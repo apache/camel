@@ -89,4 +89,4 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-include::{page-component-version}@camel-spring-boot::page$websocket-jsr356-starter.adoc[]
+include::spring-boot:partial$websocket-jsr356-starter.adoc[]

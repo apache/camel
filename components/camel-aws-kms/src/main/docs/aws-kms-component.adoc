@@ -172,4 +172,4 @@ Maven users will need to add the following dependency to their pom.xml.
 where `$\{camel-version}` must be replaced by the actual version of Camel.
 
 
-include::{page-component-version}@camel-spring-boot::page$aws-kms-starter.adoc[]
+include::spring-boot:partial$aws-kms-starter.adoc[]

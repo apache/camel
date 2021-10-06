@@ -149,4 +149,4 @@ And the sample using spring DSL:
 ----
 
 
-include::{page-component-version}@camel-spring-boot::page$directvm-starter.adoc[]
+include::spring-boot:partial$directvm-starter.adoc[]

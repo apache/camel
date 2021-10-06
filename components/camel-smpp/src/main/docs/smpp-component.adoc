@@ -652,4 +652,4 @@ log4j.logger.org.apache.camel.component.smpp=DEBUG
 --------------------------------------------------
 
 
-include::{page-component-version}@camel-spring-boot::page$smpp-starter.adoc[]
+include::spring-boot:partial$smpp-starter.adoc[]

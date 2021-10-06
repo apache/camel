@@ -1864,4 +1864,4 @@ the download page for the latest versions).
 </dependency>
 --------------------------------------
 
-include::{page-component-version}@camel-spring-boot::page$bindy-starter.adoc[]
+include::spring-boot:partial$bindy-starter.adoc[]

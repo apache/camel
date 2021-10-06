@@ -175,4 +175,4 @@ exchange is used
 from("someProducingEndpoint").process(someProcessor).to("couchdb:http://localhost:9999")
 ----------------------------------------------------------------------------------------
 
-include::{page-component-version}@camel-spring-boot::page$couchdb-starter.adoc[]
+include::spring-boot:partial$couchdb-starter.adoc[]

@@ -141,4 +141,4 @@ instead of INSERT,...). This will make sure repeated messages won't affect your 
 ====
 
 
-include::{page-component-version}@camel-spring-boot::page$pg-replication-slot-starter.adoc[]
+include::spring-boot:partial$pg-replication-slot-starter.adoc[]

@@ -579,4 +579,4 @@ from("kafka:my_topic?headerFilterStrategy=#myStrategy")
 
 `myStrategy` object should be subclass of `HeaderFilterStrategy` and must be placed in the Camel registry, either manually or by registration as a bean in Spring/Blueprint, as it is `CamelContext` aware.
 
-include::{page-component-version}@camel-spring-boot::page$kafka-starter.adoc[]
+include::spring-boot:partial$kafka-starter.adoc[]

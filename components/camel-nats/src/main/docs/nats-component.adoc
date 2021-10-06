@@ -209,4 +209,4 @@ from("nats:mytopic?maxMessages=5&queueName=myqueue")
   .to("mock:result");
 ----
 
-include::{page-component-version}@camel-spring-boot::page$nats-starter.adoc[]
+include::spring-boot:partial$nats-starter.adoc[]

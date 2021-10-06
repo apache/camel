@@ -135,4 +135,4 @@ The following rules determine which request method the CoAP producer will use to
  3. **POST** if the message exchange body is not null.
  4. **GET** otherwise.
 
-include::{page-component-version}@camel-spring-boot::page$coap-starter.adoc[]
+include::spring-boot:partial$coap-starter.adoc[]

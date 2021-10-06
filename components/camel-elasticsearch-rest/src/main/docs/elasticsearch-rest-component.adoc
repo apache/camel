@@ -325,4 +325,4 @@ MultiSearchRequest request = new MultiSearchRequest().add(req1).add(req);
 Item[] response = template.requestBody("direct:search", request, Item[].class);
 ----
 
-include::{page-component-version}@camel-spring-boot::page$elasticsearch-rest-starter.adoc[]
+include::spring-boot:partial$elasticsearch-rest-starter.adoc[]

@@ -97,4 +97,4 @@ The Splunk HEC endpoint may be used to stream data to Splunk for ingestion.
 
 It is meant for high volume ingestion of machine data.
 
-include::{page-component-version}@camel-spring-boot::page$splunk-starter.adoc[]
+include::spring-boot:partial$splunk-starter.adoc[]

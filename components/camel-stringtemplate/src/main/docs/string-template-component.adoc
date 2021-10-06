@@ -176,4 +176,4 @@ Regards Camel Riders Bookstore
 And the java code is as follows:
 
 
-include::{page-component-version}@camel-spring-boot::page$stringtemplate-starter.adoc[]
+include::spring-boot:partial$stringtemplate-starter.adoc[]

@@ -1355,4 +1355,4 @@ wmq.setDestinationResolver(new DestinationResolver() {
 ----------------------------------------------------------------------------------------------------------------------------------
 
 
-include::{page-component-version}@camel-spring-boot::page$jms-starter.adoc[]
+include::spring-boot:partial$jms-starter.adoc[]

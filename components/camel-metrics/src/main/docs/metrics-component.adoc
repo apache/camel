@@ -640,4 +640,4 @@ This factory allows you to gather performance information about Camel Thread Poo
 which collects information from inside of Camel.
 See more details at Advanced configuration of CamelContext using Spring
 
-include::{page-component-version}@camel-spring-boot::page$metrics-starter.adoc[]
+include::spring-boot:partial$metrics-starter.adoc[]
