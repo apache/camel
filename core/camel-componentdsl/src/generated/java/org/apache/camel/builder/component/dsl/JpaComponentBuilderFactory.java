@@ -51,6 +51,24 @@ public interface JpaComponentBuilderFactory {
      */
     interface JpaComponentBuilder extends ComponentBuilder<JpaComponent> {
         /**
+         * Maps an alias to a JPA entity class. The alias can then be used in
+         * the endpoint URI (instead of the fully qualified class name).
+         * 
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Class&amp;lt;java.lang.Object&amp;gt;&amp;gt;&lt;/code&gt;
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param aliases the value to set
+         * @return the dsl builder
+         */
+        default JpaComponentBuilder aliases(
+                java.util.Map<java.lang.String, java.lang.Class<java.lang.Object>> aliases) {
+            doSetProperty("aliases", aliases);
+            return this;
+        }
+        /**
          * To use the EntityManagerFactory. This is strongly recommended to
          * configure.
          * 
@@ -202,6 +220,7 @@ public interface JpaComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "aliases": ((JpaComponent) component).setAliases((java.util.Map) value); return true;
             case "entityManagerFactory": ((JpaComponent) component).setEntityManagerFactory((javax.persistence.EntityManagerFactory) value); return true;
             case "joinTransaction": ((JpaComponent) component).setJoinTransaction((boolean) value); return true;
             case "sharedEntityManager": ((JpaComponent) component).setSharedEntityManager((boolean) value); return true;
