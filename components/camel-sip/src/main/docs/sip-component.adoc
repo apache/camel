@@ -237,4 +237,4 @@ well as Subscriber. While it is set up as a Camel Consumer, it does not
 actually send any messages along the route to the endpoint
 "mock:neverland".
 
-include::{page-component-version}@camel-spring-boot::page$sip-starter.adoc[]
+include::spring-boot:partial$sip-starter.adoc[]

@@ -3886,4 +3886,4 @@ For more information on the endpoints and options see API documentation at:
 https://www.twilio.com/docs/libraries/reference/twilio-java/index.html
 
 
-include::{page-component-version}@camel-spring-boot::page$twilio-starter.adoc[]
+include::spring-boot:partial$twilio-starter.adoc[]

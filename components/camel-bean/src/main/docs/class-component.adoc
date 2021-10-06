@@ -134,4 +134,4 @@ component works in much the same way.
 ====
 
 
-include::{page-component-version}@camel-spring-boot::page$bean-starter.adoc[]
+include::spring-boot:partial$bean-starter.adoc[]

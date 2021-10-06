@@ -107,4 +107,4 @@ with the following path and query parameters:
 - deleteCustomResource
 - createCustomResource
 
-include::{page-component-version}@camel-spring-boot::page$kubernetes-starter.adoc[]
+include::spring-boot:partial$kubernetes-starter.adoc[]

@@ -96,4 +96,4 @@ Supported actions are:
 * SIP_PEERS, List SIP Peers
 * EXTENSION_STATE, Check Extension Status
 
-include::{page-component-version}@camel-spring-boot::page$asterisk-starter.adoc[]
+include::spring-boot:partial$asterisk-starter.adoc[]

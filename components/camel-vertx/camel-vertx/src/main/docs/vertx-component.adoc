@@ -125,4 +125,4 @@ camelContext.addComponent("vertx", vertxComponent);
 -----------------------------------------------------
 
 
-include::{page-component-version}@camel-spring-boot::page$vertx-starter.adoc[]
+include::spring-boot:partial$vertx-starter.adoc[]

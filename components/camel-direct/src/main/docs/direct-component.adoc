@@ -140,4 +140,4 @@ See also samples from the xref:seda-component.adoc[SEDA] component, how they can
 be used together.
 
 
-include::{page-component-version}@camel-spring-boot::page$direct-starter.adoc[]
+include::spring-boot:partial$direct-starter.adoc[]

@@ -83,4 +83,4 @@ Camel provide the following ServiceRegistry implementations:
 - camel-spring-cloud
 
 
-include::{page-component-version}@camel-spring-boot::page$service-starter.adoc[]
+include::spring-boot:partial$service-starter.adoc[]

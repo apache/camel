@@ -473,4 +473,4 @@ from("direct:shutdown")
     .to("digitalocean:droplet?operation=shutdown&oAuthToken=XXXXXX")
 ```
 
-include::{page-component-version}@camel-spring-boot::page$digitalocean-starter.adoc[]
+include::spring-boot:partial$digitalocean-starter.adoc[]

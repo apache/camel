@@ -129,4 +129,4 @@ To use this feature, add the following dependencies to your spring boot pom.xml 
 </dependency>
 ----
 
-include::{page-component-version}@camel-spring-boot::page$kudu-starter.adoc[]
+include::spring-boot:partial$kudu-starter.adoc[]

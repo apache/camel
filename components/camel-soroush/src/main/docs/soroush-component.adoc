@@ -262,4 +262,4 @@ onException(CongestionException.class).log("Failed to processing ${id}")
 
 _Donated by https://www.mohaymen.ir[Mohaymen ICT] to ASF_
 
-include::{page-component-version}@camel-spring-boot::page$soroush-starter.adoc[]
+include::spring-boot:partial$soroush-starter.adoc[]
