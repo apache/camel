@@ -10,16 +10,16 @@ image::eip/MessageHistory.gif[image]
 
 Attaching a Message History to the message will provide a list of all applications that the message passed through since its origination.
 
-IMPORTANT: The message history is disabled by default (to optimize for lower footprint out of the box). You should only enable message history
+== Enabling Message History
+
+The message history is disabled by default (to optimize for lower footprint out of the box). You should only enable message history
 if needed, such as during development, where Camel can report route stack-traces when a message failed with an exception.
 But for production usage, then message history should only be enabled if you have monitoring systems that rely on gathering these
-fine grained details. When message history is enabled then there is a slight performance overhead as the history data is stored
+fine-grained details. When message history is enabled then there is a slight performance overhead as the history data is stored
 in a `java.util.concurrent.CopyOnWriteArrayList` due to the need of being thread safe.
 
-== Enabling or disabling Message History
-
 The Message History can be enabled or disabled per CamelContext or per route (disabled by default).
-For example you can turn it on with
+For example, you can turn it on with:
 
 [source,java]
 ----
@@ -35,13 +35,68 @@ Or in XML
 </camelContext>
 ----
 
-You can also do this per route. Then a route level configuration overrides the CamelContext level configuration.
+Or when using Spring Boot or Quarkus, you can enable this in the configuration file:
+
+[source,properties]
+----
+camel.springboot.message-history = true
+----
+
+And in Quarkus:
+
+[source,properties]
+----
+camel.quarkus.message-history = true
+----
+
+=== Route level Message History
+
+You can also enable or disable message history per route.
+When doing this then Camel can only gather message history in the routes where this is enabled,
+which means you may not have full coverage. You may still want to do this, for example to capture
+the history in a critical route to help pin-point where the route is slow.
+
+A route level configuration overrides the global configuration.
+
+To enable in Java:
+
+[source,java]
+----
+from("jms:cheese")
+  .messageHistory()
+  .to("bean:validate")
+  .to("bean:transform")
+  .to("jms:wine");
+----
+
+You can also turn off message history per route:
+
+[source,java]
+----
+from("jms:cheese")
+  .messageHistory(false)
+  .to("bean:validate")
+  .to("bean:transform")
+  .to("jms:wine");
+----
+
+And in XML:
+
+[source,xml]
+----
+<route messageHistory="true">
+  <from uri="jms:cheese"/>
+  <to uri="bean:validate"/>
+  <to uri="bean:transform"/>
+  <to uri="jms:wine"/>
+</route>
+----
 
 == Route stack-trace in exceptions logged by error handler
 
-If Message History is enabled, then Camel will leverage this information,
-when the Error Handler logs exhausted exceptions. Then in addition to the caused exception with its stacktrace,
-you can see the message history; you may think this as a "route stacktrace".
+If Message History is enabled, then Camel will include this information,
+when the xref:latest@manual:ROOT:error-handler.adoc[Error Handler] logs exhausted exceptions,
+where you can see the message history; you may think this as a "route stacktrace".
 
 And example is provided below:
 
@@ -83,10 +138,10 @@ java.lang.IllegalArgumentException: Forced to dump message history
 	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_201]
 ----
 
-When message history is enabled then the full history is logged as shown above. Here we can see the full path
+When Message History is enabled then the full history is logged as shown above. Here we can see the full path
 the message has been routed, where it started from route1, called route2 and returned to route1 again, and so on.
 
-When message history is disabled (by default) then the error handler logs a brief history with the last node
+When Message History is disabled (by default) then the error handler logs a brief history with the last node
 where the exception occurred as shown below:
 
 [source,text]
@@ -121,29 +176,55 @@ java.lang.IllegalArgumentException: Forced to dump message history
 	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_201]
 ----
 
+Here you can see the Message History only outputs the input (route1) and the last step
+where the exception occurred (process1).
 
 === Configuring route stack-trace from error handler
 
-You can turn off logging message history from the Error Handler using
+You can turn off logging Message History with `logExhaustedMessageHistory`
+from the xref:latest@manual:ROOT:error-handler.adoc[Error Handler] using:
 
 [source,java]
 ----
 errorHandler(defaultErrorHandler().logExhaustedMessageHistory(false));
 ----
 
-The Error Handler does not log the message body/header details (to avoid logging sensitive message body details).
-You can enable this on the error handler as shown:
+The xref:latest@manual:ROOT:error-handler.adoc[Error Handler] does not log the
+message body/header details (to avoid logging sensitive message body details).
+You can enable this with `logExhaustedMessageBody` on the error handler as shown:
 
 [source,java]
 ----
 errorHandler(defaultErrorHandler().logExhaustedMessageBody(true));
 ----
 
+In XML configuring this is a bit different, as you configure this in the `redeliveryPolicy`
+of the `<errorHandler>` as shown:
+
+[source,xml]
+----
+<camelContext messageHistory="true" errorHandlerRef="myErrorHandler" xmlns="http://camel.apache.org/schema/spring">
+
+    <errorHandler id="myErrorHandler">
+      <redeliveryPolicy logExhaustedMessageHistory="false" logExhaustedMessageBody="true"/>
+    </errorHandler>
+
+    <route>
+      <from uri="jms:cheese"/>
+      <to uri="bean:validate"/>
+      <to uri="bean:transform"/>
+      <to uri="jms:wine"/>
+    </route>
+</camelContext>
+----
+
 == MessageHistory API
 
-When message history is enabled during routing Camel captures how the Exchange is routed, as a `org.apache.camel.MessageHistory` entity
-that is stored on the Exchange. On the `org.apache.camel.MessageHistory` there is information about the
-route id, processor id, timestamp, and elapsed time it took to process the Exchange by the processor.
+When message history is enabled during routing Camel captures how the `Exchange` is routed,
+as an `org.apache.camel.MessageHistory` entity that is stored on the `Exchange`.
+
+On the `org.apache.camel.MessageHistory` there is information about the
+route id, processor id, timestamp, and elapsed time it took to process the `Exchange` by the processor.
 
 You can access the message history from Java code:
 
