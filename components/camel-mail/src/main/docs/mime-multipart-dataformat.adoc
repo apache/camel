@@ -200,4 +200,4 @@ If you use Maven you can just add the following to your pom.xml:
 </dependency>
 -----------------------------------------------------------------------------------
 
-include::{page-component-version}@camel-spring-boot::page$mail-starter.adoc[]
+include::spring-boot:partial$mail-starter.adoc[]

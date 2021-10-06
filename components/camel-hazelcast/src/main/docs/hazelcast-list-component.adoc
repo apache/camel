@@ -143,4 +143,4 @@ fromF("hazelcast-%smm", HazelcastConstants.LIST_PREFIX)
                         .log("fail!");
 -----------------------------------------------------------------------------------------------
 
-include::{page-component-version}@camel-spring-boot::page$hazelcast-starter.adoc[]
+include::spring-boot:partial$hazelcast-starter.adoc[]

@@ -159,4 +159,4 @@ fromF("kubernetes-hpa://%s?oauthToken=%s&namespace=default&resourceName=test", h
 This consumer will return a list of events on the namespace default for the hpa test.
 
 
-include::{page-component-version}@camel-spring-boot::page$kubernetes-starter.adoc[]
+include::spring-boot:partial$kubernetes-starter.adoc[]

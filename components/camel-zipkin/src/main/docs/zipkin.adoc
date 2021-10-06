@@ -283,4 +283,4 @@ You can then configure camel-zipkin in the `application.properties` file where y
 
 You can find an example of this in the https://github.com/apache/camel-spring-boot-examples/tree/master/camel-example-spring-boot-zipkin[camel-example-spring-boot-zipkin]
 
-include::{page-component-version}@camel-spring-boot::page$zipkin-starter.adoc[]
+include::spring-boot:partial$zipkin-starter.adoc[]

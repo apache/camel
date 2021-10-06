@@ -88,4 +88,4 @@ with the following path and query parameters:
 
 
 
-include::{page-component-version}@camel-spring-boot::page$spring-starter.adoc[]
+include::spring-boot:partial$spring-starter.adoc[]

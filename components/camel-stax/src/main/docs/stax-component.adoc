@@ -231,4 +231,4 @@ from("file:target/in")
 The example above could be implemented as follows in XML DSL
 
 
-include::{page-component-version}@camel-spring-boot::page$stax-starter.adoc[]
+include::spring-boot:partial$stax-starter.adoc[]

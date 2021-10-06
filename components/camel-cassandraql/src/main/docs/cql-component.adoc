@@ -287,4 +287,4 @@ The same approach can be used for updating or querying the table.
 
 
 
-include::{page-component-version}@camel-spring-boot::page$cassandraql-starter.adoc[]
+include::spring-boot:partial$cassandraql-starter.adoc[]
