@@ -249,4 +249,4 @@ the bodies from a file.
 the file into multiple payloads.
 |===
 
-include::{page-component-version}@camel-spring-boot::page$dataset-starter.adoc[]
+include::spring-boot:partial$dataset-starter.adoc[]

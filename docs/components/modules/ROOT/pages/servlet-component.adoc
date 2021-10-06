@@ -496,4 +496,4 @@ The automatic mapping of the Camel servlet can also be disabled.
 |=======================================================================
 
 
-include::{page-component-version}@camel-spring-boot::page$servlet-starter.adoc[]
+include::spring-boot:partial$servlet-starter.adoc[]

@@ -52,4 +52,4 @@ otelTracer.setTracer(...);
 otelTracer.init(camelContext);
 --------------------------------------------------------------------------------------------------
 
-include::{page-component-version}@camel-spring-boot::page$opentelemetry-starter.adoc[]
+include::spring-boot:partial$opentelemetry-starter.adoc[]

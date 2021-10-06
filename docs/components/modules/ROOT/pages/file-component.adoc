@@ -1163,4 +1163,4 @@ This component has log level *TRACE* that can be helpful if you have
 problems.
 
 
-include::{page-component-version}@camel-spring-boot::page$file-starter.adoc[]
+include::spring-boot:partial$file-starter.adoc[]

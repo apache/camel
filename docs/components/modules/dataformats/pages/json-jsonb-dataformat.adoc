@@ -71,4 +71,4 @@ If you want to add the Johnzon implementation and you are using maven, just add 
 </dependency>
 ----------------------------------------------------------
 
-include::{page-component-version}@camel-spring-boot::page$jsonb-starter.adoc[]
+include::spring-boot:partial$jsonb-starter.adoc[]

@@ -486,4 +486,4 @@ queryMap.put("q2", "world");
 inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_QUERY_MAP, queryMap);
 ----
 
-include::{page-component-version}@camel-spring-boot::page$cxf-starter.adoc[]
+include::spring-boot:partial$cxf-starter.adoc[]

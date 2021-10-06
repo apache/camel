@@ -162,4 +162,4 @@ xref:manual::advanced-configuration-of-camelcontext-using-spring.adoc[Advanced
 configuration of CamelContext using Spring].
 
 
-include::{page-component-version}@camel-spring-boot::page$nagios-starter.adoc[]
+include::spring-boot:partial$nagios-starter.adoc[]

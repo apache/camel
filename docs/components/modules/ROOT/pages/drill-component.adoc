@@ -97,4 +97,4 @@ with the following path and query parameters:
 
 
 
-include::{page-component-version}@camel-spring-boot::page$drill-starter.adoc[]
+include::spring-boot:partial$drill-starter.adoc[]

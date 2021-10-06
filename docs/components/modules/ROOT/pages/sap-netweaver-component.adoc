@@ -206,4 +206,4 @@ Destination airport: SFO
 -------------------------------
 
 
-include::{page-component-version}@camel-spring-boot::page$sap-netweaver-starter.adoc[]
+include::spring-boot:partial$sap-netweaver-starter.adoc[]

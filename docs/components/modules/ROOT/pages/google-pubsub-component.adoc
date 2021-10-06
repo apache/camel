@@ -203,4 +203,4 @@ be redelivered to the next consumer.
 It is possible to delay the message redelivery by setting the acknowledgement deadline explicitly for the rollback by
 setting the message header `GooglePubsubConstants.ACK_DEADLINE` to the value in seconds.
 
-include::{page-component-version}@camel-spring-boot::page$google-pubsub-starter.adoc[]
+include::spring-boot:partial$google-pubsub-starter.adoc[]

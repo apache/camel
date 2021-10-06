@@ -597,4 +597,4 @@ Direction : from FIX gateway
 ----
 
 
-include::{page-component-version}@camel-spring-boot::page$quickfix-starter.adoc[]
+include::spring-boot:partial$quickfix-starter.adoc[]

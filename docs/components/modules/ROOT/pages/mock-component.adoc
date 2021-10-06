@@ -500,4 +500,4 @@ In the example above we use `seconds` as the time unit, but Camel offers
 
 
 
-include::{page-component-version}@camel-spring-boot::page$mock-starter.adoc[]
+include::spring-boot:partial$mock-starter.adoc[]

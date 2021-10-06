@@ -378,4 +378,4 @@ Here is the same using spring xml.
 ----------------------------------------------------------------------------------------------
 
 
-include::{page-component-version}@camel-spring-boot::page$jclouds-starter.adoc[]
+include::spring-boot:partial$jclouds-starter.adoc[]

@@ -77,4 +77,4 @@ for this component:
 ------------------------------------------------------------
 
 
-include::{page-component-version}@camel-spring-boot::page$ical-starter.adoc[]
+include::spring-boot:partial$ical-starter.adoc[]

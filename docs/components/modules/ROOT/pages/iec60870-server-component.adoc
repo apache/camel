@@ -118,4 +118,4 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-include::{page-component-version}@camel-spring-boot::page$iec60870-starter.adoc[]
+include::spring-boot:partial$iec60870-starter.adoc[]

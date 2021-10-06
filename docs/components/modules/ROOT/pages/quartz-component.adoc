@@ -458,4 +458,4 @@ Users can then use the cron component instead of the quartz component, as in the
     .to("activemq:Totally.Rocks");
 ----
 
-include::{page-component-version}@camel-spring-boot::page$quartz-starter.adoc[]
+include::spring-boot:partial$quartz-starter.adoc[]

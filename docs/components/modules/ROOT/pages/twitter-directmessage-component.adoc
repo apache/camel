@@ -121,4 +121,4 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-include::{page-component-version}@camel-spring-boot::page$twitter-starter.adoc[]
+include::spring-boot:partial$twitter-starter.adoc[]

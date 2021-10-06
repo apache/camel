@@ -327,4 +327,4 @@ from("timer://MoveNewCustomersEveryHour?period=3600000")
 ----
 
 
-include::{page-component-version}@camel-spring-boot::page$jdbc-starter.adoc[]
+include::spring-boot:partial$jdbc-starter.adoc[]

@@ -296,4 +296,4 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-include::{page-component-version}@camel-spring-boot::page$activemq-starter.adoc[]
+include::spring-boot:partial$activemq-starter.adoc[]

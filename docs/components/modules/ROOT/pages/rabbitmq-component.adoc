@@ -435,4 +435,4 @@ public Map<String, Object> bindArgsBuilder() {
 ----
 
 
-include::{page-component-version}@camel-spring-boot::page$rabbitmq-starter.adoc[]
+include::spring-boot:partial$rabbitmq-starter.adoc[]

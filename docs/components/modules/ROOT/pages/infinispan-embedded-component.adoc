@@ -489,4 +489,4 @@ With the release of Infinispan 11, it is required to set the encoding configurat
 For more information have a look at https://infinispan.org/docs/stable/titles/developing/developing.html#data_encoding[Data Encoding and MediaTypes] in the official Infinispan documentation.
 ====
 
-include::{page-component-version}@camel-spring-boot::page$infinispan-embedded-starter.adoc[]
+include::spring-boot:partial$infinispan-embedded-starter.adoc[]

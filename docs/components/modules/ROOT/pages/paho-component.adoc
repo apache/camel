@@ -229,4 +229,4 @@ from("direct:test")
     .to("paho:some/target/queue");
 ----
 
-include::{page-component-version}@camel-spring-boot::page$paho-starter.adoc[]
+include::spring-boot:partial$paho-starter.adoc[]

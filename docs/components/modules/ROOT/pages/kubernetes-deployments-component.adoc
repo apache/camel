@@ -162,4 +162,4 @@ fromF("kubernetes-deployments://%s?oauthToken=%s&namespace=default&resourceName=
 This consumer will return a list of events on the namespace default for the deployment test.
 
 
-include::{page-component-version}@camel-spring-boot::page$kubernetes-starter.adoc[]
+include::spring-boot:partial$kubernetes-starter.adoc[]

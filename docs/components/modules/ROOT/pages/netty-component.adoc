@@ -792,4 +792,4 @@ You can find an example with the Apache Camel source code in the examples direct
 under the `camel-example-netty-custom-correlation` directory.
 
 
-include::{page-component-version}@camel-spring-boot::page$netty-starter.adoc[]
+include::spring-boot:partial$netty-starter.adoc[]
