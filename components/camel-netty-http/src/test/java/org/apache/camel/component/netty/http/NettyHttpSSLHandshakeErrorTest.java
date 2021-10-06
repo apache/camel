@@ -60,8 +60,8 @@ public class NettyHttpSSLHandshakeErrorTest extends BaseNettyTest {
         Exception ex = response.getException();
 
         assertTrue(response.isFailed(), "should have failed");
-        assertNotNull(ex.getCause());
-        assertEquals(javax.net.ssl.SSLHandshakeException.class, ex.getCause().getClass(), "exception expected");
+        assertNotNull(ex);
+        assertEquals(javax.net.ssl.SSLHandshakeException.class, ex.getClass(), "SSLHandshakeException expected");
 
         assertMockEndpointsSatisfied();
     }
