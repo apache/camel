@@ -439,4 +439,4 @@ You need to ensure that your server is exposed to the internet and to pass the r
 
 Refer to the *camel-webhook* component documentation for instructions on how to set it.
 
-include::{page-component-version}@camel-spring-boot::page$telegram-starter.adoc[]
+include::spring-boot:partial$telegram-starter.adoc[]

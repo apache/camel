@@ -261,4 +261,4 @@ transport that can be deployed on Apache Tomcat, or similar web
 containers.
 
 
-include::{page-component-version}@camel-spring-boot::page$rest-starter.adoc[]
+include::spring-boot:partial$rest-starter.adoc[]

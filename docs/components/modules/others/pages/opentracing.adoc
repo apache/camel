@@ -107,7 +107,7 @@ How this agent is used will be specific to how you execute your application. _Se
 You can find an example demonstrating the three ways to configure OpenTracing here:
 https://github.com/apache/camel-spring-boot-examples/tree/master/camel-example-spring-boot-opentracing[camel-example-spring-boot-opentracing]
 
-include::{page-component-version}@camel-spring-boot::page$opentracing-starter.adoc[]
+include::spring-boot:partial$opentracing-starter.adoc[]
 
 == Span Operations Processors
 

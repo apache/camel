@@ -249,4 +249,4 @@ Header Variables inside the response message:
 |`CamelHazelcastCacheType` |`String` |the type of the cache - here multimap
 |=======================================================================
 
-include::{page-component-version}@camel-spring-boot::page$hazelcast-starter.adoc[]
+include::spring-boot:partial$hazelcast-starter.adoc[]

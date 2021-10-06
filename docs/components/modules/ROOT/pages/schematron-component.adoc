@@ -213,4 +213,4 @@ to get you started on Schematron.
 links to other resources
 ====
 
-include::{page-component-version}@camel-spring-boot::page$schematron-starter.adoc[]
+include::spring-boot:partial$schematron-starter.adoc[]

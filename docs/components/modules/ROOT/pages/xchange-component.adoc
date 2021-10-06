@@ -121,4 +121,4 @@ In this sample we find the current Bitcoin market price in USDT:
 from("direct:ticker").to("xchange:binance?service=marketdata&method=ticker&currencyPair=BTC/USDT")
 ---------------------------------------------------------------------------------------------
 
-include::{page-component-version}@camel-spring-boot::page$xchange-starter.adoc[]
+include::spring-boot:partial$xchange-starter.adoc[]

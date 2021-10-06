@@ -30,4 +30,4 @@ for this component:
 ----
 
 
-include::{page-component-version}@camel-spring-boot::page$hystrix-starter.adoc[]
+include::spring-boot:partial$hystrix-starter.adoc[]

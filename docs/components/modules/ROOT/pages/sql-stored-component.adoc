@@ -276,4 +276,4 @@ To use this feature, add the following dependencies to your spring boot pom.xml 
 You should also include the specific database driver, if needed.
 
 
-include::{page-component-version}@camel-spring-boot::page$sql-starter.adoc[]
+include::spring-boot:partial$sql-starter.adoc[]

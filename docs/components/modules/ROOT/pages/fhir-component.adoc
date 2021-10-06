@@ -1049,4 +1049,4 @@ The `inBody` parameter overrides message header, i.e. the endpoint parameter `in
 would override a `CamelFhir.myParameterNameHere` header.
 // endpoint options: END
 
-include::{page-component-version}@camel-spring-boot::page$fhir-starter.adoc[]
+include::spring-boot:partial$fhir-starter.adoc[]

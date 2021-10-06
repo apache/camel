@@ -297,4 +297,4 @@ And the `template.robot` file:
 Please note that when you pass values through Camel Exchange to test cases,
 they will be available as case-sensitive ``body``, ``headers.[yourHeaderName]`` and ``properties.[yourPropertyName]``
 
-include::{page-component-version}@camel-spring-boot::page$robotframework-starter.adoc[]
+include::spring-boot:partial$robotframework-starter.adoc[]

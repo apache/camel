@@ -95,4 +95,4 @@ The amount of items transferred as the result of the DRAIN operation.
 Dynamically sets the timeout in milliseconds to use when invoking the OFFER or POLL operations. 
 |=======================================================================
 
-include::{page-component-version}@camel-spring-boot::page$ignite-starter.adoc[]
+include::spring-boot:partial$ignite-starter.adoc[]

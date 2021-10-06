@@ -82,4 +82,4 @@ The *kamelet-reify* endpoint is *lenient*, which means that the endpoint accepts
 ====
 
 
-//include::{page-component-version}@camel-spring-boot::page$kamelet-reify-starter.adoc[]
+//include::spring-boot:partial$kamelet-reify-starter.adoc[]

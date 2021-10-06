@@ -172,4 +172,4 @@ Camel provide the following ClusterService implementations:
 - camel-zookeeper
 
 
-include::{page-component-version}@camel-spring-boot::page$master-starter.adoc[]
+include::spring-boot:partial$master-starter.adoc[]

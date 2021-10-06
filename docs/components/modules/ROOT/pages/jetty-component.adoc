@@ -718,4 +718,4 @@ sharing the same MBeanServer between the instances, you can provide both
 instances with a reference to the same MBeanContainer in order to avoid
 name collisions when registering Jetty MBeans.
 
-include::{page-component-version}@camel-spring-boot::page$jetty-starter.adoc[]
+include::spring-boot:partial$jetty-starter.adoc[]

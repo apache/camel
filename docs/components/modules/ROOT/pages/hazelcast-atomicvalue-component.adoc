@@ -223,4 +223,4 @@ Spring DSL:
 </route>
 -----------------------------------------------------------------------------------------------
 
-include::{page-component-version}@camel-spring-boot::page$hazelcast-starter.adoc[]
+include::spring-boot:partial$hazelcast-starter.adoc[]
