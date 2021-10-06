@@ -205,4 +205,4 @@ And to get the weather at the current location, then:
   String json = template.requestBodyAndHeader("direct:start", "", "CamelWeatherLocation", "current&appid=APIKEY", String.class);
 --------------------------------------------------------------------------------------------------------------------------------
 
-include::{page-component-version}@camel-spring-boot::page$weather-starter.adoc[]
+include::spring-boot:partial$weather-starter.adoc[]

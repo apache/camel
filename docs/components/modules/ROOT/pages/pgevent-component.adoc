@@ -113,4 +113,4 @@ Please use the pgjdbc-ng driver (`jdbc:pgsql:/...`) instead.
 
 
 
-include::{page-component-version}@camel-spring-boot::page$pgevent-starter.adoc[]
+include::spring-boot:partial$pgevent-starter.adoc[]

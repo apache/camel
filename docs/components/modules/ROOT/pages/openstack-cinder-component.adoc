@@ -193,4 +193,4 @@ If you need more precise volume settings you can create new object of the type *
 If you need more precise server settings you can create new object of the type *org.openstack4j.model.storage.block.VolumeSnapshot* and send in the message body.
 
 
-include::{page-component-version}@camel-spring-boot::page$openstack-starter.adoc[]
+include::spring-boot:partial$openstack-starter.adoc[]

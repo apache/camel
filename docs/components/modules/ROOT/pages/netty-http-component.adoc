@@ -645,4 +645,4 @@ below:
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-include::{page-component-version}@camel-spring-boot::page$netty-http-starter.adoc[]
+include::spring-boot:partial$netty-http-starter.adoc[]

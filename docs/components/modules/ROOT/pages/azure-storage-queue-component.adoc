@@ -412,4 +412,4 @@ mvn verify -PfullTests -DaccountName=myacc -DaccessKey=mykey
 Whereby `accountName` is your Azure account name and `accessKey` is the access key being generated from Azure portal.
 
 
-include::{page-component-version}@camel-spring-boot::page$azure-storage-queue-starter.adoc[]
+include::spring-boot:partial$azure-storage-queue-starter.adoc[]

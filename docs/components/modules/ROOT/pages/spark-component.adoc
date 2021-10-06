@@ -414,4 +414,4 @@ Dataset<Row> cars(HiveContext hiveContext) {
 }
 ------------------------------------------------------------------------
 
-include::{page-component-version}@camel-spring-boot::page$spark-starter.adoc[]
+include::spring-boot:partial$spark-starter.adoc[]

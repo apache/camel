@@ -122,4 +122,4 @@ the JMX operation `clearCachedSchema`. You can also use this method to
 programmatically clear the cache. This method is available on the
 `ValidatorEndpoint` class.
 
-include::{page-component-version}@camel-spring-boot::page$validator-starter.adoc[]
+include::spring-boot:partial$validator-starter.adoc[]

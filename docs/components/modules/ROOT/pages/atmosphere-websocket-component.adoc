@@ -187,4 +187,4 @@ And the equivalent Spring sample:
  
 
 
-include::{page-component-version}@camel-spring-boot::page$atmosphere-websocket-starter.adoc[]
+include::spring-boot:partial$atmosphere-websocket-starter.adoc[]

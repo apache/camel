@@ -212,4 +212,4 @@ Regards Camel Riders Bookstore
 ----------------------------------------------
 
 
-include::{page-component-version}@camel-spring-boot::page$chunk-starter.adoc[]
+include::spring-boot:partial$chunk-starter.adoc[]

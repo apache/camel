@@ -133,4 +133,4 @@ from("vertx-websocket:localhost:8080/echo")
 By default the `ws://` protocol is used, but secure connections with `wss://` are supported by configuring the consumer or producer
 via the `sslContextParameters` URI parameter and the xref:manual::camel-configuration-utilities.adoc[Camel JSSE Configuration Utility]
 
-include::{page-component-version}@camel-spring-boot::page$vertx-websocket-starter.adoc[]
+include::spring-boot:partial$vertx-websocket-starter.adoc[]

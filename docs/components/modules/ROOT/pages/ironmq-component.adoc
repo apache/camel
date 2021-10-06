@@ -182,4 +182,4 @@ from("activemq:foo")
   .to("ironmq:testqueue?projectId=myIronMQProjectid&token=myIronMQToken");
 --------------------------------------------------
 
-include::{page-component-version}@camel-spring-boot::page$ironmq-starter.adoc[]
+include::spring-boot:partial$ironmq-starter.adoc[]

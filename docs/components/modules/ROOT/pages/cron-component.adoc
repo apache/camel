@@ -140,4 +140,4 @@ Routes can also be written using the XML DSL.
 </route>
 -------------
 
-include::{page-component-version}@camel-spring-boot::page$cron-starter.adoc[]
+include::spring-boot:partial$cron-starter.adoc[]

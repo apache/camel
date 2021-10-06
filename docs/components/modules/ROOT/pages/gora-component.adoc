@@ -286,4 +286,4 @@ http://gora.apache.org/current/overview.html[Apache Gora Documentation]
 and the http://gora.apache.org/current/tutorial.html[Apache Gora
 Tutorial].
 
-include::{page-component-version}@camel-spring-boot::page$gora-starter.adoc[]
+include::spring-boot:partial$gora-starter.adoc[]

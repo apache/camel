@@ -343,4 +343,4 @@ static {
 ------------------------------------------------------------------------------------------------------
 
 
-include::{page-component-version}@camel-spring-boot::page$hdfs-starter.adoc[]
+include::spring-boot:partial$hdfs-starter.adoc[]

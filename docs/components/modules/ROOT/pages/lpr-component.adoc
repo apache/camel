@@ -168,4 +168,4 @@ RouteBuilder builder = new RouteBuilder() {
     }};
 --------------------------------------------------
 
-include::{page-component-version}@camel-spring-boot::page$printer-starter.adoc[]
+include::spring-boot:partial$printer-starter.adoc[]

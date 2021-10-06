@@ -416,4 +416,4 @@ Users can then use the cron component inside routes of their Spring or Spring-bo
 </route>
 ----
 
-include::{page-component-version}@camel-spring-boot::page$spring-starter.adoc[]
+include::spring-boot:partial$spring-starter.adoc[]

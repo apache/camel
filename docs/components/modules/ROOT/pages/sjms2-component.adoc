@@ -590,4 +590,4 @@ Springless refers to moving away from the dependency on the Spring JMS
 API. A new JMS client API is being developed from the ground up to power
 SJMS2.
 
-include::{page-component-version}@camel-spring-boot::page$sjms2-starter.adoc[]
+include::spring-boot:partial$sjms2-starter.adoc[]

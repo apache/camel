@@ -261,4 +261,4 @@ try (CamelContext camelctx = new DefaultCamelContext()) {
 * https://waikato.github.io/weka-wiki/documentation/[Weka Documentation,window=_blank]
 * https://tdiesler.github.io/nessus-weka[Nessus-Weka,window=_blank]
 
-include::{page-component-version}@camel-spring-boot::page$weka-starter.adoc[]
+include::spring-boot:partial$weka-starter.adoc[]

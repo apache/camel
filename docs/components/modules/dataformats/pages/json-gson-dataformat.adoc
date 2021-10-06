@@ -59,4 +59,4 @@ the download page for the latest versions).
 </dependency>
 ----------------------------------------------------------
 
-include::{page-component-version}@camel-spring-boot::page$gson-starter.adoc[]
+include::spring-boot:partial$gson-starter.adoc[]

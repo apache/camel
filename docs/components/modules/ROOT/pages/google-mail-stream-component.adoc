@@ -138,4 +138,4 @@ with the following path and query parameters:
 | *refreshToken* (security) | OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived. |  | String
 |===
 
-include::{page-component-version}@camel-spring-boot::page$google-mail-starter.adoc[]
+include::spring-boot:partial$google-mail-starter.adoc[]
