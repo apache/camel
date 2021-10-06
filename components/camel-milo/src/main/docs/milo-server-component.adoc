@@ -119,4 +119,4 @@ with the following path and query parameters:
 
 
 
-include::{page-component-version}@camel-spring-boot::page$milo-starter.adoc[]
+include::spring-boot:partial$milo-starter.adoc[]

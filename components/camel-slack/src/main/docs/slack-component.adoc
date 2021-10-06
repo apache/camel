@@ -183,4 +183,4 @@ Use the 'Bot User OAuth Access Token' as token for the consumer endpoint.
 
 IMPORTANT: Add the `channels:history` and `channels:read` user token scope to your app to grant it permission to view messages in the user's public channels.
 
-include::{page-component-version}@camel-spring-boot::page$slack-starter.adoc[]
+include::spring-boot:partial$slack-starter.adoc[]

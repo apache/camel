@@ -440,4 +440,4 @@ Spring DSL based configuration of endpoint
 ...
 ----------------------------------------------------------------------------------
 
-include::{page-component-version}@camel-spring-boot::page$ahc-starter.adoc[]
+include::spring-boot:partial$ahc-starter.adoc[]

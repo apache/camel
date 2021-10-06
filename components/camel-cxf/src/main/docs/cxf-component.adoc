@@ -879,4 +879,4 @@ the key SOAPAction (case-insensitive).
  
 
 
-include::{page-component-version}@camel-spring-boot::page$cxf-starter.adoc[]
+include::spring-boot:partial$cxf-starter.adoc[]

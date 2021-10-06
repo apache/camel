@@ -151,4 +151,4 @@ from("direct:start")
   .to("mock:end")
 ----
 
-include::{page-component-version}@camel-spring-boot::page$json-validator-starter.adoc[]
+include::spring-boot:partial$json-validator-starter.adoc[]

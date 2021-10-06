@@ -167,4 +167,4 @@ consuming message exchanges from the endpoint via a
 https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/PollingConsumer.html[PollingConsumer]
 
 
-include::{page-component-version}@camel-spring-boot::page$stomp-starter.adoc[]
+include::spring-boot:partial$stomp-starter.adoc[]

@@ -201,4 +201,4 @@ you can use "current" as the address as shown:
     .to("geocoder:address:current")
 -----------------------------------
 
-include::{page-component-version}@camel-spring-boot::page$geocoder-starter.adoc[]
+include::spring-boot:partial$geocoder-starter.adoc[]

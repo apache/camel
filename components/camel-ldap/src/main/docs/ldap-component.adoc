@@ -364,4 +364,4 @@ public class CustomSocketFactory extends SSLSocketFactory {
  
 
 
-include::{page-component-version}@camel-spring-boot::page$ldap-starter.adoc[]
+include::spring-boot:partial$ldap-starter.adoc[]

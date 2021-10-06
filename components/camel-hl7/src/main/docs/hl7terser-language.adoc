@@ -138,4 +138,4 @@ from("direct:test1")
   .transform(ack())
 ----
 
-include::{page-component-version}@camel-spring-boot::page$hl7-starter.adoc[]
+include::spring-boot:partial$hl7-starter.adoc[]

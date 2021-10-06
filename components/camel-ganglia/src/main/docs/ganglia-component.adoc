@@ -180,4 +180,4 @@ from("direct:ganglia.tx")
     .to("ganglia:239.2.11.71:8649?mode=MULTICAST&prefix=test");
 ----
 
-include::{page-component-version}@camel-spring-boot::page$ganglia-starter.adoc[]
+include::spring-boot:partial$ganglia-starter.adoc[]

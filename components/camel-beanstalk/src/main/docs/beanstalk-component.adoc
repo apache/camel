@@ -240,4 +240,4 @@ out of buried and/or delayed state to the normal queue.
  
 
 
-include::{page-component-version}@camel-spring-boot::page$beanstalk-starter.adoc[]
+include::spring-boot:partial$beanstalk-starter.adoc[]

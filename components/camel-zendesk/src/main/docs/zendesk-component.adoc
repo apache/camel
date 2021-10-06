@@ -1381,4 +1381,4 @@ would override a `CamelZendesk.myParameterNameHere` header.
 
 
 
-include::{page-component-version}@camel-spring-boot::page$zendesk-starter.adoc[]
+include::spring-boot:partial$zendesk-starter.adoc[]
