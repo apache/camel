@@ -353,4 +353,4 @@ from("direct:start")
 ----
 
 This will go out and fetch the current user's `User` object and set it as the Camel message body.
-include::{page-component-version}@camel-spring-boot::page$yammer-starter.adoc[]
+include::spring-boot:partial$yammer-starter.adoc[]

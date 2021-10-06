@@ -295,4 +295,4 @@ from("direct:start")
 ----------------------------------------------------------------------------------------------
 
 
-include::{page-component-version}@camel-spring-boot::page$jbpm-starter.adoc[]
+include::spring-boot:partial$jbpm-starter.adoc[]

@@ -146,4 +146,4 @@ with the following path and query parameters:
 
 Google BigQuery SQL endpoint expects the payload to be either empty or a map of query parameters.
 
-include::{page-component-version}@camel-spring-boot::page$google-bigquery-starter.adoc[]
+include::spring-boot:partial$google-bigquery-starter.adoc[]

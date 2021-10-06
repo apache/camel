@@ -187,4 +187,4 @@ expression being used in a filter
 is a Spring XML test case for the xref:{eip-vc}:eips:aggregate-eip.adoc[Aggregator] which
 uses a bean method call to test for the completion of the aggregation.
 
-include::{page-component-version}@camel-spring-boot::page$bean-starter.adoc[]
+include::spring-boot:partial$bean-starter.adoc[]

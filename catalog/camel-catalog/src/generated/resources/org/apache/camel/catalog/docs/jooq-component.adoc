@@ -283,4 +283,4 @@ public class BookStoreRecordBean {
 }
 ----
 
-include::{page-component-version}@camel-spring-boot::page$jooq-starter.adoc[]
+include::spring-boot:partial$jooq-starter.adoc[]

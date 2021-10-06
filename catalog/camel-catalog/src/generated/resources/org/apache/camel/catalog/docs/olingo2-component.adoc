@@ -366,4 +366,4 @@ from("olingo2://read/Manufacturers?queryParams=#paramsBean&timeUnit=SECONDS&dela
     .to("bean:blah");
 ---------------------------------------------------------------------------------------------------------
 
-include::{page-component-version}@camel-spring-boot::page$olingo2-starter.adoc[]
+include::spring-boot:partial$olingo2-starter.adoc[]

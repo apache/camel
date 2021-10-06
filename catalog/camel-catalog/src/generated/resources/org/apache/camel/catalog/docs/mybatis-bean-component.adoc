@@ -162,4 +162,4 @@ public interface AccountService {
 ----
 
 
-include::{page-component-version}@camel-spring-boot::page$mybatis-starter.adoc[]
+include::spring-boot:partial$mybatis-starter.adoc[]

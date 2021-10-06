@@ -74,4 +74,4 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-include::{page-component-version}@camel-spring-boot::page$ignite-starter.adoc[]
+include::spring-boot:partial$ignite-starter.adoc[]
