@@ -241,4 +241,4 @@ following dependency to your pom.
 </dependency>
 -------------------------------------
 
-include::{page-component-version}@camel-spring-boot::page$soap-starter.adoc[]
+include::spring-boot:partial$soap-starter.adoc[]

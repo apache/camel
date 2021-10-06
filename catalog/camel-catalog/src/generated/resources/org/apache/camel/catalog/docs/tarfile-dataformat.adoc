@@ -173,4 +173,4 @@ the download page for the latest versions).
 </dependency>
 ----------------------------------------------------------
 
-include::{page-component-version}@camel-spring-boot::page$tarfile-starter.adoc[]
+include::spring-boot:partial$tarfile-starter.adoc[]

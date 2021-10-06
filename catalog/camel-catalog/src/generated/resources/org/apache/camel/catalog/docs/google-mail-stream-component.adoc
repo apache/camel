@@ -665,4 +665,4 @@ The `inBody` parameter overrides message header, i.e. the endpoint parameter `in
 would override a `CamelGoogleMailStream.myParameterNameHere` header.
 // endpoint options: END
 
-include::{page-component-version}@camel-spring-boot::page$google-mail-starter.adoc[]
+include::spring-boot:partial$google-mail-starter.adoc[]

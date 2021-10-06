@@ -94,4 +94,4 @@ with the following path and query parameters:
 
 You can try https://github.com/oalles/camel-cm-sample[this project] to see how camel-cm-sms can be integrated in a camel route. 
 
-include::{page-component-version}@camel-spring-boot::page$cm-sms-starter.adoc[]
+include::spring-boot:partial$cm-sms-starter.adoc[]

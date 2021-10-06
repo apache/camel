@@ -309,4 +309,4 @@ mvn verify -PfullTests -Dtoken=stitchToken
 Whereby `token` is your Stitch token that is generated for Stitch Import API integration.
 
 
-include::{page-component-version}@camel-spring-boot::page$stitch-starter.adoc[]
+include::spring-boot:partial$stitch-starter.adoc[]

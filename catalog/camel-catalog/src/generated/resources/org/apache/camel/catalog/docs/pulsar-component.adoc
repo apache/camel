@@ -182,4 +182,4 @@ with the following path and query parameters:
 |===
 // message-headers options: END
 
-include::{page-component-version}@camel-spring-boot::page$pulsar-starter.adoc[]
+include::spring-boot:partial$pulsar-starter.adoc[]

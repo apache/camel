@@ -106,4 +106,4 @@ the download page for the latest versions).
 </dependency>
 -------------------------------------
 
-include::{page-component-version}@camel-spring-boot::page$bonita-starter.adoc[]
+include::spring-boot:partial$bonita-starter.adoc[]

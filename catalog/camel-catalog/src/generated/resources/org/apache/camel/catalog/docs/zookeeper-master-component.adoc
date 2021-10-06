@@ -156,4 +156,4 @@ A little example
 ----
 
 
-include::{page-component-version}@camel-spring-boot::page$zookeeper-master-starter.adoc[]
+include::spring-boot:partial$zookeeper-master-starter.adoc[]

@@ -131,4 +131,4 @@ This example uses the following namespaces:
 You can bind your source or target to a Camel endpoint as follows:
 
 
-include::{page-component-version}@camel-spring-boot::page$spring-integration-starter.adoc[]
+include::spring-boot:partial$spring-integration-starter.adoc[]

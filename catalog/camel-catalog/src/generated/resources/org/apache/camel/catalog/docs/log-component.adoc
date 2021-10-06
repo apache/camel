@@ -348,4 +348,4 @@ register single instance of `org.slf4j.Logger` in the Registry or
 reference it using `logger` URI parameter.
 
 
-include::{page-component-version}@camel-spring-boot::page$log-starter.adoc[]
+include::spring-boot:partial$log-starter.adoc[]

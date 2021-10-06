@@ -297,4 +297,4 @@ Note that any properties within your expression must be escaped with "\"
 to prevent an error when Dozer attempts to resolve variable values
 defined using the EL.
 
-include::{page-component-version}@camel-spring-boot::page$dozer-starter.adoc[]
+include::spring-boot:partial$dozer-starter.adoc[]
