@@ -1,0 +1,70 @@
+= Updating the website after a release of main camel, camel-spring-boot, and camel-karaf
+
+These steps should be done only after the release is voted on and approved.
+
+I'm going to use the notation `<repo short name>:<path>` to indicate the file to be changed.
+For instance, `camel:docs/components/antora.yml` for the `docs/components/antora.yml` component descriptor in the main camel repository, in whatever branch is under discussion.
+
+== Notes on versions
+
+Within an Antora component, xrefs to content in the same component, whether or not they are in the same source tree or repository, should never include the `version` or `component` segment of the page id.
+Including the version will make the page non-relocatable to another version: for instance specifying `latest` in the main branch will break the link when main is branched for a release.
+Including the `component` segment will redirect to the (Antora) latest version, which will typically be the last released version.
+
+Antora calculates the latest version as the last non-prerelease version.
+Since we are marking the main branch as prerelease, this will never be the main branch, although the version is currently 'latest'.
+
+== After a new release branch is created
+
+This will always be a branch from `main`.
+Changes to both `main` and the new branch, say `camel-3.12.x`, will be needed.
+The changes are almost the same whether the new branch is LTS or not.
+
+=== Changes to `main` branch
+
+In `camel:docs/components/antora.yml`::
+In `camel-karaf:docs/antora.yml`::
+In `camel-spring-boot:docs/antora.yml`::
+Increment the display-version, e.g. `3.12.x (Prerelease)`  to `3.13.x (Prerelease)`
+
+=== Changes to the new branch (`3.12.x`)
+
+In `camel:docs/components/antora.yml`::
+In `camel-karaf:docs/antora.yml`::
+In `camel-spring-boot:docs/antora.yml`::
+* Change `version` to the branch name e.g. `3.12.x`
+* Remove the `prerelease` flag line
+* If the new branch is LTS, set the display-version to e.g. `3.12.x (LTS)`.
+* If the new branch is not LTS, remove the `display-version` line.
+
+In `camel-karaf:tooling/camel-karaf-docs-maven-plugin/src/main/java/org/apache/camel/karaf/maven/ExtMvelHelper.java`::
+In `camel-spring-boot:tooling/camel-spring-boot-docs-maven-plugin/src/main/java/org/apache/camel/springboot/maven/ExtMvelHelper.java`::
+
+change
++
+[source,java]
+private final static String CAMEL_VERSION = "latest";`
++
+to e.g.
++
+[source,java]
+private final static String CAMEL_VERSION = "3.12.x";
+
+At this point, build each project (`mvn clean install -Pfastinstall`) and check for generated changes that should be committed.
+
+NOTE: TODO: Is there a step of setting up CI or the regen bot?
+Should maven snapshots be deployed?
+
+=== Changes to the Antora playbook
+
+NOTE: After a release, consider whether any LTS versions are now out of service and should be removed from the documentation.
+
+There are two cases to consider in modifying `camel-website:antora-playbook.yml`.
+
+New LTS version::
+Release after a non-LTS release::
+* Change the branch of the last release to that of the new release in the sources sections for camel, camel-karaf, and camel-spring-boot.
+Branches should be listed in reverse release order, newest first, preceded by the `main` prerelease branch.
+
+First release after an LTS release::
+* Add a new branch in the sources sections for camel, camel-karaf, and camel-spring-boot between `main` and the last LTS release branch.
