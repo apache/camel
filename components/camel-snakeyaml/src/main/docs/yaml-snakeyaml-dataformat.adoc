@@ -6,6 +6,8 @@
 :since: 2.17
 :supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/yaml-snakeyaml.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: snakeyaml
 
 *Since Camel {since}*
 
@@ -136,4 +138,5 @@ substituting the version number for the latest & greatest release
 
  
 
-include::spring-boot:partial$snakeyaml-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

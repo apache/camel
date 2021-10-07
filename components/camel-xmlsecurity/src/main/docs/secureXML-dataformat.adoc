@@ -6,6 +6,8 @@
 :since: 2.0
 :supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/secureXML.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: xmlsecurity
 
 *Since Camel {since}*
 
@@ -217,4 +219,5 @@ Spring XML Recipient
 
 This data format is provided within the *camel-xmlsecurity* component.
 
-include::spring-boot:partial$xmlsecurity-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

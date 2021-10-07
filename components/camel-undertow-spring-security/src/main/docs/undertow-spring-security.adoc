@@ -6,6 +6,8 @@
 :since: 3.3
 :supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/undertow-spring-security.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: undertow-spring-security
 
 *Since Camel {since}*
 
@@ -32,3 +34,5 @@ for example from DelegatingFilterProxyRegistrationBean. | Filter
 Each exchange created by Undertow endpoint with spring security contains header 'SpringSecurityProvider_principal' (
 name of header is provided as a constant `SpringSecurityProvider.PRINCIPAL_NAME_HEADER`) with current authorized identity
 as value  or header is not present in case of rejected requests.
+
+include::spring-boot:partial$starter.adoc[]

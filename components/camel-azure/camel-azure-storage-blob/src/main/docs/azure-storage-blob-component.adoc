@@ -9,6 +9,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/azure-storage-blob.adoc[opts=optional]
 //Manually maintained attributes
 :group: Azure
+:camel-spring-boot-name: azure-storage-blob
 
 *Since Camel {since}*
 
@@ -610,4 +611,5 @@ mvn verify -PfullTests -DaccountName=myacc -DaccessKey=mykey
 Whereby `accountName` is your Azure account name and `accessKey` is the access key being generated from Azure portal.
 
 
-include::spring-boot:partial$azure-storage-blob-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

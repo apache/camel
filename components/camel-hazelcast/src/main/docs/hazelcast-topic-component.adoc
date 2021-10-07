@@ -9,6 +9,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/hazelcast-topic.adoc[opts=optional]
 //Manually maintained attributes
 :group: Hazelcast
+:camel-spring-boot-name: hazelcast
 
 *Since Camel {since}*
 
@@ -63,4 +64,5 @@ fromF("hazelcast-%sfoo", HazelcastConstants.TOPIC_PREFIX)
       .log("...this should never have happened")
 --------------------------------------------------------------------------------------------
 
-include::spring-boot:partial$hazelcast-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -8,6 +8,8 @@
 :component-header: Only consumer is supported
 :core:
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/scheduler.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: scheduler
 
 *Since Camel {since}*
 
@@ -117,4 +119,5 @@ scheduler, every time the consumer has completed processing the
 exchange.
 
 
-include::spring-boot:partial$scheduler-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

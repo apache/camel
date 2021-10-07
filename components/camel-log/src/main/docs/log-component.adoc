@@ -8,6 +8,8 @@
 :component-header: Only producer is supported
 :core:
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/log.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: log
 
 *Since Camel {since}*
 
@@ -265,4 +267,5 @@ options:
 ---------------------------------------------
 
 
-include::spring-boot:partial$log-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

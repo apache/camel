@@ -6,6 +6,8 @@
 :since: 2.21
 :supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/fhirJson.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: fhir
 
 *Since Camel {since}*
 
@@ -18,3 +20,5 @@ JSON parser to parse to/from JSON format to/from a HAPI-FHIR's `IBaseResource`.
 // dataformat options: START
 include::partial$dataformat-options.adoc[]
 // dataformat options: END
+
+include::spring-boot:partial$starter.adoc[]

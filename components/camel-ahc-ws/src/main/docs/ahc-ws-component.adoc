@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/ahc-ws.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: ahc-ws
 
 *Since Camel {since}*
 
@@ -112,4 +114,5 @@ And the equivalent Spring sample:
  
 
 
-include::spring-boot:partial$ahc-ws-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/paho.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: paho
 
 *Since Camel {since}*
 
@@ -135,4 +137,5 @@ from("direct:test")
     .to("paho:some/target/queue");
 ----
 
-include::spring-boot:partial$paho-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

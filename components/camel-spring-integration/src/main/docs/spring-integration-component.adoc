@@ -9,6 +9,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/spring-integration.adoc[opts=optional]
 //Manually maintained attributes
 :group: Spring
+:camel-spring-boot-name: spring-integration
 
 *Since Camel {since}*
 
@@ -90,4 +91,5 @@ This example uses the following namespaces:
 You can bind your source or target to a Camel endpoint as follows:
 
 
-include::spring-boot:partial$spring-integration-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

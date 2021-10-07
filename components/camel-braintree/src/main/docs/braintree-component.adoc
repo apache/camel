@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/braintree.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: braintree
 
 *Since Camel {since}*
 
@@ -96,4 +98,5 @@ For more information on the endpoints and options see Braintree
 references at https://developers.braintreepayments.com/reference/overview[https://developers.braintreepayments.com/reference/overview]
 
 
-include::spring-boot:partial$braintree-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

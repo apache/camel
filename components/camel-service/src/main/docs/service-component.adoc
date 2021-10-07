@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Only consumer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/service.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: service
 
 *Since Camel {since}*
 
@@ -43,4 +45,5 @@ Camel provides the following ServiceRegistry implementations:
 - camel-spring-cloud
 
 
-include::spring-boot:partial$service-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

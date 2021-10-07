@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/pubnub.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: pubnub
 
 *Since Camel {since}*
 
@@ -165,4 +167,5 @@ The example PubNubSensorExample already contains a subscribe key provided by Pub
 The example illustrates the PubNub component subscribing to a infinite stream of sensor data.
 
 
-include::spring-boot:partial$pubnub-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

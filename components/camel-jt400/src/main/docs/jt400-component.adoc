@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/jt400.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: jt400
 
 *Since Camel {since}*
 
@@ -252,4 +254,5 @@ from("jt400://username:password@localhost/qsys.lib/qusrsys.lib/myq.msgq?sendingR
 -------------------------------------------------------------------------------------------------------
 
 
-include::spring-boot:partial$jt400-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

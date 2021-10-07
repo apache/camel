@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/ldif.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: ldif
 
 *Since Camel {since}*
 
@@ -157,4 +159,5 @@ if (results.size() > 0) {
 }
 ----
 
-include::spring-boot:partial$ldif-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

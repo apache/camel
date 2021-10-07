@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/ssh.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: ssh
 
 *Since Camel {since}*
 
@@ -144,4 +146,5 @@ The component uses `sshd-core` library which is based on either `bouncycastle` o
 -----------------------------------------
 
 
-include::spring-boot:partial$ssh-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

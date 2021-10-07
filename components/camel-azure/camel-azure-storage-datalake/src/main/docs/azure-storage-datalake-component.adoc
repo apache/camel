@@ -9,6 +9,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/azure-storage-datalake.adoc[opts=optional]
 //Manually maintained attributes
 :group: Azure
+:camel-spring-boot-name: azure-storage-datalake
 
 *Since Camel {since}*
 
@@ -459,3 +460,5 @@ You can also skip the integration test, and run only basic unit test by using th
 ----
 mvn test
 ----
+
+include::spring-boot:partial$starter.adoc[]

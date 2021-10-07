@@ -8,6 +8,8 @@
 :component-header: Both producer and consumer are supported
 :core:
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/vm.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: vm
 
 *Since Camel {since}*
 
@@ -84,4 +86,5 @@ from("vm:order.email").bean(MyOrderEmailSender.class);
 ----
 
 
-include::spring-boot:partial$vm-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

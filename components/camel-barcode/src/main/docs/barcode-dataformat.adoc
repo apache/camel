@@ -6,6 +6,8 @@
 :since: 2.14
 :supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/barcode.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: barcode
 
 *Since Camel {since}*
 
@@ -133,4 +135,5 @@ You can find the ORIENTATION as header variable:
 |=======================================================================
  
 
-include::spring-boot:partial$barcode-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/fop.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: fop
 
 *Since Camel {since}*
 
@@ -140,4 +142,5 @@ from("file:source/data/xml")
 ---------------------------------
 
 
-include::spring-boot:partial$fop-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

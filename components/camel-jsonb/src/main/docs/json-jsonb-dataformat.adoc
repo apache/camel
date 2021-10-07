@@ -6,6 +6,8 @@
 :since: 3.7
 :supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/json-jsonb.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: jsonb
 
 *Since Camel {since}*
 
@@ -59,4 +61,5 @@ If you want to add the Johnzon implementation and you are using maven, just add 
 </dependency>
 ----------------------------------------------------------
 
-include::spring-boot:partial$jsonb-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

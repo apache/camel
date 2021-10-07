@@ -9,6 +9,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/google-calendar-stream.adoc[opts=optional]
 //Manually maintained attributes
 :group: Google
+:camel-spring-boot-name: google-calendar
 
 *Since Camel {since}*
 
@@ -65,4 +66,5 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: END
 
 
-include::spring-boot:partial$google-calendar-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -9,6 +9,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/spring-ldap.adoc[opts=optional]
 //Manually maintained attributes
 :group: Spring
+:camel-spring-boot-name: spring-ldap
 
 *Since Camel {since}*
 
@@ -119,4 +120,5 @@ in `org.apache.camel.springldap.SpringLdapProducer`:
 * public static final String FUNCTION = "function";
 * public static final String REQUEST = "request";
 
-include::spring-boot:partial$spring-ldap-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

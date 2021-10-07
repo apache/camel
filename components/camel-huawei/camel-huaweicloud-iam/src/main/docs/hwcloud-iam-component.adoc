@@ -9,6 +9,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/hwcloud-iam.adoc[opts=optional]
 //Manually maintained attributes
 :group: Huawei Cloud
+:camel-spring-boot-name: huaweicloud-iam
 
 *Since Camel {since}*
 
@@ -134,4 +135,5 @@ from("direct:triggerRoute")
  .to("hwcloud-iam:listUsers?region=cn-north-4&serviceKeys=#myServiceKeyConfig")
 ----
 
-include::spring-boot:partial$huaweicloud-iam-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

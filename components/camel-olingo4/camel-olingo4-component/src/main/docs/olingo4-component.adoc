@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/olingo4.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: olingo4
 
 *Since Camel {since}*
 
@@ -138,4 +140,5 @@ from("direct:...")
     .to("olingo4://action/People");
 ------------------------------------------------------------
 
-include::spring-boot:partial$olingo4-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

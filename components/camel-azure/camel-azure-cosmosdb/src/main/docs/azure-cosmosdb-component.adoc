@@ -9,6 +9,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/azure-cosmosdb.adoc[opts=optional]
 //Manually maintained attributes
 :group: Azure
+:camel-spring-boot-name: azure-cosmosdb
 
 *Since Camel {since}*
 
@@ -380,4 +381,5 @@ mvn clean install -Dendpoint={{dbaddress}} -DaccessKey={{accessKey}}
 Whereby `endpoint` is your Azure CosmosDB endpoint name and `accessKey` is the access key being generated from Azure CosmosDB portal.
 
 
-include::spring-boot:partial$azure-cosmosdb-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

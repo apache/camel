@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Only consumer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/platform-http.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: platform-http
 
 *Since Camel {since}*
 
@@ -41,3 +43,5 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: START
 
 // endpoint options: END
+
+include::spring-boot:partial$starter.adoc[]

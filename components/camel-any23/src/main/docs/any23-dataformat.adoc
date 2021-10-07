@@ -6,6 +6,8 @@
 :since: 3.0
 :supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/any23.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: any23
 
 
 *Since Camel {since}*
@@ -81,4 +83,5 @@ the download page for the latest versions).
 </dependency>
 ----------------------------------------
 
-include::spring-boot:partial$any23-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

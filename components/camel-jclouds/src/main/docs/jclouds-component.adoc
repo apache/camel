@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/jclouds.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: jclouds
 
 *Since Camel {since}*
 
@@ -316,4 +318,5 @@ Here is the same using spring xml.
 ----------------------------------------------------------------------------------------------
 
 
-include::spring-boot:partial$jclouds-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

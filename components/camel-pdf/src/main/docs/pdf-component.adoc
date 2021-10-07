@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/pdf.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: pdf
 
 *Since Camel {since}*
 
@@ -74,4 +76,5 @@ https://pdfbox.apache.org/docs/2.0.13/javadocs/org/apache/pdfbox/pdmodel/encrypt
 |=======================================================================
 
 
-include::spring-boot:partial$pdf-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

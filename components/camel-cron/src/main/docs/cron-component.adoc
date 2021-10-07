@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Only consumer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/cron.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: cron
 
 *Since Camel {since}*
 
@@ -98,4 +100,5 @@ Routes can also be written using the XML DSL.
 </route>
 -------------
 
-include::spring-boot:partial$cron-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

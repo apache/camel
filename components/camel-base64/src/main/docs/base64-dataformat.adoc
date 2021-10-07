@@ -6,6 +6,8 @@
 :since: 2.11
 :supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/base64.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: base64
 
 *Since Camel {since}*
 
@@ -107,4 +109,5 @@ If you use Maven you can just add the following to your pom.xml:
 </dependency>
 ----
 
-include::spring-boot:partial$base64-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

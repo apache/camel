@@ -6,6 +6,8 @@
 :since: 1.1
 :supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/file.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: core
 
 *Since Camel {since}*
 
@@ -221,3 +223,5 @@ is pretty powerful for those common file path patterns.
 == Dependencies
 
 The File language is part of *camel-core*.
+
+include::spring-boot:partial$starter.adoc[]

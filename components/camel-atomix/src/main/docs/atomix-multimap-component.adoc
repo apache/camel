@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/atomix-multimap.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: atomix
 
 *Since Camel {since}*
 
@@ -57,4 +59,5 @@ from("direct:start")
   .to("atomix-multimap:multimap");
 ----
 
-include::spring-boot:partial$atomix-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

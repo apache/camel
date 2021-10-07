@@ -8,6 +8,8 @@
 :component-header: Only consumer is supported
 :core:
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/timer.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: timer
 
 *Since Camel {since}*
 
@@ -134,4 +136,5 @@ starting the route. To do that you use the repeatCount option as shown:
 ----
 
 
-include::spring-boot:partial$timer-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

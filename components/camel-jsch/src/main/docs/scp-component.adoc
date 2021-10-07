@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/scp.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: jsch
 
 *Since Camel {since}*
 
@@ -63,4 +65,5 @@ https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/P
 (i.e. copy files to another host). 
 
 
-include::spring-boot:partial$jsch-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

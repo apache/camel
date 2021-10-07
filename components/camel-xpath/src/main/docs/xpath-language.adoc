@@ -6,6 +6,8 @@
 :since: 1.1
 :supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/xpath.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: xpath
 
 *Since Camel {since}*
 
@@ -529,4 +531,5 @@ the download page for the latest versions).
 </dependency>
 --------------------------------------
 
-include::spring-boot:partial$xpath-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

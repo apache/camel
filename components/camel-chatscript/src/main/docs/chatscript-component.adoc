@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/chatscript.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: chatscript
 
 *Since Camel {since}*
 
@@ -44,4 +46,5 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: END
 
 
-include::spring-boot:partial$chatscript-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

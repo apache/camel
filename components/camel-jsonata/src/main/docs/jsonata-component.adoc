@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/jsonata.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: jsonata
 
 *Since Camel {since}*
 
@@ -73,4 +75,5 @@ from("activemq:My.Queue").
   to("activemq:Another.Queue");
 ---------------------------------------------------------------
 
-include::spring-boot:partial$jsonata-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

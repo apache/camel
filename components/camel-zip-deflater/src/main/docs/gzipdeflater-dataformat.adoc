@@ -6,6 +6,8 @@
 :since: 2.0
 :supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/gzipdeflater.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: zip-deflater
 
 *Since Camel {since}*
 
@@ -58,4 +60,5 @@ from("activemq:queue:MY_QUEUE").unmarshal().gzipDeflater().process(new UnGZipped
 This data format is provided in *camel-core* so no additional
 dependencies is needed.
 
-include::spring-boot:partial$zip-deflater-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

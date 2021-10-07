@@ -8,6 +8,8 @@
 :component-header: Both producer and consumer are supported
 :core:
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/seda.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: seda
 
 *Since Camel {since}*
 
@@ -249,4 +251,5 @@ int size = seda.getExchanges().size();
 ----
 
 
-include::spring-boot:partial$seda-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

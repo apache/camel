@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/atlasmap.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: atlasmap
 
 *Since Camel {since}*
 
@@ -80,4 +82,5 @@ from("activemq:My.Queue").
 where you can export an ADM archive file from AtlasMap Data Mapper UI.
 
 
-include::spring-boot:partial$atlasmap-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

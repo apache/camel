@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/atomix-map.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: atomix
 
 *Since Camel {since}*
 
@@ -163,4 +165,5 @@ FluentProducerTemplate.on(context)
     .send();
 ----
 
-include::spring-boot:partial$atomix-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -9,6 +9,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/azure-servicebus.adoc[opts=optional]
 //Manually maintained attributes
 :group: Azure
+:camel-spring-boot-name: azure-servicebus
 
 *Since Camel {since}*
 
@@ -180,4 +181,5 @@ from("azure-servicebus:test//?connectionString=test&consumerOperation=peekMessag
 --------------------------------------------------------------------------------
 
 
-include::spring-boot:partial$azure-servicebus-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

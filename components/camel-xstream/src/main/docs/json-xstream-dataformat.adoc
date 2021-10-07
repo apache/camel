@@ -6,6 +6,8 @@
 :since: 2.0
 :supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/json-xstream.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: xstream
 
 *Since Camel {since}*
 
@@ -48,4 +50,5 @@ from("activemq:My.Queue").
   to("mqseries:Another.Queue");
 -----------------------------------------------------------
 
-include::spring-boot:partial$xstream-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]
