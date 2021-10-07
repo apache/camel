@@ -8,6 +8,8 @@
 :component-header: Only producer is supported
 :core:
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/xslt.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: xslt
 
 *Since Camel {since}*
 
@@ -191,4 +193,5 @@ The exception is stored on the Exchange as a warning with the
 key `Exchange.XSLT_WARNING.`
 
 
-include::spring-boot:partial$xslt-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

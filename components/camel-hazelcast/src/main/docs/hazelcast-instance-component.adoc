@@ -9,6 +9,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/hazelcast-instance.adoc[opts=optional]
 //Manually maintained attributes
 :group: Hazelcast
+:camel-spring-boot-name: hazelcast
 
 *Since Camel {since}*
 
@@ -70,4 +71,5 @@ Header Variables inside the response message:
 |`CamelHazelcastInstancePort` |`Integer` |port number of the instance
 |=======================================================================
 
-include::spring-boot:partial$hazelcast-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

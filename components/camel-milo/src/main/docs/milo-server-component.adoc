@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/milo-server.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: milo
 
 *Since Camel {since}*
 
@@ -56,4 +58,5 @@ include::partial$component-endpoint-options.adoc[]
 
 
 
-include::spring-boot:partial$milo-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

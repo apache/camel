@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/nsq.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: nsq
 
 *Since Camel {since}*
 
@@ -83,4 +85,5 @@ from("direct:start").to("nsq:myTopic");
 ----
 
 
-include::spring-boot:partial$nsq-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

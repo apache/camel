@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/as2.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: as2
 
 *Since Camel {since}*
 
@@ -54,4 +56,5 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
-include::spring-boot:partial$as2-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

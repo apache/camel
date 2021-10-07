@@ -9,6 +9,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/azure-eventhubs.adoc[opts=optional]
 //Manually maintained attributes
 :group: Azure
+:camel-spring-boot-name: azure-eventhubs
 
 *Since Camel {since}*
 
@@ -192,4 +193,5 @@ mvn verify -PfullTests -DconnectionString=string -DblobAccountName=blob -DblobAc
 Whereby `blobAccountName` is your Azure account name and `blobAccessKey` is the access key being generated from Azure portal and `connectionString` is the eventHub connection string.
 
 
-include::spring-boot:partial$azure-eventhubs-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

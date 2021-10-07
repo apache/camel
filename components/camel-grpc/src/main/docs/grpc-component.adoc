@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/grpc.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: grpc
 
 *Since Camel {since}*
 
@@ -238,4 +240,5 @@ See these resources:
 - https://www.xolstice.org/protobuf-maven-plugin[Maven Protocol Buffers Plugin]
 
 
-include::spring-boot:partial$grpc-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

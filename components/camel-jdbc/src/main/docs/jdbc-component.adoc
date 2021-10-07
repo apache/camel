@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/jdbc.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: jdbc
 
 *Since Camel {since}*
 
@@ -266,4 +268,5 @@ from("timer://MoveNewCustomersEveryHour?period=3600000")
 ----
 
 
-include::spring-boot:partial$jdbc-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

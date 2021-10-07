@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/snmp.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: snmp
 
 *Since Camel {since}*
 
@@ -141,4 +143,5 @@ to("activemq:snmp.states");
 ------------------------------------------------------------------------------
 
 
-include::spring-boot:partial$snmp-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

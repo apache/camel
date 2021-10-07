@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/soroush.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: soroush
 
 *Since Camel {since}*
 
@@ -210,4 +212,5 @@ One way to handle these exceptions is by using `onException` route definition:
 onException(CongestionException.class).log("Failed to processing ${id}")
 -------------
 
-include::spring-boot:partial$soroush-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

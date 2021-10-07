@@ -9,6 +9,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/openshift-build-configs.adoc[opts=optional]
 //Manually maintained attributes
 :group: Kubernetes
+:camel-spring-boot-name: kubernetes
 
 *Since Camel {since}*
 
@@ -70,4 +71,5 @@ from("direct:listByLabels").process(new Processor() {
 
 This operation return a List of Build configs from your cluster, using a label selector (with key1 and key2, with value value1 and value2)
 
-include::spring-boot:partial$kubernetes-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

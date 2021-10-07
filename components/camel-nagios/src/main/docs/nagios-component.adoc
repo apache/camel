@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/nagios.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: nagios
 
 *Since Camel {since}*
 
@@ -111,4 +113,5 @@ In Camel on Spring XML you can declare a `<bean>` which Camel will automatic pic
 </beans>
 ----
 
-include::spring-boot:partial$nagios-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

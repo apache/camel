@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/bean-validator.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: bean-validator
 
 *Since Camel {since}*
 
@@ -249,4 +251,5 @@ Note that the body should include an instance of a class to validate.
 </beans>
 ----------------------------------------------------------------------------------------------------
 
-include::spring-boot:partial$bean-validator-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

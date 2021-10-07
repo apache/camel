@@ -6,6 +6,8 @@
 :since: 2.0
 :supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/tidyMarkup.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: tagsoup
 
 *Since Camel {since}*
 
@@ -79,4 +81,5 @@ the download page for the latest versions).
 </dependency>
 ----------------------------------------
 
-include::spring-boot:partial$tagsoup-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

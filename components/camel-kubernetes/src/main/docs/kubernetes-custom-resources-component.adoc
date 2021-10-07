@@ -9,6 +9,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/kubernetes-custom-resources.adoc[opts=optional]
 //Manually maintained attributes
 :group: Kubernetes
+:camel-spring-boot-name: kubernetes
 
 *Since Camel {since}*
 
@@ -40,4 +41,5 @@ include::partial$component-endpoint-options.adoc[]
 - deleteCustomResource
 - createCustomResource
 
-include::spring-boot:partial$kubernetes-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

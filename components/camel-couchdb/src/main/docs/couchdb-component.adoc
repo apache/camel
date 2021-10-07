@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/couchdb.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: couchdb
 
 *Since Camel {since}*
 
@@ -128,4 +130,5 @@ exchange is used
 from("someProducingEndpoint").process(someProcessor).to("couchdb:http://localhost:9999")
 ----------------------------------------------------------------------------------------
 
-include::spring-boot:partial$couchdb-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

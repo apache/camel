@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/twitter-directmessage.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: twitter
 
 *Since Camel {since}*
 
@@ -37,4 +39,5 @@ include::partial$component-endpoint-options.adoc[]
 
 
 
-include::spring-boot:partial$twitter-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -6,6 +6,8 @@
 :since: 2.21
 :supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/aws-xray.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: aws-xray
 
 *Since Camel {since}*
 
@@ -91,7 +93,7 @@ In order to include AWS XRay support into Camel, the archive containing the Came
 To include both, AWS XRay and Camel, dependencies use the following Maven imports:
 
 [source,xml]
----------------------------------------------------------------------------------------------------------
+----
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -119,4 +121,6 @@ To include both, AWS XRay and Camel, dependencies use the following Maven import
         <artifactId>aws-xray-recorder-sdk-aws-sdk</artifactId>
       </dependency>
   </dependencies>
----------------------------------------------------------------------------------------------------------
+----
+
+include::spring-boot:partial$starter.adoc[]

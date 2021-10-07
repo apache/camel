@@ -8,6 +8,8 @@
 :component-header: Only producer is supported
 :core:
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/language.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: language
 
 *Since Camel {since}*
 
@@ -104,4 +106,5 @@ You can refer to the resource similar to the
 other xref:language-component.adoc[Language]s in Camel by prefixing with
 `"resource:"` as shown below:
 
-include::spring-boot:partial$language-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

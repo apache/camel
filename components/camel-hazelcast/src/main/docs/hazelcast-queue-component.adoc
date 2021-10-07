@@ -9,6 +9,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/hazelcast-queue.adoc[opts=optional]
 //Manually maintained attributes
 :group: Hazelcast
+:camel-spring-boot-name: hazelcast
 
 *Since Camel {since}*
 
@@ -190,4 +191,5 @@ fromF("hazelcast-%smm", HazelcastConstants.QUEUE_PREFIX)
         .log("fail!");
 -------------------------------------------------------------------------------------------
 
-include::spring-boot:partial$hazelcast-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

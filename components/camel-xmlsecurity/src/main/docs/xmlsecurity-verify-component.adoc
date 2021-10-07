@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/xmlsecurity-verify.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: xmlsecurity
 
 
 
@@ -569,4 +571,5 @@ the XML signer endpoint).
 * The `IndividualDataObjectsTimeStamp` element is not supported
 
 
-include::spring-boot:partial$xmlsecurity-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -9,6 +9,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/hwcloud-imagerecognition.adoc[opts=optional]
 //Manually maintained attributes
 :group: Huawei Cloud
+:camel-spring-boot-name: huaweicloud-imagerecognition
 
 *Since Camel {since}*
 
@@ -145,4 +146,5 @@ XML DSL
 </route>
 ----
 
-include::spring-boot:partial$huaweicloud-imagerecognition-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

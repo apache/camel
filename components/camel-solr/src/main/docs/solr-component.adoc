@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/solr.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: solr
 
 *Since Camel {since}*
 
@@ -163,4 +165,5 @@ For more information:
 https://solr.apache.org/guide/8_8/the-standard-query-parser.html[Solr Query Syntax]
 
 
-include::spring-boot:partial$solr-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

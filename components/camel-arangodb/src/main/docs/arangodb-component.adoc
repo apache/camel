@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/arangodb.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: arangodb
 
 *Since Camel {since}*
 
@@ -89,4 +91,5 @@ And you can invoke an AQL Query in this way
         });
 --------------------------------------------------------------------------------
 
-include::spring-boot:partial$arangodb-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

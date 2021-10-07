@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/facebook.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: facebook
 
 *Since Camel {since}*
 
@@ -182,4 +184,5 @@ from("direct:foo")
     .to("facebook://posts");
 --------------------------------------------------------
 
-include::spring-boot:partial$facebook-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

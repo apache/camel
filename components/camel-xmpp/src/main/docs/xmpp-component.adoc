@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/xmpp.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: xmpp
 
 *Since Camel {since}*
 
@@ -127,4 +129,5 @@ from("direct:start").
  
 
 
-include::spring-boot:partial$xmpp-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -6,6 +6,8 @@
 :since: 3.7
 :supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/csimple-joor.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: csimple-joor
 
 *Since Camel {since}*
 
@@ -44,3 +46,5 @@ the download page for the latest versions).
   <version>x.x.x</version>
 </dependency>
 ---------------------------------------
+
+include::spring-boot:partial$starter.adoc[]

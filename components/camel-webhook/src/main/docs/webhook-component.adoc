@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Only consumer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/webhook.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: webhook
 
 *Since Camel {since}*
 
@@ -61,4 +63,5 @@ include::partial$component-endpoint-options.adoc[]
 
 Examples of webhook component are provided in the documentation of the delegate components that support it.
 
-include::spring-boot:partial$webhook-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

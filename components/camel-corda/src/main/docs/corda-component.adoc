@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/corda.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: corda
 
 
 *{component-header}*
@@ -79,4 +81,5 @@ from("direct:start")
     .to("corda://localhost:10006?username=user1&password=test&operation=NODE_INFO");
 ----
 
-include::spring-boot:partial$corda-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

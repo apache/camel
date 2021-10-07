@@ -9,6 +9,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/google-storage.adoc[opts=optional]
 //Manually maintained attributes
 :group: Google
+:camel-spring-boot-name: google-storage
 
 *Since Camel {since}*
 
@@ -317,4 +318,5 @@ This will require specifying the destinationBucket option. As example:
 
 In this case the objects consumed will be moved to myCamelProcessedBucket bucket and deleted from the original one (because of deleteAfterRead).
 
-include::spring-boot:partial$google-storage-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

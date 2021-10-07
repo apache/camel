@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Only consumer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/master.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: master
 
 *Since Camel {since}*
 
@@ -138,4 +140,5 @@ Camel provides the following ClusterService implementations:
 - camel-zookeeper
 
 
-include::spring-boot:partial$master-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

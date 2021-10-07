@@ -6,6 +6,8 @@
 :since: 2.11
 :supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/zipfile.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: zipfile
 
 *Since Camel {since}*
 
@@ -160,4 +162,5 @@ the download page for the latest versions).
 </dependency>
 ----
 
-include::spring-boot:partial$zipfile-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

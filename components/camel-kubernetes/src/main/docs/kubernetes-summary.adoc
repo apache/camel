@@ -2,6 +2,8 @@
 //attributes written by hand, not generated
 :doctitle: Kubernetes
 :since: 2.17
+:shortname: kubernetes
+:artifactid: camel-kubernetes
 
 *Since Camel {since}*
 
@@ -139,4 +141,6 @@ from("direct:createPod")
 
 By using the KubernetesConstants.KUBERNETES_POD_NAME header you can specify your Pod name and pass it to this operation.
 
-include::spring-boot:partial$kubernetes-starter.adoc[]
+:camel-spring-boot-name: kubernetes
+
+include::spring-boot:partial$starter.adoc[]

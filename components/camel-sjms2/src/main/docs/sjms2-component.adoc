@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/sjms2.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: sjms2
 
 *Since Camel {since}*
 
@@ -229,4 +231,5 @@ responses messages to the included `JMSReplyTo` destination also have the
 `JMSCorrelationId` copied from the request as well.
 
 
-include::spring-boot:partial$sjms2-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -8,6 +8,8 @@
 :component-header: Both producer and consumer are supported
 :core:
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/stub.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: stub
 
 *Since Camel {since}*
 
@@ -60,4 +62,5 @@ stub:smtp://somehost.foo.com?user=whatnot&something=else
 stub:http://somehost.bar.com/something
 ----
 
-include::spring-boot:partial$stub-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

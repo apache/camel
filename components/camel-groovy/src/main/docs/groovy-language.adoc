@@ -6,6 +6,8 @@
 :since: 1.3
 :supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/groovy.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: groovy
 
 *Since Camel {since}*
 
@@ -123,4 +125,5 @@ the download page for the latest versions).
 </dependency>
 ---------------------------------------
 
-include::spring-boot:partial$groovy-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

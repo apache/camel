@@ -6,6 +6,8 @@
 :since: 1.1
 :supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/simple.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: core
 
 *Since Camel {since}*
 
@@ -829,3 +831,5 @@ e.g. to refer to a file on the classpath you can do:
 ----
 .setHeader("myHeader").simple("resource:classpath:mysimple.txt")
 ----
+
+include::spring-boot:partial$starter.adoc[]

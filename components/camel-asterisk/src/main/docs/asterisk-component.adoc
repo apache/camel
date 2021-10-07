@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/asterisk.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: asterisk
 
 *Since Camel {since}*
 
@@ -75,4 +77,5 @@ from("asterisk:myVoIP?hostname=hostname&username=username&password=password")
   .log("Received a message - ${body}");
 --------------------------------------------------------------------------------
 
-include::spring-boot:partial$asterisk-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

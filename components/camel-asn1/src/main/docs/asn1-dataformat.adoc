@@ -6,6 +6,8 @@
 :since: 2.20
 :supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/asn1.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: asn1
 
 *Since Camel {since}*
 
@@ -70,4 +72,5 @@ the download page for the latest versions).
 </dependency>
 ----------------------------------------------------------
 
-include::spring-boot:partial$asn1-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]
