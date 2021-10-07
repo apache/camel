@@ -31,7 +31,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.net.ssl.SSLContext;
 
-import io.undertow.server.HttpHandler;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
@@ -59,6 +58,8 @@ import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import io.undertow.server.HttpHandler;
 
 /**
  * Represents the component that manages {@link UndertowEndpoint}.
@@ -334,8 +335,8 @@ public class UndertowComponent extends DefaultComponent
         // the component
         RestProducerFactoryHelper.setupComponentFor(url, camelContext, (Map<String, Object>) parameters.remove("component"));
 
-        UndertowEndpoint endpoint = camelContext.getEndpoint(url, UndertowEndpoint.class);
-        setProperties(endpoint, parameters);
+        
+        UndertowEndpoint endpoint = (UndertowEndpoint) camelContext.getEndpoint(url, parameters);
         String path = uriTemplate != null ? uriTemplate : basePath;
         endpoint.setHeaderFilterStrategy(new UndertowRestHeaderFilterStrategy(path, queryParameters));
 

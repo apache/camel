@@ -478,8 +478,7 @@ public class NettyHttpComponent extends NettyComponent
         // the component
         RestProducerFactoryHelper.setupComponentFor(url, camelContext, (Map<String, Object>) parameters.remove("component"));
 
-        NettyHttpEndpoint endpoint = camelContext.getEndpoint(url, NettyHttpEndpoint.class);
-        setProperties(endpoint, parameters);
+        NettyHttpEndpoint endpoint = (NettyHttpEndpoint) camelContext.getEndpoint(url, parameters);
         String path = uriTemplate != null ? uriTemplate : basePath;
         endpoint.setHeaderFilterStrategy(new NettyHttpRestHeaderFilterStrategy(path, queryParameters));
 
