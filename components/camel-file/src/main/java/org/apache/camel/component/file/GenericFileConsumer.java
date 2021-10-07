@@ -590,21 +590,10 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             return false;
         }
 
-        // if its a file then check we have the file in the idempotent registry
+        // if it is a file then check we have the file in the idempotent registry
         // already
         if (endpoint.isIdempotent()) {
-            // use absolute file path as default key, but evaluate if an
-            // expression key was configured
-            String key = file.getAbsoluteFilePath();
-            if (endpoint.getIdempotentKey() != null) {
-                Exchange dummy = endpoint.createExchange(file);
-                key = endpoint.getIdempotentKey().evaluate(dummy, String.class);
-                LOG.trace("Evaluated idempotentKey: {} for file: {}", key, file);
-            }
-            if (key != null && endpoint.getIdempotentRepository().contains(key)) {
-                LOG.trace(
-                        "This consumer is idempotent and the file has been consumed before matching idempotentKey: {}. Will skip this file: {}",
-                        key, file);
+            if (notUnique(file)) {
                 return false;
             }
         }
@@ -613,6 +602,24 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         // are the
         // only thread processing this file
         return endpoint.getInProgressRepository().add(absoluteFilePath);
+    }
+
+    private boolean notUnique(GenericFile<T> file) {
+        // use absolute file path as default key, but evaluate if an
+        // expression key was configured
+        String key = file.getAbsoluteFilePath();
+        if (endpoint.getIdempotentKey() != null) {
+            Exchange dummy = endpoint.createExchange(file);
+            key = endpoint.getIdempotentKey().evaluate(dummy, String.class);
+            LOG.trace("Evaluated idempotentKey: {} for file: {}", key, file);
+        }
+        if (key != null && endpoint.getIdempotentRepository().contains(key)) {
+            LOG.trace(
+                    "This consumer is idempotent and the file has been consumed before matching idempotentKey: {}. Will skip this file: {}",
+                    key, file);
+            return true;
+        }
+        return false;
     }
 
     /**

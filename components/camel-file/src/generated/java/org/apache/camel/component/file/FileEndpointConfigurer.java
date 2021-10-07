@@ -162,6 +162,8 @@ public class FileEndpointConfigurer extends PropertyConfigurerSupport implements
         case "renameUsingCopy": target.setRenameUsingCopy(property(camelContext, boolean.class, value)); return true;
         case "repeatcount":
         case "repeatCount": target.setRepeatCount(property(camelContext, long.class, value)); return true;
+        case "resumestrategy":
+        case "resumeStrategy": target.setResumeStrategy(property(camelContext, org.apache.camel.component.file.consumer.FileConsumerResumeStrategy.class, value)); return true;
         case "runlogginglevel":
         case "runLoggingLevel": target.setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
         case "scheduledexecutorservice":
@@ -338,6 +340,8 @@ public class FileEndpointConfigurer extends PropertyConfigurerSupport implements
         case "renameUsingCopy": return boolean.class;
         case "repeatcount":
         case "repeatCount": return long.class;
+        case "resumestrategy":
+        case "resumeStrategy": return org.apache.camel.component.file.consumer.FileConsumerResumeStrategy.class;
         case "runlogginglevel":
         case "runLoggingLevel": return org.apache.camel.LoggingLevel.class;
         case "scheduledexecutorservice":
@@ -515,6 +519,8 @@ public class FileEndpointConfigurer extends PropertyConfigurerSupport implements
         case "renameUsingCopy": return target.isRenameUsingCopy();
         case "repeatcount":
         case "repeatCount": return target.getRepeatCount();
+        case "resumestrategy":
+        case "resumeStrategy": return target.getResumeStrategy();
         case "runlogginglevel":
         case "runLoggingLevel": return target.getRunLoggingLevel();
         case "scheduledexecutorservice":
