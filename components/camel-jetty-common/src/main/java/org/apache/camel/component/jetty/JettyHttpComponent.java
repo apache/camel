@@ -1123,8 +1123,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
 
         String url = RestComponentHelper.createRestConsumerUrl("jetty", scheme, host, port, path, map);
 
-        JettyHttpEndpoint endpoint = camelContext.getEndpoint(url, JettyHttpEndpoint.class);
-        setProperties(endpoint, parameters);
+        JettyHttpEndpoint endpoint = (JettyHttpEndpoint) camelContext.getEndpoint(url, parameters);
 
         if (!map.containsKey("httpBindingRef")) {
             // use the rest binding, if not using a custom http binding

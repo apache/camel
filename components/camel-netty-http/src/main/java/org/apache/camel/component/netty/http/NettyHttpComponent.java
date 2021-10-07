@@ -417,8 +417,7 @@ public class NettyHttpComponent extends NettyComponent
 
         String url = RestComponentHelper.createRestConsumerUrl("netty-http", scheme, host, port, path, map);
 
-        NettyHttpEndpoint endpoint = camelContext.getEndpoint(url, NettyHttpEndpoint.class);
-        setProperties(endpoint, parameters);
+        NettyHttpEndpoint endpoint = (NettyHttpEndpoint) camelContext.getEndpoint(url, parameters);
 
         // configure consumer properties
         Consumer consumer = endpoint.createConsumer(processor);

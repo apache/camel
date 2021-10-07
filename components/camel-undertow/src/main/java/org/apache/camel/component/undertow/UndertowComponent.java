@@ -269,8 +269,7 @@ public class UndertowComponent extends DefaultComponent
 
         String url = RestComponentHelper.createRestConsumerUrl(getComponentName(), scheme, host, port, path, map);
 
-        UndertowEndpoint endpoint = camelContext.getEndpoint(url, UndertowEndpoint.class);
-        setProperties(endpoint, parameters);
+        UndertowEndpoint endpoint = (UndertowEndpoint) camelContext.getEndpoint(url, parameters);
 
         if (!map.containsKey("undertowHttpBinding")) {
             // use the rest binding, if not using a custom http binding

@@ -205,8 +205,7 @@ public class ResteasyComponent extends HttpComponent implements RestConsumerFact
         // get the endpoint
         url = String.format(url, path, restrict);
 
-        ResteasyEndpoint endpoint = camelContext.getEndpoint(url, ResteasyEndpoint.class);
-        setProperties(endpoint, parameters);
+        ResteasyEndpoint endpoint = (ResteasyEndpoint) camelContext.getEndpoint(url, parameters);
 
         Consumer consumer = endpoint.createConsumer(processor);
         if (config.getConsumerProperties() != null && !config.getConsumerProperties().isEmpty()) {
