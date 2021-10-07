@@ -3,15 +3,19 @@
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/MessageTranslator.html[Message
 Translator] from the xref:enterprise-integration-patterns.adoc[EIP
-patterns] by using an arbitrary xref:latest@manual:ROOT:processor.adoc[Processor] in the
-routing logic, by using a xref:latest@manual:ROOT:bean-integration.adoc[bean] to perform
-the transformation, or by using transform() in the DSL. You can also use
-a xref:latest@manual:ROOT:data-format.adoc[Data Format] to marshal and unmarshal messages
-in different encodings.
+patterns].
 
 image::eip/MessageTranslator.gif[image]
 
-== Samples
+The Message Translator can be done in different ways in Camel:
+
+* Using xref:transform-eip.adoc[Transform] in the DSL
+* Calling a xref:latest@manual:ROOT:processor.adoc[Processor] or xref:latest@manual:ROOT:bean-integration.adoc[bean]
+  to perform the transformation
+* Messages can also be transformed using xref:latest@manual:ROOT:data-format.adoc[Data Format]
+  to marshal and unmarshal messages in different encodings.
+
+== Example
 
 You can transform a message using Camel's
 xref:latest@manual:ROOT:bean-integration.adoc[Bean Integration] to call any method on a
