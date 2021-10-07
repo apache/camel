@@ -93,7 +93,4 @@ And in XML:
 
 === Message Translator using Data Format
 
-TODO:
-
-
-
+See xref:marshal-eip.adoc[Marshal] EIP for more details and examples.
