@@ -3,11 +3,14 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-datasonnet/src/main/docs/datasonnet-language.adoc
 :docTitle: DataSonnet
+:shortname: datasonnet
 :artifactId: camel-datasonnet
 :description: To use DataSonnet scripts in Camel expressions or predicates.
 :since: 3.7
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/datasonnet.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: datasonnet
 
 *Since Camel {since}*
 
@@ -217,3 +220,6 @@ the download page for the latest versions).
   <version>x.x.x</version>
 </dependency>
 ---------------------------------------
+
+
+include::spring-boot:partial$starter.adoc[]

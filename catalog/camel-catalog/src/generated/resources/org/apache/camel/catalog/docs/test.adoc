@@ -1,6 +1,7 @@
 [[test-other]]
 = Test Component
 :docTitle: Test
+:shortname: test
 :artifactId: camel-test
 :description: Camel unit testing
 :since: 2.9

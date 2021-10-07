@@ -1,6 +1,7 @@
 [[hwcloud-functiongraph-component]]
 = Huawei Cloud FunctionGraph Component
 :docTitle: Huawei Cloud FunctionGraph
+:shortname: hwcloud-functiongraph
 :artifactId: camel-huaweicloud-functiongraph
 :description: To call serverless functions on Huawei Cloud
 :since: 3.11
@@ -9,6 +10,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/hwcloud-functiongraph.adoc[opts=optional]
 //Manually maintained attributes
 :group: Huawei Cloud
+:camel-spring-boot-name: huaweicloud-functiongraph
 
 *Since Camel {since}*
 
@@ -152,3 +154,5 @@ from("direct:triggerRoute")
  .setProperty(FunctionGraphProperties.FUNCTION_PACKAGE, constant("your_function_package"))
  .to("hwcloud-functiongraph:invokeFunction?projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&region=cn-north-4&serviceKeys=#myServiceKeyConfig")
 ----
+
+include::spring-boot:partial$starter.adoc[]

@@ -1,6 +1,7 @@
 [[test-spring-other]]
 = Test Spring Component
 :docTitle: Test Spring
+:shortname: test-spring
 :artifactId: camel-test-spring
 :description: Camel unit testing with Spring
 :since: 2.10

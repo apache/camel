@@ -1,12 +1,15 @@
 [[guava-eventbus-component]]
 = Guava EventBus Component
 :docTitle: Guava EventBus
+:shortname: guava-eventbus
 :artifactId: camel-guava-eventbus
 :description: Send and receive messages to/from Guava EventBus.
 :since: 2.10
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/guava-eventbus.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: guava-eventbus
 
 *Since Camel {since}*
 
@@ -232,4 +235,5 @@ follows.
 from("guava-eventbus:busName?listenerInterface=com.example.MultipleEventsListener").to("seda:queue");
 -----------------------------------------------------------------------------------------------------
 
-include::spring-boot:partial$guava-eventbus-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

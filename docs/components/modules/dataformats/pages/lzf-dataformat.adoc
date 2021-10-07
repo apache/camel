@@ -3,11 +3,14 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-lzf/src/main/docs/lzf-dataformat.adoc
 :docTitle: LZF Deflate Compression
+:shortname: lzf
 :artifactId: camel-lzf
 :description: Compress and decompress streams using LZF deflate algorithm.
 :since: 2.17
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/lzf.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: lzf
 
 *Since Camel {since}*
 
@@ -74,4 +77,5 @@ substituting the version number for the latest & greatest release.
 </dependency>
 ----------------------------------------------------------
 
-include::spring-boot:partial$lzf-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

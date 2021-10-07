@@ -1,6 +1,7 @@
 [[aws2-kinesis-component]]
 = AWS Kinesis Component
 :docTitle: AWS Kinesis
+:shortname: aws2-kinesis
 :artifactId: camel-aws2-kinesis
 :description: Consume and produce records from and to AWS Kinesis Streams using AWS SDK version 2.x.
 :since: 3.2
@@ -9,6 +10,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws2-kinesis.adoc[opts=optional]
 //Manually maintained attributes
 :group: AWS
+:camel-spring-boot-name: aws2-kinesis
 
 *Since Camel {since}*
 
@@ -257,4 +259,5 @@ Maven users will need to add the following dependency to their pom.xml.
 where `$\{camel-version}` must be replaced by the actual version of Camel.
 
 
-include::spring-boot:partial$aws2-kinesis-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

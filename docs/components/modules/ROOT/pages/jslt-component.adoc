@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-jslt/src/main/docs/jslt-component.adoc
 :docTitle: JSLT
+:shortname: jslt
 :artifactId: camel-jslt
 :description: Query or transform JSON payloads using an JSLT.
 :since: 3.1
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/jslt.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: jslt
 
 *Since Camel {since}*
 
@@ -177,4 +180,5 @@ from("direct:in").
   to("jslt:com/acme/MyResponse.json?allowContextMapAll=true");
 ---------------------------------------------------------------------
 
-include::spring-boot:partial$jslt-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

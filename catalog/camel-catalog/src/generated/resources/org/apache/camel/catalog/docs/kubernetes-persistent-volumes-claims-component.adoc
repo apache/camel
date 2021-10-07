@@ -1,6 +1,7 @@
 [[kubernetes-persistent-volumes-claims-component]]
 = Kubernetes Persistent Volume Claim Component
 :docTitle: Kubernetes Persistent Volume Claim
+:shortname: kubernetes-persistent-volumes-claims
 :artifactId: camel-kubernetes
 :description: Perform operations on Kubernetes Persistent Volumes Claims and get notified on Persistent Volumes Claim changes.
 :since: 2.17
@@ -9,6 +10,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/kubernetes-persistent-volumes-claims.adoc[opts=optional]
 //Manually maintained attributes
 :group: Kubernetes
+:camel-spring-boot-name: kubernetes
 
 *Since Camel {since}*
 
@@ -127,4 +129,5 @@ from("direct:listByLabels").process(new Processor() {
 This operation return a List of pvc from your cluster, using a label selector (with key1 and key2, with value value1 and value2)
 
 
-include::spring-boot:partial$kubernetes-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

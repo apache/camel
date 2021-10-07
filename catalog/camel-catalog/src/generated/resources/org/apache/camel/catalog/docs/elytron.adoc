@@ -1,6 +1,7 @@
 [[elytron-other]]
 = Elytron Component
 :docTitle: Elytron
+:shortname: elytron
 :artifactId: camel-elytron
 :description: Elytron Security Provider for camel-undertow
 :since: 3.1

@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-pg-replication-slot/src/main/docs/pg-replication-slot-component.adoc
 :docTitle: PostgresSQL Replication Slot
+:shortname: pg-replication-slot
 :artifactId: camel-pg-replication-slot
 :description: Poll for PostgreSQL Write-Ahead Log (WAL) records using Streaming Replication Slots.
 :since: 3.0
 :supportLevel: Stable
 :component-header: Only consumer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/pg-replication-slot.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: pg-replication-slot
 
 *Since Camel {since}*
 
@@ -142,4 +145,5 @@ instead of INSERT,...). This will make sure repeated messages won't affect your 
 ====
 
 
-include::spring-boot:partial$pg-replication-slot-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

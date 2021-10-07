@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-vertx/camel-vertx-kafka/camel-vertx-kafka-component/src/main/docs/vertx-kafka-component.adoc
 :docTitle: Vert.x Kafka
+:shortname: vertx-kafka
 :artifactId: camel-vertx-kafka
 :description: Sent and receive messages to/from an Apache Kafka broker using vert.x Kafka client
 :since: 3.7
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/vertx-kafka.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: vertx-kafka
 
 
 *Since Camel {since}*
@@ -503,4 +506,5 @@ from("direct:start")
 ----
 
 
-include::spring-boot:partial$vertx-kafka-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -1,12 +1,15 @@
 [[pgevent-component]]
 = PostgresSQL Event Component
 :docTitle: PostgresSQL Event
+:shortname: pgevent
 :artifactId: camel-pgevent
 :description: Send and receive PostgreSQL events via LISTEN and NOTIFY commands.
 :since: 2.15
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/pgevent.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: pgevent
 
 *Since Camel {since}*
 
@@ -110,4 +113,5 @@ Please use the pgjdbc-ng driver (`jdbc:pgsql:/...`) instead.
 
 
 
-include::spring-boot:partial$pgevent-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

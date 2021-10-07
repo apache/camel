@@ -1,11 +1,14 @@
 [[json-jsonb-dataformat]]
 = JSON JSON-B DataFormat
 :docTitle: JSON JSON-B
+:shortname: json-jsonb
 :artifactId: camel-jsonb
 :description: Marshal POJOs to JSON and back using JSON-B.
 :since: 3.7
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/json-jsonb.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: jsonb
 
 *Since Camel {since}*
 
@@ -69,4 +72,5 @@ If you want to add the Johnzon implementation and you are using maven, just add 
 </dependency>
 ----------------------------------------------------------
 
-include::spring-boot:partial$jsonb-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

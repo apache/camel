@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-ganglia/src/main/docs/ganglia-component.adoc
 :docTitle: Ganglia
+:shortname: ganglia
 :artifactId: camel-ganglia
 :description: Send metrics to Ganglia monitoring system.
 :since: 2.15
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/ganglia.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: ganglia
 
 *Since Camel {since}*
 
@@ -181,4 +184,5 @@ from("direct:ganglia.tx")
     .to("ganglia:239.2.11.71:8649?mode=MULTICAST&prefix=test");
 ----
 
-include::spring-boot:partial$ganglia-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

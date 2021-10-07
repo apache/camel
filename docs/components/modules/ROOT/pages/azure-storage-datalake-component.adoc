@@ -3,6 +3,7 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-azure/camel-azure-storage-datalake/src/main/docs/azure-storage-datalake-component.adoc
 :docTitle: Azure storage datalake service
+:shortname: azure-storage-datalake
 :artifactId: camel-azure-storage-datalake
 :description: Camel Azure Datalake Gen2 Component
 :since: 3.8
@@ -11,6 +12,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/azure-storage-datalake.adoc[opts=optional]
 //Manually maintained attributes
 :group: Azure
+:camel-spring-boot-name: azure-storage-datalake
 
 *Since Camel {since}*
 
@@ -569,3 +571,5 @@ You can also skip the integration test, and run only basic unit test by using th
 ----
 mvn test
 ----
+
+include::spring-boot:partial$starter.adoc[]

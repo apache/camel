@@ -1,11 +1,14 @@
 [[ref-language]]
 = Ref Language
 :docTitle: Ref
+:shortname: ref
 :artifactId: camel-core-languages
 :description: Look up an expression in the Camel Registry and evaluate it.
 :since: 2.8
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/ref.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: core
 
 *Since Camel {since}*
 
@@ -61,3 +64,5 @@ from("seda:a").split().ref("myExpression").to("seda:b");
 == Dependencies
 
 The Ref language is part of *camel-core*.
+
+include::spring-boot:partial$starter.adoc[]

@@ -3,6 +3,7 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-hazelcast/src/main/docs/hazelcast-replicatedmap-component.adoc
 :docTitle: Hazelcast Replicated Map
+:shortname: hazelcast-replicatedmap
 :artifactId: camel-hazelcast
 :description: Perform operations on Hazelcast replicated map.
 :since: 2.16
@@ -11,6 +12,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/hazelcast-replicatedmap.adoc[opts=optional]
 //Manually maintained attributes
 :group: Hazelcast
+:camel-spring-boot-name: hazelcast
 
 *Since Camel {since}*
 
@@ -222,4 +224,5 @@ Header Variables inside the response message:
 |`CamelHazelcastCacheType` |`String` |the type of the cache - here replicatedmap
 |=======================================================================
 
-include::spring-boot:partial$hazelcast-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

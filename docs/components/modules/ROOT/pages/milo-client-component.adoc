@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-milo/src/main/docs/milo-client-component.adoc
 :docTitle: OPC UA Client
+:shortname: milo-client
 :artifactId: camel-milo
 :description: Connect to OPC UA servers using the binary protocol for acquiring telemetry data.
 :since: 2.19
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/milo-client.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: milo
 
 *Since Camel {since}*
 
@@ -260,4 +263,5 @@ The known security policy URIs and enum literals are can be seen here: https://g
 **Note:** In any case security policies are considered case sensitive.
 
 
-include::spring-boot:partial$milo-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

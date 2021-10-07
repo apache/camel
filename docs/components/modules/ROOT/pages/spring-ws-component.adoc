@@ -3,6 +3,7 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-spring-ws/src/main/docs/spring-ws-component.adoc
 :docTitle: Spring WebService
+:shortname: spring-ws
 :artifactId: camel-spring-ws
 :description: Access external web services as a client or expose your own web services.
 :since: 2.6
@@ -11,6 +12,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/spring-ws.adoc[opts=optional]
 //Manually maintained attributes
 :group: Spring
+:camel-spring-boot-name: spring-ws
 
 *Since Camel {since}*
 
@@ -622,4 +624,5 @@ from("spring-ws:rootqname:{http://example.com/}GetFoo?endpointMapping=#endpointM
 --------------------------------------------------------------------------------------------------------
 
 
-include::spring-boot:partial$spring-ws-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

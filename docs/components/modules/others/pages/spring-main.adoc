@@ -3,6 +3,7 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-spring-main/src/main/docs/spring-main.adoc
 :docTitle: Spring Main
+:shortname: spring-main
 :artifactId: camel-spring-main
 :description: Camel Spring Main support
 :since: 3.2

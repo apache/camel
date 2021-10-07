@@ -1,12 +1,15 @@
 [[cxf-component]]
 = CXF Component
 :docTitle: CXF
+:shortname: cxf
 :artifactId: camel-cxf
 :description: Expose SOAP WebServices using Apache CXF or connect to external WebServices using CXF WS client.
 :since: 1.0
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/cxf.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: cxf
 
 *Since Camel {since}*
 
@@ -1197,4 +1200,5 @@ the key SOAPAction (case-insensitive).
  
 
 
-include::spring-boot:partial$cxf-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

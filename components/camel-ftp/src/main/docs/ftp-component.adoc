@@ -1,12 +1,15 @@
 [[ftp-component]]
 = FTP Component
 :docTitle: FTP
+:shortname: ftp
 :artifactId: camel-ftp
 :description: Upload and download files to/from FTP servers.
 :since: 1.1
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/ftp.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: ftp
 
 *Since Camel {since}*
 
@@ -773,4 +776,5 @@ This component has log level *TRACE* that can be helpful if you have
 problems.
 
 
-include::spring-boot:partial$ftp-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

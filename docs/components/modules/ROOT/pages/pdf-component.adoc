@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-pdf/src/main/docs/pdf-component.adoc
 :docTitle: PDF
+:shortname: pdf
 :artifactId: camel-pdf
 :description: Create, modify or extract content from PDF documents.
 :since: 2.16
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/pdf.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: pdf
 
 *Since Camel {since}*
 
@@ -119,4 +122,5 @@ https://pdfbox.apache.org/docs/2.0.13/javadocs/org/apache/pdfbox/pdmodel/encrypt
 |=======================================================================
 
 
-include::spring-boot:partial$pdf-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

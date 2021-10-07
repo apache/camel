@@ -1,11 +1,14 @@
 [[any23-dataformat]]
 = Any23 DataFormat
 :docTitle: Any23
+:shortname: any23
 :artifactId: camel-any23
 :description: Extract RDF data from HTML documents.
 :since: 3.0
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/any23.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: any23
 
 
 *Since Camel {since}*
@@ -92,4 +95,5 @@ the download page for the latest versions).
 </dependency>
 ----------------------------------------
 
-include::spring-boot:partial$any23-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

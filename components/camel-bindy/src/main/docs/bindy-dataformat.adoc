@@ -1,11 +1,14 @@
 [[bindy-dataformat]]
 = Bindy DataFormat
 :docTitle: Bindy
+:shortname: bindy
 :artifactId: camel-bindy
 :description: Marshal and unmarshal between POJOs and key-value pair (KVP) format using Camel Bindy
 :since: 2.0
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/bindy.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: bindy
 
 *Since Camel {since}*
 
@@ -1900,4 +1903,5 @@ the download page for the latest versions).
 </dependency>
 --------------------------------------
 
-include::spring-boot:partial$bindy-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

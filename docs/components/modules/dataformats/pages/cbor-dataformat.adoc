@@ -3,11 +3,14 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-cbor/src/main/docs/cbor-dataformat.adoc
 :docTitle: CBOR
+:shortname: cbor
 :artifactId: camel-cbor
 :description: Unmarshal a CBOR payload to POJO and back.
 :since: 3.0
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/cbor.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: cbor
 
 *Since Camel {since}*
 
@@ -84,4 +87,5 @@ And then you can refer to this id in the route:
 </dependency>
 -------------------------------------
 
-include::spring-boot:partial$cbor-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-flatpack/src/main/docs/flatpack-component.adoc
 :docTitle: Flatpack
+:shortname: flatpack
 :artifactId: camel-flatpack
 :description: Parse fixed width and delimited files using the FlatPack library.
 :since: 1.4
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/flatpack.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: flatpack
 
 *Since Camel {since}*
 
@@ -325,4 +328,5 @@ the download page for the latest versions).
 </dependency>
 -----------------------------------------
 
-include::spring-boot:partial$flatpack-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

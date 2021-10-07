@@ -3,6 +3,7 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-ignite/src/main/docs/ignite-messaging-component.adoc
 :docTitle: Ignite Messaging
+:shortname: ignite-messaging
 :artifactId: camel-ignite
 :description: Send and receive messages from an Ignite topic.
 :since: 2.17
@@ -11,6 +12,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/ignite-messaging.adoc[opts=optional]
 //Manually maintained attributes
 :group: Ignite
+:camel-spring-boot-name: ignite
 
 *Since Camel {since}*
 
@@ -92,4 +94,5 @@ It also carries the topic on which a message was received (consumer).
 This header is filled in with the UUID of the subscription when a message arrives (consumer).
 |=======================================================================
 
-include::spring-boot:partial$ignite-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -1,6 +1,7 @@
 [[seda-component]]
 = SEDA Component
 :docTitle: SEDA
+:shortname: seda
 :artifactId: camel-seda
 :description: Asynchronously call another endpoint from any Camel Context in the same JVM.
 :since: 1.1
@@ -8,6 +9,8 @@
 :component-header: Both producer and consumer are supported
 :core:
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/seda.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: seda
 
 *Since Camel {since}*
 
@@ -311,4 +314,5 @@ int size = seda.getExchanges().size();
 ----
 
 
-include::spring-boot:partial$seda-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

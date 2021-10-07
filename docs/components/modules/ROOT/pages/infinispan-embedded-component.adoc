@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-infinispan/camel-infinispan-embedded/src/main/docs/infinispan-embedded-component.adoc
 :docTitle: Infinispan Embedded
+:shortname: infinispan-embedded
 :artifactId: camel-infinispan-embedded
 :description: Read and write from/to Infinispan distributed key/value store and data grid.
 :since: 2.13
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/infinispan-embedded.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: infinispan-embedded
 
 *Since Camel {since}*
 
@@ -489,4 +492,5 @@ With the release of Infinispan 11, it is required to set the encoding configurat
 For more information have a look at https://infinispan.org/docs/stable/titles/developing/developing.html#data_encoding[Data Encoding and MediaTypes] in the official Infinispan documentation.
 ====
 
-include::spring-boot:partial$infinispan-embedded-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

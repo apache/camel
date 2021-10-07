@@ -3,6 +3,7 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-cdi/src/main/docs/cdi.adoc
 :docTitle: CDI
+:shortname: cdi
 :artifactId: camel-cdi
 :description: Using Camel with CDI
 :since: 2.10

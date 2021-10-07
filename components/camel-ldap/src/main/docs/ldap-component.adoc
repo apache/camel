@@ -1,12 +1,15 @@
 [[ldap-component]]
 = LDAP Component
 :docTitle: LDAP
+:shortname: ldap
 :artifactId: camel-ldap
 :description: Perform searches on LDAP servers.
 :since: 1.5
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/ldap.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: ldap
 
 *Since Camel {since}*
 
@@ -363,4 +366,5 @@ public class CustomSocketFactory extends SSLSocketFactory {
  
 
 
-include::spring-boot:partial$ldap-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

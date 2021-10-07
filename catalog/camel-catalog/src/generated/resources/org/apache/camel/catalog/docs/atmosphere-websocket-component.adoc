@@ -1,12 +1,15 @@
 [[atmosphere-websocket-component]]
 = Atmosphere Websocket Component
 :docTitle: Atmosphere Websocket
+:shortname: atmosphere-websocket
 :artifactId: camel-atmosphere-websocket
 :description: Expose WebSocket endpoints using the Atmosphere framework.
 :since: 2.14
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/atmosphere-websocket.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: atmosphere-websocket
 
 *Since Camel {since}*
 
@@ -181,7 +184,5 @@ And the equivalent Spring sample:
 </camelContext>
 ------------------------------------------------------------
 
- 
 
-
-include::spring-boot:partial$atmosphere-websocket-starter.adoc[]
+include::spring-boot:partial$starter.adoc[]

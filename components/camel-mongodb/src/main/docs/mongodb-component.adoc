@@ -1,12 +1,15 @@
 [[mongodb-component]]
 = MongoDB Component
 :docTitle: MongoDB
+:shortname: mongodb
 :artifactId: camel-mongodb
 :description: Perform operations on MongoDB documents and collections.
 :since: 2.19
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/mongodb.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: mongodb
 
 *Since Camel {since}*
 
@@ -1044,4 +1047,5 @@ object to a `Map`, which is in turn used to initialise a new
 This type converter is auto-discovered, so you don't need to configure anything manually.
 
 
-include::spring-boot:partial$mongodb-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

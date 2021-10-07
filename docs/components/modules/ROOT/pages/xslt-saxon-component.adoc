@@ -3,6 +3,7 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-xslt-saxon/src/main/docs/xslt-saxon-component.adoc
 :docTitle: XSLT Saxon
+:shortname: xslt-saxon
 :artifactId: camel-xslt-saxon
 :description: Transform XML payloads using an XSLT template using Saxon.
 :since: 3.0
@@ -10,6 +11,8 @@
 :component-header: Only producer is supported
 :core:
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/xslt-saxon.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: xslt-saxon
 
 *Since Camel {since}*
 
@@ -285,4 +288,5 @@ xsl:message.
 The exception is stored on the Exchange as a warning with the
 key `Exchange.XSLT_WARNING.`
 
-include::spring-boot:partial$xslt-saxon-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

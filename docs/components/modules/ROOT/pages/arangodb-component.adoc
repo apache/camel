@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-arangodb/src/main/docs/arangodb-component.adoc
 :docTitle: ArangoDb
+:shortname: arangodb
 :artifactId: camel-arangodb
 :description: Perform operations on ArangoDb when used as a Document Database, or as a Graph Database
 :since: 3.5
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/arangodb.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: arangodb
 
 *Since Camel {since}*
 
@@ -101,4 +104,5 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
-include::spring-boot:partial$arangodb-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

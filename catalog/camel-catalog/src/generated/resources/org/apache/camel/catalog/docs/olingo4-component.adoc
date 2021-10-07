@@ -1,12 +1,15 @@
 [[olingo4-component]]
 = Olingo4 Component
 :docTitle: Olingo4
+:shortname: olingo4
 :artifactId: camel-olingo4
 :description: Communicate with OData 4.0 services using Apache Olingo OData API.
 :since: 2.19
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/olingo4.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: olingo4
 
 *Since Camel {since}*
 
@@ -355,4 +358,5 @@ from("direct:...")
     .to("olingo4://action/People");
 ------------------------------------------------------------
 
-include::spring-boot:partial$olingo4-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

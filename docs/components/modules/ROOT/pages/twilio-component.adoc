@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-twilio/src/main/docs/twilio-component.adoc
 :docTitle: Twilio
+:shortname: twilio
 :artifactId: camel-twilio
 :description: Interact with Twilio REST APIs using Twilio Java SDK.
 :since: 2.20
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/twilio.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: twilio
 
 *Since Camel {since}*
 
@@ -3888,4 +3891,5 @@ For more information on the endpoints and options see API documentation at:
 https://www.twilio.com/docs/libraries/reference/twilio-java/index.html
 
 
-include::spring-boot:partial$twilio-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

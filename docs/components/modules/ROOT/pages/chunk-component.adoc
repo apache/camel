@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-chunk/src/main/docs/chunk-component.adoc
 :docTitle: Chunk
+:shortname: chunk
 :artifactId: camel-chunk
 :description: Transform messages using Chunk templating engine.
 :since: 2.15
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/chunk.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: chunk
 
 *Since Camel {since}*
 
@@ -211,4 +214,5 @@ Regards Camel Riders Bookstore
 ----------------------------------------------
 
 
-include::spring-boot:partial$chunk-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

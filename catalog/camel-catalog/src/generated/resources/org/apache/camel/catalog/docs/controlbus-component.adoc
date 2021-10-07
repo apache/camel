@@ -1,6 +1,7 @@
 [[controlbus-component]]
 = Control Bus Component
 :docTitle: Control Bus
+:shortname: controlbus
 :artifactId: camel-controlbus
 :description: Manage and monitor Camel routes.
 :since: 2.11
@@ -8,6 +9,8 @@
 :component-header: Only producer is supported
 :core:
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/controlbus.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: controlbus
 
 *Since Camel {since}*
 
@@ -204,4 +207,5 @@ message we sent to the control bus component.
 You can also use other languages such as xref:languages:groovy-language.adoc[Groovy], etc.
 ====
 
-include::spring-boot:partial$controlbus-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

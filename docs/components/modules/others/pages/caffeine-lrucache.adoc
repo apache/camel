@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-caffeine-lrucache/src/main/docs/caffeine-lrucache.adoc
 :docTitle: Caffeine Lrucache
+:shortname: caffeine-lrucache
 :artifactId: camel-caffeine-lrucache
 :description: Camel Caffeine LRUCache support
 :since: 3.0
 :supportLevel: Stable-deprecated
 :deprecated: *deprecated*
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/caffeine-lrucache.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: caffeine-lrucache
 
 *Since Camel {since}*
 
@@ -39,4 +42,4 @@ their `pom.xml` for this component:
 // endpoint options: START
 // endpoint options: END
 
-include::spring-boot:partial$caffeine-lrucache-starter.adoc[]
+include::spring-boot:partial$starter.adoc[]

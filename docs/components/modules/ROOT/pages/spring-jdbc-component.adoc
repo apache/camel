@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-spring-jdbc/src/main/docs/spring-jdbc-component.adoc
 :docTitle: Spring JDBC
+:shortname: spring-jdbc
 :artifactId: camel-spring-jdbc
 :description: Access databases through SQL and JDBC with Spring Transaction support.
 :since: 3.10
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/spring-jdbc.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: spring-jdbc
 
 *Since Camel {since}*
 
@@ -93,4 +96,5 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-include::spring-boot:partial$spring-jdbc-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

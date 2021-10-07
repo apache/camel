@@ -1,12 +1,15 @@
 [[mybatis-component]]
 = MyBatis Component
 :docTitle: MyBatis
+:shortname: mybatis
 :artifactId: camel-mybatis
 :description: Performs a query, poll, insert, update or delete in a relational database using MyBatis.
 :since: 2.7
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/mybatis.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: mybatis
 
 *Since Camel {since}*
 
@@ -420,4 +423,5 @@ usual:
 ----
 
 
-include::spring-boot:partial$mybatis-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -1,6 +1,7 @@
 [[kubernetes-nodes-component]]
 = Kubernetes Nodes Component
 :docTitle: Kubernetes Nodes
+:shortname: kubernetes-nodes
 :artifactId: camel-kubernetes
 :description: Perform operations on Kubernetes Nodes and get notified on Node changes.
 :since: 2.17
@@ -9,6 +10,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/kubernetes-nodes.adoc[opts=optional]
 //Manually maintained attributes
 :group: Kubernetes
+:camel-spring-boot-name: kubernetes
 
 *Since Camel {since}*
 
@@ -160,4 +162,5 @@ fromF("kubernetes-nodes://%s?oauthToken=%s&resourceName=test", host, authToken).
 This consumer will return a list of events for the node test.
 
 
-include::spring-boot:partial$kubernetes-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-elsql/src/main/docs/elsql-component.adoc
 :docTitle: ElSQL
+:shortname: elsql
 :artifactId: camel-elsql
 :description: Use ElSql to define SQL queries. Extends the SQL Component.
 :since: 2.16
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/elsql.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: elsql
 
 *Since Camel {since}*
 
@@ -282,4 +285,5 @@ the simple expression you can use in the consumer are most useable for calling
 bean methods as in this example.
 
 
-include::spring-boot:partial$elsql-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

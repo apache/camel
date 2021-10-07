@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-platform-http/src/main/docs/platform-http-component.adoc
 :docTitle: Platform HTTP
+:shortname: platform-http
 :artifactId: camel-platform-http
 :description: Expose HTTP endpoints using the HTTP server available in the current platform.
 :since: 3.0
 :supportLevel: Stable
 :component-header: Only consumer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/platform-http.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: platform-http
 
 *Since Camel {since}*
 
@@ -87,5 +90,4 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
-
-include::spring-boot:partial$platform-http-starter.adoc[]
+include::spring-boot:partial$starter.adoc[]

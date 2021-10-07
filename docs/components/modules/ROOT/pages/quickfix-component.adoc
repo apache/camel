@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-quickfix/src/main/docs/quickfix-component.adoc
 :docTitle: QuickFix
+:shortname: quickfix
 :artifactId: camel-quickfix
 :description: Open a Financial Interchange (FIX) session using an embedded QuickFix/J engine.
 :since: 2.1
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/quickfix.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: quickfix
 
 *Since Camel {since}*
 
@@ -597,4 +600,5 @@ Direction : from FIX gateway
 ----
 
 
-include::spring-boot:partial$quickfix-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

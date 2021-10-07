@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-kudu/src/main/docs/kudu-component.adoc
 :docTitle: Kudu
+:shortname: kudu
 :artifactId: camel-kudu
 :description: Interact with Apache Kudu, a free and open source column-oriented data store of the Apache Hadoop ecosystem.
 :since: 3.0
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/kudu.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: kudu
 
 *Since Camel {since}*
 
@@ -131,4 +134,5 @@ To use this feature, add the following dependencies to your spring boot pom.xml 
 </dependency>
 ----
 
-include::spring-boot:partial$kudu-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

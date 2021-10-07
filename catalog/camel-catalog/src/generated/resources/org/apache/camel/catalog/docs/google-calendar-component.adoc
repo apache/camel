@@ -1,6 +1,7 @@
 [[google-calendar-component]]
 = Google Calendar Component
 :docTitle: Google Calendar
+:shortname: google-calendar
 :artifactId: camel-google-calendar
 :description: Perform various operations on a Google Calendar.
 :since: 2.15
@@ -9,6 +10,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/google-calendar.adoc[opts=optional]
 //Manually maintained attributes
 :group: Google
+:camel-spring-boot-name: google-calendar
 
 *Since Camel {since}*
 
@@ -633,4 +635,5 @@ would override a `CamelGoogleCalendar.myParameterNameHere` header.
 // endpoint options: END
 
 
-include::spring-boot:partial$google-calendar-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

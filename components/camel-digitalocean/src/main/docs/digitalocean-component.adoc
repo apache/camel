@@ -1,12 +1,15 @@
 [[digitalocean-component]]
 = DigitalOcean Component
 :docTitle: DigitalOcean
+:shortname: digitalocean
 :artifactId: camel-digitalocean
 :description: Manage Droplets and resources within the DigitalOcean cloud.
 :since: 2.19
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/digitalocean.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: digitalocean
 
 *Since Camel {since}*
 
@@ -473,4 +476,5 @@ from("direct:shutdown")
     .to("digitalocean:droplet?operation=shutdown&oAuthToken=XXXXXX")
 ```
 
-include::spring-boot:partial$digitalocean-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

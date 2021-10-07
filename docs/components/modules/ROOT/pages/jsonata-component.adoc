@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-jsonata/src/main/docs/jsonata-component.adoc
 :docTitle: JSONata
+:shortname: jsonata
 :artifactId: camel-jsonata
 :description: Transforms JSON payload using JSONata transformation.
 :since: 3.5
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/jsonata.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: jsonata
 
 *Since Camel {since}*
 
@@ -121,5 +124,4 @@ from("activemq:My.Queue").
 ---------------------------------------------------------------
 
 
-
-include::spring-boot:partial$jsonata-starter.adoc[]
+include::spring-boot:partial$starter.adoc[]

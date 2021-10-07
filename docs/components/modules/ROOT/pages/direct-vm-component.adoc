@@ -3,6 +3,7 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-directvm/src/main/docs/direct-vm-component.adoc
 :docTitle: Direct VM
+:shortname: direct-vm
 :artifactId: camel-directvm
 :description: Call another endpoint from any Camel Context in the same JVM synchronously.
 :since: 2.10
@@ -10,6 +11,8 @@
 :component-header: Both producer and consumer are supported
 :core:
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/direct-vm.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: directvm
 
 *Since Camel {since}*
 
@@ -150,4 +153,5 @@ And the sample using spring DSL:
 ----
 
 
-include::spring-boot:partial$directvm-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

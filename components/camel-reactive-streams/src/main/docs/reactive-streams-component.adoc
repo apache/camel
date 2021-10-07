@@ -1,12 +1,15 @@
 [[reactive-streams-component]]
 = Reactive Streams Component
 :docTitle: Reactive Streams
+:shortname: reactive-streams
 :artifactId: camel-reactive-streams
 :description: Exchange messages with reactive stream processing libraries compatible with the reactive streams standard.
 :since: 2.19
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/reactive-streams.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: reactive-streams
 
 *Since Camel {since}*
 
@@ -408,22 +411,5 @@ When using 1 consumer (the default), the order of items in the source stream is 
 When this value is increased, items will be processed concurrently by multiple threads (so not preserving the order).
 
 
-== Camel Reactive Streams Starter
 
-A starter module is available to spring-boot users. When using the starter,
-the `CamelReactiveStreamsService` can be directly injected into Spring components.
-
-To use the starter, add the following to your spring boot pom.xml file:
-
-[source,xml]
-------------------------------------------------------
-<dependency>
-    <groupId>org.apache.camel.springboot</groupId>
-    <artifactId>camel-reactive-streams-starter</artifactId>
-    <version>${camel.version}</version> <!-- use the same version as your Camel core version -->
-</dependency>
-------------------------------------------------------
-
-
-
-include::spring-boot:partial$reactive-streams-starter.adoc[]
+include::spring-boot:partial$starter.adoc[]

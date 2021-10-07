@@ -3,11 +3,14 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-beanio/src/main/docs/beanio-dataformat.adoc
 :docTitle: BeanIO
+:shortname: beanio
 :artifactId: camel-beanio
 :description: Marshal and unmarshal Java beans to and from flat files (such as CSV, delimited, or fixed length formats).
 :since: 2.10
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/beanio.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: beanio
 
 *Since Camel {since}*
 
@@ -88,4 +91,5 @@ the download page for the latest versions).
 </dependency>
 ---------------------------------------
 
-include::spring-boot:partial$beanio-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

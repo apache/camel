@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-web3j/src/main/docs/web3j-component.adoc
 :docTitle: Web3j Ethereum Blockchain
+:shortname: web3j
 :artifactId: camel-web3j
 :description: Interact with Ethereum nodes using web3j client API.
 :since: 2.22
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/web3j.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: web3j
 
 *Since Camel {since}*
 
@@ -202,4 +205,5 @@ from("direct:start")
     .to("web3j://http://127.0.0.1:7545?operation=ETH_GET_BALANCE&address=0xc8CDceCE5d006dAB638029EBCf6Dd666efF5A952&atBlock=10");
 --------------------------------------------------------
 
-include::spring-boot:partial$web3j-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

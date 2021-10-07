@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-iota/src/main/docs/iota-component.adoc
 :docTitle: IOTA
+:shortname: iota
 :artifactId: camel-iota
 :description: Manage financial transactions using IOTA distributed ledger.
 :since: 2.23
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/iota.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: iota
 
 *Since Camel {since}*
 
@@ -152,4 +155,5 @@ The following route defined in Spring XML retrieve transfers data
 ----
 
 
-include::spring-boot:partial$iota-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

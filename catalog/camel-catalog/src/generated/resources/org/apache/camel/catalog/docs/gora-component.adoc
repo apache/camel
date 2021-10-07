@@ -1,12 +1,15 @@
 [[gora-component]]
 = Gora Component
 :docTitle: Gora
+:shortname: gora
 :artifactId: camel-gora
 :description: Access NoSQL databases using the Apache Gora framework.
 :since: 2.14
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/gora.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: gora
 
 *Since Camel {since}*
 
@@ -283,4 +286,5 @@ http://gora.apache.org/current/overview.html[Apache Gora Documentation]
 and the http://gora.apache.org/current/tutorial.html[Apache Gora
 Tutorial].
 
-include::spring-boot:partial$gora-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

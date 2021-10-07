@@ -3,6 +3,7 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-ignite/src/main/docs/ignite-compute-component.adoc
 :docTitle: Ignite Compute
+:shortname: ignite-compute
 :artifactId: camel-ignite
 :description: Run compute operations on an Ignite cluster.
 :since: 2.17
@@ -11,6 +12,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/ignite-compute.adoc[opts=optional]
 //Manually maintained attributes
 :group: Ignite
+:camel-spring-boot-name: ignite
 
 *Since Camel {since}*
 
@@ -117,4 +119,5 @@ Affinity cache name for the AFFINITY_CALL and AFFINITY_RUN operations.
 Affinity key for the AFFINITY_CALL and AFFINITY_RUN operations.
 |=======================================================================
 
-include::spring-boot:partial$ignite-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -3,6 +3,7 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-hazelcast/src/main/docs/hazelcast-ringbuffer-component.adoc
 :docTitle: Hazelcast Ringbuffer
+:shortname: hazelcast-ringbuffer
 :artifactId: camel-hazelcast
 :description: Perform operations on Hazelcast distributed ringbuffer.
 :since: 2.16
@@ -11,6 +12,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/hazelcast-ringbuffer.adoc[opts=optional]
 //Manually maintained attributes
 :group: Hazelcast
+:camel-spring-boot-name: hazelcast
 
 *Since Camel {since}*
 
@@ -128,4 +130,5 @@ from("direct:get")
 .to("seda:out");
 -----------------------------------------------------------------------------------------------
 
-include::spring-boot:partial$hazelcast-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

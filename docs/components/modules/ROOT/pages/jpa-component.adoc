@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-jpa/src/main/docs/jpa-component.adoc
 :docTitle: JPA
+:shortname: jpa
 :artifactId: camel-jpa
 :description: Store and retrieve Java objects from databases using Java Persistence API (JPA).
 :since: 1.0
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/jpa.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: jpa
 
 *Since Camel {since}*
 
@@ -442,4 +445,5 @@ argument to the JVM:
 -------------------------------------------------------------------------------------------
 
 
-include::spring-boot:partial$jpa-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

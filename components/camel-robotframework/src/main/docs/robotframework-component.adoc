@@ -1,12 +1,15 @@
 [[robotframework-component]]
 = Robot Framework Component
 :docTitle: Robot Framework
+:shortname: robotframework
 :artifactId: camel-robotframework
 :description: Pass camel exchanges to acceptence test written in Robot DSL.
 :since: 3.0
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/robotframework.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: robotframework
 
 *Since Camel {since}*
 
@@ -295,4 +298,5 @@ And the `template.robot` file:
 Please note that when you pass values through Camel Exchange to test cases,
 they will be available as case-sensitive ``body``, ``headers.[yourHeaderName]`` and ``properties.[yourPropertyName]``
 
-include::spring-boot:partial$robotframework-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

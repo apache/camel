@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-ldif/src/main/docs/ldif-component.adoc
 :docTitle: LDIF
+:shortname: ldif
 :artifactId: camel-ldif
 :description: Perform updates on an LDAP server from an LDIF body content.
 :since: 2.20
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/ldif.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: ldif
 
 *Since Camel {since}*
 
@@ -193,4 +196,5 @@ if (results.size() > 0) {
 }
 ----
 
-include::spring-boot:partial$ldif-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

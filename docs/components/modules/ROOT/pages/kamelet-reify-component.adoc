@@ -3,6 +3,7 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-kamelet-reify/src/main/docs/kamelet-reify-component.adoc
 :docTitle: Kamelet Reify
+:shortname: kamelet-reify
 :artifactId: camel-kamelet-reify
 :description: To call Kamelets (indirectly)
 :since: 3.6
@@ -11,6 +12,8 @@
 :component-header: Both producer and consumer are supported
 :core:
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/kamelet-reify.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: kamelet-reify
 
 *Since Camel {since}*
 
@@ -81,5 +84,4 @@ with the following path and query parameters:
 The *kamelet-reify* endpoint is *lenient*, which means that the endpoint accepts additional parameters that are passed to the route template engine and consumed upon route materialization.
 ====
 
-
-//include::spring-boot:partial$kamelet-reify-starter.adoc[]
+include::spring-boot:partial$starter.adoc[]

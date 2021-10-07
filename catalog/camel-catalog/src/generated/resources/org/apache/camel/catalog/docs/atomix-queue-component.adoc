@@ -1,12 +1,15 @@
 [[atomix-queue-component]]
 = Atomix Queue Component
 :docTitle: Atomix Queue
+:shortname: atomix-queue
 :artifactId: camel-atomix
 :description: Access Atomix's distributed queue.
 :since: 2.20
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/atomix-queue.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: atomix
 
 *Since Camel {since}*
 
@@ -105,4 +108,5 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-include::spring-boot:partial$atomix-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

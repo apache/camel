@@ -1,12 +1,15 @@
 [[chatscript-component]]
 = ChatScript Component
 :docTitle: ChatScript
+:shortname: chatscript
 :artifactId: camel-chatscript
 :description: Chat with a ChatScript Server.
 :since: 3.0
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/chatscript.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: chatscript
 
 *Since Camel {since}*
 
@@ -93,4 +96,5 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-include::spring-boot:partial$chatscript-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

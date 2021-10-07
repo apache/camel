@@ -1,6 +1,7 @@
 [[google-functions-component]]
 = Google Cloud Functions Component
 :docTitle: Google Cloud Functions
+:shortname: google-functions
 :artifactId: camel-google-functions
 :description: Manage and invoke Google Cloud Functions
 :since: 3.9
@@ -9,6 +10,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/google-functions.adoc[opts=optional]
 //Manually maintained attributes
 :group: Google
+:camel-spring-boot-name: google-functions
 
 *Since Camel {since}*
 
@@ -272,4 +274,5 @@ from("direct:start")
 .to("mock:result");
 --------------------------------------------------------------------------------
 
-include::spring-boot:partial$google-functions-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

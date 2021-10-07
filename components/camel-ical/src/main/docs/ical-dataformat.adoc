@@ -1,11 +1,14 @@
 [[ical-dataformat]]
 = iCal DataFormat
 :docTitle: iCal
+:shortname: ical
 :artifactId: camel-ical
 :description: Marshal and unmarshal iCal (.ics) documents to/from model objects provided by the iCal4j library.
 :since: 2.12
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/ical.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: ical
 
 *Since Camel {since}*
 
@@ -75,4 +78,5 @@ for this component:
 ------------------------------------------------------------
 
 
-include::spring-boot:partial$ical-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

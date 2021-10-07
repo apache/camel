@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-activemq/src/main/docs/activemq-component.adoc
 :docTitle: ActiveMQ
+:shortname: activemq
 :artifactId: camel-activemq
 :description: Send messages to (or consume from) Apache ActiveMQ. This component extends the Camel JMS component.
 :since: 1.0
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/activemq.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: activemq
 
 *Since Camel {since}*
 
@@ -296,4 +299,5 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-include::spring-boot:partial$activemq-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

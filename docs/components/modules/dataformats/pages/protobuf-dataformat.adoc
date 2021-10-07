@@ -3,11 +3,14 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-protobuf/src/main/docs/protobuf-dataformat.adoc
 :docTitle: Protobuf
+:shortname: protobuf
 :artifactId: camel-protobuf
 :description: Serialize and deserialize Java objects using Google's Protocol buffers.
 :since: 2.2
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/protobuf.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: protobuf
 
 *Since Camel {since}*
 
@@ -229,4 +232,5 @@ To use Protobuf in your camel routes you need to add the a dependency on
 </dependency>
 -----------------------------------------
 
-include::spring-boot:partial$protobuf-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

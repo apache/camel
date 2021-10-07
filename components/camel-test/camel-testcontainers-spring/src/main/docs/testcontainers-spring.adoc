@@ -1,6 +1,7 @@
 [[testcontainers-spring-other]]
 = Testcontainers Spring Component
 :docTitle: Testcontainers Spring
+:shortname: testcontainers-spring
 :artifactId: camel-testcontainers-spring
 :description: Camel unit testing with Spring and testcontainers
 :since: 2.22

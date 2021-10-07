@@ -3,11 +3,14 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-fastjson/src/main/docs/json-fastjson-dataformat.adoc
 :docTitle: JSON Fastjson
+:shortname: json-fastjson
 :artifactId: camel-fastjson
 :description: Marshal POJOs to JSON and back using Fastjson
 :since: 2.20
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/json-fastjson.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: fastjson
 
 *Since Camel {since}*
 
@@ -57,4 +60,5 @@ the download page for the latest versions).
 </dependency>
 ----------------------------------------------------------
 
-include::spring-boot:partial$fastjson-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]
