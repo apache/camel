@@ -34,10 +34,10 @@ public final class ExpressionNodeHelper {
     }
 
     /**
-     * Determines which {@link ExpressionDefinition} describes the given expression best possible.
+     * Determines which {@link ExpressionDefinition} describes the given expression in the best possible way.
      * <p/>
      * This implementation will use types such as {@link SimpleExpression}, {@link XPathExpression} etc. if the given
-     * expression is detect as such a type.
+     * expression is detected as such a type.
      *
      * @param  expression the expression
      * @return            a definition which describes the expression
@@ -72,7 +72,7 @@ public final class ExpressionNodeHelper {
     }
 
     /**
-     * Determines which {@link ExpressionDefinition} describes the given predicate best possible.
+     * Determines which {@link ExpressionDefinition} describes the given predicate in the best possible way.
      * <p/>
      * This implementation will use types such as {@link SimpleExpression}, {@link XPathExpression} etc. if the given
      * predicate is detect as such a type.
