@@ -26,8 +26,8 @@ import org.apache.camel.spi.Language;
 /**
  * Creates a DataSonnet language builder.
  * <p/>
- * This builder is available in the Java DSL from the {@link RouteBuilder} which means that using datasonnet language for
- * {@link Expression}s or {@link Predicate}s is very easy with the help of this builder.
+ * This builder is available in the Java DSL from the {@link RouteBuilder} which means that using datasonnet language
+ * for {@link Expression}s or {@link Predicate}s is very easy with the help of this builder.
  */
 public class DatasonnetBuilder implements Predicate, Expression, ExpressionResultTypeAware {
 
