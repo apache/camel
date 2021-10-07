@@ -404,7 +404,7 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
 
         final Map<Object, Object> nestedParameters = new HashMap<>();
         if (!componentParameters.isEmpty()) {
-        	// we're trying to set RestEndpoint.parameters['component']
+            // we're trying to set RestEndpoint.parameters['component']
             nestedParameters.put("component", componentParameters);
         }
 
