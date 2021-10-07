@@ -41,14 +41,6 @@
       <!--START OF GENERATED CODE-->
       <exclusions>
         <exclusion>
-          <groupId>ch.qos.logback</groupId>
-          <artifactId>logback-classic</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>ch.qos.logback</groupId>
-          <artifactId>logback-core</artifactId>
-        </exclusion>
-        <exclusion>
           <groupId>org.apache.logging.log4j</groupId>
           <artifactId>log4j-core</artifactId>
         </exclusion>
