@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/consul.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: consul
 
 *Since Camel {since}*
 
@@ -135,4 +137,5 @@ from("jetty:http://0.0.0.0:8080/service/endpoint").routeId("foo-1")
 ...
 ----
 
-include::spring-boot:partial$consul-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

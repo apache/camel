@@ -9,6 +9,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/ignite-events.adoc[opts=optional]
 //Manually maintained attributes
 :group: Ignite
+:camel-spring-boot-name: ignite
 
 *Since Camel {since}*
 
@@ -32,4 +33,5 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: END
 
 
-include::spring-boot:partial$ignite-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

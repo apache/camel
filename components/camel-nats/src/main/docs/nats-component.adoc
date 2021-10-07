@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/nats.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: nats
 
 *Since Camel {since}*
 
@@ -140,4 +142,5 @@ from("nats:mytopic?maxMessages=5&queueName=myqueue")
   .to("mock:result");
 ----
 
-include::spring-boot:partial$nats-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

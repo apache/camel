@@ -6,6 +6,8 @@
 :since: 1.0
 :supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/xquery.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: saxon
 
 *Since Camel {since}*
 
@@ -212,4 +214,5 @@ the download page for the latest versions).
 </dependency>
 --------------------------------------
 
-include::spring-boot:partial$saxon-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

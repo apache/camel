@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/sap-netweaver.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: sap-netweaver
 
 *Since Camel {since}*
 
@@ -158,4 +160,5 @@ Destination airport: SFO
 -------------------------------
 
 
-include::spring-boot:partial$sap-netweaver-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -6,6 +6,8 @@
 :since: 1.3
 :supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/xstream.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: xstream
 
 *Since Camel {since}*
 
@@ -129,4 +131,5 @@ DataFormat instance by setting its type permissions property.
 
 -------------------------------------------------------------------
 
-include::spring-boot:partial$xstream-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

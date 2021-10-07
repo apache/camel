@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/dozer.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: dozer
 
 *Since Camel {since}*
 
@@ -466,4 +468,5 @@ template.sendBody("direct:legacy-service-in", new org.apache.camel.converter.doz
 
 
 
-include::spring-boot:partial$dozer-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

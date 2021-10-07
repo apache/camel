@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/reactive-streams.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: reactive-streams
 
 *Since Camel {since}*
 
@@ -353,4 +355,5 @@ When using 1 consumer (the default), the order of items in the source stream is 
 When this value is increased, items will be processed concurrently by multiple threads (so not preserving the order).
 
 
-include::spring-boot:partial$reactive-streams-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

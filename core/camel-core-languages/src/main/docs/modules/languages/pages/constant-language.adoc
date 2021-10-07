@@ -6,6 +6,8 @@
 :since: 1.5
 :supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/constant.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: core
 
 *Since Camel {since}*
 
@@ -88,3 +90,5 @@ eg to refer to a file on the classpath you can do:
 == Dependencies
 
 The Constant language is part of *camel-core*.
+
+include::spring-boot:partial$starter.adoc[]

@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/websocket-jsr356.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: websocket-jsr356
 
 *Since Camel {since}*
 
@@ -47,4 +49,5 @@ include::partial$component-endpoint-options.adoc[]
 
 
 
-include::spring-boot:partial$websocket-jsr356-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Only consumer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/servlet.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: servlet
 
 *Since Camel {since}*
 
@@ -418,4 +420,5 @@ public final class ServletActivator implements BundleActivator, BundleContextAwa
 -------------------------------------------------------------------------
 
 
-include::spring-boot:partial$servlet-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -6,6 +6,8 @@
 :since: 2.2
 :supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/protobuf.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: protobuf
 
 *Since Camel {since}*
 
@@ -217,4 +219,5 @@ To use Protobuf in your camel routes you need to add the a dependency on
 </dependency>
 -----------------------------------------
 
-include::spring-boot:partial$protobuf-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -9,6 +9,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/openstack-swift.adoc[opts=optional]
 //Manually maintained attributes
 :group: OpenStack
+:camel-spring-boot-name: openstack
 
 *Since Camel {since}*
 
@@ -153,4 +154,5 @@ or *org.openstack4j.model.storage.object.options.ContainerListOptions* for listi
 |=========================================================================
 
 
-include::spring-boot:partial$openstack-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/milo-client.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: milo
 
 *Since Camel {since}*
 
@@ -156,4 +158,5 @@ The known security policy URIs and enum literals are can be seen here: https://g
 
 NOTE: In any case security policies are considered case sensitive.
 
-include::spring-boot:partial$milo-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

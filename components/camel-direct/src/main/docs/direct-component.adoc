@@ -8,6 +8,8 @@
 :component-header: Both producer and consumer are supported
 :core:
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/direct.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: direct
 
 *Since Camel {since}*
 
@@ -95,4 +97,5 @@ See also samples from the xref:seda-component.adoc[SEDA] component, how they can
 be used together.
 
 
-include::spring-boot:partial$direct-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

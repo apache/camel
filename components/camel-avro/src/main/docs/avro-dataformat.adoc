@@ -6,6 +6,8 @@
 :since: 2.14
 :supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/avro.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: avro
 
 *Since Camel {since}*
 
@@ -89,4 +91,5 @@ reference it from your route.
 
 In the same manner you can umarshal using the avro data format.
 
-include::spring-boot:partial$avro-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -6,6 +6,8 @@
 :since: 2.21
 :supportlevel: Preview
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/lra.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: lra
 
 *Since Camel {since}*
 
@@ -25,4 +27,5 @@ for this component:
 ----
 
 
-include::spring-boot:partial$lra-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

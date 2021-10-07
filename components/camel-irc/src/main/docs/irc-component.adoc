@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/irc.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: irc
 
 *Since Camel {since}*
 
@@ -155,4 +157,5 @@ You can specify the destination in the following header:
 |`irc.sendTo` |`String` |The channel (or the person) name.
 |=====================================================================
 
-include::spring-boot:partial$irc-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

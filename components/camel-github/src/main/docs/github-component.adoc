@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/github.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: github
 
 *Since Camel {since}*
 
@@ -108,4 +110,5 @@ pull request discussion is assumed.
 |createIssue |String (issue body text) | - GitHubIssueTitle (String) (REQUIRED): Issue Title.
 |=======================================================================
 
-include::spring-boot:partial$github-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

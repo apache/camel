@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Only consumer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/lumberjack.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: lumberjack
 
 *Since Camel {since}*
 
@@ -68,4 +70,5 @@ RouteBuilder builder = new RouteBuilder() {
 };
 ------------------------------------------------------------------------------------
 
-include::spring-boot:partial$lumberjack-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

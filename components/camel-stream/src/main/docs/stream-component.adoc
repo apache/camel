@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/stream.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: stream
 
 *Since Camel {since}*
 
@@ -110,4 +112,5 @@ from("stream:file?fileName=/server/logs/server.log&scanStream=true&scanStreamDel
   .to("bean:logService?method=parseLogLine");
 ----
 
-include::spring-boot:partial$stream-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

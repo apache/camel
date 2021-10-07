@@ -9,6 +9,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/ignite-compute.adoc[opts=optional]
 //Manually maintained attributes
 :group: Ignite
+:camel-spring-boot-name: ignite
 
 *Since Camel {since}*
 
@@ -71,4 +72,5 @@ Affinity cache name for the AFFINITY_CALL and AFFINITY_RUN operations.
 Affinity key for the AFFINITY_CALL and AFFINITY_RUN operations.
 |=======================================================================
 
-include::spring-boot:partial$ignite-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

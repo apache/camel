@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/kudu.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: kudu
 
 *Since Camel {since}*
 
@@ -64,4 +66,5 @@ Maven users will need to add the following dependency to their pom.xml.
 where `$\{camel-version}` must be replaced by the actual version of Camel (3.0 or higher).
 
 
-include::spring-boot:partial$kudu-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

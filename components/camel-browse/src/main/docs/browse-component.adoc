@@ -8,6 +8,8 @@
 :component-header: Both producer and consumer are supported
 :core:
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/browse.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: browse
 
 *Since Camel {since}*
 
@@ -70,4 +72,5 @@ public void inspectReceivedOrders() {
 ----
 
 
-include::spring-boot:partial$browse-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

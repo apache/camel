@@ -7,6 +7,8 @@
 :supportlevel: Preview
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/json-patch.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: json-patch
 
 *Since Camel {since}*
 
@@ -53,3 +55,5 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: START
 
 // endpoint options: END
+
+include::spring-boot:partial$starter.adoc[]

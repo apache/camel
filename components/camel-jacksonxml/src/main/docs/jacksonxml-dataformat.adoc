@@ -6,6 +6,8 @@
 :since: 2.16
 :supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/jacksonxml.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: jacksonxml
 
 *Since Camel {since}*
 
@@ -346,4 +348,5 @@ the download page for the latest versions).
 </dependency>
 ----------------------------------------------------------
 
-include::spring-boot:partial$jacksonxml-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

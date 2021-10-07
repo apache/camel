@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/olingo2.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: olingo2
 
 *Since Camel {since}*
 
@@ -148,4 +150,5 @@ from("olingo2://read/Manufacturers?queryParams=#paramsBean&timeUnit=SECONDS&dela
     .to("bean:blah");
 ---------------------------------------------------------------------------------------------------------
 
-include::spring-boot:partial$olingo2-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

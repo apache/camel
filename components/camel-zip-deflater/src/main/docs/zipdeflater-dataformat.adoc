@@ -6,6 +6,8 @@
 :since: 2.12
 :supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/zipdeflater.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: zip-deflater
 
 *Since Camel {since}*
 
@@ -62,4 +64,5 @@ unmarshalling to avoid errors.
 from("activemq:queue:MY_QUEUE").unmarshal().zipDeflater().process(new UnZippedMessageProcessor()); 
 ----
 
-include::spring-boot:partial$zip-deflater-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

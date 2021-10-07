@@ -9,6 +9,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/spring-batch.adoc[opts=optional]
 //Manually maintained attributes
 :group: Spring
+:camel-spring-boot-name: spring-batch
 
 *Since Camel {since}*
 
@@ -240,4 +241,5 @@ JMS queue.
 </batch:job>
 -----------------------------------------------------------------------------------------------------------------------
 
-include::spring-boot:partial$spring-batch-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

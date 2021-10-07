@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/netty.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: netty
 
 *Since Camel {since}*
 
@@ -611,4 +613,5 @@ You can find an example with the Apache Camel source code in the examples direct
 under the `camel-example-netty-custom-correlation` directory.
 
 
-include::spring-boot:partial$netty-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

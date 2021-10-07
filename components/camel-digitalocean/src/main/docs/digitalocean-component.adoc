@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/digitalocean.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: digitalocean
 
 *Since Camel {since}*
 
@@ -428,4 +430,5 @@ from("direct:shutdown")
     .to("digitalocean:droplet?operation=shutdown&oAuthToken=XXXXXX")
 ----
 
-include::spring-boot:partial$digitalocean-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -6,6 +6,8 @@
 :since: 3.0
 :supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/cbor.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: cbor
 
 *Since Camel {since}*
 
@@ -65,4 +67,5 @@ And then you can refer to this id in the route:
 </dependency>
 -------------------------------------
 
-include::spring-boot:partial$cbor-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/grape.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: grape
 
 *Since Camel {since}*
 
@@ -206,3 +208,5 @@ from("netty-http:http://0.0.0.0:80/patches").
     setHeader(GrapeConstats.GRAPE_COMMAND, constant(CamelGrapeCommand.clearPatches)).
     setBody().constant("Installed patches have been deleted.");
 -----------------------------------------------------------------------------------------
+
+include::spring-boot:partial$starter.adoc[]

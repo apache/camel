@@ -9,6 +9,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws2-ddbstream.adoc[opts=optional]
 //Manually maintained attributes
 :group: AWS
+:camel-spring-boot-name: aws2-ddb
 
 *Since Camel {since}*
 
@@ -123,4 +124,5 @@ Maven users will need to add the following dependency to their pom.xml.
 
 where `$\{camel-version}` must be replaced by the actual version of Camel.
 
-include::spring-boot:partial$aws2-ddb-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

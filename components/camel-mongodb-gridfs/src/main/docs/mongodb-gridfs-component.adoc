@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/mongodb-gridfs.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: mongodb-gridfs
 
 *Since Camel {since}*
 
@@ -158,4 +160,5 @@ template.requestBodyAndHeaders("direct:remove", "", headers);
 ------------------------------------------------------------------------
 
 
-include::spring-boot:partial$mongodb-gridfs-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

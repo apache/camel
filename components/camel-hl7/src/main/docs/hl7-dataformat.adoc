@@ -6,6 +6,8 @@
 :since: 2.0
 :supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/hl7.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: hl7
 
 *Since Camel {since}*
 
@@ -394,4 +396,5 @@ repository].
 ----
 
 
-include::spring-boot:partial$hl7-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -6,6 +6,8 @@
 :since: 2.13
 :supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/jsonpath.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: jsonpath
 
 *Since Camel {since}*
 
@@ -303,4 +305,5 @@ The same example in XML DSL would be:
 </route>
 ----
 
-include::spring-boot:partial$jsonpath-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

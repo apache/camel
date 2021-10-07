@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/mustache.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: mustache
 
 *Since Camel {since}*
 
@@ -143,4 +145,5 @@ Regards Camel Riders Bookstore
 -------------------------------------------------
 
 
-include::spring-boot:partial$mustache-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

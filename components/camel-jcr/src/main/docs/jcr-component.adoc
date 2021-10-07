@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/jcr.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: jcr
 
 *Since Camel {since}*
 
@@ -84,4 +86,5 @@ all the children.
 ---------------------------------------------------------------------------------------------
 
 
-include::spring-boot:partial$jcr-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

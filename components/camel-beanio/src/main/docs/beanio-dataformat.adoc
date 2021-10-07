@@ -6,6 +6,8 @@
 :since: 2.10
 :supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/beanio.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: beanio
 
 *Since Camel {since}*
 
@@ -71,4 +73,5 @@ the download page for the latest versions).
 </dependency>
 ---------------------------------------
 
-include::spring-boot:partial$beanio-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/geocoder.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: geocoder
 
 *Since Camel {since}*
 
@@ -145,4 +147,5 @@ from("direct:start")
     .to("geocoder:address:current")
 -----------------------------------
 
-include::spring-boot:partial$geocoder-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

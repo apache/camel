@@ -8,6 +8,8 @@
 :component-header: Only producer is supported
 :core:
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/class.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: bean
 
 *Since Camel {since}*
 
@@ -94,4 +96,5 @@ component works in much the same way.
 ====
 
 
-include::spring-boot:partial$bean-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

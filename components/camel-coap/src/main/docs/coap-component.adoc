@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/coap.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: coap
 
 *Since Camel {since}*
 
@@ -86,4 +88,5 @@ The following rules determine which request method the CoAP producer will use to
  3. **POST** if the message exchange body is not null.
  4. **GET** otherwise.
 
-include::spring-boot:partial$coap-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -6,6 +6,8 @@
 :since: 2.3
 :supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/crypto.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: crypto
 
 *Since Camel {since}*
 
@@ -265,4 +267,5 @@ need to add the following dependency to your pom.
 ----------------------------------------------------------
 
 
-include::spring-boot:partial$crypto-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

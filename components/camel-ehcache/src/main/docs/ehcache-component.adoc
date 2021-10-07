@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/ehcache.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: ehcache
 
 *Since Camel {since}*
 
@@ -178,4 +180,5 @@ public class EhcacheAggregationRepositoryRoutesTest extends CamelTestSupport {
 }
 ---------------------------------------------------------------------------------------------------------------------------------
 
-include::spring-boot:partial$ehcache-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/sip.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: sip
 
 *Since Camel {since}*
 
@@ -157,4 +159,5 @@ well as Subscriber. While it is set up as a Camel Consumer, it does not
 actually send any messages along the route to the endpoint
 "mock:neverland".
 
-include::spring-boot:partial$sip-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

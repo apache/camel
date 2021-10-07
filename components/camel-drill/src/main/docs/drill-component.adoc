@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/drill.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: drill
 
 *Since Camel {since}*
 
@@ -55,4 +57,5 @@ include::partial$component-endpoint-options.adoc[]
 The producer executes a query using the *CamelDrillQuery* header and puts the results into the body.
 
 
-include::spring-boot:partial$drill-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

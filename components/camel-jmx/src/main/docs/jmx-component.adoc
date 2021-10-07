@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Only consumer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/jmx.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: jmx
 
 *Since Camel {since}*
 
@@ -40,4 +42,5 @@ include::partial$component-endpoint-options.adoc[]
 
 
 
-include::spring-boot:partial$jmx-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

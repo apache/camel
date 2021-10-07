@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/infinispan.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: infinispan
 
 *Since Camel {since}*
 
@@ -404,4 +406,5 @@ For more information have a look at https://infinispan.org/docs/stable/titles/de
 ====
 
 
-include::spring-boot:partial$infinispan-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

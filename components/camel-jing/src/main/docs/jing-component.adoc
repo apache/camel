@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/jing.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: jing
 
 *Since Camel {since}*
 
@@ -87,4 +89,5 @@ schema (which is supplied on the classpath).
     </camelContext>
 ----
 
-include::spring-boot:partial$jing-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

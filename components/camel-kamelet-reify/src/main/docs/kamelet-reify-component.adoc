@@ -9,6 +9,8 @@
 :component-header: Both producer and consumer are supported
 :core:
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/kamelet-reify.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: kamelet-reify
 
 *Since Camel {since}*
 
@@ -40,5 +42,4 @@ include::partial$component-endpoint-options.adoc[]
 The *kamelet-reify* endpoint is *lenient*, which means that the endpoint accepts additional parameters that are passed to the route template engine and consumed upon route materialization.
 ====
 
-
-//include::spring-boot:partial$kamelet-reify-starter.adoc[]
+include::spring-boot:partial$starter.adoc[]

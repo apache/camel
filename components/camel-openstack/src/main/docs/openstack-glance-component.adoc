@@ -9,6 +9,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/openstack-glance.adoc[opts=optional]
 //Manually maintained attributes
 :group: OpenStack
+:camel-spring-boot-name: openstack
 
 *Since Camel {since}*
 
@@ -107,4 +108,5 @@ include::partial$component-endpoint-options.adoc[]
 |=========================================================================
 
 
-include::spring-boot:partial$openstack-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

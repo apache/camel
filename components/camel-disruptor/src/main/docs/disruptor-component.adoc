@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/disruptor.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: disruptor
 
 *Since Camel {since}*
 
@@ -250,4 +252,6 @@ DisruptorEndpoint disruptor = context.getEndpoint("disruptor:xxxx");
 int size = disruptor.getBufferSize();
 --------------------------------------------------------------------
 
-include::spring-boot:partial$disruptor-starter.adoc[]
+// shared with disruptor-vm
+
+include::spring-boot:partial$starter.adoc[]

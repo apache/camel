@@ -8,6 +8,8 @@
 :component-header: Only producer is supported
 :core:
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/dataset-test.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: dataset
 
 *Since Camel {since}*
 
@@ -81,4 +83,5 @@ To see how you can set other expectations on the test endpoint, see the
 xref:mock-component.adoc[Mock] component.
 
 
-include::spring-boot:partial$dataset-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]
