@@ -1,12 +1,15 @@
 [[mllp-component]]
 = MLLP Component
 :docTitle: MLLP
+:shortname: mllp
 :artifactId: camel-mllp
 :description: Communicate with external systems using the MLLP protocol.
 :since: 2.17
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/mllp.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: mllp
 
 *Since Camel {since}*
 
@@ -232,4 +235,5 @@ The state of the TCP Socket can be controlled by these properties on the Camel e
 |CamelMllpResetConnectionAfterSend | Boolean | If true, the Socket will be reset immediately after sending any data
 |====================================
 
-include::spring-boot:partial$mllp-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -1,6 +1,7 @@
 [[hazelcast-atomicvalue-component]]
 = Hazelcast Atomic Number Component
 :docTitle: Hazelcast Atomic Number
+:shortname: hazelcast-atomicvalue
 :artifactId: camel-hazelcast
 :description: Increment, decrement, set, etc. Hazelcast atomic number (a grid wide number).
 :since: 2.7
@@ -9,6 +10,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/hazelcast-atomicvalue.adoc[opts=optional]
 //Manually maintained attributes
 :group: Hazelcast
+:camel-spring-boot-name: hazelcast
 
 *Since Camel {since}*
 
@@ -221,4 +223,5 @@ Spring DSL:
 </route>
 -----------------------------------------------------------------------------------------------
 
-include::spring-boot:partial$hazelcast-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

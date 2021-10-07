@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-resteasy/src/main/docs/resteasy-component.adoc
 :docTitle: Resteasy
+:shortname: resteasy
 :artifactId: camel-resteasy
 :description: Expose REST endpoints and access external REST servers.
 :since: 3.4
 :supportLevel: Preview
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/resteasy.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: resteasy
 
 *Since Camel {since}*
 
@@ -216,4 +219,5 @@ Then you can define your route as follows:
 
 Notice that component-scan is important to load resteasy servlet properly into container's runtime.
 
-include::spring-boot:partial$resteasy-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -1,11 +1,14 @@
 [[asn1-dataformat]]
 = ASN.1 File DataFormat
 :docTitle: ASN.1 File
+:shortname: asn1
 :artifactId: camel-asn1
 :description: Encode and decode data structures using Abstract Syntax Notation One (ASN.1).
 :since: 2.20
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/asn1.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: asn1
 
 *Since Camel {since}*
 
@@ -79,4 +82,5 @@ the download page for the latest versions).
 </dependency>
 ----------------------------------------------------------
 
-include::spring-boot:partial$asn1-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

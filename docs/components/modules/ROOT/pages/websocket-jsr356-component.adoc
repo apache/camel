@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-websocket-jsr356/src/main/docs/websocket-jsr356-component.adoc
 :docTitle: Javax Websocket
+:shortname: websocket-jsr356
 :artifactId: camel-websocket-jsr356
 :description: Expose websocket endpoints using JSR356.
 :since: 2.23
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/websocket-jsr356.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: websocket-jsr356
 
 *Since Camel {since}*
 
@@ -90,4 +93,5 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-include::spring-boot:partial$websocket-jsr356-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

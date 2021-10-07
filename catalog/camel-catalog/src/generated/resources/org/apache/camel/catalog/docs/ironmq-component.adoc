@@ -1,12 +1,15 @@
 [[ironmq-component]]
 = IronMQ Component
 :docTitle: IronMQ
+:shortname: ironmq
 :artifactId: camel-ironmq
 :description: Send and receive messages to/from IronMQ an elastic and durable hosted message queue as a service.
 :since: 2.17
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/ironmq.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: ironmq
 
 *Since Camel {since}*
 
@@ -179,4 +182,5 @@ from("activemq:foo")
   .to("ironmq:testqueue?projectId=myIronMQProjectid&token=myIronMQToken");
 --------------------------------------------------
 
-include::spring-boot:partial$ironmq-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-iec60870/src/main/docs/iec60870-server-component.adoc
 :docTitle: IEC 60870 Server
+:shortname: iec60870-server
 :artifactId: camel-iec60870
 :description: IEC 60870 supervisory control and data acquisition (SCADA) server using NeoSCADA implementation.
 :since: 2.20
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/iec60870-server.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: iec60870
 
 *Since Camel {since}*
 
@@ -118,4 +121,5 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-include::spring-boot:partial$iec60870-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

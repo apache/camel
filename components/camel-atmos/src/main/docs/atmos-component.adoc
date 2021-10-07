@@ -1,12 +1,15 @@
 [[atmos-component]]
 = Atmos Component
 :docTitle: Atmos
+:shortname: atmos
 :artifactId: camel-atmos
 :description: Integrate with EMC's ViPR object data services using the Atmos Client.
 :since: 2.15
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/atmos.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: atmos
 
 *Since Camel {since}*
 
@@ -159,4 +162,5 @@ DOWNLOADED_FILE, DOWNLOADED_FILES, UPLOADED_FILE, UPLOADED_FILES, FOUND_FILES, D
 -------------------------------
 
 
-include::spring-boot:partial$atmos-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

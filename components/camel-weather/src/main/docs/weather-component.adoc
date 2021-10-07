@@ -1,12 +1,15 @@
 [[weather-component]]
 = Weather Component
 :docTitle: Weather
+:shortname: weather
 :artifactId: camel-weather
 :description: Poll the weather information from Open Weather Map.
 :since: 2.12
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/weather.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: weather
 
 *Since Camel {since}*
 
@@ -202,4 +205,5 @@ And to get the weather at the current location, then:
   String json = template.requestBodyAndHeader("direct:start", "", "CamelWeatherLocation", "current&appid=APIKEY", String.class);
 --------------------------------------------------------------------------------------------------------------------------------
 
-include::spring-boot:partial$weather-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -3,6 +3,7 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-kubernetes/src/main/docs/kubernetes-resources-quota-component.adoc
 :docTitle: Kubernetes Resources Quota
+:shortname: kubernetes-resources-quota
 :artifactId: camel-kubernetes
 :description: Perform operations on Kubernetes Resources Quotas.
 :since: 2.17
@@ -11,6 +12,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/kubernetes-resources-quota.adoc[opts=optional]
 //Manually maintained attributes
 :group: Kubernetes
+:camel-spring-boot-name: kubernetes
 
 *Since Camel {since}*
 
@@ -129,4 +131,5 @@ from("direct:listByLabels").process(new Processor() {
 This operation return a List of Resource Quotas from your cluster, using a label selector (with key1 and key2, with value value1 and value2)
 
 
-include::spring-boot:partial$kubernetes-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

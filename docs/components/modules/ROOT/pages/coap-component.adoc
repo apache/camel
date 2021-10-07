@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-coap/src/main/docs/coap-component.adoc
 :docTitle: CoAP
+:shortname: coap
 :artifactId: camel-coap
 :description: Send and receive messages to/from COAP capable devices.
 :since: 2.16
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/coap.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: coap
 
 *Since Camel {since}*
 
@@ -136,4 +139,5 @@ The following rules determine which request method the CoAP producer will use to
  3. **POST** if the message exchange body is not null.
  4. **GET** otherwise.
 
-include::spring-boot:partial$coap-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

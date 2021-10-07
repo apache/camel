@@ -3,11 +3,14 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-syslog/src/main/docs/syslog-dataformat.adoc
 :docTitle: Syslog
+:shortname: syslog
 :artifactId: camel-syslog
 :description: Marshall SyslogMessages to RFC3164 and RFC5424 messages and back.
 :since: 2.6
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/syslog.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: syslog
 
 *Since Camel {since}*
 
@@ -131,4 +134,5 @@ The same route using xref:ROOT:mina-component.adoc[Mina Component]
 -------------------------------------------------------------------------
 
 
-include::spring-boot:partial$syslog-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

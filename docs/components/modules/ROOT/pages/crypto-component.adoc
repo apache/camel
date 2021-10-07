@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-crypto/src/main/docs/crypto-component.adoc
 :docTitle: Crypto (JCE)
+:shortname: crypto
 :artifactId: camel-crypto
 :description: Sign and verify exchanges using the Signature Service of the Java Cryptographic Extension (JCE).
 :since: 2.3
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/crypto.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: crypto
 
 *Since Camel {since}*
 
@@ -264,4 +267,5 @@ template.send("direct:alias-verify", signed);
 -------------------------------------------------------------------------------------------------
 
 
-include::spring-boot:partial$crypto-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

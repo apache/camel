@@ -1,6 +1,7 @@
 [[rest-api-component]]
 = REST API Component
 :docTitle: REST API
+:shortname: rest-api
 :artifactId: camel-rest
 :description: Expose OpenAPI Specification of the REST services defined using Camel REST DSL.
 :since: 2.16
@@ -8,6 +9,8 @@
 :component-header: Only consumer is supported
 :core:
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/rest-api.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: rest
 
 *Since Camel {since}*
 
@@ -67,6 +70,4 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
-
-
-include::spring-boot:partial$rest-starter.adoc[]
+include::spring-boot:partial$starter.adoc[]

@@ -1,11 +1,14 @@
 [[tarfile-dataformat]]
 = Tar File DataFormat
 :docTitle: Tar File
+:shortname: tarfile
 :artifactId: camel-tarfile
 :description: Archive files into tarballs or extract files from tarballs.
 :since: 2.16
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/tarfile.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: tarfile
 
 *Since Camel {since}*
 
@@ -173,4 +176,5 @@ the download page for the latest versions).
 </dependency>
 ----------------------------------------------------------
 
-include::spring-boot:partial$tarfile-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

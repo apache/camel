@@ -1,11 +1,14 @@
 [[lra-other]]
 = LRA Component
 :docTitle: LRA
+:shortname: lra
 :artifactId: camel-lra
 :description: Camel saga binding for Long-Running-Action framework
 :since: 2.21
 :supportLevel: Preview
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/lra.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: lra
 
 *Since Camel {since}*
 
@@ -25,4 +28,5 @@ for this component:
 ----
 
 
-include::spring-boot:partial$lra-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

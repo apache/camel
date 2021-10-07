@@ -1,12 +1,15 @@
 [[git-component]]
 = Git Component
 :docTitle: Git
+:shortname: git
 :artifactId: camel-git
 :description: Perform operations on git repositories.
 :since: 2.16
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/git.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: git
 
 *Since Camel {since}*
 
@@ -150,4 +153,5 @@ from("git:///tmp/testRepo?type=commit")
                         .to(....)
 ---------------------------------------
 
-include::spring-boot:partial$git-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

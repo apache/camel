@@ -3,11 +3,14 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-crypto/src/main/docs/pgp-dataformat.adoc
 :docTitle: PGP
+:shortname: pgp
 :artifactId: camel-crypto
 :description: Encrypt and decrypt messages using Java Cryptographic Extension (JCE) and PGP.
 :since: 2.9
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/pgp.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: crypto
 
 *Since Camel {since}*
 
@@ -314,4 +317,5 @@ need to add the following dependency to your pom.
 ----------------------------------------------------------
 
 
-include::spring-boot:partial$crypto-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

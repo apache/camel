@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-metrics/src/main/docs/metrics-component.adoc
 :docTitle: Metrics
+:shortname: metrics
 :artifactId: camel-metrics
 :description: Collect various metrics directly from Camel routes using the DropWizard metrics library.
 :since: 2.14
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/metrics.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: metrics
 
 *Since Camel {since}*
 
@@ -641,4 +644,5 @@ This factory allows you to gather performance information about Camel Thread Poo
 which collects information from inside of Camel.
 See more details at Advanced configuration of CamelContext using Spring
 
-include::spring-boot:partial$metrics-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

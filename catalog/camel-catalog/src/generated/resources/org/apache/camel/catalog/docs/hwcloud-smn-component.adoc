@@ -1,6 +1,7 @@
 [[hwcloud-smn-component]]
 = Huawei Cloud Simple Message Notification (SMN) Component
 :docTitle: Huawei Cloud Simple Message Notification (SMN)
+:shortname: hwcloud-smn
 :artifactId: camel-huaweicloud-smn
 :description: To broadcast messages and connect cloud services through notifications on Huawei Cloud
 :since: 3.8
@@ -9,6 +10,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/hwcloud-smn.adoc[opts=optional]
 //Manually maintained attributes
 :group: Huawei Cloud
+:camel-spring-boot-name: huaweicloud-smn
 
 *Since Camel {since}*
 
@@ -209,3 +211,5 @@ from("direct:triggerRoute")
  .setProperty(SmnProperties.NOTIFICATION_TTL, constant(60))
  .to("hwcloud-smn:publishMessageService?operation=publishAsTextMessage&projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&region=cn-north-4&serviceKeys=#myServiceKeyConfig")
 --------------------------------------------------------------------------------
+
+include::spring-boot:partial$starter.adoc[]

@@ -3,6 +3,7 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-resourceresolver-github/src/main/docs/resourceresolver-github.adoc
 :docTitle: Resourceresolver Github
+:shortname: resourceresolver-github
 :artifactId: camel-resourceresolver-github
 :description: Resource resolver to load files from GitHub
 :since: 3.11

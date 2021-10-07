@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-atlasmap/src/main/docs/atlasmap-component.adoc
 :docTitle: AtlasMap
+:shortname: atlasmap
 :artifactId: camel-atlasmap
 :description: Transforms the message using an AtlasMap transformation.
 :since: 3.7
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/atlasmap.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: atlasmap
 
 *Since Camel {since}*
 
@@ -28,6 +31,17 @@ for this component:
     <artifactId>camel-atlasmap</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+Optionally you can include the DFDL module, which is a POC for https://daffodil.apache.org/[Apache Daffodil]:
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>io.atlasmap</groupId>
+    <artifactId>atlas-dfdl-module</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as atlasmap-core in camel-atlasmap -->
 </dependency>
 ------------------------------------------------------------
 
@@ -113,4 +127,5 @@ from("activemq:My.Queue").
 where you can export an ADM archive file from AtlasMap Data Mapper UI.
 
 
-include::spring-boot:partial$atlasmap-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

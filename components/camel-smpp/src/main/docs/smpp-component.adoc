@@ -1,12 +1,15 @@
 [[smpp-component]]
 = SMPP Component
 :docTitle: SMPP
+:shortname: smpp
 :artifactId: camel-smpp
 :description: Send and receive SMS messages using a SMSC (Short Message Service Center).
 :since: 2.2
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/smpp.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: smpp
 
 *Since Camel {since}*
 
@@ -661,4 +664,5 @@ log4j.logger.org.apache.camel.component.smpp=DEBUG
 --------------------------------------------------
 
 
-include::spring-boot:partial$smpp-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

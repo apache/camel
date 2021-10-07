@@ -1,12 +1,15 @@
 [[thrift-component]]
 = Thrift Component
 :docTitle: Thrift
+:shortname: thrift
 :artifactId: camel-thrift
 :description: Call and expose remote procedures (RPC) with Apache Thrift data format and serialization mechanism.
 :since: 2.20
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/thrift.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: thrift
 
 *Since Camel {since}*
 
@@ -170,4 +173,5 @@ https://github.com/apache/thrift/[Thrift project GitHub]
 https://thrift.apache.org/tutorial/java [Apache Thrift Java tutorial]
 
 
-include::spring-boot:partial$thrift-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

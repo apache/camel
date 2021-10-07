@@ -1,12 +1,15 @@
 [[pubnub-component]]
 = PubNub Component
 :docTitle: PubNub
+:shortname: pubnub
 :artifactId: camel-pubnub
 :description: Send and receive messages to/from PubNub data stream network for connected devices.
 :since: 2.19
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/pubnub.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: pubnub
 
 *Since Camel {since}*
 
@@ -228,4 +231,4 @@ The example illustrates the PubNub component subscribing to a infinite stream of
 
 
 
-include::spring-boot:partial$pubnub-starter.adoc[]
+include::spring-boot:partial$starter.adoc[]

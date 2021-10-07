@@ -1,6 +1,7 @@
 [[tracing-other]]
 = Tracing Component
 :docTitle: Tracing
+:shortname: tracing
 :artifactId: camel-tracing
 :description: Distributed tracing common interfaces
 :since: 3.5

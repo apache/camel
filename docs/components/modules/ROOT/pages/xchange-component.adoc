@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-xchange/src/main/docs/xchange-component.adoc
 :docTitle: XChange
+:shortname: xchange
 :artifactId: camel-xchange
 :description: Access market data and trade on Bitcoin and Altcoin exchanges.
 :since: 2.21
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/xchange.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: xchange
 
 *Since Camel {since}*
 
@@ -121,4 +124,5 @@ In this sample we find the current Bitcoin market price in USDT:
 from("direct:ticker").to("xchange:binance?service=marketdata&method=ticker&currencyPair=BTC/USDT")
 ---------------------------------------------------------------------------------------------
 
-include::spring-boot:partial$xchange-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

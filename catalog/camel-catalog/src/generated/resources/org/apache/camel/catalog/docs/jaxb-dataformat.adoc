@@ -1,11 +1,14 @@
 [[jaxb-dataformat]]
 = JAXB DataFormat
 :docTitle: JAXB
+:shortname: jaxb
 :artifactId: camel-jaxb
 :description: Unmarshal XML payloads to POJOs and back using JAXB2 XML marshalling standard.
 :since: 1.0
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/jaxb.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: jaxb
 
 *Since Camel {since}*
 
@@ -325,4 +328,5 @@ the download page for the latest versions).
 </dependency>
 -------------------------------------
 
-include::spring-boot:partial$jaxb-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

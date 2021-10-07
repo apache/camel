@@ -3,11 +3,14 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-avro/src/main/docs/avro-dataformat.adoc
 :docTitle: Avro
+:shortname: avro
 :artifactId: camel-avro
 :description: Serialize and deserialize messages using Apache Avro binary data format.
 :since: 2.14
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/avro.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: avro
 
 *Since Camel {since}*
 
@@ -85,4 +88,5 @@ The Avro dataformat supports 1 options, which are listed below.
 |===
 // dataformat options: END
 
-include::spring-boot:partial$avro-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

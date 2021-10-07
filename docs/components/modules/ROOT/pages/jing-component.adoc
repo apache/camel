@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-jing/src/main/docs/jing-component.adoc
 :docTitle: Jing
+:shortname: jing
 :artifactId: camel-jing
 :description: Validate XML against a RelaxNG schema (XML Syntax or Compact Syntax) using Jing library.
 :since: 1.1
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/jing.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: jing
 
 *Since Camel {since}*
 
@@ -128,4 +131,5 @@ schema (which is supplied on the classpath).
     </camelContext>
 ----
 
-include::spring-boot:partial$jing-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

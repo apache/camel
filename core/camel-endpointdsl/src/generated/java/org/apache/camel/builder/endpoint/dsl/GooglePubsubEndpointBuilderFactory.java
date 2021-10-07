@@ -42,73 +42,6 @@ public interface GooglePubsubEndpointBuilderFactory {
             return (AdvancedGooglePubsubEndpointConsumerBuilder) this;
         }
         /**
-         * AUTO = exchange gets ack'ed/nack'ed on completion. NONE = downstream
-         * process has to ack/nack explicitly.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.google.pubsub.GooglePubsubConstants$AckMode&lt;/code&gt; type.
-         * 
-         * Default: AUTO
-         * Group: common
-         * 
-         * @param ackMode the value to set
-         * @return the dsl builder
-         */
-        default GooglePubsubEndpointConsumerBuilder ackMode(AckMode ackMode) {
-            doSetProperty("ackMode", ackMode);
-            return this;
-        }
-        /**
-         * AUTO = exchange gets ack'ed/nack'ed on completion. NONE = downstream
-         * process has to ack/nack explicitly.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.google.pubsub.GooglePubsubConstants$AckMode&lt;/code&gt; type.
-         * 
-         * Default: AUTO
-         * Group: common
-         * 
-         * @param ackMode the value to set
-         * @return the dsl builder
-         */
-        default GooglePubsubEndpointConsumerBuilder ackMode(String ackMode) {
-            doSetProperty("ackMode", ackMode);
-            return this;
-        }
-        /**
-         * The number of parallel streams consuming from the subscription.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Default: 1
-         * Group: common
-         * 
-         * @param concurrentConsumers the value to set
-         * @return the dsl builder
-         */
-        default GooglePubsubEndpointConsumerBuilder concurrentConsumers(
-                Integer concurrentConsumers) {
-            doSetProperty("concurrentConsumers", concurrentConsumers);
-            return this;
-        }
-        /**
-         * The number of parallel streams consuming from the subscription.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Default: 1
-         * Group: common
-         * 
-         * @param concurrentConsumers the value to set
-         * @return the dsl builder
-         */
-        default GooglePubsubEndpointConsumerBuilder concurrentConsumers(
-                String concurrentConsumers) {
-            doSetProperty("concurrentConsumers", concurrentConsumers);
-            return this;
-        }
-        /**
          * Logger ID to use when a match to the parent route required.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -120,41 +53,6 @@ public interface GooglePubsubEndpointBuilderFactory {
          */
         default GooglePubsubEndpointConsumerBuilder loggerId(String loggerId) {
             doSetProperty("loggerId", loggerId);
-            return this;
-        }
-        /**
-         * The max number of messages to receive from the server in a single API
-         * call.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Default: 1
-         * Group: common
-         * 
-         * @param maxMessagesPerPoll the value to set
-         * @return the dsl builder
-         */
-        default GooglePubsubEndpointConsumerBuilder maxMessagesPerPoll(
-                Integer maxMessagesPerPoll) {
-            doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
-            return this;
-        }
-        /**
-         * The max number of messages to receive from the server in a single API
-         * call.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Default: 1
-         * Group: common
-         * 
-         * @param maxMessagesPerPoll the value to set
-         * @return the dsl builder
-         */
-        default GooglePubsubEndpointConsumerBuilder maxMessagesPerPoll(
-                String maxMessagesPerPoll) {
-            doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
             return this;
         }
         /**
@@ -177,36 +75,37 @@ public interface GooglePubsubEndpointBuilderFactory {
             return this;
         }
         /**
-         * Synchronously pull batches of messages.
+         * AUTO = exchange gets ack'ed/nack'ed on completion. NONE = downstream
+         * process has to ack/nack explicitly.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.google.pubsub.GooglePubsubConstants$AckMode&lt;/code&gt; type.
          * 
-         * Default: false
-         * Group: common
+         * Default: AUTO
+         * Group: consumer
          * 
-         * @param synchronousPull the value to set
+         * @param ackMode the value to set
          * @return the dsl builder
          */
-        default GooglePubsubEndpointConsumerBuilder synchronousPull(
-                boolean synchronousPull) {
-            doSetProperty("synchronousPull", synchronousPull);
+        default GooglePubsubEndpointConsumerBuilder ackMode(AckMode ackMode) {
+            doSetProperty("ackMode", ackMode);
             return this;
         }
         /**
-         * Synchronously pull batches of messages.
+         * AUTO = exchange gets ack'ed/nack'ed on completion. NONE = downstream
+         * process has to ack/nack explicitly.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.google.pubsub.GooglePubsubConstants$AckMode&lt;/code&gt; type.
          * 
-         * Default: false
-         * Group: common
+         * Default: AUTO
+         * Group: consumer
          * 
-         * @param synchronousPull the value to set
+         * @param ackMode the value to set
          * @return the dsl builder
          */
-        default GooglePubsubEndpointConsumerBuilder synchronousPull(
-                String synchronousPull) {
-            doSetProperty("synchronousPull", synchronousPull);
+        default GooglePubsubEndpointConsumerBuilder ackMode(String ackMode) {
+            doSetProperty("ackMode", ackMode);
             return this;
         }
         /**
@@ -252,6 +151,107 @@ public interface GooglePubsubEndpointBuilderFactory {
         default GooglePubsubEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * The number of parallel streams consuming from the subscription.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 1
+         * Group: consumer
+         * 
+         * @param concurrentConsumers the value to set
+         * @return the dsl builder
+         */
+        default GooglePubsubEndpointConsumerBuilder concurrentConsumers(
+                Integer concurrentConsumers) {
+            doSetProperty("concurrentConsumers", concurrentConsumers);
+            return this;
+        }
+        /**
+         * The number of parallel streams consuming from the subscription.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 1
+         * Group: consumer
+         * 
+         * @param concurrentConsumers the value to set
+         * @return the dsl builder
+         */
+        default GooglePubsubEndpointConsumerBuilder concurrentConsumers(
+                String concurrentConsumers) {
+            doSetProperty("concurrentConsumers", concurrentConsumers);
+            return this;
+        }
+        /**
+         * The max number of messages to receive from the server in a single API
+         * call.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 1
+         * Group: consumer
+         * 
+         * @param maxMessagesPerPoll the value to set
+         * @return the dsl builder
+         */
+        default GooglePubsubEndpointConsumerBuilder maxMessagesPerPoll(
+                Integer maxMessagesPerPoll) {
+            doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
+            return this;
+        }
+        /**
+         * The max number of messages to receive from the server in a single API
+         * call.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 1
+         * Group: consumer
+         * 
+         * @param maxMessagesPerPoll the value to set
+         * @return the dsl builder
+         */
+        default GooglePubsubEndpointConsumerBuilder maxMessagesPerPoll(
+                String maxMessagesPerPoll) {
+            doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
+            return this;
+        }
+        /**
+         * Synchronously pull batches of messages.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param synchronousPull the value to set
+         * @return the dsl builder
+         */
+        default GooglePubsubEndpointConsumerBuilder synchronousPull(
+                boolean synchronousPull) {
+            doSetProperty("synchronousPull", synchronousPull);
+            return this;
+        }
+        /**
+         * Synchronously pull batches of messages.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param synchronousPull the value to set
+         * @return the dsl builder
+         */
+        default GooglePubsubEndpointConsumerBuilder synchronousPull(
+                String synchronousPull) {
+            doSetProperty("synchronousPull", synchronousPull);
             return this;
         }
     }
@@ -347,73 +347,6 @@ public interface GooglePubsubEndpointBuilderFactory {
             return (AdvancedGooglePubsubEndpointProducerBuilder) this;
         }
         /**
-         * AUTO = exchange gets ack'ed/nack'ed on completion. NONE = downstream
-         * process has to ack/nack explicitly.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.google.pubsub.GooglePubsubConstants$AckMode&lt;/code&gt; type.
-         * 
-         * Default: AUTO
-         * Group: common
-         * 
-         * @param ackMode the value to set
-         * @return the dsl builder
-         */
-        default GooglePubsubEndpointProducerBuilder ackMode(AckMode ackMode) {
-            doSetProperty("ackMode", ackMode);
-            return this;
-        }
-        /**
-         * AUTO = exchange gets ack'ed/nack'ed on completion. NONE = downstream
-         * process has to ack/nack explicitly.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.google.pubsub.GooglePubsubConstants$AckMode&lt;/code&gt; type.
-         * 
-         * Default: AUTO
-         * Group: common
-         * 
-         * @param ackMode the value to set
-         * @return the dsl builder
-         */
-        default GooglePubsubEndpointProducerBuilder ackMode(String ackMode) {
-            doSetProperty("ackMode", ackMode);
-            return this;
-        }
-        /**
-         * The number of parallel streams consuming from the subscription.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Default: 1
-         * Group: common
-         * 
-         * @param concurrentConsumers the value to set
-         * @return the dsl builder
-         */
-        default GooglePubsubEndpointProducerBuilder concurrentConsumers(
-                Integer concurrentConsumers) {
-            doSetProperty("concurrentConsumers", concurrentConsumers);
-            return this;
-        }
-        /**
-         * The number of parallel streams consuming from the subscription.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Default: 1
-         * Group: common
-         * 
-         * @param concurrentConsumers the value to set
-         * @return the dsl builder
-         */
-        default GooglePubsubEndpointProducerBuilder concurrentConsumers(
-                String concurrentConsumers) {
-            doSetProperty("concurrentConsumers", concurrentConsumers);
-            return this;
-        }
-        /**
          * Logger ID to use when a match to the parent route required.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -425,41 +358,6 @@ public interface GooglePubsubEndpointBuilderFactory {
          */
         default GooglePubsubEndpointProducerBuilder loggerId(String loggerId) {
             doSetProperty("loggerId", loggerId);
-            return this;
-        }
-        /**
-         * The max number of messages to receive from the server in a single API
-         * call.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Default: 1
-         * Group: common
-         * 
-         * @param maxMessagesPerPoll the value to set
-         * @return the dsl builder
-         */
-        default GooglePubsubEndpointProducerBuilder maxMessagesPerPoll(
-                Integer maxMessagesPerPoll) {
-            doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
-            return this;
-        }
-        /**
-         * The max number of messages to receive from the server in a single API
-         * call.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Default: 1
-         * Group: common
-         * 
-         * @param maxMessagesPerPoll the value to set
-         * @return the dsl builder
-         */
-        default GooglePubsubEndpointProducerBuilder maxMessagesPerPoll(
-                String maxMessagesPerPoll) {
-            doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
             return this;
         }
         /**
@@ -479,39 +377,6 @@ public interface GooglePubsubEndpointBuilderFactory {
         default GooglePubsubEndpointProducerBuilder serviceAccountKey(
                 String serviceAccountKey) {
             doSetProperty("serviceAccountKey", serviceAccountKey);
-            return this;
-        }
-        /**
-         * Synchronously pull batches of messages.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param synchronousPull the value to set
-         * @return the dsl builder
-         */
-        default GooglePubsubEndpointProducerBuilder synchronousPull(
-                boolean synchronousPull) {
-            doSetProperty("synchronousPull", synchronousPull);
-            return this;
-        }
-        /**
-         * Synchronously pull batches of messages.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param synchronousPull the value to set
-         * @return the dsl builder
-         */
-        default GooglePubsubEndpointProducerBuilder synchronousPull(
-                String synchronousPull) {
-            doSetProperty("synchronousPull", synchronousPull);
             return this;
         }
         /**
@@ -671,73 +536,6 @@ public interface GooglePubsubEndpointBuilderFactory {
             return (AdvancedGooglePubsubEndpointBuilder) this;
         }
         /**
-         * AUTO = exchange gets ack'ed/nack'ed on completion. NONE = downstream
-         * process has to ack/nack explicitly.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.google.pubsub.GooglePubsubConstants$AckMode&lt;/code&gt; type.
-         * 
-         * Default: AUTO
-         * Group: common
-         * 
-         * @param ackMode the value to set
-         * @return the dsl builder
-         */
-        default GooglePubsubEndpointBuilder ackMode(AckMode ackMode) {
-            doSetProperty("ackMode", ackMode);
-            return this;
-        }
-        /**
-         * AUTO = exchange gets ack'ed/nack'ed on completion. NONE = downstream
-         * process has to ack/nack explicitly.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.google.pubsub.GooglePubsubConstants$AckMode&lt;/code&gt; type.
-         * 
-         * Default: AUTO
-         * Group: common
-         * 
-         * @param ackMode the value to set
-         * @return the dsl builder
-         */
-        default GooglePubsubEndpointBuilder ackMode(String ackMode) {
-            doSetProperty("ackMode", ackMode);
-            return this;
-        }
-        /**
-         * The number of parallel streams consuming from the subscription.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Default: 1
-         * Group: common
-         * 
-         * @param concurrentConsumers the value to set
-         * @return the dsl builder
-         */
-        default GooglePubsubEndpointBuilder concurrentConsumers(
-                Integer concurrentConsumers) {
-            doSetProperty("concurrentConsumers", concurrentConsumers);
-            return this;
-        }
-        /**
-         * The number of parallel streams consuming from the subscription.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Default: 1
-         * Group: common
-         * 
-         * @param concurrentConsumers the value to set
-         * @return the dsl builder
-         */
-        default GooglePubsubEndpointBuilder concurrentConsumers(
-                String concurrentConsumers) {
-            doSetProperty("concurrentConsumers", concurrentConsumers);
-            return this;
-        }
-        /**
          * Logger ID to use when a match to the parent route required.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -749,41 +547,6 @@ public interface GooglePubsubEndpointBuilderFactory {
          */
         default GooglePubsubEndpointBuilder loggerId(String loggerId) {
             doSetProperty("loggerId", loggerId);
-            return this;
-        }
-        /**
-         * The max number of messages to receive from the server in a single API
-         * call.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Default: 1
-         * Group: common
-         * 
-         * @param maxMessagesPerPoll the value to set
-         * @return the dsl builder
-         */
-        default GooglePubsubEndpointBuilder maxMessagesPerPoll(
-                Integer maxMessagesPerPoll) {
-            doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
-            return this;
-        }
-        /**
-         * The max number of messages to receive from the server in a single API
-         * call.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Default: 1
-         * Group: common
-         * 
-         * @param maxMessagesPerPoll the value to set
-         * @return the dsl builder
-         */
-        default GooglePubsubEndpointBuilder maxMessagesPerPoll(
-                String maxMessagesPerPoll) {
-            doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
             return this;
         }
         /**
@@ -803,39 +566,6 @@ public interface GooglePubsubEndpointBuilderFactory {
         default GooglePubsubEndpointBuilder serviceAccountKey(
                 String serviceAccountKey) {
             doSetProperty("serviceAccountKey", serviceAccountKey);
-            return this;
-        }
-        /**
-         * Synchronously pull batches of messages.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param synchronousPull the value to set
-         * @return the dsl builder
-         */
-        default GooglePubsubEndpointBuilder synchronousPull(
-                boolean synchronousPull) {
-            doSetProperty("synchronousPull", synchronousPull);
-            return this;
-        }
-        /**
-         * Synchronously pull batches of messages.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param synchronousPull the value to set
-         * @return the dsl builder
-         */
-        default GooglePubsubEndpointBuilder synchronousPull(
-                String synchronousPull) {
-            doSetProperty("synchronousPull", synchronousPull);
             return this;
         }
     }

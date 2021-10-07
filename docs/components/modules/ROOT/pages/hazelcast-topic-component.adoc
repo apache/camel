@@ -3,6 +3,7 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-hazelcast/src/main/docs/hazelcast-topic-component.adoc
 :docTitle: Hazelcast Topic
+:shortname: hazelcast-topic
 :artifactId: camel-hazelcast
 :description: Send and receive messages to/from Hazelcast distributed topic.
 :since: 2.15
@@ -11,6 +12,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/hazelcast-topic.adoc[opts=optional]
 //Manually maintained attributes
 :group: Hazelcast
+:camel-spring-boot-name: hazelcast
 
 *Since Camel {since}*
 
@@ -105,4 +107,5 @@ fromF("hazelcast-%sfoo", HazelcastConstants.TOPIC_PREFIX)
       .log("...this should never have happened")
 --------------------------------------------------------------------------------------------
 
-include::spring-boot:partial$hazelcast-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

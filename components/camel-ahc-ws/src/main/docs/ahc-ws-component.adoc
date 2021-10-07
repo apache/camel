@@ -1,12 +1,15 @@
 [[ahc-ws-component]]
 = Async HTTP Client (AHC) Websocket Component
 :docTitle: Async HTTP Client (AHC) Websocket
+:shortname: ahc-ws
 :artifactId: camel-ahc-ws
 :description: Exchange data with external Websocket servers using Async Http Client.
 :since: 2.14
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/ahc-ws.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: ahc-ws
 
 *Since Camel {since}*
 
@@ -176,4 +179,5 @@ And the equivalent Spring sample:
  
 
 
-include::spring-boot:partial$ahc-ws-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

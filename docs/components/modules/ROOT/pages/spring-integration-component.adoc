@@ -3,6 +3,7 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-spring-integration/src/main/docs/spring-integration-component.adoc
 :docTitle: Spring Integration
+:shortname: spring-integration
 :artifactId: camel-spring-integration
 :description: Bridge Camel with Spring Integration.
 :since: 1.4
@@ -11,6 +12,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/spring-integration.adoc[opts=optional]
 //Manually maintained attributes
 :group: Spring
+:camel-spring-boot-name: spring-integration
 
 *Since Camel {since}*
 
@@ -133,4 +135,5 @@ This example uses the following namespaces:
 You can bind your source or target to a Camel endpoint as follows:
 
 
-include::spring-boot:partial$spring-integration-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

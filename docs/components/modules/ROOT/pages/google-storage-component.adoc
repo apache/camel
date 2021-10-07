@@ -3,6 +3,7 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-google/camel-google-storage/src/main/docs/google-storage-component.adoc
 :docTitle: Google Storage
+:shortname: google-storage
 :artifactId: camel-google-storage
 :description: Store and retrieve objects from Google Cloud Storage Service using the google-cloud-storage library.
 :since: 3.9
@@ -11,6 +12,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/google-storage.adoc[opts=optional]
 //Manually maintained attributes
 :group: Google
+:camel-spring-boot-name: google-storage
 
 *Since Camel {since}*
 
@@ -398,4 +400,5 @@ This will require specifying the destinationBucket option. As example:
 
 In this case the objects consumed will be moved to myCamelProcessedBucket bucket and deleted from the original one (because of deleteAfterRead).
 
-include::spring-boot:partial$google-storage-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

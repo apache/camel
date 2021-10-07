@@ -3,11 +3,14 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-bean/src/main/docs/bean-language.adoc
 :docTitle: Bean method
+:shortname: bean
 :artifactId: camel-bean
 :description: Call a method of the specified Java bean passing the Exchange, Body or specific headers to it.
 :since: 1.3
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/bean.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: bean
 
 *Since Camel {since}*
 
@@ -189,4 +192,5 @@ expression being used in a filter
 is a Spring XML test case for the xref:eips:aggregate-eip.adoc[Aggregator] which
 uses a bean method call to test for the completion of the aggregation.
 
-include::spring-boot:partial$bean-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

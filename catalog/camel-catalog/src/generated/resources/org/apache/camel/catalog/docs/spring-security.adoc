@@ -1,6 +1,7 @@
 [[spring-security-other]]
 = Spring Security Component
 :docTitle: Spring Security
+:shortname: spring-security
 :artifactId: camel-spring-security
 :description: Security using Spring Security
 :since: 2.3
@@ -8,6 +9,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/spring-security.adoc[opts=optional]
 //Manually maintained attributes
 :group: Spring
+:camel-spring-boot-name: spring-security
 
 *Since Camel {since}*
 
@@ -245,3 +247,5 @@ policy as well as the type of exception:
   </choice>
 </onException>
 ----
+
+include::spring-boot:partial$starter.adoc[]

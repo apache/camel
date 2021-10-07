@@ -1,12 +1,15 @@
 [[splunk-hec-component]]
 = Splunk HEC Component
 :docTitle: Splunk HEC
+:shortname: splunk-hec
 :artifactId: camel-splunk-hec
 :description: The splunk component allows to publish events in Splunk using the HTTP Event Collector.
 :since: 3.3
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/splunk-hec.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: splunk
 
 *Since Camel {since}*
 
@@ -140,4 +143,5 @@ from("kafka:logs")
 -------------------------------
 
 
-include::spring-boot:partial$splunk-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -1,11 +1,14 @@
 [[univocity-fixed-dataformat]]
 = uniVocity Fixed Length DataFormat
 :docTitle: uniVocity Fixed Length
+:shortname: univocity-fixed
 :artifactId: camel-univocity-parsers
 :description: Marshal and unmarshal Java objects from and to fixed length records using UniVocity Parsers.
 :since: 2.15
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/univocity-fixed.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: univocity-parsers
 
 *Since Camel {since}*
 
@@ -173,4 +176,5 @@ All the rows can either:
 </route>
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-include::spring-boot:partial$univocity-parsers-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

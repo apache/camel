@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-printer/src/main/docs/lpr-component.adoc
 :docTitle: Printer
+:shortname: lpr
 :artifactId: camel-printer
 :description: Send print jobs to printers.
 :since: 2.1
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/lpr.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: printer
 
 *Since Camel {since}*
 
@@ -167,4 +170,5 @@ RouteBuilder builder = new RouteBuilder() {
     }};
 --------------------------------------------------
 
-include::spring-boot:partial$printer-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

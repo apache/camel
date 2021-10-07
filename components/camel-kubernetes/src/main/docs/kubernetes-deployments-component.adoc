@@ -1,6 +1,7 @@
 [[kubernetes-deployments-component]]
 = Kubernetes Deployments Component
 :docTitle: Kubernetes Deployments
+:shortname: kubernetes-deployments
 :artifactId: camel-kubernetes
 :description: Perform operations on Kubernetes Deployments and get notified on Deployment changes.
 :since: 2.20
@@ -9,6 +10,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/kubernetes-deployments.adoc[opts=optional]
 //Manually maintained attributes
 :group: Kubernetes
+:camel-spring-boot-name: kubernetes
 
 *Since Camel {since}*
 
@@ -160,4 +162,5 @@ fromF("kubernetes-deployments://%s?oauthToken=%s&namespace=default&resourceName=
 This consumer will return a list of events on the namespace default for the deployment test.
 
 
-include::spring-boot:partial$kubernetes-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

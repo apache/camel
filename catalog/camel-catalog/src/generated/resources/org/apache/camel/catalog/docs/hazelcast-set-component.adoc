@@ -1,6 +1,7 @@
 [[hazelcast-set-component]]
 = Hazelcast Set Component
 :docTitle: Hazelcast Set
+:shortname: hazelcast-set
 :artifactId: camel-hazelcast
 :description: Perform operations on Hazelcast distributed set.
 :since: 2.7
@@ -9,6 +10,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/hazelcast-set.adoc[opts=optional]
 //Manually maintained attributes
 :group: Hazelcast
+:camel-spring-boot-name: hazelcast
 
 *Since Camel {since}*
 
@@ -70,4 +72,5 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-include::spring-boot:partial$hazelcast-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

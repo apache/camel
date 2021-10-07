@@ -1,12 +1,15 @@
 [[rss-component]]
 = RSS Component
 :docTitle: RSS
+:shortname: rss
 :artifactId: camel-rss
 :description: Poll RSS feeds.
 :since: 2.0
 :supportLevel: Stable
 :component-header: Only consumer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/rss.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: rss
 
 *Since Camel {since}*
 
@@ -210,4 +213,5 @@ public static class FilterBean {
 ----
 
 
-include::spring-boot:partial$rss-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -3,6 +3,7 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-kubernetes/src/main/docs/kubernetes-hpa-component.adoc
 :docTitle: Kubernetes HPA
+:shortname: kubernetes-hpa
 :artifactId: camel-kubernetes
 :description: Perform operations on Kubernetes Horizontal Pod Autoscalers (HPA) and get notified on HPA changes.
 :since: 2.23
@@ -11,6 +12,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/kubernetes-hpa.adoc[opts=optional]
 //Manually maintained attributes
 :group: Kubernetes
+:camel-spring-boot-name: kubernetes
 
 *Since Camel {since}*
 
@@ -161,4 +163,5 @@ fromF("kubernetes-hpa://%s?oauthToken=%s&namespace=default&resourceName=test", h
 This consumer will return a list of events on the namespace default for the hpa test.
 
 
-include::spring-boot:partial$kubernetes-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

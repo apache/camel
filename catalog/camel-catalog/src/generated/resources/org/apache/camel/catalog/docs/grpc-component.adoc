@@ -1,12 +1,15 @@
 [[grpc-component]]
 = gRPC Component
 :docTitle: gRPC
+:shortname: grpc
 :artifactId: camel-grpc
 :description: Expose gRPC endpoints and access external gRPC endpoints.
 :since: 2.19
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/grpc.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: grpc
 
 *Since Camel {since}*
 
@@ -297,4 +300,5 @@ http://www.grpc.io/[gRPC project site]
 https://www.xolstice.org/protobuf-maven-plugin[Maven Protocol Buffers Plugin]
 
 
-include::spring-boot:partial$grpc-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

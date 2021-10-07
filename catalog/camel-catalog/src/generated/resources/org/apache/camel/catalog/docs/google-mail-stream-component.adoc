@@ -1,6 +1,7 @@
 [[google-mail-stream-component]]
 = Google Mail Stream Component
 :docTitle: Google Mail Stream
+:shortname: google-mail-stream
 :artifactId: camel-google-mail
 :description: Poll for incoming messages in Google Mail.
 :since: 2.22
@@ -9,6 +10,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/google-mail-stream.adoc[opts=optional]
 //Manually maintained attributes
 :group: Google
+:camel-spring-boot-name: google-mail
 
 *Since Camel {since}*
 
@@ -665,4 +667,5 @@ The `inBody` parameter overrides message header, i.e. the endpoint parameter `in
 would override a `CamelGoogleMailStream.myParameterNameHere` header.
 // endpoint options: END
 
-include::spring-boot:partial$google-mail-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

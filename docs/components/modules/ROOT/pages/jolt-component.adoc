@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-jolt/src/main/docs/jolt-component.adoc
 :docTitle: JOLT
+:shortname: jolt
 :artifactId: camel-jolt
 :description: JSON to JSON transformation using JOLT.
 :since: 2.16
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/jolt.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: jolt
 
 *Since Camel {since}*
 
@@ -142,4 +145,5 @@ from("direct:in").
  
 
 
-include::spring-boot:partial$jolt-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

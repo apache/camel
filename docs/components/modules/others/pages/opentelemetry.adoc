@@ -3,11 +3,14 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-opentelemetry/src/main/docs/opentelemetry.adoc
 :docTitle: OpenTelemetry
+:shortname: opentelemetry
 :artifactId: camel-opentelemetry
 :description: Distributed tracing using OpenTelemetry
 :since: 3.5
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/opentelemetry.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: opentelemetry
 
 *Since Camel {since}*
 
@@ -52,4 +55,5 @@ otelTracer.setTracer(...);
 otelTracer.init(camelContext);
 --------------------------------------------------------------------------------------------------
 
-include::spring-boot:partial$opentelemetry-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

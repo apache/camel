@@ -1,12 +1,15 @@
 [[bean-validator-component]]
 = Bean Validator Component
 :docTitle: Bean Validator
+:shortname: bean-validator
 :artifactId: camel-bean-validator
 :description: Validate the message body using the Java Bean Validation API.
 :since: 2.3
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/bean-validator.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: bean-validator
 
 *Since Camel {since}*
 
@@ -302,6 +305,4 @@ Note that the body should include an instance of a class to validate.
 ----------------------------------------------------------------------------------------------------
 
 
-
-
-include::spring-boot:partial$bean-validator-starter.adoc[]
+include::spring-boot:partial$starter.adoc[]

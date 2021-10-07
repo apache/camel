@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-milo/src/main/docs/milo-server-component.adoc
 :docTitle: OPC UA Server
+:shortname: milo-server
 :artifactId: camel-milo
 :description: Make telemetry data available as an OPC UA server.
 :since: 2.19
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/milo-server.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: milo
 
 *Since Camel {since}*
 
@@ -120,4 +123,5 @@ with the following path and query parameters:
 
 
 
-include::spring-boot:partial$milo-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

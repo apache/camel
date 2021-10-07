@@ -1,12 +1,15 @@
 [[graphql-component]]
 = GraphQL Component
 :docTitle: GraphQL
+:shortname: graphql
 :artifactId: camel-graphql
 :description: Send GraphQL queries and mutations to external systems.
 :since: 3.0
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/graphql.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: graphql
 
 *Since Camel {since}*
 
@@ -169,4 +172,5 @@ from("direct:start")
     .to("graphql://http://example.com/graphql?graphql?queryFile=addBookMutation.graphql&variables=#addBookMutationVariables")
 ----
 
-include::spring-boot:partial$graphql-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

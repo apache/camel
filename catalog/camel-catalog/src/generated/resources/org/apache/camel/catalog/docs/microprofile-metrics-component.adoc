@@ -1,6 +1,7 @@
 [[microprofile-metrics-component]]
 = MicroProfile Metrics Component
 :docTitle: MicroProfile Metrics
+:shortname: microprofile-metrics
 :artifactId: camel-microprofile-metrics
 :description: Expose metrics from Camel routes.
 :since: 3.0

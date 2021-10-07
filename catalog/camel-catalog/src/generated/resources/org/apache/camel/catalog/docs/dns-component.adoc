@@ -1,12 +1,15 @@
 [[dns-component]]
 = DNS Component
 :docTitle: DNS
+:shortname: dns
 :artifactId: camel-dns
 :description: Perform DNS queries using DNSJava.
 :since: 2.7
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/dns.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: dns
 
 *Since Camel {since}*
 
@@ -194,4 +197,5 @@ i.e. You may have an instance in NYC and an instance in SFO. You would configure
 	</route>
 ----
 
-include::spring-boot:partial$dns-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

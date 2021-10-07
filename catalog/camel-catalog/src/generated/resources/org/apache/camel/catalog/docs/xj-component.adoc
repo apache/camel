@@ -1,12 +1,15 @@
 [[xj-component]]
 = XJ Component
 :docTitle: XJ
+:shortname: xj
 :artifactId: camel-xj
 :description: Transform JSON and XML message using a XSLT.
 :since: 3.0
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/xj.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: xj
 
 *Since Camel {since}*
 
@@ -494,4 +497,5 @@ that aren't allowed in XML element names.
 | null | Generate an empty value, using the word null
 |===
 
-include::spring-boot:partial$xj-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

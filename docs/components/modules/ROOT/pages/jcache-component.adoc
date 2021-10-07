@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-jcache/src/main/docs/jcache-component.adoc
 :docTitle: JCache
+:shortname: jcache
 :artifactId: camel-jcache
 :description: Perform caching operations against JSR107/JCache.
 :since: 2.17
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/jcache.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: jcache
 
 *Since Camel {since}*
 
@@ -336,4 +339,5 @@ In case of an exception during the route, the error handled is called as always.
  the policy stores the Exchange body, otherwise nothing is added to the cache.
  If an exception happens during evaluating the keyExpression, the routing fails, the error handler is called as normally.
 
-include::spring-boot:partial$jcache-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

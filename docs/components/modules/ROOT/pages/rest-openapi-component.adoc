@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-rest-openapi/src/main/docs/rest-openapi-component.adoc
 :docTitle: REST OpenApi
+:shortname: rest-openapi
 :artifactId: camel-rest-openapi
 :description: Configure REST producers based on an OpenAPI specification document delegating to a component implementing the RestProducerFactory interface.
 :since: 3.1
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/rest-openapi.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: rest-openapi
 
 
 *Since Camel {since}*
@@ -221,4 +224,5 @@ String getPetJsonById(int petId) {
 }
 ----
 
-include::spring-boot:partial$rest-openapi-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

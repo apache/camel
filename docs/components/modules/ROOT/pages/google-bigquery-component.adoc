@@ -3,6 +3,7 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-google/camel-google-bigquery/src/main/docs/google-bigquery-component.adoc
 :docTitle: Google BigQuery
+:shortname: google-bigquery
 :artifactId: camel-google-bigquery
 :description: Google BigQuery data warehouse for analytics.
 :since: 2.20
@@ -11,6 +12,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/google-bigquery.adoc[opts=optional]
 //Manually maintained attributes
 :group: Google
+:camel-spring-boot-name: google-bigquery
 
 *Since Camel {since}*
 
@@ -169,4 +171,5 @@ query parameter `useAsInsertId`. As an insert id need to be specified per row in
 be used when the payload is a list - if the payload is a list the `GoogleBigQueryConstants.INSERT_ID` will
 be ignored. In that case use the query parameter `useAsInsertId`.
 
-include::spring-boot:partial$google-bigquery-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

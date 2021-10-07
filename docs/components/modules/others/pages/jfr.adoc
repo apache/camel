@@ -3,11 +3,14 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-jfr/src/main/docs/jfr.adoc
 :docTitle: Jfr
+:shortname: jfr
 :artifactId: camel-jfr
 :description: Diagnose Camel applications with Java Flight Recorder
 :since: 3.8
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/jfr.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: jfr
 
 *Since Camel {since}*
 
@@ -33,4 +36,4 @@ JFR recordings can be started either at:
 
 See the `camel-example-flight-recorder` from the Camel Examples.
 
-include::spring-boot:partial$jfr-starter.adoc[]
+include::spring-boot:partial$starter.adoc[]

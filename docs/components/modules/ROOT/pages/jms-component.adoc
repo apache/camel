@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-jms/src/main/docs/jms-component.adoc
 :docTitle: JMS
+:shortname: jms
 :artifactId: camel-jms
 :description: Sent and receive messages to/from a JMS Queue or Topic.
 :since: 1.0
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/jms.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: jms
 
 *Since Camel {since}*
 
@@ -1360,4 +1363,5 @@ wmq.setDestinationResolver(new DestinationResolver() {
 ----------------------------------------------------------------------------------------------------------------------------------
 
 
-include::spring-boot:partial$jms-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

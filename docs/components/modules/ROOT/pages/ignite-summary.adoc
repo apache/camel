@@ -4,6 +4,8 @@
 //attributes written by hand, not generated
 :docTitle: Ignite
 :since: 2.17
+:shortname: ignite
+:artifactid: camel-ignite
 
 *Since Camel {since}*
 
@@ -109,4 +111,6 @@ When installing on Apache Karaf:
 Please refer to the OSGi section in the Ignite documentation for more information.
 
 
-include::spring-boot:partial$ignite-starter.adoc[]
+:camel-spring-boot-name: ignite
+
+include::spring-boot:partial$starter.adoc[]

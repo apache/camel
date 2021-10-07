@@ -3,11 +3,14 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-jackson-protobuf/src/main/docs/protobuf-jackson-dataformat.adoc
 :docTitle: Protobuf Jackson
+:shortname: protobuf-jackson
 :artifactId: camel-jackson-protobuf
 :description: Marshal POJOs to Protobuf and back using Jackson.
 :since: 3.10
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/protobuf-jackson.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: jackson-protobuf
 
 *Since Camel {since}*
 
@@ -94,3 +97,5 @@ the download page for the latest versions).
   <!-- use the same version as your Camel core version -->
 </dependency>
 ----------------------------------------------------------
+
+include::spring-boot:partial$starter.adoc[]

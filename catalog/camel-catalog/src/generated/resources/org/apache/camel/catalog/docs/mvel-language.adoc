@@ -1,11 +1,14 @@
 [[mvel-language]]
 = MVEL Language
 :docTitle: MVEL
+:shortname: mvel
 :artifactId: camel-mvel
 :description: Evaluate an MVEL template against the Camel Exchange.
 :since: 2.0
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/mvel.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: mvel
 
 *Since Camel {since}*
 
@@ -126,4 +129,5 @@ the download page for the latest versions).
 </dependency>
 -------------------------------------
 
-include::spring-boot:partial$mvel-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

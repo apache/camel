@@ -1,12 +1,15 @@
 [[jgroups-raft-component]]
 = JGroups raft Component
 :docTitle: JGroups raft
+:shortname: jgroups-raft
 :artifactId: camel-jgroups-raft
 :description: Exchange messages with JGroups-raft clusters.
 :since: 2.24
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/jgroups-raft.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: jgroups-raft
 
 *Since Camel {since}*
 
@@ -183,4 +186,5 @@ context.addService(service);
 from("master:mycluster:jetty:http://localhost:8080/orders").to("jms:orders"); 
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-include::spring-boot:partial$jgroups-raft-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-zookeeper/src/main/docs/zookeeper-component.adoc
 :docTitle: ZooKeeper
+:shortname: zookeeper
 :artifactId: camel-zookeeper
 :description: Manage ZooKeeper clusters.
 :since: 2.9
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/zookeeper.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: zookeeper
 
 *Since Camel {since}*
 
@@ -238,4 +241,5 @@ template.sendBodyAndHeader("direct:create-and-write-to-persistent-znode", testPa
 ----
 
 
-include::spring-boot:partial$zookeeper-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

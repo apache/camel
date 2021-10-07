@@ -3,6 +3,7 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-azure/camel-azure-eventhubs/src/main/docs/azure-eventhubs-component.adoc
 :docTitle: Azure Event Hubs
+:shortname: azure-eventhubs
 :artifactId: camel-azure-eventhubs
 :description: The azure-eventhubs component that integrates Azure Event Hubs using AMQP protocol. Azure EventHubs is a highly scalable publish-subscribe service that can ingest millions of events per second and stream them to multiple consumers.
 :since: 3.5
@@ -11,6 +12,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/azure-eventhubs.adoc[opts=optional]
 //Manually maintained attributes
 :group: Azure
+:camel-spring-boot-name: azure-eventhubs
 
 *Since Camel {since}*
 
@@ -251,4 +253,5 @@ mvn verify -PfullTests -DconnectionString=string -DblobAccountName=blob -DblobAc
 Whereby `blobAccountName` is your Azure account name and `blobAccessKey` is the access key being generated from Azure portal and `connectionString` is the eventHub connection string.
 
 
-include::spring-boot:partial$azure-eventhubs-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

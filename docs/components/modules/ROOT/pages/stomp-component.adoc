@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-stomp/src/main/docs/stomp-component.adoc
 :docTitle: Stomp
+:shortname: stomp
 :artifactId: camel-stomp
 :description: Send and rececive messages to/from STOMP (Simple Text Oriented Messaging Protocol) compliant message brokers.
 :since: 2.12
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/stomp.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: stomp
 
 *Since Camel {since}*
 
@@ -168,4 +171,5 @@ consuming message exchanges from the endpoint via a
 https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/PollingConsumer.html[PollingConsumer]
 
 
-include::spring-boot:partial$stomp-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

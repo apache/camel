@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-saxon/src/main/docs/xquery-component.adoc
 :docTitle: XQuery
+:shortname: xquery
 :artifactId: camel-saxon
 :description: Query and/or transform XML payloads using XQuery and Saxon.
 :since: 1.0
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/xquery.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: saxon
 
 *Since Camel {since}*
 
@@ -297,4 +300,5 @@ substituting the version number for the latest & greatest release.
 </dependency>
 --------------------------------------
 
-include::spring-boot:partial$saxon-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

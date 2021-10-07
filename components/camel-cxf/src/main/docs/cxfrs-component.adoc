@@ -1,12 +1,15 @@
 [[cxfrs-component]]
 = CXF-RS Component
 :docTitle: CXF-RS
+:shortname: cxfrs
 :artifactId: camel-cxf
 :description: Expose JAX-RS REST services using Apache CXF or connect to external REST services using CXF REST client.
 :since: 2.0
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/cxfrs.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: cxf
 
 *Since Camel {since}*
 
@@ -484,4 +487,5 @@ queryMap.put("q2", "world");
 inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_QUERY_MAP, queryMap);
 ----
 
-include::spring-boot:partial$cxf-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

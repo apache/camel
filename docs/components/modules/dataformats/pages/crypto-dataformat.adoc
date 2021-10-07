@@ -3,11 +3,14 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-crypto/src/main/docs/crypto-dataformat.adoc
 :docTitle: Crypto (Java Cryptographic Extension)
+:shortname: crypto
 :artifactId: camel-crypto
 :description: Encrypt and decrypt messages using Java Cryptography Extension (JCE).
 :since: 2.3
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/crypto.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: crypto
 
 *Since Camel {since}*
 
@@ -283,4 +286,5 @@ need to add the following dependency to your pom.
 ----------------------------------------------------------
 
 
-include::spring-boot:partial$crypto-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

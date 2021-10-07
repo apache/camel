@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-stitch/src/main/docs/stitch-component.adoc
 :docTitle: Stitch
+:shortname: stitch
 :artifactId: camel-stitch
 :description: Stitch is a cloud ETL service that integrates various data sources into a central data warehouse through various integrations.
 :since: 3.8
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/stitch.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: stitch
 
 *Since Camel {since}*
 
@@ -311,4 +314,5 @@ mvn verify -PfullTests -Dtoken=stitchToken
 Whereby `token` is your Stitch token that is generated for Stitch Import API integration.
 
 
-include::spring-boot:partial$stitch-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

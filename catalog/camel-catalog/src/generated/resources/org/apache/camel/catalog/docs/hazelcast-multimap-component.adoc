@@ -1,6 +1,7 @@
 [[hazelcast-multimap-component]]
 = Hazelcast Multimap Component
 :docTitle: Hazelcast Multimap
+:shortname: hazelcast-multimap
 :artifactId: camel-hazelcast
 :description: Perform operations on Hazelcast distributed multimap.
 :since: 2.7
@@ -9,6 +10,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/hazelcast-multimap.adoc[opts=optional]
 //Manually maintained attributes
 :group: Hazelcast
+:camel-spring-boot-name: hazelcast
 
 *Since Camel {since}*
 
@@ -247,4 +249,5 @@ Header Variables inside the response message:
 |`CamelHazelcastCacheType` |`String` |the type of the cache - here multimap
 |=======================================================================
 
-include::spring-boot:partial$hazelcast-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

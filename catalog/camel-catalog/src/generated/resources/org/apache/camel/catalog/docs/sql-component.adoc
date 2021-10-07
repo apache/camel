@@ -1,12 +1,15 @@
 [[sql-component]]
 = SQL Component
 :docTitle: SQL
+:shortname: sql
 :artifactId: camel-sql
 :description: Perform SQL queries using Spring JDBC.
 :since: 1.4
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/sql.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: sql
 
 *Since Camel {since}*
 
@@ -890,4 +893,5 @@ To use this feature, add the following dependencies to your spring boot pom.xml 
 You should also include the specific database driver, if needed.
 
 
-include::spring-boot:partial$sql-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

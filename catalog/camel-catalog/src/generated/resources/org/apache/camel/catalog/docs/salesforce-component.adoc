@@ -1,12 +1,15 @@
 [[salesforce-component]]
 = Salesforce Component
 :docTitle: Salesforce
+:shortname: salesforce
 :artifactId: camel-salesforce
 :description: Communicate with Salesforce using Java DTOs.
 :since: 2.12
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/salesforce.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: salesforce
 
 *Since Camel {since}*
 
@@ -1012,4 +1015,4 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
-include::spring-boot:partial$salesforce-starter.adoc[]
+include::spring-boot:partial$starter.adoc[]

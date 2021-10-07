@@ -3,6 +3,7 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-microprofile/camel-microprofile-fault-tolerance/src/main/docs/microprofile-fault-tolerance.adoc
 :docTitle: Microprofile Fault Tolerance
+:shortname: microprofile-fault-tolerance
 :artifactId: camel-microprofile-fault-tolerance
 :description: Circuit Breaker EIP using MicroProfile Fault Tolerance
 :since: 3.3

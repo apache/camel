@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-jmx/src/main/docs/jmx-component.adoc
 :docTitle: JMX
+:shortname: jmx
 :artifactId: camel-jmx
 :description: Receive JMX notifications.
 :since: 2.6
 :supportLevel: Stable
 :component-header: Only consumer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/jmx.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: jmx
 
 *Since Camel {since}*
 
@@ -100,4 +103,5 @@ with the following path and query parameters:
 
 
 
-include::spring-boot:partial$jmx-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

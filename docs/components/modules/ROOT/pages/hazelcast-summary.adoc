@@ -4,6 +4,8 @@
 //attributes written by hand, not generated
 :docTitle: Hazelcast
 :since: 2.7
+:shortname: hazelcast
+:artifactid: camel-hazelcast
 
 *Since Camel {since}*
 
@@ -184,4 +186,6 @@ to reference the service in the hazelcast endpoint.
 </camelContext>
 --------------------------------------------------------------------------------------
 
-include::spring-boot:partial$hazelcast-starter.adoc[]
+:camel-spring-boot-name: hazelcast
+
+include::spring-boot:partial$starter.adoc[]

@@ -3,6 +3,7 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-google/camel-google-sheets/src/main/docs/google-sheets-stream-component.adoc
 :docTitle: Google Sheets Stream
+:shortname: google-sheets-stream
 :artifactId: camel-google-sheets
 :description: Poll for changes in Google Sheets.
 :since: 2.23
@@ -11,6 +12,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/google-sheets-stream.adoc[opts=optional]
 //Manually maintained attributes
 :group: Google
+:camel-spring-boot-name: google-sheets
 
 *Since Camel {since}*
 
@@ -333,4 +335,5 @@ For more information on the endpoints and options see API documentation
 at: https://developers.google.com/sheets/api/reference/rest/[https://developers.google.com/sheets/api/reference/rest/]
 
 
-include::spring-boot:partial$google-sheets-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

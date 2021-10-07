@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-sjms2/src/main/docs/sjms2-component.adoc
 :docTitle: Simple JMS2
+:shortname: sjms2
 :artifactId: camel-sjms2
 :description: Send and receive messages to/from a JMS Queue or Topic using plain JMS 2.x API.
 :since: 2.19
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/sjms2.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: sjms2
 
 *Since Camel {since}*
 
@@ -325,4 +328,5 @@ responses messages to the included `JMSReplyTo` destination also have the
 `JMSCorrelationId` copied from the request as well.
 
 
-include::spring-boot:partial$sjms2-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

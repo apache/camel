@@ -3,6 +3,7 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-language/src/main/docs/language-component.adoc
 :docTitle: Language
+:shortname: language
 :artifactId: camel-language
 :description: Execute scripts in any of the languages supported by Camel.
 :since: 2.5
@@ -10,6 +11,8 @@
 :component-header: Only producer is supported
 :core:
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/language.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: language
 
 *Since Camel {since}*
 
@@ -155,4 +158,5 @@ You can refer to the resource similar to the
 other xref:language-component.adoc[Language]s in Camel by prefixing with
 `"resource:"` as shown below:
 
-include::spring-boot:partial$language-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-jsch/src/main/docs/scp-component.adoc
 :docTitle: SCP
+:shortname: scp
 :artifactId: camel-jsch
 :description: Copy files to/from remote hosts using the secure copy protocol (SCP).
 :since: 2.10
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/scp.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: jsch
 
 *Since Camel {since}*
 
@@ -138,4 +141,5 @@ https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/P
 (i.e. copy files to another host). 
 
 
-include::spring-boot:partial$jsch-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

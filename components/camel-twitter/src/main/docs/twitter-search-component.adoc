@@ -1,12 +1,15 @@
 [[twitter-search-component]]
 = Twitter Search Component
 :docTitle: Twitter Search
+:shortname: twitter-search
 :artifactId: camel-twitter
 :description: Access Twitter Search.
 :since: 2.10
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/twitter-search.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: twitter
 
 *Since Camel {since}*
 
@@ -121,4 +124,5 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-include::spring-boot:partial$twitter-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

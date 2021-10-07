@@ -1,12 +1,15 @@
 [[github-component]]
 = GitHub Component
 :docTitle: GitHub
+:shortname: github
 :artifactId: camel-github
 :description: Interact with the GitHub API.
 :since: 2.15
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/github.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: github
 
 *Since Camel {since}*
 
@@ -76,7 +79,7 @@ github:type/branchName
 
 with the following path and query parameters:
 
-=== Path Parameters (3 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -84,11 +87,10 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *type* | *Required* What git operation to execute. There are 10 enums and the value can be one of: CLOSEPULLREQUEST, PULLREQUESTCOMMENT, COMMIT, PULLREQUEST, TAG, PULLREQUESTSTATE, PULLREQUESTFILES, GETCOMMITFILE, CREATEISSUE, EVENT |  | GitHubType
 | *branchName* | Name of branch |  | String
-| *startingSha* | The starting sha to use for polling commits with the commit consumer. The value can either be a sha for the sha to start from, or use beginning to start from the beginning, or last to start from the last commit. | last | String
 |===
 
 
-=== Query Parameters (27 parameters):
+=== Query Parameters (28 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -98,6 +100,7 @@ with the following path and query parameters:
 | *repoOwner* (common) | *Required* GitHub repository owner (organization) |  | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
+| *startingSha* (consumer) | The starting sha to use for polling commits with the commit consumer. The value can either be a sha for the sha to start from, or use beginning to start from the beginning, or last to start from the last commit. | last | String
 | *eventFetchStrategy* (consumer) | To specify a custom strategy that configures how the EventsConsumer fetches events. |  | GitHubEventFetchStrategy
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
@@ -170,4 +173,5 @@ pull request discussion is assumed.
 |createIssue |String (issue body text) | - GitHubIssueTitle (String) (REQUIRED): Issue Title.
 |=======================================================================
 
-include::spring-boot:partial$github-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

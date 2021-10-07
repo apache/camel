@@ -3,6 +3,7 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-vm/src/main/docs/vm-component.adoc
 :docTitle: VM
+:shortname: vm
 :artifactId: camel-vm
 :description: Call another endpoint in the same CamelContext asynchronously.
 :since: 1.1
@@ -10,6 +11,8 @@
 :component-header: Both producer and consumer are supported
 :core:
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/vm.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: vm
 
 *Since Camel {since}*
 
@@ -143,4 +146,5 @@ from("vm:order.email").bean(MyOrderEmailSender.class);
 ----
 
 
-include::spring-boot:partial$vm-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

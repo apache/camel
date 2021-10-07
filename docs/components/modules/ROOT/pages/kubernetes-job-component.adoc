@@ -3,6 +3,7 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-kubernetes/src/main/docs/kubernetes-job-component.adoc
 :docTitle: Kubernetes Job
+:shortname: kubernetes-job
 :artifactId: camel-kubernetes
 :description: Perform operations on Kubernetes Jobs.
 :since: 2.23
@@ -11,6 +12,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/kubernetes-job.adoc[opts=optional]
 //Manually maintained attributes
 :group: Kubernetes
+:camel-spring-boot-name: kubernetes
 
 *Since Camel {since}*
 
@@ -254,4 +256,5 @@ public class KubernetesCreateJob extends RouteBuilder {
 --------------------------------------------------------------------------------
 
 
-include::spring-boot:partial$kubernetes-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

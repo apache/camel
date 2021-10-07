@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-avro-rpc/camel-avro-rpc-component/src/main/docs/avro-component.adoc
 :docTitle: Avro RPC
+:shortname: avro
 :artifactId: camel-avro-rpc
 :description: Produce or consume Apache Avro RPC services.
 :since: 2.10
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/avro.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: avro
 
 *Since Camel {since}*
 
@@ -286,4 +289,5 @@ The Avro RPC component offers the `org.apache.camel.component.avro.spi.AvroRpcHt
 The default implementation available in `org.apache.camel:camel-avro-jetty` is based on `org.apache.avro:avro-ipc-jetty`.
 
 
-include::spring-boot:partial$avro-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

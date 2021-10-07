@@ -1,11 +1,14 @@
 [[avro-jackson-dataformat]]
 = Avro Jackson DataFormat
 :docTitle: Avro Jackson
+:shortname: avro-jackson
 :artifactId: camel-jackson-avro
 :description: Marshal POJOs to Avro and back using Jackson.
 :since: 3.10
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/avro-jackson.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: jackson-avro
 
 *Since Camel {since}*
 
@@ -92,3 +95,5 @@ the download page for the latest versions).
   <!-- use the same version as your Camel core version -->
 </dependency>
 ----------------------------------------------------------
+
+include::spring-boot:partial$starter.adoc[]

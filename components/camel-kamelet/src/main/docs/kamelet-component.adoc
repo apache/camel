@@ -1,6 +1,7 @@
 [[kamelet-component]]
 = Kamelet Component
 :docTitle: Kamelet
+:shortname: kamelet
 :artifactId: camel-kamelet
 :description: To call Kamelets
 :since: 3.8
@@ -8,6 +9,8 @@
 :component-header: Both producer and consumer are supported
 :core:
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/kamelet.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: kamelet
 
 *Since Camel {since}*
 
@@ -148,4 +151,5 @@ from("direct:template")
 ----
 
 
-//include::spring-boot:partial$kamelet-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

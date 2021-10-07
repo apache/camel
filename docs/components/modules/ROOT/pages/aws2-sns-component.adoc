@@ -3,6 +3,7 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-aws/camel-aws2-sns/src/main/docs/aws2-sns-component.adoc
 :docTitle: AWS Simple Notification System (SNS)
+:shortname: aws2-sns
 :artifactId: camel-aws2-sns
 :description: Send messages to an AWS Simple Notification Topic using AWS SDK version 2.x.
 :since: 3.1
@@ -11,6 +12,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws2-sns.adoc[opts=optional]
 //Manually maintained attributes
 :group: AWS
+:camel-spring-boot-name: aws2-sns
 
 *Since Camel {since}*
 
@@ -287,4 +289,5 @@ Maven users will need to add the following dependency to their pom.xml.
 where `$\{camel-version}` must be replaced by the actual version of Camel.
 
 
-include::spring-boot:partial$aws2-sns-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

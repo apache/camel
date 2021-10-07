@@ -3,11 +3,14 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-tagsoup/src/main/docs/tidyMarkup-dataformat.adoc
 :docTitle: TidyMarkup
+:shortname: tidyMarkup
 :artifactId: camel-tagsoup
 :description: Parse (potentially invalid) HTML into valid HTML or DOM.
 :since: 2.0
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/tidyMarkup.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: tagsoup
 
 *Since Camel {since}*
 
@@ -90,4 +93,5 @@ the download page for the latest versions).
 </dependency>
 ----------------------------------------
 
-include::spring-boot:partial$tagsoup-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -1,12 +1,15 @@
 [[paho-component]]
 = Paho Component
 :docTitle: Paho
+:shortname: paho
 :artifactId: camel-paho
 :description: Communicate with MQTT message brokers using Eclipse Paho MQTT Client.
 :since: 2.16
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/paho.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: paho
 
 *Since Camel {since}*
 
@@ -227,4 +230,5 @@ from("direct:test")
     .to("paho:some/target/queue");
 ----
 
-include::spring-boot:partial$paho-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -1,12 +1,15 @@
 [[as2-component]]
 = AS2 Component
 :docTitle: AS2
+:shortname: as2
 :artifactId: camel-as2
 :description: Transfer data securely and reliably using the AS2 protocol (RFC4130).
 :since: 2.22
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/as2.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: as2
 
 *Since Camel {since}*
 
@@ -255,4 +258,5 @@ The `inBody` parameter overrides message header, i.e. the endpoint parameter `in
 would override a `CamelAs2.myParameterNameHere` header.
 // endpoint options: END
 
-include::spring-boot:partial$as2-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -1,12 +1,15 @@
 [[http-component]]
 = HTTP Component
 :docTitle: HTTP
+:shortname: http
 :artifactId: camel-http
 :description: Send requests to external HTTP servers using Apache HTTP Client 4.x.
 :since: 2.3
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/http.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: http
 
 *Since Camel {since}*
 
@@ -715,4 +718,5 @@ property.
 </bean>
 ----------------------------------------------------------------------------
 
-include::spring-boot:partial$http-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

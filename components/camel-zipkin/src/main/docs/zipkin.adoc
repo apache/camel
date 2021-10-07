@@ -1,11 +1,14 @@
 [[zipkin-other]]
 = Zipkin Component
 :docTitle: Zipkin
+:shortname: zipkin
 :artifactId: camel-zipkin
 :description: Distributed message tracing using Zipkin
 :since: 2.18
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/zipkin.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: zipkin
 
 *Since Camel {since}*
 
@@ -283,4 +286,5 @@ You can then configure camel-zipkin in the `application.properties` file where y
 
 You can find an example of this in the https://github.com/apache/camel-spring-boot-examples/tree/master/camel-example-spring-boot-zipkin[camel-example-spring-boot-zipkin]
 
-include::spring-boot:partial$zipkin-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]
