@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/ftps.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: ftp
 
 *Since Camel {since}*
 
@@ -46,4 +48,5 @@ include::partial$component-endpoint-options.adoc[]
 
 For more information you can look at xref:ftp-component.adoc[FTP component]
 
-include::spring-boot:partial$ftp-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

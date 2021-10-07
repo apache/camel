@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/jpa.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: jpa
 
 *Since Camel {since}*
 
@@ -342,4 +344,5 @@ argument to the JVM:
 -------------------------------------------------------------------------------------------
 
 
-include::spring-boot:partial$jpa-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

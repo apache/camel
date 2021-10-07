@@ -6,6 +6,8 @@
 :since: 2.6
 :supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/syslog.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: syslog
 
 *Since Camel {since}*
 
@@ -129,4 +131,5 @@ The same route using xref:ROOT:mina-component.adoc[Mina Component]
 -------------------------------------------------------------------------
 
 
-include::spring-boot:partial$syslog-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

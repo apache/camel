@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/web3j.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: web3j
 
 *Since Camel {since}*
 
@@ -88,4 +90,5 @@ from("direct:start")
     .to("web3j://http://127.0.0.1:7545?operation=ETH_GET_BALANCE&address=0xc8CDceCE5d006dAB638029EBCf6Dd666efF5A952&atBlock=10");
 --------------------------------------------------------
 
-include::spring-boot:partial$web3j-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/stomp.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: stomp
 
 *Since Camel {since}*
 
@@ -104,4 +106,5 @@ consuming message exchanges from the endpoint via a
 https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/PollingConsumer.html[PollingConsumer]
 
 
-include::spring-boot:partial$stomp-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

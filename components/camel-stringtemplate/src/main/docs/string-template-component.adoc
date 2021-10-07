@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/string-template.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: stringtemplate
 
 *Since Camel {since}*
 
@@ -131,4 +133,5 @@ Regards Camel Riders Bookstore
 And the java code is as follows:
 
 
-include::spring-boot:partial$stringtemplate-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

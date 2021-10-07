@@ -6,6 +6,8 @@
 :since: 2.0
 :supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/tokenize.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: core
 
 *Since Camel {since}*
 
@@ -55,3 +57,5 @@ from("direct:a")
 ----
 
 For more examples see xref:eips:split-eip.adoc[Split] EIP.
+
+include::spring-boot:partial$starter.adoc[]

@@ -6,6 +6,8 @@
 :since: 3.7
 :supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/joor.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: joor
 
 *Since Camel {since}*
 
@@ -348,3 +350,5 @@ If you use Maven you could just add the following to your `pom.xml`, substitutin
   <version>x.x.x</version>
 </dependency>
 ---------------------------------------
+
+include::spring-boot:partial$starter.adoc[]

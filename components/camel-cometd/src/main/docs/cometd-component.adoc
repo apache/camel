@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/cometd.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: cometd
 
 *Since Camel {since}*
 
@@ -146,4 +148,5 @@ Spring DSL based configuration of endpoint
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-include::spring-boot:partial$cometd-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

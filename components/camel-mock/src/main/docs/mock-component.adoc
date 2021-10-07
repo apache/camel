@@ -8,6 +8,8 @@
 :component-header: Only producer is supported
 :core:
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/mock.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: mock
 
 *Since Camel {since}*
 
@@ -441,4 +443,5 @@ In the example above we use `seconds` as the time unit, but Camel offers
 ====
 
 
-include::spring-boot:partial$mock-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

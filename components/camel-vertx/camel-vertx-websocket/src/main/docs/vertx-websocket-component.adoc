@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/vertx-websocket.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: vertx-websocket
 
 *Since Camel {since}*
 
@@ -79,4 +81,5 @@ from("vertx-websocket:localhost:8080/echo")
 By default the `ws://` protocol is used, but secure connections with `wss://` are supported by configuring the consumer or producer
 via the `sslContextParameters` URI parameter and the xref:manual::camel-configuration-utilities.adoc[Camel JSSE Configuration Utility]
 
-include::spring-boot:partial$vertx-websocket-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

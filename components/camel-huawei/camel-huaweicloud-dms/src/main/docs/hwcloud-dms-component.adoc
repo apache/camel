@@ -9,6 +9,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/hwcloud-dms.adoc[opts=optional]
 //Manually maintained attributes
 :group: Huawei Cloud
+:camel-spring-boot-name: huaweicloud-dms
 
 *Since Camel {since}*
 
@@ -173,4 +174,5 @@ from("direct:triggerRoute")
  .to("hwcloud-dms:listInstances?region=cn-north-4&serviceKeys=#myServiceKeyConfig")
 ----
 
-include::spring-boot:partial$huaweicloud-dms-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

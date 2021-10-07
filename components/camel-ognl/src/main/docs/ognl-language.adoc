@@ -6,6 +6,8 @@
 :since: 1.1
 :supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/ognl.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: ognl
 
 *Since Camel {since}*
 
@@ -118,4 +120,5 @@ the download page for the latest versions).
 </dependency>
 -------------------------------------
 
-include::spring-boot:partial$ognl-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

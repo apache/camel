@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/amqp.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: amqp
 
 *Since Camel {since}*
 
@@ -167,4 +169,5 @@ Keep in mind that both  `AMQPComponent#amqpComponent()` methods and
 prefix, so you don't have to configure it explicitly.
 
 
-include::spring-boot:partial$amqp-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/flink.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: flink
 
 *Since Camel {since}*
 
@@ -110,4 +112,5 @@ try {
     }
 -----------------------------------
 
-include::spring-boot:partial$flink-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

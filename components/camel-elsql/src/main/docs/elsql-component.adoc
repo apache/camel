@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/elsql.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: elsql
 
 *Since Camel {since}*
 
@@ -194,4 +196,5 @@ the simple expression you can use in the consumer are most useable for calling
 bean methods as in this example.
 
 
-include::spring-boot:partial$elsql-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

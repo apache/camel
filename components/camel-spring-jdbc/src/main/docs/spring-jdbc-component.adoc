@@ -9,6 +9,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/spring-jdbc.adoc[opts=optional]
 //Manually maintained attributes
 :group: Spring
+:camel-spring-boot-name: spring-jdbc
 
 *Since Camel {since}*
 
@@ -48,4 +49,5 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: END
 
 
-include::spring-boot:partial$spring-jdbc-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

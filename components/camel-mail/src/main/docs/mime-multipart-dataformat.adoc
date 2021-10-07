@@ -6,6 +6,8 @@
 :since: 2.17
 :supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/mime-multipart.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: mail
 
 *Since Camel {since}*
 
@@ -188,4 +190,5 @@ If you use Maven you can just add the following to your pom.xml:
 </dependency>
 -----------------------------------------------------------------------------------
 
-include::spring-boot:partial$mail-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -9,6 +9,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/google-sheets-stream.adoc[opts=optional]
 //Manually maintained attributes
 :group: Google
+:camel-spring-boot-name: google-sheets
 
 *Since Camel {since}*
 
@@ -70,4 +71,5 @@ For more information on the endpoints and options see API documentation
 at: https://developers.google.com/sheets/api/reference/rest/[https://developers.google.com/sheets/api/reference/rest/]
 
 
-include::spring-boot:partial$google-sheets-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

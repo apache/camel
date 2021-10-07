@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/atmos.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: atmos
 
 *Since Camel {since}*
 
@@ -103,4 +105,5 @@ on ViPR object data service. In producers, operations(`Get`,`Del`,
 `Move`,`Put`) run on ViPR object data services and results are set 
 on headers of camel exchange.
 
-include::spring-boot:partial$atmos-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

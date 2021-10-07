@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/hbase.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: hbase
 
 *Since Camel {since}*
 
@@ -449,4 +451,5 @@ advantage it has over the header mapping strategy is that the HBaseData
 object can be easily converted to or from xml/json.
 
 
-include::spring-boot:partial$hbase-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

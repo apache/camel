@@ -6,6 +6,8 @@
 :since: 3.0
 :supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/grok.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: grok
 
 *Since Camel {since}*
 
@@ -99,4 +101,5 @@ public class MyRouteBuilder extends RouteBuilder {
 include::partial$dataformat-options.adoc[]
 // dataformat options: END
 
-include::spring-boot:partial$grok-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

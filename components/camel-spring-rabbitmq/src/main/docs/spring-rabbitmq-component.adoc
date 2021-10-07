@@ -9,6 +9,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/spring-rabbitmq.adoc[opts=optional]
 //Manually maintained attributes
 :group: Spring
+:camel-spring-boot-name: spring-rabbitmq
 
 *Since Camel {since}*
 
@@ -238,4 +239,5 @@ from("direct:order")
   .toD("spring-rabbit:order-${header.orderType}");
 ----
 
-include::spring-boot:partial$spring-rabbitmq-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -2,6 +2,8 @@
 //attributes written by hand, not generated
 :doctitle: OpenStack
 :since: 2.19
+:shortname: openstack
+:artifactid: camel-openstack
 
 *Since Camel {since}*
 
@@ -29,4 +31,6 @@ for this component:
 ------------------------------------------------------------
 
 
-include::spring-boot:partial$openstack-starter.adoc[]
+:camel-spring-boot-name: openstack
+
+include::spring-boot:partial$starter.adoc[]

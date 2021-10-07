@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/jgroups.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: jgroups
 
 *Since Camel {since}*
 
@@ -221,4 +223,5 @@ context.addService(service);
 from("master:mycluster:jetty:http://localhost:8080/orders").to("jms:orders"); 
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-include::spring-boot:partial$jgroups-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

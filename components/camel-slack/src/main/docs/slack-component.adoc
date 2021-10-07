@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/slack.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: slack
 
 *Since Camel {since}*
 
@@ -154,4 +156,5 @@ Originally you would get the newest first and consume backward (message 3 => mes
 IMPORTANT: You can use the conversationType option to read history and messages from a channel that is not only public
 (`PUBLIC_CHANNEL`,`PRIVATE_CHANNEL`, `MPIM`, `IM`)
 
-include::spring-boot:partial$slack-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/crypto.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: crypto
 
 *Since Camel {since}*
 
@@ -191,4 +193,5 @@ template.send("direct:alias-verify", signed);
 -------------------------------------------------------------------------------------------------
 
 
-include::spring-boot:partial$crypto-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

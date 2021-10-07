@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/dropbox.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: dropbox
 
 *Since Camel {since}*
 
@@ -387,4 +389,5 @@ Dropbox documentation,
 
  
 
-include::spring-boot:partial$dropbox-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

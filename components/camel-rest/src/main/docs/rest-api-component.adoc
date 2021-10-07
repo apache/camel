@@ -8,6 +8,8 @@
 :component-header: Only consumer is supported
 :core:
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/rest-api.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: rest
 
 *Since Camel {since}*
 
@@ -27,3 +29,5 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: START
 
 // endpoint options: END
+
+include::spring-boot:partial$starter.adoc[]

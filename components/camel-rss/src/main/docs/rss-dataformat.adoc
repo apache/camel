@@ -6,6 +6,8 @@
 :since: 2.1
 :supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/rss.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: rss
 
 *Since Camel {since}*
 
@@ -65,4 +67,5 @@ from("rss:file:src/test/data/rss20.xml?splitEntries=true&delay=100")
     .to("mock:result");
 ----
 
-include::spring-boot:partial$rss-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

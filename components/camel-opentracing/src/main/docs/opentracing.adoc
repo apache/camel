@@ -6,6 +6,8 @@
 :since: 2.19
 :supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/opentracing.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: opentracing
 
 *Since Camel {since}*
 
@@ -105,7 +107,8 @@ How this agent is used will be specific to how you execute your application. _Se
 You can find an example demonstrating the three ways to configure OpenTracing here:
 https://github.com/apache/camel-spring-boot-examples/tree/master/camel-example-spring-boot-opentracing[camel-example-spring-boot-opentracing]
 
-include::spring-boot:partial$opentracing-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]
 
 == Span Operations Processors
 

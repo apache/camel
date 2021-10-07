@@ -8,6 +8,8 @@
 :component-header: Only producer is supported
 :core:
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/dataformat.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: dataformat
 
 *Since Camel {since}*
 
@@ -74,4 +76,5 @@ And in XML DSL you do:
 </camelContext>
 ----
 
-include::spring-boot:partial$dataformat-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

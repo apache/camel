@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/cql.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: cassandraql
 
 *Since Camel {since}*
 
@@ -203,4 +205,5 @@ Arrays.asList("davsclaus", "Claus", "Ibsen")
 The same approach can be used for updating or querying the table.
 
 
-include::spring-boot:partial$cassandraql-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

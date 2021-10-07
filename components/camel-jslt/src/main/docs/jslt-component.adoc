@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/jslt.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: jslt
 
 *Since Camel {since}*
 
@@ -124,4 +126,5 @@ from("direct:in").
   to("jslt:com/acme/MyResponse.json?allowContextMapAll=true");
 ---------------------------------------------------------------------
 
-include::spring-boot:partial$jslt-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

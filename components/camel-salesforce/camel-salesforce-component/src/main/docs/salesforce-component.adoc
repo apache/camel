@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/salesforce.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: salesforce
 
 *Since Camel {since}*
 
@@ -825,3 +827,5 @@ generated Java Enumerations.
 Please refer to
 https://github.com/apache/camel/tree/main/components/camel-salesforce/camel-salesforce-maven-plugin[README.md]
 for details on how to generate the DTO.
+
+include::spring-boot:partial$starter.adoc[]

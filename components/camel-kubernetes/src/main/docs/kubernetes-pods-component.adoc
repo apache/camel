@@ -9,6 +9,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/kubernetes-pods.adoc[opts=optional]
 //Manually maintained attributes
 :group: Kubernetes
+:camel-spring-boot-name: kubernetes
 
 *Since Camel {since}*
 
@@ -90,4 +91,5 @@ fromF("kubernetes-pods://%s?oauthToken=%s&namespace=default&resourceName=test", 
 This consumer will return a list of events on the namespace default for the pod test.
 
 
-include::spring-boot:partial$kubernetes-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

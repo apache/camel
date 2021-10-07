@@ -6,6 +6,8 @@
 :since: 2.20
 :supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/thrift.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: thrift
 
 *Since Camel {since}*
 
@@ -151,4 +153,5 @@ To use Thrift in your camel routes you need to add the a dependency on
 </dependency>
 ----
 
-include::spring-boot:partial$thrift-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

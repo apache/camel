@@ -9,6 +9,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/google-bigquery-sql.adoc[opts=optional]
 //Manually maintained attributes
 :group: Google
+:camel-spring-boot-name: google-bigquery
 
 *Since Camel {since}*
 
@@ -108,4 +109,5 @@ include::partial$component-endpoint-options.adoc[]
 
 Google BigQuery SQL endpoint expects the payload to be either empty or a map of query parameters.
 
-include::spring-boot:partial$google-bigquery-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

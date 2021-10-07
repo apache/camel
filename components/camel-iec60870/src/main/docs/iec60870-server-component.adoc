@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/iec60870-server.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: iec60870
 
 *Since Camel {since}*
 
@@ -55,4 +57,5 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: END
 
 
-include::spring-boot:partial$iec60870-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

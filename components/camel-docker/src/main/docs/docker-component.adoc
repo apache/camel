@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/docker.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: docker
 
 *Since Camel {since}*
 
@@ -92,4 +94,5 @@ the download page for the latest versions).
 </dependency>
 -------------------------------------
 
-include::spring-boot:partial$docker-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

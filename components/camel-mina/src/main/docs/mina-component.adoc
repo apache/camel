@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/mina.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: mina
 
 *Since Camel {since}*
 
@@ -203,4 +205,5 @@ filters you may define are appended to the end of the filter chain; that
 is, after `codec` and `logger`.
 
 
-include::spring-boot:partial$mina-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -9,6 +9,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws2-sts.adoc[opts=optional]
 //Manually maintained attributes
 :group: AWS
+:camel-spring-boot-name: aws2-sts
 
 *Since Camel {since}*
 
@@ -139,4 +140,5 @@ Maven users will need to add the following dependency to their pom.xml.
 
 where `$\{camel-version}` must be replaced by the actual version of Camel.
 
-include::spring-boot:partial$aws2-sts-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

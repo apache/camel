@@ -6,6 +6,8 @@
 :since: 2.16
 :supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/swagger-java.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: swagger-java
 
 *Since Camel {since}*
 
@@ -217,3 +219,5 @@ restConfiguration().component("netty-http")
 In the Apache Camel distribution we ship
 the `camel-example-swagger-cdi` and `camel-example-swagger-java` which
 demonstrates using this Swagger component.
+
+include::spring-boot:partial$starter.adoc[]

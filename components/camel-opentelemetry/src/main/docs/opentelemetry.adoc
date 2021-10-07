@@ -6,6 +6,8 @@
 :since: 3.5
 :supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/opentelemetry.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: opentelemetry
 
 *Since Camel {since}*
 
@@ -50,7 +52,8 @@ otelTracer.setTracer(...);
 otelTracer.init(camelContext);
 --------------------------------------------------------------------------------------------------
 
-include::spring-boot:partial$opentelemetry-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]
 
 == MDC Logging
 When MDC Logging is enabled for the active Camel context the Trace ID and Span ID will be added and removed from the MDC for each route, the keys are `traceId` and `spanId`, respectively.
