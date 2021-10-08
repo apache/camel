@@ -165,7 +165,7 @@ public class DefaultServerInitializerFactory extends ServerInitializerFactory {
         return answer;
     }
 
-    private SslHandler configureServerSSLOnDemand() throws Exception {
+    private SslHandler configureServerSSLOnDemand() {
         if (!consumer.getConfiguration().isSsl()) {
             return null;
         }

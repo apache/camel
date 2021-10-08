@@ -65,7 +65,7 @@ public class GoraConsumer extends ScheduledPollConsumer {
     public GoraConsumer(final Endpoint endpoint,
                         final Processor processor,
                         final GoraConfiguration configuration,
-                        final DataStore<Object, Persistent> dataStore) throws ClassNotFoundException, NoSuchMethodException,
+                        final DataStore<Object, Persistent> dataStore) throws NoSuchMethodException,
                                                                        InvocationTargetException, IllegalAccessException {
 
         super(endpoint, processor);
