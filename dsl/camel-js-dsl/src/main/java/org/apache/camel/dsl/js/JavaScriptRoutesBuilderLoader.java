@@ -25,6 +25,8 @@ import org.apache.camel.dsl.support.EndpointRouteBuilderLoaderSupport;
 import org.apache.camel.spi.annotations.RoutesLoader;
 import org.apache.camel.support.LifecycleStrategySupport;
 import org.graalvm.polyglot.Context;
+import org.graalvm.polyglot.HostAccess;
+import org.graalvm.polyglot.PolyglotAccess;
 import org.graalvm.polyglot.Value;
 
 import static org.graalvm.polyglot.Source.newBuilder;
@@ -41,7 +43,14 @@ public class JavaScriptRoutesBuilderLoader extends EndpointRouteBuilderLoaderSup
 
     @Override
     protected void doLoadEndpointRouteBuilder(Reader reader, EndpointRouteBuilder builder) {
-        final Context context = Context.newBuilder(LANGUAGE_ID).allowAllAccess(true).build();
+        final Context.Builder contextBuilder = Context.newBuilder(LANGUAGE_ID)
+                .allowHostAccess(HostAccess.ALL)
+                .allowExperimentalOptions(true)
+                .allowHostClassLookup(s -> true)
+                .allowPolyglotAccess(PolyglotAccess.NONE)
+                .option("engine.WarnInterpreterOnly", "false");
+
+        final Context context = contextBuilder.build();
         final Value bindings = context.getBindings(LANGUAGE_ID);
 
         // configure bindings
