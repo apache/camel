@@ -34,6 +34,8 @@ public class NatsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "flushConnection": target.getConfiguration().setFlushConnection(property(camelContext, boolean.class, value)); return true;
         case "flushtimeout":
         case "flushTimeout": target.getConfiguration().setFlushTimeout(property(camelContext, int.class, value)); return true;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": target.getConfiguration().setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxmessages":
@@ -91,6 +93,8 @@ public class NatsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "flushConnection": return boolean.class;
         case "flushtimeout":
         case "flushTimeout": return int.class;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "maxmessages":
@@ -149,6 +153,8 @@ public class NatsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "flushConnection": return target.getConfiguration().isFlushConnection();
         case "flushtimeout":
         case "flushTimeout": return target.getConfiguration().getFlushTimeout();
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return target.getConfiguration().getHeaderFilterStrategy();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxmessages":

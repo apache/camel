@@ -22,6 +22,7 @@ import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
 import org.apache.camel.spi.ExceptionHandler;
+import org.apache.camel.spi.HeaderFilterStrategy;
 
 /**
  * Send and receive messages from NATS messaging system.
@@ -788,6 +789,40 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
+         * Define the header filtering strategy.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
+         * 
+         * Group: advanced
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNatsEndpointConsumerBuilder headerFilterStrategy(
+                HeaderFilterStrategy headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
+         * Define the header filtering strategy.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
+         * 
+         * Group: advanced
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNatsEndpointConsumerBuilder headerFilterStrategy(
+                String headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
          * Whether or not connection trace messages should be printed to
          * standard out for fine grained debugging of connection issues.
          * 
@@ -1466,6 +1501,40 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
+         * Define the header filtering strategy.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
+         * 
+         * Group: advanced
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNatsEndpointProducerBuilder headerFilterStrategy(
+                HeaderFilterStrategy headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
+         * Define the header filtering strategy.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
+         * 
+         * Group: advanced
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNatsEndpointProducerBuilder headerFilterStrategy(
+                String headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
          * Whether or not connection trace messages should be printed to
          * standard out for fine grained debugging of connection issues.
          * 
@@ -2043,6 +2112,40 @@ public interface NatsEndpointBuilderFactory {
          */
         default AdvancedNatsEndpointBuilder connection(String connection) {
             doSetProperty("connection", connection);
+            return this;
+        }
+        /**
+         * Define the header filtering strategy.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
+         * 
+         * Group: advanced
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNatsEndpointBuilder headerFilterStrategy(
+                HeaderFilterStrategy headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
+         * Define the header filtering strategy.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
+         * 
+         * Group: advanced
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNatsEndpointBuilder headerFilterStrategy(
+                String headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**

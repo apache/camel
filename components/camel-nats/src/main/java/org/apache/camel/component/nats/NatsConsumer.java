@@ -26,6 +26,7 @@ import io.nats.client.Message;
 import io.nats.client.MessageHandler;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -167,8 +168,15 @@ public class NatsConsumer extends DefaultConsumer {
                     exchange.getIn().setHeader(NatsConstants.NATS_QUEUE_NAME, msg.getSubscription().getQueueName());
                     exchange.getIn().setHeader(NatsConstants.NATS_MESSAGE_TIMESTAMP, System.currentTimeMillis());
                     if (msg.getHeaders() != null) {
+                        final HeaderFilterStrategy strategy = NatsConsumer.this.getEndpoint()
+                                .getConfiguration()
+                                .getHeaderFilterStrategy();
                         msg.getHeaders().entrySet().forEach(entry -> {
-                            exchange.getIn().setHeader(entry.getKey(), entry.getValue());
+                            if (!strategy.applyFilterToExternalHeaders(entry.getKey(), entry.getValue(), exchange)) {
+                                exchange.getIn().setHeader(entry.getKey(), entry.getValue());
+                            } else {
+                                LOG.debug("Excluding header {} as per strategy", entry.getKey());
+                            }
                         });
                     }
                     NatsConsumer.this.processor.process(exchange);

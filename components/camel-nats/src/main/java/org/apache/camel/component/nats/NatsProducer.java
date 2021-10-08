@@ -18,7 +18,6 @@ package org.apache.camel.component.nats;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -33,6 +32,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.spi.ExecutorServiceManager;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.util.ObjectHelper;
@@ -80,7 +80,7 @@ public class NatsProducer extends DefaultAsyncProducer {
             final NatsMessage.Builder builder = NatsMessage.builder()
                     .data(body)
                     .subject(config.getTopic())
-                    .headers(this.buildHeaders(exchange.getIn().getHeaders()));
+                    .headers(this.buildHeaders(exchange));
             final CompletableFuture<Message> requestFuture = this.connection.request(builder.build());
             final CompletableFuture timeoutFuture = this.failAfter(exchange,
                     Duration.ofMillis(config.getRequestTimeout()));
@@ -111,7 +111,7 @@ public class NatsProducer extends DefaultAsyncProducer {
             final NatsMessage.Builder builder = NatsMessage.builder()
                     .data(body)
                     .subject(config.getTopic())
-                    .headers(this.buildHeaders(exchange.getIn().getHeaders()));
+                    .headers(this.buildHeaders(exchange));
 
             if (ObjectHelper.isNotEmpty(config.getReplySubject())) {
                 final String replySubject = config.getReplySubject();
@@ -123,20 +123,26 @@ public class NatsProducer extends DefaultAsyncProducer {
         }
     }
 
-    private Headers buildHeaders(Map<String, Object> headersMap) {
+    private Headers buildHeaders(final Exchange exchange) {
         final Headers headers = new Headers();
-        headersMap.forEach((key, value) -> {
-            String headerValue;
-            if (value instanceof byte[]) {
-                headerValue = new String((byte[]) value, StandardCharsets.UTF_8);
+        final HeaderFilterStrategy filteringStrategy = this.getEndpoint().getConfiguration().getHeaderFilterStrategy();
+        exchange.getIn().getHeaders().forEach((key, value) -> {
+            if (!filteringStrategy.applyFilterToCamelHeaders(key, value, exchange)) {
+                String headerValue;
+                if (value instanceof byte[]) {
+                    headerValue = new String((byte[]) value, StandardCharsets.UTF_8);
+                } else {
+                    headerValue = String.valueOf(value);
+                }
+                if (headers.get(key) != null) {
+                    headers.get(key).add(headerValue);
+                } else {
+                    headers.add(key, headerValue);
+                }
             } else {
-                headerValue = String.valueOf(value);
+                LOG.debug("Excluding header {} as per strategy", key);
             }
-            if (headers.get(key) != null) {
-                headers.get(key).add(headerValue);
-            } else {
-                headers.add(key, headerValue);
-            }
+
         });
         return headers;
     }
