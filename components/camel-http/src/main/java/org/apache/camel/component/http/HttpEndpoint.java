@@ -171,7 +171,7 @@ public class HttpEndpoint extends HttpCommonEndpoint {
 
     public HttpEndpoint(String endPointURI, HttpComponent component, URI httpURI, HttpClientBuilder clientBuilder,
                         HttpClientConnectionManager clientConnectionManager,
-                        HttpClientConfigurer clientConfigurer) throws URISyntaxException {
+                        HttpClientConfigurer clientConfigurer) {
         super(endPointURI, component, httpURI);
         this.clientBuilder = clientBuilder;
         this.httpClientConfigurer = clientConfigurer;

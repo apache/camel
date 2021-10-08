@@ -17,7 +17,6 @@
 package org.apache.camel.component.resteasy;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
@@ -72,7 +71,7 @@ public class ResteasyEndpoint extends HttpEndpoint {
     @UriParam(label = "advanced")
     private HeaderFilterStrategy headerFilterStrategy;
 
-    public ResteasyEndpoint(String endPointURI, ResteasyComponent component, URI httpUri) throws URISyntaxException {
+    public ResteasyEndpoint(String endPointURI, ResteasyComponent component, URI httpUri) {
         super(endPointURI, component, httpUri, null, null, null);
     }
 

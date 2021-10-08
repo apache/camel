@@ -130,7 +130,7 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         }
     }
 
-    public Producer createGroupChatProducer() throws Exception {
+    public Producer createGroupChatProducer() {
         return new XmppGroupChatProducer(this);
     }
 

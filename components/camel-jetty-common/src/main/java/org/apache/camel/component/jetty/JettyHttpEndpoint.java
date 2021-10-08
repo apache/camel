@@ -17,7 +17,6 @@
 package org.apache.camel.component.jetty;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 
@@ -82,7 +81,7 @@ public abstract class JettyHttpEndpoint extends HttpCommonEndpoint {
               description = "To configure security using SSLContextParameters")
     private SSLContextParameters sslContextParameters;
 
-    public JettyHttpEndpoint(JettyHttpComponent component, String uri, URI httpURL) throws URISyntaxException {
+    public JettyHttpEndpoint(JettyHttpComponent component, String uri, URI httpURL) {
         super(uri, component, httpURL);
     }
 

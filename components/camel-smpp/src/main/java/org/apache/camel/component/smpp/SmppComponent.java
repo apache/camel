@@ -63,7 +63,7 @@ public class SmppComponent extends DefaultComponent {
     /**
      * Create a new smpp endpoint with the provided smpp configuration
      */
-    protected Endpoint createEndpoint(SmppConfiguration config) throws Exception {
+    protected Endpoint createEndpoint(SmppConfiguration config) {
         return createEndpoint(null, config);
     }
 

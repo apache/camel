@@ -145,7 +145,7 @@ public class KubernetesCustomResourcesProducer extends DefaultProducer {
         prepareOutboundMessage(exchange, customResourceJSON);
     }
 
-    protected void doDelete(Exchange exchange, String namespaceName) throws IOException {
+    protected void doDelete(Exchange exchange, String namespaceName) {
         String customResourceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CRD_INSTANCE_NAME, String.class);
         if (ObjectHelper.isEmpty(customResourceName)) {
             LOG.error("Deleting a specific deployment require specify a deployment name");
