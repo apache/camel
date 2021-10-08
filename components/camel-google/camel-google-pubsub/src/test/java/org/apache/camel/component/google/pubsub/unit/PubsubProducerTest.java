@@ -40,7 +40,7 @@ public class PubsubProducerTest extends PubsubTestSupport {
     @Test
     public void testProducerConfiguration() throws Exception {
         // :1 indicates first of a component type in Camel context
-        Endpoint endpoint = context.hasEndpoint(String.format("google-pubsub:%s:%s:1", PROJECT_ID, TEST_TOPIC_NAME));
+        Endpoint endpoint = context.hasEndpoint(String.format("google-pubsub:%s:%s", PROJECT_ID, TEST_TOPIC_NAME));
         assertNotNull(endpoint,
                 String.format("Endpoint 'google-pubsub:%s:$s' is not found in Camel Context", PROJECT_ID, TEST_TOPIC_NAME));
 
