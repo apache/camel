@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.nats;
 
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -24,6 +26,8 @@ import java.util.concurrent.TimeUnit;
 import io.nats.client.Connection;
 import io.nats.client.Connection.Status;
 import io.nats.client.Message;
+import io.nats.client.impl.Headers;
+import io.nats.client.impl.NatsMessage;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
@@ -57,13 +61,13 @@ public class NatsProducer extends DefaultAsyncProducer {
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        NatsConfiguration config = getEndpoint().getConfiguration();
+        final NatsConfiguration config = this.getEndpoint().getConfiguration();
         byte[] body = exchange.getIn().getBody(byte[].class);
         if (body == null) {
             // fallback to use string
             try {
                 body = exchange.getIn().getMandatoryBody(String.class).getBytes();
-            } catch (InvalidPayloadException e) {
+            } catch (final InvalidPayloadException e) {
                 exchange.setException(e);
                 callback.done(true);
                 return true;
@@ -73,11 +77,16 @@ public class NatsProducer extends DefaultAsyncProducer {
         if (exchange.getPattern().isOutCapable()) {
             LOG.debug("Requesting to topic: {}", config.getTopic());
 
-            CompletableFuture<Message> requestFuture = connection.request(config.getTopic(), body);
-            CompletableFuture timeoutFuture = this.failAfter(exchange, Duration.ofMillis(config.getRequestTimeout()));
+            final NatsMessage.Builder builder = NatsMessage.builder()
+                    .data(body)
+                    .subject(config.getTopic())
+                    .headers(this.buildHeaders(exchange.getIn().getHeaders()));
+            final CompletableFuture<Message> requestFuture = this.connection.request(builder.build());
+            final CompletableFuture timeoutFuture = this.failAfter(exchange,
+                    Duration.ofMillis(config.getRequestTimeout()));
             CompletableFuture.anyOf(requestFuture, timeoutFuture).whenComplete((message, e) -> {
                 if (e == null) {
-                    Message msg = (Message) message;
+                    final Message msg = (Message) message;
                     exchange.getMessage().setBody(msg.getData());
                     exchange.getMessage().setHeader(NatsConstants.NATS_REPLY_TO, msg.getReplyTo());
                     exchange.getMessage().setHeader(NatsConstants.NATS_SID, msg.getSID());
@@ -99,20 +108,42 @@ public class NatsProducer extends DefaultAsyncProducer {
         } else {
             LOG.debug("Publishing to topic: {}", config.getTopic());
 
+            final NatsMessage.Builder builder = NatsMessage.builder()
+                    .data(body)
+                    .subject(config.getTopic())
+                    .headers(this.buildHeaders(exchange.getIn().getHeaders()));
+
             if (ObjectHelper.isNotEmpty(config.getReplySubject())) {
-                String replySubject = config.getReplySubject();
-                connection.publish(config.getTopic(), replySubject, body);
-            } else {
-                connection.publish(config.getTopic(), body);
+                final String replySubject = config.getReplySubject();
+                builder.replyTo(replySubject);
             }
+            this.connection.publish(builder.build());
             callback.done(true);
             return true;
         }
     }
 
+    private Headers buildHeaders(Map<String, Object> headersMap) {
+        final Headers headers = new Headers();
+        headersMap.forEach((key, value) -> {
+            String headerValue;
+            if (value instanceof byte[]) {
+                headerValue = new String((byte[]) value, StandardCharsets.UTF_8);
+            } else {
+                headerValue = String.valueOf(value);
+            }
+            if (headers.get(key) != null) {
+                headers.get(key).add(headerValue);
+            } else {
+                headers.add(key, headerValue);
+            }
+        });
+        return headers;
+    }
+
     private <T> CompletableFuture<T> failAfter(Exchange exchange, Duration duration) {
         final CompletableFuture<T> future = new CompletableFuture<>();
-        scheduler.schedule(() -> {
+        this.scheduler.schedule(() -> {
             final ExchangeTimedOutException ex = new ExchangeTimedOutException(exchange, duration.toMillis());
             return future.completeExceptionally(ex);
         }, duration.toNanos(), TimeUnit.NANOSECONDS);
@@ -134,8 +165,9 @@ public class NatsProducer extends DefaultAsyncProducer {
         LOG.debug("Starting Nats Producer");
 
         LOG.debug("Getting Nats Connection");
-        connection = getEndpoint().getConfiguration().getConnection() != null
-                ? getEndpoint().getConfiguration().getConnection() : getEndpoint().getConnection();
+        this.connection = this.getEndpoint().getConfiguration().getConnection() != null
+                ? this.getEndpoint().getConfiguration().getConnection()
+                : this.getEndpoint().getConnection();
     }
 
     @Override
@@ -144,14 +176,14 @@ public class NatsProducer extends DefaultAsyncProducer {
             this.executorServiceManager.shutdownNow(this.scheduler);
         }
         LOG.debug("Stopping Nats Producer");
-        if (ObjectHelper.isEmpty(getEndpoint().getConfiguration().getConnection())) {
+        if (ObjectHelper.isEmpty(this.getEndpoint().getConfiguration().getConnection())) {
             LOG.debug("Closing Nats Connection");
-            if (connection != null && !connection.getStatus().equals(Status.CLOSED)) {
-                if (getEndpoint().getConfiguration().isFlushConnection()) {
+            if (this.connection != null && !this.connection.getStatus().equals(Status.CLOSED)) {
+                if (this.getEndpoint().getConfiguration().isFlushConnection()) {
                     LOG.debug("Flushing Nats Connection");
-                    connection.flush(Duration.ofMillis(getEndpoint().getConfiguration().getFlushTimeout()));
+                    this.connection.flush(Duration.ofMillis(this.getEndpoint().getConfiguration().getFlushTimeout()));
                 }
-                connection.close();
+                this.connection.close();
             }
         }
         super.doStop();
