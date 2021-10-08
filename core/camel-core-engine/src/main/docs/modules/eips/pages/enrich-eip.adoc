@@ -14,7 +14,7 @@ image::eip/DataEnricher.gif[image]
 
 In Camel the Content Enricher can be done in several ways:
 
-* Using xref:enrich-eip.adoc[Enrich] EIP
+* Using xref:enrich-eip.adoc[Enrich] EIP or xref:pollEnrich-eip.adoc[Poll Enrich] EIP
 * Using a xref:message-translator.adoc[Message Translator]
 * Using a xref:latest@manual:ROOT:processor.adoc[Processor] with the enrichment programmed in Java
 * Using a xref:bean-eip.adoc[Bean] EIP with the enrichment programmed in Java
@@ -160,6 +160,8 @@ And in XML DSL:
 </route>
 ----
 
+TIP: See the `cacheSize` option for more details on _how much cache_ to use depending on how many or few unique endpoints are used.
+
 === Using out of the box Aggregation Strategies
 
 The `org.apache.camel.builder.AggregationStrategies` is a builder that can
@@ -173,4 +175,8 @@ AggregationStrategy agg = AggregationStrategies.string(":");
 ----
 
 There are many other possibilities with the `AggregationStrategies` builder, and for
-more details see the https://www.javadoc.io/static/org.apache.camel/camel-core-model/3.11.2/org/apache/camel/builder/AggregationStrategies.html[AggregationStrategies javadoc].
+more details see the https://www.javadoc.io/static/org.apache.camel/camel-core-model/3.12.0/org/apache/camel/builder/AggregationStrategies.html[AggregationStrategies javadoc].
+
+== See More
+
+See xref:pollEnrich-eip.adoc[Poll Enrich] EIP
