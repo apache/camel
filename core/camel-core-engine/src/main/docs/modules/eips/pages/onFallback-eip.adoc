@@ -1,7 +1,7 @@
 = On Fallback EIP
 :doctitle: On Fallback
 :shortname: onFallback
-:description: Route to be executed when Hystrix EIP executes fallback
+:description: Route to be executed when Circuit Breaker EIP executes fallback
 :since: 
 :supportlevel: Stable
 
@@ -15,67 +15,12 @@ If you need to call an external service over the network then you should use *on
 include::partial$eip-options.adoc[]
 // eip options: END
 
-Hystrix has many options as listed in xref:hystrixConfiguration-eip.adoc[Hystrix Configuration].
-For example to set a higher timeout to *5* seconds, and also let the circuit breaker wait *10* seconds before attempting a request again when the state was tripped to be open.
+== Using fallback
 
-[source,java]
-----
-from("direct:start")
-    .circuitBreaker()
-        .hystrixConfiguration()
-             .executionTimeoutInMilliseconds(5000)
-             .circuitBreakerSleepWindowInMilliseconds(10000)
-        .end() // end Hystrix configuration
-        .to("http://fooservice.com/slow")
-    .onFallback()
-        .transform().constant("Fallback message")
-    .end()
-    .to("mock:result");
-----
+The *onFallback* is used by xref:circuitBreaker-eip.adoc[Circuit Breaker] EIPs to execute a fallback route.
+For examples how to use this see the various Circuit Breaker implementations:
 
-And in XML DSL:
-[source,xml]
-----
-<camelContext xmlns="http://camel.apache.org/schema/spring">
-  <route>
-    <from uri="direct:start"/>
-    <circuitBreaker>
-      <hystrixConfiguration executionTimeoutInMilliseconds="5000"
-                            circuitBreakerSleepWindowInMilliseconds="10000"/>
-      <to uri="http://fooservice.com/slow"/>
-      <onFallback>
-        <transform>
-          <constant>Fallback message</constant>
-        </transform>
-      </onFallback>
-    </circuitBreaker>
-    <to uri="mock:result"/>
-  </route>
-</camelContext>
-----
+- xref:fault-tolerance-eip.adoc[FaultTolerance EIP] - MicroProfile Fault Tolerance Circuit Breaker
+- xref:resilience4j-eip.adoc[Resilience4j EIP] - Resilience4j Circuit Breaker
+- xref:hystrix-eip.adoc[Hystrix EIP] - Netflix Hystrix Circuit Breaker *deprecated*
 
-You can also configure Hystrix globally and then refer to that configuration:
-
-[source,xml]
-----
-<camelContext xmlns="http://camel.apache.org/schema/spring">
-
-  <!-- a shared config which you can refer to from all your Hystrix EIPs -->
-  <hystrixConfiguration id="sharedConfig"
-                        executionTimeoutInMilliseconds="5000"
-                        circuitBreakerSleepWindowInMilliseconds="10000"/>
-
-  <route>
-    <from uri="direct:start"/>
-    <circuitBreaker configurationRef="sharedConfig">
-      <to uri="http://fooservice.com/slow"/>
-      <onFallback>
-        <transform>
-          <constant>Fallback message</constant>
-        </transform>
-      </onFallback>
-    </hystrix>
-    <to uri="mock:result"/>
-  </route>
-</camelContext>
-----
