@@ -4007,6 +4007,15 @@
                 <version>${directory-watcher-version}</version>
             </dependency>
 
+            <!-- Netty bom -->
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-bom</artifactId>
+                <version>${netty-version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
             <!-- Azure SDK bom -->
             <dependency>
                 <groupId>com.azure</groupId>
@@ -4014,15 +4023,6 @@
                 <version>${azure-sdk-bom-version}</version>
                 <type>pom</type>
                 <scope>import</scope>
-            </dependency>
-
-            <!-- Netty bom -->
-            <dependency>
-              <groupId>io.netty</groupId>
-              <artifactId>netty-bom</artifactId>
-              <version>${netty-version}</version>
-              <type>pom</type>
-              <scope>import</scope>
             </dependency>
 
         </dependencies>
