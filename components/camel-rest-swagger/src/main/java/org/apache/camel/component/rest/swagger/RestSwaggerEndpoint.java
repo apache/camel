@@ -402,11 +402,16 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
             componentParameters.put("sslContextParameters", component.getSslContextParameters());
         }
 
+        final Map<Object, Object> nestedParameters = new HashMap<>();
         if (!componentParameters.isEmpty()) {
-            final Map<Object, Object> nestedParameters = new HashMap<>();
-            nestedParameters.put("component", componentParameters);
-
             // we're trying to set RestEndpoint.parameters['component']
+            nestedParameters.put("component", componentParameters);
+        }
+
+        // Add rest endpoint parameters
+        nestedParameters.putAll(this.parameters);
+
+        if (!nestedParameters.isEmpty()) {
             parameters.put("parameters", nestedParameters);
         }
 
