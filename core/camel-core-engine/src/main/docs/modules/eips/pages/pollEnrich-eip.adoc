@@ -40,11 +40,11 @@ include::partial$eip-options.adoc[]
 
 == Content enrichment using Poll Enrich EIP
 
-`pollEnrich` uses a `PollingConsumer` to obtain the additional data.
+`pollEnrich` uses a xref:polling-consumer.adoc[Polling Consumer] to obtain the additional data.
 It is usually used for xref:event-message.adoc[Event Message] messaging, for instance to read a file or download a FTP file.
 
 The `pollEnrich` works just the same as `enrich`,
-however as it uses a `PollingConsumer` we have three methods when polling:
+however as it uses a xref:polling-consumer.adoc[Polling Consumer] we have three methods when polling:
 
 * `receive` - Waits until a message is available and then returns it. *Warning* that this method could block indefinitely if no messages are available.
 * `receiveNoWait` - Attempts to receive a message exchange immediately without waiting and returning `null` if a message exchange is not available yet.
@@ -53,13 +53,14 @@ however as it uses a `PollingConsumer` we have three methods when polling:
 === Poll Enrich with timeout
 
 It is good practice to use timeout value.
+
 By default, Camel will use the `receive` which may block until there is a message available.
 It is therefore recommended to always provide a timeout value, to make this clear that we may wait for a message, until the timeout is hit.
 
 You can pass in a timeout value that determines which method to use:
 
-* if timeout is -1 or other negative number then `receive` is selected (*Important:* the `receive` method may block if there is no message)
-* if timeout is 0 then `receiveNoWait` is selected
+* if timeout is `-1` or other negative number then `receive` is selected (*Important:* the `receive` method may block if there is no message)
+* if timeout is `0` then `receiveNoWait` is selected
 * otherwise, `receive(timeout)` is selected
 
 The timeout values is in millis.
