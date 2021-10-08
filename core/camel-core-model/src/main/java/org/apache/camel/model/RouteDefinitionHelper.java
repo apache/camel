@@ -677,7 +677,7 @@ public final class RouteDefinitionHelper {
 
         if (saga != null) {
             // the outputs should be moved to the transacted policy
-            saga.getOutputs().addAll(lower);
+            saga.getOutputs().addAll(0, lower);
             // and add it as the single output
             lower.clear();
             lower.add(saga);
@@ -699,8 +699,8 @@ public final class RouteDefinitionHelper {
         }
 
         if (transacted != null) {
-            // the outputs should be moved to the transacted policy
-            transacted.getOutputs().addAll(lower);
+            // the outputs should be moved to the start of the transacted policy
+            transacted.getOutputs().addAll(0, lower);
             // and add it as the single output
             lower.clear();
             lower.add(transacted);
