@@ -874,7 +874,7 @@ Route to be executed when an exception is thrown
   <xs:element name="onFallback" type="tns:onFallbackDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-Route to be executed when Hystrix EIP executes fallback
+Route to be executed when Circuit Breaker EIP executes fallback
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
