@@ -2240,7 +2240,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * Marks this route as participating to a saga.
+     * Marks this route as participating in a saga.
      *
      * @return the saga definition
      */
