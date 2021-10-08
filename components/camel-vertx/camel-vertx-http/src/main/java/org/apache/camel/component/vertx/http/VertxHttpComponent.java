@@ -191,7 +191,7 @@ public class VertxHttpComponent extends HeaderFilterStrategyComponent
         // the component, one such case is when we switch from "http" to "https" component name
         RestProducerFactoryHelper.setupComponentFor(url, camelContext, (Map<String, Object>) parameters.remove("component"));
 
-        VertxHttpEndpoint endpoint = camelContext.getEndpoint(url, VertxHttpEndpoint.class);
+        VertxHttpEndpoint endpoint = (VertxHttpEndpoint) camelContext.getEndpoint(url, parameters);
         setProperties(endpoint, parameters);
         String path = uriTemplate != null ? uriTemplate : basePath;
         endpoint.getConfiguration().setHeaderFilterStrategy(new VertxHttpRestHeaderFilterStrategy(path, queryParameters));

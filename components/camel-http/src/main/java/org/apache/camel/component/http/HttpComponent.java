@@ -573,8 +573,8 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         // the component, one such case is when we switch from "http" to "https" component name
         RestProducerFactoryHelper.setupComponentFor(url, camelContext, (Map<String, Object>) parameters.remove("component"));
 
-        HttpEndpoint endpoint = camelContext.getEndpoint(url, HttpEndpoint.class);
-        setProperties(endpoint, parameters);
+        HttpEndpoint endpoint = (HttpEndpoint) camelContext.getEndpoint(url, parameters);
+
         String path = uriTemplate != null ? uriTemplate : basePath;
         endpoint.setHeaderFilterStrategy(new HttpRestHeaderFilterStrategy(path, queryParameters));
 
