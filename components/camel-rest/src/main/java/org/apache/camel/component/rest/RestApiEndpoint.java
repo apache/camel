@@ -19,6 +19,7 @@ package org.apache.camel.component.rest;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.ExchangePattern;
@@ -43,7 +44,7 @@ import org.apache.camel.util.ObjectHelper;
  * Expose OpenAPI Specification of the REST services defined using Camel REST DSL.
  */
 @UriEndpoint(firstVersion = "2.16.0", scheme = "rest-api", title = "REST API", syntax = "rest-api:path/contextIdPattern",
-             consumerOnly = true, label = "core,rest", lenientProperties = true)
+             consumerOnly = true, category = { Category.CORE, Category.REST }, lenientProperties = true)
 public class RestApiEndpoint extends DefaultEndpoint {
 
     public static final String DEFAULT_API_COMPONENT_NAME = "openapi";
