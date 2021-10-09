@@ -776,19 +776,16 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         // create the from endpoint uri which is using the rest-api component
         String from = "rest-api:" + configuration.getApiContextPath();
 
-        // append options
-        Map<String, Object> options = new HashMap<>();
-
         String routeId = configuration.getApiContextRouteId();
         if (routeId == null) {
             routeId = answer.idOrCreate(camelContext.adapt(ExtendedCamelContext.class).getNodeIdFactory());
         }
-        options.put("routeId", routeId);
+
+        // append options
+        Map<String, Object> options = new HashMap<>();
+
         if (configuration.getComponent() != null && !configuration.getComponent().isEmpty()) {
             options.put("consumerComponentName", configuration.getComponent());
-        }
-        if (configuration.getComponent() != null && !configuration.getComponent().isEmpty()) {
-            options.put("producerComponentName", configuration.getProducerComponent());
         }
         if (configuration.getApiContextIdPattern() != null) {
             options.put("contextIdPattern", configuration.getApiContextIdPattern());
