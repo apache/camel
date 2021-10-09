@@ -12,12 +12,21 @@ Added method `getStartedEventNotifiers` to `org.apache.camel.spi.ManagementStrat
 
 Added method `scheduleQueue` to `org.apache.camel.spi.ReactiveExecutor`.
 
-== Using transactions
+=== Using transactions
 
 The routing engine has been changed to route exchanges in a different order
 when using transactions (`.transacted()`). When an `Exchange` is continued
 routed a task is scheduled to the `ReactiveExecutor`. This fixed issues
 with could lead to `StackOverflowException`.
 
+=== camel-hazelcast-starter
 
+The `camel-hazelcast-starter` for Spring Boot no longer has _customer_ auto configuration options for all its components
+
+eg the following configuration keys have been removed
+
+- ...customizer.hazelcast-instance.enabled
+- ...customizer.hazelcast-instance.override
+
+Any Camel component can be customized by using the `org.apache.camel.spi.ComponentCustomizer` SPI.
 
