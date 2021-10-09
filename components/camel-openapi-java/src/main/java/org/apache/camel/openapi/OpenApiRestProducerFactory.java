@@ -102,7 +102,9 @@ public class OpenApiRestProducerFactory implements RestProducerFactory {
         final ObjectMapper mapper = new ObjectMapper();
         try {
             final JsonNode node = mapper.readTree(is);
-            LOG.debug("Loaded openApi api-doc:\n{}", node.toPrettyString());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Loaded openApi api-doc:\n{}", node.toPrettyString());
+            }
             return (OasDocument) Library.readDocument(node);
 
         } finally {
