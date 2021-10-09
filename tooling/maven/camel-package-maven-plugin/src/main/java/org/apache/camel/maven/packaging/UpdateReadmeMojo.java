@@ -69,15 +69,22 @@ import org.sonatype.plexus.build.incremental.BuildContext;
 import static org.apache.camel.tooling.util.PackageHelper.findCamelDirectory;
 
 /**
- * Generate or updates the component/dataformat/language/eip readme.md and .adoc files in the project root directory.
+ * Generate or updates the component/dataformat/language/eip documentation .adoc files in the project src/main/docs
+ * directory.
  */
 @Mojo(name = "update-readme", threadSafe = true)
 public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
+    //Set to true if you need to move a new manual attribute from text body to header attributes.
+    private static final boolean RELOCATE_MANUAL_ATTRIBUTES = false;
+
     //Header attributes that are preserved through header generation
     private static final Pattern[] MANUAL_ATTRIBUTES = {
             Pattern.compile(":(group): *(.*)"),
-            Pattern.compile(":(summary-group): *(.*)") };
+            Pattern.compile(":(summary-group): *(.*)"),
+            Pattern.compile(":(camel-spring-boot-name): *(.*)"),
+            Pattern.compile(":(starter-artifactid): *(.*)")
+    };
 
     /**
      * The project build directory
@@ -633,7 +640,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
             // find manual attributes
             Map<String, String> manualAttributes = new LinkedHashMap<>();
             for (String line : lines) {
-                if (line.length() == 0) {
+                if (!RELOCATE_MANUAL_ATTRIBUTES && line.length() == 0) {
                     break;
                 }
                 for (Pattern attrName : MANUAL_ATTRIBUTES) {
@@ -657,6 +664,8 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
             }
             newLines.add("= " + title);
             newLines.add(":docTitle: " + model.getTitle());
+            String shortName = "mail".equals(name) ? "imap" : name;
+            newLines.add(":shortname: " + shortName);
 
             if (model instanceof ArtifactModel<?>) {
                 newLines.add(":artifactId: " + ((ArtifactModel<?>) model).getArtifactId());
@@ -702,12 +711,23 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
             }
 
             boolean copy = false;
-            if (updated) {
-                for (int i = 0; i < lines.length; i++) {
-                    if (!copy && lines[i].isEmpty()) {
+            if (updated || RELOCATE_MANUAL_ATTRIBUTES) {
+                outer: for (String line : lines) {
+                    if (!copy && line.isEmpty()) {
                         copy = true;
                     } else if (copy) {
-                        newLines.add(lines[i]);
+
+                        if (RELOCATE_MANUAL_ATTRIBUTES) {
+                            for (Pattern attrName : MANUAL_ATTRIBUTES) {
+                                Matcher m = attrName.matcher(line);
+                                if (m.matches()) {
+                                    updated = true;
+                                    continue outer;
+                                }
+                            }
+                        }
+
+                        newLines.add(line);
                     }
                 }
                 if (!copy) {
