@@ -22,10 +22,12 @@ import java.time.Duration;
 import io.nats.client.Connection;
 import io.nats.client.Options;
 import io.nats.client.Options.Builder;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.ObjectHelper;
 
@@ -83,6 +85,8 @@ public class NatsConfiguration {
     private SSLContextParameters sslContextParameters;
     @UriParam(label = "advanced")
     private boolean traceConnection;
+    @UriParam(label = "advanced")
+    private HeaderFilterStrategy headerFilterStrategy = new DefaultHeaderFilterStrategy();
 
     /**
      * URLs to one or more NAT servers. Use comma to separate URLs when specifying multiple servers.
@@ -336,6 +340,20 @@ public class NatsConfiguration {
 
     public void setSecure(boolean secure) {
         this.secure = secure;
+    }
+
+    /**
+     * Get the header filter strategy
+     */
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        return headerFilterStrategy;
+    }
+
+    /**
+     * Define the header filtering strategy
+     */
+    public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
+        this.headerFilterStrategy = headerFilterStrategy;
     }
 
     /**

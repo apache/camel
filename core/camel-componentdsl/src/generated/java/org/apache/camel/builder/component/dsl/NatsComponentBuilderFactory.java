@@ -144,6 +144,24 @@ public interface NatsComponentBuilderFactory {
             return this;
         }
         /**
+         * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
+         * header to and from Camel message.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
+         * 
+         * Group: filter
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default NatsComponentBuilder headerFilterStrategy(
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
          * Enable usage of global SSL context parameters.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -181,6 +199,7 @@ public interface NatsComponentBuilderFactory {
             case "bridgeErrorHandler": ((NatsComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((NatsComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((NatsComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "headerFilterStrategy": ((NatsComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
             case "useGlobalSslContextParameters": ((NatsComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
             default: return false;
             }
