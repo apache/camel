@@ -34,15 +34,21 @@ public final class OpenApiHelper {
     }
 
     public static String buildUrl(String path1, String path2) {
+        String answer;
         String s1 = FileUtil.stripTrailingSeparator(path1);
         String s2 = FileUtil.stripLeadingSeparator(path2);
         if (s1 != null && s2 != null) {
-            return s1 + "/" + s2;
+            answer = s1 + "/" + s2;
         } else if (path1 != null) {
-            return path1;
+            answer = path1;
         } else {
-            return path2;
+            answer = path2;
         }
+        // must start with leading slash
+        if (answer != null && !answer.startsWith("/")) {
+            answer = "/" + answer;
+        }
+        return answer;
     }
 
     /**

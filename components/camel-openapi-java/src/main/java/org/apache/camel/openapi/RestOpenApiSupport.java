@@ -229,15 +229,14 @@ public class RestOpenApiSupport {
             }
 
         }
-        return basePath;
 
+        return basePath;
     }
 
     public static String parseVariables(String url, Oas30Server server) {
         Pattern p = Pattern.compile("\\{(.*?)\\}");
         Matcher m = p.matcher(url);
         while (m.find()) {
-
             String var = m.group(1);
             if (server != null && server.variables != null && server.variables.get(var) != null) {
                 String varValue = server.variables.get(var).default_;
@@ -296,7 +295,6 @@ public class RestOpenApiSupport {
             setInfoOas30(openApiConfig, version, title, description, termsOfService, licenseName, licenseUrl,
                     contactName, contactUrl, contactEmail);
         }
-
     }
 
     private void setInfoOas30(
@@ -467,7 +465,7 @@ public class RestOpenApiSupport {
 
         List<String> contexts = findCamelContexts(camelContext);
 
-        // filter non matched CamelContext's
+        // filter not matched CamelContext's
         if (contextIdPattern != null) {
             Iterator<String> it = contexts.iterator();
             while (it.hasNext()) {

@@ -197,10 +197,10 @@ public class RestOpenApiReader {
         List<VerbDefinition> verbs = new ArrayList<>(rest.getVerbs());
         // must sort the verbs by uri so we group them together when an uri has multiple operations
         verbs.sort(new VerbOrdering(camelContext));
-        // we need to group the operations within the same tag, so use the path as default if not
-        // configured
-        String pathAsTag = getValue(camelContext, rest.getTag() != null
-                ? rest.getTag() : FileUtil.stripLeadingSeparator(rest.getPath()));
+
+        // we need to group the operations within the same tag, so use the path as default if not configured
+        String opPath = OpenApiHelper.buildUrl(buildBasePath(camelContext, rest), getValue(camelContext, rest.getPath()));
+        String pathAsTag = getValue(camelContext, rest.getTag() != null ? rest.getTag() : opPath);
         if (openApi instanceof Oas20Document) {
             parseOas20(camelContext, (Oas20Document) openApi, rest, pathAsTag);
         } else if (openApi instanceof Oas30Document) {
@@ -474,12 +474,32 @@ public class RestOpenApiReader {
         }
     }
 
+    private String buildBasePath(CamelContext camelContext, RestDefinition rest) {
+        // used during gathering of apis
+        String basePath = getValue(camelContext, rest.getPath());
+
+        // is there any context-path which we must use in base path for each rest service
+        String cp = camelContext.getRestConfiguration() != null ? camelContext.getRestConfiguration().getContextPath() : null;
+        if (cp != null) {
+            cp = FileUtil.stripLeadingSeparator(cp);
+            if (basePath != null) {
+                basePath = cp + "/" + basePath;
+            } else {
+                basePath = cp;
+            }
+        }
+        // must start with leading slash
+        if (basePath != null && !basePath.startsWith("/")) {
+            basePath = "/" + basePath;
+        }
+        return basePath;
+    }
+
     private void doParseVerbs(
             CamelContext camelContext, OasDocument openApi, RestDefinition rest, String camelContextId,
             List<VerbDefinition> verbs, String pathAsTag) {
 
-        // used during gathering of apis
-        String basePath = getValue(camelContext, rest.getPath());
+        String basePath = buildBasePath(camelContext, rest);
 
         for (VerbDefinition verb : verbs) {
             // check if the Verb Definition must be excluded from documentation

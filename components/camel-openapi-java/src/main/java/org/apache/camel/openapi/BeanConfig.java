@@ -17,6 +17,7 @@
 package org.apache.camel.openapi;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import io.apicurio.datamodels.core.models.common.Info;
 import io.apicurio.datamodels.core.models.common.Server;
@@ -121,9 +122,7 @@ public class BeanConfig {
             info._parent = openApi;
         }
         Server server = openApi.createServer();
-        String serverUrl
-                = new StringBuilder().append(this.schemes[0]).append("://").append(this.host).append(this.basePath).toString();
-        server.url = serverUrl;
+        server.url = this.schemes[0] + "://" + this.host + this.basePath;
         openApi.addServer(server);
     }
 
@@ -132,9 +131,7 @@ public class BeanConfig {
             if (openApi.schemes == null) {
                 openApi.schemes = new ArrayList<String>();
             }
-            for (String scheme : schemes) {
-                openApi.schemes.add(scheme);
-            }
+            openApi.schemes.addAll(Arrays.asList(schemes));
         }
         if (info != null) {
             openApi.info = info;
