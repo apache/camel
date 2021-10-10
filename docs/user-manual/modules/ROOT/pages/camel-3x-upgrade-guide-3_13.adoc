@@ -30,3 +30,10 @@ eg the following configuration keys have been removed
 
 Any Camel component can be customized by using the `org.apache.camel.spi.ComponentCustomizer` SPI.
 
+=== camel-openapi-java
+
+When using Rest DSL and the `restConfiguration` has a `contextPath` configured, then this value
+is used as leading base path for all API services that are in the generated api-docs.
+
+This is i.e. needed when using `camel-servlet` which runs under a specific `context-path`.
+
