@@ -1058,7 +1058,7 @@ The destination endpoints are selected by random.
   <xs:element name="recipientList" type="tns:recipientListDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-Route messages to a number of dynamically specified recipients (dynamic to)
+Route messages to a number of dynamically specified recipients
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
