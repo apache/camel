@@ -98,10 +98,10 @@
                 </datasonnet>
             </transform>
 
-                    <to uri="mock:direct:end"/>
-                </route>
+            <to uri="mock:direct:end"/>
+        </route>
 
-                <route id="namedImports">
+        <route id="namedImports">
             <from uri="direct:namedImports"/>
             <transform>
                 <datasonnet bodyMediaType="application/json" outputMediaType="application/json"
@@ -115,6 +115,14 @@
             <transform>
                 <datasonnet bodyMediaType="application/x-java-object" outputMediaType="application/json"
                             resultType="java.lang.String">resource:classpath:readJavaTest.ds</datasonnet>
+            </transform>
+            <to uri="mock:direct:end"/>
+        </route>
+
+        <route id="readJavaDatasonnetHeader">
+            <from uri="direct:readJavaDatasonnetHeader"/>
+            <transform>
+                <datasonnet outputMediaType="application/json" resultType="java.lang.String">resource:classpath:readJavaTest.ds</datasonnet>
             </transform>
             <to uri="mock:direct:end"/>
         </route>

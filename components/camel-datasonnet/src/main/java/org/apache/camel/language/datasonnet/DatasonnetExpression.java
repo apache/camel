@@ -113,7 +113,7 @@ public class DatasonnetExpression extends ExpressionAdapter implements Expressio
         Document<?> body;
         if (exchange.getMessage().getBody() instanceof Document) {
             body = (Document<?>) exchange.getMessage().getBody();
-        } else if (MediaTypes.APPLICATION_JAVA.equalsTypeAndSubtype(bodyMT)) {
+        } else if (MediaTypes.APPLICATION_JAVA.equalsTypeAndSubtype(bodyMT) || bodyMT == null) {
             body = new DefaultDocument<>(exchange.getMessage().getBody());
         } else {
             body = new DefaultDocument<>(MessageHelper.extractBodyAsString(exchange.getMessage()), bodyMT);
