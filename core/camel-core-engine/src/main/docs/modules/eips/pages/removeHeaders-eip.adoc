@@ -5,17 +5,68 @@
 :since: 
 :supportlevel: Stable
 
+The Remove Headers EIP allows you to remove one or more headers from the xref:message.adoc[Message],
+based on pattern syntax.
+
 == Options
 
 // eip options: START
 include::partial$eip-options.adoc[]
 // eip options: END
 
-== Samples
+== Remove Headers by pattern
+
+The Remove Headers EIP supports pattern
+matching by the following rules in the given order:
+
+* match by exact name
+* match by wildcard
+* match by regular expression
+
+== Remove all headers
+
+To remove all headers you can use `*` as the pattern:
 
 [source,java]
 ----
 from("seda:b")
-  .removeHeaders(map)
+  .removeHeaders("*")
   .to("mock:result");
 ----
+
+And in XML:
+
+[source,xml]
+----
+<route>
+  <from uri="seda:b"/>
+  <removeHeader name="*"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+== Remove all Camel headers
+
+To remove all headers that start with `Camel` then use `Camel*` as shown:
+
+[source,java]
+----
+from("seda:b")
+  .removeHeaders("Camel*")
+  .to("mock:result");
+----
+
+And in XML:
+
+[source,xml]
+----
+<route>
+  <from uri="seda:b"/>
+  <removeHeader name="Camel*"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+== See Also
+
+To remove a single header, then you can use xref:removeHeader-eip.adoc[Remove Header].

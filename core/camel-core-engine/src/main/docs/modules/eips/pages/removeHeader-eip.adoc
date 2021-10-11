@@ -5,13 +5,17 @@
 :since: 
 :supportlevel: Stable
 
+The Remove Header EIP allows you to remove a header from the xref:message.adoc[Message].
+
 == Options
 
 // eip options: START
 include::partial$eip-options.adoc[]
 // eip options: END
 
-== Samples
+== Example
+
+We want to remove a header with key "myHeader" from the message:
 
 [source,java]
 ----
@@ -20,17 +24,17 @@ from("seda:b")
   .to("mock:result");
 ----
 
-=== Spring DSL
-The sample below demonstrates the delay in Spring DSL:
+And in XML:
 
 [source,xml]
 ----
 <route>
   <from uri="seda:b"/>
-  <removeHeader>
-     <constant>myHeader</constant>
-  <removeHeader/>
+  <removeHeader name="myHeader"/>
   <to uri="mock:result"/>
 </route>
-
 ----
+
+== See Also
+
+If you need to remove multiple headers or by pattern, then use xref:removeHeaders-eip.adoc[Remove Headers].
