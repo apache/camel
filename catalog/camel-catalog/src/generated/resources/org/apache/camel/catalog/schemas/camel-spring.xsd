@@ -1050,7 +1050,7 @@ Rest PUT command
   <xs:element name="random" type="tns:randomLoadBalancerDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-A random endpoint is selected for each exchange.
+The destination endpoints are selected by random.
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -1226,8 +1226,8 @@ Forces a rollback by stopping routing the message
   <xs:element name="roundRobin" type="tns:roundRobinLoadBalancerDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-The exchanges are selected in a round robin fashion. This is a well known and
-classic policy, which spreads the load evenly.
+The destination endpoints are selected in a round-robin fashion. This is a well
+known and classic policy, which spreads the load evenly.
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
