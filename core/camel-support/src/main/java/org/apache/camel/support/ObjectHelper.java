@@ -660,7 +660,6 @@ public final class ObjectHelper {
      * Creates an iterable over the value if the value is a collection, an Object[], a String with values separated by
      * the given delimiter, or a primitive type array; otherwise to simplify the caller's code, we just create a
      * singleton collection iterator over a single value
-     *
      * </p>
      * In case of primitive type arrays the returned {@code Iterable} iterates over the corresponding Java primitive
      * wrapper objects of the given elements inside the {@code value} array. That's we get an autoboxing of the
