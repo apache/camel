@@ -21,6 +21,8 @@ The Point to Point Channel is supported in Camel by messaging based xref:compone
 
 There are also messaging based in the cloud from cloud providers such as Amazon, Google and Azure.
 
+TIP: See also the related xref:publish-subscribe-channel.adoc[Publish Scribe Channel] EIP
+
 == Example
 
 The following example demonstrates point to point messaging using
