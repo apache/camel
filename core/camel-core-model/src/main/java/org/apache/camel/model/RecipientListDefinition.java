@@ -33,7 +33,7 @@ import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Route messages to a number of dynamically specified recipients (dynamic to)
+ * Route messages to a number of dynamically specified recipients
  */
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "recipientList")

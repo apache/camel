@@ -1,7 +1,7 @@
 = Recipient List EIP
 :doctitle: Recipient List
 :shortname: recipientList
-:description: Route messages to a number of dynamically specified recipients (dynamic to)
+:description: Route messages to a number of dynamically specified recipients
 :since: 
 :supportlevel: Stable
 
