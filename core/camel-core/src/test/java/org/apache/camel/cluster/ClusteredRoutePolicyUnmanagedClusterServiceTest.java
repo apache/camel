@@ -22,18 +22,15 @@ import java.util.Optional;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.cluster.ClusteredRoutePolicy;
 import org.apache.camel.support.cluster.AbstractCamelClusterService;
 import org.apache.camel.support.cluster.AbstractCamelClusterView;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-public class ClusteredRoutePolicyTest extends ContextTestSupport {
+public class ClusteredRoutePolicyUnmanagedClusterServiceTest extends ContextTestSupport {
 
     private ClusteredRoutePolicy policy;
     private TestClusterService cs;
@@ -43,101 +40,20 @@ public class ClusteredRoutePolicyTest extends ContextTestSupport {
         CamelContext context = super.createCamelContext();
 
         cs = new TestClusterService("my-cluster-service");
-        context.addService(cs);
+        cs.start();
 
-        policy = ClusteredRoutePolicy.forNamespace("my-ns");
+        policy = ClusteredRoutePolicy.forNamespace(cs, "my-ns");
 
         return context;
     }
 
     @Test
-    public void testClusteredRoutePolicy() throws Exception {
-        // route is stopped as we are not leader yet
-        assertEquals(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("foo"));
-
-        MockEndpoint mock = getMockEndpoint("mock:foo");
-        mock.expectedBodiesReceived("Hello Foo");
-
+    public void testClusteredRoutePolicyReleaseViewOnCamelContextStop() {
         cs.getView().setLeader(true);
 
-        template.sendBody("seda:foo", "Hello Foo");
-
-        assertMockEndpointsSatisfied();
-
-        assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("foo"));
-    }
-
-    @Test
-    public void testClusteredRoutePolicyStopAllRoutes() throws Exception {
-        cs.getView().setLeader(true);
-
-        context.getRouteController().stopRoute("foo");
-        context.getRouteController().stopRoute("baz");
+        context.stop();
 
         assertFalse(cs.getView().isRunning());
-    }
-
-    @Test
-    public void testClusteredRoutePolicyDontStartAutoStartFalseRoutes() throws Exception {
-        cs.getView().setLeader(true);
-
-        assertEquals(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("baz"));
-    }
-
-    @Test
-    public void testClusteredRoutePolicyAddRoute() throws Exception {
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("seda:bar").routeId("bar").routePolicy(policy)
-                        .to("mock:bar");
-            }
-        });
-
-        // route is stopped as we are not leader yet
-        assertEquals(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("foo"));
-        assertEquals(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("bar"));
-
-        getMockEndpoint("mock:foo").expectedBodiesReceived("Hello Foo");
-        getMockEndpoint("mock:bar").expectedBodiesReceived("Hello Bar");
-
-        cs.getView().setLeader(true);
-
-        template.sendBody("seda:foo", "Hello Foo");
-        template.sendBody("seda:bar", "Hello Bar");
-
-        assertMockEndpointsSatisfied();
-
-        assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("foo"));
-        assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("bar"));
-    }
-
-    @Test
-    public void testClusteredRoutePolicyAddRouteAlreadyLeader() throws Exception {
-        cs.getView().setLeader(true);
-
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("seda:bar").routeId("bar").routePolicy(policy)
-                        .to("mock:bar");
-            }
-        });
-
-        // route is started as we are leader
-        assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("foo"));
-        assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("bar"));
-
-        getMockEndpoint("mock:foo").expectedBodiesReceived("Hello Foo");
-        getMockEndpoint("mock:bar").expectedBodiesReceived("Hello Bar");
-
-        template.sendBody("seda:foo", "Hello Foo");
-        template.sendBody("seda:bar", "Hello Bar");
-
-        assertMockEndpointsSatisfied();
-
-        assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("foo"));
-        assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("bar"));
     }
 
     @Override
@@ -147,8 +63,8 @@ public class ClusteredRoutePolicyTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("seda:foo").routeId("foo").routePolicy(policy)
                         .to("mock:foo");
-                from("seda:baz").autoStartup(false).routeId("baz").routePolicy(policy)
-                        .to("mock:baz");
+                from("seda:bar").routeId("bar").routePolicy(policy)
+                        .to("mock:bar");
             }
         };
     }
