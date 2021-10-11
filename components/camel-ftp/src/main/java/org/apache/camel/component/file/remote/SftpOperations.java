@@ -28,10 +28,10 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Vector;
 import java.util.regex.Pattern;
 
 import com.jcraft.jsch.ChannelSftp;
@@ -710,30 +710,24 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
     }
 
     @Override
-    public synchronized List<SftpRemoteFile> listFiles() throws GenericFileOperationFailedException {
+    public synchronized SftpRemoteFile[] listFiles() throws GenericFileOperationFailedException {
         return listFiles(".");
     }
 
     @Override
-    public synchronized List<SftpRemoteFile> listFiles(String path) throws GenericFileOperationFailedException {
-        LOG.trace("listFiles({})", path);
+    public synchronized SftpRemoteFile[] listFiles(String path) throws GenericFileOperationFailedException {
+        LOG.trace("Listing remote files from path {}", path);
         if (ObjectHelper.isEmpty(path)) {
             // list current directory if file path is not given
             path = ".";
         }
 
         try {
-            final List<SftpRemoteFile> list = new ArrayList<>();
+            Vector<?> files = channel.ls(path);
 
-            @SuppressWarnings("rawtypes")
-            List files = channel.ls(path);
-            // can return either null or an empty list depending on FTP servers
-            if (files != null) {
-                for (Object file : files) {
-                    list.add(new SftpRemoteFileJCraft((ChannelSftp.LsEntry) file));
-                }
-            }
-            return list;
+            return files.stream()
+                    .map(f -> new SftpRemoteFileJCraft((ChannelSftp.LsEntry) f))
+                    .toArray(SftpRemoteFileJCraft[]::new);
         } catch (SftpException e) {
             throw new GenericFileOperationFailedException("Cannot list directory: " + path, e);
         }

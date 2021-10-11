@@ -127,7 +127,7 @@ public class RemoteFileIgnoreDoPollErrorTest {
             }
 
             @Override
-            protected boolean isMatched(GenericFile<Object> file, String doneFileName, List<Object> files) {
+            protected boolean isMatched(GenericFile<Object> file, String doneFileName, Object[] files) {
                 return false;
             }
 

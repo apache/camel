@@ -37,3 +37,18 @@ is used as leading base path for all API services that are in the generated api-
 
 This is i.e. needed when using `camel-servlet` which runs under a specific `context-path`.
 
+=== camel-file
+
+In order to reduce memory pressure, the component was modified to avoid using Lists for certain file operations (CAMEL-17059). This affected the APIs of some the APIs and interfaces provided by the component.
+
+- `GenericFileOperations`: the return type for the methods `listFiles` and `listFiles(String)` was modified to return an array of (generic) objects instead of a List
+- `GenericFileConsumer`: the signature of the methods `isValidFile` and `isMatched` was modified to receive an array of files.
+
+
+=== camel-ftp
+
+The `FtpConsumer`, `FtpOperations`, `SftConsumer` and `SftpOperations` classes were modified to comply with the API changes on the `camel-file` component.
+
+=== camel-jsch
+
+The `ScpOperations` class were modified to comply with the API changes on the `camel-file` component.

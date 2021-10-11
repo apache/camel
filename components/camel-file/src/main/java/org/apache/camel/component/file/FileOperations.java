@@ -34,7 +34,6 @@ import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
 
 import org.apache.camel.Exchange;
@@ -202,13 +201,13 @@ public class FileOperations implements GenericFileOperations<File> {
     }
 
     @Override
-    public List<File> listFiles() throws GenericFileOperationFailedException {
+    public File[] listFiles() throws GenericFileOperationFailedException {
         // noop
         return null;
     }
 
     @Override
-    public List<File> listFiles(String path) throws GenericFileOperationFailedException {
+    public File[] listFiles(String path) throws GenericFileOperationFailedException {
         // noop
         return null;
     }

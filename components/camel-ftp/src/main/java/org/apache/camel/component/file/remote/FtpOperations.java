@@ -23,10 +23,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
@@ -924,17 +921,12 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     }
 
     @Override
-    public List<FTPFile> listFiles() throws GenericFileOperationFailedException {
-        log.trace("listFiles()");
+    public FTPFile[] listFiles() throws GenericFileOperationFailedException {
+        log.trace("Listing remote files");
         clientActivityListener.onScanningForFiles(endpoint.remoteServerInformation(), null);
         try {
-            final List<FTPFile> list = new ArrayList<>();
-            FTPFile[] files = client.listFiles();
-            // can return either null or an empty list depending on FTP servers
-            if (files != null) {
-                list.addAll(Arrays.asList(files));
-            }
-            return list;
+
+            return client.listFiles();
         } catch (IOException e) {
             clientActivityListener.onGeneralError(endpoint.getConfiguration().remoteServerInformation(), e.getMessage());
             throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
@@ -942,8 +934,8 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     }
 
     @Override
-    public List<FTPFile> listFiles(String path) throws GenericFileOperationFailedException {
-        log.trace("listFiles({})", path);
+    public FTPFile[] listFiles(String path) throws GenericFileOperationFailedException {
+        log.trace("Listing remote files from path {}", path);
         clientActivityListener.onScanningForFiles(endpoint.remoteServerInformation(), path);
 
         // use current directory if path not given
@@ -952,13 +944,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         }
 
         try {
-            final List<FTPFile> list = new ArrayList<>();
-            FTPFile[] files = client.listFiles(path);
-            // can return either null or an empty list depending on FTP servers
-            if (files != null) {
-                list.addAll(Arrays.asList(files));
-            }
-            return list;
+            return client.listFiles(path);
         } catch (IOException e) {
             clientActivityListener.onGeneralError(endpoint.getConfiguration().remoteServerInformation(), e.getMessage());
             throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);

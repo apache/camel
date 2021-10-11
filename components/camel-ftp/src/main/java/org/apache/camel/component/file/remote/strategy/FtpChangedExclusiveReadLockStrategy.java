@@ -17,7 +17,6 @@
 package org.apache.camel.component.file.remote.strategy;
 
 import java.util.Date;
-import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
@@ -76,7 +75,7 @@ public class FtpChangedExclusiveReadLockStrategy implements GenericFileExclusive
             long newLastModified = 0;
             long newLength = 0;
 
-            List<FTPFile> files;
+            FTPFile[] files;
             if (fastExistsCheck) {
                 // use the absolute file path to only pickup the file we want to
                 // check, this avoids expensive
@@ -106,7 +105,7 @@ public class FtpChangedExclusiveReadLockStrategy implements GenericFileExclusive
                     files = operations.listFiles(path);
                 }
             }
-            LOG.trace("List files {} found {} files", file.getAbsoluteFilePath(), files.size());
+            LOG.trace("List files {} found {} files", file.getAbsoluteFilePath(), files.length);
             for (FTPFile f : files) {
                 boolean match;
                 if (fastExistsCheck) {

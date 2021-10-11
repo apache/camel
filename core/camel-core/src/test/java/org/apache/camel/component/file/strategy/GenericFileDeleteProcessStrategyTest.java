@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.file.strategy;
 
-import java.util.List;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.file.GenericFile;
@@ -107,12 +105,12 @@ public class GenericFileDeleteProcessStrategyTest extends ContextTestSupport {
         }
 
         @Override
-        public List<Object> listFiles() throws GenericFileOperationFailedException {
+        public Object[] listFiles() throws GenericFileOperationFailedException {
             return null;
         }
 
         @Override
-        public List<Object> listFiles(String path) throws GenericFileOperationFailedException {
+        public Object[] listFiles(String path) throws GenericFileOperationFailedException {
             return null;
         }
     }

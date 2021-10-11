@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.file.remote;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 import com.jcraft.jsch.ChannelSftp;
@@ -124,52 +124,26 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
 
         // compute dir depending on stepwise is enabled or not
         String dir = null;
-        List<SftpRemoteFile> files = null;
-        try {
-            if (isStepwise()) {
-                dir = ObjectHelper.isNotEmpty(dirName) ? dirName : absolutePath;
-                operations.changeCurrentDirectory(dir);
-            } else {
-                dir = absolutePath;
-            }
-
-            LOG.trace("Polling directory: {}", dir);
-            if (isUseList()) {
-                if (isStepwise()) {
-                    files = operations.listFiles();
-                } else {
-                    files = operations.listFiles(dir);
-                }
-            } else {
-                // we cannot use the LIST command(s) so we can only poll a named
-                // file so created a pseudo file with that name
-                Exchange dummy = endpoint.createExchange();
-                String name = evaluateFileExpression(dummy);
-                if (name != null) {
-                    SftpRemoteFile file = new SftpRemoteFileSingle(name);
-                    files = new ArrayList<>(1);
-                    files.add(file);
-                }
-            }
-        } catch (GenericFileOperationFailedException e) {
-            if (ignoreCannotRetrieveFile(null, null, e)) {
-                LOG.debug("Cannot list files in directory {} due directory does not exists or file permission error.", dir);
-            } else {
-                throw e;
-            }
+        if (isStepwise()) {
+            dir = ObjectHelper.isNotEmpty(dirName) ? dirName : absolutePath;
+            operations.changeCurrentDirectory(dir);
+        } else {
+            dir = absolutePath;
         }
 
-        if (files == null || files.isEmpty()) {
+        final SftpRemoteFile[] files = getSftpRemoteFiles(dir);
+
+        if (files == null || files.length == 0) {
             // no files in this directory to poll
             LOG.trace("No files found in directory: {}", dir);
             return true;
         } else {
             // we found some files
-            LOG.trace("Found {} in directory: {}", files.size(), dir);
+            LOG.trace("Found {} files in directory: {}", files.length, dir);
         }
 
         if (getEndpoint().isPreSort()) {
-            Collections.sort(files, (a, b) -> a.getFilename().compareTo(b.getFilename()));
+            Arrays.sort(files, Comparator.comparing(SftpRemoteFile::getFilename));
         }
 
         for (SftpRemoteFile file : files) {
@@ -210,8 +184,51 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
         return true;
     }
 
+    private SftpRemoteFile[] listFiles(String dir) {
+        if (isStepwise()) {
+            return operations.listFiles();
+        }
+
+        return operations.listFiles(dir);
+    }
+
+    private SftpRemoteFile[] getSftpRemoteFiles(String dir) {
+        SftpRemoteFile[] files = null;
+        try {
+            LOG.trace("Polling directory: {}", dir);
+            if (isUseList()) {
+                files = listFiles(dir);
+            } else {
+                files = pollNamedFile();
+            }
+        } catch (GenericFileOperationFailedException e) {
+            if (ignoreCannotRetrieveFile(null, null, e)) {
+                LOG.debug("Cannot list files in directory {} due directory does not exists or file permission error.", dir);
+            } else {
+                throw e;
+            }
+        }
+        return files;
+    }
+
+    private SftpRemoteFile[] pollNamedFile() {
+        SftpRemoteFile[] files = null;
+
+        // we cannot use the LIST command(s) so we can only poll a named
+        // file so created a pseudo file with that name
+        Exchange dummy = endpoint.createExchange();
+        String name = evaluateFileExpression(dummy);
+        if (name != null) {
+            SftpRemoteFile file = new SftpRemoteFileSingle(name);
+            files = new SftpRemoteFile[1];
+            files[0] = file;
+        }
+
+        return files;
+    }
+
     @Override
-    protected boolean isMatched(GenericFile<SftpRemoteFile> file, String doneFileName, List<SftpRemoteFile> files) {
+    protected boolean isMatched(GenericFile<SftpRemoteFile> file, String doneFileName, SftpRemoteFile[] files) {
         String onlyName = FileUtil.stripPath(doneFileName);
 
         for (SftpRemoteFile f : files) {

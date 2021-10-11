@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.file;
 
-import java.util.List;
-
 import org.apache.camel.Exchange;
 
 public interface GenericFileOperations<T> {
@@ -132,7 +130,7 @@ public interface GenericFileOperations<T> {
      * @return                                     a list of backing objects representing the files
      * @throws GenericFileOperationFailedException can be thrown
      */
-    List<T> listFiles() throws GenericFileOperationFailedException;
+    T[] listFiles() throws GenericFileOperationFailedException;
 
     /**
      * List the files in the given remote directory
@@ -141,6 +139,6 @@ public interface GenericFileOperations<T> {
      * @return                                     a list of backing objects representing the files
      * @throws GenericFileOperationFailedException can be thrown
      */
-    List<T> listFiles(String path) throws GenericFileOperationFailedException;
+    T[] listFiles(String path) throws GenericFileOperationFailedException;
 
 }
