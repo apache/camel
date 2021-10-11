@@ -118,6 +118,28 @@ public class CamelDatasonnetTest extends CamelSpringTestSupport {
     }
 
     @Test
+    public void testReadJavaDatasonnetHeader() throws Exception {
+        Gizmo theGizmo = new Gizmo();
+        theGizmo.setName("gizmo");
+        theGizmo.setQuantity(123);
+        theGizmo.setInStock(true);
+        theGizmo.setColors(Arrays.asList("red", "white", "blue"));
+
+        Manufacturer manufacturer = new Manufacturer();
+        manufacturer.setManufacturerName("ACME Corp.");
+        manufacturer.setManufacturerCode("ACME123");
+        theGizmo.setManufacturer(manufacturer);
+
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        df.setTimeZone(TimeZone.getTimeZone("UTC"));
+        theGizmo.setDate(df.parse("2020-01-06"));
+
+        runCamelTest(theGizmo,
+                loadResourceAsString("javaTest.json"),
+                "direct:readJavaDatasonnetHeader");
+    }
+
+    @Test
     public void testWriteJava() throws Exception {
         Gizmo theGizmo = new Gizmo();
         theGizmo.setName("gizmo");
