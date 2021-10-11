@@ -342,7 +342,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
      * therefore not using the default {@link EventDrivenPollingConsumer} implementation.
      * <p/>
      * Setting this option to <tt>false</tt>, will result in an {@link java.lang.IllegalStateException} being thrown
-     * when trying to add to the queue, and its full.
+     * when trying to add to the queue, and it is full.
      * <p/>
      * The default value is <tt>true</tt> which will block the producer queue until the queue has space.
      */
