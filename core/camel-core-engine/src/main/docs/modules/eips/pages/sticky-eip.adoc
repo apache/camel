@@ -5,7 +5,10 @@
 :since: 
 :supportlevel: Stable
 
-Sticky Load Balancer. Sticky load balancing uses an Expression to calculate a correlation key to perform the sticky load balancing.
+Sticky mode for the xref:loadBalance-eip.adoc[Load Balancer] EIP.
+
+A stick mode means that a correlation key (calculated as xref:latest@manual:ROOT:expression.adoc[Expression])
+is used to determine the destination. This allows to route all messages with the same key to the same destination.
 
 == Options
 
@@ -15,29 +18,33 @@ include::partial$eip-options.adoc[]
 
 == Examples
 
-In this case we are using the header test as correlation expression:
+In this case we are using the header myKey as correlation expression:
 
 [source,java]
 ----
 from("direct:start")
-    .loadBalance()
-    .sticky(header("test"))
-    .to("seda:x", "seda:y", "seda:z");
+    .loadBalance().sticky(header("myKey"))
+        .to("seda:x")
+        .to("seda:y")
+        .to("seda:z")
+    .end();
 ----
 
-In XML you'll have a route like this
+In XML you'll have a route like this:
 
 [source,xml]
 ----
+<route>
 <from uri="direct:start"/>
     <loadBalance>
        <sticky>
            <correlationExpression>
-               <header>test</header>
+               <header>myKey</header>
            </correlationExpression>
        </sticky>
        <to uri="seda:x"/>      
        <to uri="seda:y"/>      
        <to uri="seda:z"/>       
     </loadBalance> 
+</route>
 ----

@@ -20,7 +20,10 @@ An example using Java DSL:
 from("direct:start")
     // using our custom load balancer
     .loadBalance(new MyLoadBalancer())
-    .to("mock:x", "mock:y", "mock:z");
+        .to("seda:x")
+        .to("seda:y")
+        .to("seda:z")
+    .end();
 ----
 
 And the same example using XML DSL:
@@ -28,18 +31,18 @@ And the same example using XML DSL:
 [source,xml]
 ----
 <!-- this is the implementation of our custom load balancer -->
-<bean id="myBalancer" class="org.apache.camel.processor.CustomLoadBalanceTest$MyLoadBalancer"/>
+<bean id="myBalancer" class="com.foo.MyLoadBalancer"/>
 
 <camelContext xmlns="http://camel.apache.org/schema/spring">
   <route>
     <from uri="direct:start"/>
     <loadBalance>
       <!-- refer to my custom load balancer -->
-      <custom ref="myBalancer"/>
-      <!-- these are the endpoints to balancer -->
-      <to uri="mock:x"/>
-      <to uri="mock:y"/>
-      <to uri="mock:z"/>
+      <customLoadBalancer ref="myBalancer"/>
+      <!-- these are the endpoints to balance -->
+      <to uri="seda:x"/>
+      <to uri="seda:y"/>
+      <to uri="seda:z"/>
     </loadBalance>
   </route>
 </camelContext>
