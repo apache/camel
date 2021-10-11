@@ -24,7 +24,7 @@ import org.apache.camel.model.LoadBalancerDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * A random endpoint is selected for each exchange.
+ * The destination endpoints are selected by random.
  */
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "random")

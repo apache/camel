@@ -1,11 +1,14 @@
 = Round Robin EIP
 :doctitle: Round Robin
 :shortname: roundRobin
-:description: The exchanges are selected in a round robin fashion. This is a well known and classic policy, which spreads the load evenly.
+:description: The destination endpoints are selected in a round-robin fashion. This is a well known and classic policy, which spreads the load evenly.
 :since: 
 :supportlevel: Stable
 
-Round Robin Load Balancer. With this Load Balancing policy, a random endpoint is selected for each exchange.
+Round Robin mode for the xref:loadBalance-eip.adoc[Load Balancer] EIP.
+
+The exchanges are selected in a round-robin fashion.
+This is a well known and classic policy, which spreads the load evenly.
 
 == Options
 
@@ -13,27 +16,33 @@ Round Robin Load Balancer. With this Load Balancing policy, a random endpoint is
 include::partial$eip-options.adoc[]
 // eip options: END
 
-== Examples
+== Example
 
-In this case we are using the header test as correlation expression:
+We want to load balance between three endpoints in round-robin mode.
+
+This is done as follows in Java DSL:
 
 [source,java]
 ----
 from("direct:start")
-    .loadBalance()
-    .roundRobin()
-    .to("seda:x", "seda:y", "seda:z");
+    .loadBalance().roundRobin()
+        .to("seda:x")
+        .to("seda:y")
+        .to("seda:z")
+    .end();
 ----
 
-In XML you'll have a route like this
+In XML you'll have a route like this:
 
 [source,xml]
 ----
-<from uri="direct:start"/>
+<route>
+    <from uri="direct:start"/>
     <loadBalance>
        <roundRobin/>
-       <to uri="seda:x"/>      
-       <to uri="seda:y"/>      
-       <to uri="seda:z"/>       
-    </loadBalance> 
+       <to uri="seda:x"/>
+       <to uri="seda:y"/>
+       <to uri="seda:z"/>
+    </loadBalance>
+</route>
 ----

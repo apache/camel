@@ -24,8 +24,8 @@ import org.apache.camel.model.LoadBalancerDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * The exchanges are selected in a round robin fashion. This is a well known and classic policy, which spreads the load
- * evenly.
+ * The destination endpoints are selected in a round-robin fashion. This is a well known and classic policy, which
+ * spreads the load evenly.
  */
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "roundRobin")
