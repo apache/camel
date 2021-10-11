@@ -40,7 +40,7 @@ And in XML:
 ----
 <route>
   <from uri="seda:b"/>
-  <removeHeader name="*"/>
+  <removeHeaders pattern="*"/>
   <to uri="mock:result"/>
 </route>
 ----
@@ -62,11 +62,16 @@ And in XML:
 ----
 <route>
   <from uri="seda:b"/>
-  <removeHeader name="Camel*"/>
+  <removeHeaders pattern="Camel*"/>
   <to uri="mock:result"/>
 </route>
 ----
 
 == See Also
 
-To remove a single header, then you can use xref:removeHeader-eip.adoc[Remove Header].
+Camel provides the following EIPs for removing headers or exchange properties:
+
+- xref:removeHeader-eip.adoc[Remove Header] - To remove a single header
+- xref:removeHeaders-eip.adoc[Remove Headers] - To remove one or more message headers
+- xref:removeProperty-eip.adoc[Remove Property] - To remove a single exchange property
+- xref:removeProperties-eip.adoc[Remove Properties] - To remove one or more exchange properties

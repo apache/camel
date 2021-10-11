@@ -25,8 +25,6 @@ remove these headers as follows:
 [source,java]
 ----
   from("jetty://http://myhost:9000/myservice/")
-    // Remove the header which name is start with CamelHttp, this DSL is new to Camel 2.3.0
-    // You can use removeHeader if your camel version is lower than 2.3.0
     .removeHeaders("CamelHttp*")
     .to("otherEndpoint");
 ----

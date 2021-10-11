@@ -5,7 +5,7 @@
 :since: 
 :supportlevel: Stable
 
-The RemoveProperty EIP allows you to remove a Property from your exchange.
+The Remove Property EIP allows you to remove a single property from the `Exchange`.
 
 == Options
 
@@ -13,31 +13,33 @@ The RemoveProperty EIP allows you to remove a Property from your exchange.
 include::partial$eip-options.adoc[]
 // eip options: END
 
-== Examples
+== Example
 
-The following example shows how to use the Remove Property EIP
+We want to remove an exchange property with key "myProperty" from the exchange:
 
 [source,java]
 ----
-RouteBuilder builder = new RouteBuilder() {
-    public void configure() {
-        from("direct:a")
-            .removeProperty("myProperty")
-            .to("direct:b");
-    }
-};
+from("seda:b")
+  .removeProperty("myProperty")
+  .to("mock:result");
 ----
 
-
-And the same example using XML:
+And in XML:
 
 [source,xml]
 ----
-<camelContext xmlns="http://camel.apache.org/schema/spring">
-    <route>
-        <from uri="direct:a"/>
-           <removeProperty propertyName="myProperty"/>
-        <to uri="direct:b"/>
-    </route>
-</camelContext>
+<route>
+  <from uri="seda:b"/>
+  <removeProperty name="myProperty"/>
+  <to uri="mock:result"/>
+</route>
 ----
+
+== See Also
+
+Camel provides the following EIPs for removing headers or exchange properties:
+
+- xref:removeHeader-eip.adoc[Remove Header] - To remove a single header
+- xref:removeHeaders-eip.adoc[Remove Headers] - To remove one or more message headers
+- xref:removeProperty-eip.adoc[Remove Property] - To remove a single exchange property
+- xref:removeProperties-eip.adoc[Remove Properties] - To remove one or more exchange properties

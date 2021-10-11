@@ -5,7 +5,8 @@
 :since: 
 :supportlevel: Stable
 
-The RemoveProperties EIP allows you to remove Properties from you exchange.
+The Remove Properties EIP allows you to remove one or more `Exchange` properties,
+based on pattern syntax.
 
 == Options
 
@@ -13,31 +14,66 @@ The RemoveProperties EIP allows you to remove Properties from you exchange.
 include::partial$eip-options.adoc[]
 // eip options: END
 
-== Examples
+== Remove Properties by pattern
 
-The following example shows how to use the removeProperties EIP
+The Remove Properties EIP supports pattern
+matching by the following rules in the given order:
+
+* match by exact name
+* match by wildcard
+* match by regular expression
+
+== Remove all properties
 
 [source,java]
 ----
-RouteBuilder builder = new RouteBuilder() {
-    public void configure() {
-        from("direct:a")
-            .removeProperties("myProperty", "myProperty1")
-            .to("direct:b");
-    }
-};
+from("seda:b")
+  .removeProperties("*")
+  .to("mock:result");
 ----
 
-
-And the same example using XML:
+And in XML:
 
 [source,xml]
 ----
-<camelContext xmlns="http://camel.apache.org/schema/spring">
-    <route>
-        <from uri="direct:a"/>
-           <removeProperties pattern="myProperty*"/>
-        <to uri="direct:b"/>
-    </route>
-</camelContext>
+<route>
+  <from uri="seda:b"/>
+  <removeProperties pattern="*"/>
+  <to uri="mock:result"/>
+</route>
 ----
+
+NOTE: Be careful to remove all exchange properties as Camel uses internally exchange properties
+to keep state on the `Exchange` during routing. So use this with care. You should generally only remove
+custom exchange properties that are under your own control.
+
+== Remove properties by pattern
+
+To remove all exchange properties that start with `Foo` then use `Foo*` as shown:
+
+[source,java]
+----
+from("seda:b")
+  .removeProperties("Foo*")
+  .to("mock:result");
+----
+
+And in XML:
+
+[source,xml]
+----
+<route>
+  <from uri="seda:b"/>
+  <removeProperties pattern="Foo*"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+== See Also
+
+Camel provides the following EIPs for removing headers or exchange properties:
+
+- xref:removeHeader-eip.adoc[Remove Header] - To remove a single header
+- xref:removeHeaders-eip.adoc[Remove Headers] - To remove one or more message headers
+- xref:removeProperty-eip.adoc[Remove Property] - To remove a single exchange property
+- xref:removeProperties-eip.adoc[Remove Properties] - To remove one or more exchange properties
