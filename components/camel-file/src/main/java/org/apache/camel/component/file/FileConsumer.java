@@ -70,25 +70,13 @@ public class FileConsumer extends GenericFileConsumer<File> {
         return exchange;
     }
 
-    @Override
-    protected boolean pollDirectory(String fileName, List<GenericFile<File>> fileList, int depth) {
-        LOG.trace("pollDirectory from fileName: {}", fileName);
-
+    private boolean pollDirectory(File directory, List<GenericFile<File>> fileList, int depth) {
         depth++;
-
-        File directory = new File(fileName);
-        if (!directory.exists() || !directory.isDirectory()) {
-            LOG.debug("Cannot poll as directory does not exists or its not a directory: {}", directory);
-            if (getEndpoint().isDirectoryMustExist()) {
-                throw new GenericFileOperationFailedException("Directory does not exist: " + directory);
-            }
-            return true;
-        }
 
         if (LOG.isTraceEnabled()) {
             LOG.trace("Polling directory: {}, absolute path: {}", directory.getPath(), directory.getAbsolutePath());
         }
-        File[] files = listFiles(directory);
+        final File[] files = listFiles(directory);
         if (files == null || files.length == 0) {
             return true;
         }
@@ -97,16 +85,13 @@ public class FileConsumer extends GenericFileConsumer<File> {
             Arrays.sort(files, Comparator.comparing(File::getAbsoluteFile));
         }
 
-        List<File> filesArray = Arrays.asList(files);
-
         for (File file : files) {
             // check if we can continue polling in files
             if (!canPollMoreFiles(fileList)) {
                 return false;
             }
 
-            // trace log as Windows/Unix can have different views what the file
-            // is?
+            // trace log as Windows/Unix can have different views what the file is
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Found file: {} [isAbsolute: {}, isDirectory: {}, isFile: {}, isHidden: {}]", file, file.isAbsolute(),
                         file.isDirectory(), file.isFile(),
@@ -118,10 +103,8 @@ public class FileConsumer extends GenericFileConsumer<File> {
                     = asGenericFile(endpointPath, file, getEndpoint().getCharset(), getEndpoint().isProbeContentType());
 
             if (file.isDirectory()) {
-                if (endpoint.isRecursive() && depth < endpoint.getMaxDepth() && isValidFile(gf, true, filesArray)) {
-                    // recursive scan and add the sub files and folders
-                    String subDirectory = fileName + File.separator + file.getName();
-                    boolean canPollMore = pollDirectory(subDirectory, fileList, depth);
+                if (endpoint.isRecursive() && depth < endpoint.getMaxDepth() && isValidFile(gf, true, files)) {
+                    boolean canPollMore = pollDirectory(file, fileList, depth);
                     if (!canPollMore) {
                         return false;
                     }
@@ -129,7 +112,7 @@ public class FileConsumer extends GenericFileConsumer<File> {
             } else {
                 // Windows can report false to a file on a share so regard it
                 // always as a file (if it is not a directory)
-                if (depth >= endpoint.minDepth && isValidFile(gf, false, filesArray)) {
+                if (depth >= endpoint.minDepth && isValidFile(gf, false, files)) {
                     LOG.trace("Adding valid file: {}", file);
                     // matched file so add
                     if (extendedAttributes != null) {
@@ -149,6 +132,22 @@ public class FileConsumer extends GenericFileConsumer<File> {
         }
 
         return true;
+    }
+
+    @Override
+    protected boolean pollDirectory(String fileName, List<GenericFile<File>> fileList, int depth) {
+        LOG.trace("pollDirectory from fileName: {}", fileName);
+
+        File directory = new File(fileName);
+        if (!directory.exists() || !directory.isDirectory()) {
+            LOG.debug("Cannot poll as directory does not exists or its not a directory: {}", directory);
+            if (getEndpoint().isDirectoryMustExist()) {
+                throw new GenericFileOperationFailedException("Directory does not exist: " + directory);
+            }
+            return true;
+        }
+
+        return pollDirectory(directory, fileList, depth);
     }
 
     private File[] listFiles(File directory) {
@@ -206,7 +205,7 @@ public class FileConsumer extends GenericFileConsumer<File> {
     }
 
     @Override
-    protected boolean isMatched(GenericFile<File> file, String doneFileName, List<File> files) {
+    protected boolean isMatched(GenericFile<File> file, String doneFileName, File[] files) {
         String onlyName = FileUtil.stripPath(doneFileName);
         // the done file name must be among the files
         for (File f : files) {

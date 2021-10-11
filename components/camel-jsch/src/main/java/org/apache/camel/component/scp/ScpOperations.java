@@ -24,7 +24,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Hashtable;
-import java.util.List;
 
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
@@ -170,12 +169,12 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
     }
 
     @Override
-    public List<ScpFile> listFiles() throws GenericFileOperationFailedException {
+    public ScpFile[] listFiles() throws GenericFileOperationFailedException {
         throw new GenericFileOperationFailedException("Operation 'ls' not supported by the scp: protocol");
     }
 
     @Override
-    public List<ScpFile> listFiles(String path) throws GenericFileOperationFailedException {
+    public ScpFile[] listFiles(String path) throws GenericFileOperationFailedException {
         throw new GenericFileOperationFailedException("Operation 'ls " + path + "' not supported by the scp: protocol");
     }
 

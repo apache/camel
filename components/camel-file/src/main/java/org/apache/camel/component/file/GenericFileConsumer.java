@@ -569,7 +569,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
      * @param  files       files in the directory
      * @return             <tt>true</tt> to include the file, <tt>false</tt> to skip it
      */
-    protected boolean isValidFile(GenericFile<T> file, boolean isDirectory, List<T> files) {
+    protected boolean isValidFile(GenericFile<T> file, boolean isDirectory, T[] files) {
         String absoluteFilePath = file.getAbsoluteFilePath();
 
         if (!isMatched(file, isDirectory, files)) {
@@ -637,7 +637,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
      * @param  files       files in the directory
      * @return             <tt>true</tt> if the file is matched, <tt>false</tt> if not
      */
-    protected boolean isMatched(GenericFile<T> file, boolean isDirectory, List<T> files) {
+    protected boolean isMatched(GenericFile<T> file, boolean isDirectory, T[] files) {
         String name = file.getFileNameOnly();
 
         // folders/names starting with dot is always skipped (eg. ".", ".camel",
@@ -757,7 +757,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
      * @param  files        files in the directory
      * @return              <tt>true</tt> if the file is matched, <tt>false</tt> if not
      */
-    protected abstract boolean isMatched(GenericFile<T> file, String doneFileName, List<T> files);
+    protected abstract boolean isMatched(GenericFile<T> file, String doneFileName, T[] files);
 
     protected String evaluateFileExpression(Exchange exchange) {
         String result = endpoint.getFileName().evaluate(exchange, String.class);
