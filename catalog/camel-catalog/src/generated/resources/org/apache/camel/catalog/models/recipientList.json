@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "recipientList",
     "title": "Recipient List",
-    "description": "Route messages to a number of dynamically specified recipients (dynamic to)",
+    "description": "Route messages to a number of dynamically specified recipients",
     "deprecated": false,
     "label": "eip,routing",
     "javaType": "org.apache.camel.model.RecipientListDefinition",
