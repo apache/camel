@@ -62,43 +62,11 @@ available for Kafka, such as the Confluent one and the Strimzi project one.
 
 ### Handling Dependencies Versions
 
-This module aims to be both simple and practical, as such, there are a few recommendations to follow when contributing 
-to the code on
-this particular module. 
-
-The module leverages JBang's ability to [parameterize dependencies](https://www.jbang.dev/documentation/guide/latest/dependencies.html#system-properties-and-environment-variables) along with Antrun's
-ability to process source code on the fly and perform string substitution to replace strings on files. 
-
-During the build, the *perfectly valid* Java-based JBang script code is copied to the `dist` directory. Then the antrun 
-plugin replaces the references to parameterized dependencies. The parameterized dependencies are in the format `${name}`. 
-
-In order to minimize the problems caused by CVEs in dependencies and ensure the correct alignment of dependencies within 
-Camel, all references to dependencies should use parameterized ones. Such as: 
+If needed for development and debugging purposes, dependencies can be referenced by correctly resolving the parameterized variables on the command line. Such as: 
 
 ```
-//DEPS org.apache.camel:camel-bom:${camel.jbang.version}@pom
+jbang -Dcamel.jbang.version=3.13.0-SNAPSHOT CamelJBang.java
 ```
-
-After being processed by antrun, during the build, the aforementioned line would be transformed to something like (for 
-a Camel 3.13.0-SNAPSHOT build):
-
-```
-//DEPS org.apache.camel:camel-bom:3.13.0-SNAPSHOT@pom
-```
-
-The same applies to Camel version references, which should rely on the `${camel.jbang.version}` parameter (such 
-as when displaying help information).
-
-Despite this transformation, the code in `src/main/jbang` should be valid nonetheless and can be executed for development 
-and debugging purposes by correctly resolving the parameterized variables on the command line. Such as: 
-
-```
-jbang -Dcamel.jbang.version=3.13.0-SNAPSHOT -Dcamel.jbang.log4j2.version=2.13.3 -Dcamel.jbang.picocli.version=4.5.0 CamelJBang.java
-```
-
-Alternatively, it is possible to just build the module and then execute the post-processed script on the `dist` directory.
-
-```mvn clean package && ./dist/Camel```
 
 ### Checkstyle
 
