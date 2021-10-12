@@ -13,7 +13,7 @@ logged at `INFO` level in the log category: `org.apache.camel.Tracing`.
 The message information from the Exchange is formatted using `ExchangeFormatter` and the default implementation
 has many options you can configure accordingly to the https://www.javadoc.io/doc/org.apache.camel/camel-support/latest/org/apache/camel/support/processor/DefaultExchangeFormatter.html[javadoc].
 
-== Enabling
+== Enabling Tracing
 
 In Java you set tracing on `CamelContext`:
 
@@ -37,5 +37,43 @@ And in Spring Boot
 ----
 camel.springboot.tracing = true
 ----
+
+=== Setting Tracing in Standby mode
+
+By default Camel optimizes and opt-out tracing. Therefore, you would either have to enable tracing from the startup,
+or turn on standby mode, to allow tracing to be enabled later during runtime.
+
+To set tracing in standby mode you can do:
+
+[source,java]
+----
+context.setTracingStandby(true);
+----
+
+And in XML DSL:
+
+[source,xml]
+----
+<camelContext trace="standby" xmlns="http://activemq.apache.org/camel/schema/spring">
+...
+</camelContext>
+----
+
+And in Spring Boot
+
+[source,text]
+----
+camel.springboot.tracing-standby = true
+----
+
+If tracer is in standby mode, then tracing is made available, and can be enabled during runtime.
+This requires to either use JMX or enable via Java code:
+
+[source,java]
+----
+Tracer tracer = context.getTracer();
+tracer.setEnabled(true);
+----
+
 
 

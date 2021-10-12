@@ -92,6 +92,11 @@ public abstract class MainCommandLineSupport extends MainSupport {
                 enableTrace();
             }
         });
+        addOption(new Option("ts", "traceStandby", "Enables tracing standby") {
+            protected void doProcess(String arg, LinkedList<String> remainingArgs) {
+                enableTraceStandby();
+            }
+        });
         addOption(new ParameterOption(
                 "e", "exitcode",
                 "Sets the exit code if duration was hit",

@@ -88,6 +88,22 @@ public interface Tracer extends StaticService {
     void setEnabled(boolean enabled);
 
     /**
+     * Whether the tracer is standby.
+     *
+     * If a tracer is in standby then the tracer is activated during startup and are ready to be enabled manually via
+     * JMX or calling the enabled method.
+     */
+    boolean isStandby();
+
+    /**
+     * Whether the tracer is standby.
+     *
+     * If a tracer is in standby then the tracer is activated during startup and are ready to be enabled manually via
+     * JMX or calling the enabled method.
+     */
+    void setStandby(boolean standby);
+
+    /**
      * Tracing pattern to match which node EIPs to trace. For example to match all To EIP nodes, use to*. The pattern
      * matches by node and route id's Multiple patterns can be separated by comma.
      */

@@ -37,7 +37,9 @@ public interface RuntimeConfiguration {
     Boolean isStreamCaching();
 
     /**
-     * Sets whether tracing is enabled or not (default is disabled).
+     * Returns whether tracing enabled
+     *
+     * To use tracing then either turn on tracing standby or enable tracing to make tracing possible.
      *
      * @param tracing whether to enable tracing.
      */
@@ -46,7 +48,7 @@ public interface RuntimeConfiguration {
     /**
      * Returns whether tracing enabled
      *
-     * To use tracing then this must be enabled on startup to be installed in the CamelContext.
+     * To use tracing then either turn on tracing standby or enable tracing to make tracing possible.
      *
      * @return <tt>true</tt> if tracing is enabled
      */

@@ -48,6 +48,7 @@ public class DefaultTracer extends ServiceSupport implements CamelContextAware, 
     private static final Logger LOG = LoggerFactory.getLogger("org.apache.camel.Tracing");
     private CamelContext camelContext;
     private boolean enabled = true;
+    private boolean standby;
     private long traceCounter;
 
     private ExchangeFormatter exchangeFormatter;
@@ -191,6 +192,16 @@ public class DefaultTracer extends ServiceSupport implements CamelContextAware, 
     @Override
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    @Override
+    public boolean isStandby() {
+        return standby;
+    }
+
+    @Override
+    public void setStandby(boolean standby) {
+        this.standby = standby;
     }
 
     @Override

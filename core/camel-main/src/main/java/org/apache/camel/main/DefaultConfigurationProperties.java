@@ -23,6 +23,7 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.StartupSummaryLevel;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.Tracer;
 import org.apache.camel.support.PatternHelper;
 
 /**
@@ -62,6 +63,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean streamCachingStatisticsEnabled;
     private boolean backlogTracing;
     private boolean tracing;
+    private boolean tracingStandby;
     private String tracingPattern;
     private boolean messageHistory;
     private boolean logMask;
@@ -485,6 +487,18 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setTracing(boolean tracing) {
         this.tracing = tracing;
+    }
+
+    public boolean isTracingStandby() {
+        return tracingStandby;
+    }
+
+    /**
+     * Whether to set tracing on standby. If on standby then the tracer is installed and made available. Then the tracer
+     * can be enabled later at runtime via JMX or via {@link Tracer#setEnabled(boolean)}.
+     */
+    public void setTracingStandby(boolean tracingStandby) {
+        this.tracingStandby = tracingStandby;
     }
 
     public String getTracingPattern() {
@@ -1534,6 +1548,17 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withTracing(boolean tracing) {
         this.tracing = tracing;
+        return (T) this;
+    }
+
+    /**
+     * Whether to set tracing on standby. If on standby then the tracer is installed and made available. Then the tracer
+     * can be enabled later at runtime via JMX or via {@link Tracer#setEnabled(boolean)}.
+     *
+     * Default is false.
+     */
+    public T withTracingStandby(boolean tracingStandby) {
+        this.tracingStandby = tracingStandby;
         return (T) this;
     }
 

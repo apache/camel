@@ -57,6 +57,30 @@ public class MainTest {
     }
 
     @Test
+    public void testTraceStandby() throws Exception {
+        // lets make a simple route
+        Main main = new Main();
+        main.configure().addRoutesBuilder(new MyRouteBuilder());
+        main.enableTraceStandby();
+        main.bind("foo", 31);
+        main.start();
+
+        CamelContext camelContext = main.getCamelContext();
+
+        assertNotNull(camelContext);
+        assertEquals(31, camelContext.getRegistry().lookupByName("foo"), "Could not find the registry bound object");
+
+        MockEndpoint endpoint = camelContext.getEndpoint("mock:results", MockEndpoint.class);
+        endpoint.expectedMinimumMessageCount(1);
+
+        main.getCamelTemplate().sendBody("direct:start", "<message>1</message>");
+
+        endpoint.assertIsSatisfied();
+
+        main.stop();
+    }
+
+    @Test
     public void testDisableHangupSupport() throws Exception {
         // lets make a simple route
         Main main = new Main();

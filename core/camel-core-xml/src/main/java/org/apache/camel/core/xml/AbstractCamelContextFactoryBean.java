@@ -1077,7 +1077,12 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             context.setStreamCaching(CamelContextHelper.parseBoolean(context, getStreamCache()));
         }
         if (getTrace() != null) {
-            context.setTracing(CamelContextHelper.parseBoolean(context, getTrace()));
+            String text = CamelContextHelper.parseText(context, getTrace());
+            if ("standby".equalsIgnoreCase(text)) {
+                context.setTracingStandby(true);
+            } else {
+                context.setTracing(CamelContextHelper.parseBoolean(context, getTrace()));
+            }
         }
         if (getTracePattern() != null) {
             context.setTracingPattern(CamelContextHelper.parseText(context, getTracePattern()));

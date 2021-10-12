@@ -845,6 +845,16 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     @Override
+    public void setTracingStandby(boolean tracingStandby) {
+        delegate.setTracingStandby(tracingStandby);
+    }
+
+    @Override
+    public boolean isTracingStandby() {
+        return delegate.isTracingStandby();
+    }
+
+    @Override
     public UuidGenerator getUuidGenerator() {
         return delegate.getUuidGenerator();
     }

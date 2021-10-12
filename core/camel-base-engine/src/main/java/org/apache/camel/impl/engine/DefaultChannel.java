@@ -197,7 +197,7 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
             BacklogTracer backlogTracer = getOrCreateBacklogTracer(camelContext);
             addAdvice(new BacklogTracerAdvice(backlogTracer, targetOutputDef, routeDefinition, first));
         }
-        if (route.isTracing()) {
+        if (route.isTracing() || camelContext.isTracingStandby()) {
             // add logger tracer
             Tracer tracer = camelContext.getTracer();
             addAdvice(new TracingAdvice(tracer, targetOutputDef, routeDefinition, first));

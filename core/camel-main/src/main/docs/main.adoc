@@ -21,7 +21,7 @@ The following tables lists all the options:
 
 // main options: START
 === Camel Main configurations
-The camel.main supports 94 options, which are listed below.
+The camel.main supports 95 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -116,6 +116,7 @@ The camel.main supports 94 options, which are listed below.
 | *camel.main.threadNamePattern* | Sets the thread name pattern used for creating the full thread name. The default pattern is: Camel (#camelId#) thread ##counter# - #name# Where #camelId# is the name of the CamelContext. and #counter# is a unique incrementing counter. and #name# is the regular thread name. You can also use #longName# which is the long thread name which can includes endpoint parameters etc. |  | String
 | *camel.main.tracing* | Sets whether tracing is enabled or not. Default is false. | false | boolean
 | *camel.main.tracingPattern* | Tracing pattern to match which node EIPs to trace. For example to match all To EIP nodes, use to. The pattern matches by node and route id's Multiple patterns can be separated by comma. |  | String
+| *camel.main.tracingStandby* | Whether to set tracing on standby. If on standby then the tracer is installed and made available. Then the tracer can be enabled later at runtime via JMX or via Tracer#setEnabled(boolean) . | false | boolean
 | *camel.main.useBreadcrumb* | Set whether breadcrumb is enabled. The default value is false. | false | boolean
 | *camel.main.useDataType* | Whether to enable using data type on Camel messages. Data type are automatic turned on if one ore more routes has been explicit configured with input and output types. Otherwise data type is default off. | false | boolean
 | *camel.main.useMdcLogging* | To turn on MDC logging | false | boolean

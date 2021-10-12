@@ -1014,23 +1014,27 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
 
         @Override
         public Object before(Exchange exchange) throws Exception {
-            if (!added && tracingAfterRoute != null) {
-                // add before route and after route tracing but only once per route, so check if there is already an existing
-                boolean contains = exchange.getUnitOfWork().containsSynchronization(tracingAfterRoute);
-                if (!contains) {
-                    added = true;
-                    tracer.traceBeforeRoute(routeDefinition, exchange);
-                    exchange.adapt(ExtendedExchange.class).addOnCompletion(tracingAfterRoute);
+            if (tracer.isEnabled()) {
+                if (!added && tracingAfterRoute != null) {
+                    // add before route and after route tracing but only once per route, so check if there is already an existing
+                    boolean contains = exchange.getUnitOfWork().containsSynchronization(tracingAfterRoute);
+                    if (!contains) {
+                        added = true;
+                        tracer.traceBeforeRoute(routeDefinition, exchange);
+                        exchange.adapt(ExtendedExchange.class).addOnCompletion(tracingAfterRoute);
+                    }
                 }
-            }
 
-            tracer.traceBeforeNode(processorDefinition, exchange);
+                tracer.traceBeforeNode(processorDefinition, exchange);
+            }
             return null;
         }
 
         @Override
         public void after(Exchange exchange, Object data) throws Exception {
-            tracer.traceAfterNode(processorDefinition, exchange);
+            if (tracer.isEnabled()) {
+                tracer.traceAfterNode(processorDefinition, exchange);
+            }
         }
 
         @Override
@@ -1081,10 +1085,6 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
      */
     public static <T> CamelInternalProcessorAdvice<T> wrap(InstrumentationProcessor<T> instrumentationProcessor) {
         if (instrumentationProcessor instanceof CamelInternalProcessor) {
-            // TODO Findbugs alerts:
-            //  Unchecked/unconfirmed cast from org.apache.camel.impl.engine.CamelInternalProcessor<T>
-            //  to org.apache.camel.spi.CamelInternalProcessorAdvice in
-            //  org.apache.camel.impl.engine.CamelInternalProcessor.wrap(ManagementInterceptStrategy$InstrumentationProcessor)
             return (CamelInternalProcessorAdvice<T>) instrumentationProcessor;
         } else {
             return new CamelInternalProcessorAdviceWrapper<>(instrumentationProcessor);

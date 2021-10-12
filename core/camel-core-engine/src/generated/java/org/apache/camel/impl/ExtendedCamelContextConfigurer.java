@@ -173,6 +173,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "Tracing": target.setTracing(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "tracingpattern":
         case "TracingPattern": target.setTracingPattern(property(camelContext, java.lang.String.class, value)); return true;
+        case "tracingstandby":
+        case "TracingStandby": target.setTracingStandby(property(camelContext, boolean.class, value)); return true;
         case "typeconverterregistry":
         case "TypeConverterRegistry": target.setTypeConverterRegistry(property(camelContext, org.apache.camel.spi.TypeConverterRegistry.class, value)); return true;
         case "typeconverterstatisticsenabled":
@@ -350,6 +352,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "Tracing": return java.lang.Boolean.class;
         case "tracingpattern":
         case "TracingPattern": return java.lang.String.class;
+        case "tracingstandby":
+        case "TracingStandby": return boolean.class;
         case "typeconverterregistry":
         case "TypeConverterRegistry": return org.apache.camel.spi.TypeConverterRegistry.class;
         case "typeconverterstatisticsenabled":
@@ -528,6 +532,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "Tracing": return target.isTracing();
         case "tracingpattern":
         case "TracingPattern": return target.getTracingPattern();
+        case "tracingstandby":
+        case "TracingStandby": return target.isTracingStandby();
         case "typeconverterregistry":
         case "TypeConverterRegistry": return target.getTypeConverterRegistry();
         case "typeconverterstatisticsenabled":

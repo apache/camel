@@ -240,6 +240,10 @@ public abstract class MainSupport extends BaseMainSupport {
         mainConfigurationProperties.setTracing(true);
     }
 
+    public void enableTraceStandby() {
+        mainConfigurationProperties.setTracingStandby(true);
+    }
+
     public MainShutdownStrategy getShutdownStrategy() {
         return shutdownStrategy;
     }

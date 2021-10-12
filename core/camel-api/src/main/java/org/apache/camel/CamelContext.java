@@ -1122,6 +1122,18 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     void setTracer(Tracer tracer);
 
     /**
+     * Whether to set tracing on standby. If on standby then the tracer is installed and made available. Then the tracer
+     * can be enabled later at runtime via JMX or via {@link Tracer#setEnabled(boolean)}.
+     */
+    void setTracingStandby(boolean tracingStandby);
+
+    /**
+     * Whether to set tracing on standby. If on standby then the tracer is installed and made available. Then the tracer
+     * can be enabled later at runtime via JMX or via {@link Tracer#setEnabled(boolean)}.
+     */
+    boolean isTracingStandby();
+
+    /**
      * Gets the current {@link UuidGenerator}
      *
      * @return the uuidGenerator

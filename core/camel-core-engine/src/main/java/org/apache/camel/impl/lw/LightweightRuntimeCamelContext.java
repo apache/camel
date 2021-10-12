@@ -1080,6 +1080,16 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
         throw new UnsupportedOperationException();
     }
 
+    @Override
+    public void setTracingStandby(boolean tracingStandby) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean isTracingStandby() {
+        return false;
+    }
+
     //
     // ExtendedCamelContext
     //

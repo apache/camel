@@ -252,6 +252,7 @@ public final class DefaultConfigurationConfigurer {
 
         camelContext.setBacklogTracing(config.isBacklogTracing());
         camelContext.setTracing(config.isTracing());
+        camelContext.setTracingStandby(config.isTracingStandby());
         camelContext.setTracingPattern(config.getTracingPattern());
 
         if (config.getThreadNamePattern() != null) {

@@ -248,6 +248,7 @@ public abstract class AbstractCamelContext extends BaseService
     private Boolean autoStartup = Boolean.TRUE;
     private Boolean backlogTrace = Boolean.FALSE;
     private Boolean trace = Boolean.FALSE;
+    private Boolean traceStandby = Boolean.FALSE;
     private String tracePattern;
     private Boolean debug = Boolean.FALSE;
     private Boolean messageHistory = Boolean.FALSE;
@@ -4465,6 +4466,16 @@ public abstract class AbstractCamelContext extends BaseService
         this.tracer = doAddService(tracer, true, false, true);
         // enable tracing if we set a custom tracer
         setTracing(true);
+    }
+
+    @Override
+    public void setTracingStandby(boolean tracingStandby) {
+        this.traceStandby = tracingStandby;
+    }
+
+    @Override
+    public boolean isTracingStandby() {
+        return traceStandby != null && traceStandby;
     }
 
     @Override
