@@ -169,6 +169,7 @@ public class SalesforceConsumer extends DefaultConsumer {
         in.setHeader("CamelSalesforceRecordIds", changeEventHeader.get("recordIds"));
 
         if (rawPayload) {
+            // getJSON is used for raw payload
             in.setBody(message.getJSON());
         } else {
             payload.remove("ChangeEventHeader");
@@ -198,6 +199,7 @@ public class SalesforceConsumer extends DefaultConsumer {
         in.setHeader("CamelSalesforceCreatedDate", platformEvent.getCreated());
 
         if (rawPayload) {
+            // getJSON is used for raw payload
             in.setBody(message.getJSON());
         } else {
             in.setBody(platformEvent);
