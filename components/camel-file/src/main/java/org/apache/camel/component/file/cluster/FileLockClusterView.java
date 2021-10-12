@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.file.cluster;
 
+import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.nio.channels.OverlappingFileLockException;
 import java.nio.file.Files;
@@ -30,10 +30,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.cluster.CamelClusterMember;
 import org.apache.camel.support.cluster.AbstractCamelClusterView;
-import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,8 +40,7 @@ public class FileLockClusterView extends AbstractCamelClusterView {
 
     private final ClusterMember localMember;
     private final Path path;
-    private RandomAccessFile file;
-    private FileChannel channel;
+    private RandomAccessFile lockFile;
     private FileLock lock;
     private ScheduledFuture<?> task;
 
@@ -76,7 +73,7 @@ public class FileLockClusterView extends AbstractCamelClusterView {
 
     @Override
     protected void doStart() throws Exception {
-        if (file != null) {
+        if (lockFile != null) {
             closeInternal();
 
             fireLeadershipChangedEvent(Optional.empty());
@@ -85,9 +82,6 @@ public class FileLockClusterView extends AbstractCamelClusterView {
         if (!Files.exists(path.getParent())) {
             Files.createDirectories(path.getParent());
         }
-
-        file = new RandomAccessFile(path.toFile(), "rw");
-        channel = file.getChannel();
 
         FileLockClusterService service = getClusterService().unwrap(FileLockClusterService.class);
         ScheduledExecutorService executor = service.getExecutor();
@@ -116,17 +110,24 @@ public class FileLockClusterView extends AbstractCamelClusterView {
             lock.release();
         }
 
-        if (file != null) {
-            IOHelper.close(channel);
-            IOHelper.close(file);
+        closeLockFile();
+    }
 
-            channel = null;
-            file = null;
+    private void closeLockFile() {
+        if (lockFile != null) {
+            try {
+                lockFile.close();
+            } catch (Throwable ignore) {
+                // Ignore
+            }
+            lockFile = null;
         }
     }
 
     private void tryLock() {
         if (isStarting() || isStarted()) {
+            Exception reason = null;
+
             try {
                 if (localMember.isLeader()) {
                     LOGGER.trace("Holding the lock on file {} (lock={})", path, lock);
@@ -140,9 +141,10 @@ public class FileLockClusterView extends AbstractCamelClusterView {
                     }
 
                     LOGGER.debug("Try to acquire a lock on {}", path);
+                    lockFile = new RandomAccessFile(path.toFile(), "rw");
 
                     lock = null;
-                    lock = channel.tryLock();
+                    lock = lockFile.getChannel().tryLock(0, Math.max(1, lockFile.getChannel().size()), false);
 
                     if (lock != null) {
                         LOGGER.info("Lock on file {} acquired (lock={})", path, lock);
@@ -152,9 +154,14 @@ public class FileLockClusterView extends AbstractCamelClusterView {
                     }
                 }
             } catch (OverlappingFileLockException e) {
-                LOGGER.debug("Lock on file {} not acquired ", path);
+                reason = new IOException(e);
             } catch (Exception e) {
-                throw new RuntimeCamelException(e);
+                reason = e;
+            }
+
+            if (lock == null) {
+                LOGGER.debug("Lock on file {} not acquired ", path, reason);
+                closeLockFile();
             }
         }
     }
