@@ -131,7 +131,7 @@ public class RestModelConverters {
                     if (schema.getProperties() != null) {
                         //noinspection unchecked
                         schema.getProperties().forEach((p, v) -> {
-                            OasSchema property = model.createPropertySchema((String) p);
+                            OasSchema property = (OasSchema) model.createPropertySchema((String) p);
                             model.addProperty((String) p, property);
                             processSchema(property, (Schema) v);
                         });
