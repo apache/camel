@@ -2,7 +2,7 @@
 :doctitle: Rollback
 :shortname: rollback
 :description: Forces a rollback by stopping routing the message
-:since:
+:since: 
 :supportlevel: Stable
 
 The Rollback EIP is used for marking an xref:latest@manual:ROOT:exchange.adoc[Exchange]
@@ -88,4 +88,3 @@ Then no exception is thrown, but the message is marked to rollback and stopped c
 
 Rollback can be used together with xref:transactional-client.adoc[transactions].
 For more details see xref:transactional-client.adoc[Transaction Client] EIP.
-
