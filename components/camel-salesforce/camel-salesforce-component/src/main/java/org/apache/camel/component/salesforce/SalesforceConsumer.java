@@ -169,7 +169,7 @@ public class SalesforceConsumer extends DefaultConsumer {
         in.setHeader("CamelSalesforceRecordIds", changeEventHeader.get("recordIds"));
 
         if (rawPayload) {
-            in.setBody(message);
+            in.setBody(message.getJSON());
         } else {
             payload.remove("ChangeEventHeader");
             in.setBody(payload);
@@ -198,7 +198,7 @@ public class SalesforceConsumer extends DefaultConsumer {
         in.setHeader("CamelSalesforceCreatedDate", platformEvent.getCreated());
 
         if (rawPayload) {
-            in.setBody(message);
+            in.setBody(message.getJSON());
         } else {
             in.setBody(platformEvent);
         }
