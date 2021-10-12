@@ -46,7 +46,7 @@ The Recipient List EIP has many features and is based on the xref:multicast-eip.
 For example the Recipient List EIP is capable of aggregating each message into a single
 _response_ message as the result after the Recipient List EIP.
 
-=== Using static Recipient List
+=== Using Static Recipient List
 
 The following example shows how to route a request from an input queue:a endpoint
 to a static list of destinations, using `constant`:
@@ -69,7 +69,7 @@ And in XML:
 </route>
 ----
 
-=== Using dynamic Recipient List
+=== Using Dynamic Recipient List
 
 Usually one of the main reasons for using the Recipient List pattern is that the list of recipients is dynamic and
 calculated at runtime.
@@ -167,13 +167,12 @@ And in XML it is an attribute on `<recipientList>`:
 ==== Using custom thread pool
 
 A thread pool is only used for `parallelProcessing`. You supply your own custom thread pool via the `ExecutorServiceStrategy` (see Camel's Threading Model),
-the same way you would do it for the `aggregationStrategy`. By default Camel uses a thread pool with 10 threads (subject to change in future versions).
+the same way you would do it for the `aggregationStrategy`. By default, Camel uses a thread pool with 10 threads (subject to change in future versions).
 
-The Multicast EIP will by default continue to process
-the entire exchange even in case one of the
-multicasted messages will throw an exception during routing.
+The Recipient List EIP will by default continue to process the entire exchange even in case one of the
+sub messages will throw an exception during routing.
 
-For example if you want to multicast to 3 destinations and the 2nd
+For example if you want to route to 3 destinations and the 2nd
 destination fails by an exception. What Camel does by default is to
 process the remainder destinations. You have the chance to deal with the exception
 when aggregating using an `AggregationStrategy`.
@@ -236,7 +235,7 @@ And using XML DSL you specify it as follows:
 
 === Ignore invalid endpoints
 
-The Recipient List now supports `ignoreInvalidEndpoints` (like xref:routingSlip-eip.adoc[Routing Slip] EIP).
+The Recipient List supports `ignoreInvalidEndpoints` (like xref:routingSlip-eip.adoc[Routing Slip] EIP).
 You can use it to skip endpoints which are invalid.
 
 [source,java]
