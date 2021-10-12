@@ -3,8 +3,7 @@
 The Hystrix EIP provides integration with Netflix https://github.com/Netflix/Hystrix[Hystrix]
 to be used as xref:circuitBreaker-eip.adoc[Circuit Breaker] in the Camel routes.
 
-Hystrix is a latency and fault tolerance library designed to isolate points of access to remote systems,
-services and 3rd party libraries, stop cascading failure and enable resilience in complex distributed systems where failure is inevitable.
+Resilience4j is a lightweight fault tolerance library inspired by Netflix Hystrix, but designed for functional programming.
 
 == Configuration options
 
@@ -99,9 +98,9 @@ And in XML:
 ----
 
 In this example if calling the downstream service does not return a response within 2 seconds,
-a timeout is triggered, and the exchange will fail with a TimeoutException.
+a timeout is triggered, and the exchange will fail with a `TimeoutException`.
 
-== Camel's Error Handler and Circuit Breaker EIP
+=== Camel's Error Handler and Circuit Breaker EIP
 
 By default, the xref:circuitBreaker-eip.adoc[Circuit Breaker] EIP handles errors by itself.
 This means if the circuit breaker is open, and the message fails, then Camel's error handler
