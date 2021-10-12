@@ -478,8 +478,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
             parameters.put("consumes", determinedConsumes);
         }
 
-        // what we produce is what the API defined by OpenApi specification
-        // consumes
+        // what we produce is what the API defined by OpenApi specification consumes
 
         List<String> specificationLevelProducers = new ArrayList<>();
         if (openapi instanceof Oas20Document) {
@@ -493,7 +492,6 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
             if (oas30Operation.requestBody != null && oas30Operation.requestBody.content != null) {
                 operationLevelProducers.addAll(oas30Operation.requestBody.content.keySet());
             }
-
         }
 
         final String determinedProducers = determineOption(specificationLevelProducers, operationLevelProducers,
@@ -528,7 +526,18 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         }
 
         // Add rest endpoint parameters
-        nestedParameters.putAll(this.parameters);
+        if (this.parameters != null && operation.getParameters() != null) {
+            for (Map.Entry<String, Object> entry : this.parameters.entrySet()) {
+                for (OasParameter param : operation.getParameters()) {
+                    // skip parameters that are part of the operation as path as otherwise
+                    // it will be duplicated as query parameter as well
+                    boolean clash = "path".equals(param.in) && entry.getKey().equals(param.getName());
+                    if (!clash) {
+                        nestedParameters.put(entry.getKey(), entry.getValue());
+                    }
+                }
+            }
+        }
 
         if (!nestedParameters.isEmpty()) {
             // we're trying to set RestEndpoint.parameters['component']
@@ -742,7 +751,6 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
             } else {
                 throw new IllegalStateException("We only support OpenApi 2.0 or 3.0 document here");
             }
-
         }
 
         if (operation.getParameters() != null) {
