@@ -19,7 +19,6 @@ package org.apache.camel.processor.resequencer;
 /**
  * An interface used by the {@link ResequencerEngine#deliver()} and {@link ResequencerEngine#deliverNext()} methods to
  * send out re-ordered elements.
- *
  */
 public interface SequenceSender<E> {
 

@@ -247,7 +247,7 @@ public class ResequencerEngine<E> {
         if (sequence.isEmpty()) {
             return false;
         }
-        // inspect element with lowest sequence value
+        // inspect element with the lowest sequence value
         Element<E> element = sequence.first();
 
         // if element is scheduled do not deliver and return

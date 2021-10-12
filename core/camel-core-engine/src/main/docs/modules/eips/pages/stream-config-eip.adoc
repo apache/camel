@@ -5,7 +5,7 @@
 :since: 
 :supportlevel: Stable
 
-Stream-processing resequence EIP
+Configuring for xref:resequence-eip.adoc[Resequence EIP] in stream mode.
 
 // eip options: START
 include::partial$eip-options.adoc[]

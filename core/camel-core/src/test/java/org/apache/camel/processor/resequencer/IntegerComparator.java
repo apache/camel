@@ -20,12 +20,12 @@ public class IntegerComparator implements SequenceElementComparator<Integer> {
 
     @Override
     public boolean predecessor(Integer o1, Integer o2) {
-        return o1.intValue() == (o2.intValue() - 1);
+        return o1 == (o2 - 1);
     }
 
     @Override
     public boolean successor(Integer o1, Integer o2) {
-        return o2.intValue() == (o1.intValue() - 1);
+        return o2 == (o1 - 1);
     }
 
     @Override

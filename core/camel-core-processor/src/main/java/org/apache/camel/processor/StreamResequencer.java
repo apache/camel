@@ -243,7 +243,7 @@ public class StreamResequencer extends AsyncProcessorSupport
             try {
                 Thread.sleep(getTimeout());
             } catch (InterruptedException e) {
-                // we was interrupted so break out
+                // we were interrupted so break out
                 exchange.setException(e);
                 callback.done(true);
                 return true;
@@ -285,8 +285,8 @@ public class StreamResequencer extends AsyncProcessorSupport
 
     class Delivery extends Thread {
 
-        private Lock deliveryRequestLock = new ReentrantLock();
-        private Condition deliveryRequestCondition = deliveryRequestLock.newCondition();
+        private final Lock deliveryRequestLock = new ReentrantLock();
+        private final Condition deliveryRequestCondition = deliveryRequestLock.newCondition();
 
         Delivery() {
             super(camelContext.getExecutorServiceManager().resolveThreadName("Resequencer Delivery"));
@@ -308,7 +308,7 @@ public class StreamResequencer extends AsyncProcessorSupport
                 try {
                     engine.deliver();
                 } catch (Throwable t) {
-                    // a fail safe to handle all exceptions being thrown
+                    // a fail-safe to handle all exceptions being thrown
                     getExceptionHandler().handleException(t);
                 }
             }
