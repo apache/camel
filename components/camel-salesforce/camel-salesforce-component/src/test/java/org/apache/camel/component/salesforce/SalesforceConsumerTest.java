@@ -273,7 +273,7 @@ public class SalesforceConsumerTest {
 
         consumer.processMessage(mock(ClientSessionChannel.class), message);
 
-        verify(in).setBody(message);
+        verify(in).setBody(message.getJSON());
         verify(in).setHeader("CamelSalesforceCreatedDate", ZonedDateTime.parse("2018-07-06T12:41:04Z"));
         verify(in).setHeader("CamelSalesforceReplayId", 4L);
         verify(in).setHeader("CamelSalesforceChannel", "/event/TestEvent__e");
