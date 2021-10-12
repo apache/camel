@@ -53,6 +53,7 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
     private static final Logger LOG = LoggerFactory.getLogger(ClusteredRoutePolicy.class);
 
     private final AtomicBoolean leader;
+    private final Set<Route> autoStartupRoutes;
     private final Set<Route> startedRoutes;
     private final Set<Route> stoppedRoutes;
     private final ReferenceCount refCount;
@@ -84,6 +85,7 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
 
         this.stoppedRoutes = new HashSet<>();
         this.startedRoutes = new HashSet<>();
+        this.autoStartupRoutes = new HashSet<>();
         this.leader = new AtomicBoolean();
         this.contextStarted = new AtomicBoolean();
         this.initialDelay = Duration.ofMillis(0);
@@ -178,6 +180,10 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
 
         this.refCount.retain();
 
+        if (route.isAutoStartup()) {
+            autoStartupRoutes.add(route);
+        }
+
         if (camelContext.isStarted() && isLeader()) {
             // when camel context is already started, and we add new routes
             // then let the route controller start the route as usual (no need to mark as auto startup false)
@@ -214,7 +220,12 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
     }
 
     @Override
-    public void doShutdown() throws Exception {
+    public void onRemove(Route route) {
+        autoStartupRoutes.remove(route);
+    }
+
+    @Override
+    public void onStop(Route route) {
         this.refCount.release();
     }
 
@@ -266,7 +277,9 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
         try {
             for (Route route : stoppedRoutes) {
                 ServiceStatus status = getStatus(route);
-                if (status != null && status.isStartable()) {
+                boolean autostart = autoStartupRoutes.contains(route);
+
+                if (status != null && status.isStartable() && autostart) {
                     LOG.debug("Starting route '{}'", route.getId());
                     camelContext.getRouteController().startRoute(route.getId());
 
