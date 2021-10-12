@@ -133,7 +133,11 @@ function createComponentDataFormatSymlinks () {
 
 function createComponentLanguageSymlinks () {
   return (
-    src(['../components/{*,*/*}/src/main/docs/*-language.adoc'])
+    src([
+      '../components/{*,*/*}/src/main/docs/*-language.adoc',
+      '../core/camel-core-languages/src/main/docs/modules/languages/pages/*-language.adoc',
+      '../core/camel-xml-jaxp/src/main/docs/modules/languages/pages/*-language.adoc',
+    ])
       .pipe(
         map((file, done) => {
           // this flattens the output to just .../pages/....adoc
