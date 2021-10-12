@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-service/src/main/docs/service-component.adoc
 :docTitle: Service
+:shortname: service
 :artifactId: camel-service
 :description: Register a Camel endpoint to a Service Registry (such as Consul, Etcd) and delegate to it.
 :since: 2.22
 :supportLevel: Stable
 :component-header: Only consumer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/service.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: service
 
 *Since Camel {since}*
 
@@ -86,4 +89,5 @@ Camel provide the following ServiceRegistry implementations:
 - camel-spring-cloud
 
 
-include::spring-boot:partial$service-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

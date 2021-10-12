@@ -1,6 +1,7 @@
 [[ref-language]]
 = Ref Language
 :docTitle: Ref
+:shortname: ref
 :artifactId: camel-core-languages
 :description: Look up an expression in the Camel Registry and evaluate it.
 :since: 2.8

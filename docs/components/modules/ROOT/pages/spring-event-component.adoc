@@ -3,6 +3,7 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-spring/src/main/docs/spring-event-component.adoc
 :docTitle: Spring Event
+:shortname: spring-event
 :artifactId: camel-spring
 :description: Listen for Spring Application Events.
 :since: 1.4
@@ -11,6 +12,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/spring-event.adoc[opts=optional]
 //Manually maintained attributes
 :group: Spring
+:camel-spring-boot-name: spring
 
 *Since Camel {since}*
 
@@ -91,4 +93,5 @@ with the following path and query parameters:
 
 
 
-include::spring-boot:partial$spring-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

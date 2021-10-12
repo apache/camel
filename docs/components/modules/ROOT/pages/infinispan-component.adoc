@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-infinispan/src/main/docs/infinispan-component.adoc
 :docTitle: Infinispan
+:shortname: infinispan
 :artifactId: camel-infinispan
 :description: Read and write from/to Infinispan distributed key/value store and data grid.
 :since: 2.13
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/infinispan.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: infinispan
 
 *Since Camel {since}*
 
@@ -864,4 +867,5 @@ XML file as well:
 ----
 
 
-include::spring-boot:partial$infinispan-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

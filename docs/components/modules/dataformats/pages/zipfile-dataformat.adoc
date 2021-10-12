@@ -3,11 +3,14 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-zipfile/src/main/docs/zipfile-dataformat.adoc
 :docTitle: Zip File
+:shortname: zipfile
 :artifactId: camel-zipfile
 :description: Compression and decompress streams using java.util.zip.ZipStream.
 :since: 2.11
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/zipfile.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: zipfile
 
 *Since Camel {since}*
 
@@ -173,4 +176,5 @@ the download page for the latest versions).
 </dependency>
 ----
 
-include::spring-boot:partial$zipfile-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

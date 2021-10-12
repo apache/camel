@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-workday/src/main/docs/workday-component.adoc
 :docTitle: Workday
+:shortname: workday
 :artifactId: camel-workday
 :description: Detect and parse documents using Workday.
 :since: 3.1
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/workday.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: workday
 
 *Since Camel {since}*
 
@@ -85,4 +88,5 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
-include::spring-boot:partial$workday-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -1,6 +1,7 @@
 [[google-sheets-component]]
 = Google Sheets Component
 :docTitle: Google Sheets
+:shortname: google-sheets
 :artifactId: camel-google-sheets
 :description: Manage spreadsheets in Google Sheets.
 :since: 2.23
@@ -9,6 +10,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/google-sheets.adoc[opts=optional]
 //Manually maintained attributes
 :group: Google
+:camel-spring-boot-name: google-sheets
 
 *Since Camel {since}*
 
@@ -325,4 +327,5 @@ would override a `CamelGoogleSheets.myParameterNameHere` header.
 For more information on the endpoints and options see API documentation
 at: https://developers.google.com/sheets/api/reference/rest/[https://developers.google.com/sheets/api/reference/rest/]
 
-include::spring-boot:partial$google-sheets-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

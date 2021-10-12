@@ -3,6 +3,7 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-google-calendar/src/main/docs/google-calendar-stream-component.adoc
 :docTitle: Google Calendar Stream
+:shortname: google-calendar-stream
 :artifactId: camel-google-calendar
 :description: Poll for changes in a Google Calendar.
 :since: 2.23
@@ -11,6 +12,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/google-calendar-stream.adoc[opts=optional]
 //Manually maintained attributes
 :group: Google
+:camel-spring-boot-name: google-calendar
 
 *Since Camel {since}*
 
@@ -142,4 +144,5 @@ with the following path and query parameters:
 | *refreshToken* (security) | OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived. |  | String
 |===
 
-include::spring-boot:partial$google-calendar-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

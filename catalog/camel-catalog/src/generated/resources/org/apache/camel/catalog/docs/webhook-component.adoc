@@ -1,12 +1,15 @@
 [[webhook-component]]
 = Webhook Component
 :docTitle: Webhook
+:shortname: webhook
 :artifactId: camel-webhook
 :description: Expose webhook endpoints to receive push notifications for other Camel components.
 :since: 3.0
 :supportLevel: Stable
 :component-header: Only consumer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/webhook.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: webhook
 
 *Since Camel {since}*
 
@@ -112,4 +115,5 @@ You can append query options to the URI in the following format,
 
 Examples of webhook component are provided in the documentation of the delegate components that support it.
 
-include::spring-boot:partial$webhook-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

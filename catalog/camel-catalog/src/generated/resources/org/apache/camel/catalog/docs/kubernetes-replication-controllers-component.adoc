@@ -1,6 +1,7 @@
 [[kubernetes-replication-controllers-component]]
 = Kubernetes Replication Controller Component
 :docTitle: Kubernetes Replication Controller
+:shortname: kubernetes-replication-controllers
 :artifactId: camel-kubernetes
 :description: Perform operations on Kubernetes Replication Controllers and get notified on Replication Controllers changes.
 :since: 2.17
@@ -9,6 +10,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/kubernetes-replication-controllers.adoc[opts=optional]
 //Manually maintained attributes
 :group: Kubernetes
+:camel-spring-boot-name: kubernetes
 
 *Since Camel {since}*
 
@@ -162,4 +164,5 @@ fromF("kubernetes-replication-controllers://%s?oauthToken=%s&namespace=default&r
 This consumer will return a list of events on the namespace default for the rc test.
 
 
-include::spring-boot:partial$kubernetes-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

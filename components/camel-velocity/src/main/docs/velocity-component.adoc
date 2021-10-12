@@ -1,12 +1,15 @@
 [[velocity-component]]
 = Velocity Component
 :docTitle: Velocity
+:shortname: velocity
 :artifactId: camel-velocity
 :description: Transform messages using a Velocity template.
 :since: 1.2
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/velocity.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: velocity
 
 *Since Camel {since}*
 
@@ -281,4 +284,5 @@ ${body}
 And the java code:
 
 
-include::spring-boot:partial$velocity-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

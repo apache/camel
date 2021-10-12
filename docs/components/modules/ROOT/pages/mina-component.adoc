@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-mina/src/main/docs/mina-component.adoc
 :docTitle: Mina
+:shortname: mina
 :artifactId: camel-mina
 :description: Socket level networking using TCP or UDP with Apache Mina 2.x.
 :since: 2.10
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/mina.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: mina
 
 *Since Camel {since}*
 
@@ -308,4 +311,5 @@ filters you may define are appended to the end of the filter chain; that
 is, after `codec` and `logger`.
 
 
-include::spring-boot:partial$mina-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

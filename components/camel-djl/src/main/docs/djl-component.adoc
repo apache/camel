@@ -1,12 +1,15 @@
 [[djl-component]]
 = Deep Java Library Component
 :docTitle: Deep Java Library
+:shortname: djl
 :artifactId: camel-djl
 :description: Infer Deep Learning models from message exchanges data using Deep Java Library (DJL).
 :since: 3.3
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/djl.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: djl
 
 *Since Camel {since}*
 
@@ -249,3 +252,5 @@ context.getRegistry().bind("MyTranslator", translator);
 from("file:/data/mnist/0/10.png")
     .to("djl:cv/image_classification?model=MyModel&translator=MyTranslator");
 ----
+
+include::spring-boot:partial$starter.adoc[]

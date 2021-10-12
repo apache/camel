@@ -3,6 +3,7 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-grape/src/main/docs/grape-component.adoc
 :docTitle: Grape
+:shortname: grape
 :artifactId: camel-grape
 :description: Fetch, load and manage additional jars dynamically after Camel Context was started.
 :since: 2.16

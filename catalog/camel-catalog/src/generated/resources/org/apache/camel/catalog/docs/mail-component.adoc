@@ -1,12 +1,15 @@
 [[mail-component]]
 = Mail Component
 :docTitle: Mail
+:shortname: imap
 :artifactId: camel-mail
 :description: Send and receive emails using imap, pop3 and smtp protocols.
 :since: 1.0
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/mail.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: mail
 
 *Since Camel {since}*
 
@@ -730,4 +733,5 @@ For example to provide a dynamic uuid in `java.smtp.from` (SMTP MAIL command):
 
 NOTE: This is only supported when *not* using a custom `JavaMailSender`.
 
-include::spring-boot:partial$mail-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

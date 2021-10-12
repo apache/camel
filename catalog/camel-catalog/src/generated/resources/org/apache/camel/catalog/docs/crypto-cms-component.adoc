@@ -1,6 +1,7 @@
 [[crypto-cms-component]]
 = Crypto CMS Component (deprecated)
 :docTitle: Crypto CMS
+:shortname: crypto-cms
 :artifactId: camel-crypto-cms
 :description: Encrypt, decrypt, sign and verify data in CMS Enveloped Data format.
 :since: 2.20
@@ -8,6 +9,8 @@
 :deprecated: *deprecated*
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/crypto-cms.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: crypto-cms
 
 *Since Camel {since}*
 
@@ -409,4 +412,5 @@ from("direct:start")
     </route>    
 ----
 
-include::spring-boot:partial$crypto-cms-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

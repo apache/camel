@@ -1,12 +1,15 @@
 [[optaplanner-component]]
 = OptaPlanner Component
 :docTitle: OptaPlanner
+:shortname: optaplanner
 :artifactId: camel-optaplanner
 :description: Solve planning problems with OptaPlanner.
 :since: 2.13
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/optaplanner.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: optaplanner
 
 *Since Camel {since}*
 
@@ -169,4 +172,5 @@ from("cxfrs:bean:rsServer?bindingStyle=SimpleConsumer")
 -------------------------------------------------------
 
 
-include::spring-boot:partial$optaplanner-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

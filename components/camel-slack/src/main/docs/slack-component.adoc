@@ -1,12 +1,15 @@
 [[slack-component]]
 = Slack Component
 :docTitle: Slack
+:shortname: slack
 :artifactId: camel-slack
 :description: Send and receive messages to/from Slack.
 :since: 2.16
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/slack.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: slack
 
 *Since Camel {since}*
 
@@ -183,4 +186,5 @@ Use the 'Bot User OAuth Access Token' as token for the consumer endpoint.
 
 IMPORTANT: Add the `channels:history` and `channels:read` user token scope to your app to grant it permission to view messages in the user's public channels.
 
-include::spring-boot:partial$slack-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

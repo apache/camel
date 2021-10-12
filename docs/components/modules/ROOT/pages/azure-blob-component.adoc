@@ -3,6 +3,7 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-azure/src/main/docs/azure-blob-component.adoc
 :docTitle: Azure Storage Blob Service (Deprecated)
+:shortname: azure-blob
 :artifactId: camel-azure
 :description: Store and retrieve blobs from Azure Storage Blob Service.
 :since: 2.19
@@ -12,6 +13,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/azure-blob.adoc[opts=optional]
 //Manually maintained attributes
 :group: Azure
+:camel-spring-boot-name: azure
 
 *Since Camel {since}*
 
@@ -279,4 +281,5 @@ Maven users will need to add the following dependency to their `pom.xml`.
 
 where `+++${camel-version}+++` must be replaced by the actual version of Camel.
 
-include::spring-boot:partial$azure-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

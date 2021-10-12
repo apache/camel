@@ -3,6 +3,7 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-hazelcast/src/main/docs/hazelcast-queue-component.adoc
 :docTitle: Hazelcast Queue
+:shortname: hazelcast-queue
 :artifactId: camel-hazelcast
 :description: Perform operations on Hazelcast distributed queue.
 :since: 2.7
@@ -11,6 +12,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/hazelcast-queue.adoc[opts=optional]
 //Manually maintained attributes
 :group: Hazelcast
+:camel-spring-boot-name: hazelcast
 
 *Since Camel {since}*
 
@@ -235,4 +237,5 @@ fromF("hazelcast-%smm", HazelcastConstants.QUEUE_PREFIX)
         .log("fail!");
 -------------------------------------------------------------------------------------------
 
-include::spring-boot:partial$hazelcast-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

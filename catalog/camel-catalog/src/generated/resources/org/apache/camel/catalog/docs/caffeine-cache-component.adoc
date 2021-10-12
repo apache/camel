@@ -1,12 +1,15 @@
 [[caffeine-cache-component]]
 = Caffeine Cache Component
 :docTitle: Caffeine Cache
+:shortname: caffeine-cache
 :artifactId: camel-caffeine
 :description: Perform caching operations using Caffeine Cache.
 :since: 2.20
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/caffeine-cache.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: caffeine
 
 *Since Camel {since}*
 
@@ -148,4 +151,5 @@ CaffeineConstants.ACTION_HAS_RESULT
 CaffeineConstants.ACTION_SUCCEEDED
 ------------------------------------------------------------
 
-include::spring-boot:partial$caffeine-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

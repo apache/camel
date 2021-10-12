@@ -1,6 +1,7 @@
 [[spring-batch-component]]
 = Spring Batch Component
 :docTitle: Spring Batch
+:shortname: spring-batch
 :artifactId: camel-spring-batch
 :description: Send messages to Spring Batch for further processing.
 :since: 2.10
@@ -9,6 +10,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/spring-batch.adoc[opts=optional]
 //Manually maintained attributes
 :group: Spring
+:camel-spring-boot-name: spring-batch
 
 *Since Camel {since}*
 
@@ -290,4 +292,5 @@ JMS queue.
 </batch:job>
 -----------------------------------------------------------------------------------------------------------------------
 
-include::spring-boot:partial$spring-batch-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

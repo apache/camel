@@ -3,11 +3,14 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: core/camel-xml-jaxp/src/main/docs/modules/languages/pages/xtokenize-language.adoc
 :docTitle: XML Tokenize
+:shortname: xtokenize
 :artifactId: camel-xml-jaxp
 :description: Tokenize XML payloads using the specified path expression.
 :since: 2.14
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/xtokenize.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: xml-jaxp
 
 *Since Camel {since}*
 
@@ -37,3 +40,5 @@ The XML Tokenize language supports 4 options, which are listed below.
 | trim | true | Boolean | Whether to trim the value to remove leading and trailing whitespaces and line breaks
 |===
 // language options: END
+
+ include::spring-boot:partial$starter.adoc[]

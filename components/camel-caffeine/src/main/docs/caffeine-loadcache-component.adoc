@@ -1,12 +1,15 @@
 [[caffeine-loadcache-component]]
 = Caffeine LoadCache Component
 :docTitle: Caffeine LoadCache
+:shortname: caffeine-loadcache
 :artifactId: camel-caffeine
 :description: Perform caching operations using Caffeine Cache with an attached CacheLoader.
 :since: 2.20
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/caffeine-loadcache.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: caffeine
 
 *Since Camel {since}*
 
@@ -116,4 +119,5 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-include::spring-boot:partial$caffeine-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

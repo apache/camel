@@ -1,12 +1,15 @@
 [[exec-component]]
 = Exec Component
 :docTitle: Exec
+:shortname: exec
 :artifactId: camel-exec
 :description: Execute commands on the underlying operating system.
 :since: 2.3
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/exec.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: exec
 
 *Since Camel {since}*
 
@@ -258,4 +261,5 @@ from("direct:exec").to("exec:cmd?args=/C echo echoString")
 ----------------------------------------------------------
 
 
-include::spring-boot:partial$exec-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

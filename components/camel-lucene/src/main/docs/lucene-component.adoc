@@ -1,12 +1,15 @@
 [[lucene-component]]
 = Lucene Component
 :docTitle: Lucene
+:shortname: lucene
 :artifactId: camel-lucene
 :description: Perform inserts or queries against Apache Lucene databases.
 :since: 2.2
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/lucene.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: lucene
 
 *Since Camel {since}*
 
@@ -248,4 +251,5 @@ RouteBuilder builder = new RouteBuilder() {
 };
 -------------------------------------------------------------------------------------------------------
 
-include::spring-boot:partial$lucene-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

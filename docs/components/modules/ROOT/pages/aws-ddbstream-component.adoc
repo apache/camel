@@ -3,6 +3,7 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-aws-ddb/src/main/docs/aws-ddbstream-component.adoc
 :docTitle: AWS DynamoDB Streams
+:shortname: aws-ddbstream
 :artifactId: camel-aws-ddb
 :description: Receive messages from AWS DynamoDB Stream service.
 :since: 2.17
@@ -11,6 +12,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws-ddbstream.adoc[opts=optional]
 //Manually maintained attributes
 :group: AWS
+:camel-spring-boot-name: aws-ddb
 
 *Since Camel {since}*
 
@@ -225,4 +227,5 @@ Maven users will need to add the following dependency to their pom.xml.
 where `$\{camel-version}` must be replaced by the actual version of Camel.
 
 
-include::spring-boot:partial$aws-ddb-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

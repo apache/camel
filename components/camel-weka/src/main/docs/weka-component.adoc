@@ -1,12 +1,15 @@
 [[weka-component]]
 = Weka Component
 :docTitle: Weka
+:shortname: weka
 :artifactId: camel-weka
 :description: Perform machine learning tasks using Weka.
 :since: 3.1
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/weka.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: weka
 
 *Since Camel {since}*
 
@@ -259,4 +262,5 @@ try (CamelContext camelctx = new DefaultCamelContext()) {
 * https://waikato.github.io/weka-wiki/documentation/[Weka Documentation,window=_blank]
 * https://tdiesler.github.io/nessus-weka[Nessus-Weka,window=_blank]
 
-include::spring-boot:partial$weka-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

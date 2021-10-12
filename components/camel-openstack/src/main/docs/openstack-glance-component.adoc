@@ -1,6 +1,7 @@
 [[openstack-glance-component]]
 = OpenStack Glance Component
 :docTitle: OpenStack Glance
+:shortname: openstack-glance
 :artifactId: camel-openstack
 :description: Manage VM images and metadata definitions in OpenStack Glance.
 :since: 2.19
@@ -9,6 +10,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/openstack-glance.adoc[opts=optional]
 //Manually maintained attributes
 :group: OpenStack
+:camel-spring-boot-name: openstack
 
 *Since Camel {since}*
 
@@ -151,4 +153,5 @@ with the following path and query parameters:
 |=========================================================================
 
 
-include::spring-boot:partial$openstack-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

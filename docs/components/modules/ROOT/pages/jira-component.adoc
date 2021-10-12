@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-jira/src/main/docs/jira-component.adoc
 :docTitle: Jira
+:shortname: jira
 :artifactId: camel-jira
 :description: Interact with JIRA issue tracker.
 :since: 3.0
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/jira.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: jira
 
 *Since Camel {since}*
 
@@ -283,4 +286,5 @@ All messages also contain following headers that add additional info about the c
 * `watchedIssues`: list of all issue keys that are watched in the time of update
 
 
-include::spring-boot:partial$jira-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

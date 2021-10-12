@@ -1,12 +1,15 @@
 [[tika-component]]
 = Tika Component
 :docTitle: Tika
+:shortname: tika
 :artifactId: camel-tika
 :description: Parse documents and extract metadata and text using Apache Tika.
 :since: 2.19
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/tika.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: tika
 
 *Since Camel {since}*
 
@@ -109,4 +112,5 @@ from("direct:start")
         .to("tika:parse");
 ----
 
-include::spring-boot:partial$tika-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

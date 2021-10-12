@@ -1,6 +1,7 @@
 [[exchangeProperty-language]]
 = ExchangeProperty Language
 :docTitle: ExchangeProperty
+:shortname: exchangeProperty
 :artifactId: camel-core-languages
 :description: Get the value of named Camel Exchange property.
 :since: 2.0

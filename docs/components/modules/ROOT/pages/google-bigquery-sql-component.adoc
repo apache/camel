@@ -3,6 +3,7 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-google-bigquery/src/main/docs/google-bigquery-sql-component.adoc
 :docTitle: Google BigQuery Standard SQL
+:shortname: google-bigquery-sql
 :artifactId: camel-google-bigquery
 :description: Access Google Cloud BigQuery service using SQL queries.
 :since: 2.23
@@ -11,6 +12,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/google-bigquery-sql.adoc[opts=optional]
 //Manually maintained attributes
 :group: Google
+:camel-spring-boot-name: google-bigquery
 
 *Since Camel {since}*
 
@@ -148,4 +150,5 @@ with the following path and query parameters:
 
 Google BigQuery SQL endpoint expects the payload to be either empty or a map of query parameters.
 
-include::spring-boot:partial$google-bigquery-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

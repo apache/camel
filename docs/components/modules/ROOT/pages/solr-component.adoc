@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-solr/src/main/docs/solr-component.adoc
 :docTitle: Solr
+:shortname: solr
 :artifactId: camel-solr
 :description: Perform operations against Apache Lucene Solr.
 :since: 2.9
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/solr.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: solr
 
 *Since Camel {since}*
 
@@ -232,4 +235,5 @@ Tutorial]
 https://lucene.apache.org/solr/guide/8_4/the-standard-query-parser.html[Solr Query Syntax]
 
 
-include::spring-boot:partial$solr-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

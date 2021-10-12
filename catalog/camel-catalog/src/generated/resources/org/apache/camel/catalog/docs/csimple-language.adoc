@@ -1,6 +1,7 @@
 [[csimple-language]]
 = CSimple Language
 :docTitle: CSimple
+:shortname: csimple
 :artifactId: camel-core-languages
 :description: Evaluate a compile simple expression language.
 :since: 3.7

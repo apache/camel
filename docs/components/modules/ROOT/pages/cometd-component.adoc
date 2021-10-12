@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-cometd/src/main/docs/cometd-component.adoc
 :docTitle: CometD
+:shortname: cometd
 :artifactId: camel-cometd
 :description: Offers publish/subscribe, peer-to-peer (via a server), and RPC style messaging using the CometD/Bayeux protocol.
 :since: 2.0
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/cometd.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: cometd
 
 *Since Camel {since}*
 
@@ -219,4 +222,5 @@ Spring DSL based configuration of endpoint
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-include::spring-boot:partial$cometd-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

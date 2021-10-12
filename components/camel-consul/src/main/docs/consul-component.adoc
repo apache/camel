@@ -1,12 +1,15 @@
 [[consul-component]]
 = Consul Component
 :docTitle: Consul
+:shortname: consul
 :artifactId: camel-consul
 :description: Integrate with Consul service discovery and configuration store.
 :since: 2.18
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/consul.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: consul
 
 *Since Camel {since}*
 
@@ -174,4 +177,5 @@ with the following path and query parameters:
 |CamelConsulValueAsString|boolean|To transform values retrieved from Consul i.e. on KV endpoint to string.
 |=======================================================================
 
-include::spring-boot:partial$consul-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -3,6 +3,7 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-microprofile-metrics/src/main/docs/microprofile-metrics-component.adoc
 :docTitle: MicroProfile Metrics
+:shortname: microprofile-metrics
 :artifactId: camel-microprofile-metrics
 :description: Expose metrics from Camel routes.
 :since: 3.0

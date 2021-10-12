@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-ahc/src/main/docs/ahc-component.adoc
 :docTitle: Async HTTP Client (AHC)
+:shortname: ahc
 :artifactId: camel-ahc
 :description: Call external HTTP services using Async Http Client.
 :since: 2.8
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/ahc.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: ahc
 
 *Since Camel {since}*
 
@@ -442,4 +445,5 @@ Spring DSL based configuration of endpoint
 ...
 ----------------------------------------------------------------------------------
 
-include::spring-boot:partial$ahc-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

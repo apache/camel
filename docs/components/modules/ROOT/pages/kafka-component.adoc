@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-kafka/src/main/docs/kafka-component.adoc
 :docTitle: Kafka
+:shortname: kafka
 :artifactId: camel-kafka
 :description: Sent and receive messages to/from an Apache Kafka broker.
 :since: 2.13
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/kafka.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: kafka
 
 *Since Camel {since}*
 
@@ -581,4 +584,5 @@ from("kafka:my_topic?headerFilterStrategy=#myStrategy")
 
 `myStrategy` object should be subclass of `HeaderFilterStrategy` and must be placed in the Camel registry, either manually or by registration as a bean in Spring/Blueprint, as it is `CamelContext` aware.
 
-include::spring-boot:partial$kafka-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

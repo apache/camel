@@ -1,12 +1,15 @@
 [[jooq-component]]
 = JOOQ Component
 :docTitle: JOOQ
+:shortname: jooq
 :artifactId: camel-jooq
 :description: Store and retrieve Java objects from an SQL database using JOOQ.
 :since: 3.0
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/jooq.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: jooq
 
 *Since Camel {since}*
 
@@ -283,4 +286,5 @@ public class BookStoreRecordBean {
 }
 ----
 
-include::spring-boot:partial$jooq-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

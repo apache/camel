@@ -1,11 +1,14 @@
 [[json-johnzon-dataformat]]
 = JSON Johnzon DataFormat
 :docTitle: JSON Johnzon
+:shortname: json-johnzon
 :artifactId: camel-johnzon
 :description: Marshal POJOs to JSON and back using Johnzon
 :since: 2.18
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/json-johnzon.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: johnzon
 
 *Since Camel {since}*
 
@@ -57,4 +60,5 @@ the download page for the latest versions).
 </dependency>
 ----------------------------------------------------------
 
-include::spring-boot:partial$johnzon-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -3,11 +3,14 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-xstream/src/main/docs/json-xstream-dataformat.adoc
 :docTitle: JSON XStream
+:shortname: json-xstream
 :artifactId: camel-xstream
 :description: Marshal POJOs to JSON and back using XStream
 :since: 2.0
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/json-xstream.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: xstream
 
 *Since Camel {since}*
 
@@ -60,4 +63,5 @@ from("activemq:My.Queue").
   to("mqseries:Another.Queue");
 -----------------------------------------------------------
 
-include::spring-boot:partial$xstream-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

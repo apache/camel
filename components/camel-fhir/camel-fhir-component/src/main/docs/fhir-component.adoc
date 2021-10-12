@@ -1,12 +1,15 @@
 [[fhir-component]]
 = FHIR Component
 :docTitle: FHIR
+:shortname: fhir
 :artifactId: camel-fhir
 :description: Exchange information in the healthcare domain using the FHIR (Fast Healthcare Interoperability Resources) standard.
 :since: 2.23
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/fhir.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: fhir
 
 *Since Camel {since}*
 
@@ -1048,4 +1051,5 @@ The `inBody` parameter overrides message header, i.e. the endpoint parameter `in
 would override a `CamelFhir.myParameterNameHere` header.
 // endpoint options: END
 
-include::spring-boot:partial$fhir-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -1,6 +1,7 @@
 [[aws-ecs-component]]
 = AWS Elastic Container Service (ECS) Component
 :docTitle: AWS Elastic Container Service (ECS)
+:shortname: aws-ecs
 :artifactId: camel-aws-ecs
 :description: Manage AWS ECS cluster instances.
 :since: 3.0
@@ -9,6 +10,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws-ecs.adoc[opts=optional]
 //Manually maintained attributes
 :group: AWS
+:camel-spring-boot-name: aws-ecs
 
 *Since Camel {since}*
 
@@ -168,4 +170,5 @@ Maven users will need to add the following dependency to their pom.xml.
 where `$\{camel-version}` must be replaced by the actual version of Camel.
 
 
-include::spring-boot:partial$aws-ecs-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

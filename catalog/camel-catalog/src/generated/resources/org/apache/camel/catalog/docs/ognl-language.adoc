@@ -1,11 +1,14 @@
 [[ognl-language]]
 = OGNL Language
 :docTitle: OGNL
+:shortname: ognl
 :artifactId: camel-ognl
 :description: Evaluate an Apache Commons Object Graph Navigation Library (OGNL) expression against the Camel Exchange.
 :since: 1.1
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/ognl.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: ognl
 
 *Since Camel {since}*
 
@@ -77,7 +80,7 @@ The OGNL language supports 1 options, which are listed below.
 
 == Samples
 
-For example you could use OGNL inside a xref:{eip-vc}:eips:filter-eip.adoc[Message
+For example you could use OGNL inside a xref:eips:filter-eip.adoc[Message
 Filter] in XML
 
 [source,java]
@@ -133,4 +136,5 @@ the download page for the latest versions).
 Otherwise, you'll also need
 https://repo1.maven.org/maven2/org/apache/servicemix/bundles/org.apache.servicemix.bundles.ognl/2.7.3_4/org.apache.servicemix.bundles.ognl-2.7.3_4.jar[OGNL]
 
-include::spring-boot:partial$ognl-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

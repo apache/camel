@@ -1,6 +1,7 @@
 [[google-mail-stream-component]]
 = Google Mail Stream Component
 :docTitle: Google Mail Stream
+:shortname: google-mail-stream
 :artifactId: camel-google-mail
 :description: Poll for incoming messages in Google Mail.
 :since: 2.22
@@ -9,6 +10,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/google-mail-stream.adoc[opts=optional]
 //Manually maintained attributes
 :group: Google
+:camel-spring-boot-name: google-mail
 
 *Since Camel {since}*
 
@@ -136,4 +138,5 @@ with the following path and query parameters:
 | *refreshToken* (security) | OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived. |  | String
 |===
 
-include::spring-boot:partial$google-mail-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

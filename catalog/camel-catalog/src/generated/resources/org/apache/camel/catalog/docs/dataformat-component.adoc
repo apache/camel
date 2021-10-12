@@ -1,6 +1,7 @@
 [[dataformat-component]]
 = Data Format Component
 :docTitle: Data Format
+:shortname: dataformat
 :artifactId: camel-dataformat
 :description: Use a Camel Data Format as a regular Camel Component.
 :since: 2.12
@@ -8,6 +9,8 @@
 :component-header: Only producer is supported
 :core:
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/dataformat.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: dataformat
 
 *Since Camel {since}*
 
@@ -104,4 +107,5 @@ And in XML DSL you do:
 </camelContext>
 ----
 
-include::spring-boot:partial$dataformat-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

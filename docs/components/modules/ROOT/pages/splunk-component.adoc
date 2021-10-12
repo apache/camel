@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-splunk/src/main/docs/splunk-component.adoc
 :docTitle: Splunk
+:shortname: splunk
 :artifactId: camel-splunk
 :description: Publish or search for events in Splunk.
 :since: 2.13
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/splunk.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: splunk
 
 *Since Camel {since}*
 
@@ -257,4 +260,5 @@ data with prebuilt apps for analyzing and displaying this.  +
 route and jvm metrics to Splunk, and displaying this on a dashboard.
 
 
-include::spring-boot:partial$splunk-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

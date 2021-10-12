@@ -1,6 +1,7 @@
 [[cxf-transport-other]]
 = CXF Transport Component
 :docTitle: CXF Transport
+:shortname: cxf-transport
 :artifactId: camel-cxf-transport
 :description: Camel Transport for Apache CXF
 :since: 2.8

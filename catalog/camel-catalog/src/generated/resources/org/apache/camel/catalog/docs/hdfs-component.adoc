@@ -1,12 +1,15 @@
 [[hdfs-component]]
 = HDFS Component
 :docTitle: HDFS
+:shortname: hdfs
 :artifactId: camel-hdfs
 :description: Read and write from/to an HDFS filesystem using Hadoop 2.x.
 :since: 2.14
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/hdfs.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: hdfs
 
 *Since Camel {since}*
 
@@ -341,4 +344,5 @@ static {
 ------------------------------------------------------------------------------------------------------
 
 
-include::spring-boot:partial$hdfs-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

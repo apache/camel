@@ -30,4 +30,6 @@ for this component:
 ------------------------------------------------------------
 
 
-include::spring-boot:partial$openstack-starter.adoc[]
+:camel-spring-boot-name: openstack
+
+include::spring-boot:partial$starter.adoc[]

@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-json-validator/src/main/docs/json-validator-component.adoc
 :docTitle: JSON Schema Validator
+:shortname: json-validator
 :artifactId: camel-json-validator
 :description: Validate JSON payloads using NetworkNT JSON Schema.
 :since: 2.20
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/json-validator.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: json-validator
 
 *Since Camel {since}*
 
@@ -153,4 +156,5 @@ from("direct:start")
   .to("mock:end")
 ----
 
-include::spring-boot:partial$json-validator-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -1,6 +1,7 @@
 [[aws-xray-other]]
 = AWS XRay Component
 :docTitle: AWS XRay
+:shortname: aws-xray
 :artifactId: camel-aws-xray
 :description: Distributed tracing using AWS XRay
 :since: 2.21

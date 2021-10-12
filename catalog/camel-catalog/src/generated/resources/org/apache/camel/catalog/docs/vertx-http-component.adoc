@@ -1,12 +1,15 @@
 [[vertx-http-component]]
 = Vert.x HTTP Client Component
 :docTitle: Vert.x HTTP Client
+:shortname: vertx-http
 :artifactId: camel-vertx-http
 :description: Send requests to external HTTP servers using Vert.x
 :since: 3.5
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/vertx-http.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: vertx-http
 
 *Since Camel {since}*
 
@@ -245,4 +248,5 @@ It is also possible to configure SSL options by providing a custom `WebClientOpt
 Session management can be enabled via the `sessionManagement` URI option. When enabled, an in-memory cookie store is used to track cookies.
 This can be overridden by providing a custom `CookieStore` via the `cookieStore` URI option.
 
-include::spring-boot:partial$vertx-http-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

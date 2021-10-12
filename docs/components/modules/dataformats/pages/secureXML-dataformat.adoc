@@ -3,11 +3,14 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-xmlsecurity/src/main/docs/secureXML-dataformat.adoc
 :docTitle: XML Security
+:shortname: secureXML
 :artifactId: camel-xmlsecurity
 :description: Encrypt and decrypt XML payloads using Apache Santuario.
 :since: 2.0
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/secureXML.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: xmlsecurity
 
 *Since Camel {since}*
 
@@ -238,4 +241,5 @@ Spring XML Recipient
 
 This data format is provided within the *camel-xmlsecurity* component.
 
-include::spring-boot:partial$xmlsecurity-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-nagios/src/main/docs/nagios-component.adoc
 :docTitle: Nagios
+:shortname: nagios
 :artifactId: camel-nagios
 :description: Send passive checks to Nagios using JSendNSCA.
 :since: 2.3
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/nagios.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: nagios
 
 *Since Camel {since}*
 
@@ -163,4 +166,5 @@ xref:manual::advanced-configuration-of-camelcontext-using-spring.adoc[Advanced
 configuration of CamelContext using Spring].
 
 
-include::spring-boot:partial$nagios-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

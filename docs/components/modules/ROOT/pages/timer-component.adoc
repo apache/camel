@@ -3,6 +3,7 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-timer/src/main/docs/timer-component.adoc
 :docTitle: Timer
+:shortname: timer
 :artifactId: camel-timer
 :description: Generate messages in specified intervals using java.util.Timer.
 :since: 1.0
@@ -10,6 +11,8 @@
 :component-header: Only consumer is supported
 :core:
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/timer.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: timer
 
 *Since Camel {since}*
 
@@ -185,4 +188,5 @@ starting the route. To do that you use the repeatCount option as shown:
 ----
 
 
-include::spring-boot:partial$timer-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

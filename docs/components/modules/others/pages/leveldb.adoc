@@ -3,11 +3,14 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-leveldb/src/main/docs/leveldb.adoc
 :docTitle: LevelDB
+:shortname: leveldb
 :artifactId: camel-leveldb
 :description: Using LevelDB as persistent EIP store
 :since: 2.10
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/leveldb.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: leveldb
 
 *Since Camel {since}*
 
@@ -185,3 +188,5 @@ the download page for the latest versions).
   <version>x.y.z</version>
 </dependency>
 ----------------------------------------
+
+include::spring-boot:partial$starter.adoc[]

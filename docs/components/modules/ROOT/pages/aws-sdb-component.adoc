@@ -3,6 +3,7 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-aws-sdb/src/main/docs/aws-sdb-component.adoc
 :docTitle: AWS SimpleDB
+:shortname: aws-sdb
 :artifactId: camel-aws-sdb
 :description: Store and Retrieve data from/to AWS SDB service.
 :since: 2.9
@@ -11,6 +12,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws-sdb.adoc[opts=optional]
 //Manually maintained attributes
 :group: AWS
+:camel-spring-boot-name: aws-sdb
 
 *Since Camel {since}*
 
@@ -257,4 +259,5 @@ Maven users will need to add the following dependency to their pom.xml.
 where `$\{camel-version}` must be replaced by the actual version of Camel.
 
 
-include::spring-boot:partial$aws-sdb-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

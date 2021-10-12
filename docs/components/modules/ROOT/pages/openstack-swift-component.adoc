@@ -3,6 +3,7 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-openstack/src/main/docs/openstack-swift-component.adoc
 :docTitle: OpenStack Swift
+:shortname: openstack-swift
 :artifactId: camel-openstack
 :description: Access OpenStack Swift object/blob store.
 :since: 2.19
@@ -11,6 +12,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/openstack-swift.adoc[opts=optional]
 //Manually maintained attributes
 :group: OpenStack
+:camel-spring-boot-name: openstack
 
 *Since Camel {since}*
 
@@ -199,4 +201,5 @@ or *org.openstack4j.model.storage.object.options.ContainerListOptions* for listi
 |=========================================================================
 
 
-include::spring-boot:partial$openstack-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

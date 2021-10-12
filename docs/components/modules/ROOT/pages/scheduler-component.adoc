@@ -3,6 +3,7 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-scheduler/src/main/docs/scheduler-component.adoc
 :docTitle: Scheduler
+:shortname: scheduler
 :artifactId: camel-scheduler
 :description: Generate messages in specified intervals using java.util.concurrent.ScheduledExecutorService.
 :since: 2.15
@@ -10,6 +11,8 @@
 :component-header: Only consumer is supported
 :core:
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/scheduler.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: scheduler
 
 *Since Camel {since}*
 
@@ -174,4 +177,5 @@ scheduler, every time the consumer has completed processing the
 exchange.
 
 
-include::spring-boot:partial$scheduler-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

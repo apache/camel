@@ -1,11 +1,14 @@
 [[soapjaxb-dataformat]]
 = SOAP DataFormat
 :docTitle: SOAP
+:shortname: soapjaxb
 :artifactId: camel-soap
 :description: Marshal Java objects to SOAP messages and back.
 :since: 2.3
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/soapjaxb.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: soap
 
 *Since Camel {since}*
 
@@ -241,4 +244,5 @@ following dependency to your pom.
 </dependency>
 -------------------------------------
 
-include::spring-boot:partial$soap-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

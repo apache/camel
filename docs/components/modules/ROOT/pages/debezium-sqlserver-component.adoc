@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-debezium-sqlserver/src/main/docs/debezium-sqlserver-component.adoc
 :docTitle: Debezium SQL Server Connector
+:shortname: debezium-sqlserver
 :artifactId: camel-debezium-sqlserver
 :description: Capture changes from an SQL Server database.
 :since: 3.0
 :supportLevel: Stable
 :component-header: Only consumer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/debezium-sqlserver.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: debezium-sqlserver
 
 *Since Camel {since}*
 
@@ -277,4 +280,5 @@ from("debezium-sqlserver:[name]?[options]])
 
 *Important Note:* This component is a thin wrapper around Debezium Engine as mentioned, therefore before using this component in production, you need to understand how Debezium works and how configurations can reflect the expected behavior, especially in regards to https://debezium.io/documentation/reference/0.9/operations/embedded.html#_handling_failures[handling failures].
 
-include::spring-boot:partial$debezium-sqlserver-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

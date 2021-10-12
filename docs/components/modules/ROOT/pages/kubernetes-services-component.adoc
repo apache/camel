@@ -3,6 +3,7 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-kubernetes/src/main/docs/kubernetes-services-component.adoc
 :docTitle: Kubernetes Services
+:shortname: kubernetes-services
 :artifactId: camel-kubernetes
 :description: Perform operations on Kubernetes Services and get notified on Service changes.
 :since: 2.17
@@ -11,6 +12,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/kubernetes-services.adoc[opts=optional]
 //Manually maintained attributes
 :group: Kubernetes
+:camel-spring-boot-name: kubernetes
 
 *Since Camel {since}*
 
@@ -161,4 +163,5 @@ fromF("kubernetes-services://%s?oauthToken=%s&namespace=default&resourceName=tes
 
 This consumer will return a list of events on the namespace default for the service test.
 
-include::spring-boot:partial$kubernetes-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

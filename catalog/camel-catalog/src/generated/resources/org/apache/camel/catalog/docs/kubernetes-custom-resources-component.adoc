@@ -1,6 +1,7 @@
 [[kubernetes-custom-resources-component]]
 = Kubernetes Custom Resources Component
 :docTitle: Kubernetes Custom Resources
+:shortname: kubernetes-custom-resources
 :artifactId: camel-kubernetes
 :description: Perform operations on Kubernetes Custom Resources and get notified on Deployment changes.
 :since: 3.7
@@ -9,6 +10,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/kubernetes-custom-resources.adoc[opts=optional]
 //Manually maintained attributes
 :group: Kubernetes
+:camel-spring-boot-name: kubernetes
 
 *Since Camel {since}*
 
@@ -108,4 +110,5 @@ with the following path and query parameters:
 - deleteCustomResource
 - createCustomResource
 
-include::spring-boot:partial$kubernetes-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

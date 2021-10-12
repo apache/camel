@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-spark/src/main/docs/spark-component.adoc
 :docTitle: Spark
+:shortname: spark
 :artifactId: camel-spark
 :description: Send RDD or DataFrame jobs to Apache Spark clusters.
 :since: 2.17
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/spark.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: spark
 
 *Since Camel {since}*
 
@@ -414,4 +417,5 @@ Dataset<Row> cars(HiveContext hiveContext) {
 }
 ------------------------------------------------------------------------
 
-include::spring-boot:partial$spark-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

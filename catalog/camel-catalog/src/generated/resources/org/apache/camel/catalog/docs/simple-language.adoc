@@ -1,6 +1,7 @@
 [[simple-language]]
 = Simple Language
 :docTitle: Simple
+:shortname: simple
 :artifactId: camel-core-languages
 :description: Evaluate Camel's built-in Simple language expression against the Camel Exchange.
 :since: 1.1

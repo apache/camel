@@ -1,11 +1,14 @@
 [[joor-language]]
 = jOOR Language
 :docTitle: jOOR
+:shortname: joor
 :artifactId: camel-joor
 :description: Evaluate a jOOR (Java compiled once at runtime) expression language.
 :since: 3.7
 :supportLevel: Preview
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/joor.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: core
 
 *Since Camel {since}*
 
@@ -329,3 +332,5 @@ the download page for the latest versions).
   <version>x.x.x</version>
 </dependency>
 ---------------------------------------
+
+include::spring-boot:partial$starter.adoc[]

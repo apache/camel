@@ -1,12 +1,15 @@
 [[jt400-component]]
 = JT400 Component
 :docTitle: JT400
+:shortname: jt400
 :artifactId: camel-jt400
 :description: Exchanges messages with an IBM i system using data queues, message queues, or program call. IBM i is the replacement for AS/400 and iSeries servers.
 :since: 1.5
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/jt400.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: jt400
 
 *Since Camel {since}*
 
@@ -276,4 +279,5 @@ from("jt400://username:password@system/lib.lib/MSGOUTQ.DTAQ")
 -------------------------------------------------------------------------------------------------------
 
 
-include::spring-boot:partial$jt400-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

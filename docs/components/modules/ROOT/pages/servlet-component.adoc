@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-servlet/src/main/docs/servlet-component.adoc
 :docTitle: Servlet
+:shortname: servlet
 :artifactId: camel-servlet
 :description: Serve HTTP requests by a Servlet.
 :since: 2.0
 :supportLevel: Stable
 :component-header: Only consumer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/servlet.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: servlet
 
 *Since Camel {since}*
 
@@ -497,4 +500,5 @@ The automatic mapping of the Camel servlet can also be disabled.
 |=======================================================================
 
 
-include::spring-boot:partial$servlet-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

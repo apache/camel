@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-cmis/src/main/docs/cmis-component.adoc
 :docTitle: CMIS
+:shortname: cmis
 :artifactId: camel-cmis
 :description: Read and write data from to/from a CMIS compliant content repositories.
 :since: 2.11
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/cmis.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: cmis
 
 *Since Camel {since}*
 
@@ -153,4 +156,5 @@ where `${camel-version`} must be replaced by the actual version of Camel
 (2.11 or higher).
 
 
-include::spring-boot:partial$cmis-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

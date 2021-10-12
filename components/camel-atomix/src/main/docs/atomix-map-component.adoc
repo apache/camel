@@ -1,12 +1,15 @@
 [[atomix-map-component]]
 = Atomix Map Component
 :docTitle: Atomix Map
+:shortname: atomix-map
 :artifactId: camel-atomix
 :description: Access Atomix's distributed map.
 :since: 2.20
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/atomix-map.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: atomix
 
 *Since Camel {since}*
 
@@ -215,4 +218,5 @@ FluentProducerTemplate.on(context)
     .send();
 ----
 
-include::spring-boot:partial$atomix-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

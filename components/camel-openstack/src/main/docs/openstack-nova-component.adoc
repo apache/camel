@@ -1,6 +1,7 @@
 [[openstack-nova-component]]
 = OpenStack Nova Component
 :docTitle: OpenStack Nova
+:shortname: openstack-nova
 :artifactId: camel-openstack
 :description: Access OpenStack to manage compute resources.
 :since: 2.19
@@ -9,6 +10,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/openstack-nova.adoc[opts=optional]
 //Manually maintained attributes
 :group: OpenStack
+:camel-spring-boot-name: openstack
 
 *Since Camel {since}*
 
@@ -220,4 +222,5 @@ If you need more precise server settings you can create new object of the type *
 |=========================================================================
 
 
-include::spring-boot:partial$openstack-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

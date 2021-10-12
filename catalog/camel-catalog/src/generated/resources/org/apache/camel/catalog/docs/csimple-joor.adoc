@@ -1,6 +1,7 @@
 [[csimple-joor-other]]
 = CSimple jOOR Component
 :docTitle: CSimple jOOR
+:shortname: csimple-joor
 :artifactId: camel-csimple-joor
 :description: jOOR compiler for csimple language
 :since: 3.7

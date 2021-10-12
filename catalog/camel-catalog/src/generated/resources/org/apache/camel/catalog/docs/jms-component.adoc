@@ -1,12 +1,15 @@
 [[jms-component]]
 = JMS Component
 :docTitle: JMS
+:shortname: jms
 :artifactId: camel-jms
 :description: Sent and receive messages to/from a JMS Queue or Topic.
 :since: 1.0
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/jms.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: jms
 
 *Since Camel {since}*
 
@@ -507,7 +510,7 @@ the documentation.
 
 Normally, when using xref:jms-component.adoc[JMS] as the transport, it only
 transfers the body and headers as the payload. If you want to use
-xref:jms-component.adoc[JMS] with a xref:{eip-vc}:eips:dead-letter-channel.adoc[Dead Letter
+xref:jms-component.adoc[JMS] with a xref:eips:dead-letter-channel.adoc[Dead Letter
 Channel], using a JMS queue as the Dead Letter Queue, then normally the
 caused Exception is not stored in the JMS message. You can, however, use
 the `transferExchange` option on the JMS dead letter queue to instruct
@@ -1214,7 +1217,7 @@ Transactions and [Request Reply] over JMS
 When using Request Reply over JMS you cannot
 use a single transaction; JMS will not send any messages until a commit
 is performed, so the server side won't receive anything at all until the
-transaction commits. Therefore to use xref:{eip-vc}:eips:requestReply-eip.adoc[Request
+transaction commits. Therefore to use xref:eips:requestReply-eip.adoc[Request
 Reply] you must commit a transaction after sending the request and then
 use a separate transaction for receiving the response.
 
@@ -1355,4 +1358,5 @@ wmq.setDestinationResolver(new DestinationResolver() {
 ----------------------------------------------------------------------------------------------------------------------------------
 
 
-include::spring-boot:partial$jms-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

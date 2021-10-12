@@ -1,12 +1,15 @@
 [[twitter-directmessage-component]]
 = Twitter Direct Message Component
 :docTitle: Twitter Direct Message
+:shortname: twitter-directmessage
 :artifactId: camel-twitter
 :description: Send and receive Twitter direct messages.
 :since: 2.10
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/twitter-directmessage.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: twitter
 
 *Since Camel {since}*
 
@@ -120,4 +123,5 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-include::spring-boot:partial$twitter-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

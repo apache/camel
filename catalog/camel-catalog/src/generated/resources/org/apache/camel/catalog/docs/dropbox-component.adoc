@@ -1,12 +1,15 @@
 [[dropbox-component]]
 = Dropbox Component
 :docTitle: Dropbox
+:shortname: dropbox
 :artifactId: camel-dropbox
 :description: Upload, download and manage files, folders, groups, collaborations, etc on Dropbox.
 :since: 2.14
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/dropbox.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: dropbox
 
 *Since Camel {since}*
 
@@ -431,4 +434,5 @@ Dropbox documentation,
 
  
 
-include::spring-boot:partial$dropbox-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

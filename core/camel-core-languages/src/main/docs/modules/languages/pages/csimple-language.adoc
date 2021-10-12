@@ -1,11 +1,14 @@
 [[csimple-language]]
 = CSimple Language
 :docTitle: CSimple
+:shortname: csimple
 :artifactId: camel-core-languages
 :description: Evaluate a compile simple expression language.
 :since: 3.7
 :supportLevel: Preview
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/csimple.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: core
 
 *Since Camel {since}*
 
@@ -259,3 +262,5 @@ The _echo()_ alias will be replaced with its value resulting in a script as:
 == More documentation
 
 See the xref:simple-language.adoc[Simple] language as csimple has the same set of functions as simple language.
+
+include::spring-boot:partial$starter.adoc[]

@@ -3,11 +3,14 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-jacksonxml/src/main/docs/jacksonxml-dataformat.adoc
 :docTitle: JacksonXML
+:shortname: jacksonxml
 :artifactId: camel-jacksonxml
 :description: Unmarshal a XML payloads to POJOs and back using XMLMapper extension of Jackson.
 :since: 2.16
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/jacksonxml.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: jacksonxml
 
 *Since Camel {since}*
 
@@ -370,4 +373,5 @@ the download page for the latest versions).
 </dependency>
 ----------------------------------------------------------
 
-include::spring-boot:partial$jacksonxml-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

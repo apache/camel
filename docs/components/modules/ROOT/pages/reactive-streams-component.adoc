@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-reactive-streams/src/main/docs/reactive-streams-component.adoc
 :docTitle: Reactive Streams
+:shortname: reactive-streams
 :artifactId: camel-reactive-streams
 :description: Exchange messages with reactive stream processing libraries compatible with the reactive streams standard.
 :since: 2.19
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/reactive-streams.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: reactive-streams
 
 *Since Camel {since}*
 
@@ -429,4 +432,5 @@ To use the starter, add the following to your spring boot pom.xml file:
 
 
 
-include::spring-boot:partial$reactive-streams-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

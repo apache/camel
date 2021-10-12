@@ -1,6 +1,7 @@
 [[spel-language]]
 = SpEL Language
 :docTitle: SpEL
+:shortname: spel
 :artifactId: camel-spring
 :description: Evaluate a Spring Expression Language (SpEL) expression against the Camel Exchange.
 :since: 2.7
@@ -8,6 +9,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/spel.adoc[opts=optional]
 //Manually maintained attributes
 :group: Spring
+:camel-spring-boot-name: spring
 
 *Since Camel {since}*
 
@@ -126,8 +128,8 @@ can invoke the "bar" method on this bean like this:
 
 === SpEL in enterprise integration patterns
 
-You can use SpEL as an expression for xref:{eip-vc}:eips:recipientList-eip.adoc[Recipient
-List] or as a predicate inside a xref:{eip-vc}:eips:filter-eip.adoc[Message
+You can use SpEL as an expression for xref:eips:recipientList-eip.adoc[Recipient
+List] or as a predicate inside a xref:eips:filter-eip.adoc[Message
 Filter]:
 
 [source,xml]
@@ -165,4 +167,5 @@ eg to refer to a file on the classpath you can do:
 ----
 
 
-include::spring-boot:partial$spring-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

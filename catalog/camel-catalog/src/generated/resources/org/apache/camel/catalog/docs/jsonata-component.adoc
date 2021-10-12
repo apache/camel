@@ -1,12 +1,15 @@
 [[jsonata-component]]
 = JSONATA Component
 :docTitle: JSONATA
+:shortname: jsonata
 :artifactId: camel-jsonata
 :description: JSON to JSON transformation using JSONATA.
 :since: 3.5
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/jsonata.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: jsonata
 
 *Since Camel {since}*
 
@@ -121,4 +124,5 @@ from("activemq:My.Queue").
 
 
 
-include::spring-boot:partial$jsonata-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

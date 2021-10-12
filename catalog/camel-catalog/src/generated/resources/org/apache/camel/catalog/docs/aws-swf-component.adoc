@@ -1,6 +1,7 @@
 [[aws-swf-component]]
 = AWS Simple Workflow (SWF) Component
 :docTitle: AWS Simple Workflow (SWF)
+:shortname: aws-swf
 :artifactId: camel-aws-swf
 :description: Manage workflows in the AWS Simple Workflow service.
 :since: 2.13
@@ -9,6 +10,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws-swf.adoc[opts=optional]
 //Manually maintained attributes
 :group: AWS
+:camel-spring-boot-name: aws-swf
 
 *Since Camel {since}*
 
@@ -285,4 +287,5 @@ Maven users will need to add the following dependency to their pom.xml.
 where `$\{camel-version}` must be replaced by the actual version of Camel.
 
 
-include::spring-boot:partial$aws-swf-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

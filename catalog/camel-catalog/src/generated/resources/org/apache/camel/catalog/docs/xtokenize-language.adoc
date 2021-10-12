@@ -1,6 +1,7 @@
 [[xtokenize-language]]
 = XML Tokenize Language
 :docTitle: XML Tokenize
+:shortname: xtokenize
 :artifactId: camel-xml-jaxp
 :description: Tokenize XML payloads using the specified path expression.
 :since: 2.14

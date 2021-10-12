@@ -1,12 +1,15 @@
 [[wordpress-component]]
 = Wordpress Component
 :docTitle: Wordpress
+:shortname: wordpress
 :artifactId: camel-wordpress
 :description: Manage posts and users using Wordpress API.
 :since: 2.21
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/wordpress.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: wordpress
 
 *Since Camel {since}*
 
@@ -137,4 +140,5 @@ At this time, `camel-wordpress` only supports Basic Authentication (more to come
 
 **It's not recommend to use Basic Authentication in production without TLS!!**
 
-include::spring-boot:partial$wordpress-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

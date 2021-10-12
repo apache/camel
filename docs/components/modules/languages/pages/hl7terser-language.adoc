@@ -3,11 +3,14 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-hl7/src/main/docs/hl7terser-language.adoc
 :docTitle: HL7 Terser
+:shortname: hl7terser
 :artifactId: camel-hl7
 :description: Get the value of an HL7 message field specified by terse location specification syntax.
 :since: 2.11
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/hl7terser.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: hl7
 
 *Since Camel {since}*
 
@@ -140,4 +143,5 @@ from("direct:test1")
   .transform(ack())
 ----
 
-include::spring-boot:partial$hl7-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

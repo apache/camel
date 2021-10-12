@@ -1,6 +1,7 @@
 [[grape-component]]
 = Grape Component
 :docTitle: Grape
+:shortname: grape
 :artifactId: camel-grape
 :description: Fetch, load and manage additional jars dynamically after Camel Context was started.
 :since: 2.16
