@@ -10446,23 +10446,22 @@ Whether to ignore invalid exchanges. Default value: false
         <xs:attribute name="capacity" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Sets the capacity of the resequencer inbound queue. Default value: 1000
+Sets the capacity of the resequencer's inbound queue. Default value: 100
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="timeout" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Sets minimum time (milliseconds) to wait for missing elements (messages).
-Default value: 1s
+Sets minimum time to wait for missing elements (messages). Default value: 1s
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="deliveryAttemptInterval" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Sets the interval in milliseconds the stream resequencer will at most wait while
-waiting for condition of being able to deliver. Default value: 1s
+Sets the interval in milli seconds the stream resequencer will at most wait
+while waiting for condition of being able to deliver. Default value: 1s
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -10476,8 +10475,7 @@ Whether to ignore invalid exchanges. Default value: false
         <xs:attribute name="comparatorRef" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-To use a custom comparator as a
-org.apache.camel.processor.resequencer.ExpressionResultComparator type.
+To use a custom comparator.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
