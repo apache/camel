@@ -1,5 +1,3 @@
-///usr/bin/env jbang "$0" "$@" ; exit $?
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -8,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,16 +15,25 @@
  * limitations under the License.
  */
 
-//REPOS mavencentral,apache=https://repository.apache.org/snapshots
-//DEPS org.apache.camel:camel-bom:${camel.jbang.version:RELEASE}@pom
-//DEPS org.apache.camel:camel-jbang-core:${camel.jbang.version:RELEASE}
+package org.apache.camel.dsl.jbang.core.commands;
 
-package main;
+import java.util.concurrent.Callable;
 
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import picocli.CommandLine;
+import picocli.CommandLine.Command;
+import picocli.CommandLine.Option;
 
-public class CamelJBang {
-    public static void main(String... args) {
-        CamelJBangMain.run(args);
+@Command(name = "init", description = "Provide init templates for kamelets and bindings")
+class Init implements Callable<Integer> {
+    //CHECKSTYLE:OFF
+    @Option(names = { "-h", "--help" }, usageHelp = true, description = "Display the help and sub-commands")
+    private boolean helpRequested = false;
+    //CHECKSTYLE:ON
+
+    @Override
+    public Integer call() throws Exception {
+        new CommandLine(this).execute("--help");
+
+        return 0;
     }
 }
