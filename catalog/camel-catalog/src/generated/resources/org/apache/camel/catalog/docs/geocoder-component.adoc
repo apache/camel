@@ -1,12 +1,15 @@
 [[geocoder-component]]
 = Geocoder Component
 :docTitle: Geocoder
+:shortname: geocoder
 :artifactId: camel-geocoder
 :description: Find geocodes (latitude and longitude) for a given address or the other way round.
 :since: 2.12
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/geocoder.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: geocoder
 
 *Since Camel {since}*
 
@@ -201,4 +204,5 @@ you can use "current" as the address as shown:
     .to("geocoder:address:current")
 -----------------------------------
 
-include::spring-boot:partial$geocoder-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

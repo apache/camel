@@ -1,12 +1,15 @@
 [[sql-stored-component]]
 = SQL Stored Procedure Component
 :docTitle: SQL Stored Procedure
+:shortname: sql-stored
 :artifactId: camel-sql
 :description: Perform SQL queries as a JDBC Stored Procedures using Spring JDBC.
 :since: 2.17
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/sql-stored.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: sql
 
 *Since Camel {since}*
 
@@ -262,4 +265,5 @@ To use this feature, add the following dependencies to your spring boot pom.xml 
 You should also include the specific database driver, if needed.
 
 
-include::spring-boot:partial$sql-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

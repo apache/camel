@@ -1,12 +1,15 @@
 [[rest-swagger-component]]
 = REST Swagger Component
 :docTitle: REST Swagger
+:shortname: rest-swagger
 :artifactId: camel-rest-swagger
 :description: Configure REST producers based on a Swagger (OpenAPI) specification document delegating to a component implementing the RestProducerFactory interface.
 :since: 2.19
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/rest-swagger.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: rest-swagger
 
 *Since Camel {since}*
 
@@ -220,4 +223,5 @@ String getPetJsonById(int petId) {
 }
 ----
 
-include::spring-boot:partial$rest-swagger-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

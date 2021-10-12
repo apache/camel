@@ -1,12 +1,15 @@
 [[beanstalk-component]]
 = Beanstalk Component
 :docTitle: Beanstalk
+:shortname: beanstalk
 :artifactId: camel-beanstalk
 :description: Retrieve and post-process Beanstalk jobs.
 :since: 2.15
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/beanstalk.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: beanstalk
 
 *Since Camel {since}*
 
@@ -240,4 +243,5 @@ out of buried and/or delayed state to the normal queue.
  
 
 
-include::spring-boot:partial$beanstalk-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

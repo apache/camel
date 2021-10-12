@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-zookeeper-master/src/main/docs/zookeeper-master-component.adoc
 :docTitle: ZooKeeper Master
+:shortname: zookeeper-master
 :artifactId: camel-zookeeper-master
 :description: Have only a single consumer in a cluster consuming from a given endpoint; with automatic failover if the JVM dies.
 :since: 2.19
 :supportLevel: Stable
 :component-header: Only consumer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/zookeeper-master.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: zookeeper-master
 
 *Since Camel {since}*
 
@@ -159,4 +162,5 @@ A little example
 ----
 
 
-include::spring-boot:partial$zookeeper-master-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

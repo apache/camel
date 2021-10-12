@@ -1,12 +1,15 @@
 [[vertx-component]]
 = Vert.x Component
 :docTitle: Vert.x
+:shortname: vertx
 :artifactId: camel-vertx
 :description: Send and receive messages to/from Vert.x Event Bus.
 :since: 2.12
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/vertx.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: vertx
 
 *Since Camel {since}*
 
@@ -128,4 +131,5 @@ camelContext.addComponent("vertx", vertxComponent);
 -----------------------------------------------------
 
 
-include::spring-boot:partial$vertx-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

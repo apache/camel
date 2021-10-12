@@ -1,12 +1,15 @@
 [[soroush-component]]
 = Soroush Component
 :docTitle: Soroush
+:shortname: soroush
 :artifactId: camel-soroush
 :description: Send and receive messages as a Soroush chat bot.
 :since: 3.0
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/soroush.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: soroush
 
 *Since Camel {since}*
 
@@ -263,4 +266,5 @@ onException(CongestionException.class).log("Failed to processing ${id}")
 
 _Donated by https://www.mohaymen.ir[Mohaymen ICT] to ASF_
 
-include::spring-boot:partial$soroush-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

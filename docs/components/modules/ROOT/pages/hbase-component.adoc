@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-hbase/src/main/docs/hbase-component.adoc
 :docTitle: HBase
+:shortname: hbase
 :artifactId: camel-hbase
 :description: Reading and write from/to an HBase store (Hadoop database).
 :since: 2.10
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/hbase.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: hbase
 
 *Since Camel {since}*
 
@@ -514,4 +517,5 @@ advantage it has over the header mapping strategy is that the HBaseData
 object can be easily converted to or from xml/json.
 
 
-include::spring-boot:partial$hbase-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -1,12 +1,15 @@
 [[master-component]]
 = Master Component
 :docTitle: Master
+:shortname: master
 :artifactId: camel-master
 :description: Have only a single consumer in a cluster consuming from a given endpoint; with automatic failover if the JVM dies.
 :since: 2.20
 :supportLevel: Stable
 :component-header: Only consumer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/master.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: master
 
 *Since Camel {since}*
 
@@ -171,4 +174,5 @@ Camel provide the following ClusterService implementations:
 - camel-zookeeper
 
 
-include::spring-boot:partial$master-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

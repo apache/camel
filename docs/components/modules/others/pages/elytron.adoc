@@ -3,6 +3,7 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-elytron/src/main/docs/elytron.adoc
 :docTitle: Elytron
+:shortname: elytron
 :artifactId: camel-elytron
 :description: Elytron Security Provider for camel-undertow
 :since: 3.1

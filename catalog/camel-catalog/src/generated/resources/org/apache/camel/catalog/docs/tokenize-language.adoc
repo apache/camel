@@ -1,6 +1,7 @@
 [[tokenize-language]]
 = Tokenize Language
 :docTitle: Tokenize
+:shortname: tokenize
 :artifactId: camel-core-languages
 :description: Tokenize text payloads using the specified delimiter patterns.
 :since: 2.0

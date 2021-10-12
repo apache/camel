@@ -1,12 +1,15 @@
 [[apns-component]]
 = APNS Component
 :docTitle: APNS
+:shortname: apns
 :artifactId: camel-apns
 :description: Send notifications to Apple iOS devices.
 :since: 2.8
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/apns.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: apns
 
 *Since Camel {since}*
 
@@ -320,4 +323,5 @@ from("apns:consumer?initialDelay=10&delay=3600&timeUnit=SECONDS")
 --------------------------------------------------------------------------
 
 
-include::spring-boot:partial$apns-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

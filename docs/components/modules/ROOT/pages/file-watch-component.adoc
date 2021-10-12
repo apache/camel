@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-file-watch/src/main/docs/file-watch-component.adoc
 :docTitle: File Watch
+:shortname: file-watch
 :artifactId: camel-file-watch
 :description: Get notified about file events in a directory using java.nio.file.WatchService.
 :since: 3.0
 :supportLevel: Stable
 :component-header: Only consumer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/file-watch.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: file-watch
 
 *Since Camel {since}*
 
@@ -143,4 +146,5 @@ relative filename. For absolute files this is the absolute path.
 |`CamelFileLastModified` |A `Long` value containing the last modified timestamp of the file.
 |===
 
-include::spring-boot:partial$file-watch-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

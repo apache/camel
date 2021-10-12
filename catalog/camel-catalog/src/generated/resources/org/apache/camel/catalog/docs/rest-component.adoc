@@ -1,6 +1,7 @@
 [[rest-component]]
 = REST Component
 :docTitle: REST
+:shortname: rest
 :artifactId: camel-rest
 :description: Expose REST services or call external REST services.
 :since: 2.14
@@ -8,6 +9,8 @@
 :component-header: Both producer and consumer are supported
 :core:
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/rest.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: rest
 
 *Since Camel {since}*
 
@@ -260,4 +263,5 @@ transport that can be deployed on Apache Tomcat, or similar web
 containers.
 
 
-include::spring-boot:partial$rest-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

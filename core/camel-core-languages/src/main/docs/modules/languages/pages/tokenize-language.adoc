@@ -1,11 +1,14 @@
 [[tokenize-language]]
 = Tokenize Language
 :docTitle: Tokenize
+:shortname: tokenize
 :artifactId: camel-core-languages
 :description: Tokenize text payloads using the specified delimiter patterns.
 :since: 2.0
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/tokenize.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: core
 
 *Since Camel {since}*
 
@@ -43,3 +46,5 @@ The Tokenize language supports 11 options, which are listed below.
 | trim | true | Boolean | Whether to trim the value to remove leading and trailing whitespaces and line breaks
 |===
 // language options: END
+
+ include::spring-boot:partial$starter.adoc[]

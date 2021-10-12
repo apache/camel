@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-pulsar/src/main/docs/pulsar-component.adoc
 :docTitle: Pulsar
+:shortname: pulsar
 :artifactId: camel-pulsar
 :description: Send and receive messages from/to Apache Pulsar messaging system.
 :since: 2.24
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/pulsar.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: pulsar
 
 *Since Camel {since}*
 
@@ -185,4 +188,5 @@ with the following path and query parameters:
 |===
 // message-headers options: END
 
-include::spring-boot:partial$pulsar-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

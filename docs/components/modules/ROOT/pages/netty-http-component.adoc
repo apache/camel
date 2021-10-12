@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-netty-http/src/main/docs/netty-http-component.adoc
 :docTitle: Netty HTTP
+:shortname: netty-http
 :artifactId: camel-netty-http
 :description: Netty HTTP server and client using the Netty 4.x.
 :since: 2.14
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/netty-http.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: netty-http
 
 *Since Camel {since}*
 
@@ -645,4 +648,5 @@ below:
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-include::spring-boot:partial$netty-http-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

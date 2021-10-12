@@ -1,6 +1,7 @@
 [[constant-language]]
 = Constant Language
 :docTitle: Constant
+:shortname: constant
 :artifactId: camel-core-languages
 :description: A fixed value set only once during the route startup.
 :since: 1.5

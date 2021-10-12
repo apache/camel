@@ -1,6 +1,7 @@
 [[hazelcast-map-component]]
 = Hazelcast Map Component
 :docTitle: Hazelcast Map
+:shortname: hazelcast-map
 :artifactId: camel-hazelcast
 :description: Perform operations on Hazelcast distributed map.
 :since: 2.7
@@ -9,6 +10,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/hazelcast-map.adoc[opts=optional]
 //Manually maintained attributes
 :group: Hazelcast
+:camel-spring-boot-name: hazelcast
 
 *Since Camel {since}*
 
@@ -345,4 +347,5 @@ fromF("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX)
          .log("fail!");
 --------------------------------------------------------------------------------------------
 
-include::spring-boot:partial$hazelcast-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

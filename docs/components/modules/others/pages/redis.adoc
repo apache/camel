@@ -3,6 +3,7 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-redis/src/main/docs/redis.adoc
 :docTitle: Redis
+:shortname: redis
 :artifactId: camel-redis
 :description: Aggregation repository using Redis as datastore
 :since: 3.5

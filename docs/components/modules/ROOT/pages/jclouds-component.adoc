@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-jclouds/src/main/docs/jclouds-component.adoc
 :docTitle: JClouds
+:shortname: jclouds
 :artifactId: camel-jclouds
 :description: Interact with jclouds compute and blobstore service.
 :since: 2.9
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/jclouds.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: jclouds
 
 *Since Camel {since}*
 
@@ -379,4 +382,5 @@ Here is the same using spring xml.
 ----------------------------------------------------------------------------------------------
 
 
-include::spring-boot:partial$jclouds-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

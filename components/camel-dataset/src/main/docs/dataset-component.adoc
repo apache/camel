@@ -1,6 +1,7 @@
 [[dataset-component]]
 = Dataset Component
 :docTitle: Dataset
+:shortname: dataset
 :artifactId: camel-dataset
 :description: Provide data for load and soak testing of your Camel application.
 :since: 1.3
@@ -8,6 +9,8 @@
 :component-header: Both producer and consumer are supported
 :core:
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/dataset.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: dataset
 
 *Since Camel {since}*
 
@@ -245,4 +248,5 @@ the bodies from a file.
 the file into multiple payloads.
 |===
 
-include::spring-boot:partial$dataset-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

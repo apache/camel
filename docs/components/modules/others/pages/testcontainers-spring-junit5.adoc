@@ -3,6 +3,7 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-testcontainers-spring-junit5/src/main/docs/testcontainers-spring-junit5.adoc
 :docTitle: Testcontainers Spring Junit5
+:shortname: testcontainers-spring-junit5
 :artifactId: camel-testcontainers-spring-junit5
 :description: Camel unit testing with Spring, testcontainers and JUnit 5
 :since: 3.0

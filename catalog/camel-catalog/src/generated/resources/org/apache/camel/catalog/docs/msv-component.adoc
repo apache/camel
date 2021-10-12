@@ -1,12 +1,15 @@
 [[msv-component]]
 = MSV Component
 :docTitle: MSV
+:shortname: msv
 :artifactId: camel-msv
 :description: Validate XML payloads using Multi-Schema Validator (MSV).
 :since: 1.1
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/msv.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: msv
 
 *Since Camel {since}*
 
@@ -133,4 +136,5 @@ http://relaxng.org/[RelaxNG XML Schema] (which is supplied on the
 classpath).
 
 
-include::spring-boot:partial$msv-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -3,6 +3,7 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-headersmap/src/main/docs/headersmap.adoc
 :docTitle: Headersmap
+:shortname: headersmap
 :artifactId: camel-headersmap
 :description: Fast case-insensitive headers map implementation
 :since: 2.20

@@ -1,6 +1,7 @@
 [[ignite-set-component]]
 = Ignite Sets Component
 :docTitle: Ignite Sets
+:shortname: ignite-set
 :artifactId: camel-ignite
 :description: Interact with Ignite Set data structures.
 :since: 2.17
@@ -9,6 +10,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/ignite-set.adoc[opts=optional]
 //Manually maintained attributes
 :group: Ignite
+:camel-spring-boot-name: ignite
 
 *Since Camel {since}*
 
@@ -83,4 +85,5 @@ This endpoint uses the following headers:
 Allows you to dynamically change the set operation.
 |=======================================================================
 
-include::spring-boot:partial$ignite-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

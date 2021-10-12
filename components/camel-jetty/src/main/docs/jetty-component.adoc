@@ -1,12 +1,15 @@
 [[jetty-component]]
 = Jetty Component
 :docTitle: Jetty
+:shortname: jetty
 :artifactId: camel-jetty
 :description: Expose HTTP endpoints using Jetty 9.
 :since: 1.2
 :supportLevel: Stable
 :component-header: Only consumer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/jetty.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: jetty
 
 *Since Camel {since}*
 
@@ -717,4 +720,5 @@ sharing the same MBeanServer between the instances, you can provide both
 instances with a reference to the same MBeanContainer in order to avoid
 name collisions when registering Jetty MBeans.
 
-include::spring-boot:partial$jetty-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

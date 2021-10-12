@@ -1,6 +1,7 @@
 [[djl-component]]
 = Deep Java Library Component
 :docTitle: Deep Java Library
+:shortname: djl
 :artifactId: camel-djl
 :description: Infer Deep Learning models from message exchanges data using Deep Java Library (DJL).
 :since: 3.3

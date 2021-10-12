@@ -3,6 +3,7 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-ignite/src/main/docs/ignite-idgen-component.adoc
 :docTitle: Ignite ID Generator
+:shortname: ignite-idgen
 :artifactId: camel-ignite
 :description: Interact with Ignite Atomic Sequences and ID Generators .
 :since: 2.17
@@ -11,6 +12,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/ignite-idgen.adoc[opts=optional]
 //Manually maintained attributes
 :group: Ignite
+:camel-spring-boot-name: ignite
 
 *Since Camel {since}*
 
@@ -74,4 +76,5 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-include::spring-boot:partial$ignite-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

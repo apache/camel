@@ -1,12 +1,15 @@
 [[ssh-component]]
 = SSH Component
 :docTitle: SSH
+:shortname: ssh
 :artifactId: camel-ssh
 :description: Execute commands on remote hosts using SSH.
 :since: 2.10
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/ssh.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: ssh
 
 *Since Camel {since}*
 
@@ -234,4 +237,5 @@ See the `examples/camel-example-ssh` and
 `examples/camel-example-ssh-security` in the Camel distribution.
 
 
-include::spring-boot:partial$ssh-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

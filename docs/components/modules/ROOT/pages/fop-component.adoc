@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-fop/src/main/docs/fop-component.adoc
 :docTitle: FOP
+:shortname: fop
 :artifactId: camel-fop
 :description: Render messages into PDF and other output formats supported by Apache FOP.
 :since: 2.10
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/fop.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: fop
 
 *Since Camel {since}*
 
@@ -177,4 +180,5 @@ from("file:source/data/xml")
 ---------------------------------
 
 
-include::spring-boot:partial$fop-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

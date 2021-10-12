@@ -1,12 +1,15 @@
 [[disruptor-component]]
 = Disruptor Component
 :docTitle: Disruptor
+:shortname: disruptor
 :artifactId: camel-disruptor
 :description: Provides asynchronous SEDA behavior using LMAX Disruptor.
 :since: 2.12
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/disruptor.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: disruptor
 
 *Since Camel {since}*
 
@@ -200,7 +203,7 @@ without incurring significant latency spikes.
 
 == Use of Request Reply
 
-The Disruptor component supports using xref:{eip-vc}:eips:requestReply-eip.adoc[Request
+The Disruptor component supports using xref:eips:requestReply-eip.adoc[Request
 Reply], where the caller will wait for the Async route to complete. For
 instance:
 
@@ -332,4 +335,5 @@ DisruptorEndpoint disruptor = context.getEndpoint("disruptor:xxxx");
 int size = disruptor.getBufferSize();
 --------------------------------------------------------------------
 
-include::spring-boot:partial$disruptor-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

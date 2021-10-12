@@ -1,6 +1,7 @@
 [[azure-storage-queue-component]]
 = Azure Storage Queue Service Component
 :docTitle: Azure Storage Queue Service
+:shortname: azure-storage-queue
 :artifactId: camel-azure-storage-queue
 :description: The azure-storage-queue component is used for storing and retrieving the messages to/from Azure Storage Queue using Azure SDK v12.
 :since: 3.3
@@ -9,6 +10,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/azure-storage-queue.adoc[opts=optional]
 //Manually maintained attributes
 :group: Azure
+:camel-spring-boot-name: azure-storage-queue
 
 *Since Camel {since}*
 
@@ -410,4 +412,5 @@ mvn verify -PfullTests -DaccountName=myacc -DaccessKey=mykey
 Whereby `accountName` is your Azure account name and `accessKey` is the access key being generated from Azure portal.
 
 
-include::spring-boot:partial$azure-storage-queue-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

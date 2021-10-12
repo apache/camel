@@ -1,12 +1,15 @@
 [[schematron-component]]
 = Schematron Component
 :docTitle: Schematron
+:shortname: schematron
 :artifactId: camel-schematron
 :description: Validate XML payload using the Schematron Library.
 :since: 2.15
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/schematron.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: schematron
 
 *Since Camel {since}*
 
@@ -212,4 +215,5 @@ to get you started on Schematron.
 links to other resources
 ====
 
-include::spring-boot:partial$schematron-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -1,6 +1,7 @@
 [[spring-ldap-component]]
 = Spring LDAP Component
 :docTitle: Spring LDAP
+:shortname: spring-ldap
 :artifactId: camel-spring-ldap
 :description: Perform searches in LDAP servers using filters as the message payload.
 :since: 2.11
@@ -9,6 +10,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/spring-ldap.adoc[opts=optional]
 //Manually maintained attributes
 :group: Spring
+:camel-spring-boot-name: spring-ldap
 
 *Since Camel {since}*
 
@@ -156,4 +158,5 @@ in `org.apache.camel.springldap.SpringLdapProducer`:
 * public static final String FUNCTION = "function";
 * public static final String REQUEST = "request";
 
-include::spring-boot:partial$spring-ldap-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

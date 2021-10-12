@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-atom/src/main/docs/atom-component.adoc
 :docTitle: Atom
+:shortname: atom
 :artifactId: camel-atom
 :description: Poll Atom RSS feeds.
 :since: 1.2
 :supportLevel: Stable
 :component-header: Only consumer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/atom.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: atom
 
 *Since Camel {since}*
 
@@ -165,4 +168,5 @@ queue. The sample also shows how to setup Camel standalone, not running
 in any Container or using Spring.
 
 
-include::spring-boot:partial$atom-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

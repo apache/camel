@@ -3,6 +3,7 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-aws-translate/src/main/docs/aws-translate-component.adoc
 :docTitle: AWS Translate
+:shortname: aws-translate
 :artifactId: camel-aws-translate
 :description: Translate texts using AWS Translate.
 :since: 3.0
@@ -11,6 +12,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws-translate.adoc[opts=optional]
 //Manually maintained attributes
 :group: AWS
+:camel-spring-boot-name: aws-translate
 
 *Since Camel {since}*
 
@@ -177,4 +179,5 @@ Maven users will need to add the following dependency to their pom.xml.
 where `$\{camel-version}` must be replaced by the actual version of Camel.
 
 
-include::spring-boot:partial$aws-translate-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

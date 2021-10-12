@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-mustache/src/main/docs/mustache-component.adoc
 :docTitle: Mustache
+:shortname: mustache
 :artifactId: camel-mustache
 :description: Transform messages using a Mustache template.
 :since: 2.12
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/mustache.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: mustache
 
 *Since Camel {since}*
 
@@ -199,4 +202,5 @@ Regards Camel Riders Bookstore
 -------------------------------------------------
 
 
-include::spring-boot:partial$mustache-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

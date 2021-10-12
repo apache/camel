@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-dozer/src/main/docs/dozer-component.adoc
 :docTitle: Dozer
+:shortname: dozer
 :artifactId: camel-dozer
 :description: Map between Java beans using the Dozer mapping library.
 :since: 2.15
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/dozer.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: dozer
 
 *Since Camel {since}*
 
@@ -300,4 +303,5 @@ Note that any properties within your expression must be escaped with "\"
 to prevent an error when Dozer attempts to resolve variable values
 defined using the EL.
 
-include::spring-boot:partial$dozer-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -3,11 +3,14 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-gson/src/main/docs/json-gson-dataformat.adoc
 :docTitle: JSON Gson
+:shortname: json-gson
 :artifactId: camel-gson
 :description: Marshal POJOs to JSON and back using Gson
 :since: 2.10
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/json-gson.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: gson
 
 *Since Camel {since}*
 
@@ -59,4 +62,5 @@ the download page for the latest versions).
 </dependency>
 ----------------------------------------------------------
 
-include::spring-boot:partial$gson-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

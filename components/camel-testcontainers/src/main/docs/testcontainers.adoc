@@ -1,6 +1,7 @@
 [[testcontainers-other]]
 = Testcontainers Component
 :docTitle: Testcontainers
+:shortname: testcontainers
 :artifactId: camel-testcontainers
 :description: Camel support for testcontainers
 :since: 2.22

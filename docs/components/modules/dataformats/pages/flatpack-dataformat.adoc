@@ -3,11 +3,14 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-flatpack/src/main/docs/flatpack-dataformat.adoc
 :docTitle: Flatpack
+:shortname: flatpack
 :artifactId: camel-flatpack
 :description: Marshal and unmarshal Java lists and maps to/from flat files (such as CSV, delimited, or fixed length formats) using Flatpack library.
 :since: 2.1
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/flatpack.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: flatpack
 
 *Since Camel {since}*
 
@@ -101,4 +104,5 @@ the download page for the latest versions).
 </dependency>
 -----------------------------------------
 
-include::spring-boot:partial$flatpack-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

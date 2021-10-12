@@ -3,6 +3,7 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-google-drive/src/main/docs/google-drive-component.adoc
 :docTitle: Google Drive
+:shortname: google-drive
 :artifactId: camel-google-drive
 :description: Manage files in Google Drive.
 :since: 2.14
@@ -11,6 +12,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/google-drive.adoc[opts=optional]
 //Manually maintained attributes
 :group: Google
+:camel-spring-boot-name: google-drive
 
 *Since Camel {since}*
 
@@ -995,4 +997,5 @@ For more information on the endpoints and options see API documentation
 at: https://developers.google.com/drive/v2/reference/[https://developers.google.com/drive/v2/reference/]
 
 
-include::spring-boot:partial$google-drive-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -1,6 +1,7 @@
 [[ignite-queue-component]]
 = Ignite Queues Component
 :docTitle: Ignite Queues
+:shortname: ignite-queue
 :artifactId: camel-ignite
 :description: Interact with Ignite Queue data structures.
 :since: 2.17
@@ -9,6 +10,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/ignite-queue.adoc[opts=optional]
 //Manually maintained attributes
 :group: Ignite
+:camel-spring-boot-name: ignite
 
 *Since Camel {since}*
 
@@ -94,4 +96,5 @@ The amount of items transferred as the result of the DRAIN operation.
 Dynamically sets the timeout in milliseconds to use when invoking the OFFER or POLL operations. 
 |=======================================================================
 
-include::spring-boot:partial$ignite-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

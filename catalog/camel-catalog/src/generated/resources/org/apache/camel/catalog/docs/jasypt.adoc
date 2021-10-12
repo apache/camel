@@ -1,6 +1,7 @@
 [[jasypt-other]]
 = Jasypt Component
 :docTitle: Jasypt
+:shortname: jasypt
 :artifactId: camel-jasypt
 :description: Security using Jasypt
 :since: 2.5

@@ -1,6 +1,7 @@
 [[oaipmh-component]]
 = OAI-PMH Component
 :docTitle: OAI-PMH
+:shortname: oaipmh
 :artifactId: camel-oaipmh
 :description: Harvest metadata using OAI-PMH protocol
 :since: 3.5

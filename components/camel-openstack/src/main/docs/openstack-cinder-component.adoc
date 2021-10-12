@@ -1,6 +1,7 @@
 [[openstack-cinder-component]]
 = OpenStack Cinder Component
 :docTitle: OpenStack Cinder
+:shortname: openstack-cinder
 :artifactId: camel-openstack
 :description: Access data in OpenStack Cinder block storage.
 :since: 2.19
@@ -9,6 +10,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/openstack-cinder.adoc[opts=optional]
 //Manually maintained attributes
 :group: OpenStack
+:camel-spring-boot-name: openstack
 
 *Since Camel {since}*
 
@@ -191,4 +193,5 @@ If you need more precise volume settings you can create new object of the type *
 If you need more precise server settings you can create new object of the type *org.openstack4j.model.storage.block.VolumeSnapshot* and send in the message body.
 
 
-include::spring-boot:partial$openstack-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

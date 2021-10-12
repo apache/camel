@@ -1,6 +1,7 @@
 [[file-language]]
 = File Language
 :docTitle: File
+:shortname: file
 :artifactId: camel-core-languages
 :description: For expressions and predicates using the file/simple language.
 :since: 1.1

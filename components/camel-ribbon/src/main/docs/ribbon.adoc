@@ -1,11 +1,14 @@
 [[ribbon-other]]
 = Ribbon Component
 :docTitle: Ribbon
+:shortname: ribbon
 :artifactId: camel-ribbon
 :description: Using Netflix Ribbon for client side load balancing
 :since: 2.18
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/ribbon.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: ribbon
 
 *Since Camel {since}*
 
@@ -80,3 +83,5 @@ from("direct:start")
     </serviceCall>
 </route>
 ----
+
+include::spring-boot:partial$starter.adoc[]

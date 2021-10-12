@@ -1,12 +1,15 @@
 [[quartz-component]]
 = Quartz Component
 :docTitle: Quartz
+:shortname: quartz
 :artifactId: camel-quartz
 :description: Schedule sending of messages using the Quartz 2.x scheduler.
 :since: 2.12
 :supportLevel: Stable
 :component-header: Only consumer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/quartz.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: quartz
 
 *Since Camel {since}*
 
@@ -457,4 +460,5 @@ Users can then use the cron component instead of the quartz component, as in the
     .to("activemq:Totally.Rocks");
 ----
 
-include::spring-boot:partial$quartz-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

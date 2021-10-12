@@ -1,12 +1,15 @@
 [[elasticsearch-rest-component]]
 = Elasticsearch Rest Component
 :docTitle: Elasticsearch Rest
+:shortname: elasticsearch-rest
 :artifactId: camel-elasticsearch-rest
 :description: Send requests to with an ElasticSearch via REST API.
 :since: 2.21
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/elasticsearch-rest.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: elasticsearch-rest
 
 *Since Camel {since}*
 
@@ -325,4 +328,5 @@ MultiSearchRequest request = new MultiSearchRequest().add(req1).add(req);
 Item[] response = template.requestBody("direct:search", request, Item[].class);
 ----
 
-include::spring-boot:partial$elasticsearch-rest-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

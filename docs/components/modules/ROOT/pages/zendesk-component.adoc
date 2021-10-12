@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-zendesk/src/main/docs/zendesk-component.adoc
 :docTitle: Zendesk
+:shortname: zendesk
 :artifactId: camel-zendesk
 :description: Manage Zendesk tickets, users, organizations, etc.
 :since: 2.19
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/zendesk.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: zendesk
 
 *Since Camel {since}*
 
@@ -1383,4 +1386,5 @@ would override a `CamelZendesk.myParameterNameHere` header.
 
 
 
-include::spring-boot:partial$zendesk-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

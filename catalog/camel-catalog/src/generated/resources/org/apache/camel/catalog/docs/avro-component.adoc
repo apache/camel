@@ -1,12 +1,15 @@
 [[avro-component]]
 = Avro RPC Component
 :docTitle: Avro RPC
+:shortname: avro
 :artifactId: camel-avro-rpc
 :description: Produce or consume Apache Avro RPC services.
 :since: 2.10
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/avro.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: avro
 
 *Since Camel {since}*
 
@@ -278,4 +281,5 @@ Value value filled as array contents.
 
 This component is not supported in Karaf.
 
-include::spring-boot:partial$avro-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

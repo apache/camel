@@ -1,12 +1,15 @@
 [[servicenow-component]]
 = ServiceNow Component
 :docTitle: ServiceNow
+:shortname: servicenow
 :artifactId: camel-servicenow
 :description: Interact with ServiceNow via its REST API.
 :since: 2.18
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/servicenow.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: servicenow
 
 *Since Camel {since}*
 
@@ -360,4 +363,5 @@ FluentProducerTemplate.on(context)
     .send();
 -------------------------------------------------------------------------------------------------------------------
 
-include::spring-boot:partial$servicenow-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

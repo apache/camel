@@ -3,11 +3,14 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-grok/src/main/docs/grok-dataformat.adoc
 :docTitle: Grok
+:shortname: grok
 :artifactId: camel-grok
 :description: Unmarshal unstructured data to objects using Logstash based Grok patterns.
 :since: 3.0
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/grok.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: grok
 
 *Since Camel {since}*
 
@@ -112,4 +115,5 @@ The Grok dataformat supports 4 options, which are listed below.
 |===
 // dataformat options: END
 
-include::spring-boot:partial$grok-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

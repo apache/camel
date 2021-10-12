@@ -182,4 +182,6 @@ to reference the service in the hazelcast endpoint.
 </camelContext>
 --------------------------------------------------------------------------------------
 
-include::spring-boot:partial$hazelcast-starter.adoc[]
+:camel-spring-boot-name: hazelcast
+
+include::spring-boot:partial$starter.adoc[]

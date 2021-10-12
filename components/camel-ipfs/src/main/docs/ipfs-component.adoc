@@ -1,12 +1,15 @@
 [[ipfs-component]]
 = IPFS Component
 :docTitle: IPFS
+:shortname: ipfs
 :artifactId: camel-ipfs
 :description: Access the Interplanetary File System (IPFS).
 :since: 2.23
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/ipfs.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: ipfs
 
 *Since Camel {since}*
 
@@ -101,4 +104,5 @@ from("direct:start").to("ipfs:get?outdir=target")
 from("direct:start").to("ipfs:cat");
 ---------------------------------------------------------------------------------------------
 
-include::spring-boot:partial$ipfs-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -3,6 +3,7 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-openstack/src/main/docs/openstack-neutron-component.adoc
 :docTitle: OpenStack Neutron
+:shortname: openstack-neutron
 :artifactId: camel-openstack
 :description: Access OpenStack Neutron for network services.
 :since: 2.19
@@ -11,6 +12,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/openstack-neutron.adoc[opts=optional]
 //Manually maintained attributes
 :group: OpenStack
+:camel-spring-boot-name: openstack
 
 *Since Camel {since}*
 
@@ -272,4 +274,5 @@ If you need more precise subnet settings you can create new object of the type *
 
 
 
-include::spring-boot:partial$openstack-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

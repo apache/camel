@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-jdbc/src/main/docs/jdbc-component.adoc
 :docTitle: JDBC
+:shortname: jdbc
 :artifactId: camel-jdbc
 :description: Access databases through SQL and JDBC.
 :since: 1.2
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/jdbc.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: jdbc
 
 *Since Camel {since}*
 
@@ -323,4 +326,5 @@ from("timer://MoveNewCustomersEveryHour?period=3600000")
 ----
 
 
-include::spring-boot:partial$jdbc-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

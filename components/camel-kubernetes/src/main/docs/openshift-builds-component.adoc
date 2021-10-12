@@ -1,6 +1,7 @@
 [[openshift-builds-component]]
 = Openshift Builds Component
 :docTitle: Openshift Builds
+:shortname: openshift-builds
 :artifactId: camel-kubernetes
 :description: Perform operations on OpenShift Builds.
 :since: 2.17
@@ -9,6 +10,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/openshift-builds.adoc[opts=optional]
 //Manually maintained attributes
 :group: Kubernetes
+:camel-spring-boot-name: kubernetes
 
 *Since Camel {since}*
 
@@ -125,4 +127,5 @@ from("direct:listByLabels").process(new Processor() {
 
 This operation return a List of Builds from your cluster, using a label selector (with key1 and key2, with value value1 and value2)
 
-include::spring-boot:partial$kubernetes-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

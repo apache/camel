@@ -3,11 +3,14 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: core/camel-core-languages/src/main/docs/modules/languages/pages/constant-language.adoc
 :docTitle: Constant
+:shortname: constant
 :artifactId: camel-core-languages
 :description: A fixed value set only once during the route startup.
 :since: 1.5
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/constant.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: core
 
 *Since Camel {since}*
 
@@ -80,3 +83,5 @@ eg to refer to a file on the classpath you can do:
 == Dependencies
 
 The Constant language is part of *camel-core*.
+
+include::spring-boot:partial$starter.adoc[]

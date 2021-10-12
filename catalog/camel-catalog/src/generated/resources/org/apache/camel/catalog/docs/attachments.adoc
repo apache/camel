@@ -1,6 +1,7 @@
 [[attachments-other]]
 = Attachments Component
 :docTitle: Attachments
+:shortname: attachments
 :artifactId: camel-attachments
 :description: Support for attachments on Camel messages
 :since: 3.0

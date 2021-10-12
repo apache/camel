@@ -1,11 +1,14 @@
 [[shiro-other]]
 = Shiro Component
 :docTitle: Shiro
+:shortname: shiro
 :artifactId: camel-shiro
 :description: Security using Shiro
 :since: 2.5
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/shiro.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: shiro
 
 *Since Camel {since}*
 
@@ -304,3 +307,5 @@ into a single header with key
 ShiroSecurityConstants.SHIRO_SECURITY_TOKEN with the token. Then token
 is either a `ShiroSecurityToken` instance, or a base64 representation as
 a String (the latter is when you have set base64=true).
+
+include::spring-boot:partial$starter.adoc[]

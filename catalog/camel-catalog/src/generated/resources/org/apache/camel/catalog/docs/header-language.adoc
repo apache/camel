@@ -1,6 +1,7 @@
 [[header-language]]
 = Header Language
 :docTitle: Header
+:shortname: header
 :artifactId: camel-core-languages
 :description: Get the value of the named Camel Message header.
 :since: 1.5

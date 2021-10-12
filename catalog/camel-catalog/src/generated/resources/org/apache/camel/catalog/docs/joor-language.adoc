@@ -1,6 +1,7 @@
 [[joor-language]]
 = jOOR Language
 :docTitle: jOOR
+:shortname: joor
 :artifactId: camel-joor
 :description: Evaluate a jOOR (Java compiled once at runtime) expression language.
 :since: 3.7

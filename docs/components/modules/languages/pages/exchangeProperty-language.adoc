@@ -3,11 +3,14 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: core/camel-core-languages/src/main/docs/modules/languages/pages/exchangeProperty-language.adoc
 :docTitle: ExchangeProperty
+:shortname: exchangeProperty
 :artifactId: camel-core-languages
 :description: Get the value of named Camel Exchange property.
 :since: 2.0
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/exchangeProperty.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: core
 
 *Since Camel {since}*
 
@@ -66,3 +69,5 @@ from("direct:a").recipientList().exchangeProperty("myProperty");
 == Dependencies
 
 The ExchangeProperty language is part of *camel-core*.
+
+include::spring-boot:partial$starter.adoc[]

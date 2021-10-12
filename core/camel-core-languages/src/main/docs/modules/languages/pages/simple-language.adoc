@@ -1,11 +1,14 @@
 [[simple-language]]
 = Simple Language
 :docTitle: Simple
+:shortname: simple
 :artifactId: camel-core-languages
 :description: Evaluate Camel's built-in Simple language expression against the Camel Exchange.
 :since: 1.1
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/simple.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: core
 
 *Since Camel {since}*
 
@@ -879,3 +882,5 @@ You can set a spring bean into an exchange property as shown below:
   ...
 </route>
 ----
+
+include::spring-boot:partial$starter.adoc[]

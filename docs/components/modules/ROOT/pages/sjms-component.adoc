@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-sjms/src/main/docs/sjms-component.adoc
 :docTitle: Simple JMS
+:shortname: sjms
 :artifactId: camel-sjms
 :description: Send and receive messages to/from a JMS Queue or Topic using plain JMS 1.x API.
 :since: 2.11
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/sjms.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: sjms
 
 *Since Camel {since}*
 
@@ -485,4 +488,5 @@ Springless refers to moving away from the dependency on the Spring JMS
 API. A new JMS client API is being developed from the ground up to power
 SJMS.
 
-include::spring-boot:partial$sjms-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

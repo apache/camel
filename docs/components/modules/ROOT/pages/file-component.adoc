@@ -3,6 +3,7 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-file/src/main/docs/file-component.adoc
 :docTitle: File
+:shortname: file
 :artifactId: camel-file
 :description: Read and write files.
 :since: 1.0
@@ -10,6 +11,8 @@
 :component-header: Both producer and consumer are supported
 :core:
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/file.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: file
 
 *Since Camel {since}*
 
@@ -1161,4 +1164,5 @@ This component has log level *TRACE* that can be helpful if you have
 problems.
 
 
-include::spring-boot:partial$file-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

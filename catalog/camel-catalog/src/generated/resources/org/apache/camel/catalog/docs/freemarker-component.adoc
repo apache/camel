@@ -1,12 +1,15 @@
 [[freemarker-component]]
 = Freemarker Component
 :docTitle: Freemarker
+:shortname: freemarker
 :artifactId: camel-freemarker
 :description: Transform messages using FreeMarker templates.
 :since: 2.10
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/freemarker.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: freemarker
 
 *Since Camel {since}*
 
@@ -254,4 +257,5 @@ ${body}
 And the java code:
 
 
-include::spring-boot:partial$freemarker-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

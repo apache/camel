@@ -1,6 +1,7 @@
 [[aws-kinesis-firehose-component]]
 = AWS Kinesis Firehose Component
 :docTitle: AWS Kinesis Firehose
+:shortname: aws-kinesis-firehose
 :artifactId: camel-aws-kinesis
 :description: Consume data from AWS Kinesis Firehose streams.
 :since: 2.19
@@ -9,6 +10,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws-kinesis-firehose.adoc[opts=optional]
 //Manually maintained attributes
 :group: AWS
+:camel-spring-boot-name: aws-kinesis
 
 *Since Camel {since}*
 
@@ -188,4 +190,5 @@ Maven users will need to add the following dependency to their pom.xml.
 where `$\{camel-version}` must be replaced by the actual version of Camel.
 
 
-include::spring-boot:partial$aws-kinesis-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

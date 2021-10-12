@@ -3,6 +3,7 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-log/src/main/docs/log-component.adoc
 :docTitle: Log
+:shortname: log
 :artifactId: camel-log
 :description: Log messages to the underlying logging mechanism.
 :since: 1.1
@@ -10,6 +11,8 @@
 :component-header: Only producer is supported
 :core:
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/log.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: log
 
 *Since Camel {since}*
 
@@ -351,4 +354,5 @@ register single instance of `org.slf4j.Logger` in the Registry or
 reference it using `logger` URI parameter.
 
 
-include::spring-boot:partial$log-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

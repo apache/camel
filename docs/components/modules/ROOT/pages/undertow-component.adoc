@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-undertow/src/main/docs/undertow-component.adoc
 :docTitle: Undertow
+:shortname: undertow
 :artifactId: camel-undertow
 :description: Expose HTTP and WebSocket endpoints and access external HTTP/WebSocket servers.
 :since: 2.16
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/undertow.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: undertow
 
 *Since Camel {since}*
 
@@ -230,4 +233,5 @@ Property `requireServletContext` of security providers forces udertow server to 
 with servlet context. There will be no servlet actually handled. This feature is meant only
 for use with servlet filters, which needs servlet context for their functionality.
 
-include::spring-boot:partial$undertow-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

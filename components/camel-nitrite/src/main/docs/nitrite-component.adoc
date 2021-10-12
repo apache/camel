@@ -1,12 +1,15 @@
 [[nitrite-component]]
 = Nitrite Component
 :docTitle: Nitrite
+:shortname: nitrite
 :artifactId: camel-nitrite
 :description: Access Nitrite databases.
 :since: 3.0
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/nitrite.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: nitrite
 
 *Since Camel {since}*
 
@@ -191,4 +194,5 @@ from("direct:getByID")
     .to("log:result");
 ----
 
-include::spring-boot:partial$nitrite-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

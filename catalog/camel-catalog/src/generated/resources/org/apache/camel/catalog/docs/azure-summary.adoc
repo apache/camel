@@ -12,4 +12,6 @@ See the following for usage of each component:
 
 indexDescriptionList::[attributes='group={docTitle}',descAttribute=description]
 
-include::spring-boot:partial$azure-starter.adoc[]
+:camel-spring-boot-name: azure
+
+include::spring-boot:partial$starter.adoc[]

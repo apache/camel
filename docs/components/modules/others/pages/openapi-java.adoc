@@ -3,11 +3,14 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-openapi-java/src/main/docs/openapi-java.adoc
 :docTitle: Openapi Java
+:shortname: openapi-java
 :artifactId: camel-openapi-java
 :description: Rest-dsl support for using openapi doc
 :since: 3.1
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/openapi-java.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: openapi-java
 
 *Since Camel {since}*
 
@@ -201,3 +204,5 @@ json is returned as the default format.
 In the Apache Camel distribution we ship the `camel-example-openapi-cdi`
 and `camel-example-spring-boot-rest-openapi-simple` which demonstrates
 using this OpenApi component.
+
+include::spring-boot:partial$starter.adoc[]

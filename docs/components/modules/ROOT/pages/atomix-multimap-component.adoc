@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-atomix/src/main/docs/atomix-multimap-component.adoc
 :docTitle: Atomix MultiMap
+:shortname: atomix-multimap
 :artifactId: camel-atomix
 :description: Access Atomix's distributed multi map.
 :since: 2.20
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/atomix-multimap.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: atomix
 
 *Since Camel {since}*
 
@@ -108,4 +111,5 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-include::spring-boot:partial$atomix-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -1,6 +1,7 @@
 [[validator-component]]
 = Validator Component
 :docTitle: Validator
+:shortname: validator
 :artifactId: camel-validator
 :description: Validate the payload using XML Schema and JAXP Validation.
 :since: 1.1
@@ -8,6 +9,8 @@
 :component-header: Only producer is supported
 :core:
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/validator.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: validator
 
 *Since Camel {since}*
 
@@ -120,4 +123,5 @@ the JMX operation `clearCachedSchema`. You can also use this method to
 programmatically clear the cache. This method is available on the
 `ValidatorEndpoint` class.
 
-include::spring-boot:partial$validator-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -3,6 +3,7 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-kubernetes/src/main/docs/kubernetes-persistent-volumes-component.adoc
 :docTitle: Kubernetes Persistent Volume
+:shortname: kubernetes-persistent-volumes
 :artifactId: camel-kubernetes
 :description: Perform operations on Kubernetes Persistent Volumes and get notified on Persistent Volume changes.
 :since: 2.17
@@ -11,6 +12,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/kubernetes-persistent-volumes.adoc[opts=optional]
 //Manually maintained attributes
 :group: Kubernetes
+:camel-spring-boot-name: kubernetes
 
 *Since Camel {since}*
 
@@ -127,4 +129,5 @@ from("direct:listByLabels").process(new Processor() {
 
 This operation return a List of pv from your cluster, using a label selector (with key1 and key2, with value value1 and value2)
 
-include::spring-boot:partial$kubernetes-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

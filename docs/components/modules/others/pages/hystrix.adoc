@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-hystrix/src/main/docs/hystrix.adoc
 :docTitle: Hystrix
+:shortname: hystrix
 :artifactId: camel-hystrix
 :description: Circuit Breaker EIP using Netflix Hystrix
 :since: 2.18
 :supportLevel: Stable-deprecated
 :deprecated: *deprecated*
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/hystrix.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: hystrix
 
 *Since Camel {since}*
 
@@ -30,4 +33,5 @@ for this component:
 ----
 
 
-include::spring-boot:partial$hystrix-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

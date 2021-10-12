@@ -1,12 +1,15 @@
 [[facebook-component]]
 = Facebook Component
 :docTitle: Facebook
+:shortname: facebook
 :artifactId: camel-facebook
 :description: Send requests to Facebook APIs supported by Facebook4J.
 :since: 2.14
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/facebook.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: facebook
 
 *Since Camel {since}*
 
@@ -351,4 +354,5 @@ CamelFacebook.query header.
         .to("facebook://posts");
 --------------------------------------------------------
 
-include::spring-boot:partial$facebook-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

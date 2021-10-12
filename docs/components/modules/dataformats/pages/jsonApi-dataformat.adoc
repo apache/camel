@@ -3,11 +3,14 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-jsonapi/src/main/docs/jsonApi-dataformat.adoc
 :docTitle: JSonApi
+:shortname: jsonApi
 :artifactId: camel-jsonapi
 :description: Marshal and unmarshal JSON:API resources using JSONAPI-Converter library.
 :since: 3.0
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/jsonApi.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: jsonapi
 
 *Since Camel {since}*
 
@@ -44,4 +47,5 @@ the download page for the latest versions).
 </dependency>
 ----
 
-include::spring-boot:partial$jsonapi-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

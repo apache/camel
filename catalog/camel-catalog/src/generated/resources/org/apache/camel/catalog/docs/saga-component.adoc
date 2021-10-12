@@ -1,6 +1,7 @@
 [[saga-component]]
 = Saga Component
 :docTitle: Saga
+:shortname: saga
 :artifactId: camel-saga
 :description: Execute custom actions within a route using the Saga EIP.
 :since: 2.21
@@ -8,6 +9,8 @@
 :component-header: Only producer is supported
 :core:
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/saga.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: saga
 
 *Since Camel {since}*
 
@@ -74,4 +77,5 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-include::spring-boot:partial$saga-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

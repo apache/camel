@@ -3,11 +3,14 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-aws-xray/src/main/docs/aws-xray.adoc
 :docTitle: AWS XRay
+:shortname: aws-xray
 :artifactId: camel-aws-xray
 :description: Distributed tracing using AWS XRay
 :since: 2.21
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/aws-xray.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: aws-xray
 
 *Since Camel {since}*
 
@@ -121,3 +124,5 @@ Note that the AWS XRay `Entity` (i.e., `Segment` and `Subsegment`) are not seria
 == Example
 
 You can find an example demonstrating the way to configure AWS XRay tracing within the tests accompanying this project.
+
+include::spring-boot:partial$starter.adoc[]

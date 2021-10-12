@@ -3,12 +3,15 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-xmlsecurity/src/main/docs/xmlsecurity-verify-component.adoc
 :docTitle: XML Security Verify
+:shortname: xmlsecurity-verify
 :artifactId: camel-xmlsecurity
 :description: Verify XML payloads using the XML signature specification.
 :since: 2.12
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/xmlsecurity-verify.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: xmlsecurity
 
 
 
@@ -719,4 +722,5 @@ the XML signer endpoint).
 * The `IndividualDataObjectsTimeStamp` element is not supported
 
 
-include::spring-boot:partial$xmlsecurity-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

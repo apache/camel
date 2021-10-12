@@ -3,6 +3,7 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-test-cdi/src/main/docs/test-cdi.adoc
 :docTitle: Test CDI
+:shortname: test-cdi
 :artifactId: camel-test-cdi
 :description: Camel unit testing with CDI
 :since: 2.17

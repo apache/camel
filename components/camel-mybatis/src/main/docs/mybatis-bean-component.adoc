@@ -1,12 +1,15 @@
 [[mybatis-bean-component]]
 = MyBatis Bean Component
 :docTitle: MyBatis Bean
+:shortname: mybatis-bean
 :artifactId: camel-mybatis
 :description: Perform queries, inserts, updates or deletes in a relational database using MyBatis.
 :since: 2.22
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/mybatis-bean.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: mybatis
 
 *Since Camel {since}*
 
@@ -162,4 +165,5 @@ public interface AccountService {
 ----
 
 
-include::spring-boot:partial$mybatis-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

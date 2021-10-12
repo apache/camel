@@ -1,12 +1,15 @@
 [[atomix-messaging-component]]
 = Atomix Messaging Component
 :docTitle: Atomix Messaging
+:shortname: atomix-messaging
 :artifactId: camel-atomix
 :description: Access Atomix's group messaging.
 :since: 2.20
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/atomix-messaging.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: atomix
 
 *Since Camel {since}*
 
@@ -112,4 +115,5 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-include::spring-boot:partial$atomix-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

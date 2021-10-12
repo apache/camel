@@ -3,6 +3,7 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-google-mail/src/main/docs/google-mail-component.adoc
 :docTitle: Google Mail
+:shortname: google-mail
 :artifactId: camel-google-mail
 :description: Manage messages in Google Mail.
 :since: 2.15
@@ -11,6 +12,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/google-mail.adoc[opts=optional]
 //Manually maintained attributes
 :group: Google
+:camel-spring-boot-name: google-mail
 
 *Since Camel {since}*
 
@@ -667,4 +669,5 @@ For more information on the endpoints and options see API documentation
 at: https://developers.google.com/gmail/api/v1/reference/[https://developers.google.com/gmail/api/v1/reference/]
 
 
-include::spring-boot:partial$google-mail-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

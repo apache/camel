@@ -3,11 +3,14 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-jackson/src/main/docs/json-jackson-dataformat.adoc
 :docTitle: JSON Jackson
+:shortname: json-jackson
 :artifactId: camel-jackson
 :description: Marshal POJOs to JSON and back using Jackson
 :since: 2.0
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/json-jackson.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: jackson
 
 *Since Camel {since}*
 
@@ -81,4 +84,5 @@ the download page for the latest versions).
 </dependency>
 ----------------------------------------------------------
 
-include::spring-boot:partial$jackson-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

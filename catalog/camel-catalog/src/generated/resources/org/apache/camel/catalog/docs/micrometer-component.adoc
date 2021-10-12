@@ -1,12 +1,15 @@
 [[micrometer-component]]
 = Micrometer Component
 :docTitle: Micrometer
+:shortname: micrometer
 :artifactId: camel-micrometer
 :description: Collect various metrics directly from Camel routes using the Micrometer library.
 :since: 2.22
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/micrometer.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: micrometer
 
 *Since Camel {since}*
 
@@ -575,4 +578,5 @@ an MBean name.
 `camel-example-micrometer` provides an example how to set up Micrometer monitoring with
 Camel using Java configuration and a Prometheus backend.
 
-include::spring-boot:partial$micrometer-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

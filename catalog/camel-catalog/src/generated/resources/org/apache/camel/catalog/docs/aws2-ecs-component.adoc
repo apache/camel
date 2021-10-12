@@ -1,6 +1,7 @@
 [[aws2-ecs-component]]
 = AWS 2 Elastic Container Service (ECS) Component
 :docTitle: AWS 2 Elastic Container Service (ECS)
+:shortname: aws2-ecs
 :artifactId: camel-aws2-ecs
 :description: Manage AWS ECS cluster instances using AWS SDK version 2.x.
 :since: 3.1
@@ -9,6 +10,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws2-ecs.adoc[opts=optional]
 //Manually maintained attributes
 :group: AWS 2
+:camel-spring-boot-name: aws2-ecs
 
 *Since Camel {since}*
 
@@ -186,4 +188,5 @@ Maven users will need to add the following dependency to their pom.xml.
 
 where `$\{camel-version}` must be replaced by the actual version of Camel.
 
-include::spring-boot:partial$aws2-ecs-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

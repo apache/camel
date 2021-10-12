@@ -1,6 +1,7 @@
 [[google-pubsub-component]]
 = Google Pubsub Component
 :docTitle: Google Pubsub
+:shortname: google-pubsub
 :artifactId: camel-google-pubsub
 :description: Send and receive messages to/from Google Cloud Platform PubSub Service.
 :since: 2.19
@@ -9,6 +10,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/google-pubsub.adoc[opts=optional]
 //Manually maintained attributes
 :group: Google
+:camel-spring-boot-name: google-pubsub
 
 *Since Camel {since}*
 
@@ -189,4 +191,5 @@ be redelivered to the next consumer.
 It is possible to delay the message redelivery by setting the acknowledgement deadline explicitly for the rollback by
 setting the message header `GooglePubsubConstants.ACK_DEADLINE` to the value in seconds.
 
-include::spring-boot:partial$google-pubsub-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

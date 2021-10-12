@@ -1,12 +1,15 @@
 [[asterisk-component]]
 = Asterisk Component
 :docTitle: Asterisk
+:shortname: asterisk
 :artifactId: camel-asterisk
 :description: Interact with Asterisk PBX Server.
 :since: 2.18
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/asterisk.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: asterisk
 
 *Since Camel {since}*
 
@@ -97,4 +100,5 @@ Supported actions are:
 * SIP_PEERS, List SIP Peers
 * EXTENSION_STATE, Check Extension Status
 
-include::spring-boot:partial$asterisk-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

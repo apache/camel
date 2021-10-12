@@ -3,6 +3,7 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-aws-ddb/src/main/docs/aws-ddb-component.adoc
 :docTitle: AWS DynamoDB
+:shortname: aws-ddb
 :artifactId: camel-aws-ddb
 :description: Store and retrieve data from AWS DynamoDB service.
 :since: 2.10
@@ -11,6 +12,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws-ddb.adoc[opts=optional]
 //Manually maintained attributes
 :group: AWS
+:camel-spring-boot-name: aws-ddb
 
 *Since Camel {since}*
 
@@ -380,4 +382,5 @@ Maven users will need to add the following dependency to their pom.xml.
 where `$\{camel-version}` must be replaced by the actual version of Camel.
 
 
-include::spring-boot:partial$aws-ddb-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -1,6 +1,7 @@
 [[reactor-other]]
 = Reactor Component
 :docTitle: Reactor
+:shortname: reactor
 :artifactId: camel-reactor
 :description: Reactor based back-end for Camel's reactive streams component
 :since: 2.20
