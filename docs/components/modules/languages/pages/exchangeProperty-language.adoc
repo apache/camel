@@ -11,6 +11,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/exchangeProperty.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: core
+:starter-artifactid: camel-core-starter
 
 *Since Camel {since}*
 
