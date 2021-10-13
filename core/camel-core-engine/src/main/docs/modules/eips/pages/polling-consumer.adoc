@@ -70,10 +70,10 @@ https://github.com/apache/camel/blob/main/core/camel-api/src/main/java/org/apach
 In Camel there are two kinds of `PollingConsumer` implementations:
 
 - _Custom_ - Some components have their own custom implementation of `PollingConsumer` which is optimized for the given component.
-- _Default_ - `EventDrivePollingConsumer` is the default implementation otherwise.
+- _Default_ - `EventDrivenPollingConsumer` is the default implementation otherwise.
 
 
-The `EventDrivePollingConsumer` supports the following options:
+The `EventDrivenPollingConsumer` supports the following options:
 
 [width="100%",cols="34%,33%,33%",options="header",]
 |=======================================================================
