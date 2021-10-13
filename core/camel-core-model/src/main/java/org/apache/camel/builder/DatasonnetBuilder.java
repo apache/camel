@@ -111,21 +111,6 @@ public class DatasonnetBuilder implements Predicate, Expression, ExpressionResul
 
     @Override
     public <T> T evaluate(Exchange exchange, Class<T> type) {
-        if (expression == null) {
-            if (datasonnet == null) {
-                init(exchange.getContext());
-            }
-            if (resultType != null) {
-                Object[] properties = new Object[3];
-                properties[0] = resultType;
-                properties[1] = bodyMediaType;
-                properties[2] = outputMediaType;
-                expression = datasonnet.createExpression(text, properties);
-            } else {
-                expression = datasonnet.createExpression(text);
-            }
-            expression.init(exchange.getContext());
-        }
         return expression.evaluate(exchange, type);
     }
 
@@ -145,5 +130,16 @@ public class DatasonnetBuilder implements Predicate, Expression, ExpressionResul
     public void init(CamelContext context) {
         datasonnet = context.resolveLanguage("datasonnet");
         text = context.resolvePropertyPlaceholders(text);
+        if (resultType != null) {
+            Object[] properties = new Object[3];
+            properties[0] = resultType;
+            properties[1] = bodyMediaType;
+            properties[2] = outputMediaType;
+            expression = datasonnet.createExpression(text, properties);
+        } else {
+            expression = datasonnet.createExpression(text);
+        }
+        expression.init(context);
+
     }
 }

@@ -90,19 +90,6 @@ public class SimpleBuilder implements Predicate, Expression, ExpressionResultTyp
 
     @Override
     public <T> T evaluate(Exchange exchange, Class<T> type) {
-        if (expression == null) {
-            if (simple == null) {
-                init(exchange.getContext());
-            }
-            if (resultType != null) {
-                Object[] properties = new Object[2];
-                properties[0] = resultType;
-                expression = simple.createExpression(text, properties);
-            } else {
-                expression = simple.createExpression(text);
-            }
-            expression.init(exchange.getContext());
-        }
         return expression.evaluate(exchange, type);
     }
 
@@ -122,5 +109,13 @@ public class SimpleBuilder implements Predicate, Expression, ExpressionResultTyp
     public void init(CamelContext context) {
         simple = context.resolveLanguage("simple");
         text = context.resolvePropertyPlaceholders(text);
+        if (resultType != null) {
+            Object[] properties = new Object[2];
+            properties[0] = resultType;
+            expression = simple.createExpression(text, properties);
+        } else {
+            expression = simple.createExpression(text);
+        }
+        expression.init(context);
     }
 }
