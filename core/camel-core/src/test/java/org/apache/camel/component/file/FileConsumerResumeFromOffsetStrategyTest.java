@@ -17,64 +17,60 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.consumer.FileConsumerResumeStrategy;
 import org.apache.camel.component.file.consumer.FileResumeInfo;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.util.IOHelper;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FileConsumerResumeStrategyTest extends ContextTestSupport {
+public class FileConsumerResumeFromOffsetStrategyTest extends ContextTestSupport {
 
     private static class TestResumeStrategy implements FileConsumerResumeStrategy {
         private static final Logger LOG = LoggerFactory.getLogger(TestResumeStrategy.class);
 
         @Override
         public long lastOffset(File file) {
-            return IOHelper.INITIAL_OFFSET;
+            if (!file.getName().startsWith("resume-from-offset")) {
+                throw new RuntimeCamelException("Invalid file - resume strategy should not have been called!");
+            }
+
+            return 3;
         }
 
         @Override
         public void resume(FileResumeInfo resumeInfo) {
-            List<String> processedFiles = Arrays.asList("0.txt", "1.txt", "2.txt");
-            int count = 0;
-
             File[] input = resumeInfo.getInputFiles();
-            File[] tmp = Arrays.copyOf(input, input.length);
 
-            for (File file : resumeInfo.getInputFiles()) {
-                if (!processedFiles.contains(file.getName())) {
-                    LOG.info("Including file {}", file);
-                    tmp[count] = file;
-                    count++;
-                } else {
-                    LOG.info("Skipping file {}", file);
-                }
-            }
-
-            resumeInfo.setOutputFiles(Arrays.copyOf(tmp, count));
+            resumeInfo.setOutputFiles(input);
         }
     }
 
+    @DisplayName("Tests whether we can resume from an offset")
     @Test
-    public void testResume() throws Exception {
+    public void testResumeFromOffset() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceivedInAnyOrder("3", "4", "5", "6");
+        mock.expectedBodiesReceivedInAnyOrder("34567890");
 
-        template.sendBodyAndHeader(fileUri("resume"), "0", Exchange.FILE_NAME, "0.txt");
-        template.sendBodyAndHeader(fileUri("resume"), "1", Exchange.FILE_NAME, "1.txt");
-        template.sendBodyAndHeader(fileUri("resume"), "2", Exchange.FILE_NAME, "2.txt");
-        template.sendBodyAndHeader(fileUri("resume"), "3", Exchange.FILE_NAME, "3.txt");
-        template.sendBodyAndHeader(fileUri("resume"), "4", Exchange.FILE_NAME, "4.txt");
-        template.sendBodyAndHeader(fileUri("resume"), "5", Exchange.FILE_NAME, "5.txt");
-        template.sendBodyAndHeader(fileUri("resume"), "6", Exchange.FILE_NAME, "6.txt");
+        template.sendBodyAndHeader(fileUri("resumeOff"), "01234567890", Exchange.FILE_NAME, "resume-from-offset.txt");
+
+        // only expect 4 of the 6 sent
+        assertMockEndpointsSatisfied();
+    }
+
+    @DisplayName("Tests whether we can start from the beginning (i.e.: no resume strategy)")
+    @Test
+    public void testNoResume() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceivedInAnyOrder("01234567890");
+
+        template.sendBodyAndHeader(fileUri("resumeNone"), "01234567890", Exchange.FILE_NAME, "resume-none.txt");
 
         // only expect 4 of the 6 sent
         assertMockEndpointsSatisfied();
@@ -88,7 +84,10 @@ public class FileConsumerResumeStrategyTest extends ContextTestSupport {
 
                 bindToRegistry("testResumeStrategy", new TestResumeStrategy());
 
-                from(fileUri("resume?noop=true&recursive=true&resumeStrategy=#testResumeStrategy"))
+                from(fileUri("resumeOff?noop=true&recursive=true&resumeStrategy=#testResumeStrategy"))
+                        .convertBodyTo(String.class).to("mock:result");
+
+                from(fileUri("resumeNone?noop=true&recursive=true"))
                         .convertBodyTo(String.class).to("mock:result");
             }
         };

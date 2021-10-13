@@ -141,10 +141,12 @@ public final class GenericFileConverter {
         // use reader first as it supports the file charset
         Reader reader = genericFileToReader(file, exchange);
         if (reader != null) {
+            // Note: When resuming, the offset should've been reset at this point, so it may not be
+            // necessary to skip the bytes again
             return IOHelper.toString(reader);
         }
         if (exchange != null) {
-            // otherwise ensure the body is loaded as we want the content of the
+            // otherwise, ensure the body is loaded as we want the content of the
             // body
             file.getBinding().loadContent(exchange, file);
             return exchange.getContext().getTypeConverter().convertTo(String.class, exchange, file.getBody());
@@ -183,13 +185,17 @@ public final class GenericFileConverter {
             // and use the charset if the file was explicit configured with a
             // charset
             String charset = file.getCharset();
+            Reader reader;
             if (charset != null) {
                 LOG.debug("Read file {} with charset {}", f, file.getCharset());
-                return IOHelper.toReader(f, charset);
+                reader = IOHelper.toReader(f, charset);
             } else {
                 LOG.debug("Read file {} (no charset)", f);
-                return IOHelper.toReader(f, ExchangeHelper.getCharsetName(exchange));
+                reader = IOHelper.toReader(f, ExchangeHelper.getCharsetName(exchange));
             }
+
+            reader.skip(file.getLastOffset());
+            return reader;
         }
         return null;
     }
