@@ -45,6 +45,9 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
     // singleton for expressions without a result type
     private static final SimpleLanguage SIMPLE = new SimpleLanguage();
 
+    // a special prefix to avoid cache clash
+    private static final String CACHE_KEY_PREFIX = "@SIMPLE@";
+
     boolean allowEscape = true;
 
     // use caches to avoid re-parsing the same expressions over and over again
@@ -103,7 +106,8 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
     public Predicate createPredicate(String expression) {
         ObjectHelper.notNull(expression, "expression");
 
-        Predicate answer = cachePredicate != null ? cachePredicate.get(expression) : null;
+        String key = CACHE_KEY_PREFIX + expression;
+        Predicate answer = cachePredicate != null ? cachePredicate.get(key) : null;
         if (answer == null) {
 
             if (isDynamicResource(expression)) {
@@ -129,14 +133,16 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
 
             if (isStaticResource(expression)) {
                 expression = loadResource(expression);
+                key = CACHE_KEY_PREFIX + expression;
             }
 
+            // using the expression cache here with the predicate parser is okay
             SimplePredicateParser parser
                     = new SimplePredicateParser(getCamelContext(), expression, allowEscape, cacheExpression);
             answer = parser.parsePredicate();
 
             if (cachePredicate != null && answer != null) {
-                cachePredicate.put(expression, answer);
+                cachePredicate.put(key, answer);
             }
         }
 
@@ -166,13 +172,8 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
     public Expression createExpression(String expression) {
         ObjectHelper.notNull(expression, "expression");
 
-        Expression answer = null;
-
-        // only lookup in cache if there are functions or special escape tokens
-        boolean function = hasSimpleFunction(expression) || hasEscapeToken(expression);
-        if (function && cacheExpression != null) {
-            answer = cacheExpression.get(expression);
-        }
+        String key = CACHE_KEY_PREFIX + expression;
+        Expression answer = cacheExpression != null ? cacheExpression.get(key) : null;
 
         if (answer == null) {
             if (isDynamicResource(expression)) {
@@ -198,24 +199,17 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
             if (isStaticResource(expression)) {
                 // load static resource and re-eval if there are functions
                 expression = loadResource(expression);
-                function = hasSimpleFunction(expression) || hasEscapeToken(expression);
+                key = CACHE_KEY_PREFIX + expression;
             }
 
             // only parse if there are simple functions
-            if (function) {
-                SimpleExpressionParser parser
-                        = new SimpleExpressionParser(getCamelContext(), expression, allowEscape, cacheExpression);
-                answer = parser.parseExpression();
+            SimpleExpressionParser parser
+                    = new SimpleExpressionParser(getCamelContext(), expression, allowEscape, cacheExpression);
+            answer = parser.parseExpression();
 
-                if (cacheExpression != null && answer != null) {
-                    cacheExpression.put(expression, answer);
-                }
+            if (cacheExpression != null && answer != null) {
+                cacheExpression.put(key, answer);
             }
-        }
-
-        if (answer == null) {
-            // it has no functions so its static text
-            answer = ExpressionBuilder.constantExpression(expression);
         }
 
         return answer;
@@ -272,26 +266,6 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
     @Deprecated
     public static Predicate predicate(String predicate) {
         return SIMPLE.createPredicate(predicate);
-    }
-
-    /**
-     * Does the expression include a simple function.
-     *
-     * @param  expression the expression
-     * @return            <tt>true</tt> if one or more simple function is included in the expression
-     */
-    public static boolean hasSimpleFunction(String expression) {
-        return SimpleTokenizer.hasFunctionStartToken(expression);
-    }
-
-    /**
-     * Does the expression include an escape tokens.
-     *
-     * @param  expression the expression
-     * @return            <tt>true</tt> if one or more escape tokens is included in the expression
-     */
-    public static boolean hasEscapeToken(String expression) {
-        return SimpleTokenizer.hasEscapeToken(expression);
     }
 
 }
