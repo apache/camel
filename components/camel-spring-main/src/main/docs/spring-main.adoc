@@ -9,4 +9,4 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/spring-main.ad
 
 *Since Camel {since}*
 
-This module is used for running Spring standalone via a main class extended from `camel-main`.
+This module is used for running classic Spring XML (not Spring Boot) via a main class extended from `camel-main`.

@@ -88,7 +88,8 @@ public class DebugExceptionBreakpointTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // use debugger
+                // turn on debugging
+                context.setDebugging(true);
                 context.setDebugger(new DefaultDebugger());
 
                 from("direct:start").to("log:foo").choice().when(body().contains("Camel"))

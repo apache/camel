@@ -59,6 +59,11 @@ public class ManagedTracer implements ManagedTracerMBean {
     }
 
     @Override
+    public boolean isStandby() {
+        return tracer.isStandby();
+    }
+
+    @Override
     public void setEnabled(boolean enabled) {
         tracer.setEnabled(enabled);
     }

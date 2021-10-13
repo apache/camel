@@ -51,12 +51,12 @@ import org.slf4j.LoggerFactory;
  * A {@link org.apache.camel.spi.Debugger} that has easy debugging functionality which can be used from JMX with
  * {@link org.apache.camel.api.management.mbean.ManagedBacklogDebuggerMBean}.
  * <p/>
- * This implementation allows to set breakpoints (with or without a condition) and inspect the {@link Exchange} dumped
+ * This implementation allows setting breakpoints (with or without a condition) and inspect the {@link Exchange} dumped
  * in XML in {@link BacklogTracerEventMessage} format. There is operations to resume suspended breakpoints to continue
- * routing the {@link Exchange}. There is also step functionality so you can single step a given {@link Exchange}.
+ * routing the {@link Exchange}. There is also step functionality, so you can single step a given {@link Exchange}.
  * <p/>
  * This implementation will only break the first {@link Exchange} that arrives to a breakpoint. If Camel routes using
- * concurrency then sub-sequent {@link Exchange} will continue to be routed, if there breakpoint already holds a
+ * concurrency then sub-sequent {@link Exchange} will continue to be routed, if their breakpoint already holds a
  * suspended {@link Exchange}.
  */
 public final class BacklogDebugger extends ServiceSupport {

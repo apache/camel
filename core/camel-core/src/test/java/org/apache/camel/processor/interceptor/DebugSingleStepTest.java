@@ -75,7 +75,8 @@ public class DebugSingleStepTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // use debugger
+                // turn on debugging
+                context.setDebugging(true);
                 context.setDebugger(new DefaultDebugger());
 
                 from("direct:start").to("log:foo").to("log:bar").to("mock:result");

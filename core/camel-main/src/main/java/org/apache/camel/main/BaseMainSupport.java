@@ -95,6 +95,7 @@ public abstract class BaseMainSupport extends BaseService {
     protected String defaultPropertyPlaceholderLocation = DEFAULT_PROPERTY_PLACEHOLDER_LOCATION;
     protected Properties initialProperties;
     protected Properties overrideProperties;
+    protected boolean standalone = true;
     private final MainHelper helper;
 
     protected BaseMainSupport() {
@@ -407,11 +408,6 @@ public abstract class BaseMainSupport extends BaseService {
             autowireWildcardProperties(camelContext);
         }
 
-        // tracing may be enabled by some other property (i.e. camel.context.tracer.exchange-formatter.show-headers)
-        if (camelContext.isTracing() && !mainConfigurationProperties.isTracing()) {
-            camelContext.setTracing(Boolean.FALSE);
-        }
-
         // log summary of configurations
         if (mainConfigurationProperties.isAutoConfigurationLogSummary() && !autoConfiguredProperties.isEmpty()) {
             LOG.info("Auto-configuration summary");
@@ -531,17 +527,20 @@ public abstract class BaseMainSupport extends BaseService {
             listener.beforeInitialize(this);
         }
 
-        // allow to do configuration before its started
+        // allow doing custom configuration before camel is started
         for (MainListener listener : listeners) {
             listener.beforeConfigure(this);
         }
 
         // we want to capture startup events for import tasks during main bootstrap
         StartupStepRecorder recorder = camelContext.adapt(ExtendedCamelContext.class).getStartupStepRecorder();
+        StartupStep step;
 
-        StartupStep step = recorder.beginStep(BaseMainSupport.class, "autoconfigure", "Auto Configure");
-        autoconfigure(camelContext);
-        recorder.endStep(step);
+        if (standalone) {
+            step = recorder.beginStep(BaseMainSupport.class, "autoconfigure", "Auto Configure");
+            autoconfigure(camelContext);
+            recorder.endStep(step);
+        }
 
         if (mainConfigurationProperties.isEagerClassloading()) {
             step = recorder.beginStep(BaseMainSupport.class, "classloading", "Eager Classloading");
@@ -551,11 +550,13 @@ public abstract class BaseMainSupport extends BaseService {
 
         configureLifecycle(camelContext);
 
-        step = recorder.beginStep(BaseMainSupport.class, "configureRoutes", "Collect Routes");
-        configureRoutes(camelContext);
-        recorder.endStep(step);
+        if (standalone) {
+            step = recorder.beginStep(BaseMainSupport.class, "configureRoutes", "Collect Routes");
+            configureRoutes(camelContext);
+            recorder.endStep(step);
+        }
 
-        // allow to do configuration before its started
+        // allow doing custom configuration before camel is started
         for (MainListener listener : listeners) {
             listener.afterConfigure(this);
             listener.configure(camelContext);

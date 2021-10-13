@@ -4437,16 +4437,16 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     public Debugger getDebugger() {
         return debugger;
+        // do not lazy create debugger as the DefaultDebugger is mostly only useable for testing
+        // and if debugging is enabled then Camel will use BacklogDebugger that can be remotely controlled via JMX management
     }
 
     @Override
     public void setDebugger(Debugger debugger) {
         if (isStartingOrStarted()) {
-            throw new IllegalStateException("Can not set debugger on a started CamelContext");
+            throw new IllegalStateException("Cannot set debugger on a started CamelContext");
         }
         this.debugger = doAddService(debugger, true, false, true);
-        // enable debugging if we set a custom debugger
-        setDebugging(true);
     }
 
     @Override
@@ -4463,9 +4463,10 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public void setTracer(Tracer tracer) {
+        if (isStartingOrStarted()) {
+            throw new IllegalStateException("Cannot set tracer on a started CamelContext");
+        }
         this.tracer = doAddService(tracer, true, false, true);
-        // enable tracing if we set a custom tracer
-        setTracing(true);
     }
 
     @Override

@@ -1002,7 +1002,6 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         private final NamedNode processorDefinition;
         private final NamedRoute routeDefinition;
         private final Synchronization tracingAfterRoute;
-        private boolean added;
 
         public TracingAdvice(Tracer tracer, NamedNode processorDefinition, NamedRoute routeDefinition, boolean first) {
             this.tracer = tracer;
@@ -1015,16 +1014,14 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         @Override
         public Object before(Exchange exchange) throws Exception {
             if (tracer.isEnabled()) {
-                if (!added && tracingAfterRoute != null) {
+                if (tracingAfterRoute != null) {
                     // add before route and after route tracing but only once per route, so check if there is already an existing
                     boolean contains = exchange.getUnitOfWork().containsSynchronization(tracingAfterRoute);
                     if (!contains) {
-                        added = true;
                         tracer.traceBeforeRoute(routeDefinition, exchange);
                         exchange.adapt(ExtendedExchange.class).addOnCompletion(tracingAfterRoute);
                     }
                 }
-
                 tracer.traceBeforeNode(processorDefinition, exchange);
             }
             return null;

@@ -48,7 +48,6 @@ public class RetryWhileStackOverflowIssueTest extends ContextTestSupport {
                         .handled(true).to("mock:error");
 
                 from("direct:start")
-                        //                        .transacted()
                         .throwException(new IllegalArgumentException("Forced"));
             }
         };
@@ -60,7 +59,6 @@ public class RetryWhileStackOverflowIssueTest extends ContextTestSupport {
 
         public String areWeCool() {
             int size = currentStackSize();
-            System.out.println("Stacksize: " + size);
             if (counter++ < 1000) {
                 return "no";
             } else {

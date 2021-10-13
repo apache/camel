@@ -66,6 +66,8 @@ public class Main extends MainCommandLineSupport {
     private boolean allowMultipleCamelContexts;
 
     public Main() {
+        // do not run in standalone mode as we let Spring create and manage CamelContext but use this Main to bootstrap
+        standalone = false;
     }
 
     @Override
