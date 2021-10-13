@@ -173,7 +173,13 @@ public class NatsConsumer extends DefaultConsumer {
                                 .getHeaderFilterStrategy();
                         msg.getHeaders().entrySet().forEach(entry -> {
                             if (!strategy.applyFilterToExternalHeaders(entry.getKey(), entry.getValue(), exchange)) {
-                                exchange.getIn().setHeader(entry.getKey(), entry.getValue());
+                                if (entry.getValue().size() == 1) {
+                                    // going from camel to nats add all headers in lists, so we extract them in the opposite
+                                    // way if it contains a single value
+                                    exchange.getIn().setHeader(entry.getKey(), entry.getValue().get(0));
+                                } else {
+                                    exchange.getIn().setHeader(entry.getKey(), entry.getValue());
+                                }
                             } else {
                                 LOG.debug("Excluding header {} as per strategy", entry.getKey());
                             }

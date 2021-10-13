@@ -17,6 +17,8 @@
 package org.apache.camel.component.nats.integration;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import io.nats.client.Connection;
 import io.nats.client.Nats;
@@ -46,11 +48,11 @@ class NatsConsumerHeadersSupportIT extends NatsITSupport {
     @Test
     void testConsumerShouldForwardHeaders() throws IOException, InterruptedException {
 
-        final String[] firstHeader = { HEADER_VALUE_1 };
-        final String[] secondHeader = { HEADER_VALUE_2, HEADER_VALUE_3 };
-        this.mockResultEndpoint.expectedHeaderReceived(HEADER_KEY_1, firstHeader);
-        this.mockResultEndpoint.expectedHeaderReceived(HEADER_KEY_2,
-                secondHeader);
+        List<String> secondHeaders = new ArrayList<String>();
+        secondHeaders.add(HEADER_VALUE_2);
+        secondHeaders.add(HEADER_VALUE_3);
+        this.mockResultEndpoint.expectedHeaderReceived(HEADER_KEY_1, HEADER_VALUE_1);
+        this.mockResultEndpoint.expectedHeaderReceived(HEADER_KEY_2, secondHeaders);
 
         final Options options = new Options.Builder().server("nats://" + service.getServiceAddress()).build();
         final Connection connection = Nats.connect(options);
