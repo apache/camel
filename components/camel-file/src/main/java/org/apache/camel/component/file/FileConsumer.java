@@ -102,6 +102,11 @@ public class FileConsumer extends GenericFileConsumer<File> {
             GenericFile<File> gf
                     = asGenericFile(endpointPath, file, getEndpoint().getCharset(), getEndpoint().isProbeContentType());
 
+            if (resumeStrategy != null) {
+                long offset = resumeStrategy.lastOffset(file);
+                gf.setLastOffset(offset);
+            }
+
             if (file.isDirectory()) {
                 if (endpoint.isRecursive() && depth < endpoint.getMaxDepth() && isValidFile(gf, true, files)) {
                     boolean canPollMore = pollDirectory(file, fileList, depth);

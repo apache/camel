@@ -55,6 +55,8 @@ public final class IOHelper {
 
     public static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
 
+    public static final long INITIAL_OFFSET = 0;
+
     private static final Logger LOG = LoggerFactory.getLogger(IOHelper.class);
 
     // allows to turn on backwards compatible to turn off regarding the first
@@ -116,11 +118,22 @@ public final class IOHelper {
     }
 
     public static String toString(Reader reader) throws IOException {
-        return toString(buffered(reader));
+        return toString(reader, INITIAL_OFFSET);
+    }
+
+    public static String toString(Reader reader, long offset) throws IOException {
+        return toString(buffered(reader), offset);
     }
 
     public static String toString(BufferedReader reader) throws IOException {
+        return toString(reader, INITIAL_OFFSET);
+    }
+
+    public static String toString(BufferedReader reader, long offset) throws IOException {
         StringBuilder sb = new StringBuilder(1024);
+
+        reader.skip(offset);
+
         char[] buf = new char[1024];
         try {
             int len;
