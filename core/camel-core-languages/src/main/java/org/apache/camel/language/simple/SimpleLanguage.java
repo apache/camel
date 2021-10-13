@@ -166,13 +166,18 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
     public Expression createExpression(String expression) {
         ObjectHelper.notNull(expression, "expression");
 
-        Expression answer = cacheExpression != null ? cacheExpression.get(expression) : null;
-        if (answer == null) {
+        Expression answer = null;
 
+        // only lookup in cache if there are functions or special escape tokens
+        boolean function = hasSimpleFunction(expression) || hasEscapeToken(expression);
+        if (function && cacheExpression != null) {
+            answer = cacheExpression.get(expression);
+        }
+
+        if (answer == null) {
             if (isDynamicResource(expression)) {
                 // we need to load the resource dynamic based on evaluating the expression via the exchange
-                // so create an embedded expression as result
-                // need to lazy eval as its a dynamic resource
+                // so create an embedded expression as result need to lazy eval due to dynamic resource
                 final String text = expression;
                 return new Expression() {
                     @Override
@@ -191,16 +196,26 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
             }
 
             if (isStaticResource(expression)) {
+                // load static resource and re-eval if there are functions
                 expression = loadResource(expression);
+                function = hasSimpleFunction(expression) || hasEscapeToken(expression);
             }
 
-            SimpleExpressionParser parser
-                    = new SimpleExpressionParser(getCamelContext(), expression, allowEscape, cacheExpression);
-            answer = parser.parseExpression();
+            // only parse if there are simple functions
+            if (function) {
+                SimpleExpressionParser parser
+                        = new SimpleExpressionParser(getCamelContext(), expression, allowEscape, cacheExpression);
+                answer = parser.parseExpression();
 
-            if (cacheExpression != null && answer != null) {
-                cacheExpression.put(expression, answer);
+                if (cacheExpression != null && answer != null) {
+                    cacheExpression.put(expression, answer);
+                }
             }
+        }
+
+        if (answer == null) {
+            // it has no functions so its static text
+            answer = ExpressionBuilder.constantExpression(expression);
         }
 
         return answer;
@@ -267,6 +282,16 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
      */
     public static boolean hasSimpleFunction(String expression) {
         return SimpleTokenizer.hasFunctionStartToken(expression);
+    }
+
+    /**
+     * Does the expression include an escape tokens.
+     *
+     * @param  expression the expression
+     * @return            <tt>true</tt> if one or more escape tokens is included in the expression
+     */
+    public static boolean hasEscapeToken(String expression) {
+        return SimpleTokenizer.hasEscapeToken(expression);
     }
 
 }
