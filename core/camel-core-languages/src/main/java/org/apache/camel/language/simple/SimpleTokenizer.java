@@ -113,6 +113,20 @@ public final class SimpleTokenizer {
     }
 
     /**
+     * Does the expression include an escape tokens.
+     *
+     * @param  expression the expression
+     * @return            <tt>true</tt> if one or more escape tokens is included in the expression
+     */
+    public static boolean hasEscapeToken(String expression) {
+        if (expression != null) {
+            return expression.contains("\\n") || expression.contains("\\t") || expression.contains("\\r")
+                    || expression.contains("\\}");
+        }
+        return false;
+    }
+
+    /**
      * Create the next token
      *
      * @param  expression  the input expression

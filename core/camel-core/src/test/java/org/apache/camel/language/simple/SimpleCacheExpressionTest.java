@@ -19,10 +19,7 @@ package org.apache.camel.language.simple;
 import org.apache.camel.LanguageTestSupport;
 import org.junit.jupiter.api.Test;
 
-/**
- *
- */
-public class SimpleCacheExpressionTest  extends LanguageTestSupport {
+public class SimpleCacheExpressionTest extends LanguageTestSupport {
 
     @Override
     protected String getLanguageName() {
