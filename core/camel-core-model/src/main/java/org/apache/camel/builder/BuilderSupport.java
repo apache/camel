@@ -28,6 +28,7 @@ import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.language.ExchangePropertyExpression;
 import org.apache.camel.model.language.HeaderExpression;
+import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.support.builder.Namespaces;
 import org.apache.camel.util.ObjectHelper;
@@ -177,29 +178,33 @@ public abstract class BuilderSupport implements CamelContextAware {
     /**
      * Returns a simple expression value builder
      */
-    public SimpleBuilder simple(String value) {
-        return SimpleBuilder.simple(value);
+    public ValueBuilder simple(String value) {
+        return simple(value, null);
     }
 
     /**
      * Returns a simple expression value builder
      */
-    public SimpleBuilder simple(String value, Class<?> resultType) {
-        return SimpleBuilder.simple(value, resultType);
+    public ValueBuilder simple(String value, Class<?> resultType) {
+        SimpleExpression exp = new SimpleExpression(value);
+        exp.setResultType(resultType);
+        return new ValueBuilder(exp);
     }
 
     /**
      * Returns a simple expression value builder, using String.format style
      */
-    public SimpleBuilder simpleF(String format, Object... values) {
-        return SimpleBuilder.simpleF(format, values);
+    public ValueBuilder simpleF(String format, Object... values) {
+        String exp = String.format(format, values);
+        return simple(exp);
     }
 
     /**
      * Returns a simple expression value builder, using String.format style
      */
-    public SimpleBuilder simpleF(String format, Class<?> resultType, Object... values) {
-        return SimpleBuilder.simpleF(format, resultType, values);
+    public ValueBuilder simpleF(String format, Class<?> resultType, Object... values) {
+        String exp = String.format(format, values);
+        return simple(exp, resultType);
     }
 
     /**
