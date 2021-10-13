@@ -33,4 +33,12 @@ public class SimpleCacheExpressionTest extends LanguageTestSupport {
         assertExpression(exchange, "header.foo", "header.foo");
         assertExpression(exchange, "${header.foo}", 123);
     }
+
+    @Test
+    public void testReverseCachingExpression() throws Exception {
+        exchange.getIn().setHeader("foo", 123);
+
+        assertExpression(exchange, "${header.foo}", 123);
+        assertExpression(exchange, "header.foo", "header.foo");
+    }
 }
