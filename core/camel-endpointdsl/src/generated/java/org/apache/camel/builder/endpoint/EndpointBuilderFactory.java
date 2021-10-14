@@ -373,13 +373,20 @@ public interface EndpointBuilderFactory
     default org.apache.camel.Expression endpoints(
             org.apache.camel.builder.EndpointProducerBuilder... endpoints) {
         return new org.apache.camel.support.ExpressionAdapter() {
-            List<org.apache.camel.Expression> expressions = Stream.of(endpoints)
-                .map(org.apache.camel.builder.EndpointProducerBuilder::expr)
-                .collect(Collectors.toList());
+        
+            private List<org.apache.camel.Expression> expressions = null;
         
             @Override
             public Object evaluate(org.apache.camel.Exchange exchange) {
                 return expressions.stream().map(e -> e.evaluate(exchange, Object.class)).collect(Collectors.toList());
+            }
+        
+            @Override
+            public void init(org.apache.camel.CamelContext context) {
+                super.init(context);
+                expressions = Stream.of(endpoints)
+                        .map(epb -> epb.expr(context))
+                        .collect(Collectors.toList());
             }
         };
     }
