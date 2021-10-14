@@ -18,10 +18,8 @@ package org.apache.camel.model;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.builder.DatasonnetBuilder;
 import org.apache.camel.builder.SimpleBuilder;
 import org.apache.camel.builder.ValueBuilder;
-import org.apache.camel.model.language.DatasonnetExpression;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.model.language.XPathExpression;
@@ -50,15 +48,6 @@ public final class ExpressionNodeHelper {
             // we want to use the definition objects in the route graph
             SimpleExpression answer = new SimpleExpression(builder.getText());
             answer.setResultType(builder.getResultType());
-            return answer;
-        } else if (expression instanceof DatasonnetBuilder) {
-            DatasonnetBuilder builder = (DatasonnetBuilder) expression;
-            // we want to use the definition objects in the route graph
-            DatasonnetExpression answer = new DatasonnetExpression(builder.getText());
-            answer.setExpression(builder.getText());
-            answer.setResultType(builder.getResultType());
-            answer.setBodyMediaType(builder.getBodyMediaType());
-            answer.setOutputMediaType(builder.getOutputMediaType());
             return answer;
         } else if (expression instanceof ExpressionResultTypeAware
                 && expression.getClass().getName().equals("org.apache.camel.language.xpath.XPathBuilder")) {
@@ -97,15 +86,6 @@ public final class ExpressionNodeHelper {
             SimpleExpression answer = new SimpleExpression(builder.getText());
             answer.setExpression(builder.getText());
             answer.setResultType(builder.getResultType());
-            return answer;
-        } else if (predicate instanceof DatasonnetBuilder) {
-            DatasonnetBuilder builder = (DatasonnetBuilder) predicate;
-            // we want to use the definition objects in the route graph
-            DatasonnetExpression answer = new DatasonnetExpression(builder.getText());
-            answer.setExpression(builder.getText());
-            answer.setResultType(builder.getResultType());
-            answer.setBodyMediaType(builder.getBodyMediaType());
-            answer.setOutputMediaType(builder.getOutputMediaType());
             return answer;
         } else if (predicate instanceof ExpressionResultTypeAware
                 && predicate.getClass().getName().equals("org.apache.camel.language.xpath.XPathBuilder")) {
