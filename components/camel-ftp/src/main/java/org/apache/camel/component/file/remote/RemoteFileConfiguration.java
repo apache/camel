@@ -63,17 +63,17 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
                                                                         + "for a connection to be established <p/> Used by both FTPClient and JSCH",
               javaType = "java.time.Duration")
     private int connectTimeout = 10000;
-    @UriParam(defaultValue = "30s", label = "advanced",
-              description = "Sets the data timeout for waiting for " + "reply <p/> Used only by FTPClient",
+    @UriParam(defaultValue = "30000", label = "advanced",
+              description = "Sets the data timeout for waiting for reply Used only by FTPClient",
               javaType = "java.time.Duration")
     private int timeout = 30000;
-    @UriParam(defaultValue = "5m", label = "advanced", description = "Sets the so timeout <p/> FTP and FTPS "
-                                                                     + "Only for Camel 2.4. SFTP for Camel 2.14.3/2.15.3/2.16 onwards. Is the SocketOptions.SO_TIMEOUT value "
-                                                                     + "in millis. Recommended option is to set this to 300000 so as not have a hanged connection. On SFTP this "
-                                                                     + "option is set as timeout on the JSCH Session instance.",
+    @UriParam(defaultValue = "300000", label = "advanced", description = "Sets the so timeout FTP and FTPS "
+                                                                         + "Is the SocketOptions.SO_TIMEOUT value "
+                                                                         + "in millis. Recommended option is to set this to 300000 so as not have a hanged connection. On SFTP this "
+                                                                         + "option is set as timeout on the JSCH Session instance.",
               javaType = "java.time.Duration")
     private int soTimeout = 300000;
-    @UriParam(label = "advanced", description = "Should an exception be thrown if connection failed (exhausted) <p/> "
+    @UriParam(label = "advanced", description = "Should an exception be thrown if connection failed (exhausted)"
                                                 + "By default exception is not thrown and a <tt>WARN</tt> is logged. You can use this to enable exception "
                                                 + "being thrown and handle the thrown exception from the {@link "
                                                 + "org.apache.camel.spi.PollingConsumerPollStrategy} rollback method.")

@@ -91,7 +91,7 @@ public interface TimerEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
-         * Default: 1s
+         * Default: 1000
          * Group: consumer
          * 
          * @param delay the value to set
@@ -106,7 +106,7 @@ public interface TimerEndpointBuilderFactory {
          * 
          * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
-         * Default: 1s
+         * Default: 1000
          * Group: consumer
          * 
          * @param delay the value to set
@@ -187,7 +187,7 @@ public interface TimerEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
-         * Default: 1s
+         * Default: 1000
          * Group: consumer
          * 
          * @param period the value to set
@@ -202,7 +202,7 @@ public interface TimerEndpointBuilderFactory {
          * 
          * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
-         * Default: 1s
+         * Default: 1000
          * Group: consumer
          * 
          * @param period the value to set
@@ -219,7 +219,6 @@ public interface TimerEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
-         * Default: 0
          * Group: consumer
          * 
          * @param repeatCount the value to set
@@ -236,7 +235,6 @@ public interface TimerEndpointBuilderFactory {
          * 
          * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
-         * Default: 0
          * Group: consumer
          * 
          * @param repeatCount the value to set

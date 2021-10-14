@@ -1031,7 +1031,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
-         * Default: 2500
+         * Default: 30000
          * Group: advanced
          * 
          * @param connectTimeout the value to set
@@ -1047,7 +1047,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
-         * Default: 2500
+         * Default: 30000
          * Group: advanced
          * 
          * @param connectTimeout the value to set
@@ -1470,7 +1470,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
-         * Default: 2500
+         * Default: 30000
          * Group: advanced
          * 
          * @param connectTimeout the value to set
@@ -1486,7 +1486,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
-         * Default: 2500
+         * Default: 30000
          * Group: advanced
          * 
          * @param connectTimeout the value to set
@@ -1658,7 +1658,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
-         * Default: 2500
+         * Default: 30000
          * Group: advanced
          * 
          * @param connectTimeout the value to set
@@ -1674,7 +1674,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
-         * Default: 2500
+         * Default: 30000
          * Group: advanced
          * 
          * @param connectTimeout the value to set

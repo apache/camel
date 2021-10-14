@@ -138,7 +138,7 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint {
     private long queryTimeout = DEFAULT_QUERY_TIMEOUT;
 
     // Connection fine tuning parameters
-    @UriParam(label = "advanced", defaultValue = "2500", javaType = "java.time.Duration")
+    @UriParam(label = "advanced", defaultValue = "30000", javaType = "java.time.Duration")
     private long connectTimeout = DEFAULT_CONNECT_TIMEOUT;
 
     public CouchbaseEndpoint() {

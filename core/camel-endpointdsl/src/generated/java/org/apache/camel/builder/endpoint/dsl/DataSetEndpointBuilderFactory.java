@@ -356,7 +356,6 @@ public interface DataSetEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
-         * Default: 0
          * Group: producer
          * 
          * @param assertPeriod the value to set
@@ -378,7 +377,6 @@ public interface DataSetEndpointBuilderFactory {
          * 
          * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
-         * Default: 0
          * Group: producer
          * 
          * @param assertPeriod the value to set
@@ -634,7 +632,6 @@ public interface DataSetEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
-         * Default: 0
          * Group: producer
          * 
          * @param resultMinimumWaitTime the value to set
@@ -651,7 +648,6 @@ public interface DataSetEndpointBuilderFactory {
          * 
          * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
-         * Default: 0
          * Group: producer
          * 
          * @param resultMinimumWaitTime the value to set
@@ -668,7 +664,6 @@ public interface DataSetEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
-         * Default: 0
          * Group: producer
          * 
          * @param resultWaitTime the value to set
@@ -685,7 +680,6 @@ public interface DataSetEndpointBuilderFactory {
          * 
          * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
-         * Default: 0
          * Group: producer
          * 
          * @param resultWaitTime the value to set
@@ -814,7 +808,6 @@ public interface DataSetEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
-         * Default: 0
          * Group: producer
          * 
          * @param sleepForEmptyTest the value to set
@@ -831,7 +824,6 @@ public interface DataSetEndpointBuilderFactory {
          * 
          * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
-         * Default: 0
          * Group: producer
          * 
          * @param sleepForEmptyTest the value to set

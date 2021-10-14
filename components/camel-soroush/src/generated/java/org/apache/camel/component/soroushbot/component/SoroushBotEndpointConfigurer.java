@@ -56,7 +56,7 @@ public class SoroushBotEndpointConfigurer extends PropertyConfigurerSupport impl
         case "reconnectidleconnectiontimeout":
         case "reconnectIdleConnectionTimeout": target.setReconnectIdleConnectionTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "retryexponentialcoefficient":
-        case "retryExponentialCoefficient": target.setRetryExponentialCoefficient(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "retryExponentialCoefficient": target.setRetryExponentialCoefficient(property(camelContext, long.class, value)); return true;
         case "retrylinearincrement":
         case "retryLinearIncrement": target.setRetryLinearIncrement(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "retrywaitingtime":

@@ -621,15 +621,14 @@ public interface ScpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the so timeout FTP and FTPS Only for Camel 2.4. SFTP for Camel
-         * 2.14.3/2.15.3/2.16 onwards. Is the SocketOptions.SO_TIMEOUT value in
-         * millis. Recommended option is to set this to 300000 so as not have a
-         * hanged connection. On SFTP this option is set as timeout on the JSCH
-         * Session instance.
+         * Sets the so timeout FTP and FTPS Is the SocketOptions.SO_TIMEOUT
+         * value in millis. Recommended option is to set this to 300000 so as
+         * not have a hanged connection. On SFTP this option is set as timeout
+         * on the JSCH Session instance.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
-         * Default: 5m
+         * Default: 300000
          * Group: advanced
          * 
          * @param soTimeout the value to set
@@ -640,15 +639,14 @@ public interface ScpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the so timeout FTP and FTPS Only for Camel 2.4. SFTP for Camel
-         * 2.14.3/2.15.3/2.16 onwards. Is the SocketOptions.SO_TIMEOUT value in
-         * millis. Recommended option is to set this to 300000 so as not have a
-         * hanged connection. On SFTP this option is set as timeout on the JSCH
-         * Session instance.
+         * Sets the so timeout FTP and FTPS Is the SocketOptions.SO_TIMEOUT
+         * value in millis. Recommended option is to set this to 300000 so as
+         * not have a hanged connection. On SFTP this option is set as timeout
+         * on the JSCH Session instance.
          * 
          * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
-         * Default: 5m
+         * Default: 300000
          * Group: advanced
          * 
          * @param soTimeout the value to set
@@ -694,7 +692,7 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
-         * Default: 30s
+         * Default: 30000
          * Group: advanced
          * 
          * @param timeout the value to set
@@ -709,7 +707,7 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
-         * Default: 30s
+         * Default: 30000
          * Group: advanced
          * 
          * @param timeout the value to set

@@ -126,7 +126,7 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
     private String backOffStrategy = "Exponential";
     @UriParam(label = "scheduling",
               description = "Coefficient to compute back off time when using `Exponential` Back Off strategy",
-              defaultValue = "2", javaType = "java.time.Duration")
+              defaultValue = "2")
     private long retryExponentialCoefficient = 2L;
     @UriParam(label = "scheduling",
               description = "The amount of time (in millisecond) which adds to waiting time when using `Linear` back off strategy",
