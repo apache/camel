@@ -10,17 +10,28 @@ specified recipients and re-aggregate the responses back into a single message.
 image::eip/BroadcastAggregate.gif[image]
 
 With Camel this pattern is implemented by using the xref:recipientList-eip.adoc[Recipient List]
-and the xref:aggregate-eip.adoc[Aggregate] patterns.
+which comes with aggregation built-in. This is often the simplest solution. However, there can
+be some complex use-cases where you would need not use the built-in aggregator, and instead
+use the more powerful xref:aggregate-eip.adoc[Aggregate] EIP for aggregation.
 
-== Sample
+== Using only Recipient List
 
-In this example we want to get the best quote for beer from several different vendors.
-We use a dynamic Recipient List to get the request for a quote to all vendors and an Aggregator
-to pick the best quote out of all the responses. The routes for this are defined as:
+TODO: Simple example
+
+
+== Using both Recipient List and Aggregator EIP
+
+In this example we want to get the best quote for beer from several vendors.
+
+We use xref:recipientList-eip.adoc[Recipient List] to get the request for a quote to all vendors
+and an xref:aggregate-eip.adoc[Aggregate] to pick the best quote out of all the responses.
+
+The routes for this are defined as:
 
 [source,xml]
 ----
-<camelContext xmlns="http://camel.apache.org/schema/spring">
+<routes>
+
   <route>
     <from uri="direct:start"/>
     <recipientList>
@@ -30,24 +41,26 @@ to pick the best quote out of all the responses. The routes for this are defined
 
   <route>
     <from uri="seda:quoteAggregator"/>
-    <aggregate strategyRef="aggregatorStrategy" completionTimeout="1000">
+    <aggregate strategyRef="beerAggregator" completionTimeout="1000">
       <correlationExpression>
         <header>quoteRequestId</header>
       </correlationExpression>
       <to uri="mock:result"/>
     </aggregate>
   </route>
-</camelContext>
+
+</routes>
 ----
 
-So in the first route you see that the Recipient List is looking at the listOfVendors header
-for the list of recipients. So, we need to send a message like
+So in the first route you see that the xref:recipientList-eip.adoc[Recipient List] is looking at the
+listOfVendors header for the list of recipients. So, we need to send a message like:
 
 [source,java]
 ----
 Map<String, Object> headers = new HashMap<>();
 headers.put("listOfVendors", "bean:vendor1, bean:vendor2, bean:vendor3");
 headers.put("quoteRequestId", "quoteRequest-1");
+
 template.sendBodyAndHeaders("direct:start", "<quote_request item=\"beer\"/>", headers);
 ----
 
@@ -68,7 +81,7 @@ public class MyVendor {
 
     public void quote(@XPath("/quote_request/@item") String item, Exchange exchange) {
         if ("beer".equals(item)) {
-            exchange.getIn().setBody(beerPrice);
+            exchange.getMessage().setBody(beerPrice);
             quoteAggregator.send(exchange);
         } else {
             // ignore no quote
@@ -77,54 +90,56 @@ public class MyVendor {
 }
 ----
 
-And are loaded up in Spring XML like:
+And are loaded up in XML like:
 
 [source,xml]
 ----
-<bean id="aggregatorStrategy" class="org.apache.camel.spring.processor.scattergather.LowestQuoteAggregationStrategy"/>
+<camelContext>
 
-<bean id="vendor1" class="org.apache.camel.spring.processor.scattergather.MyVendor">
-  <constructor-arg>
-  <value>1</value>
-  </constructor-arg>
-</bean>
+    <bean id="aggregatorStrategy" class="org.apache.camel.spring.processor.scattergather.LowestQuoteAggregationStrategy"/>
 
-<bean id="vendor2" class="org.apache.camel.spring.processor.scattergather.MyVendor">
-  <constructor-arg>
-  <value>2</value>
-  </constructor-arg>
-</bean>
+    <bean id="vendor1" class="org.apache.camel.spring.processor.scattergather.MyVendor">
+      <constructor-arg><value>1</value></constructor-arg>
+    </bean>
 
-<bean id="vendor3" class="org.apache.camel.spring.processor.scattergather.MyVendor">
-  <constructor-arg>
-  <value>3</value>
-  </constructor-arg>
-</bean>
+    <bean id="vendor2" class="org.apache.camel.spring.processor.scattergather.MyVendor">
+      <constructor-arg><value>2</value></constructor-arg>
+    </bean>
+
+    <bean id="vendor3" class="org.apache.camel.spring.processor.scattergather.MyVendor">
+      <constructor-arg><value>3</value></constructor-arg>
+    </bean>
+
+</camelContext>
 ----
 
 Each bean is loaded with a different price for beer. When the message is sent to each bean endpoint,
 it will arrive at the `MyVendor.quote` method. This method does a simple check whether this quote
 request is for beer and then sets the price of beer on the exchange for retrieval at a later step.
-The message is forwarded on to the next step using POJO Producing (see the `@Produce` annotation).
+The message is forwarded on to the next step using xref:latest@manual:ROOT:pojo-producing.adoc[POJO Producing]
+(see the `@Produce` annotation).
 
 At the next step we want to take the beer quotes from all vendors and find out which one was the best
-(i.e. the lowest!). To do this we use an Aggregator with a custom aggregation strategy.
-The Aggregator needs to be able to compare only the messages from this particular quote;
-this is easily done by specifying a correlationExpression equal to the value of the quoteRequestId header.
+(i.e. the lowest!). To do this we use the xref:aggregate-eip.adoc[Aggregate] EIP with a custom
+`AggregationStrategy`.
+
+The xref:aggregate-eip.adoc[Aggregate] needs to be able to compare only the messages from this particular quote;
+this is easily done by specifying a correlation expression equal to the value of the quoteRequestId header.
 As shown above in the message sending snippet, we set this header to quoteRequest-1.
-This correlation value should be unique or you may include responses that are not part of this quote.
-To pick the lowest quote out of the set, we use a custom aggregation strategy like
+This correlation value must be unique, or you may include responses that are not part of this quote.
+To pick the lowest quote out of the set, we use a custom `AggregationStrategy` like:
 
 [source,java]
 ----
 public class LowestQuoteAggregationStrategy implements AggregationStrategy {
+
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         // the first time we only have the new exchange
         if (oldExchange == null) {
             return newExchange;
         }
 
-        if (oldExchange.getIn().getBody(int.class) < newExchange.getIn().getBody(int.class)) {
+        if (oldExchange.getMessage().getBody(int.class) < newExchange.getMessage().getBody(int.class)) {
             return oldExchange;
         } else {
             return newExchange;
