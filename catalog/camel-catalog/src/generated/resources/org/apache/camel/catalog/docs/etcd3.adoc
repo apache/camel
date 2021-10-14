@@ -7,7 +7,11 @@
 :since: 3.5
 :supportLevel: Preview
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/etcd3.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: etcd3
 
 *Since Camel {since}*
 
 The Etcd3 component provides an `AggregationStrategy` to use Etcd3 as the backend datastore.
+
+include::spring-boot:partial$starter.adoc[]

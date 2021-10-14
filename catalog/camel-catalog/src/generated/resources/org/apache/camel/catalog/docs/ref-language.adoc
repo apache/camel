@@ -7,6 +7,9 @@
 :since: 2.8
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/ref.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: core
+:starter-artifactid: camel-core-starter
 
 *Since Camel {since}*
 
@@ -62,3 +65,5 @@ from("seda:a").split().ref("myExpression").to("seda:b");
 == Dependencies
 
 The Ref language is part of *camel-core*.
+
+include::spring-boot:partial$starter.adoc[]

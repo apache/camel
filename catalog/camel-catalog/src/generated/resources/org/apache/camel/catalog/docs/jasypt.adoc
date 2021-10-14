@@ -7,6 +7,8 @@
 :since: 2.5
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/jasypt.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: jasypt
 
 *Since Camel {since}*
 
@@ -295,3 +297,5 @@ to Jasypt.
 
 </blueprint>
 ----------------------------------------------------------------------------------------------------------------
+
+include::spring-boot:partial$starter.adoc[]

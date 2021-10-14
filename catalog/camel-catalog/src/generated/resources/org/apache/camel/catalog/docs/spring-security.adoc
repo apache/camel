@@ -9,6 +9,7 @@
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/spring-security.adoc[opts=optional]
 //Manually maintained attributes
 :group: Spring
+:camel-spring-boot-name: spring-security
 
 *Since Camel {since}*
 
@@ -246,3 +247,5 @@ policy as well as the type of exception:
   </choice>
 </onException>
 ----
+
+include::spring-boot:partial$starter.adoc[]

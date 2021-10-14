@@ -7,6 +7,8 @@
 :since: 2.10
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/leveldb-legacy.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: leveldb-legacy
 
 *Since Camel {since}*
 
@@ -159,3 +161,5 @@ the download page for the latest versions).
   <version>x.y.z</version>
 </dependency>
 ----------------------------------------
+
+include::spring-boot:partial$starter.adoc[]
