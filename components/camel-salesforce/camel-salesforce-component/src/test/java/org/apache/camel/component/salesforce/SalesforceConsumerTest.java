@@ -337,7 +337,7 @@ public class SalesforceConsumerTest {
 
         consumer.processMessage(mock(ClientSessionChannel.class), mockChangeEvent);
 
-        verify(in).setBody(mockChangeEvent);
+        verify(in).setBody(mockChangeEvent.getJSON());
     }
 
     static Message createPushTopicMessage() {
