@@ -36,10 +36,10 @@ public class StreamResequencerConfig extends ResequencerConfig {
     @Metadata(defaultValue = "1000", javaType = "java.lang.Integer")
     private String capacity;
     @XmlAttribute
-    @Metadata(defaultValue = "1s", javaType = "java.time.Duration")
+    @Metadata(defaultValue = "1000", javaType = "java.time.Duration")
     private String timeout;
     @XmlAttribute
-    @Metadata(defaultValue = "1s", javaType = "java.time.Duration")
+    @Metadata(defaultValue = "1000", javaType = "java.time.Duration")
     private String deliveryAttemptInterval;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")

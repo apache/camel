@@ -34,7 +34,7 @@ public class BatchResequencerConfig extends ResequencerConfig {
     @Metadata(defaultValue = "100", javaType = "java.lang.Integer")
     private String batchSize;
     @XmlAttribute
-    @Metadata(defaultValue = "1s", javaType = "java.time.Duration")
+    @Metadata(defaultValue = "1000", javaType = "java.time.Duration")
     private String batchTimeout;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")

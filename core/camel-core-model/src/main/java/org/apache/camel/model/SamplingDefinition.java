@@ -36,7 +36,7 @@ import org.apache.camel.util.TimeUtils;
 public class SamplingDefinition extends NoOutputDefinition<SamplingDefinition> {
 
     @XmlAttribute
-    @Metadata(defaultValue = "1s", javaType = "java.time.Duration")
+    @Metadata(defaultValue = "1000", javaType = "java.time.Duration")
     private String samplePeriod;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Long")

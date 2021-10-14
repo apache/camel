@@ -29,7 +29,7 @@ public class FaultToleranceConfigurationCommon extends IdentifiedType {
     @Metadata(label = "circuitbreaker")
     private String circuitBreakerRef;
     @XmlAttribute
-    @Metadata(label = "circuitbreaker", defaultValue = "5s", javaType = "java.time.Duration")
+    @Metadata(label = "circuitbreaker", defaultValue = "5000", javaType = "java.time.Duration")
     private String delay;
     @XmlAttribute
     @Metadata(label = "circuitbreaker", defaultValue = "1", javaType = "java.lang.Integer")
@@ -44,7 +44,7 @@ public class FaultToleranceConfigurationCommon extends IdentifiedType {
     @Metadata(label = "timeout", defaultValue = "false", javaType = "java.lang.Boolean")
     private String timeoutEnabled;
     @XmlAttribute
-    @Metadata(label = "timeout", defaultValue = "1s", javaType = "java.time.Duration")
+    @Metadata(label = "timeout", defaultValue = "1000", javaType = "java.time.Duration")
     private String timeoutDuration;
     @XmlAttribute
     @Metadata(label = "timeout", defaultValue = "10", javaType = "java.lang.Integer")

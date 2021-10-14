@@ -34,10 +34,10 @@ public class OptimisticLockRetryPolicyDefinition {
     @Metadata(javaType = "java.lang.Integer")
     private String maximumRetries;
     @XmlAttribute
-    @Metadata(javaType = "java.time.Duration", defaultValue = "50ms")
+    @Metadata(javaType = "java.time.Duration", defaultValue = "50")
     private String retryDelay;
     @XmlAttribute
-    @Metadata(javaType = "java.time.Duration", defaultValue = "1s")
+    @Metadata(javaType = "java.time.Duration", defaultValue = "1000")
     private String maximumRetryDelay;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
