@@ -3213,7 +3213,7 @@ Interval in millis that is used by the background task that checks for timeouts
 ( org.apache.camel.TimeoutMap ). By default the timeout checker runs every
 second. The timeout is an approximation and there is no guarantee that the a
 timeout is triggered exactly after the timeout value. It is not recommended to
-use very low timeout values or checker intervals. Default value: 1000
+use very low timeout values or checker intervals. Default value: 1s
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -3378,7 +3378,7 @@ Sets the maximum number of retries.
     <xs:attribute name="retryDelay" type="xs:string">
       <xs:annotation>
         <xs:documentation xml:lang="en"><![CDATA[
-Sets the delay in millis between retries. Default value: 50
+Sets the delay in millis between retries. Default value: 50ms
         ]]></xs:documentation>
       </xs:annotation>
     </xs:attribute>
@@ -3386,7 +3386,7 @@ Sets the delay in millis between retries. Default value: 50
       <xs:annotation>
         <xs:documentation xml:lang="en"><![CDATA[
 Sets the upper value of retry in millis between retries, when using exponential
-or random backoff. Default value: 1000
+or random backoff. Default value: 1s
         ]]></xs:documentation>
       </xs:annotation>
     </xs:attribute>
@@ -4309,7 +4309,7 @@ breaker options are not in use.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Control how long the circuit breaker stays open. The default is 5 seconds.
-Default value: 5000
+Default value: 5s
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -4351,7 +4351,7 @@ Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Configures the thread execution timeout. Default value is 1 second. Default
-value: 1000
+value: 1s
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -10406,7 +10406,7 @@ value: 100
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Sets the timeout for collecting elements to be re-ordered. The default timeout
-is 1000 msec. Default value: 1000
+is 1000 msec. Default value: 1s
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -10454,7 +10454,7 @@ Sets the capacity of the resequencer inbound queue. Default value: 1000
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Sets minimum time (milliseconds) to wait for missing elements (messages).
-Default value: 1000
+Default value: 1s
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -10462,7 +10462,7 @@ Default value: 1000
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Sets the interval in milliseconds the stream resequencer will at most wait while
-waiting for condition of being able to deliver. Default value: 1000
+waiting for condition of being able to deliver. Default value: 1s
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -11135,7 +11135,7 @@ use.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Sets the sample period during which only a single Exchange will pass through.
-Default value: 1000
+Default value: 1s
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
