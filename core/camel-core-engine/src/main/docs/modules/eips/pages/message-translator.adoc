@@ -9,7 +9,7 @@ image::eip/MessageTranslator.gif[image]
 
 The Message Translator can be done in different ways in Camel:
 
-* Using xref:transform-eip.adoc[Transform] in the DSL
+* Using xref:transform-eip.adoc[Transform] or xref:setBody-eip.adoc[Set Body] in the DSL
 * Calling a xref:latest@manual:ROOT:processor.adoc[Processor] or xref:latest@manual:ROOT:bean-integration.adoc[bean]
   to perform the transformation
 * Using template-based xref:components::index.adoc[Components], with the template being the source for how the message is translated

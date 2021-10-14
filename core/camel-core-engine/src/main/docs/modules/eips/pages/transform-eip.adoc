@@ -12,9 +12,9 @@ patterns].
 
 image::eip/MessageTranslator.gif[image]
 
-The Message Translator can be done in different ways in Camel:
+The xref:message-translator.adoc[Message Translator] can be done in different ways in Camel:
 
-* Using Transform EIP in the DSL
+* Using xref:transform-eip.adoc[Transform] or xref:setBody-eip.adoc[Set Body] in the DSL
 * Calling a xref:latest@manual:ROOT:processor.adoc[Processor] or xref:latest@manual:ROOT:bean-integration.adoc[bean]
 to perform the transformation
 * Using template-based xref:components::index.adoc[Components], with the template being the source for how the message is translated
@@ -49,11 +49,17 @@ And in XML DSL:
 [source,xml]
 ----
 <route>
-    <from uri="activemq:cheese"/>
+    <from uri="direct:cheese"/>
     <transform>
         <simple>Hello ${body}</simple>
     </transform>
-    <to uri="activemq:wine"/>
+    <to uri="log:hello"/>
 </route>
 ----
 
+=== What is the difference between Transform and Set Body
+
+The Transform EIP always sets the result on the OUT message body.
+
+Set Body sets the result accordingly to the xref:latest@manual:ROOT:exchange-pattern.adoc[Exchange Pattern]
+on the `Exchange`.
