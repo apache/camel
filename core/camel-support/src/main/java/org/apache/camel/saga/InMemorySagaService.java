@@ -26,7 +26,7 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * A in-memory implementation of a saga service.
+ * An in-memory implementation of a saga service.
  */
 public class InMemorySagaService extends ServiceSupport implements CamelSagaService {
 
