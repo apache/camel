@@ -210,6 +210,10 @@ public final class CamelAnnotationsHandler {
 
                 public void execute(String contextName, SpringCamelContext camelContext)
                         throws Exception {
+
+                    // automatic turn on debugging when we have breakpoints
+                    camelContext.setDebugging(true);
+
                     Debugger debugger = camelContext.getDebugger();
                     if (debugger == null) {
                         debugger = new DefaultDebugger();

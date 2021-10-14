@@ -442,10 +442,10 @@ public abstract class CamelTestSupport
                 // we need to stop the context first to setup the debugger
                 context.stop();
             }
+            context.setDebugging(true);
             context.setDebugger(new DefaultDebugger());
             context.getDebugger().addBreakpoint(breakpoint);
-            // when stopping CamelContext it will automatic remove the
-            // breakpoint
+            // when stopping CamelContext it will automatically remove the breakpoint
         }
 
         template = context.createProducerTemplate();

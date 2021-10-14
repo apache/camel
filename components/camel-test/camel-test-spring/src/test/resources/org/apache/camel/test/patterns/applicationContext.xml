@@ -25,7 +25,7 @@
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd ">
 
 
-	<camelContext id="camelContext" xmlns="http://camel.apache.org/schema/spring" trace="true" autoStartup="true" >
+	<camelContext id="camelContext" xmlns="http://camel.apache.org/schema/spring" debug="true" trace="true" autoStartup="true" >
 
 		<route>
 			<from uri="direct:start" />
