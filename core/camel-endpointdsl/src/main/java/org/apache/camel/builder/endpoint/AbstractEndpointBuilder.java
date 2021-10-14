@@ -30,7 +30,6 @@ import org.apache.camel.Expression;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.builder.SimpleBuilder;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.PropertiesComponent;
@@ -184,14 +183,6 @@ public class AbstractEndpointBuilder {
         values.forEach((k, v) -> {
             doSetMultiValueProperty(name, prefix + k, v);
         });
-    }
-
-    /**
-     * Use {@link #expr(CamelContext)}
-     */
-    @Deprecated
-    public Expression expr() {
-        return SimpleBuilder.simple(getUri());
     }
 
     public Expression expr(CamelContext camelContext) {

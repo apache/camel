@@ -3207,7 +3207,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @see                org.apache.camel.processor.PollEnricher
      */
     public Type pollEnrich(EndpointConsumerBuilder resourceUri) {
-        return pollEnrich(resourceUri.expr(), -1, (String) null, false);
+        return pollEnrich(new SimpleExpression(resourceUri.getUri()), -1, (String) null, false);
     }
 
     /**
@@ -3432,7 +3432,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     public Type pollEnrich(
             @AsEndpointUri EndpointConsumerBuilder resourceUri, long timeout, AggregationStrategy aggregationStrategy,
             boolean aggregateOnException) {
-        return pollEnrich(resourceUri.expr(), timeout, aggregationStrategy, aggregateOnException);
+        return pollEnrich(new SimpleExpression(resourceUri.getUri()), timeout, aggregationStrategy, aggregateOnException);
     }
 
     /**
@@ -3459,7 +3459,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     public Type pollEnrich(
             @AsEndpointUri EndpointConsumerBuilder resourceUri, long timeout, String aggregationStrategyRef,
             boolean aggregateOnException) {
-        return pollEnrich(resourceUri.expr(), timeout, aggregationStrategyRef, aggregateOnException);
+        return pollEnrich(new SimpleExpression(resourceUri.getUri()), timeout, aggregationStrategyRef, aggregateOnException);
     }
 
     /**

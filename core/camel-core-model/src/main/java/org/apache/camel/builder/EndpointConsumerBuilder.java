@@ -49,11 +49,6 @@ public interface EndpointConsumerBuilder extends EndpointConsumerResolver {
     void doSetMultiValueProperties(String name, String prefix, Map<String, Object> values);
 
     /**
-     * Builds an expression of this endpoint url. This API is only intended for Camel internally.
-     */
-    Expression expr();
-
-    /**
      * Builds a dynamic expression of this endpoint url. This API is only intended for Camel internally.
      */
     Expression expr(CamelContext camelContext);
