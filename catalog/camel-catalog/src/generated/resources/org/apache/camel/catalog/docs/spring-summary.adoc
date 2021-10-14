@@ -2,6 +2,9 @@
 = Spring Support
 //attributes written by hand, not generated
 :docTitle: Spring
+:shortname: spring
+:artifactid: camel-spring
+:camel-spring-boot-name: spring
 
 == {docTitle} components
 
@@ -413,7 +416,5 @@ Users can then use the cron component inside routes of their Spring or Spring-bo
   <to uri="log:info"/>
 </route>
 ----
-
-:camel-spring-boot-name: spring
 
 include::spring-boot:partial$starter.adoc[]

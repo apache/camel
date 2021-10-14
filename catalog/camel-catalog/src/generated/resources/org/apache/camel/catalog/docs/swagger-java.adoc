@@ -7,6 +7,8 @@
 :since: 2.16
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/swagger-java.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: swagger-java
 
 *Since Camel {since}*
 
@@ -200,3 +202,5 @@ json is returned as the default format.
 In the Apache Camel distribution we ship
 the `camel-example-swagger-cdi` and `camel-example-swagger-java` which
 demonstrates using this Swagger component.
+
+include::spring-boot:partial$starter.adoc[]

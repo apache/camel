@@ -8,6 +8,8 @@
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/oaipmh.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: oaipmh
 
 *Since Camel {since}*
 
@@ -159,3 +161,5 @@ from("oaipmh:baseUrlRepository/oai/request")
 ---------------------------------------------------------
 
 For more details about OAI-PMH see the documentation: http://www.openarchives.org/pmh/
+
+include::spring-boot:partial$starter.adoc[]

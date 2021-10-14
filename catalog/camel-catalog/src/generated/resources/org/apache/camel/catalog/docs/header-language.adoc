@@ -7,6 +7,9 @@
 :since: 1.5
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/header.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: core
+:starter-artifactid: camel-core-starter
 
 *Since Camel {since}*
 
@@ -49,3 +52,5 @@ from("direct:a").recipientList().header("myHeader");
 == Dependencies
 
 The Header language is part of *camel-core*.
+
+include::spring-boot:partial$starter.adoc[]
