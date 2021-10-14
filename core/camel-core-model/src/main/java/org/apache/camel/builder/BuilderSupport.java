@@ -26,6 +26,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Expression;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.model.language.DatasonnetExpression;
 import org.apache.camel.model.language.ExchangePropertyExpression;
 import org.apache.camel.model.language.HeaderExpression;
 import org.apache.camel.model.language.SimpleExpression;
@@ -162,17 +163,28 @@ public abstract class BuilderSupport implements CamelContextAware {
     }
 
     /**
-     * Returns a Datasonnet expression value builder
+     * Returns a datasonnet expression value builder
      */
-    public DatasonnetBuilder datasonnet(String value) {
-        return DatasonnetBuilder.datasonnet(value);
+    public ValueBuilder datasonnet(String value) {
+        return datasonnet(value, null);
     }
 
     /**
-     * Returns a Datasonnet expression value builder
+     * Returns a datasonnet expression value builder
      */
-    public DatasonnetBuilder datasonnet(String value, Class<?> resultType) {
-        return DatasonnetBuilder.datasonnet(value, resultType);
+    public ValueBuilder datasonnet(String value, Class<?> resultType) {
+        return datasonnet(value, resultType, null, null);
+    }
+
+    /**
+     * Returns a datasonnet expression value builder
+     */
+    public ValueBuilder datasonnet(String value, Class<?> resultType, String bodyMediaType, String outputMediaType) {
+        DatasonnetExpression exp = new DatasonnetExpression(value);
+        exp.setResultType(resultType);
+        exp.setBodyMediaType(bodyMediaType);
+        exp.setOutputMediaType(outputMediaType);
+        return new ValueBuilder(exp);
     }
 
     /**

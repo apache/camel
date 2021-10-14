@@ -31,6 +31,25 @@ to
 simple("1", Integer.class)
 ----
 
+=== camel-datasonnet and DataSonnetBuilder
+
+The `org.apache.camel.builder.DataSonnetBuilder` has been removed.
+
+End users that use camel-datasonnet in Java DSL should migrate from:
+
+[source,java]
+----
+datasonnet("resource:classpath:simpleMapping.ds", String.class)
+        .bodyMediaType(MediaTypes.APPLICATION_JSON_VALUE)
+        .outputMediaType(MediaTypes.APPLICATION_JSON_VALUE)
+----
+
+to
+
+[source,java]
+----
+----
+
 === Using custom Debugger
 
 Previously when setting a custom org.apache.camel.spi.Debugger, then Camel would automatically

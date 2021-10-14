@@ -66,23 +66,20 @@ public class CamelDatasonnetJavaDslTest extends CamelTestSupport {
                         .setProperty("count", simple("1", Integer.class))
                         .setProperty("isActive", simple("true", Boolean.class))
                         .setProperty("1. Full Name", constant("DataSonnet"))
-                        .transform(datasonnet("resource:classpath:simpleMapping.ds", String.class)
-                                .bodyMediaType(MediaTypes.APPLICATION_JSON_VALUE)
-                                .outputMediaType(MediaTypes.APPLICATION_JSON_VALUE))
+                        .transform(datasonnet("resource:classpath:simpleMapping.ds", String.class,
+                                MediaTypes.APPLICATION_JSON_VALUE, MediaTypes.APPLICATION_JSON_VALUE))
                         .to("mock:direct:end");
 
                 from("direct:transformXML")
                         .routeId("transformXML")
-                        .transform(datasonnet("resource:classpath:readXMLExtTest.ds", String.class)
-                                .bodyMediaType(MediaTypes.APPLICATION_XML_VALUE)
-                                .outputMediaType(MediaTypes.APPLICATION_JSON_VALUE))
+                        .transform(datasonnet("resource:classpath:readXMLExtTest.ds", String.class,
+                                MediaTypes.APPLICATION_XML_VALUE, MediaTypes.APPLICATION_JSON_VALUE))
                         .to("mock:direct:end");
 
                 from("direct:transformCSV")
                         .routeId("transformCSV")
-                        .transform(datasonnet("resource:classpath:readCSVTest.ds", String.class)
-                                .bodyMediaType(MediaTypes.APPLICATION_CSV_VALUE)
-                                .outputMediaType(MediaTypes.APPLICATION_JSON_VALUE))
+                        .transform(datasonnet("resource:classpath:readCSVTest.ds", String.class,
+                                MediaTypes.APPLICATION_CSV_VALUE, MediaTypes.APPLICATION_JSON_VALUE))
                         .to("mock:direct:end");
 
             }
