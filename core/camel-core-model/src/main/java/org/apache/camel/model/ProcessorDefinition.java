@@ -54,6 +54,7 @@ import org.apache.camel.model.dataformat.CustomDataFormat;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.LanguageExpression;
+import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.spi.AsEndpointUri;
@@ -3082,7 +3083,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
             @AsEndpointUri EndpointProducerBuilder resourceUri, AggregationStrategy aggregationStrategy,
             boolean aggregateOnException, boolean shareUnitOfWork) {
         EnrichDefinition answer = new EnrichDefinition();
-        answer.setExpression(resourceUri.expr());
+        answer.setExpression(new SimpleExpression(resourceUri.getUri()));
         answer.setAggregationStrategy(aggregationStrategy);
         answer.setAggregateOnException(Boolean.toString(aggregateOnException));
         answer.setShareUnitOfWork(Boolean.toString(shareUnitOfWork));

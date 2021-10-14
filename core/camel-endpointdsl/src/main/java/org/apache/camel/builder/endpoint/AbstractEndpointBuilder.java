@@ -31,6 +31,7 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.SimpleBuilder;
+import org.apache.camel.spi.Language;
 import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.support.EndpointHelper;
@@ -44,6 +45,7 @@ public class AbstractEndpointBuilder {
     protected final Map<String, Object> properties = new LinkedHashMap<>();
     protected final Map<String, Map<String, Object>> multivalues = new HashMap<>();
     private volatile Endpoint resolvedEndpoint;
+    private volatile Language simple;
 
     public AbstractEndpointBuilder(String scheme, String path) {
         this.scheme = scheme;
@@ -184,6 +186,10 @@ public class AbstractEndpointBuilder {
         });
     }
 
+    /**
+     * Use {@link #expr(CamelContext)}
+     */
+    @Deprecated
     public Expression expr() {
         return SimpleBuilder.simple(getUri());
     }
@@ -193,7 +199,10 @@ public class AbstractEndpointBuilder {
         // do not encode computed uri as we want to preserve simple expressions, as this is used
         // by ToDynamic which builds the uri string un-encoded for simple language parser to be able to parse
         NormalizedEndpointUri uri = computeUri(new LinkedHashMap<>(), camelContext, true, false);
-        return SimpleBuilder.simple(uri.getUri());
+        if (simple == null) {
+            simple = camelContext.resolveLanguage("simple");
+        }
+        return simple.createExpression(uri.getUri());
     }
 
 }
