@@ -32,7 +32,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.file.consumer.FileConsumerResumeStrategy;
-import org.apache.camel.component.file.consumer.FileResumeInfo;
+import org.apache.camel.component.file.consumer.FileResumeSet;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -172,10 +172,10 @@ public class FileConsumer extends GenericFileConsumer<File> {
         }
 
         if (resumeStrategy != null) {
-            FileResumeInfo resumeInfo = new FileResumeInfo(dirFiles);
-            resumeStrategy.resume(resumeInfo);
+            FileResumeSet resumeSet = new FileResumeSet(dirFiles);
+            resumeStrategy.resume(resumeSet);
 
-            return resumeInfo.getOutputFiles();
+            return resumeSet.hasResumables() ? resumeSet.resumedFiles() : dirFiles;
         }
 
         return dirFiles;

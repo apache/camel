@@ -24,7 +24,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.consumer.FileConsumerResumeStrategy;
-import org.apache.camel.component.file.consumer.FileResumeInfo;
+import org.apache.camel.component.file.consumer.FileResumeSet;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Test;
@@ -42,24 +42,10 @@ public class FileConsumerResumeStrategyTest extends ContextTestSupport {
         }
 
         @Override
-        public void resume(FileResumeInfo resumeInfo) {
+        public void resume(FileResumeSet resumeSet) {
             List<String> processedFiles = Arrays.asList("0.txt", "1.txt", "2.txt");
-            int count = 0;
 
-            File[] input = resumeInfo.getInputFiles();
-            File[] tmp = Arrays.copyOf(input, input.length);
-
-            for (File file : resumeInfo.getInputFiles()) {
-                if (!processedFiles.contains(file.getName())) {
-                    LOG.info("Including file {}", file);
-                    tmp[count] = file;
-                    count++;
-                } else {
-                    LOG.info("Skipping file {}", file);
-                }
-            }
-
-            resumeInfo.setOutputFiles(Arrays.copyOf(tmp, count));
+            resumeSet.resumeEach(f -> !processedFiles.contains(f.getName()));
         }
     }
 
