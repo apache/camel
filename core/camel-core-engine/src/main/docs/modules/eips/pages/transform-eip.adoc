@@ -5,12 +5,55 @@
 :since: 
 :supportlevel: Stable
 
-See below for details
+Camel supports the
+http://www.enterpriseintegrationpatterns.com/MessageTranslator.html[Message
+Translator] from the xref:enterprise-integration-patterns.adoc[EIP
+patterns].
 
-* xref:message-translator.adoc[Message Translator]
+image::eip/MessageTranslator.gif[image]
+
+The Message Translator can be done in different ways in Camel:
+
+* Using Transform EIP in the DSL
+* Calling a xref:latest@manual:ROOT:processor.adoc[Processor] or xref:latest@manual:ROOT:bean-integration.adoc[bean]
+to perform the transformation
+* Using template-based xref:components::index.adoc[Components], with the template being the source for how the message is translated
+* Messages can also be transformed using xref:latest@manual:ROOT:data-format.adoc[Data Format]
+to marshal and unmarshal messages in different encodings.
+
+This page is documenting the first approach by using Transform EIP.
 
 == Options
 
 // eip options: START
 include::partial$eip-options.adoc[]
 // eip options: END
+
+=== Using Transform EIP
+
+You can use a xref:transform-eip.adoc[Transform] which uses an
+xref:latest@manual:ROOT:expression.adoc[Expression] to do the transformation:
+
+In the example below we prepend Hello to the message body using the
+xref:components:languages:simple-language.adoc[Simple] language:
+
+[source,java]
+----
+from("direct:cheese")
+    .setBody(simple("Hello ${body}"))
+    .to("log:hello");
+----
+
+And in XML DSL:
+
+[source,xml]
+----
+<route>
+    <from uri="activemq:cheese"/>
+    <transform>
+        <simple>Hello ${body}</simple>
+    </transform>
+    <to uri="activemq:wine"/>
+</route>
+----
+

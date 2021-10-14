@@ -18,7 +18,35 @@ The Message Translator can be done in different ways in Camel:
 
 == Example
 
-Each of above approaches is documented in the following examples
+Each of above approaches is documented in the following examples:
+
+=== Message Translator with Transform EIP
+
+You can use a xref:transform-eip.adoc[Transform] which uses an
+xref:latest@manual:ROOT:expression.adoc[Expression] to do the transformation:
+
+In the example below we prepend Hello to the message body using the
+xref:components:languages:simple-language.adoc[Simple] language:
+
+[source,java]
+----
+from("direct:cheese")
+    .setBody(simple("Hello ${body}"))
+    .to("log:hello");
+----
+
+And in XML DSL:
+
+[source,xml]
+----
+<route>
+    <from uri="activemq:cheese"/>
+    <transform>
+        <simple>Hello ${body}</simple>
+    </transform>
+    <to uri="activemq:wine"/>
+</route>
+----
 
 === Message Translator with Bean
 
