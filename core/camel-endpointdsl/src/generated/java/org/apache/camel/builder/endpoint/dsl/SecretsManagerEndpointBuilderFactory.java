@@ -494,12 +494,12 @@ public interface SecretsManagerEndpointBuilderFactory {
          * Since: 3.9
          * Maven coordinates: org.apache.camel:camel-aws-secrets-manager
          * 
-         * Syntax: <code>aws-secrets-manager://label</code>
+         * Syntax: <code>aws-secrets-manager:label</code>
          * 
          * Path parameter: label (required)
          * Logical name
          * 
-         * @param path //label
+         * @param path label
          * @return the dsl builder
          */
         default SecretsManagerEndpointBuilder awsSecretsManager(String path) {
@@ -513,14 +513,14 @@ public interface SecretsManagerEndpointBuilderFactory {
          * Since: 3.9
          * Maven coordinates: org.apache.camel:camel-aws-secrets-manager
          * 
-         * Syntax: <code>aws-secrets-manager://label</code>
+         * Syntax: <code>aws-secrets-manager:label</code>
          * 
          * Path parameter: label (required)
          * Logical name
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
-         * @param path //label
+         * @param path label
          * @return the dsl builder
          */
         default SecretsManagerEndpointBuilder awsSecretsManager(
