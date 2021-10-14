@@ -12,6 +12,9 @@ Added method `getStartedEventNotifiers` to `org.apache.camel.spi.ManagementStrat
 
 Added method `scheduleQueue` to `org.apache.camel.spi.ReactiveExecutor`.
 
+The `org.apache.camel.builder.SimpleBuilder` has been deprecated. This builder
+was mostly used internally in Camel with the Java DSL in some situations.
+
 === Using custom Debugger
 
 Previously when setting a custom org.apache.camel.spi.Debugger, then Camel would automatically
