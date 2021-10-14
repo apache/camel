@@ -23,7 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.consumer.FileConsumerResumeStrategy;
-import org.apache.camel.component.file.consumer.FileResumeInfo;
+import org.apache.camel.component.file.consumer.FileResumeSet;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -45,10 +45,8 @@ public class FileConsumerResumeFromOffsetStrategyTest extends ContextTestSupport
         }
 
         @Override
-        public void resume(FileResumeInfo resumeInfo) {
-            File[] input = resumeInfo.getInputFiles();
-
-            resumeInfo.setOutputFiles(input);
+        public void resume(FileResumeSet resumeSet) {
+            // NO-OP
         }
     }
 

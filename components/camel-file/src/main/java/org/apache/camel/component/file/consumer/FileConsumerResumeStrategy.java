@@ -24,7 +24,7 @@ import org.apache.camel.ResumeStrategy;
 /**
  * Defines resume strategy for consumers of the file component.
  */
-public interface FileConsumerResumeStrategy extends ResumeStrategy<FileResumeInfo> {
+public interface FileConsumerResumeStrategy extends ResumeStrategy<FileResumeSet> {
 
     /**
      * Returns the last offset read for the given file.
@@ -40,5 +40,5 @@ public interface FileConsumerResumeStrategy extends ResumeStrategy<FileResumeInf
      * @param resumeInfo resume information
      */
     @Override
-    void resume(FileResumeInfo resumeInfo);
+    void resume(FileResumeSet resumeInfo);
 }
