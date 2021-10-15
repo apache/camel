@@ -2,7 +2,7 @@
 :doctitle: Stop
 :shortname: stop
 :description: Stops the processing of the current message
-:since:
+:since: 
 :supportlevel: Stable
 
 How can I stop continue routing a message?
