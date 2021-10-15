@@ -24,6 +24,7 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.BeanIntrospection;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -31,6 +32,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UndertowServiceCallRouteTest extends CamelTestSupport {
+    private int port1 = AvailablePortFinder.getNextAvailable();
+    private int port2 = AvailablePortFinder.getNextAvailable();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -75,21 +78,21 @@ public class UndertowServiceCallRouteTest extends CamelTestSupport {
                         .name("myService")
                         .component("undertow")
                         .staticServiceDiscovery()
-                        .servers("myService@localhost:8081")
-                        .servers("myService@localhost:8082")
+                        .servers("myService@localhost:" + port1)
+                        .servers("myService@localhost:" + port2)
                         .endParent();
 
                 from("direct:default")
                         .serviceCall()
                         .name("myService")
                         .staticServiceDiscovery()
-                        .servers("myService@localhost:8081")
-                        .servers("myService@localhost:8082")
+                        .servers("myService@localhost:" + port1)
+                        .servers("myService@localhost:" + port2)
                         .endParent();
 
-                from("undertow:http://localhost:8081")
+                from("undertow:http://localhost:" + port1)
                         .transform().constant("8081");
-                from("undertow:http://localhost:8082")
+                from("undertow:http://localhost:" + port2)
                         .transform().constant("8082");
             }
         };
