@@ -65,7 +65,6 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
     private final CamelClusterService.Selector clusterServiceSelector;
     private CamelClusterService clusterService;
     private CamelClusterView clusterView;
-    private volatile boolean clusterViewAddListenerDone;
     private volatile boolean startManagedRoutesEarly;
 
     private Duration initialDelay;
@@ -97,31 +96,10 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
             throw new RuntimeException(e);
         }
 
-        // Cleanup the policy when all the routes it manages have been shut down
+        // Cleanup the policy when all the routes it manages have been removed
         // so a single policy instance can be shared among routes.
-        this.refCount = ReferenceCount.onRelease(() -> {
-            if (camelContext != null) {
-                camelContext.getManagementStrategy().removeEventNotifier(listener);
-                if (executorService != null) {
-                    camelContext.getExecutorServiceManager().shutdownNow(executorService);
-                }
-            }
-
-            try {
-                // Remove event listener
-                if (clusterView != null) {
-                    clusterView.removeEventListener(leadershipEventListener);
-
-                    // If all the routes have been shut down then the view and its
-                    // resources can eventually be released.
-                    clusterView.getClusterService().releaseView(clusterView);
-                }
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            } finally {
-                setLeader(false);
-            }
-        });
+        // Acquire cluster view once a route is added to the policy
+        this.refCount = ReferenceCount.on(this::retainClusterView, this::releaseClusterView);
     }
 
     @Override
@@ -178,6 +156,7 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
     public void onInit(Route route) {
         super.onInit(route);
 
+        // Increase number of managed routes by this policy, acquire policy view on first run
         this.refCount.retain();
 
         if (route.isAutoStartup()) {
@@ -211,27 +190,57 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
     }
 
     @Override
-    public void doStart() throws Exception {
-        this.clusterView = clusterService.getView(namespace);
-        if (!clusterViewAddListenerDone) {
-            clusterView.addEventListener(leadershipEventListener);
-            clusterViewAddListenerDone = true;
-        }
-    }
-
-    @Override
     public void onRemove(Route route) {
+        // Decrease number of managed routes, release view once there are no route left
+        refCount.release();
         autoStartupRoutes.remove(route);
     }
 
     @Override
-    public void onStop(Route route) {
-        this.refCount.release();
+    protected void doShutdown() throws Exception {
+        releaseClusterView();
+        removeCamelEventListeners();
     }
 
     // ****************************************************
     // Management
     // ****************************************************
+
+    private void removeCamelEventListeners() {
+        if (camelContext != null) {
+            camelContext.getManagementStrategy().removeEventNotifier(listener);
+            if (executorService != null) {
+                camelContext.getExecutorServiceManager().shutdownNow(executorService);
+            }
+        }
+    }
+
+    private synchronized void retainClusterView() {
+        try {
+            clusterView = clusterService.getView(namespace);
+            clusterView.addEventListener(leadershipEventListener);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private synchronized void releaseClusterView() {
+        try {
+            // Remove event listener
+            if (clusterView != null) {
+                clusterView.removeEventListener(leadershipEventListener);
+
+                // If all the routes have been removed then the view and its
+                // resources can eventually be released.
+                clusterView.getClusterService().releaseView(clusterView);
+                clusterView = null;
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            setLeader(false);
+        }
+    }
 
     @ManagedAttribute(description = "Is this route the master or a slave")
     public boolean isLeader() {
@@ -330,14 +339,6 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
             LOG.debug("Apply cluster policy (stopped-routes='{}', started-routes='{}')",
                     stoppedRoutes.stream().map(Route::getId).collect(Collectors.joining(",")),
                     startedRoutes.stream().map(Route::getId).collect(Collectors.joining(",")));
-        }
-
-        if (clusterView != null && !clusterViewAddListenerDone) {
-            clusterView.addEventListener(leadershipEventListener);
-            clusterViewAddListenerDone = true;
-        } else {
-            // cluster view is not initialized yet, so lets add its listener in doStart
-            clusterViewAddListenerDone = false;
         }
 
         if (startManagedRoutesEarly) {
