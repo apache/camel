@@ -16,7 +16,27 @@ use the more powerful xref:aggregate-eip.adoc[Aggregate] EIP for aggregation.
 
 == Using only Recipient List
 
+In the following example we want to call two HTTP services and gather their responses into a single message.
+
+[source,xml]
+----
+<routes>
+
+  <route>
+    <from uri="direct:start"/>
+    <recipientList strategyRef="cheeseAggregator">
+      <constant>http:server1,http:server2</header>
+    </recipientList>
+    <to uri="mock:result"/>
+  </route>
+
+</routes>
+----
+
+The example is kept basic,
+
 TODO: Simple example
+TODO: sync vs async messaging
 
 
 == Using both Recipient List and Aggregator EIP
