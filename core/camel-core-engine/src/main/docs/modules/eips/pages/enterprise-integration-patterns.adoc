@@ -187,6 +187,9 @@ number of endpoints?
 a|image::eip/MessageDispatcherIcon.gif[image]
 |xref:circuitBreaker-eip.adoc[Circuit Breaker] |How can I stop to call an external service if the service is broken?
 
+a|image::eip/MessageExpirationIcon.gif[image]
+|xref:stop-eip.adoc[Stop] |How can I stop continue routing a message?
+
 a|image::eip/MessagingGatewayIcon.gif[image]
 |xref:serviceCall-eip.adoc[Service Call] |How can I call a remote service in a distributed system
 where the service is looked up from a service registry of some sorts?
