@@ -409,13 +409,28 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
         }
 
         // Add rest endpoint parameters
-        nestedParameters.putAll(this.parameters);
+        addRestEndpointParameters(operation, nestedParameters);
 
         if (!nestedParameters.isEmpty()) {
             parameters.put("parameters", nestedParameters);
         }
 
         return parameters;
+    }
+
+    private void addRestEndpointParameters(Operation operation, Map<Object, Object> nestedParameters) {
+        if (this.parameters != null && operation.getParameters() != null) {
+            for (Entry<String, Object> entry : this.parameters.entrySet()) {
+                for (Parameter param : operation.getParameters()) {
+                    // skip parameters that are part of the operation as path as otherwise
+                    // it will be duplicated as query parameter as well
+                    boolean clash = "path".equals(param.getIn()) && entry.getKey().equals(param.getName());
+                    if (!clash) {
+                        nestedParameters.put(entry.getKey(), entry.getValue());
+                    }
+                }
+            }
+        }
     }
 
     String determineHost(final Swagger swagger) {
