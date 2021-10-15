@@ -323,7 +323,7 @@ RouteBuilder builder = new RouteBuilder() {
     public void configure() {
      from("direct:start")
      .setHeader(CacheConstants.CACHE_OPERATION, constant(CacheConstants.CACHE_DELETE))
-     .setHeader(CacheConstants.CACHE_KEY", constant("Ralph_Waldo_Emerson"))
+     .setHeader(CacheConstants.CACHE_KEY, constant("Ralph_Waldo_Emerson"))
      .to("cache://TestCache1")
    }
 };
