@@ -24,20 +24,34 @@ import org.apache.camel.non_wrapper.Person;
 import org.apache.camel.non_wrapper.PersonService;
 import org.apache.camel.non_wrapper.types.GetPerson;
 import org.apache.camel.non_wrapper.types.GetPersonResponse;
+import org.apache.camel.test.AvailablePortFinder;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 @ContextConfiguration(locations = { "/org/apache/camel/component/cxf/context-camel-1145.xml" })
 @ExtendWith(SpringExtension.class)
 public class Camel1145RouteTest {
+    private static int port;
+
+    public static int portNotAvailableHandler(boolean allocated) {
+        assumeTrue(allocated);
+        return -1;
+    }
+
+    @BeforeAll
+    public static void getPort() {
+        port = AvailablePortFinder.getSpecificPort(9000, false, Camel1145RouteTest::portNotAvailableHandler);
+    }
 
     @Test
     public void testCamel1145Route() throws Exception {
-        URL wsdlURL = new URL("http://localhost:9000/PersonService/?wsdl");
+        URL wsdlURL = new URL(String.format("http://localhost:%d/PersonService/?wsdl", port));
         PersonService ss = new PersonService(wsdlURL, new QName("http://camel.apache.org/non-wrapper", "PersonService"));
         Person client = ss.getSoap();
         GetPerson request = new GetPerson();
