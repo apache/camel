@@ -10,7 +10,11 @@ http://www.enterpriseintegrationpatterns.com/MessageTranslator.html[Message
 Translator] from the xref:enterprise-integration-patterns.adoc[EIP
 patterns].
 
+How can systems using different data formats communicate with each other using messaging?
+
 image::eip/MessageTranslator.gif[image]
+
+Use a special filter, a Message Translator, between other filters or applications to translate one data format into another.
 
 The xref:message-translator.adoc[Message Translator] can be done in different ways in Camel:
 
