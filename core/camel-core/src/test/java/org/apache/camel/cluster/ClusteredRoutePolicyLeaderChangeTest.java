@@ -59,7 +59,6 @@ public class ClusteredRoutePolicyLeaderChangeTest extends ContextTestSupport {
         assertEquals(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("foo"));
     }
 
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
