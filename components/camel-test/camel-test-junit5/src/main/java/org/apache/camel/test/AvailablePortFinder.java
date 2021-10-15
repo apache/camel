@@ -22,6 +22,7 @@ import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
@@ -143,6 +144,30 @@ public final class AvailablePortFinder {
     public static int getNextAvailable(int fromPort, int toPort) {
         try (Port port = INSTANCE.findPort(fromPort, toPort)) {
             return port.getPort();
+        }
+    }
+
+    /**
+     * Gets the next available port in the given range.
+     *
+     * @param  portNumber            port number start range.
+     * @param  failurePayload        handover data in case port allocation fails (i.e.: a default one to use)
+     * @param  failureHandler        a handler in case the requested port is not available
+     *
+     * @throws IllegalStateException if there are no ports available
+     * @return                       the available port
+     */
+    public static <T> int getSpecificPort(int portNumber, T failurePayload, Function<T, Integer> failureHandler) {
+        try (Port port = INSTANCE.findPort(portNumber, portNumber)) {
+            return port.getPort();
+        } catch (IllegalStateException e) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Unable to obtain the requested TCP port {}: {}", portNumber, e.getMessage(), e);
+            } else {
+                LOG.warn("Unable to obtain the requested TCP port {}: {}", portNumber, e.getMessage());
+            }
+
+            return failureHandler.apply(failurePayload);
         }
     }
 
