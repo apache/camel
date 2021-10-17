@@ -17,6 +17,7 @@
 package org.apache.camel.component.kafka;
 
 import java.time.Duration;
+import java.util.Collection;
 import java.util.Collections;
 
 import org.apache.camel.spi.StateRepository;
@@ -37,10 +38,11 @@ public class DefaultKafkaManualCommit implements KafkaManualCommit {
     private final TopicPartition partition;
     private final long recordOffset;
     private final long commitTimeout;
+    private final Collection<KafkaManualCommit> asyncCommits;
 
     public DefaultKafkaManualCommit(KafkaConsumer consumer, String topicName, String threadId,
                                     StateRepository<String, String> offsetRepository, TopicPartition partition,
-                                    long recordOffset, long commitTimeout) {
+                                    long recordOffset, long commitTimeout, Collection<KafkaManualCommit> asyncCommits) {
         this.consumer = consumer;
         this.topicName = topicName;
         this.threadId = threadId;
@@ -48,6 +50,7 @@ public class DefaultKafkaManualCommit implements KafkaManualCommit {
         this.partition = partition;
         this.recordOffset = recordOffset;
         this.commitTimeout = commitTimeout;
+        this.asyncCommits = asyncCommits;
 
         LOG.debug("Using commit timeout of {}", commitTimeout);
     }
@@ -55,6 +58,16 @@ public class DefaultKafkaManualCommit implements KafkaManualCommit {
     @Override
     public void commitSync() {
         commitOffset(offsetRepository, partition, recordOffset);
+    }
+
+    @Override
+    public void commitAsync() {
+        asyncCommits.add(this);
+    }
+
+    @Override
+    public void processAsyncCommit() {
+        commitAsyncOffset(offsetRepository, partition, recordOffset);
     }
 
     protected void commitOffset(StateRepository<String, String> offsetRepository, TopicPartition partition, long recordOffset) {
@@ -66,6 +79,26 @@ public class DefaultKafkaManualCommit implements KafkaManualCommit {
                 consumer.commitSync(Collections.singletonMap(partition, new OffsetAndMetadata(recordOffset + 1)),
                         Duration.ofMillis(commitTimeout));
                 LOG.debug("CommitSync done for {} from topic {} with offset: {}", threadId, topicName, recordOffset);
+            }
+        }
+    }
+
+    protected void commitAsyncOffset(
+            StateRepository<String, String> offsetRepository, TopicPartition partition, long recordOffset) {
+        if (recordOffset != -1) {
+            if (offsetRepository != null) {
+                offsetRepository.setState(serializeOffsetKey(partition), serializeOffsetValue(recordOffset));
+            } else {
+                LOG.debug("CommitAsync {} from topic {} with offset: {}", threadId, topicName, recordOffset);
+                consumer.commitAsync(Collections.singletonMap(partition, new OffsetAndMetadata(recordOffset + 1)),
+                        (offsets, exception) -> {
+                            if (exception != null) {
+                                LOG.error("Error during async commit: ", exception);
+                            } else {
+                                LOG.info("CommitAsync done for {} from topic {} with offset: {}", threadId, topicName,
+                                        recordOffset);
+                            }
+                        });
             }
         }
     }

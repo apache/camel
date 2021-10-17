@@ -27,4 +27,16 @@ public interface KafkaManualCommit {
      * @see org.apache.kafka.clients.consumer.KafkaConsumer#commitSync()
      */
     void commitSync();
+
+    /**
+     * Commit asynchronously. The real commit is done in the consumer's loop in order to use the same thread id.
+     *
+     * @see org.apache.kafka.clients.consumer.KafkaConsumer#commitAsync()
+     */
+    void commitAsync();
+
+    /**
+     * Used in the consumer loop to effectively call org.apache.kafka.clients.consumer.KafkaConsumer#commitAsync()
+     */
+    void processAsyncCommit();
 }

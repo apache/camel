@@ -21,6 +21,8 @@ import java.util.Properties;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
+import org.apache.camel.Exchange;
+import org.apache.camel.builder.AggregationStrategies;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kafka.KafkaConstants;
 import org.apache.camel.component.kafka.KafkaManualCommit;
@@ -32,7 +34,7 @@ import org.junit.jupiter.api.RepeatedTest;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class KafkaConsumerManualCommitIT extends BaseEmbeddedKafkaTestSupport {
+public class KafkaConsumerAsyncManualCommitIT extends BaseEmbeddedKafkaTestSupport {
 
     public static final String TOPIC = "testManualCommitTest";
 
@@ -70,54 +72,29 @@ public class KafkaConsumerManualCommitIT extends BaseEmbeddedKafkaTestSupport {
 
             @Override
             public void configure() throws Exception {
-                from(from).routeId("foo").to(to).process(e -> {
-                    KafkaManualCommit manual = e.getIn().getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
-                    assertNotNull(manual);
-                    manual.commitSync();
-                });
+                from(from).routeId("foo").to("direct:aggregate");
+                // With sync manual commit, this would throw a concurrent modification exception
+                // It can be usesd in aggregator with completion timeout/interval for instance
+                // WARN: records from one partition must be processed by one unique thread
+                from("direct:aggregate").routeId("aggregate").to(to)
+                        .aggregate()
+                        .constant(true)
+                        .completionTimeout(1)
+                        .aggregationStrategy(AggregationStrategies.groupedExchange())
+                        .split().body()
+                        .process(e -> {
+                            KafkaManualCommit manual = e.getMessage().getBody(Exchange.class)
+                                    .getMessage().getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
+                            assertNotNull(manual);
+                            if (e.getMessage().getBody(String.class).equals("message-0")) {
+                                // Delay the commit of the first message
+                                Thread.sleep(2000);
+                            }
+                            manual.commitAsync();
+                        });
                 from(from).routeId("bar").autoStartup(false).to(toBar);
             }
         };
-    }
-
-    @RepeatedTest(4)
-    public void kafkaAutoCommitDisabledDuringRebalance() throws Exception {
-        to.expectedMessageCount(1);
-        String firstMessage = "message-0";
-        to.expectedBodiesReceivedInAnyOrder(firstMessage);
-
-        ProducerRecord<String, String> data = new ProducerRecord<>(TOPIC, "1", firstMessage);
-        producer.send(data);
-
-        to.assertIsSatisfied(3000);
-
-        to.reset();
-
-        context.getRouteController().stopRoute("foo");
-        to.expectedMessageCount(0);
-
-        String secondMessage = "message-1";
-        data = new ProducerRecord<>(TOPIC, "1", secondMessage);
-        producer.send(data);
-
-        to.assertIsSatisfied(3000);
-
-        to.reset();
-
-        // start a new route in order to rebalance kafka
-        context.getRouteController().startRoute("bar");
-        toBar.expectedMessageCount(1);
-
-        toBar.assertIsSatisfied();
-
-        context.getRouteController().stopRoute("bar");
-
-        // The route bar is not committing the offset, so by restarting foo, last 3 items will be processed
-        context.getRouteController().startRoute("foo");
-        to.expectedMessageCount(1);
-        to.expectedBodiesReceivedInAnyOrder("message-1");
-
-        to.assertIsSatisfied(3000);
     }
 
     @RepeatedTest(4)
