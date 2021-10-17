@@ -474,7 +474,7 @@ public class ResilienceProcessor extends AsyncProcessorSupport
             callable = task;
         }
         if (bulkhead != null) {
-            callable = Bulkhead.decorateCallable(bulkhead, task);
+            callable = Bulkhead.decorateCallable(bulkhead, callable);
         }
 
         callable = CircuitBreaker.decorateCallable(circuitBreaker, callable);
