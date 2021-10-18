@@ -5,7 +5,7 @@
 :since: 
 :supportlevel: Stable
 
-The SetHeader EIP allows you to set and header on your exchange.
+The SetHeader EIP is used for setting a xref:message.adoc[message] header.
 
 == Options
 
@@ -13,33 +13,76 @@ The SetHeader EIP allows you to set and header on your exchange.
 include::partial$eip-options.adoc[]
 // eip options: END
 
-== Examples
+== Using Set Header
 
-The following example shows how to use the SetHeader EIP
+The following example shows how to set a header in a Camel route:
 
 [source,java]
 ----
-RouteBuilder builder = new RouteBuilder() {
-    public void configure() {
-        from("direct:a")
-            .setHeader("myHeader", constant("test"))
-            .to("direct:b");
-    }
-};
+from("direct:a")
+    .setHeader("myHeader", constant("test"))
+    .to("direct:b");
 ----
-
 
 And the same example using XML:
 
 [source,xml]
 ----
-<camelContext xmlns="http://camel.apache.org/schema/spring">
-    <route>
-        <from uri="direct:a"/>
-        <setHeader name="myHeader">
-            <constant>test</constant>
-        </setHeader>
-        <to uri="direct:b"/>
-    </route>
-</camelContext>
+<route>
+    <from uri="direct:a"/>
+    <setHeader name="myHeader">
+        <constant>test</constant>
+    </setHeader>
+    <to uri="direct:b"/>
+</route>
+----
+
+In the example the header value is a xref:components:languages:constant-language.adoc[constant].
+
+Any of the Camel languages can be used, such as xref:components:languages:simple-language.adoc[Simple].
+
+[source,java]
+----
+from("direct:a")
+    .setHeader("randomNumber", simple("${random(1,100)}"))
+    .to("direct:b");
+----
+
+And in XML:
+
+[source,xml]
+----
+<route>
+    <from uri="direct:a"/>
+    <setHeader name="randomNumber">
+        <simple>${random(1,100)}</simple>
+    </setHeader>
+    <to uri="direct:b"/>
+</route>
+----
+
+=== Setting a header from another header
+
+You can also set a header with the value from another header.
+
+In the example we set the header foo with the value from an existing header named bar.
+
+[source,java]
+----
+from("direct:a")
+    .setHeader("foo", header("bar"))
+    .to("direct:b");
+----
+
+And in XML:
+
+[source,xml]
+----
+<route>
+    <from uri="direct:a"/>
+    <setHeader name="foo">
+        <header>bar</header>
+    </setHeader>
+    <to uri="direct:b"/>
+</route>
 ----

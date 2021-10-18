@@ -9,37 +9,54 @@ specified recipients and re-aggregate the responses back into a single message.
 
 image::eip/BroadcastAggregate.gif[image]
 
-With Camel this pattern is implemented by using the xref:recipientList-eip.adoc[Recipient List]
-which comes with aggregation built-in. This is often the simplest solution. However, there can
-be some complex use-cases where you would need not use the built-in aggregator, and instead
-use the more powerful xref:aggregate-eip.adoc[Aggregate] EIP for aggregation.
+In Camel the Scatter Gather EIP is supported in two different synchronous modes.
 
-== Using only Recipient List
+- request/reply mode, where the re-aggregated response message continues being routed synchronously
+after the Scatter Gather is complete.
 
-In the following example we want to call two HTTP services and gather their responses into a single message.
+- one-way mode, where the response message is being routed asynchronous separately from
+the incoming message thread.
+
+== Request/Reply vs One-Way messaging modes
+
+In Camel the request/reply mode is done by using only the xref:recipientList-eip.adoc[Recipient List]
+which comes with aggregation built-in (which is often the simplest solution).
+
+The request/reply mode refers to the fact that the response message, is tied synchronously
+to the incoming message (that would wait), until the response message is ready, and then continue being routed.
+This allows for xref:requestReply-eip.adoc[Request Reply] messaging style.
+
+The one-way mode refers to the fact that the response message, is not tied to the incoming message (which will continue).
+And the response message (when its ready) will continue being routed independently of the incoming message.
+This only allows for xref:event-message.adoc[Event Message] messaging style.
+
+In the one-way mode, then you combine the xref:recipientList-eip.adoc[Recipient List] and xref:aggregate-eip.adoc[Aggregate] EIPs
+together as the Scatter Gather EIP solution.
+
+== Using Recipient List only
+
+In the following example we want to call two HTTP services and gather their responses into a single message,
+as the response:
 
 [source,xml]
 ----
 <routes>
 
   <route>
-    <from uri="direct:start"/>
+    <from uri="servlet:cheese"/>
     <recipientList strategyRef="cheeseAggregator">
       <constant>http:server1,http:server2</header>
     </recipientList>
-    <to uri="mock:result"/>
+    <to uri="log:response"/>
   </route>
 
 </routes>
 ----
 
-The example is kept basic,
+This is a basic example that only uses basic functionality of the xref:recipientList-eip.adoc[Recipient List].
+For more details how the aggregation works, see the xref:recipientList-eip.adoc[Recipient List] documentation.
 
-TODO: Simple example
-TODO: sync vs async messaging
-
-
-== Using both Recipient List and Aggregator EIP
+== Using Recipient List and Aggregate EIP
 
 In this example we want to get the best quote for beer from several vendors.
 
@@ -65,7 +82,7 @@ The routes for this are defined as:
       <correlationExpression>
         <header>quoteRequestId</header>
       </correlationExpression>
-      <to uri="mock:result"/>
+      <to uri="direct:bestBeer"/>
     </aggregate>
   </route>
 
@@ -78,14 +95,14 @@ listOfVendors header for the list of recipients. So, we need to send a message l
 [source,java]
 ----
 Map<String, Object> headers = new HashMap<>();
-headers.put("listOfVendors", "bean:vendor1, bean:vendor2, bean:vendor3");
+headers.put("listOfVendors", "bean:vendor1,bean:vendor2,bean:vendor3");
 headers.put("quoteRequestId", "quoteRequest-1");
 
 template.sendBodyAndHeaders("direct:start", "<quote_request item=\"beer\"/>", headers);
 ----
 
 This message will be distributed to the following Endpoints: bean:vendor1, bean:vendor2, and bean:vendor3.
-These are all beans which look like:
+These are all Java beans (called via the Camel xref:components::bean-component.adoc[Bean] endpoint), which look like:
 
 [source,java]
 ----
@@ -110,7 +127,7 @@ public class MyVendor {
 }
 ----
 
-And are loaded up in XML like:
+And are loaded up in XML like this:
 
 [source,xml]
 ----
@@ -168,3 +185,15 @@ public class LowestQuoteAggregationStrategy implements AggregationStrategy {
 }
 ----
 
+And finally the aggregator will assemble the response message with the best beer price (the lowest).
+Notice how the aggregator has timeout built-in, meaning that if one or more of the beer vendors does
+not respond, then the aggregator will discard those _late_ responses, and send out a message with the _best price so far_.
+
+The message is then continued to another route via the `direct:bestBeer` endpoint.
+
+== See Also
+
+The Scatter Gather EIP is a composite pattern that is built by exiting EIPs:
+
+- xref:recipientList-eip.adoc[Recipient List]
+- xref:aggregate-eip.adoc[Aggregate]

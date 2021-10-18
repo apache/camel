@@ -12,6 +12,11 @@ Added method `getStartedEventNotifiers` to `org.apache.camel.spi.ManagementStrat
 
 Added method `scheduleQueue` to `org.apache.camel.spi.ReactiveExecutor`.
 
+=== Split EIP
+
+The Split EIP now supports splitting message bodies that are of type `java.util.Map`, which
+now splits that into a `Set<Map.Entry>` - eg a set of each map entry as key/value pairs.
+
 === SimpleBuilder
 
 The `org.apache.camel.builder.SimpleBuilder` has been deprecated. This builder

@@ -22,6 +22,7 @@ import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.infinispan.common.InfinispanProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testcontainers.containers.BindMode;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.output.OutputFrame;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
@@ -58,6 +59,8 @@ public class InfinispanLocalContainerService implements InfinispanService, Conta
                 .withEnv("USER", DEFAULT_USERNAME)
                 .withEnv("PASS", DEFAULT_PASSWORD)
                 .withLogConsumer(logConsumer)
+                .withClasspathResourceMapping("infinispan.xml", "/user-config/infinispan.xml", BindMode.READ_ONLY)
+                .withCommand("-c", "/user-config/infinispan.xml")
                 .withExposedPorts(InfinispanProperties.DEFAULT_SERVICE_PORT)
                 .waitingFor(Wait.forListeningPort())
                 .waitingFor(Wait.forLogMessage(".*Infinispan.*Server.*started.*", 1));
