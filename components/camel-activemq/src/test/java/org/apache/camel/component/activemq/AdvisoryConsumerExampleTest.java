@@ -35,16 +35,14 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 /**
  * 
  */
-public class AdvisoryConsumerExample extends ActiveMQTestSupport {
-    private static final Logger LOG = LoggerFactory.getLogger(AdvisoryConsumerExample.class);
+public class AdvisoryConsumerExampleTest extends ActiveMQTestSupport {
+    private static final Logger LOG = LoggerFactory.getLogger(AdvisoryConsumerExampleTest.class);
 
-    @Test()
+    @Test
     public void testWorks() throws Exception {
         // lets create a new queue
         assertDoesNotThrow(
                 () -> template.sendBody("activemq:NewQueue." + System.currentTimeMillis(), "<hello>world!</hello>"));
-
-        Thread.sleep(10000);
     }
 
     @Override

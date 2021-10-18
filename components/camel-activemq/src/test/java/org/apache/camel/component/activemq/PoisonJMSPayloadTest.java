@@ -17,39 +17,47 @@
 package org.apache.camel.component.activemq;
 
 import javax.jms.Connection;
+import javax.jms.JMSException;
 import javax.jms.MessageProducer;
 import javax.jms.ObjectMessage;
 import javax.jms.Session;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.component.activemq.support.ActiveMQSpringTestSupport;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class PoisonJMSPayloadTest extends ActiveMQSpringTestSupport {
 
-    @Test
-    public void testCreateBodyThrowException() throws Exception {
+    private ActiveMQConnectionFactory factory;
+    private Session sess;
+
+    @BeforeEach
+    public void setupTest() throws JMSException {
         getMockEndpoint("mock:result-activemq").expectedMessageCount(0);
         getMockEndpoint("mock:dead").expectedMessageCount(1);
         getMockEndpoint("mock:dead").message(0).body(String.class)
                 .startsWith(
                         "Poison JMS message payload: Failed to extract body due to: javax.jms.JMSException: Failed to build body from content. Serializable class not available to broker.");
 
-        ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory(vmUri());
+        factory = new ActiveMQConnectionFactory(vmUri());
         Connection conn = factory.createConnection();
         conn.start();
-        Session sess = conn.createSession(false, Session.AUTO_ACKNOWLEDGE);
+        sess = conn.createSession(false, Session.AUTO_ACKNOWLEDGE);
+
         MessageProducer producer = sess.createProducer(sess.createTopic("foo"));
         ObjectMessage msg = sess.createObjectMessage();
+
         ObjectPayload payload = new ObjectPayload();
         payload.payload = "test";
         msg.setObject(payload);
         producer.send(msg);
+    }
 
-        Thread.sleep(1000);
-
+    @Test
+    public void testCreateBodyThrowException() throws Exception {
         // bean should not be invoked
         boolean invoked = context.getRegistry().lookupByNameAndType("myBean", MyBean.class).isInvoked();
         assertFalse(invoked, "Bean should not be invoked");
