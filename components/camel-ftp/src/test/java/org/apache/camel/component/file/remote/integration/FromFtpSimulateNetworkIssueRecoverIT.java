@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.file.remote.integration;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
@@ -24,6 +26,7 @@ import org.apache.camel.component.file.remote.RemoteFilePollingConsumerPollStrat
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -52,9 +55,8 @@ public class FromFtpSimulateNetworkIssueRecoverIT extends FtpServerTestSupport {
 
         resultEndpoint.assertIsSatisfied();
 
-        Thread.sleep(2000);
-
-        assertTrue(counter >= 3, "Should have tried at least 3 times was " + counter);
+        await().atMost(2, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertTrue(counter >= 3, "Should have tried at least 3 times was " + counter));
         assertEquals(2, rollback);
     }
 

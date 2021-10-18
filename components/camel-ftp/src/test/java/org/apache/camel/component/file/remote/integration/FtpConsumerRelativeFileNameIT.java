@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.file.remote.integration;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -23,6 +25,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertDirectoryEquals;
+import static org.awaitility.Awaitility.await;
 
 public class FtpConsumerRelativeFileNameIT extends FtpServerTestSupport {
 
@@ -59,13 +62,15 @@ public class FtpConsumerRelativeFileNameIT extends FtpServerTestSupport {
         assertMockEndpointsSatisfied();
 
         // give time for ftp consumer to disconnect
-        Thread.sleep(2000);
-
         // and expect name to contain target/filename-consumer-XXX.txt
-        assertDirectoryEquals("out/filename-consumer-bye.txt",
-                mock.getReceivedExchanges().get(0).getIn().getHeader(Exchange.FILE_NAME, String.class));
-        assertDirectoryEquals("out/filename-consumer-hello.txt",
-                mock.getReceivedExchanges().get(1).getIn().getHeader(Exchange.FILE_NAME, String.class));
+        await().atMost(2, TimeUnit.SECONDS)
+                .untilAsserted(() -> isExpectedFile(mock, "out/filename-consumer-bye.txt", 0));
+        isExpectedFile(mock, "out/filename-consumer-hello.txt", 1);
+    }
+
+    private void isExpectedFile(MockEndpoint mock, String s, int exchangeNumber) {
+        assertDirectoryEquals(s,
+                mock.getReceivedExchanges().get(exchangeNumber).getIn().getHeader(Exchange.FILE_NAME, String.class));
     }
 
 }

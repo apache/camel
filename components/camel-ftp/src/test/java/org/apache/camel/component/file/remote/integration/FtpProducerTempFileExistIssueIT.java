@@ -17,6 +17,7 @@
 package org.apache.camel.component.file.remote.integration;
 
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Endpoint;
@@ -25,6 +26,7 @@ import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -53,10 +55,8 @@ public class FtpProducerTempFileExistIssueIT extends FtpServerTestSupport {
 
         template.sendBodyAndHeader(getFtpUrl() + "&tempPrefix=foo", "Bye World", Exchange.FILE_NAME, "hello.txt");
 
-        Thread.sleep(500);
-
         File file = ftpFile("tempprefix/hello.txt").toFile();
-        assertEquals(true, file.exists());
+        await().atMost(500, TimeUnit.MILLISECONDS).untilAsserted(() -> assertEquals(true, file.exists()));
         assertEquals("Bye World", context.getTypeConverter().convertTo(String.class, file));
     }
 
@@ -69,10 +69,8 @@ public class FtpProducerTempFileExistIssueIT extends FtpServerTestSupport {
 
         template.sendBodyAndHeader(getFtpUrl() + "&tempPrefix=foo", "Bye World", Exchange.FILE_NAME, "hello.txt");
 
-        Thread.sleep(500);
-
         File file = ftpFile("tempprefix/hello.txt").toFile();
-        assertEquals(true, file.exists());
+        await().atMost(500, TimeUnit.MILLISECONDS).untilAsserted(() -> assertEquals(true, file.exists()));
         assertEquals("Bye World", context.getTypeConverter().convertTo(String.class, file));
     }
 
@@ -85,10 +83,9 @@ public class FtpProducerTempFileExistIssueIT extends FtpServerTestSupport {
         template.sendBodyAndHeader(getFtpUrl() + "&tempPrefix=foo&fileExist=Override", "Bye World", Exchange.FILE_NAME,
                 "hello.txt");
 
-        Thread.sleep(500);
-
         File file = ftpFile("tempprefix/hello.txt").toFile();
-        assertEquals(true, file.exists());
+        await().atMost(500, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> assertEquals(true, file.exists()));
         assertEquals("Bye World", context.getTypeConverter().convertTo(String.class, file));
     }
 
@@ -101,11 +98,10 @@ public class FtpProducerTempFileExistIssueIT extends FtpServerTestSupport {
         template.sendBodyAndHeader(getFtpUrl() + "&tempPrefix=foo&fileExist=Ignore", "Bye World", Exchange.FILE_NAME,
                 "hello.txt");
 
-        Thread.sleep(500);
-
         File file = ftpFile("tempprefix/hello.txt").toFile();
         // should not write new file as we should ignore
-        assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, file));
+        await().atMost(500, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, file)));
     }
 
     @Test
@@ -122,10 +118,9 @@ public class FtpProducerTempFileExistIssueIT extends FtpServerTestSupport {
                 = assertIsInstanceOf(GenericFileOperationFailedException.class, ex.getCause());
         assertTrue(cause.getMessage().startsWith("File already exist"));
 
-        Thread.sleep(500);
-
         File file = ftpFile("tempprefix/hello.txt").toFile();
         // should not write new file as we should ignore
-        assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, file));
+        await().atMost(1, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, file)));
     }
 }

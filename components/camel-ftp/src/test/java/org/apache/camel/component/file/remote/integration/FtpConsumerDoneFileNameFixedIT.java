@@ -17,11 +17,13 @@
 package org.apache.camel.component.file.remote.integration;
 
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class FtpConsumerDoneFileNameFixedIT extends FtpServerTestSupport {
@@ -38,9 +40,7 @@ public class FtpConsumerDoneFileNameFixedIT extends FtpServerTestSupport {
 
         // wait a bit and it should not pickup the written file as there are no
         // done file
-        Thread.sleep(1000);
-
-        assertMockEndpointsSatisfied();
+        await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> assertMockEndpointsSatisfied());
 
         resetMocks();
 
@@ -52,11 +52,10 @@ public class FtpConsumerDoneFileNameFixedIT extends FtpServerTestSupport {
         assertMockEndpointsSatisfied();
 
         // give time for done file to be deleted
-        Thread.sleep(1000);
-
-        // done file should be deleted now
         File file = new File(service.getFtpRootDir() + "done/fin.dat");
-        assertFalse(file.exists(), "Done file should be deleted: " + file);
+        // done file should be deleted now
+        await().atMost(1, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertFalse(file.exists(), "Done file should be deleted: " + file));
     }
 
     @Override

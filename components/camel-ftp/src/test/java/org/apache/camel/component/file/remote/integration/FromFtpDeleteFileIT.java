@@ -17,6 +17,7 @@
 package org.apache.camel.component.file.remote.integration;
 
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -26,6 +27,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -53,11 +55,10 @@ public class FromFtpDeleteFileIT extends FtpServerTestSupport {
 
         mock.assertIsSatisfied();
 
-        Thread.sleep(500);
-
         // assert the file is deleted
         File file = ftpFile("deletefile/hello.txt").toFile();
-        assertFalse(file.exists(), "The file should have been deleted");
+        await().atMost(500, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> assertFalse(file.exists(), "The file should have been deleted"));
     }
 
     private void prepareFtpServer() throws Exception {

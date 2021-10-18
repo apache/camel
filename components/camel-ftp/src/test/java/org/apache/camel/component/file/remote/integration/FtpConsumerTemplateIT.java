@@ -17,6 +17,7 @@
 package org.apache.camel.component.file.remote.integration;
 
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -24,6 +25,7 @@ import org.apache.camel.Producer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -52,8 +54,6 @@ public class FtpConsumerTemplateIT extends FtpServerTestSupport {
         // must done when we are done using the exchange
         consumer.doneUoW(exchange);
 
-        Thread.sleep(500);
-
         // poll the same file again
         exchange = consumer.receive(getFtpUrl(), 5000);
         assertNotNull(exchange);
@@ -63,10 +63,10 @@ public class FtpConsumerTemplateIT extends FtpServerTestSupport {
         // must done when we are done using the exchange
         consumer.doneUoW(exchange);
 
-        // file should still exists
-        Thread.sleep(500);
+        // file should still exist
         File file = ftpFile("template/hello.txt").toFile();
-        assertTrue(file.exists(), "The file should exist: " + file);
+        await().atMost(1, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertTrue(file.exists(), "The file should exist: " + file));
     }
 
     @Test
@@ -77,8 +77,6 @@ public class FtpConsumerTemplateIT extends FtpServerTestSupport {
         assertEquals("Hello World", exchange.getIn().getBody(String.class));
 
         // forget to call done
-
-        Thread.sleep(500);
 
         // try poll the same file again
         Exchange exchange2 = consumer.receive(getFtpUrl(), 2000);
@@ -95,9 +93,9 @@ public class FtpConsumerTemplateIT extends FtpServerTestSupport {
         consumer.doneUoW(exchange2);
 
         // file should still exists
-        Thread.sleep(500);
         File file = ftpFile("template/hello.txt").toFile();
-        assertTrue(file.exists(), "The file should exist: " + file);
+        await().atMost(1, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertTrue(file.exists(), "The file should exist: " + file));
     }
 
     private void prepareFtpServer() throws Exception {
