@@ -18,16 +18,20 @@ package org.apache.camel.component.ribbon.cloud;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RibbonServiceCallRouteDslTest extends CamelTestSupport {
+    private static final int PORT1 = AvailablePortFinder.getNextAvailable();
+    private static final int PORT2 = AvailablePortFinder.getNextAvailable();
+
     @Test
     public void testServiceCall() throws Exception {
-        getMockEndpoint("mock:9090").expectedMessageCount(1);
-        getMockEndpoint("mock:9091").expectedMessageCount(1);
+        getMockEndpoint("mock:" + PORT1).expectedMessageCount(1);
+        getMockEndpoint("mock:" + PORT2).expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(2);
 
         String out = template.requestBody("direct:start", null, String.class);
@@ -49,15 +53,15 @@ public class RibbonServiceCallRouteDslTest extends CamelTestSupport {
                         .component("http")
                         .ribbonLoadBalancer()
                         .staticServiceDiscovery()
-                        .servers("localhost:9090")
-                        .servers("localhost:9091")
+                        .servers("localhost:" + PORT1)
+                        .servers("localhost:" + PORT2)
                         .endParent()
                         .to("mock:result");
-                from("jetty:http://localhost:9090")
-                        .to("mock:9090")
+                fromF("jetty:http://localhost:%d", PORT1)
+                        .to("mock:" + PORT1)
                         .transform().constant("9090");
-                from("jetty:http://localhost:9091")
-                        .to("mock:9091")
+                fromF("jetty:http://localhost:%d", PORT2)
+                        .to("mock:" + PORT2)
                         .transform().constant("9091");
             }
         };

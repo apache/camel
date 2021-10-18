@@ -23,6 +23,7 @@ import org.apache.camel.impl.cloud.StaticServiceDiscovery;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 
 public class RibbonServiceCallRegistryRouteTest extends RibbonServiceCallRouteTest {
+
     @Override
     protected RoutesBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -30,8 +31,8 @@ public class RibbonServiceCallRegistryRouteTest extends RibbonServiceCallRouteTe
             public void configure() throws Exception {
                 // setup a static ribbon server list with these 2 servers to start with
                 StaticServiceDiscovery servers = new StaticServiceDiscovery();
-                servers.addServer("myService@localhost:9090");
-                servers.addServer("myService@localhost:9091");
+                servers.addServer("myService@localhost:" + PORT1);
+                servers.addServer("myService@localhost:" + PORT2);
 
                 RibbonConfiguration configuration = new RibbonConfiguration();
                 RibbonServiceLoadBalancer loadBalancer = new RibbonServiceLoadBalancer(configuration);
@@ -50,11 +51,11 @@ public class RibbonServiceCallRegistryRouteTest extends RibbonServiceCallRouteTe
                         .component("http")
                         .end()
                         .to("mock:result");
-                from("jetty:http://localhost:9090")
-                        .to("mock:9090")
+                fromF("jetty:http://localhost:%d", PORT1)
+                        .to("mock:" + ROUTE_1_ID)
                         .transform().constant("9090");
-                from("jetty:http://localhost:9091")
-                        .to("mock:9091")
+                fromF("jetty:http://localhost:%d", PORT2)
+                        .to("mock:" + ROUTE_2_ID)
                         .transform().constant("9091");
             }
         };

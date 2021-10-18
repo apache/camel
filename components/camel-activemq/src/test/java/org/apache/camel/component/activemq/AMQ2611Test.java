@@ -16,12 +16,16 @@
  */
 package org.apache.camel.component.activemq;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.Body;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.activemq.support.ActiveMQSupport;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.support.LifecycleStrategySupport;
 import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedService;
 import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedServiceBuilder;
 import org.junit.jupiter.api.Test;
@@ -42,6 +46,8 @@ public class AMQ2611Test implements ActiveMQSupport {
             .build();
 
     private CamelContext camelContext;
+    private CountDownLatch startedLatch = new CountDownLatch(1);
+    private CountDownLatch stoppedLatch = new CountDownLatch(1);
 
     public static class Consumer {
         public void consume(@Body String message) {
@@ -60,6 +66,21 @@ public class AMQ2611Test implements ActiveMQSupport {
                 from(queueEndpointName).bean(Consumer.class, "consume");
             }
         });
+
+        camelContext.addLifecycleStrategy(new LifecycleStrategySupport() {
+            @Override
+            public void onContextStarted(CamelContext context) {
+                super.onContextStarted(context);
+                startedLatch.countDown();
+            }
+
+            @Override
+            public void onContextStopped(CamelContext context) {
+                super.onContextStopped(context);
+                stoppedLatch.countDown();
+            }
+        });
+
         camelContext.start();
         final ProducerTemplate producerTemplate = camelContext.createProducerTemplate();
         producerTemplate.sendBody(queueEndpointName, "message");
@@ -77,9 +98,9 @@ public class AMQ2611Test implements ActiveMQSupport {
             int i = 0;
             while (i++ < 5) {
                 createCamelContext();
-                Thread.sleep(1000);
+                startedLatch.await(1, TimeUnit.SECONDS);
                 destroyCamelContext();
-                Thread.sleep(1000);
+                stoppedLatch.await(1, TimeUnit.SECONDS);
                 assertEquals(0, service.getConnectionCount());
             }
         } catch (Exception e) {
