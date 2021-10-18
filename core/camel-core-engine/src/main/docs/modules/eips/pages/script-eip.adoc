@@ -1,7 +1,7 @@
 = Script EIP
 :doctitle: Script
 :shortname: script
-:d&lt;scription: Executes a script from a language which does not change the message body.
+:description: Executes a script from a language which does not change the message body.
 :since: 
 :supportlevel: Stable
 
