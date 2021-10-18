@@ -20,16 +20,23 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.ribbon.RibbonConfiguration;
 import org.apache.camel.impl.cloud.StaticServiceDiscovery;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RibbonServiceCallRouteTest extends CamelTestSupport {
+    protected static final int PORT1 = AvailablePortFinder.getNextAvailable();
+    protected static final int PORT2 = AvailablePortFinder.getNextAvailable();
+
+    protected static final String ROUTE_1_ID = "srv1";
+    protected static final String ROUTE_2_ID = "srv2";
+
     @Test
     public void testServiceCall() throws Exception {
-        getMockEndpoint("mock:9090").expectedMessageCount(1);
-        getMockEndpoint("mock:9091").expectedMessageCount(1);
+        getMockEndpoint("mock:" + ROUTE_1_ID).expectedMessageCount(1);
+        getMockEndpoint("mock:" + ROUTE_2_ID).expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(2);
 
         String out = template.requestBody("direct:start", null, String.class);
@@ -47,8 +54,8 @@ public class RibbonServiceCallRouteTest extends CamelTestSupport {
             public void configure() throws Exception {
                 // setup a static ribbon server list with these 2 servers to start with
                 StaticServiceDiscovery servers = new StaticServiceDiscovery();
-                servers.addServer("myService@localhost:9090");
-                servers.addServer("myService@localhost:9091");
+                servers.addServer("myService@localhost:" + PORT1);
+                servers.addServer("myService@localhost:" + PORT2);
 
                 RibbonConfiguration configuration = new RibbonConfiguration();
                 RibbonServiceLoadBalancer loadBalancer = new RibbonServiceLoadBalancer(configuration);
@@ -61,11 +68,11 @@ public class RibbonServiceCallRouteTest extends CamelTestSupport {
                         .serviceDiscovery(servers)
                         .end()
                         .to("mock:result");
-                from("jetty:http://localhost:9090")
-                        .to("mock:9090")
+                fromF("jetty:http://localhost:%d", PORT1)
+                        .to("mock:" + ROUTE_1_ID)
                         .transform().constant("9090");
-                from("jetty:http://localhost:9091")
-                        .to("mock:9091")
+                fromF("jetty:http://localhost:%d", PORT2)
+                        .to("mock:" + ROUTE_2_ID)
                         .transform().constant("9091");
             }
         };

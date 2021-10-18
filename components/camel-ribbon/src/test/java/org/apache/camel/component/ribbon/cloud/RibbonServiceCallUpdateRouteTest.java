@@ -20,6 +20,7 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.ribbon.RibbonConfiguration;
 import org.apache.camel.impl.cloud.StaticServiceDiscovery;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,6 +31,8 @@ import org.slf4j.LoggerFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RibbonServiceCallUpdateRouteTest extends CamelTestSupport {
+    private static final int PORT1 = AvailablePortFinder.getNextAvailable();
+    private static final int PORT2 = AvailablePortFinder.getNextAvailable();
 
     private static final Logger LOG = LoggerFactory.getLogger(RibbonServiceCallUpdateRouteTest.class);
     private final StaticServiceDiscovery servers = new StaticServiceDiscovery();
@@ -38,16 +41,16 @@ public class RibbonServiceCallUpdateRouteTest extends CamelTestSupport {
     @BeforeEach
     public void setUp() throws Exception {
         // setup a static ribbon server list with these 2 servers to start with
-        servers.addServer("myService@localhost:9090");
-        servers.addServer("myService@localhost:9091");
+        servers.addServer("myService@localhost:" + PORT1);
+        servers.addServer("myService@localhost:" + PORT2);
 
         super.setUp();
     }
 
     @Test
     public void testServiceCall() throws Exception {
-        getMockEndpoint("mock:9090").expectedMessageCount(1);
-        getMockEndpoint("mock:9091").expectedMessageCount(1);
+        getMockEndpoint("mock:" + PORT1).expectedMessageCount(1);
+        getMockEndpoint("mock:" + PORT2).expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(2);
 
         String out = template.requestBody("direct:start", null, String.class);
@@ -58,8 +61,8 @@ public class RibbonServiceCallUpdateRouteTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         // stop the first server and remove it from the known list of servers
-        context.getRouteController().stopRoute("9090");
-        servers.removeServer(s -> ObjectHelper.equal("localhost", s.getHost()) && 9090 == s.getPort());
+        context.getRouteController().stopRoute(String.valueOf(PORT1));
+        servers.removeServer(s -> ObjectHelper.equal("localhost", s.getHost()) && PORT1 == s.getPort());
 
         // call the other active server
         String out3 = template.requestBody("direct:start", null, String.class);
@@ -93,11 +96,11 @@ public class RibbonServiceCallUpdateRouteTest extends CamelTestSupport {
                         .serviceDiscovery(servers)
                         .end()
                         .to("mock:result");
-                from("jetty:http://localhost:9090").routeId("9090")
-                        .to("mock:9090")
+                fromF("jetty:http://localhost:%d", PORT1).routeId(String.valueOf(PORT1))
+                        .to("mock:" + PORT1)
                         .transform().constant("9090");
-                from("jetty:http://localhost:9091").routeId("9091")
-                        .to("mock:9091")
+                fromF("jetty:http://localhost:%d", PORT2).routeId(String.valueOf(PORT2))
+                        .to("mock:" + PORT2)
                         .transform().constant("9091");
             }
         };
