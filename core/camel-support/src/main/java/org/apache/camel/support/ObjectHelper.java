@@ -687,12 +687,7 @@ public final class ObjectHelper {
             return Collections.emptyList();
         } else if (value instanceof Iterator) {
             final Iterator<Object> iterator = (Iterator<Object>) value;
-            return new Iterable<Object>() {
-                @Override
-                public Iterator<Object> iterator() {
-                    return iterator;
-                }
-            };
+            return (Iterable<Object>) () -> iterator;
         } else if (value instanceof Iterable) {
             return (Iterable<Object>) value;
         } else if (value instanceof Map) {
