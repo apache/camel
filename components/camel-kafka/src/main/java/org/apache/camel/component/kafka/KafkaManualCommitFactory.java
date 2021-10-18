@@ -34,5 +34,5 @@ public interface KafkaManualCommitFactory {
     KafkaManualCommit newInstance(
             Exchange exchange, KafkaConsumer consumer, String topicName, String threadId,
             StateRepository<String, String> offsetRepository,
-            TopicPartition partition, long recordOffset, long commitTimeout, Collection<KafkaManualCommit> asyncCommits);
+            TopicPartition partition, long recordOffset, long commitTimeout, Collection<KafkaAsyncManualCommit> asyncCommits);
 }

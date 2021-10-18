@@ -59,7 +59,7 @@ class KafkaFetchRecords implements Runnable {
     private final BridgeExceptionHandlerToErrorHandler bridge;
     private final ReentrantLock lock = new ReentrantLock();
     private final AtomicBoolean stopping = new AtomicBoolean(false);
-    private final ConcurrentLinkedQueue<KafkaManualCommit> asyncCommits = new ConcurrentLinkedQueue<>();
+    private final ConcurrentLinkedQueue<KafkaAsyncManualCommit> asyncCommits = new ConcurrentLinkedQueue<>();
 
     private boolean retry = true;
     private boolean reconnect = true;

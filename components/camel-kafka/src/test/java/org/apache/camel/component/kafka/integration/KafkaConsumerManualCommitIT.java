@@ -73,7 +73,7 @@ public class KafkaConsumerManualCommitIT extends BaseEmbeddedKafkaTestSupport {
                 from(from).routeId("foo").to(to).process(e -> {
                     KafkaManualCommit manual = e.getIn().getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
                     assertNotNull(manual);
-                    manual.commitSync();
+                    manual.commit();
                 });
                 from(from).routeId("bar").autoStartup(false).to(toBar);
             }

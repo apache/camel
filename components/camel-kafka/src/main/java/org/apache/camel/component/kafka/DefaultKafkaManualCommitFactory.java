@@ -29,8 +29,8 @@ public class DefaultKafkaManualCommitFactory implements KafkaManualCommitFactory
     public KafkaManualCommit newInstance(
             Exchange exchange, KafkaConsumer consumer, String topicName, String threadId,
             StateRepository<String, String> offsetRepository,
-            TopicPartition partition, long recordOffset, long commitTimeout, Collection<KafkaManualCommit> asyncCommits) {
-        return new DefaultKafkaManualCommit(
-                consumer, topicName, threadId, offsetRepository, partition, recordOffset, commitTimeout, asyncCommits);
+            TopicPartition partition, long recordOffset, long commitTimeout, Collection<KafkaAsyncManualCommit> asyncCommits) {
+        return new DefaultKafkaManualSyncCommit(
+                consumer, topicName, threadId, offsetRepository, partition, recordOffset, commitTimeout);
     }
 }

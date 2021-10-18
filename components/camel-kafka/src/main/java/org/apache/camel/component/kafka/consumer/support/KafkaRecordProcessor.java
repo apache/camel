@@ -25,6 +25,7 @@ import java.util.stream.StreamSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.component.kafka.KafkaAsyncManualCommit;
 import org.apache.camel.component.kafka.KafkaConfiguration;
 import org.apache.camel.component.kafka.KafkaConstants;
 import org.apache.camel.component.kafka.KafkaManualCommit;
@@ -52,7 +53,7 @@ public class KafkaRecordProcessor {
     private final KafkaConsumer<?, ?> consumer;
     private final KafkaManualCommitFactory manualCommitFactory;
     private final String threadId;
-    private final ConcurrentLinkedQueue<KafkaManualCommit> asyncCommits;
+    private final ConcurrentLinkedQueue<KafkaAsyncManualCommit> asyncCommits;
 
     public static final class ProcessResult {
         private static final ProcessResult UNPROCESSED_RESULT = new ProcessResult(false, START_OFFSET);
@@ -81,7 +82,7 @@ public class KafkaRecordProcessor {
     public KafkaRecordProcessor(boolean autoCommitEnabled, KafkaConfiguration configuration,
                                 Processor processor, KafkaConsumer<?, ?> consumer,
                                 KafkaManualCommitFactory manualCommitFactory,
-                                String threadId, ConcurrentLinkedQueue<KafkaManualCommit> asyncCommits) {
+                                String threadId, ConcurrentLinkedQueue<KafkaAsyncManualCommit> asyncCommits) {
         this.autoCommitEnabled = autoCommitEnabled;
         this.configuration = configuration;
         this.processor = processor;

@@ -24,7 +24,9 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.AggregationStrategies;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.kafka.DefaultKafkaManualAsyncCommitFactory;
 import org.apache.camel.component.kafka.KafkaConstants;
+import org.apache.camel.component.kafka.KafkaEndpoint;
 import org.apache.camel.component.kafka.KafkaManualCommit;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -68,10 +70,11 @@ public class KafkaConsumerAsyncManualCommitIT extends BaseEmbeddedKafkaTestSuppo
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
+        ((KafkaEndpoint) from).getComponent().setKafkaManualCommitFactory(new DefaultKafkaManualAsyncCommitFactory());
         return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(from).routeId("foo").to("direct:aggregate");
                 // With sync manual commit, this would throw a concurrent modification exception
                 // It can be usesd in aggregator with completion timeout/interval for instance
@@ -86,11 +89,7 @@ public class KafkaConsumerAsyncManualCommitIT extends BaseEmbeddedKafkaTestSuppo
                             KafkaManualCommit manual = e.getMessage().getBody(Exchange.class)
                                     .getMessage().getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
                             assertNotNull(manual);
-                            if (e.getMessage().getBody(String.class).equals("message-0")) {
-                                // Delay the commit of the first message
-                                Thread.sleep(2000);
-                            }
-                            manual.commitAsync();
+                            manual.commit();
                         });
                 from(from).routeId("bar").autoStartup(false).to(toBar);
             }
