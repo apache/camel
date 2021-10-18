@@ -207,7 +207,7 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
                 processByErrorHandler(exchange);
 
                 // after handling and still an exception or marked as rollback only then rollback
-                if (exchange.getException() != null || exchange.isRollbackOnly()) {
+                if (exchange.getException() != null || exchange.isRollbackOnly() || exchange.isRollbackOnlyLast()) {
 
                     // wrap exception in transacted exception
                     if (exchange.getException() != null) {
