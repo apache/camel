@@ -49,7 +49,7 @@ public class SplitterMapTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .split(body())
+                        .split(body())
                         .setHeader("myKey").simple("${body.key}")
                         .setBody(simple("${body.value}"))
                         .to("mock:line");
