@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.concurrent.Callable;
 import java.util.regex.Pattern;
@@ -694,6 +695,9 @@ public final class ObjectHelper {
             };
         } else if (value instanceof Iterable) {
             return (Iterable<Object>) value;
+        } else if (value instanceof Map) {
+            Map<?, ?> map = (Map<?, ?>) value;
+            return map.entrySet();
         } else if (value.getClass().isArray()) {
             if (org.apache.camel.util.ObjectHelper.isPrimitiveArrayType(value.getClass())) {
                 final Object array = value;
