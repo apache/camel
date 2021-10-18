@@ -18,6 +18,7 @@ package org.apache.camel.component.file.remote.integration;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -26,6 +27,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertFileNotExists;
+import static org.awaitility.Awaitility.await;
 
 public class FtpConsumerPostProcessingOnDisconnectIT extends FtpServerTestSupport {
     private static final String SAMPLE_FILE_NAME_1 = String.format("sample-1-%s.txt",
@@ -51,8 +53,7 @@ public class FtpConsumerPostProcessingOnDisconnectIT extends FtpServerTestSuppor
         assertMockEndpointsSatisfied();
 
         // File is deleted
-        Thread.sleep(250);
-        assertFileNotExists(ftpFile(SAMPLE_FILE_NAME_1));
+        await().atMost(250, TimeUnit.MILLISECONDS).untilAsserted(() -> assertFileNotExists(ftpFile(SAMPLE_FILE_NAME_1)));
     }
 
     @Test

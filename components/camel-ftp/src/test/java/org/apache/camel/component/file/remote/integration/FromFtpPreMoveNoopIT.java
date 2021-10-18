@@ -17,6 +17,7 @@
 package org.apache.camel.component.file.remote.integration;
 
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -27,6 +28,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -54,9 +56,9 @@ public class FromFtpPreMoveNoopIT extends FtpServerTestSupport {
         mock.assertIsSatisfied();
 
         // and file should be kept there
-        Thread.sleep(1000);
         File file = ftpFile("movefile/work/hello.txt").toFile();
-        assertTrue(file.exists(), "The file should exists");
+        await().atMost(1, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertTrue(file.exists(), "The file should exists"));
     }
 
     private void prepareFtpServer() throws Exception {

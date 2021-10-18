@@ -18,12 +18,14 @@ package org.apache.camel.component.file.remote.integration;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FtpStreamingMoveIT extends FtpServerTestSupport {
@@ -48,10 +50,9 @@ public class FtpStreamingMoveIT extends FtpServerTestSupport {
         assertTrue(remoteFile.getBody() instanceof InputStream);
 
         // give time for consumer to rename file
-        Thread.sleep(1000);
-
         File file = ftpFile("mymove/done/hello.txt").toFile();
-        assertTrue(file.exists(), "File should have been renamed");
+        await().atMost(1, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertTrue(file.exists(), "File should have been renamed"));
     }
 
     @Override

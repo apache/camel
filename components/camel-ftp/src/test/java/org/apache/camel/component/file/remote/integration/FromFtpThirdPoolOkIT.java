@@ -17,12 +17,14 @@
 package org.apache.camel.component.file.remote.integration;
 
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -47,9 +49,8 @@ public class FromFtpThirdPoolOkIT extends FtpServerTestSupport {
         assertMockEndpointsSatisfied();
 
         // give time to delete file
-        Thread.sleep(200);
-
-        assertEquals(3, counter);
+        await().atMost(200, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> assertEquals(3, counter));
 
         // assert the file is deleted
         File file = ftpFile("thirdpool/hello.txt").toFile();

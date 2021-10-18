@@ -29,6 +29,7 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -56,10 +57,9 @@ public class FtpConsumerThrowExceptionOnLoginFailedIT extends FtpServerTestSuppo
         assertMockEndpointsSatisfied();
 
         // consumer should be stopped
-        Thread.sleep(1000);
-
         Consumer consumer = context.getRoute("foo").getConsumer();
-        assertTrue(((ServiceSupport) consumer).isStopped(), "Consumer should be stopped");
+        await().atMost(1, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertTrue(((ServiceSupport) consumer).isStopped(), "Consumer should be stopped"));
     }
 
     @Override

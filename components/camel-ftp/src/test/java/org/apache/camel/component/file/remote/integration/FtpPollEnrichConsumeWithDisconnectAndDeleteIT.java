@@ -17,6 +17,7 @@
 package org.apache.camel.component.file.remote.integration;
 
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
@@ -26,6 +27,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class FtpPollEnrichConsumeWithDisconnectAndDeleteIT extends FtpServerTestSupport {
@@ -49,27 +51,9 @@ public class FtpPollEnrichConsumeWithDisconnectAndDeleteIT extends FtpServerTest
 
         assertMockEndpointsSatisfied();
 
-        long startFileDeletionCheckTime = System.currentTimeMillis();
-        boolean fileExists = true;
-        while (System.currentTimeMillis() - startFileDeletionCheckTime < 3000) { // wait
-                                                                                // up
-                                                                                // to
-                                                                                // 3000ms
-                                                                                // for
-                                                                                // file
-                                                                                // to
-                                                                                // be
-                                                                                // deleted
-            File file = ftpFile("poll/hello.txt").toFile();
-            fileExists = file.exists();
-
-            if (fileExists) {
-                LOG.info("Will check that file has been deleted again in 200ms");
-                Thread.sleep(200);
-            }
-        }
-
-        assertFalse(fileExists, "The file should have been deleted");
+        File file = ftpFile("poll/hello.txt").toFile();
+        await().atMost(3, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertFalse(file.exists(), "The file should have been deleted"));
     }
 
     @Override

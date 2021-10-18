@@ -18,6 +18,7 @@ package org.apache.camel.component.file.remote.integration;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
@@ -25,6 +26,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertFileExists;
+import static org.awaitility.Awaitility.await;
 
 /**
  * Unit test for FTP using expression (file language)
@@ -48,10 +50,9 @@ public class FtpConsumerMoveExpressionIT extends FtpServerTestSupport {
         assertMockEndpointsSatisfied();
 
         // give time for consumer to rename file
-        Thread.sleep(1000);
-
         String now = new SimpleDateFormat("yyyyMMdd").format(new Date());
-        assertFileExists(ftpFile("filelanguage/backup/" + now + "/123-report2.bak"));
+        await().atMost(1, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertFileExists(ftpFile("filelanguage/backup/" + now + "/123-report2.bak")));
     }
 
     @Override
