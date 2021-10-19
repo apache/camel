@@ -64,6 +64,8 @@ include::partial$component-endpoint-options.adoc[]
 
 |`CamelHwCloudObsBucketLocation` |`String` | Bucket location when creating a new bucket
 
+|`CamelHwCloudObsObjectName` |`String` | Name of the object to be used in operation
+
 |=======================================================================
 
 If any of the above properties are set, they will override their corresponding query parameter.
