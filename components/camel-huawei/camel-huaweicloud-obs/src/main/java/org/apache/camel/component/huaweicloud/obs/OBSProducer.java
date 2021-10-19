@@ -109,7 +109,7 @@ public class OBSProducer extends DefaultProducer {
     private void getObject(Exchange exchange, ClientConfigurations clientConfigurations) {
         if (ObjectHelper.isEmpty(clientConfigurations.getBucketName()) ||
                 ObjectHelper.isEmpty(clientConfigurations.getObjectName())) {
-            throw new IllegalArgumentException("Bucket name and object names are mandatory to get objects");
+            throw new IllegalArgumentException("Bucket and object names are mandatory to get objects");
         }
 
         LOG.debug("Downloading remote obs object {} from bucket {}", clientConfigurations.getObjectName(),
