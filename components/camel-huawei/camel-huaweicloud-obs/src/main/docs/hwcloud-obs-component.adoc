@@ -86,6 +86,8 @@ If any of the above properties are set, they will override their corresponding q
 
 |`CamelHwCloudObsBucketName` |`String` | Name of the bucket where object is contained
 
+|`CamelHwCloudObsObjectName` |`String` | Name of the object with which the operation is to be performed
+
 |`CamelHwCloudObsObjectKey` |`String` | The key that the object is stored under
 
 |`CamelHwCloudObsLastModified` |`String` | The date and time that the object was last modified
@@ -111,6 +113,7 @@ If any of the above properties are set, they will override their corresponding q
 - checkBucketExists - `bucketName` parameter is *required*
 - getBucketMetadata - `bucketName` parameter is *required*
 - listObjects - `bucketName` parameter is *required*
+- getObject - `bucketName` and `objectName` parameters are *required*
 
 === Passing Options Through Exchange Body
 There are many options that can be submited to the `createBucket` and `listObjects` operations, so they can be passed through the exchange body.
