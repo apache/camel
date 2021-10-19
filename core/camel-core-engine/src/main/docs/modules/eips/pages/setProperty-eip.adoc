@@ -5,7 +5,10 @@
 :since: 
 :supportlevel: Stable
 
-The SetProperty EIP allows you to set a property on your exchange.
+The SetProperty EIP is used for setting a xref:latest@manual:ROOT:exchange.adoc[Exchange] property.
+
+NOTE: An `Exchange` property is a key/value set as a `Map` on the `org.apache.camel.Exchange` instance.
+This is *not* for setting xref:latest@manual:ROOT:using-propertyplaceholder.adoc[property placeholders].
 
 == Options
 
@@ -13,33 +16,78 @@ The SetProperty EIP allows you to set a property on your exchange.
 include::partial$eip-options.adoc[]
 // eip options: END
 
-== Examples
+== Example
 
-The following example shows how to use the SetProperty EIP
+The following example shows how to set a property on the exchange in a Camel route:
 
 [source,java]
 ----
-RouteBuilder builder = new RouteBuilder() {
-    public void configure() {
-        from("direct:a")
-            .setProperty("myProperty", constant("test"))
-            .to("direct:b");
-    }
-};
+from("direct:a")
+    .setProperty("myProperty", constant("test"))
+    .to("direct:b");
 ----
-
 
 And the same example using XML:
 
 [source,xml]
 ----
-<camelContext xmlns="http://camel.apache.org/schema/spring">
-    <route>
-        <from uri="direct:a"/>
-        <setProperty name="myProperty">
-            <constant>test</constant>
-        </setProperty>
-        <to uri="direct:b"/>
-    </route>
-</camelContext>
+<route>
+    <from uri="direct:a"/>
+    <setProperty name="myProperty">
+        <constant>test</constant>
+    </setProperty>
+    <to uri="direct:b"/>
+</route>
+----
+
+=== Setting an exchange property from another exchange property
+
+You can also set an exchange property with the value from another exchange property.
+
+In the example we set the exchange property foo with the value from an existing exchange property named bar.
+
+[source,java]
+----
+from("direct:a")
+    .setProperty("foo", exchangeProperty("bar"))
+    .to("direct:b");
+----
+
+And in XML:
+
+[source,xml]
+----
+<route>
+    <from uri="direct:a"/>
+    <setProperty name="foo">
+        <exchangeProperty>bar</exchangeProperty>
+    </setProperty>
+    <to uri="direct:b"/>
+</route>
+----
+
+=== Setting an exchange property with the current message body
+
+It is of course also possible to set an exchange property with a value
+from anything on the `Exchange` such as the message body:
+
+[source,java]
+----
+from("direct:a")
+    .setProperty("myBody", body())
+    .to("direct:b");
+----
+
+And in XML we use the xref:components:languages:simple-language.adoc[Simple] language
+to refer to the message body:
+
+[source,xml]
+----
+<route>
+    <from uri="direct:a"/>
+    <setProperty name="myBody">
+        <simple>${body}</simple>
+    </setProperty>
+    <to uri="direct:b"/>
+</route>
 ----
