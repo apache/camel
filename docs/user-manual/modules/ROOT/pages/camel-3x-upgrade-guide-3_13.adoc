@@ -86,3 +86,7 @@ The `FtpConsumer`, `FtpOperations`, `SftConsumer` and `SftpOperations` classes w
 === camel-jsch
 
 The `ScpOperations` class were modified to comply with the API changes on the `camel-file` component.
+
+=== camel-kafka
+
+The `KafkaManualCommit` class were modified in order to support async manual commit. Please use the new function `commit()` instead of the old deprecated one `commitSync`.
