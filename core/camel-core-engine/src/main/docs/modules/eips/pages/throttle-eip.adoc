@@ -69,20 +69,33 @@ And to throttle 50 message per second:
 
 === Dynamically changing maximum requests per period
 
-TODO: 
+The Throttler uses an xref:latest@manual:ROOT:expression.adoc[Expression]
+to configure the number of requests. In all the examples from above, we used
+a xref:components:languages:constant-language.adoc[constant]. However, the expression can
+be dynamic, such as determined from a message header from the current `Exchange`.
 
-Since we use an Expression you can adjust this value at runtime, for example you can provide a header with the value. At runtime Camel evaluates the expression and converts the result to a `java.lang.Long` type. In the example below we use a header from the message to determine the maximum requests per period. If the header is absent, then the Throttler uses the old value. So that allows you to only provide a header if the value is to be changed:
+At runtime Camel evaluates the expression and converts the result to a `java.lang.Long` type.
+In the example below we use a header from the message to determine the maximum requests per period.
+If the header is absent, then the Throttler uses the old value. This allows you to only provide a header if the value is to be changed:
+
+[source,java]
+----
+from("seda:a")
+  .throttle(header("throttleValue")).timePeriodMillis(500)
+  .to("seda:b")
+----
+
+And in XML:
 
 [source,xml]
 ----
 <route>
-  <from uri="direct:expressionHeader"/>
+  <from uri="seda:a"/>
   <throttle timePeriodMillis="500">
     <!-- use a header to determine how many messages to throttle per 0.5 sec -->
     <header>throttleValue</header>
   </throttle>
-  <to uri="log:result"/>
-  <to uri="mock:result"/>
+  <to uri="seda:b"/>
 </route>
 ----
 
@@ -109,6 +122,68 @@ And in XML:
   <from uri="seda:a"/>
   <throttle timePeriodMillis="100" asyncDelayed="true">
     <constant>100</constant>
+  </throttle>
+  <to uri="seda:b"/>
+</route>
+----
+
+=== Rejecting processing if rate limit hit
+
+When a message is being _throttled_ due the maximum request per limit has been reached, then
+the Throttler will by default wait until there is _free space_ before continue routing the message.
+
+Instead of waiting you can also configure the Throttler to reject the message by throwing `ThrottlerRejectedExecutionException`
+exception.
+
+[source,java]
+---------------------
+from("seda:a")
+  .throttle(100).rejectExecution(true)
+  .to("seda:b");
+---------------------
+
+And in XML:
+
+[source,xml]
+----
+<route>
+  <from uri="seda:a"/>
+  <throttle timePeriodMillis="100" rejectExecution="true">
+    <constant>100</constant>
+  </throttle>
+  <to uri="seda:b"/>
+</route>
+----
+
+=== Throttling per group
+
+The Throttler will by default throttle all messages in the same group. However, it is possible to use
+a _correlation expression_ to diving into multiple groups, where each group is throttled independently.
+
+For example, you can throttle by a xref:message.adoc[message] header as shown in the following example:
+
+[source,java]
+---------------------
+from("seda:a")
+  .throttle(100).correlationExpression(header("region"))
+  .to("seda:b");
+---------------------
+
+In the example above messages a throttled by the header with name region.
+So suppose there are regions for US, EMEA, and ASIA, then we have three different groups, that each
+are throttled by 100 messages per second.
+
+And in XML:
+
+[source,xml]
+----
+<route>
+  <from uri="seda:a"/>
+  <throttle>
+    <constant>100</constant>
+    <correlationExpression>
+      <header>region</header>
+    </correlationExpression>
   </throttle>
   <to uri="seda:b"/>
 </route>
