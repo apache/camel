@@ -21,6 +21,7 @@ import java.lang.reflect.Method;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import javax.jms.ConnectionFactory;
 
@@ -48,7 +49,6 @@ public class JmsDefaultTaskExecutorTypeTest extends CamelTestSupport {
         Long beforeThreadCount = currentThreadCount();
         getMockEndpoint("mock:result.threadPool").expectedMessageCount(1000);
         doSendMessages("foo.threadPool", 500, 5, DefaultTaskExecutorType.ThreadPool);
-        Thread.sleep(100);
         doSendMessages("foo.threadPool", 500, 5, DefaultTaskExecutorType.ThreadPool);
         assertMockEndpointsSatisfied();
         Long numberThreadsCreated = currentThreadCount() - beforeThreadCount;
@@ -63,7 +63,6 @@ public class JmsDefaultTaskExecutorTypeTest extends CamelTestSupport {
         Long beforeThreadCount = currentThreadCount();
         getMockEndpoint("mock:result.simpleAsync").expectedMessageCount(1000);
         doSendMessages("foo.simpleAsync", 500, 5, DefaultTaskExecutorType.SimpleAsync);
-        Thread.sleep(100);
         doSendMessages("foo.simpleAsync", 500, 5, DefaultTaskExecutorType.SimpleAsync);
         assertMockEndpointsSatisfied();
         Long numberThreadsCreated = currentThreadCount() - beforeThreadCount;
@@ -78,7 +77,6 @@ public class JmsDefaultTaskExecutorTypeTest extends CamelTestSupport {
         Long beforeThreadCount = currentThreadCount();
         getMockEndpoint("mock:result.default").expectedMessageCount(1000);
         doSendMessages("foo.default", 500, 5, null);
-        Thread.sleep(100);
         doSendMessages("foo.default", 500, 5, null);
         assertMockEndpointsSatisfied();
         Long numberThreadsCreated = currentThreadCount() - beforeThreadCount;
@@ -97,7 +95,6 @@ public class JmsDefaultTaskExecutorTypeTest extends CamelTestSupport {
         Long beforeThreadCount = currentThreadCount();
         getMockEndpoint("mock:result.default").expectedMessageCount(1000);
         doSendMessages("foo.default", 500, 5, DefaultTaskExecutorType.ThreadPool);
-        Thread.sleep(100);
         doSendMessages("foo.default", 500, 5, DefaultTaskExecutorType.ThreadPool);
         assertMockEndpointsSatisfied();
         Long numberThreadsCreated = currentThreadCount() - beforeThreadCount;
@@ -131,23 +128,35 @@ public class JmsDefaultTaskExecutorTypeTest extends CamelTestSupport {
 
     private void doSendMessages(
             final String queueName, int messages, int poolSize,
-            final DefaultTaskExecutorType defaultTaskExecutorType)
-            throws Exception {
-        ExecutorService executor = Executors.newFixedThreadPool(poolSize);
-        final CountDownLatch latch = new CountDownLatch(messages);
+            final DefaultTaskExecutorType defaultTaskExecutorType, CountDownLatch latch, ExecutorService executor) {
+
         for (int i = 0; i < messages; i++) {
             final int index = i;
             executor.submit(() -> {
                 String options = defaultTaskExecutorType == null
-                        ? "" : "?defaultTaskExecutorType="
-                               + defaultTaskExecutorType.toString();
+                        ? "" : "?defaultTaskExecutorType=" + defaultTaskExecutorType;
                 template.requestBody("activemq:queue:" + queueName + options, "Message " + index);
                 latch.countDown();
                 return null;
             });
         }
-        latch.await();
-        executor.shutdown();
+
+    }
+
+    private void doSendMessages(
+            final String queueName, int messages, int poolSize,
+            final DefaultTaskExecutorType defaultTaskExecutorType)
+            throws Exception {
+        ExecutorService executor = Executors.newFixedThreadPool(poolSize);
+        final CountDownLatch latch = new CountDownLatch(messages);
+
+        try {
+            doSendMessages(queueName, messages, poolSize, defaultTaskExecutorType, latch, executor);
+            executor.shutdown();
+            executor.awaitTermination(5, TimeUnit.SECONDS);
+        } finally {
+            latch.await(5, TimeUnit.SECONDS);
+        }
     }
 
     @Override

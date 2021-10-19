@@ -16,8 +16,7 @@
  */
 package org.apache.camel.component.jms.discovery;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.jms.ConnectionFactory;
 
@@ -28,10 +27,11 @@ import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class JmsDiscoveryTest extends CamelTestSupport {
     protected MyRegistry myRegistry = new MyRegistry();
@@ -47,10 +47,8 @@ public class JmsDiscoveryTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         // sleep a little
-        Thread.sleep(1000);
-
-        Map<String, Map<?, ?>> map = new HashMap<>(myRegistry.getServices());
-        assertTrue(map.size() >= 1, "There should be 1 or more, was: " + map.size());
+        Awaitility.await().atMost(1, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertThat(myRegistry.getServices()).hasSizeGreaterThanOrEqualTo(1));
     }
 
     @Override
