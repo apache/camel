@@ -60,7 +60,7 @@ public class GetObjectFunctionalTest extends CamelTestSupport {
      */
     @Disabled("Manually enable this once you configure the parameters in the placeholders above")
     @Test
-    public void testListBuckets() throws Exception {
+    public void testGetObjectFunctionalTest() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:get_object_result");
         mock.expectedMinimumMessageCount(1);
         template.sendBody("direct:get_object", null);

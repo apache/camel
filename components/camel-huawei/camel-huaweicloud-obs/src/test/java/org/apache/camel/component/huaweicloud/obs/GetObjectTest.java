@@ -76,7 +76,7 @@ public class GetObjectTest extends CamelTestSupport {
     }
 
     @Test
-    public void testListBuckets() throws Exception {
+    public void testGetObject() throws Exception {
 
         ObsObject response = new ObsObject();
         response.setBucketName(bucketName);
