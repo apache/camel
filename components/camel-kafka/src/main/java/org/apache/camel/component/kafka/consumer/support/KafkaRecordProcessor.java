@@ -19,11 +19,13 @@ package org.apache.camel.component.kafka.consumer.support;
 
 import java.time.Duration;
 import java.util.Collections;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.StreamSupport;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.component.kafka.KafkaAsyncManualCommit;
 import org.apache.camel.component.kafka.KafkaConfiguration;
 import org.apache.camel.component.kafka.KafkaConstants;
 import org.apache.camel.component.kafka.KafkaManualCommit;
@@ -51,6 +53,7 @@ public class KafkaRecordProcessor {
     private final KafkaConsumer<?, ?> consumer;
     private final KafkaManualCommitFactory manualCommitFactory;
     private final String threadId;
+    private final ConcurrentLinkedQueue<KafkaAsyncManualCommit> asyncCommits;
 
     public static final class ProcessResult {
         private static final ProcessResult UNPROCESSED_RESULT = new ProcessResult(false, START_OFFSET);
@@ -79,13 +82,14 @@ public class KafkaRecordProcessor {
     public KafkaRecordProcessor(boolean autoCommitEnabled, KafkaConfiguration configuration,
                                 Processor processor, KafkaConsumer<?, ?> consumer,
                                 KafkaManualCommitFactory manualCommitFactory,
-                                String threadId) {
+                                String threadId, ConcurrentLinkedQueue<KafkaAsyncManualCommit> asyncCommits) {
         this.autoCommitEnabled = autoCommitEnabled;
         this.configuration = configuration;
         this.processor = processor;
         this.consumer = consumer;
         this.manualCommitFactory = manualCommitFactory;
         this.threadId = threadId;
+        this.asyncCommits = asyncCommits;
     }
 
     private void setupExchangeMessage(Message message, ConsumerRecord record) {
@@ -140,7 +144,7 @@ public class KafkaRecordProcessor {
 
             // allow Camel users to access the Kafka consumer API to be able to do for example manual commits
             KafkaManualCommit manual = manualCommitFactory.newInstance(exchange, consumer, partition.topic(), threadId,
-                    offsetRepository, partition, record.offset(), configuration.getCommitTimeoutMs());
+                    offsetRepository, partition, record.offset(), configuration.getCommitTimeoutMs(), asyncCommits);
             message.setHeader(KafkaConstants.MANUAL_COMMIT, manual);
             message.setHeader(KafkaConstants.LAST_POLL_RECORD, !recordHasNext && !partitionHasNext);
         }

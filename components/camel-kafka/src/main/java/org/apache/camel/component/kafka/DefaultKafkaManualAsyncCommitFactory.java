@@ -16,25 +16,21 @@
  */
 package org.apache.camel.component.kafka;
 
-/**
- * Can be used for forcing manual offset commit when using Kafka consumer.
- */
-public interface KafkaManualCommit {
+import java.util.Collection;
 
-    /**
-     * Commit synchronously or asynchronously depending on the implementation.
-     *
-     * @see org.apache.kafka.clients.consumer.KafkaConsumer#commitSync()
-     * @see org.apache.kafka.clients.consumer.KafkaConsumer#commitAsync()
-     */
-    void commit();
+import org.apache.camel.Exchange;
+import org.apache.camel.spi.StateRepository;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.TopicPartition;
 
-    /**
-     * Commit synchronously.
-     *
-     * @see        org.apache.kafka.clients.consumer.KafkaConsumer#commitSync()
-     * @deprecated use commit function instead.
-     */
-    @Deprecated
-    void commitSync();
+public class DefaultKafkaManualAsyncCommitFactory implements KafkaManualCommitFactory {
+
+    @Override
+    public KafkaManualCommit newInstance(
+            Exchange exchange, KafkaConsumer consumer, String topicName, String threadId,
+            StateRepository<String, String> offsetRepository,
+            TopicPartition partition, long recordOffset, long commitTimeout, Collection<KafkaAsyncManualCommit> asyncCommits) {
+        return new DefaultKafkaManualAsyncCommit(
+                consumer, topicName, threadId, offsetRepository, partition, recordOffset, commitTimeout, asyncCommits);
+    }
 }

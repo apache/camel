@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.kafka;
 
+import java.util.Collection;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.StateRepository;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -27,8 +29,8 @@ public class DefaultKafkaManualCommitFactory implements KafkaManualCommitFactory
     public KafkaManualCommit newInstance(
             Exchange exchange, KafkaConsumer consumer, String topicName, String threadId,
             StateRepository<String, String> offsetRepository,
-            TopicPartition partition, long recordOffset, long commitTimeout) {
-        return new DefaultKafkaManualCommit(
+            TopicPartition partition, long recordOffset, long commitTimeout, Collection<KafkaAsyncManualCommit> asyncCommits) {
+        return new DefaultKafkaManualSyncCommit(
                 consumer, topicName, threadId, offsetRepository, partition, recordOffset, commitTimeout);
     }
 }

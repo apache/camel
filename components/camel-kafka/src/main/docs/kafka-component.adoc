@@ -396,11 +396,17 @@ You can then use the `KafkaManualCommit` from Java code such as a Camel `Process
 public void process(Exchange exchange) {
     KafkaManualCommit manual =
         exchange.getIn().getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
-    manual.commitSync();
+    manual.commit();
 }
 ----
 
 This will force a synchronous commit which will block until the commit is acknowledge on Kafka, or if it fails an exception is thrown.
+You can use an asynchronous commit as well by configuring the `KafkaManualCommitFactory` with the `DefaultKafkaManualAsyncCommitFactory`implementation.
+
+The commit will then be done in the next consumer loop using the kafka asynchronous commit api.
+Be aware that records from a partition must be processed and committed by a unique thread.
+If not, this could lead with non consistent behaviors.
+This is mostly useful with aggregation's completion timeout strategies.
 
 If you want to use a custom implementation of `KafkaManualCommit` then you can configure a custom `KafkaManualCommitFactory`
 on the `KafkaComponent` that creates instances of your custom implementation.
