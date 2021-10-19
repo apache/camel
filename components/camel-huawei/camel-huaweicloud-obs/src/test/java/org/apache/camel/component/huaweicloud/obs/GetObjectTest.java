@@ -22,7 +22,8 @@ import java.io.InputStream;
 import java.util.Date;
 
 import com.obs.services.ObsClient;
-import com.obs.services.model.*;
+import com.obs.services.model.ObjectMetadata;
+import com.obs.services.model.ObsObject;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
