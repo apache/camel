@@ -31,6 +31,7 @@ import org.apache.camel.support.service.ServiceSupport;
  */
 public abstract class SimpleEventNotifierSupport extends ServiceSupport implements EventNotifier {
 
+    boolean ignoreCamelContextInitEvents;
     boolean ignoreCamelContextEvents;
     boolean ignoreRouteEvents;
     boolean ignoreServiceEvents;
@@ -71,6 +72,16 @@ public abstract class SimpleEventNotifierSupport extends ServiceSupport implemen
     @Override
     public boolean isDisabled() {
         return false;
+    }
+
+    @Override
+    public boolean isIgnoreCamelContextInitEvents() {
+        return ignoreCamelContextInitEvents;
+    }
+
+    @Override
+    public void setIgnoreCamelContextInitEvents(boolean ignoreCamelContextInitEvents) {
+        this.ignoreCamelContextInitEvents = ignoreCamelContextInitEvents;
     }
 
     @Override

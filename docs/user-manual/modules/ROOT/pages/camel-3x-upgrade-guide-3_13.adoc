@@ -36,6 +36,12 @@ to
 simple("1", Integer.class)
 ----
 
+=== CamelContextInitializing and CamelContextInitialized events
+
+These two events are fired during bootstrap of `CamelContext` even if a custom `EventNotifier`
+may not have been fully started. This is due to that these events happen very early in the
+bootstrap process, but are of importance for event notifiers to be able to react upon.
+
 === Using custom Debugger
 
 Previously when setting a custom org.apache.camel.spi.Debugger, then Camel would automatically
