@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.huaweicloud.obs;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,10 +34,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExtendedExchange;
-import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.huaweicloud.obs.constants.OBSConstants;
 import org.apache.camel.component.huaweicloud.obs.constants.OBSHeaders;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
@@ -236,28 +232,8 @@ public class OBSConsumer extends ScheduledBatchPollingConsumer {
     public Exchange createExchange(ObsObject obsObject) {
         Exchange exchange = createExchange(true);
         exchange.setPattern(endpoint.getExchangePattern());
-        Message message = exchange.getIn();
 
-        // set exchange body to a byte array of object contents
-        try {
-            message.setBody(OBSUtils.toBytes(obsObject.getObjectContent()));
-        } catch (IOException e) {
-            throw new RuntimeCamelException(e);
-        }
-
-        // set all the message headers
-        message.setHeader(OBSHeaders.BUCKET_NAME, obsObject.getBucketName());
-        message.setHeader(OBSHeaders.OBJECT_KEY, obsObject.getObjectKey());
-        message.setHeader(OBSHeaders.LAST_MODIFIED, obsObject.getMetadata().getLastModified());
-        message.setHeader(Exchange.CONTENT_LENGTH, obsObject.getMetadata().getContentLength());
-        message.setHeader(Exchange.CONTENT_TYPE, obsObject.getMetadata().getContentType());
-        message.setHeader(OBSHeaders.ETAG, obsObject.getMetadata().getEtag());
-        message.setHeader(OBSHeaders.CONTENT_MD5, obsObject.getMetadata().getContentMd5());
-        if (obsObject.getObjectKey().endsWith("/")) {
-            message.setHeader(OBSHeaders.OBJECT_TYPE, OBSConstants.FOLDER);
-        } else {
-            message.setHeader(OBSHeaders.OBJECT_TYPE, OBSConstants.FILE);
-        }
+        OBSUtils.mapObsObject(exchange, obsObject);
 
         return exchange;
     }

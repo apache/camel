@@ -91,10 +91,36 @@ public class OBSProducer extends DefaultProducer {
             case OBSOperations.LIST_OBJECTS:
                 listObjects(exchange, clientConfigurations);
                 break;
+            case OBSOperations.GET_OBJECT:
+                getObject(exchange, clientConfigurations);
+                break;
             default:
                 throw new UnsupportedOperationException(
                         String.format("%s is not a supported operation", clientConfigurations.getOperation()));
         }
+    }
+
+    /**
+     * downloads an object from remote OBS bucket
+     * 
+     * @param exchange
+     * @param clientConfigurations
+     */
+    private void getObject(Exchange exchange, ClientConfigurations clientConfigurations) {
+        if (ObjectHelper.isEmpty(clientConfigurations.getBucketName()) ||
+                ObjectHelper.isEmpty(clientConfigurations.getObjectName())) {
+            throw new IllegalArgumentException("Bucket name and object names are mandatory to get objects");
+        }
+
+        LOG.debug("Downloading remote obs object {} from bucket {}", clientConfigurations.getObjectName(),
+                clientConfigurations.getBucketLocation());
+
+        ObsObject obsObject = obsClient
+                .getObject(clientConfigurations.getBucketName(), clientConfigurations.getObjectName());
+
+        LOG.debug("Successfully downloaded obs object {}", clientConfigurations.getObjectName());
+
+        OBSUtils.mapObsObject(exchange, obsObject);
     }
 
     /**
@@ -300,6 +326,15 @@ public class OBSProducer extends DefaultProducer {
                     ObjectHelper.isNotEmpty(exchange.getProperty(OBSProperties.BUCKET_LOCATION))
                             ? (String) exchange.getProperty(OBSProperties.BUCKET_LOCATION)
                             : endpoint.getBucketLocation());
+        }
+
+        // checking for optional object name (exchange overrides endpoint bucketLocation if both are provided)
+        if (ObjectHelper.isNotEmpty(exchange.getProperty(OBSProperties.OBJECT_NAME))
+                || ObjectHelper.isNotEmpty(endpoint.getObjectName())) {
+            clientConfigurations.setObjectName(
+                    ObjectHelper.isNotEmpty(exchange.getProperty(OBSProperties.OBJECT_NAME))
+                            ? (String) exchange.getProperty(OBSProperties.OBJECT_NAME)
+                            : endpoint.getObjectName());
         }
     }
 }

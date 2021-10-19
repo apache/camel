@@ -94,6 +94,10 @@ public class OBSEndpoint extends ScheduledPollEndpoint {
     @Metadata(required = false)
     private String bucketName;
 
+    @UriParam(description = "Name of object to perform operation with", displayName = "Object Name")
+    @Metadata(required = false)
+    private String objectName;
+
     @UriParam(description = "Location of bucket when creating a new bucket", displayName = "Bucket Location",
               label = "producer")
     @Metadata(required = false)
@@ -333,6 +337,14 @@ public class OBSEndpoint extends ScheduledPollEndpoint {
 
     public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
         this.maxMessagesPerPoll = maxMessagesPerPoll;
+    }
+
+    public String getObjectName() {
+        return objectName;
+    }
+
+    public void setObjectName(String objectName) {
+        this.objectName = objectName;
     }
 
     /**

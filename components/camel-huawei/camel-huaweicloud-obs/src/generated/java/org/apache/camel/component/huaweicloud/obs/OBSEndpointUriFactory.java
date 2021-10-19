@@ -20,7 +20,7 @@ public class OBSEndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(41);
+        Set<String> props = new HashSet<>(42);
         props.add("backoffMultiplier");
         props.add("bucketName");
         props.add("destinationBucket");
@@ -59,6 +59,7 @@ public class OBSEndpointUriFactory extends org.apache.camel.support.component.En
         props.add("accessKey");
         props.add("deleteAfterRead");
         props.add("proxyUser");
+        props.add("objectName");
         props.add("region");
         props.add("operation");
         props.add("exceptionHandler");

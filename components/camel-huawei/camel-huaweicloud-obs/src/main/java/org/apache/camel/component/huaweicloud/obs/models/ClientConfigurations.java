@@ -24,6 +24,7 @@ public class ClientConfigurations {
     private String operation;
     private String bucketName;
     private String bucketLocation;
+    private String objectName;
 
     public ClientConfigurations() {
     }
@@ -50,5 +51,13 @@ public class ClientConfigurations {
 
     public void setBucketLocation(String bucketLocation) {
         this.bucketLocation = bucketLocation;
+    }
+
+    public String getObjectName() {
+        return objectName;
+    }
+
+    public void setObjectName(String objectName) {
+        this.objectName = objectName;
     }
 }

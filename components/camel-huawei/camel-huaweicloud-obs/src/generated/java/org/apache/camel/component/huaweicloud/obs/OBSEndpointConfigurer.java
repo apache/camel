@@ -61,6 +61,8 @@ public class OBSEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "maxMessagesPerPoll": target.setMaxMessagesPerPoll(property(camelContext, int.class, value)); return true;
         case "moveafterread":
         case "moveAfterRead": target.setMoveAfterRead(property(camelContext, boolean.class, value)); return true;
+        case "objectname":
+        case "objectName": target.setObjectName(property(camelContext, java.lang.String.class, value)); return true;
         case "pollstrategy":
         case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
         case "prefix": target.setPrefix(property(camelContext, java.lang.String.class, value)); return true;
@@ -141,6 +143,8 @@ public class OBSEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "maxMessagesPerPoll": return int.class;
         case "moveafterread":
         case "moveAfterRead": return boolean.class;
+        case "objectname":
+        case "objectName": return java.lang.String.class;
         case "pollstrategy":
         case "pollStrategy": return org.apache.camel.spi.PollingConsumerPollStrategy.class;
         case "prefix": return java.lang.String.class;
@@ -222,6 +226,8 @@ public class OBSEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "maxMessagesPerPoll": return target.getMaxMessagesPerPoll();
         case "moveafterread":
         case "moveAfterRead": return target.isMoveAfterRead();
+        case "objectname":
+        case "objectName": return target.getObjectName();
         case "pollstrategy":
         case "pollStrategy": return target.getPollStrategy();
         case "prefix": return target.getPrefix();
