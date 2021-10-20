@@ -12,6 +12,9 @@ Added method `getStartedEventNotifiers` to `org.apache.camel.spi.ManagementStrat
 
 Added method `scheduleQueue` to `org.apache.camel.spi.ReactiveExecutor`.
 
+The `org.apache.camel.support.ObjectHelper#createIterable` now supports `java.util.Map` returning
+an `Iterable<Map.Entry>` iterating each row in the map.
+
 === Split EIP
 
 The Split EIP now supports splitting message bodies that are of type `java.util.Map`, which
