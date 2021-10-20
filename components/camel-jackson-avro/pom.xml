@@ -52,6 +52,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-avro</artifactId>
+            <version>${jackson2-version}</version>
         </dependency>
 
         <!-- testing -->
