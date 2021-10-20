@@ -25,13 +25,13 @@ import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-public class KameletUoWIssueTest extends CamelTestSupport {
+public class KameletConsumerUoWIssueTest extends CamelTestSupport {
 
     @Test
     public void testUoW() throws Exception {
-        getMockEndpoint("mock:foo").expectedBodiesReceived("A", "Done");
+        getMockEndpoint("mock:foo").expectedBodiesReceived("1", "Done");
 
-        template.sendBody("direct:foo", "A");
+        context.getRouteController().startAllRoutes();
 
         assertMockEndpointsSatisfied();
     }
@@ -47,9 +47,9 @@ public class KameletUoWIssueTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                routeTemplate("broker")
-                        .templateParameter("queue")
-                        .from("kamelet:source")
+                routeTemplate("tick")
+                        .from("timer:tick?repeatCount=1&delay=-1")
+                        .setBody().exchangeProperty(Exchange.TIMER_COUNTER)
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) throws Exception {
@@ -61,10 +61,10 @@ public class KameletUoWIssueTest extends CamelTestSupport {
                                     }
                                 });
                             }
-                        }).to("mock:{{queue}}");
+                        }).to("kamelet:sink");
 
-                from("direct:foo")
-                        .to("kamelet:broker?queue=foo");
+                from("kamelet:tick").noAutoStartup().routeId("tick")
+                        .to("mock:foo");
             }
         };
     }
