@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.huaweicloud.obs;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +38,7 @@ import com.obs.services.model.ListObjectsRequest;
 import com.obs.services.model.ObjectListing;
 import com.obs.services.model.ObsBucket;
 import com.obs.services.model.ObsObject;
+import com.obs.services.model.PutObjectResult;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.huaweicloud.obs.constants.OBSConstants;
 import org.apache.camel.component.huaweicloud.obs.constants.OBSOperations;
@@ -94,10 +99,70 @@ public class OBSProducer extends DefaultProducer {
             case OBSOperations.GET_OBJECT:
                 getObject(exchange, clientConfigurations);
                 break;
+            case OBSOperations.PUT_OBJECT:
+                putObject(exchange, clientConfigurations);
+                break;
             default:
                 throw new UnsupportedOperationException(
                         String.format("%s is not a supported operation", clientConfigurations.getOperation()));
         }
+    }
+
+    private void putObject(Exchange exchange, ClientConfigurations clientConfigurations) throws IOException {
+
+        Object body = exchange.getMessage().getBody();
+
+        // if body doesn't contain File, then user must pass object name. Bucket name is mandatory in all case
+        if ((ObjectHelper.isEmpty(clientConfigurations.getBucketName()) ||
+                ObjectHelper.isEmpty(clientConfigurations.getObjectName())) && !(body instanceof File)) {
+            throw new IllegalArgumentException("Bucket and object names are mandatory to put objects into bucket");
+        }
+
+        // check if bucket exists. if not, create one
+        LOG.trace("Checking if bucket {} exists", clientConfigurations.getBucketName());
+        if (!obsClient.headBucket(clientConfigurations.getBucketName())) {
+            LOG.warn("No bucket found with name {}. Attempting to create", clientConfigurations.getBucketName());
+            OBSRegion.checkValidRegion(clientConfigurations.getBucketLocation());
+            CreateBucketRequest request = new CreateBucketRequest(
+                    clientConfigurations.getBucketName(),
+                    clientConfigurations.getBucketLocation());
+
+            obsClient.createBucket(request);
+            LOG.warn("Bucket with name {} created. Continuing to upload object into it", request.getBucketName());
+        }
+
+        PutObjectResult putObjectResult = null;
+
+        if (body instanceof File) {
+
+            LOG.trace("Exchange payload is of type File");
+
+            // user file name by default if user has not over-riden it
+            String objectName = ObjectHelper.isEmpty(clientConfigurations.getObjectName())
+                    ? ((File) body).getName()
+                    : clientConfigurations.getObjectName();
+
+            putObjectResult = obsClient.putObject(clientConfigurations.getBucketName(),
+                    objectName, (File) body);
+
+        } else if (body instanceof String) {
+            // the string content will be stored in the remote object
+            LOG.trace("Writing text body into an object");
+            InputStream stream = new ByteArrayInputStream(((String) body).getBytes());
+            putObjectResult = obsClient.putObject(clientConfigurations.getBucketName(),
+                    clientConfigurations.getObjectName(), stream);
+            stream.close();
+
+        } else if (body instanceof InputStream) {
+            // this covers miscellaneous file types
+            LOG.trace("Exchange payload is of type InputStream");
+            putObjectResult = obsClient.putObject(clientConfigurations.getBucketName(),
+                    clientConfigurations.getObjectName(), (InputStream) body);
+
+        } else {
+            throw new IllegalArgumentException("Body should be of type file, string or an input stream");
+        }
+        exchange.getMessage().setBody(gson.toJson(putObjectResult));
     }
 
     /**
