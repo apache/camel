@@ -1,5 +1,7 @@
 package org.apache.camel.component.huaweicloud.obs;
 
+import java.io.InputStream;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.obs.services.ObsClient;
 import com.obs.services.model.PutObjectResult;
@@ -15,8 +17,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.InputStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -45,10 +45,10 @@ public class PutObjectStringTest extends CamelTestSupport {
                         .setProperty(OBSProperties.BUCKET_NAME, constant("reji-abc"))
                         .setProperty(OBSProperties.BUCKET_LOCATION, constant("cn-north-1"))
                         .to("hwcloud-obs:putObject?" +
-                                "serviceKeys=#serviceKeys" +
-                                "&region=" + testConfiguration.getProperty("region") +
-                                "&ignoreSslVerification=true" +
-                                "&obsClient=#obsClient")
+                            "serviceKeys=#serviceKeys" +
+                            "&region=" + testConfiguration.getProperty("region") +
+                            "&ignoreSslVerification=true" +
+                            "&obsClient=#obsClient")
                         .log("Put object successful")
                         .to("log:LOG?showAll=true")
                         .to("mock:put_object_result");
@@ -59,7 +59,8 @@ public class PutObjectStringTest extends CamelTestSupport {
     @Test
     public void putObjectStringTest() throws Exception {
 
-        PutObjectResult putObjectResult = new PutObjectResult("reji-abc", "string_file.txt",
+        PutObjectResult putObjectResult = new PutObjectResult(
+                "reji-abc", "string_file.txt",
                 "eb733a00c0c9d336e65691a37ab54293", "version-xxx",
                 StorageClassEnum.STANDARD, "https://reji-abc.obs.cn-north-1.myhuaweicloud.com/test_file.txt");
 
@@ -75,10 +76,11 @@ public class PutObjectStringTest extends CamelTestSupport {
         mock.assertIsSatisfied();
 
         assertEquals("{\"bucketName\":\"reji-abc\",\"objectKey\":\"string_file.txt\"," +
-                "\"etag\":\"eb733a00c0c9d336e65691a37ab54293\",\"versionId\":\"version-xxx\"," +
-                "\"storageClass\":\"STANDARD\"," +
-                "\"objectUrl\":\"https://reji-abc.obs.cn-north-1.myhuaweicloud.com/test_file.txt\"," +
-                "\"statusCode\":0}", responseExchange.getIn().getBody());
+                     "\"etag\":\"eb733a00c0c9d336e65691a37ab54293\",\"versionId\":\"version-xxx\"," +
+                     "\"storageClass\":\"STANDARD\"," +
+                     "\"objectUrl\":\"https://reji-abc.obs.cn-north-1.myhuaweicloud.com/test_file.txt\"," +
+                     "\"statusCode\":0}",
+                responseExchange.getIn().getBody());
 
     }
 }
