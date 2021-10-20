@@ -57,6 +57,7 @@
         <dependency>
             <groupId>com.azure</groupId>
             <artifactId>azure-storage-blob</artifactId>
+            <version>${azure-storage-blob-version}</version>
         </dependency>
     </dependencies>
 
