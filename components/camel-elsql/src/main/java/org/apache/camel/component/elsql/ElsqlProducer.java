@@ -20,8 +20,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.sql.DataSource;
 
@@ -109,7 +111,10 @@ public class ElsqlProducer extends DefaultProducer {
                         final String sqlForDefaultPreparedStamentStrategy = sql.replace(":", ":?");
                         final String preparedQuery = sqlPrepareStatementStrategy.prepareQuery(
                                 sqlForDefaultPreparedStamentStrategy, getEndpoint().isAllowNamedParameters(), exchange);
-                        final Iterator<?> iterator = exchange.getIn().getBody(Iterator.class);
+                        // if the body is a map then it's the key/values for a statement, so do not iterate each map entry.
+                        Object body = exchange.getIn().getBody();
+                        final Iterator<?> iterator = body instanceof Map
+                                ? Collections.singleton(body).iterator() : exchange.getIn().getBody(Iterator.class);
                         while (iterator != null && iterator.hasNext()) {
                             final Object value = iterator.next();
                             final Iterator<?> i = sqlPrepareStatementStrategy.createPopulateIterator(

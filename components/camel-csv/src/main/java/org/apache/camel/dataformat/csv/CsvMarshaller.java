@@ -80,10 +80,15 @@ public abstract class CsvMarshaller {
             throws NoTypeConversionAvailableException, IOException {
         CSVPrinter printer = createPrinter(exchange, outputStream);
         try {
-            Iterator it = ObjectHelper.createIterator(object);
-            while (it.hasNext()) {
-                Object child = it.next();
-                printer.printRecord(getRecordValues(exchange, child));
+            if (object instanceof Map) {
+                Map map = (Map) object;
+                printer.printRecord(getMapRecordValues(map));
+            } else {
+                Iterator it = ObjectHelper.createIterator(object);
+                while (it.hasNext()) {
+                    Object child = it.next();
+                    printer.printRecord(getRecordValues(exchange, child));
+                }
             }
         } finally {
             IOHelper.close(printer);

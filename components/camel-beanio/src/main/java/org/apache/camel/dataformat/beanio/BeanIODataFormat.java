@@ -25,6 +25,7 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.camel.CamelContext;
@@ -143,7 +144,11 @@ public class BeanIODataFormat extends ServiceSupport implements DataFormat, Data
     @SuppressWarnings("unchecked")
     private List<Object> getModels(Exchange exchange, Object body) {
         List<Object> models;
-        if ((models = exchange.getContext().getTypeConverter().convertTo(List.class, body)) == null) {
+
+        if (body instanceof Map && isUnmarshalSingleObject()) {
+            models = new ArrayList<>();
+            models.add(body);
+        } else if ((models = exchange.getContext().getTypeConverter().convertTo(List.class, body)) == null) {
             models = new ArrayList<>();
             for (Object model : ObjectHelper.createIterable(body)) {
                 models.add(model);

@@ -74,17 +74,19 @@ public class BindyKeyValuePairDataFormat extends BindyAbstractDataFormat {
 
         // the body may not be a prepared list of map that bindy expects so help
         // a bit here and create one if needed
+        if (body instanceof Map) {
+            // the body is already a map, and we do not want to iterate each element in the map,
+            // but keep the body as a map, so wrap as iterator
+            body = Collections.singleton(body).iterator();
+        }
         for (Object model : ObjectHelper.createIterable(body)) {
-
             Map<String, Object> row;
             if (model instanceof Map) {
                 row = (Map<String, Object>) model;
             } else {
                 row = Collections.singletonMap(model.getClass().getName(), model);
             }
-
             String result = factory.unbind(getCamelContext(), row);
-
             outputStream.write(converter.convertTo(byte[].class, exchange, result));
             outputStream.write(crlf);
         }
