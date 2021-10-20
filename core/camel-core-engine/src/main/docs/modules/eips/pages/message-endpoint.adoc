@@ -7,7 +7,11 @@ patterns] using the
 https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Endpoint.html[Endpoint]
 interface.
 
+How does an application connect to a messaging channel to send and receive messages?
+
 image::eip/MessageEndpointSolution.gif[image]
+
+Connect an application to a messaging channel using a Message Endpoint, a client of the messaging system that the application can then use to send or receive messages.
 
 When using the xref:latest@manual:ROOT:dsl.adoc[DSL] to create xref:latest@manual:ROOT:routes.adoc[Routes] you
 typically refer to Message Endpoints by their xref:latest@manual:ROOT:uris.adoc[URIs]
