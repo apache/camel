@@ -39,7 +39,6 @@ public class CouchDbChangesetTracker implements Runnable {
         this.endpoint = endpoint;
         this.consumer = consumer;
         this.couchClient = couchClient;
-        initChanges(null);
     }
 
     private void initChanges(final String sequence) {
@@ -54,8 +53,8 @@ public class CouchDbChangesetTracker implements Runnable {
 
     @Override
     public void run() {
-
         String lastSequence = null;
+        initChanges(null);
 
         try {
             while (!stopped) {
