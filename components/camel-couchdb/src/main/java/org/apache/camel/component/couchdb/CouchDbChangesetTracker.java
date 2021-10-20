@@ -91,8 +91,12 @@ public class CouchDbChangesetTracker implements Runnable {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("CouchDb Exception encountered waiting for changes!  Attempting to recover...", e);
                     }
-                    if (!waitForStability(lastSequence)) {
-                        throw e;
+                    if (endpoint.isRunAllowed() || !endpoint.isShutdown() || !consumer.isStopped()) {
+                        if (!waitForStability(lastSequence)) {
+                            throw e;
+                        }
+                    } else {
+                        LOG.debug("Skipping the stability check because shutting down or running is not allowed at the moment");
                     }
                 }
             }
