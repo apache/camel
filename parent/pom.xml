@@ -4052,15 +4052,6 @@
                 <scope>import</scope>
             </dependency>
 
-            <!-- Azure SDK bom -->
-            <dependency>
-                <groupId>com.azure</groupId>
-                <artifactId>azure-sdk-bom</artifactId>
-                <version>${azure-sdk-bom-version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-
         </dependencies>
     </dependencyManagement>
 
