@@ -291,6 +291,7 @@ public class RestConfiguration {
         this.apiContextRouteId = apiContextRouteId;
     }
 
+    @Deprecated
     public String getApiContextIdPattern() {
         return apiContextIdPattern;
     }
@@ -305,10 +306,12 @@ public class RestConfiguration {
      *
      * @param apiContextIdPattern the pattern
      */
+    @Deprecated
     public void setApiContextIdPattern(String apiContextIdPattern) {
         this.apiContextIdPattern = apiContextIdPattern;
     }
 
+    @Deprecated
     public boolean isApiContextListing() {
         return apiContextListing;
     }
@@ -317,6 +320,7 @@ public class RestConfiguration {
      * Sets whether listing of all available CamelContext's with REST services in the JVM is enabled. If enabled it
      * allows to discover these contexts, if <tt>false</tt> then only the current CamelContext is in use.
      */
+    @Deprecated
     public void setApiContextListing(boolean apiContextListing) {
         this.apiContextListing = apiContextListing;
     }

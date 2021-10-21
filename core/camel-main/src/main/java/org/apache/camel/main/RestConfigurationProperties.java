@@ -189,6 +189,7 @@ public class RestConfigurationProperties extends RestConfiguration implements Bo
      * The pattern <tt>#name#</tt> refers to the CamelContext name, to match on the current CamelContext only. For any
      * other value, the pattern uses the rules from {@link PatternHelper#matchPattern(String, String)}
      */
+    @Deprecated
     public RestConfigurationProperties withApiContextIdPattern(String apiContextIdPattern) {
         setApiContextIdPattern(apiContextIdPattern);
         return this;
@@ -198,6 +199,7 @@ public class RestConfigurationProperties extends RestConfiguration implements Bo
      * Sets whether listing of all available CamelContext's with REST services in the JVM is enabled. If enabled it
      * allows to discover these contexts, if <tt>false</tt> then only the current CamelContext is in use.
      */
+    @Deprecated
     public RestConfigurationProperties withApiContextListing(boolean apiContextListing) {
         setApiContextListing(apiContextListing);
         return this;

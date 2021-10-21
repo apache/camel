@@ -218,10 +218,6 @@ public interface RestApiEndpointBuilderFactory {
          * Path parameter: path (required)
          * The base path
          * 
-         * Path parameter: contextIdPattern
-         * Optional CamelContext id pattern to only allow Rest APIs from rest
-         * services within CamelContext's which name matches the pattern.
-         * 
          * @param path path/contextIdPattern
          * @return the dsl builder
          */
@@ -241,10 +237,6 @@ public interface RestApiEndpointBuilderFactory {
          * 
          * Path parameter: path (required)
          * The base path
-         * 
-         * Path parameter: contextIdPattern
-         * Optional CamelContext id pattern to only allow Rest APIs from rest
-         * services within CamelContext's which name matches the pattern.
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

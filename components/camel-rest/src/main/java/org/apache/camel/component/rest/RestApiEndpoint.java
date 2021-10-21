@@ -53,8 +53,6 @@ public class RestApiEndpoint extends DefaultEndpoint {
     @UriPath
     @Metadata(required = true)
     private String path;
-    @UriPath
-    private String contextIdPattern;
     @UriParam
     private String consumerComponentName;
     @UriParam
@@ -81,18 +79,6 @@ public class RestApiEndpoint extends DefaultEndpoint {
      */
     public void setPath(String path) {
         this.path = path;
-    }
-
-    public String getContextIdPattern() {
-        return contextIdPattern;
-    }
-
-    /**
-     * Optional CamelContext id pattern to only allow Rest APIs from rest services within CamelContext's which name
-     * matches the pattern.
-     */
-    public void setContextIdPattern(String contextIdPattern) {
-        this.contextIdPattern = contextIdPattern;
     }
 
     public String getConsumerComponentName() {
@@ -200,11 +186,7 @@ public class RestApiEndpoint extends DefaultEndpoint {
                 path = "/" + path;
             }
 
-            // whether listing of the context id's is enabled or not
-            boolean contextIdListing = config.isApiContextListing();
-
-            Processor processor = factory.createApiProcessor(getCamelContext(), path, getContextIdPattern(), contextIdListing,
-                    config, getParameters());
+            Processor processor = factory.createApiProcessor(getCamelContext(), path, config, getParameters());
             return new RestApiProducer(this, processor);
         } else {
             throw new IllegalStateException(

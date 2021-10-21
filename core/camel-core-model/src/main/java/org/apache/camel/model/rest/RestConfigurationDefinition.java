@@ -86,10 +86,12 @@ public class RestConfigurationDefinition {
 
     @XmlAttribute
     @Metadata(label = "consumer")
+    @Deprecated
     private String apiContextIdPattern;
 
     @XmlAttribute
     @Metadata(label = "consumer")
+    @Deprecated
     private Boolean apiContextListing;
 
     @XmlAttribute
