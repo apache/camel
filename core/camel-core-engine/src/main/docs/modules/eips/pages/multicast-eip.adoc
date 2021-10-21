@@ -23,7 +23,7 @@ include::partial$eip-options.adoc[]
 
 == Exchange properties
 
-The following properties are set on each Exchange that are multicasted:
+The following exchange properties are set on each `Exchange` that are multicasted:
 
 [width="100%",cols="3,1m,6",options="header"]
 |=======================================================================

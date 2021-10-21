@@ -170,10 +170,6 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
             }
         }
 
-        public int getPendingSize() {
-            return Math.max(count - index, 0);
-        }
-
         @Override
         public String toString() {
             return "LoopState";

@@ -26,7 +26,7 @@ TIP: See the `cacheSize` option for more details on _how much cache_ to use depe
 
 == Exchange properties
 
-The following properties are set on each Exchange that are sent by the recipient list:
+The following exchange properties are set on each `Exchange` that are sent by the recipient list:
 
 [width="100%",cols="3,1m,6",options="header"]
 |=======================================================================

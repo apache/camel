@@ -57,6 +57,8 @@ from("direct:a")
         .to("direct:b");
 ----
 
+== See Also
+
 For more examples see xref:eips:split-eip.adoc[Split] EIP.
 
 include::spring-boot:partial$starter.adoc[]
