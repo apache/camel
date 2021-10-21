@@ -5,36 +5,23 @@
 :since: 
 :supportlevel: Stable
 
+How can I decouple the continued routing of a message from the current thread?
+
+image::eip/MessagingAdapterIcon.gif[image]
+
+Submit the message to a thread pool, which then is responsible for the continued routing of the message.
+
+In Camel this is implemented as the Threads EIP.
+
 == Options
 
 // eip options: START
 include::partial$eip-options.adoc[]
 // eip options: END
 
-== About rejected tasks
+== Using Threads EIP
 
-The Threads EIP uses a thread pool which has a worker queue for tasks.
-When the worker queue gets full, the task is rejected. You can customize
-how to react upon this using the `rejectedPolicy` and
-`callerRunsWhenRejected` option. The latter is used to easily switch
-between the two most common and recommended settings. Either let the
-current caller thread execute the task (i.e. it will become synchronous),
-but also give time for the thread pool to process its current tasks,
-without adding more tasks (self throttling). This is the default
-behavior. If setting `callerRunsWhenRejected` you use the `Abort`
-policy, which means the task is rejected, and a
-`RejectedExecutionException` is set on the xref:latest@manual:ROOT:exchange.adoc[Exchange],
-and the `Exchange` will stop continue being routed, and its `UnitOfWork` will be regarded as failed.
-
-The other options `Discard` and `DiscardOldest` work a bit like
-`Abort`, however they do *not* set any exception on the
-Exchange, which means the `Exchange` will *not* be regarded as failed, but the
-`Exchange` will be successful. When using `Discard` and `DiscardOldest` then the `Exchange` will not
-continue being routed.
-
-== Example
-
-The example below will add a Thread pool with a pool size of 5 threads before sending to *mock:result*.
+The example below will add a Thread pool with a pool size of 5 threads before sending to mock:result.
 
 [source,java]
 ----
@@ -53,3 +40,83 @@ And in XML DSL
     <to uri="mock:result"/>
 </route>
 ----
+
+And to use a thread pool with a task queue of only 20 elements:
+
+[source,java]
+----
+from("seda:a")
+  .threads(5).maxQueueSize(20)
+  .to("mock:result");
+----
+
+And in XML DSL
+
+[source,xml]
+----
+<route>
+    <from uri="seda:a"/>
+    <threads poolSize="5" maxQueueSize="20"/>
+    <to uri="mock:result"/>
+</route>
+----
+
+And you can also use a thread pool with no queue (meaning that a task cannot be pending on a queue):
+
+[source,java]
+----
+from("seda:a")
+  .threads(5).maxQueueSize(0)
+  .to("mock:result");
+----
+
+And in XML DSL
+
+[source,xml]
+----
+<route>
+    <from uri="seda:a"/>
+    <threads poolSize="5" maxQueueSize="0"/>
+    <to uri="mock:result"/>
+</route>
+----
+
+=== About rejected tasks
+
+The Threads EIP uses a thread pool which has a worker queue for tasks.
+When the worker queue gets full, the task is rejected.
+
+You can customize how to react upon this using the `rejectedPolicy` and
+`callerRunsWhenRejected` options. The latter is used to easily switch
+between the two most common and recommended settings. Either let the
+current caller thread execute the task (i.e. it will become synchronous),
+but also give time for the thread pool to process its current tasks,
+without adding more tasks (self throttling). This is the default
+behavior.
+
+The `Abort` policy, means the task is rejected, and a
+`RejectedExecutionException` is thrown.
+
+The other options `Discard` and `DiscardOldest`
+is *deprecated* and should not be used.
+
+=== Default values
+
+The Threads EIP uses the default values from the default xref:latest@manual:ROOT:threading-model.adoc[Thread Pool Profile].
+If the profile has not been altered, then the default profile are as follows:
+
+[width="100%",cols="25%,25%,50%",options="header",]
+|===
+| Option | Default | Description
+| *poolSize* | `10` | Sets the default core pool size (threads to keep minimum in pool)
+| *keepAliveTime* | `60` | Sets the default keep alive time (in seconds) for inactive threads
+| *maxPoolSize* | `20` | Sets the default maximum pool size
+| *maxQueueSize* | `1000` | Sets the default maximum number of tasks in the work queue. Use -1 for an unbounded queue.
+| *allowCoreThreadTimeOut* | `true` | Sets default whether to allow core threads to timeout
+| *rejectedPolicy* | `CallerRuns` | Sets the default handler for tasks which cannot be executed by the thread pool. Has four options:
+`Abort, CallerRuns, Discard, DiscardOldest` which corresponds to the same four options provided out of the box in the JDK.
+|===
+
+=== See Also
+
+See xref:latest@manual:ROOT:threading-model.adoc[Threading Model]
