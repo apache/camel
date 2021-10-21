@@ -121,22 +121,9 @@ So using relative paths is much easier. See above for an example.
 |api.license.name |String |The license name used for the API.
 
 |api.license.url |String |A URL to the license used for the API.
-
-|apiContextIdListing |boolean |Whether to allow listing all the CamelContext names in the JVM that has
-REST services. When enabled then the root path of the api-doc will list
-all the contexts. When disabled then no context ids is listed and the
-root path of the api-doc lists the current CamelContext. Is default
-false.
-
-|apiContextIdPattern |String |A pattern that allows to filter which CamelContext names is shown in the
-context listing. The pattern is using regular expression and * as
-wildcard. Its the same pattern matching as used by
-Intercept
 |===
 
 == Adding Security Definitions in API doc
-
-*Available as of Camel 3.1.0*
 
 The Rest DSL now supports declaring OpenApi `securityDefinitions` in the generated API document.
 For example as shown below:
@@ -174,20 +161,7 @@ their key (petstore_auth or api_key).
 Here the get operation is using the Api Key security and the put operation
 is using OAuth security with permitted scopes of read and write pets.
 
-
-
-== ContextIdListing enabled
-
-When contextIdListing is enabled then its detecting all the running
-CamelContexts in the same JVM. These contexts are listed in the root
-path, eg `/api-docs` as a simple list of names in json format. To access
-the OpenApi documentation then the context-path must be appended with
-the Camel context id, such as `api-docs/myCamel`. The
-option apiContextIdPattern can be used to filter the names in this list.
-
 == JSon or Yaml
-
-*Available as of Camel 3.1.0
 
 The camel-openapi-java module supports both JSon and Yaml out of the
 box. You can specify in the request url what you want returned by using

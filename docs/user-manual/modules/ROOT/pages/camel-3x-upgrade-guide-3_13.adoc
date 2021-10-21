@@ -15,6 +15,10 @@ Added method `scheduleQueue` to `org.apache.camel.spi.ReactiveExecutor`.
 The `org.apache.camel.support.ObjectHelper#createIterable` now supports `java.util.Map` returning
 an `Iterable<Map.Entry>` iterating each row in the map.
 
+The `org.apache.camel.spi.RestApiProcessorFactory` has removed
+the following two parameters (`String contextIdPattern, boolean contextIdListing`)
+from the `createApiProcessor` method.
+
 === Split EIP
 
 The Split EIP now supports splitting message bodies that are of type `java.util.Map`, which
@@ -93,3 +97,8 @@ The `ScpOperations` class were modified to comply with the API changes on the `c
 === camel-kafka
 
 The `KafkaManualCommit` class were modified in order to support async manual commit. Please use the new function `commit()` instead of the old deprecated one `commitSync()`.
+
+=== camel-openapi-java / camel-swagger-java
+
+Support for rendering api docs by discovering other CamelContext via JMX in the same JVM has been removed.
+Rendering of api docs is now only supported for the same CamelContext.
