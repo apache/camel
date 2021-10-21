@@ -1065,6 +1065,44 @@ public interface MllpEndpointBuilderFactory {
             return (MllpEndpointProducerBuilder) this;
         }
         /**
+         * decide what action to take when idle timeout occurs. Possible values
+         * are : RESET: set SO_LINGER to 0 and reset the socket CLOSE: close the
+         * socket gracefully default is RESET.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.mllp.MllpIdleTimeoutStrategy&lt;/code&gt; type.
+         * 
+         * Default: RESET
+         * Group: producer
+         * 
+         * @param idleTimeoutStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMllpEndpointProducerBuilder idleTimeoutStrategy(
+                MllpIdleTimeoutStrategy idleTimeoutStrategy) {
+            doSetProperty("idleTimeoutStrategy", idleTimeoutStrategy);
+            return this;
+        }
+        /**
+         * decide what action to take when idle timeout occurs. Possible values
+         * are : RESET: set SO_LINGER to 0 and reset the socket CLOSE: close the
+         * socket gracefully default is RESET.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.mllp.MllpIdleTimeoutStrategy&lt;/code&gt; type.
+         * 
+         * Default: RESET
+         * Group: producer
+         * 
+         * @param idleTimeoutStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMllpEndpointProducerBuilder idleTimeoutStrategy(
+                String idleTimeoutStrategy) {
+            doSetProperty("idleTimeoutStrategy", idleTimeoutStrategy);
+            return this;
+        }
+        /**
          * Enable/disable the SO_KEEPALIVE socket option.
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
@@ -1718,6 +1756,16 @@ public interface MllpEndpointBuilderFactory {
             doSetProperty("receiveTimeout", receiveTimeout);
             return this;
         }
+    }
+
+    /**
+     * Proxy enum for
+     * <code>org.apache.camel.component.mllp.MllpIdleTimeoutStrategy</code>
+     * enum.
+     */
+    enum MllpIdleTimeoutStrategy {
+        RESET,
+        CLOSE;
     }
 
     public interface MllpBuilders {
