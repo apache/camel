@@ -43,49 +43,49 @@ public class MllpConfiguration implements Cloneable {
     ExchangePattern exchangePattern = ExchangePattern.InOut;
 
     // camel-mllp specific URI parameters
-    @UriParam(label = "advanced,consumer,tcp", defaultValue = "5")
+    @UriParam(label = "advanced,consumer", defaultValue = "5")
     Integer backlog = 5;
 
-    @UriParam(label = "advanced,consumer,tcp,timeout", defaultValue = "30000")
+    @UriParam(label = "advanced,consumer", defaultValue = "30000")
     int bindTimeout = 30000;
 
-    @UriParam(label = "advanced,consumer,tcp,timeout", defaultValue = "5000")
+    @UriParam(label = "advanced,consumer", defaultValue = "5000")
     int bindRetryInterval = 5000;
 
-    @UriParam(label = "advanced,consumer,tcp", defaultValue = "false")
+    @UriParam(label = "advanced,consumer", defaultValue = "false")
     boolean lenientBind;
 
-    @UriParam(label = "advanced,consumer,tcp,timeout", defaultValue = "60000")
+    @UriParam(label = "advanced,consumer", defaultValue = "60000")
     int acceptTimeout = 60000;
 
-    @UriParam(label = "advanced,producer,tcp,timeout", defaultValue = "30000")
+    @UriParam(label = "advanced,producer", defaultValue = "30000")
     int connectTimeout = 30000;
 
-    @UriParam(label = "advanced,tcp,timeout", defaultValue = "15000")
+    @UriParam(label = "advanced", defaultValue = "15000")
     int receiveTimeout = 15000;
 
-    @UriParam(label = "advanced,consumer,tcp", defaultValue = "5")
+    @UriParam(label = "advanced,consumer", defaultValue = "5")
     int maxConcurrentConsumers = 5;
 
-    @UriParam(label = "advanced,tcp,timeout", defaultValue = "null")
+    @UriParam(label = "advanced,tcp", defaultValue = "null")
     Integer idleTimeout;
 
-    @UriParam(label = "advanced,tcp,timeout", defaultValue = "5000")
+    @UriParam(label = "advanced", defaultValue = "5000")
     int readTimeout = 5000;
 
-    @UriParam(label = "advanced,producer,tcp", defaultValue = "true")
+    @UriParam(label = "advanced,producer", defaultValue = "true")
     Boolean keepAlive = true;
 
-    @UriParam(label = "advanced,producer,tcp", defaultValue = "true")
+    @UriParam(label = "advanced,producer", defaultValue = "true")
     Boolean tcpNoDelay = true;
 
-    @UriParam(label = "advanced,consumer,tcp", defaultValue = "false")
+    @UriParam(label = "advanced,consumer", defaultValue = "false")
     Boolean reuseAddress = false;
 
-    @UriParam(label = "advanced,tcp", defaultValue = "8192")
+    @UriParam(label = "advanced", defaultValue = "8192")
     Integer receiveBufferSize = 8192;
 
-    @UriParam(label = "advanced,tcp", defaultValue = "8192")
+    @UriParam(label = "advanced", defaultValue = "8192")
     Integer sendBufferSize = 8192;
 
     @UriParam(defaultValue = "true")
@@ -103,7 +103,7 @@ public class MllpConfiguration implements Cloneable {
     @UriParam(defaultValue = "false")
     boolean validatePayload;
 
-    @UriParam(label = "codec")
+    @UriParam
     String charsetName;
 
     @UriParam(label = "advanced,producer", defaultValue = "RESET")

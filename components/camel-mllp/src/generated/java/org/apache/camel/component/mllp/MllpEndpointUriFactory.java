@@ -33,8 +33,8 @@ public class MllpEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("requireEndOfData");
         props.add("tcpNoDelay");
         props.add("autoAck");
-        props.add("keepAlive");
         props.add("maxConcurrentConsumers");
+        props.add("keepAlive");
         props.add("hl7Headers");
         props.add("sendBufferSize");
         props.add("exchangePattern");
@@ -44,11 +44,11 @@ public class MllpEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("receiveBufferSize");
         props.add("port");
         props.add("receiveTimeout");
-        props.add("idleTimeout");
         props.add("readTimeout");
+        props.add("idleTimeout");
         props.add("exceptionHandler");
-        props.add("validatePayload");
         props.add("charsetName");
+        props.add("validatePayload");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
