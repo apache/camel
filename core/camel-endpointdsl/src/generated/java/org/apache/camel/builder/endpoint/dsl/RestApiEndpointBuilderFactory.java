@@ -213,12 +213,12 @@ public interface RestApiEndpointBuilderFactory {
          * Since: 2.16
          * Maven coordinates: org.apache.camel:camel-rest
          * 
-         * Syntax: <code>rest-api:path/contextIdPattern</code>
+         * Syntax: <code>rest-api:path</code>
          * 
          * Path parameter: path (required)
          * The base path
          * 
-         * @param path path/contextIdPattern
+         * @param path path
          * @return the dsl builder
          */
         default RestApiEndpointBuilder restApi(String path) {
@@ -233,14 +233,14 @@ public interface RestApiEndpointBuilderFactory {
          * Since: 2.16
          * Maven coordinates: org.apache.camel:camel-rest
          * 
-         * Syntax: <code>rest-api:path/contextIdPattern</code>
+         * Syntax: <code>rest-api:path</code>
          * 
          * Path parameter: path (required)
          * The base path
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
-         * @param path path/contextIdPattern
+         * @param path path
          * @return the dsl builder
          */
         default RestApiEndpointBuilder restApi(String componentName, String path) {

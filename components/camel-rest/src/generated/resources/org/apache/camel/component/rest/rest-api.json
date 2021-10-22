@@ -14,7 +14,7 @@
     "version": "3.13.0-SNAPSHOT",
     "scheme": "rest-api",
     "extendsScheme": "",
-    "syntax": "rest-api:path\/contextIdPattern",
+    "syntax": "rest-api:path",
     "async": false,
     "api": false,
     "consumerOnly": true,
