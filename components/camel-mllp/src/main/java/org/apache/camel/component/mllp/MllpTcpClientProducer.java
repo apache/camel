@@ -518,10 +518,17 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
                                 getConfiguration().getIdleTimeout());
                     }
                     if (idleTime >= getConfiguration().getIdleTimeout()) {
-                        log.info(
-                                "MLLP Connection idle time of '{}' milliseconds met or exceeded the idle producer timeout of '{}' milliseconds - resetting connection",
-                                idleTime, getConfiguration().getIdleTimeout());
-                        mllpBuffer.resetSocket(socket);
+                        if (MllpIdleTimeoutStrategy.CLOSE == getConfiguration().getIdleTimeoutStrategy()) {
+                            log.info(
+                                    "MLLP Connection idle time of '{}' milliseconds met or exceeded the idle producer timeout of '{}' milliseconds - closing connection",
+                                    idleTime, getConfiguration().getIdleTimeout());
+                            mllpBuffer.closeSocket(socket);
+                        } else {
+                            log.info(
+                                    "MLLP Connection idle time of '{}' milliseconds met or exceeded the idle producer timeout of '{}' milliseconds - resetting connection",
+                                    idleTime, getConfiguration().getIdleTimeout());
+                            mllpBuffer.resetSocket(socket);
+                        }
                     } else {
                         long minDelay = 100;
                         long delay = Long.min(Long.max(minDelay, getConfiguration().getIdleTimeout() - idleTime),
