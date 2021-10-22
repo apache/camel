@@ -246,7 +246,7 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
             // or setFactory(SchedulerFactory) methods
 
             // must use classloader from StdSchedulerFactory to work even in OSGi
-            InputStream is = StdSchedulerFactory.class.getClassLoader().getResourceAsStream("org/quartz/quartz.properties");
+            InputStream is = org.apache.camel.util.ObjectHelper.loadResourceAsStream("org/quartz/quartz.properties");
             if (is == null) {
                 throw new SchedulerException("Quartz properties file not found in classpath: org/quartz/quartz.properties");
             }

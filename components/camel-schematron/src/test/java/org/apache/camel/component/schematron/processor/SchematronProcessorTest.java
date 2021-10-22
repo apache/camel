@@ -100,7 +100,7 @@ public class SchematronProcessorTest {
         @Override
         public Source resolve(String href, String base) throws TransformerException {
             return new StreamSource(
-                    ClientUriResolver.class.getClassLoader().getResourceAsStream("custom-resolver/".concat(href)));
+                    org.apache.camel.util.ObjectHelper.loadResourceAsStream("custom-resolver/".concat(href)));
         }
     }
 }

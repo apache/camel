@@ -96,7 +96,8 @@ public class CamelKieServerExtension implements KieServerExtension {
             this.camelContext = (DefaultCamelContext) buildGlobalContext();
             this.camelContext.setName("KIE Server Camel context");
 
-            try (InputStream is = this.getClass().getResourceAsStream("/global-camel-routes.xml")) {
+            try (InputStream is
+                    = getCamelContext().getClassResolver().loadResourceAsStream("/global-camel-routes.xml")) {
                 if (is != null) {
                     ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
                     RoutesDefinition routes
@@ -128,7 +129,7 @@ public class CamelKieServerExtension implements KieServerExtension {
     public void createContainer(String id, KieContainerInstance kieContainerInstance, Map<String, Object> parameters) {
 
         ClassLoader classloader = kieContainerInstance.getKieContainer().getClassLoader();
-        try (InputStream is = classloader.getResourceAsStream("camel-routes.xml")) {
+        try (InputStream is = getCamelContext().getClassResolver().loadResourceAsStream("camel-routes.xml")) {
             if (is != null) {
 
                 DefaultCamelContext context = (DefaultCamelContext) buildDeploymentContext(id, classloader);
