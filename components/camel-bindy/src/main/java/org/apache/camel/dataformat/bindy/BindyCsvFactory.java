@@ -160,7 +160,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
         }
 
         if (annotatedFields.size() < maxpos) {
-            LOG.info("Potentially incomplete model: some csv fields may not be mapped to @DataField members");
+            LOG.debug("Potentially incomplete model: some csv fields may not be mapped to @DataField members");
         }
     }
 
