@@ -90,6 +90,12 @@ Also remember to execute the `run` goal, you should use `camel-karaf:run` instea
 mvn camel-karaf:run
 ----
 
+=== camel-sql
+
+Support of deprecated use of named dataSource in the URI has been removed.
+
+You have to use `sql:select * from table where id=# order by name?dataSource=#myDS` instead of `sql:select * from table where id=# order by name?dataSource=myDS`.
+
 === Spring Boot Starters
 
 Some of the Camel Spring Boot starters have additional auto configuration options that clashed with component.
