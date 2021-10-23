@@ -20,7 +20,7 @@ package org.apache.camel.component.file.consumer;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * This contains the input/output file set for resume operations.
@@ -36,16 +36,16 @@ public final class FileResumeSet {
 
     /**
      * Iterates over the set of input files checking if they should be resumed or not
-     * 
+     *
      * @param resumableCheck a checker method that returns true if the file should be resumed or false otherwise
      */
-    public void resumeEach(Function<File, Boolean> resumableCheck) {
+    public void resumeEach(Predicate<File> resumableCheck) {
         this.outputFiles = null;
         File[] tmp = Arrays.copyOf(inputFiles, inputFiles.length);
         int count = 0;
 
         for (File file : inputFiles) {
-            if (resumableCheck.apply(file)) {
+            if (resumableCheck.test(file)) {
                 tmp[count] = file;
                 count++;
             }
@@ -56,7 +56,7 @@ public final class FileResumeSet {
 
     /**
      * Gets the files that should be resumed
-     * 
+     *
      * @return an array with the files that should be resumed
      */
     public File[] resumedFiles() {
@@ -65,7 +65,7 @@ public final class FileResumeSet {
 
     /**
      * Whether there are resumable files to process
-     * 
+     *
      * @return true if there are resumable files or false otherwise
      */
     public boolean hasResumables() {
