@@ -89,7 +89,7 @@ jpa:entityClassName[?options]
 -----------------------------
 
 For sending to the endpoint, the _entityClassName_ is optional. If
-specified, it helps the xref:latest@manual::type-converter.adoc[Type Converter] to
+specified, it helps the xref:manual::type-converter.adoc[Type Converter] to
 ensure the body is of the correct type.
 
 For consuming, the _entityClassName_ is mandatory.
