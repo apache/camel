@@ -102,7 +102,7 @@ is *deprecated* and should not be used.
 
 === Default values
 
-The Threads EIP uses the default values from the default xref:latest@manual:ROOT:threading-model.adoc[Thread Pool Profile].
+The Threads EIP uses the default values from the default xref:manual:ROOT:threading-model.adoc[Thread Pool Profile].
 If the profile has not been altered, then the default profile are as follows:
 
 [width="100%",cols="25%,25%,50%",options="header",]
@@ -119,4 +119,4 @@ If the profile has not been altered, then the default profile are as follows:
 
 === See Also
 
-See xref:latest@manual:ROOT:threading-model.adoc[Threading Model]
+See xref:manual:ROOT:threading-model.adoc[Threading Model]

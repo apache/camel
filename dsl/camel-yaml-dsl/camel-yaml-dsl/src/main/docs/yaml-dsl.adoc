@@ -144,7 +144,7 @@ To define an endpoint with the YAML dsl you have three options:
           parameters:
             authorizationToken: "XXX"
 ----
-. Using the YAML implementation of the xref:latest@manual::Endpoint-dsl.adoc[Endpoint DSL]:
+. Using the YAML implementation of the xref:manual::Endpoint-dsl.adoc[Endpoint DSL]:
 +
 [source,yaml]
 ----

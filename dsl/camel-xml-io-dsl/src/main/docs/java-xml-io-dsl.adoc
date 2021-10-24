@@ -9,4 +9,4 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/xml-io-dsl.ado
 //Manually maintained attributes
 :group: DSL
 
-See xref:latest@manual:ROOT:dsl.adoc[DSL]
+See xref:manual:ROOT:dsl.adoc[DSL]
