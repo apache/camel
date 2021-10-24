@@ -16,15 +16,12 @@
  */
 package org.apache.camel.component.mllp;
 
-import java.nio.charset.Charset;
 import java.util.Objects;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.mllp.internal.Hl7Util;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
-import org.apache.camel.support.ExchangeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -112,10 +109,6 @@ public class MllpConfiguration implements Cloneable {
     public MllpConfiguration() {
     }
 
-    public MllpConfiguration(MllpConfiguration source) {
-        this.copy(source);
-    }
-
     public static void copy(MllpConfiguration source, MllpConfiguration target) {
         if (source == null) {
             LOG.warn(
@@ -174,8 +167,6 @@ public class MllpConfiguration implements Cloneable {
      *
      * If disabled, the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions by logging
      * them at WARN or ERROR level and ignored.
-     *
-     * @param bridgeErrorHandler
      */
     public void setBridgeErrorHandler(boolean bridgeErrorHandler) {
         this.bridgeErrorHandler = bridgeErrorHandler;
@@ -187,8 +178,6 @@ public class MllpConfiguration implements Cloneable {
 
     /**
      * Sets the exchange pattern when the consumer creates an exchange.
-     *
-     * @param exchangePattern
      */
     public void setExchangePattern(ExchangePattern exchangePattern) {
         this.exchangePattern = exchangePattern;
@@ -199,119 +188,11 @@ public class MllpConfiguration implements Cloneable {
     }
 
     public String getCharsetName() {
-        if (hasCharsetName()) {
-            try {
-                if (Charset.isSupported(charsetName)) {
-                    return charsetName;
-                }
-                LOG.warn(
-                        "Unsupported character set name '{}' configured for the MLLP Endpoint  - returning default charset name {}",
-                        charsetName, MllpComponent.getDefaultCharset());
-            } catch (Exception charsetEx) {
-                LOG.warn(
-                        "Ignoring exception determining character set for name '{}' configured for the MLLP Endpoint - returning default charset name {}",
-                        charsetName, MllpComponent.getDefaultCharset(), charsetEx);
-            }
-        }
-
-        return MllpComponent.getDefaultCharset().name();
-    }
-
-    public Charset getCharset() {
-        if (hasCharsetName()) {
-            try {
-                if (Charset.isSupported(charsetName)) {
-                    return Charset.forName(charsetName);
-                }
-                LOG.warn("Unsupported character set name '{}' configured for the MLLP Endpoint - returning default charset {}",
-                        charsetName, MllpComponent.getDefaultCharset());
-            } catch (Exception charsetEx) {
-                LOG.warn(
-                        "Ignoring exception determining character set for name '{}' configured for the MLLP Endpoint - returning default charset {}",
-                        charsetName, MllpComponent.getDefaultCharset(), charsetEx);
-            }
-        }
-
-        return MllpComponent.getDefaultCharset();
-    }
-
-    public Charset getCharset(Exchange exchange) {
-        String exchangeCharsetName = ExchangeHelper.getCharsetName(exchange, false);
-        if (exchangeCharsetName != null && !exchangeCharsetName.isEmpty()) {
-            try {
-                if (Charset.isSupported(exchangeCharsetName)) {
-                    return Charset.forName(exchangeCharsetName);
-                }
-                LOG.warn(
-                        "Unsupported character set name '{}' specified in the Exchange - checking for configured character set",
-                        exchangeCharsetName);
-            } catch (Exception charsetEx) {
-                LOG.warn(
-                        "Ignoring exception determining character set for name '{}' specified in the Exchange - checking for configured character set",
-                        exchangeCharsetName, charsetEx);
-            }
-        }
-
-        return getCharset();
-    }
-
-    public Charset getCharset(Exchange exchange, byte[] hl7Bytes) {
-        String exchangeCharsetName = ExchangeHelper.getCharsetName(exchange, false);
-        if (exchangeCharsetName != null && !exchangeCharsetName.isEmpty()) {
-            try {
-                if (Charset.isSupported(exchangeCharsetName)) {
-                    return Charset.forName(exchangeCharsetName);
-                }
-                LOG.warn(
-                        "Unsupported character set name '{}' specified in the Exchange - checking for configured character set",
-                        exchangeCharsetName);
-            } catch (Exception charsetEx) {
-                LOG.warn(
-                        "Ignoring exception determining character set for name '{}' specified in the Exchange - checking for configured character set",
-                        exchangeCharsetName, charsetEx);
-            }
-        }
-
-        if (hasCharsetName()) {
-            try {
-                if (Charset.isSupported(charsetName)) {
-                    return Charset.forName(charsetName);
-                }
-                LOG.warn(
-                        "Unsupported character set name '{}' configured for the MLLP Endpoint - checking for character set in payload",
-                        charsetName);
-            } catch (Exception charsetEx) {
-                LOG.warn(
-                        "Ignoring exception determining character set for name '{}' configured for the MLLP Endpoint - checking for character set in payload",
-                        charsetName, charsetEx);
-            }
-        }
-
-        String msh18 = Hl7Util.findMsh18(hl7Bytes);
-        if (msh18 != null && !msh18.isEmpty()) {
-            if (MllpProtocolConstants.MSH18_VALUES.containsKey(msh18)) {
-                return MllpProtocolConstants.MSH18_VALUES.get(msh18);
-            }
-            try {
-                if (Charset.isSupported(msh18)) {
-                    return Charset.forName(msh18);
-                }
-                LOG.info("Unsupported character set name '{}' found in MSH-18 - using default character set {}",
-                        msh18, MllpComponent.getDefaultCharset());
-            } catch (Exception charsetEx) {
-                LOG.info(
-                        "Ignoring exception encountered determining character set for for name '{}' found in MSH-18 - using default character set {}",
-                        msh18, MllpComponent.getDefaultCharset(), charsetEx);
-            }
-        }
-
-        return MllpComponent.getDefaultCharset();
+        return charsetName;
     }
 
     /**
-     * Set the CamelCharsetName property on the exchange
-     *
-     * @param charsetName the charset
+     * Sets the default charset to use
      */
     public void setCharsetName(String charsetName) {
         this.charsetName = charsetName;

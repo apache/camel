@@ -75,7 +75,7 @@ public interface MllpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the CamelCharsetName property on the exchange.
+         * Sets the default charset to use.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -831,7 +831,7 @@ public interface MllpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the CamelCharsetName property on the exchange.
+         * Sets the default charset to use.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1413,7 +1413,7 @@ public interface MllpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the CamelCharsetName property on the exchange.
+         * Sets the default charset to use.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

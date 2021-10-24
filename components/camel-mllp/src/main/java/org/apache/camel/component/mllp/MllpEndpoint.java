@@ -48,7 +48,7 @@ import org.slf4j.Logger;
  */
 @ManagedResource(description = "MLLP Endpoint")
 @UriEndpoint(scheme = "mllp", firstVersion = "2.17.0", title = "MLLP", syntax = "mllp:hostname:port",
-             category = { Category.NETWORKING, Category.RPC, Category.MLLP }, generateConfigurer = false)
+             category = { Category.NETWORKING, Category.RPC, Category.MLLP }, generateConfigurer = true)
 public class MllpEndpoint extends DefaultEndpoint {
 
     @UriPath
@@ -72,6 +72,11 @@ public class MllpEndpoint extends DefaultEndpoint {
 
         super.setBridgeErrorHandler(configuration.isBridgeErrorHandler());
         super.setExchangePattern(configuration.getExchangePattern());
+    }
+
+    @Override
+    public MllpComponent getComponent() {
+        return (MllpComponent) super.getComponent();
     }
 
     @Override
@@ -277,6 +282,10 @@ public class MllpEndpoint extends DefaultEndpoint {
 
     public void setValidatePayload(Boolean validatePayload) {
         configuration.setValidatePayload(validatePayload);
+    }
+
+    public String getCharsetName() {
+        return configuration.getCharsetName();
     }
 
     public void setCharsetName(String charsetName) {

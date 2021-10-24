@@ -98,6 +98,15 @@ The `ScpOperations` class were modified to comply with the API changes on the `c
 
 The `KafkaManualCommit` class were modified in order to support async manual commit. Please use the new function `commit()` instead of the old deprecated one `commitSync()`.
 
+=== camel-mllp
+
+This component has been refactored to be similar to other Camel components.
+The old component had an unusual static configuration of the `MllpComponent` which now is
+refactored to be Camel standard with regular getter/setters. The component is now also
+configured _reflection free_. We also cleaned up how the component dealt with which charset
+to use when processing HL7 messages. Users using `camel-mllp` is recommended to test
+their applications when upgrading to ensure this continues to work.
+
 === camel-openapi-java / camel-swagger-java
 
 Support for rendering api docs by discovering other CamelContext via JMX in the same JVM has been removed.

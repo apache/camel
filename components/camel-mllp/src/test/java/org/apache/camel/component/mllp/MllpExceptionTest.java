@@ -118,8 +118,6 @@ public class MllpExceptionTest extends MllpExceptionTestSupport {
 
     @Test
     public void testNullHl7Message() throws Exception {
-        System.setProperty(MllpComponent.MLLP_LOG_PHI_PROPERTY, "true");
-
         instance = new MllpException(EXCEPTION_MESSAGE, null, HL7_ACKNOWLEDGEMENT_BYTES);
 
         assertEquals(expectedMessage(null, HL7_ACKNOWLEDGEMENT), instance.getMessage());
@@ -127,8 +125,6 @@ public class MllpExceptionTest extends MllpExceptionTestSupport {
 
     @Test
     public void testEmptyHl7Message() throws Exception {
-        System.setProperty(MllpComponent.MLLP_LOG_PHI_PROPERTY, "true");
-
         instance = new MllpException(EXCEPTION_MESSAGE, EMPTY_BYTE_ARRAY, HL7_ACKNOWLEDGEMENT_BYTES);
 
         assertEquals(expectedMessage(null, HL7_ACKNOWLEDGEMENT), instance.getMessage());
@@ -136,8 +132,6 @@ public class MllpExceptionTest extends MllpExceptionTestSupport {
 
     @Test
     public void testNullHl7Acknowledgement() throws Exception {
-        System.setProperty(MllpComponent.MLLP_LOG_PHI_PROPERTY, "true");
-
         instance = new MllpException(EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, NULL_BYTE_ARRAY);
 
         assertEquals(expectedMessage(HL7_MESSAGE, null), instance.getMessage());
@@ -145,8 +139,6 @@ public class MllpExceptionTest extends MllpExceptionTestSupport {
 
     @Test
     public void testEmptyAcknowledgement() throws Exception {
-        System.setProperty(MllpComponent.MLLP_LOG_PHI_PROPERTY, "true");
-
         instance = new MllpException(EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, EMPTY_BYTE_ARRAY);
 
         assertEquals(expectedMessage(HL7_MESSAGE, null), instance.getMessage());
@@ -154,8 +146,6 @@ public class MllpExceptionTest extends MllpExceptionTestSupport {
 
     @Test
     public void testNullHl7Payloads() throws Exception {
-        System.setProperty(MllpComponent.MLLP_LOG_PHI_PROPERTY, "true");
-
         instance = new MllpException(EXCEPTION_MESSAGE, NULL_BYTE_ARRAY, NULL_BYTE_ARRAY);
 
         assertEquals(expectedMessage(null, null), instance.getMessage());

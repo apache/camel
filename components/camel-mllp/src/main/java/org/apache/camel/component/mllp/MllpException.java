@@ -24,6 +24,7 @@ import org.apache.camel.component.mllp.internal.Hl7Util;
 public class MllpException extends Exception {
     final byte[] hl7MessageBytes;
     final byte[] hl7AcknowledgementBytes;
+    final Hl7Util hl7Util;
 
     // No-payload constructors
     public MllpException(String message) {
@@ -50,6 +51,7 @@ public class MllpException extends Exception {
 
     public MllpException(String message, byte[] hl7MessageBytes, byte[] hl7AcknowledgementBytes, Throwable cause) {
         super(message, cause);
+        this.hl7Util = new Hl7Util(5120);
 
         if (hl7MessageBytes != null && hl7MessageBytes.length > 0) {
             this.hl7MessageBytes = hl7MessageBytes;
@@ -125,7 +127,7 @@ public class MllpException extends Exception {
                         .append(hl7MessageBytes.length)
                         .append("] = ");
 
-                Hl7Util.appendBytesAsPrintFriendlyString(messageBuilder, hl7MessageBytes, 0, hl7MessageBytes.length);
+                hl7Util.appendBytesAsPrintFriendlyString(messageBuilder, hl7MessageBytes, 0, hl7MessageBytes.length);
 
                 messageBuilder.append('}');
             }
@@ -135,7 +137,7 @@ public class MllpException extends Exception {
                         .append(hl7AcknowledgementBytes.length)
                         .append("] = ");
 
-                Hl7Util.appendBytesAsPrintFriendlyString(messageBuilder, hl7AcknowledgementBytes, 0,
+                hl7Util.appendBytesAsPrintFriendlyString(messageBuilder, hl7AcknowledgementBytes, 0,
                         hl7AcknowledgementBytes.length);
 
                 messageBuilder.append('}');

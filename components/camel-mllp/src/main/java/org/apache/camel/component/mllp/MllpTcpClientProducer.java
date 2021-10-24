@@ -22,6 +22,7 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import java.nio.charset.Charset;
 import java.util.Date;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -56,6 +57,8 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
     private String cachedLocalAddress;
     private String cachedRemoteAddress;
     private String cachedCombinedAddress;
+    private final Charset charset;
+    private final Hl7Util hl7Util;
 
     public MllpTcpClientProducer(MllpEndpoint endpoint) {
         super(endpoint);
@@ -66,6 +69,8 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
         log.trace("Constructing MllpTcpClientProducer for endpoint URI {}", endpoint.getEndpointUri());
 
         mllpBuffer = new MllpSocketBuffer(endpoint);
+        charset = Charset.forName(endpoint.getConfiguration().getCharsetName());
+        hl7Util = new Hl7Util(endpoint.getComponent().getLogPhiMaxBytes());
     }
 
     @ManagedAttribute(description = "Last activity time")
@@ -159,7 +164,7 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
                 hl7MessageBytes = (byte[]) messageBody;
             } else if (messageBody instanceof String) {
                 String stringBody = (String) messageBody;
-                hl7MessageBytes = stringBody.getBytes(getConfiguration().getCharset(exchange));
+                hl7MessageBytes = stringBody.getBytes(MllpCharsetHelper.getCharset(exchange, charset));
                 if (getConfiguration().hasCharsetName()) {
                     exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, getConfiguration().getCharsetName());
                 }
@@ -286,13 +291,14 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
                         message.setHeader(MllpConstants.MLLP_ACKNOWLEDGEMENT, acknowledgementBytes);
                         if (acknowledgementBytes != null && acknowledgementBytes.length > 0) {
                             message.setHeader(MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING, new String(
-                                    acknowledgementBytes, getConfiguration().getCharset(exchange, acknowledgementBytes)));
+                                    acknowledgementBytes,
+                                    MllpCharsetHelper.getCharset(exchange, acknowledgementBytes, hl7Util, charset)));
                         } else {
                             message.setHeader(MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING, "");
                         }
 
                         if (getConfiguration().isValidatePayload()) {
-                            String exceptionMessage = Hl7Util.generateInvalidPayloadExceptionMessage(acknowledgementBytes);
+                            String exceptionMessage = hl7Util.generateInvalidPayloadExceptionMessage(acknowledgementBytes);
                             if (exceptionMessage != null) {
                                 exchange.setException(new MllpInvalidAcknowledgementException(
                                         exceptionMessage, hl7MessageBytes, acknowledgementBytes));
