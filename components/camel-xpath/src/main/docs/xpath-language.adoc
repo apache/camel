@@ -79,7 +79,7 @@ exchange:
 |in:header |the header name |Object |Will return the message header.
 |out:body |none |Object |*deprecated* Will return the out message body.
 |out:header |the header name |Object |*deprecated* Will return the out message header.
-|function:properties |key for property |String |To use a xref:latest@manual:ROOT:using-propertyplaceholder.adoc[Property Placeholder].
+|function:properties |key for property |String |To use a xref:manual:ROOT:using-propertyplaceholder.adoc[Property Placeholder].
 |function:simple |simple expression |Object |To evaluate a xref:simple-language.adoc[Simple] language.
 |===
 
@@ -312,7 +312,7 @@ to use it as a helper to do custom XPath evaluations.
 
 It requires that you pass in a `CamelContext`
 since a lot of the moving parts inside the `XPathBuilder` requires access
-to the Camel xref:latest@manual:ROOT:type-converter.adoc[Type Converter]
+to the Camel xref:manual:ROOT:type-converter.adoc[Type Converter]
 and hence why `CamelContext` is needed.
 
 For example, you can do something like this:

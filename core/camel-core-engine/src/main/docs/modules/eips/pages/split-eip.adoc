@@ -85,7 +85,7 @@ And in XML:
 </route>
 ----
 
-The splitter can use any xref:latest@manual:ROOT:expression.adoc[Expression],
+The splitter can use any xref:manual:ROOT:expression.adoc[Expression],
 so you could use any of the supported languages such as
 xref:components:languages:simple-language.adoc[Simple], xref:components:languages:xpath-language.adoc[XPath],
 xref:components:languages:jsonpath-language.adoc[JSonPath], xref:components:languages:groovy-language.adoc[Groovy] to perform the split.
@@ -338,7 +338,7 @@ public class MyCustomSplitter {
 The bean should just return something that the splitter can work with when splitting, such as a `List` or `Iterator` etc.
 
 TIP: The bean method `splitMe` uses `Exchange` as parameter, however Camel supports
-xref:latest@manual:ROOT:bean-binding.adoc[Bean Parameter Binding], which allows using other parameters types instead.
+xref:manual:ROOT:bean-binding.adoc[Bean Parameter Binding], which allows using other parameters types instead.
 
 === Streaming big XML payloads
 
@@ -701,7 +701,7 @@ What Camel does by default is to process the remainder 983 messages.
 You have the chance to deal with the exception when aggregating using an `AggregationStrategy`.
 
 But sometimes you just want Camel to stop and let the exception be
-propagated back, and let the Camel xref:latest@manual:ROOT:error-handler.adoc[Error Handler]
+propagated back, and let the Camel xref:manual:ROOT:error-handler.adoc[Error Handler]
 handle it. You can do this by specifying that it should stop in case of an
 exception occurred. This is done by the `stopOnException` option as
 shown below:
