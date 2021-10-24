@@ -5,11 +5,11 @@ http://www.enterpriseintegrationpatterns.com/DeadLetterChannel.html[Dead
 Letter Channel] from the xref:enterprise-integration-patterns.adoc[EIP
 patterns] using the
 https://www.javadoc.io/doc/org.apache.camel/camel-core-processor/current/org/apache/camel/processor/errorhandler/DeadLetterChannel.html[DeadLetterChannel]
-processor which is an xref:latest@manual:ROOT:error-handler.adoc[Error Handler].
+processor which is an xref:manual:ROOT:error-handler.adoc[Error Handler].
 
 image::eip/DeadLetterChannelSolution.gif[image]
 
-The Dead Letter Channel is an xref:latest@manual:ROOT:error-handler.adoc[Error Handler]
+The Dead Letter Channel is an xref:manual:ROOT:error-handler.adoc[Error Handler]
 that implements the principles from the Dead Letter Channel EIP.
 From the illustration above we can see the pattern is that if a message cannot be processed or fails during sending, it should be moved to a dead letter queue.
 The dead letter queue, is based on a Camel
@@ -66,7 +66,7 @@ which means this error handler is used globally. You can override this per route
 individual routes used another error handler.
 
 NOTE: The DSLs is planned to be improved in the near future to have a unified
-way of configuring error handling across all DSLs, with xref:latest@manual:ROOT:route-configuration.adoc[Route Configuration].
+way of configuring error handling across all DSLs, with xref:manual:ROOT:route-configuration.adoc[Route Configuration].
 When fully implemented then configuring error handler in Java and XML DSL would be much more similar than currently.
 
 === Redelivery
@@ -133,7 +133,7 @@ If you do not want this behaviour you can configure `deadLetterHandleNewExceptio
 === What happens when an Exchange is moved to the dead letter queue
 
 When all attempts of redelivery have failed the
-xref:latest@manual:ROOT:exchange.adoc[Exchange] is moved to the dead letter queue.
+xref:manual:ROOT:exchange.adoc[Exchange] is moved to the dead letter queue.
 The exchange is then complete, and from the client point of view, the message is done being processed.
 
 For instance configuring the dead letter channel as:
@@ -154,8 +154,8 @@ And in XML:
 </errorHandler>
 ----
 
-The Dead Letter error handler will clear the caused exception (`setException(null)`), by moving the caused exception to a property on the xref:latest@manual:ROOT:exchange.adoc[Exchange], with the key `Exchange.EXCEPTION_CAUGHT`.
-Then the xref:latest@manual:ROOT:exchange.adoc[Exchange]
+The Dead Letter error handler will clear the caused exception (`setException(null)`), by moving the caused exception to a property on the xref:manual:ROOT:exchange.adoc[Exchange], with the key `Exchange.EXCEPTION_CAUGHT`.
+Then the xref:manual:ROOT:exchange.adoc[Exchange]
 is moved to the `jms:queue:dead` destination, and the client will not notice the failure.
 
 === Moving the original message to the dead letter queue
@@ -173,7 +173,7 @@ from("jms:queue:order:input")
 -----
 
 The route listen for JMS messages and validates, transforms and handle it.
-During this the xref:latest@manual:ROOT:exchange.adoc[Exchange] payload is transformed/modified in the various bean stages.
+During this the xref:manual:ROOT:exchange.adoc[Exchange] payload is transformed/modified in the various bean stages.
 
 Now suppose that if an exception is thrown we want to move the message to the dead letter queue.
 However the message that is moved to the dead letter queue (by default) is the current message.
@@ -221,7 +221,7 @@ combining with the parent unit of work and ends up usinguse the parent original 
 
 === Calling a processor before redelivery using OnRedelivery
 
-When the Dead Letter Channel is doing redeliver its possible to configure a xref:latest@manual:ROOT:processor.adoc[Processor]
+When the Dead Letter Channel is doing redeliver its possible to configure a xref:manual:ROOT:processor.adoc[Processor]
 that is executed just _before_ every redelivery attempt.
 This can be used for the situations where you need to alter the message before its redelivered.
 
@@ -246,9 +246,9 @@ And in XML DSL, you specify a bean id via `onRedeliveryRef` on the `<errorHandle
 </errorHandler>
 ----
 
-TIP: Camel also supports xref:latest@manual:ROOT:exception-clause.adoc[onException] to use `onRedeliver`.
+TIP: Camel also supports xref:manual:ROOT:exception-clause.adoc[onException] to use `onRedeliver`.
 This means you can do special on redelivery for different exceptions, as opposed to `onRedelivery` set on
-Dead Letter Channel (or xref:latest@manual:ROOT:defaulterrorhandler.adoc[Default Error Handler]) can be viewed as global scoped.
+Dead Letter Channel (or xref:manual:ROOT:defaulterrorhandler.adoc[Default Error Handler]) can be viewed as global scoped.
 
 
 === Calling a processor before sending message to the dead letter queue using OnPrepareFailure
@@ -408,8 +408,8 @@ The `Exchange.TO_ENDPOINT` have the constant value `CamelToEndpoint`.
 
 This information is updated when Camel sends a message to any endpoint.
 
-When for example processing the xref:latest@manual:ROOT:exchange.adoc[Exchange] at a given
-xref:latest@manual:ROOT:endpoint.adoc[Endpoint] and the message is to be moved into the dead letter queue, then Camel also decorates the Exchange with another property that contains that *last* endpoint:
+When for example processing the xref:manual:ROOT:exchange.adoc[Exchange] at a given
+xref:manual:ROOT:endpoint.adoc[Endpoint] and the message is to be moved into the dead letter queue, then Camel also decorates the Exchange with another property that contains that *last* endpoint:
 
 [source,java]
 ----
@@ -425,7 +425,7 @@ endpoint uri would be stored as information.
 
 This information is kept on the Exchange even if the message was successfully processed by a given endpoint,
 and then later fails for example in a local xref:bean-eip.adoc[Bean] EIP processing instead.
-So beware that this is a hint that helps pinpoint errors to xref:latest@manual:ROOT:endpoint.adoc[Endpoints], and not EIPs.
+So beware that this is a hint that helps pinpoint errors to xref:manual:ROOT:endpoint.adoc[Endpoints], and not EIPs.
 
 [source,java]
 ----

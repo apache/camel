@@ -11,7 +11,7 @@ In Camel the Content Enricher can be done in several ways:
 
 * Using xref:enrich-eip.adoc[Enrich] EIP
 * Using a xref:message-translator.adoc[Message Translator]
-* Using a xref:latest@manual:ROOT:processor.adoc[Processor] with the enrichment programmed in Java
+* Using a xref:manual:ROOT:processor.adoc[Processor] with the enrichment programmed in Java
 * Using a xref:bean-eip.adoc[Bean] EIP with the enrichment programmed in Java
 
 The most natural Camel approach is using xref:enrich-eip.adoc[Enrich] EIP.
@@ -44,7 +44,7 @@ And in XML
 ----
 
 You can also enrich the message in Java DSL directly (using fluent builder) as an
-xref:latest@manual:ROOT:expression.adoc[Expression]. In the example below the message
+xref:manual:ROOT:expression.adoc[Expression]. In the example below the message
 is enriched by appending ` World!` to the message body:
 
 [source,java]
@@ -70,7 +70,7 @@ xref:languages:simple-language.adoc[Simple] language:
 
 == Content enrichment using a Processor
 
-In this example we add our own xref:latest@manual:ROOT:processor.adoc[Processor] using
+In this example we add our own xref:manual:ROOT:processor.adoc[Processor] using
 explicit Java to enrich the message:
 
 [source,java]

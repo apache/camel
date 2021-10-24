@@ -13,7 +13,7 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/ref.adoc[op
 *Since Camel {since}*
 
 The Ref Expression Language is really just a way to lookup a custom
-`Expression` or `Predicate` from the xref:latest@manual:ROOT:registry.adoc[Registry].
+`Expression` or `Predicate` from the xref:manual:ROOT:registry.adoc[Registry].
 
 This is particular useable in XML DSLs.
 
@@ -44,7 +44,7 @@ expression using `<ref>` like:
 in this case, the message coming from the seda:a
 endpoint will be splitted using a custom
 `Expression` which has the id `myExpression` in the
-xref:latest@manual:ROOT:registry.adoc[Registry].
+xref:manual:ROOT:registry.adoc[Registry].
 
 And the same example using Java DSL:
 

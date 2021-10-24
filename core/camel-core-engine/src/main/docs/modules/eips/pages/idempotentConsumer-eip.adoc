@@ -14,9 +14,9 @@ The Idempotent Consumer essentially acts like a
 xref:filter-eip.adoc[Message Filter] to filter out duplicates.
 
 Camel will add the message id eagerly to the repository to detect
-duplication also for xref:latest@manual:ROOT:exchange.adoc[Exchange]'s' currently in progress.
+duplication also for xref:manual:ROOT:exchange.adoc[Exchange]'s' currently in progress.
 On completion Camel will remove the message id from the repository if
-the xref:latest@manual:ROOT:exchange.adoc[Exchange] failed, otherwise it stays there.
+the xref:manual:ROOT:exchange.adoc[Exchange] failed, otherwise it stays there.
 
 == Options
 
@@ -47,7 +47,7 @@ xref:ROOT:infinispan-component.adoc[InfinispanRemoteIdempotentRepository]
 * xref:ROOT:mongodb-component.adoc[MongoDbIdempotentRepository]
 * xref:ROOT:spring-redis-component.adoc[RedisIdempotentRepository]
 xref:ROOT:spring-redis-component.adoc[RedisStringIdempotentRepository]
-* xref:latest@manual:ROOT:spring.adoc[SpringCacheIdempotentRepository]
+* xref:manual:ROOT:spring.adoc[SpringCacheIdempotentRepository]
 * xref:ROOT:sql-component.adoc[JdbcMessageIdRepository]
 xref:ROOT:sql-component.adoc[JdbcOrphanLockAwareIdempotentRepository]
 

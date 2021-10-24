@@ -45,7 +45,7 @@ then send the message repetitively to mock:result.
 The number of times the message is sent is either passed as an argument to `loop`,
 or determined at runtime by evaluating an expression.
 
-The xref:latest@manual:ROOT:expression.adoc[Expression] *must* evaluate to an `int`,
+The xref:manual:ROOT:expression.adoc[Expression] *must* evaluate to an `int`,
 otherwise a `RuntimeCamelException` is thrown.
 
 Pass loop count as an argument:

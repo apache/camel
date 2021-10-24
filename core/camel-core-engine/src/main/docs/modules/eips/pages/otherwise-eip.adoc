@@ -21,7 +21,7 @@ include::partial$eip-options.adoc[]
 
 The following example shows how to route a request from an input
 *direct:a* endpoint to either *direct:b*, *direct:c* or *direct:d* depending on
-the evaluation of various xref:latest@manual:ROOT:predicate.adoc[Predicate] expressions
+the evaluation of various xref:manual:ROOT:predicate.adoc[Predicate] expressions
 
 [source,java]
 ----

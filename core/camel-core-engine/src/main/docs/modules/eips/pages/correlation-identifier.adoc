@@ -19,7 +19,7 @@ message exchange to help correlate messages together to a single
 conversation (or business process). For example if you need to correlation messages when using web services.
 
 The use of a correlation identifier is key to working with xref:others:tracing.adoc[Distributed Tracing]
-and be useful when using xref:latest@manual::tracer.adoc[Tracer] messages to log,
+and be useful when using xref:manual::tracer.adoc[Tracer] messages to log,
 or testing with simulation or canned data such as with the xref:ROOT:mock-component.adoc[Mock] testing framework.
 
 
@@ -27,9 +27,9 @@ or testing with simulation or canned data such as with the xref:ROOT:mock-compon
 
 Some xref:enterprise-integration-patterns.adoc[EIP] patterns will spin off a sub message, and in
 those cases, Camel will add a correlation id on the
-xref:latest@manual:ROOT:exchange.adoc[Exchange] as a property with they key
+xref:manual:ROOT:exchange.adoc[Exchange] as a property with they key
 `Exchange.CORRELATION_ID`, which links back to the source
-xref:latest@manual:ROOT:exchange.adoc[Exchange] and its exchange id.
+xref:manual:ROOT:exchange.adoc[Exchange] and its exchange id.
 
 The following EIPs does this:
 

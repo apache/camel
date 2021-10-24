@@ -185,7 +185,7 @@ or xref:ROOT:sql-component.adoc[SQL] components.
 
 == Completion
 
-When aggregation xref:latest@manual:ROOT:exchange.adoc[Exchange]s at some point you need to
+When aggregation xref:manual:ROOT:exchange.adoc[Exchange]s at some point you need to
 indicate that the aggregated exchanges is complete, so they can be sent
 out of the aggregator. Camel allows you to indicate completion in
 various ways as follows:
@@ -197,7 +197,7 @@ key within the period.
 exchanges are completed.
 * _completionSize_ - Is a number indicating that after X aggregated
 exchanges its complete.
-* _completionPredicate_ - Runs a xref:latest@manual:ROOT:predicate.adoc[Predicate] when a new
+* _completionPredicate_ - Runs a xref:manual:ROOT:predicate.adoc[Predicate] when a new
 exchange is aggregated to determine if we are complete or not.
 The configured aggregationStrategy can implement the
 Predicate interface and will be used as the completionPredicate if no
@@ -206,7 +206,7 @@ override the `preComplete` method and will be used as
 the completionPredicate in pre-complete check mode. See further below
 for more details.
 * _completionFromBatchConsumer_ - Special option for
-xref:latest@manual:ROOT:batch-consumer.adoc[Batch Consumer] which allows you to complete
+xref:manual:ROOT:batch-consumer.adoc[Batch Consumer] which allows you to complete
 when all the messages from the batch has been aggregated.
 * _forceCompletionOnStop_ - Indicates to complete all current
 aggregated exchanges when the context is stopped
@@ -224,9 +224,9 @@ Completion is mandatory and must be configured on the aggregation.
 === Pre-completion mode
 
 There can be use-cases where you want the incoming
-xref:latest@manual:ROOT:exchange.adoc[Exchange] to determine if the correlation group
+xref:manual:ROOT:exchange.adoc[Exchange] to determine if the correlation group
 should pre-complete, and then the incoming
-xref:latest@manual:ROOT:exchange.adoc[Exchange] is starting a new group from scratch.
+xref:manual:ROOT:exchange.adoc[Exchange] is starting a new group from scratch.
 The pre-completion mode must be enabled by the `AggregationStrategy` by overriding the `canPreComplete` method
 to return a `true` value.
 

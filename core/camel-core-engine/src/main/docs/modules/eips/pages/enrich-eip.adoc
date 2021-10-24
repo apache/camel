@@ -16,7 +16,7 @@ In Camel the Content Enricher can be done in several ways:
 
 * Using xref:enrich-eip.adoc[Enrich] EIP
 * Using a xref:message-translator.adoc[Message Translator]
-* Using a xref:latest@manual:ROOT:processor.adoc[Processor] with the enrichment programmed in Java
+* Using a xref:manual:ROOT:processor.adoc[Processor] with the enrichment programmed in Java
 * Using a xref:bean-eip.adoc[Bean] EIP with the enrichment programmed in Java
 
 The most natural Camel approach is using xref:enrich-eip.adoc[Enrich] EIP,

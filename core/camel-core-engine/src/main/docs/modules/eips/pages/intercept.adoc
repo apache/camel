@@ -1,7 +1,7 @@
 = Intercept
 
 The intercept feature in Camel supports intercepting
-xref:latest@manual:ROOT:exchange.adoc[Exchange]'s' while they are being routed.
+xref:manual:ROOT:exchange.adoc[Exchange]'s' while they are being routed.
 
 == Kinds of interceptors
 
@@ -10,7 +10,7 @@ Camel supports three kinds of interceptors:
 * `intercept` that intercepts every processing step as they happen during routing
 * `interceptFrom` that intercepts only the incoming step (i.e. xref:from-eip.adoc[from])
 * `interceptSendToEndpoint` that intercepts only when an
-xref:latest@manual:ROOT:exchange.adoc[Exchange] is about to be sent to the given xref:message-endpoint.adoc[endpoint].
+xref:manual:ROOT:exchange.adoc[Exchange] is about to be sent to the given xref:message-endpoint.adoc[endpoint].
 
 The `interceptSendToEndpoint` is dynamic hence it will also trigger if a
 dynamic URI is constructed that Camel was not aware of at startup
@@ -24,7 +24,7 @@ messages from this endpoint, then the `interceptFrom` is not triggered.
 === Interceptor scopes
 
 All the interceptors can be configured on global, route scope, or with
-xref:latest@manual:ROOT:route-configuration.adoc[Route Configuration].
+xref:manual:ROOT:route-configuration.adoc[Route Configuration].
 
 This means multiple interceptors can be _triggered_.
 
@@ -59,7 +59,7 @@ And in XML:
 
 All these interceptors support the following features:
 
-* xref:latest@manual:ROOT:predicate.adoc[Predicate] using `when` to only trigger the interceptor in certain conditions
+* xref:manual:ROOT:predicate.adoc[Predicate] using `when` to only trigger the interceptor in certain conditions
 * `stop` forces stopping continue routing the Exchange and mark it as completed successful (it's actually the xref:stop-eip.adoc[Stop] EIP).
 * `skip` when used with `interceptSendToEndpoint` will *skip* sending the message to the original intended endpoint.
 * `afterUri` when used with `interceptSendToEndpoint` allows to send
@@ -71,7 +71,7 @@ URI pattern matching by: exact uri, wildcard, regular expression. See further be
 
 === Using intercept
 
-The `Intercept` is intercepting the xref:latest@manual:ROOT:exchange.adoc[Exchange]
+The `Intercept` is intercepting the xref:manual:ROOT:exchange.adoc[Exchange]
 on every processing steps during routing.
 
 Given the following example:
@@ -117,7 +117,7 @@ The example is as follows in XML:
 
 === Controlling when to intercept using a predicate
 
-If you only want to intercept "sometimes", then you can use a xref:latest@manual:ROOT:predicate.adoc[predicate].
+If you only want to intercept "sometimes", then you can use a xref:manual:ROOT:predicate.adoc[predicate].
 
 For instance in the sample below we only intercept if the message body
 contains the string word Hello:
@@ -288,7 +288,7 @@ message is sent to the intended destination.
 The interceptor can also be configured to not send to the destination (skip)
 which means the message is detoured instead.
 
-A xref:latest@manual:ROOT:predicate.adoc[Predicate] can also be used
+A xref:manual:ROOT:predicate.adoc[Predicate] can also be used
 to control when to intercept, which has been previously covered.
 
 The `afterUri` option, is used when you need to process
@@ -404,7 +404,7 @@ And in XML:
 
 === Conditional skipping sending to endpoint
 
-You can combine both a xref:latest@manual:ROOT:predicate.adoc[predicate] and skip sending to the original endpoint.
+You can combine both a xref:manual:ROOT:predicate.adoc[predicate] and skip sending to the original endpoint.
 For example suppose you have some "test" messages that sometimes occur, and that you
 want to avoid sending these message to a downstream kafka system, then this can be done as shown:
 
