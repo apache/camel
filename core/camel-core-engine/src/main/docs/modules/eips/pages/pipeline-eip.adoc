@@ -10,7 +10,7 @@ Camel supports the http://www.enterpriseintegrationpatterns.com/PipesAndFilters.
 image::eip/PipesAndFilters.gif[image]
 
 With Camel you can split your processing across multiple independent
-xref:latest@manual:ROOT:endpoint.adoc[Endpoint] instances which can then be chained
+xref:manual:ROOT:endpoint.adoc[Endpoint] instances which can then be chained
 together.
 
 == Options
@@ -23,7 +23,7 @@ include::partial$eip-options.adoc[]
 == Examples
 
 You can create pipelines of logic using multiple
-xref:latest@manual:ROOT:endpoint.adoc[Endpoint] or xref:message-translator.adoc[Message
+xref:manual:ROOT:endpoint.adoc[Endpoint] or xref:message-translator.adoc[Message
 Translator] instances as follows
 
 Though pipeline is the default mode of operation when you specify

@@ -9,8 +9,8 @@ interface.
 
 image::eip/MessageEndpointSolution.gif[image]
 
-When using the xref:latest@manual:ROOT:dsl.adoc[DSL] to create xref:latest@manual:ROOT:routes.adoc[Routes] you
-typically refer to Message Endpoints by their xref:latest@manual:ROOT:uris.adoc[URIs]
+When using the xref:manual:ROOT:dsl.adoc[DSL] to create xref:manual:ROOT:routes.adoc[Routes] you
+typically refer to Message Endpoints by their xref:manual:ROOT:uris.adoc[URIs]
 rather than directly using the
 https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Endpoint.html[Endpoint]
 interface. It's then a responsibility of the

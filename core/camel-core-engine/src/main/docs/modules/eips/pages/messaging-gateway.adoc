@@ -14,5 +14,5 @@ Camel has several endpoint components that support the Messaging Gateway from th
 Components like xref:ROOT:bean-component.adoc[Bean] and xref:ROOT:bean-component.adoc[CXF] provide a way
 to bind a Java interface to the message exchange.
 
-Another approach is to use `@Produce` annotations which you can read about in xref:latest@manual:ROOT:pojo-producing.adoc[POJO Producing]
+Another approach is to use `@Produce` annotations which you can read about in xref:manual:ROOT:pojo-producing.adoc[POJO Producing]
 which also can be used as a Messaging Gateway EIP solution.

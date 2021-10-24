@@ -23,7 +23,7 @@ but also give time for the thread pool to process its current tasks,
 without adding more tasks (self throttling). This is the default
 behavior. If setting `callerRunsWhenRejected` you use the `Abort`
 policy, which means the task is rejected, and a
-`RejectedExecutionException` is set on the xref:latest@manual:ROOT:exchange.adoc[Exchange],
+`RejectedExecutionException` is set on the xref:manual:ROOT:exchange.adoc[Exchange],
 and the `Exchange` will stop continue being routed, and its `UnitOfWork` will be regarded as failed.
 
 The other options `Discard` and `DiscardOldest` work a bit like

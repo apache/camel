@@ -30,7 +30,7 @@ public class MyProcessor implements Processor {
 
 You can then easily use this inside a route by declaring the bean in
 Spring, say via the XML (or registering it in JNDI if that is your
-xref:latest@manual:ROOT:registry.adoc[Registry])
+xref:manual:ROOT:registry.adoc[Registry])
 
 [source,xml]
 --------------------------------------------------------
@@ -56,7 +56,7 @@ Processor myProcessor = new MyProcessor();
 from("activemq:myQueue").process(myProcessor);
 ----
 
-If you need to lookup the processor in the xref:latest@manual:ROOT:registry.adoc[Registry]
+If you need to lookup the processor in the xref:manual:ROOT:registry.adoc[Registry]
 then you should use the *processRef* DSL:
 
 [source,java]
@@ -87,11 +87,11 @@ refactor it into a separate class.
 
 There is a base class called
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/impl/ProcessorEndpoint.html[ProcessorEndpoint]
-which supports the full xref:latest@manual:ROOT:endpoint.adoc[Endpoint] semantics given a
+which supports the full xref:manual:ROOT:endpoint.adoc[Endpoint] semantics given a
 Processor instance.
 
 So you just need to create a https://github.com/apache/camel/tree/main/components[Component] class by
 deriving from
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/impl/DefaultComponent.html[DefaultComponent]
 which returns instances of ProcessorEndpoint. For more details see
-xref:latest@manual:ROOT:writing-components.adoc[Writing Components]
+xref:manual:ROOT:writing-components.adoc[Writing Components]

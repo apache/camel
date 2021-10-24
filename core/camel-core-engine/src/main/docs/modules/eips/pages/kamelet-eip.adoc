@@ -8,7 +8,7 @@
 Kamelets (Kamel route snippets) allow users to connect to external systems via a simplified interface,
 hiding all the low level details about how those connections are implemented.
 
-The Kamelet EIP allows calling Kamelets (i.e. xref:latest@manual:ROOT:route-template.adoc[Route Template]).
+The Kamelet EIP allows calling Kamelets (i.e. xref:manual:ROOT:route-template.adoc[Route Template]).
 When calling a Kamelet you may just refer to the name (template id) of the Kamelet in the EIP as shown below:
 
 == Options
@@ -38,8 +38,8 @@ And in XML
 
 Camel will then, when starting:
 
-* Lookup the xref:latest@manual:ROOT:route-template.adoc[Route Template] with the given id (in the example above its foo) from the `CamelContext`
-* Create a new route based on the xref:latest@manual:ROOT:route-template.adoc[Route Template]
+* Lookup the xref:manual:ROOT:route-template.adoc[Route Template] with the given id (in the example above its foo) from the `CamelContext`
+* Create a new route based on the xref:manual:ROOT:route-template.adoc[Route Template]
 
 == Dependency
 

@@ -3,7 +3,7 @@
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/EventMessage.html[Event
 Message] from the xref:enterprise-integration-patterns.adoc[EIP
-patterns] by supporting the xref:latest@manual:ROOT:exchange-pattern.adoc[Exchange Pattern]
+patterns] by supporting the xref:manual:ROOT:exchange-pattern.adoc[Exchange Pattern]
 on a xref:message.adoc[Message] which can be set to *InOnly* to indicate
 a oneway event message. Camel xref:ROOT:index.adoc[Components] then
 implement this pattern using the underlying transport or protocols.
@@ -19,7 +19,7 @@ TIP: See the related xref:requestReply-eip.adoc[Request Reply] message.
 == Using endpoint URI
 
 If you are using a component which defaults to `InOut` you can override
-the xref:latest@manual:ROOT:exchange-pattern.adoc[Exchange Pattern] for a *consumer* endpoint using
+the xref:manual:ROOT:exchange-pattern.adoc[Exchange Pattern] for a *consumer* endpoint using
 the pattern property.
 
 [source,text]
@@ -51,7 +51,7 @@ And with XML:
 == Using setExchangePattern EIP
 
 You can specify the
-xref:latest@manual:ROOT:exchange-pattern.adoc[Exchange Pattern] using `setExchangePattern` in the DSL.
+xref:manual:ROOT:exchange-pattern.adoc[Exchange Pattern] using `setExchangePattern` in the DSL.
 
 [source,java]
 ----
@@ -71,8 +71,8 @@ And with XML:
 </route>
 ----
 
-When using `setExchangePattern` then the xref:latest@manual:ROOT:exchange-pattern.adoc[Exchange Pattern]
-on the xref:latest@manual:ROOT:exchange.adoc[Exchange] is changed from this point onwards in the route.
+When using `setExchangePattern` then the xref:manual:ROOT:exchange-pattern.adoc[Exchange Pattern]
+on the xref:manual:ROOT:exchange.adoc[Exchange] is changed from this point onwards in the route.
 
 This means you can change the pattern back again at a later point:
 
@@ -86,7 +86,7 @@ from("mq:someQueue")
   .log("InOut MEP received ${body}")
 ----
 
-NOTE: Using `setExchangePattern` to change the xref:latest@manual:ROOT:exchange-pattern.adoc[Exchange Pattern]
+NOTE: Using `setExchangePattern` to change the xref:manual:ROOT:exchange-pattern.adoc[Exchange Pattern]
 is often only used in special use-cases where you must
 force to be using either `InOnly` or `InOut` mode when using components that support both modes (such as messaging components like ActiveMQ, JMS, RabbitMQ etc.)
 

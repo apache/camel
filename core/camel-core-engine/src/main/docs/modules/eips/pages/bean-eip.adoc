@@ -19,7 +19,7 @@ bean:beanID[?options]
 ----
 
 Where *beanID* can be any string which is used to look up the bean in
-the xref:latest@manual:ROOT:registry.adoc[Registry].
+the xref:manual:ROOT:registry.adoc[Registry].
 
 == EIP options
 
@@ -115,6 +115,6 @@ In XML DSL this is also possible using `beanType`:
 How bean methods to be invoked are chosen (if they are not specified
 explicitly through the *method* parameter) and how parameter values are
 constructed from the xref:message.adoc[Message] are all defined by the
-xref:latest@manual:ROOT:bean-binding.adoc[Bean Binding] mechanism which is used throughout
-all the various xref:latest@manual:ROOT:bean-integration.adoc[Bean Integration]
+xref:manual:ROOT:bean-binding.adoc[Bean Binding] mechanism which is used throughout
+all the various xref:manual:ROOT:bean-integration.adoc[Bean Integration]
 mechanisms in Camel.

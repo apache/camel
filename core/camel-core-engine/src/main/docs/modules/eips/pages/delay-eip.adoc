@@ -37,7 +37,7 @@ And in XML:
 </route>
 ----
 
-The delayed value can be a dynamic xref:latest@manual:ROOT:expression.adoc[Expression].
+The delayed value can be a dynamic xref:manual:ROOT:expression.adoc[Expression].
 
 For example to delay a random between 1 and 5 seconds, we can use
 the xref:languages:simple-language.adoc[Simple] language:

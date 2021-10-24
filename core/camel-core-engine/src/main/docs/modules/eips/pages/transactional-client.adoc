@@ -261,9 +261,9 @@ route as transacted using the *transacted* tag.
 
 When a route is marked as transacted using *transacted* Camel will
 automatic use `TransactionErrorHandler` as the
-xref:latest@manual:ROOT:error-handler.adoc[Error Handler]. This error handler supports basically the same
-feature set as the xref:latest@manual:ROOT:defaulterrorhandler.adoc[DefaultErrorHandler],
-so you can for instance use xref:latest@manual:ROOT:exception-clause.adoc[Exception Clause]
+xref:manual:ROOT:error-handler.adoc[Error Handler]. This error handler supports basically the same
+feature set as the xref:manual:ROOT:defaulterrorhandler.adoc[DefaultErrorHandler],
+so you can for instance use xref:manual:ROOT:exception-clause.adoc[Exception Clause]
 as well.
 
 [[TransactionalClient-IntegrationTestingwithSpring]]
