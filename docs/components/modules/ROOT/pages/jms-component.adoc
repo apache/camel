@@ -665,7 +665,7 @@ from("file://orders").
 
 === Using Annotations
 
-Camel also has annotations so you can use xref:latest@manual::pojo-consuming.adoc[POJO
+Camel also has annotations so you can use xref:manual::pojo-consuming.adoc[POJO
 Consuming] and POJO Producing.
 
 === Spring DSL sample

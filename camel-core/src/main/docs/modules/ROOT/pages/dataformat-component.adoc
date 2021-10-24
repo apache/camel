@@ -9,7 +9,7 @@
 
 *Since Camel {since}*
 
-The *dataformat:* component allows to use xref:latest@manual::data-format.adoc[Data
+The *dataformat:* component allows to use xref:manual::data-format.adoc[Data
 Format] as a Camel Component.
 
 == URI format
@@ -21,7 +21,7 @@ dataformat:name:(marshal|unmarshal)[?options]
 
 Where *name* is the name of the Data Format. And
 then followed by the operation which must either be `marshal` or
-`unmarshal`. The options is used for configuring the xref:latest@manual::data-format.adoc[Data
+`unmarshal`. The options is used for configuring the xref:manual::data-format.adoc[Data
 Format] in use. See the Data Format documentation
 for which options it support.
 
@@ -67,7 +67,7 @@ with the following path and query parameters:
 
 == Samples
 
-For example to use the xref:dataformats:jaxb-dataformat.adoc[JAXB] xref:latest@manual::data-format.adoc[Data
+For example to use the xref:dataformats:jaxb-dataformat.adoc[JAXB] xref:manual::data-format.adoc[Data
 Format] we can do as follows:
 
 [source,java]
