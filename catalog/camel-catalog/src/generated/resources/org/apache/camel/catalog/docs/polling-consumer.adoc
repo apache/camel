@@ -69,7 +69,7 @@ Notice that some Camel xref:components::index.adoc[Components] has their own
 implementation of *`PollingConsumer`* and therefore do not support the
 options above.
 
-You can configure these options in endpoints xref:latest@manual:ROOT:uris.adoc[URIs], such
+You can configure these options in endpoints xref:manual:ROOT:uris.adoc[URIs], such
 as shown below:
 
 [source,java]
@@ -86,8 +86,8 @@ Exchange exchange = consumer.receive(5000);
 The *`ConsumerTemplate`* is a template much like
 Spring's *`JmsTemplate`* or *`JdbcTemplate`* supporting the
 xref:polling-consumer.adoc[Polling Consumer] EIP. With the template you
-can consume xref:latest@manual:ROOT:exchange.adoc[Exchange]s from an
-xref:latest@manual:ROOT:endpoint.adoc[Endpoint]. The template supports the three operations
+can consume xref:manual:ROOT:exchange.adoc[Exchange]s from an
+xref:manual:ROOT:endpoint.adoc[Endpoint]. The template supports the three operations
 listed above. However, it also includes convenient methods for returning
 the body, etc *`consumeBody`*.
 
@@ -220,7 +220,7 @@ previous run polled 1 or more messages.
 A pluggable *`org.apache.camel.PollingConsumerPollingStrategy`* allowing
 you to provide your custom implementation to control error handling
 usually occurred during the *`poll`* operation _*before*_ an
-xref:latest@manual:ROOT:exchange.adoc[Exchange] has been created and routed in Camel. In
+xref:manual:ROOT:exchange.adoc[Exchange] has been created and routed in Camel. In
 other words the error occurred while the polling was gathering
 information, for instance access to a file network failed so Camel
 cannot access it to scan for files.
@@ -242,20 +242,20 @@ option allows you to share a thread pool among multiple consumers.
 *`org.apache.camel.spi.ScheduledPollConsumerScheduler`* to use as the
 scheduler for firing when the polling consumer runs. The default
 implementation uses the *`ScheduledExecutorService`* and there is a
-xref:components::quartz-component.adoc[Quartz], and xref:latest@manual:ROOT:spring.adoc[Spring] based which
+xref:components::quartz-component.adoc[Quartz], and xref:manual:ROOT:spring.adoc[Spring] based which
 supports CRON expressions. *Notice:* If using a custom scheduler then
 the options for *`initialDelay`, `useFixedDelay`*, *`timeUnit`* and
 *`scheduledExecutorService`* may not be in use. Use the text *`quartz`*
 to refer to use the xref:components::quartz-component.adoc[Quartz] scheduler; and use the
-text `spring` to use the xref:latest@manual:ROOT:spring.adoc[Spring] based; and use the
+text `spring` to use the xref:manual:ROOT:spring.adoc[Spring] based; and use the
 text *`#myScheduler`* to refer to a custom scheduler by its id in the
-xref:latest@manual:ROOT:registry.adoc[Registry].
+xref:manual:ROOT:registry.adoc[Registry].
 
 See xref:components::quartz-component.adoc[Quartz] page for an example.
 
 |`scheduler.xxx` |`null` |*Camel 2.12:* To configure additional
 properties when using a custom *`scheduler`* or any of the
-xref:components::quartz-component.adoc[Quartz], xref:latest@manual:ROOT:spring.adoc[Spring] based scheduler.
+xref:components::quartz-component.adoc[Quartz], xref:manual:ROOT:spring.adoc[Spring] based scheduler.
 
 |`sendEmptyMessageWhenIdle` |`false` |*Camel 2.9:* If the polling
 consumer did not poll any files, you can enable this option to send an
@@ -319,9 +319,9 @@ is scheduled based and its *`run`* method is invoked periodically based
 on schedule settings. But errors can also occur when a poll is being
 executed. For instance if Camel should poll a file network, and this
 network resource is not available then a *`java.io.IOException`* could
-occur. As this error happens *before* any xref:latest@manual:ROOT:exchange.adoc[Exchange]
+occur. As this error happens *before* any xref:manual:ROOT:exchange.adoc[Exchange]
 has been created and prepared for routing, then the regular
-xref:latest@manual:ROOT:error-handler.adoc[Error handler] does not
+xref:manual:ROOT:error-handler.adoc[Error handler] does not
 apply. So what does the consumer do then? Well the exception is
 propagated back to the *`run`* method where its handled. Camel will by
 default log the exception at *`WARN`* level and then ignore it. At next
@@ -339,7 +339,7 @@ implement a custom scheduler to control when the
 xref:polling-consumer.adoc[Polling Consumer] runs. The default
 implementation is based on the JDKs *`ScheduledExecutorService`* with a
 single thread in the thread pool. There is a CRON based implementation
-in the xref:components::quartz-component.adoc[Quartz], and xref:latest@manual:ROOT:spring.adoc[Spring]
+in the xref:components::quartz-component.adoc[Quartz], and xref:manual:ROOT:spring.adoc[Spring]
 components.
 
 For an example of developing and using a custom scheduler, see the unit
@@ -412,12 +412,12 @@ throwing exceptions as in such a case the *`poll`* operation is not
 invoked and Camel will invoke the *`rollback`* directly.
 
 [[PollingConsumer-ConfiguringantoUsePollingConsumerPollStrategy]]
-=== Configuring an xref:latest@manual:ROOT:endpoint.adoc[Endpoint] to Use `PollingConsumerPollStrategy`
+=== Configuring an xref:manual:ROOT:endpoint.adoc[Endpoint] to Use `PollingConsumerPollStrategy`
 
-To configure an xref:latest@manual:ROOT:endpoint.adoc[Endpoint] to use a custom
+To configure an xref:manual:ROOT:endpoint.adoc[Endpoint] to use a custom
 *`PollingConsumerPollStrategy`* you use the option *`pollStrategy`*. For
 example in the file consumer below we want to use our custom strategy
-defined in the xref:latest@manual:ROOT:registry.adoc[Registry] with the bean id *`myPoll`*:
+defined in the xref:manual:ROOT:registry.adoc[Registry] with the bean id *`myPoll`*:
 
 [source,java]
 ----

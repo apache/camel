@@ -41,7 +41,7 @@ public class CheeseBean {
 }
 ----
 
-You can also use xref:latest@manual:ROOT:pojo-consuming.adoc[POJO consuming] with `@Consume` annotation.
+You can also use xref:manual:ROOT:pojo-consuming.adoc[POJO consuming] with `@Consume` annotation.
 
 [source,java]
 ----

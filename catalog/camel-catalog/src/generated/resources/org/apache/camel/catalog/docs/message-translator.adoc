@@ -4,10 +4,10 @@
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/MessageTranslator.html[Message
 Translator] from the xref:enterprise-integration-patterns.adoc[EIP
-patterns] by using an arbitrary xref:latest@manual:ROOT:processor.adoc[Processor] in the
-routing logic, by using a xref:latest@manual:ROOT:bean-integration.adoc[bean] to perform
+patterns] by using an arbitrary xref:manual:ROOT:processor.adoc[Processor] in the
+routing logic, by using a xref:manual:ROOT:bean-integration.adoc[bean] to perform
 the transformation, or by using transform() in the DSL. You can also use
-a xref:latest@manual:ROOT:data-format.adoc[Data Format] to marshal and unmarshal messages
+a xref:manual:ROOT:data-format.adoc[Data Format] to marshal and unmarshal messages
 in different encodings.
 
 image::eip/MessageTranslator.gif[image]
@@ -15,9 +15,9 @@ image::eip/MessageTranslator.gif[image]
 == Samples
 
 You can transform a message using Camel's
-xref:latest@manual:ROOT:bean-integration.adoc[Bean Integration] to call any method on a
-bean in your xref:latest@manual:ROOT:registry.adoc[Registry] such as your
-xref:latest@manual:ROOT:spring.adoc[Spring] XML configuration file as follows
+xref:manual:ROOT:bean-integration.adoc[Bean Integration] to call any method on a
+bean in your xref:manual:ROOT:registry.adoc[Registry] such as your
+xref:manual:ROOT:spring.adoc[Spring] XML configuration file as follows
 
 [source,java]
 ----
@@ -28,19 +28,19 @@ from("activemq:SomeQueue")
 
 Where the "myTransformerBean" would be defined in a Spring XML file or
 defined in JNDI etc. You can omit the method name parameter from
-beanRef() and the xref:latest@manual:ROOT:bean-integration.adoc[Bean Integration] will try
+beanRef() and the xref:manual:ROOT:bean-integration.adoc[Bean Integration] will try
 to deduce the method to invoke from the message exchange.
 
-or you can add your own explicit xref:latest@manual:ROOT:processor.adoc[Processor] to do
+or you can add your own explicit xref:manual:ROOT:processor.adoc[Processor] to do
 the transformation
 
 or you can use the DSL to explicitly configure the transformation
 
-You can also use xref:latest@manual:ROOT:spring-xml-extensions.adoc[Spring XML Extensions]
-to do a transformation. Basically any xref:latest@manual:ROOT:expression.adoc[Expression]
+You can also use xref:manual:ROOT:spring-xml-extensions.adoc[Spring XML Extensions]
+to do a transformation. Basically any xref:manual:ROOT:expression.adoc[Expression]
 language can be substituted inside the transform element as shown below
 
-Or you can use the xref:latest@manual:ROOT:bean-integration.adoc[Bean Integration] to
+Or you can use the xref:manual:ROOT:bean-integration.adoc[Bean Integration] to
 invoke a bean
 
 [source,xml]

@@ -21,9 +21,9 @@ with the xref:components::mock-component.adoc[Mock testing framework]
 
 Some xref:enterprise-integration-patterns.adoc[EIP] patterns will spin off a sub message, and in
 those cases, Camel will add a correlation id on the
-xref:latest@manual:ROOT:exchange.adoc[Exchange] as a property with they key
+xref:manual:ROOT:exchange.adoc[Exchange] as a property with they key
 `Exchange.CORRELATION_ID`, which links back to the source
-xref:latest@manual:ROOT:exchange.adoc[Exchange]. For example the
+xref:manual:ROOT:exchange.adoc[Exchange]. For example the
 xref:split-eip.adoc[Splitter], xref:multicast-eip.adoc[Multicast],
 xref:recipientList-eip.adoc[Recipient List], and xref:wireTap-eip.adoc[Wire
 Tap] EIP does this.

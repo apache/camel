@@ -120,7 +120,7 @@ https://issues.apache.org/jira/browse/CAMEL-5456[CAMEL-5456].
 
 //NOTE: normal attribute replacement doesn't seem to work in xrefs in section headers.
 [[ErrorhandlinginCamel-Howdoestheerrorhandlerwork]]
-== How does the xref:latest@components:eips:dead-letter-channel.adoc[Dead Letter Channel] error handler work
+== How does the xref:next@components:eips:dead-letter-channel.adoc[Dead Letter Channel] error handler work
 
 When Camel is started it will inspect the routes and weave in the error
 handling into the routing. With up to 3 supported scopes, the error
