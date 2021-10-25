@@ -20,13 +20,36 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.annotation.JsonTypeResolver;
 import org.apache.camel.component.salesforce.api.dto.AbstractDescribedSObjectBase;
+import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescriptionUrls;
 import org.apache.camel.component.salesforce.api.dto.SObjectField;
+import org.apache.camel.component.salesforce.api.utils.AsNestedPropertyResolver;
 
 //CHECKSTYLE:OFF
 public class Line_Item__c extends AbstractDescribedSObjectBase {
+
+    @JsonTypeResolver(AsNestedPropertyResolver.class)
+    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "attributes.type",
+        defaultImpl = AbstractDescribedSObjectBase.class)
+    @JsonSubTypes({
+            @JsonSubTypes.Type(value = User.class, name = "User")
+    })
+    private AbstractSObjectBase Owner;
+
+    @JsonProperty("Owner")
+    public AbstractSObjectBase getOwner() {
+        return Owner;
+    }
+
+    @JsonProperty("Owner")
+    public void setOwner(AbstractSObjectBase owner) {
+        Owner = owner;
+    }
 
     public Line_Item__c() {
         getAttributes().setType("Line_Item__c");
@@ -69,6 +92,19 @@ public class Line_Item__c extends AbstractDescribedSObjectBase {
     public void setUnits_Sold__c(Double Units_Sold__c) {
         this.Units_Sold__c = Units_Sold__c;
     }
+
+    private RecordType RecordType;
+
+    @JsonProperty("RecordType")
+    public RecordType getRecordType() {
+        return this.RecordType;
+    }
+
+    @JsonProperty("RecordType")
+    public void setRecordType(RecordType RecordType) {
+        this.RecordType = RecordType;
+    }
+
 
     @Override
     public final SObjectDescription description() {

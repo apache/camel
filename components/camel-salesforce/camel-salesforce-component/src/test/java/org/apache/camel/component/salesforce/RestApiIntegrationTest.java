@@ -49,6 +49,7 @@ import org.apache.camel.component.salesforce.dto.generated.QueryRecordsAccount;
 import org.apache.camel.component.salesforce.dto.generated.QueryRecordsContact;
 import org.apache.camel.component.salesforce.dto.generated.QueryRecordsLine_Item__c;
 import org.apache.camel.component.salesforce.dto.generated.Task;
+import org.apache.camel.component.salesforce.dto.generated.User;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.ContentResponse;
@@ -139,6 +140,13 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
                 = template().requestBody("salesforce:createSObject", merchandise, CreateSObjectResult.class);
 
         merchandiseId = merchandiseResult.getId();
+    }
+
+    private void createLineItem() {
+        Line_Item__c lineItem = new Line_Item__c();
+        final String lineItemId = String.valueOf(TEST_LINE_ITEM_ID.incrementAndGet());
+        lineItem.setName(lineItemId);
+        CreateSObjectResult result = template().requestBody("direct:createLineItem", lineItem, CreateSObjectResult.class);
     }
 
     private void createAccountAndContact() {
@@ -455,9 +463,16 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
 
     @Test
     public void testQuery() throws Exception {
+        createLineItem();
         final QueryRecordsLine_Item__c queryRecords
                 = template().requestBody("direct:query", null, QueryRecordsLine_Item__c.class);
         assertNotNull(queryRecords);
+        // verify polymorphic query resulted in the correct type
+        assertEquals(User.class, queryRecords.getRecords().get(0).getOwner().getClass());
+        final Line_Item__c lineItem = queryRecords.getRecords().get(0);
+        User user = (User) queryRecords.getRecords().get(0).getOwner();
+        assertNotNull(user.getUsername());
+        assertNotNull(lineItem.getRecordType());
     }
 
     @Test
@@ -735,7 +750,7 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
 
                 // testQuery
                 from("direct:query")
-                        .to("salesforce:query?sObjectQuery=SELECT name from Line_Item__c&sObjectClass="
+                        .to("salesforce:query?sObjectQuery=SELECT Id, name, Typeof Owner WHEN User Then Username End, recordTypeId, RecordType.Name from Line_Item__c&sObjectClass="
                             + QueryRecordsLine_Item__c.class.getName() + "");
 
                 // testParentRelationshipQuery

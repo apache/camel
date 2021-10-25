@@ -50,6 +50,10 @@ import org.apache.camel.component.salesforce.api.dto.SObjectDescriptionUrls;
 import org.apache.camel.component.salesforce.api.dto.SObjectField;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.annotation.JsonTypeResolver;
+import org.apache.camel.component.salesforce.api.utils.AsNestedPropertyResolver;
 #if ( $hasMultiSelectPicklists )
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -105,19 +109,26 @@ public class $desc.Name extends AbstractDescribedSObjectBase {
         this.$propertyName = $propertyName;
     }
 
-#if ( $field.type == "reference" && $utility.notNull($field.relationshipName)
-    && $utility.hasDescription($field.getReferenceTo().get(0)) )## IS LOOKUP $hasDescription
-#if ( $field.getReferenceTo().size() > 1)
-#set ( $propertyType = "AbstractDescribedSObjectBase")
-#set ( $needed = true )
-#else
-#set ( $propertyType = $field.getReferenceTo().get(0) )
-#set ( $needed = $sObjectNames.contains($field.getReferenceTo().get(0)) )
 #end
-#if ( $needed )
-#set( $fieldName = $field.getName() )
+#if ( $field.type == "reference" && $utility.notNull($field.relationshipName) )## IS LOOKUP $hasDescription
+#if ( $field.getReferenceTo().size() > 1 )
+#set ( $propertyType = "AbstractDescribedSObjectBase")
+    @JsonTypeResolver(AsNestedPropertyResolver.class)
+    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "attributes.type",
+        defaultImpl = AbstractDescribedSObjectBase.class)
+    @JsonSubTypes({
+#foreach ( $sob in $field.getReferenceTo() )
+#if ($utility.hasDescription($sob))
+        @JsonSubTypes.Type(value = ${sob}.class, name = "$sob")#if( $foreach.hasNext ),#end
+#end
+#end
+    })
+#elseif ( $sObjectNames.contains($field.getReferenceTo().get(0)) )
+#set ( $propertyType = $field.getReferenceTo().get(0) )
+#else
+#set ( $propertyType = "AbstractDescribedSObjectBase")
+#end
 #set( $jsonPropertyName = $field.relationshipName )
-#set( $lookupObjectType = $reference )
     private $propertyType $jsonPropertyName;
 
     @JsonProperty("${jsonPropertyName}")
@@ -129,10 +140,8 @@ public class $desc.Name extends AbstractDescribedSObjectBase {
     public void set${jsonPropertyName}($propertyType $jsonPropertyName) {
         this.${jsonPropertyName} = $jsonPropertyName;
     }
-#end
 #end## END IS LOOKUP
-#end
-#end ##foreach field
+#end##foreach field
 #foreach ( $rel in $desc.childRelationships )
 #set (  $hasDescription = $sObjectNames.contains($rel.childSObject) )
 #if ( $utility.notNull($rel.relationshipName) && $hasDescription )
