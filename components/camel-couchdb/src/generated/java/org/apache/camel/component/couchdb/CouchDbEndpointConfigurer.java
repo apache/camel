@@ -34,7 +34,8 @@ public class CouchDbEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "since": target.setSince(property(camelContext, java.lang.String.class, value)); return true;
+        case "resumestrategy":
+        case "resumeStrategy": target.setResumeStrategy(property(camelContext, org.apache.camel.component.couchdb.consumer.CouchDbResumeStrategy.class, value)); return true;
         case "style": target.setStyle(property(camelContext, java.lang.String.class, value)); return true;
         case "updates": target.setUpdates(property(camelContext, boolean.class, value)); return true;
         case "username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
@@ -58,7 +59,8 @@ public class CouchDbEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "password": return java.lang.String.class;
-        case "since": return java.lang.String.class;
+        case "resumestrategy":
+        case "resumeStrategy": return org.apache.camel.component.couchdb.consumer.CouchDbResumeStrategy.class;
         case "style": return java.lang.String.class;
         case "updates": return boolean.class;
         case "username": return java.lang.String.class;
@@ -83,7 +85,8 @@ public class CouchDbEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "password": return target.getPassword();
-        case "since": return target.getSince();
+        case "resumestrategy":
+        case "resumeStrategy": return target.getResumeStrategy();
         case "style": return target.getStyle();
         case "updates": return target.isUpdates();
         case "username": return target.getUsername();

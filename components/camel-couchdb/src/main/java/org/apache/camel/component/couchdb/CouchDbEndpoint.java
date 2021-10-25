@@ -22,6 +22,7 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.couchdb.consumer.CouchDbResumeStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -70,7 +71,7 @@ public class CouchDbEndpoint extends DefaultEndpoint {
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean updates = true;
     @UriParam(label = "consumer")
-    private String since;
+    private CouchDbResumeStrategy resumeStrategy;
 
     public CouchDbEndpoint() {
     }
@@ -238,15 +239,15 @@ public class CouchDbEndpoint extends DefaultEndpoint {
         this.updates = updates;
     }
 
-    public String getSince() {
-        return since;
+    public CouchDbResumeStrategy getResumeStrategy() {
+        return resumeStrategy;
     }
 
     /**
-     * Start tracking changes immediately after the given update sequence. The default, null, will start monitoring from
-     * the latest sequence.
+     * Sets a custom resume strategy for tracking changes from CouchDB. It allows tracking from a specific point (i.e.:
+     * since the given update sequence, the latest sequence, etc).
      */
-    public void setSince(String since) {
-        this.since = since;
+    public void setResumeStrategy(CouchDbResumeStrategy resumeStrategy) {
+        this.resumeStrategy = resumeStrategy;
     }
 }

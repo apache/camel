@@ -33,9 +33,9 @@ public class CouchDbEndpointUriFactory extends org.apache.camel.support.componen
         props.add("password");
         props.add("bridgeErrorHandler");
         props.add("port");
+        props.add("resumeStrategy");
         props.add("style");
         props.add("exceptionHandler");
-        props.add("since");
         props.add("username");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(2);

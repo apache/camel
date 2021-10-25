@@ -130,5 +130,16 @@ exchange is used
 from("someProducingEndpoint").process(someProcessor).to("couchdb:http://localhost:9999")
 ----------------------------------------------------------------------------------------
 
+To start tracking the changes immediately after an update sequence, implement a custom resume strategy. To do so, it is necessary to implement a CouchDbResumeStrategy and use the resumable to set the last (update) offset to start tracking the changes:
+
+```
+public class CustomSequenceResumeStrategy implements CouchDbResumeStrategy {
+    @Override
+    public void resume(CouchDbResumable resumable) {
+        resumable.setLastOffset("custom-last-update");
+    }
+}
+```
+
 
 include::spring-boot:partial$starter.adoc[]

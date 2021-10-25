@@ -18,6 +18,9 @@ package org.apache.camel.component.couchdb;
 
 import com.google.gson.JsonObject;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.couchdb.consumer.CouchDbResumable;
+import org.apache.camel.component.couchdb.consumer.CouchDbResumeStrategy;
+import org.apache.camel.component.couchdb.consumer.CouchDdResumeStrategyFactory;
 import org.lightcouch.Changes;
 import org.lightcouch.ChangesResult;
 import org.lightcouch.CouchDbException;
@@ -42,13 +45,17 @@ public class CouchDbChangesetTracker implements Runnable {
     }
 
     private void initChanges(final String sequence) {
-        String since = sequence;
-        if (null == since) {
-            since = couchClient.getLatestUpdateSequence();
+        CouchDbResumable resumable = new CouchDbResumable(couchClient, sequence);
+
+        if (sequence == null) {
+            CouchDbResumeStrategy resumeStrategy = CouchDdResumeStrategyFactory.newResumeStrategy(this.endpoint);
+
+            resumeStrategy.resume(resumable);
         }
-        LOG.debug("Last sequence [{}]", since);
+
+        LOG.debug("Last sequence [{}]", resumable.getLastOffset());
         changes = couchClient.changes().style(endpoint.getStyle()).includeDocs(true)
-                .since(since).heartBeat(endpoint.getHeartbeat()).continuousChanges();
+                .since(resumable.getLastOffset()).heartBeat(endpoint.getHeartbeat()).continuousChanges();
     }
 
     @Override

@@ -111,3 +111,7 @@ their applications when upgrading to ensure this continues to work.
 
 Support for rendering api docs by discovering other CamelContext via JMX in the same JVM has been removed.
 Rendering of api docs is now only supported for the same CamelContext.
+
+=== camel-couchdb
+
+The `since` configuration was replaced by the `resumeStrategy`. Integrations can now manage the last update sequence for tracking the changes directly. Check the samples section on the component documentation page for a sample.
