@@ -182,18 +182,39 @@ public interface CouchDbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Start tracking changes immediately after the given update sequence.
-         * The default, null, will start monitoring from the latest sequence.
+         * Sets a custom resume strategy for tracking changes from CouchDB. It
+         * allows tracking from a specific point (i.e.: since the given update
+         * sequence, the latest sequence, etc).
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.couchdb.consumer.CouchDbResumeStrategy&lt;/code&gt; type.
          * 
          * Group: consumer
          * 
-         * @param since the value to set
+         * @param resumeStrategy the value to set
          * @return the dsl builder
          */
-        default CouchDbEndpointConsumerBuilder since(String since) {
-            doSetProperty("since", since);
+        default CouchDbEndpointConsumerBuilder resumeStrategy(
+                Object resumeStrategy) {
+            doSetProperty("resumeStrategy", resumeStrategy);
+            return this;
+        }
+        /**
+         * Sets a custom resume strategy for tracking changes from CouchDB. It
+         * allows tracking from a specific point (i.e.: since the given update
+         * sequence, the latest sequence, etc).
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.couchdb.consumer.CouchDbResumeStrategy&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param resumeStrategy the value to set
+         * @return the dsl builder
+         */
+        default CouchDbEndpointConsumerBuilder resumeStrategy(
+                String resumeStrategy) {
+            doSetProperty("resumeStrategy", resumeStrategy);
             return this;
         }
         /**
