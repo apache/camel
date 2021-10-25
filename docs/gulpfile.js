@@ -125,7 +125,7 @@ function createComponentLanguageSymlinks() {
 }
 
 function createComponentImageSymlinks() {
-    return src('../components/{*,*/*}/src/main/docs/*.png')
+    return src(['../components/{*,*/*}/src/main/docs/*.{png,gif}'])
         .pipe(map((file, done) => {
             // this flattens the output to just .../pages/....adoc
             // instead of .../pages/camel-.../src/main/docs/....adoc
@@ -141,7 +141,7 @@ function createComponentImageSymlinks() {
         // }));
         // uncomment above .pipe() and remove the .pipe() below
         // when antora#188 is resolved
-        .pipe(dest('components/modules/ROOT/assets/images/'));
+        .pipe(dest('components/modules/ROOT/images/'));
 }
 
 function titleFrom(file) {

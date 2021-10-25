@@ -3,6 +3,8 @@
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-cxf/src/main/docs/cxfrs-component.adoc
 :docTitle: CXF-RS
+*Available as of Camel version 2.0*
+
 :artifactId: camel-cxf
 :description: The cxfrs component is used for JAX-RS REST services using Apache CXF.
 :since: 2.0
