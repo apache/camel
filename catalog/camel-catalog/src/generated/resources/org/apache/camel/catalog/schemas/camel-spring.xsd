@@ -14409,10 +14409,10 @@ will by default use an auto assigned route id.
     <xs:attribute name="apiContextIdPattern" type="xs:string">
       <xs:annotation>
         <xs:documentation xml:lang="en"><![CDATA[
-Deprecated: Sets an CamelContext id pattern to only allow Rest APIs from rest
-services within CamelContext's which name matches the pattern. The pattern
-#name# refers to the CamelContext name, to match on the current CamelContext
-only. For any other value, the pattern uses the rules from
+Sets an CamelContext id pattern to only allow Rest APIs from rest services
+within CamelContext's which name matches the pattern. The pattern #name# refers
+to the CamelContext name, to match on the current CamelContext only. For any
+other value, the pattern uses the rules from
 PatternHelper#matchPattern(String,String).
         ]]></xs:documentation>
       </xs:annotation>
@@ -14420,9 +14420,9 @@ PatternHelper#matchPattern(String,String).
     <xs:attribute name="apiContextListing" type="xs:boolean">
       <xs:annotation>
         <xs:documentation xml:lang="en"><![CDATA[
-Deprecated: Sets whether listing of all available CamelContext's with REST
-services in the JVM is enabled. If enabled it allows to discover these contexts,
-if false then only the current CamelContext is in use. Default value: false
+Sets whether listing of all available CamelContext's with REST services in the
+JVM is enabled. If enabled it allows to discover these contexts, if false then
+only the current CamelContext is in use. Default value: false
         ]]></xs:documentation>
       </xs:annotation>
     </xs:attribute>
