@@ -28,7 +28,6 @@ import javax.annotation.Generated;
 #set ( $hasPicklists = $utility.hasPicklists($desc) )
 #set ( $hasMultiSelectPicklists = $utility.hasMultiSelectPicklists($desc) )
 #if ( $hasPicklists && !$useStringsForPicklists )
-import org.apache.camel.component.salesforce.api.PicklistEnumConverter;
 #end
 #if ( $hasMultiSelectPicklists )
 #if ( $useStringsForPicklists )
