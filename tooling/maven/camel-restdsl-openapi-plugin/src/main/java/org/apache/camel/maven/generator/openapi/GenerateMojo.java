@@ -102,6 +102,9 @@ public class GenerateMojo extends AbstractGenerateMojo {
             String comp = findAppropriateComponent();
             generator.withRestComponent(comp);
 
+            if (clientRequestValidation) {
+                generator.withClientRequestValidation();
+            }
             if (ObjectHelper.isNotEmpty(apiContextPath)) {
                 generator.withApiContextPath(apiContextPath);
             }
