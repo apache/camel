@@ -69,7 +69,7 @@ TODO:
 
 === About Spring Transactions
 
-Camel uses Spring Transaction to manage transactions via its `TransactionManager`
+Camel uses Spring Transaction (`camel-spring`) to manage transactions via its `TransactionManager`
 API. Depending on the kinds of resources that are taking part in the transaction,
 an appropriate implementation of the transaction manager must be chosen. Spring
 offers a number of transaction managers out of the box that work for various local
@@ -81,70 +81,124 @@ API abstract that Camel uses.
 === About JTA Transactions
 
 TODO:
+TODO: (`camel-jta`)
 
 == Using Transactions in Camel
 
-TODO:
+In Camel, transactions are used by:
 
-=== Transaction error handler
+. Setting up transaction manager via either Spring Transactions or JTA Transactions.
+. Marking routes as transacted
+. Using different transaction propagations for rare use-cases
 
-When a route is marked as transacted using ``<transacted/>` Camel will
-automatically use `TransactionErrorHandler` as the
-xref:latest@manual:ROOT:error-handler.adoc[Error Handler].
+You will later in the two transactional examples further below, see how to set up transaction manager in Camel.
 
-This error handler supports basically the same
-feature set as the xref:latest@manual:ROOT:defaulterrorhandler.adoc[DefaultErrorHandler].
+=== Marking a route as transacted
 
-=== Transaction Policies
+When using transactions (JTA or Spring Transaction) in Camel then you enable this on routes by using `transacted`
+right after `from` in the routes.
 
-Outbound endpoints will automatically enlist in the current transaction
-context. But what if you do not want your outbound endpoint to enlist in
-the same transaction as your inbound endpoint? The solution is to add a
-Transaction Policy to the processing route. You first have to define
-transaction policies that you will be using. The policies use a spring
-TransactionTemplate under the covers for declaring the transaction
-demarcation to use. So you will need to add something like the following
-to your spring xml:
+For example in Java that would be:
+
+[source,java]
+----
+from("jms:cheese")
+    .transacted()
+    .to("bean:foo");
+----
+
+And in XML:
 
 [source,xml]
 ----
-<bean id="PROPAGATION_REQUIRED" class="org.apache.camel.spring.spi.SpringTransactionPolicy">
+<route>
+    <from uri="jms:cheese"/>
+    <transacted/>
+    <to uri="bean:foo"/>
+</route>
+----
+
+When you specify `<transacted/>` in a route, Camel uses transactions for that particular
+route and any other routes that the message may undertake.
+
+When a route is specified as `<transacted/>`, then under the hood Camel looks up
+the Spring/JTA transaction manager and uses it. This is convention over configuration.
+
+The convention over configuration applies only when you have a single Spring/JTA transaction
+manager configured. In more complex scenarios, where you either use multiple
+transaction managers or transaction propagation policies, you have to do additional
+configuration.
+
+=== Using different transaction propagations
+
+In some rare situations, you may need to use multiple transactions with the same exchange.
+
+For example an exchange starts off using `PROPAGATION_REQUIRED`, and then you need
+to use another transaction that’s independent of the existing transaction. You can
+do this by using PROPAGATION_REQUIRES_NEW, which will start a new transaction.
+
+NOTE: In Camel a route can only have exactly one transaction policy, which means, that if
+you need to change transaction propagation, then you must use a new route.
+
+When the exchange completes, the transaction manager will issue commits
+or rollbacks to these two transactions, which ensures that they both complete at
+the same time. Because two transaction legs are in play, they can have different
+outcomes; for example, transaction 1 can roll back, while transaction 2 commits,
+and vice versa.
+
+In Camel, you need to configure the propagations using `SpringTransactionPolicy`
+as shown in the following XML snippets:
+
+[source,xml]
+----
+<bean id="txRequired" class="org.apache.camel.spring.spi.SpringTransactionPolicy">
     <property name="transactionManager" ref="jmsTransactionManager"/>
 </bean>
 
-<bean id="PROPAGATION_REQUIRES_NEW" class="org.apache.camel.spring.spi.SpringTransactionPolicy">
+<bean id="txRequiresNew" class="org.apache.camel.spring.spi.SpringTransactionPolicy">
     <property name="transactionManager" ref="jmsTransactionManager"/>
     <property name="propagationBehaviorName" value="PROPAGATION_REQUIRES_NEW"/>
 </bean>
+
+<bean id="txMandatory" class="org.apache.camel.spring.spi.SpringTransactionPolicy">
+    <property name="transactionManager" ref="jmsTransactionManager"/>
+    <property name="propagationBehaviorName" value="PROPAGATION_REQUIRES_MANDATORY"/>
+</bean>
 ----
 
-Then in your
-https://www.javadoc.io/doc/org.apache.camel/camel-spring/current/org/apache/camel/spring/SpringRouteBuilder.html[SpringRouteBuilder],
-you just need to create new SpringTransactionPolicy objects for each of
-the templates.
+Then we have routes, where each of the route use their different policy:
 
-[source,java]
+[source,xml]
 ----
-public void configure() {
-    ...
-    Policy required = bean(SpringTransactionPolicy.class, "PROPAGATION_REQUIRED"));
-    Policy requirenew = bean(SpringTransactionPolicy.class, "PROPAGATION_REQUIRES_NEW"));
-    ...
-}
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+    <route>
+        <from uri="activemq:queue:inbox"/>
+        <transacted ref="txRequired"/>
+        <to uri="direct:audit"/>
+        <to uri="direct:order"/>
+        <to uri="activemq:queue:order"/>
+    </route>
+
+    <route>
+        <from uri="direct:audit"/>
+        <transacted ref="txRequiresNew"/>
+        <bean ref="auditLogService" method="insertAuditLog"/>
+    </route>
+
+    <route>
+        <from uri="direct:order"/>
+        <transacted ref="txMandatory"/>
+        <bean ref="orderService" method="insertOrder"/>
+    </route>
+</camelContext>
 ----
 
-Once created, you can use the Policy objects in your processing routes:
+Notice how the ref attribute on `<transacted>` refers to the corresponding bean id of the transaction policy.
 
-[source,java]
-----
-// Send to bar in a new transaction
-from("activemq:queue:foo").policy(requirenew)
-    .to("activemq:queue:bar");
+TIP: **Keep it simple:** Although you can use multiple propagation behaviors with multiple routes in Camel, do
+so with care. Try to design your solutions with as few propagations as possible, because
+complexity increases dramatically when you introduce new propagation behaviors
 
-// Send to bar without a transaction.
-from("activemq:queue:foo").policy(notsupported)
-    .to("activemq:queue:bar");
-----
 
 == Transaction example with database
 
@@ -241,7 +295,7 @@ https://github.com/apache/camel/tree/main/components/camel-jms/src/test/java/org
 the destination is a mock endpoint.
 
 First we configure the standard Spring XML to declare a JMS connection
-factory, a JMS transaction manager and our ActiveMQ component that we
+factory, a JMS transaction manager and our xref:ROOT:activemq-component.adoc[ActiveMQ] component that we
 use in our routing.
 
 [source,xml]
@@ -291,4 +345,45 @@ route as transacted using the `<transacted/>` XML tag.
     </route>
 </camelContext>
 ----
+
+== Local vs Global Transactions
+
+When talking about transactions, you need to distinguish between single- and
+multiple-resource transactions. The former are also known as local transactions,
+and the latter as global transactions
+
+=== Local Transactions
+
+If you only have a single resource (such as one database, or one messaging system) then
+transactions can be simpler to orchestrate by the transaction manager. This is known as local transactions.
+
+The previous two examples above are both using a single resource, and are therefore using local transactions.
+When using local transactions and Spring Transactions, then you can use the dedicated transaction manager for the resource type:
+
+- org.springframework.jdbc.datasource.DataSourceTransactionManager
+- org.springframework.jms.connection.JmsTransactionManager
+
+TIP: Consult the spring documentation for more local transaction managers.
+
+=== Global Transactions
+
+The situation changes when you need to span multiple resources in the
+same transaction, such as JMS and JDBC resources together.
+
+To support multiple resources you need to use a JTA (XA) capable transaction manager,
+which means using `org.springframework.transaction.jta.JtaTransactionManager` with Spring Transactions.
+
+NOTE: For more information on JTA, see the Wikipedia page on the subject:
+http://en.wikipedia.org/wiki/Java_Transaction_API. XA is also briefly discussed
+here: http://en.wikipedia.org/wiki/X/Open_XA.
+
+That is not all, you also need to use a JTA transaction implementation such as:
+
+- Atomikos - https://www.atomikos.com/
+- Narayana - https://narayana.io/
+- JEE Application Server with JTA
+
+And all of this must be configured correctly to have JTA transaction working.
+You may also need to do special configuration from the vendors of the resources (i.e. database or messaging system)
+to have this work properly with JTA/XA transactions. Consult the documentation of those systems for more details.
 
