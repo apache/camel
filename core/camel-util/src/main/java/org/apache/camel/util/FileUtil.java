@@ -96,10 +96,7 @@ public final class FileUtil {
         }
 
         // create parent folder
-        boolean mkdirsResult = parentDir.mkdirs();
-        if (!mkdirsResult) {
-            LOG.error("mkdirs() failed for " + parentDir);
-        }
+        parentDir.mkdirs();
 
         return Files.createTempFile(parentDir.toPath(), prefix, suffix).toFile();
     }
@@ -385,10 +382,6 @@ public final class FileUtil {
 
     private static void delete(File f) {
         if (!f.delete()) {
-            // manual GC call on every file delete? Looks very suspicious!
-            /*if (isWindows()) {
-                System.gc();
-            }*/
             try {
                 Thread.sleep(RETRY_SLEEP_MILLIS);
             } catch (InterruptedException ex) {

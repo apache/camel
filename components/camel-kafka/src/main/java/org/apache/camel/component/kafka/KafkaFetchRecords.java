@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
@@ -58,6 +59,7 @@ class KafkaFetchRecords implements Runnable {
     private final BridgeExceptionHandlerToErrorHandler bridge;
     private final ReentrantLock lock = new ReentrantLock();
     private final AtomicBoolean stopping = new AtomicBoolean(false);
+    private final ConcurrentLinkedQueue<KafkaAsyncManualCommit> asyncCommits = new ConcurrentLinkedQueue<>();
 
     private boolean retry = true;
     private boolean reconnect = true;
@@ -170,6 +172,8 @@ class KafkaFetchRecords implements Runnable {
             while (isKafkaConsumerRunnable() && isRetrying() && !isReconnecting()) {
                 ConsumerRecords<Object, Object> allRecords = consumer.poll(pollDuration);
 
+                processAsyncCommits();
+
                 partitionLastOffset = processPolledRecords(allRecords, kafkaRecordProcessor);
             }
 
@@ -212,6 +216,12 @@ class KafkaFetchRecords implements Runnable {
         }
     }
 
+    private void processAsyncCommits() {
+        while (!asyncCommits.isEmpty()) {
+            asyncCommits.poll().processAsyncCommit();
+        }
+    }
+
     private void handleAccordingToStrategy(long partitionLastOffset, Exception e) {
         PollOnError onError = pollExceptionStrategy.handleException(e);
         if (PollOnError.RETRY == onError) {
@@ -238,6 +248,7 @@ class KafkaFetchRecords implements Runnable {
     }
 
     private void commit() {
+        processAsyncCommits();
         if (isAutoCommitEnabled()) {
             if ("async".equals(kafkaConsumer.getEndpoint().getConfiguration().getAutoCommitOnStop())) {
                 LOG.info("Auto commitAsync on stop {} from topic {}", threadId, topicName);
@@ -394,7 +405,7 @@ class KafkaFetchRecords implements Runnable {
                 kafkaConsumer.getEndpoint().getConfiguration(),
                 kafkaConsumer.getProcessor(),
                 consumer,
-                kafkaConsumer.getEndpoint().getComponent().getKafkaManualCommitFactory(), threadId);
+                kafkaConsumer.getEndpoint().getComponent().getKafkaManualCommitFactory(), threadId, asyncCommits);
     }
 
     private void seekToNextOffset(long partitionLastOffset) {

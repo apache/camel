@@ -74,39 +74,39 @@ public final class EventHelper {
     }
 
     public static boolean notifyCamelContextInitializing(CamelContext context) {
-        return notifyCamelContext(context, EventFactory::createCamelContextInitializingEvent);
+        return notifyCamelContext(context, EventFactory::createCamelContextInitializingEvent, true);
     }
 
     public static boolean notifyCamelContextInitialized(CamelContext context) {
-        return notifyCamelContext(context, EventFactory::createCamelContextInitializedEvent);
+        return notifyCamelContext(context, EventFactory::createCamelContextInitializedEvent, true);
     }
 
     public static boolean notifyCamelContextStarting(CamelContext context) {
-        return notifyCamelContext(context, EventFactory::createCamelContextStartingEvent);
+        return notifyCamelContext(context, EventFactory::createCamelContextStartingEvent, false);
     }
 
     public static boolean notifyCamelContextStarted(CamelContext context) {
-        return notifyCamelContext(context, EventFactory::createCamelContextStartedEvent);
+        return notifyCamelContext(context, EventFactory::createCamelContextStartedEvent, false);
     }
 
     public static boolean notifyCamelContextStartupFailed(CamelContext context, Throwable cause) {
-        return notifyCamelContext(context, (ef, ctx) -> ef.createCamelContextStartupFailureEvent(ctx, cause));
+        return notifyCamelContext(context, (ef, ctx) -> ef.createCamelContextStartupFailureEvent(ctx, cause), false);
     }
 
     public static boolean notifyCamelContextStopping(CamelContext context) {
-        return notifyCamelContext(context, EventFactory::createCamelContextStoppingEvent);
+        return notifyCamelContext(context, EventFactory::createCamelContextStoppingEvent, false);
     }
 
     public static boolean notifyCamelContextStopped(CamelContext context) {
-        return notifyCamelContext(context, EventFactory::createCamelContextStoppedEvent);
+        return notifyCamelContext(context, EventFactory::createCamelContextStoppedEvent, false);
     }
 
     public static boolean notifyCamelContextStopFailed(CamelContext context, Throwable cause) {
-        return notifyCamelContext(context, (ef, ctx) -> ef.createCamelContextStopFailureEvent(ctx, cause));
+        return notifyCamelContext(context, (ef, ctx) -> ef.createCamelContextStopFailureEvent(ctx, cause), false);
     }
 
     private static boolean notifyCamelContext(
-            CamelContext context, BiFunction<EventFactory, CamelContext, CamelEvent> eventSupplier) {
+            CamelContext context, BiFunction<EventFactory, CamelContext, CamelEvent> eventSupplier, boolean init) {
         ManagementStrategy management = context.getManagementStrategy();
         if (management == null) {
             return false;
@@ -117,7 +117,9 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
+        // init camel context events are triggered before event notifiers is started so get those pre-started notifiers
+        // so we can emit those special init events
+        List<EventNotifier> notifiers = init ? management.getEventNotifiers() : management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
@@ -129,6 +131,9 @@ public final class EventHelper {
                 continue;
             }
             if (notifier.isIgnoreCamelContextEvents()) {
+                continue;
+            }
+            if (init && notifier.isIgnoreCamelContextInitEvents()) {
                 continue;
             }
 

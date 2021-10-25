@@ -390,12 +390,10 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
 
     @Test
     public void testUseCorrelationIDTimeout() throws Exception {
-        JmsComponent c = (JmsComponent) context.getComponent(componentName);
-        c.getConfiguration().setRequestTimeout(1000);
-
         Object reply = "";
         try {
-            reply = template.requestBody(endpointUriA, request);
+            // set the timeout for the request, specifically. At this point it is too late to re-configure
+            template.requestBodyAndHeader(endpointUriA, request, JmsConstants.JMS_REQUEST_TIMEOUT, "1000");
             fail("Should have thrown exception");
         } catch (RuntimeCamelException e) {
             assertIsInstanceOf(ExchangeTimedOutException.class, e.getCause());
@@ -405,12 +403,10 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
 
     @Test
     public void testUseMessageIDAsCorrelationIDTimeout() throws Exception {
-        JmsComponent c = (JmsComponent) context.getComponent(componentName);
-        c.getConfiguration().setRequestTimeout(1000);
-
         Object reply = "";
         try {
-            reply = template.requestBody(endpointUriA, request);
+            // set the timeout for the request, specifically. At this point it is too late to re-configure
+            reply = template.requestBodyAndHeader(endpointUriA, request, JmsConstants.JMS_REQUEST_TIMEOUT, "1000");
             fail("Should have thrown exception");
         } catch (RuntimeCamelException e) {
             assertIsInstanceOf(ExchangeTimedOutException.class, e.getCause());

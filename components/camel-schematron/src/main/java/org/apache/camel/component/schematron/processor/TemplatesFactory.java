@@ -68,7 +68,7 @@ public final class TemplatesFactory {
             for (String template : PIPELINE) {
                 String path = Constants.SCHEMATRON_TEMPLATES_ROOT_DIR
                         .concat("/").concat(template);
-                InputStream xsl = this.getClass().getClassLoader().getResourceAsStream(path);
+                InputStream xsl = org.apache.camel.util.ObjectHelper.loadResourceAsStream(path);
                 Transformer t = fac.newTransformer(new StreamSource(xsl));
                 DOMResult result = new DOMResult();
                 t.transform(source, result);

@@ -5,7 +5,7 @@
 :since: 
 :supportlevel: Stable
 
-Every Camel xref:latest@manual:ROOT:routes.adoc[route] starts from an xref:latest@manual:ROOT:endpoint.adoc[Endpoint]
+Every Camel xref:manual::routes.adoc[route] starts from an xref:manual::endpoint.adoc[Endpoint]
 as the input (source) to the route.
 
 The From EIP is the input.
@@ -19,7 +19,7 @@ include::partial$eip-options.adoc[]
 == Example
 
 In the route below the route starts from
-a xref:components::file-component.adoc[File] endpoint.
+a xref:ROOT:file-component.adoc[File] endpoint.
 
 [source,java]
 ----

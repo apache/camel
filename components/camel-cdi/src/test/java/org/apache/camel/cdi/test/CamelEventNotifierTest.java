@@ -31,6 +31,7 @@ import org.apache.camel.cdi.CdiCamelExtension;
 import org.apache.camel.cdi.Uri;
 import org.apache.camel.cdi.bean.SimpleCamelRoute;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.CamelContextStartedEvent;
 import org.apache.camel.spi.CamelEvent.CamelContextStartingEvent;
 import org.apache.camel.spi.CamelEvent.CamelContextStoppedEvent;
@@ -69,6 +70,14 @@ public class CamelEventNotifierTest {
     @ApplicationScoped
     private List<Class> firedEvents = new ArrayList<>();
 
+    private void onCamelContextStartingEvent(@Observes CamelEvent.CamelContextInitializingEvent event, List<Class> events) {
+        events.add(CamelEvent.CamelContextInitializingEvent.class);
+    }
+
+    private void onCamelContextStartingEvent(@Observes CamelEvent.CamelContextInitializedEvent event, List<Class> events) {
+        events.add(CamelEvent.CamelContextInitializedEvent.class);
+    }
+
     private void onCamelContextStartingEvent(@Observes CamelContextStartingEvent event, List<Class> events) {
         events.add(CamelContextStartingEvent.class);
     }
@@ -105,6 +114,8 @@ public class CamelEventNotifierTest {
     public void startedCamelContext(List<Class> events) {
         assertThat("Events fired are incorrect!", events,
                 contains(
+                        CamelEvent.CamelContextInitializingEvent.class,
+                        CamelEvent.CamelContextInitializedEvent.class,
                         CamelContextStartingEvent.class,
                         CamelContextStartedEvent.class));
     }
@@ -121,6 +132,8 @@ public class CamelEventNotifierTest {
 
         assertThat("Events fired are incorrect!", events,
                 contains(
+                        CamelEvent.CamelContextInitializingEvent.class,
+                        CamelEvent.CamelContextInitializedEvent.class,
                         CamelContextStartingEvent.class,
                         CamelContextStartedEvent.class,
                         ExchangeSendingEvent.class,
@@ -138,6 +151,8 @@ public class CamelEventNotifierTest {
 
         assertThat("Events fired are incorrect!", events,
                 contains(
+                        CamelEvent.CamelContextInitializingEvent.class,
+                        CamelEvent.CamelContextInitializedEvent.class,
                         CamelContextStartingEvent.class,
                         CamelContextStartedEvent.class,
                         ExchangeSendingEvent.class,

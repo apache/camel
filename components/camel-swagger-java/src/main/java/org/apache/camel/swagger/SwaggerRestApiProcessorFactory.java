@@ -28,7 +28,7 @@ public class SwaggerRestApiProcessorFactory implements RestApiProcessorFactory {
 
     @Override
     public Processor createApiProcessor(
-            CamelContext camelContext, String contextPath, String contextIdPattern, boolean contextIdListing,
+            CamelContext camelContext, String contextPath,
             RestConfiguration configuration, Map<String, Object> parameters)
             throws Exception {
 
@@ -78,6 +78,6 @@ public class SwaggerRestApiProcessorFactory implements RestApiProcessorFactory {
             options.put("cors", "true");
         }
 
-        return new RestSwaggerProcessor(contextIdPattern, contextIdListing, options, configuration);
+        return new RestSwaggerProcessor(options, configuration);
     }
 }

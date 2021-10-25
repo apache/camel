@@ -18,6 +18,7 @@ package org.apache.camel.component.file.remote.sftp.integration;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -27,6 +28,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -54,10 +56,8 @@ public class SftpSimpleConsumeStreamingPartialReadIT extends SftpServerTestSuppo
         assertTrue(remoteFile1.getBody() instanceof InputStream);
 
         // Wait a little bit for the move to finish.
-        Thread.sleep(2000);
-
         File resultFile = new File(service.getFtpRootDir() + File.separator + "failed", "hello.txt");
-        assertTrue(resultFile.exists());
+        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(resultFile.exists()));
         assertFalse(resultFile.isDirectory());
     }
 

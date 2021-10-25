@@ -23,19 +23,23 @@ import org.apache.camel.component.mllp.internal.Hl7Util;
  */
 public class Hl7AcknowledgementGenerationException extends Exception {
     private final byte[] hl7MessageBytes;
+    private final Hl7Util hl7Util;
 
-    public Hl7AcknowledgementGenerationException(String message) {
+    public Hl7AcknowledgementGenerationException(Hl7Util hl7Util, String message) {
         super(message);
+        this.hl7Util = hl7Util;
         this.hl7MessageBytes = null;
     }
 
-    public Hl7AcknowledgementGenerationException(String message, byte[] hl7MessageBytes) {
+    public Hl7AcknowledgementGenerationException(Hl7Util hl7Util, String message, byte[] hl7MessageBytes) {
         super(message);
+        this.hl7Util = hl7Util;
         this.hl7MessageBytes = hl7MessageBytes;
     }
 
-    public Hl7AcknowledgementGenerationException(String message, byte[] hl7MessageBytes, Throwable cause) {
+    public Hl7AcknowledgementGenerationException(Hl7Util hl7Util, String message, byte[] hl7MessageBytes, Throwable cause) {
         super(message, cause);
+        this.hl7Util = hl7Util;
         this.hl7MessageBytes = hl7MessageBytes;
     }
 
@@ -63,7 +67,7 @@ public class Hl7AcknowledgementGenerationException extends Exception {
                     .append(hl7MessageBytes.length)
                     .append("] = ");
 
-            Hl7Util.appendBytesAsPrintFriendlyString(messageBuilder, hl7MessageBytes, 0, hl7MessageBytes.length);
+            hl7Util.appendBytesAsPrintFriendlyString(messageBuilder, hl7MessageBytes, 0, hl7MessageBytes.length);
 
             messageBuilder.append('}');
 

@@ -45,20 +45,19 @@ public class JsonPathSplitWriteAsStringMapTest extends CamelTestSupport {
     @Test
     public void testSplitToJSon() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:line");
-        // we only get 1 map (because we split via: $.content) but each entry is converted to a json string
-        mock.expectedMessageCount(1);
+        mock.expectedMessageCount(2);
 
         template.sendBody("direct:start", new File("src/test/resources/content-map.json"));
 
         assertMockEndpointsSatisfied();
 
-        Map map = mock.getReceivedExchanges().get(0).getIn().getBody(Map.class);
+        Map.Entry<?, ?> row = mock.getReceivedExchanges().get(0).getIn().getBody(Map.Entry.class);
+        assertEquals("foo", row.getKey());
+        assertEquals("{\"action\":\"CU\",\"id\":123,\"modifiedTime\":\"2015-07-28T11:40:09.520+02:00\"}", row.getValue());
 
-        String foo = (String) map.get("foo");
-        assertEquals("{\"action\":\"CU\",\"id\":123,\"modifiedTime\":\"2015-07-28T11:40:09.520+02:00\"}", foo);
-
-        String bar = (String) map.get("bar");
-        assertEquals("{\"action\":\"CU\",\"id\":456,\"modifiedTime\":\"2015-07-28T11:42:29.510+02:00\"}", bar);
+        row = mock.getReceivedExchanges().get(1).getIn().getBody(Map.Entry.class);
+        assertEquals("bar", row.getKey());
+        assertEquals("{\"action\":\"CU\",\"id\":456,\"modifiedTime\":\"2015-07-28T11:42:29.510+02:00\"}", row.getValue());
     }
 
 }

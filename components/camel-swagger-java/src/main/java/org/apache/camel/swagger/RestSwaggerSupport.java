@@ -17,17 +17,10 @@
 package org.apache.camel.swagger;
 
 import java.io.InputStream;
-import java.lang.management.ManagementFactory;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
-
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -49,7 +42,6 @@ import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.RestConfiguration;
-import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
@@ -164,56 +156,8 @@ public class RestSwaggerSupport {
         return rests;
     }
 
-    public List<RestDefinition> getRestDefinitions(CamelContext camelContext, String camelId) throws Exception {
-        ObjectName found = null;
-
-        MBeanServer server = ManagementFactory.getPlatformMBeanServer();
-        Set<ObjectName> names = server.queryNames(new ObjectName("org.apache.camel:type=context,*"), null);
-        for (ObjectName on : names) {
-            String id = on.getKeyProperty("name");
-            if (id.startsWith("\"") && id.endsWith("\"")) {
-                id = id.substring(1, id.length() - 1);
-            }
-            if (camelId == null || camelId.equals(id)) {
-                found = on;
-            }
-        }
-
-        if (found != null) {
-            String xml = (String) server.invoke(found, "dumpRestsAsXml", new Object[] { true }, new String[] { "boolean" });
-            if (xml != null) {
-                LOG.debug("DumpRestAsXml:\n{}", xml);
-                InputStream isxml = camelContext.getTypeConverter().convertTo(InputStream.class, xml);
-                ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
-                RestsDefinition rests
-                        = (RestsDefinition) ecc.getXMLRoutesDefinitionLoader().loadRestsDefinition(camelContext, isxml);
-                if (rests != null) {
-                    return rests.getRests();
-                }
-            }
-        }
-
-        return null;
-    }
-
-    public List<String> findCamelContexts() throws Exception {
-        List<String> answer = new ArrayList<>();
-
-        MBeanServer server = ManagementFactory.getPlatformMBeanServer();
-        Set<ObjectName> names = server.queryNames(new ObjectName("*:type=context,*"), null);
-        for (ObjectName on : names) {
-
-            String id = on.getKeyProperty("name");
-            if (id.startsWith("\"") && id.endsWith("\"")) {
-                id = id.substring(1, id.length() - 1);
-            }
-            answer.add(id);
-        }
-        return answer;
-    }
-
     public void renderResourceListing(
-            CamelContext camelContext, RestApiResponseAdapter response, BeanConfig swaggerConfig, String contextId,
+            CamelContext camelContext, RestApiResponseAdapter response, BeanConfig swaggerConfig,
             String route, boolean json, boolean yaml,
             Map<String, Object> headers, ClassResolver classResolver, RestConfiguration configuration)
             throws Exception {
@@ -227,12 +171,7 @@ public class RestSwaggerSupport {
             setupCorsHeaders(response, configuration.getCorsHeaders());
         }
 
-        List<RestDefinition> rests;
-        if (camelContext.getName().equals(contextId)) {
-            rests = getRestDefinitions(camelContext);
-        } else {
-            rests = getRestDefinitions(camelContext, contextId);
-        }
+        List<RestDefinition> rests = getRestDefinitions(camelContext);
 
         if (rests != null) {
             final Map<String, Object> apiProperties
@@ -242,7 +181,7 @@ public class RestSwaggerSupport {
                         (String) apiProperties.getOrDefault("api.specification.contentType.json", "application/json"));
 
                 // read the rest-dsl into swagger model
-                Swagger swagger = reader.read(rests, route, swaggerConfig, contextId, classResolver);
+                Swagger swagger = reader.read(rests, route, swaggerConfig, camelContext.getName(), classResolver);
                 if (configuration.isUseXForwardHeaders()) {
                     setupXForwardedHeaders(swagger, headers);
                 }
@@ -262,7 +201,7 @@ public class RestSwaggerSupport {
                         (String) apiProperties.getOrDefault("api.specification.contentType.yaml", "text/yaml"));
 
                 // read the rest-dsl into swagger model
-                Swagger swagger = reader.read(rests, route, swaggerConfig, contextId, classResolver);
+                Swagger swagger = reader.read(rests, route, swaggerConfig, camelContext.getName(), classResolver);
                 if (configuration.isUseXForwardHeaders()) {
                     setupXForwardedHeaders(swagger, headers);
                 }
@@ -285,68 +224,6 @@ public class RestSwaggerSupport {
         } else {
             response.noContent();
         }
-    }
-
-    /**
-     * Renders a list of available CamelContexts in the JVM
-     */
-    public void renderCamelContexts(
-            RestApiResponseAdapter response, String contextId, String contextIdPattern, boolean json, boolean yaml,
-            RestConfiguration configuration)
-            throws Exception {
-        LOG.trace("renderCamelContexts");
-
-        if (cors) {
-            setupCorsHeaders(response, configuration.getCorsHeaders());
-        }
-
-        List<String> contexts = findCamelContexts();
-
-        // filter non matched CamelContext's
-        if (contextIdPattern != null) {
-            Iterator<String> it = contexts.iterator();
-            while (it.hasNext()) {
-                String name = it.next();
-
-                boolean match;
-                if ("#name#".equals(contextIdPattern)) {
-                    match = name.equals(contextId);
-                } else {
-                    match = PatternHelper.matchPattern(name, contextIdPattern);
-                }
-                if (!match) {
-                    it.remove();
-                }
-            }
-        }
-
-        StringBuffer sb = new StringBuffer();
-
-        if (json) {
-            response.setHeader(Exchange.CONTENT_TYPE, "application/json");
-
-            sb.append("[\n");
-            for (int i = 0; i < contexts.size(); i++) {
-                String name = contexts.get(i);
-                sb.append("{\"name\": \"").append(name).append("\"}");
-                if (i < contexts.size() - 1) {
-                    sb.append(",\n");
-                }
-            }
-            sb.append("\n]");
-        } else {
-            response.setHeader(Exchange.CONTENT_TYPE, "text/yaml");
-
-            for (int i = 0; i < contexts.size(); i++) {
-                String name = contexts.get(i);
-                sb.append("- \"").append(name).append("\"\n");
-            }
-        }
-
-        int len = sb.length();
-        response.setHeader(Exchange.CONTENT_LENGTH, "" + len);
-
-        response.writeBytes(sb.toString().getBytes());
     }
 
     private static void setupCorsHeaders(RestApiResponseAdapter response, Map<String, String> corsHeaders) {

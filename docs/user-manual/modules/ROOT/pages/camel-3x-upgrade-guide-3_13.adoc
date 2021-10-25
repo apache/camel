@@ -12,6 +12,18 @@ Added method `getStartedEventNotifiers` to `org.apache.camel.spi.ManagementStrat
 
 Added method `scheduleQueue` to `org.apache.camel.spi.ReactiveExecutor`.
 
+The `org.apache.camel.support.ObjectHelper#createIterable` now supports `java.util.Map` returning
+an `Iterable<Map.Entry>` iterating each row in the map.
+
+The `org.apache.camel.spi.RestApiProcessorFactory` has removed
+the following two parameters (`String contextIdPattern, boolean contextIdListing`)
+from the `createApiProcessor` method.
+
+=== Split EIP
+
+The Split EIP now supports splitting message bodies that are of type `java.util.Map`, which
+now splits that into a `Set<Map.Entry>` - eg a set of each map entry as key/value pairs.
+
 === SimpleBuilder
 
 The `org.apache.camel.builder.SimpleBuilder` has been deprecated. This builder
@@ -30,6 +42,12 @@ to
 ----
 simple("1", Integer.class)
 ----
+
+=== CamelContextInitializing and CamelContextInitialized events
+
+These two events are fired during bootstrap of `CamelContext` even if a custom `EventNotifier`
+may not have been fully started. This is due to that these events happen very early in the
+bootstrap process, but are of importance for event notifiers to be able to react upon.
 
 === Using custom Debugger
 
@@ -75,3 +93,25 @@ The `FtpConsumer`, `FtpOperations`, `SftConsumer` and `SftpOperations` classes w
 === camel-jsch
 
 The `ScpOperations` class were modified to comply with the API changes on the `camel-file` component.
+
+=== camel-kafka
+
+The `KafkaManualCommit` class were modified in order to support async manual commit. Please use the new function `commit()` instead of the old deprecated one `commitSync()`.
+
+=== camel-mllp
+
+This component has been refactored to be similar to other Camel components.
+The old component had an unusual static configuration of the `MllpComponent` which now is
+refactored to be Camel standard with regular getter/setters. The component is now also
+configured _reflection free_. We also cleaned up how the component dealt with which charset
+to use when processing HL7 messages. Users using `camel-mllp` is recommended to test
+their applications when upgrading to ensure this continues to work.
+
+=== camel-openapi-java / camel-swagger-java
+
+Support for rendering api docs by discovering other CamelContext via JMX in the same JVM has been removed.
+Rendering of api docs is now only supported for the same CamelContext.
+
+=== camel-couchdb
+
+The `since` configuration was replaced by the `resumeStrategy`. Integrations can now manage the last update sequence for tracking the changes directly. Check the samples section on the component documentation page for a sample.

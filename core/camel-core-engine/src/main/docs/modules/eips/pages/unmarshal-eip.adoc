@@ -4,11 +4,11 @@ The xref:marshal-eip.adoc[Marshal] and xref:unmarshal-eip.adoc[Unmarshal] EIPs a
 for xref:message-translator.adoc[Message Transformation].
 
 Camel has support for message transformation using several techniques.
-One such technique is xref:components:dataformats:index.adoc[Data Formats],
+One such technique is xref:dataformats:index.adoc[Data Formats],
 where marshal and unmarshal comes from.
 
 So in other words the xref:marshal-eip.adoc[Marshal] and xref:unmarshal-eip.adoc[Unmarshal] EIPs
-are used with xref:components:dataformats:index.adoc[Data Formats].
+are used with xref:dataformats:index.adoc[Data Formats].
 
 - _Marshal_ - Transforms the message body (such as Java object) into a binary or textual format, ready to be wired over the network.
 - _Unmarshal_ - Transforms data in some binary or textual format (such as received over the network)
@@ -18,10 +18,10 @@ into a Java object; or some other representation according to the data format be
 
 The following example reads XML files from the inbox/xml directory.
 Each file is then transformed into Java Objects using xref:dataformats:jaxb-dataformat.adoc[JAXB].
-Then a xref:components::bean-component.adoc[Bean] is invoked that takes in the Java object.
+Then a xref:ROOT:bean-component.adoc[Bean] is invoked that takes in the Java object.
 
 Then the reverse operation happens to transform the Java objects back into XML also via JAXB,
-but using the `unmarshal` operation. And finally the message is routed to a xref:components::jms-component.adoc[JMS] queue.
+but using the `unmarshal` operation. And finally the message is routed to a xref:ROOT:jms-component.adoc[JMS] queue.
 
 [source,java]
 ----

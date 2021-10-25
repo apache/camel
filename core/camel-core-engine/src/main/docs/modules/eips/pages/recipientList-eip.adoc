@@ -26,7 +26,7 @@ TIP: See the `cacheSize` option for more details on _how much cache_ to use depe
 
 == Exchange properties
 
-The following properties are set on each Exchange that are sent by the recipient list:
+The following exchange properties are set on each `Exchange` that are sent by the recipient list:
 
 [width="100%",cols="3,1m,6",options="header"]
 |=======================================================================
@@ -36,7 +36,7 @@ The following properties are set on each Exchange that are sent by the recipient
 
 == Using Recipient List
 
-The Recipient List EIP allows to route *the same* message to a number of xref:latest@manual:ROOT:endpoint.adoc[endpoints]
+The Recipient List EIP allows to route *the same* message to a number of xref:manual::endpoint.adoc[endpoints]
 and process them in a different way.
 
 There can be 1 or more destinations, and Camel will execute them sequentially (by default).
@@ -74,7 +74,7 @@ And in XML:
 Usually one of the main reasons for using the Recipient List pattern is that the list of recipients is dynamic and
 calculated at runtime.
 
-The following example demonstrates how to create a dynamic recipient list using an xref:latest@manual:ROOT:expression.adoc[Expression]
+The following example demonstrates how to create a dynamic recipient list using an xref:manual::expression.adoc[Expression]
 (which in this case extracts a named header value dynamically) to calculate the list of endpoints; which are either
 of type `Endpoint` or are converted to a `String` and then resolved using the endpoint URIs (separated by comma).
 
@@ -178,7 +178,7 @@ process the remainder destinations. You have the chance to deal with the excepti
 when aggregating using an `AggregationStrategy`.
 
 But sometimes you just want Camel to stop and let the exception be
-propagated back, and let the Camel xref:latest@manual:ROOT:error-handler.adoc[Error Handler]
+propagated back, and let the Camel xref:manual::error-handler.adoc[Error Handler]
 handle it. You can do this by specifying that it should stop in case of an
 exception occurred. This is done by the `stopOnException` option as
 shown below:

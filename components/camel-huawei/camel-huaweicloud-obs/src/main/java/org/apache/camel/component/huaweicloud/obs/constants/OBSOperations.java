@@ -26,6 +26,8 @@ public final class OBSOperations {
     public static final String CHECK_BUCKET_EXISTS = "checkBucketExists";
     public static final String GET_BUCKET_METADATA = "getBucketMetadata";
     public static final String LIST_OBJECTS = "listObjects";
+    public static final String GET_OBJECT = "getObject";
+    public static final String PUT_OBJECT = "putObject";
 
     private OBSOperations() {
     }

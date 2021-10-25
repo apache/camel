@@ -25,7 +25,7 @@ TIP: See the `cacheSize` option for more details on _how much cache_ to use depe
 
 == Exchange properties
 
-The following properties are set on each Exchange that are sent by the routing slip:
+The following exchange properties are set on each `Exchange` that are sent by the routing slip:
 
 [width="100%",cols="3,1m,6",options="header"]
 |=======================================================================
@@ -36,14 +36,14 @@ The following properties are set on each Exchange that are sent by the routing s
 
 == Using Routing Slip
 
-The Routing Slip EIP allows to route a message through a series of xref:latest@manual:ROOT:endpoint.adoc[endpoints] (the slip).
+The Routing Slip EIP allows to route a message through a series of xref:manual::endpoint.adoc[endpoints] (the slip).
 
-There can be 1 or more endpoint xref:latest@manual:ROOT:uris.adoc[uris] in the slip.
+There can be 1 or more endpoint xref:manual::uris.adoc[uris] in the slip.
 
 TIP: A slip can be empty, meaning that the message will not be routed anywhere.
 
 The following route will take any messages sent to the Apache ActiveMQ queue cheese
-and use the header with key "whereTo" that is used to compute the slip (endpoint xref:latest@manual:ROOT:uris.adoc[uris]).
+and use the header with key "whereTo" that is used to compute the slip (endpoint xref:manual::uris.adoc[uris]).
 
 [source,java]
 ---------------------
@@ -74,7 +74,7 @@ The same example in XML is simply just:
 
 === How is the slip computed
 
-The Routing Slip uses an xref:latest@manual:ROOT:expression.adoc[Expression] to compute the value for the slip.
+The Routing Slip uses an xref:manual::expression.adoc[Expression] to compute the value for the slip.
 The result of the expression can be one of:
 
 - `String`

@@ -78,6 +78,20 @@ public interface OBSEndpointBuilderFactory {
             return this;
         }
         /**
+         * Name of object to perform operation with.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param objectName the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointConsumerBuilder objectName(String objectName) {
+            doSetProperty("objectName", objectName);
+            return this;
+        }
+        /**
          * OBS service region. This is lower precedence than endpoint based
          * configuration.
          * 
@@ -1162,6 +1176,20 @@ public interface OBSEndpointBuilderFactory {
             return this;
         }
         /**
+         * Name of object to perform operation with.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param objectName the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointProducerBuilder objectName(String objectName) {
+            doSetProperty("objectName", objectName);
+            return this;
+        }
+        /**
          * OBS service region. This is lower precedence than endpoint based
          * configuration.
          * 
@@ -1455,6 +1483,20 @@ public interface OBSEndpointBuilderFactory {
          */
         default OBSEndpointBuilder endpoint(String endpoint) {
             doSetProperty("endpoint", endpoint);
+            return this;
+        }
+        /**
+         * Name of object to perform operation with.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param objectName the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointBuilder objectName(String objectName) {
+            doSetProperty("objectName", objectName);
             return this;
         }
         /**

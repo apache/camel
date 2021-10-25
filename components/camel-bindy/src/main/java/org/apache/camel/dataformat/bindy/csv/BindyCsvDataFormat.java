@@ -23,6 +23,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -90,6 +91,11 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
 
         // the body is not a prepared list of map that bindy expects so help a
         // bit here and create one for us
+        if (body instanceof Map) {
+            // the body is already a map, and we do not want to iterate each element in the map,
+            // but keep the body as a map, so wrap as iterator
+            body = Collections.singleton(body).iterator();
+        }
         for (Object model : ObjectHelper.createIterable(body)) {
             if (model instanceof Map) {
                 models.add((Map<String, Object>) model);

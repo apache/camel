@@ -34,7 +34,7 @@ public final class ThreadHelper {
     }
 
     private static long nextThreadCounter() {
-        return threadCounter.getAndIncrement();
+        return threadCounter.incrementAndGet();
     }
 
     /**

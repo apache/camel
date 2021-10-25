@@ -20,9 +20,10 @@ public class MllpEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(27);
+        Set<String> props = new HashSet<>(28);
         props.add("bindRetryInterval");
         props.add("lenientBind");
+        props.add("idleTimeoutStrategy");
         props.add("hostname");
         props.add("bridgeErrorHandler");
         props.add("bindTimeout");
@@ -32,8 +33,8 @@ public class MllpEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("requireEndOfData");
         props.add("tcpNoDelay");
         props.add("autoAck");
-        props.add("keepAlive");
         props.add("maxConcurrentConsumers");
+        props.add("keepAlive");
         props.add("hl7Headers");
         props.add("sendBufferSize");
         props.add("exchangePattern");
@@ -43,11 +44,11 @@ public class MllpEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("receiveBufferSize");
         props.add("port");
         props.add("receiveTimeout");
-        props.add("idleTimeout");
         props.add("readTimeout");
+        props.add("idleTimeout");
         props.add("exceptionHandler");
-        props.add("validatePayload");
         props.add("charsetName");
+        props.add("validatePayload");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
     }

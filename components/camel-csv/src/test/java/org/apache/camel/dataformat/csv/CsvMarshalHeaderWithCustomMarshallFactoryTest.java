@@ -132,10 +132,15 @@ public class CsvMarshalHeaderWithCustomMarshallFactoryTest extends CamelTestSupp
         @Override
         @SuppressWarnings("unchecked")
         public void marshal(Exchange exchange, Object object, OutputStream outputStream) throws IOException {
-            Iterator<Map<String, String>> it = (Iterator<Map<String, String>>) ObjectHelper.createIterator(object);
             synchronized (printer) {
-                while (it.hasNext()) {
-                    printer.printRecord(getMapRecordValues(it.next()));
+                if (object instanceof Map) {
+                    Map map = (Map) object;
+                    printer.printRecord(getMapRecordValues(map));
+                } else {
+                    Iterator<Map<String, String>> it = (Iterator<Map<String, String>>) ObjectHelper.createIterator(object);
+                    while (it.hasNext()) {
+                        printer.printRecord(getMapRecordValues(it.next()));
+                    }
                 }
                 // Access the 'Appendable'
                 StringBuilder stringBuilder = (StringBuilder) printer.getOut();

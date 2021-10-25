@@ -43,7 +43,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Expose OpenAPI Specification of the REST services defined using Camel REST DSL.
  */
-@UriEndpoint(firstVersion = "2.16.0", scheme = "rest-api", title = "REST API", syntax = "rest-api:path/contextIdPattern",
+@UriEndpoint(firstVersion = "2.16.0", scheme = "rest-api", title = "REST API", syntax = "rest-api:path",
              consumerOnly = true, category = { Category.CORE, Category.REST }, lenientProperties = true)
 public class RestApiEndpoint extends DefaultEndpoint {
 
@@ -53,8 +53,6 @@ public class RestApiEndpoint extends DefaultEndpoint {
     @UriPath
     @Metadata(required = true)
     private String path;
-    @UriPath
-    private String contextIdPattern;
     @UriParam
     private String consumerComponentName;
     @UriParam
@@ -81,18 +79,6 @@ public class RestApiEndpoint extends DefaultEndpoint {
      */
     public void setPath(String path) {
         this.path = path;
-    }
-
-    public String getContextIdPattern() {
-        return contextIdPattern;
-    }
-
-    /**
-     * Optional CamelContext id pattern to only allow Rest APIs from rest services within CamelContext's which name
-     * matches the pattern.
-     */
-    public void setContextIdPattern(String contextIdPattern) {
-        this.contextIdPattern = contextIdPattern;
     }
 
     public String getConsumerComponentName() {
@@ -200,11 +186,7 @@ public class RestApiEndpoint extends DefaultEndpoint {
                 path = "/" + path;
             }
 
-            // whether listing of the context id's is enabled or not
-            boolean contextIdListing = config.isApiContextListing();
-
-            Processor processor = factory.createApiProcessor(getCamelContext(), path, getContextIdPattern(), contextIdListing,
-                    config, getParameters());
+            Processor processor = factory.createApiProcessor(getCamelContext(), path, config, getParameters());
             return new RestApiProducer(this, processor);
         } else {
             throw new IllegalStateException(

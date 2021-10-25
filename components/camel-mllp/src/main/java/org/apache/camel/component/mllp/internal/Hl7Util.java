@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.mllp.internal;
 
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -24,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.component.mllp.MllpAcknowledgementGenerationException;
-import org.apache.camel.component.mllp.MllpComponent;
 import org.apache.camel.component.mllp.MllpProtocolConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,11 +78,17 @@ public final class Hl7Util {
         CHARACTER_REPLACEMENTS.put((char) 0x7F, "<0x7F DEL>");
     }
 
-    private Hl7Util() {
-        //utility class, never constructed
+    private final int logPhiMaxBytes;
+
+    public Hl7Util(int logPhiMaxBytes) {
+        this.logPhiMaxBytes = logPhiMaxBytes;
     }
 
-    public static String generateInvalidPayloadExceptionMessage(final byte[] hl7Bytes) {
+    public int getLogPhiMaxBytes() {
+        return logPhiMaxBytes;
+    }
+
+    public String generateInvalidPayloadExceptionMessage(final byte[] hl7Bytes) {
         if (hl7Bytes == null) {
             return "HL7 payload is null";
         }
@@ -181,7 +187,7 @@ public final class Hl7Util {
      *
      * @return            the String value of MSH-18, or an empty String if not found.
      */
-    public static String findMsh18(byte[] hl7Message) {
+    public String findMsh18(byte[] hl7Message, Charset charset) {
         String answer = "";
 
         if (hl7Message != null && hl7Message.length > 0) {
@@ -193,7 +199,7 @@ public final class Hl7Util {
                 int length = fieldSeparatorIndexes.get(17) - fieldSeparatorIndexes.get(16) - 1;
 
                 if (length > 0) {
-                    answer = new String(hl7Message, startOfMsh19, length, MllpComponent.getDefaultCharset());
+                    answer = new String(hl7Message, startOfMsh19, length, charset);
                 }
             }
         }
@@ -201,13 +207,13 @@ public final class Hl7Util {
         return answer;
     }
 
-    public static void generateAcknowledgementPayload(
+    public void generateAcknowledgementPayload(
             MllpSocketBuffer mllpSocketBuffer, byte[] hl7MessageBytes, String acknowledgementCode)
             throws MllpAcknowledgementGenerationException {
         generateAcknowledgementPayload(mllpSocketBuffer, hl7MessageBytes, acknowledgementCode, null);
     }
 
-    public static void generateAcknowledgementPayload(
+    public void generateAcknowledgementPayload(
             MllpSocketBuffer mllpSocketBuffer, byte[] hl7MessageBytes, String acknowledgementCode, String msa3)
             throws MllpAcknowledgementGenerationException {
         if (hl7MessageBytes == null) {
@@ -299,14 +305,13 @@ public final class Hl7Util {
         return;
     }
 
-    public static String convertToPrintFriendlyString(String phiString) {
+    public String convertToPrintFriendlyString(String phiString) {
         if (null == phiString) {
             return NULL_REPLACEMENT_VALUE;
         } else if (phiString.length() == 0) {
             return EMPTY_REPLACEMENT_VALUE;
         }
 
-        int logPhiMaxBytes = MllpComponent.getLogPhiMaxBytes();
         int conversionLength = (logPhiMaxBytes > 0) ? Integer.min(phiString.length(), logPhiMaxBytes) : phiString.length();
 
         StringBuilder builder = new StringBuilder(conversionLength + STRING_BUFFER_PAD_SIZE);
@@ -318,7 +323,7 @@ public final class Hl7Util {
         return builder.toString();
     }
 
-    public static String convertToPrintFriendlyString(byte[] phiBytes) {
+    public String convertToPrintFriendlyString(byte[] phiBytes) {
         return bytesToPrintFriendlyStringBuilder(phiBytes).toString();
     }
 
@@ -333,7 +338,7 @@ public final class Hl7Util {
      *
      * @return               a String representation of the byte[]
      */
-    public static String convertToPrintFriendlyString(byte[] phiBytes, int startPosition, int endPosition) {
+    public String convertToPrintFriendlyString(byte[] phiBytes, int startPosition, int endPosition) {
         return bytesToPrintFriendlyStringBuilder(phiBytes, startPosition, endPosition).toString();
     }
 
@@ -346,7 +351,7 @@ public final class Hl7Util {
      *
      * @return
      */
-    public static StringBuilder bytesToPrintFriendlyStringBuilder(byte[] phiBytes) {
+    public StringBuilder bytesToPrintFriendlyStringBuilder(byte[] phiBytes) {
         return bytesToPrintFriendlyStringBuilder(phiBytes, 0, phiBytes != null ? phiBytes.length : -1);
     }
 
@@ -361,7 +366,8 @@ public final class Hl7Util {
      *
      * @return               a String representation of the byte[]
      */
-    public static StringBuilder bytesToPrintFriendlyStringBuilder(byte[] phiBytes, int startPosition, int endPosition) {
+    public StringBuilder bytesToPrintFriendlyStringBuilder(
+            byte[] phiBytes, int startPosition, int endPosition) {
         StringBuilder answer = new StringBuilder();
 
         appendBytesAsPrintFriendlyString(answer, phiBytes, startPosition, endPosition);
@@ -369,7 +375,7 @@ public final class Hl7Util {
         return answer;
     }
 
-    public static void appendBytesAsPrintFriendlyString(StringBuilder builder, byte[] phiBytes) {
+    public void appendBytesAsPrintFriendlyString(StringBuilder builder, byte[] phiBytes) {
         appendBytesAsPrintFriendlyString(builder, phiBytes, 0, phiBytes != null ? phiBytes.length : 0);
     }
 
@@ -382,7 +388,7 @@ public final class Hl7Util {
      * @param startPosition the starting position/index of the data
      * @param endPosition   the ending position/index of the data - will not be included in String
      */
-    public static void appendBytesAsPrintFriendlyString(
+    public void appendBytesAsPrintFriendlyString(
             StringBuilder builder, byte[] phiBytes, int startPosition, int endPosition) {
         if (builder == null) {
             throw new IllegalArgumentException("StringBuilder cannot be null");
@@ -405,7 +411,6 @@ public final class Hl7Util {
 
                     int length = endPosition - startPosition;
                     if (length > 0) {
-                        int logPhiMaxBytes = MllpComponent.getLogPhiMaxBytes();
                         int conversionLength = (logPhiMaxBytes > 0) ? Integer.min(length, logPhiMaxBytes) : length;
                         if (builder.capacity() - builder.length() < conversionLength + STRING_BUFFER_PAD_SIZE) {
                             builder.ensureCapacity(builder.length() + conversionLength + STRING_BUFFER_PAD_SIZE);

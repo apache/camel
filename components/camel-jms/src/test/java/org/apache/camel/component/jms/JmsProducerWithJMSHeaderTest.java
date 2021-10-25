@@ -18,6 +18,7 @@ package org.apache.camel.component.jms;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
@@ -32,9 +33,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.apache.camel.component.jms.JmsConstants.JMS_X_GROUP_ID;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
 
 public class JmsProducerWithJMSHeaderTest extends CamelTestSupport {
 
@@ -136,11 +138,8 @@ public class JmsProducerWithJMSHeaderTest extends CamelTestSupport {
         template.sendBodyAndHeader("activemq:queue:bar?preserveMessageQos=true", "Hello World", "JMSExpiration", ttl);
 
         // sleep more so the message is expired
-        Thread.sleep(5000);
-
-        Exchange bar = consumer.receiveNoWait("activemq:queue:bar");
-        assertNull(bar, "Should NOT be a message on queue");
-
+        await().atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertThat(consumer.receiveNoWait("activemq:queue:bar")).isNull());
         template.sendBody("activemq:queue:foo", "Hello World");
 
         assertMockEndpointsSatisfied();
@@ -180,7 +179,6 @@ public class JmsProducerWithJMSHeaderTest extends CamelTestSupport {
 
         Exchange bar = consumer.receive("activemq:queue:bar", 5000);
         assertNotNull(bar, "Should be a message on queue");
-
         template.send("activemq:queue:foo?preserveMessageQos=true", bar);
 
         Thread.sleep(1000);
@@ -201,10 +199,9 @@ public class JmsProducerWithJMSHeaderTest extends CamelTestSupport {
         template.sendBodyAndHeaders("activemq:queue:bar?preserveMessageQos=true", "Hello World", headers);
 
         // sleep more so the message is expired
-        Thread.sleep(5000);
-
-        Exchange bar = consumer.receiveNoWait("activemq:queue:bar");
-        assertNull(bar, "Should NOT be a message on queue");
+        await()
+                .atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertThat(consumer.receiveNoWait("activemq:queue:bar")).isNull());
 
         template.sendBody("activemq:queue:foo", "Hello World");
 

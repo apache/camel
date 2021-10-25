@@ -337,7 +337,7 @@ public abstract class TcpServerConsumerEndOfDataAndValidationTestSupport extends
                             "PID" + MllpProtocolConstants.START_OF_BLOCK)
                     : Hl7TestMessageGenerator.generateMessage(i + 1);
 
-            log.debug("Sending message {}", Hl7Util.convertToPrintFriendlyString(message));
+            log.debug("Sending message {}", new Hl7Util(5120).convertToPrintFriendlyString(message));
 
             mllpClient.sendMessageAndWaitForAcknowledgement(message);
         }

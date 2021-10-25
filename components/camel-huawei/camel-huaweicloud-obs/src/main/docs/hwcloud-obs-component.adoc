@@ -64,6 +64,8 @@ include::partial$component-endpoint-options.adoc[]
 
 |`CamelHwCloudObsBucketLocation` |`String` | Bucket location when creating a new bucket
 
+|`CamelHwCloudObsObjectName` |`String` | Name of the object to be used in operation. You can also configure the name of the object using this property while performing putObject operation
+
 |=======================================================================
 
 If any of the above properties are set, they will override their corresponding query parameter.
@@ -85,6 +87,8 @@ If any of the above properties are set, they will override their corresponding q
 |Header |Type |Description
 
 |`CamelHwCloudObsBucketName` |`String` | Name of the bucket where object is contained
+
+|`CamelHwCloudObsObjectName` |`String` | Name of the object with which the operation is to be performed
 
 |`CamelHwCloudObsObjectKey` |`String` | The key that the object is stored under
 
@@ -111,9 +115,11 @@ If any of the above properties are set, they will override their corresponding q
 - checkBucketExists - `bucketName` parameter is *required*
 - getBucketMetadata - `bucketName` parameter is *required*
 - listObjects - `bucketName` parameter is *required*
+- getObject - `bucketName` and `objectName` parameters are *required*
+- putObject - `bucketName` parameter is *required*. If exchange body contains File, then file name is used as default object name unless over-ridden via exchange property CamelHwCloudObsObjectName
 
 === Passing Options Through Exchange Body
-There are many options that can be submited to the `createBucket` and `listObjects` operations, so they can be passed through the exchange body.
+There are many options that can be submitted to the `createBucket` and `listObjects` operations, so they can be passed through the exchange body.
 
 If you would like to configure all the https://support.huaweicloud.com/intl/en-us/api-obs/obs_04_0021.html[parameters] when creating a bucket, you can pass a https://obssdk-intl.obs.ap-southeast-1.myhuaweicloud.com/apidoc/en/java/com/obs/services/model/CreateBucketRequest.html[CreateBucketRequest] object or a Json string into the exchange body. If the exchange body is empty, a new bucket will be created using the bucketName and bucketLocation (if provided) passed through the endpoint uri.
 

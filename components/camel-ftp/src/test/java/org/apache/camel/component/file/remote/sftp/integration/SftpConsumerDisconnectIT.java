@@ -18,6 +18,7 @@ package org.apache.camel.component.file.remote.sftp.integration;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -27,6 +28,7 @@ import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @Disabled
@@ -53,11 +55,10 @@ public class SftpConsumerDisconnectIT extends SftpServerTestSupport {
         // Check that expectations are satisfied
         assertMockEndpointsSatisfied();
 
-        Thread.sleep(250);
-
         // File is deleted
         File deletedFile = new File(service.getFtpRootDir() + "/" + SAMPLE_FILE_NAME_1);
-        assertFalse(deletedFile.exists(), "File should have been deleted: " + deletedFile);
+        await().atMost(250, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> assertFalse(deletedFile.exists(), "File should have been deleted: " + deletedFile));
     }
 
     @Test

@@ -340,7 +340,7 @@ public final class XmlSignatureHelper {
         if (path == null) {
             throw new IllegalArgumentException("path is null");
         }
-        return XmlSignatureHelper.class.getResourceAsStream(path);
+        return org.apache.camel.util.ObjectHelper.loadResourceAsStream(path);
     }
 
     public static List<AlgorithmMethod> getTransforms(List<AlgorithmMethod> list) {

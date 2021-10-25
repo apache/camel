@@ -211,7 +211,7 @@ public class ThrottlingGroupingTest extends ContextTestSupport {
 
                 from("seda:a").throttle(header("max"), 1).to("mock:result");
                 from("seda:b").throttle(header("max"), 2).to("mock:result2");
-                from("seda:c").throttle(header("max"), header("key")).to("mock:resultdynamic");
+                from("seda:c").throttle(header("max")).correlationExpression(header("key")).to("mock:resultdynamic");
 
                 from("seda:ga").throttle(constant(3), header("key")).timePeriodMillis(1000).to("log:gresult", "mock:gresult");
 

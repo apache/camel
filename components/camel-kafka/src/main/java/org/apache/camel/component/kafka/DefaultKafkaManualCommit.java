@@ -16,19 +16,11 @@
  */
 package org.apache.camel.component.kafka;
 
-import java.time.Duration;
-import java.util.Collections;
-
 import org.apache.camel.spi.StateRepository;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.common.TopicPartition;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class DefaultKafkaManualCommit implements KafkaManualCommit {
-
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultKafkaManualCommit.class);
+public abstract class DefaultKafkaManualCommit implements KafkaManualCommit {
 
     private final KafkaConsumer consumer;
     private final String topicName;
@@ -48,26 +40,11 @@ public class DefaultKafkaManualCommit implements KafkaManualCommit {
         this.partition = partition;
         this.recordOffset = recordOffset;
         this.commitTimeout = commitTimeout;
-
-        LOG.debug("Using commit timeout of {}", commitTimeout);
     }
 
     @Override
     public void commitSync() {
-        commitOffset(offsetRepository, partition, recordOffset);
-    }
-
-    protected void commitOffset(StateRepository<String, String> offsetRepository, TopicPartition partition, long recordOffset) {
-        if (recordOffset != -1) {
-            if (offsetRepository != null) {
-                offsetRepository.setState(serializeOffsetKey(partition), serializeOffsetValue(recordOffset));
-            } else {
-                LOG.debug("CommitSync {} from topic {} with offset: {}", threadId, topicName, recordOffset);
-                consumer.commitSync(Collections.singletonMap(partition, new OffsetAndMetadata(recordOffset + 1)),
-                        Duration.ofMillis(commitTimeout));
-                LOG.debug("CommitSync done for {} from topic {} with offset: {}", threadId, topicName, recordOffset);
-            }
-        }
+        throw new IllegalStateException("This method is deprecated and should not be used anymore.");
     }
 
     protected String serializeOffsetKey(TopicPartition topicPartition) {
@@ -102,4 +79,7 @@ public class DefaultKafkaManualCommit implements KafkaManualCommit {
         return recordOffset;
     }
 
+    public long getCommitTimeout() {
+        return commitTimeout;
+    }
 }

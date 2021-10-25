@@ -145,6 +145,31 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
     }
 
     /**
+     * To use a correlation expression that can throttle by the given key instead of overall throttling
+     *
+     * @param  correlationExpression is a correlation key as a long number that can throttle by the given key instead of
+     *                               overall throttling
+     * @return                       the builder
+     */
+    public ThrottleDefinition correlationExpression(long correlationExpression) {
+        return correlationExpression(ExpressionBuilder.constantExpression(correlationExpression));
+    }
+
+    /**
+     * To use a correlation expression that can throttle by the given key instead of overall throttling
+     *
+     * @param  correlationExpression is a correlation key as an expression that can throttle by the given key instead of
+     *                               overall throttling
+     * @return                       the builder
+     */
+    public ThrottleDefinition correlationExpression(Expression correlationExpression) {
+        ExpressionSubElementDefinition cor = new ExpressionSubElementDefinition();
+        cor.setExpressionType(ExpressionNodeHelper.toExpressionDefinition(correlationExpression));
+        setCorrelationExpression(cor);
+        return this;
+    }
+
+    /**
      * Whether or not the caller should run the task when it was rejected by the thread pool.
      * <p/>
      * Is by default <tt>true</tt>

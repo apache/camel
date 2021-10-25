@@ -18,6 +18,7 @@ package org.apache.camel.component.file.remote.sftp.integration;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -25,6 +26,7 @@ import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
@@ -54,11 +56,10 @@ public class SftpFromSedaDeleteFileIT extends SftpServerTestSupport {
 
         mock.assertIsSatisfied();
 
-        Thread.sleep(500);
-
         // assert the file is deleted
         File file = ftpFile("hello.txt").toFile();
-        assertFalse(file.exists(), "The file should have been deleted");
+        await().atMost(500, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> assertFalse(file.exists(), "The file should have been deleted"));
     }
 
     private void createSampleFile() throws IOException {

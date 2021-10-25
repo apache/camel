@@ -10,12 +10,12 @@ image::eip/RequestReply.gif[image]
 
 Send a pair of Request-Reply messages, each on its own channel.
 
-Camel supports Request Reply by the xref:latest@manual:ROOT:exchange-pattern.adoc[Exchange Pattern]
+Camel supports Request Reply by the xref:manual::exchange-pattern.adoc[Exchange Pattern]
 on a xref:message.adoc[Message] which can be set to `InOut` to indicate a
-request/reply message. Camel xref:components::index.adoc[Components] then
+request/reply message. Camel xref:ROOT:index.adoc[Components] then
 implement this pattern using the underlying transport or protocols.
 
-For example when using xref:components::jms-component.adoc[JMS] with `InOut` the component will
+For example when using xref:ROOT:jms-component.adoc[JMS] with `InOut` the component will
 by default perform these actions:
 
 * create by default a temporary inbound queue
@@ -24,14 +24,14 @@ by default perform these actions:
 * send the request message
 * consume the response and associate the inbound message to the belonging request
 using the `JMSCorrelationID` (as you may be performing many concurrent request/responses).
-* continue routing when the reply is received and populated on the xref:latest@manual:ROOT:exchange.adoc[Exchange]
+* continue routing when the reply is received and populated on the xref:manual::exchange.adoc[Exchange]
 
 TIP: See the related xref:eips:event-message.adoc[Event Message].
 
 == Using endpoint URI
 
 If you are using a component which defaults to `InOnly` you can override
-the xref:latest@manual:ROOT:exchange-pattern.adoc[Exchange Pattern] for a *consumer* endpoint using
+the xref:manual::exchange-pattern.adoc[Exchange Pattern] for a *consumer* endpoint using
 the pattern property.
 
 [source,text]
@@ -63,7 +63,7 @@ And with XML:
 == Using setExchangePattern EIP
 
 You can specify the
-xref:latest@manual:ROOT:exchange-pattern.adoc[Exchange Pattern] using `setExchangePattern` in the DSL.
+xref:manual::exchange-pattern.adoc[Exchange Pattern] using `setExchangePattern` in the DSL.
 
 [source,java]
 ----
@@ -83,8 +83,8 @@ And with XML:
 </route>
 ----
 
-When using `setExchangePattern` then the xref:latest@manual:ROOT:exchange-pattern.adoc[Exchange Pattern]
-on the xref:latest@manual:ROOT:exchange.adoc[Exchange] is changed from this point onwards in the route.
+When using `setExchangePattern` then the xref:manual::exchange-pattern.adoc[Exchange Pattern]
+on the xref:manual::exchange.adoc[Exchange] is changed from this point onwards in the route.
 
 This means you can change the pattern back again at a later point:
 
@@ -98,17 +98,17 @@ from("direct:foo")
   .log("InOut MEP received ${body}")
 ----
 
-NOTE: Using `setExchangePattern` to change the xref:latest@manual:ROOT:exchange-pattern.adoc[Exchange Pattern]
+NOTE: Using `setExchangePattern` to change the xref:manual::exchange-pattern.adoc[Exchange Pattern]
 is often only used in special use-cases where you must
 force to be using either `InOnly` or `InOut` mode when using components that support both modes (such as messaging components like ActiveMQ, JMS, RabbitMQ etc.)
 
 == JMS component and InOnly vs InOut
 
-When consuming messages from xref:components::jms-component.adoc[JMS] a Request Reply is
+When consuming messages from xref:ROOT:jms-component.adoc[JMS] a Request Reply is
 indicated by the presence of the `JMSReplyTo` header. This means the JMS component automatic
 detects whether to use `InOnly` or `InOut` in the consumer.
 
-Likewise, the JMS producer will check the current xref:latest@manual:ROOT:exchange-pattern.adoc[Exchange Pattern]
-on the xref:latest@manual:ROOT:exchange.adoc[Exchange] to know whether to use `InOnly` or `InOut` mode (i.e. one-way vs request/reply messaging)
+Likewise, the JMS producer will check the current xref:manual::exchange-pattern.adoc[Exchange Pattern]
+on the xref:manual::exchange.adoc[Exchange] to know whether to use `InOnly` or `InOut` mode (i.e. one-way vs request/reply messaging)
 
 

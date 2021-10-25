@@ -169,7 +169,7 @@ public class OAuthAsynchronousHttpClientFactory {
         static String getVersion(String groupId, String artifactId) {
             final Properties props = new Properties();
             String pomProps = String.format("/META-INF/maven/%s/%s/pom.properties", groupId, artifactId);
-            try (InputStream resourceAsStream = AuthenticationHandler.class.getResourceAsStream(pomProps)) {
+            try (InputStream resourceAsStream = org.apache.camel.util.ObjectHelper.loadResourceAsStream(pomProps)) {
                 props.load(resourceAsStream);
                 return props.getProperty("version", UNKNOWN_VERSION);
             } catch (Exception e) {

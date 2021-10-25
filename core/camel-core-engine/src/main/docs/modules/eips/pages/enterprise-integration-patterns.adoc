@@ -166,6 +166,10 @@ destination of a message from the sender and maintain central control
 over the flow of messages?
 
 a|image::eip/MessagingAdapterIcon.gif[image]
+|xref:threads-eip.adoc[Threads] |How can I decouple the continued routing
+of a message from the current thread?
+
+a|image::eip/MessagingAdapterIcon.gif[image]
 |xref:throttle-eip.adoc[Throttler] |How can I throttle messages to ensure
 that a specific endpoint does not get overloaded, or we don't exceed an
 agreed SLA with some external service?
@@ -295,7 +299,7 @@ and via non-messaging techniques?
 [width="100%",cols="10%,10%,80%",]
 |=======================================================================
 a|image::eip/ControlBusIcon.gif[image]
-|xref:components::controlbus-component.adoc[ControlBus] |How can we effectively administer a
+|xref:ROOT:controlbus-component.adoc[ControlBus] |How can we effectively administer a
 messaging system that is distributed across multiple platforms and a
 wide geographic area?
 

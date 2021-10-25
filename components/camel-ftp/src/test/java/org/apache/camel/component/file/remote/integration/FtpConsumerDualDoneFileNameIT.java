@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.file.remote.integration;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
@@ -47,9 +49,7 @@ public class FtpConsumerDualDoneFileNameIT extends FtpServerTestSupport {
         template.sendBodyAndHeader(getFtpUrl(), "Bye World", Exchange.FILE_NAME, "bye.txt");
 
         // give chance to poll 2nd file but it lacks the done file
-        Thread.sleep(1000);
-
-        assertMockEndpointsSatisfied();
+        assertMockEndpointsSatisfied(1, TimeUnit.SECONDS);
     }
 
     @Override

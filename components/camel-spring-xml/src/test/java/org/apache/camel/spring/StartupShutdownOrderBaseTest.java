@@ -29,7 +29,7 @@ import org.springframework.context.Lifecycle;
 import org.springframework.context.SmartLifecycle;
 import org.springframework.context.annotation.Bean;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public abstract class StartupShutdownOrderBaseTest {
 
@@ -45,12 +45,12 @@ public abstract class StartupShutdownOrderBaseTest {
 
         @Override
         public void assertValid() {
-            assertThat(closed).as("AutoCloseable bean should be closed").isTrue();
+            assertThat("AutoCloseable bean should be closed", closed);
         }
 
         @Override
         public void close() {
-            assertThat(camelIsStopped(context)).as("AutoCloseable bean should be stopped after Camel").isTrue();
+            assertThat("AutoCloseable bean should be stopped after Camel", camelIsStopped(context));
             closed = true;
         }
     }
@@ -95,11 +95,11 @@ public abstract class StartupShutdownOrderBaseTest {
 
         @Override
         public void assertValid() {
-            assertThat(shutdown).as("Bean with shutdown method should be shutdown").isTrue();
+            assertThat("Bean with shutdown method should be shutdown", shutdown);
         }
 
         public void shutdown() {
-            assertThat(camelIsStopped(context)).as("@Bean with close() method should be stopped after Camel").isTrue();
+            assertThat("@Bean with close() method should be stopped after Camel", camelIsStopped(context));
             shutdown = true;
         }
     }
@@ -116,12 +116,12 @@ public abstract class StartupShutdownOrderBaseTest {
 
         @Override
         public void assertValid() {
-            assertThat(disposed).as("DisposableBean should be disposed").isTrue();
+            assertThat("DisposableBean should be disposed", disposed);
         }
 
         @Override
         public void destroy() throws Exception {
-            assertThat(camelIsStopped(context)).as("DisposableBean should be stopped after Camel").isTrue();
+            assertThat("DisposableBean should be stopped after Camel", camelIsStopped(context));
             disposed = true;
         }
     }
@@ -139,13 +139,13 @@ public abstract class StartupShutdownOrderBaseTest {
 
         @Override
         public void afterPropertiesSet() throws Exception {
-            assertThat(camelIsStopped(context)).as("initializing bean should be started before Camel").isTrue();
+            assertThat("initializing bean should be started before Camel", camelIsStopped(context));
             initialized = true;
         }
 
         @Override
         public void assertValid() {
-            assertThat(initialized).as("InitializingBean should be initialized").isTrue();
+            assertThat("InitializingBean should be initialized", initialized);
         }
     }
 
@@ -164,8 +164,8 @@ public abstract class StartupShutdownOrderBaseTest {
 
         @Override
         public void assertValid() {
-            assertThat(started).as("Lifecycle should have been started").isTrue();
-            assertThat(stopped).as("Lifecycle should be stopped").isTrue();
+            assertThat("Lifecycle should have been started", started);
+            assertThat("Lifecycle should be stopped", stopped);
         }
 
         @Override
@@ -185,13 +185,13 @@ public abstract class StartupShutdownOrderBaseTest {
 
         @Override
         public void start() {
-            assertThat(camelIsStopped(context)).as("lifecycle bean should be started before Camel").isTrue();
+            assertThat("lifecycle bean should be started before Camel", camelIsStopped(context));
             started = true;
         }
 
         @Override
         public void stop() {
-            assertThat(camelIsStopped(context)).as("lifecycle bean should be stopped after Camel").isTrue();
+            assertThat("lifecycle bean should be stopped after Camel", camelIsStopped(context));
             stopped = true;
         }
 
@@ -213,11 +213,11 @@ public abstract class StartupShutdownOrderBaseTest {
         final CamelContext camelContext = context.getBean(CamelContext.class);
         final Map<String, TestState> testStates = context.getBeansOfType(TestState.class);
 
-        assertThat(camelContext.isStarted()).as("Camel context should be started").isTrue();
+        assertThat("Camel context should be started", camelContext.isStarted());
 
         context.close();
 
-        assertThat(camelContext.isStopped()).as("Camel context should be stopped").isTrue();
+        assertThat("Camel context should be stopped", camelContext.isStopped());
         testStates.values().stream().forEach(TestState::assertValid);
     }
 

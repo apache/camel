@@ -12464,16 +12464,12 @@ public class StaticEndpointBuilders {
      * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-rest
      * 
-     * Syntax: <code>rest-api:path/contextIdPattern</code>
+     * Syntax: <code>rest-api:path</code>
      * 
      * Path parameter: path (required)
      * The base path
      * 
-     * Path parameter: contextIdPattern
-     * Optional CamelContext id pattern to only allow Rest APIs from rest
-     * services within CamelContext's which name matches the pattern.
-     * 
-     * @param path path/contextIdPattern
+     * @param path path
      * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.RestApiEndpointBuilderFactory.RestApiEndpointBuilder restApi(
@@ -12489,18 +12485,14 @@ public class StaticEndpointBuilders {
      * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-rest
      * 
-     * Syntax: <code>rest-api:path/contextIdPattern</code>
+     * Syntax: <code>rest-api:path</code>
      * 
      * Path parameter: path (required)
      * The base path
      * 
-     * Path parameter: contextIdPattern
-     * Optional CamelContext id pattern to only allow Rest APIs from rest
-     * services within CamelContext's which name matches the pattern.
-     * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
-     * @param path path/contextIdPattern
+     * @param path path
      * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.RestApiEndpointBuilderFactory.RestApiEndpointBuilder restApi(

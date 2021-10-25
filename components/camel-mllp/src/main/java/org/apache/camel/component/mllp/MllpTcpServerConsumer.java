@@ -64,6 +64,8 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
     final Logger log;
     final ExecutorService validationExecutor;
     final ExecutorService consumerExecutor;
+    final Charset charset;
+    final Hl7Util hl7Util;
 
     TcpServerBindThread bindThread;
     TcpServerAcceptThread acceptThread;
@@ -73,6 +75,8 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
     public MllpTcpServerConsumer(MllpEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         log = LoggerFactory.getLogger(String.format("%s.%d", this.getClass().getName(), endpoint.getPort()));
+        charset = Charset.forName(endpoint.getConfiguration().getCharsetName());
+        hl7Util = new Hl7Util(endpoint.getComponent().getLogPhiMaxBytes());
 
         validationExecutor = Executors.newCachedThreadPool();
         consumerExecutor = new ThreadPoolExecutor(
@@ -95,7 +99,6 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
 
     @ManagedOperation(description = "Close Connections")
     public void closeConnections() {
-
         for (TcpSocketConsumerRunnable consumerRunnable : consumerRunnables.keySet()) {
             if (consumerRunnable != null) {
                 log.info("Close Connection called via JMX for address {}", consumerRunnable.getCombinedAddress());
@@ -106,7 +109,6 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
 
     @ManagedOperation(description = "Reset Connections")
     public void resetConnections() {
-
         for (TcpSocketConsumerRunnable consumerRunnable : consumerRunnables.keySet()) {
             if (consumerRunnable != null) {
                 log.info("Reset Connection called via JMX for address {}", consumerRunnable.getCombinedAddress());
@@ -208,7 +210,8 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
     }
 
     public void startConsumer(Socket clientSocket, MllpSocketBuffer mllpBuffer) {
-        TcpSocketConsumerRunnable client = new TcpSocketConsumerRunnable(this, clientSocket, mllpBuffer);
+        TcpSocketConsumerRunnable client = new TcpSocketConsumerRunnable(
+                this, clientSocket, mllpBuffer, hl7Util);
 
         consumerRunnables.put(client, System.currentTimeMillis());
         try {
@@ -253,7 +256,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
             }
 
             if (getConfiguration().isValidatePayload()) {
-                String exceptionMessage = Hl7Util.generateInvalidPayloadExceptionMessage(hl7MessageBytes);
+                String exceptionMessage = hl7Util.generateInvalidPayloadExceptionMessage(hl7MessageBytes);
                 if (exceptionMessage != null) {
                     exchange.setException(new MllpInvalidMessageException(exceptionMessage, hl7MessageBytes));
                 }
@@ -262,7 +265,10 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
 
             if (getConfiguration().isStringPayload()) {
                 if (hl7MessageBytes != null && hl7MessageBytes.length > 0) {
-                    message.setBody(new String(hl7MessageBytes, getConfiguration().getCharset(exchange, hl7MessageBytes)));
+                    message.setBody(
+                            new String(
+                                    hl7MessageBytes,
+                                    MllpCharsetHelper.getCharset(exchange, hl7MessageBytes, hl7Util, charset)));
                 } else {
                     message.setBody("", String.class);
                 }
@@ -320,7 +326,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                 log.warn("Population of message headers failed - unable to find the end of the MSH segment");
             } else {
                 log.debug("Populating the HL7 message headers");
-                Charset charset = getConfiguration().getCharset(exchange);
+                Charset charset = MllpCharsetHelper.getCharset(exchange, this.charset);
 
                 for (int i = 2; i < fieldSeparatorIndexes.size(); ++i) {
                     int startingFieldSeparatorIndex = fieldSeparatorIndexes.get(i - 1);
@@ -328,7 +334,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
 
                     // Only populate the header if there's data in the HL7 field
                     if (endingFieldSeparatorIndex - startingFieldSeparatorIndex > 1) {
-                        String headerName = null;
+                        String headerName;
                         switch (i) {
                             case 2: // MSH-3
                                 headerName = MllpConstants.MLLP_SENDING_APPLICATION;
@@ -466,12 +472,13 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                                 break;
                             default:
                                 exchange.setException(new Hl7AcknowledgementGenerationException(
+                                        hl7Util,
                                         "Unsupported acknowledgment type: " + acknowledgmentTypeProperty));
                                 return;
                         }
                     }
 
-                    Hl7Util.generateAcknowledgementPayload(consumerRunnable.getMllpBuffer(), originalHl7MessageBytes,
+                    hl7Util.generateAcknowledgementPayload(consumerRunnable.getMllpBuffer(), originalHl7MessageBytes,
                             acknowledgementMessageType, msa3);
 
                 } catch (MllpAcknowledgementGenerationException ackGenerationException) {
@@ -542,7 +549,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
             message.setHeader(MllpConstants.MLLP_ACKNOWLEDGEMENT_TYPE, acknowledgementMessageType);
         }
 
-        Charset charset = getConfiguration().getCharset(exchange);
+        Charset charset = MllpCharsetHelper.getCharset(exchange, this.charset);
 
         // TODO:  re-evaluate this - it seems that the MLLP buffer should be populated by now
         if (consumerRunnable.getMllpBuffer().hasCompleteEnvelope()) {
@@ -579,7 +586,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                 log.debug("sendAcknowledgement(originalHl7MessageBytes[{}], Exchange[{}], {}) - Sending Acknowledgement: {}",
                         originalHl7MessageBytes == null ? -1 : originalHl7MessageBytes.length, exchange.getExchangeId(),
                         consumerRunnable.getSocket(),
-                        Hl7Util.convertToPrintFriendlyString(acknowledgementMessageBytes));
+                        hl7Util.convertToPrintFriendlyString(acknowledgementMessageBytes));
             }
 
             try {

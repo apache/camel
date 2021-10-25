@@ -44,11 +44,14 @@ public class TcpSocketConsumerRunnable implements Runnable {
     private final String localAddress;
     private final String remoteAddress;
     private final String combinedAddress;
+    private final Hl7Util hl7Util;
 
-    public TcpSocketConsumerRunnable(MllpTcpServerConsumer consumer, Socket clientSocket, MllpSocketBuffer mllpBuffer) {
+    public TcpSocketConsumerRunnable(MllpTcpServerConsumer consumer, Socket clientSocket, MllpSocketBuffer mllpBuffer,
+                                     Hl7Util hl7Util) {
         this.consumer = consumer;
         // this.setName(createThreadName(clientSocket));
         this.clientSocket = clientSocket;
+        this.hl7Util = hl7Util;
 
         SocketAddress localSocketAddress = clientSocket.getLocalSocketAddress();
         if (localSocketAddress != null) {
@@ -149,16 +152,16 @@ public class TcpSocketConsumerRunnable implements Runnable {
                         hl7MessageBytes = mllpBuffer.toMllpPayload();
                         if (log.isDebugEnabled()) {
                             log.debug("Received {} byte message {}", hl7MessageBytes.length,
-                                    Hl7Util.convertToPrintFriendlyString(hl7MessageBytes));
+                                    hl7Util.convertToPrintFriendlyString(hl7MessageBytes));
                         }
                         if (mllpBuffer.hasLeadingOutOfBandData()) {
                             // TODO:  Move the conversion utilities to the MllpSocketBuffer to avoid a byte[] copy
                             log.warn("Ignoring leading out-of-band data: {}",
-                                    Hl7Util.convertToPrintFriendlyString(mllpBuffer.getLeadingOutOfBandData()));
+                                    hl7Util.convertToPrintFriendlyString(mllpBuffer.getLeadingOutOfBandData()));
                         }
                         if (mllpBuffer.hasTrailingOutOfBandData()) {
                             log.warn("Ignoring trailing out-of-band data: {}",
-                                    Hl7Util.convertToPrintFriendlyString(mllpBuffer.getTrailingOutOfBandData()));
+                                    hl7Util.convertToPrintFriendlyString(mllpBuffer.getTrailingOutOfBandData()));
                         }
                         mllpBuffer.reset();
 
@@ -166,12 +169,12 @@ public class TcpSocketConsumerRunnable implements Runnable {
                     } else if (!mllpBuffer.hasStartOfBlock()) {
                         byte[] payload = mllpBuffer.toByteArray();
                         log.warn("Ignoring {} byte un-enveloped payload {}", payload.length,
-                                Hl7Util.convertToPrintFriendlyString(payload));
+                                hl7Util.convertToPrintFriendlyString(payload));
                         mllpBuffer.reset();
                     } else if (!mllpBuffer.isEmpty()) {
                         byte[] payload = mllpBuffer.toByteArray();
                         log.warn("Partial {} byte payload received {}", payload.length,
-                                Hl7Util.convertToPrintFriendlyString(payload));
+                                hl7Util.convertToPrintFriendlyString(payload));
                     }
                 } catch (SocketTimeoutException timeoutEx) {
                     if (mllpBuffer.isEmpty()) {

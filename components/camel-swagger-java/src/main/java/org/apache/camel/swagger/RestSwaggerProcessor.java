@@ -24,8 +24,6 @@ import io.swagger.jaxrs.config.BeanConfig;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.RestConfiguration;
-import org.apache.camel.support.PatternHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,15 +32,11 @@ public class RestSwaggerProcessor implements Processor {
     private static final Logger LOG = LoggerFactory.getLogger(RestSwaggerProcessor.class);
     private final BeanConfig swaggerConfig;
     private final RestSwaggerSupport support;
-    private final String contextIdPattern;
-    private final boolean contextIdListing;
     private final RestConfiguration configuration;
 
     @SuppressWarnings("unchecked")
-    public RestSwaggerProcessor(String contextIdPattern, boolean contextIdListing, Map<String, Object> parameters,
+    public RestSwaggerProcessor(Map<String, Object> parameters,
                                 RestConfiguration configuration) {
-        this.contextIdPattern = contextIdPattern;
-        this.contextIdListing = contextIdListing;
         this.configuration = configuration;
         this.support = new RestSwaggerSupport();
         this.swaggerConfig = new BeanConfig();
@@ -56,7 +50,6 @@ public class RestSwaggerProcessor implements Processor {
     @Override
     public void process(Exchange exchange) throws Exception {
 
-        String contextId = exchange.getContext().getName();
         String route = exchange.getIn().getHeader(Exchange.HTTP_PATH, String.class);
         String accept = exchange.getIn().getHeader("Accept", String.class);
 
@@ -82,45 +75,8 @@ public class RestSwaggerProcessor implements Processor {
         }
 
         try {
-            // render list of camel contexts as root
-            if (contextIdListing && (ObjectHelper.isEmpty(route) || route.equals("/"))) {
-                support.renderCamelContexts(adapter, contextId, contextIdPattern, json, yaml, configuration);
-            } else {
-                String name;
-                if (ObjectHelper.isNotEmpty(route)) {
-                    // first part is the camel context
-                    if (route.startsWith("/")) {
-                        route = route.substring(1);
-                    }
-                    // the remainder is the route part
-                    name = route.split("/")[0];
-                    if (route.startsWith(contextId)) {
-                        route = route.substring(name.length());
-                    }
-                } else {
-                    // listing not enabled then get current camel context as the name
-                    name = exchange.getContext().getName();
-                }
-
-                boolean match = true;
-                if (contextIdPattern != null) {
-                    if ("#name#".equals(contextIdPattern)) {
-                        match = name.equals(contextId);
-                    } else {
-                        match = PatternHelper.matchPattern(name, contextIdPattern);
-                    }
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Match contextId: {} with pattern: {} -> {}", name, contextIdPattern, match);
-                    }
-                }
-
-                if (!match) {
-                    adapter.noContent();
-                } else {
-                    support.renderResourceListing(exchange.getContext(), adapter, swaggerConfig, name, route, json, yaml,
-                            exchange.getIn().getHeaders(), exchange.getContext().getClassResolver(), configuration);
-                }
-            }
+            support.renderResourceListing(exchange.getContext(), adapter, swaggerConfig, route, json, yaml,
+                    exchange.getIn().getHeaders(), exchange.getContext().getClassResolver(), configuration);
         } catch (Exception e) {
             LOG.warn("Error rendering Swagger API due {}", e.getMessage(), e);
         }

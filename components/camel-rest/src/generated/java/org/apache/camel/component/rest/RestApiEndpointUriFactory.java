@@ -15,17 +15,16 @@ import org.apache.camel.spi.EndpointUriFactory;
  */
 public class RestApiEndpointUriFactory extends org.apache.camel.support.component.EndpointUriFactorySupport implements EndpointUriFactory {
 
-    private static final String BASE = ":path/contextIdPattern";
+    private static final String BASE = ":path";
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(7);
+        Set<String> props = new HashSet<>(6);
         props.add("path");
         props.add("apiComponentName");
         props.add("bridgeErrorHandler");
         props.add("consumerComponentName");
-        props.add("contextIdPattern");
         props.add("exchangePattern");
         props.add("exceptionHandler");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
@@ -45,7 +44,6 @@ public class RestApiEndpointUriFactory extends org.apache.camel.support.componen
         Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "path", null, true, copy);
-        uri = buildPathParameter(syntax, uri, "contextIdPattern", null, false, copy);
         uri = buildQueryParameters(uri, copy, encode);
         return uri;
     }

@@ -15,7 +15,7 @@ image::eip/Resequencer.gif[image]
 
 Use a stateful filter, a Resequencer, to collect and re-order messages so that they can be published to the output channel in a specified order.
 
-The Resequencer implementation in Camel uses an xref:latest@manual:ROOT:expression.adoc[Expression]
+The Resequencer implementation in Camel uses an xref:manual::expression.adoc[Expression]
 as the `Comparator` to re-order the messages. By using the expression then the messages
 can easily be re-ordered by a message header or another piece of the message.
 

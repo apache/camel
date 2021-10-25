@@ -101,7 +101,7 @@ public class JsltEndpoint extends ResourceEndpoint {
                 if (jsltStringFromHeader != null) {
                     parser = new Parser(new StringReader(jsltStringFromHeader)).withSource("<inline>");
                 } else {
-                    stream = JsltEndpoint.class.getClassLoader().getResourceAsStream(getResourceUri());
+                    stream = getCamelContext().getClassResolver().loadResourceAsStream(getResourceUri());
                     if (stream == null) {
                         throw new JsltException("Cannot load resource '" + getResourceUri() + "': not found");
                     }

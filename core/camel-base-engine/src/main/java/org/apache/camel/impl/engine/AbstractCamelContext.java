@@ -3677,6 +3677,7 @@ public abstract class AbstractCamelContext extends BaseService
         getDataFormatResolver();
 
         getExecutorServiceManager();
+        getExchangeFactoryManager();
         getExchangeFactory();
         getShutdownStrategy();
         getUuidGenerator();

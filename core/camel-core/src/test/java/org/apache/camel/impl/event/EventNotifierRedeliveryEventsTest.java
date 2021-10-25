@@ -56,7 +56,7 @@ public class EventNotifierRedeliveryEventsTest extends ContextTestSupport {
             }
 
             @Override
-            protected void doStart() throws Exception {
+            protected void doBuild() throws Exception {
                 setIgnoreCamelContextEvents(true);
                 setIgnoreRouteEvents(true);
                 setIgnoreServiceEvents(true);

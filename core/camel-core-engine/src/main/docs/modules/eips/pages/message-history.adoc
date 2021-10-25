@@ -95,7 +95,7 @@ And in XML:
 == Route stack-trace in exceptions logged by error handler
 
 If Message History is enabled, then Camel will include this information,
-when the xref:latest@manual:ROOT:error-handler.adoc[Error Handler] logs exhausted exceptions,
+when the xref:manual::error-handler.adoc[Error Handler] logs exhausted exceptions,
 where you can see the message history; you may think this as a "route stacktrace".
 
 And example is provided below:
@@ -182,14 +182,14 @@ where the exception occurred (process1).
 === Configuring route stack-trace from error handler
 
 You can turn off logging Message History with `logExhaustedMessageHistory`
-from the xref:latest@manual:ROOT:error-handler.adoc[Error Handler] using:
+from the xref:manual::error-handler.adoc[Error Handler] using:
 
 [source,java]
 ----
 errorHandler(defaultErrorHandler().logExhaustedMessageHistory(false));
 ----
 
-The xref:latest@manual:ROOT:error-handler.adoc[Error Handler] does not log the
+The xref:manual::error-handler.adoc[Error Handler] does not log the
 message body/header details (to avoid logging sensitive message body details).
 You can enable this with `logExhaustedMessageBody` on the error handler as shown:
 

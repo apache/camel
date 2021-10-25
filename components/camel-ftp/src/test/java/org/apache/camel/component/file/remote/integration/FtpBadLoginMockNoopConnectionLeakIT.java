@@ -22,6 +22,7 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.net.SocketFactory;
 
@@ -35,6 +36,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -79,7 +81,7 @@ public class FtpBadLoginMockNoopConnectionLeakIT extends FtpServerTestSupport {
         mock.expectedMessageCount(0);
 
         // let's have several login attempts
-        Thread.sleep(3000L);
+        await().atMost(3, TimeUnit.SECONDS).until(() -> socketAudits.size() > 0);
 
         stopCamelContext();
 

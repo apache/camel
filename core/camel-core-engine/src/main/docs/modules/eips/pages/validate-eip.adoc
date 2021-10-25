@@ -5,7 +5,7 @@
 :since: 
 :supportlevel: Stable
 
-The Validate EIP uses an xref:latest@manual:ROOT:expression.adoc[Expression] or xref:latest@manual:ROOT:predicate.adoc[Predicate]
+The Validate EIP uses an xref:manual::expression.adoc[Expression] or xref:manual::predicate.adoc[Predicate]
 to validate the contents of a message.
 
 image::eip/MessageSelectorIcon.gif[image]

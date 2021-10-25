@@ -21,12 +21,16 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.ribbon.RibbonConfiguration;
 import org.apache.camel.impl.cloud.DefaultServiceDefinition;
 import org.apache.camel.impl.cloud.StaticServiceDiscovery;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RibbonServiceCallRouteMetadataTest extends CamelTestSupport {
+    private static final int PORT1 = AvailablePortFinder.getNextAvailable();
+    private static final int PORT2 = AvailablePortFinder.getNextAvailable();
+
     @Test
     public void testServiceCall() throws Exception {
         getMockEndpoint("mock:app1").expectedMessageCount(1);
@@ -48,9 +52,9 @@ public class RibbonServiceCallRouteMetadataTest extends CamelTestSupport {
             public void configure() throws Exception {
                 // setup a static ribbon server list with these 2 servers to start with
                 StaticServiceDiscovery servers = new StaticServiceDiscovery();
-                servers.addServer(DefaultServiceDefinition.builder().withName("myService").withHost("localhost").withPort(9090)
+                servers.addServer(DefaultServiceDefinition.builder().withName("myService").withHost("localhost").withPort(PORT1)
                         .addMeta("contextPath", "app1").build());
-                servers.addServer(DefaultServiceDefinition.builder().withName("myService").withHost("localhost").withPort(9090)
+                servers.addServer(DefaultServiceDefinition.builder().withName("myService").withHost("localhost").withPort(PORT2)
                         .addMeta("contextPath", "app2").build());
 
                 RibbonConfiguration configuration = new RibbonConfiguration();
@@ -65,10 +69,10 @@ public class RibbonServiceCallRouteMetadataTest extends CamelTestSupport {
                         .serviceDiscovery(servers)
                         .end()
                         .to("mock:result");
-                from("jetty:http://localhost:9090/app1")
+                fromF("jetty:http://localhost:%d/app1", PORT1)
                         .to("mock:app1")
                         .transform().constant("app1");
-                from("jetty:http://localhost:9090/app2")
+                fromF("jetty:http://localhost:%d/app2", PORT2)
                         .to("mock:app2")
                         .transform().constant("app2");
             }

@@ -22,13 +22,14 @@ import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.infinispan.common.InfinispanProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testcontainers.containers.BindMode;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.output.OutputFrame;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
 public class InfinispanLocalContainerService implements InfinispanService, ContainerService<GenericContainer<?>> {
-    public static final String CONTAINER_IMAGE = "quay.io/infinispan/server:12.1.7.Final-1";
+    public static final String CONTAINER_IMAGE = "quay.io/infinispan/server:13.0.0.Final";
     public static final String CONTAINER_NAME = "infinispan";
     private static final String DEFAULT_USERNAME = "admin";
     private static final String DEFAULT_PASSWORD = "password";
@@ -58,6 +59,8 @@ public class InfinispanLocalContainerService implements InfinispanService, Conta
                 .withEnv("USER", DEFAULT_USERNAME)
                 .withEnv("PASS", DEFAULT_PASSWORD)
                 .withLogConsumer(logConsumer)
+                .withClasspathResourceMapping("infinispan.xml", "/user-config/infinispan.xml", BindMode.READ_ONLY)
+                .withCommand("-c", "/user-config/infinispan.xml")
                 .withExposedPorts(InfinispanProperties.DEFAULT_SERVICE_PORT)
                 .waitingFor(Wait.forListeningPort())
                 .waitingFor(Wait.forLogMessage(".*Infinispan.*Server.*started.*", 1));

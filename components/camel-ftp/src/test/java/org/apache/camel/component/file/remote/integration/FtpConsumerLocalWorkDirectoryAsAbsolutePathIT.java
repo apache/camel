@@ -18,6 +18,7 @@ package org.apache.camel.component.file.remote.integration;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -31,6 +32,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertFileExists;
 import static org.apache.camel.test.junit5.TestSupport.assertFileNotExists;
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -61,10 +63,9 @@ public class FtpConsumerLocalWorkDirectoryAsAbsolutePathIT extends FtpServerTest
         assertMockEndpointsSatisfied();
 
         // give test some time to close file resources
-        Thread.sleep(6000);
-
         // now the lwd file should be deleted
-        assertFileNotExists(base.resolve("hello.txt"));
+        await().atMost(6, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertFileNotExists(base.resolve("hello.txt")));
 
         // and the out file should exists
         assertFileExists(testFile("out/hello.txt"), "Hello World");

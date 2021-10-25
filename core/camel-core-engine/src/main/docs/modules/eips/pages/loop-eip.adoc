@@ -15,14 +15,14 @@ include::partial$eip-options.adoc[]
 
 == Exchange properties
 
-For each iteration two properties are set on the `Exchange`.
+For each iteration two exchange properties are set on the `Exchange`.
 Processors can rely on these properties to process the message in different ways.
 
-[width="100%",cols="3m,6",options="header"]
+[width="100%",cols="3,1m,6",options="header"]
 |===
-| Property | Description
-| Exchange.LOOP_SIZE | Total number of loops. This is not available if running the loop in while loop mode.
-| Exchange.LOOP_INDEX | Index of the current iteration (0 based)
+| Property | Type | Description
+| `CamelLoopSize` | `int` | Total number of loops. This is not available if running the loop in while loop mode.
+| `CamelLoopIndex` | `int` | Index of the current iteration (0 based).
 |===
 
 == Looping modes
@@ -45,7 +45,7 @@ then send the message repetitively to mock:result.
 The number of times the message is sent is either passed as an argument to `loop`,
 or determined at runtime by evaluating an expression.
 
-The xref:latest@manual:ROOT:expression.adoc[Expression] *must* evaluate to an `int`,
+The xref:manual::expression.adoc[Expression] *must* evaluate to an `int`,
 otherwise a `RuntimeCamelException` is thrown.
 
 Pass loop count as an argument:
@@ -66,7 +66,7 @@ from("direct:b")
         .to("mock:result");
 ----
 
-And with the xref:components:languages:xpath-language.adoc[XPath] language:
+And with the xref:languages:xpath-language.adoc[XPath] language:
 
 [source,java]
 ----

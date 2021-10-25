@@ -8,7 +8,6 @@ import java.util.List;
 
 import javax.annotation.Generated;
 
-import org.apache.camel.component.salesforce.api.PicklistEnumConverter;
 import org.apache.camel.component.salesforce.api.dto.AbstractDescribedSObjectBase;
 import org.apache.camel.component.salesforce.api.dto.Attributes;
 import org.apache.camel.component.salesforce.api.dto.ChildRelationShip;
@@ -20,6 +19,10 @@ import org.apache.camel.component.salesforce.api.dto.SObjectDescriptionUrls;
 import org.apache.camel.component.salesforce.api.dto.SObjectField;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.annotation.JsonTypeResolver;
+import org.apache.camel.component.salesforce.api.utils.AsNestedPropertyResolver;
 
 /**
  * Salesforce DTO for SObject Case
@@ -81,7 +84,7 @@ public class Case extends AbstractDescribedSObjectBase {
         this.PickListValueOverride = PickListValueOverride;
     }
 
- 
+
     @Override
     public final SObjectDescription description() {
         return DESCRIPTION;

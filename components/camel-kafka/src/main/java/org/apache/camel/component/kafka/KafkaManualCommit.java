@@ -22,9 +22,19 @@ package org.apache.camel.component.kafka;
 public interface KafkaManualCommit {
 
     /**
-     * Commit synchronously.
+     * Commit synchronously or asynchronously depending on the implementation.
      *
      * @see org.apache.kafka.clients.consumer.KafkaConsumer#commitSync()
+     * @see org.apache.kafka.clients.consumer.KafkaConsumer#commitAsync()
      */
+    void commit();
+
+    /**
+     * Commit synchronously.
+     *
+     * @see        org.apache.kafka.clients.consumer.KafkaConsumer#commitSync()
+     * @deprecated use commit function instead.
+     */
+    @Deprecated
     void commitSync();
 }

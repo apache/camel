@@ -19,6 +19,7 @@ package org.apache.camel.component.file.remote.integration;
 import java.io.File;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
@@ -26,6 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
@@ -56,13 +58,15 @@ public class FromFtpAsyncProcessIT extends FtpServerTestSupport {
         assertMockEndpointsSatisfied();
 
         // give time for files to be deleted on ftp server
-        Thread.sleep(1000);
 
         File hello = ftpFile("async/hello.txt").toFile();
-        assertFalse(hello.exists(), "File should not exist " + hello);
+        await().atMost(1, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertFalse(hello.exists(), "File should not exist " + hello));
 
         File bye = ftpFile("async/bye.txt").toFile();
-        assertFalse(bye.exists(), "File should not exist " + bye);
+        await().atMost(1, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertFalse(bye.exists(), "File should not exist " + bye));
+
     }
 
     @Override
@@ -80,18 +84,16 @@ public class FromFtpAsyncProcessIT extends FtpServerTestSupport {
 
         @Override
         public boolean process(final Exchange exchange, final AsyncCallback callback) {
-            executor.submit(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        // ignore
-                    }
+            executor.submit(() -> {
 
-                    exchange.getIn().setHeader("foo", 123);
-                    callback.done(false);
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    // ignore
                 }
+
+                exchange.getIn().setHeader("foo", 123);
+                callback.done(false);
             });
 
             return false;

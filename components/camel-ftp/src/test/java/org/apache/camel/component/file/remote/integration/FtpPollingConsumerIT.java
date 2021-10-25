@@ -17,11 +17,13 @@
 package org.apache.camel.component.file.remote.integration;
 
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.PollingConsumer;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -54,10 +56,9 @@ public class FtpPollingConsumerIT extends FtpServerTestSupport {
 
         // sleep a bit to ensure polling consumer would not have picked up that
         // file
-        Thread.sleep(1000);
-
         File file = ftpFile("polling/bye.txt").toFile();
-        assertTrue(file.exists(), "File should exist " + file);
+        await().atMost(1, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertTrue(file.exists(), "File should exist " + file));
 
         consumer.stop();
     }

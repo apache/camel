@@ -73,7 +73,7 @@ public class KafkaConsumerManualCommitIT extends BaseEmbeddedKafkaTestSupport {
                 from(from).routeId("foo").to(to).process(e -> {
                     KafkaManualCommit manual = e.getIn().getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
                     assertNotNull(manual);
-                    manual.commitSync();
+                    manual.commit();
                 });
                 from(from).routeId("bar").autoStartup(false).to(toBar);
             }
@@ -157,6 +157,7 @@ public class KafkaConsumerManualCommitIT extends BaseEmbeddedKafkaTestSupport {
         // we will expect to consume from the latest committed offset e.g from offset 5
         context.getRouteController().startRoute("foo");
         to.expectedMessageCount(3);
+        to.expectedBodiesReceivedInAnyOrder("message-5", "message-6", "message-7");
 
         to.assertIsSatisfied(3000);
     }

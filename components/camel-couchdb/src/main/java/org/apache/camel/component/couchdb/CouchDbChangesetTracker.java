@@ -18,6 +18,9 @@ package org.apache.camel.component.couchdb;
 
 import com.google.gson.JsonObject;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.couchdb.consumer.CouchDbResumable;
+import org.apache.camel.component.couchdb.consumer.CouchDbResumeStrategy;
+import org.apache.camel.component.couchdb.consumer.CouchDdResumeStrategyFactory;
 import org.lightcouch.Changes;
 import org.lightcouch.ChangesResult;
 import org.lightcouch.CouchDbException;
@@ -39,23 +42,26 @@ public class CouchDbChangesetTracker implements Runnable {
         this.endpoint = endpoint;
         this.consumer = consumer;
         this.couchClient = couchClient;
-        initChanges(null);
     }
 
     private void initChanges(final String sequence) {
-        String since = sequence;
-        if (null == since) {
-            since = couchClient.getLatestUpdateSequence();
+        CouchDbResumable resumable = new CouchDbResumable(couchClient, sequence);
+
+        if (sequence == null) {
+            CouchDbResumeStrategy resumeStrategy = CouchDdResumeStrategyFactory.newResumeStrategy(this.endpoint);
+
+            resumeStrategy.resume(resumable);
         }
-        LOG.debug("Last sequence [{}]", since);
+
+        LOG.debug("Last sequence [{}]", resumable.getLastOffset());
         changes = couchClient.changes().style(endpoint.getStyle()).includeDocs(true)
-                .since(since).heartBeat(endpoint.getHeartbeat()).continuousChanges();
+                .since(resumable.getLastOffset()).heartBeat(endpoint.getHeartbeat()).continuousChanges();
     }
 
     @Override
     public void run() {
-
         String lastSequence = null;
+        initChanges(null);
 
         try {
             while (!stopped) {
@@ -74,7 +80,10 @@ public class CouchDbChangesetTracker implements Runnable {
                         JsonObject doc = feed.getDoc();
 
                         Exchange exchange = consumer.createExchange(lastSequence, feed.getId(), doc, feed.isDeleted());
-                        LOG.trace("Created exchange [exchange={}, _id={}, seq={}", exchange, feed.getId(), lastSequence);
+
+                        if (LOG.isTraceEnabled()) {
+                            LOG.trace("Created exchange [exchange={}, _id={}, seq={}", exchange, feed.getId(), lastSequence);
+                        }
 
                         try {
                             consumer.getProcessor().process(exchange);
@@ -91,8 +100,12 @@ public class CouchDbChangesetTracker implements Runnable {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("CouchDb Exception encountered waiting for changes!  Attempting to recover...", e);
                     }
-                    if (!waitForStability(lastSequence)) {
-                        throw e;
+                    if (endpoint.isRunAllowed() || !endpoint.isShutdown() || !consumer.isStopped()) {
+                        if (!waitForStability(lastSequence)) {
+                            throw e;
+                        }
+                    } else {
+                        LOG.debug("Skipping the stability check because shutting down or running is not allowed at the moment");
                     }
                 }
             }

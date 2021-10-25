@@ -30,8 +30,7 @@ import org.apache.camel.support.cluster.AbstractCamelClusterService;
 import org.apache.camel.support.cluster.AbstractCamelClusterView;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ClusteredRoutePolicyTest extends ContextTestSupport {
 
@@ -68,11 +67,13 @@ public class ClusteredRoutePolicyTest extends ContextTestSupport {
     }
 
     @Test
-    public void testClusteredRoutePolicyStopAllRoutes() throws Exception {
+    public void testClusteredRoutePolicyRemoveAllRoutes() throws Exception {
         cs.getView().setLeader(true);
 
         context.getRouteController().stopRoute("foo");
         context.getRouteController().stopRoute("baz");
+        context.removeRoute("foo");
+        context.removeRoute("baz");
 
         assertFalse(cs.getView().isRunning());
     }

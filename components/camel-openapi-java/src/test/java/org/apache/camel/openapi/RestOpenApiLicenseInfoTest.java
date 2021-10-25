@@ -55,7 +55,7 @@ public class RestOpenApiLicenseInfoTest {
 
         RestConfiguration restConfiguration = context.getRestConfiguration();
         RestOpenApiProcessor processor
-                = new RestOpenApiProcessor(null, false, restConfiguration.getApiProperties(), restConfiguration);
+                = new RestOpenApiProcessor(restConfiguration.getApiProperties(), restConfiguration);
         Exchange exchange = new DefaultExchange(context);
         processor.process(exchange);
 

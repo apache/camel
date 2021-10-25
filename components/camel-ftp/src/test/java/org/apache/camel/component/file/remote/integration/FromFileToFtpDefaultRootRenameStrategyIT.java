@@ -17,6 +17,7 @@
 package org.apache.camel.component.file.remote.integration;
 
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -27,6 +28,8 @@ import org.apache.camel.converter.IOConverter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FromFileToFtpDefaultRootRenameStrategyIT extends FtpServerTestSupport {
@@ -67,11 +70,7 @@ public class FromFileToFtpDefaultRootRenameStrategyIT extends FtpServerTestSuppo
 
         assertMockEndpointsSatisfied();
 
-        // give our mock a chance to delete the file
-        Thread.sleep(250);
-
-        // assert the file is NOT there now
-        assertTrue(!expectedOnFtpServer.exists());
+        await().atMost(250, TimeUnit.MILLISECONDS).untilAsserted(() -> assertFalse(expectedOnFtpServer.exists()));
     }
 
     private void prepareFtpServer() throws Exception {
