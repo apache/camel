@@ -47,12 +47,12 @@ public class HttpRestHeaderFilterStrategy extends HttpHeaderFilterStrategy {
                 tokens[0] = "={" + headerName + "}";
                 tokens[1] = "={" + headerName + "?}";
                 tokens[2] = "=%7B" + headerName + "%7D";
-                tokens[3] = "=%7B" + headerName + "?%7D";
+                tokens[3] = "=%7B" + headerName + "%3F%7D";
                 for (String token : tokens) {
-                	if (queryParameters.contains(token)) {
-                		answer = true;
-                		break;
-                	}
+                    if (queryParameters.contains(token)) {
+                        answer = true;
+                        break;
+                    }
                 }
             }
         }
