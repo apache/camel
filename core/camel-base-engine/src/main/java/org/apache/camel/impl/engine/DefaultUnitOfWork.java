@@ -256,13 +256,21 @@ public class DefaultUnitOfWork implements UnitOfWork {
 
         // the exchange is now done
         if (exchange instanceof PooledExchange) {
+            // pooled exchange has its own done logic which will reset this uow for reuse
+            // so do not call onDone
             try {
                 ((PooledExchange) exchange).done(false);
             } catch (Throwable e) {
                 // must catch exceptions to ensure synchronizations is also invoked
                 log.warn("Exception occurred during exchange done. This exception will be ignored.", e);
             }
+        } else {
+            onDone();
         }
+    }
+
+    protected void onDone() {
+        // optimized to do nothing
     }
 
     @Override

@@ -35,7 +35,6 @@ import org.slf4j.MDC;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-@Disabled("TODO: CAMEL-17009")
 public class MDCClearingTest extends ContextTestSupport {
 
     public static final String CAMEL_BREADCRUMB_ID = "camel.breadcrumbId";
@@ -43,7 +42,7 @@ public class MDCClearingTest extends ContextTestSupport {
     public static final String MY_BREADCRUMB = "my breadcrumb";
 
     private static final Logger LOG = LoggerFactory.getLogger(MDCClearingTest.class);
-    private final ExecutorService executorService = Executors.newFixedThreadPool(16);
+    private final ExecutorService executorService = Executors.newFixedThreadPool(1);
 
     @Test
     public void shouldPropagateAndClearMdcInSyncRoute() {
@@ -58,6 +57,7 @@ public class MDCClearingTest extends ContextTestSupport {
     }
 
     @Test
+    @Disabled
     public void shouldPropagateAndClearMdcInAsyncRoute() {
         // given
         MDC.remove(CAMEL_BREADCRUMB_ID);
@@ -70,6 +70,7 @@ public class MDCClearingTest extends ContextTestSupport {
     }
 
     @Test
+    @Disabled
     public void shouldPropagateAndClearMdcInMixedRoute() {
         // given
         MDC.remove(CAMEL_BREADCRUMB_ID);
@@ -98,11 +99,11 @@ public class MDCClearingTest extends ContextTestSupport {
                         .process(new MySyncProcessor("STEP 1"));
 
                 from("direct:test-async")
-                        .process(new MySyncProcessor("STEP 1"));
+                        .process(new MyAsyncProcessor("STEP 2"));
 
                 from("direct:test-mixed")
-                        .process(new MyAsyncProcessor("STEP 1"))
-                        .process(new MySyncProcessor("STEP 2"));
+                        .process(new MyAsyncProcessor("STEP 3"))
+                        .process(new MySyncProcessor("STEP 4"));
             }
         };
     }
@@ -134,7 +135,15 @@ public class MDCClearingTest extends ContextTestSupport {
             LOG.info(msg);
             assertEquals(MY_BREADCRUMB, MDC.get(CAMEL_BREADCRUMB_ID));
 
-            executorService.execute(() -> callback.done(false));
+            executorService.execute(() -> {
+                // wait a little to simulate later async completion
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    // ignore
+                }
+                callback.done(false);
+            });
             return false;
         }
     }
