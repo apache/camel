@@ -44,7 +44,7 @@ import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.setDeseri
 
 @YamlIn
 @YamlType(
-          nodes = "error-handler",
+          nodes = { "error-handler", "errorHandler" },
           types = ErrorHandlerBuilderRef.class,
           order = YamlDeserializerResolver.ORDER_DEFAULT,
           properties = {

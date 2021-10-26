@@ -37,7 +37,7 @@ import org.snakeyaml.engine.v2.nodes.SequenceNode;
           inline = true,
           types = org.apache.camel.model.RouteConfigurationDefinition.class,
           order = YamlDeserializerResolver.ORDER_DEFAULT,
-          nodes = "route-configuration",
+          nodes = { "route-configuration", "routeConfiguration" },
           properties = {
                   @YamlProperty(name = "id", type = "string"),
                   @YamlProperty(name = "intercept", type = "array:org.apache.camel.model.InterceptDefinition"),

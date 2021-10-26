@@ -53,4 +53,36 @@ class ConvertBodyTest extends YamlTestSupport {
 
             MockEndpoint.assertIsSatisfied(context)
     }
+
+    def "convert-body-to (camelCase)"() {
+        setup:
+            loadRoutes '''
+                - from:
+                    uri: "direct:start"
+                    steps:    
+                      - convertBodyTo:  
+                          type: "java.lang.String"
+                          charset: "UTF8"
+                      - to: "mock:result"
+            '''
+
+            withMock('mock:result') {
+                expectedBodiesReceived 'test'
+            }
+        when:
+            context.start()
+
+            withTemplate {
+                to('direct:start').withBody('test'.bytes).send()
+            }
+        then:
+            context.routeDefinitions.size() == 1
+
+            with(context.routeDefinitions[0].outputs[0], ConvertBodyDefinition) {
+                type == 'java.lang.String'
+                charset == 'UTF8'
+            }
+
+            MockEndpoint.assertIsSatisfied(context)
+    }
 }

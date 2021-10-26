@@ -182,54 +182,59 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
                 continue;
             }
 
-            //
-            // Type properties
-            //
-            if (propertyType.startsWith("object:")) {
-                String objectType = StringHelper.after(propertyType, ":");
-                objectDefinition
-                        .with("properties")
-                        .with(propertyName)
-                        .put("$ref", "#/items/definitions/" + objectType);
-            } else if (propertyType.startsWith("array:")) {
-                String arrayType = StringHelper.after(propertyType, ":");
-                if (arrayType.contains(".")) {
-                    objectDefinition
-                            .with("properties")
-                            .with(propertyName)
-                            .put("type", "array")
-                            .with("items").put("$ref", "#/items/definitions/" + arrayType);
-                } else {
-                    objectDefinition
-                        .with("properties")
-                        .with(propertyName)
-                        .put("type", "array")
-                        .with("items").put("type", arrayType);
-                }
-            } else if (propertyType.startsWith("enum:")) {
-                objectDefinition
-                        .with("properties")
-                        .with(propertyName)
-                        .put("type", "string");
-
-                String enumValues = StringHelper.after(propertyType, ":");
-                for (String enumValue : enumValues.split(",")) {
-                    objectDefinition
-                            .with("properties")
-                            .with(propertyName)
-                            .withArray("enum")
-                            .add(enumValue);
-                }
-            } else {
-                objectDefinition
-                        .with("properties")
-                        .with(propertyName)
-                        .put("type", propertyType);
-            }
+            setProperty(objectDefinition, propertyName, propertyType);
 
             if (propertyRequired) {
                 definition.withArray("required").add(propertyName);
             }
+        }
+    }
+
+    private void setProperty(
+        ObjectNode objectDefinition,
+        String propertyName,
+        String propertyType) {
+
+        if (propertyType.startsWith("object:")) {
+            String objectType = StringHelper.after(propertyType, ":");
+            objectDefinition
+                .with("properties")
+                .with(propertyName)
+                .put("$ref", "#/items/definitions/" + objectType);
+        } else if (propertyType.startsWith("array:")) {
+            String arrayType = StringHelper.after(propertyType, ":");
+            if (arrayType.contains(".")) {
+                objectDefinition
+                    .with("properties")
+                    .with(propertyName)
+                    .put("type", "array")
+                    .with("items").put("$ref", "#/items/definitions/" + arrayType);
+            } else {
+                objectDefinition
+                    .with("properties")
+                    .with(propertyName)
+                    .put("type", "array")
+                    .with("items").put("type", arrayType);
+            }
+        } else if (propertyType.startsWith("enum:")) {
+            objectDefinition
+                .with("properties")
+                .with(propertyName)
+                .put("type", "string");
+
+            String enumValues = StringHelper.after(propertyType, ":");
+            for (String enumValue : enumValues.split(",")) {
+                objectDefinition
+                    .with("properties")
+                    .with(propertyName)
+                    .withArray("enum")
+                    .add(enumValue);
+            }
+        } else {
+            objectDefinition
+                .with("properties")
+                .with(propertyName)
+                .put("type", propertyType);
         }
     }
 

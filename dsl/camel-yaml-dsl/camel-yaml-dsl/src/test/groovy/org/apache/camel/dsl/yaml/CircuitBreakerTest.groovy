@@ -58,6 +58,40 @@ class CircuitBreakerTest extends YamlTestSupport {
                 }
             }
     }
+    def "circuit-breaker-camelCase"() {
+        when:
+            loadRoutes '''
+                - from:
+                    uri: "direct:start"
+                    steps:
+                      - circuitBreaker:   
+                         steps:
+                           - log: "test"                           
+                         configurationRef: "my-config"
+                         resilience4jConfiguration:
+                           failureRateThreshold: 10
+                         onFallback:
+                           fallbackViaNetwork: true
+            '''
+        then:
+            with(context.routeDefinitions[0], RouteDefinition) {
+                input.endpointUri == 'direct:start'
+
+                with(outputs[0], CircuitBreakerDefinition) {
+                    configurationRef == 'my-config'
+
+                    resilience4jConfiguration != null
+                    resilience4jConfiguration.failureRateThreshold == '10'
+
+                    onFallback != null
+                    onFallback.fallbackViaNetwork == "true"
+
+                    with (outputs[0], LogDefinition) {
+                        message == "test"
+                    }
+                }
+            }
+    }
 
     def "circuit-breaker with on-fallback steps"() {
         when:
