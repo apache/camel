@@ -40,7 +40,12 @@ class SagaTest extends YamlTestSupport {
                 with(completion, SagaActionUriDefinition) {
                     uri == "direct:completion"
                 }
+                // saga spans the entire route so steps are inserted before any saga specific step
+                // https://issues.apache.org/jira/browse/CAMEL-17129
                 with(outputs[0], ToDefinition) {
+                    endpointUri == 'mock:result'
+                }
+                with(outputs[1], ToDefinition) {
                     endpointUri == 'direct:something'
                 }
                 with(options[0], SagaOptionDefinition) {
