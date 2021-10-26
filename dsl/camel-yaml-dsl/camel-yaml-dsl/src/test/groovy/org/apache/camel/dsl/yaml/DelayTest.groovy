@@ -55,6 +55,16 @@ class DelayTest extends YamlTestSupport {
                                 simple: "${body}"
                               async-delayed: true
                           - to: "mock:result"
+                    '''),
+                asResource('expression-camelCase', '''
+                    - from:
+                        uri: "direct:start"
+                        steps:    
+                          - delay: 
+                              expression: 
+                                simple: "${body}"
+                              asyncDelayed: true
+                          - to: "mock:result"
                     ''')
             ]
     }

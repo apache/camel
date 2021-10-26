@@ -46,4 +46,29 @@ class BeanTest extends YamlTestSupport {
         then:
             MockEndpoint.assertIsSatisfied(context)
     }
+
+    def "bean-camelCase"() {
+        setup:
+            loadRoutes """
+                - from:
+                   uri: "direct:route"
+                   steps:
+                     - bean:
+                         beanType: ${MyUppercaseProcessor.name}
+                     - to: "mock:route"
+            """
+
+            withMock('mock:route') {
+                expectedBodiesReceived 'TEST'
+            }
+
+        when:
+            context.start()
+
+            withTemplate {
+                to('direct:route').withBody('test').send()
+            }
+        then:
+            MockEndpoint.assertIsSatisfied(context)
+    }
 }

@@ -17,22 +17,37 @@
           "do-catch" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.CatchDefinition"
           },
+          "doCatch" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.CatchDefinition"
+          },
           "choice" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.ChoiceDefinition"
           },
           "circuit-breaker" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.CircuitBreakerDefinition"
           },
+          "circuitBreaker" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.CircuitBreakerDefinition"
+          },
           "claim-check" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.ClaimCheckDefinition"
           },
+          "claimCheck" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.ClaimCheckDefinition"
+          },
           "convert-body-to" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.ConvertBodyDefinition"
+          },
+          "convertBodyTo" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.ConvertBodyDefinition"
           },
           "delay" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.DelayDefinition"
           },
           "dynamic-router" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.DynamicRouterDefinition"
+          },
+          "dynamicRouter" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.DynamicRouterDefinition"
           },
           "enrich" : {
@@ -44,13 +59,25 @@
           "do-finally" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.FinallyDefinition"
           },
+          "doFinally" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.FinallyDefinition"
+          },
           "idempotent-consumer" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.IdempotentConsumerDefinition"
+          },
+          "idempotentConsumer" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.IdempotentConsumerDefinition"
           },
           "in-only" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.InOnlyDefinition"
           },
+          "inOnly" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.InOnlyDefinition"
+          },
           "in-out" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.InOutDefinition"
+          },
+          "inOut" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.InOutDefinition"
           },
           "intercept" : {
@@ -59,13 +86,22 @@
           "intercept-from" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.InterceptFromDefinition"
           },
+          "interceptFrom" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.InterceptFromDefinition"
+          },
           "intercept-send-to-endpoint" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.InterceptSendToEndpointDefinition"
+          },
+          "interceptSendToEndpoint" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.InterceptSendToEndpointDefinition"
           },
           "kamelet" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.KameletDefinition"
           },
           "load-balance" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.LoadBalanceDefinition"
+          },
+          "loadBalance" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.LoadBalanceDefinition"
           },
           "log" : {
@@ -83,7 +119,13 @@
           "on-completion" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.OnCompletionDefinition"
           },
+          "onCompletion" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.OnCompletionDefinition"
+          },
           "on-fallback" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.OnFallbackDefinition"
+          },
+          "onFallback" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.OnFallbackDefinition"
           },
           "otherwise" : {
@@ -98,22 +140,40 @@
           "poll-enrich" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.PollEnrichDefinition"
           },
+          "pollEnrich" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.PollEnrichDefinition"
+          },
           "process" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.ProcessDefinition"
           },
           "recipient-list" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.RecipientListDefinition"
           },
+          "recipientList" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.RecipientListDefinition"
+          },
           "remove-header" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.RemoveHeaderDefinition"
+          },
+          "removeHeader" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.RemoveHeaderDefinition"
           },
           "remove-headers" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.RemoveHeadersDefinition"
           },
+          "removeHeaders" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.RemoveHeadersDefinition"
+          },
           "remove-properties" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.RemovePropertiesDefinition"
           },
+          "removeProperties" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.RemovePropertiesDefinition"
+          },
           "remove-property" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.RemovePropertyDefinition"
+          },
+          "removeProperty" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.RemovePropertyDefinition"
           },
           "resequence" : {
@@ -123,6 +183,9 @@
             "$ref" : "#/items/definitions/org.apache.camel.model.RollbackDefinition"
           },
           "routing-slip" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.RoutingSlipDefinition"
+          },
+          "routingSlip" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.RoutingSlipDefinition"
           },
           "saga" : {
@@ -137,13 +200,25 @@
           "set-body" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.SetBodyDefinition"
           },
+          "setBody" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.SetBodyDefinition"
+          },
           "set-exchange-pattern" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.SetExchangePatternDefinition"
+          },
+          "setExchangePattern" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.SetExchangePatternDefinition"
           },
           "set-header" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.SetHeaderDefinition"
           },
+          "setHeader" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.SetHeaderDefinition"
+          },
           "set-property" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.SetPropertyDefinition"
+          },
+          "setProperty" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.SetPropertyDefinition"
           },
           "sort" : {
@@ -167,10 +242,16 @@
           "throw-exception" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.ThrowExceptionDefinition"
           },
+          "throwException" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.ThrowExceptionDefinition"
+          },
           "to" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.ToDefinition"
           },
           "to-d" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.ToDynamicDefinition"
+          },
+          "toD" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.ToDynamicDefinition"
           },
           "tod" : {
@@ -185,6 +266,9 @@
           "do-try" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.TryDefinition"
           },
+          "doTry" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.TryDefinition"
+          },
           "unmarshal" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.UnmarshalDefinition"
           },
@@ -197,10 +281,19 @@
           "when-skip-send-to-endpoint" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.WhenSkipSendToEndpointDefinition"
           },
+          "whenSkipSendToEndpoint" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.WhenSkipSendToEndpointDefinition"
+          },
           "wire-tap" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.WireTapDefinition"
           },
+          "wireTap" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.WireTapDefinition"
+          },
           "service-call" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.cloud.ServiceCallDefinition"
+          },
+          "serviceCall" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.cloud.ServiceCallDefinition"
           }
         }
@@ -7234,6 +7327,9 @@
       "error-handler" : {
         "$ref" : "#/items/definitions/org.apache.camel.builder.ErrorHandlerBuilderRef"
       },
+      "errorHandler" : {
+        "$ref" : "#/items/definitions/org.apache.camel.builder.ErrorHandlerBuilderRef"
+      },
       "beans" : {
         "$ref" : "#/items/definitions/org.apache.camel.dsl.yaml.deserializers.BeansDeserializer"
       },
@@ -7243,10 +7339,16 @@
       "on-exception" : {
         "$ref" : "#/items/definitions/org.apache.camel.model.OnExceptionDefinition"
       },
+      "onException" : {
+        "$ref" : "#/items/definitions/org.apache.camel.model.OnExceptionDefinition"
+      },
       "route" : {
         "$ref" : "#/items/definitions/org.apache.camel.model.RouteDefinition"
       },
       "route-template" : {
+        "$ref" : "#/items/definitions/org.apache.camel.model.RouteTemplateDefinition"
+      },
+      "routeTemplate" : {
         "$ref" : "#/items/definitions/org.apache.camel.model.RouteTemplateDefinition"
       },
       "template" : {

@@ -39,6 +39,7 @@ public class CustomResolver implements YamlDeserializerResolver {
             case "org.apache.camel.model.RouteDefinition":
                 return new RouteDefinitionDeserializer();
             case "route-configuration":
+            case "routeConfiguration":
             case "org.apache.camel.model.RouteConfigurationDefinition":
                 return new RouteConfigurationDefinitionDeserializer();
             case "template":
@@ -66,6 +67,7 @@ public class CustomResolver implements YamlDeserializerResolver {
             case "beans":
                 return new BeansDeserializer();
             case "error-handler":
+            case "errorHandler":
                 return new ErrorHandlerBuilderDeserializer();
             case "org.apache.camel.model.ProcessorDefinition":
                 return new ProcessorDefinitionDeserializer();

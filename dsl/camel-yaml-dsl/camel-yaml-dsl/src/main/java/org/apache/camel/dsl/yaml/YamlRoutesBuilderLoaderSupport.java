@@ -111,9 +111,9 @@ public abstract class YamlRoutesBuilderLoaderSupport extends RouteBuilderLoaderS
         }
 
         try (InputStream is = resource.getInputStream()) {
-            final StreamReader reader = new StreamReader(new YamlUnicodeReader(is), settings);
-            final Parser parser = new ParserImpl(reader, settings);
-            final Composer composer = new Composer(parser, settings);
+            final StreamReader reader = new StreamReader(settings, new YamlUnicodeReader(is));
+            final Parser parser = new ParserImpl(settings, reader);
+            final Composer composer = new Composer(settings, parser);
 
             return composer.getSingleNode()
                     .map(this::builder)

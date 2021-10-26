@@ -43,6 +43,14 @@ class DynamicRouterTest extends YamlTestSupport {
                               simple: "${body}"
                           - to: "mock:result"
                     '''),
+                asResource('expression-camelCase', '''
+                    - from:
+                        uri: "direct:start"
+                        steps:    
+                          - dynamicRouter:  
+                              simple: "${body}"
+                          - to: "mock:result"
+                    '''),
                 asResource('expression-block', '''
                     - from:
                         uri: "direct:start"

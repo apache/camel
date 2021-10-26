@@ -30,7 +30,7 @@ import org.snakeyaml.engine.v2.nodes.Node;
           inline = true,
           types = org.apache.camel.model.RouteTemplateBeanDefinition.class,
           order = YamlDeserializerResolver.ORDER_DEFAULT,
-          nodes = "template-bean",
+          nodes = { "template-bean", "templateBean" },
           properties = {
                   @YamlProperty(name = "bean-type", type = "string"),
                   @YamlProperty(name = "name", type = "string", required = true),
