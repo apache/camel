@@ -20,7 +20,7 @@ public class QuartzEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(20);
+        Set<String> props = new HashSet<>(19);
         props.add("cron");
         props.add("triggerName");
         props.add("customCalendar");
@@ -40,7 +40,6 @@ public class QuartzEndpointUriFactory extends org.apache.camel.support.component
         props.add("exceptionHandler");
         props.add("usingFixedCamelContextName");
         props.add("stateful");
-        props.add("fireNow");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
     }

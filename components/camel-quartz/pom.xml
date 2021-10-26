@@ -113,32 +113,4 @@
         </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>add-source</goal>
-                            <goal>add-resource</goal>
-                        </goals>
-                        <configuration>
-                            <sources>
-                                <source>src/generated/java</source>
-                            </sources>
-                            <resources>
-                                <resource>
-                                    <directory>src/generated/resources</directory>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
-
 </project>

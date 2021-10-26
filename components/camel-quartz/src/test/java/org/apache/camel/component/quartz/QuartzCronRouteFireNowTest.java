@@ -19,17 +19,17 @@ package org.apache.camel.component.quartz;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.quartz.SchedulerException;
 
-public class QuartzRouteFireNowOnlyOnceTest extends BaseQuartzTest {
+public class QuartzCronRouteFireNowTest extends BaseQuartzTest {
 
     protected MockEndpoint resultEndpoint;
 
     @Test
     public void testQuartzRoute() throws Exception {
         resultEndpoint = getMockEndpoint("mock:result");
-        resultEndpoint.expectedMessageCount(1);
-        resultEndpoint.message(0).header("triggerName").isEqualTo("myTimerName");
-        resultEndpoint.message(0).header("triggerGroup").isEqualTo("myGroup");
+        resultEndpoint.expectedMinimumMessageCount(1);
+        resultEndpoint.message(0).header("triggerName").isEqualTo("daily");
 
         // lets test the receive worked
         resultEndpoint.assertIsSatisfied();
@@ -38,12 +38,11 @@ public class QuartzRouteFireNowOnlyOnceTest extends BaseQuartzTest {
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() {
-                // START SNIPPET: example
-                from("quartz://myGroup/myTimerName?trigger.repeatInterval=100&trigger.repeatCount=0")
+            public void configure() throws SchedulerException {
+                // daily trigger strarted a day ago
+                from("quartz://daily?triggerStartDelay=" + Long.toString(-(24 * 60 * 60 * 1000)) + "&cron=0+0+0+*+*+?")
                         .to("log:quartz")
                         .to("mock:result");
-                // END SNIPPET: example
             }
         };
     }

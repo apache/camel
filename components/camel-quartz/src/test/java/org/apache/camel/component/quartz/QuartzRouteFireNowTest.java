@@ -40,7 +40,7 @@ public class QuartzRouteFireNowTest extends BaseQuartzTest {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
-                from("quartz://myGroup/myTimerName?fireNow=true&trigger.repeatInterval=100&trigger.repeatCount=2")
+                from("quartz://myGroup/myTimerName?trigger.repeatInterval=100&trigger.repeatCount=2")
                         .to("log:quartz")
                         .to("mock:result");
                 // END SNIPPET: example

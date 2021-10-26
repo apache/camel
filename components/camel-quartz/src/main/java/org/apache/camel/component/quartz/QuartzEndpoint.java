@@ -81,8 +81,6 @@ public class QuartzEndpoint extends DefaultEndpoint {
     private String cron;
     @UriParam
     private boolean stateful;
-    @UriParam(label = "scheduler")
-    private boolean fireNow;
     @UriParam(defaultValue = "true")
     private boolean deleteJob = true;
     @UriParam
@@ -132,10 +130,6 @@ public class QuartzEndpoint extends DefaultEndpoint {
         return stateful;
     }
 
-    public boolean isFireNow() {
-        return fireNow;
-    }
-
     public long getTriggerStartDelay() {
         return triggerStartDelay;
     }
@@ -172,13 +166,6 @@ public class QuartzEndpoint extends DefaultEndpoint {
      */
     public void setDeleteJob(boolean deleteJob) {
         this.deleteJob = deleteJob;
-    }
-
-    /**
-     * If it is true will fire the trigger when the route is start when using SimpleTrigger.
-     */
-    public void setFireNow(boolean fireNow) {
-        this.fireNow = fireNow;
     }
 
     /**
@@ -441,52 +428,40 @@ public class QuartzEndpoint extends DefaultEndpoint {
 
     private Trigger createTrigger(JobDetail jobDetail) throws Exception {
         // use a defensive copy to keep the trigger parameters on the endpoint
-        Map<String, Object> copy = new HashMap<>(triggerParameters);
+        final Map<String, Object> copy = new HashMap<>(triggerParameters);
 
-        Trigger result;
-        Date startTime = new Date();
-        if (getComponent().getScheduler().isStarted()) {
-            startTime = new Date(System.currentTimeMillis() + triggerStartDelay);
+        final TriggerBuilder<Trigger> triggerBuilder = TriggerBuilder.newTrigger().withIdentity(triggerKey);
+
+        if (getComponent().getScheduler().isStarted() || triggerStartDelay < 0) {
+            triggerBuilder.startAt(new Date(System.currentTimeMillis() + triggerStartDelay));
         }
         if (cron != null) {
             LOG.debug("Creating CronTrigger: {}", cron);
-            String timeZone = (String) copy.get("timeZone");
+            final String timeZone = (String) copy.get("timeZone");
             if (timeZone != null) {
                 if (ObjectHelper.isNotEmpty(customCalendar)) {
-                    result = TriggerBuilder.newTrigger()
-                            .withIdentity(triggerKey)
-                            .startAt(startTime)
+                    triggerBuilder
                             .withSchedule(cronSchedule(cron)
                                     .withMisfireHandlingInstructionFireAndProceed()
                                     .inTimeZone(TimeZone.getTimeZone(timeZone)))
-                            .modifiedByCalendar(QuartzConstants.QUARTZ_CAMEL_CUSTOM_CALENDAR)
-                            .build();
+                            .modifiedByCalendar(QuartzConstants.QUARTZ_CAMEL_CUSTOM_CALENDAR);
                 } else {
-                    result = TriggerBuilder.newTrigger()
-                            .withIdentity(triggerKey)
-                            .startAt(startTime)
+                    triggerBuilder
                             .withSchedule(cronSchedule(cron)
                                     .withMisfireHandlingInstructionFireAndProceed()
-                                    .inTimeZone(TimeZone.getTimeZone(timeZone)))
-                            .build();
+                                    .inTimeZone(TimeZone.getTimeZone(timeZone)));
                 }
                 jobDetail.getJobDataMap().put(QuartzConstants.QUARTZ_TRIGGER_CRON_TIMEZONE, timeZone);
             } else {
                 if (ObjectHelper.isNotEmpty(customCalendar)) {
-                    result = TriggerBuilder.newTrigger()
-                            .withIdentity(triggerKey)
-                            .startAt(startTime)
+                    triggerBuilder
                             .withSchedule(cronSchedule(cron)
                                     .withMisfireHandlingInstructionFireAndProceed())
-                            .modifiedByCalendar(QuartzConstants.QUARTZ_CAMEL_CUSTOM_CALENDAR)
-                            .build();
+                            .modifiedByCalendar(QuartzConstants.QUARTZ_CAMEL_CUSTOM_CALENDAR);
                 } else {
-                    result = TriggerBuilder.newTrigger()
-                            .withIdentity(triggerKey)
-                            .startAt(startTime)
+                    triggerBuilder
                             .withSchedule(cronSchedule(cron)
-                                    .withMisfireHandlingInstructionFireAndProceed())
-                            .build();
+                                    .withMisfireHandlingInstructionFireAndProceed());
                 }
             }
 
@@ -511,27 +486,16 @@ public class QuartzEndpoint extends DefaultEndpoint {
                 // need to update the parameters
                 copy.put("repeatInterval", interval);
             }
-            TriggerBuilder<SimpleTrigger> triggerBuilder;
             if (ObjectHelper.isNotEmpty(customCalendar)) {
-                triggerBuilder = TriggerBuilder.newTrigger()
-                        .withIdentity(triggerKey)
-                        .startAt(startTime)
+                triggerBuilder
                         .withSchedule(simpleSchedule().withMisfireHandlingInstructionFireNow()
                                 .withRepeatCount(repeat).withIntervalInMilliseconds(interval))
                         .modifiedByCalendar(QuartzConstants.QUARTZ_CAMEL_CUSTOM_CALENDAR);
             } else {
-                triggerBuilder = TriggerBuilder.newTrigger()
-                        .withIdentity(triggerKey)
-                        .startAt(startTime)
+                triggerBuilder
                         .withSchedule(simpleSchedule().withMisfireHandlingInstructionFireNow()
                                 .withRepeatCount(repeat).withIntervalInMilliseconds(interval));
             }
-
-            if (fireNow) {
-                triggerBuilder = triggerBuilder.startNow();
-            }
-
-            result = triggerBuilder.build();
 
             // enrich job map with details
             jobDetail.getJobDataMap().put(QuartzConstants.QUARTZ_TRIGGER_TYPE, "simple");
@@ -539,7 +503,9 @@ public class QuartzEndpoint extends DefaultEndpoint {
             jobDetail.getJobDataMap().put(QuartzConstants.QUARTZ_TRIGGER_SIMPLE_REPEAT_INTERVAL, interval);
         }
 
-        if (copy.size() > 0) {
+        final Trigger result = triggerBuilder.build();
+
+        if (!copy.isEmpty()) {
             LOG.debug("Setting user extra triggerParameters {}", copy);
             setProperties(result, copy);
         }
