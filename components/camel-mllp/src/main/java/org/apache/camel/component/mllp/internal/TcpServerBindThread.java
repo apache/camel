@@ -17,14 +17,17 @@
 package org.apache.camel.component.mllp.internal;
 
 import java.io.IOException;
-import java.net.BindException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.SocketException;
+import java.time.Duration;
 
 import org.apache.camel.Route;
 import org.apache.camel.component.mllp.MllpTcpServerConsumer;
 import org.apache.camel.spi.UnitOfWork;
+import org.apache.camel.support.task.BlockingTask;
+import org.apache.camel.support.task.Tasks;
+import org.apache.camel.support.task.budget.Budgets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -81,38 +84,36 @@ public class TcpServerBindThread extends Thread {
     }
 
     private void doAccept(ServerSocket serverSocket, InetSocketAddress socketAddress) {
-        long startTicks = System.currentTimeMillis();
-        do {
-            try {
-                if (consumer.getConfiguration().hasBacklog()) {
-                    serverSocket.bind(socketAddress, consumer.getConfiguration().getBacklog());
-                } else {
-                    serverSocket.bind(socketAddress);
-                }
-                consumer.startAcceptThread(serverSocket);
-            } catch (BindException bindException) {
-                if (System.currentTimeMillis() > startTicks + consumer.getConfiguration().getBindTimeout()) {
-                    log.error("Failed to bind to address {} within timeout {}", socketAddress,
-                            consumer.getConfiguration().getBindTimeout(), bindException);
-                    break;
-                } else {
-                    log.warn("Failed to bind to address {} - retrying in {} milliseconds", socketAddress,
-                            consumer.getConfiguration().getBindRetryInterval());
-                    try {
-                        Thread.sleep(consumer.getConfiguration().getBindRetryInterval());
-                    } catch (InterruptedException interruptedEx) {
-                        log.info("Bind to address {} interrupted", socketAddress, interruptedEx);
-                        if (!this.isInterrupted()) {
-                            super.interrupt();
-                        }
-                        break;
-                    }
-                }
-            } catch (IOException unexpectedEx) {
-                log.error("Unexpected exception encountered binding to address {}", socketAddress, unexpectedEx);
-                break;
+        BlockingTask task = Tasks.foregroundTask()
+                .withBudget(Budgets.iterationTimeBudget()
+                        .withMaxDuration(Duration.ofMillis(consumer.getConfiguration().getBindTimeout()))
+                        .withInterval(Duration.ofMillis(consumer.getConfiguration().getBindRetryInterval()))
+                        .build())
+                .withName("mllp-tcp-server-accept")
+                .build();
+
+        if (task.run(() -> doBind(serverSocket, socketAddress))) {
+            consumer.startAcceptThread(serverSocket);
+        } else {
+            log.error("Failed to bind to address {} within timeout {}", socketAddress,
+                    consumer.getConfiguration().getBindTimeout());
+        }
+    }
+
+    private boolean doBind(ServerSocket serverSocket, InetSocketAddress socketAddress) {
+        try {
+            if (consumer.getConfiguration().hasBacklog()) {
+                serverSocket.bind(socketAddress, consumer.getConfiguration().getBacklog());
+            } else {
+                serverSocket.bind(socketAddress);
             }
-        } while (!this.isInterrupted() && !serverSocket.isBound());
+            return true;
+        } catch (IOException e) {
+            log.warn("Failed to bind to address {} - retrying in {} milliseconds", socketAddress,
+                    consumer.getConfiguration().getBindRetryInterval());
+
+            return false;
+        }
     }
 
     private InetSocketAddress setupSocket(ServerSocket serverSocket) throws SocketException {
