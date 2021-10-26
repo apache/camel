@@ -19,19 +19,25 @@ package org.apache.camel.component.file.remote.integration;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.awaitility.Awaitility;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 public class FtpReconnectAttemptServerStoppedIT extends FtpServerTestSupport {
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}"
-               + "/reconnect?password=admin&maximumReconnectAttempts=2&reconnectDelay=500&delete=true";
+               + "/reconnect?password=admin&maximumReconnectAttempts=5&reconnectDelay=1000&delete=true";
     }
 
     @Test
+    @Timeout(15)
     public void testFromFileToFtp() throws Exception {
-        // suspect serve so we cannot connect
-        service.suspend();
+        // disconnect all the connections so that they have to reconnect again
+        service.disconnectAllSessions();
+
+        Awaitility.await().until(() -> service.countConnections() == 0);
 
         // put a file in the folder (do not use ftp as we then will connect)
         template.sendBodyAndHeader("file:{{ftp.root.dir}}/reconnect", "Hello World", Exchange.FILE_NAME,
@@ -39,9 +45,6 @@ public class FtpReconnectAttemptServerStoppedIT extends FtpServerTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
-
-        // let it run a little
-        Thread.sleep(3000);
 
         assertMockEndpointsSatisfied();
 
@@ -51,10 +54,8 @@ public class FtpReconnectAttemptServerStoppedIT extends FtpServerTestSupport {
         // resume the server so we can connect
         service.resume();
 
-        // wait a bit so that the server resumes properly
-        Thread.sleep(3000);
-
         assertMockEndpointsSatisfied();
+        Awaitility.await().untilAsserted(() -> Assertions.assertEquals(1, service.countConnections()));
     }
 
     @Override

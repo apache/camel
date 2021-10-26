@@ -179,4 +179,16 @@ public class FtpEmbeddedService extends AbstractTestService implements FtpServic
     public int getPort() {
         return port;
     }
+
+    public int countConnections() {
+        int count = 0;
+
+        // stop all listeners
+        Map<String, Listener> listeners = ((DefaultFtpServer) ftpServer).getListeners();
+        for (Listener listener : listeners.values()) {
+            count += listener.getActiveSessions().size();
+        }
+
+        return count;
+    }
 }
