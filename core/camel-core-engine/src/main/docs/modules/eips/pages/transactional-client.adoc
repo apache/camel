@@ -65,11 +65,48 @@ Instead, Camel uses APIs from either `camel-spring` or `camel-jta`.
 
 === Local vs Global Transactions
 
-TODO:
+When talking about transactions, you need to distinguish between single- and
+multiple-resource transactions. The former are also known as local transactions,
+and the latter as global transactions
+
+==== Local Transactions
+
+If you only have a single resource (such as one database, or one messaging system) then
+transactions can be simpler to orchestrate by the transaction manager. This is known as local transactions.
+
+The previous two examples above are both using a single resource, and are therefore using local transactions.
+When using local transactions and Spring Transactions, then you can use the dedicated transaction manager for the resource type:
+
+- org.springframework.jdbc.datasource.DataSourceTransactionManager
+- org.springframework.jms.connection.JmsTransactionManager
+
+TIP: Consult the spring documentation for more local transaction managers.
+
+==== Global Transactions
+
+The situation changes when you need to span multiple resources in the
+same transaction, such as JMS and JDBC resources together.
+
+To support multiple resources you need to use a JTA (XA) capable transaction manager,
+which means using `org.springframework.transaction.jta.JtaTransactionManager` with Spring Transactions.
+
+NOTE: For more information on JTA, see the Wikipedia page on the subject:
+http://en.wikipedia.org/wiki/Java_Transaction_API. XA is also briefly discussed
+here: http://en.wikipedia.org/wiki/X/Open_XA.
+
+That is not all, you also need to use a JTA transaction implementation such as:
+
+- Atomikos - https://www.atomikos.com/
+- Narayana - https://narayana.io/
+- JEE Application Server with JTA
+
+And all of this must be configured correctly to have JTA transaction working.
+You may also need to do special configuration from the vendors of the resources (i.e. database or messaging system)
+to have this work properly with JTA/XA transactions. Consult the documentation of those systems for more details.
 
 === About Spring Transactions
 
-Camel uses Spring Transaction (`camel-spring`) to manage transactions via its `TransactionManager`
+Camel uses Spring Transaction APIs (`camel-spring`) to manage transactions via its `TransactionManager`
 API. Depending on the kinds of resources that are taking part in the transaction,
 an appropriate implementation of the transaction manager must be chosen. Spring
 offers a number of transaction managers out of the box that work for various local
@@ -80,8 +117,10 @@ API abstract that Camel uses.
 
 === About JTA Transactions
 
-TODO:
-TODO: (`camel-jta`)
+Camel can also use directly the JTA Transaction APIs (`camel-jta`) to manage transactions via its
+`javax.transaction` API. You must use a third-party
+JTA transaction manager implementation; JTA transaction manager is provided
+by Java EE application servers.
 
 == Using Transactions in Camel
 
@@ -345,45 +384,4 @@ route as transacted using the `<transacted/>` XML tag.
     </route>
 </camelContext>
 ----
-
-== Local vs Global Transactions
-
-When talking about transactions, you need to distinguish between single- and
-multiple-resource transactions. The former are also known as local transactions,
-and the latter as global transactions
-
-=== Local Transactions
-
-If you only have a single resource (such as one database, or one messaging system) then
-transactions can be simpler to orchestrate by the transaction manager. This is known as local transactions.
-
-The previous two examples above are both using a single resource, and are therefore using local transactions.
-When using local transactions and Spring Transactions, then you can use the dedicated transaction manager for the resource type:
-
-- org.springframework.jdbc.datasource.DataSourceTransactionManager
-- org.springframework.jms.connection.JmsTransactionManager
-
-TIP: Consult the spring documentation for more local transaction managers.
-
-=== Global Transactions
-
-The situation changes when you need to span multiple resources in the
-same transaction, such as JMS and JDBC resources together.
-
-To support multiple resources you need to use a JTA (XA) capable transaction manager,
-which means using `org.springframework.transaction.jta.JtaTransactionManager` with Spring Transactions.
-
-NOTE: For more information on JTA, see the Wikipedia page on the subject:
-http://en.wikipedia.org/wiki/Java_Transaction_API. XA is also briefly discussed
-here: http://en.wikipedia.org/wiki/X/Open_XA.
-
-That is not all, you also need to use a JTA transaction implementation such as:
-
-- Atomikos - https://www.atomikos.com/
-- Narayana - https://narayana.io/
-- JEE Application Server with JTA
-
-And all of this must be configured correctly to have JTA transaction working.
-You may also need to do special configuration from the vendors of the resources (i.e. database or messaging system)
-to have this work properly with JTA/XA transactions. Consult the documentation of those systems for more details.
 
