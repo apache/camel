@@ -114,3 +114,7 @@ This is i.e. needed when using `camel-servlet` which runs under a specific `cont
 Support for rendering api docs by discovering other CamelContext via JMX in the same JVM has been removed.
 Rendering of api docs is now only supported for the same CamelContext.
 
+=== camel-quartz
+
+The `fireNow` parameter was removed because have no effect.
+The `triggerStartDelay` parameter supports negative value to shift trigger start time in the past. It allows to fire the trigger immediately by configured `MISFIRE_INSTRUCTION_FIRE_ONCE_NOW`.
