@@ -28,8 +28,6 @@ public class SpringEndpointPropertyTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        System.clearProperty("CamelSedaPollTimeout");
-
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/SpringEndpointPropertyTest.xml");
     }
 

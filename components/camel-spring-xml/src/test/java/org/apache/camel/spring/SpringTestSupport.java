@@ -28,6 +28,7 @@ import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.component.seda.SedaComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
 import org.apache.camel.impl.scan.AssignableToPackageScanFilter;
@@ -63,8 +64,6 @@ public abstract class SpringTestSupport extends ContextTestSupport {
     public void setUp() throws Exception {
         deleteTestDirectory();
 
-        // we want SpringTestSupport to startup faster and not use JMX by default and should stop seda quicker
-        System.setProperty("CamelSedaPollTimeout", "10");
         DefaultCamelContext.setDisableJmx(!useJmx());
         Class<?>[] excluded = excludeRoutes();
         if (excluded != null && excluded.length > 0) {
@@ -164,6 +163,8 @@ public abstract class SpringTestSupport extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = SpringCamelContext.springCamelContext(applicationContext, true);
+        // make SEDA run faster
+        context.getComponent("seda", SedaComponent.class).setDefaultPollTimeout(10);
         return context;
     }
 
