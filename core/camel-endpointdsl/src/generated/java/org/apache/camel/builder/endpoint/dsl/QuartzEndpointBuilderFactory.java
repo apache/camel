@@ -310,39 +310,6 @@ public interface QuartzEndpointBuilderFactory {
             return this;
         }
         /**
-         * If it is true will fire the trigger when the route is start when
-         * using SimpleTrigger.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: scheduler
-         * 
-         * @param fireNow the value to set
-         * @return the dsl builder
-         */
-        default QuartzEndpointBuilder fireNow(boolean fireNow) {
-            doSetProperty("fireNow", fireNow);
-            return this;
-        }
-        /**
-         * If it is true will fire the trigger when the route is start when
-         * using SimpleTrigger.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: scheduler
-         * 
-         * @param fireNow the value to set
-         * @return the dsl builder
-         */
-        default QuartzEndpointBuilder fireNow(String fireNow) {
-            doSetProperty("fireNow", fireNow);
-            return this;
-        }
-        /**
          * Seconds to wait before starting the quartz scheduler.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
@@ -375,7 +342,8 @@ public interface QuartzEndpointBuilderFactory {
         /**
          * In case of scheduler has already started, we want the trigger start
          * slightly after current time to ensure endpoint is fully started
-         * before the job kicks in.
+         * before the job kicks in. Negative value shifts trigger start time in
+         * the past.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
@@ -392,7 +360,8 @@ public interface QuartzEndpointBuilderFactory {
         /**
          * In case of scheduler has already started, we want the trigger start
          * slightly after current time to ensure endpoint is fully started
-         * before the job kicks in.
+         * before the job kicks in. Negative value shifts trigger start time in
+         * the past.
          * 
          * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
