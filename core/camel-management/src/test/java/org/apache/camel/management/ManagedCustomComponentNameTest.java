@@ -40,7 +40,7 @@ public class ManagedCustomComponentNameTest extends ManagementTestSupport {
         MBeanServer mbeanServer = getMBeanServer();
 
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=components,*"), null);
-        assertEquals(3, set.size());
+        assertEquals(3 + 1, set.size()); // + 1 since seda is automatic added in ContextTestSupport
 
         ObjectName on = set.iterator().next();
         assertTrue(mbeanServer.isRegistered(on), "Should be registered");
