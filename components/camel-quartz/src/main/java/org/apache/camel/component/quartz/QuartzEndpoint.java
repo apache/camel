@@ -153,7 +153,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
 
     /**
      * In case of scheduler has already started, we want the trigger start slightly after current time to ensure
-     * endpoint is fully started before the job kicks in.
+     * endpoint is fully started before the job kicks in. Negative value shifts trigger start time in the past.
      */
     public void setTriggerStartDelay(long triggerStartDelay) {
         this.triggerStartDelay = triggerStartDelay;

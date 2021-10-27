@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.quartz;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
@@ -40,7 +42,7 @@ public class QuartzCronRouteFireNowTest extends BaseQuartzTest {
         return new RouteBuilder() {
             public void configure() throws SchedulerException {
                 // daily trigger strarted a day ago
-                from("quartz://daily?triggerStartDelay=" + Long.toString(-(24 * 60 * 60 * 1000)) + "&cron=0+0+0+*+*+?")
+                from("quartz://daily?triggerStartDelay=" + TimeUnit.DAYS.toMillis(-1l) + "&cron=0+0+0+*+*+?")
                         .to("log:quartz")
                         .to("mock:result");
             }
