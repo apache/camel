@@ -40,7 +40,7 @@ public interface UnitOfWork {
     String MDC_TRANSACTION_KEY = "camel.transactionKey";
 
     /**
-     * Clears the unit of work from user data so it may be reused.
+     * Clears the unit of work from user data, so it may be reused.
      * <p/>
      * <b>Important:</b> This API is NOT intended for Camel end users, but used internally by Camel itself.
      */
@@ -196,7 +196,7 @@ public interface UnitOfWork {
     boolean isBeforeAfterProcess();
 
     /**
-     * Strategy for work to be execute before processing.
+     * Strategy for work to be executed before processing.
      * <p/>
      * For example the MDCUnitOfWork leverages this to ensure MDC is handled correctly during routing exchanges using
      * the asynchronous routing engine.

@@ -65,7 +65,7 @@
     <avro-ipc-netty-version>1.10.2</avro-ipc-netty-version>
     <avro-version>1.10.2</avro-version>
     <awaitility-version>4.1.1</awaitility-version>
-    <aws-java-sdk2-version>2.17.66</aws-java-sdk2-version>
+    <aws-java-sdk2-version>2.17.67</aws-java-sdk2-version>
     <aws-xray-version>2.6.1</aws-xray-version>
     <axiom-version>1.2.14</axiom-version>
     <azure-cosmos-version>4.20.0</azure-cosmos-version>
@@ -332,7 +332,7 @@
     <jgroups-raft-leveldbjni-version>1.8</jgroups-raft-leveldbjni-version>
     <jgroups-raft-mapdb-version>1.0.8</jgroups-raft-mapdb-version>
     <jgroups-raft-version>0.5.3.Final</jgroups-raft-version>
-    <jgroups-version>4.2.16.Final</jgroups-version>
+    <jgroups-version>4.2.17.Final</jgroups-version>
     <jing-version>20030619</jing-version>
     <jira-guava-version>26.0-jre</jira-guava-version>
     <jira-rest-client-api-version>5.2.2</jira-rest-client-api-version>

@@ -196,6 +196,12 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
     }
 
     @Override
+    protected void onDone() {
+        // clear MDC, so we do not leak as Camel is done using this UoW
+        clear();
+    }
+
+    @Override
     public void reset() {
         super.reset();
         clear();

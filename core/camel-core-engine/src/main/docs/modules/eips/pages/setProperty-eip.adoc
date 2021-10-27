@@ -5,10 +5,10 @@
 :since: 
 :supportlevel: Stable
 
-The SetProperty EIP is used for setting a xref:latest@manual:ROOT:exchange.adoc[Exchange] property.
+The SetProperty EIP is used for setting a xref:manual:ROOT:exchange.adoc[Exchange] property.
 
 NOTE: An `Exchange` property is a key/value set as a `Map` on the `org.apache.camel.Exchange` instance.
-This is *not* for setting xref:latest@manual:ROOT:using-propertyplaceholder.adoc[property placeholders].
+This is *not* for setting xref:manual:ROOT:using-propertyplaceholder.adoc[property placeholders].
 
 == Options
 

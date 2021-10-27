@@ -226,7 +226,8 @@ public class SharedCamelInternalProcessor implements SharedInternalProcessor {
             }
 
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Exchange processed and is continued routed asynchronously for exchangeId: {} -> {}",
+                LOG.trace("Exchange processed and is continued routed {} for exchangeId: {} -> {}",
+                        sync ? "synchronously" : "asynchronously",
                         exchange.getExchangeId(), exchange);
             }
             return sync;

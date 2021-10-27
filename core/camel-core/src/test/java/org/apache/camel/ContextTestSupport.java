@@ -25,6 +25,7 @@ import javax.naming.Context;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.seda.SedaComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.lw.LightweightCamelContext;
 import org.apache.camel.model.ModelCamelContext;
@@ -97,9 +98,6 @@ public abstract class ContextTestSupport extends TestSupport {
     public void setUp() throws Exception {
         super.setUp();
 
-        // make SEDA testing faster
-        System.setProperty("CamelSedaPollTimeout", "10");
-
         CamelContext c2 = createCamelContext();
         if (c2 instanceof ModelCamelContext) {
             context = (ModelCamelContext) c2;
@@ -109,6 +107,9 @@ public abstract class ContextTestSupport extends TestSupport {
         assertValidContext(context);
 
         context.build();
+
+        // make SEDA run faster
+        context.getComponent("seda", SedaComponent.class).setDefaultPollTimeout(10);
 
         template = context.createProducerTemplate();
         consumer = context.createConsumerTemplate();
@@ -158,7 +159,6 @@ public abstract class ContextTestSupport extends TestSupport {
             template.stop();
         }
         stopCamelContext();
-        System.clearProperty("CamelSedaPollTimeout");
 
         super.tearDown();
     }

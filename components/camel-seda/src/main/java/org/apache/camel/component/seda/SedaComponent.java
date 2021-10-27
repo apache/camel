@@ -49,6 +49,8 @@ public class SedaComponent extends DefaultComponent {
     private boolean defaultDiscardWhenFull;
     @Metadata(label = "producer")
     private long defaultOfferTimeout;
+    @Metadata(label = "consumer,advanced", defaultValue = "1000")
+    private int defaultPollTimeout = 1000;
 
     private final Map<String, QueueReference> queues = new HashMap<>();
     private final Map<String, Integer> customSize = new HashMap<>();
@@ -127,6 +129,18 @@ public class SedaComponent extends DefaultComponent {
      */
     public void setDefaultOfferTimeout(long defaultOfferTimeout) {
         this.defaultOfferTimeout = defaultOfferTimeout;
+    }
+
+    public int getDefaultPollTimeout() {
+        return defaultPollTimeout;
+    }
+
+    /**
+     * The timeout (in milliseconds) used when polling. When a timeout occurs, the consumer can check whether it is
+     * allowed to continue running. Setting a lower value allows the consumer to react more quickly upon shutdown.
+     */
+    public void setDefaultPollTimeout(int defaultPollTimeout) {
+        this.defaultPollTimeout = defaultPollTimeout;
     }
 
     public synchronized QueueReference getOrCreateQueue(
@@ -234,6 +248,8 @@ public class SedaComponent extends DefaultComponent {
         boolean discardWhenFull = getAndRemoveParameter(parameters, "discardWhenFull", Boolean.class, defaultDiscardWhenFull);
         // if offerTimeout is set on endpoint, defaultOfferTimeout is ignored.
         long offerTimeout = getAndRemoveParameter(parameters, "offerTimeout", long.class, defaultOfferTimeout);
+        // if offerTimeout is set on endpoint, defaultOfferTimeout is ignored.
+        int pollTimeout = getAndRemoveParameter(parameters, "pollTimeout", int.class, defaultPollTimeout);
 
         // using custom size?
         Integer size = getAndRemoveParameter(parameters, "size", Integer.class);
@@ -251,6 +267,7 @@ public class SedaComponent extends DefaultComponent {
         answer.setDiscardWhenFull(discardWhenFull);
         answer.setConcurrentConsumers(consumers);
         answer.setLimitConcurrentConsumers(limitConcurrentConsumers);
+        answer.setPollTimeout(pollTimeout);
         setProperties(answer, parameters);
         return answer;
     }

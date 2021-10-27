@@ -396,7 +396,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Processing exchange for exchangeId: {} -> {}", exchange.getExchangeId(), exchange);
             }
-            processor.process(exchange, async);
+            boolean sync = processor.process(exchange, async);
             // ----------------------------------------------------------
             // CAMEL END USER - DEBUG ME HERE +++ END +++
             // ----------------------------------------------------------
@@ -404,15 +404,15 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
             // optimize to only do after uow processing if really needed
             if (beforeAndAfter) {
                 // execute any after processor work (in current thread, not in the callback)
-                uow.afterProcess(processor, exchange, afterTask, false);
+                uow.afterProcess(processor, exchange, afterTask, sync);
             }
 
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Exchange processed and is continued routed asynchronously for exchangeId: {} -> {}",
+                LOG.trace("Exchange processed and is continued routed {} for exchangeId: {} -> {}",
+                        sync ? "synchronously" : "asynchronously",
                         exchange.getExchangeId(), exchange);
             }
-            // we are done asynchronously - must return false
-            return false;
+            return sync;
         }
     }
 

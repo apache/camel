@@ -79,7 +79,7 @@
         <avro-ipc-jetty-version>1.10.2</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.10.2</avro-ipc-netty-version>
         <awaitility-version>4.1.1</awaitility-version>
-        <aws-java-sdk2-version>2.17.66</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.17.67</aws-java-sdk2-version>
         <aws-xray-version>2.6.1</aws-xray-version>
         <axiom-version>1.2.14</axiom-version>
         <azure-jackson2-version>2.11.3</azure-jackson2-version>
@@ -313,7 +313,7 @@
         <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
         <jettison-version>1.4.1</jettison-version>
         <jgit-version>5.13.0.202109080827-r</jgit-version>
-        <jgroups-version>4.2.16.Final</jgroups-version>
+        <jgroups-version>4.2.17.Final</jgroups-version>
         <jgroups-raft-version>0.5.3.Final</jgroups-raft-version>
         <jgroups-raft-leveldbjni-version>1.8</jgroups-raft-leveldbjni-version>
         <jgroups-raft-mapdb-version>1.0.8</jgroups-raft-mapdb-version>
