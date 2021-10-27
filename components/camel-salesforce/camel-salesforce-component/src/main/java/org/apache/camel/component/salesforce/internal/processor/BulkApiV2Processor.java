@@ -17,6 +17,7 @@
 package org.apache.camel.component.salesforce.internal.processor;
 
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.AsyncCallback;
@@ -37,6 +38,8 @@ import org.apache.camel.component.salesforce.internal.client.DefaultBulkApiV2Cli
 import org.apache.camel.support.service.ServiceHelper;
 
 import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.JOB_ID;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.LOCATOR;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.MAX_RECORDS;
 import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.QUERY_LOCATOR;
 import static org.apache.camel.component.salesforce.internal.client.BulkApiV2Client.JobResponseCallback;
 import static org.apache.camel.component.salesforce.internal.client.BulkApiV2Client.ResponseCallback;
@@ -312,7 +315,10 @@ public class BulkApiV2Processor extends AbstractSalesforceProcessor {
     private void processGetQueryJobResults(Exchange exchange, AsyncCallback callback)
             throws SalesforceException {
         String jobId = getParameter(JOB_ID, exchange, IGNORE_BODY, NOT_OPTIONAL);
-        bulkClient.getQueryJobResults(jobId, determineHeaders(exchange),
+        final Map<String, String> queryParams = new HashMap<>();
+        queryParams.put(LOCATOR, getParameter(LOCATOR, exchange, IGNORE_BODY, IS_OPTIONAL));
+        queryParams.put(MAX_RECORDS, getParameter(MAX_RECORDS, exchange, IGNORE_BODY, IS_OPTIONAL));
+        bulkClient.getQueryJobResults(jobId, queryParams, determineHeaders(exchange),
                 new StreamResponseCallback() {
                     @Override
                     public void onResponse(InputStream inputStream, Map<String, String> headers, SalesforceException ex) {

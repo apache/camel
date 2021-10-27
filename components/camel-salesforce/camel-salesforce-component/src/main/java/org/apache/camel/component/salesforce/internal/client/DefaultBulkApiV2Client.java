@@ -37,6 +37,7 @@ import org.apache.camel.component.salesforce.api.dto.bulkv2.QueryJob;
 import org.apache.camel.component.salesforce.api.dto.bulkv2.QueryJobs;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.client.api.Request;
 import org.eclipse.jetty.client.api.Response;
 import org.eclipse.jetty.client.util.BytesContentProvider;
@@ -200,8 +201,16 @@ public class DefaultBulkApiV2Client extends AbstractClientBase implements BulkAp
     }
 
     @Override
-    public void getQueryJobResults(String jobId, Map<String, List<String>> headers, StreamResponseCallback callback) {
-        final Request request = getRequest(HttpMethod.GET, queryJobUrl(jobId) + "/results", headers);
+    public void getQueryJobResults(String jobId, Map<String, String> queryParams, Map<String, List<String>> headers, StreamResponseCallback callback) {
+        String url = queryJobUrl(jobId) + "/results?"
+          + queryParams
+          .entrySet()
+          .stream()
+          .filter(queryParam -> StringUtils.isNotBlank(queryParam.getValue()))
+          .map(queryParam -> queryParam.getKey() + "=" + queryParam.getValue())
+          .reduce((queryParam1, queryParam2) -> queryParam1 + "&" + queryParam2)
+          .orElse("");
+        final Request request = getRequest(HttpMethod.GET, url, headers);
         doRequestWithCsvResponse(callback, request);
     }
 

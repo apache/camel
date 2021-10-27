@@ -79,6 +79,8 @@ public class SalesforceEndpointConfig implements Cloneable {
     public static final String PK_CHUNKING_CHUNK_SIZE = "pkChunkingChunkSize";
     public static final String PK_CHUNKING_PARENT = "pkChunkingParent";
     public static final String PK_CHUNKING_START_ROW = "pkChunkingStartRow";
+    public static final String LOCATOR = "locator";
+    public static final String MAX_RECORDS = "maxRecords";
 
     // parameters for Analytics API
     public static final String REPORT_ID = "reportId";
