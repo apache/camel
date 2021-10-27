@@ -316,9 +316,10 @@ public interface VmEndpointBuilderFactory {
             return this;
         }
         /**
-         * The timeout used when polling. When a timeout occurs, the consumer
-         * can check whether it is allowed to continue running. Setting a lower
-         * value allows the consumer to react more quickly upon shutdown.
+         * The timeout (in milliseconds) used when polling. When a timeout
+         * occurs, the consumer can check whether it is allowed to continue
+         * running. Setting a lower value allows the consumer to react more
+         * quickly upon shutdown.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -333,9 +334,10 @@ public interface VmEndpointBuilderFactory {
             return this;
         }
         /**
-         * The timeout used when polling. When a timeout occurs, the consumer
-         * can check whether it is allowed to continue running. Setting a lower
-         * value allows the consumer to react more quickly upon shutdown.
+         * The timeout (in milliseconds) used when polling. When a timeout
+         * occurs, the consumer can check whether it is allowed to continue
+         * running. Setting a lower value allows the consumer to react more
+         * quickly upon shutdown.
          * 
          * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -668,7 +670,7 @@ public interface VmEndpointBuilderFactory {
             return this;
         }
         /**
-         * offerTimeout (in milliseconds) can be added to the block case when
+         * Offer timeout (in milliseconds) can be added to the block case when
          * queue is full. You can disable timeout by using 0 or a negative
          * value.
          * 
@@ -684,7 +686,7 @@ public interface VmEndpointBuilderFactory {
             return this;
         }
         /**
-         * offerTimeout (in milliseconds) can be added to the block case when
+         * Offer timeout (in milliseconds) can be added to the block case when
          * queue is full. You can disable timeout by using 0 or a negative
          * value.
          * 
