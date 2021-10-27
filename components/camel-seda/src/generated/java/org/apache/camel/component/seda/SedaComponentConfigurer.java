@@ -33,6 +33,8 @@ public class SedaComponentConfigurer extends PropertyConfigurerSupport implement
         case "defaultDiscardWhenFull": target.setDefaultDiscardWhenFull(property(camelContext, boolean.class, value)); return true;
         case "defaultoffertimeout":
         case "defaultOfferTimeout": target.setDefaultOfferTimeout(property(camelContext, long.class, value)); return true;
+        case "defaultpolltimeout":
+        case "defaultPollTimeout": target.setDefaultPollTimeout(property(camelContext, int.class, value)); return true;
         case "defaultqueuefactory":
         case "defaultQueueFactory": target.setDefaultQueueFactory(property(camelContext, org.apache.camel.component.seda.BlockingQueueFactory.class, value)); return true;
         case "lazystartproducer":
@@ -58,6 +60,8 @@ public class SedaComponentConfigurer extends PropertyConfigurerSupport implement
         case "defaultDiscardWhenFull": return boolean.class;
         case "defaultoffertimeout":
         case "defaultOfferTimeout": return long.class;
+        case "defaultpolltimeout":
+        case "defaultPollTimeout": return int.class;
         case "defaultqueuefactory":
         case "defaultQueueFactory": return org.apache.camel.component.seda.BlockingQueueFactory.class;
         case "lazystartproducer":
@@ -84,6 +88,8 @@ public class SedaComponentConfigurer extends PropertyConfigurerSupport implement
         case "defaultDiscardWhenFull": return target.isDefaultDiscardWhenFull();
         case "defaultoffertimeout":
         case "defaultOfferTimeout": return target.getDefaultOfferTimeout();
+        case "defaultpolltimeout":
+        case "defaultPollTimeout": return target.getDefaultPollTimeout();
         case "defaultqueuefactory":
         case "defaultQueueFactory": return target.getDefaultQueueFactory();
         case "lazystartproducer":
