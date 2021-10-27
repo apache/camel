@@ -51,33 +51,19 @@ bootstrap process, but are of importance for event notifiers to be able to react
 
 === Using custom Debugger
 
-Previously when setting a custom org.apache.camel.spi.Debugger, then Camel would automatically
+Previously when setting a custom `org.apache.camel.spi.Debugger`, then Camel would automatically
 enable debug mode. Now debugging must be enabled by setting `setDebugging(true)` on `CamelContext`.
 
-=== Using transactions
+=== Using Transactions
 
 The routing engine has been changed to route exchanges in a different order
 when using transactions (`.transacted()`). When an `Exchange` is continued
 routed a task is scheduled to the `ReactiveExecutor`. This fixed issues
 with could lead to `StackOverflowException`.
 
-=== camel-hazelcast-starter
+=== camel-couchdb
 
-The `camel-hazelcast-starter` for Spring Boot no longer has _customer_ auto configuration options for all its components
-
-eg the following configuration keys have been removed
-
-- ...customizer.hazelcast-instance.enabled
-- ...customizer.hazelcast-instance.override
-
-Any Camel component can be customized by using the `org.apache.camel.spi.ComponentCustomizer` SPI.
-
-=== camel-openapi-java
-
-When using Rest DSL and the `restConfiguration` has a `contextPath` configured, then this value
-is used as leading base path for all API services that are in the generated api-docs.
-
-This is i.e. needed when using `camel-servlet` which runs under a specific `context-path`.
+The `since` configuration was replaced by the `resumeStrategy`. Integrations can now manage the last update sequence for tracking the changes directly. Check the samples section on the component documentation page for a sample.
 
 === camel-file
 
@@ -89,6 +75,17 @@ In order to reduce memory pressure, the component was modified to avoid using Li
 === camel-ftp
 
 The `FtpConsumer`, `FtpOperations`, `SftConsumer` and `SftpOperations` classes were modified to comply with the API changes on the `camel-file` component.
+
+=== camel-hazelcast-starter
+
+The `camel-hazelcast-starter` for Spring Boot no longer has _customer_ auto configuration options for all its components
+
+eg the following configuration keys have been removed
+
+- `...customizer.hazelcast-instance.enabled`
+- `...customizer.hazelcast-instance.override`
+
+Any Camel component can be customized by using the `org.apache.camel.spi.ComponentCustomizer` SPI.
 
 === camel-jsch
 
@@ -109,9 +106,11 @@ their applications when upgrading to ensure this continues to work.
 
 === camel-openapi-java / camel-swagger-java
 
+When using Rest DSL and the `restConfiguration` has a `contextPath` configured, then this value
+is used as leading base path for all API services that are in the generated api-docs.
+
+This is i.e. needed when using `camel-servlet` which runs under a specific `context-path`.
+
 Support for rendering api docs by discovering other CamelContext via JMX in the same JVM has been removed.
 Rendering of api docs is now only supported for the same CamelContext.
 
-=== camel-couchdb
-
-The `since` configuration was replaced by the `resumeStrategy`. Integrations can now manage the last update sequence for tracking the changes directly. Check the samples section on the component documentation page for a sample.
