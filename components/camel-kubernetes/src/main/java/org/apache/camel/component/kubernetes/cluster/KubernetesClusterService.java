@@ -20,6 +20,7 @@ import java.net.InetAddress;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.DeferredContextBinding;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.cluster.CamelPreemptiveClusterService;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
@@ -30,6 +31,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * A Kubernetes based cluster service leveraging Kubernetes optimistic locks on resources (specifically ConfigMaps).
  */
+@DeferredContextBinding
 public class KubernetesClusterService extends AbstractCamelClusterService<KubernetesClusterView>
         implements CamelPreemptiveClusterService {
 
