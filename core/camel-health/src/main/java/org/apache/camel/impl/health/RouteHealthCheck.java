@@ -22,8 +22,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
-import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.health.HealthCheckAware;
+import org.apache.camel.health.HealthCheckResultBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

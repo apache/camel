@@ -16,6 +16,12 @@
  */
 package org.apache.camel.support;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.FailedToCreateConsumerException;
@@ -32,12 +38,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.PropertiesHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * A useful base class for any consumer which is polling based
@@ -439,17 +439,16 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
     // -------------------------------------------------------------------------
 
     /**
-     * Gets the error counter. If the counter is > 0 that means the consumer
-     * failed polling for the last N number of times. When the consumer
-     * is successfully again, then the error counter resets to zero.
+     * Gets the error counter. If the counter is > 0 that means the consumer failed polling for the last N number of
+     * times. When the consumer is successfully again, then the error counter resets to zero.
      */
     protected long getErrorCounter() {
         return errorCounter;
     }
 
     /**
-     * Gets the last caused error (exception) for the last poll that failed.
-     * When the consumer is successfully again, then the error resets to null.
+     * Gets the last caused error (exception) for the last poll that failed. When the consumer is successfully again,
+     * then the error resets to null.
      */
     protected Throwable getLastError() {
         return lastError;

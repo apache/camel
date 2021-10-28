@@ -1,11 +1,11 @@
 package org.apache.camel.support;
 
+import java.util.Map;
+
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckConfiguration;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.util.URISupport;
-
-import java.util.Map;
 
 public class ScheduledPollConsumerHealthCheck implements HealthCheck {
 
