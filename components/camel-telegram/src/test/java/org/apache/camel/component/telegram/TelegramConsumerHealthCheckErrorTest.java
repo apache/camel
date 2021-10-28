@@ -65,6 +65,19 @@ public class TelegramConsumerHealthCheckErrorTest extends TelegramTestSupport {
         // wait until HC is DOWN
         Awaitility.waitAtMost(5, TimeUnit.SECONDS).until(
                 () -> repo.stream().anyMatch(h -> h.call().getState().equals(HealthCheck.State.DOWN)));
+
+        // if we grab the health check by id, we can also check it afterwards
+        HealthCheck hc = hcr.getCheck("telegram").get();
+        HealthCheck.Result rc = hc.call();
+
+        // and get the detailed error message (and exception)
+        Assertions.assertEquals(HealthCheck.State.DOWN, rc.getState());
+        String msg = rc.getMessage().get();
+        long count = (long) rc.getDetails().get("failure.error.count");
+        Assertions.assertEquals("Consumer failed polling " + count + " times route: telegram (telegram://bots)", msg);
+
+        Throwable e = rc.getError().get();
+        Assertions.assertTrue(e.getMessage().contains("401 Unauthorized"));
     }
 
     @Override
