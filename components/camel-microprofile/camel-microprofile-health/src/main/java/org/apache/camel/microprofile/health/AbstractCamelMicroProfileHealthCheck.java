@@ -17,7 +17,9 @@
 package org.apache.camel.microprofile.health;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.inject.Inject;
 
@@ -30,7 +32,6 @@ import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.impl.health.AbstractHealthCheck;
 import org.eclipse.microprofile.health.HealthCheck;
 import org.eclipse.microprofile.health.HealthCheckResponse;
-import org.eclipse.microprofile.health.HealthCheckResponseBuilder;
 
 /**
  * Invokes Camel health checks and adds their results into the HealthCheckResponseBuilder
@@ -44,9 +45,8 @@ public abstract class AbstractCamelMicroProfileHealthCheck implements HealthChec
 
     @Override
     public HealthCheckResponse call() {
-        final HealthCheckResponseBuilder builder = HealthCheckResponse.builder();
-        builder.name(getHealthCheckName());
-        builder.up();
+        Map<String, Object> data = new HashMap<>();
+        HealthCheckResponse.Status status = HealthCheckResponse.Status.UP;
 
         if (camelContext != null) {
             Collection<Result> results = HealthCheckHelper.invoke(camelContext,
@@ -62,25 +62,30 @@ public abstract class AbstractCamelMicroProfileHealthCheck implements HealthChec
                 }
 
                 if (enabled) {
-                    builder.withData(result.getCheck().getId(), result.getState().name());
+                    result.getError().ifPresent(
+                            error -> data.put(error.getMessage(), error));
+
+                    data.putAll(details);
+
+                    data.put(result.getCheck().getId(), result.getState().name());
                     if (result.getState() == State.DOWN) {
-                        builder.down();
+                        status = HealthCheckResponse.Status.DOWN;
                     }
                 }
             }
         }
 
-        return builder.build();
-    }
-
-    @Override
-    public void setCamelContext(CamelContext camelContext) {
-        this.camelContext = camelContext;
+        return new HealthCheckResponse(getHealthCheckName(), status, data.isEmpty() ? Optional.empty() : Optional.of(data));
     }
 
     @Override
     public CamelContext getCamelContext() {
         return this.camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
     }
 
     /**
@@ -99,7 +104,7 @@ public abstract class AbstractCamelMicroProfileHealthCheck implements HealthChec
 
     /**
      * Gets the name of the health check which will be used as a heading for the associated checks.
-     * 
+     *
      * @return the health check name
      */
     abstract String getHealthCheckName();
