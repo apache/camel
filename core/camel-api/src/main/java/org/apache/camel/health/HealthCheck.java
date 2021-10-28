@@ -41,7 +41,7 @@ public interface HealthCheck extends HasGroup, HasId, Ordered {
     }
 
     /**
-     * Return meta data associated with this {@link HealthCheck}.
+     * Return metadata associated with this {@link HealthCheck}.
      */
     default Map<String, Object> getMetaData() {
         return Collections.emptyMap();
@@ -86,7 +86,7 @@ public interface HealthCheck extends HasGroup, HasId, Ordered {
     Result call(Map<String, Object> options);
 
     /**
-     * Response to an health check invocation.
+     * Response to a health check invocation.
      */
     interface Result {
 
@@ -111,7 +111,7 @@ public interface HealthCheck extends HasGroup, HasId, Ordered {
         Optional<Throwable> getError();
 
         /**
-         * An key/value combination of details.
+         * A key/value combination of details.
          *
          * @return a non null details map
          */
