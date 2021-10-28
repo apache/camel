@@ -29,6 +29,16 @@ import org.apache.camel.spi.HasId;
  */
 public interface HealthCheck extends HasGroup, HasId, Ordered {
 
+    String CHECK_ID = "check.id";
+    String CHECK_GROUP = "check.group";
+    String CHECK_ENABLED = "check.enabled";
+    String INVOCATION_COUNT = "invocation.count";
+    String INVOCATION_TIME = "invocation.time";
+    String INVOCATION_ATTEMPT_TIME = "invocation.attempt.time";
+    String FAILURE_COUNT = "failure.count";
+    String FAILURE_ENDPOINT_URI = "failure.endpoint.uri";
+    String FAILURE_ERROR_COUNT = "failure.error.count";
+
     enum State {
         UP,
         DOWN,

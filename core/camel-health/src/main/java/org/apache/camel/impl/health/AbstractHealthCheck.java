@@ -35,13 +35,6 @@ import org.slf4j.LoggerFactory;
  * Base implementation for {@link HealthCheck}.
  */
 public abstract class AbstractHealthCheck implements HealthCheck {
-    public static final String CHECK_ID = "check.id";
-    public static final String CHECK_GROUP = "check.group";
-    public static final String CHECK_ENABLED = "check.enabled";
-    public static final String INVOCATION_COUNT = "invocation.count";
-    public static final String INVOCATION_TIME = "invocation.time";
-    public static final String INVOCATION_ATTEMPT_TIME = "invocation.attempt.time";
-    public static final String FAILURE_COUNT = "failure.count";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractHealthCheck.class);
 

@@ -73,7 +73,7 @@ public class TelegramConsumerHealthCheckErrorTest extends TelegramTestSupport {
         // and get the detailed error message (and exception)
         Assertions.assertEquals(HealthCheck.State.DOWN, rc.getState());
         String msg = rc.getMessage().get();
-        long count = (long) rc.getDetails().get("failure.error.count");
+        long count = (long) rc.getDetails().get(HealthCheck.FAILURE_ERROR_COUNT);
         Assertions.assertEquals("Consumer failed polling " + count + " times route: telegram (telegram://bots)", msg);
 
         Throwable e = rc.getError().get();

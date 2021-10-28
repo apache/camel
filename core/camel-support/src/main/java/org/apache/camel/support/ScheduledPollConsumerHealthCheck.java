@@ -28,9 +28,6 @@ import org.apache.camel.util.URISupport;
  */
 public class ScheduledPollConsumerHealthCheck implements HealthCheck {
 
-    public static final String ENDPOINT_URI = "endpoint.uri";
-    public static final String ERROR_COUNT = "failure.error.count";
-
     private final ScheduledPollConsumer consumer;
     private final String id;
     private final String sanitizedUri; // used for error message which should mask sensitive details
@@ -49,7 +46,7 @@ public class ScheduledPollConsumerHealthCheck implements HealthCheck {
     @Override
     public Result call(Map<String, Object> options) {
         final HealthCheckResultBuilder builder = HealthCheckResultBuilder.on(this);
-        builder.detail(ENDPOINT_URI, consumer.getEndpoint().getEndpointUri());
+        builder.detail(FAILURE_ENDPOINT_URI, consumer.getEndpoint().getEndpointUri());
 
         long ec = consumer.getErrorCounter();
         Throwable cause = consumer.getLastError();
@@ -59,7 +56,7 @@ public class ScheduledPollConsumerHealthCheck implements HealthCheck {
             builder.up();
         } else {
             builder.down();
-            builder.detail(ERROR_COUNT, ec);
+            builder.detail(FAILURE_ERROR_COUNT, ec);
             String rid = consumer.getRouteId();
             String msg = "Consumer failed polling %s times route: %s (%s)";
             builder.message(String.format(msg, ec, rid, sanitizedUri));
