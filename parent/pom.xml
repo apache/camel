@@ -42,6 +42,7 @@
         <camel.surefire.reuseForks>true</camel.surefire.reuseForks>
         <camel.surefire.parallel>false</camel.surefire.parallel>
         <camel.surefire.parallel.factor>1</camel.surefire.parallel.factor>
+        <camel.surefire.parallel.strategy>dynamic</camel.surefire.parallel.strategy>
         <cxf.xjc.jvmArgs/>
         <trimStackTrace>false</trimStackTrace>
         <checkstyle.failOnViolation>false</checkstyle.failOnViolation>
@@ -344,7 +345,7 @@
         <jt400-version>10.7</jt400-version>
         <junit-toolbox-version>2.3</junit-toolbox-version>
         <junit-version>4.13.1</junit-version>
-        <junit-jupiter-version>5.7.1</junit-jupiter-version>
+        <junit-jupiter-version>5.8.1</junit-jupiter-version>
         <jxmpp-version>0.6.4</jxmpp-version>
         <jython-version>2.5.3</jython-version>
         <jython-standalone-version>2.5.3</jython-standalone-version>
@@ -4616,7 +4617,7 @@
                             junit.jupiter.execution.parallel.enabled = ${camel.surefire.parallel}
                             junit.jupiter.execution.parallel.mode.default = same_thread
                             junit.jupiter.execution.parallel.mode.classes.default = concurrent
-                            junit.jupiter.execution.parallel.config.strategy = dynamic
+                            junit.jupiter.execution.parallel.config.strategy = ${camel.surefire.parallel.strategy}
                             junit.jupiter.execution.parallel.config.dynamic.factor = ${camel.surefire.parallel.factor}
                         </configurationParameters>
                     </properties>
