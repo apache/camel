@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.telegram;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -24,22 +25,43 @@ import org.apache.camel.component.telegram.model.UpdateResult;
 import org.apache.camel.component.telegram.util.TelegramMockRoutes;
 import org.apache.camel.component.telegram.util.TelegramTestSupport;
 import org.apache.camel.component.telegram.util.TelegramTestUtil;
+import org.apache.camel.health.HealthCheck;
+import org.apache.camel.health.HealthCheckRegistry;
+import org.apache.camel.health.HealthCheckRepository;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-/**
- * Tests a simple conversation.
- */
-public class TelegramConsumerSingleTest extends TelegramTestSupport {
+public class TelegramConsumerHealthCheckOkTest extends TelegramTestSupport {
 
     @EndpointInject("mock:telegram")
     private MockEndpoint endpoint;
 
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+
+        // enabling routes health check is a bit cumbersome via low-level Java code
+        HealthCheckRegistry hcr = context.getExtension(HealthCheckRegistry.class);
+        HealthCheckRepository repo = hcr.getRepository("routes").orElse((HealthCheckRepository) hcr.resolveById("routes"));
+        repo.setEnabled(true);
+        hcr.register(repo);
+
+        return context;
+    }
+
     @Test
     public void testReceptionOfTwoMessages() throws Exception {
+        HealthCheckRegistry hcr = context.getExtension(HealthCheckRegistry.class);
+        HealthCheckRepository repo = hcr.getRepository("routes").get();
+
+        repo.stream().forEach(h -> Assertions.assertEquals(HealthCheck.State.UP, h.call().getState()));
+
         endpoint.expectedMinimumMessageCount(2);
         endpoint.expectedBodiesReceived("message1", "message2");
 
         endpoint.assertIsSatisfied(5000);
+
+        repo.stream().forEach(h -> Assertions.assertEquals(HealthCheck.State.UP, h.call().getState()));
     }
 
     @Override
