@@ -24,8 +24,7 @@ import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.util.URISupport;
 
 /**
- * {@link HealthCheck} that uses the last polling state from {@link ScheduledPollConsumer}
- * when reporting the health.
+ * {@link HealthCheck} that uses the last polling state from {@link ScheduledPollConsumer} when reporting the health.
  */
 public class ScheduledPollConsumerHealthCheck implements HealthCheck {
 
