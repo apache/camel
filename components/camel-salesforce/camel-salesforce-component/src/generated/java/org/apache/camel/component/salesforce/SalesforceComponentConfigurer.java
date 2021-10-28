@@ -112,6 +112,7 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "limit": getOrCreateConfig(target).setLimit(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "locator": getOrCreateConfig(target).setLocator(property(camelContext, java.lang.String.class, value)); return true;
         case "loginconfig":
         case "loginConfig": target.setLoginConfig(property(camelContext, org.apache.camel.component.salesforce.SalesforceLoginConfig.class, value)); return true;
         case "loginurl":
@@ -120,6 +121,8 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "longPollingTransportProperties": target.setLongPollingTransportProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "maxbackoff":
         case "maxBackoff": getOrCreateConfig(target).setMaxBackoff(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "maxrecords":
+        case "maxRecords": getOrCreateConfig(target).setMaxRecords(property(camelContext, java.lang.Integer.class, value)); return true;
         case "notfoundbehaviour":
         case "notFoundBehaviour": getOrCreateConfig(target).setNotFoundBehaviour(property(camelContext, org.apache.camel.component.salesforce.NotFoundBehaviour.class, value)); return true;
         case "notifyforfields":
@@ -287,6 +290,7 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "limit": return java.lang.Integer.class;
+        case "locator": return java.lang.String.class;
         case "loginconfig":
         case "loginConfig": return org.apache.camel.component.salesforce.SalesforceLoginConfig.class;
         case "loginurl":
@@ -295,6 +299,8 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "longPollingTransportProperties": return java.util.Map.class;
         case "maxbackoff":
         case "maxBackoff": return long.class;
+        case "maxrecords":
+        case "maxRecords": return java.lang.Integer.class;
         case "notfoundbehaviour":
         case "notFoundBehaviour": return org.apache.camel.component.salesforce.NotFoundBehaviour.class;
         case "notifyforfields":
@@ -463,6 +469,7 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "limit": return getOrCreateConfig(target).getLimit();
+        case "locator": return getOrCreateConfig(target).getLocator();
         case "loginconfig":
         case "loginConfig": return target.getLoginConfig();
         case "loginurl":
@@ -471,6 +478,8 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "longPollingTransportProperties": return target.getLongPollingTransportProperties();
         case "maxbackoff":
         case "maxBackoff": return getOrCreateConfig(target).getMaxBackoff();
+        case "maxrecords":
+        case "maxRecords": return getOrCreateConfig(target).getMaxRecords();
         case "notfoundbehaviour":
         case "notFoundBehaviour": return getOrCreateConfig(target).getNotFoundBehaviour();
         case "notifyforfields":

@@ -404,6 +404,21 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
+         * Locator provided by salesforce Bulk 2.0 API for use in getting
+         * results for a Query job.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param locator the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointConsumerBuilder locator(String locator) {
+            doSetProperty("locator", locator);
+            return this;
+        }
+        /**
          * Maximum backoff interval for Streaming connection restart attempts
          * for failures beyond CometD auto-reconnect.
          * 
@@ -433,6 +448,49 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointConsumerBuilder maxBackoff(String maxBackoff) {
             doSetProperty("maxBackoff", maxBackoff);
+            return this;
+        }
+        /**
+         * The maximum number of records to retrieve per set of results for a
+         * Bulk 2.0 Query. The request is still subject to the size limits. If
+         * you are working with a very large number of query results, you may
+         * experience a timeout before receiving all the data from Salesforce.
+         * To prevent a timeout, specify the maximum number of records your
+         * client is expecting to receive in the maxRecords parameter. This
+         * splits the results into smaller sets with this value as the maximum
+         * size.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param maxRecords the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointConsumerBuilder maxRecords(Integer maxRecords) {
+            doSetProperty("maxRecords", maxRecords);
+            return this;
+        }
+        /**
+         * The maximum number of records to retrieve per set of results for a
+         * Bulk 2.0 Query. The request is still subject to the size limits. If
+         * you are working with a very large number of query results, you may
+         * experience a timeout before receiving all the data from Salesforce.
+         * To prevent a timeout, specify the maximum number of records your
+         * client is expecting to receive in the maxRecords parameter. This
+         * splits the results into smaller sets with this value as the maximum
+         * size.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param maxRecords the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointConsumerBuilder maxRecords(String maxRecords) {
+            doSetProperty("maxRecords", maxRecords);
             return this;
         }
         /**
@@ -1610,6 +1668,21 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
+         * Locator provided by salesforce Bulk 2.0 API for use in getting
+         * results for a Query job.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param locator the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointProducerBuilder locator(String locator) {
+            doSetProperty("locator", locator);
+            return this;
+        }
+        /**
          * Maximum backoff interval for Streaming connection restart attempts
          * for failures beyond CometD auto-reconnect.
          * 
@@ -1639,6 +1712,49 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointProducerBuilder maxBackoff(String maxBackoff) {
             doSetProperty("maxBackoff", maxBackoff);
+            return this;
+        }
+        /**
+         * The maximum number of records to retrieve per set of results for a
+         * Bulk 2.0 Query. The request is still subject to the size limits. If
+         * you are working with a very large number of query results, you may
+         * experience a timeout before receiving all the data from Salesforce.
+         * To prevent a timeout, specify the maximum number of records your
+         * client is expecting to receive in the maxRecords parameter. This
+         * splits the results into smaller sets with this value as the maximum
+         * size.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param maxRecords the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointProducerBuilder maxRecords(Integer maxRecords) {
+            doSetProperty("maxRecords", maxRecords);
+            return this;
+        }
+        /**
+         * The maximum number of records to retrieve per set of results for a
+         * Bulk 2.0 Query. The request is still subject to the size limits. If
+         * you are working with a very large number of query results, you may
+         * experience a timeout before receiving all the data from Salesforce.
+         * To prevent a timeout, specify the maximum number of records your
+         * client is expecting to receive in the maxRecords parameter. This
+         * splits the results into smaller sets with this value as the maximum
+         * size.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param maxRecords the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointProducerBuilder maxRecords(String maxRecords) {
+            doSetProperty("maxRecords", maxRecords);
             return this;
         }
         /**
@@ -2839,6 +2955,21 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
+         * Locator provided by salesforce Bulk 2.0 API for use in getting
+         * results for a Query job.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param locator the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointBuilder locator(String locator) {
+            doSetProperty("locator", locator);
+            return this;
+        }
+        /**
          * Maximum backoff interval for Streaming connection restart attempts
          * for failures beyond CometD auto-reconnect.
          * 
@@ -2868,6 +2999,49 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointBuilder maxBackoff(String maxBackoff) {
             doSetProperty("maxBackoff", maxBackoff);
+            return this;
+        }
+        /**
+         * The maximum number of records to retrieve per set of results for a
+         * Bulk 2.0 Query. The request is still subject to the size limits. If
+         * you are working with a very large number of query results, you may
+         * experience a timeout before receiving all the data from Salesforce.
+         * To prevent a timeout, specify the maximum number of records your
+         * client is expecting to receive in the maxRecords parameter. This
+         * splits the results into smaller sets with this value as the maximum
+         * size.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param maxRecords the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointBuilder maxRecords(Integer maxRecords) {
+            doSetProperty("maxRecords", maxRecords);
+            return this;
+        }
+        /**
+         * The maximum number of records to retrieve per set of results for a
+         * Bulk 2.0 Query. The request is still subject to the size limits. If
+         * you are working with a very large number of query results, you may
+         * experience a timeout before receiving all the data from Salesforce.
+         * To prevent a timeout, specify the maximum number of records your
+         * client is expecting to receive in the maxRecords parameter. This
+         * splits the results into smaller sets with this value as the maximum
+         * size.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param maxRecords the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointBuilder maxRecords(String maxRecords) {
+            doSetProperty("maxRecords", maxRecords);
             return this;
         }
         /**

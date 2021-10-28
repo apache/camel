@@ -75,6 +75,8 @@ public class SalesforceEndpointConfig implements Cloneable {
     public static final String BATCH_ID = "batchId";
     public static final String RESULT_ID = "resultId";
     public static final String QUERY_LOCATOR = "queryLocator";
+    public static final String LOCATOR = "locator";
+    public static final String MAX_RECORDS = "maxRecords";
     public static final String PK_CHUNKING = "pkChunking";
     public static final String PK_CHUNKING_CHUNK_SIZE = "pkChunkingChunkSize";
     public static final String PK_CHUNKING_PARENT = "pkChunkingParent";
@@ -160,6 +162,10 @@ public class SalesforceEndpointConfig implements Cloneable {
     private String resultId;
     @UriParam
     private String queryLocator;
+    @UriParam
+    private String locator;
+    @UriParam(javaType = "java.lang.Integer")
+    private Integer maxRecords;
     @UriParam
     private Boolean pkChunking;
     @UriParam
@@ -507,6 +513,32 @@ public class SalesforceEndpointConfig implements Cloneable {
      */
     public void setQueryLocator(String queryLocator) {
         this.queryLocator = queryLocator;
+    }
+
+    public String getLocator() {
+        return locator;
+    }
+
+    /**
+     * Locator provided by salesforce Bulk 2.0 API for use in getting results for a Query job.
+     */
+    public void setLocator(String locator) {
+        this.locator = locator;
+    }
+
+    public Integer getMaxRecords() {
+        return maxRecords;
+    }
+
+    /**
+     * The maximum number of records to retrieve per set of results for a Bulk 2.0 Query. The request is still subject
+     * to the size limits. If you are working with a very large number of query results, you may experience a timeout
+     * before receiving all the data from Salesforce. To prevent a timeout, specify the maximum number of records your
+     * client is expecting to receive in the maxRecords parameter. This splits the results into smaller sets with this
+     * value as the maximum size.
+     */
+    public void setMaxRecords(Integer maxRecords) {
+        this.maxRecords = maxRecords;
     }
 
     public Boolean getPkChunking() {
