@@ -16,8 +16,6 @@
  */
 package org.apache.camel.health;
 
-import org.apache.camel.health.HealthCheck;
-
 public interface HealthCheckAware {
 
     HealthCheck getHealthCheck();
