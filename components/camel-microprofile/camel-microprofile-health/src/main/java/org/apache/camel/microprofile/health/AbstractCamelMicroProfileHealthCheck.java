@@ -16,10 +16,11 @@
  */
 package org.apache.camel.microprofile.health;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import javax.inject.Inject;
 
@@ -32,6 +33,7 @@ import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.impl.health.AbstractHealthCheck;
 import org.eclipse.microprofile.health.HealthCheck;
 import org.eclipse.microprofile.health.HealthCheckResponse;
+import org.eclipse.microprofile.health.HealthCheckResponseBuilder;
 
 /**
  * Invokes Camel health checks and adds their results into the HealthCheckResponseBuilder
@@ -45,8 +47,9 @@ public abstract class AbstractCamelMicroProfileHealthCheck implements HealthChec
 
     @Override
     public HealthCheckResponse call() {
-        Map<String, Object> data = new HashMap<>();
-        HealthCheckResponse.Status status = HealthCheckResponse.Status.UP;
+        final HealthCheckResponseBuilder builder = HealthCheckResponse.builder();
+        builder.name(getHealthCheckName());
+        builder.up();
 
         if (camelContext != null) {
             Collection<Result> results = HealthCheckHelper.invoke(camelContext,
@@ -62,20 +65,28 @@ public abstract class AbstractCamelMicroProfileHealthCheck implements HealthChec
                 }
 
                 if (enabled) {
-                    result.getError().ifPresent(
-                            error -> data.put(error.getMessage(), error));
+                    details.forEach((key, value) -> builder.withData(key, value.toString()));
 
-                    data.putAll(details);
+                    result.getError().ifPresent(error -> {
+                        builder.withData("error.message", error.getMessage());
+                        try (final StringWriter stackTraceWriter = new StringWriter();
+                             final PrintWriter pw = new PrintWriter(stackTraceWriter, true)) {
+                            error.printStackTrace(pw);
+                            builder.withData("error.stacktrace", stackTraceWriter.getBuffer().toString());
+                        } catch (IOException exception) {
+                            // ignore
+                        }
+                    });
 
-                    data.put(result.getCheck().getId(), result.getState().name());
+                    builder.withData(result.getCheck().getId(), result.getState().name());
                     if (result.getState() == State.DOWN) {
-                        status = HealthCheckResponse.Status.DOWN;
+                        builder.down();
                     }
                 }
             }
         }
 
-        return new HealthCheckResponse(getHealthCheckName(), status, data.isEmpty() ? Optional.empty() : Optional.of(data));
+        return builder.build();
     }
 
     @Override
