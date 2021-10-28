@@ -26,6 +26,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.telegram.util.TelegramMockRoutes;
 import org.apache.camel.component.telegram.util.TelegramTestSupport;
 import org.apache.camel.health.HealthCheck;
+import org.apache.camel.health.HealthCheckConfiguration;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
 import org.awaitility.Awaitility;
@@ -44,6 +45,8 @@ public class TelegramConsumerHealthCheckErrorTest extends TelegramTestSupport {
         // enabling routes health check is a bit cumbersome via low-level Java code
         HealthCheckRegistry hcr = context.getExtension(HealthCheckRegistry.class);
         HealthCheckRepository repo = hcr.getRepository("routes").orElse((HealthCheckRepository) hcr.resolveById("routes"));
+        // add some slack so the check should fail 5 times in a row to be DOWN
+        repo.addConfiguration("telegram", HealthCheckConfiguration.builder().failureThreshold(5).build());
         repo.setEnabled(true);
         hcr.register(repo);
 
@@ -71,7 +74,7 @@ public class TelegramConsumerHealthCheckErrorTest extends TelegramTestSupport {
                 new RouteBuilder() {
                     @Override
                     public void configure() throws Exception {
-                        from("telegram:bots?authorizationToken=mock-token")
+                        from("telegram:bots?authorizationToken=mock-token").routeId("telegram")
                                 .convertBodyTo(String.class)
                                 .to("mock:telegram");
                     }
