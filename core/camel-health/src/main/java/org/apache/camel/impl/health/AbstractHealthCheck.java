@@ -109,11 +109,13 @@ public abstract class AbstractHealthCheck implements HealthCheck {
             final ZonedDateTime now = ZonedDateTime.now();
             final boolean enabled = conf.isEnabled();
             final long interval = conf.getInterval();
-            final int threshold = conf.getFailureThreshold();
+            final int failureThreshold = conf.getFailureThreshold();
+            final int successThreshold = conf.getSuccessThreshold();
 
             // Extract relevant information from meta data.
             int invocationCount = (Integer) meta.getOrDefault(INVOCATION_COUNT, 0);
             int failureCount = (Integer) meta.getOrDefault(FAILURE_COUNT, 0);
+            int successCount = (Integer) meta.getOrDefault(SUCCESS_COUNT, 0);
 
             String invocationTime = now.format(DateTimeFormatter.ISO_ZONED_DATE_TIME);
             boolean call = true;
@@ -156,33 +158,54 @@ public abstract class AbstractHealthCheck implements HealthCheck {
                 ObjectHelper.notNull(builder.state(), "Response State");
 
                 if (builder.state() == State.DOWN) {
+                    // reset success since it failed
+                    successCount = 0;
+
                     // If the service is un-healthy but the number of time it
                     // has been consecutively reported in this state is less
                     // than the threshold configured, mark it as UP. This is
                     // used to avoid false positive in case of glitches.
-                    if (failureCount++ < threshold) {
+                    if (failureCount++ < failureThreshold) {
                         LOGGER.debug(
                                 "Health-check {}/{} has status DOWN but failure count ({}) is less than configured threshold ({})",
                                 getGroup(),
                                 getId(),
                                 failureCount,
-                                threshold);
+                                failureThreshold);
 
                         builder.up();
                     }
-                } else {
+                } else if (builder.state() == State.UP) {
+                    // reset failure since it ok
                     failureCount = 0;
+
+                    // If the service is healthy but the number of time it
+                    // has been consecutively reported in this state is less
+                    // than the threshold configured, mark it as DOWN. This is
+                    // used to avoid false positive in case of glitches.
+                    if (successCount++ < successThreshold) {
+                        LOGGER.debug(
+                                "Health-check {}/{} has status UP but success count ({}) is less than configured threshold ({})",
+                                getGroup(),
+                                getId(),
+                                successCount,
+                                successThreshold);
+
+                        builder.down();
+                    }
                 }
 
                 meta.put(INVOCATION_TIME, invocationTime);
-                meta.put(FAILURE_COUNT, failureCount);
                 meta.put(INVOCATION_COUNT, ++invocationCount);
+                meta.put(FAILURE_COUNT, failureCount);
+                meta.put(SUCCESS_COUNT, successCount);
 
                 // Copy some of the meta-data bits to the response attributes so the
                 // response caches the health-check state at the time of the invocation.
                 builder.detail(INVOCATION_TIME, meta.get(INVOCATION_TIME));
                 builder.detail(INVOCATION_COUNT, meta.get(INVOCATION_COUNT));
                 builder.detail(FAILURE_COUNT, meta.get(FAILURE_COUNT));
+                builder.detail(SUCCESS_COUNT, meta.get(SUCCESS_COUNT));
 
                 // update last invocation time.
                 lastInvocation = now;

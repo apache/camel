@@ -31,6 +31,7 @@ public class HealthCheckConfiguration implements Cloneable {
     private boolean enabled = true;
     private long interval;
     private int failureThreshold;
+    private int successThreshold;
 
     // *************************************************
     // Properties
@@ -82,6 +83,17 @@ public class HealthCheckConfiguration implements Cloneable {
         this.failureThreshold = failureThreshold;
     }
 
+    public int getSuccessThreshold() {
+        return successThreshold;
+    }
+
+    /**
+     * Set the number of success before reporting the service as healthy.
+     */
+    public void setSuccessThreshold(int successThreshold) {
+        this.successThreshold = successThreshold;
+    }
+
     public HealthCheckConfiguration copy() {
         try {
             return (HealthCheckConfiguration) super.clone();
@@ -103,6 +115,7 @@ public class HealthCheckConfiguration implements Cloneable {
         private Boolean enabled;
         private Long interval;
         private Integer failureThreshold;
+        private Integer successThreshold;
 
         private Builder() {
         }
@@ -120,6 +133,9 @@ public class HealthCheckConfiguration implements Cloneable {
                 }
                 if (this.failureThreshold == null) {
                     this.failureThreshold = template.failureThreshold;
+                }
+                if (this.successThreshold == null) {
+                    this.successThreshold = template.successThreshold;
                 }
             }
 
@@ -157,6 +173,11 @@ public class HealthCheckConfiguration implements Cloneable {
             return this;
         }
 
+        public Builder successThreshold(int successThreshold) {
+            this.successThreshold = successThreshold;
+            return this;
+        }
+
         @Override
         public HealthCheckConfiguration build() {
             HealthCheckConfiguration conf = new HealthCheckConfiguration();
@@ -171,6 +192,9 @@ public class HealthCheckConfiguration implements Cloneable {
             }
             if (failureThreshold != null) {
                 conf.setFailureThreshold(failureThreshold);
+            }
+            if (successThreshold != null) {
+                conf.setSuccessThreshold(successThreshold);
             }
             return conf;
         }

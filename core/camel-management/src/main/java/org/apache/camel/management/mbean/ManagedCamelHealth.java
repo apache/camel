@@ -134,6 +134,7 @@ public class ManagedCamelHealth implements ManagedCamelHealthMBean {
                                 "readiness",
                                 "liveness",
                                 "interval",
+                                "successThreshold",
                                 "failureThreshold"
                         },
                         new Object[] {
@@ -148,6 +149,7 @@ public class ManagedCamelHealth implements ManagedCamelHealthMBean {
                                 result.getCheck().isReadiness(),
                                 result.getCheck().isLiveness(),
                                 result.getCheck().getConfiguration().getInterval(),
+                                result.getCheck().getConfiguration().getSuccessThreshold(),
                                 result.getCheck().getConfiguration().getFailureThreshold()
                         });
 
