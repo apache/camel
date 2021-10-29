@@ -147,6 +147,7 @@ public class BackgroundTask implements BlockingTask {
             service.awaitTermination(1, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             LOG.warn("Interrupted while waiting for the repeatable task to execute");
+            Thread.currentThread().interrupt();
         } finally {
             service.shutdownNow();
         }
