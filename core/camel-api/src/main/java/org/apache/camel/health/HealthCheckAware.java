@@ -14,35 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel;
+package org.apache.camel.health;
 
 /**
- * An interface to represent an object which wishes to be injected with the {@link CamelContext}
+ * An interface to represent an object which wishes to be injected with the {@link HealthCheck}
  */
-public interface CamelContextAware {
+public interface HealthCheckAware {
 
     /**
-     * Set the {@link CamelContext} context if the object is an instance of {@link CamelContextAware}.
-     */
-    static <T> T trySetCamelContext(T object, CamelContext camelContext) {
-        if (camelContext != null && object instanceof CamelContextAware) {
-            ((CamelContextAware) object).setCamelContext(camelContext);
-        }
-
-        return object;
-    }
-
-    /**
-     * Get the {@link CamelContext}
+     * Gets the {@link HealthCheck}
      *
-     * @return the Camel context
+     * @return the health check
      */
-    CamelContext getCamelContext();
+    HealthCheck getHealthCheck();
 
     /**
-     * Injects the {@link CamelContext}
+     * Injects the {@link HealthCheck}
      *
-     * @param camelContext the Camel context
+     * @param healthCheck the health check
      */
-    void setCamelContext(CamelContext camelContext);
+    void setHealthCheck(HealthCheck healthCheck);
+
 }

@@ -17,9 +17,11 @@
 package org.apache.camel.health;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.apache.camel.spi.HasId;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * A repository for health checks.
@@ -58,4 +60,15 @@ public interface HealthCheckRepository extends HasId {
      * Returns a sequential {@code Stream} with the known {@link HealthCheck} as its source.
      */
     Stream<HealthCheck> stream();
+
+    /**
+     * Returns the check identified by the given <code>id</code> if available.
+     */
+    default Optional<HealthCheck> getCheck(String id) {
+        return stream()
+                .filter(r -> ObjectHelper.equal(r.getId(), id)
+                        || ObjectHelper.equal(r.getId().replace("-health-check", ""), id)
+                        || ObjectHelper.equal(r.getId().replace("route:", ""), id))
+                .findFirst();
+    }
 }

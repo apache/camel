@@ -47,6 +47,11 @@ public class TelegramMockRoutes extends RouteBuilder {
         return this;
     }
 
+    public TelegramMockRoutes addErrorEndpoint(String path, String method, int errorCode) {
+        this.mocks.put(path, new MockProcessor<>(method, path, errorCode));
+        return this;
+    }
+
     @Override
     public void configure() throws Exception {
 
@@ -61,6 +66,7 @@ public class TelegramMockRoutes extends RouteBuilder {
         private final String method;
         private final String path;
         private final List<T> recordedMessages = new ArrayList<>();
+        private int errorCode;
         private final String[] responseBodies;
         private final Object lock = new Object();
         private final Class<?> returnType;
@@ -72,24 +78,37 @@ public class TelegramMockRoutes extends RouteBuilder {
             this.responseBodies = responseBodies;
         }
 
+        public MockProcessor(String method, String path, int errorCode) {
+            this.method = method;
+            this.path = path;
+            this.returnType = String.class;
+            this.responseBodies = null;
+            this.errorCode = errorCode;
+        }
+
         @Override
         public void process(Exchange exchange) throws Exception {
             synchronized (lock) {
                 final Message m = exchange.getMessage();
-                final int responseIndex = Math.min(recordedMessages.size(), responseBodies.length - 1);
-                if (returnType == byte[].class) {
-                    recordedMessages.add((T) m.getBody(byte[].class));
+                if (errorCode > 0) {
+                    m.setHeader(Exchange.HTTP_RESPONSE_CODE, errorCode);
                 } else {
-                    final String rawBody = m.getBody(String.class);
-                    LOG.debug("Recording {} {} body {}", method, path, rawBody);
-                    @SuppressWarnings("unchecked")
-                    final T body
-                            = returnType != String.class ? (T) new ObjectMapper().readValue(rawBody, returnType) : (T) rawBody;
-                    recordedMessages.add(body);
-                    final byte[] bytes = responseBodies[responseIndex].getBytes(StandardCharsets.UTF_8);
-                    m.setBody(bytes);
-                    m.setHeader("Content-Length", bytes.length);
-                    m.setHeader("Content-Type", "application/json; charset=UTF-8");
+                    final int responseIndex = Math.min(recordedMessages.size(), responseBodies.length - 1);
+                    if (returnType == byte[].class) {
+                        recordedMessages.add((T) m.getBody(byte[].class));
+                    } else {
+                        final String rawBody = m.getBody(String.class);
+                        LOG.debug("Recording {} {} body {}", method, path, rawBody);
+                        @SuppressWarnings("unchecked")
+                        final T body
+                                = returnType != String.class
+                                        ? (T) new ObjectMapper().readValue(rawBody, returnType) : (T) rawBody;
+                        recordedMessages.add(body);
+                        final byte[] bytes = responseBodies[responseIndex].getBytes(StandardCharsets.UTF_8);
+                        m.setBody(bytes);
+                        m.setHeader("Content-Length", bytes.length);
+                        m.setHeader("Content-Type", "application/json; charset=UTF-8");
+                    }
                 }
             }
         }
