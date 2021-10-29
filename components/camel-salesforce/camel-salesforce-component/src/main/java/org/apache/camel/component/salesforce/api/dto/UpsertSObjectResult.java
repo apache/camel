@@ -16,38 +16,9 @@
  */
 package org.apache.camel.component.salesforce.api.dto;
 
-import java.util.List;
+public class UpsertSObjectResult extends SaveSObjectResult {
 
-public class UpsertSObjectResult extends AbstractDTOBase {
-
-    private String id;
-    private List<RestError> errors;
-    private Boolean success;
     private Boolean created;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public List<RestError> getErrors() {
-        return errors;
-    }
-
-    public void setErrors(List<RestError> errors) {
-        this.errors = errors;
-    }
-
-    public Boolean getSuccess() {
-        return success;
-    }
-
-    public void setSuccess(Boolean success) {
-        this.success = success;
-    }
 
     public Boolean getCreated() {
         return created;

@@ -23,6 +23,7 @@ import java.util.Optional;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.DeleteSObjectResult;
 import org.apache.camel.component.salesforce.api.dto.SaveSObjectResult;
+import org.apache.camel.component.salesforce.api.dto.UpsertSObjectResult;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectCollection;
 import org.apache.camel.component.salesforce.internal.dto.composite.RetrieveSObjectCollectionsDto;
 
@@ -39,10 +40,19 @@ public interface CompositeSObjectCollectionsApiClient {
             Class<T> returnType)
             throws SalesforceException;
 
-    void submitCompositeCollections(
+    void createCompositeCollections(
             SObjectCollection collection, Map<String, List<String>> headers,
-            ResponseCallback<List<SaveSObjectResult>> callback, String sObjectName, String externalIdFieldName,
-            String method)
+            ResponseCallback<List<SaveSObjectResult>> callback)
+            throws SalesforceException;
+
+    void updateCompositeCollections(
+            SObjectCollection collection, Map<String, List<String>> headers,
+            ResponseCallback<List<SaveSObjectResult>> callback)
+            throws SalesforceException;
+
+    void upsertCompositeCollections(
+            SObjectCollection collection, Map<String, List<String>> headers,
+            ResponseCallback<List<UpsertSObjectResult>> callback, String sObjectName, String externalIdFieldName)
             throws SalesforceException;
 
     void submitDeleteCompositeCollections(
