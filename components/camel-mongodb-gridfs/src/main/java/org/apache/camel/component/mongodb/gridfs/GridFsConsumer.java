@@ -17,6 +17,7 @@
 package org.apache.camel.component.mongodb.gridfs;
 
 import java.io.InputStream;
+import java.time.Duration;
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
 
@@ -32,7 +33,10 @@ import com.mongodb.client.model.Updates;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
-import org.apache.camel.util.IOHelper;
+import org.apache.camel.support.task.BlockingTask;
+import org.apache.camel.support.task.Tasks;
+import org.apache.camel.support.task.budget.Budgets;
+import org.apache.camel.support.task.budget.IterationBoundedBudget;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
@@ -71,7 +75,6 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
 
     @Override
     public void run() {
-        MongoCursor<GridFSFile> cursor = null;
         Date fromDate = null;
 
         QueryStrategy queryStrategy = endpoint.getQueryStrategy();
@@ -103,92 +106,112 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
         } else if (usesTimestamp) {
             fromDate = new Date();
         }
-        try {
-            Thread.sleep(endpoint.getInitialDelay());
-            while (isStarted()) {
-                if (cursor == null) {
-                    String queryString = endpoint.getQuery();
-                    Bson query = null;
-                    if (queryString != null) {
-                        query = Document.parse(queryString);
-                    }
-                    if (usesTimestamp) {
-                        Bson uploadDateFilter = Filters.gt(GRIDFS_FILE_KEY_UPLOAD_DATE, fromDate);
-                        if (query == null) {
-                            query = uploadDateFilter;
-                        } else {
-                            query = Filters.and(query, uploadDateFilter);
-                        }
-                    }
-                    if (usesAttribute) {
-                        Bson fileAttributeNameFilter = Filters.eq(endpoint.getFileAttributeName(), null);
-                        if (query == null) {
-                            query = fileAttributeNameFilter;
-                        } else {
-                            query = Filters.and(query, fileAttributeNameFilter);
-                        }
-                    }
-                    cursor = endpoint.getGridFsBucket().find(query).cursor();
+
+        BlockingTask task = Tasks.foregroundTask()
+                .withBudget(Budgets.iterationBudget()
+                        .withMaxIterations(IterationBoundedBudget.UNLIMITED_ITERATIONS)
+                        .withInterval(Duration.ofMillis(endpoint.getDelay()))
+                        .withInitialDelay(Duration.ofMillis(endpoint.getInitialDelay()))
+                        .build())
+                .build();
+
+        MongoCollection<Document> finalPtsCollection = ptsCollection;
+        Date finalFromDate = fromDate;
+        Document finalPersistentTimestamp = persistentTimestamp;
+        task.run(() -> processCollection(finalFromDate, usesTimestamp, persistsTimestamp, usesAttribute, finalPtsCollection,
+                finalPersistentTimestamp));
+    }
+
+    private boolean processCollection(
+            Date fromDate, boolean usesTimestamp, boolean persistsTimestamp, boolean usesAttribute,
+            final MongoCollection<Document> ptsCollection, final Document persistentTimestamp) {
+
+        if (!isStarted()) {
+            return false;
+        }
+
+        try (MongoCursor<GridFSFile> cursor = getGridFSFileMongoCursor(fromDate, usesTimestamp, usesAttribute)) {
+            boolean dateModified = false;
+
+            while (cursor.hasNext() && isStarted()) {
+                GridFSFile file = cursor.next();
+                GridFSFile fOrig = file;
+                if (usesAttribute) {
+                    FindOneAndUpdateOptions options = new FindOneAndUpdateOptions();
+                    options.returnDocument(ReturnDocument.AFTER);
+                    Bson filter = Filters.and(eq("_id", file.getId()), eq(endpoint.getFileAttributeName(), null));
+                    Bson update = Updates.set(endpoint.getFileAttributeName(), GRIDFS_FILE_ATTRIBUTE_PROCESSING);
+                    fOrig = endpoint.getFilesCollection().findOneAndUpdate(filter, update, options);
                 }
-                boolean dateModified = false;
-                while (cursor.hasNext() && isStarted()) {
-                    GridFSFile file = cursor.next();
-                    GridFSFile forig = file;
-                    if (usesAttribute) {
-                        FindOneAndUpdateOptions options = new FindOneAndUpdateOptions();
-                        options.returnDocument(ReturnDocument.AFTER);
-                        Bson filter = Filters.and(eq("_id", file.getId()), eq(endpoint.getFileAttributeName(), null));
-                        Bson update = Updates.set(endpoint.getFileAttributeName(), GRIDFS_FILE_ATTRIBUTE_PROCESSING);
-                        forig = endpoint.getFilesCollection().findOneAndUpdate(filter, update, options);
+                if (fOrig != null) {
+                    Exchange exchange = createExchange(true);
+                    GridFSDownloadStream downloadStream = endpoint.getGridFsBucket().openDownloadStream(file.getFilename());
+                    file = downloadStream.getGridFSFile();
+
+                    Document metadata = file.getMetadata();
+                    if (metadata != null) {
+                        String contentType = metadata.get(GRIDFS_FILE_KEY_CONTENT_TYPE, String.class);
+                        if (contentType != null) {
+                            exchange.getIn().setHeader(Exchange.FILE_CONTENT_TYPE, contentType);
+                        }
+                        exchange.getIn().setHeader(GridFsEndpoint.GRIDFS_METADATA, metadata.toJson());
                     }
-                    if (forig != null) {
-                        Exchange exchange = createExchange(true);
-                        GridFSDownloadStream downloadStream = endpoint.getGridFsBucket().openDownloadStream(file.getFilename());
-                        file = downloadStream.getGridFSFile();
 
-                        Document metadata = file.getMetadata();
-                        if (metadata != null) {
-                            String contentType = metadata.get(GRIDFS_FILE_KEY_CONTENT_TYPE, String.class);
-                            if (contentType != null) {
-                                exchange.getIn().setHeader(Exchange.FILE_CONTENT_TYPE, contentType);
-                            }
-                            exchange.getIn().setHeader(GridFsEndpoint.GRIDFS_METADATA, metadata.toJson());
+                    exchange.getIn().setHeader(Exchange.FILE_LENGTH, file.getLength());
+                    exchange.getIn().setHeader(Exchange.FILE_LAST_MODIFIED, file.getUploadDate());
+                    exchange.getIn().setBody(downloadStream, InputStream.class);
+                    try {
+                        getProcessor().process(exchange);
+                        if (usesAttribute) {
+                            Bson update = Updates.set(endpoint.getFileAttributeName(), GRIDFS_FILE_ATTRIBUTE_DONE);
+                            endpoint.getFilesCollection().findOneAndUpdate(eq("_id", fOrig.getId()), update);
                         }
-
-                        exchange.getIn().setHeader(Exchange.FILE_LENGTH, file.getLength());
-                        exchange.getIn().setHeader(Exchange.FILE_LAST_MODIFIED, file.getUploadDate());
-                        exchange.getIn().setBody(downloadStream, InputStream.class);
-                        try {
-                            getProcessor().process(exchange);
-                            if (usesAttribute) {
-                                Bson update = Updates.set(endpoint.getFileAttributeName(), GRIDFS_FILE_ATTRIBUTE_DONE);
-                                endpoint.getFilesCollection().findOneAndUpdate(eq("_id", forig.getId()), update);
-                            }
-                            if (usesTimestamp) {
-                                if (file.getUploadDate().compareTo(fromDate) > 0) {
-                                    fromDate = file.getUploadDate();
-                                    dateModified = true;
-                                }
-                            }
-                        } catch (Exception e) {
-                            // ignore
+                        if (usesTimestamp && file.getUploadDate().compareTo(fromDate) > 0) {
+                            fromDate = file.getUploadDate();
+                            dateModified = true;
                         }
+                    } catch (Exception e) {
+                        // ignore
                     }
                 }
-
-                if (persistsTimestamp && dateModified) {
-                    Bson update = Updates.set(PERSISTENT_TIMESTAMP_KEY, fromDate);
-                    ptsCollection.findOneAndUpdate(eq("_id", persistentTimestamp.getObjectId("_id")), update);
-                }
-
-                cursor = null;
-                Thread.sleep(endpoint.getDelay());
             }
-        } catch (Exception e1) {
-            // ignore
+
+            if (persistsTimestamp && dateModified) {
+                Bson update = Updates.set(PERSISTENT_TIMESTAMP_KEY, fromDate);
+                ptsCollection.findOneAndUpdate(eq("_id", persistentTimestamp.getObjectId("_id")), update);
+            }
         }
-        if (cursor != null) {
-            IOHelper.close(cursor);
+
+        return false;
+    }
+
+    private MongoCursor<GridFSFile> getGridFSFileMongoCursor(Date fromDate, boolean usesTimestamp, boolean usesAttribute) {
+        String queryString = endpoint.getQuery();
+        Bson query = getBsonDocument(fromDate, usesTimestamp, usesAttribute, queryString);
+        return endpoint.getGridFsBucket().find(query).cursor();
+    }
+
+    private Bson getBsonDocument(Date fromDate, boolean usesTimestamp, boolean usesAttribute, String queryString) {
+        Bson query = null;
+        if (queryString != null) {
+            query = Document.parse(queryString);
         }
+        if (usesTimestamp) {
+            Bson uploadDateFilter = Filters.gt(GRIDFS_FILE_KEY_UPLOAD_DATE, fromDate);
+            if (query == null) {
+                query = uploadDateFilter;
+            } else {
+                query = Filters.and(query, uploadDateFilter);
+            }
+        }
+        if (usesAttribute) {
+            Bson fileAttributeNameFilter = Filters.eq(endpoint.getFileAttributeName(), null);
+            if (query == null) {
+                query = fileAttributeNameFilter;
+            } else {
+                query = Filters.and(query, fileAttributeNameFilter);
+            }
+        }
+        return query;
     }
 }
