@@ -93,7 +93,7 @@ public class RestSwaggerReaderPropertyPlaceholderTest extends CamelTestSupport {
         RestSwaggerSupport support = new RestSwaggerSupport();
         List<RestDefinition> rests = support.getRestDefinitions(context);
 
-        Swagger swagger = reader.read(rests, null, config, context.getName(), new DefaultClassResolver());
+        Swagger swagger = reader.read(rests, config, context.getName(), new DefaultClassResolver());
         assertNotNull(swagger);
 
         ObjectMapper mapper = new ObjectMapper();

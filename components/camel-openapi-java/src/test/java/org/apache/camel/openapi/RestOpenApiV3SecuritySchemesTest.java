@@ -82,7 +82,7 @@ public class RestOpenApiV3SecuritySchemesTest extends CamelTestSupport {
         config.setLicenseUrl("https://www.apache.org/licenses/LICENSE-2.0.html");
 
         RestOpenApiReader reader = new RestOpenApiReader();
-        OasDocument openApi = reader.read(context, context.getRestDefinitions(), null, config, context.getName(),
+        OasDocument openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
                 new DefaultClassResolver());
         assertNotNull(openApi);
 
@@ -128,7 +128,7 @@ public class RestOpenApiV3SecuritySchemesTest extends CamelTestSupport {
 
         RestOpenApiReader reader = new RestOpenApiReader();
         assertThrows(IllegalStateException.class,
-                () -> reader.read(context, context.getRestDefinitions(), null, config, context.getName(),
+                () -> reader.read(context, context.getRestDefinitions(), config, context.getName(),
                         new DefaultClassResolver()));
     }
 }

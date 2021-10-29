@@ -89,7 +89,7 @@ public class RestSwaggerReaderModelApiSecurityTest extends CamelTestSupport {
         RestSwaggerReader reader = new RestSwaggerReader();
 
         Swagger swagger
-                = reader.read(context.getRestDefinitions(), null, config, context.getName(), new DefaultClassResolver());
+                = reader.read(context.getRestDefinitions(), config, context.getName(), new DefaultClassResolver());
         assertNotNull(swagger);
 
         ObjectMapper mapper = new ObjectMapper();
