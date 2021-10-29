@@ -16,10 +16,23 @@
  */
 package org.apache.camel.health;
 
+/**
+ * An interface to represent an object which wishes to be injected with the {@link HealthCheck}
+ */
 public interface HealthCheckAware {
 
+    /**
+     * Gets the {@link HealthCheck}
+     *
+     * @return the health check
+     */
     HealthCheck getHealthCheck();
 
+    /**
+     * Injects the {@link HealthCheck}
+     *
+     * @param healthCheck the health check
+     */
     void setHealthCheck(HealthCheck healthCheck);
 
 }

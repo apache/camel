@@ -35,7 +35,7 @@ public interface CamelContextAware {
     /**
      * Get the {@link CamelContext}
      *
-     * @return camelContext the Camel context
+     * @return the Camel context
      */
     CamelContext getCamelContext();
 
