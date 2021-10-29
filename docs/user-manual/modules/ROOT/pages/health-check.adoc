@@ -127,7 +127,7 @@ the readiness or liveness checks.
 
 The health checks can also be invoked from JMX.
 
-== Writing a custom health check:
+== Writing a custom health check
 
 There are a limited number of health checks provided by Camel out of the box,
 so you may need to write your own check which you can do by implementing the _HealthCheck_ interface
@@ -162,6 +162,16 @@ You can now make _MyHealthCheck_ available to Camel by adding an instance to (fo
 or directly to the Camel xref:registry.adoc[Registry].
 
 TIP: The example `main-health` has a custom health check.
+
+=== Writing custom Health Check for Camel components
+
+You can implement custom health checks in Camel components (currently only for consumers).
+
+To do this, you implement the interface `HealthCheckAware` on your consumer class, which should
+return the custom health check in the getter method.
+
+In the custom health check implementation, you can perform the check as shown in the previous section.
+Camel will then use these custom component health checks when it performs *routes* health checks.
 
 == Examples
 
