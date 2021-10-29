@@ -16,6 +16,9 @@
  */
 package org.apache.camel.management.mbean;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
@@ -106,6 +109,17 @@ public class ManagedCamelHealth implements ManagedCamelHealthMBean {
                 String failureUri = (String) result.getDetails().getOrDefault(HealthCheck.FAILURE_ENDPOINT_URI, "");
                 Integer failureCount = (Integer) result.getDetails().getOrDefault(HealthCheck.FAILURE_COUNT, 0);
 
+                String stacktrace = "";
+                if (result.getError().isPresent()) {
+                    try (StringWriter stackTraceWriter = new StringWriter();
+                         PrintWriter pw = new PrintWriter(stackTraceWriter, true)) {
+                        result.getError().get().printStackTrace(pw);
+                        stacktrace = stackTraceWriter.getBuffer().toString();
+                    } catch (IOException exception) {
+                        // ignore
+                    }
+                }
+
                 CompositeData data = new CompositeDataSupport(
                         type,
                         new String[] {
@@ -116,6 +130,7 @@ public class ManagedCamelHealth implements ManagedCamelHealthMBean {
                                 "message",
                                 "failureUri",
                                 "failureCount",
+                                "failureStackTrace",
                                 "readiness",
                                 "liveness",
                                 "interval",
@@ -129,6 +144,7 @@ public class ManagedCamelHealth implements ManagedCamelHealthMBean {
                                 result.getMessage().orElse(""),
                                 failureUri,
                                 failureCount,
+                                stacktrace,
                                 result.getCheck().isReadiness(),
                                 result.getCheck().isLiveness(),
                                 result.getCheck().getConfiguration().getInterval(),
