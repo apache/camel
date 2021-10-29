@@ -54,7 +54,7 @@ public class SpringRestOpenApiReaderModelApiSecurityTest extends CamelSpringTest
         config.setVersion("2.0");
         RestOpenApiReader reader = new RestOpenApiReader();
 
-        OasDocument openApi = reader.read(context, context.getRestDefinitions(), null, config, context.getName(),
+        OasDocument openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
                 new DefaultClassResolver());
         assertNotNull(openApi);
 
@@ -98,7 +98,7 @@ public class SpringRestOpenApiReaderModelApiSecurityTest extends CamelSpringTest
         config.setLicenseUrl("http://www.apache.org/licenses/LICENSE-2.0.html");
         RestOpenApiReader reader = new RestOpenApiReader();
 
-        OasDocument openApi = reader.read(context, context.getRestDefinitions(), null, config, context.getName(),
+        OasDocument openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
                 new DefaultClassResolver());
         assertNotNull(openApi);
 

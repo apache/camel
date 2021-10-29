@@ -93,7 +93,7 @@ public class RestOpenApiReaderPropertyPlaceholderTest extends CamelTestSupport {
         RestOpenApiSupport support = new RestOpenApiSupport();
         List<RestDefinition> rests = support.getRestDefinitions(context);
 
-        OasDocument openApi = reader.read(context, rests, null, config, context.getName(), new DefaultClassResolver());
+        OasDocument openApi = reader.read(context, rests, config, context.getName(), new DefaultClassResolver());
         assertNotNull(openApi);
 
         ObjectMapper mapper = new ObjectMapper();

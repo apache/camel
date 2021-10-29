@@ -75,7 +75,7 @@ public class RestSwaggerProcessor implements Processor {
         }
 
         try {
-            support.renderResourceListing(exchange.getContext(), adapter, swaggerConfig, route, json, yaml,
+            support.renderResourceListing(exchange.getContext(), adapter, swaggerConfig, json, yaml,
                     exchange.getIn().getHeaders(), exchange.getContext().getClassResolver(), configuration);
         } catch (Exception e) {
             LOG.warn("Error rendering Swagger API due {}", e.getMessage(), e);

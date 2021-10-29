@@ -158,7 +158,7 @@ public class RestSwaggerSupport {
 
     public void renderResourceListing(
             CamelContext camelContext, RestApiResponseAdapter response, BeanConfig swaggerConfig,
-            String route, boolean json, boolean yaml,
+            boolean json, boolean yaml,
             Map<String, Object> headers, ClassResolver classResolver, RestConfiguration configuration)
             throws Exception {
         LOG.trace("renderResourceListing");
@@ -181,7 +181,7 @@ public class RestSwaggerSupport {
                         (String) apiProperties.getOrDefault("api.specification.contentType.json", "application/json"));
 
                 // read the rest-dsl into swagger model
-                Swagger swagger = reader.read(rests, route, swaggerConfig, camelContext.getName(), classResolver);
+                Swagger swagger = reader.read(rests, swaggerConfig, camelContext.getName(), classResolver);
                 if (configuration.isUseXForwardHeaders()) {
                     setupXForwardedHeaders(swagger, headers);
                 }
@@ -201,7 +201,7 @@ public class RestSwaggerSupport {
                         (String) apiProperties.getOrDefault("api.specification.contentType.yaml", "text/yaml"));
 
                 // read the rest-dsl into swagger model
-                Swagger swagger = reader.read(rests, route, swaggerConfig, camelContext.getName(), classResolver);
+                Swagger swagger = reader.read(rests, swaggerConfig, camelContext.getName(), classResolver);
                 if (configuration.isUseXForwardHeaders()) {
                     setupXForwardedHeaders(swagger, headers);
                 }

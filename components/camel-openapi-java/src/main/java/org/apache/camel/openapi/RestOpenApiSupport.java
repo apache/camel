@@ -372,7 +372,7 @@ public class RestOpenApiSupport {
 
     public void renderResourceListing(
             CamelContext camelContext, RestApiResponseAdapter response,
-            BeanConfig openApiConfig, String route, boolean json,
+            BeanConfig openApiConfig, boolean json,
             boolean yaml, Map<String, Object> headers, ClassResolver classResolver,
             RestConfiguration configuration)
             throws Exception {
@@ -397,7 +397,7 @@ public class RestOpenApiSupport {
 
                 // read the rest-dsl into openApi model
                 OasDocument openApi
-                        = reader.read(camelContext, rests, route, openApiConfig, camelContext.getName(), classResolver);
+                        = reader.read(camelContext, rests, openApiConfig, camelContext.getName(), classResolver);
                 if (configuration.isUseXForwardHeaders()) {
                     setupXForwardedHeaders(openApi, headers);
                 }
@@ -418,7 +418,7 @@ public class RestOpenApiSupport {
 
                 // read the rest-dsl into openApi model
                 OasDocument openApi
-                        = reader.read(camelContext, rests, route, openApiConfig, camelContext.getName(), classResolver);
+                        = reader.read(camelContext, rests, openApiConfig, camelContext.getName(), classResolver);
                 if (configuration.isUseXForwardHeaders()) {
                     setupXForwardedHeaders(openApi, headers);
                 }
