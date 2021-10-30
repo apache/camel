@@ -28,7 +28,7 @@
 ** xref:camel-3-migration-guide.adoc[Camel 2.x to 3.0 Migration Guide]
 ** xref:camel-3x-upgrade-guide.adoc[Camel 3.x Upgrade Guide]
 * xref:architecture.adoc[Architecture]
-** xref:backlogdebugger.adoc[Backlog debugger]
+** xref:backlog-debugger.adoc[Backlog debugger]
 ** xref:backlog-tracer.adoc[Backlog Tracer]
 ** xref:batch-consumer.adoc[Batch Consumer]
 ** xref:bean-binding.adoc[Bean Binding]

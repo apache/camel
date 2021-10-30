@@ -14,7 +14,6 @@ You can enable or disable the BacklogDebugger dynamically, by calling
 
 NOTE: This requires to enabled JMX by including `camel-management` JAR in the classpath.
 
-[[BacklogDebugger-Options]]
 == Options
 
 [width="100%",cols="10%,20%,70%",options="header",]
@@ -37,7 +36,6 @@ Stream Caching.
 is that the file content has to be read from the file.
 |=======================================================================
 
-[[BacklogDebugger-Operations]]
 == Operations
 
 [width="100%",cols="10%,20%,70%",options="header",]
@@ -90,7 +88,6 @@ Exchange at the node.
 A timeout used for waiting for a message to arrive at a given breakpoint. `
 |=======================================================================
 
-[[BacklogDebugger-Enabling]]
 == Enabling
 
 You would need to enable this using the JMX API.
