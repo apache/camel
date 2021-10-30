@@ -1,10 +1,10 @@
 = BrowsableEndpoint
 
 The `BrowseableEndpoint` is an extension interface an `Endpoint` may implement
-to support the browsing of the Message exchanges
+to support the browsing of the Message xref:exchange.adoc[Exchanges]
 which are pending or have been sent on it.
 
-Some example implementations include:
+Some implementations include:
 
 * xref:components::jms-component.adoc[JMS] for queues only
 * xref:components::mock-component.adoc[Mock]

@@ -6,7 +6,6 @@ the method when it is invoked.
 
 NOTE: This requires to include `camel-bean` as dependency on the classpath.
 
-[[BeanBinding-Choosingthemethodtoinvoke]]
 == Choosing the method to invoke
 
 The binding of a Camel xref:components:eips:message.adoc[Message] to a bean method call
@@ -42,9 +41,8 @@ will be preferred since Camel can't invoke class methods on such beans
 In cases where Camel cannot choose a method to invoke, an
 `AmbiguousMethodCallException` is thrown.
 
-By default the return value is set on the outbound message body. 
+By default, the return value is set on the outbound message body.
 
-[[BeanBinding-Asynchronousprocessing]]
 == Asynchronous processing
 
 You can return a `CompletionStage` implementation (e.g. a `CompletableFuture`)
@@ -80,7 +78,6 @@ Composite processor that do not modify exchange
  }
 ----
 
-[[BeanBinding-Parameterbinding]]
 == Parameter binding
 
 When a method has been chosen for invocation, Camel will bind to the
@@ -157,14 +154,12 @@ method name option.
 
 See the following sections for more detail.
 
-[[BeanBinding-BindingAnnotations]]
 == Binding Annotations
 
 You can use the xref:parameter-binding-annotations.adoc[Parameter
 Binding Annotations] to customize how parameter values are created from
 the xref:components:eips:message.adoc[Message]
 
-[[BeanBinding-Examples]]
 === Examples
 
 For example, a xref:components:eips:bean-eip.adoc[Bean] such as:
@@ -191,12 +186,12 @@ there is only a single parameter of the type
  }
 ----
 
-[[BeanBinding-Handler]]
-=== @Handler
+=== Using @Handler
 
 You can mark a method in your bean with the `@Handler` annotation to
 indicate that this method should be used for xref:bean-binding.adoc[Bean
 Binding].
+
 This has an advantage as you need not specify a method name in the Camel
 route, and therefore do not run into problems after renaming the method
 in an IDE that can't find all its references.
@@ -212,7 +207,6 @@ public class Bar {
 } 
 ----
 
-[[BeanBinding-Parameterbindingusingmethodoption]]
 == Parameter binding using method option
 
 Camel uses the following rules to determine if it's a parameter value in
@@ -223,9 +217,9 @@ the method option
 * The value is a String enclosed with either single or double quotes
 * The value is null which denotes a `null` value
 * It can be evaluated using the xref:components:languages:simple-language.adoc[Simple] language, which
-means you can use, e.g., body, header.foo and other
+means you can use, e.g., `${body}`, `${header.foo}` and others
 xref:components:languages:simple-language.adoc[Simple] tokens. Notice the tokens must be enclosed with
-${ }.
+`${ }`.
 
 Any other value is considered to be a type declaration instead - see the
 next section about specifying types for overloaded methods.
@@ -328,8 +322,7 @@ use `.to` instead as shown:
 .to("bean:orderService?method=doSomething(${body.asXml}, ${header.high})") 
 ----
 
-[[BeanBinding-Usingtypequalifierstoselectamongoverloadedmethods]]
-== Using type qualifiers to select among overloaded methods
+=== Using type qualifiers to select among overloaded methods
 
 If you have a xref:components:eips:bean-eip.adoc[Bean] with overloaded methods, you can now
 specify parameter types in the method name so Camel can match the method
@@ -384,5 +377,3 @@ at the same time, such as
 ----
 doSomething(com.foo.MyOrder ${body}, boolean ${header.high})
 ----
-
-This may change in the future.
