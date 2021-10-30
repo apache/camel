@@ -26,7 +26,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DebeziumMongodbComponentTest {
 
@@ -94,39 +93,4 @@ public class DebeziumMongodbComponentTest {
         }
     }
 
-    @Test
-    void testIfItHandlesNullExternalConfigurations() throws Exception {
-        final String remaining = "";
-        final String uri = "debezium:";
-        try (final DebeziumComponent debeziumComponent = new DebeziumMongodbComponent(new DefaultCamelContext())) {
-            debeziumComponent.start();
-
-            // set configurations
-            debeziumComponent.setConfiguration(null);
-
-            final Map<String, Object> parameters = Collections.emptyMap();
-
-            assertThrows(IllegalArgumentException.class, () -> {
-                debeziumComponent.createEndpoint(uri, remaining, parameters);
-            });
-        }
-    }
-
-    @Test
-    void testIfItHandlesNullExternalConfigurationsWithValidUri() throws Exception {
-        final String remaining = "dummy";
-        final String uri = "debezium:dummy";
-        try (final DebeziumComponent debeziumComponent = new DebeziumMongodbComponent(new DefaultCamelContext())) {
-            debeziumComponent.start();
-
-            // set configurations
-            debeziumComponent.setConfiguration(null);
-
-            final Map<String, Object> parameters = Collections.emptyMap();
-
-            assertThrows(IllegalArgumentException.class, () -> {
-                debeziumComponent.createEndpoint(uri, remaining, parameters);
-            });
-        }
-    }
 }

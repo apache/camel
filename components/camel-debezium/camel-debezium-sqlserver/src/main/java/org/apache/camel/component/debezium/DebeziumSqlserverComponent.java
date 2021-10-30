@@ -25,7 +25,8 @@ import org.apache.camel.spi.annotations.Component;
 public final class DebeziumSqlserverComponent extends DebeziumComponent<SqlServerConnectorEmbeddedDebeziumConfiguration> {
 
     @Metadata
-    private SqlServerConnectorEmbeddedDebeziumConfiguration configuration;
+    private SqlServerConnectorEmbeddedDebeziumConfiguration configuration
+            = new SqlServerConnectorEmbeddedDebeziumConfiguration();
 
     public DebeziumSqlserverComponent() {
     }
@@ -36,14 +37,9 @@ public final class DebeziumSqlserverComponent extends DebeziumComponent<SqlServe
 
     /**
      * Allow pre-configured Configurations to be set.
-     *
-     * @return {@link SqlServerConnectorEmbeddedDebeziumConfiguration}
      */
     @Override
     public SqlServerConnectorEmbeddedDebeziumConfiguration getConfiguration() {
-        if (configuration == null) {
-            return new SqlServerConnectorEmbeddedDebeziumConfiguration();
-        }
         return configuration;
     }
 
