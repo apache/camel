@@ -18,84 +18,36 @@ more than 1 bean of this type, then Camel will *not* use it.
 [width="100%",cols="34%,33%,33%",options="header",]
 |=======================================================================
 |Type |Number of beans |Description
-|PackageScanClassResolver |0..1 |To use a 3rd party package scan
-resolver. More details at xref:pluggable-class-resolvers.adoc[Pluggable
-Class Resolvers].
-
-|ClassResolver |0..1 |To use a 3rd party class resolver. More details at
-xref:pluggable-class-resolvers.adoc[Pluggable Class Resolvers].
-
-|FactoryFinderResolver |0..1 |To use a 3rd party factory finder.
-
-|Registry |0..1 |To use a 3rd party bean registry. By default Camel will
-use Spring ApplicationContext (when using Spring) as registry.
-
-|Debugger |0..1 |To use a xref:debugger.adoc[Debugger] usually for
-tooling.
-
-|Tracer |0..1 |To use a 3rd party xref:tracer.adoc[Tracer].
-
-|TraceFormatter |0..1 |To use a bean that has the tracing options
-configured.
-
+|AsyncProcessorAwaitManager |0..1 |To use a 3rd part async process await manager.
+|BacklogTracer |0..1 |To use a 3rd party xref:backlog-tracer.adoc[BacklogTracer].
+|ClassResolver |0..1 |To use a 3rd party class resolver. More details at xref:pluggable-class-resolvers.adoc[Pluggable Class Resolvers].
+|Debugger |0..1 |To use a xref:debugger.adoc[Debugger] usually for tooling.
 |Delayer |0..1 |To use a 3rd part xref:components:eips:delay-eip.adoc[Delayer].
-
-|ManagementStrategy |0..1 |To use a 3rd part strategy for
-xref:jmx.adoc[management], for example JMX management.
-
-|ManagementNamingStrategy |0..1 |To use a 3rd part strategy
-for naming MBeans for xref:jmx.adoc[management].
-
-|NodeIdFactory |0..1 |To use a 3rd part node id factory.
-
 |EventFactory |0..1 |To use a 3rd part event factory.
-
-|EventNotifier |0..1 |To use a 3rd part event notifier. In
-Camel 2.2 onwards you can have multiple notifiers, see next table.
-
-|InflightRepository |0..1 |To use a 3rd part inflight
-repository.
-
-|ShutdownStrategy |0..1 |To use a 3rd part shutdown
-strategy.
-
-|ExecutorServiceStrategy |0..1 |To use a 3rd part
-executor service strategy. More details at
-xref:threading-model.adoc[Threading Model].
-
-|ExecutorServiceManager |0..1 |To use a 3rd part executor
-service manager. More details at xref:threading-model.adoc[Threading
-Model].
-
-|ThreadPoolFactory |0..1 |To use a 3rd part thread pool
-factory. More details at xref:threading-model.adoc[Threading Model].
-
-|ProcessorFactory |0..1 |To use a 3rd part processor
-factory.
-
-|UuidGenerator |0..1 |To use a 3rd part
-xref:uuidgenerator.adoc[UuidGenerator].
-
-|StreamCachingStrategy |0..1 |To use a 3rd part
-xref:stream-caching.adoc[Stream caching] strategy.
-
-|UnitOfWorkFactory |0..1 |To use 3rd part
-`UnitOfWork` implementations created by the factory.
-
-|RuntimeEndpointRegistry |0..1 |To use a 3rd party
-RuntimeEndpointRegistry implementation.
-
-|Logger |0..1 |To use provided org.slf4j.Logger
-for xref:components::log-component.adoc[Log] component and xref:components:eips:log-eip.adoc[log() EIP].
-
-|AsyncProcessorAwaitManager |0..1 |To use a 3rd part async
-process await manager.
-
-|ModelJAXBContextFactory |0..1 |To use a 3rd party model
-JAXB ContextFactory
-
-|MessageHistoryFactory |0..1 |To use a 3rd party
-MessageHistoryFactory implementation.
+|ExecutorServiceManager |0..1 |To use a 3rd part executor service manager. More details at xref:threading-model.adoc[Threading Model].
+|ExecutorServiceStrategy |0..1 |To use a 3rd part executor service strategy. More details at xref:threading-model.adoc[Threading Model].
+|FactoryFinderResolver |0..1 |To use a 3rd party factory finder.
+|HeadersMapFactory |0..1|To use a 3rd party HeadersMapFactory implementation.
+|HealthCheckRegistry |0..1|To use a 3rd party xref:health-check.adoc[HealthCheckRegistry] implementation.
+|InflightRepository |0..1 |To use a 3rd part inflight repository.
+|Logger |0..1 |To use provided org.slf4j.Logger for xref:components::log-component.adoc[Log] component and xref:components:eips:log-eip.adoc[log() EIP].
+|ManagementObjectNameStrategy |0..1 |To use a 3rd part strategy for naming MBeans for xref:jmx.adoc[management].
+|ManagementStrategy |0..1 |To use a 3rd part strategy for xref:jmx.adoc[management], for example JMX management.
+|MessageHistoryFactory |0..1 |To use a 3rd party MessageHistoryFactory implementation.
+|ModelJAXBContextFactory |0..1 |To use a 3rd party model JAXB ContextFactory
+|NodeIdFactory |0..1 |To use a 3rd part node id factory.
+|PackageScanClassResolver |0..1 |To use a 3rd party package scan resolver. More details at xref:pluggable-class-resolvers.adoc[Pluggable Class Resolvers].
+|ProcessorFactory |0..1 |To use a 3rd part processor factory.
+|Registry |0..1 |To use a 3rd party bean registry. By default Camel will use Spring ApplicationContext (when using Spring) as registry.
+|RuntimeEndpointRegistry |0..1 |To use a 3rd party RuntimeEndpointRegistry implementation.
+|RuntimeEndpointRegistry |0..1|To use a 3rd party RuntimeEndpointRegistry implementation.
+|ShutdownStrategy |0..1 |To use a 3rd part shutdown strategy.
+|StreamCachingStrategy |0..1 |To use a 3rd part xref:stream-caching.adoc[Stream caching] strategy.
+|ThreadPoolFactory |0..1 |To use a 3rd part thread pool factory. More details at xref:threading-model.adoc[Threading Model].
+|TraceFormatter |0..1 |To use a bean that has the tracing options configured.
+|Tracer |0..1 |To use a 3rd party xref:tracer.adoc[Tracer].
+|UnitOfWorkFactory |0..1 |To use 3rd part `UnitOfWork` implementations created by the factory.
+|UuidGenerator |0..1 |To use a 3rd part xref:uuidgenerator.adoc[UuidGenerator].
 |=======================================================================
 
 And the following options have support for any number of beans defined.
@@ -103,18 +55,15 @@ And the following options have support for any number of beans defined.
 [width="100%",cols="34%,33%,33%",options="header",]
 |=======================================================================
 |Type |Number of beans |Description
-|InterceptStrategy |0..n |To use your own xref:components:eips:intercept.adoc[Intercept]
-that intercepts every processing steps in all routes in the
-xref:camelcontext.adoc[CamelContext]. For instance you can use this to
-do an AOP like performance timer interceptor.
-
-|LifecycleStrategy |0..n |To use 3rd party lifecycle
-strategies. By default Camel uses a JMX aware that does JMX
-instrumentation.
-
+|CamelClusterService |0..n |To detect xref:clustering.adoc[Clustering] services.
+|EndpointStrategy |0..n |To use 3rd part endpoint strategies.
 |EventNotifier |0..n |To use 3rd part event notifiers.
-
-|RoutePolicyFactory |0..n |To use a 3rd party route policy
-factory to create a route policy for every route.
+|HealthCheckRepository|0..n|To use Camel xref:health-check.adoc[Health Check] repositories.
+|InterceptStrategy |0..n |To use your own xref:components:eips:intercept.adoc[Intercept]that intercepts every processing steps in all routes in the xref:camelcontext.adoc[CamelContext]. For instance you can use this to do an AOP like performance timer interceptor.
+|LifecycleStrategy |0..n |To use 3rd party lifecycle strategies.
+|LogListener|0..n|To use custom `LogListener` implementations.
+|ModelLifecycleStrategy |0..n |To use 3rd party model lifecycle strategies.
+|RoutePolicyFactory |0..n |To use a 3rd party route policy factory to create a route policy for every route.
+|ServiceRegistry |0..n |To use camel-cloud xref:service-registry.adoc[Service Registries].
 |=======================================================================
 
