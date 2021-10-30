@@ -1200,7 +1200,20 @@ public final class PropertyBindingSupport {
             for (int i = 0; i < found.getParameterCount(); i++) {
                 Class<?> paramType = found.getParameterTypes()[i];
                 Object param = params[i];
-                Object val = camelContext.getTypeConverter().convertTo(paramType, param);
+                Object val = null;
+                // special as we may refer to other #bean or #type in the parameter
+                if (param instanceof String) {
+                    String str = param.toString();
+                    if (str.startsWith("#")) {
+                        Object bean = resolveBean(camelContext, param);
+                        if (bean != null) {
+                            val = bean;
+                        }
+                    }
+                }
+                if (val == null) {
+                    val = camelContext.getTypeConverter().convertTo(paramType, param);
+                }
                 // unquote text
                 if (val instanceof String) {
                     val = StringHelper.removeLeadingAndEndingQuotes((String) val);
