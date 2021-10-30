@@ -32,7 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Default {@link ScheduledBatchPollingConsumer}.
+ * The default scheduler for {@link ScheduledPollConsumer}.
  */
 public class DefaultScheduledPollConsumerScheduler extends ServiceSupport implements ScheduledPollConsumerScheduler {
 
