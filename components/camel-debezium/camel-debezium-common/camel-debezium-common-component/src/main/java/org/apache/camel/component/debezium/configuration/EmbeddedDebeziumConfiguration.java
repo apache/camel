@@ -23,6 +23,7 @@ import io.debezium.config.Configuration;
 import io.debezium.config.Field;
 import io.debezium.embedded.EmbeddedEngine;
 import io.debezium.engine.spi.OffsetCommitPolicy;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.debezium.DebeziumConstants;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
@@ -32,7 +33,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.kafka.connect.json.JsonConverter;
 
 @UriParams
-public abstract class EmbeddedDebeziumConfiguration {
+public abstract class EmbeddedDebeziumConfiguration implements Cloneable {
 
     private static final String LABEL_NAME = "consumer";
 
@@ -103,6 +104,18 @@ public abstract class EmbeddedDebeziumConfiguration {
     public EmbeddedDebeziumConfiguration() {
         ObjectHelper.notNull(configureConnectorClass(), "connectorClass");
         this.connectorClass = configureConnectorClass();
+    }
+
+    public Object copy() {
+        try {
+            EmbeddedDebeziumConfiguration answer = (EmbeddedDebeziumConfiguration) clone();
+            // make sure the map is copied in its own instance
+            Map<String, Object> additionalPropertiesCopy = new HashMap<>(additionalProperties);
+            answer.setAdditionalProperties(additionalPropertiesCopy);
+            return answer;
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
     }
 
     /**

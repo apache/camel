@@ -25,7 +25,7 @@ import org.apache.camel.spi.annotations.Component;
 public final class DebeziumPostgresComponent extends DebeziumComponent<PostgresConnectorEmbeddedDebeziumConfiguration> {
 
     @Metadata
-    private PostgresConnectorEmbeddedDebeziumConfiguration configuration;
+    private PostgresConnectorEmbeddedDebeziumConfiguration configuration = new PostgresConnectorEmbeddedDebeziumConfiguration();
 
     public DebeziumPostgresComponent() {
     }
@@ -36,14 +36,9 @@ public final class DebeziumPostgresComponent extends DebeziumComponent<PostgresC
 
     /**
      * Allow pre-configured Configurations to be set.
-     *
-     * @return {@link PostgresConnectorEmbeddedDebeziumConfiguration}
      */
     @Override
     public PostgresConnectorEmbeddedDebeziumConfiguration getConfiguration() {
-        if (configuration == null) {
-            return new PostgresConnectorEmbeddedDebeziumConfiguration();
-        }
         return configuration;
     }
 
