@@ -18,6 +18,8 @@
 package org.apache.camel.support.task.budget;
 
 public class IterationBoundedBudget implements IterationBudget {
+    public static final int UNLIMITED_ITERATIONS = -1;
+
     private final long initialDelay;
     private final long interval;
     private final int maxIterations;
@@ -51,7 +53,9 @@ public class IterationBoundedBudget implements IterationBudget {
     @Override
     public boolean next() {
         if (canContinue()) {
-            iterations++;
+            if (iterations != UNLIMITED_ITERATIONS) {
+                iterations++;
+            }
 
             return true;
         }
@@ -61,6 +65,10 @@ public class IterationBoundedBudget implements IterationBudget {
 
     @Override
     public boolean canContinue() {
-        return iterations < maxIterations;
+        if (maxIterations != UNLIMITED_ITERATIONS) {
+            return iterations < maxIterations;
+        }
+
+        return true;
     }
 }
