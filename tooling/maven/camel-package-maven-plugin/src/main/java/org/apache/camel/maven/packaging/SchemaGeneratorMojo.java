@@ -398,15 +398,18 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
         required = findRequired(fieldElement, required);
 
         // gather enums
-        Set<String> enums = new TreeSet<>();
+        Set<String> enums;
         boolean isEnum;
         if (metadata != null && !Strings.isNullOrEmpty(metadata.enums())) {
+            // use the order from the metadata
+            enums = new LinkedHashSet<>();
             isEnum = true;
             String[] values = metadata.enums().split(",");
             for (String val : values) {
                 enums.add(val.trim());
             }
         } else {
+            enums = new TreeSet<>(); // sort the enums A..Z
             isEnum = fieldTypeElement.isEnum();
             if (isEnum) {
                 for (Object val : fieldTypeElement.getEnumConstants()) {
