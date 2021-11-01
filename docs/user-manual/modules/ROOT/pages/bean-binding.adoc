@@ -217,7 +217,7 @@ the method option
 * The value is a String enclosed with either single or double quotes
 * The value is null which denotes a `null` value
 * It can be evaluated using the xref:components:languages:simple-language.adoc[Simple] language, which
-means you can use, e.g., `${body}`, `${header.foo}` and others
+means you can use, e.g., `$\{body}`, `${header.foo}` and others
 xref:components:languages:simple-language.adoc[Simple] tokens. Notice the tokens must be enclosed with
 `${ }`.
 
