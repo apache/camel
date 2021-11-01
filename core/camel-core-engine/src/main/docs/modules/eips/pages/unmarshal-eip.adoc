@@ -3,6 +3,8 @@
 The xref:marshal-eip.adoc[Marshal] and xref:unmarshal-eip.adoc[Unmarshal] EIPs are used
 for xref:message-translator.adoc[Message Transformation].
 
+image::eip/MessageTranslator.gif[image]
+
 Camel has support for message transformation using several techniques.
 One such technique is xref:dataformats:index.adoc[Data Formats],
 where marshal and unmarshal comes from.
