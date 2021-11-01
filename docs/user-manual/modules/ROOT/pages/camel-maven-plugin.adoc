@@ -10,8 +10,9 @@ The Camel Maven Plugin supports the following goals
 The `camel:run` goal of the Camel Maven Plugin is used to run your Camel Spring configurations in a forked JVM from Maven.
 A good example application to get you started is the Spring Example.
 
+[source,bash]
 ----
-cd examples/camel-example-spring
+cd examples/spring
 mvn camel:run
 ----
 
@@ -27,6 +28,7 @@ If you want to boot up your Camel routes a little faster, you could try the `cam
 
 The maven plugin *run* goal supports the following options which can be configured from the command line (use `-D` syntax), or defined in the `pom.xml` file in the `<configuration>` tag.
 
+[width="100%",cols="2,2,6",options="header",]
 |===
 | Parameter | Default Value | Description
 | duration | -1 | Sets the time duration (seconds) that the application will run for before terminating. A value <= 0 will run forever.
@@ -49,6 +51,7 @@ You should add the CDI container of your choice (e.g. Weld or OpenWebBeans) to t
 
 From the source of Camel you can run a CDI example via
 
+[source,bash]
 ----
 cd examples/camel-example-cdi
 mvn compile camel:run
@@ -69,27 +72,6 @@ You can enable this in the configuration using:
   </configuration>
 </plugin>
 ----
-
-=== Using live reload of XML files
-
-You can configure the plugin to scan for XML file changes and trigger a reload of the Camel routes which are contained in those XML files.
-
-[source,xml]
-----
-<plugin>
-  <groupId>org.apache.camel</groupId>
-  <artifactId>camel-maven-plugin</artifactId>
-  <configuration>
-    <fileWatcherDirectory>src/main/resources/META-INF/spring</fileWatcherDirectory>
-  </configuration>
-</plugin>
-----
-
-Then the plugin watches this directory. This allows you to edit the source code from your editor and save the file, and have
-    the running Camel application pickup those changes.
-
-Notice its only changes of Camel routes, eg `<routes>`, or `<route>` which is supported.
-You cannot change Spring or OSGi Blueprint `<bean>` elements.
 
 
 == camel:prepare-fatjar

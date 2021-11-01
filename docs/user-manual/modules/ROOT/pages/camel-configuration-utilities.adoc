@@ -5,7 +5,7 @@ https://docs.oracle.com/en/java/javase/11/security/java-secure-socket-extension-
 Secure Socket Extension] (JSSE) API in order to greatly simplify the use
 of custom transport layer security (TLS) settings on Camel components.
 
-== Supported Components
+== Supported JSSE Components
 
 A number of Camel components support this (such as but not limited to):
 
@@ -17,7 +17,7 @@ A number of Camel components support this (such as but not limited to):
 * xref:components::netty-component.adoc[Netty]
 * xref:components::mail-component.adoc[Mail]
 
-== Configuration
+== Configuring JSSE with Camel
 
 The key component in configuring TLS through the JSSE API is the `SSLContext`.
 
@@ -55,11 +55,11 @@ contain the following elements:
 
 provider::
 The optional provider identifier for the JSSE implementation to use when
-constructing the SSLContext.  If omitted, the standard provider look-up
+constructing the SSLContext. If omitted, the standard provider look-up
 mechanism is used to resolve the provider.
 secureSocketProtocol::
 The optional secure socket protocol. See https://docs.oracle.com/en/java/javase/11/docs/specs/security/standard-names.html[Java Security Standard Algorithm Names]
-for information about standard protocol names.  If omitted, TLS is used by default.
+for information about standard protocol names. If omitted, TLS is used by default.
 Note that this property is related to but distinctly different from the
 secureSocketProtocols and secureSocketProtocolsFilter properties.
 certAlias::
@@ -71,65 +71,75 @@ sessions on both the client and server side as well as in the SSLEngine.
 cipherSuites::
 This optional property represents a collection of explicitly named
 cipher suites to enable on both the client and server side as well as in
-the SSLEngine.  These values take precedence over filters supplied in
-cipherSuitesFilter.  The utility attempts to enable the listed cipher
-suites regardless of whether or not the JSSE provider actually supports
-them or not.  This behavior guarantees that listed cipher suites are
-always enabled when listed.  For a more lenient option, use
+the SSLEngine. These values take precedence over filters supplied in
+cipherSuitesFilter. The utility attempts to enable the listed cipher
+suites regardless of whether the JSSE provider actually supports
+them or not. This behavior guarantees that listed cipher suites are
+always enabled when listed. For a more lenient option, use
 cipherSuitesFilter.
 cipherSuitesFilter::
 This optional property represents a collection of include and exclude
 patterns for cipher suites to enable on both the client and server side
-as well as in the SSLEngine.  The patterns are applied over only the
-available cipher suites.  The exclude patterns have precedence over the
-include patterns.  If no cipherSuites and no cipherSuitesFilter are
-present, the default patterns applied are: +
-Includes .\*; +
+as well as in the SSLEngine. The patterns are applied over only the
+available cipher suites. The excludes patterns have precedence over the
+includes patterns. If no cipherSuites and no cipherSuitesFilter are
+present, the default patterns applied are:
+
+[source,text]
+----
+Includes .\*;
 Excludes .*_NULL_.*, .\*_anon_.*, .\*DES.*, .\*EXPORT.*, .\*MD5, .*RC4.*
+----
+
 secureSocketProtocols::
 This optional property represents a collection of explicitly named
 secure socket protocols, such as SSLv3/TLS/etc., to enable on both the
-client and server side as well as in the SSLEngine.  These values take
+client and server side as well as in the SSLEngine. These values take
 precedence over filters supplied in secureSocketProtocolsFilter.  The
-utility attempts to enable the listed protocols regardless of whether or
-not the JSSE provider actually supports them or not.  This behavior
-guarantees that listed protocols are always enabled when listed.  For a
+utility attempts to enable the listed protocols regardless of whether
+the JSSE provider actually supports them or not. This behavior
+guarantees that listed protocols are always enabled when listed. For a
 more lenient option, use secureSocketProtocolsFilter.
 secureSocketProtocolsFilter::
 This optional property represents a collection of include and exclude
 patterns for secure socket protocols to enable on both the client and
-server side as well as in the SSLEngine.  The patterns are applied over
-only the available protocols. The exclude patterns have precedence over
-the include patterns. If no secureSocketProtocols and no
+server side as well as in the SSLEngine. The patterns are applied over
+only the available protocols. The excludes patterns have precedence over
+the includes patterns. If no secureSocketProtocols and no
 secureSocketProtocolsFilter are present, the default patterns applied
-are: Includes .*
+are:
+
+[source,text]
+----
+Includes .*
+----
 
 keyManagers::
 This optional property configures the source of key material for
 providing identity of client and server side connections as well as in
-the SSLEngine.  If omitted, no source of key material is provided and
+the SSLEngine. If omitted, no source of key material is provided and
 the SSLContext is suitable only for client-side usage when mutual
-authentication is not in use.  You typically configure this property
+authentication is not in use. You typically configure this property
 with a key store containing a client or server private key.
 trustManagers::
 This optional property configures the source of material for verifying
-trust of key material used in the handshake process.  If omitted, the
-default trust manager is automatically used.  See the
+trust of key material used in the handshake process. If omitted, the
+default trust manager is automatically used. See the
 https://docs.oracle.com/en/java/javase/11/security/java-secure-socket-extension-jsse-reference-guide.html#GUID-7D9F43B8-AABF-4C5B-93E6-3AFB18B66150[JSSE
 documentation] for more information on how the default trust manager is
-configured.  You typically configure this property with a key store
+configured. You typically configure this property with a key store
 containing trusted CA certificates.
 secureRandom::
 This optional property configures the secure random number generator
-used by the client and server side as well as in the SSLEngine.  If
+used by the client and server side as well as in the SSLEngine. If
 omitted, the default secure random number generator is used.
 clientParameters::
 This optional property configures additional settings that apply only to
-the client side aspects of the SSLContext.  If present, these settings
+the client side aspects of the SSLContext. If present, these settings
 override the settings specified at the SSLContextParameters level.
 serverParameters::
 This optional property configures additional settings that apply only to
-the server side aspects of the SSLContext.  If present, these settings
+the server side aspects of the SSLContext. If present, these settings
 override the settings specified at the SSLContextParameters level.
 
 
@@ -150,18 +160,18 @@ PKCS#11, the key password may be provided through other means and is
 omitted entirely in this configuration.
 provider::
 The optional provider identifier for the KeyManagerFactory used to
-create the KeyManagers represented by this object's configuration.  If
+create the KeyManagers represented by this object's configuration. If
 omitted, the default look-up behavior is used.
 algorithm::
 The optional algorithm name for the KeyManagerFactory used to create the
-KeyManager represented by this object's configuration.  See the
+KeyManager represented by this object's configuration. See the
 https://docs.oracle.com/en/java/javase/11/security/java-secure-socket-extension-jsse-reference-guide.html[Java
 Secure Socket Extension Reference Guide] for information about standard
 algorithm names.
 keyStore::
 This optional property represents the key store that provides key
-material to the key manager.  This is typically configured with a key
-store containing a user or server private key.  In some cases, such as
+material to the key manager. This is typically configured with a key
+store containing a user or server private key. In some cases, such as
 when using PKCS#11, the key store is omitted entirely.
 
 === TrustManagersParameters
@@ -175,7 +185,7 @@ TrustManagersParameters contain the following elements:
 
 provider::
 The optional provider identifier for the TrustManagerFactory used to
-create the TrustManagers represented by this object's configuration.  If
+create the TrustManagers represented by this object's configuration. If
 omitted, the default look-up behavior is used.
 algorithm::
 The optional algorithm name for the TrustManagerFactory used to create
@@ -184,11 +194,12 @@ https://docs.oracle.com/en/java/javase/11/security/java-secure-socket-extension-
 Secure Socket Extension Reference Guide] for information about standard
 algorithm names.
 trustManager::
-To use a existing configured trust manager instead of using
+To use an existing configured trust manager instead of using
 TrustManagerFactory to get the TrustManager.
 keyStore::
-See <<CamelConfigurationUtilities-KeyStoreParameters>>. This optional property represents the key store that provides key
-material to the trust manager.  This is typically configured with a key
+See <<CamelConfigurationUtilities-KeyStoreParameters>>.
+This optional property represents the key store that provides key
+material to the trust manager. This is typically configured with a key
 store containing trusted CA certificates / public keys.  In some cases,
 such as when using PKCS#11, the key store is omitted entirely.
 
@@ -203,20 +214,20 @@ KeyStoreParameters contain the following elements:
 * resource (attribute)
 
 type::
-The optional type of the key store.  See the
+The optional type of the key store. See the
 https://docs.oracle.com/en/java/javase/11/docs/specs/security/standard-names.html[Java Security Standard Algorithm Names]
-for more information on standard names.  If omitted, defaults to the default
+for more information on standard names. If omitted, defaults to the default
 lookup mechanism as defined by `KeyStore.getDefaultType()`
 password::
 The optional password for reading/opening/verifying the key store.
 provider::
 The optional provider identifier for the provider used to create the
-KeyStores represented by this object's configuration.  If omitted, the
+KeyStores represented by this object's configuration. If omitted, the
 default look-up behavior is used.
 resource::
 This optional property represents the location of the key store resource
-to load the key store from.  In some cases, the resource is omitted as
-the key store content is provided by other means.  The loading of the
+to load the key store from. In some cases, the resource is omitted as
+the key store content is provided by other means. The loading of the
 resource, if provided, is attempted by treating the resource as a file
 path, a class path resource, and a URL in that order. An exception is
 thrown if the resource cannot be resolved to readable input stream using
@@ -231,14 +242,16 @@ FilterParameters contain the following elements:
 * exclude (element, multiple string)
 include::
 This optional property represents zero or more regular expression
-patterns for which matching values should be included.  The list of
-excludes takes precedence over the include patterns.
+patterns for which matching values should be included. The list of
+excludes takes precedence over the includes patterns.
 exclude::
 This optional property represents zero or more regular expression
-patterns for which matching values should be included.  The list of
-excludes takes precedence over the include patterns.
+patterns for which matching values should be included. The list of
+excludes takes precedence over the includes patterns.
+
 
 === SecureRandomParameters
+
 SecureRandomParameters contain the following elements:
 
 * algorithm (attribute)
@@ -252,9 +265,10 @@ for information about standard RNG algorithm names.
 provider::
 The optional provider identifier for the SecureRandom factory method
 used to create the SecureRandom represented by this object's
-configuration.  If omitted, the default look-up behavior is used.
+configuration. If omitted, the default look-up behavior is used.
 
 === SSLContextServerParameters
+
 SSLContextServerParameters contain the following elements:
 
 * clientAuthentication (attribute)
@@ -267,32 +281,34 @@ SSLContextServerParameters contain the following elements:
 clientAuthentication::
 This optional property indicates if the server side does not request,
 requests, or requires clients to provide authentication credentials
-during the handshake process.  This is commonly referred to as mutual
-authentication, two direction SSL/TLS, or two-legged SSL/TLS.  +
- Valid values are: NONE, WANT, REQUIRE
+during the handshake process. This is commonly referred to as mutual
+authentication, two direction SSL/TLS, or two-legged SSL/TLS.
+Valid values are: NONE, WANT, REQUIRE
+
 sessionTimeout::
 This optional property defines the timeout period, in seconds, for
-sessions on the server side.  This setting affects both the
-SSLServerSocketFactory/SSLServerSocket as well as the server side of the
+sessions on the server side. This setting affects both the
+SSLServerSocketFactory/SSLServerSocket and the server side of the
 SSLEngine.
 cipherSuites::
 This optional property overrides the value of this
-setting in the SSLContextParameters. This option has no affect on the
+setting in the SSLContextParameters. This option has no effect on the
 SSLEngine configuration.
 cipherSuitesFilter::
 This optional property overrides the value of this
-setting in the SSLContextParameters.  This option has no affect on the
+setting in the SSLContextParameters.  This option has no effect on the
 SSLEngine configuration.
 secureSocketProtocols::
 This optional property overrides the
-value of this setting in the SSLContextParameters.  This option has no
-affect on the SSLEngine configuration.
+value of this setting in the SSLContextParameters. This option has no
+effect on the SSLEngine configuration.
 secureSocketProtocolsFilter::
 This optional property overrides the value of this
-setting in the SSLContextParameters. This option has no affect on the
+setting in the SSLContextParameters. This option has no effect on the
 SSLEngine configuration.
 
 === SSLContextClientParameters
+
 SSLContextClientParameters contains the following elements:
 
 * sniHostNames (elements)
@@ -351,8 +367,13 @@ SSLEngine engine = scp.createSSLEngine();
 In this example, both the client and server sides share the same custom
 key store; however, the client side allows any supported cipher suite
 while the server side will use the default cipher suite filter and
-exclude any cipher suites that match the patterns .*_NULL_.* and
-.*_anon_.*.
+exclude any cipher suites that match the patterns:
+
+[source,text]
+----
+.*_NULL_.*
+.*_anon_.*
+----
 
 [source,java]
 -------------------------------------------------------------------

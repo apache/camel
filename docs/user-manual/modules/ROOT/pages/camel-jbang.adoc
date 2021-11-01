@@ -1,9 +1,9 @@
 = Camel JBang
 
-A JBang-based Camel app for searching for kamelets, components, languages,  running routes. This component is available from *Camel 3.12* and newer versions.
+A JBang-based Camel app for searching for kamelets, components, languages, running routes.
 
+The `camel-jbang` is available from *Camel 3.12* and newer versions.
 
-[[CamelJBang-Installation]]
 == Installation
 
 JBang makes it easy for us by providing an installation feature that works with Github. If you have JBang installed on your system, then you can run the following command to install CamelJBang:
@@ -13,9 +13,7 @@ JBang makes it easy for us by providing an installation feature that works with 
 jbang app install CamelJBang@apache/camel
 ----
 
-
-[[CamelJBang-Usage]]
-== Usage
+== Using Camel JBang
 
 The CamelJBang supports multiple commands. Running the command below, will print all of them:
 
@@ -26,8 +24,7 @@ CamelJBang.java [command]
 
 All the commands support the `--help` and will display the appropriate help if that flag is provided.
 
-[[CamelJBang-Search]]
-== Search
+=== Search
 
 You can use the CLI to search for kamelets, components, languages and miscelaneous components (others). Running the following command will present a list of items that can be searched:
 
@@ -71,8 +68,7 @@ The same behavior also works for all the other search commands. The table below 
 |===
 
 
-[[CamelJBang-Init-Kamets]]
-== Init Kamelets
+=== Init Kamelets
 
 The init sub-command can be used to simplify creating Kamelets. Through this command, it is possible to create new Kamelets through pre-configured templates. It works in two steps: first it is necessary to bootstrap the Kamelet by creating a properties file with the parameters necessary to create the Kamelet. Once the properties file is correctly set, then it is possible to create a pre-filled Kamelet by processing that properties file.
 
@@ -99,8 +95,7 @@ Running this command will create a new file in the `work` directory. The name of
 After the file is generated, it may still need to require final adjustments, such as correctly setting the name, the icon and other requirements for official Kamelets. Please consult the Kamelet development documentation for updated details.
 
 
-[[CamelJBang-Init-Bindings]]
-== Init Bindings
+=== Init Bindings
 
 The init sub-command can also be used to simplify creating Kamelets bindings. Through this command, it is possible to create new bindings through pre-configured templates. Use the  `--kamelet` option (you can list the available ones using the search command) to set the Kamelet to generate the binding for.
 
@@ -121,7 +116,6 @@ CamelJBang init binding --destination /path/to/destination/directory/ --kamelet 
 ----
 
 
-[[CamelJBang-Running]]
 == Running Routes
 
 At the moment it is possible to run YAML-based routes which also refer to Kamelets in the catalog.
