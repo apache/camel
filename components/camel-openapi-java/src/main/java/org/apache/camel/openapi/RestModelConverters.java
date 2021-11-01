@@ -97,7 +97,7 @@ public class RestModelConverters {
             oasDocument.definitions = oasDocument.createDefinitions();
         }
 
-        Map<String, Schema> swaggerModel = MODEL_CONVERTERS.getInstance().readAll(clazz);
+        Map<String, Schema> swaggerModel = ModelConverters.getInstance().readAll(clazz);
         swaggerModel.forEach((key, schema) -> {
             Oas20SchemaDefinition model = oasDocument.definitions.createSchemaDefinition(key);
             oasDocument.definitions.addDefinition(key, model);

@@ -42,7 +42,7 @@ public class DefaultRestDefinitionsResolver implements RestDefinitionsResolver {
 
     @Override
     public List<String> findCamelContexts() throws Exception {
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
 }

@@ -467,7 +467,7 @@ public class RestOpenApiReader {
 
     private String buildBasePath(CamelContext camelContext, RestDefinition rest) {
         // used during gathering of apis
-        String basePath = getValue(camelContext, rest.getPath());
+        String basePath = FileUtil.stripLeadingSeparator(getValue(camelContext, rest.getPath()));
 
         // is there any context-path which we must use in base path for each rest service
         String cp = camelContext.getRestConfiguration() != null ? camelContext.getRestConfiguration().getContextPath() : null;

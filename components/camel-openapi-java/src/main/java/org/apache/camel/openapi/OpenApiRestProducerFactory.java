@@ -92,9 +92,8 @@ public class OpenApiRestProducerFactory implements RestProducerFactory {
 
         String componentName = (String) parameters.get("componentName");
 
-        Producer producer = createHttpProducer(camelContext, openApi, operation, host, verb, path, queryParameters,
+        return createHttpProducer(camelContext, openApi, operation, host, verb, path, queryParameters,
                 produces, consumes, componentName, parameters);
-        return producer;
     }
 
     OasDocument loadOpenApiModel(CamelContext camelContext, String apiDoc) throws Exception {
@@ -168,9 +167,7 @@ public class OpenApiRestProducerFactory implements RestProducerFactory {
                     Oas30Operation oas30Operation = (Oas30Operation) operation;
                     for (OasResponse response : oas30Operation.responses.getResponses()) {
                         Oas30Response oas30Response = (Oas30Response) response;
-                        for (String ct : oas30Response.content.keySet()) {
-                            list.add(ct);
-                        }
+                        list.addAll(oas30Response.content.keySet());
                     }
 
                 }
@@ -195,9 +192,7 @@ public class OpenApiRestProducerFactory implements RestProducerFactory {
                     Oas30Operation oas30Operation = (Oas30Operation) operation;
                     if (oas30Operation.requestBody != null
                             && oas30Operation.requestBody.content != null) {
-                        for (String ct : oas30Operation.requestBody.content.keySet()) {
-                            list.add(ct);
-                        }
+                        list.addAll(oas30Operation.requestBody.content.keySet());
                     }
 
                 }
@@ -214,8 +209,8 @@ public class OpenApiRestProducerFactory implements RestProducerFactory {
                 consumes = consumesBuilder.length() == 0 ? null : consumesBuilder.toString();
             }
 
-            String basePath = null;
-            String uriTemplate = null;
+            String basePath;
+            String uriTemplate;
             if (host == null) {
 
                 //if no explicit host has been configured then use host and base path from the openApi api-doc

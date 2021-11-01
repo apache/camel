@@ -130,7 +130,7 @@ public class RestOpenApiSupport {
                     String trimmedScheme = scheme.trim();
                     if (ObjectHelper.isNotEmpty(trimmedScheme)) {
                         if (((Oas20Document) openApi).schemes == null) {
-                            ((Oas20Document) openApi).schemes = new ArrayList();
+                            ((Oas20Document) openApi).schemes = new ArrayList<>();
                         }
                         ((Oas20Document) openApi).schemes.add(trimmedScheme.toLowerCase());
                     }
@@ -159,8 +159,7 @@ public class RestOpenApiSupport {
                 String[] schemes = proto.split(",");
                 for (String schema : schemes) {
                     String trimmedScheme = schema.trim();
-                    String serverUrl = new StringBuilder().append(trimmedScheme.toLowerCase()).append("://").append(host)
-                            .append(basePath).toString();
+                    String serverUrl = String.format("%s://%s%s", trimmedScheme.toLowerCase(), host, basePath);
                     ((Oas30Document) openApi).addServer(serverUrl, null);
 
                 }
@@ -210,11 +209,8 @@ public class RestOpenApiSupport {
                         URL serverUrl = new URL(
                                 parseVariables(((Oas30Document) openapi).getServers().get(0).url,
                                         (Oas30Server) ((Oas30Document) openapi).getServers().get(0)));
-                        basePath = serverUrl.getPath();
-                        if (basePath.indexOf("//") == 0) {
-                            // strip off the first "/" if double "/" exists
-                            basePath = basePath.substring(1);
-                        }
+                        // strip off the first "/" if double "/" exists
+                        basePath = serverUrl.getPath().replaceAll("//", "/");
                         if ("/".equals(basePath)) {
                             basePath = "";
                         }
@@ -232,7 +228,7 @@ public class RestOpenApiSupport {
     }
 
     public static String parseVariables(String url, Oas30Server server) {
-        Pattern p = Pattern.compile("\\{(.*?)\\}");
+        Pattern p = Pattern.compile("\\{(.*?)}");
         Matcher m = p.matcher(url);
         while (m.find()) {
             String var = m.group(1);
@@ -286,7 +282,6 @@ public class RestOpenApiSupport {
         String contactEmail = (String) config.get("api.contact.email");
 
         if (!openApiConfig.isOpenApi3()) {
-
             setInfoOas20(openApiConfig, version, title, description, termsOfService, licenseName, licenseUrl,
                     contactName, contactUrl, contactEmail);
         } else {
@@ -396,8 +391,8 @@ public class RestOpenApiSupport {
                         .getOrDefault("api.specification.contentType.json", "application/json"));
 
                 // read the rest-dsl into openApi model
-                OasDocument openApi
-                        = reader.read(camelContext, rests, openApiConfig, camelContext.getName(), classResolver);
+                OasDocument openApi = reader.read(
+                        camelContext, rests, openApiConfig, camelContext.getName(), classResolver);
                 if (configuration.isUseXForwardHeaders()) {
                     setupXForwardedHeaders(openApi, headers);
                 }
@@ -417,8 +412,8 @@ public class RestOpenApiSupport {
                         .getOrDefault("api.specification.contentType.yaml", "text/yaml"));
 
                 // read the rest-dsl into openApi model
-                OasDocument openApi
-                        = reader.read(camelContext, rests, openApiConfig, camelContext.getName(), classResolver);
+                OasDocument openApi = reader.read(
+                        camelContext, rests, openApiConfig, camelContext.getName(), classResolver);
                 if (configuration.isUseXForwardHeaders()) {
                     setupXForwardedHeaders(openApi, headers);
                 }
