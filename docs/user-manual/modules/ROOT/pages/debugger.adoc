@@ -75,7 +75,7 @@ The IDE (IDEA) has hit the breakpoint and we can inspect the
 parameters. Notice how we can see that the message is to be send to the "mock:a"
 endpoint.
 
-image::debug.png[image]
+image::images/debug.png[image]
 
 == Implementing a custom debugger
 
