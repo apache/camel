@@ -4,11 +4,11 @@ The Camel Debugger is intended for 3rd party tooling to make it possible to
 debug routes, trace messages and to use breakpoints with the EIP patterns in the Camel routes.
 
 The Debugger allows tooling or the likes to attach breakpoints which is
-being invoked when Exchanges is being routed.
+being invoked when xref:exchange.adoc[Exchanges] are routed.
 
-== Debugging Camel routes from `camel-test`
+== Debugging Camel routes
 
-If you are developing unit tests using the `camel-test` component, then
+If you are developing unit tests using the `camel-test-junit5` component, then
 the Debugger is available if you turn it on via overriding the `isUseDebugger()`
 method and return `true`.
 
@@ -67,30 +67,30 @@ breakpoint was hit.
 
 TIP: There is also a `debugAfter` method which is invoked after the processor
 has been invoked. This allows you to _see_ what happens to the
-Exchange right after it has invoked a processor in
-the route.
+Exchange right after it has invoked a processor in the route.
 
 The screenshot below shows the Debugger in action.
-The IDE (IDEA) has hit the breakpoint and we can inspect the
-parameters. Notice how we can see that the message is to be send to the "mock:a"
+The IDE (IDEA) has hit the breakpoint, and we can inspect the
+parameters. Notice how we can see that the message is to be sent to the mock:a
 endpoint.
 
 image::images/debug.png[image]
 
-== Implementing a custom debugger
+=== Implementing a custom debugger
 
 The debugger API is defined in `org.apache.camel.spi.Debugger`.
-This API has methods to attach and remove
-breakpoints. And to suspend/resume all breakpoints etc.
-You can also attach a condition to the breakpoint so it only reacts if
+This API has methods to attach and remove breakpoints.
+
+And to suspend/resume all breakpoints etc.
+You can also attach a condition to the breakpoint, so it only reacts if
 the condition matches.
 
 Camel provides a base implementation `org.apache.camel.impl.DefaultDebugger`,
 which can be used to extend for custom implementations.
 
-== JMX debugger
+=== JMX debugger
 
-There is also a `BacklogDebugger` which allows to debug from JMX,
+There is also a xref:backlog-debugger.adoc[Backlog Debugger] which allows debugging from JMX,
 and some 3rd party tooling such as https://hawt.io/[hawtio] uses this for its
 web based debugging functionality.
 
