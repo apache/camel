@@ -195,7 +195,7 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
                         // cancel task as we are done
                         LOG.trace("Processing done so cancelling TimeoutExtender task for exchangeId: {}",
                                 exchange.getExchangeId());
-                        scheduledFuture.cancel(true);
+                        scheduledFuture.cancel(false);
                     }
                 });
             }
