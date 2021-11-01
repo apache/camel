@@ -11,15 +11,7 @@ The Camel PMC does not endorse or recommend any of the products or
 services on this page. See below for information about what is
 appropriate to add to the page.
 
-[[CommercialCamelOfferings-Code-House]]
-== http://code-house.org[Code-House]
 
-http://code-house.org[Code-House] is european service provider with own
-training programs covering Apache middleware projects (Camel,
-ServiceMix, ActiveMQ) on development and system operations level. We
-also offer dedicated management tool.
-
-[[CommercialCamelOfferings-CyberlogicConsulting]]
 == http://www.cyberlogic.ch[Cyberlogic Consulting]
 
 http://www.cyberlogic.ch[Cyberlogic Consulting] is a Swiss based
@@ -30,45 +22,27 @@ Software. We specialize in helping our clients to realize new projects
 and support the delivery of the project from end to end.
 
 
-[[CommercialCamelOfferings-GOAPPO]]
-== https://www.goappo.com[GOAPPO]
 
-https://www.goappo.com[GOAPPO] embeds Apache Camel at design, testing
-and runtime. You start by composing ETLs using the application builder.
-You test ETLs instantly on your machine. You bundle ETLs with your
-application.
-
-
-[[CommercialCamelOfferings-IBM]]
 == http://ibm.biz/OSSupport[IBM]
 
 http://ibm.biz/OSSupport[IBM] provides cross-platform support for
 Apache Camel and many other open source packages.
 
-[[CommercialCamelOfferings-LinuxPolska]]
+
 == https://linuxpolska.com/[Linux Polska]
 
-https://linuxpolska.com/[Linux Polska] provides consulting, implementation and maintenance services in the areas of middleware, especially for Apache Camel and related projects based on Apache. The company also designs and creates its own open source solutions. Its experienced team of engineers has over 500 individual certifications. Part of Linux Polska’s business centers on providing IT training courses, delivered by an experienced team of certified trainers.
+https://linuxpolska.com/[Linux Polska] provides consulting,
+implementation and maintenance services in the areas of middleware, especially for Apache Camel and related projects based on Apache.
+The company also designs and creates its own open source solutions.
 
 
-[[CommercialCamelOfferings-MediaDriver]]
-== http://mediadriver.com[Media Driver]
-
-Media Driver provides consulting services and management tools for
-Apache Camel, Red Hat JBoss Fuse and the Apache Integration stack
-(ActiveMQ, CXF, Karaf, ServiceMix, etc) for both the commercial and
-public sector. We bring a full suite of project delivery services
-including business and technical analysis, proof of concepts,
-architectural guidance, best practice integration, and project
-management. Media Driver offers training classes for developers and
-administrators, as well as middleware management software.
-
-[[CommercialCamelOfferings-OpenLogic]]
 == http://www.openlogic.com/[OpenLogic]
 
-http://www.openlogic.com/[OpenLogic] by Perforce has a team of Camel experts ready to help you. We provide 24/7 support for troubleshooting issues and outages, consulting on architecture and design, and instructor-led, hands-on training. https://www.openlogic.com/solutions/support-activemq-apache-camel-kafka#apache-camel[Learn more about OpenLogic's Camel support].
+http://www.openlogic.com/[OpenLogic] by Perforce has a team of Camel experts ready to help you.
+We provide 24/7 support for troubleshooting issues and outages, consulting on architecture and design, and instructor-led, hands-on training.
+https://www.openlogic.com/solutions/support-activemq-apache-camel-kafka#apache-camel[Learn more about OpenLogic's Camel support].
 
-[[CommercialCamelOfferings-RedHat]]
+
 == https://www.redhat.com/en/technologies/jboss-middleware/fuse[Red Hat]
 
 https://www.redhat.com/en/technologies/jboss-middleware/fuse[Red Hat] offers
@@ -80,7 +54,7 @@ https://www.redhat.com/en/services/training/courses-by-curriculum#Red-Hat-JBoss-
 https://www.redhat.com/en/services/consulting[consulting], and
 https://developers.redhat.com/products/fuse/overview/[a developer community].
 
-[[CommercialCamelOfferings-RouteBLAZE]]
+
 == https://www.routeblaze.io[RouteBLAZE]
 
 https://www.routeblaze.io[RouteBLAZE] allows you to design, develop and deploy business processes at Enterprise scale. 
@@ -88,7 +62,6 @@ It comes bundled with a suite of tools and services that support every step of t
 We also provide bespoke development and consultancy. 
 
 
-[[CommercialCamelOfferings-SavoirTechnologiesInc]]
 == http://www.savoirtech.com[Savoir Technologies, Inc]
 
 http://www.savoirtech.com[Savoir Technologies, Inc] provides enterprise
@@ -97,7 +70,7 @@ service containers. Savoir can provide best practice mentoring for
 developing with Camel, as well as architectural/design reviews,
 troubleshooting and SOA infrastructure implementations.
 
-[[CommercialCamelOfferings-TalendInc]]
+
 == http://www.talend.com[Talend, Inc]
 
 http://www.talend.com[Talend, Inc] provides enterprise level services,
@@ -106,15 +79,14 @@ http://www.talend.com/products/esb-standard-edition.php[Talend ESB]
 product which is a repackaging of Apache Camel including a full,
 pre-configured OSGi runtime container.
 
-[[CommercialCamelOfferings-TouK]]
+
 == http://touk.pl[TouK]
 
 http://touk.pl[TouK] provides enterprise integration consulting and
 system integration services as well as support for Apache Camel and
-Apache Servicemix. Their developers were involved in camel-activiti
-development.
+Apache Servicemix.
 
-[[CommercialCamelOfferings-Yupiik]]
+
 == https://www.yupiik.com[Yupiik]
 
 https://www.yupiik.com[Yupiik] contributes and commits to the Apache Camel project. Provides consulting,
@@ -122,7 +94,6 @@ training and support for Apache Camel and related projects like Apache Karaf, Ap
 Apache Unomi.
 
 
-[[CommercialCamelOfferings-Policyforadditionstothispage]]
 == Policy for additions to this page
 
 Companies are free to add information about their products and services

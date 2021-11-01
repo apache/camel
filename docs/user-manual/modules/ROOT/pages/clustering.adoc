@@ -164,7 +164,7 @@ camel.clustered.controller.routes[heartbeat].clustered = false
 +
 The master component is similar to a _ClusteredRoutePolicy_ but it works on consumer level so it ensure the only a single endpoint in a cluster is consuming resources at any point in time. Set it up is very easy and all you need is to prefix singleton endpoints according to the master component syntax:
 +
-[source]
+[source,text]
 ----
 master:namespace:delegateUri
 ----
@@ -181,6 +181,7 @@ public RouteBuilder routeBuilder() {
             from("timer:heartbeat?period=10000")
                 .routeId("heartbeat")
                 .log("HeartBeat route (timer) ...");
+
             from("master:my-ns:timer:clustered?period=5000")
                 .routeId("clustered")
                 .log("Clustered route (timer) ...");
