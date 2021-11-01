@@ -26,7 +26,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.AsyncProcessorSupport;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +56,6 @@ public class MDCClearingTest extends ContextTestSupport {
     }
 
     @Test
-    @Disabled
     public void shouldPropagateAndClearMdcInAsyncRoute() {
         // given
         MDC.remove(CAMEL_BREADCRUMB_ID);
@@ -70,7 +68,6 @@ public class MDCClearingTest extends ContextTestSupport {
     }
 
     @Test
-    @Disabled
     public void shouldPropagateAndClearMdcInMixedRoute() {
         // given
         MDC.remove(CAMEL_BREADCRUMB_ID);

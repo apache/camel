@@ -21,15 +21,18 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.MDC;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Tests that MDC works as a stack remembering old values when routing between routes.
+ * Tests that MDC works as a stack remembering old values when using a producer template to send in new messages during
+ * routing.
  */
-public class MDCResetTest extends ContextTestSupport {
+@Disabled
+public class MDCResetMidRouteProducerTemplateTest extends ContextTestSupport {
 
     @Test
     public void testMDC() throws Exception {
@@ -66,6 +69,14 @@ public class MDCResetTest extends ContextTestSupport {
                         assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
                     }
                 }).to("log:foo").to("direct:b").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        String body = exchange.getIn().getBody(String.class);
+                        // use a producer template to send to b, instead of in
+                        // the route DSL
+                        body = template.requestBody("direct:b", body, String.class);
+                        exchange.getMessage().setBody(body);
+                    }
+                }).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         assertEquals("route-a", MDC.get("camel.routeId"));
                         assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
