@@ -53,6 +53,7 @@ import software.amazon.awssdk.services.sqs.model.QueueDoesNotExistException;
 import software.amazon.awssdk.services.sqs.model.ReceiptHandleIsInvalidException;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageResponse;
+import software.amazon.awssdk.services.sqs.model.SqsException;
 
 /**
  * A Consumer of messages from the Amazon Web Service Simple Queue Service <a href="http://aws.amazon.com/sqs/">AWS
@@ -195,7 +196,7 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
                         // cancel task as we are done
                         LOG.trace("Processing done so cancelling TimeoutExtender task for exchangeId: {}",
                                 exchange.getExchangeId());
-                        scheduledFuture.cancel(true);
+                        scheduledFuture.cancel(false);
                     }
                 });
             }
@@ -384,11 +385,21 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
                 // Ignore.
             } catch (MessageNotInflightException e) {
                 // Ignore.
+            } catch (SqsException e) {
+                if (e.getMessage().contains("Message does not exist or is not available for visibility timeout change")) {
+                    // Ignore.
+                } else {
+                    logException(e);
+                }
             } catch (Exception e) {
-                LOG.warn("Extending visibility window failed for exchange " + exchange
-                         + ". Will not attempt to extend visibility further. This exception will be ignored.",
-                        e);
+                logException(e);
             }
+        }
+
+        private void logException(Exception e) {
+            LOG.warn("Extending visibility window failed for exchange " + exchange
+                     + ". Will not attempt to extend visibility further. This exception will be ignored.",
+                    e);
         }
     }
 
