@@ -168,9 +168,15 @@ public class JdbcAggregationRepository extends ServiceSupport
                     }
 
                     if (present) {
-                        long version = exchange.getProperty(VERSION_PROPERTY, Long.class);
-                        LOG.debug("Updating record with key {} and version {}", key, version);
-                        update(camelContext, correlationId, exchange, getRepositoryName(), version);
+                        Long versionLong = exchange.getProperty(VERSION_PROPERTY, Long.class);
+                        if (versionLong == null) {
+                            LOG.debug("Race while inserting record with key {}", key);
+                            throw new OptimisticLockingException();
+                        } else {
+                            long version = versionLong.longValue();
+                            LOG.debug("Updating record with key {} and version {}", key, version);
+                            update(camelContext, correlationId, exchange, getRepositoryName(), version);
+                        }
                     } else {
                         LOG.debug("Inserting record with key {}", key);
                         insert(camelContext, correlationId, exchange, getRepositoryName(), 1L);
