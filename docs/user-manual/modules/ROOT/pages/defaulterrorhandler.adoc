@@ -1,8 +1,9 @@
 = DefaultErrorHandler
 
-This is the default error handler in Camel.
+This is the default xref:error-handler.adoc[Error Handler] in Camel.
 
-The default error handler have the same power as the xref:components:eips:dead-letter-channel.adoc[Dead Letter Channel],
+The default xref:error-handler.adoc[Error Handler] has the same power
+as the xref:components:eips:dead-letter-channel.adoc[Dead Letter Channel],
 however it does *not* support a _dead letter queue_, which is
 the only difference between the two of them.
 

@@ -4,10 +4,36 @@ Camel supports the xref:components:eips:message-endpoint.adoc[Message Endpoint] 
 using the https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Endpoint.html[Endpoint]
 interface.
 
-Endpoints are usually created by a Component and Endpoints are usually referred
-to in the xref:dsl.adoc[DSL] via their xref:uris.adoc[URIs].
+Endpoints are created by a xref:component.adoc[Component] and these endpoints are referred
+to in the xref:dsl.adoc[DSL] via their endpoint xref:uris.adoc[URIs].
 
-From an `Endpoint` you can use the following methods:
+== Example
+
+The following example route demonstrates the use of a xref:components::file-component.adoc[File]
+consumer endpoint and a * xref:components::jms-component.adoc[JMS] producer endpoint,
+by their xref:manual::uris.adoc[URIs]:
+
+[source,java]
+----
+from("file:messages/foo")
+    .to("jms:queue:foo");
+----
+
+And in XML:
+
+[source,xml]
+----
+<route>
+    <from uri="file:messages/foo"/>
+    <to uri="jms:queue:foo"/>
+</route>
+----
+
+== Endpoint API
+
+You will almost never have the need for creating endpoints manually via Java API.
+
+From an `Endpoint` you can use the following Java API methods to create producers or consumers to the endpoint:
 
 * https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Endpoint.html#createProducer--[`createProducer()`]
 will create a
