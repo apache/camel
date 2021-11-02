@@ -25,9 +25,9 @@ xref:exception-clause.adoc[Exception Clause] documentation.
 
 == Example
 
-In this route below, any exception thrown in, eg the `validateOrder`
-bean, will be propagated back to the caller via the jetty endpoint. It
-will return an HTTP error message back to the client.
+In this route below, any exception thrown in, such as the `validateOrder`
+bean, will be propagated back to the caller via the jetty endpoint, which
+then returns an HTTP error message back to the client.
 
 [source,java]
 ----
@@ -36,9 +36,9 @@ from("jetty:http://localhost/myservice/order")
   .to("jms:queue:order");
 ----
 
-We can add an *onException* in case we want to catch certain exceptions
+We can add an `onException` in case we want to catch certain exceptions
 and route them differently, for instance to catch a
-*ValidationException* and return a fixed response to the caller.
+`ValidationException` and return a fixed response to the caller.
 
 [source,java]
 ----
@@ -52,9 +52,9 @@ from("jetty:http://localhost/myservice/order")
 ----
 
 When the `ValidationException` is thrown from the `validateOrder` bean,
-it is intercepted by the DefaultErrorHandler that lets the
-`onException(ValidationException.class)` handle it, so the
-xref:exchange.adoc[Exchange] is routed to this onException route, and
+it is intercepted by Camel error handler which lets the
+`onException(ValidationException.class)` handle the exception.
+The xref:exchange.adoc[Exchange] is routed to this onException route, and
 since we use `handled(true)`, then the original exception is cleared,
 and we transform the message into a fixed response that is returned to
 jetty endpoint that returns it to the original caller.
