@@ -61,6 +61,15 @@ public class RestJettyContentTypeTest extends BaseJettyTest {
         assertEquals("", cause.getResponseBody());
     }
 
+    @Test
+    public void testJettyMultiProducerContentTypeValid() throws Exception {
+        String out = fluentTemplate.withHeader("Accept", "application/csv")
+                .withHeader(Exchange.HTTP_METHOD, "get")
+                .to("http://localhost:" + getPort() + "/users").request(String.class);
+
+        assertEquals("Email,FirstName,LastName\ndonald.duck@disney.com,Donald,Duck", out);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -72,8 +81,17 @@ public class RestJettyContentTypeTest extends BaseJettyTest {
                         .clientRequestValidation(true);
 
                 // use the rest DSL to define the rest services
-                rest("/users/").post("{id}/update").consumes("application/json").produces("application/json").route()
+                rest("/users").post("{id}/update").consumes("application/json").produces("application/json").route()
                         .setBody(constant("{ \"status\": \"ok\" }"));
+
+                rest("/users").get().produces("application/json,application/csv").route()
+                    .choice()
+                        .when(simple("${header.Accept} == 'application/csv'"))
+                            .setBody(constant("Email,FirstName,LastName\ndonald.duck@disney.com,Donald,Duck"))
+                            .setHeader(Exchange.CONTENT_TYPE, constant("application/csv"))
+                        .otherwise()
+                            .setBody(constant("{\"email\": \"donald.duck@disney.com\", \"firstname\": \"Donald\", \"lastname\": \"Duck\"}"));
+
             }
         };
     }
