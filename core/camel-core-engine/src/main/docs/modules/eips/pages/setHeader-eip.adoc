@@ -5,7 +5,7 @@
 :since: 
 :supportlevel: Stable
 
-The SetHeader EIP allows you to set and header on your exchange.
+The SetHeader EIP allows you to set a header on your exchange.
 
 == Options
 
