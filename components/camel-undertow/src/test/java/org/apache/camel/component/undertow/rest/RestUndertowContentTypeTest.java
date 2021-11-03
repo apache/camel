@@ -67,7 +67,7 @@ public class RestUndertowContentTypeTest extends BaseUndertowTest {
                 .withHeader(Exchange.HTTP_METHOD, "get")
                 .to("http://localhost:" + getPort() + "/users").request(String.class);
 
-        assertEquals("Email,FirstName,LastName\ndonald.dock@disney.com,Donald,Duck", out);
+        assertEquals("Email,FirstName,LastName\ndonald.duck@disney.com,Donald,Duck", out);
     }
 
     @Override
@@ -84,12 +84,12 @@ public class RestUndertowContentTypeTest extends BaseUndertowTest {
                         .setBody(constant("{ \"status\": \"ok\" }"));
 
                 rest("/users").get().produces("application/json,application/csv").route()
-                	.choice()
-                		.when(simple("${header.Accept} == 'application/csv'"))
-                			.setBody(constant("Email,FirstName,LastName\ndonald.dock@disney.com,Donald,Duck"))
-                			.setHeader(Exchange.CONTENT_TYPE, constant("application/csv"))
-                		.otherwise()
-                			.setBody(constant("{\"email\": \"donald.duck@disney.com\", \"firstname\": \"Donald\", \"lastname\": \"Duck\"}"));
+                    .choice()
+                        .when(simple("${header.Accept} == 'application/csv'"))
+                            .setBody(constant("Email,FirstName,LastName\ndonald.duck@disney.com,Donald,Duck"))
+                            .setHeader(Exchange.CONTENT_TYPE, constant("application/csv"))
+                        .otherwise()
+                            .setBody(constant("{\"email\": \"donald.duck@disney.com\", \"firstname\": \"Donald\", \"lastname\": \"Duck\"}"));
 
             }
         };

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.servlet.rest;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -26,6 +24,8 @@ import org.apache.camel.component.servlet.ServletRestHttpBinding;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class RestServletContentTypeTest extends ServletCamelRouterTestSupport {
 
     @BindToRegistry("myBinding")
@@ -33,9 +33,10 @@ public class RestServletContentTypeTest extends ServletCamelRouterTestSupport {
 
     @Test
     public void testProducerNoContentType() throws Exception {
-    	WebRequest req = new PostMethodWebRequest(contextUrl + "/services/users/123/update", 
-    			IOUtils.toInputStream("{ \"name\": \"Donald Duck\" }", "UTF-8"),
-    			null);
+        WebRequest req = new PostMethodWebRequest(
+                contextUrl + "/services/users/123/update",
+                IOUtils.toInputStream("{ \"name\": \"Donald Duck\" }", "UTF-8"),
+                null);
         WebResponse response = query(req, false);
 
         assertEquals("{ \"status\": \"ok\" }", response.getText());
@@ -43,9 +44,10 @@ public class RestServletContentTypeTest extends ServletCamelRouterTestSupport {
 
     @Test
     public void testProducerContentTypeValid() throws Exception {
-    	WebRequest req = new PostMethodWebRequest(contextUrl + "/services/users/123/update", 
-    			IOUtils.toInputStream("{ \"name\": \"Donald Duck\" }", "UTF-8"),
-    			"application/json");
+        WebRequest req = new PostMethodWebRequest(
+                contextUrl + "/services/users/123/update",
+                IOUtils.toInputStream("{ \"name\": \"Donald Duck\" }", "UTF-8"),
+                "application/json");
         WebResponse response = query(req, false);
 
         assertEquals("{ \"status\": \"ok\" }", response.getText());
@@ -53,11 +55,12 @@ public class RestServletContentTypeTest extends ServletCamelRouterTestSupport {
 
     @Test
     public void testProducerContentTypeInvalid() throws Exception {
-    	WebRequest req = new PostMethodWebRequest(contextUrl + "/services/users/123/update", 
-    			IOUtils.toInputStream("<name>Donald Duck</name>", "UTF-8"),
-    			"application/xml");
+        WebRequest req = new PostMethodWebRequest(
+                contextUrl + "/services/users/123/update",
+                IOUtils.toInputStream("<name>Donald Duck</name>", "UTF-8"),
+                "application/xml");
         WebResponse response = query(req, false);
-        	
+
         assertEquals(415, response.getResponseCode());
     }
 
@@ -66,8 +69,8 @@ public class RestServletContentTypeTest extends ServletCamelRouterTestSupport {
         WebRequest req = new GetMethodWebRequest(contextUrl + "/services/users");
         req.setHeaderField("Accept", "application/csv");
         WebResponse response = query(req, false);
-        
-        assertEquals("Email,FirstName,LastName\ndonald.dock@disney.com,Donald,Duck", response.getText());
+
+        assertEquals("Email,FirstName,LastName\ndonald.duck@disney.com,Donald,Duck", response.getText());
     }
 
     @Override
@@ -84,12 +87,12 @@ public class RestServletContentTypeTest extends ServletCamelRouterTestSupport {
                         .setBody(constant("{ \"status\": \"ok\" }"));
 
                 rest("/users").get().produces("application/json,application/csv").route()
-                	.choice()
-                		.when(simple("${header.Accept} == 'application/csv'"))
-                			.setBody(constant("Email,FirstName,LastName\ndonald.dock@disney.com,Donald,Duck"))
-                			.setHeader(Exchange.CONTENT_TYPE, constant("application/csv"))
-                		.otherwise()
-                			.setBody(constant("{\"email\": \"donald.duck@disney.com\", \"firstname\": \"Donald\", \"lastname\": \"Duck\"}"));
+                    .choice()
+                        .when(simple("${header.Accept} == 'application/csv'"))
+                            .setBody(constant("Email,FirstName,LastName\ndonald.duck@disney.com,Donald,Duck"))
+                            .setHeader(Exchange.CONTENT_TYPE, constant("application/csv"))
+                        .otherwise()
+                             .setBody(constant("{\"email\": \"donald.duck@disney.com\", \"firstname\": \"Donald\", \"lastname\": \"Duck\"}"));
 
             }
         };
