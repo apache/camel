@@ -14,60 +14,60 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.undertow.rest;
+package org.apache.camel.component.servlet.rest;
 
-import org.apache.camel.CamelExecutionException;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.undertow.BaseUndertowTest;
-import org.apache.camel.http.base.HttpOperationFailedException;
+import org.apache.camel.component.servlet.ServletCamelRouterTestSupport;
+import org.apache.camel.component.servlet.ServletRestHttpBinding;
+import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+public class RestServletContentTypeTest extends ServletCamelRouterTestSupport {
 
-public class RestUndertowContentTypeTest extends BaseUndertowTest {
+    @BindToRegistry("myBinding")
+    private ServletRestHttpBinding restHttpBinding = new ServletRestHttpBinding();
 
     @Test
     public void testProducerNoContentType() throws Exception {
-        String out = fluentTemplate.withHeader(Exchange.HTTP_METHOD, "post").withBody("{ \"name\": \"Donald Duck\" }")
-                .to("http://localhost:" + getPort() + "/users/123/update")
-                .request(String.class);
+    	WebRequest req = new PostMethodWebRequest(contextUrl + "/services/users/123/update", 
+    			IOUtils.toInputStream("{ \"name\": \"Donald Duck\" }", "UTF-8"),
+    			null);
+        WebResponse response = query(req, false);
 
-        assertEquals("{ \"status\": \"ok\" }", out);
+        assertEquals("{ \"status\": \"ok\" }", response.getText());
     }
 
     @Test
     public void testProducerContentTypeValid() throws Exception {
-        String out = fluentTemplate.withHeader(Exchange.CONTENT_TYPE, "application/json")
-                .withHeader(Exchange.HTTP_METHOD, "post").withBody("{ \"name\": \"Donald Duck\" }")
-                .to("http://localhost:" + getPort() + "/users/123/update").request(String.class);
+    	WebRequest req = new PostMethodWebRequest(contextUrl + "/services/users/123/update", 
+    			IOUtils.toInputStream("{ \"name\": \"Donald Duck\" }", "UTF-8"),
+    			"application/json");
+        WebResponse response = query(req, false);
 
-        assertEquals("{ \"status\": \"ok\" }", out);
+        assertEquals("{ \"status\": \"ok\" }", response.getText());
     }
 
     @Test
-    public void testProducerContentTypeInvalid() {
-        fluentTemplate = fluentTemplate.withHeader(Exchange.CONTENT_TYPE, "application/xml")
-                .withHeader(Exchange.HTTP_METHOD, "post")
-                .withBody("<name>Donald Duck</name>")
-                .to("http://localhost:" + getPort() + "/users/123/update");
-
-        Exception ex = assertThrows(CamelExecutionException.class, () -> fluentTemplate.request(String.class));
-
-        HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, ex.getCause());
-        assertEquals(415, cause.getStatusCode());
-        assertEquals("No response available", cause.getResponseBody());
+    public void testProducerContentTypeInvalid() throws Exception {
+    	WebRequest req = new PostMethodWebRequest(contextUrl + "/services/users/123/update", 
+    			IOUtils.toInputStream("<name>Donald Duck</name>", "UTF-8"),
+    			"application/xml");
+        WebResponse response = query(req, false);
+        	
+        assertEquals(415, response.getResponseCode());
     }
 
     @Test
     public void testProducerMultiContentTypeValid() throws Exception {
-        String out = fluentTemplate.withHeader("Accept", "application/csv")
-                .withHeader(Exchange.HTTP_METHOD, "get")
-                .to("http://localhost:" + getPort() + "/users").request(String.class);
-
-        assertEquals("Email,FirstName,LastName\ndonald.dock@disney.com,Donald,Duck", out);
+        WebRequest req = new GetMethodWebRequest(contextUrl + "/services/users");
+        req.setHeaderField("Accept", "application/csv");
+        WebResponse response = query(req, false);
+        
+        assertEquals("Email,FirstName,LastName\ndonald.dock@disney.com,Donald,Duck", response.getText());
     }
 
     @Override
@@ -75,7 +75,7 @@ public class RestUndertowContentTypeTest extends BaseUndertowTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                restConfiguration().component("undertow").host("localhost").port(getPort())
+                restConfiguration().component("servlet").host("localhost")
                         // turn on client request validation
                         .clientRequestValidation(true);
 
