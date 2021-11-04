@@ -45,7 +45,7 @@ public class RestOpenApiReaderOverrideHostApiDocsTest extends RestOpenApiReaderA
         config.setHost("http:mycoolserver:8888/myapi");
         RestOpenApiReader reader = new RestOpenApiReader();
 
-        OasDocument openApi = reader.read(context, context.getRestDefinitions(), null, config, context.getName(),
+        OasDocument openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
                 new DefaultClassResolver());
         assertNotNull(openApi);
 
@@ -78,7 +78,7 @@ public class RestOpenApiReaderOverrideHostApiDocsTest extends RestOpenApiReaderA
         config.setHost("http:mycoolserver:8888/myapi");
         RestOpenApiReader reader = new RestOpenApiReader();
 
-        OasDocument openApi = reader.read(context, context.getRestDefinitions(), null, config, context.getName(),
+        OasDocument openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
                 new DefaultClassResolver());
         assertNotNull(openApi);
 

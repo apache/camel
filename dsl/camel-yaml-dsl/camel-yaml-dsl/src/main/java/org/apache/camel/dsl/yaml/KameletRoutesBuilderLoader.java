@@ -47,6 +47,10 @@ public class KameletRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
     protected RouteBuilder builder(Node node) {
         Node template = nodeAt(node, "/spec/template");
         if (template == null) {
+            // fallback till flows get removed
+            template = nodeAt(node, "/spec/flows");
+        }
+        if (template == null) {
             // fallback till flow get removed
             template = nodeAt(node, "/spec/flow");
         }

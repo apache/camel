@@ -18,16 +18,27 @@ package org.apache.camel.component.salesforce;
 
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.apache.camel.CamelExecutionException;
+import org.apache.camel.Exchange;
 import org.apache.camel.component.salesforce.api.SalesforceException;
+import org.apache.camel.component.salesforce.api.dto.DeleteSObjectResult;
+import org.apache.camel.component.salesforce.api.dto.SaveSObjectResult;
 import org.apache.camel.component.salesforce.api.dto.bulkv2.JobStateEnum;
 import org.apache.camel.component.salesforce.api.dto.bulkv2.OperationEnum;
 import org.apache.camel.component.salesforce.api.dto.bulkv2.QueryJob;
 import org.apache.camel.component.salesforce.api.dto.bulkv2.QueryJobs;
+import org.apache.camel.component.salesforce.dto.generated.Contact;
+import org.apache.camel.component.salesforce.dto.generated.QueryRecordsContact;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.commons.io.IOUtils;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,6 +47,18 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings("BusyWait")
 public class BulkApiV2QueryJobIntegrationTest extends AbstractSalesforceTestBase {
+
+    private static final String LAST_NAME = "CamelBulkTest";
+
+    @BeforeEach
+    private void setup() {
+        createContacts();
+    }
+
+    @AfterEach
+    private void teardown() {
+        deleteContacts();
+    }
 
     @Test
     public void testQueryLifecycle() throws Exception {
@@ -56,11 +79,29 @@ public class BulkApiV2QueryJobIntegrationTest extends AbstractSalesforceTestBase
                     job.getId(), QueryJob.class);
         }
 
-        InputStream is = template().requestBodyAndHeader("salesforce:bulk2GetQueryJobResults",
-                "", "jobId", job.getId(), InputStream.class);
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader("jobId", job.getId());
+        exchange.getIn().setHeader("maxRecords", 1);
+        template().send("salesforce:bulk2GetQueryJobResults?maxRecords=1",
+                exchange);
+        InputStream is = exchange.getIn().getBody(InputStream.class);
         assertNotNull(is, "Query Job results");
         List<String> results = IOUtils.readLines(is, StandardCharsets.UTF_8);
         assertTrue(results.size() > 0, "Query Job results");
+        assertTrue(exchange.getIn().getHeaders().containsKey("Sforce-Locator"));
+        String locator = exchange.getIn().getHeader("Sforce-Locator", String.class);
+        assertNotNull(locator);
+
+        exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader("jobId", job.getId());
+        exchange.getIn().setHeader("locator", locator);
+        template().send("salesforce:bulk2GetQueryJobResults",
+                exchange);
+        is = exchange.getIn().getBody(InputStream.class);
+        assertNotNull(is, "Query Job results");
+        results = IOUtils.readLines(is, StandardCharsets.UTF_8);
+        assertTrue(results.size() > 0, "Query Job results");
+        assertNotNull(exchange.getIn().getHeader("Sforce-Locator"));
     }
 
     @Test
@@ -140,5 +181,28 @@ public class BulkApiV2QueryJobIntegrationTest extends AbstractSalesforceTestBase
         QueryJobs jobs = template().requestBody("salesforce:bulk2GetAllQueryJobs", "",
                 QueryJobs.class);
         assertNotNull(jobs);
+    }
+
+    private void createContacts() {
+        List<Contact> contacts = new ArrayList<>(2);
+        IntStream.range(0, 2).forEach(i -> {
+            Contact c = new Contact();
+            c.setLastName(LAST_NAME);
+            c.setFirstName("TestFirst");
+            contacts.add(c);
+        });
+        final List<SaveSObjectResult> results = (List<SaveSObjectResult>) template.requestBody(
+                "salesforce:compositeCreateSObjectCollections", contacts);
+        results.forEach(r -> assertTrue(r.getSuccess()));
+    }
+
+    private void deleteContacts() {
+        final List<Contact> records
+                = template.requestBody("salesforce:query?sObjectClass=" + QueryRecordsContact.class.getName(),
+                        "SELECT Id FROM Contact WHERE LastName = '" + LAST_NAME + "'", QueryRecordsContact.class).getRecords();
+        final List<DeleteSObjectResult> results
+                = (List<DeleteSObjectResult>) template.requestBody("salesforce:compositeDeleteSObjectCollections",
+                        records.stream().map(contact -> contact.getId()).collect(Collectors.toList()));
+        results.forEach(r -> assertTrue(r.getSuccess()));
     }
 }

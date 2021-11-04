@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.Set;
 
 import groovy.grape.Grape;
-import groovy.lang.GroovyClassLoader;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.builder.RouteBuilder;
@@ -51,7 +50,6 @@ public class KameletDependencyDownloader extends YamlRoutesBuilderLoaderSupport 
     private CamelContext camelContext;
     private final String cp = System.getProperty("java.class.path");
     private final Set<String> downloaded = new HashSet<>();
-    private GroovyClassLoader groovyClassLoader;
 
     public KameletDependencyDownloader(String extension) {
         super(extension);

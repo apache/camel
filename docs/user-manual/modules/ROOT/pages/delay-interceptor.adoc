@@ -1,17 +1,19 @@
 = Delayer
 
-The Delayer is used for slowing processing of messages down.
+The Delayer is used for slowing processing of messages.
 
 This allows you to set a fixed amount of delay between each step a message passes in
-the route path, to show how things is happening nice and slowly, so you
+the route, to better show how things is happening nice and slowly, so you
 are not bombarded with a zillion lines of logging output.
+
+== Using Delayer
 
 The delayer can be configured on two levels:
 
 - CamelContext - _Globally_
 - Route - _Individually per route_
 
-== Configuring using XML DSL
+=== Configuring using XML DSL
 
 Just set the `delayer` attribute of the `<camelContext>` tag as shown below:
 
@@ -25,7 +27,7 @@ Just set the `delayer` attribute of the `<camelContext>` tag as shown below:
 </camelContext>
 --------------------------------------------------------------------------------------------------
 
-== Configuring using Java
+=== Configuring using Java
 
 You can enable delaying messages by setting the delay value on the `CamelContext` as shown:
 

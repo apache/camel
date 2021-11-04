@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.groovy.common
 
 import org.apache.camel.Exchange
+import org.apache.camel.Expression
 import org.apache.camel.Predicate
 import org.apache.camel.Processor
 import org.apache.camel.builder.BuilderSupport
@@ -37,6 +38,7 @@ import org.apache.camel.model.RouteDefinition
 import org.apache.camel.model.rest.RestConfigurationDefinition
 import org.apache.camel.model.rest.RestDefinition
 import org.apache.camel.spi.Registry
+import org.apache.camel.support.builder.ExpressionBuilder
 
 class GroovyDSL extends BuilderSupport implements EndpointBuilderFactory {
     final Registry registry
@@ -132,4 +134,13 @@ class GroovyDSL extends BuilderSupport implements EndpointBuilderFactory {
             return callable.call(it)
         } as Predicate
     }
+
+    static Expression expression(@DelegatesTo(Exchange) Closure<?> callable) {
+        callable.resolveStrategy = Closure.DELEGATE_FIRST
+
+        return {
+            return callable.call(it)
+        } as Expression
+    }
+
 }

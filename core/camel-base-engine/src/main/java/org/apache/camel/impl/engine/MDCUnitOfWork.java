@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.Service;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.PatternHelper;
@@ -34,7 +35,7 @@ import org.slf4j.MDC;
 /**
  * This unit of work supports <a href="http://www.slf4j.org/api/org/slf4j/MDC.html">MDC</a>.
  */
-public class MDCUnitOfWork extends DefaultUnitOfWork {
+public class MDCUnitOfWork extends DefaultUnitOfWork implements Service {
 
     private static final Logger LOG = LoggerFactory.getLogger(MDCUnitOfWork.class);
 
@@ -147,6 +148,10 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
         if (stepId == null) {
             MDC.remove(MDC_STEP_ID);
         }
+
+        // clear to avoid leaking to current thread when
+        // the exchange is continued routed asynchronously
+        clear();
     }
 
     /**
@@ -196,8 +201,24 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
     }
 
     @Override
+    protected void onDone() {
+        // clear MDC, so we do not leak as Camel is done using this UoW
+        clear();
+    }
+
+    @Override
     public void reset() {
         super.reset();
+        clear();
+    }
+
+    @Override
+    public void start() {
+        // noop
+    }
+
+    @Override
+    public void stop() {
         clear();
     }
 

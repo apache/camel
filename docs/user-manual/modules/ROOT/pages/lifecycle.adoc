@@ -47,7 +47,7 @@ so you can control Camel from JMX management.
 A service (`org.apache.camel.Service`) in Camel adheres to the following
 lifecycle states as illustrated in the diagram below:
 
-image::service_lifecycle.png[image]
+image::images/service_lifecycle.png[image]
 
 The `org.apache.camel.support.service.ServiceSupport` is a good base class to
 extend for custom services as it offers the basic functionally to keep

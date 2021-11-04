@@ -88,7 +88,7 @@ public class HealthCheckTest {
     }
 
     @Test
-    public void testThreshold() throws Exception {
+    public void testFailureThreshold() throws Exception {
         MyHealthCheck check = new MyHealthCheck();
         check.setState(HealthCheck.State.DOWN);
         check.getConfiguration().setEnabled(true);
@@ -105,6 +105,26 @@ public class HealthCheckTest {
         }
 
         assertEquals(HealthCheck.State.DOWN, check.call().getState());
+    }
+
+    @Test
+    public void testSuccessThreshold() throws Exception {
+        MyHealthCheck check = new MyHealthCheck();
+        check.setState(HealthCheck.State.UP);
+        check.getConfiguration().setEnabled(true);
+        check.getConfiguration().setSuccessThreshold(2);
+
+        HealthCheck.Result result;
+
+        for (int i = 0; i < check.getConfiguration().getSuccessThreshold(); i++) {
+            result = check.call();
+
+            assertEquals(HealthCheck.State.DOWN, result.getState());
+            assertEquals(i + 1, result.getDetails().get(AbstractHealthCheck.INVOCATION_COUNT));
+            assertEquals(i + 1, result.getDetails().get(AbstractHealthCheck.SUCCESS_COUNT));
+        }
+
+        assertEquals(HealthCheck.State.UP, check.call().getState());
     }
 
     @Test

@@ -29,6 +29,7 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.PollingConsumerPollingStrategy;
 import org.apache.camel.Processor;
 import org.apache.camel.Suspendable;
+import org.apache.camel.health.HealthCheckAware;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
 import org.apache.camel.spi.ScheduledPollConsumerScheduler;
 import org.apache.camel.support.service.ServiceHelper;
@@ -41,7 +42,7 @@ import org.slf4j.LoggerFactory;
  * A useful base class for any consumer which is polling based
  */
 public abstract class ScheduledPollConsumer extends DefaultConsumer
-        implements Runnable, Suspendable, PollingConsumerPollingStrategy {
+        implements Runnable, Suspendable, PollingConsumerPollingStrategy, HealthCheckAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(ScheduledPollConsumer.class);
 
@@ -70,6 +71,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
     private volatile int backoffCounter;
     private volatile long idleCounter;
     private volatile long errorCounter;
+    private volatile Throwable lastError;
     private final AtomicLong counter = new AtomicLong();
 
     public ScheduledPollConsumer(Endpoint endpoint, Processor processor) {
@@ -249,9 +251,11 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
         if (cause != null) {
             idleCounter = 0;
             errorCounter++;
+            lastError = cause;
         } else {
             idleCounter = polledMessages == 0 ? ++idleCounter : 0;
             errorCounter = 0;
+            lastError = null;
         }
         LOG.trace("doRun() done with idleCounter={}, errorCounter={}", idleCounter, errorCounter);
 
@@ -423,12 +427,37 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
     // -------------------------------------------------------------------------
 
     /**
+     * Gets the error counter. If the counter is > 0 that means the consumer failed polling for the last N number of
+     * times. When the consumer is successfully again, then the error counter resets to zero.
+     */
+    protected long getErrorCounter() {
+        return errorCounter;
+    }
+
+    /**
+     * Gets the last caused error (exception) for the last poll that failed. When the consumer is successfully again,
+     * then the error resets to null.
+     */
+    protected Throwable getLastError() {
+        return lastError;
+    }
+
+    /**
      * The polling method which is invoked periodically to poll this consumer
      *
      * @return           number of messages polled, will be <tt>0</tt> if no message was polled at all.
      * @throws Exception can be thrown if an exception occurred during polling
      */
     protected abstract int poll() throws Exception;
+
+    @Override
+    protected void doBuild() throws Exception {
+        if (getHealthCheck() == null) {
+            String id = "consumer:" + getRouteId();
+            setHealthCheck(new ScheduledPollConsumerHealthCheck(this, id));
+        }
+        super.doBuild();
+    }
 
     @Override
     protected void doInit() throws Exception {

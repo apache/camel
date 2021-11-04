@@ -53,7 +53,7 @@ public class LogEndpoint extends ProcessorEndpoint {
     @UriPath(description = "Name of the logging category to use")
     @Metadata(required = true)
     private String loggerName;
-    @UriParam(defaultValue = "INFO", enums = "ERROR,WARN,INFO,DEBUG,TRACE,OFF")
+    @UriParam(defaultValue = "INFO", enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF")
     private String level;
     @UriParam
     private String marker;

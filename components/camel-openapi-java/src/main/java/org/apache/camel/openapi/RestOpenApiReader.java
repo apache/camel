@@ -134,13 +134,12 @@ public class RestOpenApiReader {
      *
      * @param  camelContext           the camel context
      * @param  rests                  the rest-dsl
-     * @param  route                  optional route path to filter the rest-dsl to only include from the chose route
      * @param  config                 the openApi configuration
      * @param  classResolver          class resolver to use @return the openApi model
      * @throws ClassNotFoundException is thrown if error loading class
      */
     public OasDocument read(
-            CamelContext camelContext, List<RestDefinition> rests, String route, BeanConfig config,
+            CamelContext camelContext, List<RestDefinition> rests, BeanConfig config,
             String camelContextId, ClassResolver classResolver)
             throws ClassNotFoundException {
 
@@ -152,14 +151,6 @@ public class RestOpenApiReader {
         }
 
         for (RestDefinition rest : rests) {
-            if (org.apache.camel.util.ObjectHelper.isNotEmpty(route) && !route.equals("/")) {
-                // filter by route
-                String path = getValue(camelContext, rest.getPath());
-                if (!path.equals(route)) {
-                    continue;
-                }
-            }
-
             parse(camelContext, openApi, rest, camelContextId, classResolver);
         }
 
@@ -476,7 +467,7 @@ public class RestOpenApiReader {
 
     private String buildBasePath(CamelContext camelContext, RestDefinition rest) {
         // used during gathering of apis
-        String basePath = getValue(camelContext, rest.getPath());
+        String basePath = FileUtil.stripLeadingSeparator(getValue(camelContext, rest.getPath()));
 
         // is there any context-path which we must use in base path for each rest service
         String cp = camelContext.getRestConfiguration() != null ? camelContext.getRestConfiguration().getContextPath() : null;

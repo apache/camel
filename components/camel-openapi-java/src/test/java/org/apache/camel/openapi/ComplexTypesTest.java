@@ -123,7 +123,7 @@ public class ComplexTypesTest extends CamelTestSupport {
                 .collect(Collectors.toList());
 
         RestOpenApiReader reader = new RestOpenApiReader();
-        OasDocument openApi = reader.read(context, rests, null, config, context.getName(), new DefaultClassResolver());
+        OasDocument openApi = reader.read(context, rests, config, context.getName(), new DefaultClassResolver());
         assertNotNull(openApi);
 
         ObjectMapper mapper = new ObjectMapper();

@@ -36,8 +36,6 @@ public class QuartzEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "firenow":
-        case "fireNow": target.setFireNow(property(camelContext, boolean.class, value)); return true;
         case "jobparameters":
         case "jobParameters": target.setJobParameters(property(camelContext, java.util.Map.class, value)); return true;
         case "pausejob":
@@ -77,8 +75,6 @@ public class QuartzEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
-        case "firenow":
-        case "fireNow": return boolean.class;
         case "jobparameters":
         case "jobParameters": return java.util.Map.class;
         case "pausejob":
@@ -119,8 +115,6 @@ public class QuartzEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
-        case "firenow":
-        case "fireNow": return target.isFireNow();
         case "jobparameters":
         case "jobParameters": return target.getJobParameters();
         case "pausejob":

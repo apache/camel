@@ -16,7 +16,15 @@
  */
 package org.apache.camel.spi;
 
+/**
+ * The last error that happened during changing the route lifecycle, i.e. such as when an exception was thrown during
+ * starting the route.
+ * <p/>
+ * This is only errors for route lifecycle changes, it is not exceptions thrown during routing messsages with the Camel
+ * routing engine.
+ */
 public interface RouteError {
+
     enum Phase {
         START,
         STOP,

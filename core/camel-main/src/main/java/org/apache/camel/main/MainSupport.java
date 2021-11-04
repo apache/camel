@@ -74,7 +74,7 @@ public abstract class MainSupport extends BaseMainSupport {
                 stop();
                 afterStop();
             } catch (Exception e) {
-                // however while running then just log errors
+                // while running then just log errors
                 LOG.error("Failed: {}", e, e);
             }
         }

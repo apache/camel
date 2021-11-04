@@ -29,4 +29,8 @@ beans {
     myPredicate = predicate {
         false
     }
+
+    myExpression = expression {
+        'Hello World'
+    }
 }

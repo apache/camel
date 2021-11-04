@@ -20,7 +20,7 @@ Connect an application to a messaging channel using a Message Endpoint, a client
 
 In Camel the To EIP is used for sending xref:message.adoc[messages] to static xref:message-endpoint.adoc[endpoints].
 
-The To and xref:toD-eip.adoc[ToD] EIPs are the most common patterns to use in Camel xref:latest@manual:ROOT:routes.adoc[routes].
+The To and xref:toD-eip.adoc[ToD] EIPs are the most common patterns to use in Camel xref:manual:ROOT:routes.adoc[routes].
 
 == Options
 
@@ -34,7 +34,7 @@ The `to` is used for sending messages to a static xref:message-endpoint.adoc[end
 In other words `to` sends message only to the *same* endpoint.
 
 The `toD` is used for sending message to a dynamic xref:message-endpoint.adoc[endpoint].
-The dynamic endpoint is evaluated _on-demand_ by an xref:latest@manual:ROOT:expression.adoc[Expression].
+The dynamic endpoint is evaluated _on-demand_ by an xref:manual:ROOT:expression.adoc[Expression].
 By default, the xref:components:languages:simple-language.adoc[Simple] expression is used to compute
 the dynamic endpoint URI.
 

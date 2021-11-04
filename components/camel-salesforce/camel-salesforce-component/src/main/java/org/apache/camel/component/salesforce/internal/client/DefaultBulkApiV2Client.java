@@ -200,8 +200,21 @@ public class DefaultBulkApiV2Client extends AbstractClientBase implements BulkAp
     }
 
     @Override
-    public void getQueryJobResults(String jobId, Map<String, List<String>> headers, StreamResponseCallback callback) {
-        final Request request = getRequest(HttpMethod.GET, queryJobUrl(jobId) + "/results", headers);
+    public void getQueryJobResults(
+            String jobId, String locator, Integer maxRecords, Map<String, List<String>> headers,
+            StreamResponseCallback callback) {
+        String query = null;
+        if (locator != null) {
+            query = "locator=" + locator;
+        }
+        if (maxRecords != null) {
+            query = (query != null ? query + "&" : "") + "maxRecords=" + maxRecords;
+        }
+        String url = queryJobUrl(jobId) + "/results";
+        if (query != null) {
+            url = url + "?" + query;
+        }
+        final Request request = getRequest(HttpMethod.GET, url, headers);
         doRequestWithCsvResponse(callback, request);
     }
 

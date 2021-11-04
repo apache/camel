@@ -43,7 +43,6 @@ For a deeper and better understanding of Apache Camel, an xref:faq:what-is-camel
 
 * xref:getting-started.adoc[Getting Started]
 * xref:book-getting-started.adoc[Longer Getting Started Guide]
-* xref:camel-boot.adoc[Camel Boot]
 * xref:components:others:cdi.adoc[Working with Camel and CDI]
 * xref:spring.adoc[Working with Camel and Spring]
 * xref:faq:how-do-i-configure-endpoints.adoc[How do I configure endpoints?]
@@ -65,7 +64,7 @@ For a deeper and better understanding of Apache Camel, an xref:faq:what-is-camel
 
 === xref:architecture.adoc[Architecture]
 
-* xref:backlogdebugger.adoc[BacklogDebugger]
+* xref:backlog-debugger.adoc[BacklogDebugger]
 * xref:backlog-tracer.adoc[BacklogTracer]
 * xref:batch-consumer.adoc[Batch Consumer]
 * xref:browsable-endpoint.adoc[BrowsableEndpoint]

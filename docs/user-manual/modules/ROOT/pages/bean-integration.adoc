@@ -43,14 +43,14 @@ See more details at:
 
 *Example*
 
-See the https://github.com/apache/camel-examples/tree/master/examples/camel-example-pojo-messaging[POJO Messaging Example]
+See the https://github.com/apache/camel-examples/tree/main/examples/pojo-messaging[POJO Messaging Example]
 for how to use the annotations for routing and messaging.
 
 == Using @PropertyInject
 
-Camel allows to inject property placeholders in POJOs using
+Camel allows injecting property placeholders in POJOs using
 the `@PropertyInject` annotation which can be set on fields and setter
-methods. For example you can use that with `RouteBuilder` classes,
+methods. For example, you can use that with `RouteBuilder` classes,
 such as shown below:
 
 [source,java]
@@ -84,7 +84,7 @@ private String greeting;
 
 This will lookup the placeholder with they key `name`.
 
-You can also add a default value if the key does not exists, such as:
+You can also add a default value if the key does not exist, such as:
 
 [source,java]
 ----

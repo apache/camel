@@ -382,8 +382,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         } else {
             final UnitOfWork uow = exchange.getUnitOfWork();
 
-            // do uow before processing and if a value is returned the the uow wants to be processed after
-            // was well in the same thread
+            // optimize to only do before uow processing if really needed
             AsyncCallback async = afterTask;
             boolean beforeAndAfter = uow != null && uow.isBeforeAfterProcess();
             if (beforeAndAfter) {
@@ -396,23 +395,26 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Processing exchange for exchangeId: {} -> {}", exchange.getExchangeId(), exchange);
             }
-            processor.process(exchange, async);
+            boolean sync = processor.process(exchange, async);
             // ----------------------------------------------------------
             // CAMEL END USER - DEBUG ME HERE +++ END +++
             // ----------------------------------------------------------
 
             // optimize to only do after uow processing if really needed
             if (beforeAndAfter) {
-                // execute any after processor work (in current thread, not in the callback)
-                uow.afterProcess(processor, exchange, afterTask, false);
+                // use the same callback as with beforeProcess
+                final CamelInternalTask afterCallback = afterTask;
+                reactiveExecutor.schedule(() -> {
+                    uow.afterProcess(processor, exchange, afterCallback, sync);
+                });
             }
 
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Exchange processed and is continued routed asynchronously for exchangeId: {} -> {}",
+                LOG.trace("Exchange processed and is continued routed {} for exchangeId: {} -> {}",
+                        sync ? "synchronously" : "asynchronously",
                         exchange.getExchangeId(), exchange);
             }
-            // we are done asynchronously - must return false
-            return false;
+            return sync;
         }
     }
 

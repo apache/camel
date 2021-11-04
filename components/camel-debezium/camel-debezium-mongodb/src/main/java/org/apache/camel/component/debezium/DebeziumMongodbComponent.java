@@ -25,7 +25,7 @@ import org.apache.camel.spi.annotations.Component;
 public final class DebeziumMongodbComponent extends DebeziumComponent<MongoDbConnectorEmbeddedDebeziumConfiguration> {
 
     @Metadata
-    private MongoDbConnectorEmbeddedDebeziumConfiguration configuration;
+    private MongoDbConnectorEmbeddedDebeziumConfiguration configuration = new MongoDbConnectorEmbeddedDebeziumConfiguration();
 
     public DebeziumMongodbComponent() {
     }
@@ -36,14 +36,9 @@ public final class DebeziumMongodbComponent extends DebeziumComponent<MongoDbCon
 
     /**
      * Allow pre-configured Configurations to be set.
-     *
-     * @return {@link MongoDbConnectorEmbeddedDebeziumConfiguration}
      */
     @Override
     public MongoDbConnectorEmbeddedDebeziumConfiguration getConfiguration() {
-        if (configuration == null) {
-            return new MongoDbConnectorEmbeddedDebeziumConfiguration();
-        }
         return configuration;
     }
 

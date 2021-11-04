@@ -322,14 +322,14 @@ headers on the Camel message:
 
 |`CamelHL7VersionId` |`MSH-12` |`2.4`
 
-|`CamelHL7Context |`` |`contains the
+|`CamelHL7Context` |`` |`contains the
 http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/HapiContext.html[HapiContext]
 that was used to parse the message`
 
 |`CamelHL7Charset` |`MSH-18` |`UNICODE UTF-8`
 |===
 
-All headers except `CamelHL7Context `are `String` types. If a header
+All headers except `CamelHL7Context` are `String` types. If a header
 value is missing, its value is `null`.
 
 == Dependencies

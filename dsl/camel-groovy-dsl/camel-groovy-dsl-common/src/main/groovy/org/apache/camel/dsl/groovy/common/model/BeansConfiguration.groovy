@@ -18,6 +18,7 @@ package org.apache.camel.dsl.groovy.common.model
 
 import org.apache.camel.CamelContext
 import org.apache.camel.Exchange
+import org.apache.camel.Expression
 import org.apache.camel.Predicate
 import org.apache.camel.Processor
 import org.apache.camel.builder.endpoint.EndpointBuilderFactory
@@ -68,5 +69,13 @@ class BeansConfiguration implements EndpointBuilderFactory {
         return {
             return callable.call(it)
         } as Predicate
+    }
+
+    static Expression expression(@DelegatesTo(Exchange) Closure<?> callable) {
+        callable.resolveStrategy = Closure.DELEGATE_FIRST
+
+        return {
+            return callable.call(it)
+        } as Expression
     }
 }

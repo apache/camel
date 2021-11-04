@@ -69,7 +69,7 @@ And to throttle 50 message per second:
 
 === Dynamically changing maximum requests per period
 
-The Throttler uses an xref:latest@manual:ROOT:expression.adoc[Expression]
+The Throttler uses an xref:manual:ROOT:expression.adoc[Expression]
 to configure the number of requests. In all the examples from above, we used
 a xref:components:languages:constant-language.adoc[constant]. However, the expression can
 be dynamic, such as determined from a message header from the current `Exchange`.

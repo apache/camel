@@ -224,7 +224,10 @@ to be set in the `queryLocator` parameter on subsequent calls.
 * *bulk2CreateQueryJob* - Create a bulk query job. Supply an instance of `QueryJob` in the message
 body.
 * *bulk2GetQueryJob* - Get a bulk query job. `jobId` parameter is required.
-* *bulk2GetQueryJobResults* - Get bulk query job results. `jobId` parameter is required.
+* *bulk2GetQueryJobResults* - Get bulk query job results. `jobId` parameter is required. Accepts
+`maxRecords` and `locator` parameters. Response message headers include `Sforce-NumberOfRecords` and
+`Sforce-Locator` headers. The value of `Sforce-Locator` can be passed into subsequent calls via the
+`locator` parameter.
 * *bulk2AbortQueryJob* - Abort a bulk query job. `jobId` parameter is required.
 * *bulk2DeleteQueryJob* - Delete a bulk query job. `jobId` parameter is required.
 * *bulk2GetAllQueryJobs* - Get all jobs. Response body is an instance of `QueryJobs`. If the `done`

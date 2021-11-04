@@ -25,7 +25,7 @@ import org.apache.camel.spi.annotations.Component;
 public final class DebeziumMySqlComponent extends DebeziumComponent<MySqlConnectorEmbeddedDebeziumConfiguration> {
 
     @Metadata
-    private MySqlConnectorEmbeddedDebeziumConfiguration configuration;
+    private MySqlConnectorEmbeddedDebeziumConfiguration configuration = new MySqlConnectorEmbeddedDebeziumConfiguration();
 
     public DebeziumMySqlComponent() {
     }
@@ -36,14 +36,9 @@ public final class DebeziumMySqlComponent extends DebeziumComponent<MySqlConnect
 
     /**
      * Allow pre-configured Configurations to be set.
-     *
-     * @return {@link MySqlConnectorEmbeddedDebeziumConfiguration}
      */
     @Override
     public MySqlConnectorEmbeddedDebeziumConfiguration getConfiguration() {
-        if (configuration == null) {
-            return new MySqlConnectorEmbeddedDebeziumConfiguration();
-        }
         return configuration;
     }
 

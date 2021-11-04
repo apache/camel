@@ -6,7 +6,10 @@ Maven Plugin] allows third party component developers to generate all the necess
 
 == Goals Supported
 
-=== :generate
+The following goals is supported:
+
+=== generate
+
 This goal will generate the following metadata files and Java files:
 
 * Jandex index: it will generate a Jandex index for used Java annotations within the project which allows to more efficiency to search and load the annotations to generate other metadata as mentioned below.
@@ -44,4 +47,7 @@ In case you *did not* use the Camel Maven Archetypes to bootstrap the initial co
 </plugin>
 ----
 
-This will attach this plugin `:generate` goal to Maven's `process-classes`, in order to generate all the necessary files being describe above upon compilation. Thus, `mvn test`, `mvn package`, `mvn verify` and `mvn install` phases should run this plugin.
+This will attach the plugin `generate` goal to Maven's `process-classes`,
+in order to generate all the necessary files being described above upon compilation.
+
+Thus, `mvn test`, `mvn package`, `mvn verify` and `mvn install` phases should run this plugin.

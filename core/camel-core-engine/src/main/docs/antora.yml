@@ -15,5 +15,7 @@
 # limitations under the License.
 #
 
+# A distributed part of main camel "docs/components" 'components' component descriptor:
+
 name: components
-version: latest
+version: next

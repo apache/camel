@@ -35,6 +35,7 @@ import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.DeleteSObjectResult;
 import org.apache.camel.component.salesforce.api.dto.RestError;
 import org.apache.camel.component.salesforce.api.dto.SaveSObjectResult;
+import org.apache.camel.component.salesforce.api.dto.UpsertSObjectResult;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectCollection;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.apache.camel.component.salesforce.internal.PayloadFormat;
@@ -94,19 +95,27 @@ public class DefaultCompositeSObjectCollectionsApiClient extends AbstractClientB
     }
 
     @Override
-    public void submitCompositeCollections(
-            final SObjectCollection collection, final Map<String, List<String>> headers,
-            final ResponseCallback<List<SaveSObjectResult>> callback, final String sObjectName,
-            final String externalIdFieldName, final String method)
+    public void createCompositeCollections(
+            SObjectCollection collection, Map<String, List<String>> headers,
+            ResponseCallback<List<SaveSObjectResult>> callback)
+            throws SalesforceException {
+        createUpdateCompositeCollections(collection, headers, callback, "POST");
+    }
+
+    @Override
+    public void updateCompositeCollections(
+            SObjectCollection collection, Map<String, List<String>> headers,
+            ResponseCallback<List<SaveSObjectResult>> callback)
+            throws SalesforceException {
+        createUpdateCompositeCollections(collection, headers, callback, "PATCH");
+    }
+
+    private void createUpdateCompositeCollections(
+            SObjectCollection collection, Map<String, List<String>> headers,
+            ResponseCallback<List<SaveSObjectResult>> callback, String method)
             throws SalesforceException {
 
         String url = versionUrl() + "composite/sobjects";
-        if (sObjectName != null) {
-            url = url + "/" + sObjectName;
-            if (externalIdFieldName != null) {
-                url = url + "/" + externalIdFieldName;
-            }
-        }
         Request request = createRequest(method, url, headers);
 
         final ContentProvider content = serialize(collection);
@@ -117,6 +126,34 @@ public class DefaultCompositeSObjectCollectionsApiClient extends AbstractClientB
             public void onResponse(InputStream response, Map<String, String> headers, SalesforceException ex) {
                 callback.onResponse(
                         tryToReadListResponse(SaveSObjectResult.class, response),
+                        headers, ex);
+            }
+        });
+    }
+
+    @Override
+    public void upsertCompositeCollections(
+            final SObjectCollection collection, final Map<String, List<String>> headers,
+            final ResponseCallback<List<UpsertSObjectResult>> callback, final String sObjectName,
+            final String externalIdFieldName)
+            throws SalesforceException {
+
+        String url = versionUrl() + "composite/sobjects";
+        url = url + "/" + sObjectName;
+        if (externalIdFieldName != null) {
+            url = url + "/" + externalIdFieldName;
+        }
+
+        Request request = createRequest("PATCH", url, headers);
+
+        final ContentProvider content = serialize(collection);
+        request.content(content);
+
+        doHttpRequest(request, new ClientResponseCallback() {
+            @Override
+            public void onResponse(InputStream response, Map<String, String> headers, SalesforceException ex) {
+                callback.onResponse(
+                        tryToReadListResponse(UpsertSObjectResult.class, response),
                         headers, ex);
             }
         });

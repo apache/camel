@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
@@ -169,6 +170,10 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
         cb.endControlFlow();
 
         cb.beginControlFlow("case \"expression-type\":");
+        cb.addStatement("return constructExpressionType(node)");
+        cb.endControlFlow();
+
+        cb.beginControlFlow("case \"expressionType\":");
         cb.addStatement("return constructExpressionType(node)");
         cb.endControlFlow();
 
@@ -648,10 +653,16 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
         annotationValue(info, XML_ROOT_ELEMENT_ANNOTATION_CLASS, "name")
             .map(AnnotationValue::asString)
             .filter(value -> !"##default".equals(value))
-            .map(StringHelper::camelCaseToDash)
-            .ifPresent(v -> {
-                yamlTypeAnnotation.addMember("nodes", "$S", v);
-                TypeSpecHolder.put(attributes, "node", v);
+            .ifPresent(value -> {
+                // generate the kebab case variant for backward compatibility
+                // https://issues.apache.org/jira/browse/CAMEL-17097
+                if (!Objects.equals(value, StringHelper.camelCaseToDash(value))) {
+                    yamlTypeAnnotation.addMember("nodes", "$S", StringHelper.camelCaseToDash(value));
+                    TypeSpecHolder.put(attributes, "node", StringHelper.camelCaseToDash(value));
+                }
+
+                yamlTypeAnnotation.addMember("nodes", "$S", value);
+                TypeSpecHolder.put(attributes, "node", value);
             });
 
         //

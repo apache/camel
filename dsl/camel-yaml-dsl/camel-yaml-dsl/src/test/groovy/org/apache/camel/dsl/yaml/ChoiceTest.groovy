@@ -37,7 +37,7 @@ class ChoiceTest extends YamlTestSupport {
                             - expression:
                                 simple: "${body.size()} == 2"
                               steps:
-                                   - to: "log:when-b"
+                                - to: "log:when-b"
                           otherwise:
                             steps:
                               - to: "log:otherwise"

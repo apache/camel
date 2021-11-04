@@ -85,6 +85,24 @@ public interface VmComponentBuilderFactory {
             return this;
         }
         /**
+         * The timeout (in milliseconds) used when polling. When a timeout
+         * occurs, the consumer can check whether it is allowed to continue
+         * running. Setting a lower value allows the consumer to react more
+         * quickly upon shutdown.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1000
+         * Group: consumer (advanced)
+         * 
+         * @param defaultPollTimeout the value to set
+         * @return the dsl builder
+         */
+        default VmComponentBuilder defaultPollTimeout(int defaultPollTimeout) {
+            doSetProperty("defaultPollTimeout", defaultPollTimeout);
+            return this;
+        }
+        /**
          * Whether a thread that sends messages to a full SEDA queue will block
          * until the queue's capacity is no longer exhausted. By default, an
          * exception will be thrown stating that the queue is full. By enabling
@@ -237,6 +255,7 @@ public interface VmComponentBuilderFactory {
             switch (name) {
             case "bridgeErrorHandler": ((VmComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "concurrentConsumers": ((VmComponent) component).setConcurrentConsumers((int) value); return true;
+            case "defaultPollTimeout": ((VmComponent) component).setDefaultPollTimeout((int) value); return true;
             case "defaultBlockWhenFull": ((VmComponent) component).setDefaultBlockWhenFull((boolean) value); return true;
             case "defaultDiscardWhenFull": ((VmComponent) component).setDefaultDiscardWhenFull((boolean) value); return true;
             case "defaultOfferTimeout": ((VmComponent) component).setDefaultOfferTimeout((long) value); return true;

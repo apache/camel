@@ -24,6 +24,7 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.eclipse.microprofile.health.HealthCheckResponse.Status;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -48,6 +49,9 @@ public class CamelMicroProfileHealthCheckRepositoryTest extends CamelMicroProfil
 
         JsonArray checks = healthObject.getJsonArray("checks");
         assertEquals(1, checks.size());
+
+        Assertions.assertNotNull(checks.getJsonObject(0).getJsonObject("data"));
+        Assertions.assertEquals("healthyRoute", checks.getJsonObject(0).getJsonObject("data").getString("route.id"));
 
         assertHealthCheckOutput("camel-readiness-checks", Status.UP, checks.getJsonObject(0), jsonObject -> {
             assertEquals(Status.UP.name(), jsonObject.getString("route:healthyRoute"));

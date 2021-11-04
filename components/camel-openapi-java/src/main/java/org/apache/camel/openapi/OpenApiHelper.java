@@ -93,7 +93,7 @@ public final class OpenApiHelper {
     }
 
     private static Map<HttpMethod, OasOperation> getOperationMap(OasPathItem path) {
-        Map<HttpMethod, OasOperation> result = new LinkedHashMap<HttpMethod, OasOperation>();
+        Map<HttpMethod, OasOperation> result = new LinkedHashMap<>();
 
         if (path.get != null) {
             result.put(HttpMethod.GET, path.get);

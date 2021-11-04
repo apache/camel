@@ -57,7 +57,7 @@ public class RestSwaggerArrayEnumTest {
                 .param().name("headerArrayParam").type(RestParamType.header).dataType("array").arrayType("float")
                 .allowableValues("1.1", "2.2", "3.3").endParam();
 
-        final Swagger swagger = reader.read(Collections.singletonList(restDefinition), null, new BeanConfig(),
+        final Swagger swagger = reader.read(Collections.singletonList(restDefinition), new BeanConfig(),
                 "camel-1", new DefaultClassResolver());
 
         assertThat(swagger).isNotNull();

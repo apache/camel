@@ -148,7 +148,7 @@ public RouteBuilder createMyRoutes() throws Exception {
                                 @Override
                                 public void run() {
                                     try {
-                                        exchange.getContext().stopRoute("myRoute");
+                                        exchange.getContext().getRouteController().stopRoute("myRoute");
                                     } catch (Exception e) {
                                         // ignore
                                     }

@@ -9,10 +9,14 @@ The http://www.enterpriseintegrationpatterns.com/Filter.html[Message
 Filter] from the xref:enterprise-integration-patterns.adoc[EIP patterns]
 allows you to filter messages.
 
-IMPORTANT: The message filter implemented in Camel is similar to `if (predicate) { block }`
-in Java. The filter will *include* the message if the predicate evaluated to `true`.
+How can a component avoid receiving uninteresting messages?
 
 image::eip/MessageFilter.gif[image]
+
+Use a special kind of Message Router, a Message Filter, to eliminate undesired messages from a channel based on a set of criteria.
+
+The message filter implemented in Camel is similar to `if (predicate) { block }`
+in Java. The filter will *include* the message if the predicate evaluated to `true`.
 
 == EIP options
 

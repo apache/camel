@@ -111,20 +111,18 @@ public class CompositeSObjectCollectionsProcessor extends AbstractSalesforceProc
     private boolean processCreateSObjectCollections(final Exchange exchange, final AsyncCallback callback)
             throws SalesforceException {
         SObjectCollection collection = buildSObjectCollection(exchange);
-        compositeClient.submitCompositeCollections(collection, determineHeaders(exchange),
+        compositeClient.createCompositeCollections(collection, determineHeaders(exchange),
                 (response, responseHeaders, exception) -> processResponse(exchange, response, responseHeaders,
-                        exception, callback),
-                null, null, "POST");
+                        exception, callback));
         return false;
     }
 
     private boolean processUpdateSObjectCollections(final Exchange exchange, final AsyncCallback callback)
             throws SalesforceException {
         final SObjectCollection collection = buildSObjectCollection(exchange);
-        compositeClient.submitCompositeCollections(collection, determineHeaders(exchange),
+        compositeClient.updateCompositeCollections(collection, determineHeaders(exchange),
                 (response, responseHeaders, exception) -> processResponse(exchange, response, responseHeaders,
-                        exception, callback),
-                null, null, "PATCH");
+                        exception, callback));
         return false;
     }
 
@@ -134,10 +132,10 @@ public class CompositeSObjectCollectionsProcessor extends AbstractSalesforceProc
         String externalIdFieldName
                 = getParameter(SalesforceEndpointConfig.SOBJECT_EXT_ID_NAME, exchange, IGNORE_BODY, NOT_OPTIONAL);
         String sObjectName = getParameter(SalesforceEndpointConfig.SOBJECT_NAME, exchange, IGNORE_BODY, NOT_OPTIONAL);
-        compositeClient.submitCompositeCollections(collection, determineHeaders(exchange),
+        compositeClient.upsertCompositeCollections(collection, determineHeaders(exchange),
                 (response, responseHeaders, exception) -> processResponse(exchange, response, responseHeaders,
                         exception, callback),
-                sObjectName, externalIdFieldName, "PATCH");
+                sObjectName, externalIdFieldName);
 
         return false;
     }

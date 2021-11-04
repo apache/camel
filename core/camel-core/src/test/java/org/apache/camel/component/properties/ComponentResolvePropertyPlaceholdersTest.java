@@ -38,7 +38,9 @@ public class ComponentResolvePropertyPlaceholdersTest extends ContextTestSupport
             @Override
             public void configure() throws Exception {
                 SedaComponent seda = new SedaComponent();
+                seda.setDefaultPollTimeout(10);
                 seda.setQueueSize(propertyInject("myQueueSize", int.class));
+                context.removeComponent("seda");
                 context.addComponent("seda", seda);
 
                 from("seda:start").to("mock:{{cool.result}}");

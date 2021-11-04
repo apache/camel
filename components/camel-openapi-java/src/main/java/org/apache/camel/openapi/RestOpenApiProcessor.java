@@ -59,10 +59,8 @@ public class RestOpenApiProcessor implements Processor {
         boolean yaml = false;
         if (route != null && route.endsWith("/openapi.json")) {
             json = true;
-            route = route.substring(0, route.length() - 13);
         } else if (route != null && route.endsWith("/openapi.yaml")) {
             yaml = true;
-            route = route.substring(0, route.length() - 13);
         }
         if (accept != null && !json && !yaml) {
             json = accept.toLowerCase(Locale.US).contains("json");
@@ -74,7 +72,7 @@ public class RestOpenApiProcessor implements Processor {
         }
 
         try {
-            support.renderResourceListing(exchange.getContext(), adapter, openApiConfig, route, json, yaml,
+            support.renderResourceListing(exchange.getContext(), adapter, openApiConfig, json, yaml,
                     exchange.getIn().getHeaders(), exchange.getContext().getClassResolver(), configuration);
         } catch (Exception e) {
             LOG.warn("Error rendering OpenApi API due {}", e.getMessage(), e);

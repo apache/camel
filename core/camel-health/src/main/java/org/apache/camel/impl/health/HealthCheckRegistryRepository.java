@@ -103,6 +103,7 @@ public class HealthCheckRegistryRepository implements CamelContextAware, HealthC
                 hc.getConfiguration().setEnabled(hcc.isEnabled());
                 hc.getConfiguration().setInterval(hcc.getInterval());
                 hc.getConfiguration().setFailureThreshold(hcc.getFailureThreshold());
+                hc.getConfiguration().setSuccessThreshold(hcc.getSuccessThreshold());
             }
         }
         return hc;

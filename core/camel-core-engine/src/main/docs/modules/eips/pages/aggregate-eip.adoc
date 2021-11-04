@@ -10,14 +10,18 @@ http://www.enterpriseintegrationpatterns.com/Aggregator.html[Aggregator]
 from the xref:enterprise-integration-patterns.adoc[EIP patterns] allows
 you to combine a number of messages together into a single message.
 
+How do we combine the results of individual, but related messages so that they can be processed as a whole?
+
 image::eip/Aggregator.gif[image]
+
+Use a stateful filter, an Aggregator, to collect and store individual messages until a complete set of related messages has been received. Then, the Aggregator publishes a single message distilled from the individual messages.
 
 The aggregator is one of the most complex EIP and has many features and configurations.
 
 The logic for combing messages together is _correlated_ in buckets based on a _correlation key_.
 Messages with the same correlation key is aggregated together, using an `AggregationStrategy`.
 
-== Aggregator options
+== Aggregate options
 
 // eip options: START
 include::partial$eip-options.adoc[]
@@ -93,6 +97,22 @@ class ArrayListAggregationStrategy implements AggregationStrategy {
 
 TIP: The `org.apache.camel.builder.AggregationStrategies` is a builder that can
 be used for creating commonly used aggregation strategies without having to create a class.
+
+=== Exchange Properties
+
+The completed (outgoing) exchange from the Aggregate EIP contains the following information
+as exchange properties, allowing you to know how the exchange was completed, and how
+many messages were combined.
+
+[width="100%",cols="3,1m,6",options="header"]
+|=======================================================================
+| Property | Type | Description
+| `CamelAggregatedSize` | `int` | The total number of messages aggregated.
+| `CamelAggregatedCompletedBy` | `String` | The condition that triggered the completion. Possible values are size, timeout, interval, predicate, force, strategy, and consumer. The consumer value represents the completion from batch consumer.
+| `CamelAggregatedCorrelationKey` | `String` | The correlation identifier as a `String`.
+| `CamelAggregatedTimeout` | `long` | The time-out in milliseconds as set by the completion time-out.
+|=======================================================================
+
 
 === Aggregate by grouping exchanges
 

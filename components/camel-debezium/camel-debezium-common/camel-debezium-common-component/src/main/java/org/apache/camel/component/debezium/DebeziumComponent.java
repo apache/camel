@@ -41,7 +41,8 @@ public abstract class DebeziumComponent<C extends EmbeddedDebeziumConfiguration>
     @Override
     protected DebeziumEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters)
             throws Exception {
-        final C configuration = getConfiguration();
+        // use a copy on the endpoint
+        final C configuration = (C) getConfiguration().copy();
 
         if (ObjectHelper.isEmpty(remaining) && ObjectHelper.isEmpty(configuration.getName())) {
             throw new IllegalArgumentException(

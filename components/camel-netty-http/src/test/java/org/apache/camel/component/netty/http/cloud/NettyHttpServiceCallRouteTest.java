@@ -20,13 +20,21 @@ import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NettyHttpServiceCallRouteTest extends CamelTestSupport {
+
+    @RegisterExtension
+    AvailablePortFinder.Port port1 = AvailablePortFinder.find();
+
+    @RegisterExtension
+    AvailablePortFinder.Port port2 = AvailablePortFinder.find();
 
     @Test
     public void testCustomCall() throws Exception {
@@ -53,21 +61,21 @@ public class NettyHttpServiceCallRouteTest extends CamelTestSupport {
                         .name("myService")
                         .component("netty-http")
                         .staticServiceDiscovery()
-                        .servers("myService@localhost:8081")
-                        .servers("myService@localhost:8082")
+                        .servers("myService@localhost:" + port1)
+                        .servers("myService@localhost:" + port2)
                         .endParent();
 
                 from("direct:default")
                         .serviceCall()
                         .name("myService")
                         .staticServiceDiscovery()
-                        .servers("myService@localhost:8081")
-                        .servers("myService@localhost:8082")
+                        .servers("myService@localhost:" + port1)
+                        .servers("myService@localhost:" + port2)
                         .endParent();
 
-                from("netty-http:http://localhost:8081")
+                from("netty-http:http://localhost:" + port1)
                         .transform().constant("8081");
-                from("netty-http:http://localhost:8082")
+                from("netty-http:http://localhost:" + port2)
                         .transform().constant("8082");
             }
         };

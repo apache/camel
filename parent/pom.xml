@@ -42,6 +42,7 @@
         <camel.surefire.reuseForks>true</camel.surefire.reuseForks>
         <camel.surefire.parallel>false</camel.surefire.parallel>
         <camel.surefire.parallel.factor>1</camel.surefire.parallel.factor>
+        <camel.surefire.parallel.strategy>dynamic</camel.surefire.parallel.strategy>
         <cxf.xjc.jvmArgs/>
         <trimStackTrace>false</trimStackTrace>
         <checkstyle.failOnViolation>false</checkstyle.failOnViolation>
@@ -79,7 +80,7 @@
         <avro-ipc-jetty-version>1.10.2</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.10.2</avro-ipc-netty-version>
         <awaitility-version>4.1.1</awaitility-version>
-        <aws-java-sdk2-version>2.17.66</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.17.74</aws-java-sdk2-version>
         <aws-xray-version>2.6.1</aws-xray-version>
         <axiom-version>1.2.14</axiom-version>
         <azure-jackson2-version>2.11.3</azure-jackson2-version>
@@ -215,7 +216,7 @@
         <google-cloud-functions-gax-grpc-version>1.62.0</google-cloud-functions-gax-grpc-version>
         <google-cloud-guava-version>30.0-jre</google-cloud-guava-version>
         <google-mail-guava-version>17.0</google-mail-guava-version>
-        <graaljs-version>21.2.0</graaljs-version>
+        <graaljs-version>21.3.0</graaljs-version>
         <graphql-java-version>14.0</graphql-java-version>
         <grizzly-websockets-version>2.4.4</grizzly-websockets-version>
         <grpc-version>1.41.0</grpc-version>
@@ -253,7 +254,7 @@
         <icu4j-version>69.1</icu4j-version>
         <ignite-version>2.10.0</ignite-version>
         <impsort-maven-plugin-version>1.6.0</impsort-maven-plugin-version>
-        <infinispan-version>13.0.0.Final</infinispan-version>
+        <infinispan-version>13.0.1.Final</infinispan-version>
         <influx-java-driver-version>2.22</influx-java-driver-version>
         <influx-guava-version>20.0</influx-guava-version>
         <irclib-version>1.10</irclib-version>
@@ -271,7 +272,7 @@
         <jasypt-version>1.9.3</jasypt-version>
         <java-grok-version>0.1.9</java-grok-version>
         <java-util-version>1.65.0</java-util-version>
-        <jnats-version>2.12.0</jnats-version>
+        <jnats-version>2.13.0</jnats-version>
         <javacc-maven-plugin-version>2.6</javacc-maven-plugin-version>
         <javacrumbs-version>0.22</javacrumbs-version>
         <javaparser-version>3.13.10</javaparser-version>
@@ -313,7 +314,7 @@
         <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
         <jettison-version>1.4.1</jettison-version>
         <jgit-version>5.13.0.202109080827-r</jgit-version>
-        <jgroups-version>4.2.16.Final</jgroups-version>
+        <jgroups-version>4.2.17.Final</jgroups-version>
         <jgroups-raft-version>0.5.3.Final</jgroups-raft-version>
         <jgroups-raft-leveldbjni-version>1.8</jgroups-raft-leveldbjni-version>
         <jgroups-raft-mapdb-version>1.0.8</jgroups-raft-mapdb-version>
@@ -327,7 +328,7 @@
         <jool-version>0.9.12</jool-version>
         <jooq-version>3.14.15</jooq-version>
         <joor-version>0.9.14</joor-version>
-        <johnzon-version>1.2.14</johnzon-version>
+        <johnzon-version>1.2.15</johnzon-version>
         <jose4j-version>0.6.4</jose4j-version>
         <jsendnsca-version>2.1.1</jsendnsca-version>
         <jslt-version>0.1.11</jslt-version>
@@ -344,7 +345,7 @@
         <jt400-version>10.7</jt400-version>
         <junit-toolbox-version>2.3</junit-toolbox-version>
         <junit-version>4.13.1</junit-version>
-        <junit-jupiter-version>5.7.1</junit-jupiter-version>
+        <junit-jupiter-version>5.8.1</junit-jupiter-version>
         <jxmpp-version>0.6.4</jxmpp-version>
         <jython-version>2.5.3</jython-version>
         <jython-standalone-version>2.5.3</jython-standalone-version>
@@ -410,15 +411,14 @@
         <mongo-hadoop-version>1.5.0</mongo-hadoop-version>
         <msv-version>2013.6.1</msv-version>
         <mustache-java-version>0.9.10</mustache-java-version>
-        <mvel-version>2.4.12.Final</mvel-version>
+        <mvel-version>2.4.13.Final</mvel-version>
         <mybatis-version>3.5.7</mybatis-version>
         <narayana-version>5.12.1.Final</narayana-version>
         <nessus-ipfs-version>1.0.0.Beta4</nessus-ipfs-version>
         <nessus-weka-version>1.0.1</nessus-weka-version>
         <nsq-client-version>1.0.0.RC4</nsq-client-version>
         <neoscada-version>0.4.0</neoscada-version>
-        <netty3-version>3.10.6.Final</netty3-version>
-        <netty-version>4.1.69.Final</netty-version>
+        <netty-version>4.1.70.Final</netty-version>
         <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
         <networknt-json-schema-validator-version>1.0.58</networknt-json-schema-validator-version>
         <nimbus-jose-jwt>8.9</nimbus-jose-jwt>
@@ -515,16 +515,15 @@
         <spring-version>${spring5-version}</spring-version>
         <spring5-version>5.3.12</spring5-version>
         <spring-rabbitmq-version>2.3.11</spring-rabbitmq-version>
-        <spring-security-version>5.5.2</spring-security-version>
+        <spring-security-version>5.5.3</spring-security-version>
         <spring-ws-version>3.1.1</spring-ws-version>
         <sql-maven-plugin-version>1.5</sql-maven-plugin-version>
         <squareup-okhttp-version>3.14.7</squareup-okhttp-version>
         <squareup-okio-version>1.17.2</squareup-okio-version>
-        <!-- sshd 2.6.0 does not work with camel-ftp tests -->
-        <sshd-version>2.5.0</sshd-version>
+        <sshd-version>2.7.0</sshd-version>
         <stompjms-version>1.19</stompjms-version>
         <swagger-java-version>1.6.2</swagger-java-version>
-        <swagger-openapi3-version>2.1.9</swagger-openapi3-version>
+        <swagger-openapi3-version>2.1.11</swagger-openapi3-version>
         <swagger-java-parser-version>1.0.51</swagger-java-parser-version>
         <swagger-java-guava-version>27.1-jre</swagger-java-guava-version>
         <apicurio-version>1.1.16</apicurio-version>
@@ -542,7 +541,7 @@
         <vavr-version>0.10.2</vavr-version>
         <velocity-tools-version>3.1</velocity-tools-version>
         <velocity-version>2.3</velocity-version>
-        <vertx-version>4.1.4</vertx-version>
+        <vertx-version>4.1.6</vertx-version>
         <vysper-version>0.7</vysper-version>
         <web3j-version>3.6.0</web3j-version>
         <web3j-quorum-version>0.8.0</web3j-quorum-version>
@@ -4617,7 +4616,7 @@
                             junit.jupiter.execution.parallel.enabled = ${camel.surefire.parallel}
                             junit.jupiter.execution.parallel.mode.default = same_thread
                             junit.jupiter.execution.parallel.mode.classes.default = concurrent
-                            junit.jupiter.execution.parallel.config.strategy = dynamic
+                            junit.jupiter.execution.parallel.config.strategy = ${camel.surefire.parallel.strategy}
                             junit.jupiter.execution.parallel.config.dynamic.factor = ${camel.surefire.parallel.factor}
                         </configurationParameters>
                     </properties>

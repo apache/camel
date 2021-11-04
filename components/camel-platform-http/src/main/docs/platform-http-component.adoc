@@ -14,18 +14,35 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/platform-h
 
 *{component-header}*
 
-
 The Platform HTTP is used to allow Camel to use the existing HTTP server from the runtime.
 For example when running Camel on Spring Boot, Quarkus, or other runtimes.
 
-Maven users will need to add the following dependency to their `pom.xml`
-for this component:
+Maven users will need to add the following dependency to their `pom.xml` for this component:
 
 [source,xml]
 ----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-platform-http</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== Platform HTTP Provider
+
+To use Platform HTTP a provider (engine) is required to be available on the classpath.
+The purpose is to have drivers for different runtimes such as Quarkus, VertX, or Spring Boot.
+
+At this moment there is only support for Quarkus and VertX by `camel-platform-http-vertx`.
+This JAR must be on the classpath otherwise the Platform HTTP component cannot be used and an
+exception will be thrown on startup.
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-platform-http-vertx</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>

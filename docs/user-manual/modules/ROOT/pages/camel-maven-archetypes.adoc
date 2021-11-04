@@ -2,7 +2,6 @@
 
 Camel is distributed with the following archetypes for Maven end users.
 
-[[CamelMavenArchetypes-ArchetypeSupported]]
 == Archetype Supported
 
 [width="100%",cols="50%,50%",options="header",]
@@ -58,8 +57,7 @@ The maven coordinates for these archetypes is the following:
 </dependency>
 ----
 
-[[CamelMavenArchetypes-Snapshotarchetypes]]
-== Snapshot archetypes
+=== Snapshot Archetypes
 
 If you would like to use an archetype from an unreleased version of
 Camel, you just need to let the maven-archetype-plugin know where to

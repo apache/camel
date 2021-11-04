@@ -63,7 +63,7 @@ public class PrepareExampleMojo extends AbstractMojo {
     protected String filter = "camel-example";
 
     @Parameter(property = "filterMiddleFolder", required = false, readonly = true)
-    protected String filterMiddleFolder = "aws";
+    protected String filterMiddleFolder = "aws,azure";
 
     /**
      * Maven ProjectHelper.

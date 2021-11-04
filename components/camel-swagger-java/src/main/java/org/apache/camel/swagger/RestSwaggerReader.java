@@ -90,26 +90,17 @@ public class RestSwaggerReader {
      * Read the REST-DSL definition's and parse that as a Swagger model representation
      *
      * @param  rests                  the rest-dsl
-     * @param  route                  optional route path to filter the rest-dsl to only include from the chose route
      * @param  config                 the swagger configuration
      * @param  classResolver          class resolver to use
      * @return                        the swagger model
      * @throws ClassNotFoundException
      */
     public Swagger read(
-            List<RestDefinition> rests, String route, BeanConfig config, String camelContextId, ClassResolver classResolver)
+            List<RestDefinition> rests, BeanConfig config, String camelContextId, ClassResolver classResolver)
             throws ClassNotFoundException {
         Swagger swagger = new Swagger();
 
         for (RestDefinition rest : rests) {
-
-            if (org.apache.camel.util.ObjectHelper.isNotEmpty(route) && !route.equals("/")) {
-                // filter by route
-                if (!rest.getPath().equals(route)) {
-                    continue;
-                }
-            }
-
             parse(swagger, rest, camelContextId, classResolver);
         }
 

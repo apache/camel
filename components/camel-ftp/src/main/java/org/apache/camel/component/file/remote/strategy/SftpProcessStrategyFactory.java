@@ -20,7 +20,6 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy;
 import org.apache.camel.component.file.GenericFileProcessStrategy;
 import org.apache.camel.component.file.GenericFileProcessStrategyFactory;
@@ -107,53 +106,15 @@ public final class SftpProcessStrategyFactory implements GenericFileProcessStrat
             } else if ("rename".equals(readLock)) {
                 GenericFileRenameExclusiveReadLockStrategy<SftpRemoteFile> readLockStrategy
                         = new GenericFileRenameExclusiveReadLockStrategy<>();
-                Long timeout = (Long) params.get("readLockTimeout");
-                if (timeout != null) {
-                    readLockStrategy.setTimeout(timeout);
-                }
-                Long checkInterval = (Long) params.get("readLockCheckInterval");
-                if (checkInterval != null) {
-                    readLockStrategy.setCheckInterval(checkInterval);
-                }
-                Boolean readLockMarkerFile = (Boolean) params.get("readLockMarkerFile");
-                if (readLockMarkerFile != null) {
-                    readLockStrategy.setMarkerFiler(readLockMarkerFile);
-                }
-                LoggingLevel readLockLoggingLevel = (LoggingLevel) params.get("readLockLoggingLevel");
-                if (readLockLoggingLevel != null) {
-                    readLockStrategy.setReadLockLoggingLevel(readLockLoggingLevel);
-                }
+
+                StrategyUtil.setup(readLockStrategy, params);
+
                 return readLockStrategy;
             } else if ("changed".equals(readLock)) {
                 SftpChangedExclusiveReadLockStrategy readLockStrategy = new SftpChangedExclusiveReadLockStrategy();
-                Long timeout = (Long) params.get("readLockTimeout");
-                if (timeout != null) {
-                    readLockStrategy.setTimeout(timeout);
-                }
-                Long checkInterval = (Long) params.get("readLockCheckInterval");
-                if (checkInterval != null) {
-                    readLockStrategy.setCheckInterval(checkInterval);
-                }
-                Long minLength = (Long) params.get("readLockMinLength");
-                if (minLength != null) {
-                    readLockStrategy.setMinLength(minLength);
-                }
-                Long minAge = (Long) params.get("readLockMinAge");
-                if (null != minAge) {
-                    readLockStrategy.setMinAge(minAge);
-                }
-                Boolean fastExistsCheck = (Boolean) params.get("fastExistsCheck");
-                if (fastExistsCheck != null) {
-                    readLockStrategy.setFastExistsCheck(fastExistsCheck);
-                }
-                Boolean readLockMarkerFile = (Boolean) params.get("readLockMarkerFile");
-                if (readLockMarkerFile != null) {
-                    readLockStrategy.setMarkerFiler(readLockMarkerFile);
-                }
-                LoggingLevel readLockLoggingLevel = (LoggingLevel) params.get("readLockLoggingLevel");
-                if (readLockLoggingLevel != null) {
-                    readLockStrategy.setReadLockLoggingLevel(readLockLoggingLevel);
-                }
+
+                StrategyUtil.setup(readLockStrategy, params);
+
                 return readLockStrategy;
             }
         }

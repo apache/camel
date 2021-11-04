@@ -29,6 +29,17 @@ import org.apache.camel.spi.HasId;
  */
 public interface HealthCheck extends HasGroup, HasId, Ordered {
 
+    String CHECK_ID = "check.id";
+    String CHECK_GROUP = "check.group";
+    String CHECK_ENABLED = "check.enabled";
+    String INVOCATION_COUNT = "invocation.count";
+    String INVOCATION_TIME = "invocation.time";
+    String INVOCATION_ATTEMPT_TIME = "invocation.attempt.time";
+    String FAILURE_COUNT = "failure.count";
+    String FAILURE_ENDPOINT_URI = "failure.endpoint.uri";
+    String FAILURE_ERROR_COUNT = "failure.error.count";
+    String SUCCESS_COUNT = "success.count";
+
     enum State {
         UP,
         DOWN,
@@ -41,7 +52,7 @@ public interface HealthCheck extends HasGroup, HasId, Ordered {
     }
 
     /**
-     * Return meta data associated with this {@link HealthCheck}.
+     * Return metadata associated with this {@link HealthCheck}.
      */
     default Map<String, Object> getMetaData() {
         return Collections.emptyMap();
@@ -86,7 +97,7 @@ public interface HealthCheck extends HasGroup, HasId, Ordered {
     Result call(Map<String, Object> options);
 
     /**
-     * Response to an health check invocation.
+     * Response to a health check invocation.
      */
     interface Result {
 
@@ -111,7 +122,7 @@ public interface HealthCheck extends HasGroup, HasId, Ordered {
         Optional<Throwable> getError();
 
         /**
-         * An key/value combination of details.
+         * A key/value combination of details.
          *
          * @return a non null details map
          */

@@ -375,7 +375,7 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     }
 
     /**
-     * offerTimeout (in milliseconds) can be added to the block case when queue is full. You can disable timeout by
+     * Offer timeout (in milliseconds) can be added to the block case when queue is full. You can disable timeout by
      * using 0 or a negative value.
      */
     public void setOfferTimeout(long offerTimeout) {
@@ -433,8 +433,8 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     }
 
     /**
-     * The timeout used when polling. When a timeout occurs, the consumer can check whether it is allowed to continue
-     * running. Setting a lower value allows the consumer to react more quickly upon shutdown.
+     * The timeout (in milliseconds) used when polling. When a timeout occurs, the consumer can check whether it is
+     * allowed to continue running. Setting a lower value allows the consumer to react more quickly upon shutdown.
      */
     public void setPollTimeout(int pollTimeout) {
         this.pollTimeout = pollTimeout;
@@ -525,11 +525,6 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
                     "Cannot enable both discardWhenFull=true and blockWhenFull=true."
                                                + " You can only either discard or block when full.");
         }
-
-        // special for unit testing where we can set a system property to make seda poll faster
-        // and therefore also react faster upon shutdown, which makes overall testing faster of the Camel project
-        String override = System.getProperty("CamelSedaPollTimeout", "" + getPollTimeout());
-        setPollTimeout(Integer.parseInt(override));
     }
 
     @Override

@@ -86,6 +86,24 @@ public interface StubComponentBuilderFactory {
             return this;
         }
         /**
+         * The timeout (in milliseconds) used when polling. When a timeout
+         * occurs, the consumer can check whether it is allowed to continue
+         * running. Setting a lower value allows the consumer to react more
+         * quickly upon shutdown.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1000
+         * Group: consumer (advanced)
+         * 
+         * @param defaultPollTimeout the value to set
+         * @return the dsl builder
+         */
+        default StubComponentBuilder defaultPollTimeout(int defaultPollTimeout) {
+            doSetProperty("defaultPollTimeout", defaultPollTimeout);
+            return this;
+        }
+        /**
          * Whether a thread that sends messages to a full SEDA queue will block
          * until the queue's capacity is no longer exhausted. By default, an
          * exception will be thrown stating that the queue is full. By enabling
@@ -239,6 +257,7 @@ public interface StubComponentBuilderFactory {
             switch (name) {
             case "bridgeErrorHandler": ((StubComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "concurrentConsumers": ((StubComponent) component).setConcurrentConsumers((int) value); return true;
+            case "defaultPollTimeout": ((StubComponent) component).setDefaultPollTimeout((int) value); return true;
             case "defaultBlockWhenFull": ((StubComponent) component).setDefaultBlockWhenFull((boolean) value); return true;
             case "defaultDiscardWhenFull": ((StubComponent) component).setDefaultDiscardWhenFull((boolean) value); return true;
             case "defaultOfferTimeout": ((StubComponent) component).setDefaultOfferTimeout((long) value); return true;

@@ -28,6 +28,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
+import java.time.Duration;
 import java.util.Base64;
 import java.util.Hashtable;
 import java.util.List;
@@ -53,6 +54,9 @@ import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExist;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.support.task.BlockingTask;
+import org.apache.camel.support.task.Tasks;
+import org.apache.camel.support.task.budget.Budgets;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -77,6 +81,15 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
     private SftpEndpoint endpoint;
     private ChannelSftp channel;
     private Session session;
+
+    private static class TaskPayload {
+        final RemoteFileConfiguration configuration;
+        private Exception exception;
+
+        public TaskPayload(RemoteFileConfiguration configuration) {
+            this.configuration = configuration;
+        }
+    }
 
     public SftpOperations() {
     }
@@ -109,70 +122,63 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
             return true;
         }
 
-        boolean connected = false;
-        int attempt = 0;
+        BlockingTask task = Tasks
+                .foregroundTask()
+                .withBudget(Budgets.iterationBudget()
+                        .withMaxIterations(endpoint.getMaximumReconnectAttempts())
+                        .withInterval(Duration.ofMillis(endpoint.getReconnectDelay()))
+                        .build())
+                .build();
 
-        while (!connected) {
-            try {
-                if (LOG.isTraceEnabled() && attempt > 0) {
-                    LOG.trace("Reconnect attempt #{} connecting to + {}", attempt, configuration.remoteServerInformation());
-                }
+        TaskPayload payload = new TaskPayload(configuration);
 
-                if (channel == null || !channel.isConnected()) {
-                    if (session == null || !session.isConnected()) {
-                        LOG.trace("Session isn't connected, trying to recreate and connect.");
-                        session = createSession(configuration);
-                        if (endpoint.getConfiguration().getConnectTimeout() > 0) {
-                            LOG.trace("Connecting use connectTimeout: {} ...", endpoint.getConfiguration().getConnectTimeout());
-                            session.connect(endpoint.getConfiguration().getConnectTimeout());
-                        } else {
-                            LOG.trace("Connecting ...");
-                            session.connect();
-                        }
-                    }
-
-                    LOG.trace("Channel isn't connected, trying to recreate and connect.");
-                    channel = (ChannelSftp) session.openChannel("sftp");
-
-                    if (endpoint.getConfiguration().getConnectTimeout() > 0) {
-                        LOG.trace("Connecting use connectTimeout: {} ...", endpoint.getConfiguration().getConnectTimeout());
-                        channel.connect(endpoint.getConfiguration().getConnectTimeout());
-                    } else {
-                        LOG.trace("Connecting ...");
-                        channel.connect();
-                    }
-                    LOG.debug("Connected to {}", configuration.remoteServerInformation());
-                }
-
-                // yes we could connect
-                connected = true;
-            } catch (Exception e) {
-                // check if we are interrupted so we can break out
-                if (Thread.currentThread().isInterrupted()) {
-                    throw new GenericFileOperationFailedException(
-                            "Interrupted during connecting", new InterruptedException("Interrupted during connecting"));
-                }
-
-                GenericFileOperationFailedException failed = new GenericFileOperationFailedException(
-                        "Cannot connect to " + configuration.remoteServerInformation(), e);
-                LOG.trace("Cannot connect due: {}", failed.getMessage());
-                attempt++;
-                if (attempt > endpoint.getMaximumReconnectAttempts()) {
-                    throw failed;
-                }
-                if (endpoint.getReconnectDelay() > 0) {
-                    try {
-                        Thread.sleep(endpoint.getReconnectDelay());
-                    } catch (InterruptedException ie) {
-                        // we could potentially also be interrupted during sleep
-                        Thread.currentThread().interrupt();
-                        throw new GenericFileOperationFailedException("Interrupted during sleeping", ie);
-                    }
-                }
-            }
+        if (!task.run(this::tryConnect, payload)) {
+            throw new GenericFileOperationFailedException(
+                    "Cannot connect to " + configuration.remoteServerInformation(),
+                    payload.exception);
         }
 
         configureBulkRequests();
+
+        return true;
+    }
+
+    private boolean tryConnect(TaskPayload payload) {
+        LOG.trace("Reconnect attempt to {}", payload.configuration.remoteServerInformation());
+
+        try {
+            if (channel == null || !channel.isConnected()) {
+                if (session == null || !session.isConnected()) {
+                    LOG.trace("Session isn't connected, trying to recreate and connect.");
+
+                    session = createSession(payload.configuration);
+
+                    if (endpoint.getConfiguration().getConnectTimeout() > 0) {
+                        LOG.trace("Connecting use connectTimeout: {} ...", endpoint.getConfiguration().getConnectTimeout());
+                        session.connect(endpoint.getConfiguration().getConnectTimeout());
+                    } else {
+                        LOG.trace("Connecting ...");
+                        session.connect();
+                    }
+                }
+
+                LOG.trace("Channel isn't connected, trying to recreate and connect.");
+                channel = (ChannelSftp) session.openChannel("sftp");
+
+                if (endpoint.getConfiguration().getConnectTimeout() > 0) {
+                    LOG.trace("Connecting use connectTimeout: {} ...", endpoint.getConfiguration().getConnectTimeout());
+                    channel.connect(endpoint.getConfiguration().getConnectTimeout());
+                } else {
+                    LOG.trace("Connecting ...");
+                    channel.connect();
+                }
+                LOG.debug("Connected to {}", payload.configuration.remoteServerInformation());
+            }
+        } catch (JSchException e) {
+            payload.exception = e;
+
+            return false;
+        }
 
         return true;
     }

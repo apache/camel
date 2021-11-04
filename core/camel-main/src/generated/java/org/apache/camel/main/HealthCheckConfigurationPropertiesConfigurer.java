@@ -29,6 +29,8 @@ public class HealthCheckConfigurationPropertiesConfigurer extends org.apache.cam
         case "Interval": target.setInterval(property(camelContext, long.class, value)); return true;
         case "parent":
         case "Parent": target.setParent(property(camelContext, java.lang.String.class, value)); return true;
+        case "successthreshold":
+        case "SuccessThreshold": target.setSuccessThreshold(property(camelContext, int.class, value)); return true;
         default: return false;
         }
     }
@@ -44,6 +46,8 @@ public class HealthCheckConfigurationPropertiesConfigurer extends org.apache.cam
         case "Interval": return long.class;
         case "parent":
         case "Parent": return java.lang.String.class;
+        case "successthreshold":
+        case "SuccessThreshold": return int.class;
         default: return null;
         }
     }
@@ -60,6 +64,8 @@ public class HealthCheckConfigurationPropertiesConfigurer extends org.apache.cam
         case "Interval": return target.getInterval();
         case "parent":
         case "Parent": return target.getParent();
+        case "successthreshold":
+        case "SuccessThreshold": return target.getSuccessThreshold();
         default: return null;
         }
     }

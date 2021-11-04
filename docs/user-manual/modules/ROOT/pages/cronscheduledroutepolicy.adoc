@@ -3,26 +3,13 @@
 `CronScheduledRoutePolicy` is a
 xref:scheduledroutepolicy.adoc[ScheduledRoutePolicy] that facilitates
 route activation, de-activation, suspension and resumption of routes
-based on a xref:components::quartz-component.adoc[Quartz] `CronTrigger`.
-
-Maven users will need to add a camel-quartz dependency to their
-`pom.xml` to avail this capability.
-
-[source,xml]
-----
-<dependency>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>camel-quartz</artifactId>
-    <version>x.x.x</version>
-    <!-- use the same version as your Camel core version -->
-</dependency>
-----
+based on a xref:components::quartz-component.adoc[Quartz] cron trigger.
 
 [TIP]
 ====
 .Relationship to the Quartz component
 
-All Scheduled route policies share the scheduler created by the Quartz
+All Scheduled route policies share the scheduler created by the xref:components::quartz-component.adoc[Quartz]
 component. In this way, scheduler, jobs and triggers can be managed in a
 common and consistent way.
 ====
@@ -53,7 +40,7 @@ Cron Expression for route start
 |routeStopTime |String |  |the initial scheduled Date and time as a Cron
 Expression for route stop
 
-|routeStopGracePeriod |int |10 seconds |the time period to wait before
+|routeStopGracePeriod |int |10000 |the time period to wait before
 initiating graceful route stop
 
 |routeStopTimeUnit |long |TimeUnit.MILLISECONDS |the time unit for the
@@ -78,10 +65,10 @@ Cron Expression for route suspension
 Cron Expression for route resumption
 |=======================================================================
 
-== Configuring the policy
+== Configuring the route policy
 
 Once the `org.apache.camel.routepolicy.quartz.CronScheduledRoutePolicy`
-is created it can be wired into the camel route as follows:
+is created it can be wired into the Camel route as follows:
 
 In Java:
 
@@ -114,3 +101,18 @@ And with Spring XML:
 IMPORTANT: Notice how the route to be scheduled *MUST* be configured to not
 xref:configuring-route-startup-ordering-and-autostartup.adoc[autostartup], to let
 the route scheduler take control of starting and stopping the route accordingly.
+
+=== Dependency
+
+Maven users will need to add a camel-quartz dependency to their
+`pom.xml` to avail this capability.
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-quartz</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----

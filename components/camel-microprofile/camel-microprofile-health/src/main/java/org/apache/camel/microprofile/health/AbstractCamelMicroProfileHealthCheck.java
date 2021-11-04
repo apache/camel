@@ -16,6 +16,9 @@
  */
 package org.apache.camel.microprofile.health;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Collection;
 import java.util.Map;
 
@@ -62,6 +65,19 @@ public abstract class AbstractCamelMicroProfileHealthCheck implements HealthChec
                 }
 
                 if (enabled) {
+                    details.forEach((key, value) -> builder.withData(key, value.toString()));
+
+                    result.getError().ifPresent(error -> {
+                        builder.withData("error.message", error.getMessage());
+                        try (final StringWriter stackTraceWriter = new StringWriter();
+                             final PrintWriter pw = new PrintWriter(stackTraceWriter, true)) {
+                            error.printStackTrace(pw);
+                            builder.withData("error.stacktrace", stackTraceWriter.getBuffer().toString());
+                        } catch (IOException exception) {
+                            // ignore
+                        }
+                    });
+
                     builder.withData(result.getCheck().getId(), result.getState().name());
                     if (result.getState() == State.DOWN) {
                         builder.down();
@@ -74,13 +90,13 @@ public abstract class AbstractCamelMicroProfileHealthCheck implements HealthChec
     }
 
     @Override
-    public void setCamelContext(CamelContext camelContext) {
-        this.camelContext = camelContext;
+    public CamelContext getCamelContext() {
+        return this.camelContext;
     }
 
     @Override
-    public CamelContext getCamelContext() {
-        return this.camelContext;
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
     }
 
     /**
@@ -99,7 +115,7 @@ public abstract class AbstractCamelMicroProfileHealthCheck implements HealthChec
 
     /**
      * Gets the name of the health check which will be used as a heading for the associated checks.
-     * 
+     *
      * @return the health check name
      */
     abstract String getHealthCheckName();

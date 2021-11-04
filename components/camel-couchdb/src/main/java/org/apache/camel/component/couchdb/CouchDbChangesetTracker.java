@@ -16,11 +16,16 @@
  */
 package org.apache.camel.component.couchdb;
 
+import java.time.Duration;
+
 import com.google.gson.JsonObject;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.couchdb.consumer.CouchDbResumable;
 import org.apache.camel.component.couchdb.consumer.CouchDbResumeStrategy;
 import org.apache.camel.component.couchdb.consumer.CouchDdResumeStrategyFactory;
+import org.apache.camel.support.task.BlockingTask;
+import org.apache.camel.support.task.Tasks;
+import org.apache.camel.support.task.budget.Budgets;
 import org.lightcouch.Changes;
 import org.lightcouch.ChangesResult;
 import org.lightcouch.CouchDbException;
@@ -115,36 +120,30 @@ public class CouchDbChangesetTracker implements Runnable {
     }
 
     private boolean waitForStability(final String lastSequence) {
+        BlockingTask task = Tasks.foregroundTask()
+                .withBudget(Budgets.iterationBudget()
+                        .withMaxIterations(MAX_DB_ERROR_REPEATS)
+                        .withInterval(Duration.ofSeconds(3))
+                        .build())
+                .withName("couchdb-wait-for-stability")
+                .build();
 
-        boolean problems = true;
-        int repeatDbErrorCount = 0;
+        return task.run(this::stabilityCheck, lastSequence);
+    }
 
-        while (problems) {
-            if (++repeatDbErrorCount > MAX_DB_ERROR_REPEATS) {
-                LOG.error("CouchDb change set listener fatal error!  Retry attempts exceeded, listener must exit.");
-                return false;
-            }
+    private boolean stabilityCheck(String lastSequence) {
+        try {
+            // Fail fast operation
+            couchClient.context().serverVersion();
+            // reset change listener
+            initChanges(lastSequence);
 
-            try {
-                Thread.sleep((int) ((Math.random() * 2000) + 5000)); // <2000ms,5000ms)
-            } catch (InterruptedException e) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("CouchDb change set listener interrupted waiting for stability!!", e);
-                }
-            }
-            try {
-                // Fail fast operation
-                couchClient.context().serverVersion();
-                // reset change listener
-                initChanges(lastSequence);
-                problems = false;
-
-            } catch (Exception e) {
-                LOG.debug("Failed to get CouchDb server version and/or reset change listener!  Attempt: {}",
-                        repeatDbErrorCount, e);
-            }
+            return true;
+        } catch (Exception e) {
+            LOG.debug("Failed to get CouchDb server version and/or reset change listener", e);
         }
-        return true;
+
+        return false;
     }
 
     public void stop() {
