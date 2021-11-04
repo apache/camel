@@ -182,22 +182,22 @@ public interface Route extends RuntimeConfiguration {
     void warmUp();
 
     /**
-     * Gets the last error that happened during changing the route lifecycle, i.e. such as when
-     * an exception was thrown during starting the route.
+     * Gets the last error that happened during changing the route lifecycle, i.e. such as when an exception was thrown
+     * during starting the route.
      * <p/>
-     * This is only errors for route lifecycle changes, it is not exceptions thrown during routing messsages
-     * with the Camel routing engine.
+     * This is only errors for route lifecycle changes, it is not exceptions thrown during routing messsages with the
+     * Camel routing engine.
      *
      * @return the error
      */
     RouteError getLastError();
 
     /**
-     * Sets the last error that happened during changing the route lifecycle, i.e. such as when
-     * an exception was thrown during starting the route.
+     * Sets the last error that happened during changing the route lifecycle, i.e. such as when an exception was thrown
+     * during starting the route.
      * <p/>
-     * This is only errors for route lifecycle changes, it is not exceptions thrown during routing messsages
-     * with the Camel routing engine.
+     * This is only errors for route lifecycle changes, it is not exceptions thrown during routing messsages with the
+     * Camel routing engine.
      *
      * @param error the error
      */

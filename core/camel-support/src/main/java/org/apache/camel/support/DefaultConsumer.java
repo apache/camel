@@ -27,6 +27,8 @@ import org.apache.camel.PooledExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.RouteAware;
+import org.apache.camel.health.HealthCheck;
+import org.apache.camel.health.HealthCheckAware;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.ExchangeFactory;
 import org.apache.camel.spi.RouteIdAware;
@@ -40,7 +42,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A default consumer useful for implementation inheritance.
  */
-public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAware, RouteIdAware {
+public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAware, RouteIdAware, HealthCheckAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultConsumer.class);
 
@@ -49,6 +51,7 @@ public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAw
     private final Processor processor;
     private final AsyncProcessor asyncProcessor;
     private final ExchangeFactory exchangeFactory;
+    private HealthCheck healthCheck;
     private ExceptionHandler exceptionHandler;
     private Route route;
     private String routeId;
@@ -183,6 +186,16 @@ public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAw
 
     public void setExceptionHandler(ExceptionHandler exceptionHandler) {
         this.exceptionHandler = exceptionHandler;
+    }
+
+    @Override
+    public void setHealthCheck(HealthCheck healthCheck) {
+        this.healthCheck = healthCheck;
+    }
+
+    @Override
+    public HealthCheck getHealthCheck() {
+        return healthCheck;
     }
 
     @Override

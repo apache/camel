@@ -29,7 +29,6 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.PollingConsumerPollingStrategy;
 import org.apache.camel.Processor;
 import org.apache.camel.Suspendable;
-import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckAware;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
 import org.apache.camel.spi.ScheduledPollConsumerScheduler;
@@ -47,7 +46,6 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
 
     private static final Logger LOG = LoggerFactory.getLogger(ScheduledPollConsumer.class);
 
-    private HealthCheck healthCheck;
     private ScheduledPollConsumerScheduler scheduler;
     private ScheduledExecutorService scheduledExecutorService;
 
@@ -425,16 +423,6 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
         this.scheduledExecutorService = scheduledExecutorService;
     }
 
-    @Override
-    public void setHealthCheck(HealthCheck healthCheck) {
-        this.healthCheck = healthCheck;
-    }
-
-    @Override
-    public HealthCheck getHealthCheck() {
-        return healthCheck;
-    }
-
     // Implementation methods
     // -------------------------------------------------------------------------
 
@@ -464,9 +452,9 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
 
     @Override
     protected void doBuild() throws Exception {
-        if (healthCheck == null) {
+        if (getHealthCheck() == null) {
             String id = "consumer:" + getRouteId();
-            healthCheck = new ScheduledPollConsumerHealthCheck(this, id);
+            setHealthCheck(new ScheduledPollConsumerHealthCheck(this, id));
         }
     }
 

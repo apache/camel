@@ -22,6 +22,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
+import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckAware;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.slf4j.Logger;
@@ -87,12 +88,13 @@ public class RouteHealthCheck extends AbstractHealthCheck {
             if (State.UP.equals(builder.state())) {
                 Consumer consumer = route.getConsumer();
                 if (consumer instanceof HealthCheckAware) {
-                    HealthCheckAware chc = (HealthCheckAware) consumer;
-                    if (chc.getHealthCheck() != null) {
+                    // health check is optional
+                    HealthCheck hc = ((HealthCheckAware) consumer).getHealthCheck();
+                    if (hc != null) {
                         if (LOGGER.isTraceEnabled()) {
                             LOGGER.trace("Calling HealthCheck on consumer route: {}", route.getId());
                         }
-                        Result result = chc.getHealthCheck().call();
+                        Result result = hc.call();
                         if (LOGGER.isDebugEnabled()) {
                             LOGGER.debug("HealthCheck consumer route: {} -> {}", route.getId(), result.getState());
                         }
