@@ -253,11 +253,6 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
         return this;
     }
 
-    // for now commenting out - it's recursion
-    /*public SagaDefinition propagation(String propagation) {
-        return propagation(propagation);
-    }*/
-
     public SagaDefinition propagation(SagaPropagation propagation) {
         setPropagation(propagation.name());
         return this;

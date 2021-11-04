@@ -54,8 +54,6 @@ public class TelegramConsumerHealthCheckOkTest extends TelegramTestSupport {
         HealthCheckRegistry hcr = context.getExtension(HealthCheckRegistry.class);
         HealthCheckRepository repo = hcr.getRepository("routes").get();
 
-        repo.stream().forEach(h -> Assertions.assertEquals(HealthCheck.State.UP, h.call().getState()));
-
         endpoint.expectedMinimumMessageCount(2);
         endpoint.expectedBodiesReceived("message1", "message2");
 
