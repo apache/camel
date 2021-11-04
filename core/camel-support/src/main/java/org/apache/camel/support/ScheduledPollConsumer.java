@@ -71,6 +71,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
     private volatile int backoffCounter;
     private volatile long idleCounter;
     private volatile long errorCounter;
+    private volatile long successCounter;
     private volatile Throwable lastError;
     private final AtomicLong counter = new AtomicLong();
 
@@ -156,6 +157,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
                 idleCounter = 0;
                 errorCounter = 0;
                 backoffCounter = 0;
+                successCounter = 0;
                 LOG.trace("doRun() backoff finished, resetting counters.");
             }
         }
@@ -250,14 +252,17 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
 
         if (cause != null) {
             idleCounter = 0;
+            successCounter = 0;
             errorCounter++;
             lastError = cause;
         } else {
             idleCounter = polledMessages == 0 ? ++idleCounter : 0;
+            successCounter++;
             errorCounter = 0;
             lastError = null;
         }
-        LOG.trace("doRun() done with idleCounter={}, errorCounter={}", idleCounter, errorCounter);
+        LOG.trace("doRun() done with idleCounter={}, successCounter={}, errorCounter={}", idleCounter, successCounter,
+                errorCounter);
 
         // avoid this thread to throw exceptions because the thread pool wont re-schedule a new thread
     }
@@ -429,9 +434,28 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
     /**
      * Gets the error counter. If the counter is > 0 that means the consumer failed polling for the last N number of
      * times. When the consumer is successfully again, then the error counter resets to zero.
+     *
+     * @see #getSuccessCounter()
      */
     protected long getErrorCounter() {
         return errorCounter;
+    }
+
+    /**
+     * Gets the success counter. If the success is > 0 that means the consumer succeeded polling for the last N number
+     * of times. When the consumer is failing again, then the success counter resets to zero.
+     *
+     * @see #getErrorCounter()
+     */
+    protected long getSuccessCounter() {
+        return successCounter;
+    }
+
+    /**
+     * Gets the total number of polls run.
+     */
+    protected long getCounter() {
+        return counter.get();
     }
 
     /**
@@ -544,6 +568,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
         backoffCounter = 0;
         idleCounter = 0;
         errorCounter = 0;
+        successCounter = 0;
         counter.set(0);
 
         super.doStop();

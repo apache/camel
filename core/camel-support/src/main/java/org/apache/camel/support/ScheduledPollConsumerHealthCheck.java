@@ -49,17 +49,24 @@ public class ScheduledPollConsumerHealthCheck implements HealthCheck {
         builder.detail(FAILURE_ENDPOINT_URI, consumer.getEndpoint().getEndpointUri());
 
         long ec = consumer.getErrorCounter();
+        long cnt = consumer.getCounter();
         Throwable cause = consumer.getLastError();
 
-        boolean healthy = ec == 0;
+        // can only be healthy if we have at least one poll and there are no errors
+        boolean healthy = cnt > 0 && ec == 0;
         if (healthy) {
             builder.up();
         } else {
             builder.down();
             builder.detail(FAILURE_ERROR_COUNT, ec);
             String rid = consumer.getRouteId();
-            String msg = "Consumer failed polling %s times route: %s (%s)";
-            builder.message(String.format(msg, ec, rid, sanitizedUri));
+            if (ec > 0) {
+                String msg = "Consumer failed polling %s times route: %s (%s)";
+                builder.message(String.format(msg, ec, rid, sanitizedUri));
+            } else {
+                String msg = "Consumer has not yet polled route: %s (%s)";
+                builder.message(String.format(msg, rid, sanitizedUri));
+            }
             builder.error(cause);
         }
 
