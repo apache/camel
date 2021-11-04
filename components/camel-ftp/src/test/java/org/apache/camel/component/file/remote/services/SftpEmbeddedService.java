@@ -23,19 +23,25 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.function.BiConsumer;
 
 import org.apache.camel.test.infra.common.services.AbstractTestService;
 import org.apache.camel.test.infra.ftp.common.FtpProperties;
 import org.apache.camel.test.infra.ftp.services.FtpService;
+import org.apache.sshd.common.NamedFactory;
+import org.apache.sshd.common.cipher.BuiltinCiphers;
+import org.apache.sshd.common.cipher.Cipher;
 import org.apache.sshd.common.file.virtualfs.VirtualFileSystemFactory;
 import org.apache.sshd.common.keyprovider.FileKeyPairProvider;
 import org.apache.sshd.common.session.helpers.AbstractSession;
+import org.apache.sshd.common.signature.BuiltinSignatures;
+import org.apache.sshd.common.signature.Signature;
+import org.apache.sshd.scp.server.ScpCommandFactory;
 import org.apache.sshd.server.SshServer;
 import org.apache.sshd.server.auth.pubkey.PublickeyAuthenticator;
-import org.apache.sshd.server.scp.ScpCommandFactory;
-import org.apache.sshd.server.subsystem.sftp.SftpSubsystemFactory;
+import org.apache.sshd.sftp.server.SftpSubsystemFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,6 +90,16 @@ public class SftpEmbeddedService extends AbstractTestService implements FtpServi
         if (rootDirMode) {
             sshd.setFileSystemFactory(new VirtualFileSystemFactory(testDirectory().resolve("res").toAbsolutePath()));
         }
+
+        //added support of old signature and cipher for the test scope, to allow upgrade of sshd from 2.5.0 (https://issues.apache.org/jira/browse/CAMEL-17163)
+        // (these security options were disabled - https://issues.apache.org/jira/browse/SSHD-1004)
+        List<NamedFactory<Signature>> signatures = new LinkedList<NamedFactory<Signature>>(sshd.getSignatureFactories());
+        signatures.add(BuiltinSignatures.dsa);
+        sshd.setSignatureFactories(signatures);
+
+        List<NamedFactory<Cipher>> ciphers = sshd.getCipherFactories();
+        ciphers.add(BuiltinCiphers.blowfishcbc);
+        sshd.setCipherFactories(ciphers);
 
         sshd.start();
 
