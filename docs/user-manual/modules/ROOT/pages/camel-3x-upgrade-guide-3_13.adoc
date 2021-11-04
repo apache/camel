@@ -118,3 +118,7 @@ Rendering of api docs is now only supported for the same CamelContext.
 
 The `fireNow` parameter was removed because have no effect.
 The `triggerStartDelay` parameter supports negative value to shift trigger start time in the past. It allows to fire the trigger immediately by configured `MISFIRE_INSTRUCTION_FIRE_ONCE_NOW`.
+
+=== camel-aws2-sqs
+
+Since the maximum number of attributes per SQS message is 10, we are limiting the number of headers to be converted to attributes to 10.
