@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.aws2.sqs.integration;
 
-
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -38,16 +37,6 @@ public class SqsProducerSendLocalstackMaxAttributesIT extends Aws2SQSBaseTest {
     @Test
     public void sendInOnly() throws Exception {
         result.expectedMessageCount(1);
-        result.expectedHeaderReceived("value1", "value1");
-        result.expectedHeaderReceived("value2", "value2");
-        result.expectedHeaderReceived("value3", "value3");
-        result.expectedHeaderReceived("value4", "value4");
-        result.expectedHeaderReceived("value5", "value5");
-        result.expectedHeaderReceived("value6", "value6");
-        result.expectedHeaderReceived("value7", "value7");
-        result.expectedHeaderReceived("value8", "value8");
-        result.expectedHeaderReceived("value9", "value9");
-        result.expectedHeaderReceived("value10", "value10");
 
         Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
             public void process(Exchange exchange) throws Exception {
@@ -67,7 +56,7 @@ public class SqsProducerSendLocalstackMaxAttributesIT extends Aws2SQSBaseTest {
         });
 
         assertMockEndpointsSatisfied();
-        Assert.assertNull(result.getExchanges().get(0).getMessage().getHeader("value11"));
+        Assert.assertEquals(13, result.getExchanges().get(0).getMessage().getHeaders().size());
     }
 
     @Override
@@ -77,10 +66,10 @@ public class SqsProducerSendLocalstackMaxAttributesIT extends Aws2SQSBaseTest {
             @Override
             public void configure() throws Exception {
                 from("direct:start").startupOrder(2)
-                        .toF("aws2-sqs://%s?autoCreateQueue=true", sharedNameGenerator.getName());
+                        .toF("aws2-sqs://%s?autoCreateQueue=true", sharedNameGenerator.getName()).to("mock:result");
 
                 fromF("aws2-sqs://%s?deleteAfterRead=true&autoCreateQueue=true", sharedNameGenerator.getName())
-                        .startupOrder(1).log("${body}").to("mock:result");
+                        .startupOrder(1).log("${body}");
             }
         };
     }
