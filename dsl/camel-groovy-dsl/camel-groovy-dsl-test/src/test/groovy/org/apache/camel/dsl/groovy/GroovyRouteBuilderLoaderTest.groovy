@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.groovy
 
+import org.apache.camel.Expression
 import org.apache.camel.Predicate
 import org.apache.camel.Processor
 import org.apache.camel.component.jackson.JacksonDataFormat
@@ -121,6 +122,7 @@ class GroovyRouteBuilderLoaderTest extends Specification {
                 it.lookupByName('filterStrategy') instanceof DefaultHeaderFilterStrategy
                 it.lookupByName('myProcessor') instanceof Processor
                 it.lookupByName('myPredicate') instanceof Predicate
+                it.lookupByName('myExpression') instanceof Expression
             }
     }
 
@@ -206,6 +208,14 @@ class GroovyRouteBuilderLoaderTest extends Specification {
     def "load integration with eip"()  {
         when:
             loadRoute('/routes/routes-with-eip.groovy')
+            context.start()
+        then:
+            1 == 1
+    }
+
+    def "load integration with set-header-variable"()  {
+        when:
+            loadRoute('/routes/routes-with-set-header-variable.groovy')
             context.start()
         then:
             1 == 1

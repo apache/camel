@@ -18,6 +18,7 @@ package org.apache.camel.dsl.groovy.common.extensions
 
 import groovy.transform.CompileStatic
 import org.apache.camel.Exchange
+import org.apache.camel.Expression
 import org.apache.camel.Processor
 import org.apache.camel.model.ProcessorDefinition
 
@@ -31,6 +32,17 @@ class ProcessorDefinitionExtensions {
             Object apply(Exchange exchange) {
                 callable.resolveStrategy = Closure.DELEGATE_ONLY
                 return callable.call(exchange)
+            }
+        });
+    }
+
+    static <T extends ProcessorDefinition<T>> T setHeader(ProcessorDefinition<T> self, String name, Closure<?> callable) {
+        return self.setHeader(name, new Expression() {
+            @Override
+            def <T> T evaluate(Exchange exchange, Class<T> type) {
+                callable.resolveStrategy = Closure.DELEGATE_ONLY
+                Object obj = callable.call(exchange)
+                return exchange.getContext().getTypeConverter().convertTo(type, exchange, obj)
             }
         });
     }

@@ -14,23 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-beans {
-    myBean(org.apache.camel.dsl.groovy.support.MyBean) {
-        name = "test"
-    }
-    filterStrategy {
-        new org.apache.camel.support.DefaultHeaderFilterStrategy()
-    }
 
-    myProcessor = processor {
-        it.in.body = 'value'
-    }
+def myVar = "Hello World"
 
-    myPredicate = predicate {
-        false
-    }
-
-    myExpression = expression {
-        'Hello World'
-    }
-}
+from("direct:1")
+    .setHeader("foo", { myVar.reverse() } )
+    .setBody( { 3 * 2 })
