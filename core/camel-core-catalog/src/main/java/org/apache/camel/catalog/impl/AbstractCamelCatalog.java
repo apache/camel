@@ -1114,7 +1114,6 @@ public abstract class AbstractCamelCatalog {
                 || key.startsWith("rest.")) {
             int idx = key.indexOf('.');
             String name = key.substring(0, idx);
-            //String option = key.substring(idx + 1); // unused variable
             if (value != null) {
                 MainModel model = mainModel();
                 if (model == null) {
