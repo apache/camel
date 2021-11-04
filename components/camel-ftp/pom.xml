@@ -40,6 +40,9 @@
         <camel.surefire.forkTimeout>1800</camel.surefire.forkTimeout>
         <camel.surefire.parallel>false</camel.surefire.parallel>
 
+        <!-- testing with SSHD does not work with 2.6.0 or 2.7.0: https://issues.apache.org/jira/browse/CAMEL-17163 -->
+        <sshd-version>2.5.0</sshd-version>
+
         <!-- This one can run in parallel rather safely-->
         <camel.failsafe.forkCount>${camel.surefire.forkCount}</camel.failsafe.forkCount>
         <camel.failsafe.forkTimeout>${camel.surefire.forkTimeout}</camel.failsafe.forkTimeout>
