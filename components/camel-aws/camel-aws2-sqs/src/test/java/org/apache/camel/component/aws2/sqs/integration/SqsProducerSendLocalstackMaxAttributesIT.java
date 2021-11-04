@@ -16,9 +16,15 @@
  */
 package org.apache.camel.component.aws2.sqs.integration;
 
-import org.apache.camel.*;
+
+import org.apache.camel.EndpointInject;
+import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
+import org.apache.camel.Processor;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 public class SqsProducerSendLocalstackMaxAttributesIT extends Aws2SQSBaseTest {
@@ -32,6 +38,16 @@ public class SqsProducerSendLocalstackMaxAttributesIT extends Aws2SQSBaseTest {
     @Test
     public void sendInOnly() throws Exception {
         result.expectedMessageCount(1);
+        result.expectedHeaderReceived("value1", "value1");
+        result.expectedHeaderReceived("value2", "value2");
+        result.expectedHeaderReceived("value3", "value3");
+        result.expectedHeaderReceived("value4", "value4");
+        result.expectedHeaderReceived("value5", "value5");
+        result.expectedHeaderReceived("value6", "value6");
+        result.expectedHeaderReceived("value7", "value7");
+        result.expectedHeaderReceived("value8", "value8");
+        result.expectedHeaderReceived("value9", "value9");
+        result.expectedHeaderReceived("value10", "value10");
 
         Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
             public void process(Exchange exchange) throws Exception {
@@ -51,6 +67,7 @@ public class SqsProducerSendLocalstackMaxAttributesIT extends Aws2SQSBaseTest {
         });
 
         assertMockEndpointsSatisfied();
+        Assert.assertNull(result.getExchanges().get(0).getMessage().getHeader("value11"));
     }
 
     @Override
