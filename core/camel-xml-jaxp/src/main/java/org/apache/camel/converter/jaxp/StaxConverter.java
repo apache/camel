@@ -62,13 +62,12 @@ public class StaxConverter {
             String s = AccessController.doPrivileged(new PrivilegedAction<String>() {
                 @Override
                 public String run() {
-                    return System.getProperty("org.apache.cxf.staxutils.pool-size", "-1");
+                    return System.getProperty("org.apache.cxf.staxutils.pool-size", "20");
                 }
             });
             i = Integer.parseInt(s);
-        } catch (Exception t) {
-            //ignore 
-            i = 20;
+        } catch (Exception ignored) {
+            // ignore
         }
         try {
             // if we have more cores than 20, then use that
@@ -76,9 +75,8 @@ public class StaxConverter {
             if (cores > i) {
                 i = cores;
             }
-        } catch (Exception t) {
+        } catch (Exception ignored) {
             // ignore
-            i = 20;
         }
 
         if (i <= 0) {
