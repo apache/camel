@@ -19,7 +19,11 @@ Camel provides the following health checks out of the box:
   such as troublesome routes that may not start up the first time, and are retried to be started in the background with backoff delays.
 - consumer (scheduled polling consumer) - A `ScheduledPollConsumerHealthCheck` which automatic integrates with the *routes* health check
   which enables fine-grained checks for the route input. This means if the consumer is failing to poll new messages
-  then the health check can detect this and report as un-healthy.
+  then the health check can detect this and report as un-healthy. Note that the consumer will be DOWN during its initialization and until at least
+  one poll run has been executed, to know whether that poll was a success or not. And if the poll was a success
+  then the consumer is UP. This is on purpose to avoid having the health check to be initially UP
+  and then after first poll run then DOWN again because the consumer cannot poll from external system;
+  which causes the health check to be _flaky_.
 - registry - A `HealthCheckRegistry` which discovers all the available custom `HealthCheck` instances in the `Registry`.
 
 == IDs
