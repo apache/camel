@@ -456,6 +456,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
             String id = "consumer:" + getRouteId();
             setHealthCheck(new ScheduledPollConsumerHealthCheck(this, id));
         }
+        super.doBuild();
     }
 
     @Override
