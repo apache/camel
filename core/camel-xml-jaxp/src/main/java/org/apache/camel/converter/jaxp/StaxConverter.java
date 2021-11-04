@@ -304,7 +304,7 @@ public class StaxConverter {
         if (factory != inputFactory) {
             boolean resultOfOffer = INPUT_FACTORY_POOL.offer(factory);
             if (!resultOfOffer) {
-                LOG.error("factory wasn't added into INPUT_FACTORY_POOL");
+                LOG.debug("Ignore returning XMLInputFactory: {} as the pool is full", factory);
             }
         }
     }
