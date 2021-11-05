@@ -271,6 +271,16 @@ Then the `newExchange` is used to start the correlation group from scratch,
 so the group would contain only that new incoming exchange. This is
 known as pre-completion mode.
 
+The `newExchange` contains the following exchange properties, which can be used
+to determine whether to pre complete.
+
+[width="100%",cols="3,1m,6",options="header"]
+|=======================================================================
+| Property | Type | Description
+| `CamelAggregatedSize` | `int` | The total number of messages aggregated.
+| `CamelAggregatedCorrelationKey` | `String` | The correlation identifier as a `String`.
+|=======================================================================
+
 When the aggregation is in _pre-completion_ mode, then only the following completions are in use:
 
 * _completionTimeout_ or _completionInterval_ can also be used as fallback

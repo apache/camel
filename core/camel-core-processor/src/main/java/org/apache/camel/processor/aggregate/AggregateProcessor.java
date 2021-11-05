@@ -503,6 +503,7 @@ public class AggregateProcessor extends AsyncProcessorSupport
             try {
                 // put the current aggregated size on the exchange so its avail during completion check
                 newExchange.setProperty(ExchangePropertyKey.AGGREGATED_SIZE, size);
+                newExchange.setProperty(ExchangePropertyKey.AGGREGATED_CORRELATION_KEY, key);
                 complete = isPreCompleted(key, oldExchange, newExchange);
                 // make sure to track timeouts if not complete
                 if (complete == null) {
@@ -510,6 +511,7 @@ public class AggregateProcessor extends AsyncProcessorSupport
                 }
                 // remove it afterwards
                 newExchange.removeProperty(ExchangePropertyKey.AGGREGATED_SIZE);
+                newExchange.removeProperty(ExchangePropertyKey.AGGREGATED_CORRELATION_KEY);
             } catch (Throwable e) {
                 // must catch any exception from aggregation
                 throw new CamelExchangeException("Error occurred during preComplete", newExchange, e);
@@ -517,6 +519,7 @@ public class AggregateProcessor extends AsyncProcessorSupport
         } else if (isEagerCheckCompletion()) {
             // put the current aggregated size on the exchange so its avail during completion check
             newExchange.setProperty(ExchangePropertyKey.AGGREGATED_SIZE, size);
+            newExchange.setProperty(ExchangePropertyKey.AGGREGATED_CORRELATION_KEY, key);
             complete = isCompleted(key, newExchange);
             // make sure to track timeouts if not complete
             if (complete == null) {
@@ -524,6 +527,7 @@ public class AggregateProcessor extends AsyncProcessorSupport
             }
             // remove it afterwards
             newExchange.removeProperty(ExchangePropertyKey.AGGREGATED_SIZE);
+            newExchange.removeProperty(ExchangePropertyKey.AGGREGATED_CORRELATION_KEY);
         }
 
         if (preCompletion && complete != null) {
