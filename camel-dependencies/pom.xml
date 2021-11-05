@@ -383,7 +383,7 @@
     <lightcouch-version>0.2.0</lightcouch-version>
     <log4j2-version>2.13.3</log4j2-version>
     <logback-version>1.2.3</logback-version>
-    <lucene-version>8.9.0</lucene-version>
+    <lucene-version>8.10.1</lucene-version>
     <lucene-version-range>[8,9)</lucene-version-range>
     <maven-antrun-plugin-version>1.6</maven-antrun-plugin-version>
     <maven-archetype-packaging-version>2.3</maven-archetype-packaging-version>
