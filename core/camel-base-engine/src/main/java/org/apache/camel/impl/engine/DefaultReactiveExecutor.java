@@ -182,7 +182,7 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
                                 executor.pendingTasks.decrement();
                             }
                             if (LOG.isTraceEnabled()) {
-                                LOG.trace("Worker #{} running: {}", number, runnable);
+                                LOG.trace("Worker #{} running: {}", number, polled);
                             }
                             polled.run();
                         } catch (Throwable t) {
