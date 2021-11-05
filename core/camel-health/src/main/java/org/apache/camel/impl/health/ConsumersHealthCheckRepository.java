@@ -125,7 +125,7 @@ public class ConsumersHealthCheckRepository implements CamelContextAware, Health
         return checks.computeIfAbsent(route.getConsumer(), r -> {
             // must prefix id with consumer: to not clash with route
             String id = "consumer:" + route.getRouteId();
-            ConsumerHealthCheck chc = new ConsumerHealthCheck(route.getConsumer(), id);
+            ConsumerHealthCheck chc = new ConsumerHealthCheck(route, id);
             CamelContextAware.trySetCamelContext(chc, route.getCamelContext());
             HealthCheckConfiguration hcc = matchConfiguration(id);
             if (hcc != null) {

@@ -28,10 +28,14 @@ import org.apache.camel.health.HealthCheckResultBuilder;
  */
 public class RouteHealthCheck extends AbstractHealthCheck {
 
-    private final Route route;
+    final Route route;
 
     public RouteHealthCheck(Route route) {
-        super("camel", "route:" + route.getId());
+        this(route, "route:" + route.getId());
+    }
+
+    public RouteHealthCheck(Route route, String id) {
+        super("camel", id);
         this.route = route;
     }
 
@@ -76,5 +80,15 @@ public class RouteHealthCheck extends AbstractHealthCheck {
                 }
             }
         }
+
+        doCallCheck(builder, options);
     }
+
+    /**
+     * Additional checks
+     */
+    protected void doCallCheck(HealthCheckResultBuilder builder, Map<String, Object> options) {
+        // noop
+    }
+
 }

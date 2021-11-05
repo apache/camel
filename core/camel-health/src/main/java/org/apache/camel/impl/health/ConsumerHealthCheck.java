@@ -19,53 +19,41 @@ package org.apache.camel.impl.health;
 import java.util.Map;
 
 import org.apache.camel.Consumer;
-import org.apache.camel.ServiceStatus;
+import org.apache.camel.Route;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckAware;
 import org.apache.camel.health.HealthCheckResultBuilder;
-import org.apache.camel.support.service.ServiceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * {@link HealthCheck} for a given consumer.
  */
-public class ConsumerHealthCheck extends AbstractHealthCheck {
+public class ConsumerHealthCheck extends RouteHealthCheck {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConsumerHealthCheck.class);
 
     private final Consumer consumer;
-    private final String routeId;
 
-    public ConsumerHealthCheck(Consumer consumer, String id) {
-        super("camel", id);
-        this.consumer = consumer;
-        this.routeId = id.replace("consumer:", "");
+    public ConsumerHealthCheck(Route route, String id) {
+        super(route, id);
+        this.consumer = route.getConsumer();
     }
 
     @Override
-    public boolean isLiveness() {
-        // this check is only for readiness
-        return false;
-    }
-
-    @Override
-    protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
-        final ServiceStatus status = getCamelContext().getRouteController().getRouteStatus(routeId);
-        builder.detail("route.id", routeId);
-        builder.detail("route.status", status.name());
-        builder.detail("route.context.name", getCamelContext().getName());
-
-        if (consumer instanceof HealthCheckAware) {
+    protected void doCallCheck(HealthCheckResultBuilder builder, Map<String, Object> options) {
+        // only need to do consumer check if the route is UP
+        boolean up = builder.state().compareTo(State.UP) == 0;
+        if (up && consumer instanceof HealthCheckAware) {
             // health check is optional
             HealthCheck hc = ((HealthCheckAware) consumer).getHealthCheck();
             if (hc != null) {
                 if (LOGGER.isTraceEnabled()) {
-                    LOGGER.trace("Calling HealthCheck on consumer route: {}", routeId);
+                    LOGGER.trace("Calling HealthCheck on consumer route: {}", route.getRouteId());
                 }
                 Result result = hc.call();
                 if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("HealthCheck consumer route: {} -> {}", routeId, result.getState());
+                    LOGGER.debug("HealthCheck consumer route: {} -> {}", route.getRouteId(), result.getState());
                 }
 
                 builder.state(result.getState());
@@ -76,15 +64,7 @@ public class ConsumerHealthCheck extends AbstractHealthCheck {
                     builder.error(result.getError().get());
                 }
                 builder.details(result.getDetails());
-                return;
             }
         }
-
-        // consumer has no fine-grained health-check so check whether is started
-        boolean started = true;
-        if (consumer instanceof ServiceSupport) {
-            started = ((ServiceSupport) consumer).isStarted();
-        }
-        builder.state(started ? State.UP : State.DOWN);
     }
 }
