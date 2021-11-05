@@ -140,6 +140,22 @@ public interface JettyComponentBuilderFactory {
             return this;
         }
         /**
+         * If enabled and an Exchange failed processing on the consumer side the
+         * response's body won't contain the exception's stack trace.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param muteException the value to set
+         * @return the dsl builder
+         */
+        default JettyComponentBuilder muteException(boolean muteException) {
+            doSetProperty("muteException", muteException);
+            return this;
+        }
+        /**
          * Allows to configure a custom value of the request buffer size on the
          * Jetty connectors.
          * 
@@ -610,6 +626,7 @@ public interface JettyComponentBuilderFactory {
             case "enableJmx": ((JettyHttpComponent9) component).setEnableJmx((boolean) value); return true;
             case "maxThreads": ((JettyHttpComponent9) component).setMaxThreads((java.lang.Integer) value); return true;
             case "minThreads": ((JettyHttpComponent9) component).setMinThreads((java.lang.Integer) value); return true;
+            case "muteException": ((JettyHttpComponent9) component).setMuteException((boolean) value); return true;
             case "requestBufferSize": ((JettyHttpComponent9) component).setRequestBufferSize((java.lang.Integer) value); return true;
             case "requestHeaderSize": ((JettyHttpComponent9) component).setRequestHeaderSize((java.lang.Integer) value); return true;
             case "responseBufferSize": ((JettyHttpComponent9) component).setResponseBufferSize((java.lang.Integer) value); return true;
