@@ -48,6 +48,8 @@ public class JettyHttpComponent9Configurer extends PropertyConfigurerSupport imp
         case "mbContainer": target.setMbContainer(property(camelContext, org.eclipse.jetty.jmx.MBeanContainer.class, value)); return true;
         case "minthreads":
         case "minThreads": target.setMinThreads(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "muteexception":
+        case "muteException": target.setMuteException(property(camelContext, boolean.class, value)); return true;
         case "proxyhost":
         case "proxyHost": target.setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyport":
@@ -118,6 +120,8 @@ public class JettyHttpComponent9Configurer extends PropertyConfigurerSupport imp
         case "mbContainer": return org.eclipse.jetty.jmx.MBeanContainer.class;
         case "minthreads":
         case "minThreads": return java.lang.Integer.class;
+        case "muteexception":
+        case "muteException": return boolean.class;
         case "proxyhost":
         case "proxyHost": return java.lang.String.class;
         case "proxyport":
@@ -189,6 +193,8 @@ public class JettyHttpComponent9Configurer extends PropertyConfigurerSupport imp
         case "mbContainer": return target.getMbContainer();
         case "minthreads":
         case "minThreads": return target.getMinThreads();
+        case "muteexception":
+        case "muteException": return target.isMuteException();
         case "proxyhost":
         case "proxyHost": return target.getProxyHost();
         case "proxyport":
