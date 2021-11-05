@@ -24,6 +24,7 @@ import java.util.stream.Stream;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.Consumer;
 import org.apache.camel.DeferredContextBinding;
 import org.apache.camel.Route;
 import org.apache.camel.health.HealthCheck;
@@ -33,18 +34,18 @@ import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.PatternHelper;
 
 /**
- * Repository for routes {@link HealthCheck}s.
+ * Repository for consumers {@link HealthCheck}s.
  */
-@JdkService("routes-health-check-repository")
+@JdkService("consumers-health-check-repository")
 @DeferredContextBinding
-public class RoutesHealthCheckRepository implements CamelContextAware, HealthCheckRepository {
-    private final ConcurrentMap<Route, HealthCheck> checks;
+public class ConsumersHealthCheckRepository implements CamelContextAware, HealthCheckRepository {
+    private final ConcurrentMap<Consumer, HealthCheck> checks;
     private volatile CamelContext context;
     private Map<String, HealthCheckConfiguration> configurations;
     private HealthCheckConfiguration fallbackConfiguration;
     private boolean enabled = true;
 
-    public RoutesHealthCheckRepository() {
+    public ConsumersHealthCheckRepository() {
         this.checks = new ConcurrentHashMap<>();
     }
 
@@ -55,7 +56,7 @@ public class RoutesHealthCheckRepository implements CamelContextAware, HealthChe
 
     @Override
     public String getId() {
-        return "routes";
+        return "consumers";
     }
 
     @Override
@@ -112,7 +113,7 @@ public class RoutesHealthCheckRepository implements CamelContextAware, HealthChe
                 ? this.context.getRoutes()
                         .stream()
                         .filter(route -> route.getId() != null)
-                        .map(this::toRouteHealthCheck)
+                        .map(this::toConsumerHealthCheck)
                 : Stream.empty();
     }
 
@@ -120,15 +121,17 @@ public class RoutesHealthCheckRepository implements CamelContextAware, HealthChe
     // Helpers
     // *****************************
 
-    private HealthCheck toRouteHealthCheck(Route route) {
-        return checks.computeIfAbsent(route, r -> {
-            RouteHealthCheck rhc = new RouteHealthCheck(route);
-            CamelContextAware.trySetCamelContext(rhc, route.getCamelContext());
-            HealthCheckConfiguration hcc = matchConfiguration(route.getRouteId());
+    private HealthCheck toConsumerHealthCheck(Route route) {
+        return checks.computeIfAbsent(route.getConsumer(), r -> {
+            // must prefix id with consumer: to not clash with route
+            String id = "consumer:" + route.getRouteId();
+            ConsumerHealthCheck chc = new ConsumerHealthCheck(route.getConsumer(), id);
+            CamelContextAware.trySetCamelContext(chc, route.getCamelContext());
+            HealthCheckConfiguration hcc = matchConfiguration(id);
             if (hcc != null) {
-                rhc.setConfiguration(hcc);
+                chc.setConfiguration(hcc);
             }
-            return rhc;
+            return chc;
         });
     }
 

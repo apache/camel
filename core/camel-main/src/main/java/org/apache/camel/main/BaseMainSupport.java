@@ -969,7 +969,7 @@ public abstract class BaseMainSupport extends BaseService {
                 hcr.register(hc);
             }
         }
-        // routes is enabled by default
+        // routes are enabled by default
         if (hcr.isEnabled() && (!health.getConfig().containsKey("routes") || health.getRoutesEnabled() != null)) {
             HealthCheckRepository hc = hcr.getRepository("routes").orElse((HealthCheckRepository) hcr.resolveById("routes"));
             if (hc != null) {
@@ -979,13 +979,27 @@ public abstract class BaseMainSupport extends BaseService {
                 hcr.register(hc);
             }
         }
-        // registry is enabled by default
-        if (hcr.isEnabled() && (!health.getConfig().containsKey("registry") || health.getRegistryEnabled() != null)) {
-            hcr.getRepository("registry").ifPresent(h -> {
-                if (health.getRegistryEnabled() != null) {
-                    h.setEnabled(health.getRegistryEnabled());
+        // consumers are enabled by default
+        if (hcr.isEnabled() && (!health.getConfig().containsKey("consumers") || health.getRegistryEnabled() != null)) {
+            HealthCheckRepository hc
+                    = hcr.getRepository("consumers").orElse((HealthCheckRepository) hcr.resolveById("consumers"));
+            if (hc != null) {
+                if (health.getConsumersEnabled() != null) {
+                    hc.setEnabled(health.getConsumersEnabled());
                 }
-            });
+                hcr.register(hc);
+            }
+        }
+        // registry are enabled by default
+        if (hcr.isEnabled() && (!health.getConfig().containsKey("registry") || health.getRegistryEnabled() != null)) {
+            HealthCheckRepository hc
+                    = hcr.getRepository("registry").orElse((HealthCheckRepository) hcr.resolveById("registry"));
+            if (hc != null) {
+                if (health.getRegistryEnabled() != null) {
+                    hc.setEnabled(health.getRegistryEnabled());
+                }
+                hcr.register(hc);
+            }
         }
 
         // configure health checks configurations

@@ -38,6 +38,8 @@ public class HealthConfigurationProperties implements BootstrapCloseable {
     @Metadata(defaultValue = "true")
     private Boolean routesEnabled;
     @Metadata(defaultValue = "true")
+    private Boolean consumersEnabled;
+    @Metadata(defaultValue = "true")
     private Boolean registryEnabled;
     private Map<String, HealthCheckConfigurationProperties> config = new HashMap<>();
 
@@ -87,6 +89,17 @@ public class HealthConfigurationProperties implements BootstrapCloseable {
      */
     public void setRoutesEnabled(Boolean routesEnabled) {
         this.routesEnabled = routesEnabled;
+    }
+
+    public Boolean getConsumersEnabled() {
+        return consumersEnabled;
+    }
+
+    /**
+     * Whether consumers health check is enabled
+     */
+    public void setConsumersEnabled(Boolean consumersEnabled) {
+        this.consumersEnabled = consumersEnabled;
     }
 
     public Boolean getRegistryEnabled() {

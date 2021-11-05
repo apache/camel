@@ -19,7 +19,6 @@ package org.apache.camel.impl.health;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.spi.annotations.JdkService;
 
@@ -28,7 +27,7 @@ import org.apache.camel.spi.annotations.JdkService;
  * not.
  */
 @JdkService("context-health-check")
-public final class ContextHealthCheck extends AbstractHealthCheck implements CamelContextAware {
+public final class ContextHealthCheck extends AbstractHealthCheck {
     private CamelContext camelContext;
 
     public ContextHealthCheck() {

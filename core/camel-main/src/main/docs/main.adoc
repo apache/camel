@@ -140,12 +140,13 @@ The camel.threadpool supports 8 options, which are listed below.
 |===
 
 === Camel Health Check configurations
-The camel.health supports 5 options, which are listed below.
+The camel.health supports 6 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *camel.health.config* | Set additional HealthConfigurationProperties for fine grained configuration of health checks. |  | Map
+| *camel.health.consumersEnabled* | Whether consumers health check is enabled | true | Boolean
 | *camel.health.contextEnabled* | Whether context health check is enabled | true | Boolean
 | *camel.health.enabled* | Whether health check is enabled globally | true | Boolean
 | *camel.health.registryEnabled* | Whether registry health check is enabled | true | Boolean
