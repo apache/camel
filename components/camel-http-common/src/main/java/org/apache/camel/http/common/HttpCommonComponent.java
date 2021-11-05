@@ -31,7 +31,7 @@ public abstract class HttpCommonComponent extends HeaderFilterStrategyComponent 
     protected HttpConfiguration httpConfiguration;
     @Metadata(label = "consumer",
               description = "If enabled and an Exchange failed processing on the consumer side the response's body won't contain the exception's stack trace.")
-    boolean muteException;
+    protected boolean muteException;
     @Metadata(label = "advanced",
               description = "Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object."
                             + " This is by default turned off. "
