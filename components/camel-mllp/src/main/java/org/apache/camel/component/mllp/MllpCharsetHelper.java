@@ -43,16 +43,6 @@ public final class MllpCharsetHelper {
     }
 
     public static Charset getCharset(Exchange exchange, byte[] hl7Bytes, Hl7Util hl7Util, Charset defaultCharset) {
-        String exchangeCharsetName = ExchangeHelper.getCharsetName(exchange, false);
-        if (exchangeCharsetName != null && !exchangeCharsetName.isEmpty()) {
-            try {
-                if (Charset.isSupported(exchangeCharsetName)) {
-                    return Charset.forName(exchangeCharsetName);
-                }
-            } catch (Exception charsetEx) {
-                // ignore
-            }
-        }
 
         String msh18 = hl7Util.findMsh18(hl7Bytes, defaultCharset);
         if (msh18 != null && !msh18.isEmpty()) {
@@ -68,6 +58,16 @@ public final class MllpCharsetHelper {
             }
         }
 
+        String exchangeCharsetName = ExchangeHelper.getCharsetName(exchange, false);
+        if (exchangeCharsetName != null && !exchangeCharsetName.isEmpty()) {
+            try {
+                if (Charset.isSupported(exchangeCharsetName)) {
+                    return Charset.forName(exchangeCharsetName);
+                }
+            } catch (Exception charsetEx) {
+                // ignore
+            }
+        }
         return defaultCharset;
     }
 
