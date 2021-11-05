@@ -185,6 +185,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
         String proxyHost = getAndRemoveParameter(parameters, "proxyHost", String.class, getProxyHost());
         Integer proxyPort = getAndRemoveParameter(parameters, "proxyPort", Integer.class, getProxyPort());
         Boolean async = getAndRemoveParameter(parameters, "async", Boolean.class);
+        boolean muteException = getAndRemoveParameter(parameters, "muteException", boolean.class, isMuteException());
 
         // extract filterInit. parameters
         Map filterInitParameters = PropertiesHelper.extractProperties(parameters, "filterInit.");
@@ -206,6 +207,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
         if (async != null) {
             endpoint.setAsync(async);
         }
+        endpoint.setMuteException(muteException);
 
         if (headerFilterStrategy != null) {
             endpoint.setHeaderFilterStrategy(headerFilterStrategy);

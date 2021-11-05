@@ -76,11 +76,11 @@ public class UndertowComponent extends DefaultComponent
     private UndertowHttpBinding undertowHttpBinding;
     @Metadata(label = "security")
     private SSLContextParameters sslContextParameters;
-    @Metadata(label = "security", defaultValue = "false")
+    @Metadata(label = "security")
     private boolean useGlobalSslContextParameters;
     @Metadata(label = "advanced")
     private UndertowHostOptions hostOptions;
-    @Metadata(label = "consumer", defaultValue = "false")
+    @Metadata(label = "consumer")
     private boolean muteException;
     @Metadata(label = "security")
     private Object securityConfiguration;
@@ -95,7 +95,6 @@ public class UndertowComponent extends DefaultComponent
 
     public UndertowComponent(CamelContext context) {
         super(context);
-
         registerExtension(UndertowComponentVerifierExtension::new);
     }
 

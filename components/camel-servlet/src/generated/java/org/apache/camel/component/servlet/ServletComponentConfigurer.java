@@ -39,6 +39,8 @@ public class ServletComponentConfigurer extends PropertyConfigurerSupport implem
         case "httpConfiguration": target.setHttpConfiguration(property(camelContext, org.apache.camel.http.common.HttpConfiguration.class, value)); return true;
         case "httpregistry":
         case "httpRegistry": target.setHttpRegistry(property(camelContext, org.apache.camel.http.common.HttpRegistry.class, value)); return true;
+        case "muteexception":
+        case "muteException": target.setMuteException(property(camelContext, boolean.class, value)); return true;
         case "servletname":
         case "servletName": target.setServletName(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -66,6 +68,8 @@ public class ServletComponentConfigurer extends PropertyConfigurerSupport implem
         case "httpConfiguration": return org.apache.camel.http.common.HttpConfiguration.class;
         case "httpregistry":
         case "httpRegistry": return org.apache.camel.http.common.HttpRegistry.class;
+        case "muteexception":
+        case "muteException": return boolean.class;
         case "servletname":
         case "servletName": return java.lang.String.class;
         default: return null;
@@ -94,6 +98,8 @@ public class ServletComponentConfigurer extends PropertyConfigurerSupport implem
         case "httpConfiguration": return target.getHttpConfiguration();
         case "httpregistry":
         case "httpRegistry": return target.getHttpRegistry();
+        case "muteexception":
+        case "muteException": return target.isMuteException();
         case "servletname":
         case "servletName": return target.getServletName();
         default: return null;

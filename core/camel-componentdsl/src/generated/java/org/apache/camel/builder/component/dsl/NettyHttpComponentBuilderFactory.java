@@ -220,6 +220,22 @@ public interface NettyHttpComponentBuilderFactory {
             return this;
         }
         /**
+         * If enabled and an Exchange failed processing on the consumer side the
+         * response's body won't contain the exception's stack trace.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param muteException the value to set
+         * @return the dsl builder
+         */
+        default NettyHttpComponentBuilder muteException(boolean muteException) {
+            doSetProperty("muteException", muteException);
+            return this;
+        }
+        /**
          * Used only in clientMode in consumer, the consumer will attempt to
          * reconnect on disconnection if this is enabled.
          * 
@@ -1415,6 +1431,7 @@ public interface NettyHttpComponentBuilderFactory {
             case "bridgeErrorHandler": ((NettyHttpComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "broadcast": getOrCreateConfiguration((NettyHttpComponent) component).setBroadcast((boolean) value); return true;
             case "clientMode": getOrCreateConfiguration((NettyHttpComponent) component).setClientMode((boolean) value); return true;
+            case "muteException": ((NettyHttpComponent) component).setMuteException((boolean) value); return true;
             case "reconnect": getOrCreateConfiguration((NettyHttpComponent) component).setReconnect((boolean) value); return true;
             case "reconnectInterval": getOrCreateConfiguration((NettyHttpComponent) component).setReconnectInterval((int) value); return true;
             case "backlog": getOrCreateConfiguration((NettyHttpComponent) component).setBacklog((int) value); return true;
