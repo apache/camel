@@ -488,7 +488,7 @@
     <rxjava2-version>2.2.21</rxjava2-version>
     <saxon-version>9.9.1-8</saxon-version>
     <scala-datasonnet-version>2.13.3</scala-datasonnet-version>
-    <scala-version>2.11.7</scala-version>
+    <scala-version>2.11.11</scala-version>
     <scribe-version>1.3.7</scribe-version>
     <servicemix-specs-version>2.9.0</servicemix-specs-version>
     <servlet-version-range>[3,4)</servlet-version-range>
