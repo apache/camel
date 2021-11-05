@@ -34,7 +34,7 @@ public class ServletMuteExceptionTest extends ServletCamelRouterTestSupport {
 
         assertEquals(500, response.getResponseCode());
         assertEquals("text/plain", response.getContentType());
-        assertEquals("Exception", response.getText());
+        assertEquals("", response.getText());
     }
 
     @Test
@@ -46,7 +46,7 @@ public class ServletMuteExceptionTest extends ServletCamelRouterTestSupport {
 
         assertEquals(500, response.getResponseCode());
         assertEquals("text/plain", response.getContentType());
-        assertEquals("Exception", response.getText());
+        assertEquals("", response.getText());
     }
 
     @Override

@@ -38,7 +38,7 @@ public class NettyHttpMuteExceptionTest extends BaseNettyTest {
             try (CloseableHttpResponse response = client.execute(get)) {
                 String body = EntityUtils.toString(response.getEntity(), "UTF-8");
                 assertNotNull(body);
-                assertEquals("Exception", body);
+                assertEquals("", body);
                 assertEquals(500, response.getStatusLine().getStatusCode());
             }
         }

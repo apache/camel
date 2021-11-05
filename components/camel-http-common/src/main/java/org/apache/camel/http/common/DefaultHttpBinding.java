@@ -373,8 +373,8 @@ public class DefaultHttpBinding implements HttpBinding {
             response.getWriter().write("Timeout error");
         } else if (isMuteException()) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.setContentLength(0);
             response.setContentType("text/plain");
-            response.getWriter().write("Exception");
         } else {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 

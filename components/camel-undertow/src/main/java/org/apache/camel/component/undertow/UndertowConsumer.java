@@ -246,13 +246,12 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
         Object body = getResponseBody(httpExchange, camelExchange);
 
         if (body == null) {
-            String message = httpExchange.getStatusCode() == 500 ? "Exception" : "No response available";
             LOG.trace("No payload to send as reply for exchange: {}", camelExchange);
             // respect Content-Type assigned from HttpBinding if any
             String contentType = camelExchange.getIn().getHeader(Exchange.CONTENT_TYPE,
                     MimeMappings.DEFAULT_MIME_MAPPINGS.get("txt"), String.class);
             httpExchange.getResponseHeaders().put(ExchangeHeaders.CONTENT_TYPE, contentType);
-            httpExchange.getResponseSender().send(message);
+            httpExchange.getResponseSender().send(""); // empty body
             return;
         }
 

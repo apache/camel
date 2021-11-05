@@ -39,7 +39,7 @@ public class UndertowMuteExceptionTest extends BaseUndertowTest {
 
         String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
         assertNotNull(responseString);
-        assertEquals("Exception", responseString);
+        assertEquals("", responseString);
         assertEquals(500, response.getStatusLine().getStatusCode());
 
         client.close();
@@ -56,7 +56,7 @@ public class UndertowMuteExceptionTest extends BaseUndertowTest {
 
         String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
         assertNotNull(responseString);
-        assertEquals("Exception", responseString);
+        assertEquals("", responseString);
 
         assertEquals(500, response.getStatusLine().getStatusCode());
 
