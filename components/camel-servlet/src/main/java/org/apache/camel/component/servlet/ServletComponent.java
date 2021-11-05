@@ -76,7 +76,7 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
         // must extract well known parameters before we create the endpoint
         Boolean throwExceptionOnFailure = getAndRemoveParameter(parameters, "throwExceptionOnFailure", Boolean.class);
         Boolean transferException = getAndRemoveParameter(parameters, "transferException", Boolean.class);
-        Boolean muteException = getAndRemoveParameter(parameters, "muteException", Boolean.class);
+        boolean muteException = getAndRemoveParameter(parameters, "muteException", boolean.class, isMuteException());
         Boolean bridgeEndpoint = getAndRemoveParameter(parameters, "bridgeEndpoint", Boolean.class);
         HttpBinding binding = resolveAndRemoveReferenceParameter(parameters, "httpBinding", HttpBinding.class);
         Boolean matchOnUriPrefix = getAndRemoveParameter(parameters, "matchOnUriPrefix", Boolean.class);
@@ -132,9 +132,7 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
         if (transferException != null) {
             endpoint.setTransferException(transferException);
         }
-        if (muteException != null) {
-            endpoint.setMuteException(muteException);
-        }
+        endpoint.setMuteException(muteException);
         if (bridgeEndpoint != null) {
             endpoint.setBridgeEndpoint(bridgeEndpoint);
         }

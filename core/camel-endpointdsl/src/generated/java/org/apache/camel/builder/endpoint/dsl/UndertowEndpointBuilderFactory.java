@@ -288,6 +288,53 @@ public interface UndertowEndpointBuilderFactory {
             return this;
         }
         /**
+         * If enabled and an Exchange failed processing on the consumer side and
+         * if the caused Exception was send back serialized in the response as a
+         * application/x-java-serialized-object content type. On the producer
+         * side the exception will be deserialized and thrown as is instead of
+         * the HttpOperationFailedException. The caused exception is required to
+         * be serialized. This is by default turned off. If you enable this then
+         * be aware that Java will deserialize the incoming data from the
+         * request to Java and that can be a potential security risk.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param transferException the value to set
+         * @return the dsl builder
+         */
+        default UndertowEndpointConsumerBuilder transferException(
+                Boolean transferException) {
+            doSetProperty("transferException", transferException);
+            return this;
+        }
+        /**
+         * If enabled and an Exchange failed processing on the consumer side and
+         * if the caused Exception was send back serialized in the response as a
+         * application/x-java-serialized-object content type. On the producer
+         * side the exception will be deserialized and thrown as is instead of
+         * the HttpOperationFailedException. The caused exception is required to
+         * be serialized. This is by default turned off. If you enable this then
+         * be aware that Java will deserialize the incoming data from the
+         * request to Java and that can be a potential security risk.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param transferException the value to set
+         * @return the dsl builder
+         */
+        default UndertowEndpointConsumerBuilder transferException(
+                String transferException) {
+            doSetProperty("transferException", transferException);
+            return this;
+        }
+        /**
          * Configuration used by UndertowSecurityProvider. Comma separated list
          * of allowed roles.
          * 
@@ -1024,53 +1071,6 @@ public interface UndertowEndpointBuilderFactory {
         default UndertowEndpointProducerBuilder throwExceptionOnFailure(
                 String throwExceptionOnFailure) {
             doSetProperty("throwExceptionOnFailure", throwExceptionOnFailure);
-            return this;
-        }
-        /**
-         * If enabled and an Exchange failed processing on the consumer side and
-         * if the caused Exception was send back serialized in the response as a
-         * application/x-java-serialized-object content type. On the producer
-         * side the exception will be deserialized and thrown as is instead of
-         * the HttpOperationFailedException. The caused exception is required to
-         * be serialized. This is by default turned off. If you enable this then
-         * be aware that Java will deserialize the incoming data from the
-         * request to Java and that can be a potential security risk.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param transferException the value to set
-         * @return the dsl builder
-         */
-        default UndertowEndpointProducerBuilder transferException(
-                Boolean transferException) {
-            doSetProperty("transferException", transferException);
-            return this;
-        }
-        /**
-         * If enabled and an Exchange failed processing on the consumer side and
-         * if the caused Exception was send back serialized in the response as a
-         * application/x-java-serialized-object content type. On the producer
-         * side the exception will be deserialized and thrown as is instead of
-         * the HttpOperationFailedException. The caused exception is required to
-         * be serialized. This is by default turned off. If you enable this then
-         * be aware that Java will deserialize the incoming data from the
-         * request to Java and that can be a potential security risk.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param transferException the value to set
-         * @return the dsl builder
-         */
-        default UndertowEndpointProducerBuilder transferException(
-                String transferException) {
-            doSetProperty("transferException", transferException);
             return this;
         }
         /**

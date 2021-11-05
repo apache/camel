@@ -42,11 +42,12 @@ public class TelegramConsumerHealthCheckErrorTest extends TelegramTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
 
-        // enabling routes health check is a bit cumbersome via low-level Java code
+        // enabling consumers health check is a bit cumbersome via low-level Java code
         HealthCheckRegistry hcr = context.getExtension(HealthCheckRegistry.class);
-        HealthCheckRepository repo = hcr.getRepository("routes").orElse((HealthCheckRepository) hcr.resolveById("routes"));
+        HealthCheckRepository repo
+                = hcr.getRepository("consumers").orElse((HealthCheckRepository) hcr.resolveById("consumers"));
         // add some slack so the check should fail 5 times in a row to be DOWN
-        repo.addConfiguration("telegram", HealthCheckConfiguration.builder().failureThreshold(5).build());
+        repo.addConfiguration("consumer:telegram", HealthCheckConfiguration.builder().failureThreshold(5).build());
         repo.setEnabled(true);
         hcr.register(repo);
 
@@ -56,7 +57,7 @@ public class TelegramConsumerHealthCheckErrorTest extends TelegramTestSupport {
     @Test
     public void testReceptionOfTwoMessages() throws Exception {
         HealthCheckRegistry hcr = context.getExtension(HealthCheckRegistry.class);
-        HealthCheckRepository repo = hcr.getRepository("routes").get();
+        HealthCheckRepository repo = hcr.getRepository("consumers").get();
 
         // should not be DOWN from the start
         boolean down = repo.stream().anyMatch(h -> h.call().getState().equals(HealthCheck.State.DOWN));
@@ -67,7 +68,7 @@ public class TelegramConsumerHealthCheckErrorTest extends TelegramTestSupport {
                 () -> repo.stream().anyMatch(h -> h.call().getState().equals(HealthCheck.State.DOWN)));
 
         // if we grab the health check by id, we can also check it afterwards
-        HealthCheck hc = hcr.getCheck("telegram").get();
+        HealthCheck hc = hcr.getCheck("consumer:telegram").get();
         HealthCheck.Result rc = hc.call();
 
         // and get the detailed error message (and exception)

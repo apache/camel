@@ -122,3 +122,10 @@ The `triggerStartDelay` parameter supports negative value to shift trigger start
 === camel-aws2-sqs
 
 Since the maximum number of attributes per SQS message is 10, we are limiting the number of headers to be converted to attributes to 10.
+
+=== When using muteException
+
+HTTP based components that are using `muteException=true` will return an empty message body,
+instead of the text `Exception`.
+
+This applies to camel-jetty, camel-undertow, camel-servlet, camel-netty-http

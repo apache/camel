@@ -92,7 +92,7 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
     private Boolean accessLog = Boolean.FALSE;
     @UriParam(label = "producer", defaultValue = "true")
     private Boolean throwExceptionOnFailure = Boolean.TRUE;
-    @UriParam(label = "producer", defaultValue = "false")
+    @UriParam(label = "consumer", defaultValue = "false")
     private Boolean transferException = Boolean.FALSE;
     @UriParam(label = "consumer", defaultValue = "false")
     private Boolean muteException = Boolean.FALSE;
@@ -277,7 +277,6 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
      * exception will be deserialized and thrown as is instead of the HttpOperationFailedException. The caused exception
      * is required to be serialized. This is by default turned off. If you enable this then be aware that Java will
      * deserialize the incoming data from the request to Java and that can be a potential security risk.
-     *
      */
     public void setTransferException(Boolean transferException) {
         this.transferException = transferException;

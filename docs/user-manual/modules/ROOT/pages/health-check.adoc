@@ -12,19 +12,19 @@ Camel provides support to probe the state of an integration via a pluggable Heal
 
 Camel provides the following health checks out of the box:
 
-- context - A `HealthCheck` which performs check whether the `CamelContext` is started. This can be used for readiness checks; to know when Camel is fully started and ready to handle traffic.
+- _context_ - A `HealthCheck` which performs check whether the `CamelContext` is started. This can be used for readiness checks; to know when Camel is fully started and ready to handle traffic.
 - routes - A `HealthCheckRegistry` which discovers all the available routes in `CamelContext` and checks whether they are all started.
   This can be used for readiness checks; to know when Camel is fully started and ready to handle traffic.
   Combining with the supervised `RouteController` this allows to perform readiness check for routes that are under supervising,
   such as troublesome routes that may not start up the first time, and are retried to be started in the background with backoff delays.
-- consumer (scheduled polling consumer) - A `ScheduledPollConsumerHealthCheck` which automatic integrates with the *routes* health check
-  which enables fine-grained checks for the route input. This means if the consumer is failing to poll new messages
+- _consumers_ A `HealthCheckRegistry` which discovers all the consumers from all the routes in `CamelContext`
+  enabling fine-grained checks for the route input. This means if the consumer is failing to poll new messages
   then the health check can detect this and report as un-healthy. Note that the consumer will be DOWN during its initialization and until at least
   one poll run has been executed, to know whether that poll was a success or not. And if the poll was a success
   then the consumer is UP. This is on purpose to avoid having the health check to be initially UP
   and then after first poll run then DOWN again because the consumer cannot poll from external system;
   which causes the health check to be _flaky_.
-- registry - A `HealthCheckRegistry` which discovers all the available custom `HealthCheck` instances in the `Registry`.
+- _registry_ - A `HealthCheckRegistry` which discovers all the available custom `HealthCheck` instances in the `Registry`.
 
 == IDs
 
@@ -33,8 +33,8 @@ With the suffix `-health-check` or `-health-check-repository`. When looking up o
 
 For example `context-health-check` is the ID but can also be used by its shorthand `context`.
 
-The ID of the `ScheduledPollConsumerHealthCheck` is the route id with `route:` as prefix, eg if the route
-is named foo, then the ID is `route:foo`.
+The ID of the consumer health checks is the route id with `consumer:` as prefix, i.e. if the route
+is named foo, then the ID is `consumer:foo`.
 
 == Readiness and Liveness
 
@@ -78,7 +78,7 @@ By default, this is not in use, and the first successful check will result in UP
 Camel supports via `camel-main` to configure health-checks from configuration files. This is possible for runtimes that leverage `camel-main`
 such as Camel on Spring Boot, or Camel K.
 
-Camel will automatically enable `context`, `routes` and `registry` health-checks if `camel-health` is detected on the classpath.
+Camel will automatically enable `context`, `routes`, `consumers`, and `registry` health-checks if `camel-health` is detected on the classpath.
 They are all enabled by default. However, you can configure them, for example to turn it off:
 
 [source,properties]
@@ -90,6 +90,7 @@ They are all enabled by default. However, you can configure them, for example to
 # for example to only use context health-check
 camel.health.contextEnabled=true
 camel.health.routesEnabled=false
+camel.health.consumersEnabled=false
 camel.health.registryEnabled=false
 ----
 
@@ -118,6 +119,28 @@ camel.health.config[*].enabled=true
 camel.health.config[*].success-threshold=3
 camel.health.config[*].failure-threshold=10
 ----
+
+=== Turning off consumer level health-checks
+
+If routes health check is enabled then they will execute consumer health-checks as well
+as part of an aggregated response.
+
+The consumer checks can be turned off, to only use the route level checks (status of the route)
+
+[source,properties]
+----
+camel.health.consumersEnabled=false
+----
+
+You can also turn off individual consumers by prefixing the ID with `consumer:` such as:
+
+[source,properties]
+----
+camel.health.config[consumer:kafka*].enabled=false
+----
+
+which will turn off checks for all consumers on routes that starts with `kafka` in the route ID.
+
 
 == JMX management
 

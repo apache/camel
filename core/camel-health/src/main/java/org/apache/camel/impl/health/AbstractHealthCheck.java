@@ -24,6 +24,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckConfiguration;
 import org.apache.camel.health.HealthCheckResultBuilder;
@@ -34,10 +36,11 @@ import org.slf4j.LoggerFactory;
 /**
  * Base implementation for {@link HealthCheck}.
  */
-public abstract class AbstractHealthCheck implements HealthCheck {
+public abstract class AbstractHealthCheck implements HealthCheck, CamelContextAware {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractHealthCheck.class);
 
+    private CamelContext camelContext;
     private final Object lock;
     private final String group;
     private final String id;
@@ -70,6 +73,16 @@ public abstract class AbstractHealthCheck implements HealthCheck {
         if (group != null) {
             this.meta.putIfAbsent(CHECK_GROUP, group);
         }
+    }
+
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
     }
 
     @Override

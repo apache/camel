@@ -58,7 +58,7 @@ public class RestUndertowContentTypeTest extends BaseUndertowTest {
 
         HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, ex.getCause());
         assertEquals(415, cause.getStatusCode());
-        assertEquals("No response available", cause.getResponseBody());
+        assertEquals("", cause.getResponseBody());
     }
 
     @Test

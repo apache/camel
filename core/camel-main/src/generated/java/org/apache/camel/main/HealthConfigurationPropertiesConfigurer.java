@@ -23,6 +23,8 @@ public class HealthConfigurationPropertiesConfigurer extends org.apache.camel.su
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "config":
         case "Config": target.setConfig(property(camelContext, java.util.Map.class, value)); return true;
+        case "consumersenabled":
+        case "ConsumersEnabled": target.setConsumersEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "contextenabled":
         case "ContextEnabled": target.setContextEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "enabled":
@@ -40,6 +42,8 @@ public class HealthConfigurationPropertiesConfigurer extends org.apache.camel.su
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "config":
         case "Config": return java.util.Map.class;
+        case "consumersenabled":
+        case "ConsumersEnabled": return java.lang.Boolean.class;
         case "contextenabled":
         case "ContextEnabled": return java.lang.Boolean.class;
         case "enabled":
@@ -58,6 +62,8 @@ public class HealthConfigurationPropertiesConfigurer extends org.apache.camel.su
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "config":
         case "Config": return target.getConfig();
+        case "consumersenabled":
+        case "ConsumersEnabled": return target.getConsumersEnabled();
         case "contextenabled":
         case "ContextEnabled": return target.getContextEnabled();
         case "enabled":

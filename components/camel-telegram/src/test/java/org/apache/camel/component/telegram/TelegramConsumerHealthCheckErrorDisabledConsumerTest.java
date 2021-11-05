@@ -16,22 +16,24 @@
  */
 package org.apache.camel.component.telegram;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.telegram.model.UpdateResult;
 import org.apache.camel.component.telegram.util.TelegramMockRoutes;
 import org.apache.camel.component.telegram.util.TelegramTestSupport;
-import org.apache.camel.component.telegram.util.TelegramTestUtil;
 import org.apache.camel.health.HealthCheck;
+import org.apache.camel.health.HealthCheckConfiguration;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class TelegramConsumerHealthCheckOkTest extends TelegramTestSupport {
+public class TelegramConsumerHealthCheckErrorDisabledConsumerTest extends TelegramTestSupport {
 
     @EndpointInject("mock:telegram")
     private MockEndpoint endpoint;
@@ -40,10 +42,19 @@ public class TelegramConsumerHealthCheckOkTest extends TelegramTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
 
-        // enabling consumers health check is a bit cumbersome via low-level Java code
+        // enabling routes health check is a bit cumbersome via low-level Java code
         HealthCheckRegistry hcr = context.getExtension(HealthCheckRegistry.class);
-        HealthCheckRepository repo
-                = hcr.getRepository("consumers").orElse((HealthCheckRepository) hcr.resolveById("consumers"));
+        HealthCheckRepository repo = hcr.getRepository("routes").orElse((HealthCheckRepository) hcr.resolveById("routes"));
+        // add some slack so the check should fail 5 times in a row to be DOWN
+        repo.addConfiguration("*", HealthCheckConfiguration.builder().failureThreshold(5).build());
+        repo.setEnabled(true);
+        hcr.register(repo);
+        // enabling consumers health check is a bit cumbersome via low-level Java code
+        repo = hcr.getRepository("consumers").orElse((HealthCheckRepository) hcr.resolveById("consumers"));
+        // add some slack so the check should fail 5 times in a row to be DOWN
+        repo.addConfiguration("consumer:telegram", HealthCheckConfiguration.builder().failureThreshold(5).build());
+        // turn off all consumer health checks
+        repo.addConfiguration("consumer:*", HealthCheckConfiguration.builder().enabled(false).build());
         repo.setEnabled(true);
         hcr.register(repo);
 
@@ -53,14 +64,24 @@ public class TelegramConsumerHealthCheckOkTest extends TelegramTestSupport {
     @Test
     public void testReceptionOfTwoMessages() throws Exception {
         HealthCheckRegistry hcr = context.getExtension(HealthCheckRegistry.class);
-        HealthCheckRepository repo = hcr.getRepository("consumers").get();
+        HealthCheckRepository repo = hcr.getRepository("routes").get();
 
-        endpoint.expectedMinimumMessageCount(2);
-        endpoint.expectedBodiesReceived("message1", "message2");
+        // should not be UP from the start as routes can be started
+        boolean down = repo.stream().anyMatch(h -> h.call().getState().equals(HealthCheck.State.DOWN));
+        Assertions.assertFalse(down, "None health-check should be DOWN");
 
-        endpoint.assertIsSatisfied(5000);
+        // wait until HC is UP
+        Awaitility.waitAtMost(5, TimeUnit.SECONDS).until(
+                () -> repo.stream().anyMatch(h -> h.call().getState().equals(HealthCheck.State.UP)));
 
-        repo.stream().forEach(h -> Assertions.assertEquals(HealthCheck.State.UP, h.call().getState()));
+        // if we grab the health check by id, we can also check it afterwards
+        HealthCheck hc = hcr.getCheck("telegram").get();
+        HealthCheck.Result rc = hc.call();
+
+        // so routes health check just check the status of the route which is started (UP)
+        // but the telegram consumer is not healthy as it keeps getting 401 errors
+        // to detect this we needed the consumer health check which has been disabled
+        Assertions.assertEquals(HealthCheck.State.UP, rc.getState());
     }
 
     @Override
@@ -70,7 +91,7 @@ public class TelegramConsumerHealthCheckOkTest extends TelegramTestSupport {
                 new RouteBuilder() {
                     @Override
                     public void configure() throws Exception {
-                        from("telegram:bots?authorizationToken=mock-token")
+                        from("telegram:bots?authorizationToken=mock-token").routeId("telegram")
                                 .convertBodyTo(String.class)
                                 .to("mock:telegram");
                     }
@@ -79,22 +100,10 @@ public class TelegramConsumerHealthCheckOkTest extends TelegramTestSupport {
 
     @Override
     protected TelegramMockRoutes createMockRoutes() {
-
-        UpdateResult res1 = getJSONResource("messages/updates-single.json", UpdateResult.class);
-        res1.getUpdates().get(0).getMessage().setText("message1");
-
-        UpdateResult res2 = getJSONResource("messages/updates-single.json", UpdateResult.class);
-        res2.getUpdates().get(0).getMessage().setText("message2");
-
-        UpdateResult defaultRes = getJSONResource("messages/updates-empty.json", UpdateResult.class);
-
         return new TelegramMockRoutes(port)
-                .addEndpoint(
+                .addErrorEndpoint(
                         "getUpdates",
                         "GET",
-                        String.class,
-                        TelegramTestUtil.serialize(res1),
-                        TelegramTestUtil.serialize(res2),
-                        TelegramTestUtil.serialize(defaultRes));
+                        401);
     }
 }

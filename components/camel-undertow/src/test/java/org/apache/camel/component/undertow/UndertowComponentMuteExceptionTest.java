@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class UndertowMuteExceptionTest extends BaseUndertowTest {
+public class UndertowComponentMuteExceptionTest extends BaseUndertowTest {
 
     @Test
     public void muteExceptionTest() throws Exception {
@@ -68,11 +68,14 @@ public class UndertowMuteExceptionTest extends BaseUndertowTest {
         return new RouteBuilder() {
 
             public void configure() {
-                from("undertow:http://localhost:" + getPort() + "/test/mute?muteException=true").to("mock:input")
+                UndertowComponent uc = context.getComponent("undertow", UndertowComponent.class);
+                uc.setMuteException(true);
+
+                from("undertow:http://localhost:" + getPort() + "/test/mute").to("mock:input")
                         .throwException(new IllegalArgumentException("Camel cannot do this"));
 
                 from("undertow:http://localhost:" + getPort()
-                     + "/test/muteWithTransfer?transferException=true&muteException=true").to("mock:input")
+                     + "/test/muteWithTransfer?transferException=true").to("mock:input")
                              .throwException(new IllegalArgumentException("Camel cannot do this"));
             }
         };

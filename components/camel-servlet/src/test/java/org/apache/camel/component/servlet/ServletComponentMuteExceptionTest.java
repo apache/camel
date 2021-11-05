@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ServletMuteExceptionTest extends ServletCamelRouterTestSupport {
+public class ServletComponentMuteExceptionTest extends ServletCamelRouterTestSupport {
 
     @Test
     public void testMuteException() throws Exception {
@@ -54,10 +54,13 @@ public class ServletMuteExceptionTest extends ServletCamelRouterTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("servlet:mute?muteException=true")
+                ServletComponent sc = context.getComponent("servlet", ServletComponent.class);
+                sc.setMuteException(true);
+
+                from("servlet:mute")
                         .throwException(new IllegalArgumentException("Damn"));
 
-                from("servlet:muteWithTransfer?muteException=true&transferException=true")
+                from("servlet:muteWithTransfer?transferException=true")
                         .throwException(new IllegalArgumentException("Damn"));
             }
         };

@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class NettyHttpMuteExceptionTest extends BaseNettyTest {
+public class NettyHttpComponentMuteExceptionTest extends BaseNettyTest {
 
     @Test
     public void testMuteException() throws Exception {
@@ -49,7 +49,10 @@ public class NettyHttpMuteExceptionTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty-http:http://0.0.0.0:{{port}}/foo?muteException=true")
+                NettyHttpComponent nhc = context.getComponent("netty-http", NettyHttpComponent.class);
+                nhc.setMuteException(true);
+
+                from("netty-http:http://0.0.0.0:{{port}}/foo")
                         .to("mock:input")
                         .throwException(new IllegalArgumentException("Camel cannot do this"));
             }

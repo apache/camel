@@ -73,6 +73,22 @@ public interface ResteasyComponentBuilderFactory {
             return this;
         }
         /**
+         * If enabled and an Exchange failed processing on the consumer side the
+         * response's body won't contain the exception's stack trace.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param muteException the value to set
+         * @return the dsl builder
+         */
+        default ResteasyComponentBuilder muteException(boolean muteException) {
+            doSetProperty("muteException", muteException);
+            return this;
+        }
+        /**
          * Proxy classes for consumer endpoints. Multiple classes can be
          * separated by comma.
          * 
@@ -376,6 +392,7 @@ public interface ResteasyComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "bridgeErrorHandler": ((ResteasyComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "muteException": ((ResteasyComponent) component).setMuteException((boolean) value); return true;
             case "proxyConsumersClasses": ((ResteasyComponent) component).setProxyConsumersClasses((java.lang.String) value); return true;
             case "copyHeaders": ((ResteasyComponent) component).setCopyHeaders((boolean) value); return true;
             case "lazyStartProducer": ((ResteasyComponent) component).setLazyStartProducer((boolean) value); return true;

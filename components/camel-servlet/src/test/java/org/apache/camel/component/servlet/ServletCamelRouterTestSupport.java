@@ -210,12 +210,16 @@ public class ServletCamelRouterTestSupport extends CamelTestSupport {
 
         public String getText(Charset charset) throws IOException {
             if (text == null) {
-                try {
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    IOHelper.copy(con.getInputStream(), baos);
-                    text = baos.toString(charset.name());
-                } catch (IOException e) {
-                    text = "Exception";
+                if (con.getContentLength() != 0) {
+                    try {
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        IOHelper.copy(con.getInputStream(), baos);
+                        text = baos.toString(charset.name());
+                    } catch (IOException e) {
+                        text = e.getMessage();
+                    }
+                } else {
+                    text = "";
                 }
             }
             return text;

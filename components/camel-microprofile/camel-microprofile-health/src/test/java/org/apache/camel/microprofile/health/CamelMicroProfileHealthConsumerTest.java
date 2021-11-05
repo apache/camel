@@ -29,13 +29,13 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CamelMicroProfileHealthCheckRepositoryTest extends CamelMicroProfileHealthTestSupport {
+public class CamelMicroProfileHealthConsumerTest extends CamelMicroProfileHealthTestSupport {
 
     @Test
     public void testCamelHealthRepositoryUpStatus() {
         HealthCheckRegistry healthCheckRegistry = HealthCheckRegistry.get(context);
-        // enable routes health check
-        Object hc = healthCheckRegistry.resolveById("routes");
+        // enable consumers health check
+        Object hc = healthCheckRegistry.resolveById("consumers");
         healthCheckRegistry.register(hc);
 
         CamelMicroProfileReadinessCheck readinessCheck = new CamelMicroProfileReadinessCheck();
@@ -54,7 +54,8 @@ public class CamelMicroProfileHealthCheckRepositoryTest extends CamelMicroProfil
         Assertions.assertEquals("healthyRoute", checks.getJsonObject(0).getJsonObject("data").getString("route.id"));
 
         assertHealthCheckOutput("camel-readiness-checks", Status.UP, checks.getJsonObject(0), jsonObject -> {
-            assertEquals(Status.UP.name(), jsonObject.getString("route:healthyRoute"));
+            assertEquals(Status.UP.name(), jsonObject.getString("consumer:healthyRoute"));
+            assertEquals("healthyRoute", jsonObject.getString("route.id"));
             assertEquals("Started", jsonObject.getString("route.status"));
         });
     }
@@ -62,8 +63,8 @@ public class CamelMicroProfileHealthCheckRepositoryTest extends CamelMicroProfil
     @Test
     public void testCamelHealthRepositoryDownStatus() throws Exception {
         HealthCheckRegistry healthCheckRegistry = HealthCheckRegistry.get(context);
-        // enable routes health check
-        Object hc = healthCheckRegistry.resolveById("routes");
+        // enable consumers health check
+        Object hc = healthCheckRegistry.resolveById("consumers");
         healthCheckRegistry.register(hc);
 
         CamelMicroProfileReadinessCheck readinessCheck = new CamelMicroProfileReadinessCheck();
@@ -81,7 +82,8 @@ public class CamelMicroProfileHealthCheckRepositoryTest extends CamelMicroProfil
         assertEquals(1, checks.size());
 
         assertHealthCheckOutput("camel-readiness-checks", Status.DOWN, checks.getJsonObject(0), jsonObject -> {
-            assertEquals(Status.DOWN.name(), jsonObject.getString("route:healthyRoute"));
+            assertEquals(Status.DOWN.name(), jsonObject.getString("consumer:healthyRoute"));
+            assertEquals("healthyRoute", jsonObject.getString("route.id"));
             assertEquals("Stopped", jsonObject.getString("route.status"));
         });
     }

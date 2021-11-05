@@ -23,6 +23,8 @@ public class ResteasyComponentConfigurer extends HttpComponentConfigurer impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "muteexception":
+        case "muteException": target.setMuteException(property(camelContext, boolean.class, value)); return true;
         case "proxyconsumersclasses":
         case "proxyConsumersClasses": target.setProxyConsumersClasses(property(camelContext, java.lang.String.class, value)); return true;
         default: return super.configure(camelContext, obj, name, value, ignoreCase);
@@ -34,6 +36,8 @@ public class ResteasyComponentConfigurer extends HttpComponentConfigurer impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
+        case "muteexception":
+        case "muteException": return boolean.class;
         case "proxyconsumersclasses":
         case "proxyConsumersClasses": return java.lang.String.class;
         default: return super.getOptionType(name, ignoreCase);
@@ -46,6 +50,8 @@ public class ResteasyComponentConfigurer extends HttpComponentConfigurer impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "muteexception":
+        case "muteException": return target.isMuteException();
         case "proxyconsumersclasses":
         case "proxyConsumersClasses": return target.getProxyConsumersClasses();
         default: return super.getOptionValue(obj, name, ignoreCase);

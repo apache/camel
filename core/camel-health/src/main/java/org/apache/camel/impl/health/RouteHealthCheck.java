@@ -19,26 +19,23 @@ package org.apache.camel.impl.health;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Consumer;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
-import org.apache.camel.health.HealthCheck;
-import org.apache.camel.health.HealthCheckAware;
 import org.apache.camel.health.HealthCheckResultBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * {@link org.apache.camel.health.HealthCheck} for a given route.
  */
 public class RouteHealthCheck extends AbstractHealthCheck {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RouteHealthCheck.class);
-
-    private final Route route;
+    final Route route;
 
     public RouteHealthCheck(Route route) {
-        super("camel", "route:" + route.getId());
+        this(route, "route:" + route.getId());
+    }
+
+    public RouteHealthCheck(Route route, String id) {
+        super("camel", id);
         this.route = route;
     }
 
@@ -82,34 +79,16 @@ public class RouteHealthCheck extends AbstractHealthCheck {
                     }
                 }
             }
-
-            // check fine-grained consumer health check if we are up as the route may be up and running
-            // but the consumer can be un-healthy
-            if (State.UP.equals(builder.state())) {
-                Consumer consumer = route.getConsumer();
-                if (consumer instanceof HealthCheckAware) {
-                    // health check is optional
-                    HealthCheck hc = ((HealthCheckAware) consumer).getHealthCheck();
-                    if (hc != null) {
-                        if (LOGGER.isTraceEnabled()) {
-                            LOGGER.trace("Calling HealthCheck on consumer route: {}", route.getId());
-                        }
-                        Result result = hc.call();
-                        if (LOGGER.isDebugEnabled()) {
-                            LOGGER.debug("HealthCheck consumer route: {} -> {}", route.getId(), result.getState());
-                        }
-
-                        builder.state(result.getState());
-                        if (result.getMessage().isPresent()) {
-                            builder.message(result.getMessage().get());
-                        }
-                        if (result.getError().isPresent()) {
-                            builder.error(result.getError().get());
-                        }
-                        builder.details(result.getDetails());
-                    }
-                }
-            }
         }
+
+        doCallCheck(builder, options);
     }
+
+    /**
+     * Additional checks
+     */
+    protected void doCallCheck(HealthCheckResultBuilder builder, Map<String, Object> options) {
+        // noop
+    }
+
 }

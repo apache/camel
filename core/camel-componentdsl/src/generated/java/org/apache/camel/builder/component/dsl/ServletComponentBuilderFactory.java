@@ -73,6 +73,22 @@ public interface ServletComponentBuilderFactory {
             return this;
         }
         /**
+         * If enabled and an Exchange failed processing on the consumer side the
+         * response's body won't contain the exception's stack trace.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param muteException the value to set
+         * @return the dsl builder
+         */
+        default ServletComponentBuilder muteException(boolean muteException) {
+            doSetProperty("muteException", muteException);
+            return this;
+        }
+        /**
          * Default name of servlet to use. The default name is CamelServlet.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -253,6 +269,7 @@ public interface ServletComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "bridgeErrorHandler": ((ServletComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "muteException": ((ServletComponent) component).setMuteException((boolean) value); return true;
             case "servletName": ((ServletComponent) component).setServletName((java.lang.String) value); return true;
             case "attachmentMultipartBinding": ((ServletComponent) component).setAttachmentMultipartBinding((boolean) value); return true;
             case "fileNameExtWhitelist": ((ServletComponent) component).setFileNameExtWhitelist((java.lang.String) value); return true;
