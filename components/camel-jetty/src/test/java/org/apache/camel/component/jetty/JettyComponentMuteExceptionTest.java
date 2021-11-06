@@ -17,6 +17,7 @@
 package org.apache.camel.component.jetty;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.jetty9.JettyHttpComponent9;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -26,7 +27,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class JettyMuteExceptionTest extends BaseJettyTest {
+public class JettyComponentMuteExceptionTest extends BaseJettyTest {
 
     @Test
     public void testMuteException() throws Exception {
@@ -48,7 +49,10 @@ public class JettyMuteExceptionTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jetty:http://localhost:{{port}}/foo?muteException=true").to("mock:destination")
+                JettyHttpComponent9 jc = context.getComponent("jetty", JettyHttpComponent9.class);
+                jc.setMuteException(true);
+
+                from("jetty:http://localhost:{{port}}/foo").to("mock:destination")
                         .throwException(new IllegalArgumentException("Camel cannot do this"));
             }
         };
