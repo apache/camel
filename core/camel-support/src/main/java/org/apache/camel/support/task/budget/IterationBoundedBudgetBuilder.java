@@ -19,6 +19,8 @@ package org.apache.camel.support.task.budget;
 
 import java.time.Duration;
 
+import org.apache.camel.support.task.budget.backoff.BackOffStrategy;
+
 /**
  * A helper builder of iteration bounded builders. Provide generic/safe default values, but should be adjusted on a
  * per-case basis. By default, execute the iterations for up to Integer.MAX_VALUE.
@@ -31,6 +33,7 @@ public class IterationBoundedBudgetBuilder implements BudgetBuilder<IterationBud
     protected long initialDelay = DEFAULT_INITIAL_DELAY;
     protected long interval = DEFAULT_INTERVAL;
     protected int maxIterations = DEFAULT_MAX_ITERATIONS;
+    protected BackOffStrategy backOffStrategy;
 
     public IterationBoundedBudgetBuilder withInitialDelay(Duration duration) {
         this.initialDelay = duration.toMillis();
@@ -50,8 +53,18 @@ public class IterationBoundedBudgetBuilder implements BudgetBuilder<IterationBud
         return this;
     }
 
+    public IterationBoundedBudgetBuilder withBackOffStrategy(BackOffStrategy backOffStrategy) {
+        this.backOffStrategy = backOffStrategy;
+
+        return this;
+    }
+
     @Override
     public IterationBoundedBudget build() {
-        return new IterationBoundedBudget(initialDelay, interval, maxIterations);
+        if (backOffStrategy == null) {
+            return new IterationBoundedBudget(initialDelay, interval, maxIterations);
+        }
+
+        return new IterationBoundedBudget(initialDelay, maxIterations, backOffStrategy);
     }
 }

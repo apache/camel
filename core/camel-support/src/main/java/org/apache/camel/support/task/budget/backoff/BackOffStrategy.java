@@ -15,24 +15,18 @@
  * limitations under the License.
  */
 
-package org.apache.camel.support.task.budget;
+package org.apache.camel.support.task.budget.backoff;
 
 /**
- * A budget that limits the task execution to a given number of iterations
+ * A back-off strategy is used to configure different strategies for calculating the interval time between iterations
  */
-public interface IterationBudget extends Budget {
+public interface BackOffStrategy {
 
     /**
-     * The maximum number of iterations
-     * 
-     * @return
+     * Calculates the back-off interval
+     *
+     * @param  iteration the current iteration count
+     * @return           the interval in milliseconds
      */
-    int maxIterations();
-
-    /**
-     * The current number of iterations
-     * 
-     * @return the current number of iterations
-     */
-    int iteration();
+    long calculateInterval(int iteration);
 }
