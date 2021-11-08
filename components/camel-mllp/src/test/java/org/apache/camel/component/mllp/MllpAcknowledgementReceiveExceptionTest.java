@@ -38,7 +38,7 @@ public class MllpAcknowledgementReceiveExceptionTest extends MllpExceptionTestSu
      */
     @Test
     public void testConstructorOne() throws Exception {
-        instance = new MllpAcknowledgementReceiveException(HL7_MESSAGE_BYTES);
+        instance = new MllpAcknowledgementReceiveException(HL7_MESSAGE_BYTES, LOG_PHI_TRUE);
 
         assertTrue(instance.getMessage().startsWith(MllpAcknowledgementReceiveException.EXCEPTION_MESSAGE));
         assertNull(instance.getCause());
@@ -53,7 +53,7 @@ public class MllpAcknowledgementReceiveExceptionTest extends MllpExceptionTestSu
      */
     @Test
     public void testConstructorTwo() throws Exception {
-        instance = new MllpAcknowledgementReceiveException(HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES);
+        instance = new MllpAcknowledgementReceiveException(HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, LOG_PHI_TRUE);
 
         assertTrue(instance.getMessage().startsWith(MllpAcknowledgementReceiveException.EXCEPTION_MESSAGE));
         assertNull(instance.getCause());
@@ -68,7 +68,7 @@ public class MllpAcknowledgementReceiveExceptionTest extends MllpExceptionTestSu
      */
     @Test
     public void testConstructorThree() throws Exception {
-        instance = new MllpAcknowledgementReceiveException(HL7_MESSAGE_BYTES, CAUSE);
+        instance = new MllpAcknowledgementReceiveException(HL7_MESSAGE_BYTES, CAUSE, LOG_PHI_TRUE);
 
         assertTrue(instance.getMessage().startsWith(MllpAcknowledgementReceiveException.EXCEPTION_MESSAGE));
         assertSame(CAUSE, instance.getCause());
@@ -83,7 +83,7 @@ public class MllpAcknowledgementReceiveExceptionTest extends MllpExceptionTestSu
      */
     @Test
     public void testConstructorFour() throws Exception {
-        instance = new MllpAcknowledgementReceiveException(HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, CAUSE);
+        instance = new MllpAcknowledgementReceiveException(HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, CAUSE, LOG_PHI_TRUE);
 
         assertTrue(instance.getMessage().startsWith(MllpAcknowledgementReceiveException.EXCEPTION_MESSAGE));
         assertSame(CAUSE, instance.getCause());
@@ -98,7 +98,7 @@ public class MllpAcknowledgementReceiveExceptionTest extends MllpExceptionTestSu
      */
     @Test
     public void testConstructorFive() throws Exception {
-        instance = new MllpAcknowledgementReceiveException(ALTERNATE_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES);
+        instance = new MllpAcknowledgementReceiveException(ALTERNATE_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, LOG_PHI_TRUE);
 
         assertTrue(instance.getMessage().startsWith(ALTERNATE_EXCEPTION_MESSAGE));
         assertNull(instance.getCause());
@@ -114,7 +114,7 @@ public class MllpAcknowledgementReceiveExceptionTest extends MllpExceptionTestSu
     @Test
     public void testConstructorSix() throws Exception {
         instance = new MllpAcknowledgementReceiveException(
-                ALTERNATE_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES);
+                ALTERNATE_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, LOG_PHI_TRUE);
 
         assertTrue(instance.getMessage().startsWith(ALTERNATE_EXCEPTION_MESSAGE));
         assertNull(instance.getCause());
@@ -129,7 +129,7 @@ public class MllpAcknowledgementReceiveExceptionTest extends MllpExceptionTestSu
      */
     @Test
     public void testConstructorSeven() throws Exception {
-        instance = new MllpAcknowledgementReceiveException(ALTERNATE_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, CAUSE);
+        instance = new MllpAcknowledgementReceiveException(ALTERNATE_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, CAUSE, LOG_PHI_TRUE);
 
         assertTrue(instance.getMessage().startsWith(ALTERNATE_EXCEPTION_MESSAGE));
         assertSame(CAUSE, instance.getCause());
@@ -145,7 +145,7 @@ public class MllpAcknowledgementReceiveExceptionTest extends MllpExceptionTestSu
     @Test
     public void testConstructorEight() throws Exception {
         instance = new MllpAcknowledgementReceiveException(
-                ALTERNATE_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, CAUSE);
+                ALTERNATE_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, CAUSE, LOG_PHI_TRUE);
 
         assertTrue(instance.getMessage().startsWith(ALTERNATE_EXCEPTION_MESSAGE));
         assertSame(CAUSE, instance.getCause());

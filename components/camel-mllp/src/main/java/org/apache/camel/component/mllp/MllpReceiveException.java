@@ -20,27 +20,27 @@ package org.apache.camel.component.mllp;
  * Raised when a MLLP Consumer cannot deliver the MLLP Acknowledgement
  */
 public class MllpReceiveException extends MllpException {
-    public MllpReceiveException(String message) {
-        super(message);
+    public MllpReceiveException(String message, boolean logPhi) {
+        super(message, logPhi);
     }
 
-    public MllpReceiveException(String message, byte[] hl7Message) {
-        super(message, hl7Message);
+    public MllpReceiveException(String message, byte[] hl7Message, boolean logPhi) {
+        super(message, hl7Message, logPhi);
     }
 
-    public MllpReceiveException(String message, byte[] hl7Message, byte[] hl7Acknowledgement) {
-        super(message, hl7Message, hl7Acknowledgement);
+    public MllpReceiveException(String message, byte[] hl7Message, byte[] hl7Acknowledgement, boolean logPhi) {
+        super(message, hl7Message, hl7Acknowledgement, logPhi);
     }
 
-    public MllpReceiveException(String message, Throwable cause) {
-        super(message, cause);
+    public MllpReceiveException(String message, Throwable cause, boolean logPhi) {
+        super(message, cause, logPhi);
     }
 
-    public MllpReceiveException(String message, byte[] hl7Message, Throwable cause) {
-        super(message, hl7Message, cause);
+    public MllpReceiveException(String message, byte[] hl7Message, Throwable cause, boolean logPhi) {
+        super(message, hl7Message, cause, logPhi);
     }
 
-    public MllpReceiveException(String message, byte[] hl7Message, byte[] hl7Acknowledgement, Throwable cause) {
-        super(message, hl7Message, hl7Acknowledgement, cause);
+    public MllpReceiveException(String message, byte[] hl7Message, byte[] hl7Acknowledgement, Throwable cause, boolean logPhi) {
+        super(message, hl7Message, hl7Acknowledgement, cause, logPhi);
     }
 }

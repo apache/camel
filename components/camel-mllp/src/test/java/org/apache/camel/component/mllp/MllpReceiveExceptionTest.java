@@ -38,7 +38,7 @@ public class MllpReceiveExceptionTest extends MllpExceptionTestSupport {
      */
     @Test
     public void testConstructorOne() throws Exception {
-        instance = new MllpReceiveException(TEST_EXCEPTION_MESSAGE);
+        instance = new MllpReceiveException(TEST_EXCEPTION_MESSAGE, LOG_PHI_TRUE);
 
         assertNull(instance.getCause());
         assertTrue(instance.getMessage().startsWith(TEST_EXCEPTION_MESSAGE));
@@ -53,7 +53,7 @@ public class MllpReceiveExceptionTest extends MllpExceptionTestSupport {
      */
     @Test
     public void testConstructorTwo() throws Exception {
-        instance = new MllpReceiveException(TEST_EXCEPTION_MESSAGE, CAUSE);
+        instance = new MllpReceiveException(TEST_EXCEPTION_MESSAGE, CAUSE, LOG_PHI_TRUE);
 
         assertSame(CAUSE, instance.getCause());
         assertTrue(instance.getMessage().startsWith(TEST_EXCEPTION_MESSAGE));
@@ -68,7 +68,7 @@ public class MllpReceiveExceptionTest extends MllpExceptionTestSupport {
      */
     @Test
     public void testConstructorThree() throws Exception {
-        instance = new MllpReceiveException(TEST_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES);
+        instance = new MllpReceiveException(TEST_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, LOG_PHI_TRUE);
 
         assertNull(instance.getCause());
         assertTrue(instance.getMessage().startsWith(TEST_EXCEPTION_MESSAGE));
@@ -83,7 +83,7 @@ public class MllpReceiveExceptionTest extends MllpExceptionTestSupport {
      */
     @Test
     public void testConstructorFour() throws Exception {
-        instance = new MllpReceiveException(TEST_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES);
+        instance = new MllpReceiveException(TEST_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, LOG_PHI_TRUE);
 
         assertNull(instance.getCause());
         assertTrue(instance.getMessage().startsWith(TEST_EXCEPTION_MESSAGE));
@@ -98,7 +98,7 @@ public class MllpReceiveExceptionTest extends MllpExceptionTestSupport {
      */
     @Test
     public void testConstructorFive() throws Exception {
-        instance = new MllpReceiveException(TEST_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, CAUSE);
+        instance = new MllpReceiveException(TEST_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, CAUSE, LOG_PHI_TRUE);
 
         assertSame(CAUSE, instance.getCause());
         assertTrue(instance.getMessage().startsWith(TEST_EXCEPTION_MESSAGE));
@@ -113,7 +113,8 @@ public class MllpReceiveExceptionTest extends MllpExceptionTestSupport {
      */
     @Test
     public void testConstructorSix() throws Exception {
-        instance = new MllpReceiveException(TEST_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, CAUSE);
+        instance = new MllpReceiveException(
+                TEST_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, CAUSE, LOG_PHI_TRUE);
 
         assertSame(CAUSE, instance.getCause());
         assertTrue(instance.getMessage().startsWith(TEST_EXCEPTION_MESSAGE));

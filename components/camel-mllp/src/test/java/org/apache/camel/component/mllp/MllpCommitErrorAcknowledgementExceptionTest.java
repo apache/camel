@@ -37,7 +37,7 @@ public class MllpCommitErrorAcknowledgementExceptionTest extends MllpExceptionTe
      */
     @Test
     public void testConstructorOne() throws Exception {
-        instance = new MllpCommitErrorAcknowledgementException(HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES);
+        instance = new MllpCommitErrorAcknowledgementException(HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, LOG_PHI_TRUE);
 
         assertTrue(instance.getMessage().startsWith(MllpCommitErrorAcknowledgementException.EXCEPTION_MESSAGE));
         assertNull(instance.getCause());
@@ -52,7 +52,8 @@ public class MllpCommitErrorAcknowledgementExceptionTest extends MllpExceptionTe
      */
     @Test
     public void testConstructorTwo() throws Exception {
-        instance = new MllpCommitErrorAcknowledgementException(HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, CAUSE);
+        instance = new MllpCommitErrorAcknowledgementException(
+                HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, CAUSE, LOG_PHI_TRUE);
 
         assertTrue(instance.getMessage().startsWith(MllpCommitErrorAcknowledgementException.EXCEPTION_MESSAGE));
         assertSame(CAUSE, instance.getCause());
@@ -67,7 +68,7 @@ public class MllpCommitErrorAcknowledgementExceptionTest extends MllpExceptionTe
      */
     @Test
     public void testGetAcknowledgmentType() throws Exception {
-        instance = new MllpCommitErrorAcknowledgementException(HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES);
+        instance = new MllpCommitErrorAcknowledgementException(HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, LOG_PHI_TRUE);
 
         assertEquals("CE", instance.getAcknowledgmentType());
     }

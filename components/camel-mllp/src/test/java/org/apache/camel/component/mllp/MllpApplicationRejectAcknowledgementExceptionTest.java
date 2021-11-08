@@ -37,7 +37,8 @@ public class MllpApplicationRejectAcknowledgementExceptionTest extends MllpExcep
      */
     @Test
     public void testConstructorOne() throws Exception {
-        instance = new MllpApplicationRejectAcknowledgementException(HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES);
+        instance = new MllpApplicationRejectAcknowledgementException(
+                HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, LOG_PHI_TRUE);
 
         assertTrue(instance.getMessage().startsWith(MllpApplicationRejectAcknowledgementException.EXCEPTION_MESSAGE));
         assertNull(instance.getCause());
@@ -52,7 +53,8 @@ public class MllpApplicationRejectAcknowledgementExceptionTest extends MllpExcep
      */
     @Test
     public void testConstructorTwo() throws Exception {
-        instance = new MllpApplicationRejectAcknowledgementException(HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, CAUSE);
+        instance = new MllpApplicationRejectAcknowledgementException(
+                HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, CAUSE, LOG_PHI_TRUE);
 
         assertTrue(instance.getMessage().startsWith(MllpApplicationRejectAcknowledgementException.EXCEPTION_MESSAGE));
         assertSame(CAUSE, instance.getCause());
@@ -67,7 +69,8 @@ public class MllpApplicationRejectAcknowledgementExceptionTest extends MllpExcep
      */
     @Test
     public void testGetAcknowledgmentType() throws Exception {
-        instance = new MllpApplicationRejectAcknowledgementException(HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES);
+        instance = new MllpApplicationRejectAcknowledgementException(
+                HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, LOG_PHI_TRUE);
 
         assertEquals("AR", instance.getAcknowledgmentType());
     }

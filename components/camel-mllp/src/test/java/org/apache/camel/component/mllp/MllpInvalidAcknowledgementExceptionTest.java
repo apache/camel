@@ -38,7 +38,8 @@ public class MllpInvalidAcknowledgementExceptionTest extends MllpExceptionTestSu
      */
     @Test
     public void testConstructorOne() throws Exception {
-        instance = new MllpInvalidAcknowledgementException(EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES);
+        instance = new MllpInvalidAcknowledgementException(
+                EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, LOG_PHI_TRUE);
 
         assertTrue(instance.getMessage().startsWith(EXCEPTION_MESSAGE));
         assertNull(instance.getCause());
@@ -54,7 +55,7 @@ public class MllpInvalidAcknowledgementExceptionTest extends MllpExceptionTestSu
     @Test
     public void testConstructorTwo() throws Exception {
         instance = new MllpInvalidAcknowledgementException(
-                EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, CAUSE);
+                EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, CAUSE, LOG_PHI_TRUE);
 
         assertTrue(instance.getMessage().startsWith(EXCEPTION_MESSAGE));
         assertSame(CAUSE, instance.getCause());

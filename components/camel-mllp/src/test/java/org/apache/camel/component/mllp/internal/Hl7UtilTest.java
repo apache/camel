@@ -24,6 +24,7 @@ import org.apache.camel.component.mllp.MllpProtocolConstants;
 import org.apache.camel.test.stub.camel.MllpEndpointStub;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.component.mllp.MllpExceptionTestSupport.LOG_PHI_TRUE;
 import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -101,7 +102,7 @@ public class Hl7UtilTest {
 
     static final byte[] TEST_MESSAGE_BYTES = TEST_MESSAGE.getBytes();
 
-    private final Hl7Util hl7util = new Hl7Util(5120);
+    private final Hl7Util hl7util = new Hl7Util(5120, LOG_PHI_TRUE);
 
     private Charset charset = Charset.forName("ISO_8859_1");
 
@@ -667,7 +668,7 @@ public class Hl7UtilTest {
 
     @Test
     public void testConvertToPrintFriendlyStringWithPhiMaxBytes() {
-        Hl7Util local = new Hl7Util(3);
+        Hl7Util local = new Hl7Util(3, LOG_PHI_TRUE);
         String result = local.convertToPrintFriendlyString(TEST_MESSAGE);
         assertEquals("MSH", result);
     }
