@@ -74,7 +74,7 @@ public class ForegroundTask implements BlockingTask {
             while (budget.next()) {
                 if (predicate.test(payload)) {
                     LOG.info("Task {} is complete after {} iterations and it is ready to continue",
-                            name, budget.iterations());
+                            name, budget.iteration());
                     completed = true;
                     break;
                 }
@@ -103,7 +103,7 @@ public class ForegroundTask implements BlockingTask {
             while (budget.next()) {
                 if (supplier.getAsBoolean()) {
                     LOG.info("Task {} is complete after {} iterations and it is ready to continue",
-                            name, budget.iterations());
+                            name, budget.iteration());
                     completed = true;
 
                     break;
