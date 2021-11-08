@@ -173,11 +173,11 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
     }
 
     public void handleMessageTimeout(String message, byte[] payload, Throwable cause) {
-        getExceptionHandler().handleException(new MllpInvalidMessageException(message, payload, cause));
+        getExceptionHandler().handleException(new MllpInvalidMessageException(message, payload, cause, MllpComponent.logPhi));
     }
 
     public void handleMessageException(String message, byte[] payload, Throwable cause) {
-        getExceptionHandler().handleException(new MllpReceiveException(message, payload, cause));
+        getExceptionHandler().handleException(new MllpReceiveException(message, payload, cause, MllpComponent.logPhi));
     }
 
     public MllpConfiguration getConfiguration() {
@@ -254,7 +254,8 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
             if (getConfiguration().isValidatePayload()) {
                 String exceptionMessage = Hl7Util.generateInvalidPayloadExceptionMessage(hl7MessageBytes);
                 if (exceptionMessage != null) {
-                    exchange.setException(new MllpInvalidMessageException(exceptionMessage, hl7MessageBytes));
+                    exchange.setException(
+                            new MllpInvalidMessageException(exceptionMessage, hl7MessageBytes, MllpComponent.logPhi));
                 }
             }
             populateHl7DataHeaders(exchange, message, hl7MessageBytes);
@@ -427,7 +428,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                                       + acknowledgementBytesProperty.getClass().getSimpleName()
                                       + ") exchange properties can be converted to byte[]";
                     MllpInvalidAcknowledgementException invalidAckEx = new MllpInvalidAcknowledgementException(
-                            exceptionMessage, originalHl7MessageBytes, acknowledgementMessageBytes);
+                            exceptionMessage, originalHl7MessageBytes, acknowledgementMessageBytes, MllpComponent.logPhi);
                     exchange.setProperty(MllpConstants.MLLP_ACKNOWLEDGEMENT_EXCEPTION, invalidAckEx);
                     getExceptionHandler().handleException(invalidAckEx);
                 }
@@ -562,7 +563,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
             } catch (MllpSocketException acknowledgementDeliveryEx) {
                 Exception exchangeEx = new MllpAcknowledgementDeliveryException(
                         "Failure delivering acknowledgment", originalHl7MessageBytes, acknowledgementMessageBytes,
-                        acknowledgementDeliveryEx);
+                        acknowledgementDeliveryEx, MllpComponent.logPhi);
                 exchange.setProperty(MllpConstants.MLLP_ACKNOWLEDGEMENT_EXCEPTION, acknowledgementDeliveryEx);
                 exchange.setException(exchangeEx);
             } finally {
@@ -587,7 +588,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
             } catch (MllpSocketException acknowledgementDeliveryEx) {
                 Exception exchangeEx = new MllpAcknowledgementDeliveryException(
                         "Failure delivering acknowledgment", originalHl7MessageBytes, acknowledgementMessageBytes,
-                        acknowledgementDeliveryEx);
+                        acknowledgementDeliveryEx, MllpComponent.logPhi);
                 exchange.setProperty(MllpConstants.MLLP_ACKNOWLEDGEMENT_EXCEPTION, acknowledgementDeliveryEx);
                 exchange.setException(exchangeEx);
             }

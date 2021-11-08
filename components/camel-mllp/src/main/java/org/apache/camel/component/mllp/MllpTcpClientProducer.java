@@ -153,7 +153,7 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
             if (messageBody == null) {
                 String exceptionMessage
                         = String.format("process(%s) [%s] - message body is null", exchange.getExchangeId(), socket);
-                exchange.setException(new MllpInvalidMessageException(exceptionMessage, hl7MessageBytes));
+                exchange.setException(new MllpInvalidMessageException(exceptionMessage, hl7MessageBytes, MllpComponent.logPhi));
                 return;
             } else if (messageBody instanceof byte[]) {
                 hl7MessageBytes = (byte[]) messageBody;
@@ -185,13 +185,16 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
                                 exchange.getExchangeId(), socket);
                         log.warn(exceptionMessage, retryWriteEx);
                         exchange.setException(
-                                new MllpWriteException(exceptionMessage, mllpBuffer.toByteArrayAndReset(), retryWriteEx));
+                                new MllpWriteException(
+                                        exceptionMessage, mllpBuffer.toByteArrayAndReset(), retryWriteEx,
+                                        MllpComponent.logPhi));
                     }
                 } catch (IOException reconnectEx) {
                     String exceptionMessage = String.format("process(%s) [%s] - exception encountered attempting to reconnect",
                             exchange.getExchangeId(), socket);
                     log.warn(exceptionMessage, reconnectEx);
-                    exchange.setException(new MllpWriteException(exceptionMessage, mllpBuffer.toByteArrayAndReset(), writeEx));
+                    exchange.setException(new MllpWriteException(
+                            exceptionMessage, mllpBuffer.toByteArrayAndReset(), writeEx, MllpComponent.logPhi));
                     mllpBuffer.resetSocket(socket);
                 }
             }
@@ -217,7 +220,8 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
                                 exchange.getExchangeId(), socket);
                         log.warn(exceptionMessage, reconnectEx);
                         exchange.setException(
-                                new MllpAcknowledgementReceiveException(exceptionMessage, hl7MessageBytes, receiveAckEx));
+                                new MllpAcknowledgementReceiveException(
+                                        exceptionMessage, hl7MessageBytes, receiveAckEx, MllpComponent.logPhi));
                         mllpBuffer.resetSocket(socket);
                     }
 
@@ -232,7 +236,8 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
                                     "process(%s) [%s] - exception encountered attempting to write payload after read failure and successful reconnect",
                                     exchange.getExchangeId(), socket);
                             log.warn(exceptionMessage, writeRetryEx);
-                            exchange.setException(new MllpWriteException(exceptionMessage, hl7MessageBytes, receiveAckEx));
+                            exchange.setException(new MllpWriteException(
+                                    exceptionMessage, hl7MessageBytes, receiveAckEx, MllpComponent.logPhi));
                         }
 
                         if (exchange.getException() == null) {
@@ -250,7 +255,8 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
                                 log.warn(exceptionMessage, secondReceiveEx);
                                 // Send the original exception to the exchange
                                 exchange.setException(new MllpAcknowledgementReceiveException(
-                                        exceptionMessage, hl7MessageBytes, mllpBuffer.toByteArrayAndReset(), receiveAckEx));
+                                        exceptionMessage, hl7MessageBytes, mllpBuffer.toByteArrayAndReset(), receiveAckEx,
+                                        MllpComponent.logPhi));
                             } catch (SocketTimeoutException secondReadTimeoutEx) {
                                 String exceptionMessageFormat = mllpBuffer.isEmpty()
                                         ? "process(%s) [%s] - timeout receiving MLLP Acknowledgment after successful reconnect and resend"
@@ -260,7 +266,8 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
                                 log.warn(exceptionMessage, secondReadTimeoutEx);
                                 // Send the original exception to the exchange
                                 exchange.setException(new MllpAcknowledgementTimeoutException(
-                                        exceptionMessage, hl7MessageBytes, mllpBuffer.toByteArrayAndReset(), receiveAckEx));
+                                        exceptionMessage, hl7MessageBytes, mllpBuffer.toByteArrayAndReset(), receiveAckEx,
+                                        MllpComponent.logPhi));
                                 mllpBuffer.resetSocket(socket);
                             }
                         }
@@ -272,7 +279,8 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
                     String exceptionMessage = String.format(exceptionMessageFormat, exchange.getExchangeId(), socket);
                     log.warn(exceptionMessage, timeoutEx);
                     exchange.setException(new MllpAcknowledgementTimeoutException(
-                            exceptionMessage, hl7MessageBytes, mllpBuffer.toByteArrayAndReset(), timeoutEx));
+                            exceptionMessage, hl7MessageBytes, mllpBuffer.toByteArrayAndReset(), timeoutEx,
+                            MllpComponent.logPhi));
                     mllpBuffer.resetSocket(socket);
                 }
 
@@ -295,7 +303,7 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
                             String exceptionMessage = Hl7Util.generateInvalidPayloadExceptionMessage(acknowledgementBytes);
                             if (exceptionMessage != null) {
                                 exchange.setException(new MllpInvalidAcknowledgementException(
-                                        exceptionMessage, hl7MessageBytes, acknowledgementBytes));
+                                        exceptionMessage, hl7MessageBytes, acknowledgementBytes, MllpComponent.logPhi));
                             }
                         }
 
@@ -316,7 +324,7 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
                         String exceptionMessage = String.format("process(%s) [%s] - invalid acknowledgement received",
                                 exchange.getExchangeId(), socket);
                         exchange.setException(new MllpInvalidAcknowledgementException(
-                                exceptionMessage, hl7MessageBytes, mllpBuffer.toByteArrayAndReset()));
+                                exceptionMessage, hl7MessageBytes, mllpBuffer.toByteArrayAndReset(), MllpComponent.logPhi));
                     }
                 }
             }
@@ -363,7 +371,7 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
                                         hl7MessageBytes == null ? -1 : hl7MessageBytes.length, hl7AcknowledgementBytes.length,
                                         new String(hl7AcknowledgementBytes, i + 5, 2));
                                 throw new MllpInvalidAcknowledgementException(
-                                        errorMessage, hl7MessageBytes, hl7AcknowledgementBytes);
+                                        errorMessage, hl7MessageBytes, hl7AcknowledgementBytes, MllpComponent.logPhi);
                             } else {
                                 switch (hl7AcknowledgementBytes[i + 6]) {
                                     case bA:
@@ -378,25 +386,25 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
                                         // We have an AE or CE
                                         if (bA == hl7AcknowledgementBytes[i + 5]) {
                                             throw new MllpApplicationErrorAcknowledgementException(
-                                                    hl7MessageBytes, hl7AcknowledgementBytes);
+                                                    hl7MessageBytes, hl7AcknowledgementBytes, MllpComponent.logPhi);
                                         } else {
                                             throw new MllpCommitErrorAcknowledgementException(
-                                                    hl7MessageBytes, hl7AcknowledgementBytes);
+                                                    hl7MessageBytes, hl7AcknowledgementBytes, MllpComponent.logPhi);
                                         }
                                     case bR:
                                         // We have an AR or CR
                                         if (bA == hl7AcknowledgementBytes[i + 5]) {
                                             throw new MllpApplicationRejectAcknowledgementException(
-                                                    hl7MessageBytes, hl7AcknowledgementBytes);
+                                                    hl7MessageBytes, hl7AcknowledgementBytes, MllpComponent.logPhi);
                                         } else {
                                             throw new MllpCommitRejectAcknowledgementException(
-                                                    hl7MessageBytes, hl7AcknowledgementBytes);
+                                                    hl7MessageBytes, hl7AcknowledgementBytes, MllpComponent.logPhi);
                                         }
                                     default:
                                         String errorMessage = "Unsupported acknowledgement type: "
                                                               + new String(hl7AcknowledgementBytes, i + 5, 2);
                                         throw new MllpInvalidAcknowledgementException(
-                                                errorMessage, hl7MessageBytes, hl7AcknowledgementBytes);
+                                                errorMessage, hl7MessageBytes, hl7AcknowledgementBytes, MllpComponent.logPhi);
                                 }
                             }
 
@@ -409,7 +417,7 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
             if (-1 == msaStartIndex && getConfiguration().isValidatePayload()) {
                 // Didn't find an MSA
                 throw new MllpInvalidAcknowledgementException(
-                        "MSA Not found in acknowledgement", hl7MessageBytes, hl7AcknowledgementBytes);
+                        "MSA Not found in acknowledgement", hl7MessageBytes, hl7AcknowledgementBytes, MllpComponent.logPhi);
             }
         }
 

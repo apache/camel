@@ -211,14 +211,16 @@ public final class Hl7Util {
             MllpSocketBuffer mllpSocketBuffer, byte[] hl7MessageBytes, String acknowledgementCode, String msa3)
             throws MllpAcknowledgementGenerationException {
         if (hl7MessageBytes == null) {
-            throw new MllpAcknowledgementGenerationException("Null HL7 message received for parsing operation");
+            throw new MllpAcknowledgementGenerationException(
+                    "Null HL7 message received for parsing operation", MllpComponent.isLogPhi());
         }
 
         List<Integer> fieldSeparatorIndexes = findFieldSeparatorIndicesInSegment(hl7MessageBytes, 0);
 
         if (fieldSeparatorIndexes.isEmpty()) {
             throw new MllpAcknowledgementGenerationException(
-                    "Failed to find the end of the MSH Segment while attempting to generate response", hl7MessageBytes);
+                    "Failed to find the end of the MSH Segment while attempting to generate response", hl7MessageBytes,
+                    MllpComponent.isLogPhi());
         }
 
         if (fieldSeparatorIndexes.size() < 8) {
@@ -226,7 +228,7 @@ public final class Hl7Util {
                     "Insufficient number of fields found in MSH to generate a response - 10 are required but %d were found",
                     fieldSeparatorIndexes.size() - 1);
 
-            throw new MllpAcknowledgementGenerationException(exceptionMessage, hl7MessageBytes);
+            throw new MllpAcknowledgementGenerationException(exceptionMessage, hl7MessageBytes, MllpComponent.isLogPhi());
         }
 
         final byte fieldSeparator = hl7MessageBytes[3];
