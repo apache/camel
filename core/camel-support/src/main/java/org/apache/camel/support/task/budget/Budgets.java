@@ -55,6 +55,12 @@ public final class Budgets {
             return this;
         }
 
+        public TimeBoundedBudgetBuilder withUnlimitedDuration() {
+            this.maxDuration = TimeBoundedBudget.UNLIMITED_DURATION;
+
+            return this;
+        }
+
         public TimeBoundedBudget build() {
             return new TimeBoundedBudget(initialDelay, interval, maxDuration);
         }

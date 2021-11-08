@@ -58,6 +58,12 @@ public class IterationTimeBoundedBudgetBuilder implements BudgetBuilder<Iteratio
         return this;
     }
 
+    public IterationTimeBoundedBudgetBuilder withUnlimitedDuration() {
+        this.maxDuration = TimeBoundedBudget.UNLIMITED_DURATION;
+
+        return this;
+    }
+
     @Override
     public IterationTimeBoundedBudget build() {
         return new IterationTimeBoundedBudget(initialDelay, interval, maxIterations, maxDuration);
