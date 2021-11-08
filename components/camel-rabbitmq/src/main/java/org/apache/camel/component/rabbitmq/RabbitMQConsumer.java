@@ -17,6 +17,7 @@
 package org.apache.camel.component.rabbitmq;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -32,6 +33,10 @@ import org.apache.camel.Processor;
 import org.apache.camel.Suspendable;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.support.task.BlockingTask;
+import org.apache.camel.support.task.Tasks;
+import org.apache.camel.support.task.budget.Budgets;
+import org.apache.camel.support.task.budget.IterationBoundedBudget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -214,22 +219,35 @@ public class RabbitMQConsumer extends DefaultConsumer implements Suspendable {
             RabbitMQConsumer.this.startConsumerCallable = null;
         }
 
+        private boolean reconnect() {
+            if (!running.get()) {
+                return true;
+            }
+
+            try {
+                for (RabbitConsumer consumer : consumers) {
+                    consumer.reconnect();
+                }
+
+                return true;
+            } catch (Exception e) {
+                LOG.info("Connection failed, will retry in {} ms", connectionRetryInterval, e);
+
+                return false;
+            }
+        }
+
         @Override
         public Void call() throws Exception {
-            boolean connectionFailed = true;
-            // Reconnection loop
-            while (running.get() && connectionFailed) {
-                try {
-                    for (RabbitConsumer consumer : consumers) {
-                        consumer.reconnect();
-                    }
-                    connectionFailed = false;
-                } catch (Exception e) {
-                    LOG.info("Connection failed, will retry in {} ms", connectionRetryInterval, e);
-                    Thread.sleep(connectionRetryInterval);
-                }
-            }
-            stop();
+            BlockingTask task = Tasks.foregroundTask()
+                    .withBudget(Budgets.iterationBudget()
+                            .withInterval(Duration.ofMillis(connectionRetryInterval))
+                            .withMaxIterations(IterationBoundedBudget.UNLIMITED_ITERATIONS)
+                            .build())
+                    .withName("rabbitmq-reconnection-loop")
+                    .build();
+
+            task.run(this::reconnect);
             return null;
         }
     }

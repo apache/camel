@@ -17,6 +17,8 @@
 package org.apache.camel.component.rabbitmq;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeoutException;
 
@@ -32,6 +34,9 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.support.task.BlockingTask;
+import org.apache.camel.support.task.Tasks;
+import org.apache.camel.support.task.budget.Budgets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +48,6 @@ class RabbitConsumer extends ServiceSupport implements com.rabbitmq.client.Consu
     private Channel channel;
     private String tag;
     private volatile String consumerTag;
-    private volatile boolean stopping;
 
     private final Semaphore lock = new Semaphore(1);
 
@@ -286,6 +290,27 @@ class RabbitConsumer extends ServiceSupport implements com.rabbitmq.client.Consu
         }
     }
 
+    private boolean doReconnect() {
+        if (isStopping()) {
+            return true;
+        }
+
+        try {
+            reconnect();
+            return true;
+        } catch (Exception e) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Unable to obtain a RabbitMQ channel. Will try again. Caused by: {}.", e.getMessage());
+            } else {
+                LOG.warn(
+                        "Unable to obtain a RabbitMQ channel. Will try again. Caused by: {}. Stacktrace logged at DEBUG logging level.",
+                        e.getMessage());
+            }
+
+            return false;
+        }
+    }
+
     /**
      * No-op implementation of {@link Consumer#handleShutdownSignal}.
      */
@@ -293,32 +318,28 @@ class RabbitConsumer extends ServiceSupport implements com.rabbitmq.client.Consu
     public void handleShutdownSignal(String consumerTag, ShutdownSignalException sig) {
         LOG.info("Received shutdown signal on the rabbitMQ channel");
 
-        // Check if the consumer closed the connection or something else
-        if (!sig.isInitiatedByApplication()) {
-            // Something else closed the connection so reconnect
-            boolean connected = false;
-            while (!connected && !isStopping()) {
-                try {
-                    reconnect();
-                    connected = true;
-                } catch (Exception e) {
-                    LOG.warn(
-                            "Unable to obtain a RabbitMQ channel. Will try again. Caused by: {}. Stacktrace logged at DEBUG logging level.",
-                            e.getMessage());
-                    // include stacktrace in DEBUG logging
-                    LOG.debug(e.getMessage(), e);
-
-                    Integer networkRecoveryInterval = consumer.getEndpoint().getNetworkRecoveryInterval();
-                    final long connectionRetryInterval
-                            = networkRecoveryInterval != null && networkRecoveryInterval > 0 ? networkRecoveryInterval : 100L;
-                    try {
-                        Thread.sleep(connectionRetryInterval);
-                    } catch (InterruptedException e1) {
-                        Thread.currentThread().interrupt();
-                    }
-                }
-            }
+        if (sig.isInitiatedByApplication()) {
+            LOG.debug("Nothing to do because the consumer closed the connection");
+            return;
         }
+
+        Integer networkRecoveryInterval = consumer.getEndpoint().getNetworkRecoveryInterval();
+        final long connectionRetryInterval
+                = networkRecoveryInterval != null && networkRecoveryInterval > 0 ? networkRecoveryInterval : 100L;
+
+        String taskName = "shutdown-handler";
+        ScheduledExecutorService service = consumer.getEndpoint().createScheduledExecutor(taskName);
+
+        BlockingTask task = Tasks.backgroundTask()
+                .withBudget(Budgets.timeBudget()
+                        .withUnlimitedDuration()
+                        .withInterval(Duration.ofMillis(connectionRetryInterval))
+                        .build())
+                .withScheduledExecutor(service)
+                .withName(taskName)
+                .build();
+
+        task.run(this::doReconnect);
     }
 
     /**
