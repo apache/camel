@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeoutException;
 
 import javax.net.ssl.TrustManager;
@@ -274,6 +275,14 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
                     URISupport.sanitizeUri(getEndpointUri()), getThreadPoolSize());
         } else {
             return Executors.newFixedThreadPool(getThreadPoolSize());
+        }
+    }
+
+    protected ScheduledExecutorService createScheduledExecutor(String name) {
+        if (getCamelContext() != null) {
+            return getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this, name);
+        } else {
+            return Executors.newSingleThreadScheduledExecutor(tf -> new Thread(name));
         }
     }
 
