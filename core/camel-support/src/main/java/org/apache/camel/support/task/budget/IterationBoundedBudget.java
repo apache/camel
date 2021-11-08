@@ -17,18 +17,27 @@
 
 package org.apache.camel.support.task.budget;
 
+import org.apache.camel.support.task.budget.backoff.BackOffStrategy;
+import org.apache.camel.support.task.budget.backoff.FixedBackOffStrategy;
+
 public class IterationBoundedBudget implements IterationBudget {
     public static final int UNLIMITED_ITERATIONS = -1;
 
     private final long initialDelay;
-    private final long interval;
     private final int maxIterations;
+    private final BackOffStrategy backOffStrategy;
     private int iterations;
 
     IterationBoundedBudget(long initialDelay, long interval, int maxIterations) {
         this.initialDelay = initialDelay;
-        this.interval = interval;
         this.maxIterations = maxIterations;
+        this.backOffStrategy = new FixedBackOffStrategy(interval);
+    }
+
+    IterationBoundedBudget(long initialDelay, int maxIterations, BackOffStrategy backOffStrategy) {
+        this.initialDelay = initialDelay;
+        this.maxIterations = maxIterations;
+        this.backOffStrategy = backOffStrategy;
     }
 
     @Override
@@ -38,7 +47,7 @@ public class IterationBoundedBudget implements IterationBudget {
 
     @Override
     public long interval() {
-        return interval;
+        return backOffStrategy.calculateInterval(iterations);
     }
 
     @Override
@@ -46,7 +55,7 @@ public class IterationBoundedBudget implements IterationBudget {
         return maxIterations;
     }
 
-    public int iterations() {
+    public int iteration() {
         return iterations;
     }
 

@@ -14,8 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.soroushbot.utils;
 
-public interface BackOffStrategy {
-    void waitBeforeRetry(int retryCount) throws InterruptedException;
+package org.apache.camel.support.task.budget.backoff;
+
+/**
+ * A back-off strategy with constant rate
+ */
+public class FixedBackOffStrategy implements BackOffStrategy {
+    private final long interval;
+
+    public FixedBackOffStrategy(long interval) {
+        this.interval = interval;
+    }
+
+    @Override
+    public long calculateInterval(int iteration) {
+        return interval;
+    }
 }
