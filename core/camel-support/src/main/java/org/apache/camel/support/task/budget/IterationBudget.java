@@ -35,18 +35,4 @@ public interface IterationBudget extends Budget {
      * @return the current number of iterations
      */
     int iterations();
-
-    /**
-     * Whether the task has budget to continue executing or not
-     * 
-     * @return true if the task can continue or false otherwise
-     */
-    boolean canContinue();
-
-    /**
-     * Move the task to the next iteration
-     *
-     * @return true if the task can continue or false otherwise
-     */
-    boolean next();
 }
