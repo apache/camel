@@ -127,7 +127,7 @@ public class OptaPlannerProducer extends DefaultAsyncProducer {
             populateResult(exchange, solver, null);
         } else {
             exchange.setException(new Exception(
-                    "Unsuported type. Body must be of Type PlanningSolution or ProblemFactChange. To get the Best Result from the async Solver,"
+                    "Unsupported type. Body must be of Type PlanningSolution or ProblemFactChange. To get the Best Result from the async Solver,"
                                                 +
                                                 " use the camel optaplanner consumer"));
         }
@@ -171,7 +171,7 @@ public class OptaPlannerProducer extends DefaultAsyncProducer {
                 populateResultWithSolverManager(exchange, solverJob);
             }
         } else {
-            exchange.setException(new Exception("Unsuported type. Body must be of Type PlanningSolution"));
+            exchange.setException(new Exception("Unsupported type. Body must be of Type PlanningSolution"));
         }
         // synchronous or wrong type of body
         callback.done(true);
