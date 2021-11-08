@@ -16,12 +16,17 @@
  */
 package org.apache.camel.component.optaplanner;
 
+import java.time.Duration;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultAsyncProducer;
+import org.apache.camel.support.task.BlockingTask;
+import org.apache.camel.support.task.Tasks;
+import org.apache.camel.support.task.budget.Budgets;
+import org.apache.camel.support.task.budget.IterationBoundedBudget;
 import org.optaplanner.core.api.domain.solution.PlanningSolution;
 import org.optaplanner.core.api.solver.ProblemFactChange;
 import org.optaplanner.core.api.solver.Solver;
@@ -90,40 +95,32 @@ public class OptaPlannerProducer extends DefaultAsyncProducer {
      * @param  body
      * @throws Exception
      */
-    private void processWithXmlFile(Exchange exchange, Object body) throws Exception {
+    private void processWithXmlFile(Exchange exchange, Object body) {
         final String solverId = getSolverId(exchange);
         if (body.getClass().isAnnotationPresent(PlanningSolution.class)) {
             if (isAsync(exchange)) {
-                LOGGER.debug("Asynchronously solving problem: [{}] with id [{}]", body, solverId);
-                final Solver<Object> solver = endpoint.getOrCreateSolver(solverId);
-                executor.submit(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            solver.solve(body);
-                        } catch (Exception e) {
-                            exchange.setException(new Exception("Asynchronously solving failed for solverId " + solverId, e));
-                        }
-                    }
-                });
+                solveProblemAsync(exchange, body, solverId);
             } else {
-                LOGGER.debug("Synchronously solving problem: [{}] with id [{}]", body, solverId);
-                Solver<Object> solver = endpoint.getSolver(solverId);
-                if (solver == null) {
-                    solver = endpoint.createSolver();
-                }
-                Object solution = solver.solve(body);
-                populateResult(exchange, solver, solution);
+                solveProblemSync(exchange, body, solverId);
             }
         } else if (body instanceof ProblemFactChange) {
             LOGGER.debug("Adding ProblemFactChange to solver: [{}] with id [{}]", body, solverId);
             Solver<Object> solver = endpoint.getOrCreateSolver(solverId);
             solver.addProblemFactChange((ProblemFactChange<Object>) body);
+
             if (!isAsync(exchange)) {
-                while (!solver.isEveryProblemFactChangeProcessed()) {
-                    Thread.sleep(OptaPlannerConstants.IS_EVERY_PROBLEM_FACT_CHANGE_DELAY);
-                }
+                BlockingTask task = Tasks
+                        .foregroundTask()
+                        .withBudget(Budgets
+                                .iterationBudget()
+                                .withMaxIterations(IterationBoundedBudget.UNLIMITED_ITERATIONS)
+                                .withInterval(Duration.ofMillis(OptaPlannerConstants.IS_EVERY_PROBLEM_FACT_CHANGE_DELAY))
+                                .build())
+                        .build();
+
+                task.run(solver::isEveryProblemFactChangeProcessed);
             }
+
             populateResult(exchange, solver, null);
         } else {
             exchange.setException(new Exception(
@@ -131,6 +128,28 @@ public class OptaPlannerProducer extends DefaultAsyncProducer {
                                                 +
                                                 " use the camel optaplanner consumer"));
         }
+    }
+
+    private void solveProblemSync(Exchange exchange, Object body, String solverId) {
+        LOGGER.debug("Synchronously solving problem: [{}] with id [{}]", body, solverId);
+        Solver<Object> solver = endpoint.getSolver(solverId);
+        if (solver == null) {
+            solver = endpoint.createSolver();
+        }
+        Object solution = solver.solve(body);
+        populateResult(exchange, solver, solution);
+    }
+
+    private void solveProblemAsync(Exchange exchange, Object body, String solverId) {
+        LOGGER.debug("Asynchronously solving problem: [{}] with id [{}]", body, solverId);
+        final Solver<Object> solver = endpoint.getOrCreateSolver(solverId);
+        executor.submit(() -> {
+            try {
+                solver.solve(body);
+            } catch (Exception e) {
+                exchange.setException(new Exception("Asynchronously solving failed for solverId " + solverId, e));
+            }
+        });
     }
 
     /**
