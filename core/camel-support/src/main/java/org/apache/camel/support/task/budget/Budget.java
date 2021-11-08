@@ -34,4 +34,18 @@ public interface Budget {
      * @return the interval, in milliseconds, for each task execution
      */
     long interval();
+
+    /**
+     * Whether the task has budget to continue executing or not
+     *
+     * @return true if the task can continue or false otherwise
+     */
+    boolean canContinue();
+
+    /**
+     * Move the task to the next iteration
+     *
+     * @return true if the task can continue or false otherwise
+     */
+    boolean next();
 }

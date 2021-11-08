@@ -90,6 +90,12 @@ public class BackgroundTask implements BlockingTask {
             return;
         }
 
+        if (!budget.next()) {
+            LOG.warn("The task {} does not have more budget to continue running", name);
+
+            return;
+        }
+
         if (predicate.test(payload)) {
             latch.countDown();
             LOG.trace("Task {} has succeeded and the current task won't be schedulable anymore: {}", name, latch.getCount());
@@ -99,6 +105,12 @@ public class BackgroundTask implements BlockingTask {
     private void runTaskWrapper(CountDownLatch latch, BooleanSupplier supplier) {
         LOG.trace("Current latch value: {}", latch.getCount());
         if (latch.getCount() == 0) {
+            return;
+        }
+
+        if (!budget.next()) {
+            LOG.warn("The task {} does not have more budget to continue running", name);
+
             return;
         }
 
