@@ -323,7 +323,7 @@ headers on the Camel message:
 |`CamelHL7VersionId` |`MSH-12` |`2.4`
 
 |`CamelHL7Context` |`` |`contains the
-http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/HapiContext.html[HapiContext]
+https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/HapiContext.html[HapiContext]
 that was used to parse the message`
 
 |`CamelHL7Charset` |`MSH-18` |`UNICODE UTF-8`
