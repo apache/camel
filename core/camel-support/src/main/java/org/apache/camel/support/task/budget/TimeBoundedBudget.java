@@ -21,6 +21,8 @@ import java.time.Duration;
 import java.time.Instant;
 
 public class TimeBoundedBudget implements TimeBudget {
+    public static final long UNLIMITED_DURATION = -1;
+
     private final long initialDelay;
     private final long interval;
     private final long maxDuration;
