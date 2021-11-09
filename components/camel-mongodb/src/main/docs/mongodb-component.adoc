@@ -978,9 +978,9 @@ camel-mongodb component provides the following conversions:
 constructor.
 |fromDocumentToMap |`Document` |`Map` |`Document` already implements `Map`.
 |fromStringToDocument |`String` |`Document` |uses `com.mongodb.Document.parse(String s)`.
-|fromAnyObjectToDocument |`Object`  |`Document` |uses the http://jackson.codehaus.org/[Jackson library] to convert the
-object to a `Map`, which is in turn used to initialise a new
-`Document`.
+|fromStringToObjectId |`String` |`ObjectId` |constructs a new `ObjectId` via the `new ObjectId(s)`
+|fromFileToDocument|`File` |`Document` |uses `fromInputStreamToDocument` under the hood
+|fromInputStreamToDocument|`InputStream` |`Document` |converts the inputstream bytes to a `Document`
 |fromStringToList |`String` |`List<Bson>` |uses `org.bson.codecs.configuration.CodecRegistries` to convert to BsonArray then to List<Bson>.
 |=======================================================================
 
