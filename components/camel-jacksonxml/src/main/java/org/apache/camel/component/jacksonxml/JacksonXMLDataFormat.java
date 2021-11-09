@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat}) using
- * <a href="http://jackson.codehaus.org/">Jackson</a> to marshal to and from XML.
+ * <a href="https://github.com/FasterXML/jackson">Jackson</a> to marshal to and from XML.
  */
 @Dataformat("jacksonxml")
 public class JacksonXMLDataFormat extends ServiceSupport
