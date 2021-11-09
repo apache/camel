@@ -78,7 +78,7 @@ And then you can refer to this id in the route:
 
 When marshalling a POJO to XML you might want to exclude certain fields
 from the XML output. With Jackson you can
-use https://github.com/FasterXML/JacksonJsonViews[JSON views] to accomplish
+use https://github.com/FasterXML/jackson-annotations/blob/master/src/main/java/com/fasterxml/jackson/annotation/JsonView.java[JSON views] to accomplish
 this. First create one or more marker classes.
 
 Use the marker classes with the `@JsonView` annotation to
@@ -105,7 +105,7 @@ from("direct:inPojoAgeView").
   marshal(ageViewFormat);
 ---------------------------------------------------------------------------------------------------
 
-Directly specify your https://github.com/FasterXML/JacksonJsonViews[JSON
+Directly specify your https://github.com/FasterXML/jackson-annotations/blob/master/src/main/java/com/fasterxml/jackson/annotation/JsonView.java[JSON
 view] inside the Java DSL as:
 
 [source,java]
