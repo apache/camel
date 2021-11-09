@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.zookeeper.cluster;
 
+import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +27,10 @@ import org.apache.camel.cluster.CamelClusterMember;
 import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.component.zookeeper.ZooKeeperCuratorConfiguration;
 import org.apache.camel.support.cluster.AbstractCamelClusterView;
+import org.apache.camel.support.task.BlockingTask;
+import org.apache.camel.support.task.Tasks;
+import org.apache.camel.support.task.budget.Budgets;
+import org.apache.camel.support.task.budget.IterationBoundedBudget;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.leader.LeaderSelector;
@@ -133,14 +138,13 @@ final class ZooKeeperClusterView extends AbstractCamelClusterView {
         public void takeLeadership(CuratorFramework curatorFramework) throws Exception {
             fireLeadershipChangedEvent(Optional.of(localMember));
 
-            while (isRunAllowed()) {
-                try {
-                    Thread.sleep(5000);
-                } catch (InterruptedException e) {
-                    Thread.interrupted();
-                    break;
-                }
-            }
+            BlockingTask task = Tasks.foregroundTask().withBudget(Budgets.iterationBudget()
+                    .withMaxIterations(IterationBoundedBudget.UNLIMITED_ITERATIONS)
+                    .withInterval(Duration.ofSeconds(5))
+                    .build())
+                    .build();
+
+            task.run(() -> !isRunAllowed());
 
             fireLeadershipChangedEvent(getLeader());
         }
