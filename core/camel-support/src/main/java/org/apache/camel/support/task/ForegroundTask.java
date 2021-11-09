@@ -17,8 +17,10 @@
 
 package org.apache.camel.support.task;
 
+import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import org.apache.camel.support.task.budget.IterationBudget;
 import org.slf4j.Logger;
@@ -119,5 +121,39 @@ public class ForegroundTask implements BlockingTask {
         }
 
         return completed;
+    }
+
+    /**
+     * Run a task until it produces a result
+     * 
+     * @param  supplier  the supplier of the result
+     * @param  predicate a predicate to test if the result is acceptable
+     * @param  <T>       the type for the result
+     * @return           An optional with the result
+     */
+    public <T> Optional<T> run(Supplier<T> supplier, Predicate<T> predicate) {
+        try {
+            if (budget.initialDelay() > 0) {
+                Thread.sleep(budget.initialDelay());
+            }
+
+            while (budget.next()) {
+                T ret = supplier.get();
+                if (predicate.test(ret)) {
+                    LOG.info("Task {} is complete after {} iterations and it is ready to continue",
+                            name, budget.iteration());
+                    return Optional.ofNullable(ret);
+                }
+
+                if (budget.canContinue()) {
+                    Thread.sleep(budget.interval());
+                }
+            }
+        } catch (InterruptedException e) {
+            LOG.warn("Interrupted {} while waiting for the repeatable task to execute", name);
+            Thread.currentThread().interrupt();
+        }
+
+        return Optional.empty();
     }
 }
