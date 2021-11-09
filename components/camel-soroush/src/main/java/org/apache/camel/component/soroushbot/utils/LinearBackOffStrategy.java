@@ -16,23 +16,24 @@
  */
 package org.apache.camel.component.soroushbot.utils;
 
-public class LinearBackOffStrategy implements BackOffStrategy {
-    Long retryWaitingTime;
-    Long increment;
-    //Long maxRetryWaitingTime;
+import org.apache.camel.support.task.budget.backoff.BackOffStrategy;
 
-    public LinearBackOffStrategy(Long retryWaitingTime, Long increment, Long maxRetryWaitingTime) {
+public class LinearBackOffStrategy implements BackOffStrategy {
+    private final long retryWaitingTime;
+    private final long increment;
+
+    public LinearBackOffStrategy(Long retryWaitingTime, Long increment) {
         this.retryWaitingTime = retryWaitingTime;
         this.increment = increment;
-        //this.maxRetryWaitingTime = maxRetryWaitingTime;
     }
 
     @Override
-    public void waitBeforeRetry(int retryCount) throws InterruptedException {
+    public long calculateInterval(int iteration) {
         //the first and second request do not need wait
-        retryCount -= 2;
-        if (retryCount >= 0) {
-            Thread.sleep(retryWaitingTime + increment * retryCount);
+        if (iteration > 2) {
+            return retryWaitingTime + increment * (iteration - 2);
         }
+
+        return 0;
     }
 }

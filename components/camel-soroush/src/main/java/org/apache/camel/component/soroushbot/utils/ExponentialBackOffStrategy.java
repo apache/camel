@@ -16,23 +16,26 @@
  */
 package org.apache.camel.component.soroushbot.utils;
 
-public class ExponentialBackOffStrategy implements BackOffStrategy {
-    Long baseRetryTimeOut;
-    Long coefficient;
-    //Long maxRetryWaitingTime;
+import org.apache.camel.support.task.budget.backoff.BackOffStrategy;
 
-    public ExponentialBackOffStrategy(Long baseRetryTimeOut, Long coefficient, Long maxRetryWaitingTime) {
+public class ExponentialBackOffStrategy implements BackOffStrategy {
+    private final long baseRetryTimeOut;
+    private final long coefficient;
+
+    public ExponentialBackOffStrategy(Long baseRetryTimeOut, Long coefficient) {
         this.baseRetryTimeOut = baseRetryTimeOut;
         this.coefficient = coefficient;
-        //this.maxRetryWaitingTime = maxRetryWaitingTime;
     }
 
     @Override
-    public void waitBeforeRetry(int retryCount) throws InterruptedException {
+    public long calculateInterval(int iteration) {
         //the first and second request do not need wait
-        retryCount -= 2;
-        if (retryCount >= 0) {
-            Thread.sleep((long) (baseRetryTimeOut * Math.pow(coefficient, retryCount)));
+        if (iteration > 2) {
+            long interval = (long) (baseRetryTimeOut * Math.pow(coefficient, iteration - 2));
+
+            return interval;
         }
+
+        return 0;
     }
 }
