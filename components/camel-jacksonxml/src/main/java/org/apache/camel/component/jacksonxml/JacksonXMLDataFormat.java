@@ -102,7 +102,7 @@ public class JacksonXMLDataFormat extends ServiceSupport
      *
      * @param unmarshalType the custom unmarshal type
      * @param jsonView      marker class to specify properties to be included during marshalling. See also
-     *                      http://wiki.fasterxml.com/JacksonJsonViews
+     *                      https://github.com/FasterXML/JacksonJsonViews
      */
     public JacksonXMLDataFormat(Class<?> unmarshalType, Class<?> jsonView) {
         this(unmarshalType, jsonView, true);
@@ -113,7 +113,7 @@ public class JacksonXMLDataFormat extends ServiceSupport
      *
      * @param unmarshalType              the custom unmarshal type
      * @param jsonView                   marker class to specify properties to be included during marshalling. See also
-     *                                   http://wiki.fasterxml.com/JacksonJsonViews
+     *                                   https://github.com/FasterXML/JacksonJsonViews
      * @param enableJaxbAnnotationModule if it is true, will enable the JaxbAnnotationModule.
      */
     public JacksonXMLDataFormat(Class<?> unmarshalType, Class<?> jsonView, boolean enableJaxbAnnotationModule) {
@@ -138,7 +138,7 @@ public class JacksonXMLDataFormat extends ServiceSupport
      * @param mapper        the custom mapper
      * @param unmarshalType the custom unmarshal type
      * @param jsonView      marker class to specify properties to be included during marshalling. See also
-     *                      http://wiki.fasterxml.com/JacksonJsonViews
+     *                      https://github.com/FasterXML/JacksonJsonViews
      */
     public JacksonXMLDataFormat(XmlMapper mapper, Class<?> unmarshalType, Class<?> jsonView) {
         this.xmlMapper = mapper;

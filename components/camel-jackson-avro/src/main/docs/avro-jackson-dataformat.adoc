@@ -12,7 +12,7 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/avro-jack
 *Since Camel {since}*
 
 Jackson Avro is a Data Format which uses the
-http://wiki.fasterxml.com/JacksonHome/[Jackson library] with the https://github.com/FasterXML/jackson-dataformats-binary[Avro extension]
+https://github.com/FasterXML/jackson/[Jackson library] with the https://github.com/FasterXML/jackson-dataformats-binary[Avro extension]
 to unmarshal an Avro payload into Java objects or to marshal Java objects
 into an Avro payload.
 
