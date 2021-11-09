@@ -34,8 +34,6 @@ import org.apache.camel.support.DefaultConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.soroushbot.utils.StringUtils.ordinal;
-
 /**
  * this component handle logic for getting message from Soroush server and for each message it calls abstract function
  * {@link SoroushBotAbstractConsumer#sendExchange(Exchange)} each subclass should handle how it will start the
@@ -84,21 +82,14 @@ public abstract class SoroushBotAbstractConsumer extends DefaultConsumer impleme
         connection = new ReconnectableEventSourceListener(client, request, endpoint.getMaxConnectionRetry()) {
             @Override
             protected boolean onBeforeConnect() {
-                int connectionRetry = getConnectionRetry();
+                long interval = endpoint.getBackOffStrategyHelper().calculateInterval(getConnectionRetry());
+
                 try {
-                    endpoint.waitBeforeRetry(connectionRetry);
+                    Thread.sleep(interval);
                 } catch (InterruptedException e) {
-                    return false;
+                    Thread.currentThread().interrupt();
                 }
-                if (!shutdown) {
-                    if (connectionRetry == 0) {
-                        LOG.info("connecting to getMessage from soroush");
-                    } else {
-                        if (LOG.isInfoEnabled()) {
-                            LOG.info("connection is closed. retrying for the {} time(s)... ", ordinal(connectionRetry));
-                        }
-                    }
-                }
+
                 return !shutdown;
             }
 
