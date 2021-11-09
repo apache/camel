@@ -21,7 +21,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Dataformat;
 
 /**
- * Marshal POJOs to JSON and back using <a href="http://jackson.codehaus.org/">Jackson</a>
+ * Marshal POJOs to JSON and back using <a href="https://github.com/FasterXML/jackson">Jackson</a>
  */
 @Dataformat("json-jackson")
 @Metadata(excludeProperties = "library,permissions,dropRootNode")
