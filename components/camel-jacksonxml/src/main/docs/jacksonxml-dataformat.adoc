@@ -12,7 +12,7 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/jacksonxm
 *Since Camel {since}*
 
 Jackson XML is a Data Format which uses the
-http://wiki.fasterxml.com/JacksonHome/[Jackson library] with the
+https://github.com/FasterXML/jackson/[Jackson library] with the
 https://github.com/FasterXML/jackson-dataformat-xml[XMLMapper extension]
 to unmarshal an XML payload into Java objects or to marshal Java objects
 into an XML payload.
@@ -29,7 +29,7 @@ https://github.com/FasterXML/jackson-dataformat-xml/blob/master/README.md[JAXB's
 "Code first" approach].
 
 This data format relies on
-http://wiki.fasterxml.com/WoodstoxHome[Woodstox] (especially for
+https://github.com/FasterXML/WoodstoxHome[Woodstox] (especially for
 features like pretty printing), a fast and efficient XML processor.
 
 [source,java]
@@ -78,7 +78,7 @@ And then you can refer to this id in the route:
 
 When marshalling a POJO to XML you might want to exclude certain fields
 from the XML output. With Jackson you can
-use http://wiki.fasterxml.com/JacksonJsonViews[JSON views] to accomplish
+use https://github.com/FasterXML/JacksonJsonViews[JSON views] to accomplish
 this. First create one or more marker classes.
 
 Use the marker classes with the `@JsonView` annotation to
@@ -105,7 +105,7 @@ from("direct:inPojoAgeView").
   marshal(ageViewFormat);
 ---------------------------------------------------------------------------------------------------
 
-Directly specify your http://wiki.fasterxml.com/JacksonJsonViews[JSON
+Directly specify your https://github.com/FasterXML/JacksonJsonViews[JSON
 view] inside the Java DSL as:
 
 [source,java]
