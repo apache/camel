@@ -78,7 +78,7 @@ public class CamelKieServerExtensionTest {
 
     @Test
     public void testCreateContainer() {
-        CamelKieServerExtension extension = new CamelKieServerExtension();
+        CamelKieServerExtension extension = new CamelKieServerExtension(new DefaultCamelContext());
         final String containerId = "testContainer";
 
         when(kieContainerInstance.getKieContainer()).thenReturn(kieContainer);
