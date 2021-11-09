@@ -29,7 +29,7 @@ https://github.com/FasterXML/jackson-dataformat-xml/blob/master/README.md[JAXB's
 "Code first" approach].
 
 This data format relies on
-https://github.com/FasterXML/WoodstoxHome[Woodstox] (especially for
+https://github.com/FasterXML/Woodstox[Woodstox] (especially for
 features like pretty printing), a fast and efficient XML processor.
 
 [source,java]
