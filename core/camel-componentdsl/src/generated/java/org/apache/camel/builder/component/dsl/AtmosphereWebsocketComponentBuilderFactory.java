@@ -73,6 +73,23 @@ public interface AtmosphereWebsocketComponentBuilderFactory {
             return this;
         }
         /**
+         * If enabled and an Exchange failed processing on the consumer side the
+         * response's body won't contain the exception's stack trace.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param muteException the value to set
+         * @return the dsl builder
+         */
+        default AtmosphereWebsocketComponentBuilder muteException(
+                boolean muteException) {
+            doSetProperty("muteException", muteException);
+            return this;
+        }
+        /**
          * Default name of servlet to use. The default name is CamelServlet.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -278,6 +295,7 @@ public interface AtmosphereWebsocketComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "bridgeErrorHandler": ((WebsocketComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "muteException": ((WebsocketComponent) component).setMuteException((boolean) value); return true;
             case "servletName": ((WebsocketComponent) component).setServletName((java.lang.String) value); return true;
             case "attachmentMultipartBinding": ((WebsocketComponent) component).setAttachmentMultipartBinding((boolean) value); return true;
             case "fileNameExtWhitelist": ((WebsocketComponent) component).setFileNameExtWhitelist((java.lang.String) value); return true;

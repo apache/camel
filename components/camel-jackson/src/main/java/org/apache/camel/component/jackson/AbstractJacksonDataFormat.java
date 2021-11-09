@@ -102,7 +102,7 @@ public abstract class AbstractJacksonDataFormat extends ServiceSupport
      *
      * @param unmarshalType the custom unmarshal type
      * @param jsonView      marker class to specify properties to be included during marshalling. See also
-     *                      http://wiki.fasterxml.com/JacksonJsonViews
+     *                      https://github.com/FasterXML/jackson-annotations/blob/master/src/main/java/com/fasterxml/jackson/annotation/JsonView.java
      */
     public AbstractJacksonDataFormat(Class<?> unmarshalType, Class<?> jsonView) {
         this.unmarshalType = unmarshalType;
@@ -125,7 +125,7 @@ public abstract class AbstractJacksonDataFormat extends ServiceSupport
      * @param mapper        the custom mapper
      * @param unmarshalType the custom unmarshal type
      * @param jsonView      marker class to specify properties to be included during marshalling. See also
-     *                      http://wiki.fasterxml.com/JacksonJsonViews
+     *                      https://github.com/FasterXML/jackson-annotations/blob/master/src/main/java/com/fasterxml/jackson/annotation/JsonView.java
      */
     public AbstractJacksonDataFormat(ObjectMapper mapper, Class<?> unmarshalType, Class<?> jsonView) {
         this.objectMapper = mapper;

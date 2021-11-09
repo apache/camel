@@ -62,7 +62,7 @@ import static org.apache.camel.component.hl7.HL7Constants.HL7_VERSION_ID;
  * operation will also enrich the message by adding the MSH fields (MSH-3 to MSH-12) as headers on the message.</li>
  * </ul>
  * <p/>
- * Uses the <a href="http://hl7api.sourceforge.net/index.html">HAPI (HL7 API)</a> for HL7 parsing.
+ * Uses the <a href="https://hapifhir.github.io/hapi-hl7v2/index.html">HAPI (HL7 API)</a> for HL7 parsing.
  * <p/>
  * Uses the default GenericParser from the HAPI API. This DataFormat <b>only</b> supports both the EDI based HL7
  * messages and the XML based messages.

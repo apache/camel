@@ -80,7 +80,7 @@
         <avro-ipc-jetty-version>1.10.2</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.10.2</avro-ipc-netty-version>
         <awaitility-version>4.1.1</awaitility-version>
-        <aws-java-sdk2-version>2.17.75</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.17.77</aws-java-sdk2-version>
         <aws-xray-version>2.6.1</aws-xray-version>
         <axiom-version>1.2.14</axiom-version>
         <azure-jackson2-version>2.11.3</azure-jackson2-version>
@@ -160,7 +160,7 @@
         <djl-mxnet-native-version>1.8.0</djl-mxnet-native-version>
         <djl-pytorch-native-version>1.8.1</djl-pytorch-native-version>
         <djl-tensorflow-native-version>2.4.1</djl-tensorflow-native-version>
-        <docker-java-version>3.2.11</docker-java-version>
+        <docker-java-version>3.2.12</docker-java-version>
         <dozer-version>6.5.2</dozer-version>
         <dropbox-version>3.2.0</dropbox-version>
         <debezium-version>1.7.0.Final</debezium-version>
@@ -272,7 +272,7 @@
         <jasypt-version>1.9.3</jasypt-version>
         <java-grok-version>0.1.9</java-grok-version>
         <java-util-version>1.65.0</java-util-version>
-        <jnats-version>2.13.0</jnats-version>
+        <jnats-version>2.13.1</jnats-version>
         <javacc-maven-plugin-version>2.6</javacc-maven-plugin-version>
         <javacrumbs-version>0.22</javacrumbs-version>
         <javaparser-version>3.13.10</javaparser-version>
@@ -292,7 +292,7 @@
         <glassfish-javax-json>1.0.4</glassfish-javax-json>
         <glassfish-jaxb-runtime-version>2.3.3</glassfish-jaxb-runtime-version>
         <jaxb2-maven-plugin-version>2.5.0</jaxb2-maven-plugin-version>
-        <jbpm-version>7.59.0.Final</jbpm-version>
+        <jbpm-version>7.60.0.Final</jbpm-version>
         <jboss-el-api_3.0_spec-version>2.0.0.Final</jboss-el-api_3.0_spec-version>
         <jboss-logging-version>3.4.0.Final</jboss-logging-version>
         <jboss-marshalling-version>1.4.10.Final</jboss-marshalling-version>

@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
 
+import org.apache.camel.support.task.budget.TimeBoundedBudget;
 import org.apache.camel.support.task.budget.TimeBudget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,6 +91,12 @@ public class BackgroundTask implements BlockingTask {
             return;
         }
 
+        if (!budget.next()) {
+            LOG.warn("The task {} does not have more budget to continue running", name);
+
+            return;
+        }
+
         if (predicate.test(payload)) {
             latch.countDown();
             LOG.trace("Task {} has succeeded and the current task won't be schedulable anymore: {}", name, latch.getCount());
@@ -99,6 +106,12 @@ public class BackgroundTask implements BlockingTask {
     private void runTaskWrapper(CountDownLatch latch, BooleanSupplier supplier) {
         LOG.trace("Current latch value: {}", latch.getCount());
         if (latch.getCount() == 0) {
+            return;
+        }
+
+        if (!budget.next()) {
+            LOG.warn("The task {} does not have more budget to continue running", name);
+
             return;
         }
 
@@ -135,12 +148,17 @@ public class BackgroundTask implements BlockingTask {
     private boolean waitForTaskCompletion(CountDownLatch latch, ScheduledExecutorService service) {
         boolean completed = false;
         try {
-            if (!latch.await(budget.maxDuration(), TimeUnit.MILLISECONDS)) {
-                LOG.debug("Timeout out waiting for the completion of the task");
-            } else {
-                LOG.info("The task is complete after iterations and the code is ready to continue");
-
+            if (budget.maxDuration() == TimeBoundedBudget.UNLIMITED_DURATION) {
+                latch.await();
                 completed = true;
+            } else {
+                if (!latch.await(budget.maxDuration(), TimeUnit.MILLISECONDS)) {
+                    LOG.debug("Timeout out waiting for the completion of the task");
+                } else {
+                    LOG.info("The task is complete after iterations and the code is ready to continue");
+
+                    completed = true;
+                }
             }
 
             service.shutdown();

@@ -17,18 +17,13 @@
 
 package org.apache.camel.support.task.budget;
 
-import java.time.Duration;
-import java.time.Instant;
-
 public class IterationTimeBoundedBudget implements IterationBudget, TimeBudget {
     private IterationBudget iterationBudget;
-    private final long maxDuration;
-    private final Instant startTime;
+    private TimeBoundedBudget timeBoundedBudget;;
 
     public IterationTimeBoundedBudget(long initialDelay, long interval, int maxIterations, long maxDuration) {
         iterationBudget = new IterationBoundedBudget(initialDelay, interval, maxIterations);
-        this.maxDuration = maxDuration;
-        this.startTime = Instant.now();
+        timeBoundedBudget = new TimeBoundedBudget(initialDelay, interval, maxDuration);
     }
 
     @Override
@@ -47,7 +42,7 @@ public class IterationTimeBoundedBudget implements IterationBudget, TimeBudget {
     }
 
     @Override
-    public int iterations() {
+    public int iteration() {
         return iterationBudget.maxIterations();
     }
 
@@ -67,18 +62,13 @@ public class IterationTimeBoundedBudget implements IterationBudget, TimeBudget {
             return false;
         }
 
-        // ... the time budget is exhausted
-        if (Duration.between(startTime, Instant.now()).toMillis() >= maxDuration) {
-            return false;
-        }
-
         // Otherwise, can continue to schedule/run the task
-        return true;
+        return timeBoundedBudget.canContinue();
     }
 
     @Override
     public long maxDuration() {
-        return maxDuration;
+        return timeBoundedBudget.maxDuration();
     }
 
 }

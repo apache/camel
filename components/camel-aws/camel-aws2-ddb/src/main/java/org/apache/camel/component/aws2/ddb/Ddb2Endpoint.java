@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws2.ddb;
 
+import java.time.Duration;
+
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
@@ -26,6 +28,10 @@ import org.apache.camel.component.aws2.ddb.client.Ddb2ClientFactory;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
+import org.apache.camel.support.task.BlockingTask;
+import org.apache.camel.support.task.Tasks;
+import org.apache.camel.support.task.budget.Budgets;
+import org.apache.camel.support.task.budget.IterationBoundedBudget;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -134,29 +140,33 @@ public class Ddb2Endpoint extends ScheduledPollEndpoint {
     private void waitForTableToBecomeAvailable(String tableName) {
         LOG.trace("Waiting for [{}] to become ACTIVE...", tableName);
 
-        long waitTime = 5 * 60 * 1000;
-        while (waitTime > 0) {
-            try {
-                Thread.sleep(1000 * 5);
-                waitTime -= 5000;
-            } catch (Exception e) {
+        BlockingTask task = Tasks.foregroundTask().withBudget(Budgets.iterationTimeBudget()
+                .withMaxIterations(IterationBoundedBudget.UNLIMITED_ITERATIONS)
+                .withMaxDuration(Duration.ofMinutes(5))
+                .withInterval(Duration.ofSeconds(5))
+                .build())
+                .build();
+
+        if (!task.run(this::waitForTable, tableName)) {
+            throw new RuntimeCamelException("Table " + tableName + " never went active");
+        }
+    }
+
+    private boolean waitForTable(String tableName) {
+        try {
+            DescribeTableRequest request = DescribeTableRequest.builder().tableName(tableName).build();
+            TableDescription tableDescription = getDdbClient().describeTable(request).table();
+            if (isTableActive(tableDescription)) {
+                LOG.trace("Table [{}] became active", tableName);
+                return true;
             }
-            try {
-                DescribeTableRequest request = DescribeTableRequest.builder().tableName(tableName).build();
-                TableDescription tableDescription = getDdbClient().describeTable(request).table();
-                if (isTableActive(tableDescription)) {
-                    LOG.trace("Table [{}] became active", tableName);
-                    return;
-                }
-                LOG.trace("Table [{}] not active yet", tableName);
-            } catch (AwsServiceException ase) {
-                if (!ase.getMessage().contains("ResourceNotFoundException")) {
-                    throw ase;
-                }
+            LOG.trace("Table [{}] not active yet", tableName);
+        } catch (AwsServiceException ase) {
+            if (!ase.getMessage().contains("ResourceNotFoundException")) {
+                throw ase;
             }
         }
-
-        throw new RuntimeCamelException("Table " + tableName + " never went active");
+        return false;
     }
 
     private boolean isTableActive(TableDescription tableDescription) {

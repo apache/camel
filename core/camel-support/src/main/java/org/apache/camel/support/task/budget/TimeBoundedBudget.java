@@ -17,15 +17,22 @@
 
 package org.apache.camel.support.task.budget;
 
+import java.time.Duration;
+import java.time.Instant;
+
 public class TimeBoundedBudget implements TimeBudget {
+    public static final long UNLIMITED_DURATION = -1;
+
     private final long initialDelay;
     private final long interval;
     private final long maxDuration;
+    private final Instant startTime;
 
     TimeBoundedBudget(long initialDelay, long interval, long maxDuration) {
         this.initialDelay = initialDelay;
         this.interval = interval;
         this.maxDuration = maxDuration;
+        this.startTime = Instant.now();
     }
 
     @Override
@@ -41,5 +48,20 @@ public class TimeBoundedBudget implements TimeBudget {
     @Override
     public long interval() {
         return interval;
+    }
+
+    @Override
+    public boolean canContinue() {
+        // ... the time budget is exhausted
+        if (Duration.between(startTime, Instant.now()).toMillis() >= maxDuration) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean next() {
+        return true;
     }
 }

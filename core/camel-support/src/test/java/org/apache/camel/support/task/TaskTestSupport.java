@@ -55,7 +55,6 @@ public class TaskTestSupport {
         try {
             Thread.sleep(2000);
         } catch (InterruptedException e) {
-            System.out.println("Interrupted");
             return false;
         }
 

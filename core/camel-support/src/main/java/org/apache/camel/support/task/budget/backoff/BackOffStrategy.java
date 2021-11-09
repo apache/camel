@@ -14,26 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.soroushbot.utils;
 
-import org.apache.camel.support.task.budget.backoff.BackOffStrategy;
+package org.apache.camel.support.task.budget.backoff;
 
-public class LinearBackOffStrategy implements BackOffStrategy {
-    private final long retryWaitingTime;
-    private final long increment;
+/**
+ * A back-off strategy is used to configure different strategies for calculating the interval time between iterations
+ */
+public interface BackOffStrategy {
 
-    public LinearBackOffStrategy(Long retryWaitingTime, Long increment) {
-        this.retryWaitingTime = retryWaitingTime;
-        this.increment = increment;
-    }
-
-    @Override
-    public long calculateInterval(int iteration) {
-        //the first and second request do not need wait
-        if (iteration > 2) {
-            return retryWaitingTime + increment * (iteration - 2);
-        }
-
-        return 0;
-    }
+    /**
+     * Calculates the back-off interval
+     *
+     * @param  iteration the current iteration count
+     * @return           the interval in milliseconds
+     */
+    long calculateInterval(int iteration);
 }

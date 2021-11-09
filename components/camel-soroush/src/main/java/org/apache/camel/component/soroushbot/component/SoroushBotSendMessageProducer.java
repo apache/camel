@@ -31,10 +31,11 @@ import org.apache.camel.component.soroushbot.service.SoroushService;
 import org.apache.camel.component.soroushbot.utils.MaximumConnectionRetryReachedException;
 import org.apache.camel.component.soroushbot.utils.SoroushException;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.task.BlockingTask;
+import org.apache.camel.support.task.Tasks;
+import org.apache.camel.support.task.budget.Budgets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.component.soroushbot.utils.StringUtils.ordinal;
 
 /**
  * this Producer is responsible for URIs of type {@link SoroushAction#sendMessage} to send message to SoroushAPI. it
@@ -45,6 +46,15 @@ public class SoroushBotSendMessageProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(SoroushBotSendMessageProducer.class);
     SoroushBotEndpoint endpoint;
     ObjectMapper objectMapper = new ObjectMapper();
+
+    private static class SoroushMessagePayload {
+        final SoroushMessage message;
+        Exception exception;
+
+        public SoroushMessagePayload(SoroushMessage message) {
+            this.message = message;
+        }
+    }
 
     public SoroushBotSendMessageProducer(SoroushBotEndpoint endpoint) {
         super(endpoint);
@@ -61,35 +71,45 @@ public class SoroushBotSendMessageProducer extends DefaultProducer {
         sendMessage(message);
     }
 
+    private boolean doSendMessage(SoroushMessagePayload payload) {
+        try {
+            Response response = endpoint.getSendMessageTarget().request(MediaType.APPLICATION_JSON_TYPE)
+                    .post(Entity.entity(objectMapper.writeValueAsString(payload.message), MediaType.APPLICATION_JSON_TYPE));
+            SoroushService.get().assertSuccessful(response, payload.message);
+
+            return true;
+        } catch (SoroushException | IOException | ProcessingException e) {
+            LOG.warn("failed to send message: {}", payload.message, e);
+
+            payload.exception = e;
+        }
+
+        return false;
+    }
+
     /**
      * @throws MaximumConnectionRetryReachedException if can not connect to soroush after retry
      *                                                {@link SoroushBotEndpoint#getMaxConnectionRetry()} times
      * @throws SoroushException                       if soroush response code wasn't 200
      */
-    private void sendMessage(SoroushMessage message)
-            throws SoroushException, MaximumConnectionRetryReachedException, InterruptedException {
-        Response response;
-        // this for is responsible to handle maximum connection retry.
-        for (int count = 0; count <= endpoint.getMaxConnectionRetry(); count++) {
-            endpoint.waitBeforeRetry(count);
-            try {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("sending message for {} time(s). message: {}", ordinal(count + 1), message);
-                }
-                response = endpoint.getSendMessageTarget().request(MediaType.APPLICATION_JSON_TYPE)
-                        .post(Entity.entity(objectMapper.writeValueAsString(message), MediaType.APPLICATION_JSON_TYPE));
-                SoroushService.get().assertSuccessful(response, message);
-                return;
-            } catch (IOException | ProcessingException ex) {
-                if (count == endpoint.getMaxConnectionRetry()) {
-                    throw new MaximumConnectionRetryReachedException(
-                            "failed to send message. maximum retry limit reached. aborting... message: " + message, ex,
-                            message);
-                }
-                if (LOG.isWarnEnabled()) {
-                    LOG.warn("failed to send message: {}", message, ex);
-                }
+    private void sendMessage(SoroushMessage message) throws MaximumConnectionRetryReachedException {
 
+        BlockingTask task = Tasks.foregroundTask()
+                .withBudget(Budgets.iterationBudget()
+                        .withMaxIterations(endpoint.getMaxConnectionRetry() + 1)
+                        .withBackOffStrategy(endpoint.getBackOffStrategyHelper())
+                        .build())
+                .withName("send-message")
+                .build();
+
+        SoroushMessagePayload payload = new SoroushMessagePayload(message);
+
+        if (!task.run(this::doSendMessage, payload)) {
+            if (payload.exception != null) {
+                throw new MaximumConnectionRetryReachedException(
+                        "Failed to send message. maximum retry limit reached. aborting... message: "
+                                                                 + message,
+                        payload.exception, message);
             }
         }
     }
