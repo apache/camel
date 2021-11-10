@@ -1,6 +1,6 @@
 //component options: START
 
-:tablespec: width="100%",cols="2a,5a,^1,2",options="header"
+:tablespec: width="100%",cols="2,5a,^1,2",options="header"
 :component-option-name: util.boldLink(path[2], "component_option", value.group)
 :endpoint-path-option-name: util.boldLink(path[2], "endpoint_path_option", value.group)
 :endpoint-query-option-name: util.boldLink(path[2], "endpoint_query_option", value.group)
