@@ -16,13 +16,22 @@
  */
 package org.apache.camel.component.smpp;
 
+import java.time.Duration;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.ScheduledExecutorService;
 
+import org.apache.camel.Endpoint;
+import org.apache.camel.support.service.BaseService;
+import org.apache.camel.support.task.BlockingTask;
+import org.apache.camel.support.task.Tasks;
+import org.apache.camel.support.task.budget.Budgets;
 import org.jsmpp.bean.Alphabet;
 import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.SubmitMulti;
 import org.jsmpp.bean.SubmitSm;
+import org.jsmpp.extra.SessionState;
+import org.jsmpp.session.SMPPSession;
 import org.jsmpp.util.AbsoluteTimeFormatter;
 import org.jsmpp.util.TimeFormatter;
 
@@ -262,5 +271,31 @@ public final class SmppUtils {
             dest.setUdhiAndReplyPath();
         }
         return dest;
+    }
+
+    public static boolean isServiceStopping(BaseService service) {
+        return service.isStopping() || service.isStopped();
+    }
+
+    public static boolean isSessionClosed(SMPPSession session) {
+        return session == null || session.getSessionState().equals(SessionState.CLOSED);
+    }
+
+    public static BlockingTask newReconnectTask(
+            BaseService source, Endpoint endpoint, long initialReconnectDelay,
+            int maxReconnect) {
+        final String taskName = "smpp-reconnect";
+        ScheduledExecutorService service = endpoint.getCamelContext().getExecutorServiceManager()
+                .newSingleThreadScheduledExecutor(source, taskName);
+
+        return Tasks.backgroundTask()
+                .withBudget(Budgets.iterationTimeBudget()
+                        .withInitialDelay(Duration.ofMillis(initialReconnectDelay))
+                        .withMaxIterations(maxReconnect)
+                        .withUnlimitedDuration()
+                        .build())
+                .withScheduledExecutor(service)
+                .withName(taskName)
+                .build();
     }
 }
