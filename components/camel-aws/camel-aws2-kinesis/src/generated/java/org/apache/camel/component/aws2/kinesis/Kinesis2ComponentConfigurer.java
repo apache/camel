@@ -54,6 +54,8 @@ public class Kinesis2ComponentConfigurer extends PropertyConfigurerSupport imple
         case "proxyprotocol":
         case "proxyProtocol": getOrCreateConfiguration(target).setProxyProtocol(property(camelContext, software.amazon.awssdk.core.Protocol.class, value)); return true;
         case "region": getOrCreateConfiguration(target).setRegion(property(camelContext, java.lang.String.class, value)); return true;
+        case "resumestrategy":
+        case "resumeStrategy": getOrCreateConfiguration(target).setResumeStrategy(property(camelContext, org.apache.camel.component.aws2.kinesis.consumer.KinesisResumeStrategy.class, value)); return true;
         case "secretkey":
         case "secretKey": getOrCreateConfiguration(target).setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "sequencenumber":
@@ -106,6 +108,8 @@ public class Kinesis2ComponentConfigurer extends PropertyConfigurerSupport imple
         case "proxyprotocol":
         case "proxyProtocol": return software.amazon.awssdk.core.Protocol.class;
         case "region": return java.lang.String.class;
+        case "resumestrategy":
+        case "resumeStrategy": return org.apache.camel.component.aws2.kinesis.consumer.KinesisResumeStrategy.class;
         case "secretkey":
         case "secretKey": return java.lang.String.class;
         case "sequencenumber":
@@ -154,6 +158,8 @@ public class Kinesis2ComponentConfigurer extends PropertyConfigurerSupport imple
         case "proxyprotocol":
         case "proxyProtocol": return getOrCreateConfiguration(target).getProxyProtocol();
         case "region": return getOrCreateConfiguration(target).getRegion();
+        case "resumestrategy":
+        case "resumeStrategy": return getOrCreateConfiguration(target).getResumeStrategy();
         case "secretkey":
         case "secretKey": return getOrCreateConfiguration(target).getSecretKey();
         case "sequencenumber":

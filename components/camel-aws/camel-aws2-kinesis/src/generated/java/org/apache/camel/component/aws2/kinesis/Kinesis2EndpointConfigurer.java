@@ -62,6 +62,8 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
         case "region": target.getConfiguration().setRegion(property(camelContext, java.lang.String.class, value)); return true;
         case "repeatcount":
         case "repeatCount": target.setRepeatCount(property(camelContext, long.class, value)); return true;
+        case "resumestrategy":
+        case "resumeStrategy": target.getConfiguration().setResumeStrategy(property(camelContext, org.apache.camel.component.aws2.kinesis.consumer.KinesisResumeStrategy.class, value)); return true;
         case "runlogginglevel":
         case "runLoggingLevel": target.setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
         case "scheduledexecutorservice":
@@ -144,6 +146,8 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
         case "region": return java.lang.String.class;
         case "repeatcount":
         case "repeatCount": return long.class;
+        case "resumestrategy":
+        case "resumeStrategy": return org.apache.camel.component.aws2.kinesis.consumer.KinesisResumeStrategy.class;
         case "runlogginglevel":
         case "runLoggingLevel": return org.apache.camel.LoggingLevel.class;
         case "scheduledexecutorservice":
@@ -222,6 +226,8 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
         case "region": return target.getConfiguration().getRegion();
         case "repeatcount":
         case "repeatCount": return target.getRepeatCount();
+        case "resumestrategy":
+        case "resumeStrategy": return target.getConfiguration().getResumeStrategy();
         case "runlogginglevel":
         case "runLoggingLevel": return target.getRunLoggingLevel();
         case "scheduledexecutorservice":

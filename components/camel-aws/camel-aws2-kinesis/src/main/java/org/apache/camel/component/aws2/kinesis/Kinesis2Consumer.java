@@ -23,6 +23,8 @@ import java.util.Queue;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.component.aws2.kinesis.consumer.KinesisResumeStrategy;
+import org.apache.camel.component.aws2.kinesis.consumer.KinesisUserConfigurationResumeStrategy;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
@@ -37,7 +39,6 @@ import software.amazon.awssdk.services.kinesis.model.GetShardIteratorRequest;
 import software.amazon.awssdk.services.kinesis.model.GetShardIteratorResponse;
 import software.amazon.awssdk.services.kinesis.model.Record;
 import software.amazon.awssdk.services.kinesis.model.Shard;
-import software.amazon.awssdk.services.kinesis.model.ShardIteratorType;
 
 public class Kinesis2Consumer extends ScheduledBatchPollingConsumer {
 
@@ -160,15 +161,24 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer {
                     .streamName(getEndpoint().getConfiguration().getStreamName()).shardId(shardId)
                     .shardIteratorType(getEndpoint().getConfiguration().getIteratorType());
 
-            if (hasSequenceNumber()) {
-                req.startingSequenceNumber(getEndpoint().getConfiguration().getSequenceNumber());
-            }
+            resume(req);
 
             GetShardIteratorResponse result = getClient().getShardIterator(req.build());
             currentShardIterator = result.shardIterator();
         }
         LOG.debug("Shard Iterator is: {}", currentShardIterator);
         return currentShardIterator;
+    }
+
+    private void resume(GetShardIteratorRequest.Builder req) {
+        KinesisResumeStrategy resumeStrategy;
+        if (getEndpoint().getConfiguration().getResumeStrategy() == null) {
+            resumeStrategy = new KinesisUserConfigurationResumeStrategy(getEndpoint().getConfiguration());
+        } else {
+            resumeStrategy = getEndpoint().getConfiguration().getResumeStrategy();
+        }
+
+        resumeStrategy.resume(req);
     }
 
     private Queue<Exchange> createExchanges(List<Record> records) {
@@ -192,9 +202,4 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer {
         return exchange;
     }
 
-    private boolean hasSequenceNumber() {
-        return !getEndpoint().getConfiguration().getSequenceNumber().isEmpty()
-                && (getEndpoint().getConfiguration().getIteratorType().equals(ShardIteratorType.AFTER_SEQUENCE_NUMBER)
-                        || getEndpoint().getConfiguration().getIteratorType().equals(ShardIteratorType.AT_SEQUENCE_NUMBER));
-    }
 }
