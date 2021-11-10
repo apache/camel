@@ -17,15 +17,11 @@
 package org.apache.camel.component.smpp;
 
 import java.io.IOException;
-import java.time.Duration;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.task.BlockingTask;
-import org.apache.camel.support.task.Tasks;
-import org.apache.camel.support.task.budget.Budgets;
 import org.jsmpp.DefaultPDUReader;
 import org.jsmpp.DefaultPDUSender;
 import org.jsmpp.SynchronizedPDUSender;
@@ -41,6 +37,10 @@ import org.jsmpp.session.SessionStateListener;
 import org.jsmpp.util.DefaultComposer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.component.smpp.SmppUtils.isServiceStopping;
+import static org.apache.camel.component.smpp.SmppUtils.isSessionClosed;
+import static org.apache.camel.component.smpp.SmppUtils.newReconnectTask;
 
 /**
  * An implementation of consumer which use the SMPP protocol
@@ -143,11 +143,11 @@ public class SmppConsumer extends DefaultConsumer {
     }
 
     private boolean doReconnect() {
-        if (isStopping() || isStopped()) {
+        if (isServiceStopping(this)) {
             return true;
         }
 
-        if (session == null || session.getSessionState().equals(SessionState.CLOSED)) {
+        if (isSessionClosed(session)) {
             try {
                 LOG.info("Trying to reconnect to {}", getEndpoint().getConnectionString());
                 session = createSession();
@@ -165,19 +165,8 @@ public class SmppConsumer extends DefaultConsumer {
 
     private void reconnect(final long initialReconnectDelay) {
         if (reconnectLock.tryLock()) {
-            final String taskName = "smpp-reconnect";
-            ScheduledExecutorService service = getEndpoint().getCamelContext().getExecutorServiceManager()
-                    .newSingleThreadScheduledExecutor(this, taskName);
-
-            BlockingTask task = Tasks.backgroundTask()
-                    .withBudget(Budgets.iterationTimeBudget()
-                            .withInitialDelay(Duration.ofMillis(initialReconnectDelay))
-                            .withMaxIterations(configuration.getMaxReconnect())
-                            .withUnlimitedDuration()
-                            .build())
-                    .withScheduledExecutor(service)
-                    .withName(taskName)
-                    .build();
+            BlockingTask task = newReconnectTask(this, getEndpoint(), initialReconnectDelay,
+                    configuration.getMaxReconnect());
 
             try {
                 task.run(this::doReconnect);
