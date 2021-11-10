@@ -75,7 +75,7 @@ public class ForegroundTask implements BlockingTask {
 
             while (budget.next()) {
                 if (predicate.test(payload)) {
-                    LOG.info("Task {} is complete after {} iterations and it is ready to continue",
+                    LOG.debug("Task {} is complete after {} iterations and it is ready to continue",
                             name, budget.iteration());
                     completed = true;
                     break;
@@ -86,7 +86,7 @@ public class ForegroundTask implements BlockingTask {
                 }
             }
         } catch (InterruptedException e) {
-            LOG.warn("Interrupted {} while waiting for the repeatable task to execute", name);
+            LOG.warn("Interrupted {} while waiting for the repeatable task to finish", name);
             Thread.currentThread().interrupt();
         }
 
@@ -104,7 +104,7 @@ public class ForegroundTask implements BlockingTask {
 
             while (budget.next()) {
                 if (supplier.getAsBoolean()) {
-                    LOG.info("Task {} is complete after {} iterations and it is ready to continue",
+                    LOG.debug("Task {} is complete after {} iterations and it is ready to continue",
                             name, budget.iteration());
                     completed = true;
 
@@ -116,7 +116,7 @@ public class ForegroundTask implements BlockingTask {
                 }
             }
         } catch (InterruptedException e) {
-            LOG.warn("Interrupted {} while waiting for the repeatable task to execute", name);
+            LOG.warn("Interrupted {} while waiting for the repeatable task to finish", name);
             Thread.currentThread().interrupt();
         }
 
@@ -140,7 +140,7 @@ public class ForegroundTask implements BlockingTask {
             while (budget.next()) {
                 T ret = supplier.get();
                 if (predicate.test(ret)) {
-                    LOG.info("Task {} is complete after {} iterations and it is ready to continue",
+                    LOG.debug("Task {} is complete after {} iterations and it is ready to continue",
                             name, budget.iteration());
                     return Optional.ofNullable(ret);
                 }
@@ -150,7 +150,7 @@ public class ForegroundTask implements BlockingTask {
                 }
             }
         } catch (InterruptedException e) {
-            LOG.warn("Interrupted {} while waiting for the repeatable task to execute", name);
+            LOG.warn("Interrupted {} while waiting for the repeatable task to finish", name);
             Thread.currentThread().interrupt();
         }
 
