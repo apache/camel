@@ -26,7 +26,7 @@ public interface BudgetBuilder<T extends Budget> {
     /**
      * Build the budget
      * 
-     * @return
+     * @return the budget that was built
      */
     T build();
 }
