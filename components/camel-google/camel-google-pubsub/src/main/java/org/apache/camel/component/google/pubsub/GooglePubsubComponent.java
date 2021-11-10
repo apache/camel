@@ -17,7 +17,10 @@
 package org.apache.camel.component.google.pubsub;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -26,6 +29,7 @@ import com.google.api.gax.core.FixedCredentialsProvider;
 import com.google.api.gax.core.NoCredentialsProvider;
 import com.google.api.gax.grpc.GrpcTransportChannel;
 import com.google.api.gax.rpc.FixedTransportChannelProvider;
+import com.google.api.gax.rpc.StatusCode;
 import com.google.api.gax.rpc.TransportChannelProvider;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.auth.oauth2.ServiceAccountCredentials;
@@ -86,6 +90,11 @@ public class GooglePubsubComponent extends DefaultComponent {
               label = "advanced",
               description = "How many milliseconds should a producer be allowed to terminate.")
     private int publisherTerminationTimeout = 60000;
+
+    @Metadata(
+              label = "consumer",
+              description = "Additional retryable error codes for synchronous pull. By default the PubSub client library retries ABORTED, UNAVAILABLE, UNKNOWN")
+    private StatusCode.Code[] synchronousPullRetryableCodes = new StatusCode.Code[0];
 
     private RemovalListener<String, Publisher> removalListener = removal -> {
         Publisher publisher = removal.getValue();
@@ -183,6 +192,13 @@ public class GooglePubsubComponent extends DefaultComponent {
         SubscriberStubSettings.Builder builder = SubscriberStubSettings.newBuilder().setTransportChannelProvider(
                 SubscriberStubSettings.defaultGrpcTransportProviderBuilder().build());
 
+        if (synchronousPullRetryableCodes.length > 0) {
+            // retrieve the default retryable codes and add the ones specified as a component option
+            Set<StatusCode.Code> retryableCodes = new HashSet<>(builder.pullSettings().getRetryableCodes());
+            retryableCodes.addAll(Arrays.asList(synchronousPullRetryableCodes));
+            builder.pullSettings().setRetryableCodes(retryableCodes);
+        }
+
         if (StringHelper.trimToNull(endpoint) != null) {
             ManagedChannel channel = ManagedChannelBuilder.forTarget(endpoint).usePlaintext().build();
             TransportChannelProvider channelProvider
@@ -253,5 +269,13 @@ public class GooglePubsubComponent extends DefaultComponent {
 
     public void setServiceAccountKey(String serviceAccountKey) {
         this.serviceAccountKey = serviceAccountKey;
+    }
+
+    public StatusCode.Code[] getSynchronousPullRetryableCodes() {
+        return synchronousPullRetryableCodes;
+    }
+
+    public void setSynchronousPullRetryableCodes(StatusCode.Code[] synchronousPullRetryableCodes) {
+        this.synchronousPullRetryableCodes = synchronousPullRetryableCodes;
     }
 }
