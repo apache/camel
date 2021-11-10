@@ -17,9 +17,17 @@
 
 package org.apache.camel.support.task.budget;
 
+/**
+ * This task budget limits the execution by both a given number of iterations or a maximum amount of time for the
+ * execution. When evaluating the budget, the iteration takes precedence over the time budget (hence why: Iteration Time
+ * Budget).
+ *
+ * @see IterationBudget
+ * @see TimeBoundedBudget
+ */
 public class IterationTimeBoundedBudget implements IterationBudget, TimeBudget {
-    private IterationBudget iterationBudget;
-    private TimeBoundedBudget timeBoundedBudget;;
+    private final IterationBudget iterationBudget;
+    private final TimeBoundedBudget timeBoundedBudget;
 
     public IterationTimeBoundedBudget(long initialDelay, long interval, int maxIterations, long maxDuration) {
         iterationBudget = new IterationBoundedBudget(initialDelay, interval, maxIterations);

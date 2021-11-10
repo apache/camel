@@ -18,7 +18,7 @@
 package org.apache.camel.support.task.budget;
 
 /**
- * Defines a budge that limits the task execution to certain length of time
+ * Defines a budget that limits the task execution to certain length of time
  */
 public interface TimeBudget extends Budget {
 

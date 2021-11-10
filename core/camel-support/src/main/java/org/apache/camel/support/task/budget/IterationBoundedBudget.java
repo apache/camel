@@ -20,7 +20,13 @@ package org.apache.camel.support.task.budget;
 import org.apache.camel.support.task.budget.backoff.BackOffStrategy;
 import org.apache.camel.support.task.budget.backoff.FixedBackOffStrategy;
 
+/**
+ * This task budget limits the execution by a given number of iterations or an unlimited number if configured to do so.
+ */
 public class IterationBoundedBudget implements IterationBudget {
+    /**
+     * Defines an "unlimited" number of iterations
+     */
     public static final int UNLIMITED_ITERATIONS = -1;
 
     private final long initialDelay;

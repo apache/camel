@@ -55,7 +55,7 @@ public class BackgroundTask implements BlockingTask {
         }
 
         /**
-         * Sets a executor service manager for managing the threads
+         * Sets an executor service manager for managing the threads
          *
          * @param  service an instance of an executor service to use
          * @return
@@ -155,7 +155,7 @@ public class BackgroundTask implements BlockingTask {
                 if (!latch.await(budget.maxDuration(), TimeUnit.MILLISECONDS)) {
                     LOG.debug("Timeout out waiting for the completion of the task");
                 } else {
-                    LOG.info("The task is complete after iterations and the code is ready to continue");
+                    LOG.debug("The task has finished the execution and it is ready to continue");
 
                     completed = true;
                 }
