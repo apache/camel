@@ -31,6 +31,9 @@ public class MllpExceptionTestSupport {
     public static final byte[] HL7_MESSAGE_BYTES = HL7_MESSAGE.getBytes();
     public static final byte[] HL7_ACKNOWLEDGEMENT_BYTES = HL7_ACKNOWLEDGEMENT.getBytes();
 
+    public static final boolean LOG_PHI_TRUE = true;
+    public static final boolean LOG_PHI_FALSE = false;
+
     public static final Exception CAUSE = new Exception("Dummy Exception");
 
     @AfterEach

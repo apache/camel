@@ -21,11 +21,12 @@ package org.apache.camel.component.mllp;
  * determined.
  */
 public class MllpInvalidAcknowledgementException extends MllpAcknowledgementException {
-    public MllpInvalidAcknowledgementException(String message, byte[] hl7Message, byte[] hl7Acknowledgement) {
-        super(message, hl7Message, hl7Acknowledgement);
+    public MllpInvalidAcknowledgementException(String message, byte[] hl7Message, byte[] hl7Acknowledgement, boolean logPhi) {
+        super(message, hl7Message, hl7Acknowledgement, logPhi);
     }
 
-    public MllpInvalidAcknowledgementException(String message, byte[] hl7Message, byte[] hl7Acknowledgement, Throwable cause) {
-        super(message, hl7Message, hl7Acknowledgement, cause);
+    public MllpInvalidAcknowledgementException(String message, byte[] hl7Message, byte[] hl7Acknowledgement, Throwable cause,
+                                               boolean logPhi) {
+        super(message, hl7Message, hl7Acknowledgement, cause, logPhi);
     }
 }

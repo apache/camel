@@ -38,7 +38,7 @@ public class MllpWriteExceptionTest extends MllpExceptionTestSupport {
      */
     @Test
     public void testConstructorOne() throws Exception {
-        instance = new MllpWriteException(TEST_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES);
+        instance = new MllpWriteException(TEST_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, LOG_PHI_TRUE);
 
         assertNull(instance.getCause());
         assertTrue(instance.getMessage().startsWith(TEST_EXCEPTION_MESSAGE));
@@ -53,7 +53,7 @@ public class MllpWriteExceptionTest extends MllpExceptionTestSupport {
      */
     @Test
     public void testConstructorTwo() throws Exception {
-        instance = new MllpWriteException(TEST_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES);
+        instance = new MllpWriteException(TEST_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, LOG_PHI_TRUE);
 
         assertNull(instance.getCause());
         assertTrue(instance.getMessage().startsWith(TEST_EXCEPTION_MESSAGE));
@@ -68,7 +68,7 @@ public class MllpWriteExceptionTest extends MllpExceptionTestSupport {
      */
     @Test
     public void testConstructorThree() throws Exception {
-        instance = new MllpWriteException(TEST_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, CAUSE);
+        instance = new MllpWriteException(TEST_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, CAUSE, LOG_PHI_TRUE);
 
         assertSame(CAUSE, instance.getCause());
         assertTrue(instance.getMessage().startsWith(TEST_EXCEPTION_MESSAGE));
@@ -83,7 +83,8 @@ public class MllpWriteExceptionTest extends MllpExceptionTestSupport {
      */
     @Test
     public void testConstructorFour() throws Exception {
-        instance = new MllpWriteException(TEST_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, CAUSE);
+        instance = new MllpWriteException(
+                TEST_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, CAUSE, LOG_PHI_TRUE);
 
         assertSame(CAUSE, instance.getCause());
         assertTrue(instance.getMessage().startsWith(TEST_EXCEPTION_MESSAGE));

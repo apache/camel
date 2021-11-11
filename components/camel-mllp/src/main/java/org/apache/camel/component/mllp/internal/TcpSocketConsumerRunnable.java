@@ -22,6 +22,7 @@ import java.net.SocketAddress;
 import java.net.SocketTimeoutException;
 
 import org.apache.camel.Route;
+import org.apache.camel.component.mllp.MllpComponent;
 import org.apache.camel.component.mllp.MllpInvalidMessageException;
 import org.apache.camel.component.mllp.MllpSocketException;
 import org.apache.camel.component.mllp.MllpTcpServerConsumer;
@@ -189,7 +190,8 @@ public class TcpSocketConsumerRunnable implements Runnable {
                     } else {
                         mllpBuffer.resetSocket(clientSocket);
                         new MllpInvalidMessageException(
-                                "Timeout receiving complete message payload", mllpBuffer.toByteArrayAndReset(), timeoutEx);
+                                "Timeout receiving complete message payload", mllpBuffer.toByteArrayAndReset(), timeoutEx,
+                                MllpComponent.isLogPhi());
                         consumer.handleMessageTimeout("Timeout receiving complete message payload",
                                 mllpBuffer.toByteArrayAndReset(), timeoutEx);
                     }

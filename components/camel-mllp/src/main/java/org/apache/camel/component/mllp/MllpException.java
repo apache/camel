@@ -24,32 +24,35 @@ import org.apache.camel.component.mllp.internal.Hl7Util;
 public class MllpException extends Exception {
     final byte[] hl7MessageBytes;
     final byte[] hl7AcknowledgementBytes;
+    final boolean logPhi;
 
     // No-payload constructors
-    public MllpException(String message) {
-        this(message, (byte[]) null, (byte[]) null, (Throwable) null);
+    public MllpException(String message, boolean logPhi) {
+        this(message, (byte[]) null, (byte[]) null, (Throwable) null, logPhi);
     }
 
-    public MllpException(String message, Throwable cause) {
-        this(message, (byte[]) null, (byte[]) null, cause);
+    public MllpException(String message, Throwable cause, boolean logPhi) {
+        this(message, (byte[]) null, (byte[]) null, cause, logPhi);
     }
 
     // Message only payload constructors
-    public MllpException(String message, byte[] hl7MessageBytes) {
-        this(message, hl7MessageBytes, (byte[]) null, (Throwable) null);
+    public MllpException(String message, byte[] hl7MessageBytes, boolean logPhi) {
+        this(message, hl7MessageBytes, (byte[]) null, (Throwable) null, logPhi);
     }
 
-    public MllpException(String message, byte[] hl7MessageBytes, Throwable cause) {
-        this(message, hl7MessageBytes, (byte[]) null, cause);
+    public MllpException(String message, byte[] hl7MessageBytes, Throwable cause, boolean logPhi) {
+        this(message, hl7MessageBytes, (byte[]) null, cause, logPhi);
     }
 
     // Message payload and Acknowledgement payload constructors
-    public MllpException(String message, byte[] hl7MessageBytes, byte[] hl7AcknowledgementBytes) {
-        this(message, hl7MessageBytes, hl7AcknowledgementBytes, (Throwable) null);
+    public MllpException(String message, byte[] hl7MessageBytes, byte[] hl7AcknowledgementBytes, boolean logPhi) {
+        this(message, hl7MessageBytes, hl7AcknowledgementBytes, (Throwable) null, logPhi);
     }
 
-    public MllpException(String message, byte[] hl7MessageBytes, byte[] hl7AcknowledgementBytes, Throwable cause) {
+    public MllpException(String message, byte[] hl7MessageBytes, byte[] hl7AcknowledgementBytes, Throwable cause,
+                         boolean logPhi) {
         super(message, cause);
+        this.logPhi = logPhi;
 
         if (hl7MessageBytes != null && hl7MessageBytes.length > 0) {
             this.hl7MessageBytes = hl7MessageBytes;
@@ -107,8 +110,11 @@ public class MllpException extends Exception {
      */
     @Override
     public String getMessage() {
-        String answer;
+        if (!logPhi) {
+            return super.getMessage();
+        }
 
+        String answer;
         if (hasHl7MessageBytes() || hasHl7AcknowledgementBytes()) {
             String parentMessage = super.getMessage();
 
