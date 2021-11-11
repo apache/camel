@@ -17,6 +17,7 @@
 
 package org.apache.camel.support.task;
 
+import java.time.Duration;
 import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ScheduledExecutorService;
@@ -171,5 +172,10 @@ public class BackgroundTask implements BlockingTask {
         }
 
         return completed;
+    }
+
+    @Override
+    public Duration elapsed() {
+        return budget.elapsed();
     }
 }

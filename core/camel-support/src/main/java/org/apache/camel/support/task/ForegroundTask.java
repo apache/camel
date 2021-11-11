@@ -17,6 +17,7 @@
 
 package org.apache.camel.support.task;
 
+import java.time.Duration;
 import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
@@ -155,5 +156,10 @@ public class ForegroundTask implements BlockingTask {
         }
 
         return Optional.empty();
+    }
+
+    @Override
+    public Duration elapsed() {
+        return budget.elapsed();
     }
 }

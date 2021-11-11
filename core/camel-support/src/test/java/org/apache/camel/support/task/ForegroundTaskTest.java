@@ -25,6 +25,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ForegroundTaskTest extends TaskTestSupport {
@@ -44,6 +46,12 @@ public class ForegroundTaskTest extends TaskTestSupport {
 
         task.run(this::booleanSupplier);
         assertEquals(maxIterations, taskCount);
+
+        Duration duration = task.elapsed();
+        assertNotNull(duration);
+        assertFalse(duration.isNegative());
+        assertFalse(duration.isZero());
+        assertTrue(duration.toMillis() > 0);
     }
 
     @DisplayName("Test that the task does not run for more than the max iterations when using a supplier")
