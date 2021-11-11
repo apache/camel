@@ -60,6 +60,7 @@ public class ForegroundTask implements BlockingTask {
 
     private final String name;
     private IterationBudget budget;
+    private Duration elapsed = Duration.ZERO;
 
     ForegroundTask(IterationBudget budget, String name) {
         this.budget = budget;
@@ -89,6 +90,8 @@ public class ForegroundTask implements BlockingTask {
         } catch (InterruptedException e) {
             LOG.warn("Interrupted {} while waiting for the repeatable task to finish", name);
             Thread.currentThread().interrupt();
+        } finally {
+            elapsed = budget.elapsed();
         }
 
         return completed;
@@ -119,6 +122,8 @@ public class ForegroundTask implements BlockingTask {
         } catch (InterruptedException e) {
             LOG.warn("Interrupted {} while waiting for the repeatable task to finish", name);
             Thread.currentThread().interrupt();
+        } finally {
+            elapsed = budget.elapsed();
         }
 
         return completed;
@@ -153,6 +158,8 @@ public class ForegroundTask implements BlockingTask {
         } catch (InterruptedException e) {
             LOG.warn("Interrupted {} while waiting for the repeatable task to finish", name);
             Thread.currentThread().interrupt();
+        } finally {
+            elapsed = budget.elapsed();
         }
 
         return Optional.empty();
@@ -160,6 +167,6 @@ public class ForegroundTask implements BlockingTask {
 
     @Override
     public Duration elapsed() {
-        return budget.elapsed();
+        return elapsed;
     }
 }
