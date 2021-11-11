@@ -78,6 +78,7 @@ public class BackgroundTask implements BlockingTask {
     private final TimeBudget budget;
     private final ScheduledExecutorService service;
     private final String name;
+    private Duration elapsed = Duration.ZERO;
 
     BackgroundTask(TimeBudget budget, ScheduledExecutorService service, String name) {
         this.budget = budget;
@@ -168,6 +169,7 @@ public class BackgroundTask implements BlockingTask {
             LOG.warn("Interrupted while waiting for the repeatable task to execute");
             Thread.currentThread().interrupt();
         } finally {
+            elapsed = budget.elapsed();
             service.shutdownNow();
         }
 
@@ -176,6 +178,6 @@ public class BackgroundTask implements BlockingTask {
 
     @Override
     public Duration elapsed() {
-        return budget.elapsed();
+        return elapsed;
     }
 }

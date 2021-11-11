@@ -30,13 +30,24 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/*
+ * On most tests we evaluate a range or task count executions within the time budget because:
+ * very fast systems may be able to kick off the task very quickly (i.e.: at the 0th millisecond). Combined
+ * with the time drift and limits in time precision for different platforms, as well as scheduler differences
+ * between scheduler behavior for each OS, this means that an execution may happen at the last second (i.e:
+ * at 0th, 1st, 2nd, 3rd and 4th).
+ */
 public class BackgroundTaskTest extends TaskTestSupport {
 
-    @DisplayName("Test that the task does not run for more than the max iterations when using a supplier with no delay")
+    @DisplayName("Test that the task does not run for more than the max duration when using a supplier with no delay")
     @Test
     @Timeout(10)
     void testRunNoMoreSupplier() {
-        // It should run 5 times in 4 seconds because there is no delay
+        /*
+         * It should run at most 5 times in 4 seconds because:
+         * 1) there is no delay.
+         * 2) the interval is of 1 second
+         */
         BackgroundTask task = Tasks.backgroundTask()
                 .withScheduledExecutor(Executors.newSingleThreadScheduledExecutor())
                 .withBudget(Budgets.timeBudget()
@@ -47,39 +58,56 @@ public class BackgroundTaskTest extends TaskTestSupport {
                 .build();
 
         boolean completed = task.run(this::booleanSupplier);
-        assertEquals(maxIterations, taskCount);
+        assertTrue(taskCount <= maxIterations);
         assertFalse(completed, "The task did not complete, the return should be false");
 
         Duration duration = task.elapsed();
         assertNotNull(duration);
         assertFalse(duration.isNegative());
         assertFalse(duration.isZero());
-        assertTrue(duration.toMillis() > 0);
+        assertTrue(duration.getSeconds() >= 4);
+        assertTrue(duration.getSeconds() <= 5);
     }
 
-    @DisplayName("Test that the task does not run for more than the max iterations when using a supplier with delay")
+    @DisplayName("Test that the task does not run for more than the max duration when using a supplier with delay")
     @Test
     @Timeout(10)
     void testRunNoMoreSupplierWithDelay() {
+        /*
+         * It should run at most 4 times in 4 seconds because:
+         * 1) there is a delay.
+         * 2) the interval is of 1 second
+         */
         BackgroundTask task = Tasks.backgroundTask()
                 .withScheduledExecutor(Executors.newSingleThreadScheduledExecutor())
                 .withBudget(Budgets.timeBudget()
                         .withInterval(Duration.ofSeconds(1))
                         .withInitialDelay(Duration.ofSeconds(1))
-                        .withMaxDuration(Duration.ofSeconds(5))
+                        .withMaxDuration(Duration.ofSeconds(4))
                         .build())
                 .build();
 
         boolean completed = task.run(this::booleanSupplier);
-        assertEquals(maxIterations, taskCount);
+        assertTrue((maxIterations - 1) <= taskCount);
         assertFalse(completed, "The task did not complete, the return should be false");
+
+        Duration duration = task.elapsed();
+        assertNotNull(duration);
+        assertFalse(duration.isNegative());
+        assertFalse(duration.isZero());
+        assertTrue(duration.getSeconds() >= 4);
+        assertTrue(duration.getSeconds() <= 5);
     }
 
-    @DisplayName("Test that the task does not run for more than the max iterations when using a predicate and an initial delay")
+    @DisplayName("Test that the task does not run for more than the max duration when using a predicate and an initial delay")
     @Test
     @Timeout(10)
     void testRunNoMorePredicate() {
-        // It should run 5 times in 4 seconds because there is no delay
+        /*
+         * It should run at most 5 times in 4 seconds because:
+         * 1) there is no delay.
+         * 2) the interval is of 1 second
+         */
         BackgroundTask task = Tasks.backgroundTask()
                 .withScheduledExecutor(Executors.newSingleThreadScheduledExecutor())
                 .withBudget(Budgets.timeBudget()
@@ -90,15 +118,25 @@ public class BackgroundTaskTest extends TaskTestSupport {
                 .build();
 
         boolean completed = task.run(this::taskPredicate, new Object());
-        assertEquals(maxIterations, taskCount);
+        assertTrue(taskCount <= maxIterations);
         assertFalse(completed, "The task did not complete, the return should be false");
+
+        Duration duration = task.elapsed();
+        assertNotNull(duration);
+        assertFalse(duration.isNegative());
+        assertFalse(duration.isZero());
+        assertTrue(duration.getSeconds() >= 4);
+        assertTrue(duration.getSeconds() <= 5);
     }
 
     @DisplayName("Test that the task stops running once the predicate is true")
     @Test
     @Timeout(10)
-    void testRunNoMorePredicateDeterministic() {
-        // It should run 5 times in 4 seconds because there is no delay
+    void testRunNoMorePredicateWithSuccess() {
+        /*
+         * It should run 3 times in 4 seconds because when the task return successfully, the result must be
+         * deterministic.
+         */
         BackgroundTask task = Tasks.backgroundTask()
                 .withScheduledExecutor(Executors.newSingleThreadScheduledExecutor())
                 .withBudget(Budgets.timeBudget()
@@ -116,8 +154,11 @@ public class BackgroundTaskTest extends TaskTestSupport {
     @DisplayName("Test that the task stops running once the predicate is true when the test is slow")
     @Test
     @Timeout(10)
-    void testRunNoMorePredicateDeterministicSlow() {
-        // It should run 5 times in 4 seconds because there is no delay
+    void testRunNoMorePredicateWithTimeout() {
+        /*
+         * Each execution takes 2 seconds to complete. Therefore, running the task every second means that the task
+         * count should not exceed 2 because anything greater than that means that the timeout was exceeded.
+         */
         BackgroundTask task = Tasks.backgroundTask()
                 .withScheduledExecutor(Executors.newSingleThreadScheduledExecutor())
                 .withBudget(Budgets.timeBudget()
@@ -128,15 +169,26 @@ public class BackgroundTaskTest extends TaskTestSupport {
                 .build();
 
         boolean completed = task.run(this::taskPredicateWithDeterministicStopSlow, Integer.valueOf(3));
-        assertTrue(taskCount < maxIterations);
+        assertTrue(taskCount <= 2, "Slow task: it should not run more than 2 times in 4 seconds");
+
+        Duration duration = task.elapsed();
+        assertNotNull(duration);
+        assertFalse(duration.isNegative());
+        assertFalse(duration.isZero());
+        assertTrue(duration.getSeconds() >= 4);
+        assertTrue(duration.getSeconds() <= 5);
         assertFalse(completed, "The task did not complete because of timeout, the return should be false");
     }
 
     @DisplayName("Test that the task stops running once the predicate is true when the test is slow")
     @Test
     @Timeout(10)
-    void testRunNoMorePredicateDeterministicSlowWithDelay() {
-        // It should run 5 times in 4 seconds because there is no delay
+    void testRunNoMorePredicateWithTimeoutAndDelay() {
+        /*
+         * Each execution takes 2 seconds to complete, but it has a 1-second delay. Therefore, running the task every
+         * second means that the task count should not exceed 1 because anything greater than that means that the
+         * timeout was exceeded.
+         */
         BackgroundTask task = Tasks.backgroundTask()
                 .withScheduledExecutor(Executors.newSingleThreadScheduledExecutor())
                 .withBudget(Budgets.timeBudget()
@@ -147,7 +199,12 @@ public class BackgroundTaskTest extends TaskTestSupport {
                 .build();
 
         boolean completed = task.run(this::taskPredicateWithDeterministicStopSlow, Integer.valueOf(3));
-        assertTrue(taskCount < maxIterations);
+        Duration duration = task.elapsed();
+        assertNotNull(duration);
+        assertFalse(duration.isNegative());
+        assertFalse(duration.isZero());
+        assertTrue(duration.getSeconds() >= 4);
+        assertTrue(duration.getSeconds() <= 5);
         assertFalse(completed, "The task did not complete because of timeout, the return should be false");
     }
 }
