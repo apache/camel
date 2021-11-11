@@ -170,7 +170,7 @@ public class XPathExpression extends NamespaceAwareExpression {
     }
 
     /**
-     * Whether to log namespaces which can assist during trouble shooting
+     * Whether to log namespaces which can assist during troubleshooting
      */
     public void setLogNamespaces(String logNamespaces) {
         this.logNamespaces = logNamespaces;
