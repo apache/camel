@@ -27,11 +27,12 @@ import org.junit.jupiter.api.Timeout;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BackgroundTaskTest extends TaskTestSupport {
 
-    @DisplayName("Test that the task does not run for more than the max iterations when using a supplier")
+    @DisplayName("Test that the task does not run for more than the max iterations when using a supplier with no delay")
     @Test
     @Timeout(10)
     void testRunNoMoreSupplier() {
@@ -48,9 +49,15 @@ public class BackgroundTaskTest extends TaskTestSupport {
         boolean completed = task.run(this::booleanSupplier);
         assertEquals(maxIterations, taskCount);
         assertFalse(completed, "The task did not complete, the return should be false");
+
+        Duration duration = task.elapsed();
+        assertNotNull(duration);
+        assertFalse(duration.isNegative());
+        assertFalse(duration.isZero());
+        assertTrue(duration.toMillis() > 0);
     }
 
-    @DisplayName("Test that the task does not run for more than the max iterations when using a supplier")
+    @DisplayName("Test that the task does not run for more than the max iterations when using a supplier with delay")
     @Test
     @Timeout(10)
     void testRunNoMoreSupplierWithDelay() {

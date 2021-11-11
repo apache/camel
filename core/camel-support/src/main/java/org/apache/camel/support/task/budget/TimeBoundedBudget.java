@@ -56,7 +56,7 @@ public class TimeBoundedBudget implements TimeBudget {
     @Override
     public boolean canContinue() {
         // ... if time budget is NOT exhausted
-        if (Duration.between(startTime, Instant.now()).toMillis() >= maxDuration) {
+        if (elapsed().toMillis() >= maxDuration) {
             return false;
         }
 
@@ -66,5 +66,10 @@ public class TimeBoundedBudget implements TimeBudget {
     @Override
     public boolean next() {
         return true;
+    }
+
+    @Override
+    public Duration elapsed() {
+        return Duration.between(startTime, Instant.now());
     }
 }
