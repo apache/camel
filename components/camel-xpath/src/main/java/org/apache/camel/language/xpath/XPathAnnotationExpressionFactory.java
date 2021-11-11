@@ -42,7 +42,8 @@ public class XPathAnnotationExpressionFactory extends DefaultAnnotationExpressio
         }
 
         XPathBuilder builder = XPathBuilder.xpath(xpath, resultType);
-        builder.preCompile(isPreCompile(annotation));
+        // @XPath annotation cannot pre-compile so turn it off
+        builder.preCompile(false);
         builder.setLogNamespaces(isLogNamespaces(annotation));
         NamespacePrefix[] namespaces = getExpressionNameSpacePrefix(annotation);
         if (namespaces != null) {
@@ -95,13 +96,4 @@ public class XPathAnnotationExpressionFactory extends DefaultAnnotationExpressio
         return false;
     }
 
-    protected boolean isPreCompile(Annotation annotation) {
-        // in case @XPath is extended in a custom annotation then it may not have the method
-        try {
-            return (boolean) getAnnotationObjectValue(annotation, "preCompile");
-        } catch (Exception e) {
-            // Do Nothing
-        }
-        return false;
-    }
 }
