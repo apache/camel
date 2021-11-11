@@ -19,6 +19,7 @@ package org.apache.camel.component.seda;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -26,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * Tests that a Seda producer supports the blockWhenFull option by blocking when a message is sent while the queue is
  * full.
  */
+@Timeout(20)
 public class SedaBlockWhenFullTest extends ContextTestSupport {
     private static final int QUEUE_SIZE = 1;
     private static final int DELAY = 10;

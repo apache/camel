@@ -33,9 +33,11 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.service.ServiceHelper;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
+@Timeout(20)
 public class AsyncEndpointRoutingSlipBeanNonBlockingTest extends ContextTestSupport {
     private AsyncCallback innerCallback;
     private Exchange innerExchange;

@@ -22,9 +22,11 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Timeout(20)
 public class SedaConfigureTest extends ContextTestSupport {
 
     @SuppressWarnings("unchecked")
