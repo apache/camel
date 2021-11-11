@@ -86,8 +86,9 @@ public class DirectVmBlockingProducer extends DefaultAsyncProducer {
     }
 
     private DirectVmConsumer awaitConsumer() {
-        ForegroundTask task = Tasks.foregroundTask().withBudget(Budgets.iterationBudget()
+        ForegroundTask task = Tasks.foregroundTask().withBudget(Budgets.iterationTimeBudget()
                 .withMaxIterations(IterationBoundedBudget.UNLIMITED_ITERATIONS)
+                .withMaxDuration(Duration.ofMillis(endpoint.getTimeout()))
                 .withInterval(Duration.ofMillis(500))
                 .build())
                 .build();
