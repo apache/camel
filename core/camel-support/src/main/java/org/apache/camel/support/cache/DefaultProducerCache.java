@@ -133,13 +133,12 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
                 .build())
                 .build();
 
-        StopWatch watch = LOG.isDebugEnabled() ? new StopWatch() : null;
         if (!task.run(service::isStarting)) {
             LOG.warn("The producer: {} did not finish starting in {} ms", service, ACQUIRE_WAIT_TIME);
         }
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Waited {} ms for producer to finish starting: {} state: {}", watch.taken(), service,
+            LOG.debug("Waited {} ms for producer to finish starting: {} state: {}", task.elapsed().toMillis(), service,
                     service.getStatus());
         }
     }
