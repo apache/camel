@@ -301,7 +301,7 @@ public class MethodInfo {
                     if (!ServiceHelper.isStarted(dynamicRouter)) {
                         ServiceHelper.startService(dynamicRouter);
                     }
-                    // use a expression which invokes the method to be used by dynamic router
+                    // use an expression which invokes the method to be used by dynamic router
                     Expression expression = new DynamicRouterExpression(pojo);
                     expression.init(camelContext);
                     exchange.setProperty(ExchangePropertyKey.EVALUATE_EXPRESSION_RESULT, expression);
