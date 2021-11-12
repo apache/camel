@@ -163,7 +163,7 @@ public class XPathBuilder extends ServiceSupport
 
     @Override
     public void init(CamelContext context) {
-        if (preCompile) {
+        if (preCompile && pool.isEmpty()) {
             LOG.trace("PreCompiling new XPathExpression and adding to pool during initialization");
             try {
                 XPathExpression xpathExpression = createXPathExpression();
