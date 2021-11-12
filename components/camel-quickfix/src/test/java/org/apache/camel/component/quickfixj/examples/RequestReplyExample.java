@@ -80,7 +80,7 @@ public class RequestReplyExample {
                 // order status being delivered using the json printer.
                 from("quickfix:examples/inprocess.cfg?sessionID=FIX.4.2:MARKET->TRADER&exchangePattern=InOut")
                         .filter(header(QuickfixjEndpoint.MESSAGE_TYPE_KEY).isEqualTo(MsgType.ORDER_STATUS_REQUEST))
-                        .to("log://OrderStatusRequestLog?showAll=true&showOut=true&multiline=true")
+                        .to("log://OrderStatusRequestLog?showAll=true&multiline=true")
                         .bean(new MarketOrderStatusService())
                         .bean(new QuickfixjMessageJsonPrinter());
 
