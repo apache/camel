@@ -6,9 +6,9 @@
     "description": "Common package for HuaweiCloud components",
     "deprecated": false,
     "firstVersion": "3.12.0",
-    "supportLevel": "Preview",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-huaweicloud-common",
-    "version": "3.13.0-SNAPSHOT"
+    "version": "3.14.0-SNAPSHOT"
   }
 }

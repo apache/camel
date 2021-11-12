@@ -4,7 +4,7 @@
 :artifactid: camel-huaweicloud-imagerecognition
 :description: To identify objects, scenes, and concepts in images on Huawei Cloud
 :since: 3.12
-:supportlevel: Preview
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/hwcloud-imagerecognition.adoc[opts=optional]
 //Manually maintained attributes
