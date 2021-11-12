@@ -256,13 +256,24 @@ public class DefaultUnitOfWork implements UnitOfWork {
 
         // the exchange is now done
         if (exchange instanceof PooledExchange) {
+            // pooled exchange has its own done logic which will reset this uow for reuse
+            // so do not call onDone
             try {
                 ((PooledExchange) exchange).done(false);
             } catch (Throwable e) {
                 // must catch exceptions to ensure synchronizations is also invoked
                 log.warn("Exception occurred during exchange done. This exception will be ignored.", e);
             }
+        } else {
+            onDone();
         }
+    }
+
+    protected void onDone() {
+        // MUST clear and set uow to null on exchange after done
+        // in case the same exchange is manually reused by Camel end users (should happen seldom)
+        ExtendedExchange ee = (ExtendedExchange) exchange;
+        ee.setUnitOfWork(null);
     }
 
     @Override
