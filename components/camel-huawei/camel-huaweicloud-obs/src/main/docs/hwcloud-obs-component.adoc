@@ -4,7 +4,7 @@
 :artifactid: camel-huaweicloud-obs
 :description: To provide stable, secure, efficient, and easy-to-use cloud storage service on Huawei Cloud
 :since: 3.12
-:supportlevel: Preview
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/hwcloud-obs.adoc[opts=optional]
 //Manually maintained attributes
