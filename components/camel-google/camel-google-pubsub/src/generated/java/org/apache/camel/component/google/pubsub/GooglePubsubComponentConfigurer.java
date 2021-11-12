@@ -38,7 +38,7 @@ public class GooglePubsubComponentConfigurer extends PropertyConfigurerSupport i
         case "serviceaccountkey":
         case "serviceAccountKey": target.setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
         case "synchronouspullretryablecodes":
-        case "synchronousPullRetryableCodes": target.setSynchronousPullRetryableCodes(property(camelContext, com.google.api.gax.rpc.StatusCode.Code[].class, value)); return true;
+        case "synchronousPullRetryableCodes": target.setSynchronousPullRetryableCodes(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -63,7 +63,7 @@ public class GooglePubsubComponentConfigurer extends PropertyConfigurerSupport i
         case "serviceaccountkey":
         case "serviceAccountKey": return java.lang.String.class;
         case "synchronouspullretryablecodes":
-        case "synchronousPullRetryableCodes": return com.google.api.gax.rpc.StatusCode.Code[].class;
+        case "synchronousPullRetryableCodes": return java.lang.String.class;
         default: return null;
         }
     }

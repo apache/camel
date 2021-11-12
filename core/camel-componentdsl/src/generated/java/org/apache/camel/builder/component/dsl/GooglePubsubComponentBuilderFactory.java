@@ -121,12 +121,11 @@ public interface GooglePubsubComponentBuilderFactory {
             return this;
         }
         /**
-         * Additional retryable error codes for synchronous pull. By default the
-         * PubSub client library retries ABORTED, UNAVAILABLE, UNKNOWN.
+         * Comma-separated list of additional retryable error codes for
+         * synchronous pull. By default the PubSub client library retries
+         * ABORTED, UNAVAILABLE, UNKNOWN.
          * 
-         * The option is a:
-         * &lt;code&gt;com.google.api.gax.rpc.StatusCode.Code[]&lt;/code&gt;
-         * type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
          * 
@@ -134,7 +133,7 @@ public interface GooglePubsubComponentBuilderFactory {
          * @return the dsl builder
          */
         default GooglePubsubComponentBuilder synchronousPullRetryableCodes(
-                com.google.api.gax.rpc.StatusCode.Code[] synchronousPullRetryableCodes) {
+                java.lang.String synchronousPullRetryableCodes) {
             doSetProperty("synchronousPullRetryableCodes", synchronousPullRetryableCodes);
             return this;
         }
@@ -250,7 +249,7 @@ public interface GooglePubsubComponentBuilderFactory {
             case "endpoint": ((GooglePubsubComponent) component).setEndpoint((java.lang.String) value); return true;
             case "serviceAccountKey": ((GooglePubsubComponent) component).setServiceAccountKey((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((GooglePubsubComponent) component).setBridgeErrorHandler((boolean) value); return true;
-            case "synchronousPullRetryableCodes": ((GooglePubsubComponent) component).setSynchronousPullRetryableCodes((com.google.api.gax.rpc.StatusCode.Code[]) value); return true;
+            case "synchronousPullRetryableCodes": ((GooglePubsubComponent) component).setSynchronousPullRetryableCodes((java.lang.String) value); return true;
             case "lazyStartProducer": ((GooglePubsubComponent) component).setLazyStartProducer((boolean) value); return true;
             case "publisherCacheSize": ((GooglePubsubComponent) component).setPublisherCacheSize((int) value); return true;
             case "publisherCacheTimeout": ((GooglePubsubComponent) component).setPublisherCacheTimeout((int) value); return true;
