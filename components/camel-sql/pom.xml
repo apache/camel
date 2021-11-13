@@ -104,7 +104,7 @@
                             <sourceDirectory>
                                 ${basedir}/src/main/java/org/apache/camel/component/sql/stored/template/grammar
                             </sourceDirectory>
-                            <outputDirectory>${basedir}/src/main/java</outputDirectory>
+                            <outputDirectory>${basedir}/src/generated/java</outputDirectory>
                         </configuration>
                         <goals>
                             <goal>javacc</goal>
