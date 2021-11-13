@@ -218,7 +218,7 @@ public class RecipientListProcessor extends MulticastProcessor {
                 index = doCreateProcessorExchangePairs(exchange, recipient, result, index);
             }
             return result;
-        } else if (recipientList.getClass().isArray()) {
+        } else if (recipientList != null && recipientList.getClass().isArray()) {
             Object[] arr = (Object[]) recipientList;
             int size = Array.getLength(recipientList);
             List<ProcessorExchangePair> result = new ArrayList<>(size);
