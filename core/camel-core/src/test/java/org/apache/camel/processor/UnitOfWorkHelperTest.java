@@ -48,6 +48,8 @@ public class UnitOfWorkHelperTest extends ContextTestSupport {
         fromEndpoint = context.getEndpoint("seda:from", SedaEndpoint.class);
 
         eventNotifier = new CustomEventNotifier();
+        // ensure custom event notifier is started to receive events
+        eventNotifier.start();
         context.getManagementStrategy().addEventNotifier(eventNotifier);
         Exchange testExchange = createExchange("testFile");
 
