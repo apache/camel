@@ -202,6 +202,7 @@ public class MDCUnitOfWork extends DefaultUnitOfWork implements Service {
 
     @Override
     protected void onDone() {
+        super.onDone();
         // clear MDC, so we do not leak as Camel is done using this UoW
         clear();
     }
