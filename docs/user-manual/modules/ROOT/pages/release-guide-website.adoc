@@ -17,10 +17,10 @@ Since we are marking the main branch as prerelease, this will never be the main 
 == After a new release branch is created
 
 This will always be a branch from `main`.
-Changes to both `main` and the new branch, say `camel-3.12.x`, will be needed.
+Changes to the new branch, say `camel-3.13.x`, will be needed.
 The changes are almost the same whether the new branch is LTS or not.
 
-=== Changes to the new branch (`3.12.x`)
+=== Changes to the new branch (`3.13.x`) in synchronized projects
 
 For each of the projects, `camel`, `camel-karaf`, `camel-spring-boot`, locate the section for the project in the `camel-website` `antora-playbook.yml` and adjust the version in the component descriptor for each start path.
 As of writing this consists of:
@@ -33,9 +33,9 @@ In `camel-spring-boot/core/antora.yml`::
 In `camel-spring-boot/docs/components/antora.yml`::
 In `camel-spring-boot/docs/spring-boot/antora.yml`::
 
-* Change `version` to the branch name e.g. `3.12.x`
+* Change `version` to the branch name e.g. `3.13.x`
 * Remove the `prerelease` flag line
-* If the new branch is LTS, set the display-version to e.g. `3.12.x (LTS)`.
+* If the new branch is LTS, set the display-version to e.g. `3.13.x (LTS)`.
 * If the new branch is not LTS, remove the `display-version` line.
 
 In `camel-karaf:tooling/camel-karaf-docs-maven-plugin/src/main/java/org/apache/camel/karaf/maven/ExtMvelHelper.java`::
@@ -48,12 +48,21 @@ private final static String CAMEL_VERSION = "next";`
 to e.g.
 +
 [source,java]
-private final static String CAMEL_VERSION = "3.12.x";
+private final static String CAMEL_VERSION = "3.13.x";
 
 At this point, build each project (`mvn clean install -Pfastinstall`) and check for generated changes that should be committed.
 
 NOTE: TODO: Is there a step of setting up CI or the regen bot?
 Should maven snapshots be deployed?
+
+=== Changes to other subprojects
+
+Be sure the subprojects using the latest release of main camel are aware that they need to update to the latest version, including documentation updates.
+Any reference to the main camel documentation should use a version set in the subproject antora.yml component descriptor(s).
+This may be set automatically from another source such as a maven `pom.xml`.
+
+Subproject changes are likely to involve code as well as documentation changes and need to be done by a subproject expert.
+This section only attempts to describe the documentation changes needed.
 
 In the `camel-quarkus` project examine the root `pom.xml` of every version used in the website.
 There will be a property entry like:
@@ -68,19 +77,59 @@ If changed, follow the instructions and run mvn validate in the docs directory.
 
 === Changes to the Antora playbook
 
+This must be done in three steps:
+
+. Add the new documentation version to the published website, leaving the previous version.
+. Wait for all subprojects such as camel-quarkus to update to using the new version, as appropriate.
+. Remove the old, previous, documentation version from the website, if appropriate.
+
 NOTE: After a release, consider whether any LTS versions are now out of service and should be removed from the documentation.
+
+==== Step 1
+
+Add the new branch to `camel-website:antora-playbook.yml` for the `content.sources` for `camel` 3 docs, `camel-karaf`, and `camel-spring-boot`.
+Add the new branch near the top of the list after the `main` branch to keep the branches listed in reverse chronological order.
+
+Test your work locally and with a PR... once it is approved and committed go on to step 2.
+
+==== Step 2
+
+Make sure all subproject participants are aware of the new release and wait for them to update the subprojects to use the new release as appropriate.
+
+==== Step 3
 
 There are two cases to consider in modifying `camel-website:antora-playbook.yml`.
 
 New LTS version::
 Release after a non-LTS release::
-* Change the branch of the last release to that of the new release in the sources sections for camel, camel-karaf, and camel-spring-boot.
-Branches should be listed in reverse release order, newest first, preceded by the `main` prerelease branch.
+* Remove the previous release branch from the sources sections for camel, camel-karaf, and camel-spring-boot.
 
 First release after an LTS release::
-* Add a new branch in the sources sections for camel, camel-karaf, and camel-spring-boot between `main` and the last LTS release branch.
+* Nothing to do.
 
-=== Test your work!
+=== How to test your work
 
-Create branches for each changed branch, push them, use those branches in your playbook, commit the playbook in a branch and push it, and open a PR for the playbook to find out if you missed anything.
-Wait for the PR build and netlify preview and check that the build succeeded and the preview looks good.
+This process should be followed for any documentation change and is especially important for new releases.
+
+. The documentation changes will be on one or more branches in your GitHub fork(s) of camel projects.
+Make sure that the modified branch(es), say `3.13.x-feature`, and all unmodified branches are up to date in your fork.
+There may be better ways, but one way is to, in your local clone, fetch from origin, pull into each unmodified branch, and push these to your fork.
+
+. In your clone of the camel-website project, modify the playbook to use your forks of the changed branches as urls and the changed branches.
+Since you've updated your fork on unchanged branches to match origin, the other branches should be up to date.
+
+. Build the site locally.
+.. (one time) You may need to compile platform specific Node dependencies if you are not on a Linux x86 system by running `yarn workspaces foreach install`.
+.. (one time) You may need to build the Antora ui by running `yarn build-all` or `cd antora-ui-camel && yarn build`
+.. After this running `yarn build:antora` or `yarn build` is sufficient.
+
+. Your playbook and other website changes are on a branch of the `camel-website` project.
+Push this branch to your `camel-website` fork and open a PR.
+Wait for the PR preview build on Netlify and check that the build succeeded and the results look as you expect.
+
+. After appropriate approvals merge your documentation source branch PRs.
+
+. Update your Antora playbook by switching back to the `apache` urls and the merged branches.
+Push the result to your fork and wait for the PR preview build.
+
+. Once this is satisfactory and you have the appropriate approvals merge your `camel-website` PR.
