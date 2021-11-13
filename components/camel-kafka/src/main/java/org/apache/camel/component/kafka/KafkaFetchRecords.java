@@ -62,7 +62,7 @@ class KafkaFetchRecords implements Runnable {
     private final ConcurrentLinkedQueue<KafkaAsyncManualCommit> asyncCommits = new ConcurrentLinkedQueue<>();
 
     private boolean retry = true;
-    private boolean reconnect = true;
+    private boolean reconnect; // must be false at init
 
     KafkaFetchRecords(KafkaConsumer kafkaConsumer, PollExceptionStrategy pollExceptionStrategy,
                       BridgeExceptionHandlerToErrorHandler bridge, String topicName, Pattern topicPattern, String id,
