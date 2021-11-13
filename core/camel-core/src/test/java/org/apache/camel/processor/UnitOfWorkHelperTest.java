@@ -14,19 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
-import org.apache.camel.component.direct.DirectEndpoint;
 import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileMessage;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.seda.SedaEndpoint;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeCreatedEvent;
 import org.apache.camel.support.DefaultExchange;
@@ -39,21 +37,22 @@ public class UnitOfWorkHelperTest extends ContextTestSupport {
 
     private static final String FILE_CONTENT = "Lorem ipsum dolor sit amet";
 
-    @EndpointInject(value = "mock:result")
-    protected MockEndpoint resultEndpoint;
-    private DirectEndpoint fromEndpoint;
-
+    private MockEndpoint resultEndpoint;
+    private SedaEndpoint fromEndpoint;
     private CustomEventNotifier eventNotifier;
     private int numberOfExchangeCreatedEvents;
 
     @Test
     void testUoWShouldBeClearedOnJobDone() throws Exception {
+        resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
+        fromEndpoint = context.getEndpoint("seda:from", SedaEndpoint.class);
+
         eventNotifier = new CustomEventNotifier();
         context.getManagementStrategy().addEventNotifier(eventNotifier);
         Exchange testExchange = createExchange("testFile");
 
-        template.send("direct:from", testExchange);
-        template.send("direct:from", testExchange);
+        template.send(fromEndpoint, testExchange);
+        template.send(fromEndpoint, testExchange);
 
         assertEquals(2, numberOfExchangeCreatedEvents);
     }
@@ -62,7 +61,7 @@ public class UnitOfWorkHelperTest extends ContextTestSupport {
         Exchange testExchange = new DefaultExchange(context);
 
         GenericFile<String> testFile = createFile(fileName);
-        Message testMessage = new GenericFileMessage<String>(testExchange, testFile);
+        Message testMessage = new GenericFileMessage<>(testExchange, testFile);
         testMessage.setBody(testFile);
 
         testExchange.setIn(testMessage);
