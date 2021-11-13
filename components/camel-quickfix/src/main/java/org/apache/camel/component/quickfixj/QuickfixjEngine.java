@@ -93,13 +93,13 @@ public class QuickfixjEngine extends ServiceSupport {
     private LogFactory sessionLogFactory;
     private MessageFactory messageFactory;
     private final MessageCorrelator messageCorrelator = new MessageCorrelator();
-    private List<QuickfixjEventListener> eventListeners = new CopyOnWriteArrayList<>();
+    private final List<QuickfixjEventListener> eventListeners = new CopyOnWriteArrayList<>();
     private final String uri;
     private ObjectName acceptorObjectName;
     private ObjectName initiatorObjectName;
     private final SessionSettings settings;
     private final AtomicBoolean initialized = new AtomicBoolean();
-    private boolean lazy;
+    private final boolean lazy;
 
     public enum ThreadModel {
         ThreadPerConnector,
@@ -161,6 +161,9 @@ public class QuickfixjEngine extends ServiceSupport {
     void initializeEngine()
             throws ConfigError,
             FieldConvertError, JMException {
+
+        LOG.debug("Initializing QuickFIX/J Engine");
+
         if (messageFactory == null) {
             messageFactory = new DefaultMessageFactory();
         }
@@ -223,6 +226,8 @@ public class QuickfixjEngine extends ServiceSupport {
         } finally {
             Thread.currentThread().setContextClassLoader(ccl);
         }
+
+        LOG.debug("Initialized QuickFIX/J Engine acceptor: {}, initiator: {}", acceptor, initiator);
         initialized.set(true);
     }
 
@@ -233,6 +238,8 @@ public class QuickfixjEngine extends ServiceSupport {
 
     @Override
     protected void doStart() throws Exception {
+        LOG.debug("Starting QuickFIX/J Engine acceptor: {}, initiator: {}", acceptor, initiator);
+
         if (acceptor != null) {
             acceptor.start();
             if (jmxExporter != null) {
@@ -249,6 +256,8 @@ public class QuickfixjEngine extends ServiceSupport {
 
     @Override
     protected void doStop() throws Exception {
+        LOG.debug("Stopping QuickFIX/J Engine acceptor: {}, initiator: {}", acceptor, initiator);
+
         if (acceptor != null) {
             acceptor.stop();
 
