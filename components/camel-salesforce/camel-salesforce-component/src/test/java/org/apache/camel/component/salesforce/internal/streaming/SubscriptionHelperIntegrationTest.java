@@ -37,7 +37,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.mockito.ArgumentMatcher;
-import org.mockito.Mockito;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.salesforce.internal.streaming.SubscriptionHelperIntegrationTest.MessageArgumentMatcher.messageForAccountCreationWithName;
@@ -200,90 +199,6 @@ public class SubscriptionHelperIntegrationTest {
         salesforce.stop();
         camel.stop();
         server.stop();
-    }
-
-    @Test
-    void shouldResubscribeOnConnectionFailures() throws InterruptedException {
-        // handshake and connect
-        subscription.start();
-
-        final SalesforceConsumer consumer
-                = toUnsubscribe = mock(SalesforceConsumer.class, "shouldResubscribeOnConnectionFailures:consumer");
-
-        final SalesforceEndpoint endpoint = mock(SalesforceEndpoint.class, "shouldResubscribeOnConnectionFailures:endpoint");
-
-        // subscribe
-        when(consumer.getTopicName()).thenReturn("Account");
-
-        when(consumer.getEndpoint()).thenReturn(endpoint);
-        when(endpoint.getConfiguration()).thenReturn(config);
-        when(endpoint.getComponent()).thenReturn(salesforce);
-        when(endpoint.getTopicName()).thenReturn("Account");
-
-        subscription.subscribe("Account", consumer);
-
-        // push one message so we know connection is established and consumer
-        // receives notifications
-        messages.add("[\n"
-                     + "  {\n"
-                     + "    \"data\": {\n"
-                     + "      \"event\": {\n"
-                     + "        \"createdDate\": \"2020-12-11T13:44:56.891Z\",\n"
-                     + "        \"replayId\": 1,\n"
-                     + "        \"type\": \"created\"\n"
-                     + "      },\n"
-                     + "      \"sobject\": {\n"
-                     + "        \"Id\": \"0011n00002XWMgVAAX\",\n"
-                     + "        \"Name\": \"shouldResubscribeOnConnectionFailures 1\"\n"
-                     + "      }\n"
-                     + "    },\n"
-                     + "    \"channel\": \"/topic/Account\"\n"
-                     + "  },\n"
-                     + "  {\n"
-                     + "    \"clientId\": \"5ra4927ikfky6cb12juthkpofeu8\",\n"
-                     + "    \"channel\": \"/meta/connect\",\n"
-                     + "    \"id\": \"$id\",\n"
-                     + "    \"successful\": true\n"
-                     + "  }\n"
-                     + "]");
-
-        verify(consumer, Mockito.timeout(100)).processMessage(any(ClientSessionChannel.class),
-                messageForAccountCreationWithName("shouldResubscribeOnConnectionFailures 1"));
-
-        // terminate server abruptly by closing the connection (sends FIN, ACK)
-        server.abruptlyRestart();
-
-        // queue next message for when the client recovers
-        messages.add("[\n"
-                     + "  {\n"
-                     + "    \"data\": {\n"
-                     + "      \"event\": {\n"
-                     + "        \"createdDate\": \"2020-12-11T13:44:56.891Z\",\n"
-                     + "        \"replayId\": 2,\n"
-                     + "        \"type\": \"created\"\n"
-                     + "      },\n"
-                     + "      \"sobject\": {\n"
-                     + "        \"Id\": \"0011n00002XWMgVAAX\",\n"
-                     + "        \"Name\": \"shouldResubscribeOnConnectionFailures 2\"\n"
-                     + "      }\n"
-                     + "    },\n"
-                     + "    \"channel\": \"/topic/Account\"\n"
-                     + "  },\n"
-                     + "  {\n"
-                     + "    \"clientId\": \"5ra4927ikfky6cb12juthkpofeu8\",\n"
-                     + "    \"channel\": \"/meta/connect\",\n"
-                     + "    \"id\": \"$id\",\n"
-                     + "    \"successful\": true\n"
-                     + "  }\n"
-                     + "]");
-
-        // assert last message was received, recovery can take a bit
-        verify(consumer, timeout(10000)).processMessage(any(ClientSessionChannel.class),
-                messageForAccountCreationWithName("shouldResubscribeOnConnectionFailures 2"));
-
-        verify(consumer, atLeastOnce()).getEndpoint();
-        verify(consumer, atLeastOnce()).getTopicName();
-        verifyNoMoreInteractions(consumer);
     }
 
     @Test
