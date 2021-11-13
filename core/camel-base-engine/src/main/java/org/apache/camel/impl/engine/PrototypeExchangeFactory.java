@@ -51,7 +51,7 @@ public class PrototypeExchangeFactory extends PooledObjectFactorySupport<Exchang
     protected void doBuild() throws Exception {
         super.doBuild();
         this.exchangeFactoryManager = camelContext.adapt(ExtendedCamelContext.class).getExchangeFactoryManager();
-        // force to create and load the class during build time so the JVM does not
+        // force creating and load the class during build time so the JVM does not
         // load the class on first exchange to be created
         DefaultExchange dummy = new DefaultExchange(camelContext);
         // force message init to load classes
