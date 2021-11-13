@@ -16,7 +16,7 @@ image::eip/DataEnricher.gif[image]
 
 You can consume a message from
 one destination, transform it with something like
-xref:components::velocity-component.adoc[Velocity] or xref:components::xquery-component.adoc[XQuery], and then send
+xref:ROOT:velocity-component.adoc[Velocity] or xref:ROOT:xquery-component.adoc[XQuery], and then send
 it on to another destination. For example using InOnly (one way
 messaging)
 
@@ -28,7 +28,7 @@ from("activemq:My.Queue")
 ----
 
 If you want to use InOut (request-reply) semantics to process requests
-on the *My.Queue* queue on xref:components::activemq-component.adoc[ActiveMQ] with a template
+on the *My.Queue* queue on xref:ROOT:activemq-component.adoc[ActiveMQ] with a template
 generated response, then sending responses back to the JMSReplyTo
 Destination you could use this:
 
@@ -104,7 +104,7 @@ to invoke an external web service. +
 `pollEnrich` on the other hand uses a xref:polling-consumer.adoc[Polling
 Consumer] to obtain the additional data. It is usually used for
 xref:event-message.adoc[Event Message] messaging, for instance to read a
-file or download a xref:components::ftp-component.adoc[FTP] file.
+file or download a xref:ROOT:ftp-component.adoc[FTP] file.
 
 Camel 2.15 or older - Data from current Exchange not used
 
@@ -307,7 +307,7 @@ And for Spring DSL:
 From Camel 2.16 onwards enrich and pollEnrich supports using dynamic
 uris computed based on information from the
 current xref:manual:ROOT:exchange.adoc[Exchange]. For example to enrich from
-a xref:components::http-component.adoc[HTTP] endpoint where the header with key orderId is
+a xref:ROOT:http-component.adoc[HTTP] endpoint where the header with key orderId is
 used as part of the content-path of the HTTP url:
 
 [source,java]
@@ -494,7 +494,7 @@ For example to wait up to 5 seconds you can do:
 From Camel 2.16 onwards enrich and pollEnrich supports using dynamic
 uris computed based on information from the
 current xref:manual:ROOT:exchange.adoc[Exchange]. For example to pollEnrich from an
-endpoint that uses a header to indicate a xref:components::seda-component.adoc[SEDA] queue
+endpoint that uses a header to indicate a xref:ROOT:seda-component.adoc[SEDA] queue
 name:
 
 [source,java]

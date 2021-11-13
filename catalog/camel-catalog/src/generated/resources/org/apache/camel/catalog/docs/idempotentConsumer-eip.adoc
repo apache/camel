@@ -21,16 +21,16 @@ the Exchange failed, otherwise it stays there.
 Camel provides the following Idempotent Consumer implementations:
 
 * MemoryIdempotentRepository
-* xref:components::file-component.adoc[FileIdempotentRepository]
-* xref:components::hazelcast-summary.adoc[HazelcastIdempotentRepository]
-* xref:components::sql-component.adoc[JdbcMessageIdRepository]
-* xref:components::jpa-component.adoc[JpaMessageIdRepository]
-* xref:components::infinispan-component.adoc[InfinispanIdempotentRepository]
-* xref:components::jcache-component.adoc[JCacheIdempotentRepository]
+* xref:ROOT:file-component.adoc[FileIdempotentRepository]
+* xref:ROOT:hazelcast-summary.adoc[HazelcastIdempotentRepository]
+* xref:ROOT:sql-component.adoc[JdbcMessageIdRepository]
+* xref:ROOT:jpa-component.adoc[JpaMessageIdRepository]
+* xref:ROOT:infinispan-component.adoc[InfinispanIdempotentRepository]
+* xref:ROOT:jcache-component.adoc[JCacheIdempotentRepository]
 * xref:manual:ROOT:spring.adoc[SpringCacheIdempotentRepository]
-* xref:components::ehcache-component.adoc[EhcacheIdempotentRepository]
-* xref:components::kafka-component.adoc[KafkaIdempotentRepository]
-* xref:components::hbase-component.adoc[HbaseIdempotentRepository]
+* xref:ROOT:ehcache-component.adoc[EhcacheIdempotentRepository]
+* xref:ROOT:kafka-component.adoc[KafkaIdempotentRepository]
+* xref:ROOT:hbase-component.adoc[HbaseIdempotentRepository]
 
 == Options
 

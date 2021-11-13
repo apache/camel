@@ -8,7 +8,7 @@
 How can I log the processing of a xref:message.adoc[Message]?
 
 Camel provides many ways to log the fact that you are processing a message. Here are just a few examples:
-* You can use the xref:components::log-component.adoc[Log] component which logs the Message content.
+* You can use the xref:ROOT:log-component.adoc[Log] component which logs the Message content.
 * You can use the xref:manual:ROOT:tracer.adoc[Tracer] which trace logs message flow.
 * You can also use a xref:manual:ROOT:processor.adoc[Processor] or xref:manual:ROOT:bean-binding.adoc[Bean] and log from Java code.
 * You can use the log DSL.
@@ -35,7 +35,7 @@ The log DSL is much lighter and meant for logging human logs such as Starting to
 
 == Samples
 
-You can use the log DSL which allows you to use xref:components:languages:simple-language.adoc[Simple] language to construct a dynamic message which gets logged.
+You can use the log DSL which allows you to use xref:languages:simple-language.adoc[Simple] language to construct a dynamic message which gets logged.
 
 For example you can do
 
@@ -170,7 +170,7 @@ In some scenarios it is required that the bundle associated with logger should b
 == Masking sensitive information like password
 
 You can enable security masking for logging by setting `logMask` flag to `true`.
-Note that this option also affects xref:components::log-component.adoc[Log] component.
+Note that this option also affects xref:ROOT:log-component.adoc[Log] component.
 
 To enable mask in Java DSL at CamelContext level:
 [source,java]

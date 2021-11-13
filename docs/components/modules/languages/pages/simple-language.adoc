@@ -492,19 +492,13 @@ function, otherwise parsed as literal.
 |-- |To decrement a number by one. The left hand side must be a
 function, otherwise parsed as literal.
 
-|\ |To escape a value, eg \$, to indicate a $ sign.
-Special: Use \n for new line, \t for tab, and \r for carriage return.
-*Notice:* Escaping is *not* supported using the
-xref:file-language.adoc[File Language]. *Notice:* The escape character is not supported, use the
-following three special escaping instead.
-
 |\n |To use newline character.
 
 |\t |To use tab character.
 
 |\r |To use carriage return character.
 
-|\} |To use the } character as text
+|\} |To use the } character as text. This may be needed when building a JSon structure with the simple language.
 |===
 
 And the following logical operators can be used to group expressions:

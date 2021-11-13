@@ -8,7 +8,7 @@
 There is a new `.toD` / `<toD>` that allows to send a message to a dynamic
 computed xref:manual:ROOT:endpoint.adoc[Endpoint] using one or
 more xref:manual:ROOT:expression.adoc[Expression] that are concat together. By
-default the xref:components:languages:simple-language.adoc[Simple] language is used to compute
+default the xref:languages:simple-language.adoc[Simple] language is used to compute
 the endpoint.
 
 == Options
@@ -50,7 +50,7 @@ And in XML:
 ----
 
 You can also prefix the uri with a value because by default the uri is
-evaluated using the xref:components:languages:simple-language.adoc[Simple] language
+evaluated using the xref:languages:simple-language.adoc[Simple] language
 
 [source,java]
 ----
@@ -72,8 +72,8 @@ In the example above we compute an endpoint that has prefix "mock:" and
 then the header foo is appended. So for example if the header foo has
 value order, then the endpoint is computed as "mock:order".
 
-You can also use another language than xref:components:languages:simple-language.adoc[Simple] such
-as xref:components:languages:xpath-language.adoc[XPath] - this requires to prefix with language: as
+You can also use another language than xref:languages:simple-language.adoc[Simple] such
+as xref:languages:xpath-language.adoc[XPath] - this requires to prefix with language: as
 shown below (simple language is the default language). If you do not
 specify language: then the endpoint is a component name. And in some
 cases there is both a component and language with the same name such as

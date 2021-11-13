@@ -191,7 +191,7 @@ missed change events no matter what mitigations are in place.
 
 === Message Body
 
-The Message body is istance of "software.amazon.awssdk.services.dynamodb.model.Record", for more information about it, have a look at the https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/services/dynamodb/model/Record.html[related javadoc]
+The Message body is instance of "software.amazon.awssdk.services.dynamodb.model.Record", for more information about it, have a look at the https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/services/dynamodb/model/Record.html[related javadoc]
 
 == Dependencies
 

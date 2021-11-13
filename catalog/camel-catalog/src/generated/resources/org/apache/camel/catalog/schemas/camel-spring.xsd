@@ -13664,7 +13664,7 @@ The XPath object model to use.
         <xs:attribute name="logNamespaces" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Whether to log namespaces which can assist during trouble shooting. Default
+Whether to log namespaces which can assist during troubleshooting. Default
 value: false
             ]]></xs:documentation>
           </xs:annotation>
