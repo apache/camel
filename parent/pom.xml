@@ -168,7 +168,7 @@
     <couchbase-client-version>1.4.13</couchbase-client-version>
     <couchbase-client-bundle-version>1.4.13_1</couchbase-client-bundle-version>
     <curator-version>2.12.0</curator-version>
-    <cxf-version>3.3.10</cxf-version>
+    <cxf-version>3.3.12</cxf-version>
     <cxf-version-range>[3.1,4.0)</cxf-version-range>
     <cxf-xjc-plugin-version>3.3.1</cxf-xjc-plugin-version>
     <cxf-xjc-utils-version>3.3.1</cxf-xjc-utils-version>
@@ -304,7 +304,7 @@
     <htmlunit-core-js-version>2.23</htmlunit-core-js-version>
     <htrace-version>3.1.0-incubating</htrace-version>
     <httpunit-version>1.7</httpunit-version>
-    <httpcore4-version>4.4.13</httpcore4-version>
+    <httpcore4-version>4.4.14</httpcore4-version>
     <httpclient4-version>4.5.13</httpclient4-version>
     <httpasyncclient-version>4.1.4</httpasyncclient-version>
     <httpclient-version>3.1</httpclient-version>
@@ -528,7 +528,7 @@
     <neoscada-version>0.4.0</neoscada-version>
     <netty3-version>3.10.6.Final</netty3-version>
     <netty-ahc-version>4.1.56.Final</netty-ahc-version>
-    <netty-version>4.1.64.Final</netty-version>
+    <netty-version>4.1.66.Final</netty-version>
     <netty40-version>4.0.56.Final</netty40-version>
     <networknt-json-schema-validator-version>0.1.25</networknt-json-schema-validator-version>
     <noggit-bundle-version>0.5_1</noggit-bundle-version>
