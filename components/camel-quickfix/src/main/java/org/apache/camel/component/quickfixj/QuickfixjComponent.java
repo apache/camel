@@ -26,6 +26,7 @@ import org.apache.camel.StartupListener;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import quickfix.LogFactory;
@@ -144,7 +145,7 @@ public class QuickfixjComponent extends DefaultComponent implements StartupListe
     private void startQuickfixjEngine(QuickfixjEngine engine) {
         if (!engine.isLazy()) {
             LOG.info("Starting QuickFIX/J engine: {}", engine.getUri());
-            engine.start();
+            ServiceHelper.startService(engine);
         } else {
             LOG.info("QuickFIX/J engine: {} will start lazily", engine.getUri());
         }
@@ -227,6 +228,14 @@ public class QuickfixjComponent extends DefaultComponent implements StartupListe
                 engines.put(entry.getKey(), entry.getValue());
             }
             provisionalEngines.clear();
+        }
+    }
+
+    public void ensureEngineStarted(QuickfixjEngine engine) {
+        // only start engine after provisional engines is no longer in use
+        // as they are used for holding created engines during bootstrap of Camel
+        if (provisionalEngines.isEmpty()) {
+            ServiceHelper.startService(engine);
         }
     }
 }
