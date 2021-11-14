@@ -36,7 +36,6 @@ public class AccountProducerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-
                 from("direct:balances")
                         .to("xchange:binance?service=account&method=balances");
 
@@ -50,9 +49,7 @@ public class AccountProducerTest extends CamelTestSupport {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
-    void testBalances() {
-
+    public void testBalances() {
         assumeTrue(hasAPICredentials());
 
         List<Balance> balances = template.requestBody("direct:balances", null, List.class);
@@ -60,9 +57,7 @@ public class AccountProducerTest extends CamelTestSupport {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
-    void testWallets() {
-
+    public void testWallets() {
         assumeTrue(hasAPICredentials());
 
         List<Wallet> wallets = template.requestBody("direct:wallets", null, List.class);
@@ -70,9 +65,7 @@ public class AccountProducerTest extends CamelTestSupport {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
-    void testFundingHistory() {
-
+    public void testFundingHistory() {
         assumeTrue(hasAPICredentials());
 
         List<FundingRecord> records = template.requestBody("direct:fundingHistory", null, List.class);
@@ -81,6 +74,6 @@ public class AccountProducerTest extends CamelTestSupport {
 
     private boolean hasAPICredentials() {
         XChangeComponent component = context().getComponent("xchange", XChangeComponent.class);
-        return component.getXChange().getExchangeSpecification().getApiKey() != null;
+        return component.getXChange("binance").getExchangeSpecification().getApiKey() != null;
     }
 }
