@@ -136,7 +136,7 @@ Route configurations are either given an explicit unique ID, or the configuratio
 A _nameless_ configuration is used as default/fallback configuration, for routes which have *NOT*
 been explicitly assigned route configurations.
 
-Suppose you have one _nameless_ configuration and another named _javaError_:
+Suppose you have one _nameless_ configuration and another named _retryError_:
 
 [source,java]
 ----
