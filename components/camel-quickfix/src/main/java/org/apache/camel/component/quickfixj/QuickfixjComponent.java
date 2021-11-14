@@ -56,6 +56,8 @@ public class QuickfixjComponent extends DefaultComponent implements StartupListe
     private MessageFactory messageFactory;
     @Metadata
     private boolean lazyCreateEngines;
+    @Metadata(defaultValue = "true")
+    private boolean eagerStopEngines = true;
 
     public QuickfixjComponent() {
     }
@@ -210,10 +212,26 @@ public class QuickfixjComponent extends DefaultComponent implements StartupListe
     }
 
     /**
-     * If set to <code>true</code>, the engines will be created and started when needed (when first message is send)
+     * If set to true, the engines will be created and started when needed (when first message is send)
      */
     public void setLazyCreateEngines(boolean lazyCreateEngines) {
         this.lazyCreateEngines = lazyCreateEngines;
+    }
+
+    public boolean isEagerStopEngines() {
+        return eagerStopEngines;
+    }
+
+    /**
+     * Whether to eager stop engines when there are no active consumer or producers using the engine.
+     *
+     * For example when stopping a route, then the engine can be stopped as well. And when the route is started, then
+     * the engine is started again.
+     *
+     * This can be turned off to only stop the engines when Camel is shutdown.
+     */
+    public void setEagerStopEngines(boolean eagerStopEngines) {
+        this.eagerStopEngines = eagerStopEngines;
     }
 
     @Override

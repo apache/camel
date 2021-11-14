@@ -148,7 +148,7 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
     protected void removeConsumer(QuickfixjConsumer consumer) {
         consumers.remove(consumer);
         int count = engine.decRefCount();
-        if (count <= 0) {
+        if (count <= 0 && getComponent().isEagerStopEngines()) {
             LOG.info("Stopping QuickFIX/J Engine: {} no longer active in use", engine.getUri());
             ServiceHelper.stopService(engine);
         }
@@ -161,7 +161,7 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
 
     protected void removeProducer(QuickfixjProducer producer) {
         int count = engine.decRefCount();
-        if (count <= 0) {
+        if (count <= 0 && getComponent().isEagerStopEngines()) {
             LOG.info("Stopping QuickFIX/J Engine: {} no longer active in use", engine.getUri());
             ServiceHelper.stopService(engine);
         }
