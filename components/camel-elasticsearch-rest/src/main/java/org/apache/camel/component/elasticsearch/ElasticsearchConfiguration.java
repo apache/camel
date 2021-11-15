@@ -60,11 +60,11 @@ public class ElasticsearchConfiguration {
     private boolean useScroll;
     @UriParam(defaultValue = "" + ElasticsearchConstants.DEFAULT_SCROLL_KEEP_ALIVE_MS)
     private int scrollKeepAliveMs = ElasticsearchConstants.DEFAULT_SCROLL_KEEP_ALIVE_MS;
-    @UriParam
+    @UriParam(label = "advanced")
     private boolean enableSniffer;
-    @UriParam(defaultValue = "" + ElasticsearchConstants.DEFAULT_SNIFFER_INTERVAL)
+    @UriParam(label = "advanced", defaultValue = "" + ElasticsearchConstants.DEFAULT_SNIFFER_INTERVAL)
     private int snifferInterval = ElasticsearchConstants.DEFAULT_SNIFFER_INTERVAL;
-    @UriParam(defaultValue = "" + ElasticsearchConstants.DEFAULT_AFTER_FAILURE_DELAY)
+    @UriParam(label = "advanced", defaultValue = "" + ElasticsearchConstants.DEFAULT_AFTER_FAILURE_DELAY)
     private int sniffAfterFailureDelay = ElasticsearchConstants.DEFAULT_AFTER_FAILURE_DELAY;
 
     /**

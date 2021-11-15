@@ -51,6 +51,39 @@ public interface ElasticsearchRestComponentBuilderFactory {
             extends
                 ComponentBuilder<ElasticsearchComponent> {
         /**
+         * The time in ms to wait before connection will timeout.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 30000
+         * Group: producer
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
+         */
+        default ElasticsearchRestComponentBuilder connectionTimeout(
+                int connectionTimeout) {
+            doSetProperty("connectionTimeout", connectionTimeout);
+            return this;
+        }
+        /**
+         * Comma separated list with ip:port formatted remote transport
+         * addresses to use. The ip and port options must be left blank for
+         * hostAddresses to be considered instead.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param hostAddresses the value to set
+         * @return the dsl builder
+         */
+        default ElasticsearchRestComponentBuilder hostAddresses(
+                java.lang.String hostAddresses) {
+            doSetProperty("hostAddresses", hostAddresses);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -72,6 +105,38 @@ public interface ElasticsearchRestComponentBuilderFactory {
         default ElasticsearchRestComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * The time in ms before retry.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 30000
+         * Group: producer
+         * 
+         * @param maxRetryTimeout the value to set
+         * @return the dsl builder
+         */
+        default ElasticsearchRestComponentBuilder maxRetryTimeout(
+                int maxRetryTimeout) {
+            doSetProperty("maxRetryTimeout", maxRetryTimeout);
+            return this;
+        }
+        /**
+         * The timeout in ms to wait before the socket will timeout.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 30000
+         * Group: producer
+         * 
+         * @param socketTimeout the value to set
+         * @return the dsl builder
+         */
+        default ElasticsearchRestComponentBuilder socketTimeout(
+                int socketTimeout) {
+            doSetProperty("socketTimeout", socketTimeout);
             return this;
         }
         /**
@@ -114,26 +179,10 @@ public interface ElasticsearchRestComponentBuilderFactory {
             return this;
         }
         /**
-         * The time in ms to wait before connection will timeout.
-         * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Default: 30000
-         * Group: advanced
-         * 
-         * @param connectionTimeout the value to set
-         * @return the dsl builder
-         */
-        default ElasticsearchRestComponentBuilder connectionTimeout(
-                int connectionTimeout) {
-            doSetProperty("connectionTimeout", connectionTimeout);
-            return this;
-        }
-        /**
          * Enable automatically discover nodes from a running Elasticsearch
          * cluster.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
@@ -142,41 +191,8 @@ public interface ElasticsearchRestComponentBuilderFactory {
          * @return the dsl builder
          */
         default ElasticsearchRestComponentBuilder enableSniffer(
-                java.lang.Boolean enableSniffer) {
+                boolean enableSniffer) {
             doSetProperty("enableSniffer", enableSniffer);
-            return this;
-        }
-        /**
-         * Comma separated list with ip:port formatted remote transport
-         * addresses to use. The ip and port options must be left blank for
-         * hostAddresses to be considered instead.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param hostAddresses the value to set
-         * @return the dsl builder
-         */
-        default ElasticsearchRestComponentBuilder hostAddresses(
-                java.lang.String hostAddresses) {
-            doSetProperty("hostAddresses", hostAddresses);
-            return this;
-        }
-        /**
-         * The time in ms before retry.
-         * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Default: 30000
-         * Group: advanced
-         * 
-         * @param maxRetryTimeout the value to set
-         * @return the dsl builder
-         */
-        default ElasticsearchRestComponentBuilder maxRetryTimeout(
-                int maxRetryTimeout) {
-            doSetProperty("maxRetryTimeout", maxRetryTimeout);
             return this;
         }
         /**
@@ -215,25 +231,9 @@ public interface ElasticsearchRestComponentBuilderFactory {
             return this;
         }
         /**
-         * The timeout in ms to wait before the socket will timeout.
-         * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Default: 30000
-         * Group: advanced
-         * 
-         * @param socketTimeout the value to set
-         * @return the dsl builder
-         */
-        default ElasticsearchRestComponentBuilder socketTimeout(
-                int socketTimeout) {
-            doSetProperty("socketTimeout", socketTimeout);
-            return this;
-        }
-        /**
          * Enable SSL.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
@@ -241,8 +241,7 @@ public interface ElasticsearchRestComponentBuilderFactory {
          * @param enableSSL the value to set
          * @return the dsl builder
          */
-        default ElasticsearchRestComponentBuilder enableSSL(
-                java.lang.Boolean enableSSL) {
+        default ElasticsearchRestComponentBuilder enableSSL(boolean enableSSL) {
             doSetProperty("enableSSL", enableSSL);
             return this;
         }
@@ -292,17 +291,17 @@ public interface ElasticsearchRestComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "connectionTimeout": ((ElasticsearchComponent) component).setConnectionTimeout((int) value); return true;
+            case "hostAddresses": ((ElasticsearchComponent) component).setHostAddresses((java.lang.String) value); return true;
             case "lazyStartProducer": ((ElasticsearchComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "maxRetryTimeout": ((ElasticsearchComponent) component).setMaxRetryTimeout((int) value); return true;
+            case "socketTimeout": ((ElasticsearchComponent) component).setSocketTimeout((int) value); return true;
             case "autowiredEnabled": ((ElasticsearchComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "client": ((ElasticsearchComponent) component).setClient((org.elasticsearch.client.RestClient) value); return true;
-            case "connectionTimeout": ((ElasticsearchComponent) component).setConnectionTimeout((int) value); return true;
-            case "enableSniffer": ((ElasticsearchComponent) component).setEnableSniffer((java.lang.Boolean) value); return true;
-            case "hostAddresses": ((ElasticsearchComponent) component).setHostAddresses((java.lang.String) value); return true;
-            case "maxRetryTimeout": ((ElasticsearchComponent) component).setMaxRetryTimeout((int) value); return true;
+            case "enableSniffer": ((ElasticsearchComponent) component).setEnableSniffer((boolean) value); return true;
             case "sniffAfterFailureDelay": ((ElasticsearchComponent) component).setSniffAfterFailureDelay((int) value); return true;
             case "snifferInterval": ((ElasticsearchComponent) component).setSnifferInterval((int) value); return true;
-            case "socketTimeout": ((ElasticsearchComponent) component).setSocketTimeout((int) value); return true;
-            case "enableSSL": ((ElasticsearchComponent) component).setEnableSSL((java.lang.Boolean) value); return true;
+            case "enableSSL": ((ElasticsearchComponent) component).setEnableSSL((boolean) value); return true;
             case "password": ((ElasticsearchComponent) component).setPassword((java.lang.String) value); return true;
             case "user": ((ElasticsearchComponent) component).setUser((java.lang.String) value); return true;
             default: return false;
