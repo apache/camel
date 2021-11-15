@@ -94,7 +94,7 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Default: 50.0
+         * Default: 53.0
          * Group: common
          * 
          * @param apiVersion the value to set
@@ -1358,7 +1358,7 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Default: 50.0
+         * Default: 53.0
          * Group: common
          * 
          * @param apiVersion the value to set
@@ -2651,7 +2651,7 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Default: 50.0
+         * Default: 53.0
          * Group: common
          * 
          * @param apiVersion the value to set
