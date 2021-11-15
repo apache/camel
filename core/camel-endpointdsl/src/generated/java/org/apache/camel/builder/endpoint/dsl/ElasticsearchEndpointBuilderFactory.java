@@ -133,37 +133,6 @@ public interface ElasticsearchEndpointBuilderFactory {
             return this;
         }
         /**
-         * Enable SSL.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param enableSSL the value to set
-         * @return the dsl builder
-         */
-        default ElasticsearchEndpointBuilder enableSSL(boolean enableSSL) {
-            doSetProperty("enableSSL", enableSSL);
-            return this;
-        }
-        /**
-         * Enable SSL.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param enableSSL the value to set
-         * @return the dsl builder
-         */
-        default ElasticsearchEndpointBuilder enableSSL(String enableSSL) {
-            doSetProperty("enableSSL", enableSSL);
-            return this;
-        }
-        /**
          * Starting index of the response.
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
@@ -198,7 +167,6 @@ public interface ElasticsearchEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Required: true
          * Group: producer
          * 
          * @param hostAddresses the value to set
@@ -556,6 +524,37 @@ public interface ElasticsearchEndpointBuilderFactory {
         default ElasticsearchEndpointBuilder waitForActiveShards(
                 String waitForActiveShards) {
             doSetProperty("waitForActiveShards", waitForActiveShards);
+            return this;
+        }
+        /**
+         * Enable SSL.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param enableSSL the value to set
+         * @return the dsl builder
+         */
+        default ElasticsearchEndpointBuilder enableSSL(boolean enableSSL) {
+            doSetProperty("enableSSL", enableSSL);
+            return this;
+        }
+        /**
+         * Enable SSL.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param enableSSL the value to set
+         * @return the dsl builder
+         */
+        default ElasticsearchEndpointBuilder enableSSL(String enableSSL) {
+            doSetProperty("enableSSL", enableSSL);
             return this;
         }
     }
