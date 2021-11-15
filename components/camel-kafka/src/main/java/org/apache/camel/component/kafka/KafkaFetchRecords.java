@@ -76,33 +76,25 @@ class KafkaFetchRecords implements Runnable {
         this.kafkaProps = kafkaProps;
     }
 
-    void preInit() {
-        createConsumer();
-    }
-
     @Override
     public void run() {
         if (!isKafkaConsumerRunnable()) {
             return;
         }
 
-        if (isRetrying() || isReconnecting()) {
+        do {
             try {
-                if (isReconnecting()) {
-                    // re-initialize on re-connect so we have a fresh consumer
-                    createConsumer();
-                }
+                createConsumer();
+
+                initializeConsumer();
             } catch (Exception e) {
                 // ensure this is logged so users can see the problem
                 LOG.warn("Error creating org.apache.kafka.clients.consumer.KafkaConsumer due {}", e.getMessage(), e);
+                continue;
             }
 
-            long delay = kafkaConsumer.getEndpoint().getConfiguration().getPollTimeoutMs();
-            String prefix = isReconnecting() ? "Reconnecting" : "Retrying";
-            LOG.info("{} {} to topic {} after {} ms", prefix, threadId, topicName, delay);
-
-            doRun();
-        }
+            startPolling();
+        } while (isRetrying() || isReconnecting());
 
         LOG.info("Terminating KafkaConsumer thread: {} receiving from topic: {}", threadId, topicName);
         safeUnsubscribe();
@@ -117,6 +109,11 @@ class KafkaFetchRecords implements Runnable {
             Thread.currentThread()
                     .setContextClassLoader(org.apache.kafka.clients.consumer.KafkaConsumer.class.getClassLoader());
 
+            // The Kafka consumer should be null at the first try. For every other reconnection event, it will not
+            long delay = kafkaConsumer.getEndpoint().getConfiguration().getPollTimeoutMs();
+            final String prefix = this.consumer == null ? "Connecting" : "Reconnecting";
+            LOG.info("{} Kafka consumer thread ID {} with poll timeout of {} ms", prefix, threadId, delay);
+
             // this may throw an exception if something is wrong with kafka consumer
             this.consumer = kafkaConsumer.getEndpoint().getKafkaClientFactory().getConsumer(kafkaProps);
         } finally {
@@ -124,19 +121,14 @@ class KafkaFetchRecords implements Runnable {
         }
     }
 
-    protected void doRun() {
-        if (isReconnecting()) {
-            subscribe();
+    private void initializeConsumer() {
+        subscribe();
 
-            // set reconnect to false as the connection and resume is done at this point
-            setReconnect(false);
+        // set reconnect to false as the connection and resume is done at this point
+        setReconnect(false);
 
-            // set retry to true to continue polling
-            setRetry(true);
-        }
-
-        // start polling
-        startPolling();
+        // set retry to true to continue polling
+        setRetry(true);
     }
 
     private void subscribe() {
