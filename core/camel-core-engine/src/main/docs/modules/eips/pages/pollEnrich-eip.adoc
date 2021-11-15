@@ -136,13 +136,15 @@ for example download a file from xref:ROOT:aws2-s3-component.adoc[AWS S3] as the
     <description>Report REST API</description>
     <get uri="/{id}/payload">
         <route id="report-payload-download">
-            <pollEnrich id="pollEnrich">
-                <simple>aws-s3:xavier-dev?amazonS3Client=#s3client&amp;deleteAfterRead=false&amp;fileName=report-file.pdf</simple>
+            <pollEnrich>
+                <constant>aws-s3:xavier-dev?amazonS3Client=#s3client&amp;deleteAfterRead=false&amp;fileName=report-file.pdf</constant>
             </pollEnrich>
         </route>
     </get>
 </rest>
 ----
+
+Notice that the enriched endpoint is a constant, however Camel also supports dynamic endpoints which is covered next.
 
 === Poll Enrich with Dynamic Endpoints
 
