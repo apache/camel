@@ -543,6 +543,9 @@ public class SubscriptionHelper extends ServiceSupport {
         try {
             for (;;) {
                 try {
+                    if (isStoppingOrStopped()) {
+                        return;
+                    }
                     session.login(session.getAccessToken());
                     break;
                 } catch (SalesforceException e) {
