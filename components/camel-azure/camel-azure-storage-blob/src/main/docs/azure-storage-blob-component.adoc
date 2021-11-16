@@ -597,6 +597,23 @@ from("direct:start")
   .to("mock:result");
 --------------------------------------------------------------------------------
 
+- `copyBlob`
+
+[source,java]
+--------------------------------------------------------------------------------
+
+from("direct:copyBlob")
+  .process(exchange -> {
+    exchange.getIn().setHeader(BlobConstants.BLOB_NAME, "file.txt");
+    exchange.getMessage().setHeader(BlobConstants.SOURCE_BLOB_CONTAINER_NAME, "containerblob1");
+    exchange.getMessage().setHeader(BlobConstants.SOURCE_BLOB_ACCOUNT_NAME, "account");
+  })
+  .to("azure-storage-blob://account/containerblob2?operation=copyBlob&sourceBlobAccessKey=RAW(accessKey)")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+In this way the file.txt in the container containerblob1 of the account 'account', will be copied to the container containerblob2 of the same account.
+
 
 === Development Notes (Important)
 
