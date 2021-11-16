@@ -145,9 +145,6 @@ public class KafkaConsumer extends DefaultConsumer {
 
         for (int i = 0; i < endpoint.getConfiguration().getConsumersCount(); i++) {
             KafkaFetchRecords task = new KafkaFetchRecords(topic, pattern, i + "", getProps());
-            // pre-initialize task during startup so if there is any error we
-            // have it thrown asap
-            task.preInit();
             executor.submit(task);
             tasks.add(task);
         }
@@ -214,7 +211,7 @@ public class KafkaConsumer extends DefaultConsumer {
                         // re-initialize on re-connect so we have a fresh consumer
                         doInit();
                     }
-                } catch (Exception e) {
+                } catch (Throwable e) {
                     // ensure this is logged so users can see the problem
                     LOG.warn("Error creating org.apache.kafka.clients.consumer.KafkaConsumer due {}", e.getMessage(), e);
                 }
@@ -250,10 +247,6 @@ public class KafkaConsumer extends DefaultConsumer {
             }
 
             LOG.info("Terminating KafkaConsumer thread: {} receiving from topic: {}", threadId, topicName);
-        }
-
-        void preInit() {
-            doInit();
         }
 
         protected void doInit() {
