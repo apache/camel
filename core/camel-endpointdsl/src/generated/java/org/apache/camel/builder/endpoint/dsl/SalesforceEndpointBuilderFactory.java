@@ -217,6 +217,39 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
+         * ReplayId to fall back to after an Invalid Replay Id response.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * 
+         * Default: -1
+         * Group: common
+         * 
+         * @param fallBackReplayId the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointConsumerBuilder fallBackReplayId(
+                Long fallBackReplayId) {
+            doSetProperty("fallBackReplayId", fallBackReplayId);
+            return this;
+        }
+        /**
+         * ReplayId to fall back to after an Invalid Replay Id response.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * 
+         * Default: -1
+         * Group: common
+         * 
+         * @param fallBackReplayId the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointConsumerBuilder fallBackReplayId(
+                String fallBackReplayId) {
+            doSetProperty("fallBackReplayId", fallBackReplayId);
+            return this;
+        }
+        /**
          * Payload format to use for Salesforce API calls, either JSON or XML,
          * defaults to JSON. As of Camel 3.12, this option only applies to the
          * Raw operation.
@@ -1478,6 +1511,39 @@ public interface SalesforceEndpointBuilderFactory {
         default SalesforceEndpointProducerBuilder defaultReplayId(
                 String defaultReplayId) {
             doSetProperty("defaultReplayId", defaultReplayId);
+            return this;
+        }
+        /**
+         * ReplayId to fall back to after an Invalid Replay Id response.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * 
+         * Default: -1
+         * Group: common
+         * 
+         * @param fallBackReplayId the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointProducerBuilder fallBackReplayId(
+                Long fallBackReplayId) {
+            doSetProperty("fallBackReplayId", fallBackReplayId);
+            return this;
+        }
+        /**
+         * ReplayId to fall back to after an Invalid Replay Id response.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * 
+         * Default: -1
+         * Group: common
+         * 
+         * @param fallBackReplayId the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointProducerBuilder fallBackReplayId(
+                String fallBackReplayId) {
+            doSetProperty("fallBackReplayId", fallBackReplayId);
             return this;
         }
         /**
@@ -2767,6 +2833,38 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointBuilder defaultReplayId(String defaultReplayId) {
             doSetProperty("defaultReplayId", defaultReplayId);
+            return this;
+        }
+        /**
+         * ReplayId to fall back to after an Invalid Replay Id response.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * 
+         * Default: -1
+         * Group: common
+         * 
+         * @param fallBackReplayId the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointBuilder fallBackReplayId(Long fallBackReplayId) {
+            doSetProperty("fallBackReplayId", fallBackReplayId);
+            return this;
+        }
+        /**
+         * ReplayId to fall back to after an Invalid Replay Id response.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * 
+         * Default: -1
+         * Group: common
+         * 
+         * @param fallBackReplayId the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointBuilder fallBackReplayId(
+                String fallBackReplayId) {
+            doSetProperty("fallBackReplayId", fallBackReplayId);
             return this;
         }
         /**

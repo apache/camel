@@ -48,6 +48,11 @@ public class StreamingApiIntegrationTest extends AbstractSalesforceTestBase {
         rawPayloadMock.expectedHeaderReceived("CamelSalesforceTopicName", "CamelTestTopic");
         rawPayloadMock.expectedHeaderReceived("CamelSalesforceChannel", "/topic/CamelTestTopic");
 
+        MockEndpoint fallbackMock = getMockEndpoint("mock:CamelFallbackTestTopic");
+        fallbackMock.expectedMessageCount(1);
+        fallbackMock.expectedHeaderReceived("CamelSalesforceTopicName", "CamelFallbackTestTopic");
+        fallbackMock.expectedHeaderReceived("CamelSalesforceChannel", "/topic/CamelFallbackTestTopic");
+
         Merchandise__c merchandise = new Merchandise__c();
         merchandise.setName("TestNotification");
         merchandise.setDescription__c("Merchandise for testing Streaming API updated on " +
@@ -78,6 +83,9 @@ public class StreamingApiIntegrationTest extends AbstractSalesforceTestBase {
             final Message inRaw = rawPayloadMock.getExchanges().get(0).getIn();
             assertTrue(inRaw.getBody() instanceof String, "Expected String message body for Raw Payload");
 
+            // validate fallback
+            fallbackMock.assertIsSatisfied();
+
         } finally {
             // remove the test record
             template().requestBody("direct:deleteSObjectWithId", merchandise);
@@ -85,8 +93,9 @@ public class StreamingApiIntegrationTest extends AbstractSalesforceTestBase {
             // remove the test topic
             // find it using SOQL first
             QueryRecordsPushTopic records = template().requestBody("direct:query", null, QueryRecordsPushTopic.class);
-            assertEquals(1, records.getTotalSize(), "Test topic not found");
+            assertEquals(2, records.getTotalSize(), "Test topics not found");
             template().requestBody("direct:deleteSObject", records.getRecords().get(0));
+            template().requestBody("direct:deleteSObject", records.getRecords().get(1));
 
         }
     }
@@ -98,7 +107,6 @@ public class StreamingApiIntegrationTest extends AbstractSalesforceTestBase {
             public void configure() throws Exception {
 
                 // test topic subscription
-                // from("salesforce:CamelTestTopic?notifyForFields=ALL&notifyForOperations=ALL&"
                 from("salesforce:CamelTestTopic?notifyForFields=ALL&"
                      + "notifyForOperationCreate=true&notifyForOperationDelete=true&notifyForOperationUpdate=true&"
                      + "sObjectName=Merchandise__c&" + "updateTopic=true&sObjectQuery=SELECT Id, Name FROM Merchandise__c")
@@ -108,12 +116,18 @@ public class StreamingApiIntegrationTest extends AbstractSalesforceTestBase {
                      + "notifyForOperationCreate=true&notifyForOperationDelete=true&notifyForOperationUpdate=true&"
                      + "updateTopic=true&sObjectQuery=SELECT Id, Name FROM Merchandise__c").to("mock:RawPayloadCamelTestTopic");
 
+                from("salesforce:CamelFallbackTestTopic?notifyForFields=ALL&defaultReplayId=9999&"
+                     + "notifyForOperationCreate=true&notifyForOperationDelete=true&notifyForOperationUpdate=true&"
+                     + "sObjectName=Merchandise__c&" + "updateTopic=true&sObjectQuery=SELECT Id, Name FROM Merchandise__c")
+                             .to("mock:CamelFallbackTestTopic");
+
                 // route for creating test record
                 from("direct:upsertSObject").to("salesforce:upsertSObject?sObjectIdName=Name");
 
                 // route for finding test topic
                 from("direct:query")
-                        .to("salesforce:query?sObjectQuery=SELECT Id FROM PushTopic WHERE Name = 'CamelTestTopic'&"
+                        .to("salesforce:query?sObjectQuery=SELECT Id FROM PushTopic " +
+                            "WHERE Name IN ('CamelTestTopic', 'CamelFallbackTestTopic')&"
                             + "sObjectClass=" + QueryRecordsPushTopic.class.getName());
 
                 // route for removing test record

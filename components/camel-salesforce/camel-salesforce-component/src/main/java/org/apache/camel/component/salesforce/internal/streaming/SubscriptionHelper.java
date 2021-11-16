@@ -69,6 +69,7 @@ public class SubscriptionHelper extends ServiceSupport {
     private static final int DISCONNECT_INTERVAL = 5000;
     private static final String SERVER_TOO_BUSY_ERROR = "503::";
     private static final String AUTHENTICATION_INVALID = "401::Authentication invalid";
+    private static final String INVALID_REPLAY_ID_PATTERN = "400::The replayId \\{.*} you provided was invalid.*";
 
     BayeuxClient client;
 
@@ -319,7 +320,7 @@ public class SubscriptionHelper extends ServiceSupport {
         if (message.get(EXCEPTION_FIELD) != null) {
             exception = (Exception) message.get(EXCEPTION_FIELD);
         } else if (message.get(FAILURE_FIELD) != null) {
-            exception = (Exception) ((Map<String, Object>) message.get("failure")).get("exception");
+            exception = (Exception) ((Map<String, Object>) message.get(FAILURE_FIELD)).get("exception");
         } else {
             String failureReason = getFailureReason(message);
             if (failureReason != null) {
@@ -414,10 +415,16 @@ public class SubscriptionHelper extends ServiceSupport {
     }
 
     public void subscribe(final String topicName, final SalesforceConsumer consumer) {
+        subscribe(topicName, consumer, false);
+    }
+
+    public void subscribe(
+            final String topicName, final SalesforceConsumer consumer,
+            final boolean skipReplayId) {
         // create subscription for consumer
         final String channelName = getChannelName(topicName);
 
-        if (!reconnecting) {
+        if (!reconnecting && !skipReplayId) {
             setupReplay((SalesforceEndpoint) consumer.getEndpoint());
         }
 
@@ -470,6 +477,14 @@ public class SubscriptionHelper extends ServiceSupport {
                                     LOG.warn("Aborting subscribe on interrupt!", e);
                                 }
                             }
+                        } else if (error.matches(INVALID_REPLAY_ID_PATTERN)) {
+                            abort = false;
+                            final Long fallBackReplayId
+                                    = ((SalesforceEndpoint) consumer.getEndpoint()).getConfiguration().getFallBackReplayId();
+                            LOG.warn(error);
+                            LOG.warn("Falling back to replayId {} for channel {}", fallBackReplayId, channelName);
+                            REPLAY_EXTENSION.addChannelReplayId(channelName, fallBackReplayId);
+                            subscribe(topicName, consumer, true);
                         }
 
                         if (abort && client != null) {
