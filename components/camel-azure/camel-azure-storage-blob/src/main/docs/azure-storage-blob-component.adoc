@@ -125,6 +125,8 @@ to("file://blobdirectory");
 |`CamelAzureStorageBlobChangeFeedStartTime`|`BlobConstants.CHANGE_FEED_START_TIME`|`OffsetDateTime`|`getChangeFeed`| It filters the results to return events approximately after the start time. Note: A few events belonging to the previous hour can also be returned. A few events belonging to this hour can be missing; to ensure all events from the hour are returned, round the start time down by an hour.
 |`CamelAzureStorageBlobChangeFeedEndTime`|`BlobConstants.CHANGE_FEED_END_TIME`|`OffsetDateTime`|`getChangeFeed`| It filters  the results to return events approximately before the end time. Note: A few events belonging to the next hour can also be returned. A few events belonging to this hour can be missing; to ensure all events from the hour are returned, round the end time up by an hour.
 |`CamelAzureStorageBlobChangeFeedContext`|`BlobConstants.CHANGE_FEED_CONTEXT`|`Context`|`getChangeFeed`| This gives additional context that is passed through the Http pipeline during the service call.
+|`CamelAzureStorageBlobSourceBlobAccountName`|`BlobConstants.SOURCE_BLOB_ACCOUNT_NAME`|`String`|`copyBlob`| The source blob account name to be used as source account name in a copy blob operation
+|`CamelAzureStorageBlobSourceBlobContainerName`|`BlobConstants.SOURCE_BLOB_CONTAINER_NAME`|`String`|`copyBlob`| The source blob container name to be used as source container name in a copy blob operation
 |=======================================================================
 
 === Message headers set by either component producer or consumer
@@ -250,6 +252,7 @@ For these operations, `accountName`, `containerName` and `blobName` are *require
 |`resizePageBlob`|`PageBlob`| Resizes the page blob to the specified size (which must be a multiple of 512).
 |`clearPageBlob`|`PageBlob`| Frees the specified pages from the page blob. The size of the range must be a multiple of 512.
 |`getPageBlobRanges`|`PageBlob`|Returns the list of valid page ranges for a page blob or snapshot of a page blob.
+|`copyBlob`|`Common`|Copy a blob from one container to another one, even from different accounts.
 |===
 
 Refer to the example section in this page to learn how to use these operations into your camel application.
