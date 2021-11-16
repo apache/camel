@@ -32,7 +32,7 @@ class BlobCopyProducerIt extends CamelTestSupport {
     private ProducerTemplate template;
 
     @Test
-    void testUploadBlockBlob() throws InterruptedException {
+    void testCopyBlob() throws InterruptedException {
 
         template.send("direct:uploadBlockBlob", exchange -> {
             exchange.getIn().setHeader(BlobConstants.BLOB_NAME, "pmi.txt");
