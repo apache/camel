@@ -21,7 +21,6 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.azure.storage.blob.BlobConstants;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
 
