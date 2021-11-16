@@ -1042,6 +1042,23 @@ public interface BlobEndpointBuilderFactory {
             doSetProperty("accessKey", accessKey);
             return this;
         }
+        /**
+         * Source Blob Access Key: for copyblob operation, sadly, we need to
+         * have an accessKey for the source blob we want to copy Passing an
+         * accessKey as header, it's unsafe so we could set as key.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sourceBlobAccessKey the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointConsumerBuilder sourceBlobAccessKey(
+                String sourceBlobAccessKey) {
+            doSetProperty("sourceBlobAccessKey", sourceBlobAccessKey);
+            return this;
+        }
     }
 
     /**
@@ -2086,6 +2103,23 @@ public interface BlobEndpointBuilderFactory {
             doSetProperty("accessKey", accessKey);
             return this;
         }
+        /**
+         * Source Blob Access Key: for copyblob operation, sadly, we need to
+         * have an accessKey for the source blob we want to copy Passing an
+         * accessKey as header, it's unsafe so we could set as key.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sourceBlobAccessKey the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointProducerBuilder sourceBlobAccessKey(
+                String sourceBlobAccessKey) {
+            doSetProperty("sourceBlobAccessKey", sourceBlobAccessKey);
+            return this;
+        }
     }
 
     /**
@@ -2543,6 +2577,23 @@ public interface BlobEndpointBuilderFactory {
             doSetProperty("accessKey", accessKey);
             return this;
         }
+        /**
+         * Source Blob Access Key: for copyblob operation, sadly, we need to
+         * have an accessKey for the source blob we want to copy Passing an
+         * accessKey as header, it's unsafe so we could set as key.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sourceBlobAccessKey the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointBuilder sourceBlobAccessKey(
+                String sourceBlobAccessKey) {
+            doSetProperty("sourceBlobAccessKey", sourceBlobAccessKey);
+            return this;
+        }
     }
 
     /**
@@ -2602,7 +2653,8 @@ public interface BlobEndpointBuilderFactory {
         resizePageBlob,
         clearPageBlob,
         getPageBlobRanges,
-        getChangeFeed;
+        getChangeFeed,
+        copyBlob;
     }
 
     public interface BlobBuilders {

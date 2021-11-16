@@ -123,6 +123,9 @@ public class BlobProducer extends DefaultProducer {
             case getChangeFeed:
                 setResponse(exchange, getBlobChangeFeedOperations().getEvents(exchange));
                 break;
+            case copyBlob:
+                setResponse(exchange, getBlobOperations(exchange).copyBlob(exchange));
+                break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
         }

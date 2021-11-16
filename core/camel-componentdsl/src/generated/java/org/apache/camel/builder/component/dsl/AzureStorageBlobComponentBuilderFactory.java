@@ -583,6 +583,23 @@ public interface AzureStorageBlobComponentBuilderFactory {
             doSetProperty("accessKey", accessKey);
             return this;
         }
+        /**
+         * Source Blob Access Key: for copyblob operation, sadly, we need to
+         * have an accessKey for the source blob we want to copy Passing an
+         * accessKey as header, it's unsafe so we could set as key.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sourceBlobAccessKey the value to set
+         * @return the dsl builder
+         */
+        default AzureStorageBlobComponentBuilder sourceBlobAccessKey(
+                java.lang.String sourceBlobAccessKey) {
+            doSetProperty("sourceBlobAccessKey", sourceBlobAccessKey);
+            return this;
+        }
     }
 
     class AzureStorageBlobComponentBuilderImpl
@@ -637,6 +654,7 @@ public interface AzureStorageBlobComponentBuilderFactory {
             case "pageBlobSize": getOrCreateConfiguration((BlobComponent) component).setPageBlobSize((java.lang.Long) value); return true;
             case "autowiredEnabled": ((BlobComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "accessKey": getOrCreateConfiguration((BlobComponent) component).setAccessKey((java.lang.String) value); return true;
+            case "sourceBlobAccessKey": getOrCreateConfiguration((BlobComponent) component).setSourceBlobAccessKey((java.lang.String) value); return true;
             default: return false;
             }
         }

@@ -100,6 +100,8 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
         case "serviceclient":
         case "serviceClient": target.getConfiguration().setServiceClient(property(camelContext, com.azure.storage.blob.BlobServiceClient.class, value)); return true;
+        case "sourceblobaccesskey":
+        case "sourceBlobAccessKey": target.getConfiguration().setSourceBlobAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "startscheduler":
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
         case "timeunit":
@@ -198,6 +200,8 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "sendEmptyMessageWhenIdle": return boolean.class;
         case "serviceclient":
         case "serviceClient": return com.azure.storage.blob.BlobServiceClient.class;
+        case "sourceblobaccesskey":
+        case "sourceBlobAccessKey": return java.lang.String.class;
         case "startscheduler":
         case "startScheduler": return boolean.class;
         case "timeunit":
@@ -292,6 +296,8 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "sendEmptyMessageWhenIdle": return target.isSendEmptyMessageWhenIdle();
         case "serviceclient":
         case "serviceClient": return target.getConfiguration().getServiceClient();
+        case "sourceblobaccesskey":
+        case "sourceBlobAccessKey": return target.getConfiguration().getSourceBlobAccessKey();
         case "startscheduler":
         case "startScheduler": return target.isStartScheduler();
         case "timeunit":
