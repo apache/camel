@@ -133,6 +133,9 @@ class MyProcessor implements Processor {
 }
 ----
 
+In addition, HTTP response status code and text are available as headers `Exchange.HTTP_RESPONSE_CODE` and
+`Exchange.HTTP_RESPONSE_TEXT`.
+
 == Supported Salesforce APIs
 
 The component supports the following Salesforce APIs
