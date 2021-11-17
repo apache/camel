@@ -341,7 +341,8 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
             final String uriTemplate)
             throws Exception {
         final String basePath = determineBasePath(openapi);
-        final String componentEndpointUri = "rest:" + method + ":" + basePath + ":" + uriTemplate;
+        final String componentEndpointUri = "rest:" + method + ":" + basePath + ":" + uriTemplate
+                                            + "?title=" + openapi.info.title + "&version=" + openapi.info.version;
 
         final CamelContext camelContext = getCamelContext();
 
