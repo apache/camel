@@ -18,21 +18,21 @@ package org.apache.camel.main;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.Component;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
-import org.apache.camel.impl.engine.DefaultComponentResolver;
-import org.apache.camel.tooling.model.ComponentModel;
+import org.apache.camel.impl.engine.DefaultLanguageResolver;
+import org.apache.camel.spi.Language;
+import org.apache.camel.tooling.model.LanguageModel;
 
 /**
- * Auto downloaded needed JARs when resolving components.
+ * Auto downloaded needed JARs when resolving languages.
  */
-final class DependencyDownloaderComponentResolver extends DefaultComponentResolver implements CamelContextAware {
+final class DependencyDownloaderLanguageResolver extends DefaultLanguageResolver implements CamelContextAware {
 
     private final CamelCatalog catalog = new DefaultCamelCatalog();
     private CamelContext camelContext;
 
-    public DependencyDownloaderComponentResolver(CamelContext camelContext) {
+    public DependencyDownloaderLanguageResolver(CamelContext camelContext) {
         this.camelContext = camelContext;
     }
 
@@ -47,13 +47,13 @@ final class DependencyDownloaderComponentResolver extends DefaultComponentResolv
     }
 
     @Override
-    public Component resolveComponent(String name, CamelContext context) {
-        ComponentModel model = catalog.componentModel(name);
+    public Language resolveLanguage(String name, CamelContext context) {
+        LanguageModel model = catalog.languageModel(name);
         if (model != null && !DownloaderHelper.alreadyOnClasspath(camelContext, model.getArtifactId())) {
             DownloaderHelper.downloadDependency(camelContext, model.getGroupId(), model.getArtifactId(), model.getVersion());
         }
 
-        return super.resolveComponent(name, context);
+        return super.resolveLanguage(name, context);
     }
 
 }

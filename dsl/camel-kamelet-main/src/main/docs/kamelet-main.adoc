@@ -12,7 +12,8 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/kamelet-main.a
 
 *Since Camel {since}*
 
-A `main` class that is opinionated to boostrap and run Camel standalone with Kameleets for development and demo purposes.
+A `main` class that is opinionated to boostrap and run Camel standalone with Kamelets (or plain YAML routes)
+for development and demo purposes.
 
 == Initial configuration
 
@@ -29,9 +30,9 @@ These settings can be overridden by configuration in `application.properties`.
 
 == Automatic dependencies downloading
 
-The Kamelet Main can automatic download Kamelet YAML files from a remote location over http/https, and from github as well.
+The Kamelet Main can automatically download Kamelet YAML files from a remote location over http/https, and from github as well.
 
-The official Kameleets from the Apache Camel Kamelet Catalog is stored on github and they can be used out of the box as-is.
+The official Kamelets from the Apache Camel Kamelet Catalog is stored on github and they can be used out of the box as-is.
 
 For example a Camel route can be _coded_ in YAML which uses the Earthquake Kamelet from the catalog, as shown below:
 

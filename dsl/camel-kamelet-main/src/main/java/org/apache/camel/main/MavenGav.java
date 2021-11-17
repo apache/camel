@@ -16,7 +16,10 @@
  */
 package org.apache.camel.main;
 
-public class MavenGav {
+/**
+ * Maven GAV model
+ */
+public final class MavenGav {
 
     private String groupId;
     private String artifactId;

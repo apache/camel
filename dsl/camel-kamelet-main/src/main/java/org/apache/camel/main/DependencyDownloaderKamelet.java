@@ -28,9 +28,9 @@ import org.apache.camel.support.service.ServiceSupport;
 /**
  * To automatic downloaded dependencies that Kamelets requires.
  */
-public final class DependencyDownloader extends ServiceSupport implements CamelContextAware, RouteTemplateLoaderListener {
+final class DependencyDownloaderKamelet extends ServiceSupport implements CamelContextAware, RouteTemplateLoaderListener {
 
-    private final KameletDependencyDownloader downloader = new KameletDependencyDownloader("yaml");
+    private final KameletYamlRoutes downloader = new KameletYamlRoutes("yaml");
     private CamelContext camelContext;
 
     @Override

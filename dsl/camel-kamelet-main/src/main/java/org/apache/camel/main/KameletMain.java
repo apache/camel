@@ -110,7 +110,7 @@ public class KameletMain extends MainCommandLineSupport {
         super.doStart();
         if (getCamelContext() != null) {
             try {
-                // if we were veto started then mark as completed
+                // if we were vetoed started then mark as completed
                 getCamelContext().start();
             } finally {
                 if (getCamelContext().isVetoStarted()) {
@@ -146,15 +146,17 @@ public class KameletMain extends MainCommandLineSupport {
         }
         answer.setApplicationContextClassLoader(kameletClassLoader);
         answer.setRegistry(registry);
-        // use component resolver that can auto downloaded JARs
-        answer.setComponentResolver(new DependencyDownloaderComponentResolver(answer));
 
         addInitialProperty("camel.component.kamelet.location", "classpath:/kamelets,github:apache:camel-kamelets");
         addInitialProperty("camel.main.lightweight", "true");
 
         if (download) {
             try {
-                answer.addService(new DependencyDownloader());
+                // use resolver that can auto downloaded
+                answer.setComponentResolver(new DependencyDownloaderComponentResolver(answer));
+                answer.setDataFormatResolver(new DependencyDownloaderDataFormatResolver(answer));
+                answer.setLanguageResolver(new DependencyDownloaderLanguageResolver(answer));
+                answer.addService(new DependencyDownloaderKamelet());
             } catch (Exception e) {
                 throw RuntimeCamelException.wrapRuntimeException(e);
             }

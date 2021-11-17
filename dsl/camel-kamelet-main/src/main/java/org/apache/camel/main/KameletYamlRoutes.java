@@ -44,14 +44,14 @@ import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.nodeAt;
 /**
  * Reuse the YAML DSL support for parsing Kamelets
  */
-public class KameletDependencyDownloader extends YamlRoutesBuilderLoaderSupport implements CamelContextAware {
+class KameletYamlRoutes extends YamlRoutesBuilderLoaderSupport implements CamelContextAware {
 
-    private static final Logger LOG = LoggerFactory.getLogger(KameletDependencyDownloader.class);
+    private static final Logger LOG = LoggerFactory.getLogger(KameletYamlRoutes.class);
     private CamelContext camelContext;
     private final String cp = System.getProperty("java.class.path");
     private final Set<String> downloaded = new HashSet<>();
 
-    public KameletDependencyDownloader(String extension) {
+    public KameletYamlRoutes(String extension) {
         super(extension);
     }
 
