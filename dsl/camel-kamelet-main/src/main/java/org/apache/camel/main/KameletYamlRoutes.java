@@ -16,22 +16,15 @@
  */
 package org.apache.camel.main;
 
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-import groovy.grape.Grape;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.dsl.yaml.YamlRoutesBuilderLoaderSupport;
-import org.apache.camel.util.StopWatch;
-import org.apache.camel.util.TimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snakeyaml.engine.v2.nodes.Node;
@@ -101,8 +94,8 @@ class KameletYamlRoutes extends YamlRoutesBuilderLoaderSupport implements CamelC
         for (String dep : dependencies) {
             String gav = dep;
             if (dep.startsWith("camel:")) {
-                // its a known camel component
-                gav = "mvn:org.apache.camel:camel-" + dep.substring(6) + ":" + camelContext.getVersion();
+                // it's a known camel component
+                gav = "org.apache.camel:camel-" + dep.substring(6) + ":" + camelContext.getVersion();
             }
             if (isValidGav(gav)) {
                 gavs.add(gav);
@@ -111,22 +104,12 @@ class KameletYamlRoutes extends YamlRoutesBuilderLoaderSupport implements CamelC
 
         if (!gavs.isEmpty()) {
             for (String gav : gavs) {
-                StopWatch watch = new StopWatch();
                 MavenGav mg = MavenGav.parseGav(gav);
                 if (mg.getVersion() == null) {
                     mg.setVersion(camelContext.getVersion());
                 }
-                Map<String, Object> map = new HashMap<>();
-                map.put("classLoader", camelContext.getApplicationContextClassLoader());
-                map.put("group", mg.getGroupId());
-                map.put("module", mg.getArtifactId());
-                map.put("version", mg.getVersion());
-                map.put("classifier", "");
-
-                LOG.debug("Downloading dependency: {}", mg);
-                Grape.grab(map);
+                DownloaderHelper.downloadDependency(camelContext, mg.getGroupId(), mg.getArtifactId(), mg.getVersion());
                 downloaded.add(gav);
-                LOG.info("Downloaded dependency: {} took: {}", mg, TimeUtils.printDuration(watch.taken()));
             }
         }
     }
@@ -138,41 +121,14 @@ class KameletYamlRoutes extends YamlRoutesBuilderLoaderSupport implements CamelC
         }
 
         // skip camel-core and camel-kamelet as they are already included
-        if (gav.startsWith("mvn:org.apache.camel:camel-core") || gav.startsWith("mvn:org.apache.camel:camel-kamelet:")) {
+        if (gav.contains("org.apache.camel:camel-core") || gav.contains("org.apache.camel:camel-kamelet:")) {
             return false;
         }
 
-        String[] arr = gav.split(":");
-        String name = null;
-        if (arr.length == 4) {
-            String aid = arr[2];
-            String v = arr[3];
-            name = aid + "-" + v + ".jar";
-        }
-
-        if (name != null && cp != null) {
-            // is it already on classpath
-            if (cp.contains(name)) {
-                // already on classpath
-                return false;
-            }
-        }
-
-        if (name != null && camelContext.getApplicationContextClassLoader() != null) {
-            ClassLoader cl = camelContext.getApplicationContextClassLoader();
-            if (cl instanceof URLClassLoader) {
-                URLClassLoader ucl = (URLClassLoader) cl;
-                for (URL u : ucl.getURLs()) {
-                    String s = u.toString();
-                    if (s.contains(name)) {
-                        // already on classpath
-                        return false;
-                    }
-                }
-            }
-        }
-
-        return true;
+        MavenGav mg = MavenGav.parseGav(gav);
+        boolean exists = DownloaderHelper.alreadyOnClasspath(camelContext, mg.getArtifactId());
+        // valid if not already on classpath
+        return !exists;
     }
 
 }

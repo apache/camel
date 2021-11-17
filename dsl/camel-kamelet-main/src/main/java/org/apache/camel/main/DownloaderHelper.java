@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 public final class DownloaderHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(DownloaderHelper.class);
+    private static final String CP = System.getProperty("java.class.path");
 
     private DownloaderHelper() {
     }
@@ -51,6 +52,14 @@ public final class DownloaderHelper {
     }
 
     public static boolean alreadyOnClasspath(CamelContext camelContext, String artifactId) {
+        if (CP != null) {
+            // is it already on classpath
+            if (CP.contains(artifactId)) {
+                // already on classpath
+                return true;
+            }
+        }
+
         if (camelContext.getApplicationContextClassLoader() != null) {
             ClassLoader cl = camelContext.getApplicationContextClassLoader();
             if (cl instanceof URLClassLoader) {
