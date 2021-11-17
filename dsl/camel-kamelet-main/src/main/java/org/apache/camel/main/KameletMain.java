@@ -146,6 +146,8 @@ public class KameletMain extends MainCommandLineSupport {
         }
         answer.setApplicationContextClassLoader(kameletClassLoader);
         answer.setRegistry(registry);
+        // use component resolver that can auto downloaded JARs
+        answer.setComponentResolver(new DependencyDownloaderComponentResolver(answer));
 
         addInitialProperty("camel.component.kamelet.location", "classpath:/kamelets,github:apache:camel-kamelets");
         addInitialProperty("camel.main.lightweight", "true");

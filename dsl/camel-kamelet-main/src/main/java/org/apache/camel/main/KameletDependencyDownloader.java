@@ -110,9 +110,8 @@ public class KameletDependencyDownloader extends YamlRoutesBuilderLoaderSupport 
         }
 
         if (!gavs.isEmpty()) {
-            StopWatch watch = new StopWatch();
-            LOG.info("Downloading {} dependencies (may take some time)", gavs.size());
             for (String gav : gavs) {
+                StopWatch watch = new StopWatch();
                 MavenGav mg = MavenGav.parseGav(gav);
                 if (mg.getVersion() == null) {
                     mg.setVersion(camelContext.getVersion());
@@ -124,11 +123,11 @@ public class KameletDependencyDownloader extends YamlRoutesBuilderLoaderSupport 
                 map.put("version", mg.getVersion());
                 map.put("classifier", "");
 
-                LOG.info("Downloading dependency: {}", mg);
+                LOG.debug("Downloading dependency: {}", mg);
                 Grape.grab(map);
                 downloaded.add(gav);
+                LOG.info("Downloaded dependency: {} took: {}", mg, TimeUtils.printDuration(watch.taken()));
             }
-            LOG.info("Downloaded {} dependencies took: {}", gavs.size(), TimeUtils.printDuration(watch.taken()));
         }
     }
 
