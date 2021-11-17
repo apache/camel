@@ -211,7 +211,6 @@ public class AWS2S3Producer extends DefaultProducer {
                 try (InputStream fileInputStream = new FileInputStream(filePayload)) {
                     if (filePosition > 0) {
                         long skipped = fileInputStream.skip(filePosition);
-                    
                         if (skipped == 0) {
                             LOG.warn("While trying to upload the file {} file, 0 bytes were skipped", keyName);
                         }
