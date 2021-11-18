@@ -6,4 +6,7 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 
 == Upgrading Camel 3.13 to 3.14
 
+=== API changes
+
+Added method `updateRoutesToCamelContext` to `org.apache.camel.RoutesBuilder` interface.
 
