@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -274,9 +274,9 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
                                 // must use file resource loader as we cannot load from classpath
                                 Resource resource = ecc.getResourceLoader().resolveResource("file:" + name);
                                 getResourceReload().onReload(name, resource);
-                                succeeded++;
+                                incSucceededCounter();
                             } catch (Exception e) {
-                                failed++;
+                                incFailedCounter();
                                 LOG.warn("Error reloading routes from file: " + name + " due " + e.getMessage()
                                          + ". This exception is ignored.",
                                         e);

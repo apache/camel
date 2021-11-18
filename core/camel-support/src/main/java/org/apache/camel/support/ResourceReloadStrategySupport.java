@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -30,8 +30,8 @@ public abstract class ResourceReloadStrategySupport extends ServiceSupport imple
 
     private ResourceReload resourceReload;
     private CamelContext camelContext;
-    protected int succeeded;
-    protected int failed;
+    private int succeeded;
+    private int failed;
 
     @Override
     public CamelContext getCamelContext() {
@@ -75,6 +75,14 @@ public abstract class ResourceReloadStrategySupport extends ServiceSupport imple
     public void resetCounters() {
         succeeded = 0;
         failed = 0;
+    }
+
+    protected void incSucceededCounter() {
+        succeeded++;
+    }
+
+    protected void incFailedCounter() {
+        failed++;
     }
 
     @Override
