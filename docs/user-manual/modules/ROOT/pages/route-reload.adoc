@@ -44,6 +44,19 @@ camel.springboot.routes-reload-directory = myfolder
 camel.springboot.routes-reload-pattern = routes/*.xml
 ----
 
+=== Route Reload Options
+
+You can configure the `RouteWatcherReloadStrategy` using the following options:
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| routesReloadDirectory | Directory to scan (incl subdirectories) for route changes. Camel cannot scan the classpath, so this must be configured to a file directory. Development with Maven as build tool, you can configure the directory to be src/main/resources to scan for Camel routes in XML or YAML files. | src/main/resources | String
+| routesReloadEnabled | Used for enabling automatic routes reloading. If enabled then Camel will watch for file changes in the given reload directory, and trigger reloading routes if files are changed. | false | boolean
+| routesReloadPattern | Used for inclusive filtering of routes from directories. Typical used for specifying to accept routes in XML or YAML files. The default pattern is .yaml,.xml Multiple patterns can be specified separated by comma. | camel/* | String
+|=======================================================================
+
+
 === Must use route id's
 
 When using route reload then you *SHOULD* assign id's to your routes, so Camel
