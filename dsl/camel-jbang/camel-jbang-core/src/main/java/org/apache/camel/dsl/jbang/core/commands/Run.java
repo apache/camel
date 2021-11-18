@@ -50,6 +50,9 @@ class Run implements Callable<Integer> {
     @Option(names = { "--max-messages" }, defaultValue = "0", description = "Max number of messages to process before stopping")
     private int maxMessages;
 
+    @Option(names = { "--reload" }, description = "Enables live reload when source file is changed (saved)")
+    private boolean reload;
+
     class ShutdownRoute extends RouteBuilder {
         private File lockFile;
 
@@ -97,6 +100,9 @@ class Run implements Callable<Integer> {
         }
 
         System.setProperty("camel.main.routes-include-pattern", "file:" + binding);
+        System.setProperty("camel.main.routes-reload-enabled", reload ? "true" : "false");
+        System.setProperty("camel.main.routes-reload-directory", ".");
+        System.setProperty("camel.main.routes-reload-pattern", binding);
 
         RuntimeUtil.configureLog(debugLevel);
 
