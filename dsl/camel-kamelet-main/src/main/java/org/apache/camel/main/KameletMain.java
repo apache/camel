@@ -148,7 +148,13 @@ public class KameletMain extends MainCommandLineSupport {
         answer.setRegistry(registry);
 
         addInitialProperty("camel.component.kamelet.location", "classpath:/kamelets,github:apache:camel-kamelets");
-        addInitialProperty("camel.main.lightweight", "true");
+        addInitialProperty("camel.main.routes-reload-enabled", "true");
+        addInitialProperty("camel.main.routes-reload-directory", "src/main/resources");
+        addInitialProperty("camel.main.routes-reload-pattern", "camel/*.yaml");
+        // turn off lightweight as we have routes reload enabled
+        addInitialProperty("camel.main.lightweight", "false");
+        // shutdown quickly
+        addInitialProperty("camel.main.shutdown-timeout", "5");
 
         if (download) {
             try {
