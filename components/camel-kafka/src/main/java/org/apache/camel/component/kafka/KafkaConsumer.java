@@ -144,7 +144,7 @@ public class KafkaConsumer extends DefaultConsumer {
                 LOG.debug("Shutting down Kafka consumer worker threads with timeout {} millis", timeout);
                 if (!executor.awaitTermination(timeout, TimeUnit.MILLISECONDS)) {
                     LOG.warn("Shutting down Kafka {} consumer worker threads did not finish within {} millis",
-                            tasks.size());
+                            tasks.size(), timeout);
                 }
             }
 
