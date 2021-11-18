@@ -21,8 +21,8 @@ package org.apache.camel;
  * <p/>
  * Eventually the routes are added to a {@link org.apache.camel.CamelContext} where they run inside.
  *
- * This interface is not intended to be used by Camel end users.
- * Instead, Camel users will use <tt>org.apache.camel.builder.RouteBuilder</tt> to build routes in Java DSL.
+ * This interface is not intended to be used by Camel end users. Instead, Camel users will use
+ * <tt>org.apache.camel.builder.RouteBuilder</tt> to build routes in Java DSL.
  */
 public interface RoutesBuilder {
 
