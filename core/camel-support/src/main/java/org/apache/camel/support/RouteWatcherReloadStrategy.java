@@ -47,8 +47,8 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
     /**
      * Used for inclusive filtering of routes from directories.
      *
-     * Typical used for specifying to accept routes in XML or YAML files.
-     * Multiple patterns can be specified separated by comma.
+     * Typical used for specifying to accept routes in XML or YAML files. Multiple patterns can be specified separated
+     * by comma.
      */
     public void setPattern(String pattern) {
         this.pattern = pattern;
