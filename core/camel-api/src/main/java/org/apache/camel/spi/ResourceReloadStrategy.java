@@ -14,29 +14,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel;
+package org.apache.camel.spi;
+
+import org.apache.camel.CamelContextAware;
+import org.apache.camel.StaticService;
 
 /**
- * A routes builder is capable of building routes using the builder and model classes.
- * <p/>
- * Eventually the routes are added to a {@link org.apache.camel.CamelContext} where they run inside.
+ * SPI strategy for reloading {@link Resource} in an existing running {@link org.apache.camel.CamelContext}
+ *
+ * @see ResourceReload
+ * @see Resource
  */
-public interface RoutesBuilder {
+public interface ResourceReloadStrategy extends StaticService, CamelContextAware {
 
     /**
-     * Adds the routes from this Route Builder to the CamelContext.
-     *
-     * @param  context   the Camel context
-     * @throws Exception is thrown if initialization of routes failed
+     * Gets the resource listener that is triggered on reload.
      */
-    void addRoutesToCamelContext(CamelContext context) throws Exception;
+    ResourceReload getResourceReload();
 
     /**
-     * Adds or updates the routes from this Route Builder to the CamelContext.
-     *
-     * @param  context   the Camel context
-     * @throws Exception is thrown if initialization of routes failed
+     * Sets the resource listener to trigger on reload.
      */
-    void updateRoutesToCamelContext(CamelContext context) throws Exception;
+    void setResourceReload(ResourceReload listener);
 
+    /**
+     * Number of reloads succeeded.
+     */
+    int getReloadCounter();
+
+    /**
+     * Number of reloads failed.
+     */
+    int getFailedCounter();
+
+    /**
+     * Reset the counters.
+     */
+    void resetCounters();
 }

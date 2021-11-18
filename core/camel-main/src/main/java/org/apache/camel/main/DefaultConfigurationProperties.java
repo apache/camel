@@ -93,6 +93,11 @@ public abstract class DefaultConfigurationProperties<T> {
     private String javaRoutesExcludePattern;
     private String routesIncludePattern = "classpath:camel/*,classpath:camel-template/*,classpath:camel-rest/*";
     private String routesExcludePattern;
+    private boolean routesReloadEnabled;
+    @Metadata(defaultValue = "*.xml,*.yaml")
+    private String routesReloadPattern = "*.xml,*.yaml";
+    @Metadata(defaultValue = "src/main/resources")
+    private String routesReloadDirectory = "src/main/resources";
     private boolean lightweight;
     private boolean eagerClassloading;
     @Metadata(defaultValue = "default", enums = "default,prototype,pooled")
@@ -951,6 +956,46 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setRoutesExcludePattern(String routesExcludePattern) {
         this.routesExcludePattern = routesExcludePattern;
+    }
+
+    public boolean isRoutesReloadEnabled() {
+        return routesReloadEnabled;
+    }
+
+    /**
+     * Used for enabling automatic routes reloading. If enabled then Camel will watch for file changes in the given
+     * reload directory, and trigger reloading routes if files are changed.
+     */
+    public void setRoutesReloadEnabled(boolean routesReloadEnabled) {
+        this.routesReloadEnabled = routesReloadEnabled;
+    }
+
+    public String getRoutesReloadDirectory() {
+        return routesReloadDirectory;
+    }
+
+    /**
+     * Directory to scan (incl subdirectories) for route changes. Camel cannot scan the classpath, so this must be
+     * configured to a file directory. Development with Maven as build tool, you can configure the directory to be
+     * src/main/resources to scan for Camel routes in XML or YAML files.
+     */
+    public void setRoutesReloadDirectory(String routesReloadDirectory) {
+        this.routesReloadDirectory = routesReloadDirectory;
+    }
+
+    public String getRoutesReloadPattern() {
+        return routesReloadPattern;
+    }
+
+    /**
+     * Used for inclusive filtering of routes from directories.
+     *
+     * Typical used for specifying to accept routes in XML or YAML files. The default pattern is <tt>*.yaml,*.xml</tt>
+     *
+     * Multiple patterns can be specified separated by comma.
+     */
+    public void setRoutesReloadPattern(String routesReloadPattern) {
+        this.routesReloadPattern = routesReloadPattern;
     }
 
     public boolean isLightweight() {
@@ -1896,6 +1941,21 @@ public abstract class DefaultConfigurationProperties<T> {
 
     public T withRoutesExcludePattern(String routesExcludePattern) {
         this.routesExcludePattern = routesExcludePattern;
+        return (T) this;
+    }
+
+    public T withRoutesReloadEnabled(boolean routesReloadEnabled) {
+        this.routesReloadEnabled = routesReloadEnabled;
+        return (T) this;
+    }
+
+    public T withRoutesReloadDirectory(String routesReloadDirectory) {
+        this.routesReloadDirectory = routesReloadDirectory;
+        return (T) this;
+    }
+
+    public T withRoutesReloadPattern(String routesReloadPattern) {
+        this.routesReloadPattern = routesReloadPattern;
         return (T) this;
     }
 

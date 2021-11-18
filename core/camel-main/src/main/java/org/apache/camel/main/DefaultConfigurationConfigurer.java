@@ -75,6 +75,7 @@ import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.support.ClassicUuidGenerator;
 import org.apache.camel.support.DefaultUuidGenerator;
 import org.apache.camel.support.OffUuidGenerator;
+import org.apache.camel.support.RouteWatcherReloadStrategy;
 import org.apache.camel.support.ShortUuidGenerator;
 import org.apache.camel.support.SimpleUuidGenerator;
 import org.apache.camel.support.jsse.GlobalSSLContextParametersSupplier;
@@ -225,6 +226,11 @@ public final class DefaultConfigurationConfigurer {
         camelContext.setUseMDCLogging(config.isUseMdcLogging());
         camelContext.setMDCLoggingKeysPattern(config.getMdcLoggingKeysPattern());
         camelContext.setLoadTypeConverters(config.isLoadTypeConverters());
+        if (config.isRoutesReloadEnabled()) {
+            RouteWatcherReloadStrategy reloader = new RouteWatcherReloadStrategy(config.getRoutesReloadDirectory());
+            reloader.setPattern(config.getRoutesReloadPattern());
+            camelContext.addService(reloader);
+        }
 
         if (camelContext.getManagementStrategy().getManagementAgent() != null) {
             camelContext.getManagementStrategy().getManagementAgent()

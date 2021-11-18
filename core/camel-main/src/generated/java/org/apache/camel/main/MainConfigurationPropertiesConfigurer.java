@@ -151,6 +151,12 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "RoutesExcludePattern": target.setRoutesExcludePattern(property(camelContext, java.lang.String.class, value)); return true;
         case "routesincludepattern":
         case "RoutesIncludePattern": target.setRoutesIncludePattern(property(camelContext, java.lang.String.class, value)); return true;
+        case "routesreloaddirectory":
+        case "RoutesReloadDirectory": target.setRoutesReloadDirectory(property(camelContext, java.lang.String.class, value)); return true;
+        case "routesreloadenabled":
+        case "RoutesReloadEnabled": target.setRoutesReloadEnabled(property(camelContext, boolean.class, value)); return true;
+        case "routesreloadpattern":
+        case "RoutesReloadPattern": target.setRoutesReloadPattern(property(camelContext, java.lang.String.class, value)); return true;
         case "shutdownloginflightexchangesontimeout":
         case "ShutdownLogInflightExchangesOnTimeout": target.setShutdownLogInflightExchangesOnTimeout(property(camelContext, boolean.class, value)); return true;
         case "shutdownnowontimeout":
@@ -348,6 +354,12 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "RoutesExcludePattern": return java.lang.String.class;
         case "routesincludepattern":
         case "RoutesIncludePattern": return java.lang.String.class;
+        case "routesreloaddirectory":
+        case "RoutesReloadDirectory": return java.lang.String.class;
+        case "routesreloadenabled":
+        case "RoutesReloadEnabled": return boolean.class;
+        case "routesreloadpattern":
+        case "RoutesReloadPattern": return java.lang.String.class;
         case "shutdownloginflightexchangesontimeout":
         case "ShutdownLogInflightExchangesOnTimeout": return boolean.class;
         case "shutdownnowontimeout":
@@ -546,6 +558,12 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "RoutesExcludePattern": return target.getRoutesExcludePattern();
         case "routesincludepattern":
         case "RoutesIncludePattern": return target.getRoutesIncludePattern();
+        case "routesreloaddirectory":
+        case "RoutesReloadDirectory": return target.getRoutesReloadDirectory();
+        case "routesreloadenabled":
+        case "RoutesReloadEnabled": return target.isRoutesReloadEnabled();
+        case "routesreloadpattern":
+        case "RoutesReloadPattern": return target.getRoutesReloadPattern();
         case "shutdownloginflightexchangesontimeout":
         case "ShutdownLogInflightExchangesOnTimeout": return target.isShutdownLogInflightExchangesOnTimeout();
         case "shutdownnowontimeout":

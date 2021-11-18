@@ -72,6 +72,23 @@ public interface RoutesLoader extends CamelContextAware {
     }
 
     /**
+     * Loads or updates existing {@link RoutesBuilder} from the give list of {@link Resource} into the current
+     * {@link org.apache.camel.CamelContext}.
+     *
+     * If a route is loaded with a route id for an existing route, then the existing route is stopped and remove, so it
+     * can be updated.
+     *
+     * @param resources the resources to be loaded or updated.
+     */
+    default void updateRoutes(Resource... resources) throws Exception {
+        Collection<RoutesBuilder> builders = findRoutesBuilders(resources);
+        for (RoutesBuilder builder : builders) {
+            // update any existing routes
+            builder.updateRoutesToCamelContext(getCamelContext());
+        }
+    }
+
+    /**
      * Find {@link RoutesBuilder} from the give list of {@link Resource}.
      *
      * @param  resources the resource to be loaded.

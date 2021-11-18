@@ -14,29 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel;
+package org.apache.camel.spi;
 
 /**
- * A routes builder is capable of building routes using the builder and model classes.
- * <p/>
- * Eventually the routes are added to a {@link org.apache.camel.CamelContext} where they run inside.
+ * Listener for re-loading a {@link Resource} such as a Camel route.
  */
-public interface RoutesBuilder {
+@FunctionalInterface
+public interface ResourceReload {
 
     /**
-     * Adds the routes from this Route Builder to the CamelContext.
+     * Callback when the resource is re-loaded.
      *
-     * @param  context   the Camel context
-     * @throws Exception is thrown if initialization of routes failed
+     * @param name     name of the resource such as the file name (absolute)
+     * @param resource the resource
      */
-    void addRoutesToCamelContext(CamelContext context) throws Exception;
-
-    /**
-     * Adds or updates the routes from this Route Builder to the CamelContext.
-     *
-     * @param  context   the Camel context
-     * @throws Exception is thrown if initialization of routes failed
-     */
-    void updateRoutesToCamelContext(CamelContext context) throws Exception;
+    void onReload(String name, Resource resource);
 
 }
