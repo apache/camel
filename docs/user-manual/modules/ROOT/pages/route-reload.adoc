@@ -1,0 +1,60 @@
+= Route Reload
+
+The route reload functionality in Camel is capable of watching a directory folder (and its subdirectories)
+for file changes, and then automatic trigger reload of the running routes in the Camel application.
+
+NOTE: You cannot watch for file changes in the Java classpath. It is only possible to watch
+for file changes in the file system (i.e. using `file` and not `classpath`).
+
+== Using route reloading
+
+The route reloading can be configured in Java or with Spring Boot, Quarkus in the following way:
+
+[source,java]
+----
+CamelContext context = ...
+
+RouteWatcherReloadStrategy reload = new RouteWatcherReloadStrategy();
+reload.setFolder("myfolder");
+
+context.addService(reload);
+----
+
+And with Camel Quarkus / Camel Main you can configure this in `application.properties:`
+
+[source,properties]
+----
+# turn on route reloading on file changes
+camel.main.routes-reload-enabled = true
+# the base directory to watch
+camel.main.routes-reload-directory = myfolder
+# pattern(s) for files to watch
+camel.main.routes-reload-pattern = routes/*.xml
+----
+
+And in Spring Boot:
+
+[source,properties]
+----
+# turn on route reloading on file changes
+camel.springboot.routes-reload-enabled = true
+# the base directory to watch
+camel.springboot.routes-reload-directory = myfolder
+# pattern(s) for files to watch
+camel.springboot.routes-reload-pattern = routes/*.xml
+----
+
+=== Must use route id's
+
+When using route reload then you *SHOULD* assign id's to your routes, so Camel
+know exactly which routes have been updated. This is necessary because Camel
+must stop the existing routes from running, before they can be updated.
+
+Adding new routes is therefore possible as they would have a new unique route id specified.
+
+== See Also
+
+See the following examples that comes with live reloading enabled:
+
+- https://github.com/apache/camel-examples/tree/master/examples/main-xml[camel-example-main-xml]
+- https://github.com/apache/camel-examples/tree/master/examples/main-yaml[camel-example-main-yaml]
