@@ -170,8 +170,10 @@ public class KafkaRecordProcessor {
         // processing failed due to an unhandled exception, what should we do
         if (configuration.isBreakOnFirstError()) {
             // we are failing and we should break out
-            LOG.warn("Error during processing {} from topic: {}", exchange, partition.topic(), exchange.getException());
-            LOG.warn("Will seek consumer to offset {} and start polling again.", partitionLastOffset);
+            if (LOG.isWarnEnabled()) {
+                LOG.warn("Error during processing {} from topic: {}", exchange, partition.topic(), exchange.getException());
+                LOG.warn("Will seek consumer to offset {} and start polling again.", partitionLastOffset);
+            }
 
             // force commit, so we resume on next poll where we failed
             commitOffset(partition, partitionLastOffset, false, true);
@@ -202,27 +204,19 @@ public class KafkaRecordProcessor {
         StateRepository<String, String> offsetRepository = configuration.getOffsetRepository();
 
         if (!configuration.isAllowManualCommit() && offsetRepository != null) {
-            LOG.debug("Saving offset repository state {} [topic: {} partition: {} offset: {}]", threadId, partition.topic(),
-                    partition.partition(),
-                    partitionLastOffset);
-            offsetRepository.setState(serializeOffsetKey(partition), serializeOffsetValue(partitionLastOffset));
+            saveStateToOffsetRepository(partition, partitionLastOffset, threadId, offsetRepository);
         } else if (stopping) {
             // if we are stopping then react according to the configured option
             if ("async".equals(configuration.getAutoCommitOnStop())) {
-                LOG.debug("Auto commitAsync on stop {} from topic {}", threadId, partition.topic());
-                consumer.commitAsync(
-                        Collections.singletonMap(partition, new OffsetAndMetadata(partitionLastOffset + 1)), null);
+                commitAsync(consumer, partition, partitionLastOffset, threadId);
             } else if ("sync".equals(configuration.getAutoCommitOnStop())) {
-                LOG.debug("Auto commitSync on stop {} from topic {}", threadId, partition.topic());
-                commitOffset(configuration, consumer, partition, partitionLastOffset);
+                commitSync(configuration, consumer, partition, partitionLastOffset, threadId);
 
             } else if ("none".equals(configuration.getAutoCommitOnStop())) {
-                LOG.debug("Auto commit on stop {} from topic {} is disabled (none)", threadId, partition.topic());
+                noCommit(partition, threadId);
             }
         } else if (forceCommit) {
-            LOG.debug("Forcing commitSync {} [topic: {} partition: {} offset: {}]", threadId, partition.topic(),
-                    partition.partition(), partitionLastOffset);
-            commitOffset(configuration, consumer, partition, partitionLastOffset);
+            forceSyncCommit(configuration, consumer, partition, partitionLastOffset, threadId);
         }
     }
 
@@ -233,6 +227,57 @@ public class KafkaRecordProcessor {
         consumer.commitSync(
                 Collections.singletonMap(partition, new OffsetAndMetadata(partitionLastOffset + 1)),
                 Duration.ofMillis(timeout));
+    }
+
+    private static void forceSyncCommit(
+            KafkaConfiguration configuration, KafkaConsumer<?, ?> consumer, TopicPartition partition, long partitionLastOffset,
+            String threadId) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Forcing commitSync {} [topic: {} partition: {} offset: {}]", threadId, partition.topic(),
+                    partition.partition(), partitionLastOffset);
+        }
+
+        commitOffset(configuration, consumer, partition, partitionLastOffset);
+    }
+
+    private static void noCommit(TopicPartition partition, String threadId) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Auto commit on stop {} from topic {} is disabled (none)", threadId, partition.topic());
+        }
+    }
+
+    private static void commitSync(
+            KafkaConfiguration configuration, KafkaConsumer<?, ?> consumer, TopicPartition partition, long partitionLastOffset,
+            String threadId) {
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Auto commitSync on stop {} from topic {}", threadId, partition.topic());
+        }
+
+        commitOffset(configuration, consumer, partition, partitionLastOffset);
+    }
+
+    private static void commitAsync(
+            KafkaConsumer<?, ?> consumer, TopicPartition partition, long partitionLastOffset, String threadId) {
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Auto commitAsync on stop {} from topic {}", threadId, partition.topic());
+        }
+
+        consumer.commitAsync(
+                Collections.singletonMap(partition, new OffsetAndMetadata(partitionLastOffset + 1)), null);
+    }
+
+    private static void saveStateToOffsetRepository(
+            TopicPartition partition, long partitionLastOffset, String threadId,
+            StateRepository<String, String> offsetRepository) {
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Saving offset repository state {} [topic: {} partition: {} offset: {}]", threadId, partition.topic(),
+                    partition.partition(),
+                    partitionLastOffset);
+        }
+        offsetRepository.setState(serializeOffsetKey(partition), serializeOffsetValue(partitionLastOffset));
     }
 
     public static String serializeOffsetKey(TopicPartition topicPartition) {
