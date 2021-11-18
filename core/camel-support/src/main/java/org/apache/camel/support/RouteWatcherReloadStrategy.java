@@ -31,7 +31,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrategy {
 
-    private String pattern = "*.yaml,*.xml";
+    private String pattern = "camel/*";
 
     public RouteWatcherReloadStrategy() {
     }
@@ -47,8 +47,7 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
     /**
      * Used for inclusive filtering of routes from directories.
      *
-     * Typical used for specifying to accept routes in XML or YAML files. The default pattern is <tt>*.yaml,*.xml</tt>
-     *
+     * Typical used for specifying to accept routes in XML or YAML files.
      * Multiple patterns can be specified separated by comma.
      */
     public void setPattern(String pattern) {
@@ -67,7 +66,7 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
             final String[] parts = pattern.split(",");
             setFileFilter(f -> {
                 for (String part : parts) {
-                    // strip starting directory so we have a relative name to the starting folder
+                    // strip starting directory, so we have a relative name to the starting folder
                     String path = f.getAbsolutePath();
                     if (path.startsWith(base)) {
                         path = path.substring(base.length());

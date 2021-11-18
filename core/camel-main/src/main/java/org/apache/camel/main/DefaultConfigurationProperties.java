@@ -94,10 +94,10 @@ public abstract class DefaultConfigurationProperties<T> {
     private String routesIncludePattern = "classpath:camel/*,classpath:camel-template/*,classpath:camel-rest/*";
     private String routesExcludePattern;
     private boolean routesReloadEnabled;
-    @Metadata(defaultValue = "*.xml,*.yaml")
-    private String routesReloadPattern = "*.xml,*.yaml";
     @Metadata(defaultValue = "src/main/resources")
     private String routesReloadDirectory = "src/main/resources";
+    @Metadata(defaultValue = "camel/*")
+    private String routesReloadPattern = "camel/*";
     private boolean lightweight;
     private boolean eagerClassloading;
     @Metadata(defaultValue = "default", enums = "default,prototype,pooled")
@@ -991,7 +991,6 @@ public abstract class DefaultConfigurationProperties<T> {
      * Used for inclusive filtering of routes from directories.
      *
      * Typical used for specifying to accept routes in XML or YAML files. The default pattern is <tt>*.yaml,*.xml</tt>
-     *
      * Multiple patterns can be specified separated by comma.
      */
     public void setRoutesReloadPattern(String routesReloadPattern) {
