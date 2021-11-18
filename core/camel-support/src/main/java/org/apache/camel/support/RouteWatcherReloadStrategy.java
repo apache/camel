@@ -33,6 +33,9 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
 
     private String pattern = "*.yaml,*.xml";
 
+    public RouteWatcherReloadStrategy() {
+    }
+
     public RouteWatcherReloadStrategy(String directory) {
         super(directory, true);
     }
