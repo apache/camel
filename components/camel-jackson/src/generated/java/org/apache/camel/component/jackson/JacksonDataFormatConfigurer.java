@@ -51,7 +51,7 @@ public class JacksonDataFormatConfigurer extends PropertyConfigurerSupport imple
         case "autodiscoverobjectmapper":
         case "autoDiscoverObjectMapper": dataformat.setAutoDiscoverObjectMapper(property(camelContext, boolean.class, value)); return true;
         case "schemaresolver":
-        case "schemaResolver": dataformat.setSchemaResolver(property(camelContext, org.apache.camel.component.jackson.SchemaResolver.class, value)); return true;
+        case "schemaResolver": dataformat.setSchemaResolver(property(camelContext, com.fasterxml.jackson.databind.SchemaResolver.class, value)); return true;
         case "autodiscoverschemaresolver":
         case "autoDiscoverSchemaResolver": dataformat.setAutoDiscoverSchemaResolver(property(camelContext, boolean.class, value)); return true;
         default: return false;
