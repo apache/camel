@@ -7285,6 +7285,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "library", type = "enum:Fastjson,Gson,Jackson,Johnzon,Jsonb,XStream"),
                     @YamlProperty(name = "module-class-names", type = "string"),
                     @YamlProperty(name = "module-refs", type = "string"),
+                    @YamlProperty(name = "naming-strategy", type = "string"),
                     @YamlProperty(name = "object-mapper", type = "string"),
                     @YamlProperty(name = "permissions", type = "string"),
                     @YamlProperty(name = "pretty-print", type = "boolean"),
@@ -7381,6 +7382,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "module-refs": {
                     String val = asText(node);
                     target.setModuleRefs(val);
+                    break;
+                }
+                case "naming-strategy": {
+                    String val = asText(node);
+                    target.setNamingStrategy(val);
                     break;
                 }
                 case "object-mapper": {

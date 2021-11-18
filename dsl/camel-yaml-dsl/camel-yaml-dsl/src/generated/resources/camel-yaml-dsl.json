@@ -4678,6 +4678,9 @@
           "module-refs" : {
             "type" : "string"
           },
+          "naming-strategy" : {
+            "type" : "string"
+          },
           "object-mapper" : {
             "type" : "string"
           },
