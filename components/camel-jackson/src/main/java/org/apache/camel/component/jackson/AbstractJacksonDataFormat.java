@@ -29,11 +29,8 @@ import java.util.TimeZone;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.FormatSchema;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.Module;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -80,6 +77,7 @@ public abstract class AbstractJacksonDataFormat extends ServiceSupport
     private boolean autoDiscoverObjectMapper;
     private SchemaResolver schemaResolver;
     private boolean autoDiscoverSchemaResolver = true;
+    private PropertyNamingStrategy namingStrategy;
 
     /**
      * Use the default Jackson {@link ObjectMapper} and {@link Object}
@@ -283,6 +281,14 @@ public abstract class AbstractJacksonDataFormat extends ServiceSupport
 
     public List<Module> getModules() {
         return modules;
+    }
+
+    public PropertyNamingStrategy getNamingStrategy() {
+        return namingStrategy;
+    }
+
+    public void setNamingStrategy(PropertyNamingStrategy namingStrategy) {
+        this.namingStrategy = namingStrategy;
     }
 
     /**
@@ -646,6 +652,10 @@ public abstract class AbstractJacksonDataFormat extends ServiceSupport
             if (org.apache.camel.util.ObjectHelper.isNotEmpty(timezone)) {
                 LOG.debug("Setting timezone to Object Mapper: {}", timezone);
                 objectMapper.setTimeZone(timezone);
+            }
+
+            if (org.apache.camel.util.ObjectHelper.isNotEmpty(namingStrategy)) {
+                objectMapper.setPropertyNamingStrategy(namingStrategy);
             }
         } else {
             LOG.debug("The objectMapper was already found in the registry, no customizations will be applied");
