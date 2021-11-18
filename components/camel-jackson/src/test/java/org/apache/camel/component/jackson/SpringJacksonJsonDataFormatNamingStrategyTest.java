@@ -16,14 +16,15 @@
  */
 package org.apache.camel.component.jackson;
 
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.support.AbstractXmlApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class JacksonMarshalNamingStrategyTest extends CamelTestSupport {
+public class SpringJacksonJsonDataFormatNamingStrategyTest extends CamelSpringTestSupport {
 
     @Test
     public void testMarshalAndUnmarshalMap() throws Exception {
@@ -41,16 +42,9 @@ public class JacksonMarshalNamingStrategyTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-
-            @Override
-            public void configure() throws Exception {
-                JacksonDataFormat format = new JacksonDataFormat();
-                format.setNamingStrategy("LOWER_DOT_CASE");
-                from("direct:in").marshal(format).to("mock:result");
-            }
-        };
+    protected AbstractXmlApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/jackson/SpringJacksonJsonDataFormatNamingStrategyTest.xml");
     }
 
 }

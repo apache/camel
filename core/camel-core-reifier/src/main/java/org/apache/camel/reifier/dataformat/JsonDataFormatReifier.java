@@ -75,6 +75,7 @@ public class JsonDataFormatReifier extends DataFormatReifier<JsonDataFormat> {
         if (definition.getLibrary() == JsonLibrary.Jackson) {
             properties.put("schemaResolver", asRef(definition.getSchemaResolver()));
             properties.put("autoDiscoverSchemaResolver", definition.getAutoDiscoverSchemaResolver());
+            properties.put("namingStrategy", definition.getNamingStrategy());
         }
     }
 
