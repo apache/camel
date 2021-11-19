@@ -32,7 +32,7 @@ import static org.apache.camel.component.servicenow.ServiceNowConstants.ACTION_S
 
 class HelsinkiServiceNowServiceCatalogProcessor extends AbstractServiceNowProcessor {
 
-    HelsinkiServiceNowServiceCatalogProcessor(ServiceNowEndpoint endpoint) throws Exception {
+    HelsinkiServiceNowServiceCatalogProcessor(ServiceNowEndpoint endpoint) {
         super(endpoint);
 
         addDispatcher(ACTION_RETRIEVE, ACTION_SUBJECT_CATEGORIES, this::retrieveCatalogsCategories);
