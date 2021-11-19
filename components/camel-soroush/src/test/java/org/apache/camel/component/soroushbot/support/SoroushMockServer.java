@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.soroushbot.support;
 
+import org.apache.camel.test.AvailablePortFinder;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -26,7 +27,7 @@ public class SoroushMockServer extends Thread {
     private static final Logger LOG = LoggerFactory.getLogger(SoroushMockServer.class);
 
     private Server jettyServer;
-    private Integer port = 8080;
+    private Integer port = AvailablePortFinder.getNextAvailable();
 
     @Override
     public void start() {
