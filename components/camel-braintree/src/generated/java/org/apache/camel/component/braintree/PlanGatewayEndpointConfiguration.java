@@ -16,8 +16,30 @@ import org.apache.camel.spi.UriParams;
  */
 @ApiParams(apiName = "plan", 
            description = "",
-           apiMethods = {@ApiMethod(methodName = "all", signatures={"java.util.List<com.braintreegateway.Plan> all()"})}, aliases = {})
+           apiMethods = {@ApiMethod(methodName = "all", signatures={"java.util.List<com.braintreegateway.Plan> all()"}), @ApiMethod(methodName = "create", signatures={"com.braintreegateway.Result<com.braintreegateway.Plan> create(com.braintreegateway.PlanRequest request)"}), @ApiMethod(methodName = "find", signatures={"com.braintreegateway.Plan find(String id)"}), @ApiMethod(methodName = "update", signatures={"com.braintreegateway.Result<com.braintreegateway.Plan> update(String id, com.braintreegateway.PlanRequest request)"})}, aliases = {})
 @UriParams
 @Configurer(extended = true)
 public final class PlanGatewayEndpointConfiguration extends BraintreeConfiguration {
+    @UriParam
+    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "find"), @ApiMethod(methodName = "update")})
+    private String id;
+    @UriParam
+    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "create"), @ApiMethod(methodName = "update")})
+    private com.braintreegateway.PlanRequest request;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public com.braintreegateway.PlanRequest getRequest() {
+        return request;
+    }
+
+    public void setRequest(com.braintreegateway.PlanRequest request) {
+        this.request = request;
+    }
 }

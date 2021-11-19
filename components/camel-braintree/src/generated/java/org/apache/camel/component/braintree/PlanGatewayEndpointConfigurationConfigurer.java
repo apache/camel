@@ -26,6 +26,7 @@ public class PlanGatewayEndpointConfigurationConfigurer extends org.apache.camel
         map.put("HttpLogLevel", java.lang.String.class);
         map.put("HttpLogName", java.lang.String.class);
         map.put("HttpReadTimeout", java.lang.Integer.class);
+        map.put("Id", java.lang.String.class);
         map.put("LogHandlerEnabled", boolean.class);
         map.put("MerchantId", java.lang.String.class);
         map.put("MethodName", java.lang.String.class);
@@ -33,6 +34,7 @@ public class PlanGatewayEndpointConfigurationConfigurer extends org.apache.camel
         map.put("ProxyHost", java.lang.String.class);
         map.put("ProxyPort", java.lang.Integer.class);
         map.put("PublicKey", java.lang.String.class);
+        map.put("Request", com.braintreegateway.PlanRequest.class);
         ALL_OPTIONS = map;
     }
 
@@ -52,6 +54,8 @@ public class PlanGatewayEndpointConfigurationConfigurer extends org.apache.camel
         case "HttpLogName": target.setHttpLogName(property(camelContext, java.lang.String.class, value)); return true;
         case "httpreadtimeout":
         case "HttpReadTimeout": target.setHttpReadTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "id":
+        case "Id": target.setId(property(camelContext, java.lang.String.class, value)); return true;
         case "loghandlerenabled":
         case "LogHandlerEnabled": target.setLogHandlerEnabled(property(camelContext, boolean.class, value)); return true;
         case "merchantid":
@@ -66,6 +70,8 @@ public class PlanGatewayEndpointConfigurationConfigurer extends org.apache.camel
         case "ProxyPort": target.setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
         case "publickey":
         case "PublicKey": target.setPublicKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "request":
+        case "Request": target.setRequest(property(camelContext, com.braintreegateway.PlanRequest.class, value)); return true;
         default: return false;
         }
     }
@@ -90,6 +96,8 @@ public class PlanGatewayEndpointConfigurationConfigurer extends org.apache.camel
         case "HttpLogName": return java.lang.String.class;
         case "httpreadtimeout":
         case "HttpReadTimeout": return java.lang.Integer.class;
+        case "id":
+        case "Id": return java.lang.String.class;
         case "loghandlerenabled":
         case "LogHandlerEnabled": return boolean.class;
         case "merchantid":
@@ -104,6 +112,8 @@ public class PlanGatewayEndpointConfigurationConfigurer extends org.apache.camel
         case "ProxyPort": return java.lang.Integer.class;
         case "publickey":
         case "PublicKey": return java.lang.String.class;
+        case "request":
+        case "Request": return com.braintreegateway.PlanRequest.class;
         default: return null;
         }
     }
@@ -124,6 +134,8 @@ public class PlanGatewayEndpointConfigurationConfigurer extends org.apache.camel
         case "HttpLogName": return target.getHttpLogName();
         case "httpreadtimeout":
         case "HttpReadTimeout": return target.getHttpReadTimeout();
+        case "id":
+        case "Id": return target.getId();
         case "loghandlerenabled":
         case "LogHandlerEnabled": return target.isLogHandlerEnabled();
         case "merchantid":
@@ -138,6 +150,8 @@ public class PlanGatewayEndpointConfigurationConfigurer extends org.apache.camel
         case "ProxyPort": return target.getProxyPort();
         case "publickey":
         case "PublicKey": return target.getPublicKey();
+        case "request":
+        case "Request": return target.getRequest();
         default: return null;
         }
     }
