@@ -147,14 +147,7 @@ public class KameletMain extends MainCommandLineSupport {
         answer.setApplicationContextClassLoader(kameletClassLoader);
         answer.setRegistry(registry);
 
-        addInitialProperty("camel.component.kamelet.location", "classpath:/kamelets,github:apache:camel-kamelets");
-        addInitialProperty("camel.main.routes-reload-enabled", "true");
-        addInitialProperty("camel.main.routes-reload-directory", "src/main/resources");
-        addInitialProperty("camel.main.routes-reload-pattern", "camel/*.yaml");
-        // turn off lightweight as we have routes reload enabled
-        addInitialProperty("camel.main.lightweight", "false");
-        // shutdown quickly
-        addInitialProperty("camel.main.shutdown-timeout", "5");
+        configureInitialProperties();
 
         if (download) {
             try {
@@ -169,6 +162,20 @@ public class KameletMain extends MainCommandLineSupport {
         }
 
         return answer;
+    }
+
+    /**
+     * Sets initial properties that are specific to camel-kamelet-main
+     */
+    protected void configureInitialProperties() {
+        addInitialProperty("camel.component.kamelet.location", "classpath:/kamelets,github:apache:camel-kamelets");
+        addInitialProperty("camel.main.routes-reload-enabled", "true");
+        addInitialProperty("camel.main.routes-reload-directory", "src/main/resources");
+        addInitialProperty("camel.main.routes-reload-pattern", "camel/*.yaml");
+        // turn off lightweight as we have routes reload enabled
+        addInitialProperty("camel.main.lightweight", "false");
+        // shutdown quickly
+        addInitialProperty("camel.main.shutdown-timeout", "5");
     }
 
 }

@@ -25,6 +25,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.main.KameletMain;
+import org.apache.camel.support.ResourceHelper;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
@@ -38,7 +39,7 @@ class Run implements Callable<Integer> {
 
     //CHECKSTYLE:OFF
     @Option(names = { "-h", "--help" }, usageHelp = true, description = "Display the help and sub-commands")
-    private boolean helpRequested = false;
+    private boolean helpRequested;
     //CHECKSTYLE:ON
 
     @Option(names = { "--debug-level" }, defaultValue = "info", description = "Default debug level")
@@ -52,6 +53,10 @@ class Run implements Callable<Integer> {
 
     @Option(names = { "--reload" }, description = "Enables live reload when source file is changed (saved)")
     private boolean reload;
+
+    @Option(names = { "--file-lock" },
+            description = "Whether to create a temporary file lock, which upon deleting triggers this process to terminate")
+    private boolean fileLock;
 
     class ShutdownRoute extends RouteBuilder {
         private File lockFile;
@@ -99,25 +104,47 @@ class Run implements Callable<Integer> {
             System.setProperty("camel.main.durationMaxMessages", String.valueOf(maxMessages));
         }
 
-        System.setProperty("camel.main.routes-include-pattern", "file:" + binding);
-        System.setProperty("camel.main.routes-reload-enabled", reload ? "true" : "false");
-        System.setProperty("camel.main.routes-reload-directory", ".");
-        System.setProperty("camel.main.routes-reload-pattern", binding);
-
         RuntimeUtil.configureLog(debugLevel);
 
-        File bindingFile = new File(binding);
-        if (!bindingFile.exists()) {
-            System.err.println("The binding file does not exist");
+        KameletMain main = new KameletMain() {
+            @Override
+            protected void configureInitialProperties() {
+                addInitialProperty("camel.component.kamelet.location", "classpath:/kamelets,github:apache:camel-kamelets");
+                // turn off lightweight if we have routes reload enabled
+                addInitialProperty("camel.main.lightweight", reload ? "false" : "true");
+                // shutdown quickly
+                addInitialProperty("camel.main.shutdown-timeout", "5");
+            }
+        };
 
-            return 1;
+        // special route to trigger shutdown on watch file delete
+        if (fileLock) {
+            // TODO: use another way
+            main.configure().addRoutesBuilder(new ShutdownRoute(createLockFile()));
         }
 
-        System.out.println("Starting Camel JBang!");
-        KameletMain main = new KameletMain();
+        if (!ResourceHelper.hasScheme(binding) && !binding.startsWith("github:")) {
+            binding = "file:" + binding;
+        }
+        main.addInitialProperty("camel.main.routes-include-pattern", binding);
 
-        main.configure().addRoutesBuilder(new ShutdownRoute(createLockFile()));
+        if (binding.startsWith("file:")) {
+            // check if file exist
+            File bindingFile = new File(binding.substring(5));
+            if (!bindingFile.exists() && !bindingFile.isFile()) {
+                System.err.println("The binding file does not exist");
+                return 1;
+            }
+
+            // we can only reload if file based
+            main.addInitialProperty("camel.main.routes-reload-enabled", reload ? "true" : "false");
+            main.addInitialProperty("camel.main.routes-reload-directory", ".");
+            main.addInitialProperty("camel.main.routes-reload-pattern", binding);
+        }
+
+        System.out.println("Starting Camel JBang!  ZZZ");
         main.start();
+
         context = main.getCamelContext();
 
         main.run();
