@@ -4,7 +4,7 @@ A JBang-based Camel app for searching for kamelets, components, languages, runni
 
 The `camel-jbang` is available from *Camel 3.12* and newer versions.
 
-When running Camel JBang, it is possible to set the Camel version to use. For instance, to run the commands with the version 3.13.0, define the `camel.jbang.version` property in the command line.
+When running Camel JBang, it is possible to set the Camel version to use. For instance, to run the commands with the version 3.14.0, define the `camel.jbang.version` property in the command line.
 
 == Using Camel JBang
 
@@ -25,7 +25,7 @@ You can specify which Camel version to run as shown:
 
 [source,bash]
 ----
-jbang -Dcamel.jbang.version=3.13.0 CamelJBang@apache/camel [command]
+jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel [command]
 ----
 
 === Search
@@ -34,21 +34,21 @@ You can use the CLI to search for kamelets, components, languages and miscelaneo
 
 [source,bash]
 ----
-jbang -Dcamel.jbang.version=3.13.0 CamelJBang@apache/camel search --help
+jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel search --help
 ----
 
 For example, to search for kamelets named `jms`, you can use:
 
 [source,bash]
 ----
-jbang -Dcamel.jbang.version=3.13.0 CamelJBang@apache/camel search kamelets --search-term=jms
+jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel search kamelets --search-term=jms
 ----
 
 To list all the kamelets, just run the command without any search term:
 
 [source,bash]
 ----
-jbang -Dcamel.jbang.version=3.13.0 CamelJBang@apache/camel search kamelets
+jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel search kamelets
 ----
 
 
@@ -80,7 +80,7 @@ To bootstrap the Kamelet run:
 
 [source,bash]
 ----
-jbang -Dcamel.jbang.version=3.13.0 CamelJBang@apache/camel  init kamelet --bootstrap
+jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel  init kamelet --bootstrap
 ----
 
 This will create a sub-directory called `work` in the current directory with a properties file named `init-template.properties` inside it.
@@ -91,7 +91,7 @@ After you have filled the values, you can generate the Kamelet using:
 
 [source,bash]
 ----
-jbang -Dcamel.jbang.version=3.13.0 CamelJBang@apache/camel init kamelet --properties-path work/init-template.properties
+jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel init kamelet --properties-path work/init-template.properties
 ----
 
 Running this command will create a new file in the `work` directory. The name of the generated file is determined by the `kameletMetadataName` property in the properties file. As such, parsing the default properties file would generate a file named `my-sample-sink.kamelet.yaml` in the directory.
@@ -107,7 +107,7 @@ To execute this feature run:
 
 [source,bash]
 ----
-jbang -Dcamel.jbang.version=3.13.0 CamelJBang@apache/camel init binding --destination /path/to/destination/directory/ --kamelet sftp-source
+jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel init binding --destination /path/to/destination/directory/ --kamelet sftp-source
 ----
 
 This will create a new sample YAML binding file that can be modified and used in Camel K.
@@ -116,7 +116,7 @@ You can also generate bindings that can be run by CamelJBang or Camel Core, but 
 
 [source,bash]
 ----
-jbang -Dcamel.jbang.version=3.13.0 CamelJBang@apache/camel init binding --destination /path/to/destination/directory/ --kamelet sftp-source --project core
+jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel init binding --destination /path/to/destination/directory/ --kamelet sftp-source --project core
 ----
 
 
@@ -148,7 +148,7 @@ Execute the following command to run this route:
 
 [source,bash]
 ----
-jbang -Dcamel.jbang.version=3.13.0 CamelJBang@apache/camel run jms-amqp-10-sink-binding.yaml
+jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel run jms-amqp-10-sink-binding.yaml
 ----
 
 NOTE: it is necessary to have a AMQP 1.0 broker, such as Apache Artemis, running locally and listening on port 61616. Adjust the route accordingly if using a different address for the broker.
@@ -160,11 +160,21 @@ using the `--reload` options as shown:
 
 [source,bash]
 ----
-jbang -Dcamel.jbang.version=3.13.0 CamelJBang@apache/camel run jms-amqp-10-sink-binding.yaml --reload
+jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel run jms-amqp-10-sink-binding.yaml --reload
 ----
 
 Then while the Camel application is running, you can update the YAML route and update when saving.
 
+=== Running routes hosted on GitHub
+
+You can run a route that is hosted on GitHub using Camels xref:components:others:resourceresolver-github.adoc[github] resource loader.
+
+For example to run one of the Camel K examples you can do:
+
+[source,bash]
+----
+jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel run run github:apache:camel-k:examples/languages/routes.yaml
+----
 
 == Installation
 
