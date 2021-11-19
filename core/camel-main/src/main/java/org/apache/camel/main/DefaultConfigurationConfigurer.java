@@ -229,6 +229,7 @@ public final class DefaultConfigurationConfigurer {
         if (config.isRoutesReloadEnabled()) {
             RouteWatcherReloadStrategy reloader = new RouteWatcherReloadStrategy(config.getRoutesReloadDirectory());
             reloader.setPattern(config.getRoutesReloadPattern());
+            reloader.setRemoveAllRoutes(config.isRoutesReloadRemoveAllRoutes());
             camelContext.addService(reloader);
         }
 

@@ -98,6 +98,8 @@ public abstract class DefaultConfigurationProperties<T> {
     private String routesReloadDirectory = "src/main/resources";
     @Metadata(defaultValue = "camel/*")
     private String routesReloadPattern = "camel/*";
+    @Metadata(defaultValue = "true")
+    private boolean routesReloadRemoveAllRoutes = true;
     private boolean lightweight;
     private boolean eagerClassloading;
     @Metadata(defaultValue = "default", enums = "default,prototype,pooled")
@@ -995,6 +997,21 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setRoutesReloadPattern(String routesReloadPattern) {
         this.routesReloadPattern = routesReloadPattern;
+    }
+
+    public boolean isRoutesReloadRemoveAllRoutes() {
+        return routesReloadRemoveAllRoutes;
+    }
+
+    /**
+     * When reloading routes should all existing routes be stopped and removed.
+     *
+     * By default, Camel will stop and remove all existing routes before reloading routes. This ensures that only the
+     * reloaded routes will be active. If disabled then only routes with the same route id is updated, and any existing
+     * routes are continued to run.
+     */
+    public void setRoutesReloadRemoveAllRoutes(boolean routesReloadRemoveAllRoutes) {
+        this.routesReloadRemoveAllRoutes = routesReloadRemoveAllRoutes;
     }
 
     public boolean isLightweight() {
@@ -1933,28 +1950,69 @@ public abstract class DefaultConfigurationProperties<T> {
         return (T) this;
     }
 
+    /**
+     * Used for inclusive filtering of routes from directories. The exclusive filtering takes precedence over inclusive
+     * filtering. The pattern is using Ant-path style pattern.
+     *
+     * Multiple patterns can be specified separated by comma, as example, to include all the routes from a directory
+     * whose name contains foo use: &#42;&#42;/*foo*.
+     */
     public T withRoutesIncludePattern(String routesIncludePattern) {
         this.routesIncludePattern = routesIncludePattern;
         return (T) this;
     }
 
+    /**
+     * Used for exclusive filtering of routes from directories. The exclusive filtering takes precedence over inclusive
+     * filtering. The pattern is using Ant-path style pattern.
+     *
+     * Multiple patterns can be specified separated by comma, as example, to exclude all the routes from a directory
+     * whose name contains foo use: &#42;&#42;/*foo*.
+     */
     public T withRoutesExcludePattern(String routesExcludePattern) {
         this.routesExcludePattern = routesExcludePattern;
         return (T) this;
     }
 
+    /**
+     * Used for enabling automatic routes reloading. If enabled then Camel will watch for file changes in the given
+     * reload directory, and trigger reloading routes if files are changed.
+     */
     public T withRoutesReloadEnabled(boolean routesReloadEnabled) {
         this.routesReloadEnabled = routesReloadEnabled;
         return (T) this;
     }
 
+    /**
+     * Directory to scan (incl subdirectories) for route changes. Camel cannot scan the classpath, so this must be
+     * configured to a file directory. Development with Maven as build tool, you can configure the directory to be
+     * src/main/resources to scan for Camel routes in XML or YAML files.
+     */
     public T withRoutesReloadDirectory(String routesReloadDirectory) {
         this.routesReloadDirectory = routesReloadDirectory;
         return (T) this;
     }
 
+    /**
+     * Used for inclusive filtering of routes from directories.
+     *
+     * Typical used for specifying to accept routes in XML or YAML files. The default pattern is <tt>*.yaml,*.xml</tt>
+     * Multiple patterns can be specified separated by comma.
+     */
     public T withRoutesReloadPattern(String routesReloadPattern) {
         this.routesReloadPattern = routesReloadPattern;
+        return (T) this;
+    }
+
+    /**
+     * When reloading routes should all existing routes be stopped and removed.
+     *
+     * By default, Camel will stop and remove all existing routes before reloading routes. This ensures that only the
+     * reloaded routes will be active. If disabled then only routes with the same route id is updated, and any existing
+     * routes are continued to run.
+     */
+    public T withRoutesReloadRemoveAllRoutes(boolean routesReloadRemoveAllRoutes) {
+        this.routesReloadRemoveAllRoutes = routesReloadRemoveAllRoutes;
         return (T) this;
     }
 

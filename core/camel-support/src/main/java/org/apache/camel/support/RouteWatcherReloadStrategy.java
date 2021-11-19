@@ -17,12 +17,17 @@
 package org.apache.camel.support;
 
 import java.io.File;
+import java.util.Set;
+import java.util.StringJoiner;
 
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.AntPathMatcher;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Watcher strategy for triggering reloading of Camel routes in a running Camel application. The strategy watches a
@@ -31,7 +36,10 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrategy {
 
+    private static final Logger LOG = LoggerFactory.getLogger(RouteWatcherReloadStrategy.class);
+
     private String pattern = "camel/*";
+    private boolean removeAllRoutes = true;
 
     public RouteWatcherReloadStrategy() {
     }
@@ -52,6 +60,21 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
      */
     public void setPattern(String pattern) {
         this.pattern = pattern;
+    }
+
+    public boolean isRemoveAllRoutes() {
+        return removeAllRoutes;
+    }
+
+    /**
+     * When reloading routes should all existing routes be stopped and removed.
+     *
+     * By default, Camel will stop and remove all existing routes before reloading routes. This ensures that only the
+     * reloaded routes will be active. If disabled then only routes with the same route id is updated, and any existing
+     * routes are continued to run.
+     */
+    public void setRemoveAllRoutes(boolean removeAllRoutes) {
+        this.removeAllRoutes = removeAllRoutes;
     }
 
     @Override
@@ -85,7 +108,35 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
             // attach listener that triggers the route update
             setResourceReload((name, resource) -> {
                 try {
-                    getCamelContext().adapt(ExtendedCamelContext.class).getRoutesLoader().updateRoutes(resource);
+                    // should all existing routes be stopped and removed first?
+                    if (removeAllRoutes) {
+                        for (Route route : getCamelContext().getRoutes()) {
+                            getCamelContext().getRouteController().stopRoute(route.getRouteId());
+                            getCamelContext().removeRoute(route.getRouteId());
+                        }
+                    }
+                    Set<String> ids
+                            = getCamelContext().adapt(ExtendedCamelContext.class).getRoutesLoader().updateRoutes(resource);
+                    if (!ids.isEmpty()) {
+                        LOG.info("Reloaded routes: {}", String.join(", ", ids));
+                    }
+
+                    if (!removeAllRoutes) {
+                        // if not all previous routes are removed then to have safe route reloading
+                        // it is recommended to configure ids on the routes
+                        StringJoiner sj = new StringJoiner("\n    ");
+                        for (String id : ids) {
+                            Route route = getCamelContext().getRoute(id);
+                            if (route.isCustomId()) {
+                                sj.add(route.getEndpoint().getEndpointUri());
+                            }
+                        }
+                        if (sj.length() > 0) {
+                            LOG.warn(
+                                    "Routes with no id's detected. Its recommended to assign route id's to your routes so Camel can reload the routes correctly.\n    Unassigned routes:\n    {}",
+                                    sj);
+                        }
+                    }
                 } catch (Exception e) {
                     throw RuntimeCamelException.wrapRuntimeException(e);
                 }

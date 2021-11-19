@@ -157,6 +157,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "RoutesReloadEnabled": target.setRoutesReloadEnabled(property(camelContext, boolean.class, value)); return true;
         case "routesreloadpattern":
         case "RoutesReloadPattern": target.setRoutesReloadPattern(property(camelContext, java.lang.String.class, value)); return true;
+        case "routesreloadremoveallroutes":
+        case "RoutesReloadRemoveAllRoutes": target.setRoutesReloadRemoveAllRoutes(property(camelContext, boolean.class, value)); return true;
         case "shutdownloginflightexchangesontimeout":
         case "ShutdownLogInflightExchangesOnTimeout": target.setShutdownLogInflightExchangesOnTimeout(property(camelContext, boolean.class, value)); return true;
         case "shutdownnowontimeout":
@@ -360,6 +362,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "RoutesReloadEnabled": return boolean.class;
         case "routesreloadpattern":
         case "RoutesReloadPattern": return java.lang.String.class;
+        case "routesreloadremoveallroutes":
+        case "RoutesReloadRemoveAllRoutes": return boolean.class;
         case "shutdownloginflightexchangesontimeout":
         case "ShutdownLogInflightExchangesOnTimeout": return boolean.class;
         case "shutdownnowontimeout":
@@ -564,6 +568,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "RoutesReloadEnabled": return target.isRoutesReloadEnabled();
         case "routesreloadpattern":
         case "RoutesReloadPattern": return target.getRoutesReloadPattern();
+        case "routesreloadremoveallroutes":
+        case "RoutesReloadRemoveAllRoutes": return target.isRoutesReloadRemoveAllRoutes();
         case "shutdownloginflightexchangesontimeout":
         case "ShutdownLogInflightExchangesOnTimeout": return target.isShutdownLogInflightExchangesOnTimeout();
         case "shutdownnowontimeout":

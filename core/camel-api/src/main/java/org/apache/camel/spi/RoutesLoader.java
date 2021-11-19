@@ -18,6 +18,8 @@ package org.apache.camel.spi;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RouteConfigurationsBuilder;
@@ -78,14 +80,19 @@ public interface RoutesLoader extends CamelContextAware {
      * If a route is loaded with a route id for an existing route, then the existing route is stopped and remove, so it
      * can be updated.
      *
-     * @param resources the resources to be loaded or updated.
+     * @param  resources the resources to be loaded or updated.
+     * @return           route ids for the routes that was loaded or updated.
      */
-    default void updateRoutes(Resource... resources) throws Exception {
+    default Set<String> updateRoutes(Resource... resources) throws Exception {
+        Set<String> answer = new LinkedHashSet<>();
         Collection<RoutesBuilder> builders = findRoutesBuilders(resources);
         for (RoutesBuilder builder : builders) {
             // update any existing routes
-            builder.updateRoutesToCamelContext(getCamelContext());
+            Set<String> ids = builder.updateRoutesToCamelContext(getCamelContext());
+            answer.addAll(ids);
         }
+
+        return answer;
     }
 
     /**

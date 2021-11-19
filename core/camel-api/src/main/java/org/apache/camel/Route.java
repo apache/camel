@@ -54,6 +54,13 @@ public interface Route extends RuntimeConfiguration {
     String getId();
 
     /**
+     * Whether the route id is custom assigned or auto assigned
+     *
+     * @return true if custom id, false if auto assigned id
+     */
+    boolean isCustomId();
+
+    /**
      * Gets the route group
      *
      * @return the route group
@@ -61,7 +68,7 @@ public interface Route extends RuntimeConfiguration {
     String getGroup();
 
     /**
-     * Gets the uptime in a human readable format
+     * Gets the uptime in a human-readable format
      *
      * @return the uptime in days/hours/minutes
      */

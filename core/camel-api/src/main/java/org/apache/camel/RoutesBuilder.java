@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import java.util.Set;
+
 /**
  * A routes builder is capable of building routes using the builder and model classes.
  * <p/>
@@ -38,8 +40,9 @@ public interface RoutesBuilder {
      * Adds or updates the routes from this Route Builder to the CamelContext.
      *
      * @param  context   the Camel context
+     * @return           route ids for the routes that was updated
      * @throws Exception is thrown if initialization of routes failed
      */
-    void updateRoutesToCamelContext(CamelContext context) throws Exception;
+    Set<String> updateRoutesToCamelContext(CamelContext context) throws Exception;
 
 }

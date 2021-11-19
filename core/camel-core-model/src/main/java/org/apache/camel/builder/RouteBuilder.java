@@ -18,9 +18,10 @@ package org.apache.camel.builder;
 
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.StringJoiner;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
@@ -492,7 +493,9 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     }
 
     @Override
-    public void updateRoutesToCamelContext(CamelContext context) throws Exception {
+    public Set<String> updateRoutesToCamelContext(CamelContext context) throws Exception {
+        Set<String> answer = new LinkedHashSet<>();
+
         // must configure routes before rests
         configureRoutes(context);
         configureRests(context);
@@ -508,27 +511,19 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
             routeCollection.prepareRoute(route);
         }
 
-        if (!routeCollection.getRoutes().isEmpty()) {
-            StringJoiner csb = new StringJoiner("\n    ");
-            // collect route ids and force assign ids if not in use
-            for (RouteDefinition route : routeCollection.getRoutes()) {
-                if (!route.hasCustomIdAssigned()) {
-                    csb.add(route.getInput().getEndpointUri());
-                }
-            }
-            if (csb.length() > 0) {
-                log.warn(
-                        "Routes with no id's detected. Its recommended to assign route id's to your routes so Camel can reload the routes correctly.\n    Unassigned routes:\n    {}",
-                        csb);
-            }
-        }
-
         // trigger update of the routes
         populateOrUpdateRoutes();
 
         if (this instanceof OnCamelContextEvent) {
             context.addLifecycleStrategy(LifecycleStrategySupport.adapt((OnCamelContextEvent) this));
         }
+
+        for (RouteDefinition route : routeCollection.getRoutes()) {
+            String id = route.getRouteId();
+            answer.add(id);
+        }
+
+        return answer;
     }
 
     /**
