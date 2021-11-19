@@ -27,8 +27,7 @@ public class KameletMainGithubTest {
         KameletMain main = new KameletMain();
         main.setDownload(true);
         main.configure().withDurationMaxSeconds(10);
-//        main.configure().withRoutesIncludePattern("github:apache:camel-k:examples/languages/routes.yaml");
-        main.configure().withRoutesIncludePattern("github:apache:camel-examples:examples/main-yaml/src/main/resources/my-route.yaml");
+        main.configure().withRoutesIncludePattern("github:apache:camel-k:examples/languages/routes.yaml");
 
         main.run();
     }
