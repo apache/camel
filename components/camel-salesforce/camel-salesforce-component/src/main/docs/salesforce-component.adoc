@@ -322,7 +322,7 @@ class Order_Event__e extends AbstractDTOBase {
 from("timer:tick")
     .process(exchange -> {
         final Message in = exchange.getIn();
-        String orderNumber = "ORD" + String.valueOf(in.getHeader(Exchange.TIMER_COUNTER));
+        String orderNumber = "ORD" + exchange.getProperty(Exchange.TIMER_COUNTER);
         Order_Event__e event = new Order_Event__e();
         event.setOrderNumber(orderNumber);
         in.setBody(event);
@@ -337,7 +337,7 @@ Or using JSON event data:
 from("timer:tick")
     .process(exchange -> {
         final Message in = exchange.getIn();
-        String orderNumber = "ORD" + String.valueOf(in.getHeader(Exchange.TIMER_COUNTER));
+        String orderNumber = "ORD" + exchange.getProperty(Exchange.TIMER_COUNTER);
         in.setBody("{\"OrderNumber\":\"" + orderNumber + "\"}");
     })
     .to("salesforce:createSObject?sObjectName=Order_Event__e");
