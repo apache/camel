@@ -23,7 +23,11 @@ The `KameletMain` is pre-configured with the following properties:
 ----
 camel.component.kamelet.location = classpath:/kamelets,github:apache:camel-kamelets
 camel.main.routes-include-pattern = classpath:camel/*
-camel.main.lightweight = true
+camel.main.routes-reload-enabled = true
+camel.main.routes-reload-directory = src/main/resources
+camel.main.routes-reload-pattern = camel/*.yaml
+camel.main.shutdown-timeout = 5
+camel.main.lightweight = false
 ----
 
 These settings can be overridden by configuration in `application.properties`.

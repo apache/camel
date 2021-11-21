@@ -110,7 +110,7 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader 
      * @return                          a {@link RoutesBuilderLoader}
      * @throws IllegalArgumentException if no {@link RoutesBuilderLoader} can be found for the given file extension
      */
-    private RoutesBuilderLoader getRoutesLoader(String extension) throws Exception {
+    protected RoutesBuilderLoader getRoutesLoader(String extension) throws Exception {
         RoutesBuilderLoader answer = getCamelContext().getRegistry().lookupByNameAndType(
                 ROUTES_LOADER_KEY_PREFIX + extension,
                 RoutesBuilderLoader.class);
@@ -125,10 +125,10 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader 
     /**
      * Looks up a {@link RoutesBuilderLoader} for the given extension with factory finder.
      *
-     * @param  extension the file extension for which a loader should be find.
+     * @param  extension the file extension for which a loader should be found.
      * @return           a {@link RoutesBuilderLoader} or null if none found
      */
-    private RoutesBuilderLoader resolveService(String extension) {
+    protected RoutesBuilderLoader resolveService(String extension) {
         final ExtendedCamelContext ecc = getCamelContext().adapt(ExtendedCamelContext.class);
         final FactoryFinder finder = ecc.getBootstrapFactoryFinder(RoutesBuilderLoader.FACTORY_PATH);
 

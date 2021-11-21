@@ -155,6 +155,7 @@ public class KameletMain extends MainCommandLineSupport {
                 answer.setComponentResolver(new DependencyDownloaderComponentResolver(answer));
                 answer.setDataFormatResolver(new DependencyDownloaderDataFormatResolver(answer));
                 answer.setLanguageResolver(new DependencyDownloaderLanguageResolver(answer));
+                answer.setRoutesLoader(new DependencyDownloaderRoutesLoader());
                 answer.addService(new DependencyDownloaderKamelet());
             } catch (Exception e) {
                 throw RuntimeCamelException.wrapRuntimeException(e);
@@ -169,6 +170,7 @@ public class KameletMain extends MainCommandLineSupport {
      */
     protected void configureInitialProperties() {
         addInitialProperty("camel.component.kamelet.location", "classpath:/kamelets,github:apache:camel-kamelets");
+        addInitialProperty("camel.main.routes-include-pattern", "classpath:camel/*");
         addInitialProperty("camel.main.routes-reload-enabled", "true");
         addInitialProperty("camel.main.routes-reload-directory", "src/main/resources");
         addInitialProperty("camel.main.routes-reload-pattern", "camel/*.yaml");

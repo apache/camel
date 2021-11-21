@@ -31,4 +31,14 @@ public class KameletMainGithubTest {
 
         main.run();
     }
+
+    @Test
+    public void testKameletMainGroovy() throws Exception {
+        KameletMain main = new KameletMain();
+        main.setDownload(true);
+        main.configure().withDurationMaxSeconds(10);
+        main.configure().withRoutesIncludePattern("github:apache:camel-k:examples/languages/simple.groovy");
+
+        main.run();
+    }
 }
