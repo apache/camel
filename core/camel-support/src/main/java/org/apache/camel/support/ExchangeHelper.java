@@ -879,10 +879,10 @@ public final class ExchangeHelper {
      * Gets the original IN {@link Message} this Unit of Work was started with.
      * <p/>
      * The original message is only returned if the option
-     * {@link org.apache.camel.RuntimeConfiguration#isAllowUseOriginalMessage()} is enabled. If its disabled, then
-     * <tt>null</tt> is returned.
+     * {@link org.apache.camel.RuntimeConfiguration#isAllowUseOriginalMessage()} is enabled. If it is disabled, then
+     * <tt>IllegalStateException</tt> is thrown.
      *
-     * @return the original IN {@link Message}, or <tt>null</tt> if using original message is disabled.
+     * @return the original IN {@link Message}
      */
     public static Message getOriginalInMessage(Exchange exchange) {
         Message answer = null;
