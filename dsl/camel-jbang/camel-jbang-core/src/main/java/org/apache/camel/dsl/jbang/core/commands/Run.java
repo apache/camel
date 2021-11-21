@@ -137,7 +137,8 @@ class Run implements Callable<Integer> {
             if (reload) {
                 main.addInitialProperty("camel.main.routes-reload-enabled", "true");
                 main.addInitialProperty("camel.main.routes-reload-directory", ".");
-                main.addInitialProperty("camel.main.routes-reload-pattern", binding);
+                // skip file: as prefix
+                main.addInitialProperty("camel.main.routes-reload-pattern", binding.substring(5));
             }
         }
 

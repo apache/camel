@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.dsl.jbang.core.common;
 
 import org.apache.logging.log4j.Level;
@@ -29,10 +28,11 @@ public final class RuntimeUtil {
     }
 
     private RuntimeUtil() {
-
     }
 
     public static void configureLog(String debugLevel) {
+        debugLevel = debugLevel.toLowerCase();
+
         switch (debugLevel) {
             case "trace":
                 Configurator.setRootLevel(Level.TRACE);
@@ -45,6 +45,9 @@ public final class RuntimeUtil {
                 break;
             case "warn":
                 Configurator.setRootLevel(Level.WARN);
+                break;
+            case "error":
+                Configurator.setRootLevel(Level.ERROR);
                 break;
             case "fatal":
                 Configurator.setRootLevel(Level.FATAL);

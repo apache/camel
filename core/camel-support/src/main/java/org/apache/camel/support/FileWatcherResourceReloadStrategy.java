@@ -37,6 +37,7 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.Resource;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -265,10 +266,11 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
                         WatchEvent<Path> we = (WatchEvent<Path>) event;
                         Path path = we.context();
                         File file = pathToReload.resolve(path).toAbsolutePath().toFile();
+                        String name = FileUtil.compactPath(file.getAbsolutePath());
+                        LOG.debug("Detected Modified/Created file: {}", name);
                         boolean accept = fileFilter == null || fileFilter.accept(file);
                         if (accept) {
-                            String name = file.getAbsolutePath();
-                            LOG.trace("Modified/Created file: {}", name);
+                            LOG.debug("Accepted Modified/Created file: {}", name);
                             try {
                                 ExtendedCamelContext ecc = getCamelContext().adapt(ExtendedCamelContext.class);
                                 // must use file resource loader as we cannot load from classpath
@@ -294,7 +296,7 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
 
             running = false;
 
-            LOG.info("FileReloadStrategy is stopping watching folder: {}", folder);
+            LOG.debug("FileReloadStrategy is stopping watching folder: {}", folder);
         }
     }
 

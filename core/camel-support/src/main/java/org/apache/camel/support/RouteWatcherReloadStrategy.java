@@ -100,7 +100,10 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                     }
                     path = FileUtil.stripLeadingSeparator(path);
 
-                    if (matcher.match(part, path, false)) {
+                    boolean result = matcher.match(part, path, false);
+                    LOG.trace("Accepting file pattern:{} path:{} -> {}", part, path, result);
+
+                    if (result) {
                         return true;
                     }
                 }
