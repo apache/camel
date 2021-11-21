@@ -227,7 +227,8 @@ public final class DefaultConfigurationConfigurer {
         camelContext.setMDCLoggingKeysPattern(config.getMdcLoggingKeysPattern());
         camelContext.setLoadTypeConverters(config.isLoadTypeConverters());
         if (config.isRoutesReloadEnabled()) {
-            RouteWatcherReloadStrategy reloader = new RouteWatcherReloadStrategy(config.getRoutesReloadDirectory());
+            RouteWatcherReloadStrategy reloader = new RouteWatcherReloadStrategy(
+                    config.getRoutesReloadDirectory(), config.isRoutesReloadDirectoryRecursive());
             reloader.setPattern(config.getRoutesReloadPattern());
             reloader.setRemoveAllRoutes(config.isRoutesReloadRemoveAllRoutes());
             camelContext.addService(reloader);

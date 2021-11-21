@@ -38,14 +38,18 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
 
     private static final Logger LOG = LoggerFactory.getLogger(RouteWatcherReloadStrategy.class);
 
-    private String pattern = "camel/*";
+    private String pattern = "*";
     private boolean removeAllRoutes = true;
 
     public RouteWatcherReloadStrategy() {
     }
 
     public RouteWatcherReloadStrategy(String directory) {
-        super(directory, true);
+        this(directory, false);
+    }
+
+    public RouteWatcherReloadStrategy(String directory, boolean recursive) {
+        super(directory, recursive);
     }
 
     public String getPattern() {
@@ -55,8 +59,8 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
     /**
      * Used for inclusive filtering of routes from directories.
      *
-     * Typical used for specifying to accept routes in XML or YAML files. Multiple patterns can be specified separated
-     * by comma.
+     * Typical used for specifying to accept routes in XML or YAML files, such as <tt>*.yaml,*.xml</tt>. Multiple
+     * patterns can be specified separated by comma.
      */
     public void setPattern(String pattern) {
         this.pattern = pattern;

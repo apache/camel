@@ -34,6 +34,10 @@ public class KameletMain extends MainCommandLineSupport {
     protected final MainRegistry registry = new MainRegistry();
     private boolean download = true;
 
+    public KameletMain() {
+        configureInitialProperties();
+    }
+
     public static void main(String... args) throws Exception {
         KameletMain main = new KameletMain();
         int code = main.run(args);
@@ -147,8 +151,6 @@ public class KameletMain extends MainCommandLineSupport {
         answer.setApplicationContextClassLoader(kameletClassLoader);
         answer.setRegistry(registry);
 
-        configureInitialProperties();
-
         if (download) {
             try {
                 // use resolver that can auto downloaded
@@ -170,14 +172,6 @@ public class KameletMain extends MainCommandLineSupport {
      */
     protected void configureInitialProperties() {
         addInitialProperty("camel.component.kamelet.location", "classpath:/kamelets,github:apache:camel-kamelets");
-        addInitialProperty("camel.main.routes-include-pattern", "classpath:camel/*");
-        addInitialProperty("camel.main.routes-reload-enabled", "true");
-        addInitialProperty("camel.main.routes-reload-directory", "src/main/resources");
-        addInitialProperty("camel.main.routes-reload-pattern", "camel/*.yaml");
-        // turn off lightweight as we have routes reload enabled
-        addInitialProperty("camel.main.lightweight", "false");
-        // shutdown quickly
-        addInitialProperty("camel.main.shutdown-timeout", "5");
     }
 
 }

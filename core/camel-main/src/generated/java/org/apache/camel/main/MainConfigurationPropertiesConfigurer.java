@@ -153,6 +153,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "RoutesIncludePattern": target.setRoutesIncludePattern(property(camelContext, java.lang.String.class, value)); return true;
         case "routesreloaddirectory":
         case "RoutesReloadDirectory": target.setRoutesReloadDirectory(property(camelContext, java.lang.String.class, value)); return true;
+        case "routesreloaddirectoryrecursive":
+        case "RoutesReloadDirectoryRecursive": target.setRoutesReloadDirectoryRecursive(property(camelContext, boolean.class, value)); return true;
         case "routesreloadenabled":
         case "RoutesReloadEnabled": target.setRoutesReloadEnabled(property(camelContext, boolean.class, value)); return true;
         case "routesreloadpattern":
@@ -358,6 +360,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "RoutesIncludePattern": return java.lang.String.class;
         case "routesreloaddirectory":
         case "RoutesReloadDirectory": return java.lang.String.class;
+        case "routesreloaddirectoryrecursive":
+        case "RoutesReloadDirectoryRecursive": return boolean.class;
         case "routesreloadenabled":
         case "RoutesReloadEnabled": return boolean.class;
         case "routesreloadpattern":
@@ -564,6 +568,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "RoutesIncludePattern": return target.getRoutesIncludePattern();
         case "routesreloaddirectory":
         case "RoutesReloadDirectory": return target.getRoutesReloadDirectory();
+        case "routesreloaddirectoryrecursive":
+        case "RoutesReloadDirectoryRecursive": return target.isRoutesReloadDirectoryRecursive();
         case "routesreloadenabled":
         case "RoutesReloadEnabled": return target.isRoutesReloadEnabled();
         case "routesreloadpattern":

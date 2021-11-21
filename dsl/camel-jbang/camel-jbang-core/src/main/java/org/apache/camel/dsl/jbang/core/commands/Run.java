@@ -91,22 +91,18 @@ class Run implements Callable<Integer> {
     }
 
     private int run() throws Exception {
+        KameletMain main = new KameletMain();
+
         if (maxMessages > 0) {
-            System.setProperty("camel.main.durationMaxMessages", String.valueOf(maxMessages));
+            main.addInitialProperty("camel.main.durationMaxMessages", String.valueOf(maxMessages));
         }
 
         RuntimeUtil.configureLog(debugLevel);
 
-        KameletMain main = new KameletMain() {
-            @Override
-            protected void configureInitialProperties() {
-                addInitialProperty("camel.component.kamelet.location", "classpath:/kamelets,github:apache:camel-kamelets");
-                // turn off lightweight if we have routes reload enabled
-                addInitialProperty("camel.main.lightweight", reload ? "false" : "true");
-                // shutdown quickly
-                addInitialProperty("camel.main.shutdown-timeout", "5");
-            }
-        };
+        // shutdown quickly
+        main.addInitialProperty("camel.main.shutdown-timeout", "5");
+        // turn off lightweight if we have routes reload enabled
+        main.addInitialProperty("camel.main.routesReloadEnabled", reload ? "true" : "false");
 
         if (fileLock) {
             lockFile = createLockFile();
@@ -138,9 +134,11 @@ class Run implements Callable<Integer> {
             }
 
             // we can only reload if file based
-            main.addInitialProperty("camel.main.routes-reload-enabled", reload ? "true" : "false");
-            main.addInitialProperty("camel.main.routes-reload-directory", ".");
-            main.addInitialProperty("camel.main.routes-reload-pattern", binding);
+            if (reload) {
+                main.addInitialProperty("camel.main.routes-reload-enabled", "true");
+                main.addInitialProperty("camel.main.routes-reload-directory", ".");
+                main.addInitialProperty("camel.main.routes-reload-pattern", binding);
+            }
         }
 
         System.out.println("Starting Camel JBang!");

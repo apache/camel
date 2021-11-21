@@ -94,10 +94,10 @@ public abstract class DefaultConfigurationProperties<T> {
     private String routesIncludePattern = "classpath:camel/*,classpath:camel-template/*,classpath:camel-rest/*";
     private String routesExcludePattern;
     private boolean routesReloadEnabled;
-    @Metadata(defaultValue = "src/main/resources")
-    private String routesReloadDirectory = "src/main/resources";
-    @Metadata(defaultValue = "camel/*")
-    private String routesReloadPattern = "camel/*";
+    @Metadata(defaultValue = "src/main/resources/camel")
+    private String routesReloadDirectory = "src/main/resources/camel";
+    private boolean routesReloadDirectoryRecursive;
+    private String routesReloadPattern;
     @Metadata(defaultValue = "true")
     private boolean routesReloadRemoveAllRoutes = true;
     private boolean lightweight;
@@ -977,12 +977,26 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * Directory to scan (incl subdirectories) for route changes. Camel cannot scan the classpath, so this must be
-     * configured to a file directory. Development with Maven as build tool, you can configure the directory to be
-     * src/main/resources to scan for Camel routes in XML or YAML files.
+     * Directory to scan for route changes. Camel cannot scan the classpath, so this must be configured to a file
+     * directory. Development with Maven as build tool, you can configure the directory to be src/main/resources to scan
+     * for Camel routes in XML or YAML files.
      */
     public void setRoutesReloadDirectory(String routesReloadDirectory) {
         this.routesReloadDirectory = routesReloadDirectory;
+    }
+
+    public boolean isRoutesReloadDirectoryRecursive() {
+        return routesReloadDirectoryRecursive;
+    }
+
+    /**
+     * Whether the directory to scan should include sub directories.
+     *
+     * Depending on the number of sub directories, then this can cause the JVM to startup slower as Camel uses the JDK
+     * file-watch service to scan for file changes.
+     */
+    public void setRoutesReloadDirectoryRecursive(boolean routesReloadDirectoryRecursive) {
+        this.routesReloadDirectoryRecursive = routesReloadDirectoryRecursive;
     }
 
     public String getRoutesReloadPattern() {
@@ -992,8 +1006,8 @@ public abstract class DefaultConfigurationProperties<T> {
     /**
      * Used for inclusive filtering of routes from directories.
      *
-     * Typical used for specifying to accept routes in XML or YAML files. The default pattern is <tt>*.yaml,*.xml</tt>
-     * Multiple patterns can be specified separated by comma.
+     * Typical used for specifying to accept routes in XML or YAML files, such as <tt>*.yaml,*.xml</tt>. Multiple
+     * patterns can be specified separated by comma.
      */
     public void setRoutesReloadPattern(String routesReloadPattern) {
         this.routesReloadPattern = routesReloadPattern;
@@ -1990,6 +2004,17 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withRoutesReloadDirectory(String routesReloadDirectory) {
         this.routesReloadDirectory = routesReloadDirectory;
+        return (T) this;
+    }
+
+    /**
+     * Whether the directory to scan should include sub directories.
+     *
+     * Depending on the number of sub directories, then this can cause the JVM to startup slower as Camel uses the JDK
+     * file-watch service to scan for file changes.
+     */
+    public T withRoutesReloadDirectoryRecursive(boolean routesReloadDirectoryRecursive) {
+        this.routesReloadDirectoryRecursive = routesReloadDirectoryRecursive;
         return (T) this;
     }
 
