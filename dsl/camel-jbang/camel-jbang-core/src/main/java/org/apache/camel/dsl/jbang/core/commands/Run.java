@@ -142,7 +142,7 @@ class Run implements Callable<Integer> {
             main.addInitialProperty("camel.main.routes-reload-pattern", binding);
         }
 
-        System.out.println("Starting Camel JBang!  ZZZ");
+        System.out.println("Starting Camel JBang!");
         main.start();
 
         context = main.getCamelContext();
