@@ -20,9 +20,11 @@ package org.apache.camel.dsl.jbang.core.commands;
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.support.ResourceHelper;
@@ -33,6 +35,8 @@ import picocli.CommandLine.Parameters;
 @Command(name = "run", description = "Run a Kamelet")
 class Run implements Callable<Integer> {
     private CamelContext context;
+    private File lockFile;
+    private ScheduledExecutorService executor;
 
     @Parameters(description = "The path to the kamelet binding", arity = "0..1")
     private String binding;
@@ -54,22 +58,9 @@ class Run implements Callable<Integer> {
     @Option(names = { "--reload" }, description = "Enables live reload when source file is changed (saved)")
     private boolean reload;
 
-    @Option(names = { "--file-lock" },
+    @Option(names = { "--file-lock" }, defaultValue = "true",
             description = "Whether to create a temporary file lock, which upon deleting triggers this process to terminate")
-    private boolean fileLock;
-
-    class ShutdownRoute extends RouteBuilder {
-        private File lockFile;
-
-        public ShutdownRoute(File lockFile) {
-            this.lockFile = lockFile;
-        }
-
-        public void configure() {
-            fromF("file-watch://%s?events=DELETE&antInclude=%s", lockFile.getParent(), lockFile.getName())
-                    .process(p -> context.shutdown());
-        }
-    }
+    private boolean fileLock = true;
 
     @Override
     public Integer call() throws Exception {
@@ -117,10 +108,20 @@ class Run implements Callable<Integer> {
             }
         };
 
-        // special route to trigger shutdown on watch file delete
         if (fileLock) {
-            // TODO: use another way
-            main.configure().addRoutesBuilder(new ShutdownRoute(createLockFile()));
+            lockFile = createLockFile();
+            if (!lockFile.exists()) {
+                throw new IllegalStateException("Lock file does not exists: " + lockFile);
+            }
+
+            // to trigger shutdown on file lock deletion
+            executor = Executors.newSingleThreadScheduledExecutor();
+            executor.scheduleWithFixedDelay(() -> {
+                // if the lock file is deleted then stop
+                if (!lockFile.exists()) {
+                    context.stop();
+                }
+            }, 1000, 1000, TimeUnit.MILLISECONDS);
         }
 
         if (!ResourceHelper.hasScheme(binding) && !binding.startsWith("github:")) {
@@ -154,7 +155,7 @@ class Run implements Callable<Integer> {
     public File createLockFile() throws IOException {
         File lockFile = File.createTempFile(".run", ".camel.lock", new File("."));
 
-        System.out.printf("A new lock file was created on %s. Delete this file to stop running%n",
+        System.out.printf("A new lock file was created, delete the file to stop running:%n%s%n",
                 lockFile.getAbsolutePath());
         lockFile.deleteOnExit();
 
