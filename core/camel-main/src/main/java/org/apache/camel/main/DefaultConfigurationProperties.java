@@ -37,6 +37,8 @@ public abstract class DefaultConfigurationProperties<T> {
     private int durationMaxSeconds;
     private int durationMaxIdleSeconds;
     private int durationMaxMessages;
+    @Metadata(defaultValue = "terminate", enums = "shutdown,stop")
+    private String durationMaxAction = "shutdown";
     private int shutdownTimeout = 45;
     private boolean shutdownSuppressLoggingOnTimeout;
     private boolean shutdownNowOnTimeout = true;
@@ -193,6 +195,18 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setDurationMaxMessages(int durationMaxMessages) {
         this.durationMaxMessages = durationMaxMessages;
+    }
+
+    public String getDurationMaxAction() {
+        return durationMaxAction;
+    }
+
+    /**
+     * Controls whether the Camel application should shutdown the JVM, or stop all routes, when duration max is
+     * triggered.
+     */
+    public void setDurationMaxAction(String durationMaxAction) {
+        this.durationMaxAction = durationMaxAction;
     }
 
     public int getShutdownTimeout() {
@@ -1417,6 +1431,15 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withDurationMaxMessages(int durationMaxMessages) {
         this.durationMaxMessages = durationMaxMessages;
+        return (T) this;
+    }
+
+    /**
+     * Controls whether the Camel application should shutdown the JVM, or stop all routes, when duration max is
+     * triggered.
+     */
+    public T withDurationMaxAction(String durationMaxAction) {
+        this.durationMaxAction = durationMaxAction;
         return (T) this;
     }
 

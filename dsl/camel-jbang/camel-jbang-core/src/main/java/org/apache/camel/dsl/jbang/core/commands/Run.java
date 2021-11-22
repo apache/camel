@@ -142,7 +142,7 @@ class Run implements Callable<Integer> {
         if (!ResourceHelper.hasScheme(binding) && !binding.startsWith("github:")) {
             binding = "file:" + binding;
         }
-        main.addInitialProperty("camel.main.routes-include-pattern", binding);
+        main.addInitialProperty("camel.main.routesIncludePattern", binding);
 
         if (binding.startsWith("file:")) {
             // check if file exist
@@ -154,10 +154,12 @@ class Run implements Callable<Integer> {
 
             // we can only reload if file based
             if (reload) {
-                main.addInitialProperty("camel.main.routes-reload-enabled", "true");
-                main.addInitialProperty("camel.main.routes-reload-directory", ".");
+                main.addInitialProperty("camel.main.routesReloadEnabled", "true");
+                main.addInitialProperty("camel.main.routesReloadDirectory", ".");
                 // skip file: as prefix
-                main.addInitialProperty("camel.main.routes-reload-pattern", binding.substring(5));
+                main.addInitialProperty("camel.main.routesReloadPattern", binding.substring(5));
+                // do not shutdown the JVM but stop routes when max duration is triggered
+                main.addInitialProperty("camel.main.durationMaxAction", "stop");
             }
         }
 
