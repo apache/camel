@@ -160,6 +160,30 @@
                 </executions>
             </plugin>
 
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+	            <execution>
+                    <id>copy-camel-dependency-pom</id>
+                    <phase>process-resources</phase>
+                    <goals>
+                        <goal>copy-resources</goal>
+                    </goals>
+                    <configuration>
+                        <outputDirectory>${basedir}/target</outputDirectory>
+                        <resources>
+                            <resource>
+                                <directory>${basedir}</directory>
+                                <includes>
+                                    <include>camel-dependencies-pom.xml</include>
+                                </includes>
+                            </resource>
+                        </resources>
+                    </configuration>
+                    </execution>
+		</executions>
+            </plugin>
             <!-- sync properties -->
             <plugin>
                 <groupId>org.apache.camel</groupId>
@@ -167,6 +191,7 @@
                 <version>${project.version}</version>
                 <executions>
                     <execution>
+                        <phase>compile</phase>
                         <!-- prepare the catalog, readme files, etc. -->
                         <goals>
                             <goal>sync-properties</goal>
@@ -175,7 +200,7 @@
                 </executions>
                 <configuration>
                     <sourcePom>${basedir}/../../parent/pom.xml</sourcePom>
-                    <targetPom>${basedir}/../../camel-dependencies/pom.xml</targetPom>
+                    <targetPom>${basedir}/../../catalog/camel-catalog/target/camel-dependencies-pom.xml</targetPom>
                     <licenseHeader>${basedir}/../../etc/apache-header.xml</licenseHeader>
                 </configuration>
             </plugin>
