@@ -98,8 +98,7 @@ public class ImageRecognitionProducer extends DefaultProducer {
             this.imageClient = endpoint.getImageClient();
             return endpoint.getImageClient();
         }
-        HttpConfig httpConfig = HttpConfig.getDefaultHttpConfig().
-                withIgnoreSSLVerification(clientConfigurations.isIgnoreSslVerification());
+        HttpConfig httpConfig = HttpConfig.getDefaultHttpConfig().withIgnoreSSLVerification(clientConfigurations.isIgnoreSslVerification());
         if (!StringUtils.isEmpty(clientConfigurations.getProxyHost())) {
             httpConfig.setProxyHost(clientConfigurations.getProxyHost());
             httpConfig.setProxyPort(clientConfigurations.getProxyPort());
