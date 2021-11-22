@@ -161,6 +161,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "RoutesReloadPattern": target.setRoutesReloadPattern(property(camelContext, java.lang.String.class, value)); return true;
         case "routesreloadremoveallroutes":
         case "RoutesReloadRemoveAllRoutes": target.setRoutesReloadRemoveAllRoutes(property(camelContext, boolean.class, value)); return true;
+        case "routesreloadrestartduration":
+        case "RoutesReloadRestartDuration": target.setRoutesReloadRestartDuration(property(camelContext, boolean.class, value)); return true;
         case "shutdownloginflightexchangesontimeout":
         case "ShutdownLogInflightExchangesOnTimeout": target.setShutdownLogInflightExchangesOnTimeout(property(camelContext, boolean.class, value)); return true;
         case "shutdownnowontimeout":
@@ -368,6 +370,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "RoutesReloadPattern": return java.lang.String.class;
         case "routesreloadremoveallroutes":
         case "RoutesReloadRemoveAllRoutes": return boolean.class;
+        case "routesreloadrestartduration":
+        case "RoutesReloadRestartDuration": return boolean.class;
         case "shutdownloginflightexchangesontimeout":
         case "ShutdownLogInflightExchangesOnTimeout": return boolean.class;
         case "shutdownnowontimeout":
@@ -576,6 +580,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "RoutesReloadPattern": return target.getRoutesReloadPattern();
         case "routesreloadremoveallroutes":
         case "RoutesReloadRemoveAllRoutes": return target.isRoutesReloadRemoveAllRoutes();
+        case "routesreloadrestartduration":
+        case "RoutesReloadRestartDuration": return target.isRoutesReloadRestartDuration();
         case "shutdownloginflightexchangesontimeout":
         case "ShutdownLogInflightExchangesOnTimeout": return target.isShutdownLogInflightExchangesOnTimeout();
         case "shutdownnowontimeout":

@@ -100,6 +100,8 @@ public abstract class DefaultConfigurationProperties<T> {
     private String routesReloadPattern;
     @Metadata(defaultValue = "true")
     private boolean routesReloadRemoveAllRoutes = true;
+    @Metadata(defaultValue = "true")
+    private boolean routesReloadRestartDuration = true;
     private boolean lightweight;
     private boolean eagerClassloading;
     @Metadata(defaultValue = "default", enums = "default,prototype,pooled")
@@ -1026,6 +1028,18 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setRoutesReloadRemoveAllRoutes(boolean routesReloadRemoveAllRoutes) {
         this.routesReloadRemoveAllRoutes = routesReloadRemoveAllRoutes;
+    }
+
+    public boolean isRoutesReloadRestartDuration() {
+        return routesReloadRestartDuration;
+    }
+
+    /**
+     * Whether to restart max duration when routes are reloaded. For example if max duration is 60 seconds, and a route
+     * is reloaded after 25 seconds, then this will restart the count and wait 60 seconds again.
+     */
+    public void setRoutesReloadRestartDuration(boolean routesReloadRestartDuration) {
+        this.routesReloadRestartDuration = routesReloadRestartDuration;
     }
 
     public boolean isLightweight() {
@@ -2038,6 +2052,15 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withRoutesReloadRemoveAllRoutes(boolean routesReloadRemoveAllRoutes) {
         this.routesReloadRemoveAllRoutes = routesReloadRemoveAllRoutes;
+        return (T) this;
+    }
+
+    /**
+     * Whether to restart max duration when routes are reloaded. For example if max duration is 60 seconds, and a route
+     * is reloaded after 25 seconds, then this will restart the count and wait 60 seconds again.
+     */
+    public T withRoutesReloadRestartDuration(boolean routesReloadRestartDuration) {
+        this.routesReloadRestartDuration = routesReloadRestartDuration;
         return (T) this;
     }
 

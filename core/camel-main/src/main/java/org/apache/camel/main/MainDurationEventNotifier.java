@@ -44,18 +44,21 @@ public class MainDurationEventNotifier extends EventNotifierSupport {
     private final long maxIdleSeconds;
     private final MainShutdownStrategy shutdownStrategy;
     private final boolean stopCamelContext;
+    private final boolean restartDuration;
     private final AtomicInteger doneMessages;
 
     private volatile StopWatch watch;
     private volatile ScheduledExecutorService idleExecutorService;
 
     public MainDurationEventNotifier(CamelContext camelContext, int maxMessages, long maxIdleSeconds,
-                                     MainShutdownStrategy shutdownStrategy, boolean stopCamelContext) {
+                                     MainShutdownStrategy shutdownStrategy, boolean stopCamelContext,
+                                     boolean restartDuration) {
         this.camelContext = camelContext;
         this.maxMessages = maxMessages;
         this.maxIdleSeconds = maxIdleSeconds;
         this.shutdownStrategy = shutdownStrategy;
         this.stopCamelContext = stopCamelContext;
+        this.restartDuration = restartDuration;
         this.doneMessages = new AtomicInteger();
     }
 
@@ -79,11 +82,13 @@ public class MainDurationEventNotifier extends EventNotifierSupport {
         boolean reloaded = event instanceof RouteReloadedEvent;
 
         if (reloaded) {
-            LOG.debug("Routes reloaded. Resetting maxMessages/maxIdleSeconds/maxSeconds");
-            shutdownStrategy.restartAwait();
-            doneMessages.set(0);
-            if (watch != null) {
-                watch.restart();
+            if (restartDuration) {
+                LOG.debug("Routes reloaded. Resetting maxMessages/maxIdleSeconds/maxSeconds");
+                shutdownStrategy.restartAwait();
+                doneMessages.set(0);
+                if (watch != null) {
+                    watch.restart();
+                }
             }
             return;
         }

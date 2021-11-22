@@ -280,7 +280,8 @@ public abstract class MainSupport extends BaseMainSupport {
                     mainConfigurationProperties.getDurationMaxMessages(),
                     mainConfigurationProperties.getDurationMaxIdleSeconds(),
                     shutdownStrategy,
-                    true);
+                    true,
+                    mainConfigurationProperties.isRoutesReloadRestartDuration());
 
             // register our event notifier
             ServiceHelper.startService(notifier);
