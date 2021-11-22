@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.dsl.jbang.core.common.exceptions;
 
 import org.apache.camel.CamelException;
 import org.apache.camel.spi.Resource;
 
 public class ResourceDoesNotExist extends CamelException {
+
     public ResourceDoesNotExist(Resource resource) {
         super("The resource does not exist at " + resource.getLocation());
     }

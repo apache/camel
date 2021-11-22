@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.dsl.jbang.core.components;
 
 import java.util.regex.Matcher;
@@ -23,6 +22,7 @@ import org.apache.camel.dsl.jbang.core.api.Converter;
 import org.apache.camel.dsl.jbang.core.types.Component;
 
 public class ComponentConverter implements Converter<Component> {
+
     @Override
     public Component convert(Matcher matcher) {
         Component component = new Component();

@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.File;
@@ -47,6 +46,9 @@ class Run implements Callable<Integer> {
     private boolean helpRequested;
     //CHECKSTYLE:ON
 
+    @Option(names = { "--name" }, defaultValue = "CamelJBang", description = "The name of the Camel application")
+    private String name;
+
     @Option(names = { "--logging-level" }, defaultValue = "info", description = "Logging level")
     private String loggingLevel;
 
@@ -76,15 +78,12 @@ class Run implements Callable<Integer> {
 
     @Override
     public Integer call() throws Exception {
-        System.setProperty("camel.main.name", "CamelJBang");
-
         if (stopRequested) {
             stop();
+            return 0;
         } else {
-            run();
+            return run();
         }
-
-        return 0;
     }
 
     private int stop() {
@@ -103,8 +102,17 @@ class Run implements Callable<Integer> {
     }
 
     private int run() throws Exception {
-        KameletMain main = new KameletMain();
+        // configure logging first
+        RuntimeUtil.configureLog(loggingLevel);
 
+        KameletMain main = new KameletMain();
+        main.addInitialProperty("camel.main.name", name);
+        // shutdown quickly
+        main.addInitialProperty("camel.main.shutdownTimeout", "5");
+        // turn off lightweight if we have routes reload enabled
+        main.addInitialProperty("camel.main.routesReloadEnabled", reload ? "true" : "false");
+
+        // durations
         if (maxMessages > 0) {
             main.addInitialProperty("camel.main.durationMaxMessages", String.valueOf(maxMessages));
         }
@@ -114,13 +122,6 @@ class Run implements Callable<Integer> {
         if (maxIdleSeconds > 0) {
             main.addInitialProperty("camel.main.durationMaxIdleSeconds", String.valueOf(maxIdleSeconds));
         }
-
-        RuntimeUtil.configureLog(loggingLevel);
-
-        // shutdown quickly
-        main.addInitialProperty("camel.main.shutdownTimeout", "5");
-        // turn off lightweight if we have routes reload enabled
-        main.addInitialProperty("camel.main.routesReloadEnabled", reload ? "true" : "false");
 
         if (fileLock) {
             lockFile = createLockFile();
@@ -168,23 +169,22 @@ class Run implements Callable<Integer> {
                     if (!file.startsWith("/")) {
                         file = FileSystems.getDefault().getPath("").toAbsolutePath() + File.separator + file;
                     }
-
                     file = "file://" + file;
                 }
-
                 locations.append(file).append(",");
             }
-
             main.addInitialProperty("camel.component.properties.location", locations.toString());
         }
 
-        System.out.println("Starting Camel JBang!");
+        System.out.println("Starting CamelJBang");
         main.start();
 
         context = main.getCamelContext();
 
         main.run();
-        return 0;
+
+        int code = main.getExitCode();
+        return code;
     }
 
     public File createLockFile() throws IOException {
