@@ -160,8 +160,11 @@ public class MainDurationEventNotifier extends EventNotifierSupport {
             return;
         }
 
-        // TODO: stop all routes via shutdown strategy
-        LOG.warn("Stopping all routes!!!");
+        try {
+            camelContext.getRouteController().stopAllRoutes();
+        } catch (Exception e) {
+            LOG.warn("Error during stopping all routes. This exception is ignored.", e);
+        }
     }
 
     private void shutdownTask() {

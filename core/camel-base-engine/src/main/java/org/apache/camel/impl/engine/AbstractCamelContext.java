@@ -1198,6 +1198,10 @@ public abstract class AbstractCamelContext extends BaseService
         internalRouteStartupManager.doStartOrResumeRoutes(routeServices, true, true, false, false);
     }
 
+    public void stopAllRoutes() throws Exception {
+        // TODO: implement me
+    }
+
     public synchronized void startRoute(String routeId) throws Exception {
         DefaultRouteError.reset(this, routeId);
 

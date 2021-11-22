@@ -73,6 +73,11 @@ class InternalRouteController implements RouteController {
     }
 
     @Override
+    public void stopAllRoutes() throws Exception {
+        abstractCamelContext.stopAllRoutes();
+    }
+
+    @Override
     public boolean isStartingRoutes() {
         return abstractCamelContext.isStartingRoutes();
     }
