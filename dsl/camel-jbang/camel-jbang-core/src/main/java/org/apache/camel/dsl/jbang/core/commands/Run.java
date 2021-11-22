@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileSystems;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -57,6 +58,10 @@ class Run implements Callable<Integer> {
 
     @Option(names = { "--reload" }, description = "Enables live reload when source file is changed (saved)")
     private boolean reload;
+
+    @Option(names = { "--properties" },
+            description = "Load properties file for route placeholders (ex. /path/to/file.properties")
+    private String propertiesFiles;
 
     @Option(names = { "--file-lock" }, defaultValue = "true",
             description = "Whether to create a temporary file lock, which upon deleting triggers this process to terminate")
@@ -140,6 +145,24 @@ class Run implements Callable<Integer> {
                 // skip file: as prefix
                 main.addInitialProperty("camel.main.routes-reload-pattern", binding.substring(5));
             }
+        }
+
+        if (propertiesFiles != null) {
+            String[] filesLocation = propertiesFiles.split(",");
+            StringBuilder locations = new StringBuilder();
+            for (String file : filesLocation) {
+                if (!file.startsWith("file:")) {
+                    if (!file.startsWith("/")) {
+                        file = FileSystems.getDefault().getPath("").toAbsolutePath() + File.separator + file;
+                    }
+
+                    file = "file://" + file;
+                }
+
+                locations.append(file).append(",");
+            }
+
+            main.addInitialProperty("camel.component.properties.location", locations.toString());
         }
 
         System.out.println("Starting Camel JBang!");
