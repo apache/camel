@@ -74,8 +74,8 @@ public class SimpleMainShutdownStrategy implements MainShutdownStrategy {
     }
 
     @Override
-    public void await(long timeout, TimeUnit unit) throws InterruptedException {
+    public boolean await(long timeout, TimeUnit unit) throws InterruptedException {
         LOG.debug("Await shutdown to complete with timeout: {} {}", timeout, unit);
-        latch.await(timeout, unit);
+        return latch.await(timeout, unit);
     }
 }
