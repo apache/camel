@@ -1199,7 +1199,10 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     public void stopAllRoutes() throws Exception {
-        // TODO: implement me
+        // stop all routes
+        if (shutdownStrategy != null) {
+            shutdownStrategy.shutdown(this, getRouteStartupOrder());
+        }
     }
 
     public synchronized void startRoute(String routeId) throws Exception {

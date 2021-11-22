@@ -118,8 +118,12 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                     // should all existing routes be stopped and removed first?
                     if (removeAllRoutes) {
                         for (Route route : getCamelContext().getRoutes()) {
-                            getCamelContext().getRouteController().stopRoute(route.getRouteId());
-                            getCamelContext().removeRoute(route.getRouteId());
+                            boolean stopped
+                                    = getCamelContext().getRouteController().getRouteStatus(route.getRouteId()).isStopped();
+                            if (!stopped) {
+                                getCamelContext().getRouteController().stopRoute(route.getRouteId());
+                                getCamelContext().removeRoute(route.getRouteId());
+                            }
                         }
                     }
                     Set<String> ids
