@@ -36,7 +36,8 @@ public class KameletMainTest {
     public void testReload() throws Exception {
         KameletMain main = new KameletMain();
         main.setDownload(true);
-        main.configure().withDurationMaxSeconds(60);
+        main.configure().withDurationMaxMessages(10);
+        main.configure().withDurationMaxAction("stop");
         main.configure().withRoutesIncludePattern("file:src/test/resources/my-route.yaml");
         main.configure().withRoutesReloadEnabled(true);
         main.configure().withRoutesReloadDirectory("src/test/resources");
