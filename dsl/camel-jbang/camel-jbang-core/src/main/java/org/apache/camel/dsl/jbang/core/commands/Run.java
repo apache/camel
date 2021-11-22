@@ -46,14 +46,21 @@ class Run implements Callable<Integer> {
     private boolean helpRequested;
     //CHECKSTYLE:ON
 
-    @Option(names = { "--debug-level" }, defaultValue = "info", description = "Default debug level")
-    private String debugLevel;
+    @Option(names = { "--logging-level" }, defaultValue = "info", description = "Logging level")
+    private String loggingLevel;
 
     @Option(names = { "--stop" }, description = "Stop all running instances of Camel JBang")
     private boolean stopRequested;
 
     @Option(names = { "--max-messages" }, defaultValue = "0", description = "Max number of messages to process before stopping")
     private int maxMessages;
+
+    @Option(names = { "--max-seconds" }, defaultValue = "0", description = "Max seconds to run before stopping")
+    private int maxSeconds;
+
+    @Option(names = { "--max-idle-seconds" }, defaultValue = "0",
+            description = "For how long time in seconds Camel can be idle before stopping")
+    private int maxIdleSeconds;
 
     @Option(names = { "--reload" }, description = "Enables live reload when source file is changed (saved)")
     private boolean reload;
@@ -96,11 +103,17 @@ class Run implements Callable<Integer> {
         if (maxMessages > 0) {
             main.addInitialProperty("camel.main.durationMaxMessages", String.valueOf(maxMessages));
         }
+        if (maxSeconds > 0) {
+            main.addInitialProperty("camel.main.durationMaxSeconds", String.valueOf(maxSeconds));
+        }
+        if (maxIdleSeconds > 0) {
+            main.addInitialProperty("camel.main.durationMaxIdleSeconds", String.valueOf(maxIdleSeconds));
+        }
 
-        RuntimeUtil.configureLog(debugLevel);
+        RuntimeUtil.configureLog(loggingLevel);
 
         // shutdown quickly
-        main.addInitialProperty("camel.main.shutdown-timeout", "5");
+        main.addInitialProperty("camel.main.shutdownTimeout", "5");
         // turn off lightweight if we have routes reload enabled
         main.addInitialProperty("camel.main.routesReloadEnabled", reload ? "true" : "false");
 

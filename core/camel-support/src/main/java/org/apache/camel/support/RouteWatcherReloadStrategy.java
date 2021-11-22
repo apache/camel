@@ -127,6 +127,11 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                     if (!ids.isEmpty()) {
                         LOG.info("Reloaded routes: {}", String.join(", ", ids));
                     }
+                    // fire events for routes reloaded
+                    for (String id : ids) {
+                        Route route = getCamelContext().getRoute(id);
+                        EventHelper.notifyRouteReloaded(getCamelContext(), route);
+                    }
 
                     if (!removeAllRoutes) {
                         // if not all previous routes are removed then to have safe route reloading

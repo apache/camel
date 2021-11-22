@@ -30,10 +30,10 @@ public final class RuntimeUtil {
     private RuntimeUtil() {
     }
 
-    public static void configureLog(String debugLevel) {
-        debugLevel = debugLevel.toLowerCase();
+    public static void configureLog(String level) {
+        level = level.toLowerCase();
 
-        switch (debugLevel) {
+        switch (level) {
             case "trace":
                 Configurator.setRootLevel(Level.TRACE);
                 break;
@@ -54,7 +54,7 @@ public final class RuntimeUtil {
                 break;
             default: {
                 Configurator.setRootLevel(Level.INFO);
-                LoggerFactory.getLogger(RuntimeUtil.class).warn("Invalid debug level: {}", debugLevel);
+                LoggerFactory.getLogger(RuntimeUtil.class).warn("Invalid logging level: {}", level);
             }
         }
     }

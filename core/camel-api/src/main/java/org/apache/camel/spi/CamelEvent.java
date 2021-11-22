@@ -55,6 +55,7 @@ public interface CamelEvent {
         RoutesStopped,
         RouteAdded,
         RouteRemoved,
+        RouteReloaded,
         RouteStarting,
         RouteStarted,
         RouteStopping,
@@ -344,6 +345,13 @@ public interface CamelEvent {
         @Override
         default Type getType() {
             return Type.RouteRemoved;
+        }
+    }
+
+    interface RouteReloadedEvent extends RouteEvent {
+        @Override
+        default Type getType() {
+            return Type.RouteReloaded;
         }
     }
 

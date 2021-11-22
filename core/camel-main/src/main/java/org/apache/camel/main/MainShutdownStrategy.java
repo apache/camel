@@ -62,11 +62,16 @@ public interface MainShutdownStrategy {
     void await() throws InterruptedException;
 
     /**
-     * Waiting for Camel Main to complete.
+     * Waiting for Camel Main to complete (with timeout).
      *
      * @param  timeout the maximum time to wait
      * @param  unit    the time unit of the {@code timeout} argument
      * @return         true if Camel Main was completed before the timeout, false if timeout was triggered.
      */
     boolean await(long timeout, TimeUnit unit) throws InterruptedException;
+
+    /**
+     * This is used for restarting await with timeout.
+     */
+    void restartAwait();
 }
