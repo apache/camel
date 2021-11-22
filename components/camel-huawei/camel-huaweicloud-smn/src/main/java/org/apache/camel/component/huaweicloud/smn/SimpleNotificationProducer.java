@@ -258,7 +258,7 @@ public class SimpleNotificationProducer extends DefaultProducer {
     /**
      * initialization of smn client. this is lazily initialized on the first message
      *
-     * @param  clientConfigurations
+     * @param clientConfigurations
      * @return
      */
     private SmnClient initializeClient(ClientConfigurations clientConfigurations) {
