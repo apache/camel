@@ -37,7 +37,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private int durationMaxSeconds;
     private int durationMaxIdleSeconds;
     private int durationMaxMessages;
-    @Metadata(defaultValue = "terminate", enums = "shutdown,stop")
+    @Metadata(defaultValue = "shutdown", enums = "shutdown,stop")
     private String durationMaxAction = "shutdown";
     private int shutdownTimeout = 45;
     private boolean shutdownSuppressLoggingOnTimeout;
