@@ -37,7 +37,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AbstractKuduTest extends CamelTestSupport {
+public abstract class AbstractKuduTest extends CamelTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractKuduTest.class);
 
@@ -50,7 +50,7 @@ public class AbstractKuduTest extends CamelTestSupport {
     private Integer id = 1;
 
     protected void createTestTable(String tableName) {
-        LOG.trace("Creating table " + tableName + ".");
+        LOG.trace("Creating table {}.", tableName);
         KuduClient client = ikc.getClient();
 
         List<ColumnSchema> columns = new ArrayList<>(5);
@@ -94,18 +94,18 @@ public class AbstractKuduTest extends CamelTestSupport {
     }
 
     protected void deleteTestTable(String tableName) {
-        LOG.trace("Removing table " + tableName + ".");
+        LOG.trace("Removing table {}.", tableName);
         KuduClient client = ikc.getClient();
         try {
             client.deleteTable(tableName);
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }
-        LOG.trace("Table " + tableName + " removed.");
+        LOG.trace("Table {} removed.", tableName);
     }
 
     protected void insertRowInTestTable(String tableName) {
-        LOG.trace("Inserting row on table " + tableName + ".");
+        LOG.trace("Inserting row on table {}.", tableName);
         KuduClient client = ikc.getClient();
 
         try {
@@ -125,6 +125,6 @@ public class AbstractKuduTest extends CamelTestSupport {
 
             LOG.error(e.getMessage(), e);
         }
-        LOG.trace("Row inserted on table " + tableName + ".");
+        LOG.trace("Row inserted on table {}.", tableName);
     }
 }
