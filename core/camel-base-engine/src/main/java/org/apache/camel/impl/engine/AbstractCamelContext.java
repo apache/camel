@@ -1207,9 +1207,13 @@ public abstract class AbstractCamelContext extends BaseService
         List<RouteStartupOrder> routesOrdered = new ArrayList<>(getRouteStartupOrder());
         routesOrdered.sort(comparator);
         for (RouteStartupOrder order : routesOrdered) {
-            stopRoute(order.getRoute().getRouteId());
+            Route route = order.getRoute();
+            boolean stopped = getRouteController().getRouteStatus(route.getRouteId()).isStopped();
+            if (!stopped) {
+                stopRoute(route.getRouteId());
+            }
         }
-        // stop remainder routes
+        // stop any remainder routes
         for (Route route : getRoutes()) {
             boolean stopped = getRouteController().getRouteStatus(route.getRouteId()).isStopped();
             if (!stopped) {

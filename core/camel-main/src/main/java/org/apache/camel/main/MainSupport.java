@@ -46,6 +46,7 @@ public abstract class MainSupport extends BaseMainSupport {
     private int durationMaxMessages;
     private long durationMaxSeconds;
     private int durationHitExitCode;
+    private String durationMaxAction = "shutdown";
 
     protected MainSupport(Class<?>... configurationClasses) {
         this();
@@ -108,6 +109,7 @@ public abstract class MainSupport extends BaseMainSupport {
         durationMaxMessages = mainConfigurationProperties.getDurationMaxMessages();
         durationMaxSeconds = mainConfigurationProperties.getDurationMaxSeconds();
         durationHitExitCode = mainConfigurationProperties.getDurationHitExitCode();
+        durationMaxAction = mainConfigurationProperties.getDurationMaxAction();
 
         // register main as bootstrap
         CamelContext context = getCamelContext();
@@ -304,8 +306,18 @@ public abstract class MainSupport extends BaseMainSupport {
                     LOG.info("Waiting until complete: Duration max {} seconds", sec);
                     boolean zero = shutdownStrategy.await(sec, TimeUnit.SECONDS);
                     if (!zero) {
-                        LOG.info("Duration max seconds triggering shutdown of the JVM");
+                        if ("stop".equalsIgnoreCase(durationMaxAction)) {
+                            LOG.info("Duration max seconds triggering stopping all routes");
+                            try {
+                                camelContext.getRouteController().stopAllRoutes();
+                            } catch (Exception e) {
+                                LOG.warn("Error during stopping all routes. This exception is ignored.", e);
+                            }
+                            // we are just stopping routes (not terminating JVM) so continue
+                            continue;
+                        }
                     }
+                    LOG.info("Duration max seconds triggering shutdown of the JVM");
                     exitCode.compareAndSet(UNINITIALIZED_EXIT_CODE, exit);
                     shutdownStrategy.shutdown();
                 } else if (idle > 0 || max > 0) {
