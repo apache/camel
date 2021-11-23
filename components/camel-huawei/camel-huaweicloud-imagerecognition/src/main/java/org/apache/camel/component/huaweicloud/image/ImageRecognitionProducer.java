@@ -86,7 +86,7 @@ public class ImageRecognitionProducer extends DefaultProducer {
 
     /**
      * initialize image client. this is lazily initialized on the first message
-     * 
+     *
      * @param  endpoint
      * @param  clientConfigurations
      * @return
@@ -98,14 +98,12 @@ public class ImageRecognitionProducer extends DefaultProducer {
             this.imageClient = endpoint.getImageClient();
             return endpoint.getImageClient();
         }
-        HttpConfig httpConfig = null;
-        if (clientConfigurations.getProxyHost() != null) {
-            httpConfig = HttpConfig.getDefaultHttpConfig()
-                    .withProxyHost(clientConfigurations.getProxyHost())
-                    .withProxyPort(clientConfigurations.getProxyPort())
-                    .withIgnoreSSLVerification(clientConfigurations.isIgnoreSslVerification());
-
-            if (clientConfigurations.getProxyUser() != null) {
+        HttpConfig httpConfig
+                = HttpConfig.getDefaultHttpConfig().withIgnoreSSLVerification(clientConfigurations.isIgnoreSslVerification());
+        if (!StringUtils.isEmpty(clientConfigurations.getProxyHost())) {
+            httpConfig.setProxyHost(clientConfigurations.getProxyHost());
+            httpConfig.setProxyPort(clientConfigurations.getProxyPort());
+            if (!StringUtils.isEmpty(clientConfigurations.getProxyUser())) {
                 httpConfig.setProxyUsername(clientConfigurations.getProxyUser());
                 httpConfig.setProxyPassword(clientConfigurations.getProxyPassword());
             }
@@ -199,7 +197,7 @@ public class ImageRecognitionProducer extends DefaultProducer {
      * Update dynamic client configurations. Some endpoint parameters (imageContent, imageUrl, tagLanguage, tagLimit and
      * threshold) can also be passed via exchange properties, so they can be updated between each transaction. Since
      * they can change, we must clear the previous transaction and update these parameters with their new values
-     * 
+     *
      * @param exchange
      * @param clientConfigurations
      */
@@ -255,7 +253,7 @@ public class ImageRecognitionProducer extends DefaultProducer {
     /**
      * validate threshold value. for tagRecognition, threshold should be at 0~100. for celebrityRecognition, threshold
      * should be at 0~1.
-     * 
+     *
      * @param threshold
      * @param operation
      */
