@@ -16,6 +16,7 @@
  */
 package org.apache.camel.support;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -58,13 +59,8 @@ public class DefaultTimeoutMapTest {
         map.put("A", 123, 50);
         assertEquals(1, map.size());
 
-        Thread.sleep(250);
-        if (map.size() > 0) {
-            LOG.warn("Waiting extra due slow CI box");
-            Thread.sleep(1000);
-        }
-
-        assertEquals(0, map.size());
+        await().atMost(Duration.ofSeconds(2))
+                .untilAsserted(() -> assertEquals(0, map.size()));
 
         map.stop();
     }
@@ -120,14 +116,9 @@ public class DefaultTimeoutMapTest {
         map.put("A", 123, 100);
         assertEquals(1, map.size());
 
-        Thread.sleep(250);
-
-        if (map.size() > 0) {
-            LOG.warn("Waiting extra due slow CI box");
-            Thread.sleep(1000);
-        }
         // should have been timed out now
-        assertEquals(0, map.size());
+        await().atMost(Duration.ofSeconds(2))
+                .untilAsserted(() -> assertEquals(0, map.size()));
 
         assertSame(e, map.getExecutor());
 
@@ -157,9 +148,9 @@ public class DefaultTimeoutMapTest {
         // is not expired
         map.put("F", 6, 800);
 
-        Thread.sleep(250);
+        await().atMost(Duration.ofSeconds(1))
+                .untilAsserted(() -> assertEquals("D", keys.get(0)));
 
-        assertEquals("D", keys.get(0));
         assertEquals(4, values.get(0).intValue());
         assertEquals("B", keys.get(1));
         assertEquals(2, values.get(1).intValue());
@@ -188,8 +179,8 @@ public class DefaultTimeoutMapTest {
         map.put("A", 1, 50);
 
         // should not timeout as the scheduler doesn't run
-        Thread.sleep(250);
-        assertEquals(1, map.size());
+        await().atMost(Duration.ofSeconds(1))
+                .untilAsserted(() -> assertEquals(1, map.size()));
 
         // start
         map.start();
