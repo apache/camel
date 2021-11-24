@@ -160,14 +160,13 @@
                 </executions>
             </plugin>
 
-            <!-- sync properties -->
+            <!-- sync properties to camel-dependencies -->
             <plugin>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>sync-properties-maven-plugin</artifactId>
                 <version>${project.version}</version>
                 <executions>
                     <execution>
-                        <!-- prepare the catalog, readme files, etc. -->
                         <goals>
                             <goal>sync-properties</goal>
                         </goals>
