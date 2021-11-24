@@ -22,11 +22,16 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@Isolated("Does not play well with parallel execution")
 public class MulticastParallelAllTimeoutAwareTest extends ContextTestSupport {
+    private static Logger log = LoggerFactory.getLogger(MulticastParallelAllTimeoutAwareTest.class);
 
     private volatile Exchange receivedExchange;
     private volatile int receivedIndex;
@@ -38,7 +43,7 @@ public class MulticastParallelAllTimeoutAwareTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         // ABC will timeout so we only get our canned response
         mock.expectedBodiesReceived("AllTimeout");
-
+        log.info("testMulticastParallelAllTimeoutAware sendBody");
         template.sendBody("direct:start", "Hello");
 
         assertMockEndpointsSatisfied();
@@ -87,13 +92,15 @@ public class MulticastParallelAllTimeoutAwareTest extends ContextTestSupport {
             receivedIndex = index;
             receivedTotal = total;
             receivedTimeout = timeout;
-
+            log.info(String.format("testMulticastParallelAllTimeoutAware timeout index=%d, totall=%d",
+                    index, total));
             oldExchange.getIn().setBody("AllTimeout");
         }
 
         @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
             // noop
+            log.info("testMulticastParallelAllTimeoutAware aggregate with new body " + newExchange.getIn().getBody());
             return oldExchange;
         }
     }

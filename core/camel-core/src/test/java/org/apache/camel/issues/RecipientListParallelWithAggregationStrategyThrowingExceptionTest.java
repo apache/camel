@@ -50,7 +50,8 @@ public class RecipientListParallelWithAggregationStrategyThrowingExceptionTest e
                 // exceptions
                 // from the aggregation strategy also.
                 from("direct:start").recipientList(header("recipients")).aggregationStrategy(new MyAggregateBean())
-                        .parallelProcessing().stopOnAggregateException()
+                        .parallelProcessing()
+//                        .stopOnAggregateException()
                         .shareUnitOfWork().end().to("mock:end");
             }
         };

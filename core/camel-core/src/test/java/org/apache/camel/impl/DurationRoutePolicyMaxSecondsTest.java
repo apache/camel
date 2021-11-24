@@ -54,7 +54,7 @@ public class DurationRoutePolicyMaxSecondsTest extends ContextTestSupport {
                 DurationRoutePolicy policy = new DurationRoutePolicy();
                 policy.setMaxSeconds(2);
 
-                from("timer:foo?period=100").routeId("foo").routePolicy(policy).to("mock:foo");
+                from("timer:foo?period=100&delay=500").routeId("foo").routePolicy(policy).to("mock:foo");
             }
         };
     }
