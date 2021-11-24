@@ -16,6 +16,7 @@
  */
 package org.apache.camel.management;
 
+import java.time.Duration;
 import java.util.Set;
 
 import javax.management.MBeanServer;
@@ -24,6 +25,7 @@ import javax.management.ObjectName;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
@@ -115,9 +117,9 @@ public class ManagedRouteStopWithAbortAfterTimeoutTest extends ManagementTestSup
             template.sendBody("seda:start", "message-" + i);
         }
 
-        Thread.sleep(1000);
-
-        assertTrue(mockEP.getExchanges().size() <= 5, "Should not have received more than 5 messages");
+        Awaitility.await().atMost(Duration.ofSeconds(1))
+                .untilAsserted(
+                        () -> assertTrue(mockEP.getExchanges().size() <= 5, "Should not have received more than 5 messages"));
     }
 
     static ObjectName getRouteObjectName(MBeanServer mbeanServer) throws Exception {
