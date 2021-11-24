@@ -176,6 +176,16 @@ For example to run one of the Camel K examples you can do:
 jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel run run github:apache:camel-k:examples/languages/routes.yaml
 ----
 
+=== Running local Kamelets
+
+You can also use Camel JBang to try local Kamelets, without the need to publish them on Github or package them in a jar.
+
+[source,bash]
+----
+jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel run --local-kamelet-dir=/path/to/local/kamelets earthquake.yaml
+----
+
+
 == Installation
 
 It is not necessary to install Camel JBang. However, if you prefer to do so, JBang makes it easy for us by providing an installation feature that works with Github. If you have JBang installed on your system, then you can run the following command to install CamelJBang:

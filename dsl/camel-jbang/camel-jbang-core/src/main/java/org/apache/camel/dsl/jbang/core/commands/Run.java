@@ -76,6 +76,10 @@ class Run implements Callable<Integer> {
             description = "Whether to create a temporary file lock, which upon deleting triggers this process to terminate")
     private boolean fileLock = true;
 
+    @Option(names = { "--local-kamelet-dir" },
+            description = "Load a Kamelets from a local directory instead of resolving them from the classpath or GitHub")
+    private String localKameletDir;
+
     @Override
     public Integer call() throws Exception {
         if (stopRequested) {
@@ -121,6 +125,10 @@ class Run implements Callable<Integer> {
         }
         if (maxIdleSeconds > 0) {
             main.addInitialProperty("camel.main.durationMaxIdleSeconds", String.valueOf(maxIdleSeconds));
+        }
+
+        if (!localKameletDir.isEmpty()) {
+            main.addInitialProperty("camel.component.kamelet.location", "file://" + localKameletDir);
         }
 
         if (fileLock) {
