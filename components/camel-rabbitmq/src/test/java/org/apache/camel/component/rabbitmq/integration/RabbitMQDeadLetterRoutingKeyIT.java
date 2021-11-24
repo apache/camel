@@ -18,6 +18,7 @@ package org.apache.camel.component.rabbitmq.integration;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +33,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.rabbitmq.services.ConnectionProperties;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -112,9 +114,7 @@ public class RabbitMQDeadLetterRoutingKeyIT extends AbstractRabbitMQIT {
 
         deadLetterChannel.basicConsume("dlq", true, new DeadLetterRoutingKeyConsumer(received, routingKey));
 
-        Thread.sleep(500);
-
-        assertListSize(received, 1);
+        Awaitility.await().atMost(Duration.ofSeconds(1)).untilAsserted(() -> assertListSize(received, 1));
         assertEquals("rk1", routingKey.toString());
     }
 

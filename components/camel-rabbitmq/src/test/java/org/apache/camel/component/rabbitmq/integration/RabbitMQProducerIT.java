@@ -17,6 +17,7 @@
 package org.apache.camel.component.rabbitmq.integration;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,6 +36,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.rabbitmq.RabbitMQConstants;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.test.infra.rabbitmq.services.ConnectionProperties;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -190,8 +192,8 @@ public class RabbitMQProducerIT extends AbstractRabbitMQIT {
 
         templateNotAllowCustomHeaders.sendBodyAndHeaders("new message", headers);
 
-        Thread.sleep(500);
-        assertEquals("new message", received.get(0));
+        Awaitility.await().atMost(Duration.ofSeconds(1))
+                .untilAsserted(() -> assertEquals("new message", received.get(0)));
         assertTrue(receivedHeaders.containsKey(RabbitMQConstants.EXCHANGE_NAME));
         assertFalse(receivedHeaders.containsKey(CUSTOM_HEADER));
     }
