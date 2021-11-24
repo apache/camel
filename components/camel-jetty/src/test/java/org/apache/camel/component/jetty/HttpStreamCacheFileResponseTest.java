@@ -18,10 +18,13 @@ package org.apache.camel.component.jetty;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.time.Duration;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HttpStreamCacheFileResponseTest extends BaseJettyTest {
@@ -34,11 +37,10 @@ public class HttpStreamCacheFileResponseTest extends BaseJettyTest {
         String out = template.requestBody("http://localhost:{{port}}/myserver", body, String.class);
         assertEquals(body2, out);
 
-        // give time for file to be deleted
-        Thread.sleep(500);
-        // the temporary files should have been deleted
-        String[] files = testDirectory().toFile().list();
-        assertEquals(0, files.length, "There should be no files");
+        File dir = testDirectory().toFile();
+        await()
+                .atMost(Duration.ofSeconds(1))
+                .untilAsserted(() -> assertEquals(0, dir.list().length, "There should be no files"));
     }
 
     @Override
