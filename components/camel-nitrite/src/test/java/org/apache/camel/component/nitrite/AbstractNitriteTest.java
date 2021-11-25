@@ -27,7 +27,7 @@ import org.apache.camel.util.FileUtil;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
-public class AbstractNitriteTest extends CamelTestSupport implements BeforeEachCallback {
+public abstract class AbstractNitriteTest extends CamelTestSupport implements BeforeEachCallback {
 
     protected String testMethodName;
 

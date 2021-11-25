@@ -27,7 +27,7 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeAll;
 
-public class BaseMinaTest extends CamelTestSupport {
+public abstract class BaseMinaTest extends CamelTestSupport {
 
     protected static final String KEY_STORE_PASSWORD = "changeit";
 
