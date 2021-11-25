@@ -19,12 +19,13 @@ package org.apache.camel.component.xslt;
 import javax.xml.transform.TransformerConfigurationException;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  *
@@ -33,17 +34,11 @@ public class InvalidXsltFileTest extends TestSupport {
 
     @Test
     public void testInvalidStylesheet() throws Exception {
-        try {
-            RouteBuilder builder = createRouteBuilder();
-            CamelContext context = new DefaultCamelContext();
-            context.addRoutes(builder);
-            context.start();
-
-            fail("Should have thrown an exception due XSL compilation error");
-        } catch (Exception e) {
-            // expected
-            assertIsInstanceOf(TransformerConfigurationException.class, e.getCause().getCause().getCause());
-        }
+        RouteBuilder builder = createRouteBuilder();
+        CamelContext context = new DefaultCamelContext();
+        context.addRoutes(builder);
+        RuntimeCamelException exception = assertThrows(RuntimeCamelException.class, () -> context.start());
+        assertIsInstanceOf(TransformerConfigurationException.class, exception.getCause().getCause().getCause());
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
