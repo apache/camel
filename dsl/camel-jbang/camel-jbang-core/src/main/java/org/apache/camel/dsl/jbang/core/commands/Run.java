@@ -127,7 +127,7 @@ class Run implements Callable<Integer> {
             main.addInitialProperty("camel.main.durationMaxIdleSeconds", String.valueOf(maxIdleSeconds));
         }
 
-        if (!localKameletDir.isEmpty()) {
+        if (localKameletDir != null && !localKameletDir.isEmpty()) {
             main.addInitialProperty("camel.component.kamelet.location", "file://" + localKameletDir);
         }
 
