@@ -26,7 +26,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class AwsSecretsManagerBaseTest extends CamelTestSupport {
+public abstract class AwsSecretsManagerBaseTest extends CamelTestSupport {
     @RegisterExtension
     public static AWSService service = AWSServiceFactory.createKMSService();
 

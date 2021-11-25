@@ -22,7 +22,7 @@ import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.test.infra.xmpp.services.XmppServerContainer;
 import org.apache.camel.test.junit5.CamelTestSupport;
 
-public class XmppBaseContainerTest extends CamelTestSupport {
+public abstract class XmppBaseContainerTest extends CamelTestSupport {
     protected XmppServerContainer xmppServer = new XmppServerContainer();
 
     @Override
