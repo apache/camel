@@ -84,6 +84,13 @@ public interface RouteController extends CamelContextAware, StaticService {
     void stopAllRoutes() throws Exception;
 
     /**
+     * Stops and removes all the routes
+     *
+     * @throws Exception is thrown if a route could not be stopped or removed for whatever reason
+     */
+    void removeAllRoutes() throws Exception;
+
+    /**
      * Indicates whether current thread is starting route(s).
      * <p/>
      * This can be useful to know by {@link LifecycleStrategy} or the likes, in case they need to react differently.

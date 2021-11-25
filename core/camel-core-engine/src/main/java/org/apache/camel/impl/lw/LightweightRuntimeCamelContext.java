@@ -2004,6 +2004,11 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
             }
 
             @Override
+            public void removeAllRoutes() throws Exception {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
             public boolean isStartingRoutes() {
                 return false;
             }

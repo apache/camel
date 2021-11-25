@@ -17,15 +17,20 @@
 package org.apache.camel.support;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.StringJoiner;
 
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.ServiceStatus;
+import org.apache.camel.StartupSummaryLevel;
 import org.apache.camel.util.AntPathMatcher;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -117,12 +122,8 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                 try {
                     // should all existing routes be stopped and removed first?
                     if (removeAllRoutes) {
-                        // first stop all routes
-                        getCamelContext().getRouteController().stopAllRoutes();
-                        // then remove all routes
-                        for (Route route : getCamelContext().getRoutes()) {
-                            getCamelContext().removeRoute(route.getRouteId());
-                        }
+                        // first stop and remove all routes
+                        getCamelContext().getRouteController().removeAllRoutes();
                         // remove left-over route templates and endpoints, so we can start on a fresh
                         getCamelContext().removeRouteTemplates("*");
                         getCamelContext().getEndpointRegistry().clear();
@@ -130,7 +131,28 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                     Set<String> ids
                             = getCamelContext().adapt(ExtendedCamelContext.class).getRoutesLoader().updateRoutes(resource);
                     if (!ids.isEmpty()) {
-                        LOG.info("Reloaded routes: {}", String.join(", ", ids));
+                        List<String> lines = new ArrayList<>();
+                        int total = 0;
+                        int started = 0;
+                        for (String id : ids) {
+                            total++;
+                            String status = getCamelContext().getRouteController().getRouteStatus(id).name();
+                            if (ServiceStatus.Started.name().equals(status)) {
+                                started++;
+                            }
+                            // use basic endpoint uri to not log verbose details or potential sensitive data
+                            String uri = getCamelContext().getRoute(id).getEndpoint().getEndpointBaseUri();
+                            uri = URISupport.sanitizeUri(uri);
+                            lines.add(String.format("    %s %s (%s)", status, id, uri));
+                        }
+                        LOG.info(String.format("Routes reloaded summary (total:%s started:%s)", total, started));
+                        // if we are default/verbose then log each route line
+                        if (getCamelContext().getStartupSummaryLevel() == StartupSummaryLevel.Default
+                                || getCamelContext().getStartupSummaryLevel() == StartupSummaryLevel.Verbose) {
+                            for (String line : lines) {
+                                LOG.info(line);
+                            }
+                        }
                     }
                     // fire events for routes reloaded
                     for (String id : ids) {
