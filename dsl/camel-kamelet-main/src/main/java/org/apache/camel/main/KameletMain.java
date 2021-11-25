@@ -17,6 +17,7 @@
 package org.apache.camel.main;
 
 import java.util.Map;
+import java.util.Objects;
 
 import groovy.lang.GroovyClassLoader;
 import org.apache.camel.CamelContext;
@@ -29,13 +30,22 @@ import org.apache.camel.spi.Registry;
  * A Main class for booting up Camel with Kamelet in standalone mode.
  */
 public class KameletMain extends MainCommandLineSupport {
+    public static final String DEFAULT_KAMELETS_LOCATION = "classpath:/kamelets,github:apache:camel-kamelets/kamelets";
 
     private static ClassLoader kameletClassLoader;
     protected final MainRegistry registry = new MainRegistry();
     private boolean download = true;
 
     public KameletMain() {
-        configureInitialProperties();
+        configureInitialProperties(DEFAULT_KAMELETS_LOCATION);
+    }
+
+    public KameletMain(String overrides) {
+        Objects.requireNonNull(overrides);
+
+        String locations = overrides + "," + DEFAULT_KAMELETS_LOCATION;
+
+        configureInitialProperties(locations);
     }
 
     public static void main(String... args) throws Exception {
@@ -170,8 +180,8 @@ public class KameletMain extends MainCommandLineSupport {
     /**
      * Sets initial properties that are specific to camel-kamelet-main
      */
-    protected void configureInitialProperties() {
-        addInitialProperty("camel.component.kamelet.location", "classpath:/kamelets,github:apache:camel-kamelets/kamelets");
+    protected void configureInitialProperties(String location) {
+        addInitialProperty("camel.component.kamelet.location", location);
     }
 
 }

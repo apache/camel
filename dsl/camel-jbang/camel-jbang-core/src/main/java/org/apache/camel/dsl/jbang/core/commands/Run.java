@@ -109,7 +109,14 @@ class Run implements Callable<Integer> {
         // configure logging first
         RuntimeUtil.configureLog(loggingLevel);
 
-        KameletMain main = new KameletMain();
+        KameletMain main;
+
+        if (localKameletDir == null) {
+            main = new KameletMain();
+        } else {
+            main = new KameletMain("file://" + localKameletDir);
+        }
+
         main.addInitialProperty("camel.main.name", name);
         // shutdown quickly
         main.addInitialProperty("camel.main.shutdownTimeout", "5");
@@ -125,10 +132,6 @@ class Run implements Callable<Integer> {
         }
         if (maxIdleSeconds > 0) {
             main.addInitialProperty("camel.main.durationMaxIdleSeconds", String.valueOf(maxIdleSeconds));
-        }
-
-        if (localKameletDir != null && !localKameletDir.isEmpty()) {
-            main.addInitialProperty("camel.component.kamelet.location", "file://" + localKameletDir);
         }
 
         if (fileLock) {
