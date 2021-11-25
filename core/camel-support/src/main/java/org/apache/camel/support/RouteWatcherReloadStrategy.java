@@ -123,6 +123,9 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                         for (Route route : getCamelContext().getRoutes()) {
                             getCamelContext().removeRoute(route.getRouteId());
                         }
+                        // remove left-over route templates and endpoints, so we can start on a fresh
+                        getCamelContext().removeRouteTemplates("*");
+                        getCamelContext().getEndpointRegistry().clear();
                     }
                     Set<String> ids
                             = getCamelContext().adapt(ExtendedCamelContext.class).getRoutesLoader().updateRoutes(resource);

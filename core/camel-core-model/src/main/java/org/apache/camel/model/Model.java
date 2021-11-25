@@ -179,6 +179,14 @@ public interface Model {
     void removeRouteTemplateDefinition(RouteTemplateDefinition routeTemplateDefinition) throws Exception;
 
     /**
+     * Removes the route templates matching the pattern - stopping any previously running routes if any of them are
+     * actively running
+     *
+     * @param pattern pattern, such as * for all, or foo* to remove all foo templates
+     */
+    void removeRouteTemplateDefinitions(String pattern) throws Exception;
+
+    /**
      * Add a converter to translate a {@link RouteTemplateDefinition} to a {@link RouteDefinition}.
      *
      * @param templateIdPattern the route template ut to whom a pattern should eb applied

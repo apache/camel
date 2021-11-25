@@ -631,6 +631,11 @@ public class SimpleCamelContext extends AbstractCamelContext {
     }
 
     @Override
+    public void removeRouteTemplates(String pattern) throws Exception {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public String getTestExcludeRoutes() {
         throw new UnsupportedOperationException();
     }

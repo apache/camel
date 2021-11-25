@@ -635,6 +635,14 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
             throws Exception;
 
     /**
+     * Removes the route templates matching the pattern
+     *
+     * @param  pattern   pattern, such as * for all, or foo* to remove all foo templates
+     * @throws Exception is thrown if error during removing route templates
+     */
+    void removeRouteTemplates(String pattern) throws Exception;
+
+    /**
      * Adds the given route policy factory
      *
      * @param routePolicyFactory the factory

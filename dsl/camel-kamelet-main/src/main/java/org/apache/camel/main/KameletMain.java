@@ -171,7 +171,7 @@ public class KameletMain extends MainCommandLineSupport {
      * Sets initial properties that are specific to camel-kamelet-main
      */
     protected void configureInitialProperties() {
-        addInitialProperty("camel.component.kamelet.location", "classpath:/kamelets,github:apache:camel-kamelets");
+        addInitialProperty("camel.component.kamelet.location", "classpath:/kamelets,github:apache:camel-kamelets/kamelets");
     }
 
 }

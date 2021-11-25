@@ -27,8 +27,6 @@ spec:
           message: Hello Camel K
           period: 1000
         steps:
-# this works
-#          - to: "kamelet:log-sink?showHeaders=false"
           - kamelet:
               name: log-sink
               parameters:
