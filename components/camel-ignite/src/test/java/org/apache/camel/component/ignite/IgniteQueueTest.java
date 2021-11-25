@@ -109,12 +109,12 @@ public class IgniteQueueTest extends AbstractIgniteTest {
         // CLEAR
         Object result = template.requestBody("ignite-queue:" + resourceUid + "?operation=CLEAR", "hello", String.class);
         Assertions.assertThat(result).isEqualTo("hello");
-        Assertions.assertThat(ignite().queue(resourceUid, 0, new CollectionConfiguration()).size()).isEqualTo(0);
+        Assertions.assertThat(ignite().queue(resourceUid, 0, new CollectionConfiguration()).size()).isZero();
 
         // SIZE
         size = template.requestBody("ignite-queue:" + resourceUid + "?operation=SIZE", "hello", int.class);
-        Assertions.assertThat(size).isEqualTo(0);
-        Assertions.assertThat(ignite().queue(resourceUid, 0, new CollectionConfiguration()).size()).isEqualTo(0);
+        Assertions.assertThat(size).isZero();
+        Assertions.assertThat(ignite().queue(resourceUid, 0, new CollectionConfiguration()).size()).isZero();
     }
 
     @Test
@@ -240,7 +240,7 @@ public class IgniteQueueTest extends AbstractIgniteTest {
         Assertions
                 .assertThat(
                         template.requestBody("ignite-queue:" + resourceUid + "?operation=SIZE&capacity=100", null, int.class))
-                .isEqualTo(0);
+                .isZero();
         Assertions.assertThat(
                 template.requestBody("ignite-queue:" + resourceUid + "?operation=POLL&capacity=100", null, String.class))
                 .isNull();

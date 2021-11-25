@@ -21,12 +21,13 @@ import java.io.FileNotFoundException;
 import javax.xml.transform.TransformerException;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  *
@@ -35,17 +36,13 @@ public class XsltFileNotFoundTest extends TestSupport {
 
     @Test
     public void testNoXsltFile() throws Exception {
-        try {
-            RouteBuilder builder = createRouteBuilder();
-            CamelContext context = new DefaultCamelContext();
-            context.addRoutes(builder);
-            context.start();
+        RouteBuilder builder = createRouteBuilder();
+        CamelContext context = new DefaultCamelContext();
+        context.addRoutes(builder);
+        RuntimeCamelException exception = assertThrows(RuntimeCamelException.class, () -> context.start());
 
-            fail("Should have thrown an exception due XSLT file not found");
-        } catch (Exception e) {
-            assertIsInstanceOf(TransformerException.class, e.getCause().getCause().getCause());
-            assertIsInstanceOf(FileNotFoundException.class, e.getCause().getCause().getCause().getCause());
-        }
+        assertIsInstanceOf(TransformerException.class, exception.getCause().getCause().getCause());
+        assertIsInstanceOf(FileNotFoundException.class, exception.getCause().getCause().getCause().getCause());
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

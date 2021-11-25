@@ -378,7 +378,7 @@ public class CxfRsAsyncProducerTest extends CamelSpringTestSupport {
         // get the response message 
         Customer response = (Customer) exchange.getMessage().getBody();
         assertNotNull(response, "The response should not be null");
-        assertNotEquals(response.getId(), 8888, "Get a wrong customer id");
+        assertNotEquals(8888, response.getId(), "Get a wrong customer id");
         assertEquals("Willem", response.getName(), "Get a wrong customer name");
         assertEquals(201, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE), "Get a wrong response code");
     }
