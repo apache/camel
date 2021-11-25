@@ -60,8 +60,8 @@ public class VertxHttpSerializedBodyTest extends VertxHttpTestSupport {
         final String endpointUri = getProducerUri() + "/serialized";
         final NotSerializableBean body = new NotSerializableBean();
 
-        assertThrows(CamelExecutionException.class, () ->
-            template.sendBodyAndHeader(endpointUri, body, Exchange.CONTENT_TYPE, CONTENT_TYPE_JAVA_SERIALIZED_OBJECT));
+        assertThrows(CamelExecutionException.class, () -> template.sendBodyAndHeader(endpointUri, body, Exchange.CONTENT_TYPE,
+                CONTENT_TYPE_JAVA_SERIALIZED_OBJECT));
     }
 
     @Test
@@ -73,7 +73,7 @@ public class VertxHttpSerializedBodyTest extends VertxHttpTestSupport {
         final SerializedBean body = new SerializedBean();
 
         assertThrows(CamelExecutionException.class, () -> template.sendBodyAndHeader(endpointUri, body, Exchange.CONTENT_TYPE,
-                    CONTENT_TYPE_JAVA_SERIALIZED_OBJECT));
+                CONTENT_TYPE_JAVA_SERIALIZED_OBJECT));
     }
 
     @Test

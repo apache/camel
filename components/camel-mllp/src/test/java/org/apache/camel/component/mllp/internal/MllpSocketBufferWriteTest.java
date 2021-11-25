@@ -280,14 +280,16 @@ public class MllpSocketBufferWriteTest extends SocketBufferTestSupport {
                 () -> instance.write(payload, 1, payload.length),
                 "Exception should have been thrown");
 
-        assertEquals("write(byte[4], offset[1], writeCount[4]) - offset plus write count <5> is greater than length of the source byte[]",
-                    exception1.getMessage());
+        assertEquals(
+                "write(byte[4], offset[1], writeCount[4]) - offset plus write count <5> is greater than length of the source byte[]",
+                exception1.getMessage());
 
         IndexOutOfBoundsException exception2 = assertThrows(IndexOutOfBoundsException.class,
                 () -> instance.write(payload, 2, payload.length - 1),
                 "Exception should have been thrown");
-        assertEquals("write(byte[4], offset[2], writeCount[3]) - offset plus write count <5> is greater than length of the source byte[]",
-                    exception2.getMessage());
+        assertEquals(
+                "write(byte[4], offset[2], writeCount[3]) - offset plus write count <5> is greater than length of the source byte[]",
+                exception2.getMessage());
     }
 
     /**
