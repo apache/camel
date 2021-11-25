@@ -80,10 +80,10 @@ public class RestSwaggerArrayEnumTest {
         ParameterAssert.assertThat(parameters.get(3)).hasName("pathArrayParam").isGivenIn("path").isOfType("array")
                 .isOfArrayType("string").hasArrayEnumSpecifiedWith("a", "b", "c");
 
-        ParameterAssert.assertThat(parameters.get(4)).hasName("queryParam").isGivenIn("query").isOfType("array")
+        ParameterAssert.assertThat(parameters.get(4)).hasName("queryArrayParam").isGivenIn("query").isOfType("array")
                 .isOfArrayType("int").hasArrayEnumSpecifiedWith(1, 2, 3);
 
-        ParameterAssert.assertThat(parameters.get(5)).hasName("headerParam").isGivenIn("header").isOfType("array")
+        ParameterAssert.assertThat(parameters.get(5)).hasName("headerArrayParam").isGivenIn("header").isOfType("array")
                 .isOfArrayType("float").hasArrayEnumSpecifiedWith(1.1f, 2.2f, 3.3f);
     }
 
