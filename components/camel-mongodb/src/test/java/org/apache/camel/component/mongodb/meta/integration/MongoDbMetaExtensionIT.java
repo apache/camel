@@ -118,7 +118,8 @@ public class MongoDbMetaExtensionIT extends AbstractMongoDbITSupport {
         parameters.put("user", USER);
         parameters.put("password", PASSWORD);
 
-        final Optional<MetaDataExtension.MetaData> meta = component.getExtension(MetaDataExtension.class).get().meta(parameters);
+        final Optional<MetaDataExtension.MetaData> meta
+                = component.getExtension(MetaDataExtension.class).get().meta(parameters);
 
         // Then
         assertThrows(IllegalArgumentException.class, () -> meta.orElseThrow(IllegalArgumentException::new));
@@ -152,7 +153,8 @@ public class MongoDbMetaExtensionIT extends AbstractMongoDbITSupport {
         parameters.put("user", USER);
         parameters.put("password", PASSWORD);
 
-        final Optional<MetaDataExtension.MetaData> meta = component.getExtension(MetaDataExtension.class).get().meta(parameters);
+        final Optional<MetaDataExtension.MetaData> meta
+                = component.getExtension(MetaDataExtension.class).get().meta(parameters);
 
         // Then
         assertThrows(UnsupportedOperationException.class, () -> meta.orElseThrow(UnsupportedOperationException::new));

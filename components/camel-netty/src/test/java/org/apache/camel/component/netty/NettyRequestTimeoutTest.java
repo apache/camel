@@ -58,7 +58,8 @@ public class NettyRequestTimeoutTest extends BaseNettyTest {
 
         String out = template.requestBody(endpoint, "Hello", String.class);
         assertEquals("Bye World", out);
-        CamelExecutionException e = assertThrows(CamelExecutionException.class, () -> template.requestBody(endpoint, "Hello Camel", String.class));
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.requestBody(endpoint, "Hello Camel", String.class));
 
         ReadTimeoutException cause = assertIsInstanceOf(ReadTimeoutException.class, e.getCause());
         assertNotNull(cause);
