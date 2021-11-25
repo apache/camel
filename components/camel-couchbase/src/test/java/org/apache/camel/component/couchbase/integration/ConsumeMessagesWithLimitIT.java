@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.After;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 public class ConsumeMessagesWithLimitIT extends CouchbaseIntegrationTestBase {
@@ -37,7 +37,7 @@ public class ConsumeMessagesWithLimitIT extends CouchbaseIntegrationTestBase {
 
     }
 
-    @After
+    @AfterEach
     public void cleanBucket() {
         cluster.buckets().flushBucket(bucketName);
     }
