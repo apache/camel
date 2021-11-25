@@ -46,16 +46,15 @@ public class KameletRouteTest extends CamelTestSupport {
 
     @Test
     public void duplicateRouteId() {
-        assertThrows(FailedToCreateRouteException.class, () -> {
-            RouteBuilder rb = new RouteBuilder(context) {
-                @Override
-                public void configure() throws Exception {
-                    from("direct:start")
-                            .to("kamelet:echo/test?prefix=test");
-                }
-            };
-            rb.addRoutesToCamelContext(context);
-        });
+        RouteBuilder rb = new RouteBuilder(context) {
+            @Override
+            public void configure() {
+                from("direct:start")
+                        .to("kamelet:echo/test?prefix=test");
+            }
+        };
+
+        assertThrows(FailedToCreateRouteException.class, () -> rb.addRoutesToCamelContext(context));
     }
 
     // **********************************************

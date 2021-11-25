@@ -31,7 +31,7 @@ import org.apache.mina.filter.codec.ProtocolEncoderOutput;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Unit test with custom codec using the VM protocol.
@@ -76,13 +76,11 @@ public class MinaVMCustomCodecTest extends BaseMinaTest {
     }
 
     @Test
-    public void testBadConfiguration() throws Exception {
-        try {
-            template.sendBody(String.format("mina:vm://localhost:%1$s?sync=true&codec=#XXX", getPort()), "Hello World");
-            fail("Should have thrown a ResolveEndpointFailedException");
-        } catch (ResolveEndpointFailedException e) {
-            // ok
-        }
+    public void testBadConfiguration() {
+        final String format = String.format("mina:vm://localhost:%1$s?sync=true&codec=#XXX", getPort());
+
+        assertThrows(ResolveEndpointFailedException.class, () -> template.sendBody(format, "Hello World"),
+                "Should have thrown a ResolveEndpointFailedException");
     }
 
     @Override

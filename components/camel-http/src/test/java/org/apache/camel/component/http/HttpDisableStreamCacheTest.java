@@ -20,6 +20,7 @@ import java.io.InputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.TypeConversionException;
+import org.apache.camel.TypeConverter;
 import org.apache.camel.component.http.handler.BasicValidationHandler;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
@@ -29,10 +30,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.http.common.HttpMethods.GET;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class HttpDisableStreamCacheTest extends BaseHttpTest {
 
@@ -61,7 +61,7 @@ public class HttpDisableStreamCacheTest extends BaseHttpTest {
     }
 
     @Test
-    public void httpDisableStreamCache() throws Exception {
+    public void httpDisableStreamCache() {
         Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":"
                                              + localServer.getLocalPort() + "/test/?disableStreamCache=true",
                 exchange1 -> {
@@ -74,13 +74,9 @@ public class HttpDisableStreamCacheTest extends BaseHttpTest {
         // should not be stream cache
         assertFalse(name.contains("CachedOutputStream"));
 
-        // should be closed by http client
-        try {
-            assertEquals("camel rocks!", context.getTypeConverter().convertTo(String.class, exchange, is));
-            fail("Should fail");
-        } catch (TypeConversionException e) {
-            // expected
-        }
+        TypeConverter converter = context.getTypeConverter();
+        assertThrows(TypeConversionException.class, () -> converter.convertTo(String.class, exchange, is),
+                "Should have thrown an exception");
     }
 
 }

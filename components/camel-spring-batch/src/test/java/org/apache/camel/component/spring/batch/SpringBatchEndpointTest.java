@@ -195,15 +195,18 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
     }
 
     @Test
-    public void shouldThrowExceptionIfUsedAsConsumer() throws Exception {
+    public void shouldThrowExceptionIfUsedAsConsumer() {
+        RouteBuilder rb = new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("spring-batch:mockJob").to("direct:emptyEndpoint");
+            }
+        };
+        final CamelContext context = context();
+
         // When
         assertThrows(FailedToStartRouteException.class,
-                () -> context().addRoutes(new RouteBuilder() {
-                    @Override
-                    public void configure() throws Exception {
-                        from("spring-batch:mockJob").to("direct:emptyEndpoint");
-                    }
-                }));
+                () -> context.addRoutes(rb));
     }
 
     @Test
