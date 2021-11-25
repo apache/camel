@@ -31,7 +31,7 @@ import org.apache.mina.filter.codec.ProtocolEncoderOutput;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Unit test to test what happens if remote server closes session but doesn't reply
@@ -46,13 +46,12 @@ public class MinaNoResponseFromServerTest extends BaseMinaTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        try {
-            template.requestBody(String.format("mina:tcp://localhost:%1$s?sync=true&codec=#myCodec", getPort()), "Hello World");
-            fail("Should throw a CamelExchangeException");
-        } catch (RuntimeCamelException e) {
-            assertIsInstanceOf(CamelExchangeException.class, e.getCause());
-        }
+        final String format = String.format("mina:tcp://localhost:%1$s?sync=true&codec=#myCodec", getPort());
+        RuntimeCamelException e = assertThrows(RuntimeCamelException.class,
+                () -> template.requestBody(format, "Hello World"),
+                "Should throw a CamelExchangeException");
 
+        assertIsInstanceOf(CamelExchangeException.class, e.getCause());
         mock.assertIsSatisfied();
     }
 

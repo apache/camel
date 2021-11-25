@@ -33,6 +33,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -105,13 +106,12 @@ public class MinaCustomCodecTest extends BaseMinaTest {
     }
 
     @Test
-    public void testBadConfiguration() throws Exception {
-        try {
-            template.sendBody(String.format("mina:tcp://localhost:%1$s?sync=true&codec=#XXX", getPort()), "Hello World");
-            fail("Should have thrown a ResolveEndpointFailedException");
-        } catch (ResolveEndpointFailedException e) {
-            // ok
-        }
+    public void testBadConfiguration() {
+        final int port = getPort();
+        final String format = String.format("mina:tcp://localhost:%1$s?sync=true&codec=#XXX", port);
+
+        assertThrows(ResolveEndpointFailedException.class, () -> template.sendBody(format, "Hello World"),
+                "Should have thrown a ResolveEndpointFailedException");
     }
 
     @Override
