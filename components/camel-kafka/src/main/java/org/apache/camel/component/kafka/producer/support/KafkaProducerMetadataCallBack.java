@@ -20,20 +20,24 @@ package org.apache.camel.component.kafka.producer.support;
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.RecordMetadata;
 
-public final class DelegatingCallback implements Callback {
+import static org.apache.camel.component.kafka.producer.support.ProducerUtil.setException;
+import static org.apache.camel.component.kafka.producer.support.ProducerUtil.setRecordMetadata;
 
-    private final Callback callback1;
-    private final Callback callback2;
+public class KafkaProducerMetadataCallBack implements Callback {
+    private final Object body;
+    private final boolean record;
 
-    public DelegatingCallback(Callback callback1, Callback callback2) {
-        this.callback1 = callback1;
-        this.callback2 = callback2;
+    public KafkaProducerMetadataCallBack(Object body, boolean record) {
+        this.body = body;
+        this.record = record;
     }
 
     @Override
-    public void onCompletion(RecordMetadata metadata, Exception exception) {
-        callback1.onCompletion(metadata, exception);
-        callback2.onCompletion(metadata, exception);
+    public void onCompletion(RecordMetadata recordMetadata, Exception e) {
+        setException(body, e);
 
+        if (record) {
+            setRecordMetadata(body, recordMetadata);
+        }
     }
 }
