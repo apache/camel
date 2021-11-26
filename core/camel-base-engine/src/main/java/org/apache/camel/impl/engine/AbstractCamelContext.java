@@ -3081,9 +3081,9 @@ public abstract class AbstractCamelContext extends BaseService
                 }
             }
             if (disabled > 0) {
-                LOG.info("Routes startup summary (total:{} started:{} disabled:{})", total, started, disabled);
+                LOG.info("Routes startup (total:{} started:{} disabled:{})", total, started, disabled);
             } else {
-                LOG.info("Routes startup summary (total:{} started:{})", total, started);
+                LOG.info("Routes startup (total:{} started:{})", total, started);
             }
             // if we are default/verbose then log each route line
             if (startupSummaryLevel == StartupSummaryLevel.Default || startupSummaryLevel == StartupSummaryLevel.Verbose) {
@@ -3091,7 +3091,7 @@ public abstract class AbstractCamelContext extends BaseService
                     LOG.info(line);
                 }
                 if (startupSummaryLevel == StartupSummaryLevel.Verbose) {
-                    LOG.info("Routes configuration summary");
+                    LOG.info("Routes configuration:");
                     for (String line : configs) {
                         LOG.info(line);
                     }
@@ -3493,9 +3493,9 @@ public abstract class AbstractCamelContext extends BaseService
                 lines.add(String.format("    %s %s (%s)", status, id, uri));
             }
             if (forced > 0) {
-                logger.log(String.format("Routes stopped summary (total:%s stopped:%s forced:%s)", total, stopped, forced));
+                logger.log(String.format("Routes stopped (total:%s stopped:%s forced:%s)", total, stopped, forced));
             } else {
-                logger.log(String.format("Routes stopped summary (total:%s stopped:%s)", total, stopped));
+                logger.log(String.format("Routes stopped (total:%s stopped:%s)", total, stopped));
             }
             // if we are default/verbose then log each route line
             if (startupSummaryLevel == StartupSummaryLevel.Default || startupSummaryLevel == StartupSummaryLevel.Verbose) {
