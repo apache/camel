@@ -33,9 +33,6 @@
     <name>Camel :: Cassandra CQL</name>
     <description>Cassandra CQL3 support</description>
 
-    <properties>
-    </properties>
-
     <dependencies>
 
         <dependency>
@@ -47,6 +44,12 @@
         <dependency>
             <groupId>com.datastax.oss</groupId>
             <artifactId>java-driver-core</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.code.findbugs</groupId>
+                    <artifactId>jsr305</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.datastax.oss</groupId>
