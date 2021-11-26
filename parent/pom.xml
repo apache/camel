@@ -364,7 +364,7 @@
         <lettuce-version>5.1.0.RELEASE</lettuce-version>
         <log4j2-version>2.13.3</log4j2-version>
         <logback-version>1.2.3</logback-version>
-        <lucene-version>8.10.1</lucene-version>
+        <lucene-version>8.11.0</lucene-version>
         <lucene-version-range>[8,9)</lucene-version-range>
         <lightcouch-version>0.2.0</lightcouch-version>
         <!-- needed from tooling/archetypes -->
