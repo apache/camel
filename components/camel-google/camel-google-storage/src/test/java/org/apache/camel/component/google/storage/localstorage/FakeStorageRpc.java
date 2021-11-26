@@ -30,8 +30,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.concurrent.NotThreadSafe;
-
 import com.google.api.client.util.DateTime;
 import com.google.api.services.storage.model.Bucket;
 import com.google.api.services.storage.model.ServiceAccount;
@@ -78,7 +76,6 @@ import org.slf4j.LoggerFactory;
  * </ul>
  * </ul>
  */
-@NotThreadSafe
 class FakeStorageRpc extends StorageRpcTestBase {
 
     private static final Logger LOG = LoggerFactory.getLogger(FakeStorageRpc.class);
