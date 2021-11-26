@@ -600,7 +600,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      *
      * @param  routeId   the route id
      * @return           <tt>true</tt> if the route was removed, <tt>false</tt> if the route could not be removed
-     *                   because its not stopped
+     *                   because it's not stopped
      * @throws Exception is thrown if the route could not be shutdown for whatever reason
      */
     boolean removeRoute(String routeId) throws Exception;

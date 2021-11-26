@@ -29,6 +29,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.FailedToStartRouteException;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
@@ -943,6 +944,19 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
         model.getTransformers().add(def);
         Transformer transformer = model.getModelReifierFactory().createTransformer(this, def);
         getTransformerRegistry().put(createTransformerKey(def), transformer);
+    }
+
+    @Override
+    protected synchronized boolean removeRoute(String routeId, LoggingLevel loggingLevel) throws Exception {
+        boolean removed = super.removeRoute(routeId, loggingLevel);
+        if (removed) {
+            // must also remove the route definition
+            RouteDefinition def = getRouteDefinition(routeId);
+            if (def != null) {
+                removeRouteDefinition(def);
+            }
+        }
+        return removed;
     }
 
     private static ValueHolder<String> createTransformerKey(TransformerDefinition def) {
