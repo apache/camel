@@ -104,7 +104,7 @@
         <caffeine-version>2.9.2</caffeine-version>
         <californium-version>2.6.5</californium-version>
         <cassandra-driver-version>4.11.1</cassandra-driver-version>
-        <cassandra-version>3.11.8</cassandra-version>
+        <cassandra-version>3.11.11</cassandra-version>
         <cdi-api-2.0-version>2.0</cdi-api-2.0-version>
         <jta-api-1.2-version>1.2</jta-api-1.2-version>
         <cglib-version>3.2.12</cglib-version>
@@ -218,7 +218,7 @@
         <graaljs-version>21.3.0</graaljs-version>
         <graphql-java-version>14.0</graphql-java-version>
         <grizzly-websockets-version>2.4.4</grizzly-websockets-version>
-        <grpc-version>1.41.0</grpc-version>
+        <grpc-version>1.42.1</grpc-version>
         <!-- keep grpc-google-auth-library-version in sync with that used by grpc-auth -->
         <grpc-google-auth-library-version>0.22.2</grpc-google-auth-library-version>
         <grpc-guava-version>28.2-jre</grpc-guava-version>
