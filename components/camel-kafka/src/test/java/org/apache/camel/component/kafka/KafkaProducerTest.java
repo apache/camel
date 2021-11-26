@@ -128,15 +128,16 @@ public class KafkaProducerTest {
 
     @Test
     @SuppressWarnings({ "unchecked" })
-    public void processSendsMessageWithException() throws Exception {
+    public void processSendsMessageWithException() {
         endpoint.getConfiguration().setTopic("sometopic");
         // setup the exception here
         org.apache.kafka.clients.producer.KafkaProducer kp = producer.getKafkaProducer();
         Mockito.when(kp.send(any(ProducerRecord.class))).thenThrow(new ApiException());
         Mockito.when(exchange.getIn()).thenReturn(in);
+        Mockito.when(exchange.getMessage()).thenReturn(in);
         in.setHeader(KafkaConstants.PARTITION_KEY, 4);
 
-        assertThrows(Exception.class,
+        assertThrows(ApiException.class,
                 () -> producer.process(exchange));
     }
 
@@ -158,7 +159,7 @@ public class KafkaProducerTest {
     }
 
     @Test
-    public void processAsyncSendsMessageWithException() throws Exception {
+    public void processAsyncSendsMessageWithException() {
         endpoint.getConfiguration().setTopic("sometopic");
         Mockito.when(exchange.getIn()).thenReturn(in);
         Mockito.when(exchange.getMessage()).thenReturn(in);
