@@ -133,7 +133,7 @@ public class BlobProducer extends DefaultProducer {
 
     private void setResponse(final Exchange exchange, final BlobOperationResponse blobOperationResponse) {
         exchange.getMessage().setBody(blobOperationResponse.getBody());
-        exchange.getMessage().setHeaders(blobOperationResponse.getHeaders());
+        exchange.getMessage().getHeaders().putAll(blobOperationResponse.getHeaders());
     }
 
     @Override

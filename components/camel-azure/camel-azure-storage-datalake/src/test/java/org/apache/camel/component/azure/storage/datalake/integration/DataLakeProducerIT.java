@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Locale;
 
 import com.azure.storage.file.datalake.models.FileSystemItem;
+import org.apache.camel.Exchange;
 import org.apache.camel.component.azure.storage.datalake.DataLakeConstants;
 import org.apache.camel.component.azure.storage.datalake.DataLakeOperationsDefinition;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -30,6 +31,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @EnabledIfSystemProperty(named = "azure.instance.type", matches = "remote")
 public class DataLakeProducerIT extends Base {
@@ -103,6 +106,15 @@ public class DataLakeProducerIT extends Base {
             Assertions.assertThat(filesystems.stream().map(FileSystemItem::getName)).doesNotContain(fileSystemName);
         }
 
+    }
+
+    @Test
+    void testHeaderPreservation() throws InterruptedException {
+        Exchange result = template.send(componentUri(fileSystemName, DataLakeOperationsDefinition.listFileSystem),
+                exchange -> {
+                    exchange.getIn().setHeader("DoNotDelete", "keep me");
+                });
+        assertEquals("keep me", result.getMessage().getHeader("DoNotDelete"));
     }
 
     private String componentUri(final String filesystem, final DataLakeOperationsDefinition operation) {

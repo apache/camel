@@ -37,8 +37,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class BlobProducerIT extends Base {
 
@@ -170,6 +169,20 @@ class BlobProducerIT extends Base {
 
         template.send("direct:uploadBlockBlobWithConfigUri",
                 exchange -> exchange.getIn().setBody("Block Blob"));
+
+        result.assertIsSatisfied();
+    }
+
+    @Test
+    void testHeaderPreservation() throws InterruptedException {
+        result.expectedMessageCount(1);
+
+        template.send("direct:uploadBlockBlobWithConfigUri",
+                exchange -> {
+                    exchange.getIn().setBody("Block Blob");
+                    exchange.getIn().setHeader("DoNotDelete", "keep me");
+                });
+        assertEquals("keep me", result.getExchanges().get(0).getMessage().getHeader("DoNotDelete"));
 
         result.assertIsSatisfied();
     }
