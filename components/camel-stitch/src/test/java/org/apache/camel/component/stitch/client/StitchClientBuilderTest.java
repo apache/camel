@@ -29,12 +29,11 @@ class StitchClientBuilderTest {
 
         assertThrows(IllegalArgumentException.class, () -> builder.build());
 
-        assertThrows(IllegalArgumentException.class, () -> builder.withToken("test").build());
+        builder.withToken("test");
+        assertThrows(IllegalArgumentException.class, () -> builder.build());
 
         final StitchClientBuilder europeBuilder = StitchClientBuilder.builder().withRegion(StitchRegion.EUROPE);
-        assertThrows(IllegalArgumentException.class, () -> {
-            europeBuilder.build();
-        });
+        assertThrows(IllegalArgumentException.class, () -> europeBuilder.build());
     }
 
     @Test

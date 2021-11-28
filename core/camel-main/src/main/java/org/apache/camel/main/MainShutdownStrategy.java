@@ -35,28 +35,43 @@ public interface MainShutdownStrategy {
 
     }
 
+    /**
+     * Adds a shutdown listener
+     *
+     * @param listener the listener
+     */
     void addShutdownListener(ShutdownEventListener listener);
 
     /**
+     * Returns true if the application is allowed to run.
+     *
      * @return true if the application is allowed to run.
      */
     boolean isRunAllowed();
 
     /**
+     * Return true if the shutdown has been initiated by the caller.
+     *
      * @return true if the shutdown has been initiated by the caller.
      */
     boolean shutdown();
 
     /**
-     * Wait for main to complete.
+     * Waiting for Camel Main to complete.
      */
     void await() throws InterruptedException;
 
     /**
-     * Wait for main to complete.
+     * Waiting for Camel Main to complete (with timeout).
      *
-     * @param timeout the maximum time to wait
-     * @param unit    the time unit of the {@code timeout} argument
+     * @param  timeout the maximum time to wait
+     * @param  unit    the time unit of the {@code timeout} argument
+     * @return         true if Camel Main was completed before the timeout, false if timeout was triggered.
      */
-    void await(long timeout, TimeUnit unit) throws InterruptedException;
+    boolean await(long timeout, TimeUnit unit) throws InterruptedException;
+
+    /**
+     * This is used for restarting await with timeout.
+     */
+    void restartAwait();
 }

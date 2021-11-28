@@ -125,7 +125,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
         BlockingTask task = Tasks
                 .foregroundTask()
                 .withBudget(Budgets.iterationBudget()
-                        .withMaxIterations(endpoint.getMaximumReconnectAttempts())
+                        .withMaxIterations(Budgets.atLeastOnce(endpoint.getMaximumReconnectAttempts()))
                         .withInterval(Duration.ofMillis(endpoint.getReconnectDelay()))
                         .build())
                 .build();

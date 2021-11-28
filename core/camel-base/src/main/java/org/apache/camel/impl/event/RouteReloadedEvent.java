@@ -14,34 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor.intercept;
+package org.apache.camel.impl.event;
 
-import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.Route;
+import org.apache.camel.spi.CamelEvent;
 
-public class IntercepFromWithPredicateTest extends InterceptFromRouteTestSupport {
+public class RouteReloadedEvent extends AbstractRouteEvent implements CamelEvent.RouteReloadedEvent {
 
-    @Override
-    protected RouteBuilder createRouteBuilder() {
-        return new RouteBuilder() {
-            public void configure() {
-                // intercept with a predicate test
-                interceptFrom().when(header("foo").isEqualTo("bar")).to("mock:b").stop();
+    private static final long serialVersionUID = 7966471393751298718L;
 
-                from("direct:start").to("mock:a");
-            }
-        };
+    public RouteReloadedEvent(Route source) {
+        super(source);
     }
 
     @Override
-    protected void prepareMatchingTest() {
-        a.expectedMessageCount(0);
-        b.expectedMessageCount(1);
+    public String toString() {
+        return "Reloaded route: " + getRoute().getId();
     }
-
-    @Override
-    protected void prepareNonMatchingTest() {
-        a.expectedMessageCount(1);
-        b.expectedMessageCount(0);
-    }
-
 }

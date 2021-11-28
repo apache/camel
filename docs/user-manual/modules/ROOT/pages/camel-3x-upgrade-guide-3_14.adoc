@@ -10,3 +10,10 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 
 Added method `updateRoutesToCamelContext` to `org.apache.camel.RoutesBuilder` interface.
 
+=== camel-jbang
+
+The option `debug-level` has been renamed to `logging-level` because the option is for configuring the logging level.
+
+=== camel-zookeeper/camel-master
+
+When using Zookeeper with the Master component, the given namespace is now used to define leadership. In other words, a route defined with `master:lock1` will result in one leader election, while a route defined with `master:lock2` will result in a separate leader election, which may or may not result in the same leader as `lock1`. This matches the existing behavior of the Master component when using Consul.

@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.dsl.jbang.core.languages;
 
 import java.util.regex.Matcher;
@@ -23,6 +22,7 @@ import org.apache.camel.dsl.jbang.core.api.Converter;
 import org.apache.camel.dsl.jbang.core.types.Language;
 
 public class LanguageConverter implements Converter<Language> {
+
     @Override
     public Language convert(Matcher matcher) {
         Language language = new Language();

@@ -284,12 +284,11 @@ public class SubscriptionHelper extends ServiceSupport {
                                     timeout);
                             client.abort();
                         }
+
+                        client.handshake();
+                        final long waitMs = MILLISECONDS.convert(CONNECT_TIMEOUT, SECONDS);
+                        client.waitFor(waitMs, BayeuxClient.State.CONNECTED);
                     }
-
-                    client.handshake();
-                    final long waitMs = MILLISECONDS.convert(CONNECT_TIMEOUT, SECONDS);
-                    client.waitFor(waitMs, BayeuxClient.State.CONNECTED);
-
                 } catch (Exception e) {
                     LOG.error("Error handshaking: " + e.getMessage(), e);
                     lastError = e;

@@ -42,12 +42,24 @@ public class ValueBuilder implements Expression, Predicate {
     }
 
     @Override
+    public void initPredicate(CamelContext context) {
+        if (expression instanceof Predicate) {
+            ((Predicate) expression).initPredicate(context);
+        } else {
+            expression.init(context);
+        }
+    }
+
+    @Override
     public <T> T evaluate(Exchange exchange, Class<T> type) {
         return expression.evaluate(exchange, type);
     }
 
     @Override
     public boolean matches(Exchange exchange) {
+        if (expression instanceof Predicate) {
+            return ((Predicate) expression).matches(exchange);
+        }
         return PredicateBuilder.toPredicate(getExpression()).matches(exchange);
     }
 

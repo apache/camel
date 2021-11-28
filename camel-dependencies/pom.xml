@@ -65,7 +65,7 @@
     <avro-ipc-netty-version>1.10.2</avro-ipc-netty-version>
     <avro-version>1.10.2</avro-version>
     <awaitility-version>4.1.1</awaitility-version>
-    <aws-java-sdk2-version>2.17.85</aws-java-sdk2-version>
+    <aws-java-sdk2-version>2.17.89</aws-java-sdk2-version>
     <aws-xray-version>2.6.1</aws-xray-version>
     <axiom-version>1.2.14</axiom-version>
     <azure-cosmos-version>4.20.0</azure-cosmos-version>
@@ -81,7 +81,7 @@
     <beanio-version>2.1.0</beanio-version>
     <beanstalkd-client-version>1.4.6</beanstalkd-client-version>
     <bouncycastle-version>1.69</bouncycastle-version>
-    <box-java-sdk-version>2.57.0</box-java-sdk-version>
+    <box-java-sdk-version>2.58.0</box-java-sdk-version>
     <braintree-gateway-version>3.13.0</braintree-gateway-version>
     <brave-zipkin-version>5.13.3</brave-zipkin-version>
     <build-helper-maven-plugin-version>3.2.0</build-helper-maven-plugin-version>
@@ -120,7 +120,7 @@
     <camel.surefire.parallel.strategy>dynamic</camel.surefire.parallel.strategy>
     <camel.surefire.reuseForks>true</camel.surefire.reuseForks>
     <cassandra-driver-version>4.11.1</cassandra-driver-version>
-    <cassandra-version>3.11.8</cassandra-version>
+    <cassandra-version>3.11.11</cassandra-version>
     <cdi-api-2.0-version>2.0</cdi-api-2.0-version>
     <cglib-version>3.2.12</cglib-version>
     <checkstyle.failOnViolation>false</checkstyle.failOnViolation>
@@ -243,7 +243,7 @@
     <grpc-guava-version>28.2-jre</grpc-guava-version>
     <grpc-java-jwt-version>3.18.2</grpc-java-jwt-version>
     <grpc-netty-tcnative-boringssl-static-version>2.0.46.Final</grpc-netty-tcnative-boringssl-static-version>
-    <grpc-version>1.41.0</grpc-version>
+    <grpc-version>1.42.1</grpc-version>
     <gson-version>2.8.9</gson-version>
     <guava-eventbus-version>28.2-jre</guava-eventbus-version>
     <guice3-version>3.0</guice3-version>
@@ -367,7 +367,7 @@
     <jython-version>2.5.3</jython-version>
     <jzlib-version>1.1.3</jzlib-version>
     <kafka-version>2.8.1</kafka-version>
-    <kotlin-version>1.6.0</kotlin-version>
+    <kotlin-version>1.5.31</kotlin-version>
     <kubernetes-client-version>5.10.1</kubernetes-client-version>
     <kubernetes-model-version>5.10.1</kubernetes-model-version>
     <kudu-version>1.14.0</kudu-version>
@@ -382,7 +382,7 @@
     <lightcouch-version>0.2.0</lightcouch-version>
     <log4j2-version>2.13.3</log4j2-version>
     <logback-version>1.2.3</logback-version>
-    <lucene-version>8.10.1</lucene-version>
+    <lucene-version>8.11.0</lucene-version>
     <lucene-version-range>[8,9)</lucene-version-range>
     <maven-antrun-plugin-version>1.6</maven-antrun-plugin-version>
     <maven-archetype-packaging-version>2.3</maven-archetype-packaging-version>
@@ -432,7 +432,7 @@
     <nessus-weka-version>1.0.1</nessus-weka-version>
     <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
     <netty-version>4.1.70.Final</netty-version>
-    <networknt-json-schema-validator-version>1.0.58</networknt-json-schema-validator-version>
+    <networknt-json-schema-validator-version>1.0.64</networknt-json-schema-validator-version>
     <nimbus-jose-jwt>8.9</nimbus-jose-jwt>
     <nitrite-version>3.4.3</nitrite-version>
     <nsq-client-version>1.0.0.RC4</nsq-client-version>
@@ -443,7 +443,7 @@
     <openjpa-version>3.2.0</openjpa-version>
     <openstack4j-version>3.8</openstack4j-version>
     <opentelemetry-alpha-version>${opentelemetry-version}-alpha</opentelemetry-alpha-version>
-    <opentelemetry-version>1.6.0</opentelemetry-version>
+    <opentelemetry-version>1.9.1</opentelemetry-version>
     <opentracing-tracerresolver-version>0.1.8</opentracing-tracerresolver-version>
     <opentracing-version>0.33.0</opentracing-version>
     <openwebbeans-version>1.7.3</openwebbeans-version>
@@ -455,7 +455,7 @@
     <pdfbox-version>2.0.24</pdfbox-version>
     <pgjdbc-driver-version>42.2.23</pgjdbc-driver-version>
     <pgjdbc-ng-driver-version>0.8.9</pgjdbc-ng-driver-version>
-    <picocli-version>4.6.1</picocli-version>
+    <picocli-version>4.6.2</picocli-version>
     <powermock-version>2.0.7</powermock-version>
     <properties-maven-plugin-version>1.0-alpha-2</properties-maven-plugin-version>
     <protobuf-maven-plugin-version>0.6.1</protobuf-maven-plugin-version>
@@ -463,7 +463,7 @@
     <protonpack-version>1.8</protonpack-version>
     <protostream-version>4.4.1.Final</protostream-version>
     <pubnub-version>4.25.0</pubnub-version>
-    <pulsar-version>2.8.1</pulsar-version>
+    <pulsar-version>2.9.0</pulsar-version>
     <qpid-broker-version>8.0.6</qpid-broker-version>
     <qpid-jms-client-version>0.59.0</qpid-jms-client-version>
     <qpid-proton-j-version>0.33.8</qpid-proton-j-version>
@@ -508,7 +508,7 @@
     <snakeyaml-engine-version>2.3</snakeyaml-engine-version>
     <snakeyaml-version>1.29</snakeyaml-version>
     <snmp4j-version>2.6.3_1</snmp4j-version>
-    <solr-version>8.10.1</solr-version>
+    <solr-version>8.11.0</solr-version>
     <solr-version-range>[8,9)</solr-version-range>
     <solr-zookeeper-version>3.6.2</solr-zookeeper-version>
     <spark-version>3.1.2</spark-version>
@@ -518,7 +518,7 @@
     <spring-data-redis-version>2.5.6</spring-data-redis-version>
     <spring-integration-version>5.5.6</spring-integration-version>
     <spring-ldap-version>2.3.4.RELEASE</spring-ldap-version>
-    <spring-rabbitmq-version>2.3.11</spring-rabbitmq-version>
+    <spring-rabbitmq-version>2.4.0</spring-rabbitmq-version>
     <spring-security-version>5.5.3</spring-security-version>
     <spring-version>${spring5-version}</spring-version>
     <spring-version-range>[5,6)</spring-version-range>

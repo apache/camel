@@ -22,16 +22,18 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RouteRemove2Test extends ContextTestSupport {
 
     @Test
     public void testRemove() throws Exception {
         DefaultCamelContext defaultContext = (DefaultCamelContext) context;
-        assertEquals(2, context.getRoutes().size(), "2 routes to start with");
-        assertEquals(2, context.getRouteDefinitions().size(), "2 routes to start with");
-        assertEquals(2, defaultContext.getRouteStartupOrder().size(), "2 routes to start with");
-        assertEquals(2, defaultContext.getRouteServices().size(), "2 routes to start with");
+        assertEquals(2, context.getRoutes().size());
+        assertEquals(2, context.getRouteDefinitions().size());
+        assertEquals(2, defaultContext.getRouteStartupOrder().size());
+        assertEquals(2, defaultContext.getRouteServices().size());
 
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:bar").expectedMessageCount(1);
@@ -54,8 +56,9 @@ public class RouteRemove2Test extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // remove foo route and bar should continue to be functional
-        context.removeRoute("foo");
-        assertEquals(null, context.getRouteController().getRouteStatus("foo"), "There should be no foo route anymore");
+        boolean removed = context.removeRoute("foo");
+        assertTrue(removed, "Route should be removed");
+        assertNull(context.getRouteController().getRouteStatus("foo"), "There should be no foo route anymore");
         assertEquals("Started", context.getRouteController().getRouteStatus("bar").name());
 
         resetMocks();
@@ -66,10 +69,10 @@ public class RouteRemove2Test extends ContextTestSupport {
         template.sendBody("seda:bar", "Hello World");
         assertMockEndpointsSatisfied();
 
-        assertEquals(1, context.getRoutes().size(), "1 routes to end with");
-        assertEquals(1, context.getRouteDefinitions().size(), "1 routes to end with");
-        assertEquals(1, defaultContext.getRouteStartupOrder().size(), "1 routes to end with");
-        assertEquals(1, defaultContext.getRouteServices().size(), "1 routes to end with");
+        assertEquals(1, context.getRoutes().size());
+        assertEquals(1, context.getRouteDefinitions().size());
+        assertEquals(1, defaultContext.getRouteStartupOrder().size());
+        assertEquals(1, defaultContext.getRouteServices().size());
     }
 
     @Override

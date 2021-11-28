@@ -56,21 +56,24 @@ public class VertxHttpSerializedBodyTest extends VertxHttpTestSupport {
     }
 
     @Test
-    public void testSerializeRequestBodyNotSerializable() throws InterruptedException {
-        assertThrows(CamelExecutionException.class, () -> {
-            template.sendBodyAndHeader(getProducerUri() + "/serialized", new NotSerializableBean(), Exchange.CONTENT_TYPE,
-                    CONTENT_TYPE_JAVA_SERIALIZED_OBJECT);
-        });
+    public void testSerializeRequestBodyNotSerializable() {
+        final String endpointUri = getProducerUri() + "/serialized";
+        final NotSerializableBean body = new NotSerializableBean();
+
+        assertThrows(CamelExecutionException.class, () -> template.sendBodyAndHeader(endpointUri, body, Exchange.CONTENT_TYPE,
+                CONTENT_TYPE_JAVA_SERIALIZED_OBJECT));
     }
 
     @Test
-    public void testSerializeRequestBodyDenied() throws InterruptedException {
+    public void testSerializeRequestBodyDenied() {
         VertxHttpComponent component = context.getComponent("vertx-http", VertxHttpComponent.class);
         component.setAllowJavaSerializedObject(false);
-        assertThrows(CamelExecutionException.class, () -> {
-            template.sendBodyAndHeader(getProducerUri() + "/serialized", new SerializedBean(), Exchange.CONTENT_TYPE,
-                    CONTENT_TYPE_JAVA_SERIALIZED_OBJECT);
-        });
+
+        final String endpointUri = getProducerUri() + "/serialized";
+        final SerializedBean body = new SerializedBean();
+
+        assertThrows(CamelExecutionException.class, () -> template.sendBodyAndHeader(endpointUri, body, Exchange.CONTENT_TYPE,
+                CONTENT_TYPE_JAVA_SERIALIZED_OBJECT));
     }
 
     @Test

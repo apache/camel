@@ -40,6 +40,12 @@
         <dependency>
             <groupId>net.corda</groupId>
             <artifactId>corda-rpc</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.code.findbugs</groupId>
+                    <artifactId>jsr305</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- for testing -->

@@ -36,11 +36,27 @@ public class KameletMainTest {
     public void testReload() throws Exception {
         KameletMain main = new KameletMain();
         main.setDownload(true);
-        main.configure().withDurationMaxSeconds(60);
+        main.configure().withDurationMaxMessages(10);
+        main.configure().withDurationMaxAction("stop");
         main.configure().withRoutesIncludePattern("file:src/test/resources/my-route.yaml");
         main.configure().withRoutesReloadEnabled(true);
         main.configure().withRoutesReloadDirectory("src/test/resources");
         main.configure().withRoutesReloadPattern("my-route.yaml");
+
+        main.run();
+    }
+
+    @Test
+    public void testReloadCamelK() throws Exception {
+        KameletMain main = new KameletMain();
+        main.setDownload(true);
+        main.configure().withShutdownTimeout(5);
+        main.configure().withDurationMaxMessages(10);
+        main.configure().withDurationMaxAction("stop");
+        main.configure().withRoutesIncludePattern("file:src/test/resources/my-camel-k.yaml");
+        main.configure().withRoutesReloadEnabled(true);
+        main.configure().withRoutesReloadDirectory("src/test/resources");
+        main.configure().withRoutesReloadPattern("my-camel-k.yaml");
 
         main.run();
     }

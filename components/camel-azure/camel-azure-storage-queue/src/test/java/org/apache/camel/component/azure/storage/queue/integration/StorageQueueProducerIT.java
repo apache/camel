@@ -128,6 +128,19 @@ class StorageQueueProducerIT extends StorageQueueBase {
         };
     }
 
+    @Test
+    public void testHeaderPreservation() throws InterruptedException {
+
+        // first test if queue is not created
+        template.send("direct:sendMessage", ExchangePattern.InOnly, exchange -> {
+            exchange.getIn().setHeader(QueueConstants.QUEUE_NAME, queueName);
+            exchange.getIn().setBody("test-message-1");
+            exchange.getIn().setHeader(QueueConstants.CREATE_QUEUE, true);
+            exchange.getIn().setHeader("DoNotDelete", "keep me");
+        });
+        assertEquals("keep me", result.getExchanges().get(0).getMessage().getHeader("DoNotDelete"));
+    }
+
     private String componentUri(final String operation, final String queueName) {
         return String.format("azure-storage-queue://cameldev/%s?operation=%s", queueName, operation);
     }

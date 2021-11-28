@@ -37,6 +37,8 @@ public abstract class DefaultConfigurationProperties<T> {
     private int durationMaxSeconds;
     private int durationMaxIdleSeconds;
     private int durationMaxMessages;
+    @Metadata(defaultValue = "shutdown", enums = "shutdown,stop")
+    private String durationMaxAction = "shutdown";
     private int shutdownTimeout = 45;
     private boolean shutdownSuppressLoggingOnTimeout;
     private boolean shutdownNowOnTimeout = true;
@@ -100,6 +102,8 @@ public abstract class DefaultConfigurationProperties<T> {
     private String routesReloadPattern;
     @Metadata(defaultValue = "true")
     private boolean routesReloadRemoveAllRoutes = true;
+    @Metadata(defaultValue = "true")
+    private boolean routesReloadRestartDuration = true;
     private boolean lightweight;
     private boolean eagerClassloading;
     @Metadata(defaultValue = "default", enums = "default,prototype,pooled")
@@ -191,6 +195,18 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setDurationMaxMessages(int durationMaxMessages) {
         this.durationMaxMessages = durationMaxMessages;
+    }
+
+    public String getDurationMaxAction() {
+        return durationMaxAction;
+    }
+
+    /**
+     * Controls whether the Camel application should shutdown the JVM, or stop all routes, when duration max is
+     * triggered.
+     */
+    public void setDurationMaxAction(String durationMaxAction) {
+        this.durationMaxAction = durationMaxAction;
     }
 
     public int getShutdownTimeout() {
@@ -1028,6 +1044,18 @@ public abstract class DefaultConfigurationProperties<T> {
         this.routesReloadRemoveAllRoutes = routesReloadRemoveAllRoutes;
     }
 
+    public boolean isRoutesReloadRestartDuration() {
+        return routesReloadRestartDuration;
+    }
+
+    /**
+     * Whether to restart max duration when routes are reloaded. For example if max duration is 60 seconds, and a route
+     * is reloaded after 25 seconds, then this will restart the count and wait 60 seconds again.
+     */
+    public void setRoutesReloadRestartDuration(boolean routesReloadRestartDuration) {
+        this.routesReloadRestartDuration = routesReloadRestartDuration;
+    }
+
     public boolean isLightweight() {
         return lightweight;
     }
@@ -1403,6 +1431,15 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withDurationMaxMessages(int durationMaxMessages) {
         this.durationMaxMessages = durationMaxMessages;
+        return (T) this;
+    }
+
+    /**
+     * Controls whether the Camel application should shutdown the JVM, or stop all routes, when duration max is
+     * triggered.
+     */
+    public T withDurationMaxAction(String durationMaxAction) {
+        this.durationMaxAction = durationMaxAction;
         return (T) this;
     }
 
@@ -2038,6 +2075,15 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withRoutesReloadRemoveAllRoutes(boolean routesReloadRemoveAllRoutes) {
         this.routesReloadRemoveAllRoutes = routesReloadRemoveAllRoutes;
+        return (T) this;
+    }
+
+    /**
+     * Whether to restart max duration when routes are reloaded. For example if max duration is 60 seconds, and a route
+     * is reloaded after 25 seconds, then this will restart the count and wait 60 seconds again.
+     */
+    public T withRoutesReloadRestartDuration(boolean routesReloadRestartDuration) {
+        this.routesReloadRestartDuration = routesReloadRestartDuration;
         return (T) this;
     }
 

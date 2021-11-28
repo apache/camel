@@ -91,7 +91,7 @@ public class QueueProducer extends DefaultProducer {
 
     private void setResponse(final Exchange exchange, final QueueOperationResponse response) {
         exchange.getMessage().setBody(response.getBody());
-        exchange.getMessage().setHeaders(response.getHeaders());
+        exchange.getMessage().getHeaders().putAll(response.getHeaders());
     }
 
     private QueueOperationDefinition determineOperation(final Exchange exchange) {

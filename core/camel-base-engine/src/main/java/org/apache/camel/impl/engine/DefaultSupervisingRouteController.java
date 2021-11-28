@@ -530,9 +530,9 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
         }
 
         if (restarting == 0 && exhausted == 0) {
-            LOG.info("Routes startup summary (total:{} started:{})", total, started);
+            LOG.info("Routes startup (total:{} started:{})", total, started);
         } else {
-            LOG.info("Routes startup summary (total:{} started:{} restarting:{} exhausted:{})", total, started, restarting,
+            LOG.info("Routes startup (total:{} started:{} restarting:{} exhausted:{})", total, started, restarting,
                     exhausted);
         }
         if (getCamelContext().getStartupSummaryLevel() == StartupSummaryLevel.Default
@@ -541,7 +541,7 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
                 LOG.info(line);
             }
             if (getCamelContext().getStartupSummaryLevel() == StartupSummaryLevel.Verbose) {
-                LOG.info("Routes configuration summary");
+                LOG.info("Routes configuration:");
                 for (String line : configs) {
                     LOG.info(line);
                 }

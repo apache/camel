@@ -16,10 +16,17 @@
  */
 package org.apache.camel.management;
 
+import java.time.Duration;
+
+import javax.management.AttributeNotFoundException;
+import javax.management.InstanceNotFoundException;
+import javax.management.MBeanException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
+import javax.management.ReflectionException;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
@@ -59,10 +66,8 @@ public class ManagedThreadPoolTest extends ManagementTestSupport {
         assertMockEndpointsSatisfied();
 
         // wait a bit to ensure JMX have updated values
-        Thread.sleep(2000);
-
-        poolSize = (Integer) mbeanServer.getAttribute(on, "PoolSize");
-        assertEquals(1, poolSize.intValue());
+        Awaitility.await().atMost(Duration.ofSeconds(2))
+                .untilAsserted(() -> assertPoolSize(mbeanServer, on));
 
         Integer largest = (Integer) mbeanServer.getAttribute(on, "LargestPoolSize");
         assertEquals(1, largest.intValue());
@@ -78,6 +83,13 @@ public class ManagedThreadPoolTest extends ManagementTestSupport {
 
         int remainingCapacity = (Integer) mbeanServer.invoke(on, "getTaskQueueRemainingCapacity", null, null);
         assertEquals(200, remainingCapacity, "remainingCapacity");
+    }
+
+    private void assertPoolSize(MBeanServer mbeanServer, ObjectName on)
+            throws MBeanException, AttributeNotFoundException, InstanceNotFoundException, ReflectionException {
+        Integer poolSize;
+        poolSize = (Integer) mbeanServer.getAttribute(on, "PoolSize");
+        assertEquals(1, poolSize.intValue());
     }
 
     @Override

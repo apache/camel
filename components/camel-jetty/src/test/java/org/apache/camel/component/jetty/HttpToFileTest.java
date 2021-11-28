@@ -16,9 +16,12 @@
  */
 package org.apache.camel.component.jetty;
 
+import java.time.Duration;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertFileExists;
@@ -42,9 +45,9 @@ public class HttpToFileTest extends BaseJettyTest {
         assertMockEndpointsSatisfied();
 
         // give file some time to save
-        Thread.sleep(500);
-
-        assertFileExists(testFile("hello.txt"), "Hello World");
+        Awaitility.await()
+                .atMost(Duration.ofSeconds(1))
+                .untilAsserted(() -> assertFileExists(testFile("hello.txt"), "Hello World"));
     }
 
     @Override

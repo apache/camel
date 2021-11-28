@@ -18,10 +18,12 @@ package org.apache.camel.component.jetty.file;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.time.Duration;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -70,10 +72,10 @@ public class JettyFileConsumerTest extends BaseJettyTest {
         template.sendBodyAndHeader(fileUri("binary"), jpg, Exchange.FILE_NAME, "java.jpg");
 
         assertMockEndpointsSatisfied();
-        Thread.sleep(1000);
 
         File des = testFile("test/java.jpg").toFile();
-        assertTrue(des.exists(), "The uploaded file should exists");
+        Awaitility.await().atMost(Duration.ofSeconds(2))
+                .untilAsserted(() -> assertTrue(des.exists(), "The uploaded file should exists"));
         assertEquals(jpg.length(), des.length(), "This two file should have same size");
     }
 

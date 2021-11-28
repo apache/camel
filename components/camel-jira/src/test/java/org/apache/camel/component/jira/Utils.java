@@ -22,8 +22,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
-import javax.annotation.Nullable;
-
 import com.atlassian.jira.rest.client.api.StatusCategory;
 import com.atlassian.jira.rest.client.api.domain.Attachment;
 import com.atlassian.jira.rest.client.api.domain.BasicComponent;
@@ -171,13 +169,13 @@ public final class Utils {
         return new Worklog(selfUri, issueUri, null, null, comment, now, null, null, minutesSpent, null);
     }
 
-    private static Map<String, URI> buildUserAvatarUris(@Nullable String user, Long avatarId) throws Exception {
+    private static Map<String, URI> buildUserAvatarUris(String user, Long avatarId) throws Exception {
         final ImmutableMap.Builder<String, URI> builder = ImmutableMap.builder();
         builder.put(S48_48, buildUserAvatarUri(user, avatarId));
         return builder.build();
     }
 
-    private static URI buildUserAvatarUri(@Nullable String userName, Long avatarId) throws Exception {
+    private static URI buildUserAvatarUri(String userName, Long avatarId) throws Exception {
         // secure/useravatar?size=small&ownerId=admin&avatarId=10054
         final StringBuilder sb = new StringBuilder("secure/useravatar?");
 

@@ -66,9 +66,9 @@ public class DefaultMainShutdownStrategy extends SimpleMainShutdownStrategy {
     }
 
     @Override
-    public void await(long timeout, TimeUnit unit) throws InterruptedException {
+    public boolean await(long timeout, TimeUnit unit) throws InterruptedException {
         installHangupInterceptor();
-        super.await(timeout, unit);
+        return super.await(timeout, unit);
     }
 
     private void handleHangup() {

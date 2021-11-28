@@ -1124,6 +1124,11 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
         delegate.setAutowiredEnabled(autowiredEnabled);
     }
 
+    @Override
+    public void removeRouteTemplates(String pattern) throws Exception {
+        delegate.removeRouteTemplates(pattern);
+    }
+
     //
     // ExtendedCamelContext
     //
@@ -1793,6 +1798,11 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     public String addRouteFromTemplate(String routeId, String routeTemplateId, RouteTemplateContext routeTemplateContext)
             throws Exception {
         return getModelCamelContext().addRouteFromTemplate(routeId, routeTemplateId, routeTemplateContext);
+    }
+
+    @Override
+    public void removeRouteTemplateDefinitions(String pattern) throws Exception {
+        getModelCamelContext().removeRouteTemplateDefinitions(pattern);
     }
 
     @Override

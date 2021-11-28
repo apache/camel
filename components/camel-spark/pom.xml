@@ -69,6 +69,10 @@
             <version>${spark-version}</version>
             <exclusions>
                 <exclusion>
+                    <groupId>com.google.code.findbugs</groupId>
+                    <artifactId>jsr305</artifactId>
+                </exclusion>
+                <exclusion>
                     <groupId>org.scala-lang</groupId>
                     <artifactId>*</artifactId>
                 </exclusion>
@@ -95,6 +99,10 @@
             <artifactId>spark-hive_2.12</artifactId>
             <version>${spark-version}</version>
             <exclusions>
+                <exclusion>
+                    <groupId>com.google.code.findbugs</groupId>
+                    <artifactId>jsr305</artifactId>
+                </exclusion>
                 <exclusion>
                     <groupId>org.scala-lang</groupId>
                     <artifactId>*</artifactId>
@@ -145,6 +153,10 @@
             <version>${hadoop3-version}</version>
             <exclusions>
                 <exclusion>
+                    <groupId>com.google.code.findbugs</groupId>
+                    <artifactId>jsr305</artifactId>
+                </exclusion>
+                <exclusion>
                     <groupId>org.scala-lang</groupId>
                     <artifactId>*</artifactId>
                 </exclusion>
@@ -167,6 +179,10 @@
             <artifactId>hadoop-common</artifactId>
             <version>${hadoop3-version}</version>
             <exclusions>
+                <exclusion>
+                    <groupId>com.google.code.findbugs</groupId>
+                    <artifactId>jsr305</artifactId>
+                </exclusion>
                 <exclusion>
                     <groupId>org.scala-lang</groupId>
                     <artifactId>*</artifactId>
@@ -191,6 +207,10 @@
             <version>${hadoop3-version}</version>
             <exclusions>
                 <exclusion>
+                    <groupId>com.google.code.findbugs</groupId>
+                    <artifactId>jsr305</artifactId>
+                </exclusion>
+                <exclusion>
                     <groupId>org.scala-lang</groupId>
                     <artifactId>*</artifactId>
                 </exclusion>
@@ -213,6 +233,10 @@
             <artifactId>hadoop-mapreduce-client-jobclient</artifactId>
             <version>${hadoop3-version}</version>
             <exclusions>
+                <exclusion>
+                    <groupId>com.google.code.findbugs</groupId>
+                    <artifactId>jsr305</artifactId>
+                </exclusion>
                 <exclusion>
                     <groupId>org.scala-lang</groupId>
                     <artifactId>*</artifactId>

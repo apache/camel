@@ -27,6 +27,7 @@ import org.junit.jupiter.api.Test;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class NettyRequestTimeoutTest extends BaseNettyTest {
@@ -51,18 +52,17 @@ public class NettyRequestTimeoutTest extends BaseNettyTest {
     }
 
     @Test
-    public void testKeepingTimeoutHeader() throws Exception {
+    public void testKeepingTimeoutHeader() {
         Endpoint endpoint
                 = this.resolveMandatoryEndpoint("netty:tcp://localhost:{{port}}?textline=true&sync=true&requestTimeout=100");
-        try {
-            String out = template.requestBody(endpoint, "Hello", String.class);
-            assertEquals("Bye World", out);
-            template.requestBody(endpoint, "Hello Camel", String.class);
-            fail("Should have thrown exception");
-        } catch (CamelExecutionException e) {
-            ReadTimeoutException cause = assertIsInstanceOf(ReadTimeoutException.class, e.getCause());
-            assertNotNull(cause);
-        }
+
+        String out = template.requestBody(endpoint, "Hello", String.class);
+        assertEquals("Bye World", out);
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.requestBody(endpoint, "Hello Camel", String.class));
+
+        ReadTimeoutException cause = assertIsInstanceOf(ReadTimeoutException.class, e.getCause());
+        assertNotNull(cause);
     }
 
     @Test

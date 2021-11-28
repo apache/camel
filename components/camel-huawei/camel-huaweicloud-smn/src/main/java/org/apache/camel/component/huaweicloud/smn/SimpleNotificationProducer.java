@@ -258,14 +258,15 @@ public class SimpleNotificationProducer extends DefaultProducer {
     /**
      * initialization of smn client. this is lazily initialized on the first message
      *
-     * @param clientConfigurations
+     * @param  clientConfigurations
      * @return
      */
     private SmnClient initializeClient(ClientConfigurations clientConfigurations) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Initializing Smn client");
         }
-        HttpConfig httpConfig = HttpConfig.getDefaultHttpConfig().withIgnoreSSLVerification(clientConfigurations.isIgnoreSslVerification());
+        HttpConfig httpConfig
+                = HttpConfig.getDefaultHttpConfig().withIgnoreSSLVerification(clientConfigurations.isIgnoreSslVerification());
         if (!StringUtils.isEmpty(clientConfigurations.getProxyHost())) {
             httpConfig.setProxyHost(clientConfigurations.getProxyHost());
             httpConfig.setProxyPort(clientConfigurations.getProxyPort());

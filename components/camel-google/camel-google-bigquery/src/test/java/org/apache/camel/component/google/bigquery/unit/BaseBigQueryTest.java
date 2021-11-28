@@ -29,7 +29,7 @@ import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class BaseBigQueryTest extends CamelTestSupport {
+public abstract class BaseBigQueryTest extends CamelTestSupport {
     protected GoogleBigQueryEndpoint endpoint = mock(GoogleBigQueryEndpoint.class);
     protected GoogleBigQueryProducer producer;
     protected Bigquery.Tabledata tabledataMock;

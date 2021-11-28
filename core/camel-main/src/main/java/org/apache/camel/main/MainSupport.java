@@ -46,6 +46,7 @@ public abstract class MainSupport extends BaseMainSupport {
     private int durationMaxMessages;
     private long durationMaxSeconds;
     private int durationHitExitCode;
+    private String durationMaxAction = "shutdown";
 
     protected MainSupport(Class<?>... configurationClasses) {
         this();
@@ -108,6 +109,7 @@ public abstract class MainSupport extends BaseMainSupport {
         durationMaxMessages = mainConfigurationProperties.getDurationMaxMessages();
         durationMaxSeconds = mainConfigurationProperties.getDurationMaxSeconds();
         durationHitExitCode = mainConfigurationProperties.getDurationHitExitCode();
+        durationMaxAction = mainConfigurationProperties.getDurationMaxAction();
 
         // register main as bootstrap
         CamelContext context = getCamelContext();
@@ -270,22 +272,26 @@ public abstract class MainSupport extends BaseMainSupport {
 
     @Override
     protected void configureLifecycle(CamelContext camelContext) throws Exception {
-        if (mainConfigurationProperties.getDurationMaxMessages() > 0
+        if (mainConfigurationProperties.getDurationMaxSeconds() > 0
+                || mainConfigurationProperties.getDurationMaxMessages() > 0
                 || mainConfigurationProperties.getDurationMaxIdleSeconds() > 0) {
-            // register lifecycle so we can trigger to shutdown the JVM when maximum number of messages has been processed
+            // register lifecycle, so we can trigger to shutdown the JVM when maximum number of messages has been processed
+            // (we must use the event notifier also for max seconds only to support restarting duration if routes are reloaded)
             EventNotifier notifier = new MainDurationEventNotifier(
                     camelContext,
                     mainConfigurationProperties.getDurationMaxMessages(),
                     mainConfigurationProperties.getDurationMaxIdleSeconds(),
                     shutdownStrategy,
-                    true);
+                    true,
+                    mainConfigurationProperties.isRoutesReloadRestartDuration(),
+                    mainConfigurationProperties.getDurationMaxAction());
 
             // register our event notifier
             ServiceHelper.startService(notifier);
             camelContext.getManagementStrategy().addEventNotifier(notifier);
         }
 
-        // register lifecycle so we are notified in Camel is stopped from JMX or somewhere else
+        // register lifecycle, so we are notified in Camel is stopped from JMX or somewhere else
         camelContext.addLifecycleStrategy(new MainLifecycleStrategy(shutdownStrategy));
     }
 
@@ -298,7 +304,20 @@ public abstract class MainSupport extends BaseMainSupport {
                 int exit = durationHitExitCode;
                 if (sec > 0) {
                     LOG.info("Waiting until complete: Duration max {} seconds", sec);
-                    shutdownStrategy.await(sec, TimeUnit.SECONDS);
+                    boolean zero = shutdownStrategy.await(sec, TimeUnit.SECONDS);
+                    if (!zero) {
+                        if ("stop".equalsIgnoreCase(durationMaxAction)) {
+                            LOG.info("Duration max seconds triggering stopping all routes");
+                            try {
+                                camelContext.getRouteController().stopAllRoutes();
+                            } catch (Exception e) {
+                                LOG.warn("Error during stopping all routes. This exception is ignored.", e);
+                            }
+                            // we are just stopping routes (not terminating JVM) so continue
+                            continue;
+                        }
+                    }
+                    LOG.info("Duration max seconds triggering shutdown of the JVM");
                     exitCode.compareAndSet(UNINITIALIZED_EXIT_CODE, exit);
                     shutdownStrategy.shutdown();
                 } else if (idle > 0 || max > 0) {

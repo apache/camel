@@ -28,7 +28,7 @@ import org.junit.jupiter.api.BeforeAll;
 /**
  * Base class of tests which allocates ports
  */
-public class BaseUndertowTest extends CamelTestSupport {
+public abstract class BaseUndertowTest extends CamelTestSupport {
 
     private static volatile int port;
     private static volatile int port2;

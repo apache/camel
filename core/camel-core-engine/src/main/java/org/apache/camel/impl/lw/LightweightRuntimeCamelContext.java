@@ -1941,6 +1941,11 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
+    public void removeRouteTemplates(String pattern) throws Exception {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public void setLightweight(boolean lightweight) {
         throw new UnsupportedOperationException();
     }
@@ -1990,6 +1995,16 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
 
             @Override
             public void startAllRoutes() throws Exception {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public void stopAllRoutes() throws Exception {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public void removeAllRoutes() throws Exception {
                 throw new UnsupportedOperationException();
             }
 

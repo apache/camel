@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.dsl.jbang.core.others;
 
 import org.apache.camel.dsl.jbang.core.api.Printer;
 import org.apache.camel.dsl.jbang.core.types.Other;
 
 public class OtherPrinter implements Printer<Other> {
+
     @Override
     public void inject(Other other) {
         System.out.printf("%-35s %-45s %s%n", other.shortName, other.description, other.link);

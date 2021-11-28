@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class JmsTransferExceptionTest extends CamelTestSupport {
 
@@ -54,17 +54,16 @@ public class JmsTransferExceptionTest extends CamelTestSupport {
     }
 
     @Test
-    public void testTransferExeption() throws Exception {
+    public void testTransferException() {
         // we send something that causes a remote exception
-        // then we expect our producer template to thrown
+        // then we expect our producer template to throw
         // an exception with the remote exception as cause
-        try {
-            template.requestBody(getUri(), "Kabom");
-            fail("Should have thrown an exception");
-        } catch (RuntimeCamelException e) {
-            assertEquals("Boom", e.getCause().getMessage());
-            assertNotNull(e.getCause().getStackTrace(), "Should contain a remote stacktrace");
-        }
+        String uri = getUri();
+        RuntimeCamelException e = assertThrows(RuntimeCamelException.class, () -> template.requestBody(uri, "Kabom"),
+                "Should have thrown an exception");
+
+        assertEquals("Boom", e.getCause().getMessage());
+        assertNotNull(e.getCause().getStackTrace(), "Should contain a remote stacktrace");
 
         // we still try redeliver
         assertEquals(3, counter);

@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.dsl.jbang.core.languages;
 
 import org.apache.camel.dsl.jbang.core.api.Printer;
 import org.apache.camel.dsl.jbang.core.types.Language;
 
 public class LanguagePrinter implements Printer<Language> {
+
     @Override
     public void inject(Language language) {
         System.out.printf("%-35s %-45s %s%n", language.shortName, language.description, language.link);

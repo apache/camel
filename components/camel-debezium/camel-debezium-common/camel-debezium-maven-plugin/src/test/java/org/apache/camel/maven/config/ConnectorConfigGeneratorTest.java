@@ -67,9 +67,10 @@ public class ConnectorConfigGeneratorTest {
         final Map<String, Object> overridenDefaultValues = Collections.emptyMap();
         final Set<String> requiredFields = Collections.emptySet();
 
-        assertThrows(IllegalArgumentException.class, () -> {
-            ConnectorConfigGenerator.create(connector, getClass(), requiredFields, overridenDefaultValues);
-        });
+        Class<?> clazz = getClass();
+
+        assertThrows(IllegalArgumentException.class,
+                () -> ConnectorConfigGenerator.create(connector, clazz, requiredFields, overridenDefaultValues));
     }
 
     private void testIfCorrectlyGeneratedFile(

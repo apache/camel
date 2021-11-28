@@ -55,8 +55,8 @@ public class ImageRecognitionProducer extends DefaultProducer {
     /**
      * initialize ClientConfigurations
      *
-     * @param endpoint ImageRecognitionEndpoint
-     * @return ClientConfigurations
+     * @param  endpoint ImageRecognitionEndpoint
+     * @return          ClientConfigurations
      */
     private ClientConfigurations initializeConfigurations(ImageRecognitionEndpoint endpoint) {
         ClientConfigurations clientConfigurations = new ClientConfigurations();
@@ -87,8 +87,8 @@ public class ImageRecognitionProducer extends DefaultProducer {
     /**
      * initialize image client. this is lazily initialized on the first message
      *
-     * @param endpoint
-     * @param clientConfigurations
+     * @param  endpoint
+     * @param  clientConfigurations
      * @return
      */
     private ImageClient initializeSdkClient(ImageRecognitionEndpoint endpoint, ClientConfigurations clientConfigurations) {
@@ -98,7 +98,8 @@ public class ImageRecognitionProducer extends DefaultProducer {
             this.imageClient = endpoint.getImageClient();
             return endpoint.getImageClient();
         }
-        HttpConfig httpConfig = HttpConfig.getDefaultHttpConfig().withIgnoreSSLVerification(clientConfigurations.isIgnoreSslVerification());
+        HttpConfig httpConfig
+                = HttpConfig.getDefaultHttpConfig().withIgnoreSSLVerification(clientConfigurations.isIgnoreSslVerification());
         if (!StringUtils.isEmpty(clientConfigurations.getProxyHost())) {
             httpConfig.setProxyHost(clientConfigurations.getProxyHost());
             httpConfig.setProxyPort(clientConfigurations.getProxyPort());

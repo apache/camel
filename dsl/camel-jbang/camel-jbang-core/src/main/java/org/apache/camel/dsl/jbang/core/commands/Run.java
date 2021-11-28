@@ -14,11 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileSystems;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -46,8 +46,11 @@ class Run implements Callable<Integer> {
     private boolean helpRequested;
     //CHECKSTYLE:ON
 
-    @Option(names = { "--debug-level" }, defaultValue = "info", description = "Default debug level")
-    private String debugLevel;
+    @Option(names = { "--name" }, defaultValue = "CamelJBang", description = "The name of the Camel application")
+    private String name;
+
+    @Option(names = { "--logging-level" }, defaultValue = "info", description = "Logging level")
+    private String loggingLevel;
 
     @Option(names = { "--stop" }, description = "Stop all running instances of Camel JBang")
     private boolean stopRequested;
@@ -55,24 +58,36 @@ class Run implements Callable<Integer> {
     @Option(names = { "--max-messages" }, defaultValue = "0", description = "Max number of messages to process before stopping")
     private int maxMessages;
 
+    @Option(names = { "--max-seconds" }, defaultValue = "0", description = "Max seconds to run before stopping")
+    private int maxSeconds;
+
+    @Option(names = { "--max-idle-seconds" }, defaultValue = "0",
+            description = "For how long time in seconds Camel can be idle before stopping")
+    private int maxIdleSeconds;
+
     @Option(names = { "--reload" }, description = "Enables live reload when source file is changed (saved)")
     private boolean reload;
+
+    @Option(names = { "--properties" },
+            description = "Load properties file for route placeholders (ex. /path/to/file.properties")
+    private String propertiesFiles;
 
     @Option(names = { "--file-lock" }, defaultValue = "true",
             description = "Whether to create a temporary file lock, which upon deleting triggers this process to terminate")
     private boolean fileLock = true;
 
+    @Option(names = { "--local-kamelet-dir" },
+            description = "Load Kamelets from a local directory instead of resolving them from the classpath or GitHub")
+    private String localKameletDir;
+
     @Override
     public Integer call() throws Exception {
-        System.setProperty("camel.main.name", "CamelJBang");
-
         if (stopRequested) {
             stop();
+            return 0;
         } else {
-            run();
+            return run();
         }
-
-        return 0;
     }
 
     private int stop() {
@@ -91,18 +106,33 @@ class Run implements Callable<Integer> {
     }
 
     private int run() throws Exception {
-        KameletMain main = new KameletMain();
+        // configure logging first
+        RuntimeUtil.configureLog(loggingLevel);
 
+        KameletMain main;
+
+        if (localKameletDir == null) {
+            main = new KameletMain();
+        } else {
+            main = new KameletMain("file://" + localKameletDir);
+        }
+
+        main.addInitialProperty("camel.main.name", name);
+        // shutdown quickly
+        main.addInitialProperty("camel.main.shutdownTimeout", "5");
+        // turn off lightweight if we have routes reload enabled
+        main.addInitialProperty("camel.main.routesReloadEnabled", reload ? "true" : "false");
+
+        // durations
         if (maxMessages > 0) {
             main.addInitialProperty("camel.main.durationMaxMessages", String.valueOf(maxMessages));
         }
-
-        RuntimeUtil.configureLog(debugLevel);
-
-        // shutdown quickly
-        main.addInitialProperty("camel.main.shutdown-timeout", "5");
-        // turn off lightweight if we have routes reload enabled
-        main.addInitialProperty("camel.main.routesReloadEnabled", reload ? "true" : "false");
+        if (maxSeconds > 0) {
+            main.addInitialProperty("camel.main.durationMaxSeconds", String.valueOf(maxSeconds));
+        }
+        if (maxIdleSeconds > 0) {
+            main.addInitialProperty("camel.main.durationMaxIdleSeconds", String.valueOf(maxIdleSeconds));
+        }
 
         if (fileLock) {
             lockFile = createLockFile();
@@ -123,7 +153,7 @@ class Run implements Callable<Integer> {
         if (!ResourceHelper.hasScheme(binding) && !binding.startsWith("github:")) {
             binding = "file:" + binding;
         }
-        main.addInitialProperty("camel.main.routes-include-pattern", binding);
+        main.addInitialProperty("camel.main.routesIncludePattern", binding);
 
         if (binding.startsWith("file:")) {
             // check if file exist
@@ -135,20 +165,39 @@ class Run implements Callable<Integer> {
 
             // we can only reload if file based
             if (reload) {
-                main.addInitialProperty("camel.main.routes-reload-enabled", "true");
-                main.addInitialProperty("camel.main.routes-reload-directory", ".");
+                main.addInitialProperty("camel.main.routesReloadEnabled", "true");
+                main.addInitialProperty("camel.main.routesReloadDirectory", ".");
                 // skip file: as prefix
-                main.addInitialProperty("camel.main.routes-reload-pattern", binding.substring(5));
+                main.addInitialProperty("camel.main.routesReloadPattern", binding.substring(5));
+                // do not shutdown the JVM but stop routes when max duration is triggered
+                main.addInitialProperty("camel.main.durationMaxAction", "stop");
             }
         }
 
-        System.out.println("Starting Camel JBang!");
+        if (propertiesFiles != null) {
+            String[] filesLocation = propertiesFiles.split(",");
+            StringBuilder locations = new StringBuilder();
+            for (String file : filesLocation) {
+                if (!file.startsWith("file:")) {
+                    if (!file.startsWith("/")) {
+                        file = FileSystems.getDefault().getPath("").toAbsolutePath() + File.separator + file;
+                    }
+                    file = "file://" + file;
+                }
+                locations.append(file).append(",");
+            }
+            main.addInitialProperty("camel.component.properties.location", locations.toString());
+        }
+
+        System.out.println("Starting CamelJBang");
         main.start();
 
         context = main.getCamelContext();
 
         main.run();
-        return 0;
+
+        int code = main.getExitCode();
+        return code;
     }
 
     public File createLockFile() throws IOException {

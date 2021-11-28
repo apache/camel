@@ -196,6 +196,14 @@ public interface EventFactory {
     CamelEvent createRouteRemovedEvent(Route route);
 
     /**
+     * Creates an {@link CamelEvent} for {@link Route} has been reloaded successfully.
+     *
+     * @param  route the route
+     * @return       the reloaded event
+     */
+    CamelEvent createRouteReloaded(Route route);
+
+    /**
      * Creates an {@link CamelEvent} when an {@link org.apache.camel.Exchange} has been created
      *
      * @param  exchange the exchange

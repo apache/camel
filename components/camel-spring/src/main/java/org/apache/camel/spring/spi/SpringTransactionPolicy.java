@@ -38,6 +38,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 public class SpringTransactionPolicy implements TransactedPolicy {
     private static final Logger LOG = LoggerFactory.getLogger(SpringTransactionPolicy.class);
     private TransactionTemplate template;
+    private String name;
     private String propagationBehaviorName;
     private PlatformTransactionManager transactionManager;
 
@@ -133,6 +134,9 @@ public class SpringTransactionPolicy implements TransactedPolicy {
         if (template == null) {
             ObjectHelper.notNull(transactionManager, "transactionManager");
             template = new TransactionTemplate(transactionManager);
+            if (name != null) {
+                template.setName(name);
+            }
             if (propagationBehaviorName != null) {
                 template.setPropagationBehaviorName(propagationBehaviorName);
             }
@@ -150,6 +154,14 @@ public class SpringTransactionPolicy implements TransactedPolicy {
 
     public PlatformTransactionManager getTransactionManager() {
         return transactionManager;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public void setPropagationBehaviorName(String propagationBehaviorName) {
