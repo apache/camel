@@ -23,6 +23,7 @@ import org.apache.camel.Route;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckAware;
 import org.apache.camel.health.HealthCheckResultBuilder;
+import org.apache.camel.spi.HttpResponseAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,7 +62,15 @@ public class ConsumerHealthCheck extends RouteHealthCheck {
                     builder.message(result.getMessage().get());
                 }
                 if (result.getError().isPresent()) {
-                    builder.error(result.getError().get());
+                    Throwable cause = result.getError().get();
+                    builder.error(cause);
+                    // if the caused exception is HTTP response aware then include the response status code
+                    if (cause instanceof HttpResponseAware) {
+                        int code = ((HttpResponseAware) cause).getHttpResponseCode();
+                        if (code > 0) {
+                            builder.detail(HealthCheck.HTTP_RESPONSE_CODE, code);
+                        }
+                    }
                 }
                 builder.details(result.getDetails());
             }

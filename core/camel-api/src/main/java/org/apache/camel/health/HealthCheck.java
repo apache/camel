@@ -39,6 +39,7 @@ public interface HealthCheck extends HasGroup, HasId, Ordered {
     String FAILURE_ENDPOINT_URI = "failure.endpoint.uri";
     String FAILURE_ERROR_COUNT = "failure.error.count";
     String SUCCESS_COUNT = "success.count";
+    String HTTP_RESPONSE_CODE = "http.response.code";
 
     enum State {
         UP,

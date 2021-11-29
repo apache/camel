@@ -49,11 +49,11 @@ public class ScheduledPollConsumerHealthCheck implements HealthCheck {
         builder.detail(FAILURE_ENDPOINT_URI, consumer.getEndpoint().getEndpointUri());
 
         long ec = consumer.getErrorCounter();
-        long cnt = consumer.getCounter();
+        boolean first = consumer.isFirstPoolDone();
         Throwable cause = consumer.getLastError();
 
-        // can only be healthy if we have at least one poll and there are no errors
-        boolean healthy = cnt > 0 && ec == 0;
+        // can only be healthy if we have at least one poll done and there are no errors
+        boolean healthy = first && ec == 0;
         if (healthy) {
             builder.up();
         } else {
@@ -68,6 +68,11 @@ public class ScheduledPollConsumerHealthCheck implements HealthCheck {
                 builder.message(String.format(msg, rid, sanitizedUri));
             }
             builder.error(cause);
+
+            // include any additional details
+            if (consumer.getLastErrorDetails() != null) {
+                builder.details(consumer.getLastErrorDetails());
+            }
         }
 
         return builder.build();
