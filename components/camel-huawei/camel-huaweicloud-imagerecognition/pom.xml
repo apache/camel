@@ -30,7 +30,7 @@
 
     <artifactId>camel-huaweicloud-imagerecognition</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Huawei Cloud :: ImageRecognition Component</name>
+    <name>Camel :: Huawei Cloud :: ImageRecognition</name>
     <description>A Camel Huawei Image Recognition component</description>
 
     <properties>

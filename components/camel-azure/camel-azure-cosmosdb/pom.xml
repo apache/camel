@@ -29,7 +29,7 @@
     <artifactId>camel-azure-cosmosdb</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: Azure CosmosDB</name>
+    <name>Camel :: Azure :: CosmosDB</name>
     <description>Camel Azure CosmosDB Component</description>
 
     <properties>

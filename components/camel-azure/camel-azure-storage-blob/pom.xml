@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+\<?xml version="1.0" encoding="UTF-8"?>
 <!--
 
     Licensed to the Apache Software Foundation (ASF) under one or more
@@ -29,7 +29,7 @@
     <artifactId>camel-azure-storage-blob</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: Azure Storage Blob</name>
+    <name>Camel :: Azure :: Storage Blob</name>
     <description>Camel Azure Blob Storage Service Component</description>
 
     <properties>
