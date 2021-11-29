@@ -79,7 +79,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
     private volatile Throwable lastError;
     private volatile Map<String, Object> lastErrorDetails;
     private final AtomicLong counter = new AtomicLong();
-    private final AtomicBoolean firstPoolDone = new AtomicBoolean();
+    private volatile boolean firstPoolDone;
 
     public ScheduledPollConsumer(Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -276,8 +276,8 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
             lastErrorDetails = null;
         }
 
-        // first pool is done after starting
-        firstPoolDone.set(true);
+        // now first pool is done after the poll is complete
+        firstPoolDone = true;
 
         LOG.trace("doRun() done with idleCounter={}, successCounter={}, errorCounter={}", idleCounter, successCounter,
                 errorCounter);
@@ -480,7 +480,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
      * Whether a first pool attempt has been done (also if the consumer has been restarted)
      */
     protected boolean isFirstPoolDone() {
-        return firstPoolDone.get();
+        return firstPoolDone;
     }
 
     /**
@@ -627,7 +627,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
         errorCounter = 0;
         successCounter = 0;
         counter.set(0);
-        firstPoolDone.set(false);
+        firstPoolDone = false;
 
         super.doStop();
     }
