@@ -35,11 +35,12 @@ import org.slf4j.LoggerFactory;
  * The helper will lookup the {@link HealthCheckRegistry} from {@link CamelContext} and gather all the registered
  * {@link HealthCheck}s and invoke them and gather their responses.
  *
- * The helper allows to filter out unwanted health checks using {@link HealthCheckFilter} or to invoke only readiness or
+ * The helper allows filtering out unwanted health checks using {@link HealthCheckFilter} or to invoke only readiness or
  * liveness checks.
  */
 public final class HealthCheckHelper {
-    private static final Logger LOGGER = LoggerFactory.getLogger(HealthCheckHelper.class);
+
+    private static final Logger LOG = LoggerFactory.getLogger(HealthCheckHelper.class);
 
     private HealthCheckHelper() {
     }
@@ -123,7 +124,7 @@ public final class HealthCheckHelper {
                     .map(check -> check.call(optionsSupplier.apply(check)))
                     .collect(Collectors.toList());
         } else {
-            LOGGER.debug("No health check source found");
+            LOG.debug("No health check source found");
         }
 
         return Collections.emptyList();
@@ -144,7 +145,7 @@ public final class HealthCheckHelper {
         if (registry != null) {
             return registry.getCheck(id).map(check -> check.call(options));
         } else {
-            LOGGER.debug("No health check source found");
+            LOG.debug("No health check source found");
         }
 
         return Optional.empty();
@@ -164,7 +165,7 @@ public final class HealthCheckHelper {
         if (registry != null) {
             return registry.getCheck(id).map(check -> check.call(options));
         } else {
-            LOGGER.debug("No health check source found");
+            LOG.debug("No health check source found");
         }
 
         return Optional.empty();
