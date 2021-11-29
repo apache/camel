@@ -2,7 +2,7 @@
   "component": {
     "kind": "component",
     "name": "azure-storage-datalake",
-    "title": "Azure storage datalake service",
+    "title": "Azure Storage Datalake Service",
     "description": "Camel Azure Datalake Gen2 Component",
     "deprecated": false,
     "firstVersion": "3.8.0",

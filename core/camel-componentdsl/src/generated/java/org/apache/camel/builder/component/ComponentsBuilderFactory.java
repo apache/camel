@@ -646,7 +646,7 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AzureStorageBlobComponentBuilderFactory.azureStorageBlob();
     }
     /**
-     * Azure storage datalake service (camel-azure-storage-datalake)
+     * Azure Storage Datalake Service (camel-azure-storage-datalake)
      * Camel Azure Datalake Gen2 Component
      * 
      * Category: cloud,file
