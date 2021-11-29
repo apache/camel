@@ -30,7 +30,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
 
-@UriEndpoint(firstVersion = "3.8.0", scheme = "azure-storage-datalake", title = "Azure storage datalake service",
+@UriEndpoint(firstVersion = "3.8.0", scheme = "azure-storage-datalake", title = "Azure Storage Datalake Service",
              syntax = "azure-storage-datalake:accountName/fileSystemName", category = { Category.CLOUD, Category.FILE })
 public class DataLakeEndpoint extends ScheduledPollEndpoint {
 
