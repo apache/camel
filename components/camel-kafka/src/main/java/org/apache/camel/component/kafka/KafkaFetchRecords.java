@@ -99,7 +99,7 @@ class KafkaFetchRecords implements Runnable {
             }
 
             startPolling();
-        } while (isRetrying() || isReconnect());
+        } while ((isRetrying() || isReconnect()) && isKafkaConsumerRunnable());
 
         LOG.info("Terminating KafkaConsumer thread: {} receiving from topic: {}", threadId, topicName);
         safeUnsubscribe();
@@ -166,7 +166,7 @@ class KafkaFetchRecords implements Runnable {
             KafkaRecordProcessor kafkaRecordProcessor = buildKafkaRecordProcessor();
 
             Duration pollDuration = Duration.ofMillis(pollTimeoutMs);
-            while (isKafkaConsumerRunnable() && isRetrying() && !isReconnect()) {
+            while (isKafkaConsumerRunnable() && isRetrying() && isConnected()) {
                 ConsumerRecords<Object, Object> allRecords = consumer.poll(pollDuration);
 
                 processAsyncCommits();
@@ -174,7 +174,7 @@ class KafkaFetchRecords implements Runnable {
                 partitionLastOffset = processPolledRecords(allRecords, kafkaRecordProcessor);
             }
 
-            if (!isReconnect()) {
+            if (!isConnected()) {
                 LOG.debug("Not reconnecting, check whether to auto-commit or not ...");
                 commit();
             }
