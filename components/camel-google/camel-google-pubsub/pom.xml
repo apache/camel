@@ -29,7 +29,7 @@
 
     <artifactId>camel-google-pubsub</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Google PubSub</name>
+    <name>Camel :: Google :: PubSub</name>
     <description>Camel Component for Google Cloud Platform PubSub</description>
 
     <properties>

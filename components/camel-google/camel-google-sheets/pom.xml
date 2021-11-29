@@ -29,7 +29,7 @@
 
     <artifactId>camel-google-sheets</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Google Sheets</name>
+    <name>Camel :: Google :: Sheets</name>
     <description>Camel Component for Google Sheets</description>
 
     <properties>

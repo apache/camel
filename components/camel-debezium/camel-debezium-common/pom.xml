@@ -29,7 +29,7 @@
 
     <artifactId>camel-debezium-common-parent</artifactId>
     <packaging>pom</packaging>
-    <name>Camel :: Debezium Common :: Parent</name>
+    <name>Camel :: Debezium :: Common :: Parent</name>
     <description>Camel Debezium Common parent</description>
 
     <modules>
