@@ -21,19 +21,25 @@ import org.apache.camel.spi.HttpResponseAware;
 
 public class TelegramException extends RuntimeCamelException implements HttpResponseAware {
 
-    private int httpResponseCode;
-    private String httpResponseStatus;
+    private final int httpResponseCode;
+    private final String httpResponseStatus;
 
-    public TelegramException(String message) {
+    public TelegramException(String message, int httpResponseCode, String httpResponseStatus) {
         super(message);
+        this.httpResponseCode = httpResponseCode;
+        this.httpResponseStatus = httpResponseStatus;
     }
 
     public TelegramException(String message, Throwable cause) {
         super(message, cause);
+        this.httpResponseCode = 0;
+        this.httpResponseStatus = null;
     }
 
     public TelegramException(Throwable cause) {
         super(cause);
+        this.httpResponseCode = 0;
+        this.httpResponseStatus = null;
     }
 
     @Override
@@ -43,7 +49,7 @@ public class TelegramException extends RuntimeCamelException implements HttpResp
 
     @Override
     public void setHttpResponseCode(int httpResponseCode) {
-        this.httpResponseCode = httpResponseCode;
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -53,6 +59,6 @@ public class TelegramException extends RuntimeCamelException implements HttpResp
 
     @Override
     public void setHttpResponseStatus(String httpResponseStatus) {
-        this.httpResponseStatus = httpResponseStatus;
+        throw new UnsupportedOperationException();
     }
 }

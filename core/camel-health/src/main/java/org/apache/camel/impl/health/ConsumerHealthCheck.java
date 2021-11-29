@@ -24,6 +24,7 @@ import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckAware;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.spi.HttpResponseAware;
+import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,10 +36,12 @@ public class ConsumerHealthCheck extends RouteHealthCheck {
     private static final Logger LOGGER = LoggerFactory.getLogger(ConsumerHealthCheck.class);
 
     private final Consumer consumer;
+    private final String sanitizedUri;
 
     public ConsumerHealthCheck(Route route, String id) {
         super(route, id);
         this.consumer = route.getConsumer();
+        this.sanitizedUri = URISupport.sanitizeUri(consumer.getEndpoint().getEndpointUri());
     }
 
     @Override
@@ -56,6 +59,10 @@ public class ConsumerHealthCheck extends RouteHealthCheck {
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("HealthCheck consumer route: {} -> {}", route.getRouteId(), result.getState());
                 }
+
+                // ensure to sanitize uri, so we do not show sensitive information such as passwords
+                builder.detail(ENDPOINT_URI, sanitizedUri);
+                builder.detail(FAILURE_ENDPOINT_URI, sanitizedUri);
 
                 builder.state(result.getState());
                 if (result.getMessage().isPresent()) {

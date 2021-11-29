@@ -106,7 +106,7 @@ public class ManagedCamelHealth implements ManagedCamelHealthMBean {
             final CompositeType type = CamelOpenMBeanTypes.camelHealthDetailsCompositeType();
 
             for (HealthCheck.Result result : HealthCheckHelper.invoke(context)) {
-                String failureUri = (String) result.getDetails().getOrDefault(HealthCheck.FAILURE_ENDPOINT_URI, "");
+                String failureUri = (String) result.getDetails().getOrDefault(HealthCheck.ENDPOINT_URI, "");
                 Integer failureCount = (Integer) result.getDetails().getOrDefault(HealthCheck.FAILURE_COUNT, 0);
 
                 String stacktrace = "";

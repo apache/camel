@@ -85,13 +85,13 @@ public class TelegramConsumerHealthCheckErrorTest extends TelegramTestSupport {
         String msg = rc.getMessage().get();
         long count = (long) rc.getDetails().get(HealthCheck.FAILURE_ERROR_COUNT);
         Assertions.assertEquals("Consumer failed polling " + count + " times route: telegram (telegram://bots)", msg);
-        Assertions.assertEquals("telegram://bots?authorizationToken=mock-token",
-                rc.getDetails().get(HealthCheck.FAILURE_ENDPOINT_URI));
+        // test that the uri is masked
+        Assertions.assertEquals("telegram://bots?authorizationToken=xxxxxx",
+                rc.getDetails().get(HealthCheck.ENDPOINT_URI));
 
         Throwable e = rc.getError().get();
         Assertions.assertTrue(e.getMessage().contains("401 Unauthorized"));
-        // TODO: add http status code
-        // Assertions.assertEquals(401, rc.getDetails().get(HealthCheck.HTTP_RESPONSE_CODE));
+        Assertions.assertEquals(401, rc.getDetails().get(HealthCheck.HTTP_RESPONSE_CODE));
     }
 
     @Override

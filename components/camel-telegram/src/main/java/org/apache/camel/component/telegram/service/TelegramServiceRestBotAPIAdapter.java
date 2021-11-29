@@ -168,12 +168,10 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
                             "Could not parse the response from " + request.getMethod() + " " + request.getUrl(), e);
                 }
             } else {
-                TelegramException cause = new TelegramException(
+                throw new TelegramException(
                         "Could not " + request.getMethod() + " " + request.getUrl() + ": " + response.getStatusCode() + " "
-                                                + response.getStatusText());
-                cause.setHttpResponseCode(code);
-                cause.setHttpResponseStatus(status);
-                throw cause;
+                                            + response.getStatusText(),
+                        response.getStatusCode(), response.getStatusText());
             }
         } catch (ExecutionException e) {
             throw new RuntimeCamelException("Could not request " + request.getMethod() + " " + request.getUrl(), e);
