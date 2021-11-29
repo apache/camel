@@ -25,6 +25,8 @@ public class AtlasMapEndpointConfigurer extends PropertyConfigurerSupport implem
         case "allowContextMapAll": target.setAllowContextMapAll(property(camelContext, boolean.class, value)); return true;
         case "contentcache":
         case "contentCache": target.setContentCache(property(camelContext, boolean.class, value)); return true;
+        case "forcereload":
+        case "forceReload": target.setForceReload(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "sourcemapname":
@@ -44,6 +46,8 @@ public class AtlasMapEndpointConfigurer extends PropertyConfigurerSupport implem
         case "allowContextMapAll": return boolean.class;
         case "contentcache":
         case "contentCache": return boolean.class;
+        case "forcereload":
+        case "forceReload": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "sourcemapname":
@@ -64,6 +68,8 @@ public class AtlasMapEndpointConfigurer extends PropertyConfigurerSupport implem
         case "allowContextMapAll": return target.isAllowContextMapAll();
         case "contentcache":
         case "contentCache": return target.isContentCache();
+        case "forcereload":
+        case "forceReload": return target.isForceReload();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "sourcemapname":

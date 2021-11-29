@@ -107,6 +107,45 @@ public interface AtlasMapEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to enable or disable force reload mode. This is set to false
+         * by default and ADM file is loaded from a file only on a first
+         * Exchange, and AtlasContext will be reused after that until endpoint
+         * is recreated. If this is set to true, ADM file will be loaded from a
+         * file on every Exchange.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param forceReload the value to set
+         * @return the dsl builder
+         */
+        default AtlasMapEndpointBuilder forceReload(boolean forceReload) {
+            doSetProperty("forceReload", forceReload);
+            return this;
+        }
+        /**
+         * Whether to enable or disable force reload mode. This is set to false
+         * by default and ADM file is loaded from a file only on a first
+         * Exchange, and AtlasContext will be reused after that until endpoint
+         * is recreated. If this is set to true, ADM file will be loaded from a
+         * file on every Exchange.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param forceReload the value to set
+         * @return the dsl builder
+         */
+        default AtlasMapEndpointBuilder forceReload(String forceReload) {
+            doSetProperty("forceReload", forceReload);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
