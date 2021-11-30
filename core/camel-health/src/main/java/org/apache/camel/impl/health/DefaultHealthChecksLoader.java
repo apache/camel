@@ -16,15 +16,16 @@
  */
 package org.apache.camel.impl.health;
 
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.health.HealthCheck;
+import org.apache.camel.health.HealthCheckResolver;
 import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.Resource;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,14 +36,15 @@ public class DefaultHealthChecksLoader {
 
     public static final String META_INF_SERVICES = "META-INF/services/org/apache/camel/health-check";
     private static final Logger LOG = LoggerFactory.getLogger(DefaultHealthChecksLoader.class);
-    private static final Charset UTF8 = Charset.forName("UTF-8");
 
-    protected PackageScanResourceResolver resolver;
-    protected Set<Class<?>> visitedClasses = new HashSet<>();
-    protected Set<String> visitedURIs = new HashSet<>();
+    protected final CamelContext camelContext;
+    protected final PackageScanResourceResolver resolver;
+    protected final HealthCheckResolver healthCheckResolver;
 
-    public DefaultHealthChecksLoader(PackageScanResourceResolver resolver) {
-        this.resolver = resolver;
+    public DefaultHealthChecksLoader(CamelContext camelContext) {
+        this.camelContext = camelContext;
+        this.resolver = camelContext.adapt(ExtendedCamelContext.class).getPackageScanResourceResolver();
+        this.healthCheckResolver = camelContext.adapt(ExtendedCamelContext.class).getHealthCheckResolver();
     }
 
     public Collection<HealthCheck> loadHealthChecks() {
@@ -52,14 +54,46 @@ public class DefaultHealthChecksLoader {
 
         try {
             Collection<Resource> resources = resolver.findResources(META_INF_SERVICES + "/*-check");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Discovered {} health checks from classpath scanning", resources.size());
+            }
             for (Resource resource : resources) {
-                System.out.println(resource);
+                LOG.trace("Resource: {}", resource);
+                if (acceptResource(resource)) {
+                    String id = extractId(resource);
+                    LOG.trace("Loading HealthCheck: {}", id);
+                    HealthCheck hc = healthCheckResolver.resolveHealthCheck(id, camelContext);
+                    if (hc != null) {
+                        LOG.debug("Loaded HealthCheck: {}/{}", hc.getGroup(), hc.getId());
+                        answer.add(hc);
+                    }
+                }
             }
         } catch (Exception e) {
-            // ignore
+            LOG.warn("Error during scanning for custom health-checks on classpath due to: " + e.getMessage()
+                     + ". This exception is ignored.");
         }
 
         return answer;
+    }
+
+    protected boolean acceptResource(Resource resource) {
+        String loc = resource.getLocation();
+        if (loc == null) {
+            return false;
+        }
+
+        // this is an out of the box health-check
+        if (loc.endsWith("context-health")) {
+            return false;
+        }
+
+        return true;
+    }
+
+    protected String extractId(Resource resource) {
+        String loc = resource.getLocation();
+        return StringHelper.after(loc, META_INF_SERVICES + "/");
     }
 
 }

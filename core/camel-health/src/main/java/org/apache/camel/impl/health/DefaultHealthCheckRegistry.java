@@ -234,8 +234,7 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
         if (!loadHealthChecksDone) {
             loadHealthChecksDone = true;
 
-            DefaultHealthChecksLoader loader = new DefaultHealthChecksLoader(
-                    camelContext.adapt(ExtendedCamelContext.class).getPackageScanResourceResolver());
+            DefaultHealthChecksLoader loader = new DefaultHealthChecksLoader(camelContext);
             Collection<HealthCheck> col = loader.loadHealthChecks();
 
             // report how many health checks we have loaded
