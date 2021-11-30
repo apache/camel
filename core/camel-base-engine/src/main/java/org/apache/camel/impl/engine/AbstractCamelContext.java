@@ -81,6 +81,7 @@ import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.health.HealthCheckRegistry;
+import org.apache.camel.health.HealthCheckResolver;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
 import org.apache.camel.spi.AnnotationScanTypeConverters;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
@@ -290,6 +291,7 @@ public abstract class AbstractCamelContext extends BaseService
     private volatile ConfigurerResolver configurerResolver;
     private volatile UriFactoryResolver uriFactoryResolver;
     private volatile DataFormatResolver dataFormatResolver;
+    private volatile HealthCheckResolver healthCheckResolver;
     private volatile ManagementStrategy managementStrategy;
     private volatile ManagementMBeanAssembler managementMBeanAssembler;
     private volatile RestRegistryFactory restRegistryFactory;
@@ -3755,6 +3757,7 @@ public abstract class AbstractCamelContext extends BaseService
         getComponentResolver();
         getComponentNameResolver();
         getDataFormatResolver();
+        getHealthCheckResolver();
 
         getExecutorServiceManager();
         getExchangeFactoryManager();
@@ -4330,6 +4333,23 @@ public abstract class AbstractCamelContext extends BaseService
             startupStepRecorder.endStep(step);
         }
         return answer;
+    }
+
+    @Override
+    public HealthCheckResolver getHealthCheckResolver() {
+        if (healthCheckResolver == null) {
+            synchronized (lock) {
+                if (healthCheckResolver == null) {
+                    setHealthCheckResolver(createHealthCheckResolver());
+                }
+            }
+        }
+        return healthCheckResolver;
+    }
+
+    @Override
+    public void setHealthCheckResolver(HealthCheckResolver healthCheckResolver) {
+        this.healthCheckResolver = doAddService(healthCheckResolver);
     }
 
     @Override
@@ -5027,6 +5047,8 @@ public abstract class AbstractCamelContext extends BaseService
     protected abstract RouteFactory createRouteFactory();
 
     protected abstract DataFormatResolver createDataFormatResolver();
+
+    protected abstract HealthCheckResolver createHealthCheckResolver();
 
     protected abstract MessageHistoryFactory createMessageHistoryFactory();
 

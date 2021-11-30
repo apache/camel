@@ -14,22 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spi.annotations;
+package org.apache.camel.impl.health;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.util.Map;
+
+import org.apache.camel.health.HealthCheckResultBuilder;
+import org.apache.camel.spi.annotations.HealthCheck;
 
 /**
- * Internal annotation to mark a class as having constant fields for the source code generator.
+ * Custom health check.
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-@Target({ ElementType.TYPE })
-public @interface ConstantProvider {
+@HealthCheck("myfoo-check")
+public class MyFooHealthCheck extends AbstractHealthCheck {
 
-    String value();
+    public MyFooHealthCheck() {
+        super("acme", "myfoo");
+    }
 
+    @Override
+    protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
+        builder.state(State.DOWN);
+        builder.message("Chaos Monkey was here");
+    }
 }

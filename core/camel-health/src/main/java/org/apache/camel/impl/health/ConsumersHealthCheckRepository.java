@@ -30,15 +30,15 @@ import org.apache.camel.Route;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckConfiguration;
 import org.apache.camel.health.HealthCheckRepository;
-import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.PatternHelper;
 
 /**
  * Repository for consumers {@link HealthCheck}s.
  */
-@JdkService("consumers-health-check-repository")
+@org.apache.camel.spi.annotations.HealthCheck("consumers-repository")
 @DeferredContextBinding
 public class ConsumersHealthCheckRepository implements CamelContextAware, HealthCheckRepository {
+
     private final ConcurrentMap<Consumer, HealthCheck> checks;
     private volatile CamelContext context;
     private Map<String, HealthCheckConfiguration> configurations;

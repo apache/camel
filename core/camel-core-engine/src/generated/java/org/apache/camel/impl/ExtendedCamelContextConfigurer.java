@@ -79,6 +79,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "GlobalOptions": target.setGlobalOptions(property(camelContext, java.util.Map.class, value)); return true;
         case "headersmapfactory":
         case "HeadersMapFactory": target.setHeadersMapFactory(property(camelContext, org.apache.camel.spi.HeadersMapFactory.class, value)); return true;
+        case "healthcheckresolver":
+        case "HealthCheckResolver": target.setHealthCheckResolver(property(camelContext, org.apache.camel.health.HealthCheckResolver.class, value)); return true;
         case "inflightrepository":
         case "InflightRepository": target.setInflightRepository(property(camelContext, org.apache.camel.spi.InflightRepository.class, value)); return true;
         case "injector":
@@ -258,6 +260,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "GlobalOptions": return java.util.Map.class;
         case "headersmapfactory":
         case "HeadersMapFactory": return org.apache.camel.spi.HeadersMapFactory.class;
+        case "healthcheckresolver":
+        case "HealthCheckResolver": return org.apache.camel.health.HealthCheckResolver.class;
         case "inflightrepository":
         case "InflightRepository": return org.apache.camel.spi.InflightRepository.class;
         case "injector":
@@ -438,6 +442,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "GlobalOptions": return target.getGlobalOptions();
         case "headersmapfactory":
         case "HeadersMapFactory": return target.getHeadersMapFactory();
+        case "healthcheckresolver":
+        case "HealthCheckResolver": return target.getHealthCheckResolver();
         case "inflightrepository":
         case "InflightRepository": return target.getInflightRepository();
         case "injector":

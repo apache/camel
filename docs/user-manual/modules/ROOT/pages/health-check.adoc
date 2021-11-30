@@ -79,7 +79,7 @@ Camel supports via `camel-main` to configure health-checks from configuration fi
 such as Camel on Spring Boot, or Camel K.
 
 Camel will automatically enable `context`, `routes`, `consumers`, and `registry` health-checks if `camel-health` is detected on the classpath.
-They are all enabled by default. However, you can configure them, for example to turn it off:
+They are all enabled by default. However, you can configure them, for example to turn them off:
 
 [source,properties]
 ----

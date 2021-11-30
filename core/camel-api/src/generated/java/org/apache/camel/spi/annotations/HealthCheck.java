@@ -23,13 +23,20 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Internal annotation to mark a class as having constant fields for the source code generator.
+ * Marks a class as a custom health-check or health-check repository.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Target({ ElementType.TYPE })
-public @interface ConstantProvider {
+@ServiceFactory("health-check")
+public @interface HealthCheck {
 
+    /**
+     * The ID of the health check.
+     *
+     * Use <tt>-check</tt> as prefix for health checks, and use <tt>-repository</tt> as prefix for health-check repository.
+     * For example to use myfoo as the ID for a health-check, then set this value as <tt>myfoo-check</tt>.
+     */
     String value();
 
 }

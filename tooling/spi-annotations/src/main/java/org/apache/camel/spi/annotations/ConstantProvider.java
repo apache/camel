@@ -22,6 +22,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Internal annotation to mark a class as having constant fields for the source code generator.
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Target({ ElementType.TYPE })

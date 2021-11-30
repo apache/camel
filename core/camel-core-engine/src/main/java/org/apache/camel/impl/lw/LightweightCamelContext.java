@@ -54,6 +54,7 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.ValueHolder;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.catalog.RuntimeCamelCatalog;
+import org.apache.camel.health.HealthCheckResolver;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.FaultToleranceConfigurationDefinition;
@@ -1265,6 +1266,16 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     @Override
     public void setDataFormatResolver(DataFormatResolver dataFormatResolver) {
         getExtendedCamelContext().setDataFormatResolver(dataFormatResolver);
+    }
+
+    @Override
+    public HealthCheckResolver getHealthCheckResolver() {
+        return getExtendedCamelContext().getHealthCheckResolver();
+    }
+
+    @Override
+    public void setHealthCheckResolver(HealthCheckResolver healthCheckResolver) {
+        getExtendedCamelContext().setHealthCheckResolver(healthCheckResolver);
     }
 
     @Override
