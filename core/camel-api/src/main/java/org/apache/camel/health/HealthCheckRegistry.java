@@ -115,4 +115,10 @@ public interface HealthCheckRegistry extends CamelContextAware, StaticService, I
      * Returns a sequential {@code Stream} with the known {@link HealthCheck} as its source.
      */
     Stream<HealthCheck> stream();
+
+    /**
+     * Loads custom health checks by scanning classpath.
+     */
+    void loadHealthChecks();
+
 }
