@@ -163,10 +163,17 @@ The health checks can also be invoked from JMX.
 
 There are a limited number of health checks provided by Camel out of the box,
 so you may need to write your own check which you can do by implementing the _HealthCheck_ interface
-or by extending _AbstractHealthCheck_ which provides some useful methods:
+or by extending _AbstractHealthCheck_ which provides some useful methods.
+
+To make the health-check discoverable you should annotate the class with `@HealthCheck` and
+the _name_-check syntax.
 
 [source,java]
 ----
+import org.apache.camel.spi.annotations.HealthCheck;
+import org.apache.camel.impl.health.AbstractHealthCheck;
+
+@HealthCheck("my-check")
 public final class MyHealthCheck extends AbstractHealthCheck {
 
     public MyHealthCheck() {
@@ -193,7 +200,58 @@ public final class MyHealthCheck extends AbstractHealthCheck {
 You can now make _MyHealthCheck_ available to Camel by adding an instance to (for example Spring application context)
 or directly to the Camel xref:registry.adoc[Registry].
 
-TIP: The example `main-health` has a custom health check.
+=== Loading custom health checks
+
+Camel can discover and load custom health checks from classpath scanning. This requires
+to annotate the custom health checks with `@HealthCheck` annotation on the class (see above).
+
+Then the xref:camel-component-maven-plugin.adoc[camel-component-maven-plugin] can be
+used to automatic generated service loader file in `META-INF/services/org/apache/camel/health-checks` that Camel uses
+to discover the custom health checks.
+
+You must also enable loading custom health check by setting (Camel Main, Camel K, or Camel Quarkus):
+
+[source,properties]
+----
+camel.main.load-health-checks = true
+----
+
+And in Spring Boot:
+
+[source,properties]
+----
+camel.springboot.load-health-checks = true
+----
+
+And if you use the classic Spring XML or Blueprint XML, you can enable this on `<camelContext>` as shown:
+
+[source,xml]
+----
+<camelContext loadHealthChecks="true">
+    ...
+</camelContext>
+----
+
+And of course you can also enable loading health checks from Java via `CamelContext`:
+
+[source,java]
+----
+CamelContext context = ...
+context.setLoadHealthChecks(true);
+----
+
+TIP: The example `main-health` has a custom health check which is loadable.
+
+==== Loading custom health checks in Camel Quarkus
+
+If you use Camel Quarkus then you can write custom health checks with
+xref:components:others:microprofile-health.adoc[MicroProfile Health], which
+Camel Quarkus can automatically discover during build time compilation and ensure
+are automatically loaded.
+
+Using Camel's own health check APIs does however allow building health checks
+that are usable anywhere you use Camel whether its standalone, spring boot, quarkus,
+or something else.
 
 === Writing custom Health Check for Camel components
 
