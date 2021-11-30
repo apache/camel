@@ -16,9 +16,13 @@
  */
 package org.apache.camel.impl.health;
 
+import java.util.Collection;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.health.HealthCheck;
+import org.apache.camel.health.HealthCheckHelper;
+import org.apache.camel.health.HealthCheckRegistry;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -45,4 +49,24 @@ public class MyFooHealthCheckTest extends ContextTestSupport {
         Assertions.assertEquals(HealthCheck.State.DOWN, r.getState());
         Assertions.assertEquals("Chaos Monkey was here", r.getMessage().get());
     }
+
+    @Test
+    public void testAddToRegistry() throws Exception {
+        context.start();
+
+        HealthCheck hc
+                = context.adapt(ExtendedCamelContext.class).getHealthCheckResolver().resolveHealthCheck("myfoo", context);
+        Assertions.assertNotNull(hc);
+
+        HealthCheckRegistry hcr = context.getExtension(HealthCheckRegistry.class);
+        hcr.register(hc);
+
+        Collection<HealthCheck.Result> col = HealthCheckHelper.invoke(context);
+        Assertions.assertEquals(1, col.size());
+
+        HealthCheck.Result r = col.iterator().next();
+        Assertions.assertEquals(HealthCheck.State.DOWN, r.getState());
+        Assertions.assertEquals("Chaos Monkey was here", r.getMessage().get());
+    }
+
 }
