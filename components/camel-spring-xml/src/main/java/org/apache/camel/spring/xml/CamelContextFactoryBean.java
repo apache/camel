@@ -180,6 +180,9 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     @XmlAttribute
     private String typeConverterStatisticsEnabled;
     @XmlAttribute
+    @Metadata(defaultValue = "false")
+    private String loadHealthChecks;
+    @XmlAttribute
     private String inflightRepositoryBrowseEnabled;
     @XmlAttribute
     @Metadata(defaultValue = "Override")
@@ -1154,6 +1157,18 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
      */
     public void setLoadTypeConverters(String loadTypeConverters) {
         this.loadTypeConverters = loadTypeConverters;
+    }
+
+    @Override
+    public String getLoadHealthChecks() {
+        return loadHealthChecks;
+    }
+
+    /**
+     * Whether to load custom health checks by scanning classpath.
+     */
+    public void setLoadHealthChecks(String loadHealthChecks) {
+        this.loadHealthChecks = loadHealthChecks;
     }
 
     @Override

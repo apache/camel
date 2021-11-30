@@ -170,6 +170,9 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
     private String typeConverterStatisticsEnabled;
 
     @XmlAttribute
+    private String loadHealthChecks;
+
+    @XmlAttribute
     private String inflightRepositoryBrowseEnabled;
 
     @XmlAttribute
@@ -891,6 +894,15 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
 
     public void setTypeConverterStatisticsEnabled(String typeConverterStatisticsEnabled) {
         this.typeConverterStatisticsEnabled = typeConverterStatisticsEnabled;
+    }
+
+    @Override
+    public String getLoadHealthChecks() {
+        return loadHealthChecks;
+    }
+
+    public void setLoadHealthChecks(String loadHealthChecks) {
+        this.loadHealthChecks = loadHealthChecks;
     }
 
     @Override
