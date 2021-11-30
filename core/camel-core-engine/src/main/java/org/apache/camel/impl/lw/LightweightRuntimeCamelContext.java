@@ -1178,6 +1178,16 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
+    public Boolean isLoadHealthChecks() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setLoadHealthChecks(Boolean loadHealthChecks) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public Boolean isTypeConverterStatisticsEnabled() {
         throw new UnsupportedOperationException();
     }

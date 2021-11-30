@@ -886,6 +886,16 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     @Override
+    public Boolean isLoadHealthChecks() {
+        return delegate.isLoadHealthChecks();
+    }
+
+    @Override
+    public void setLoadHealthChecks(Boolean loadHealthChecks) {
+        delegate.setLoadHealthChecks(loadHealthChecks);
+    }
+
+    @Override
     public Boolean isDumpRoutes() {
         return delegate.isDumpRoutes();
     }

@@ -209,6 +209,11 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             String s = getContext().resolvePropertyPlaceholders(getLoadTypeConverters());
             getContext().setLoadTypeConverters(Boolean.parseBoolean(s));
         }
+        // setup whether to load health checks as early as possible
+        if (getLoadHealthChecks() != null) {
+            String s = getContext().resolvePropertyPlaceholders(getLoadHealthChecks());
+            getContext().setLoadHealthChecks(Boolean.parseBoolean(s));
+        }
 
         // then set custom properties
         Map<String, String> mergedOptions = new HashMap<>();
@@ -991,6 +996,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
     public abstract String getThreadNamePattern();
 
     public abstract String getLoadTypeConverters();
+
+    public abstract String getLoadHealthChecks();
 
     public abstract String getInflightRepositoryBrowseEnabled();
 

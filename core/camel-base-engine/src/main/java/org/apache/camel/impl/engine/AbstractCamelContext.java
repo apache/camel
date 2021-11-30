@@ -259,6 +259,7 @@ public abstract class AbstractCamelContext extends BaseService
     private Boolean streamCache = Boolean.FALSE;
     private Boolean disableJMX = Boolean.FALSE;
     private Boolean loadTypeConverters = Boolean.FALSE;
+    private Boolean loadHealthChecks = Boolean.FALSE;
     private Boolean typeConverterStatisticsEnabled = Boolean.FALSE;
     private Boolean dumpRoutes = Boolean.FALSE;
     private Boolean useMDCLogging = Boolean.FALSE;
@@ -4191,6 +4192,16 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     public void setLoadTypeConverters(Boolean loadTypeConverters) {
         this.loadTypeConverters = loadTypeConverters;
+    }
+
+    @Override
+    public Boolean isLoadHealthChecks() {
+        return loadHealthChecks != null && loadHealthChecks;
+    }
+
+    @Override
+    public void setLoadHealthChecks(Boolean loadHealthChecks) {
+        this.loadHealthChecks = loadHealthChecks;
     }
 
     @Override
