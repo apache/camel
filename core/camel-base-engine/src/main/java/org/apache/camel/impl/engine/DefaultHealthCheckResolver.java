@@ -17,6 +17,7 @@
 package org.apache.camel.impl.engine;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.health.HealthCheck;
@@ -28,18 +29,29 @@ import org.apache.camel.spi.FactoryFinder;
  * Default health check resolver that looks for health checks factories in
  * <b>META-INF/services/org/apache/camel/health-check/</b>.
  */
-public class DefaultHealthCheckResolver implements HealthCheckResolver {
+public class DefaultHealthCheckResolver implements HealthCheckResolver, CamelContextAware {
 
     public static final String HEALTH_CHECK_RESOURCE_PATH = "META-INF/services/org/apache/camel/health-check/";
 
     protected FactoryFinder healthCheckFactory;
+    private CamelContext camelContext;
 
     @Override
-    public HealthCheck resolveHealthCheck(String id, CamelContext context) {
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
+    @Override
+    public HealthCheck resolveHealthCheck(String id) {
         // lookup in registry first
-        HealthCheck answer = context.getRegistry().lookupByNameAndType(id + "-health-check", HealthCheck.class);
+        HealthCheck answer = camelContext.getRegistry().lookupByNameAndType(id + "-health-check", HealthCheck.class);
         if (answer == null) {
-            answer = context.getRegistry().lookupByNameAndType(id, HealthCheck.class);
+            answer = camelContext.getRegistry().lookupByNameAndType(id, HealthCheck.class);
         }
         if (answer != null) {
             return answer;
@@ -47,7 +59,7 @@ public class DefaultHealthCheckResolver implements HealthCheckResolver {
 
         Class<?> type = null;
         try {
-            type = findHealthCheck(id, context);
+            type = findHealthCheck(id, camelContext);
         } catch (NoFactoryAvailableException e) {
             // ignore
         } catch (Exception e) {
@@ -56,7 +68,7 @@ public class DefaultHealthCheckResolver implements HealthCheckResolver {
 
         if (type != null) {
             if (HealthCheck.class.isAssignableFrom(type)) {
-                return (HealthCheck) context.getInjector().newInstance(type, false);
+                return (HealthCheck) camelContext.getInjector().newInstance(type, false);
             } else {
                 throw new IllegalArgumentException(
                         "Resolving health-check: " + id + " detected type conflict: Not a HealthCheck implementation. Found: "
@@ -68,12 +80,12 @@ public class DefaultHealthCheckResolver implements HealthCheckResolver {
     }
 
     @Override
-    public HealthCheckRepository resolveHealthCheckRepository(String id, CamelContext context) {
+    public HealthCheckRepository resolveHealthCheckRepository(String id) {
         // lookup in registry first
         HealthCheckRepository answer
-                = context.getRegistry().lookupByNameAndType(id + "-health-check-repository", HealthCheckRepository.class);
+                = camelContext.getRegistry().lookupByNameAndType(id + "-health-check-repository", HealthCheckRepository.class);
         if (answer == null) {
-            answer = context.getRegistry().lookupByNameAndType(id, HealthCheckRepository.class);
+            answer = camelContext.getRegistry().lookupByNameAndType(id, HealthCheckRepository.class);
         }
         if (answer != null) {
             return answer;
@@ -81,7 +93,7 @@ public class DefaultHealthCheckResolver implements HealthCheckResolver {
 
         Class<?> type = null;
         try {
-            type = findHealthCheckRepository(id, context);
+            type = findHealthCheckRepository(id, camelContext);
         } catch (NoFactoryAvailableException e) {
             // ignore
         } catch (Exception e) {
@@ -90,7 +102,7 @@ public class DefaultHealthCheckResolver implements HealthCheckResolver {
 
         if (type != null) {
             if (HealthCheckRepository.class.isAssignableFrom(type)) {
-                return (HealthCheckRepository) context.getInjector().newInstance(type, false);
+                return (HealthCheckRepository) camelContext.getInjector().newInstance(type, false);
             } else {
                 throw new IllegalArgumentException(
                         "Resolving health-check-repository: " + id

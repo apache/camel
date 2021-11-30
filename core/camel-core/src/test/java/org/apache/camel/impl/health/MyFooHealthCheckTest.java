@@ -38,7 +38,7 @@ public class MyFooHealthCheckTest extends ContextTestSupport {
         context.start();
 
         HealthCheck hc
-                = context.adapt(ExtendedCamelContext.class).getHealthCheckResolver().resolveHealthCheck("myfoo", context);
+                = context.adapt(ExtendedCamelContext.class).getHealthCheckResolver().resolveHealthCheck("myfoo");
         Assertions.assertNotNull(hc);
 
         Assertions.assertEquals("acme", hc.getGroup());
@@ -55,7 +55,7 @@ public class MyFooHealthCheckTest extends ContextTestSupport {
         context.start();
 
         HealthCheck hc
-                = context.adapt(ExtendedCamelContext.class).getHealthCheckResolver().resolveHealthCheck("myfoo", context);
+                = context.adapt(ExtendedCamelContext.class).getHealthCheckResolver().resolveHealthCheck("myfoo");
         Assertions.assertNotNull(hc);
 
         HealthCheckRegistry hcr = context.getExtension(HealthCheckRegistry.class);

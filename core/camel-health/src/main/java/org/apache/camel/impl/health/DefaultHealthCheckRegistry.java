@@ -127,7 +127,7 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
                 .orElse(camelContext.getRegistry().findByTypeWithName(HealthCheck.class).get(id));
         if (answer == null) {
             HealthCheckResolver resolver = camelContext.adapt(ExtendedCamelContext.class).getHealthCheckResolver();
-            answer = resolver.resolveHealthCheck(id, camelContext);
+            answer = resolver.resolveHealthCheck(id);
         }
 
         return answer;
@@ -140,7 +140,7 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
         if (answer == null) {
             // discover via classpath (try first via -health-check-repository and then id as-is)
             HealthCheckResolver resolver = camelContext.adapt(ExtendedCamelContext.class).getHealthCheckResolver();
-            answer = resolver.resolveHealthCheckRepository(id, camelContext);
+            answer = resolver.resolveHealthCheckRepository(id);
         }
 
         return answer;

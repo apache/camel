@@ -62,7 +62,7 @@ public class DefaultHealthChecksLoader {
                 if (acceptResource(resource)) {
                     String id = extractId(resource);
                     LOG.trace("Loading HealthCheck: {}", id);
-                    HealthCheck hc = healthCheckResolver.resolveHealthCheck(id, camelContext);
+                    HealthCheck hc = healthCheckResolver.resolveHealthCheck(id);
                     if (hc != null) {
                         LOG.debug("Loaded HealthCheck: {}/{}", hc.getGroup(), hc.getId());
                         answer.add(hc);
@@ -84,7 +84,7 @@ public class DefaultHealthChecksLoader {
         }
 
         // this is an out of the box health-check
-        if (loc.endsWith("context-health")) {
+        if (loc.endsWith("context-check")) {
             return false;
         }
 
@@ -93,7 +93,12 @@ public class DefaultHealthChecksLoader {
 
     protected String extractId(Resource resource) {
         String loc = resource.getLocation();
-        return StringHelper.after(loc, META_INF_SERVICES + "/");
+        loc = StringHelper.after(loc, META_INF_SERVICES + "/");
+        // remove -check suffix
+        if (loc != null && loc.endsWith("-check")) {
+            loc = loc.substring(0, loc.length() - 6);
+        }
+        return loc;
     }
 
 }
