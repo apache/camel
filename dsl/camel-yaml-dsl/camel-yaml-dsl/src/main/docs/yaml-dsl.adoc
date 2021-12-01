@@ -90,13 +90,13 @@ filter:
 
 - *Data Format Aware Steps*
 +
-Some EIP such as `set-body` and `marshal` supports the definition of data formats through the `data-format` field:
+The EIP `marshal` and `unmarshal` supports the definition of data formats through the `data-format-type` field:
 +
 [source,yaml]
 .Explicit Data Format field
 ----
-set-body:
-    data-format:
+marshal:
+    data-format-type:
       json:
         library: Gson
 ----
@@ -106,7 +106,7 @@ To make the DSL less verbose, the `data-format` field can be omitted:
 [source,yaml]
 .Implicit Data Format field
 ----
-set-body:
+marshal:
     json:
       library: Gson
 ----
