@@ -34,7 +34,7 @@ public class HystrixHierarchicalConfigTest {
     public void testRegistryConfiguration() throws Exception {
         final SimpleRegistry registry = new SimpleRegistry();
         final CamelContext context = new DefaultCamelContext(registry);
-        final Route route = new DefaultRoute(context, null, null, null, null);
+        final Route route = new DefaultRoute(context, null, null, null, null, null);
 
         HystrixConfigurationDefinition def = new HystrixConfigurationDefinition();
         def.setGroupKey("global-group-key");
@@ -66,7 +66,7 @@ public class HystrixHierarchicalConfigTest {
     @Test
     public void testContextConfiguration() throws Exception {
         final CamelContext context = new DefaultCamelContext();
-        final Route route = new DefaultRoute(context, null, null, null, null);
+        final Route route = new DefaultRoute(context, null, null, null, null, null);
 
         HystrixConfigurationDefinition def = new HystrixConfigurationDefinition();
         def.setGroupKey("global-group-key");
@@ -99,7 +99,7 @@ public class HystrixHierarchicalConfigTest {
     public void testMixedConfiguration() throws Exception {
         final SimpleRegistry registry = new SimpleRegistry();
         final CamelContext context = new DefaultCamelContext(registry);
-        final Route route = new DefaultRoute(context, null, null, null, null);
+        final Route route = new DefaultRoute(context, null, null, null, null, null);
 
         HystrixConfigurationDefinition def = new HystrixConfigurationDefinition();
         def.setGroupKey("global-group-key");
