@@ -26,6 +26,14 @@ jbang CamelJBang@apache/camel [command]
 
 All the commands support the `--help` and will display the appropriate help if that flag is provided.
 
+=== Troubleshooting
+
+When using https://www.jbang.dev/[JBang] then JBang stores state in `~/.jbang` directory.
+This is also the location where JBang stores downloaded JARs.
+
+So if you find problems with JBang using what is seems like an outdated JAR, then you can
+try to delete this directory, or parts of it.
+
 === Using a specific Camel version
 
 You can specify which Camel version to run as shown:
