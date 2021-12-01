@@ -10,6 +10,11 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 
 Added method `updateRoutesToCamelContext` to `org.apache.camel.RoutesBuilder` interface.
 
+=== camel-kafka
+
+The APIs in `camel-kafka` component changed from using the Kafka Client classes `org.apache.kafka.clients.producer.KafkaProducer` and `org.apache.kafka.clients.consumer.KafkaConsumer`
+to their interfaces `org.apache.kafka.clients.producer.Producer` and `org.apache.kafka.clients.consumer.Consumer` instead.
+
 === camel-jbang
 
 The option `debug-level` has been renamed to `logging-level` because the option is for configuring the logging level.
