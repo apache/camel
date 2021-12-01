@@ -38,8 +38,8 @@ class Run implements Callable<Integer> {
     private File lockFile;
     private ScheduledExecutorService executor;
 
-    @Parameters(description = "The path to the kamelet binding", arity = "0..1")
-    private String binding;
+    @Parameters(description = "The Camel file to run", arity = "0..1")
+    private String file;
 
     //CHECKSTYLE:OFF
     @Option(names = { "-h", "--help" }, usageHelp = true, description = "Display the help and sub-commands")
@@ -150,16 +150,16 @@ class Run implements Callable<Integer> {
             }, 1000, 1000, TimeUnit.MILLISECONDS);
         }
 
-        if (!ResourceHelper.hasScheme(binding) && !binding.startsWith("github:")) {
-            binding = "file:" + binding;
+        if (!ResourceHelper.hasScheme(file) && !file.startsWith("github:")) {
+            file = "file:" + file;
         }
-        main.addInitialProperty("camel.main.routesIncludePattern", binding);
+        main.addInitialProperty("camel.main.routesIncludePattern", file);
 
-        if (binding.startsWith("file:")) {
+        if (file.startsWith("file:")) {
             // check if file exist
-            File bindingFile = new File(binding.substring(5));
-            if (!bindingFile.exists() && !bindingFile.isFile()) {
-                System.err.println("The binding file does not exist");
+            File inputFile = new File(file.substring(5));
+            if (!inputFile.exists() && !inputFile.isFile()) {
+                System.err.println("File does not exist: " + file);
                 return 1;
             }
 
@@ -168,7 +168,7 @@ class Run implements Callable<Integer> {
                 main.addInitialProperty("camel.main.routesReloadEnabled", "true");
                 main.addInitialProperty("camel.main.routesReloadDirectory", ".");
                 // skip file: as prefix
-                main.addInitialProperty("camel.main.routesReloadPattern", binding.substring(5));
+                main.addInitialProperty("camel.main.routesReloadPattern", file.substring(5));
                 // do not shutdown the JVM but stop routes when max duration is triggered
                 main.addInitialProperty("camel.main.durationMaxAction", "stop");
             }
