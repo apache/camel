@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
+import java.util.StringJoiner;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -38,8 +39,8 @@ class Run implements Callable<Integer> {
     private File lockFile;
     private ScheduledExecutorService executor;
 
-    @Parameters(description = "The Camel file to run", arity = "0..1")
-    private String file;
+    @Parameters(description = "The Camel file(s) to run", arity = "1")
+    private String[] files;
 
     //CHECKSTYLE:OFF
     @Option(names = { "-h", "--help" }, usageHelp = true, description = "Display the help and sub-commands")
@@ -150,28 +151,38 @@ class Run implements Callable<Integer> {
             }, 1000, 1000, TimeUnit.MILLISECONDS);
         }
 
-        if (!ResourceHelper.hasScheme(file) && !file.startsWith("github:")) {
-            file = "file:" + file;
-        }
-        main.addInitialProperty("camel.main.routesIncludePattern", file);
+        StringJoiner js = new StringJoiner(",");
+        StringJoiner sjReload = new StringJoiner(",");
+        for (String file : files) {
+            if (!ResourceHelper.hasScheme(file) && !file.startsWith("github:")) {
+                file = "file:" + file;
+            }
 
-        if (file.startsWith("file:")) {
             // check if file exist
-            File inputFile = new File(file.substring(5));
-            if (!inputFile.exists() && !inputFile.isFile()) {
-                System.err.println("File does not exist: " + file);
-                return 1;
+            if (file.startsWith("file:")) {
+                File inputFile = new File(file.substring(5));
+                if (!inputFile.exists() && !inputFile.isFile()) {
+                    System.err.println("File does not exist: " + files);
+                    return 1;
+                }
             }
 
-            // we can only reload if file based
-            if (reload) {
-                main.addInitialProperty("camel.main.routesReloadEnabled", "true");
-                main.addInitialProperty("camel.main.routesReloadDirectory", ".");
-                // skip file: as prefix
-                main.addInitialProperty("camel.main.routesReloadPattern", file.substring(5));
-                // do not shutdown the JVM but stop routes when max duration is triggered
-                main.addInitialProperty("camel.main.durationMaxAction", "stop");
+            js.add(file);
+            if (reload && file.startsWith("file:")) {
+                // we can only reload if file based
+                sjReload.add(file.substring(5));
             }
+        }
+        main.addInitialProperty("camel.main.routesIncludePattern", js.toString());
+
+        // we can only reload if file based
+        if (reload && sjReload.length() > 0) {
+            main.addInitialProperty("camel.main.routesReloadEnabled", "true");
+            main.addInitialProperty("camel.main.routesReloadDirectory", ".");
+            // skip file: as prefix
+            main.addInitialProperty("camel.main.routesReloadPattern", sjReload.toString());
+            // do not shutdown the JVM but stop routes when max duration is triggered
+            main.addInitialProperty("camel.main.durationMaxAction", "stop");
         }
 
         if (propertiesFiles != null) {
