@@ -93,6 +93,21 @@ You can also mix different xref:dsl.adoc[DSLs] such as yaml and Java:
 jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel run one.yaml hello.java
 ----
 
+You can also use wildcards (i.e. `*`) to match multiple files, such as running all the yaml files:
+
+[source,bash]
+----
+jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel run *.yaml
+----
+
+Or you can run all files starting with foo*
+
+[source,bash]
+----
+jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel run foo*
+----
+
+TIP: The run goal can also detect files that are `properties`.
 
 === Live reload
 
