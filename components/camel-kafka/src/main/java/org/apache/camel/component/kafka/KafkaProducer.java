@@ -56,7 +56,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
     private static final Logger LOG = LoggerFactory.getLogger(KafkaProducer.class);
 
     @SuppressWarnings("rawtypes")
-    private org.apache.kafka.clients.producer.KafkaProducer kafkaProducer;
+    private org.apache.kafka.clients.producer.Producer kafkaProducer;
     private final KafkaEndpoint endpoint;
     private final KafkaConfiguration configuration;
     private ExecutorService workerPool;
@@ -89,7 +89,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
     }
 
     @SuppressWarnings("rawtypes")
-    public org.apache.kafka.clients.producer.KafkaProducer getKafkaProducer() {
+    public org.apache.kafka.clients.producer.Producer getKafkaProducer() {
         return kafkaProducer;
     }
 
@@ -97,7 +97,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
      * To use a custom {@link org.apache.kafka.clients.producer.KafkaProducer} instance.
      */
     @SuppressWarnings("rawtypes")
-    public void setKafkaProducer(org.apache.kafka.clients.producer.KafkaProducer kafkaProducer) {
+    public void setKafkaProducer(org.apache.kafka.clients.producer.Producer kafkaProducer) {
         this.kafkaProducer = kafkaProducer;
     }
 

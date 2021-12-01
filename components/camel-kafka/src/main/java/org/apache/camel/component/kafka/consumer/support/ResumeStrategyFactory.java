@@ -19,7 +19,7 @@ package org.apache.camel.component.kafka.consumer.support;
 
 import org.apache.camel.component.kafka.KafkaConfiguration;
 import org.apache.camel.spi.StateRepository;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.consumer.Consumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +30,7 @@ public final class ResumeStrategyFactory {
     private static class NoOpKafkaConsumerResumeStrategy implements KafkaConsumerResumeStrategy {
         @SuppressWarnings("unused")
         @Override
-        public void resume(KafkaConsumer<?, ?> consumer) {
+        public void resume(Consumer<?, ?> consumer) {
             // NO-OP
         }
     }

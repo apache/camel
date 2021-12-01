@@ -17,7 +17,7 @@
 
 package org.apache.camel.component.kafka.consumer.support;
 
-import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.consumer.Consumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
  * A resume strategy that uses Camel's seekTo configuration for resuming
  */
 public class SeekPolicyKafkaConsumerResumeStrategy implements KafkaConsumerResumeStrategy {
+
     private static final Logger LOG = LoggerFactory.getLogger(SeekPolicyKafkaConsumerResumeStrategy.class);
 
     private final String seekPolicy;
@@ -34,7 +35,7 @@ public class SeekPolicyKafkaConsumerResumeStrategy implements KafkaConsumerResum
     }
 
     @Override
-    public void resume(final KafkaConsumer<?, ?> consumer) {
+    public void resume(final Consumer<?, ?> consumer) {
         if (seekPolicy.equals("beginning")) {
             LOG.debug("Seeking from the beginning of topic");
             consumer.seekToBeginning(consumer.assignment());

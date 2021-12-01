@@ -131,7 +131,7 @@ public class KafkaProducerTest {
     public void processSendsMessageWithException() {
         endpoint.getConfiguration().setTopic("sometopic");
         // setup the exception here
-        org.apache.kafka.clients.producer.KafkaProducer kp = producer.getKafkaProducer();
+        org.apache.kafka.clients.producer.Producer kp = producer.getKafkaProducer();
         Mockito.when(kp.send(any(ProducerRecord.class))).thenThrow(new ApiException());
         Mockito.when(exchange.getIn()).thenReturn(in);
         Mockito.when(exchange.getMessage()).thenReturn(in);
@@ -165,7 +165,7 @@ public class KafkaProducerTest {
         Mockito.when(exchange.getMessage()).thenReturn(in);
 
         // setup the exception here
-        org.apache.kafka.clients.producer.KafkaProducer kp = producer.getKafkaProducer();
+        org.apache.kafka.clients.producer.Producer kp = producer.getKafkaProducer();
         Mockito.when(kp.send(any(ProducerRecord.class), any(Callback.class))).thenThrow(new ApiException());
 
         in.setHeader(KafkaConstants.PARTITION_KEY, 4);

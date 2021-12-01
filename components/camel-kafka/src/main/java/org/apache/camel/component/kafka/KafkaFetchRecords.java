@@ -49,7 +49,7 @@ class KafkaFetchRecords implements Runnable {
     private static final Logger LOG = LoggerFactory.getLogger(KafkaFetchRecords.class);
 
     private final KafkaConsumer kafkaConsumer;
-    private org.apache.kafka.clients.consumer.KafkaConsumer consumer;
+    private org.apache.kafka.clients.consumer.Consumer consumer;
     private final String topicName;
     private final Pattern topicPattern;
     private final String threadId;
