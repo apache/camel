@@ -77,6 +77,23 @@ jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel run jms-amqp-10-sink-
 
 NOTE: it is necessary to have a AMQP 1.0 broker, such as Apache Artemis, running locally and listening on port 61616. Adjust the route accordingly if using a different address for the broker.
 
+=== Running Routes from multiple files
+
+You can run more than 1 file, for example to run two YAML files you can do:
+
+[source,bash]
+----
+jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel run one.yaml two.yaml
+----
+
+You can also mix different xref:dsl.adoc[DSLs] such as yaml and Java:
+
+[source,bash]
+----
+jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel run one.yaml hello.java
+----
+
+
 === Live reload
 
 You can enable live reload of the route(s) when the source file is updated (saved),
