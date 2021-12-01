@@ -37,7 +37,7 @@ jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel [command]
 
 == Running Routes
 
-You can run Camel routes from any of the supported DSLs in Camel such as YAML, XML, Java, Groovy.
+You can run Camel routes from any of the supported xref:dsl.adoc[DSLs] in Camel such as YAML, XML, Java, Groovy.
 
 For example to run YAML-based routes which also refer to Kamelets in the catalog.
 In order to do so, write a YAML-based file with the `route`, the `steps` and the `to` destination for the route. The following example, shows a route that uses the Timer Source Kamelet to produce messages every second. The body of the messages will be logged to the standard output. Subsequently, they will be sent to a AMQP 1.0 compliant broker using the JMS AMQ 1.0 Sink Kamelet.
