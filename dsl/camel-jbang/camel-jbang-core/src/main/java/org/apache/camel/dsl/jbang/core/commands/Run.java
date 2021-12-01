@@ -29,6 +29,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.util.ObjectHelper;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
@@ -154,12 +155,23 @@ class Run implements Callable<Integer> {
         StringJoiner js = new StringJoiner(",");
         StringJoiner sjReload = new StringJoiner(",");
         for (String file : files) {
+            // check for properties files
+            if (file.endsWith(".properties")) {
+                if (ObjectHelper.isEmpty(propertiesFiles)) {
+                    propertiesFiles = file;
+                } else {
+                    propertiesFiles = propertiesFiles + "," + file;
+                }
+                continue;
+            }
+
+            // Camel DSL files
+
             if (!ResourceHelper.hasScheme(file) && !file.startsWith("github:")) {
                 file = "file:" + file;
             }
-
-            // check if file exist
             if (file.startsWith("file:")) {
+                // check if file exist
                 File inputFile = new File(file.substring(5));
                 if (!inputFile.exists() && !inputFile.isFile()) {
                     System.err.println("File does not exist: " + files);
