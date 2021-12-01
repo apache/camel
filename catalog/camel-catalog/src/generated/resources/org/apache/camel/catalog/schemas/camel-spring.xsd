@@ -15322,6 +15322,13 @@ org.apache.camel.api.management.mbean.ManagedTypeConverterRegistryMBean mbean.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="loadHealthChecks" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Whether to load custom health checks by scanning classpath. Default value: false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="inflightRepositoryBrowseEnabled" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
