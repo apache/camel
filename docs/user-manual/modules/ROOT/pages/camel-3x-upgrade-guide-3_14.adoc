@@ -10,6 +10,8 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 
 Added method `updateRoutesToCamelContext` to `org.apache.camel.RoutesBuilder` interface.
 
+Added parameter `Resource` in `createRoute` method on `org.apache.camel.spi.RouteFactory`.
+
 === camel-kafka
 
 The APIs in `camel-kafka` component changed from using the Kafka Client classes `org.apache.kafka.clients.producer.KafkaProducer` and `org.apache.kafka.clients.consumer.KafkaConsumer`
