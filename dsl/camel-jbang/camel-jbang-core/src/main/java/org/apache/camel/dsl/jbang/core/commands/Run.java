@@ -174,7 +174,7 @@ class Run implements Callable<Integer> {
                 // check if file exist
                 File inputFile = new File(file.substring(5));
                 if (!inputFile.exists() && !inputFile.isFile()) {
-                    System.err.println("File does not exist: " + files);
+                    System.err.println("File does not exist: " + file);
                     return 1;
                 }
             }

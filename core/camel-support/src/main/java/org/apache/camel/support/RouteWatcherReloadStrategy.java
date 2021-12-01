@@ -132,17 +132,31 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
     }
 
     protected void onRouteReload(String name, Resource resource) {
+        // remember all existing resources
+        List<Resource> sources = new ArrayList<>();
+
         try {
             // should all existing routes be stopped and removed first?
             if (removeAllRoutes) {
+                // remember all the sources of the current routes (except the updated)
+                getCamelContext().getRoutes().forEach(r -> {
+                    Resource rs = r.getSourceResource();
+                    if (rs != null && !rs.getLocation().equals(resource.getLocation())) {
+                        sources.add(rs);
+                    }
+                });
                 // first stop and remove all routes
                 getCamelContext().getRouteController().removeAllRoutes();
                 // remove left-over route templates and endpoints, so we can start on a fresh
                 getCamelContext().removeRouteTemplates("*");
                 getCamelContext().getEndpointRegistry().clear();
             }
+
+            sources.add(resource);
+
+            // reload those other routes that was stopped and removed as we want to keep running those
             Set<String> ids
-                    = getCamelContext().adapt(ExtendedCamelContext.class).getRoutesLoader().updateRoutes(resource);
+                    = getCamelContext().adapt(ExtendedCamelContext.class).getRoutesLoader().updateRoutes(sources);
             if (!ids.isEmpty()) {
                 List<String> lines = new ArrayList<>();
                 int total = 0;
@@ -153,10 +167,12 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                     if (ServiceStatus.Started.name().equals(status)) {
                         started++;
                     }
+                    Route route = getCamelContext().getRoute(id);
                     // use basic endpoint uri to not log verbose details or potential sensitive data
-                    String uri = getCamelContext().getRoute(id).getEndpoint().getEndpointBaseUri();
+                    String uri = route.getEndpoint().getEndpointBaseUri();
                     uri = URISupport.sanitizeUri(uri);
-                    lines.add(String.format("    %s %s (%s)", status, id, uri));
+                    String loc = route.getSourceResource() != null ? route.getSourceResource().getLocation() : "";
+                    lines.add(String.format("    %s %s (%s) (source: %s)", status, id, uri, loc));
                 }
                 LOG.info(String.format("Routes reloaded summary (total:%s started:%s)", total, started));
                 // if we are default/verbose then log each route line
@@ -167,6 +183,7 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                     }
                 }
             }
+
             // fire events for routes reloaded
             for (String id : ids) {
                 Route route = getCamelContext().getRoute(id);
