@@ -72,6 +72,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     protected final Route route;
     protected final String description;
     protected final String configurationId;
+    protected final String sourceLocation;
     protected final CamelContext context;
     private final LoadTriplet load = new LoadTriplet();
     private final String jmxDomain;
@@ -81,6 +82,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         this.context = context;
         this.description = route.getDescription();
         this.configurationId = route.getConfigurationId();
+        this.sourceLocation = route.getSourceResource() != null ? route.getSourceResource().getLocation() : null;
         this.jmxDomain = context.getManagementStrategy().getManagementAgent().getMBeanObjectDomainName();
     }
 
@@ -142,6 +144,11 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     @Override
     public String getDescription() {
         return description;
+    }
+
+    @Override
+    public String getSourceLocation() {
+        return sourceLocation;
     }
 
     @Override

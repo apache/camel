@@ -3068,8 +3068,13 @@ public abstract class AbstractCamelContext extends BaseService
                 // use basic endpoint uri to not log verbose details or potential sensitive data
                 String uri = order.getRoute().getEndpoint().getEndpointBaseUri();
                 uri = URISupport.sanitizeUri(uri);
-                lines.add(String.format("    %s %s (%s)", status, id, uri));
-
+                String loc = order.getRoute().getSourceResource() != null
+                        ? order.getRoute().getSourceResource().getLocation() : null;
+                if (startupSummaryLevel == StartupSummaryLevel.Verbose && loc != null) {
+                    lines.add(String.format("    %s %s (%s) (source: %s)", status, id, uri, loc));
+                } else {
+                    lines.add(String.format("    %s %s (%s)", status, id, uri));
+                }
                 String cid = order.getRoute().getConfigurationId();
                 if (cid != null) {
                     configs.add(String.format("    %s (%s)", id, cid));
@@ -3087,7 +3092,12 @@ public abstract class AbstractCamelContext extends BaseService
                     // use basic endpoint uri to not log verbose details or potential sensitive data
                     String uri = route.getEndpoint().getEndpointBaseUri();
                     uri = URISupport.sanitizeUri(uri);
-                    lines.add(String.format("    %s %s (%s)", status, id, uri));
+                    String loc = route.getSourceResource() != null ? route.getSourceResource().getLocation() : null;
+                    if (startupSummaryLevel == StartupSummaryLevel.Verbose && loc != null) {
+                        lines.add(String.format("    %s %s (%s) (source: %s)", status, id, uri, loc));
+                    } else {
+                        lines.add(String.format("    %s %s (%s)", status, id, uri));
+                    }
 
                     String cid = route.getConfigurationId();
                     if (cid != null) {

@@ -46,6 +46,7 @@ import org.apache.camel.model.rest.RestBindingDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.spi.AsEndpointUri;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RoutePolicy;
 
 /**
@@ -88,6 +89,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
     private List<PropertyDefinition> routeProperties;
     private Map<String, Object> templateParameters;
     private RouteTemplateContext routeTemplateContext;
+    private Resource resource;
 
     public RouteDefinition() {
     }
@@ -700,6 +702,15 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
     @XmlTransient
     public void setRouteTemplateContext(RouteTemplateContext routeTemplateContext) {
         this.routeTemplateContext = routeTemplateContext;
+    }
+
+    public Resource getResource() {
+        return resource;
+    }
+
+    @XmlTransient
+    public void setResource(Resource resource) {
+        this.resource = resource;
     }
 
     // Properties

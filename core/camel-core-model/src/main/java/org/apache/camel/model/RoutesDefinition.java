@@ -32,6 +32,7 @@ import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.spi.AsEndpointUri;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.Resource;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.PatternHelper;
 import org.slf4j.Logger;
@@ -64,6 +65,8 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
     private CamelContext camelContext;
     @XmlTransient
     private ErrorHandlerFactory errorHandlerFactory;
+    @XmlTransient
+    private Resource resource;
 
     public RoutesDefinition() {
     }
@@ -151,6 +154,14 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
         this.errorHandlerFactory = errorHandlerFactory;
     }
 
+    public Resource getResource() {
+        return resource;
+    }
+
+    public void setResource(Resource resource) {
+        this.resource = resource;
+    }
+
     // Fluent API
     // -------------------------------------------------------------------------
 
@@ -221,6 +232,9 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
 
         // reset before preparing route
         route.resetPrepare();
+
+        // remember the source resource
+        route.setResource(resource);
 
         // merge global and route scoped together
         List<OnExceptionDefinition> oe = new ArrayList<>(onExceptions);
