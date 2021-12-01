@@ -26,8 +26,13 @@ package main;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 
+/**
+ * Main to run CamelJBang
+ */
 public class CamelJBang {
+
     public static void main(String... args) {
         CamelJBangMain.run(args);
     }
+
 }
