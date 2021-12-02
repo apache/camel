@@ -21,6 +21,7 @@ import java.util.Properties;
 import java.util.function.Predicate;
 
 import org.apache.camel.spi.LoadablePropertiesSource;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.OrderedProperties;
 
@@ -66,6 +67,23 @@ public abstract class AbstractLocationPropertiesSource extends ServiceSupport
     }
 
     @Override
+    public void reloadProperties(String location) {
+        String resolver = null;
+        if (ResourceHelper.hasScheme(location)) {
+            resolver = ResourceHelper.getScheme(location);
+            location = location.substring(resolver.length());
+        }
+        PropertiesLocation loc = new PropertiesLocation(resolver, location);
+        Properties prop = loadPropertiesFromLocation(propertiesComponent, loc);
+        if (prop != null) {
+            prop = prepareLoadedProperties(prop);
+            // need to clear in case some properties was removed
+            properties.clear();
+            properties.putAll(prop);
+        }
+    }
+
+    @Override
     public String getProperty(String name) {
         return properties.getProperty(name);
     }
@@ -85,7 +103,7 @@ public abstract class AbstractLocationPropertiesSource extends ServiceSupport
      * Strategy to prepare loaded properties before being used by Camel.
      * <p/>
      * This implementation will ensure values are trimmed, as loading properties from a file with values having trailing
-     * spaces is not automatic trimmed by the Properties API from the JDK.
+     * spaces is not automatically trimmed by the Properties API from the JDK.
      *
      * @param  properties the properties
      * @return            the prepared properties
@@ -99,7 +117,7 @@ public abstract class AbstractLocationPropertiesSource extends ServiceSupport
                 String s = (String) value;
 
                 // trim any trailing spaces which can be a problem when loading from
-                // a properties file, note that java.util.Properties does already this
+                // a properties file, note that java.util.Properties do already this
                 // for any potential leading spaces so there's nothing to do there
                 value = trimTrailingWhitespaces(s);
             }

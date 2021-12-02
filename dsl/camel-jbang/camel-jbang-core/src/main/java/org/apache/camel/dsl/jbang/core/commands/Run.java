@@ -157,10 +157,17 @@ class Run implements Callable<Integer> {
         for (String file : files) {
             // check for properties files
             if (file.endsWith(".properties")) {
+                if (!ResourceHelper.hasScheme(file) && !file.startsWith("github:")) {
+                    file = "file:" + file;
+                }
                 if (ObjectHelper.isEmpty(propertiesFiles)) {
                     propertiesFiles = file;
                 } else {
                     propertiesFiles = propertiesFiles + "," + file;
+                }
+                if (reload && file.startsWith("file:")) {
+                    // we can only reload if file based
+                    sjReload.add(file.substring(5));
                 }
                 continue;
             }
