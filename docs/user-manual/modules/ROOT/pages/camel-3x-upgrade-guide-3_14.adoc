@@ -12,6 +12,8 @@ Added method `updateRoutesToCamelContext` to `org.apache.camel.RoutesBuilder` in
 
 Added parameter `Resource` in `createRoute` method on `org.apache.camel.spi.RouteFactory`.
 
+Added method `reloadProperties` to `org.apache.camel.spi.LoadablePropertiesSource`.
+
 === camel-kafka
 
 The APIs in `camel-kafka` component changed from using the Kafka Client classes `org.apache.kafka.clients.producer.KafkaProducer` and `org.apache.kafka.clients.consumer.KafkaConsumer`
