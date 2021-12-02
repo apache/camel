@@ -19,6 +19,9 @@ Added method `reloadProperties` to `org.apache.camel.spi.LoadablePropertiesSourc
 The APIs in `camel-kafka` component changed from using the Kafka Client classes `org.apache.kafka.clients.producer.KafkaProducer` and `org.apache.kafka.clients.consumer.KafkaConsumer`
 to their interfaces `org.apache.kafka.clients.producer.Producer` and `org.apache.kafka.clients.consumer.Consumer` instead.
 
+The option `KafkaManualCommitFactory` on component is now autowired, if there exists a single
+custom factory in the registry.
+
 === camel-jbang
 
 The option `debug-level` has been renamed to `logging-level` because the option is for configuring the logging level.
