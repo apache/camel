@@ -107,13 +107,12 @@ public class KeyValueHolderIterator implements Iterator<KeyValueHolder<Object, P
     }
 
     private Long getOverrideTimestamp(Message innerMessage) {
-        Object objTimestamp = innerMessage.getHeader(KafkaConstants.OVERRIDE_TIMESTAMP);
-
-        if (hasValidTimestampHeader(objTimestamp)) {
-            return (Long) innerMessage.removeHeader(KafkaConstants.OVERRIDE_TIMESTAMP);
+        Long timeStamp = null;
+        Object overrideTimeStamp = innerMessage.removeHeader(KafkaConstants.OVERRIDE_TIMESTAMP);
+        if (overrideTimeStamp != null) {
+            timeStamp = exchange.getContext().getTypeConverter().convertTo(Long.class, exchange, overrideTimeStamp);
         }
-
-        return null;
+        return timeStamp;
     }
 
     private String getInnerTopic(Message innerMessage) {

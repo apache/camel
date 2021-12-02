@@ -176,9 +176,9 @@ public class KafkaProducer extends DefaultAsyncProducer {
 
         Long timeStamp = null;
         Object overrideTimeStamp = message.removeHeader(KafkaConstants.OVERRIDE_TIMESTAMP);
-        if (overrideTimeStamp instanceof Long) {
+        if (overrideTimeStamp != null) {
+            timeStamp = exchange.getContext().getTypeConverter().convertTo(Long.class, exchange, overrideTimeStamp);
             LOG.debug("Using override TimeStamp: {}", overrideTimeStamp);
-            timeStamp = (Long) overrideTimeStamp;
         }
 
         // extracting headers which need to be propagated

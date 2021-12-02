@@ -222,8 +222,10 @@ public class KafkaProducerTest {
         in.setHeader(KafkaConstants.PARTITION_KEY, 4);
         in.setHeader(KafkaConstants.OVERRIDE_TOPIC, "anotherTopic");
         in.setHeader(KafkaConstants.KEY, "someKey");
-        in.setHeader(KafkaConstants.OVERRIDE_TIMESTAMP,
-                LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+
+        // test using a string value instead of long
+        String time = "" + LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        in.setHeader(KafkaConstants.OVERRIDE_TIMESTAMP, time);
 
         producer.process(exchange);
 
