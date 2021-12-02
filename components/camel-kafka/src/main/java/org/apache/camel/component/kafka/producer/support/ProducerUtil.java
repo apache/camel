@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.kafka.producer.support;
 
 import java.nio.ByteBuffer;
@@ -30,7 +29,6 @@ import org.apache.kafka.common.utils.Bytes;
 public final class ProducerUtil {
 
     private ProducerUtil() {
-
     }
 
     public static Object tryConvertToSerializedType(Exchange exchange, Object object, String valueSerializer) {

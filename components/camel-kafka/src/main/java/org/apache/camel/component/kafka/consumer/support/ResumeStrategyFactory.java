@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.kafka.consumer.support;
 
 import org.apache.camel.component.kafka.KafkaConfiguration;
@@ -24,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class ResumeStrategyFactory {
+
     /**
      * A NO-OP resume strategy that does nothing (i.e.: no resume)
      */
@@ -42,7 +42,6 @@ public final class ResumeStrategyFactory {
     }
 
     public static KafkaConsumerResumeStrategy newResumeStrategy(KafkaConfiguration configuration) {
-
         if (configuration.getResumeStrategy() != null) {
             return configuration.getResumeStrategy();
         }

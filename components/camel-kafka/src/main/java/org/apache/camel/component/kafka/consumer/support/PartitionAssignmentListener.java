@@ -51,7 +51,7 @@ public class PartitionAssignmentListener implements ConsumerRebalanceListener {
         this.lastProcessedOffset = lastProcessedOffset;
         this.stopStateSupplier = stopStateSupplier;
 
-        resumeStrategy = ResumeStrategyFactory.newResumeStrategy(configuration);
+        this.resumeStrategy = ResumeStrategyFactory.newResumeStrategy(configuration);
     }
 
     @Override
