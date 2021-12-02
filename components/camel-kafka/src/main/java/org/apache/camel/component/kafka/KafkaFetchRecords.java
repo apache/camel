@@ -404,7 +404,7 @@ class KafkaFetchRecords implements Runnable {
                 kafkaConsumer.getEndpoint().getConfiguration(),
                 kafkaConsumer.getProcessor(),
                 consumer,
-                kafkaConsumer.getEndpoint().getComponent().getKafkaManualCommitFactory(), threadId, asyncCommits);
+                kafkaConsumer.getEndpoint().getKafkaManualCommitFactory(), threadId, asyncCommits);
     }
 
     private void seekToNextOffset(long partitionLastOffset) {

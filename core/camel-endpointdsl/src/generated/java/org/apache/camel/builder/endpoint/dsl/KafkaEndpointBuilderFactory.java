@@ -1851,6 +1851,46 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
+         * Factory to use for creating KafkaManualCommit instances. This allows
+         * to plugin a custom factory to create custom KafkaManualCommit
+         * instances in case special logic is needed when doing manual commits
+         * that deviates from the default implementation that comes out of the
+         * box.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.kafka.KafkaManualCommitFactory&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param kafkaManualCommitFactory the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKafkaEndpointConsumerBuilder kafkaManualCommitFactory(
+                Object kafkaManualCommitFactory) {
+            doSetProperty("kafkaManualCommitFactory", kafkaManualCommitFactory);
+            return this;
+        }
+        /**
+         * Factory to use for creating KafkaManualCommit instances. This allows
+         * to plugin a custom factory to create custom KafkaManualCommit
+         * instances in case special logic is needed when doing manual commits
+         * that deviates from the default implementation that comes out of the
+         * box.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.kafka.KafkaManualCommitFactory&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param kafkaManualCommitFactory the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKafkaEndpointConsumerBuilder kafkaManualCommitFactory(
+                String kafkaManualCommitFactory) {
+            doSetProperty("kafkaManualCommitFactory", kafkaManualCommitFactory);
+            return this;
+        }
+        /**
          * Factory to use for creating
          * org.apache.kafka.clients.consumer.KafkaConsumer and
          * org.apache.kafka.clients.producer.KafkaProducer instances. This
