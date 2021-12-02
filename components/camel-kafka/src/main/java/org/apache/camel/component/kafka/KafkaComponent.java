@@ -146,4 +146,13 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
         this.pollExceptionStrategy = pollExceptionStrategy;
     }
 
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+
+        // if a factory was not autowired then create a default factory
+        if (kafkaClientFactory == null) {
+            kafkaClientFactory = new DefaultKafkaClientFactory();
+        }
+    }
 }
