@@ -173,7 +173,6 @@ class Run implements Callable<Integer> {
             }
 
             // Camel DSL files
-
             if (!ResourceHelper.hasScheme(file) && !file.startsWith("github:")) {
                 file = "file:" + file;
             }
@@ -184,6 +183,11 @@ class Run implements Callable<Integer> {
                     System.err.println("File does not exist: " + file);
                     return 1;
                 }
+            }
+
+            // automatic map github https urls to github resolver
+            if (file.startsWith("https://github.com/")) {
+                file = mapGithubUrl(file);
             }
 
             js.add(file);
@@ -238,5 +242,17 @@ class Run implements Callable<Integer> {
         lockFile.deleteOnExit();
 
         return lockFile;
+    }
+
+    private static String mapGithubUrl(String url) {
+        // strip https://github.com/
+        url = url.substring(19);
+        // https://github.com/apache/camel-k/blob/main/examples/languages/routes.kts
+        // https://github.com/apache/camel-k/blob/v1.7.0/examples/languages/routes.kts
+        url = url.replaceFirst("/", ":");
+        url = url.replaceFirst("/", ":");
+        url = url.replaceFirst("blob/", "");
+        url = url.replaceFirst("/", ":");
+        return "github:" + url;
     }
 }
