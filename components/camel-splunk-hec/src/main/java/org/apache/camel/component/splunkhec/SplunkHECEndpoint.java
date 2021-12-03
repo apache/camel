@@ -56,14 +56,19 @@ public class SplunkHECEndpoint extends DefaultEndpoint {
         super(uri, component);
         this.configuration = configuration;
         Matcher match = URI_PARSER.matcher(uri);
-        if (!match.matches() || !DomainValidator.getInstance(true).isValid(match.group(1))) {
+        if (!match.matches()) {
             throw new IllegalArgumentException("Invalid URI: " + uri);
         }
+        String hostname = match.group(1);
         int port = Integer.parseInt(match.group(2));
+
+        if (!DomainValidator.getInstance(true).isValid(hostname)) {
+            throw new IllegalArgumentException("Invalid hostname: " + hostname);
+        }
         if (port < 1 || port > 65535) {
             throw new IllegalArgumentException("Invalid port: " + port);
         }
-        splunkURL = match.group(1) + ":" + port;
+        splunkURL = hostname + ":" + port;
         token = match.group(3);
     }
 
