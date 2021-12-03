@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.google.storage;
 
-import java.io.ByteArrayOutputStream;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -38,6 +37,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.EmptyAsyncCallback;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
+import org.apache.camel.support.builder.OutputStreamBuilder;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -271,9 +271,11 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
 
         if (getConfiguration().isIncludeBody()) {
             try {
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                blob.downloadTo(baos);
-                message.setBody(baos.toByteArray());
+                // if stream caching is enabled then use that so we can stream accordingly
+                // for example to overflow to disk for big streams
+                OutputStreamBuilder osb = OutputStreamBuilder.withExchange(exchange);
+                blob.downloadTo(osb);
+                message.setBody(osb.build());
             } catch (Exception e) {
                 throw new RuntimeCamelException(e);
             }
