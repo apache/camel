@@ -29,6 +29,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.commons.validator.routines.DomainValidator;
+import org.apache.commons.validator.routines.InetAddressValidator;
 
 /**
  * The splunk component allows to publish events in Splunk using the HTTP Event Collector.
@@ -62,7 +63,7 @@ public class SplunkHECEndpoint extends DefaultEndpoint {
         String hostname = match.group(1);
         int port = Integer.parseInt(match.group(2));
 
-        if (!DomainValidator.getInstance(true).isValid(hostname)) {
+        if (!DomainValidator.getInstance(true).isValid(hostname) && !InetAddressValidator.getInstance().isValidInet4Address(hostname)) {
             throw new IllegalArgumentException("Invalid hostname: " + hostname);
         }
         if (port < 1 || port > 65535) {
