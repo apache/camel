@@ -79,7 +79,7 @@ class Run implements Callable<Integer> {
     private boolean fileLock = true;
 
     @Option(names = { "--local-kamelet-dir" },
-            description = "Load Kamelets from a local directory instead of resolving them from the classpath or GitHub")
+            description = "Local directory to load Kamelets from (take precedence))")
     private String localKameletDir;
 
     @Override
