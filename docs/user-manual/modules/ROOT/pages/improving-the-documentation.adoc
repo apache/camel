@@ -6,11 +6,17 @@ a tiny typo fix, or adding more details to an existing component, etc.
 NOTE: This page only describes working with the 'documentation' portion of the website.
 Other portions are written in markdown and built using Hugo.
 
+== Simple changes
+
+If there's an `edit this page` button at the top right of the page and you wish to propose a simple change such as fixing a typo or rewording something, use this xref:faq:how-do-i-edit-the-website.adoc[very simple process].
+For more complicated changes, including changing xrefs, adding, removing or renaming pages, and significant organizational changes, please use the process described on this page.
+
 == Where to find the documentation
 
 All of the documentation accessible in the left-hand navigation panel in the documentation portion of the website is managed in the link:https://asciidoc.org/[AsciiDoc format] and built with the https://antora.org[Antora] static site generator.
-As of November 2021, by far the most capable Asciidoc editor is the Intellij Asciidoc plugin, which works with  all Intellij editor projects including the free Community Edition.
+As of November 2021, by far the most capable Asciidoc editor is the Intellij Asciidoc plugin, which works with  all Intellij editor products including the free IDEA Community Edition.
 The plugin preview is more capable than viewing a local Asciidoc file with a browser plugin as it has some understanding of Antora structure.
+Note that the only reliable way to preview your changes is with a full build of the Antora portion of the website.
 
 The files have the extension `.adoc` and are managed in the Camel repositories.
 General documentation is usually directly editable.
@@ -50,7 +56,7 @@ Please do not use this method if you are changing any xrefs or making significan
 . Create a branch for your work with a name starting with the original branch name, e.g. `git switch -c main-doc-fix`
 . Edit the `.adoc` sources as needed.
 Preview your work in the Intellij Asciidoc plugin preview or in a browser with an Asciidoctor extension installed.
-. Do a xref:#_how_to_build_the_website_locally_with_your_changes[local website build with your changes].
+. Do a xref:#_local_build_instructions[local website build with your changes].
 //=== The following workflow may be usable after https://gitlab.com/antora/antora/-/issues/831 is implemented, perhaps with the aid of an Antora extension.
 //. Commit and push your work and create a PR in the (sub)project repository.
 //Note the PR number, e.g. #456
@@ -117,7 +123,7 @@ yarn build-all
 
 === Adjusting the playbook to include local changes
 
-The Antora build is specified in the `camel-website/antora-playbook.yml` playbook.
+The Antora build is specified in the `camel-website:antora-playbook.yml` playbook.
 The content repositories are specified under the `content/sources` key.
 Locate the subproject you are working on and change the `url` to point to the local checkout of the subproject, e.g.
 
@@ -260,4 +266,4 @@ Use these attributes to refer to documentation for the related subproject, e.g.
 [source,adoc]
 xref{blank}:{camel-version}@components:eips:enterprise-integration-patterns.adoc[]
 
-If there's a missing attribute, raise an issue rather than using a concrete version.
+If there's a missing attribute, please raise an issue rather than using a concrete version.
