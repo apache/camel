@@ -209,6 +209,28 @@ public interface GoogleStorageComponentBuilderFactory {
             return this;
         }
         /**
+         * The folder or filename to use when downloading the blob. By default,
+         * this specifies the folder name, and the name of the file is the blob
+         * name. For example, setting this to mydownload will be the same as
+         * setting mydownload/${file:name}. You can use dynamic expressions for
+         * fine-grained control. For example, you can specify
+         * ${date:now:yyyyMMdd}/${file:name} to store the blob in sub folders
+         * based on today's day. Only ${file:name} and ${file:name.noext} is
+         * supported as dynamic tokens for the blob name.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param downloadFileName the value to set
+         * @return the dsl builder
+         */
+        default GoogleStorageComponentBuilder downloadFileName(
+                java.lang.String downloadFileName) {
+            doSetProperty("downloadFileName", downloadFileName);
+            return this;
+        }
+        /**
          * If it is true, the Object exchange will be consumed and put into the
          * body. If false the Object stream will be put raw into the body and
          * the headers will be set with the object metadata.
@@ -372,6 +394,7 @@ public interface GoogleStorageComponentBuilderFactory {
             case "bridgeErrorHandler": ((GoogleCloudStorageComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "deleteAfterRead": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setDeleteAfterRead((boolean) value); return true;
             case "destinationBucket": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setDestinationBucket((java.lang.String) value); return true;
+            case "downloadFileName": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setDownloadFileName((java.lang.String) value); return true;
             case "includeBody": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setIncludeBody((boolean) value); return true;
             case "includeFolders": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setIncludeFolders((boolean) value); return true;
             case "moveAfterRead": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setMoveAfterRead((boolean) value); return true;

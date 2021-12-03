@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.google.storage;
 
+import java.io.File;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,13 +28,16 @@ import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.CopyWriter;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.CopyRequest;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangePropertyKey;
+import org.apache.camel.Expression;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.Language;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.EmptyAsyncCallback;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
@@ -47,8 +51,11 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(GoogleCloudStorageConsumer.class);
 
+    private final Language language;
+
     public GoogleCloudStorageConsumer(GoogleCloudStorageEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
+        this.language = getEndpoint().getCamelContext().resolveLanguage("file");
     }
 
     @Override
@@ -270,16 +277,29 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
         Message message = exchange.getIn();
 
         if (getConfiguration().isIncludeBody()) {
-            try {
-                // if stream caching is enabled then use that so we can stream accordingly
-                // for example to overflow to disk for big streams
-                OutputStreamBuilder osb = OutputStreamBuilder.withExchange(exchange);
-                blob.downloadTo(osb);
-                message.setBody(osb.build());
-            } catch (Exception e) {
-                throw new RuntimeCamelException(e);
+            // download as file
+            if (getConfiguration().getDownloadFileName() != null) {
+                // create a dummy exchange as Exchange is needed for expression evaluation
+                String result = evaluateFileExpression(exchange, getConfiguration().getDownloadFileName(), blob.getName());
+                if (result != null) {
+                    File file = new File(result);
+                    blob.downloadTo(file.toPath());
+                    message.setBody(file);
+                }
+            } else {
+                // store blob data in the message body
+                try {
+                    // if stream caching is enabled then use that so we can stream accordingly
+                    // for example to overflow to disk for big streams
+                    OutputStreamBuilder osb = OutputStreamBuilder.withExchange(exchange);
+                    blob.downloadTo(osb);
+                    message.setBody(osb.build());
+                } catch (Exception e) {
+                    throw new RuntimeCamelException(e);
+                }
             }
         } else {
+            // store raw blob
             message.setBody(blob);
         }
 
@@ -307,6 +327,25 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
         message.setHeader(GoogleCloudStorageConstants.METADATA_LAST_UPDATE, new Date(blob.getUpdateTime()));
 
         return exchange;
+    }
+
+    protected String evaluateFileExpression(Exchange exchange, String downloadFileName, String blogName) {
+        CamelContext camelContext = exchange.getContext();
+        // use blob as file name
+        exchange.getMessage().setHeader(Exchange.FILE_NAME, blogName);
+
+        String eval = downloadFileName;
+        if (!downloadFileName.contains("$")) {
+            eval = downloadFileName + "/${file:name}";
+        }
+        Expression exp = language.createExpression(eval);
+        exp.init(camelContext);
+
+        String result = exp.evaluate(exchange, String.class);
+        if (exchange.getException() != null) {
+            throw RuntimeCamelException.wrapRuntimeCamelException(exchange.getException());
+        }
+        return result;
     }
 
 }

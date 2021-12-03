@@ -69,6 +69,9 @@ public class GoogleCloudStorageConfiguration implements Cloneable {
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean includeFolders = true;
 
+    @UriParam(label = "consumer")
+    private String downloadFileName;
+
     @UriParam
     @Metadata(autowired = true)
     private Storage storageClient;
@@ -205,6 +208,24 @@ public class GoogleCloudStorageConfiguration implements Cloneable {
         return includeFolders;
     }
 
+    public String getDownloadFileName() {
+        return downloadFileName;
+    }
+
+    /**
+     * The folder or filename to use when downloading the blob. By default, this specifies the folder name, and the name
+     * of the file is the blob name. For example, setting this to mydownload will be the same as setting
+     * mydownload/${file:name}.
+     *
+     * You can use dynamic expressions for fine-grained control. For example, you can specify
+     * ${date:now:yyyyMMdd}/${file:name} to store the blob in sub folders based on today's day.
+     *
+     * Only ${file:name} and ${file:name.noext} is supported as dynamic tokens for the blob name.
+     */
+    public void setDownloadFileName(String downloadFileName) {
+        this.downloadFileName = downloadFileName;
+    }
+
     public boolean isDeleteAfterRead() {
         return deleteAfterRead;
     }
@@ -238,4 +259,5 @@ public class GoogleCloudStorageConfiguration implements Cloneable {
             throw new RuntimeCamelException(e);
         }
     }
+
 }

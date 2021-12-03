@@ -16,14 +16,17 @@
  */
 package org.apache.camel.component.google.storage.unit;
 
+import java.io.File;
+
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.storage.GoogleCloudStorageConstants;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class ConsumerLocalTest extends GoogleCloudStorageBaseTest {
+public class ConsumerDownloadLocalTest extends GoogleCloudStorageBaseTest {
 
     @EndpointInject
     private ProducerTemplate template;
@@ -52,7 +55,8 @@ public class ConsumerLocalTest extends GoogleCloudStorageBaseTest {
                      + "&destinationBucket=camelDestinationBucket"
                      + "&autoCreateBucket=true"
                      + "&deleteAfterRead=true"
-                     + "&includeBody=true")
+                     + "&includeBody=true"
+                     + "&downloadFileName=target")
                              .startupOrder(2)
                              //.log("consuming: ${header.CamelGoogleCloudStorageBucketName}/${header.CamelGoogleCloudStorageObjectName}, body=${body}")
                              .to("mock:consumedObjects");
@@ -81,6 +85,12 @@ public class ConsumerLocalTest extends GoogleCloudStorageBaseTest {
 
         assertMockEndpointsSatisfied();
 
+        context.stop();
+
+        // there should be downloaded files
+        Assertions.assertTrue(new File("target/file_0.txt").exists());
+        Assertions.assertTrue(new File("target/file_1.txt").exists());
+        Assertions.assertTrue(new File("target/file_2.txt").exists());
     }
 
 }
