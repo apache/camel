@@ -15454,6 +15454,7 @@ public class StaticEndpointBuilders {
      * @param path topic
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.VertxKafkaEndpointBuilderFactory.VertxKafkaEndpointBuilder vertxKafka(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.VertxKafkaEndpointBuilderFactory.endpointBuilder("vertx-kafka", path);
@@ -15478,6 +15479,7 @@ public class StaticEndpointBuilders {
      * @param path topic
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.VertxKafkaEndpointBuilderFactory.VertxKafkaEndpointBuilder vertxKafka(
             String componentName,
             String path) {
