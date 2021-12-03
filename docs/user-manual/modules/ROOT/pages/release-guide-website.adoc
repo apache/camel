@@ -77,20 +77,23 @@ If changed, follow the instructions and run mvn validate in the docs directory.
 
 === Changes to the Antora playbook
 
-This must be done in three steps:
+There are two independent steps:
 
 . Add the new documentation version to the published website, leaving the previous version.
-. Wait for all subprojects such as camel-quarkus to update to using the new version, as appropriate.
-. Remove the old, previous, documentation version from the website, if appropriate.
+. Examine the older non-LTS versions and determine if any other subprojects are referencing them.
+Remove any old, non-LTS, documentation versions that have no references.
 
 NOTE: After a release, consider whether any LTS versions are now out of service and should be removed from the documentation.
+Make sure there are no references to such out of service LTS versions from other subprojects.
+
+TODO: What if there are references?
 
 ==== Step 1
 
 Add the new branch to `camel-website:antora-playbook.yml` for the `content.sources` for `camel` 3 docs, `camel-karaf`, and `camel-spring-boot`.
 Add the new branch near the top of the list after the `main` branch to keep the branches listed in reverse chronological order.
 
-Test your work locally and with a PR... once it is approved and committed go on to step 2.
+Test your work locally and xref:improving-the-documentation.adoc#_creating_a_documentation_pull_request[with a PR]... once it is approved and committed go on to step 2.
 
 ==== Step 2
 
