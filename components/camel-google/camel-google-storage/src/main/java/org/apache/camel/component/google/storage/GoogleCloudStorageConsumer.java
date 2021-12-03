@@ -140,11 +140,15 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
      * @return      true to include, false to exclude
      */
     protected boolean includeObject(Blob blob) {
-        if (getConfiguration().isIncludeFolders()) {
-            return true;
+        // is the blog a folder
+        boolean folder = blob.getName().endsWith("/");
+
+        if (folder && !getConfiguration().isIncludeFolders()) {
+            // we should not include folders
+            return false;
         }
-        // Config says to ignore folders/directories
-        return blob.getName().endsWith("/");
+
+        return true;
     }
 
     @Override
