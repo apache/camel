@@ -63,7 +63,8 @@ public class SplunkHECEndpoint extends DefaultEndpoint {
         String hostname = match.group(1);
         int port = Integer.parseInt(match.group(2));
 
-        if (!DomainValidator.getInstance(true).isValid(hostname) && !InetAddressValidator.getInstance().isValidInet4Address(hostname)) {
+        if (!DomainValidator.getInstance(true).isValid(hostname)
+                && !InetAddressValidator.getInstance().isValidInet4Address(hostname)) {
             throw new IllegalArgumentException("Invalid hostname: " + hostname);
         }
         if (port < 1 || port > 65535) {
