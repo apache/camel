@@ -38,7 +38,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.http.HttpMethods.GET;
+import static org.apache.camel.component.http.HttpMethods.POST;
 import static org.apache.http.HttpHeaders.HOST;
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -59,7 +59,7 @@ public class HeaderFilteringTest {
 
         final HttpComponent http = context.getComponent("http", HttpComponent.class);
 
-        final Producer producer = http.createProducer(context, "http://localhost:" + port, GET.name(), "/test", null, null,
+        final Producer producer = http.createProducer(context, "http://localhost:" + port, POST.name(), "/test", null, null,
                 APPLICATION_JSON.getMimeType(), APPLICATION_JSON.getMimeType(), new RestConfiguration(),
                 Collections.emptyMap());
 
