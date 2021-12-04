@@ -455,10 +455,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             getContext().adapt(ExtendedCamelContext.class).setupRoutes(false);
 
             // add route configurations
-            getContext().addRouteConfigurations(getRouteConfigurations());
-
-            // init route configurations
             initRouteConfigurationRefs();
+            getContext().addRouteConfigurations(getRouteConfigurations());
 
             // init route templates
             initRouteTemplateRefs();
