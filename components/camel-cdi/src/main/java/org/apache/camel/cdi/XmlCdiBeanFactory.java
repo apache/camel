@@ -41,6 +41,7 @@ import org.apache.camel.cdi.xml.ErrorHandlerDefinition;
 import org.apache.camel.cdi.xml.ErrorHandlerType;
 import org.apache.camel.cdi.xml.ImportDefinition;
 import org.apache.camel.cdi.xml.RestContextDefinition;
+import org.apache.camel.cdi.xml.RouteConfigurationContextDefinition;
 import org.apache.camel.cdi.xml.RouteContextDefinition;
 import org.apache.camel.cdi.xml.RouteTemplateContextDefinition;
 import org.apache.camel.core.xml.AbstractCamelFactoryBean;
@@ -48,6 +49,7 @@ import org.apache.camel.core.xml.CamelServiceExporterDefinition;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
+import org.apache.camel.model.RouteConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RoutesDefinition;
@@ -127,6 +129,9 @@ final class XmlCdiBeanFactory {
                 }
                 for (RouteContextDefinition factory : app.getRouteContexts()) {
                     beans.add(routeContextBean(factory, url));
+                }
+                for (RouteConfigurationContextDefinition factory : app.getRouteConfigurationContexts()) {
+                    beans.add(routeConfigurationContextBean(factory, url));
                 }
                 for (RouteTemplateContextDefinition factory : app.getRouteTemplateContexts()) {
                     beans.add(routeTemplateContextBean(factory, url));
@@ -344,6 +349,27 @@ final class XmlCdiBeanFactory {
                                                                                        + "from resource [" + url + "] "
                                                                                        + "with qualifiers "
                                                                                        + bean.getQualifiers());
+    }
+
+    private SyntheticBean<?> routeConfigurationContextBean(RouteConfigurationContextDefinition definition, URL url) {
+        requireNonNull(definition.getId(),
+                () -> format("Missing [%s] attribute for imported bean [%s] from resource [%s]",
+                        "id", "routeContext", url));
+
+        return new SyntheticBean<>(
+                manager,
+                new SyntheticAnnotated(
+                        List.class,
+                        Stream.of(List.class, new ListParameterizedType(RouteConfigurationDefinition.class))
+                                .collect(toSet()),
+                        ANY, NamedLiteral.of(definition.getId())),
+                List.class,
+                new SyntheticInjectionTarget<>(definition::getRouteConfigurations),
+                bean -> "imported route configuration context with "
+                        + "id [" + definition.getId() + "] "
+                        + "from resource [" + url + "] "
+                        + "with qualifiers "
+                        + bean.getQualifiers());
     }
 
     private SyntheticBean<?> routeContextBean(RouteContextDefinition definition, URL url) {
