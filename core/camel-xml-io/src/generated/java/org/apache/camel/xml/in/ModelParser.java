@@ -936,6 +936,15 @@ public class ModelParser extends BaseParser {
             return identifiedTypeAttributeHandler().accept(def, key, val);
         }, noElementHandler(), noValueHandler());
     }
+    protected RouteConfigurationContextRefDefinition doParseRouteConfigurationContextRefDefinition() throws IOException, XmlPullParserException {
+        return doParse(new RouteConfigurationContextRefDefinition(), (def, key, val) -> {
+            if ("ref".equals(key)) {
+                def.setRef(val);
+                return true;
+            }
+            return false;
+        }, noElementHandler(), noValueHandler());
+    }
     protected RouteConfigurationDefinition doParseRouteConfigurationDefinition() throws IOException, XmlPullParserException {
         return doParse(new RouteConfigurationDefinition(),
             optionalIdentifiedDefinitionAttributeHandler(), (def, key) -> {
