@@ -161,7 +161,7 @@ public class CMTest {
 
         // Body
         final SMSMessage smsMessage = new SMSMessage(generateIdAsString(), generateUnicodeMessage(), validNumber, null);
-        assertThrows(NoAccountFoundForProductTokenException.class,
+        assertThrows(CMResponseException.class,
                 () -> cmProxy.send(smsMessage));
     }
 
