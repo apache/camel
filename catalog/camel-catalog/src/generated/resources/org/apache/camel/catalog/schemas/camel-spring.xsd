@@ -1256,6 +1256,22 @@ Reusable configuration for Camel route(s).
     </xs:annotation>
   </xs:element>
 
+  <xs:element name="routeConfigurationContext" type="tns:camelRouteConfigurationContextFactoryBean">
+    <xs:annotation>
+      <xs:documentation xml:lang="en"><![CDATA[
+Configuration of route configurations using XML
+      ]]></xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="routeConfigurationContextRef" type="tns:routeConfigurationContextRefDefinition">
+    <xs:annotation>
+      <xs:documentation xml:lang="en"><![CDATA[
+To refer to an XML file with route configuration defined using the xml-dsl
+      ]]></xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
   <xs:element name="routeConfigurations" type="tns:routeConfigurationsDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
@@ -10559,6 +10575,17 @@ Reference to the route builder instance.
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:complexType name="routeConfigurationContextRefDefinition">
+    <xs:sequence/>
+    <xs:attribute name="ref" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en"><![CDATA[
+Reference to the route templates in the xml dsl.
+        ]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
   <xs:complexType name="routeConfigurationDefinition">
     <xs:complexContent>
       <xs:extension base="tns:optionalIdentifiedDefinition">
@@ -15020,6 +15047,7 @@ MicroProfile Circuit Breaker EIP configurations.
               ]]></xs:documentation>
             </xs:annotation>
           </xs:element>
+          <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:routeConfigurationContextRef"/>
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:routeTemplateContextRef"/>
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:routeBuilder"/>
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:routeContextRef"/>
@@ -15607,6 +15635,16 @@ Sets a reference to a thread pool to be used by the error handler.
       <xs:extension base="tns:identifiedType">
         <xs:sequence>
           <xs:element maxOccurs="unbounded" ref="tns:rest"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="camelRouteConfigurationContextFactoryBean">
+    <xs:complexContent>
+      <xs:extension base="tns:identifiedType">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" ref="tns:routeConfiguration"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
