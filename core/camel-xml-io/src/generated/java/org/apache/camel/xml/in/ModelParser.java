@@ -844,11 +844,12 @@ public class ModelParser extends BaseParser {
     }
     protected RemovePropertyDefinition doParseRemovePropertyDefinition() throws IOException, XmlPullParserException {
         return doParse(new RemovePropertyDefinition(), (def, key, val) -> {
-            if ("propertyName".equals(key)) {
-                def.setPropertyName(val);
-                return true;
+            switch (key) {
+                case "name": def.setName(val); break;
+                case "propertyName": def.setPropertyName(val); break;
+                default: return processorDefinitionAttributeHandler().accept(def, key, val);
             }
-            return processorDefinitionAttributeHandler().accept(def, key, val);
+            return true;
         }, optionalIdentifiedDefinitionElementHandler(), noValueHandler());
     }
     protected ResequenceDefinition doParseResequenceDefinition() throws IOException, XmlPullParserException {

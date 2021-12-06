@@ -2005,12 +2005,14 @@
             "inherit-error-handler" : {
               "type" : "boolean"
             },
+            "name" : {
+              "type" : "string"
+            },
             "property-name" : {
               "type" : "string"
             }
           }
-        } ],
-        "required" : [ "property-name" ]
+        } ]
       },
       "org.apache.camel.model.ResequenceDefinition" : {
         "type" : "object",

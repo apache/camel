@@ -11146,7 +11146,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             },
             properties = {
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
-                    @YamlProperty(name = "property-name", type = "string", required = true)
+                    @YamlProperty(name = "name", type = "string"),
+                    @YamlProperty(name = "property-name", type = "string")
             }
     )
     public static class RemovePropertyDefinitionDeserializer extends YamlDeserializerBase<RemovePropertyDefinition> {
@@ -11171,6 +11172,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "inherit-error-handler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
+                    break;
+                }
+                case "name": {
+                    String val = asText(node);
+                    target.setName(val);
                     break;
                 }
                 case "property-name": {
