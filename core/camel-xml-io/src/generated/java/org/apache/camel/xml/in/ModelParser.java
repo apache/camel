@@ -815,12 +815,11 @@ public class ModelParser extends BaseParser {
     }
     protected RemoveHeaderDefinition doParseRemoveHeaderDefinition() throws IOException, XmlPullParserException {
         return doParse(new RemoveHeaderDefinition(), (def, key, val) -> {
-            switch (key) {
-                case "headerName": def.setHeaderName(val); break;
-                case "name": def.setName(val); break;
-                default: return processorDefinitionAttributeHandler().accept(def, key, val);
+            if ("name".equals(key)) {
+                def.setName(val);
+                return true;
             }
-            return true;
+            return processorDefinitionAttributeHandler().accept(def, key, val);
         }, optionalIdentifiedDefinitionElementHandler(), noValueHandler());
     }
     protected RemoveHeadersDefinition doParseRemoveHeadersDefinition() throws IOException, XmlPullParserException {

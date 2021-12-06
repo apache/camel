@@ -14,6 +14,8 @@ Added parameter `Resource` in `createRoute` method on `org.apache.camel.spi.Rout
 
 Added method `reloadProperties` to `org.apache.camel.spi.LoadablePropertiesSource`.
 
+Removed the deprecated `headerName` option from RemoveHeader EIP. Use `name` instead.
+
 === camel-kafka
 
 The APIs in `camel-kafka` component changed from using the Kafka Client classes `org.apache.kafka.clients.producer.KafkaProducer` and `org.apache.kafka.clients.consumer.KafkaConsumer`
