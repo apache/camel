@@ -10953,9 +10953,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     "removeHeader"
             },
             properties = {
-                    @YamlProperty(name = "header-name", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
-                    @YamlProperty(name = "name", type = "string")
+                    @YamlProperty(name = "name", type = "string", required = true)
             }
     )
     public static class RemoveHeaderDefinitionDeserializer extends YamlDeserializerBase<RemoveHeaderDefinition> {
@@ -10977,11 +10976,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(RemoveHeaderDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
-                case "header-name": {
-                    String val = asText(node);
-                    target.setHeaderName(val);
-                    break;
-                }
                 case "inherit-error-handler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));

@@ -1948,9 +1948,6 @@
         }, {
           "type" : "object",
           "properties" : {
-            "header-name" : {
-              "type" : "string"
-            },
             "inherit-error-handler" : {
               "type" : "boolean"
             },
@@ -1958,7 +1955,8 @@
               "type" : "string"
             }
           }
-        } ]
+        } ],
+        "required" : [ "name" ]
       },
       "org.apache.camel.model.RemoveHeadersDefinition" : {
         "oneOf" : [ {
