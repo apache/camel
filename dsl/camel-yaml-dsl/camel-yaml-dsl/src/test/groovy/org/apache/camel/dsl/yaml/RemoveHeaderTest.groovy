@@ -28,7 +28,7 @@ class RemoveHeaderTest extends YamlTestSupport {
             context.routesLoader.loadRoutes(resource)
         then:
             with(context.routeDefinitions[0].outputs[0], RemoveHeaderDefinition) {
-                headerName == 'test'
+                name == 'test'
             }
         where:
             resource << [
