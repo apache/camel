@@ -16,8 +16,10 @@
  */
 package org.apache.camel.dsl.yaml
 
+import org.apache.camel.builder.DeadLetterChannelBuilder
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.model.ToDefinition
+import org.apache.camel.processor.errorhandler.DeadLetterChannel
 
 class KameletBindingLoaderTest extends YamlTestSupport {
     @Override
@@ -321,14 +323,20 @@ class KameletBindingLoaderTest extends YamlTestSupport {
                         redeliveryDelay: 2000    
                     ''')
         then:
-        context.routeDefinitions.size() == 2
+        context.routeDefinitions.size() == 4
 
         with (context.routeDefinitions[0]) {
+            errorHandlerFactory != null
+            errorHandlerFactory instanceof DeadLetterChannelBuilder
+            var eh = errorHandlerFactory as DeadLetterChannelBuilder
+            eh.deadLetterUri == 'kamelet:error-handler?kafkaTopic=my-first-test&logMessage=ERROR%21&kafkaServiceAccountId=scott&kafkaBrokers=my-broker&kafkaServiceAccountSecret=tiger'
+            eh.redeliveryPolicy.maximumRedeliveries == 1
+            eh.redeliveryPolicy.redeliveryDelay == 2000
             routeId == 'timer-event-source'
             input.endpointUri == 'kamelet:timer-source?message=Hello+world%21'
             outputs.size() == 1
             with (outputs[0], ToDefinition) {
-                endpointUri == 'kafka:my-topic'
+                endpointUri == 'kamelet:log-sink'
             }
         }
     }

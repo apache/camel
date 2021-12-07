@@ -212,6 +212,7 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
             route.from(from);
 
             // steps in the middle (optional)
+            // TODO: make steps as Kamelet EIP and not TO
             Node steps = nodeAt(root, "/spec/steps");
             if (steps != null) {
                 SequenceNode sn = asSequenceNode(steps);
@@ -244,6 +245,7 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                     dlcb.setDeadLetterUri(dlq);
 
                     // properties (TODO: via reflection - need builder)
+                    // TODO: route templates store user parameters in cameCase (eg convert dash to camel case) (like camel-main)
                     MappingNode prop = asMappingNode(nodeAt(nt.getValueNode(), "/parameters"));
                     Map<String, Object> params = asMap(prop);
                     if (params != null) {

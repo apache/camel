@@ -343,7 +343,7 @@ public class DefaultModel implements Model {
                 if (temp.getDefaultValue() != null) {
                     prop.put(temp.getName(), temp.getDefaultValue());
                 } else {
-                    if (temp.isRequired() && !routeTemplateContext.getParameters().containsKey(temp.getName())) {
+                    if (temp.isRequired() && !routeTemplateContext.hasParameter(temp.getName())) {
                         // this is a required parameter which is missing
                         templatesBuilder.add(temp.getName());
                     }
@@ -364,7 +364,7 @@ public class DefaultModel implements Model {
         // so it has all parameters available
         if (target.getTemplateParameters() != null) {
             for (RouteTemplateParameterDefinition temp : target.getTemplateParameters()) {
-                if (!routeTemplateContext.getParameters().containsKey(temp.getName()) && temp.getDefaultValue() != null) {
+                if (!routeTemplateContext.hasParameter(temp.getName()) && temp.getDefaultValue() != null) {
                     routeTemplateContext.setParameter(temp.getName(), temp.getDefaultValue());
                 }
             }
