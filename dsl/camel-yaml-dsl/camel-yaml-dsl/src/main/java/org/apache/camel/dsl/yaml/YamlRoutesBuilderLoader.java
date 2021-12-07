@@ -215,7 +215,6 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
             route.from(from);
 
             // steps in the middle (optional)
-            // TODO: make steps as Kamelet EIP and not TO
             Node steps = nodeAt(root, "/spec/steps");
             if (steps != null) {
                 SequenceNode sn = asSequenceNode(steps);
@@ -223,7 +222,14 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                     MappingNode step = asMappingNode(node);
                     String uri = extractCamelEndpointUri(step);
                     if (uri != null) {
-                        route.to(uri);
+                        // if kamelet then use kamelet eip instead of to
+                        boolean kamelet = uri.startsWith("kamelet:");
+                        if (kamelet) {
+                            uri = uri.substring(8);
+                            route.kamelet(uri);
+                        } else {
+                            route.to(uri);
+                        }
                     }
                 }
             }

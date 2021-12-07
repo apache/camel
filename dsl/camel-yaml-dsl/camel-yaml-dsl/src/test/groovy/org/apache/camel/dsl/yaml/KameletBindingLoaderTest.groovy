@@ -23,6 +23,7 @@ import org.apache.camel.builder.DefaultErrorHandlerBuilder
 import org.apache.camel.builder.NoErrorHandlerBuilder
 import org.apache.camel.component.mock.MockEndpoint
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
+import org.apache.camel.model.KameletDefinition
 import org.apache.camel.model.ToDefinition
 
 class KameletBindingLoaderTest extends YamlTestSupport {
@@ -158,6 +159,12 @@ class KameletBindingLoaderTest extends YamlTestSupport {
             routeId == 'steps-binding'
             input.endpointUri == 'kamelet:timer-source?message=Camel'
             outputs.size() == 3
+            with (outputs[0], KameletDefinition) {
+                name == 'prefix-action?prefix=Apache'
+            }
+            with (outputs[1], KameletDefinition) {
+                name == 'prefix-action?prefix=Hello'
+            }
             with (outputs[2], ToDefinition) {
                 endpointUri == 'log:info'
             }
@@ -197,6 +204,9 @@ class KameletBindingLoaderTest extends YamlTestSupport {
             routeId == 'steps-binding'
             input.endpointUri == 'kamelet:timer-source?message=Camel'
             outputs.size() == 3
+            with (outputs[0], KameletDefinition) {
+                name == 'prefix-action?prefix=Apache'
+            }
             with (outputs[1], ToDefinition) {
                 endpointUri == 'mock:dummy'
             }
@@ -223,24 +233,28 @@ class KameletBindingLoaderTest extends YamlTestSupport {
                   message: "Camel"
               steps:
               - uri: mock:dummy
+              - uri: kamelet:prefix-action?prefix=Apache
               - uri: mock:dummy2
               sink:
                 uri: log:info
                 ''')
         then:
-        context.routeDefinitions.size() == 2
+        context.routeDefinitions.size() == 3
 
         with (context.routeDefinitions[0]) {
             routeId == 'steps-binding'
             input.endpointUri == 'kamelet:timer-source?message=Camel'
-            outputs.size() == 3
+            outputs.size() == 4
             with (outputs[0], ToDefinition) {
                 endpointUri == 'mock:dummy'
             }
-            with (outputs[1], ToDefinition) {
-                endpointUri == 'mock:dummy2'
+            with (outputs[1], KameletDefinition) {
+                name == 'prefix-action?prefix=Apache'
             }
             with (outputs[2], ToDefinition) {
+                endpointUri == 'mock:dummy2'
+            }
+            with (outputs[3], ToDefinition) {
                 endpointUri == 'log:info'
             }
         }
