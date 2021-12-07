@@ -69,7 +69,6 @@ import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.model.RestContextRefDefinition;
 import org.apache.camel.model.RollbackDefinition;
 import org.apache.camel.model.RouteBuilderDefinition;
-import org.apache.camel.model.RouteConfigurationContextRefDefinition;
 import org.apache.camel.model.RouteContextRefDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateParameterDefinition;
@@ -12905,42 +12904,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setId(val);
                     break;
                 }
-                case "ref": {
-                    String val = asText(node);
-                    target.setRef(val);
-                    break;
-                }
-                default: {
-                    return false;
-                }
-            }
-            return true;
-        }
-    }
-
-    @YamlType(
-            types = org.apache.camel.model.RouteConfigurationContextRefDefinition.class,
-            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            nodes = {
-                    "route-configuration-context-ref",
-                    "routeConfigurationContextRef"
-            },
-            properties = @YamlProperty(name = "ref", type = "string", required = true)
-    )
-    public static class RouteConfigurationContextRefDefinitionDeserializer extends YamlDeserializerBase<RouteConfigurationContextRefDefinition> {
-        public RouteConfigurationContextRefDefinitionDeserializer() {
-            super(RouteConfigurationContextRefDefinition.class);
-        }
-
-        @Override
-        protected RouteConfigurationContextRefDefinition newInstance() {
-            return new RouteConfigurationContextRefDefinition();
-        }
-
-        @Override
-        protected boolean setProperty(RouteConfigurationContextRefDefinition target,
-                String propertyKey, String propertyName, Node node) {
-            switch(propertyKey) {
                 case "ref": {
                     String val = asText(node);
                     target.setRef(val);

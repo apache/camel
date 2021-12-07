@@ -2131,15 +2131,6 @@
         } ],
         "required" : [ "ref" ]
       },
-      "org.apache.camel.model.RouteConfigurationContextRefDefinition" : {
-        "type" : "object",
-        "properties" : {
-          "ref" : {
-            "type" : "string"
-          }
-        },
-        "required" : [ "ref" ]
-      },
       "org.apache.camel.model.RouteConfigurationDefinition" : {
         "oneOf" : [ {
           "type" : "string"
