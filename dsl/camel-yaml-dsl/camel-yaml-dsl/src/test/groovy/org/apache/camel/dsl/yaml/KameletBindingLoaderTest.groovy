@@ -16,17 +16,19 @@
  */
 package org.apache.camel.dsl.yaml
 
+import org.apache.camel.Exchange
+import org.apache.camel.Processor
 import org.apache.camel.builder.DeadLetterChannelBuilder
+import org.apache.camel.component.mock.MockEndpoint
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.model.ToDefinition
-import org.apache.camel.processor.errorhandler.DeadLetterChannel
 
 class KameletBindingLoaderTest extends YamlTestSupport {
     @Override
     def doSetup() {
         context.start()
     }
-/*
+
     def "kamelet binding from kamelet to kamelet"() {
         when:
             loadBindings('''
@@ -280,7 +282,7 @@ class KameletBindingLoaderTest extends YamlTestSupport {
             }
         }
     }
-*/
+
     def "kamelet binding with error handler"() {
         when:
 
@@ -338,6 +340,62 @@ class KameletBindingLoaderTest extends YamlTestSupport {
             with (outputs[0], ToDefinition) {
                 endpointUri == 'kamelet:log-sink'
             }
+        }
+    }
+
+    def "kamelet binding with error handler move to dlq"() {
+        when:
+
+        context.registry.bind 'chaos', new Processor() {
+            @Override
+            void process(Exchange exchange) throws Exception {
+                throw new IllegalArgumentException("Forced");
+            }
+        };
+
+        loadBindings('''
+                apiVersion: camel.apache.org/v1alpha1
+                kind: KameletBinding
+                metadata:
+                  name: timer-event-source                  
+                spec:
+                  source:
+                    ref:
+                      kind: Kamelet
+                      apiVersion: camel.apache.org/v1
+                      name: timer-source
+                    properties:
+                      message: "Hello world!"
+                  steps:
+                    - uri: bean:chaos  
+                  sink:
+                    ref:
+                      kind: Kamelet
+                      apiVersion: camel.apache.org/v1alpha1
+                      name: log-sink
+                  errorHandler:
+                    dead-letter-channel:
+                      endpoint:
+                        uri: mock:dead
+                      parameters:
+                        maximumRedeliveries: 3
+                        redeliveryDelay: 100    
+                    ''')
+        then:
+        context.routeDefinitions.size() == 3
+
+        MockEndpoint mock = context.getEndpoint("mock:dead", MockEndpoint.class)
+        mock.expectedMinimumMessageCount(1)
+
+        mock.assertIsSatisfied()
+
+        with (context.routeDefinitions[0]) {
+            errorHandlerFactory != null
+            errorHandlerFactory instanceof DeadLetterChannelBuilder
+            var eh = errorHandlerFactory as DeadLetterChannelBuilder
+            eh.deadLetterUri == 'mock:dead'
+            eh.redeliveryPolicy.maximumRedeliveries == 3
+            eh.redeliveryPolicy.redeliveryDelay == 100
         }
     }
 
