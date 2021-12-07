@@ -144,6 +144,42 @@ You can also use Camel JBang to try local Kamelets, without the need to publish 
 jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel run --local-kamelet-dir=/path/to/local/kamelets earthquake.yaml
 ----
 
+=== Running Camel K integrations or bindings
+
+Camel also supports running Camel K integrations and binding files, which are in CRD format (Kubernetes Custom Resource Definitions).
+
+For example a kamelet binding file named `joke.yaml`:
+
+[source,yaml]
+----
+apiVersion: camel.apache.org/v1alpha1
+kind: KameletBinding
+metadata:
+  name: joke
+spec:
+  source:
+    ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: chuck-norris-source
+    properties:
+      period: 2000
+  sink:
+    ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: log-sink
+    properties:
+      show-headers: false
+----
+
+Can be run with CamelJBang:
+
+[source,bash]
+----
+jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel run joke.yaml
+----
+
 === Search
 
 You can use the CLI to search for kamelets, components, languages and miscellaneous components (others). Running the following command will present a list of items that can be searched:

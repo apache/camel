@@ -271,3 +271,54 @@ which demonstrate creating Camel Routes with YAML.
 
 Another way to find examples of YAML DSL is to look in https://github.com/apache/camel-kamelets[Camel Kamelets]
 where each Kamelet is defined using YAML.
+
+== Camel K support
+
+The `camel-yaml-dsl` is supported by Camel K.
+
+=== Loading Camel K integrations
+
+A Camel K integration (in CRD format (Custom Resource Definition in Kubernetes))
+can be loaded by `camel-yaml-dsl` and run as routes:
+
+[source,yaml]
+----
+apiVersion: camel.apache.org/v1
+kind: Integration
+metadata:
+  name: hello.yaml
+spec:
+  flows:
+    - from:
+        uri: "timer:tick?period=5000"
+    steps:
+      - to: "log:tick"
+----
+
+=== Loading Camel K bindings
+
+A Camel K binding (in CRD format (Custom Resource Definition in Kubernetes))
+can be loaded by `camel-yaml-dsl` and run as routes:
+
+[source,yaml]
+----
+apiVersion: camel.apache.org/v1alpha1
+kind: KameletBinding
+metadata:
+  name: joke
+spec:
+  source:
+    ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: chuck-norris-source
+    properties:
+      period: 2000
+  sink:
+    ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: log-sink
+    properties:
+      show-headers: false
+----

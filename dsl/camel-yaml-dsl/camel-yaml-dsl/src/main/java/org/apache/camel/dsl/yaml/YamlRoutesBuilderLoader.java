@@ -22,7 +22,9 @@ import java.util.Objects;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.DeadLetterChannelBuilder;
+import org.apache.camel.builder.DefaultErrorHandlerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilder;
+import org.apache.camel.builder.NoErrorHandlerBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.RouteConfigurationBuilder;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerSupport;
@@ -31,10 +33,10 @@ import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.RouteConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
+import org.apache.camel.model.errorhandler.DefaultErrorHandlerProperties;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
-import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 import org.apache.camel.spi.CamelContextCustomizer;
 import org.apache.camel.spi.annotations.RoutesLoader;
 import org.apache.camel.support.PropertyBindingSupport;
@@ -231,30 +233,47 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
             route.to(to);
 
             // is there any error handler?
-            // TODO: set it globally via configuration so its inherited
             MappingNode errorHandler = asMappingNode(nodeAt(root, "/spec/errorHandler"));
             if (errorHandler != null) {
                 // there are 5 different error handlers, which one is it
                 NodeTuple nt = errorHandler.getValue().get(0);
                 String ehName = asText(nt.getKeyNode());
-                if ("dead-letter-channel".equals(ehName)) {
-                    DeadLetterChannelBuilder dlcb = new DeadLetterChannelBuilder();
 
+                DefaultErrorHandlerProperties ehb = null;
+                if ("dead-letter-channel".equals(ehName)) {
+                    DeadLetterChannelBuilder dlch = new DeadLetterChannelBuilder();
                     // endpoint
                     MappingNode endpoint = asMappingNode(nodeAt(nt.getValueNode(), "/endpoint"));
                     String dlq = extractCamelEndpointUri(endpoint);
-                    dlcb.setDeadLetterUri(dlq);
+                    dlch.setDeadLetterUri(dlq);
+                    ehb = dlch;
+                } else if ("log".equals(ehName)) {
+                    // log is the default error handler
+                    ehb = new DefaultErrorHandlerBuilder();
+                } else if ("none".equals(ehName)) {
+                    route.errorHandler(new NoErrorHandlerBuilder());
+                } else if ("bean".equals(ehName)) {
+                    throw new IllegalArgumentException("Bean error handler is not supported");
+                } else if ("ref".equals(ehName)) {
+                    throw new IllegalArgumentException("Ref error handler is not supported");
+                }
 
-                    // properties
+                // some error handlers support additional parameters
+                if (ehb != null) {
+                    // properties that are general for all kind of error handlers
                     MappingNode prop = asMappingNode(nodeAt(nt.getValueNode(), "/parameters"));
                     Map<String, Object> params = asMap(prop);
                     if (params != null) {
-                        // the parameters are for redelivery policy
-                        RedeliveryPolicy rp = new RedeliveryPolicy();
-                        dlcb.setRedeliveryPolicy(rp);
-                        PropertyBindingSupport.build().withIgnoreCase(true).bind(getCamelContext(), rp, params);
+                        PropertyBindingSupport.build()
+                                .withIgnoreCase(true)
+                                .withFluentBuilder(true)
+                                .withRemoveParameters(true)
+                                .withCamelContext(getCamelContext())
+                                .withTarget(ehb)
+                                .withProperties(params)
+                                .bind();
                     }
-                    route.errorHandler(dlcb);
+                    route.errorHandler(ehb);
                 }
             }
 
