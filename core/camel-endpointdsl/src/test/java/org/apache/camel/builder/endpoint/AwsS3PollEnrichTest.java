@@ -16,6 +16,7 @@
  */
 package org.apache.camel.builder.endpoint;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class AwsS3PollEnrichTest extends BaseEndpointDslTest {
@@ -27,6 +28,10 @@ public class AwsS3PollEnrichTest extends BaseEndpointDslTest {
 
     @Test
     public void test() throws Exception {
+        Assertions.assertDoesNotThrow(() -> doRun());
+    }
+
+    private void doRun() throws Exception {
         context.addRoutes(new EndpointRouteBuilder() {
             @Override
             public void configure() throws Exception {
