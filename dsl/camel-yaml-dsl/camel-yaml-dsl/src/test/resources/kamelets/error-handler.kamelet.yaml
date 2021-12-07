@@ -30,27 +30,27 @@ spec:
       - kafka-service-account-secret
       - log-message
     properties:
-      kafkaBrokers:
+      kafka-brokers:
         title: Kafka Brokers
         description: the bootstrap server
         type: string
         example: "xyz-ins--rplssqfz-yyyyyyy-crojg.bf2.kafka.my-clud-service.com:443"
-      kafkaTopic:
+      kafka-topic:
         title: Kafka Topic
         description: the DLC topic
         type: string
         example: "my-dlc"
-      kafkaServiceAccountId:
+      kafka-service-account-id:
         title: Service Account ID
         description: the SA to use
         type: string
         example: "srvc-acct-xxxxxx-519b-453f-9f68-yyyyyyyyy"
-      kafkaServiceAccountSecret:
+      kafka-service-account-secret:
         title: Service Account Secret
         description: the SA secrete to use
         type: string
         example: "xxxxxxxxx-46c7-4c6c-a753-yyyyyyyyyyyyyyy"
-      logMessage:
+      log-message:
         title: Message
         description: A message warning to log
         type: string
@@ -61,13 +61,13 @@ spec:
       steps:
         # First step: send to the DLC for future processing
         - to:
-            uri: kafka:{{kafkaTopic}}
+            uri: kafka:{{kafka-topic}}
             parameters:
-              brokers: "{{kafkaBrokers}}"
+              brokers: "{{kafka-brokers}}"
               security-protocol: SASL_SSL
               sasl-mechanism: PLAIN
-              sasl-jaas-config: "org.apache.kafka.common.security.plain.PlainLoginModule required username={{kafkaServiceAccountId}} password={{kafkaServiceAccountSecret}};"
+              sasl-jaas-config: "org.apache.kafka.common.security.plain.PlainLoginModule required username={{kafka-service-account-id}} password={{kafka-service-account-secret}};"
         # Log an error message to notify about the failure
         - set-body:
-            constant: "{{logMessage}} - worry not, the event is stored in the DLC"
+            constant: "{{log-message}} - worry not, the event is stored in the DLC"
         - to: "log:error-sink"

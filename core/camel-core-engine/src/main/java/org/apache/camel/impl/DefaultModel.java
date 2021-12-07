@@ -334,6 +334,7 @@ public class DefaultModel implements Model {
             throw new IllegalArgumentException("Cannot find RouteTemplate with id " + routeTemplateId);
         }
 
+        // support both camelCase and kebab-case keys
         final Map<String, Object> prop = new HashMap<>();
         // include default values first from the template (and validate that we have inputs for all required parameters)
         if (target.getTemplateParameters() != null) {
@@ -341,7 +342,7 @@ public class DefaultModel implements Model {
 
             for (RouteTemplateParameterDefinition temp : target.getTemplateParameters()) {
                 if (temp.getDefaultValue() != null) {
-                    prop.put(temp.getName(), temp.getDefaultValue());
+                    addProperty(prop, temp.getName(), temp.getDefaultValue());
                 } else {
                     if (temp.isRequired() && !routeTemplateContext.hasParameter(temp.getName())) {
                         // this is a required parameter which is missing
@@ -358,7 +359,7 @@ public class DefaultModel implements Model {
 
         // then override with user parameters part 1
         if (routeTemplateContext.getParameters() != null) {
-            prop.putAll(routeTemplateContext.getParameters());
+            routeTemplateContext.getParameters().forEach((k, v) -> addProperty(prop, k, v));
         }
         // route template context should include default template parameters from the target route template
         // so it has all parameters available
@@ -413,6 +414,16 @@ public class DefaultModel implements Model {
         }
         addRouteDefinition(def);
         return def.getId();
+    }
+
+    private static void addProperty(Map<String, Object> prop, String key, Object value) {
+        prop.put(key, value);
+        // support also camelCase and kebab-case because route templates (kamelets)
+        // can be defined using different key styles
+        key = StringHelper.dashToCamelCase(key);
+        prop.put(key, value);
+        key = StringHelper.camelCaseToDash(key);
+        prop.put(key, value);
     }
 
     private void addTemplateBeans(RouteTemplateContext routeTemplateContext, RouteTemplateDefinition target) throws Exception {
