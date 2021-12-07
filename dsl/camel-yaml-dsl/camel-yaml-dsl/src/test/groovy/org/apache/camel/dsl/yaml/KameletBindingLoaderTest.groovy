@@ -24,7 +24,7 @@ class KameletBindingLoaderTest extends YamlTestSupport {
     def doSetup() {
         context.start()
     }
-
+/*
     def "kamelet binding from kamelet to kamelet"() {
         when:
             loadBindings('''
@@ -244,6 +244,7 @@ class KameletBindingLoaderTest extends YamlTestSupport {
         when:
 
         // stub kafka for testing as it requires to setup connection to a real kafka broker
+        context.removeComponent("kafka")
         context.addComponent("kafka", context.getComponent("stub"))
 
         loadBindings('''
@@ -277,7 +278,7 @@ class KameletBindingLoaderTest extends YamlTestSupport {
             }
         }
     }
-
+*/
     def "kamelet binding with error handler"() {
         when:
 

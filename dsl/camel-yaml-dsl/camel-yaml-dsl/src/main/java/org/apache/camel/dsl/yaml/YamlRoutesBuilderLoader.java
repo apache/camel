@@ -36,6 +36,7 @@ import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
 import org.apache.camel.spi.CamelContextCustomizer;
 import org.apache.camel.spi.annotations.RoutesLoader;
+import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.util.URISupport;
 import org.snakeyaml.engine.v2.nodes.MappingNode;
 import org.snakeyaml.engine.v2.nodes.Node;
@@ -236,6 +237,19 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                 String ehName = asText(nt.getKeyNode());
                 if ("dead-letter-channel".equals(ehName)) {
                     DeadLetterChannelBuilder dlcb = new DeadLetterChannelBuilder();
+
+                    // endpoint
+                    MappingNode endpoint = asMappingNode(nodeAt(nt.getValueNode(), "/endpoint"));
+                    String dlq = extractCamelEndpointUri(endpoint);
+                    dlcb.setDeadLetterUri(dlq);
+
+                    // properties (TODO: via reflection - need builder)
+                    MappingNode prop = asMappingNode(nodeAt(nt.getValueNode(), "/parameters"));
+                    Map<String, Object> params = asMap(prop);
+                    if (params != null) {
+                        IntrospectionSupport.setProperties(getCamelContext(), getCamelContext().getTypeConverter(), dlcb, params);
+                    }
+                    route.errorHandler(dlcb);
                }
             }
 
