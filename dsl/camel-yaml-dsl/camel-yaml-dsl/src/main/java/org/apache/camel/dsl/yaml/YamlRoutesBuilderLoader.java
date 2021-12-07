@@ -34,9 +34,10 @@ import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
+import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 import org.apache.camel.spi.CamelContextCustomizer;
 import org.apache.camel.spi.annotations.RoutesLoader;
-import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.URISupport;
 import org.snakeyaml.engine.v2.nodes.MappingNode;
 import org.snakeyaml.engine.v2.nodes.Node;
@@ -244,15 +245,17 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                     String dlq = extractCamelEndpointUri(endpoint);
                     dlcb.setDeadLetterUri(dlq);
 
-                    // properties (TODO: via reflection - need builder)
-                    // TODO: route templates store user parameters in cameCase (eg convert dash to camel case) (like camel-main)
+                    // properties
                     MappingNode prop = asMappingNode(nodeAt(nt.getValueNode(), "/parameters"));
                     Map<String, Object> params = asMap(prop);
                     if (params != null) {
-                        IntrospectionSupport.setProperties(getCamelContext(), getCamelContext().getTypeConverter(), dlcb, params);
+                        // the parameters are for redelivery policy
+                        RedeliveryPolicy rp = new RedeliveryPolicy();
+                        dlcb.setRedeliveryPolicy(rp);
+                        PropertyBindingSupport.build().withIgnoreCase(true).bind(getCamelContext(), rp, params);
                     }
                     route.errorHandler(dlcb);
-               }
+                }
             }
 
             target = route;
