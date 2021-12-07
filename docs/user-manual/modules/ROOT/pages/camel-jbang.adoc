@@ -180,6 +180,36 @@ Can be run with CamelJBang:
 jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel run joke.yaml
 ----
 
+=== Using platform-http component
+
+When a route is started from `platform-http` then CamelJBang will automatically include a VertX HTTP server
+running on port 8080. For example the following route in a file named `server.yaml`:
+
+[source,yaml]
+----
+- from:
+    uri: "platform-http:/hello"
+    steps:
+      - set-body:
+          constant: "Hello World"
+----
+
+Can be run with
+
+[source,bash]
+----
+jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel run server.yaml
+----
+
+And you can call the HTTP service with:
+
+[source,bash]
+----
+curl http://localhost:8080/hello
+Hello World%
+----
+
+
 === Search
 
 You can use the CLI to search for kamelets, components, languages and miscellaneous components (others). Running the following command will present a list of items that can be searched:
