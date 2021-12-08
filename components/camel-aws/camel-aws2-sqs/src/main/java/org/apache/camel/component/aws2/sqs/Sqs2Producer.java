@@ -247,7 +247,9 @@ public class Sqs2Producer extends DefaultProducer {
             delayValue = headerValue;
         }
         LOG.trace("found delay: {}", delayValue);
-        request.delaySeconds(delayValue == null ? Integer.valueOf(0) : delayValue);
+        if (delayValue != null) {
+            request.delaySeconds(delayValue);
+        }
     }
 
     private void addDelay(SendMessageBatchRequestEntry.Builder request, Exchange exchange) {
@@ -261,7 +263,9 @@ public class Sqs2Producer extends DefaultProducer {
             delayValue = headerValue;
         }
         LOG.trace("found delay: {}", delayValue);
-        request.delaySeconds(delayValue == null ? Integer.valueOf(0) : delayValue);
+        if (delayValue != null) {
+            request.delaySeconds(delayValue);
+        }
     }
 
     protected SqsClient getClient() {
