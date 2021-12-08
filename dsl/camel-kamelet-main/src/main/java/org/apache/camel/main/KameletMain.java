@@ -161,6 +161,12 @@ public class KameletMain extends MainCommandLineSupport {
         answer.setApplicationContextClassLoader(kameletClassLoader);
         answer.setRegistry(registry);
 
+        // embed HTTP server if port is specified
+        Object port = getInitialProperties().get("camel.jbang.platform-http.port");
+        if (port != null) {
+            VertxHttpServer.registerServer(answer, Integer.parseInt(port.toString()));
+        }
+
         if (download) {
             try {
                 // use resolver that can auto downloaded

@@ -82,6 +82,9 @@ class Run implements Callable<Integer> {
             description = "Local directory to load Kamelets from (take precedence))")
     private String localKameletDir;
 
+    @Option(names = { "--port" }, description = "Embeds a local HTTP server on this port")
+    private int port;
+
     @Override
     public Integer call() throws Exception {
         if (stopRequested) {
@@ -134,6 +137,9 @@ class Run implements Callable<Integer> {
         }
         if (maxIdleSeconds > 0) {
             main.addInitialProperty("camel.main.durationMaxIdleSeconds", String.valueOf(maxIdleSeconds));
+        }
+        if (port > 0) {
+            main.addInitialProperty("camel.jbang.platform-http.port", String.valueOf(port));
         }
 
         if (fileLock) {

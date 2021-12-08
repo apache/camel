@@ -57,10 +57,10 @@ final class DependencyDownloaderComponentResolver extends DefaultComponentResolv
         if ("platform-http".equals(name) && !DownloaderHelper.alreadyOnClasspath(camelContext, "camel-platform-http-vertx")) {
             DownloaderHelper.downloadDependency(camelContext, model.getGroupId(), "camel-platform-http-vertx",
                     model.getVersion());
-
-            // setup a default http server on port 8080
-            VertxHttpServer.registerServer(camelContext);
         }
+
+        // setup a default http server on port 8080 if not already done when using platform-http
+        VertxHttpServer.registerServer(camelContext);
 
         return super.resolveComponent(name, context);
     }
