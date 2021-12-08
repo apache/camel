@@ -107,6 +107,11 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
 
     @Override
     public Set<String> getBreakpoints() {
+        return breakpoints();
+    }
+
+    @Override
+    public Set<String> breakpoints() {
         return backlogDebugger.getBreakpoints();
     }
 
@@ -181,6 +186,11 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
 
     @Override
     public Set<String> getSuspendedBreakpointNodeIds() {
+        return suspendedBreakpointNodeIds();
+    }
+
+    @Override
+    public Set<String> suspendedBreakpointNodeIds() {
         return backlogDebugger.getSuspendedBreakpointNodeIds();
     }
 
