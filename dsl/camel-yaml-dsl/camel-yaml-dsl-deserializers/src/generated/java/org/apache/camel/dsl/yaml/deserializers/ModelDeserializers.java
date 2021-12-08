@@ -679,7 +679,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "library": {
-                    target.setLibrary(org.apache.camel.model.dataformat.AvroLibrary.valueOf(asText(node)));
+                    target.setLibrary(asEnum(node, org.apache.camel.model.dataformat.AvroLibrary.class));
                     break;
                 }
                 case "module-class-names": {
@@ -7372,7 +7372,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "library": {
-                    target.setLibrary(org.apache.camel.model.dataformat.JsonLibrary.valueOf(asText(node)));
+                    target.setLibrary(asEnum(node, org.apache.camel.model.dataformat.JsonLibrary.class));
                     break;
                 }
                 case "module-class-names": {
@@ -10305,7 +10305,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "library": {
-                    target.setLibrary(org.apache.camel.model.dataformat.ProtobufLibrary.valueOf(asText(node)));
+                    target.setLibrary(asEnum(node, org.apache.camel.model.dataformat.ProtobufLibrary.class));
                     break;
                 }
                 case "module-class-names": {
@@ -11584,7 +11584,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "binding-mode": {
-                    target.setBindingMode(org.apache.camel.model.rest.RestBindingMode.valueOf(asText(node)));
+                    target.setBindingMode(asEnum(node, org.apache.camel.model.rest.RestBindingMode.class));
                     break;
                 }
                 case "client-request-validation": {
@@ -11638,7 +11638,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "host-name-resolver": {
-                    target.setHostNameResolver(org.apache.camel.model.rest.RestHostNameResolver.valueOf(asText(node)));
+                    target.setHostNameResolver(asEnum(node, org.apache.camel.model.rest.RestHostNameResolver.class));
                     break;
                 }
                 case "json-data-format": {
@@ -11946,7 +11946,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "collection-format": {
-                    target.setCollectionFormat(org.apache.camel.model.rest.CollectionFormat.valueOf(asText(node)));
+                    target.setCollectionFormat(asEnum(node, org.apache.camel.model.rest.CollectionFormat.class));
                     break;
                 }
                 case "data-format": {
@@ -11985,7 +11985,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "type": {
-                    target.setType(org.apache.camel.model.rest.RestParamType.valueOf(asText(node)));
+                    target.setType(asEnum(node, org.apache.camel.model.rest.RestParamType.class));
                     break;
                 }
                 default: {
@@ -12039,7 +12039,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "collection-format": {
-                    target.setCollectionFormat(org.apache.camel.model.rest.CollectionFormat.valueOf(asText(node)));
+                    target.setCollectionFormat(asEnum(node, org.apache.camel.model.rest.CollectionFormat.class));
                     break;
                 }
                 case "data-format": {
@@ -18333,7 +18333,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "library": {
-                    target.setLibrary(org.apache.camel.model.dataformat.YAMLLibrary.valueOf(asText(node)));
+                    target.setLibrary(asEnum(node, org.apache.camel.model.dataformat.YAMLLibrary.class));
                     break;
                 }
                 case "max-aliases-for-collections": {
