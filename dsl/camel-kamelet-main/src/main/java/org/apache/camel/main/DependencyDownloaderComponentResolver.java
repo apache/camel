@@ -22,7 +22,6 @@ import org.apache.camel.Component;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.impl.engine.DefaultComponentResolver;
-import org.apache.camel.tooling.model.ComponentModel;
 
 /**
  * Auto downloaded needed JARs when resolving components.
@@ -48,19 +47,10 @@ final class DependencyDownloaderComponentResolver extends DefaultComponentResolv
 
     @Override
     public Component resolveComponent(String name, CamelContext context) {
-        ComponentModel model = catalog.componentModel(name);
-        if (model != null && !DownloaderHelper.alreadyOnClasspath(camelContext, model.getArtifactId())) {
-            DownloaderHelper.downloadDependency(camelContext, model.getGroupId(), model.getArtifactId(), model.getVersion());
+        if ("platform-http".equals(name)) {
+            // setup a default http server on port 8080 if not already done
+            VertxHttpServer.registerServer(camelContext);
         }
-
-        // platform-http requires camel-platform-http-vertx to be on classpath also
-        if ("platform-http".equals(name) && !DownloaderHelper.alreadyOnClasspath(camelContext, "camel-platform-http-vertx")) {
-            DownloaderHelper.downloadDependency(camelContext, model.getGroupId(), "camel-platform-http-vertx",
-                    model.getVersion());
-        }
-
-        // setup a default http server on port 8080 if not already done when using platform-http
-        VertxHttpServer.registerServer(camelContext);
 
         return super.resolveComponent(name, context);
     }
