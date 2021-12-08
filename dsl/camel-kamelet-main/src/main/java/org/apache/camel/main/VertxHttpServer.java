@@ -16,16 +16,27 @@
  */
 package org.apache.camel.main;
 
+import java.lang.reflect.Method;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Component;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.support.SimpleEventNotifierSupport;
+import org.apache.camel.util.ReflectionHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * To setup vertx http server in the running Camel application
  */
 public final class VertxHttpServer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(VertxHttpServer.class);
 
     private static final AtomicBoolean REGISTERED = new AtomicBoolean();
 
@@ -62,5 +73,37 @@ public final class VertxHttpServer {
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeException(e);
         }
+
+        camelContext.getManagementStrategy().addEventNotifier(new SimpleEventNotifierSupport() {
+
+            private volatile Component phc;
+            private volatile Method method;
+
+            @Override
+            public boolean isEnabled(CamelEvent event) {
+                return event instanceof CamelEvent.CamelContextStartedEvent || event instanceof CamelEvent.RouteReloadedEvent;
+            }
+
+            @Override
+            public void notify(CamelEvent event) throws Exception {
+                if (method == null) {
+                    phc = camelContext.getComponent("platform-http", Component.class);
+                    method = ReflectionHelper.findMethod(phc.getClass(), "getHttpEndpoints");
+                }
+
+                Set<String> endpoints = (Set<String>) ObjectHelper.invokeMethodSafe(method, phc);
+                if (endpoints.isEmpty()) {
+                    return;
+                }
+                LOG.info("HTTP endpoints summary");
+
+                // TODO: grab http base / context-path
+
+                for (String u : endpoints) {
+                    LOG.info("    http://0.0.0.0:" + port + u);
+                }
+            }
+        });
     }
+
 }
