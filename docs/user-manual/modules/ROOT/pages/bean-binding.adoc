@@ -2,7 +2,7 @@
 
 Bean Binding in Camel defines both which methods are invoked and also
 how the xref:components:eips:message.adoc[Message] is converted into the parameters of
-the method when it is invoked.
+the method invoked.
 
 NOTE: This requires to include `camel-bean` as dependency on the classpath.
 
@@ -12,8 +12,8 @@ The binding of a Camel xref:components:eips:message.adoc[Message] to a bean meth
 can occur in different ways, in the following order of importance:
 
 * if the message contains the header *CamelBeanMethodName* then that
-method is invoked, converting the body to the type of the method's
-argument.
+method is invoked, converting the message to the type of the method's
+parameter.
 ** You can qualify parameter types to select
 exactly which method to use among overloads with the same name (see
 below for more details).
@@ -21,9 +21,9 @@ below for more details).
 the method option (see below for more details).
 * you can explicitly specify the method name in the xref:dsl.adoc[DSL]
 or when using xref:pojo-consuming.adoc[POJO Consuming] or
-xref:pojo-producing.adoc[POJO Producing]
-* if the bean has a method marked with the `@Handler` annotation, then
-that method is selected
+xref:pojo-producing.adoc[POJO Producing].
+* if the bean has a method annotated with the `@Handler` annotation, then
+that method is selected.
 * if the bean can be converted to a xref:processor.adoc[Processor] using
 the xref:type-converter.adoc[Type Converter] mechanism, then this is
 used to process the message. The xref:components::activemq-component.adoc[ActiveMQ] component
@@ -38,14 +38,14 @@ type must be void.
 * if the bean class is private (or package-private), interface methods
 will be preferred since Camel can't invoke class methods on such beans
 
-In cases where Camel cannot choose a method to invoke, an
+In cases when Camel cannot choose a method to invoke, an
 `AmbiguousMethodCallException` is thrown.
 
-By default, the return value is set on the outbound message body.
+By default, the return value is set in the outbound message body.
 
 == Asynchronous processing
 
-You can return a `CompletionStage` implementation (e.g. a `CompletableFuture`)
+You can return a `CompletionStage` implementation (e.g. `CompletableFuture`)
 to implement asynchronous processing.
 
 Please be sure to properly complete the CompletionStage with the result
