@@ -155,6 +155,18 @@ public class YamlDeserializerSupport {
         return ((ScalarNode) node).getValue();
     }
 
+    public static <T> T asEnum(Node node, Class<T> type) throws YamlDeserializationException {
+        if (node == null) {
+            return null;
+        }
+        if (node.getNodeType() != NodeType.SCALAR) {
+            throw new IllegalArgumentException("Node is not SCALAR");
+        }
+
+        String text = ((ScalarNode) node).getValue();
+        return enumConverter(type, text);
+    }
+
     public static Map<String, Object> asMap(Node node) {
         if (node == null) {
             return null;
@@ -416,6 +428,32 @@ public class YamlDeserializerSupport {
                     }
                 }
             }
+        }
+
+        return null;
+    }
+
+    public static <T> T enumConverter(Class<T> type, String value) {
+        if (type.isEnum()) {
+            String text = value.toString();
+            Class<Enum<?>> enumClass = (Class<Enum<?>>) type;
+
+            // we want to match case insensitive for enums
+            for (Enum<?> enumValue : enumClass.getEnumConstants()) {
+                if (enumValue.name().equalsIgnoreCase(text)) {
+                    return type.cast(enumValue);
+                }
+            }
+
+            // add support for using dash or camel cased to common used upper cased underscore style for enum constants
+            text = StringHelper.asEnumConstantValue(text);
+            for (Enum<?> enumValue : enumClass.getEnumConstants()) {
+                if (enumValue.name().equalsIgnoreCase(text)) {
+                    return type.cast(enumValue);
+                }
+            }
+
+            throw new IllegalArgumentException("Enum class " + type + " does not have any constant with value: " + text);
         }
 
         return null;
