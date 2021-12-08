@@ -20,6 +20,7 @@ import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 
 import javax.activation.DataHandler;
@@ -54,6 +55,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class VertxPlatformHttpEngineTest {
     public static SSLContextParameters serverSSLParameters;
@@ -144,6 +146,12 @@ public class VertxPlatformHttpEngineTest {
                     .then()
                     .statusCode(200)
                     .body(equalTo("POST"));
+
+            PlatformHttpComponent phc = context.getComponent("platform-http", PlatformHttpComponent.class);
+            assertEquals(2, phc.getHttpEndpoints().size());
+            Iterator<String> it = phc.getHttpEndpoints().iterator();
+            assertEquals("/get", it.next());
+            assertEquals("/post", it.next());
 
         } finally {
             context.stop();
