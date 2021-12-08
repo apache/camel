@@ -17,6 +17,7 @@
 package org.apache.camel.main;
 
 import java.lang.reflect.Method;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -78,6 +79,7 @@ public final class VertxHttpServer {
 
             private volatile Component phc;
             private volatile Method method;
+            private Set<String> last;
 
             @Override
             public boolean isEnabled(CamelEvent event) {
@@ -104,13 +106,17 @@ public final class VertxHttpServer {
                 if (endpoints.isEmpty()) {
                     return;
                 }
-                LOG.info("HTTP endpoints summary");
 
-                // TODO: grab http base / context-path
-
-                for (String u : endpoints) {
-                    LOG.info("    http://0.0.0.0:" + port + u);
+                // log only if changed
+                if (last == null || last.size() != endpoints.size() || !last.containsAll(endpoints)) {
+                    LOG.info("HTTP endpoints summary");
+                    for (String u : endpoints) {
+                        LOG.info("    http://0.0.0.0:" + port + u);
+                    }
                 }
+
+                // use a defensive copy of last known endpoints
+                last = new HashSet<>(endpoints);
             }
         });
     }
