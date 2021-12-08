@@ -45,14 +45,14 @@ import org.slf4j.LoggerFactory;
  */
 @Component("platform-http")
 public class PlatformHttpComponent extends DefaultComponent implements RestConsumerFactory, RestApiConsumerFactory {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PlatformHttpComponent.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PlatformHttpComponent.class);
 
     @Metadata(label = "advanced", description = "An HTTP Server engine implementation to serve the requests")
     private volatile PlatformHttpEngine engine;
 
     private volatile boolean localEngine;
 
-    private final Object lock;
+    private final Object lock = new Object();
 
     public PlatformHttpComponent() {
         this(null);
@@ -60,8 +60,6 @@ public class PlatformHttpComponent extends DefaultComponent implements RestConsu
 
     public PlatformHttpComponent(CamelContext context) {
         super(context);
-
-        this.lock = new Object();
     }
 
     @Override
@@ -182,13 +180,13 @@ public class PlatformHttpComponent extends DefaultComponent implements RestConsu
         if (engine == null) {
             synchronized (lock) {
                 if (engine == null) {
-                    LOGGER.debug("Lookup platform http engine from registry");
+                    LOG.debug("Lookup platform http engine from registry");
 
                     engine = getCamelContext().getRegistry()
                             .lookupByNameAndType(PlatformHttpConstants.PLATFORM_HTTP_ENGINE_NAME, PlatformHttpEngine.class);
 
                     if (engine == null) {
-                        LOGGER.debug("Lookup platform http engine from factory");
+                        LOG.debug("Lookup platform http engine from factory");
 
                         engine = getCamelContext()
                                 .adapt(ExtendedCamelContext.class)
@@ -216,7 +214,7 @@ public class PlatformHttpComponent extends DefaultComponent implements RestConsu
         try {
             RestConfiguration config = CamelContextHelper.getRestConfiguration(getCamelContext(), "platform-http");
 
-            // configure additional options on  configuration
+            // configure additional options on configuration
             if (config.getComponentProperties() != null && !config.getComponentProperties().isEmpty()) {
                 setProperties(this, config.getComponentProperties());
             }

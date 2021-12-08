@@ -21,9 +21,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.platform.http.spi.PlatformHttpEngine;
 
 public class JettyCustomPlatformHttpEngine implements PlatformHttpEngine {
+
     @Override
     public Consumer createConsumer(PlatformHttpEndpoint platformHttpEndpoint, Processor processor) {
-
         return new JettyCustomPlatformHttpConsumer(platformHttpEndpoint, processor);
     }
 }
