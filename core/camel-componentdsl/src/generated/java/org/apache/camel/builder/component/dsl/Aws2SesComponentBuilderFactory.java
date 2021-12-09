@@ -184,11 +184,10 @@ public interface Aws2SesComponentBuilderFactory {
             return this;
         }
         /**
-         * List of reply-to email address(es) for the message, override it using
-         * 'CamelAwsSesReplyToAddresses' header.
+         * List of comma separated reply-to email address(es) for the message,
+         * override it using 'CamelAwsSesReplyToAddresses' header.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
          * 
@@ -196,7 +195,7 @@ public interface Aws2SesComponentBuilderFactory {
          * @return the dsl builder
          */
         default Aws2SesComponentBuilder replyToAddresses(
-                java.util.List<java.lang.String> replyToAddresses) {
+                java.lang.String replyToAddresses) {
             doSetProperty("replyToAddresses", replyToAddresses);
             return this;
         }
@@ -231,18 +230,17 @@ public interface Aws2SesComponentBuilderFactory {
             return this;
         }
         /**
-         * List of destination email address. Can be overriden with
-         * 'CamelAwsSesTo' header.
+         * List of comma separated destination email address. Can be overriden
+         * with 'CamelAwsSesTo' header.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
          * 
          * @param to the value to set
          * @return the dsl builder
          */
-        default Aws2SesComponentBuilder to(java.util.List<java.lang.String> to) {
+        default Aws2SesComponentBuilder to(java.lang.String to) {
             doSetProperty("to", to);
             return this;
         }
@@ -378,10 +376,10 @@ public interface Aws2SesComponentBuilderFactory {
             case "proxyPort": getOrCreateConfiguration((Ses2Component) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((Ses2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
             case "region": getOrCreateConfiguration((Ses2Component) component).setRegion((java.lang.String) value); return true;
-            case "replyToAddresses": getOrCreateConfiguration((Ses2Component) component).setReplyToAddresses((java.util.List) value); return true;
+            case "replyToAddresses": getOrCreateConfiguration((Ses2Component) component).setReplyToAddresses((java.lang.String) value); return true;
             case "returnPath": getOrCreateConfiguration((Ses2Component) component).setReturnPath((java.lang.String) value); return true;
             case "subject": getOrCreateConfiguration((Ses2Component) component).setSubject((java.lang.String) value); return true;
-            case "to": getOrCreateConfiguration((Ses2Component) component).setTo((java.util.List) value); return true;
+            case "to": getOrCreateConfiguration((Ses2Component) component).setTo((java.lang.String) value); return true;
             case "trustAllCertificates": getOrCreateConfiguration((Ses2Component) component).setTrustAllCertificates((boolean) value); return true;
             case "uriEndpointOverride": getOrCreateConfiguration((Ses2Component) component).setUriEndpointOverride((java.lang.String) value); return true;
             case "useDefaultCredentialsProvider": getOrCreateConfiguration((Ses2Component) component).setUseDefaultCredentialsProvider((boolean) value); return true;

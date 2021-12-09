@@ -47,13 +47,13 @@ public class Ses2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "proxyProtocol": getOrCreateConfiguration(target).setProxyProtocol(property(camelContext, software.amazon.awssdk.core.Protocol.class, value)); return true;
         case "region": getOrCreateConfiguration(target).setRegion(property(camelContext, java.lang.String.class, value)); return true;
         case "replytoaddresses":
-        case "replyToAddresses": getOrCreateConfiguration(target).setReplyToAddresses(property(camelContext, java.util.List.class, value)); return true;
+        case "replyToAddresses": getOrCreateConfiguration(target).setReplyToAddresses(property(camelContext, java.lang.String.class, value)); return true;
         case "returnpath":
         case "returnPath": getOrCreateConfiguration(target).setReturnPath(property(camelContext, java.lang.String.class, value)); return true;
         case "secretkey":
         case "secretKey": getOrCreateConfiguration(target).setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "subject": getOrCreateConfiguration(target).setSubject(property(camelContext, java.lang.String.class, value)); return true;
-        case "to": getOrCreateConfiguration(target).setTo(property(camelContext, java.util.List.class, value)); return true;
+        case "to": getOrCreateConfiguration(target).setTo(property(camelContext, java.lang.String.class, value)); return true;
         case "trustallcertificates":
         case "trustAllCertificates": getOrCreateConfiguration(target).setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
         case "uriendpointoverride":
@@ -91,13 +91,13 @@ public class Ses2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "proxyProtocol": return software.amazon.awssdk.core.Protocol.class;
         case "region": return java.lang.String.class;
         case "replytoaddresses":
-        case "replyToAddresses": return java.util.List.class;
+        case "replyToAddresses": return java.lang.String.class;
         case "returnpath":
         case "returnPath": return java.lang.String.class;
         case "secretkey":
         case "secretKey": return java.lang.String.class;
         case "subject": return java.lang.String.class;
-        case "to": return java.util.List.class;
+        case "to": return java.lang.String.class;
         case "trustallcertificates":
         case "trustAllCertificates": return boolean.class;
         case "uriendpointoverride":
@@ -144,16 +144,6 @@ public class Ses2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "uriEndpointOverride": return getOrCreateConfiguration(target).getUriEndpointOverride();
         case "usedefaultcredentialsprovider":
         case "useDefaultCredentialsProvider": return getOrCreateConfiguration(target).isUseDefaultCredentialsProvider();
-        default: return null;
-        }
-    }
-
-    @Override
-    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
-        case "replytoaddresses":
-        case "replyToAddresses": return java.lang.String.class;
-        case "to": return java.lang.String.class;
         default: return null;
         }
     }
