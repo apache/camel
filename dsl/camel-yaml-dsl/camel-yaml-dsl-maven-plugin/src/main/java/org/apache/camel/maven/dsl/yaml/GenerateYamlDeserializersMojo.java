@@ -551,7 +551,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
             caseAdded = true;
 
             setProperty.beginControlFlow("case \"steps\":");
-            setProperty.addStatement("setSteps(target, node);");
+            setProperty.addStatement("setSteps(target, node)");
             setProperty.addStatement("break");
             setProperty.endControlFlow();
 
