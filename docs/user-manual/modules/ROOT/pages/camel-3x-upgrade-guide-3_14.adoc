@@ -31,3 +31,7 @@ The option `debug-level` has been renamed to `logging-level` because the option 
 === camel-zookeeper/camel-master
 
 When using Zookeeper with the Master component, the given namespace is now used to define leadership. In other words, a route defined with `master:lock1` will result in one leader election, while a route defined with `master:lock2` will result in a separate leader election, which may or may not result in the same leader as `lock1`. This matches the existing behavior of the Master component when using Consul.
+
+=== camel-aws2-ses
+
+The to and replyTo parameters are now comma separated String and no more List of Strings, this is true even for the related headers.
