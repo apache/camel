@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.aws2.ses;
 
-import java.util.List;
-
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
