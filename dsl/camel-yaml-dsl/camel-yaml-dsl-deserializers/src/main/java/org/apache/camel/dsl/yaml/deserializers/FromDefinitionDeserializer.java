@@ -26,7 +26,7 @@ import org.snakeyaml.engine.v2.api.ConstructNode;
 import org.snakeyaml.engine.v2.nodes.Node;
 
 @YamlType(
-          inline = true,
+          inline = false,
           types = FromDefinition.class,
           order = YamlDeserializerResolver.ORDER_DEFAULT,
           properties = {

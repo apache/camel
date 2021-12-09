@@ -936,25 +936,21 @@
         }
       },
       "org.apache.camel.model.FromDefinition" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "parameters" : {
-              "type" : "object"
-            },
-            "steps" : {
-              "type" : "array",
-              "items" : {
-                "$ref" : "#/items/definitions/org.apache.camel.model.ProcessorDefinition"
-              }
-            },
-            "uri" : {
-              "type" : "string"
+        "type" : "object",
+        "properties" : {
+          "parameters" : {
+            "type" : "object"
+          },
+          "steps" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.ProcessorDefinition"
             }
+          },
+          "uri" : {
+            "type" : "string"
           }
-        } ],
+        },
         "required" : [ "steps", "uri" ]
       },
       "org.apache.camel.model.GlobalOptionDefinition" : {
