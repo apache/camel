@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.component.SendDynamicAwareSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -118,16 +119,17 @@ public class HttpSendDynamicAware extends SendDynamicAwareSupport {
     }
 
     /**
-     * Parses the uri into an string array with 3 elements.
+     * Parses the uri into a string array with 3 elements.
      *
      * 0 = host:port 1 = path 2 = authority
      */
     public String[] parseUri(DynamicAwareEntry entry) {
         String u = entry.getUri();
 
-        // remove scheme prefix (unless its camel-http or camel-http)
+        // remove scheme prefix (unless its camel-http or camel-vertx-http)
         boolean httpComponent = "http".equals(getScheme()) || "https".equals(getScheme());
-        if (!httpComponent) {
+        boolean vertxHttpComponent = "vertx-http".equals(getScheme());
+        if (!httpComponent && !vertxHttpComponent) {
             String prefix = getScheme() + "://";
             String prefix2 = getScheme() + ":";
             if (u.startsWith(prefix)) {
@@ -140,6 +142,15 @@ public class HttpSendDynamicAware extends SendDynamicAwareSupport {
         // remove query parameters
         if (u.indexOf('?') > 0) {
             u = StringHelper.before(u, "?");
+        }
+
+        if (vertxHttpComponent && u.startsWith("vertx-http:")) {
+            u = u.substring(11);
+            // must include http prefix
+            String scheme = ResourceHelper.getScheme(u);
+            if (scheme == null) {
+                u = "http://" + u;
+            }
         }
 
         // favour using java.net.URI for parsing into host, context-path and authority
