@@ -209,6 +209,18 @@ curl http://localhost:8080/hello
 Hello World%
 ----
 
+=== Debugging
+
+You can debug both CamelJBang@apache/camel and your integration scripts by making use of the `--debug` flag provided by JBang:
+
+[source,bash]
+----
+jbang --debug CamelJBang@apache/camel run /path/to/integration.java
+[jbang] Building jar...
+Listening for transport dt_socket at address: 4004
+----
+
+As you can see the default listening port is 4004 but can be configured as described in https://www.jbang.dev/documentation/guide/latest/debugging.html[JBang Debugging].
 
 === Search
 
