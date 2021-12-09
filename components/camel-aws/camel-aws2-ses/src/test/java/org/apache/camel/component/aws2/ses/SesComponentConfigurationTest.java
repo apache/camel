@@ -113,12 +113,10 @@ public class SesComponentConfigurationTest extends CamelTestSupport {
         assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
         assertNotNull(endpoint.getConfiguration().getAmazonSESClient());
-        assertEquals(2, endpoint.getConfiguration().getTo().size());
         assertTrue(endpoint.getConfiguration().getTo().contains("to1@example.com"));
         assertTrue(endpoint.getConfiguration().getTo().contains("to2@example.com"));
         assertEquals("Subject", endpoint.getConfiguration().getSubject());
         assertEquals("bounce@example.com", endpoint.getConfiguration().getReturnPath());
-        assertEquals(2, endpoint.getConfiguration().getReplyToAddresses().size());
         assertTrue(endpoint.getConfiguration().getReplyToAddresses().contains("replyTo1@example.com"));
         assertTrue(endpoint.getConfiguration().getReplyToAddresses().contains("replyTo2@example.com"));
     }
