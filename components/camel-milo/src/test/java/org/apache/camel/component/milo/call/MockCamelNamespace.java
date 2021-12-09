@@ -112,7 +112,6 @@ public class MockCamelNamespace extends ManagedNamespace {
                 methodNode.getNodeId(),
                 Identifiers.HasComponent,
                 folderNode.getNodeId().expanded(),
-                folderNode.getNodeClass(),
                 false));
     }
 
