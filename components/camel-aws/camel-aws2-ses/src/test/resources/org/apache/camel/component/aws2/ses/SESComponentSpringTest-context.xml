@@ -26,7 +26,7 @@
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="direct:start"/>
-            <to uri="aws2-ses://from@example.com?amazonSESClient=#amazonSESClient&amp;returnPath=bounce@example.com"/>
+            <to uri="aws2-ses://from@example.com?amazonSESClient=#amazonSESClient&amp;returnPath=bounce@example.com&amp;to=to1@example.com,to2@example.com&amp;replyToAddresses=replyTo1@example.com,replyTo2@example.com"/>
         </route>
     </camelContext>
 
