@@ -944,12 +944,18 @@
             "parameters" : {
               "type" : "object"
             },
+            "steps" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.ProcessorDefinition"
+              }
+            },
             "uri" : {
               "type" : "string"
             }
           }
         } ],
-        "required" : [ "uri" ]
+        "required" : [ "steps", "uri" ]
       },
       "org.apache.camel.model.GlobalOptionDefinition" : {
         "type" : "object",
@@ -2205,15 +2211,9 @@
           },
           "route-configuration-id" : {
             "type" : "string"
-          },
-          "steps" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.ProcessorDefinition"
-            }
           }
         },
-        "required" : [ "from", "steps" ]
+        "required" : [ "from" ]
       },
       "org.apache.camel.model.RouteTemplateBeanDefinition" : {
         "oneOf" : [ {

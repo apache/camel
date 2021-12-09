@@ -29,6 +29,7 @@ import org.apache.camel.Component;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.PropertyBindingException;
 import org.apache.camel.dsl.yaml.common.exception.UnsupportedNodeTypeException;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.CamelContextCustomizer;
 import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.spi.PropertyConfigurer;
@@ -48,6 +49,7 @@ import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asScalarM
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asText;
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.getDeserializationContext;
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.setDeserializationContext;
+import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.setSteps;
 
 public final class YamlSupport {
     private YamlSupport() {
@@ -201,7 +203,7 @@ public final class YamlSupport {
         return node;
     }
 
-    public static String creteEndpointUri(Node node, BiFunction<String, Node, String> endpointResolver) {
+    public static String creteEndpointUri(Node node, BiFunction<String, Node, String> endpointResolver, RouteDefinition route) {
         String answer = null;
 
         if (node.getNodeType() == NodeType.SCALAR) {
@@ -235,6 +237,10 @@ public final class YamlSupport {
                         }
 
                         parameters = asScalarMap(tuple.getValueNode());
+                        break;
+                    case "steps":
+                        // steps must be set on the route
+                        setSteps(route, val);
                         break;
                     default:
                         String endpointUri = endpointResolver.apply(key, val);

@@ -133,16 +133,16 @@ class RouteConfigurationTest extends YamlTestSupport {
                 - route:
                     route-configuration-id: handleError 
                     from:
-                        uri: "direct:start"
-                    steps:
-                      - process: 
-                          ref: "myFailingProcessor"            
+                      uri: "direct:start"
+                      steps:
+                        - process: 
+                            ref: "myFailingProcessor"            
                 - route:
                     from:
-                        uri: "direct:start2"
-                    steps:
-                      - process: 
-                          ref: "myFailingProcessor"            
+                      uri: "direct:start2"
+                      steps:
+                        - process: 
+                            ref: "myFailingProcessor"            
             """
 
         withMock('mock:on-exception') {
