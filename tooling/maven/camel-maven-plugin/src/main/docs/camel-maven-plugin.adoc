@@ -92,27 +92,6 @@ This is default turned off, to use the configured logging system in the project.
 The idea with the built-in logging is that you sometimes want to avoid messing with setting
 up logging, and just want a quick and easy log to console that looks good.
 
-=== Using live reload of XML files
-
-You can configure the plugin to scan for XML file changes and trigger a reload of the Camel routes which are contained in those XML files.
-
-[source,xml]
-----
-<plugin>
-  <groupId>org.apache.camel</groupId>
-  <artifactId>camel-maven-plugin</artifactId>
-  <configuration>
-    <fileWatcherDirectory>src/main/resources/META-INF/spring</fileWatcherDirectory>
-  </configuration>
-</plugin>
-----
-
-Then the plugin watches this directory. This allows you to edit the source code from your editor and save the file, and have
-    the running Camel application pickup those changes.
-
-Notice its only changes of Camel routes, eg `<routes>`, or `<route>` which is supported.
-You cannot change Spring or OSGi Blueprint `<bean>` elements.
-
 
 == camel:prepare-fatjar
 
