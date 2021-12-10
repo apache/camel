@@ -186,3 +186,24 @@ Remember to specify the class name of *your* main class where it says `com.foo.N
     </plugins>
   </build>
 ----
+
+
+== camel:dev
+
+The `camel:dev` goal of the Camel Maven Plugin is used to run your Camel integrations, it offers live reload of xml, yml and java files:
+
+----
+cd examples/routeloader
+mvn camel:dev
+----
+
+By adding, editing or removing files in `src/main/resources/myroutes` running routes will be stopped and new ones will be created.
+
+=== Options
+
+The maven plugin *dev* extends from the run one, so all the properties and behaviour are still valid, moreover a new property is defined:
+
+|===
+| Parameter | Default Value | Description
+| routesDirectory | null | Path to integration files, by default maven resource folder (src/main/resources) will be used.
+|===
