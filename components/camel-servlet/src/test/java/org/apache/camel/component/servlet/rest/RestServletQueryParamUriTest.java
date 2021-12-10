@@ -20,12 +20,11 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.servlet.ServletCamelRouterTestSupport;
 import org.apache.camel.component.servlet.ServletRestHttpBinding;
-import org.apache.camel.model.rest.RestParamType;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class RestServletQueryParamTest extends ServletCamelRouterTestSupport {
+public class RestServletQueryParamUriTest extends ServletCamelRouterTestSupport {
 
     @BindToRegistry("myBinding")
     private ServletRestHttpBinding restHttpBinding = new ServletRestHttpBinding();
@@ -46,7 +45,9 @@ public class RestServletQueryParamTest extends ServletCamelRouterTestSupport {
         WebRequest req = new GetMethodWebRequest(contextUrl + "/services/users/");
         WebResponse response = query(req, false);
 
-        assertEquals(400, response.getResponseCode());
+        // we do not know if the query was required, so we cannot validate this
+        assertEquals(200, response.getResponseCode());
+        assertEquals("null;Donald Duck", response.getText());
     }
 
     @Override
@@ -60,12 +61,7 @@ public class RestServletQueryParamTest extends ServletCamelRouterTestSupport {
 
                 // use the rest DSL to define the rest services
                 rest()
-                    .get("/users/")
-                        .param()
-                            .name("auth")
-                            .type(RestParamType.query)
-                            .required(true)
-                        .endParam()
+                    .get("/users/?auth={myAuth}")
                     .route().to("mock:input").process(exchange -> {
                         String auth = exchange.getIn().getHeader("auth", String.class);
                             exchange.getMessage().setBody(auth + ";Donald Duck");
