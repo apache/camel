@@ -228,11 +228,11 @@ public final class RouteDefinitionHelper {
     /**
      * Find verb associated with the route by mapping uri
      */
-    private static VerbDefinition findVerbDefinition(RestDefinition rest, String endpointUri) {
+    private static VerbDefinition findVerbDefinition(RestDefinition rest, String endpointUri) throws Exception {
         VerbDefinition ret = null;
         String preVerbUri = "";
         for (VerbDefinition verb : rest.getVerbs()) {
-            String verbUri = rest.buildFromUri(verb);
+            String verbUri = URISupport.normalizeUri(rest.buildFromUri(verb));
             if (endpointUri.startsWith(verbUri) && preVerbUri.length() < verbUri.length()) {
                 // if there are multiple verb uri match, select the most
                 // specific one
