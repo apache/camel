@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.maven;
+package org.apache.camel.component.salesforce.codegen;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -37,10 +37,9 @@ import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.apache.camel.component.salesforce.internal.client.RestClient;
 import org.apache.camel.component.salesforce.internal.client.SyncResponseCallback;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.logging.Log;
+import org.slf4j.Logger;
 
-final class ObjectDescriptions {
+public final class ObjectDescriptions {
 
     private final RestClient client;
 
@@ -48,10 +47,10 @@ final class ObjectDescriptions {
 
     private final long responseTimeout;
 
-    ObjectDescriptions(final RestClient client, final long responseTimeout, final String[] includes,
-                       final String includePattern, final String[] excludes,
-                       final String excludePattern, final Log log)
-                                                                   throws MojoExecutionException {
+    public ObjectDescriptions(final RestClient client, final long responseTimeout, final String[] includes,
+                              final String includePattern, final String[] excludes,
+                              final String excludePattern, final Logger log)
+                                                                             throws Exception {
         this.client = client;
         this.responseTimeout = responseTimeout;
 
@@ -78,7 +77,7 @@ final class ObjectDescriptions {
         return descriptionOf(name).getFields().stream().anyMatch(SObjectField::isExternalId);
     }
 
-    Iterable<SObjectDescription> fetched() {
+    public Iterable<SObjectDescription> fetched() {
         return descriptions.values();
     }
 
@@ -89,7 +88,7 @@ final class ObjectDescriptions {
 
             client.getDescription(name, Collections.emptyMap(), callback);
             if (!callback.await(responseTimeout, TimeUnit.MILLISECONDS)) {
-                throw new MojoExecutionException("Timeout waiting for getDescription for sObject " + name);
+                throw new RuntimeException("Timeout waiting for getDescription for sObject " + name);
             }
             final SalesforceException ex = callback.getException();
             if (ex != null) {
@@ -108,8 +107,8 @@ final class ObjectDescriptions {
 
     private void fetchSpecifiedDescriptions(
             final String[] includes, final String includePattern, final String[] excludes, final String excludePattern,
-            final Log log)
-            throws MojoExecutionException {
+            final Logger log)
+            throws Exception {
         // use Jackson json
         final ObjectMapper mapper = JsonUtils.createObjectMapper();
 
@@ -120,7 +119,7 @@ final class ObjectDescriptions {
             log.info("Getting Salesforce Objects...");
             client.getGlobalObjects(Collections.emptyMap(), callback);
             if (!callback.await(responseTimeout, TimeUnit.MILLISECONDS)) {
-                throw new MojoExecutionException("Timeout waiting for getGlobalObjects!");
+                throw new RuntimeException("Timeout waiting for getGlobalObjects!");
             }
             final SalesforceException ex = callback.getException();
             if (ex != null) {
@@ -133,7 +132,7 @@ final class ObjectDescriptions {
                 objectNames.add(sObject.getName());
             }
         } catch (final Exception e) {
-            throw new MojoExecutionException("Error getting global Objects: " + e.getMessage(), e);
+            throw new RuntimeException("Error getting global Objects: " + e.getMessage(), e);
         }
 
         // check if we are generating POJOs for all objects or not
@@ -155,9 +154,8 @@ final class ObjectDescriptions {
 
     private static void filterObjectNames(
             final Set<String> objectNames, final String[] includes, final String includePattern, final String[] excludes,
-            final String excludePattern,
-            final Log log)
-            throws MojoExecutionException {
+            final String excludePattern, final Logger log)
+            throws Exception {
         log.info("Looking for matching Object names...");
         // create a list of accepted names
         final Set<String> includedNames = new HashSet<>();
@@ -165,7 +163,7 @@ final class ObjectDescriptions {
             for (String name : includes) {
                 name = name.trim();
                 if (name.isEmpty()) {
-                    throw new MojoExecutionException("Invalid empty name in includes");
+                    throw new RuntimeException("Invalid empty name in includes");
                 }
                 includedNames.add(name);
             }
@@ -176,7 +174,7 @@ final class ObjectDescriptions {
             for (String name : excludes) {
                 name = name.trim();
                 if (name.isEmpty()) {
-                    throw new MojoExecutionException("Invalid empty name in excludes");
+                    throw new RuntimeException("Invalid empty name in excludes");
                 }
                 excludedNames.add(name);
             }

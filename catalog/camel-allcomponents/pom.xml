@@ -1163,6 +1163,10 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-salesforce-codegen</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-salesforce</artifactId>
 		</dependency>
 		<dependency>

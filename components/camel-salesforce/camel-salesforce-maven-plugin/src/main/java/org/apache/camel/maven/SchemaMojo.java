@@ -17,18 +17,10 @@
 package org.apache.camel.maven;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.HashSet;
-import java.util.Set;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
-import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
-import org.apache.camel.component.salesforce.internal.client.RestClient;
-import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.camel.component.salesforce.codegen.AbstractSalesforceExecution;
+import org.apache.camel.component.salesforce.codegen.SchemaExecution;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -79,37 +71,23 @@ public class SchemaMojo extends AbstractSalesforceMojo {
                defaultValue = "${project.build.directory}/generated-sources/camel-salesforce")
     File outputDirectory;
 
+    private final SchemaExecution execution = new SchemaExecution();
+
     @Override
-    protected void executeWithClient(final RestClient client) throws MojoExecutionException {
-        getLog().info("Generating JSON Schema...");
-
-        final ObjectDescriptions descriptions = new ObjectDescriptions(
-                client, getResponseTimeout(), includes, includePattern, excludes, excludePattern, getLog());
-
-        // generate JSON schema for every object description
-        final ObjectMapper schemaObjectMapper = JsonUtils.createSchemaObjectMapper();
-        final Set<JsonSchema> allSchemas = new HashSet<>();
-        for (final SObjectDescription description : descriptions.fetched()) {
-            if (Defaults.IGNORED_OBJECTS.contains(description.getName())) {
-                continue;
-            }
-            try {
-                allSchemas.addAll(JsonUtils.getSObjectJsonSchema(schemaObjectMapper, description, jsonSchemaId, true));
-            } catch (final IOException e) {
-                throw new MojoExecutionException("Unable to generate JSON Schema types for: " + description.getName(), e);
-            }
-        }
-
-        final Path schemaFilePath = outputDirectory.toPath().resolve(jsonSchemaFilename);
-        try {
-            Files.write(schemaFilePath,
-                    JsonUtils.getJsonSchemaString(schemaObjectMapper, allSchemas, jsonSchemaId).getBytes("UTF-8"));
-        } catch (final IOException e) {
-            throw new MojoExecutionException("Unable to generate JSON Schema source file: " + schemaFilePath, e);
-        }
-
-        getLog().info(
-                String.format("Successfully generated %s JSON Types in file %s", descriptions.count() * 2, schemaFilePath));
+    protected AbstractSalesforceExecution getSalesforceExecution() {
+        return execution;
     }
 
+    @Override
+    protected void setup() {
+        super.setup();
+        execution.setExcludes(excludes);
+        execution.setExcludePattern(excludePattern);
+        execution.setIncludes(includes);
+        execution.setIncludePattern(includePattern);
+        execution.setJsonSchemaId(jsonSchemaId);
+        execution.setJsonSchemaFilename(jsonSchemaFilename);
+        execution.setOutputDirectory(outputDirectory);
+        execution.setup();
+    }
 }
