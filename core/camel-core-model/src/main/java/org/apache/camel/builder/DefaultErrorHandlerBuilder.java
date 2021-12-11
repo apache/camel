@@ -28,6 +28,7 @@ import org.apache.camel.model.errorhandler.DefaultErrorHandlerProperties;
 import org.apache.camel.processor.errorhandler.DefaultErrorHandler;
 import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 import org.apache.camel.spi.CamelLogger;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Language;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.slf4j.LoggerFactory;
@@ -35,6 +36,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The default error handler builder.
  */
+@Configurer
 public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport implements DefaultErrorHandlerProperties {
 
     private final DefaultErrorHandlerConfiguration configuration;

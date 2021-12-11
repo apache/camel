@@ -1,6 +1,7 @@
 = Release Guide
 
 This guide covers how to create and announce a Camel release.
+Instructions on updating the website to include the new documentation version are xref:release-guide-website.adoc[here].
 
 [[ReleaseGuide-Prequisites]]
 == Prequisites

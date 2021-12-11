@@ -561,6 +561,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         // build query string, and append any endpoint configuration properties
         if (config.getProducerComponent() == null || config.getProducerComponent().equals("http")) {
             // setup endpoint options
+            map.put("httpMethod", verb);
             if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
                 map.putAll(config.getEndpointProperties());
             }

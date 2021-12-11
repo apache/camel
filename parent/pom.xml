@@ -80,7 +80,7 @@
         <avro-ipc-jetty-version>1.10.2</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.10.2</avro-ipc-netty-version>
         <awaitility-version>4.1.1</awaitility-version>
-        <aws-java-sdk2-version>2.17.89</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.17.99</aws-java-sdk2-version>
         <aws-xray-version>2.6.1</aws-xray-version>
         <axiom-version>1.2.14</axiom-version>
         <azure-jackson2-version>2.11.3</azure-jackson2-version>
@@ -163,7 +163,7 @@
         <docker-java-version>3.2.12</docker-java-version>
         <dozer-version>6.5.2</dozer-version>
         <dropbox-version>3.2.0</dropbox-version>
-        <debezium-version>1.7.0.Final</debezium-version>
+        <debezium-version>1.7.1.Final</debezium-version>
         <debezium-mysql-connector-version>8.0.27</debezium-mysql-connector-version>
         <eddsa-version>0.3.0</eddsa-version>
         <egit-github-core-version>2.1.5</egit-github-core-version>
@@ -250,7 +250,7 @@
         <huaweicloud-sdk-version>3.0.59</huaweicloud-sdk-version>
         <hystrix-version>1.5.18</hystrix-version>
         <ical4j-version>1.0.7</ical4j-version>
-        <icu4j-version>69.1</icu4j-version>
+        <icu4j-version>70.1</icu4j-version>
         <ignite-version>2.10.0</ignite-version>
         <impsort-maven-plugin-version>1.6.0</impsort-maven-plugin-version>
         <infinispan-version>13.0.2.Final</infinispan-version>
@@ -267,6 +267,7 @@
         <jain-sip-ri-bundle-version>1.2.154_2</jain-sip-ri-bundle-version>
         <jasminb-jsonapi-version>0.11</jasminb-jsonapi-version>
         <jandex-version>2.4.1.Final</jandex-version>
+        <jansi-version>1.18</jansi-version>
         <jasn1-version>1.11.3</jasn1-version>
         <jasypt-version>1.9.3</jasypt-version>
         <java-grok-version>0.1.9</java-grok-version>
@@ -291,7 +292,7 @@
         <glassfish-javax-json>1.0.4</glassfish-javax-json>
         <glassfish-jaxb-runtime-version>2.3.3</glassfish-jaxb-runtime-version>
         <jaxb2-maven-plugin-version>2.5.0</jaxb2-maven-plugin-version>
-        <jbpm-version>7.61.0.Final</jbpm-version>
+        <jbpm-version>7.62.0.Final</jbpm-version>
         <jboss-el-api_3.0_spec-version>2.0.0.Final</jboss-el-api_3.0_spec-version>
         <jboss-logging-version>3.4.0.Final</jboss-logging-version>
         <jboss-marshalling-version>1.4.10.Final</jboss-marshalling-version>
@@ -358,12 +359,12 @@
         <leveldb-api-version>0.12</leveldb-api-version>
         <leveldb-version>0.12</leveldb-version>
         <leveldb-guava-version>21.0</leveldb-guava-version>
-        <libphonenumber-version>8.12.36</libphonenumber-version>
+        <libphonenumber-version>8.12.38</libphonenumber-version>
         <!-- virtual dependency only used by Eclipse m2e -->
         <lifecycle-mapping-version>1.0.0</lifecycle-mapping-version>
         <lettuce-version>5.1.0.RELEASE</lettuce-version>
-        <log4j2-version>2.13.3</log4j2-version>
-        <logback-version>1.2.3</logback-version>
+        <log4j2-version>2.15.0</log4j2-version>
+        <logback-version>1.2.7</logback-version>
         <lucene-version>8.11.0</lucene-version>
         <lucene-version-range>[8,9)</lucene-version-range>
         <lightcouch-version>0.2.0</lightcouch-version>
@@ -402,7 +403,7 @@
         <mina-version>2.1.4</mina-version>
         <minidns-version>0.3.4</minidns-version>
         <minimal-json-version>0.9.5</minimal-json-version>
-        <minio-version>8.3.3</minio-version>
+        <minio-version>8.3.4</minio-version>
         <mock-javamail-version>1.9</mock-javamail-version>
         <mockwebserver-version>0.1.8</mockwebserver-version>
         <mockito-version>3.12.4</mockito-version>
@@ -512,7 +513,7 @@
         <spring-version>${spring5-version}</spring-version>
         <spring5-version>5.3.13</spring5-version>
         <spring-rabbitmq-version>2.4.0</spring-rabbitmq-version>
-        <spring-security-version>5.5.3</spring-security-version>
+        <spring-security-version>5.6.0</spring-security-version>
         <spring-ws-version>3.1.1</spring-ws-version>
         <sql-maven-plugin-version>1.5</sql-maven-plugin-version>
         <squareup-okhttp-version>3.14.7</squareup-okhttp-version>
@@ -2958,25 +2959,6 @@
               <groupId>com.github.jasminb</groupId>
               <artifactId>jsonapi-converter</artifactId>
               <version>${jasminb-jsonapi-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>net.corda</groupId>
-                <artifactId>corda-rpc</artifactId>
-                <version>${corda-version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>co.paralleluniverse</groupId>
-                        <artifactId>quasar-core</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.hibernate</groupId>
-                        <artifactId>hibernate-core</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.hibernate.javax.persistence</groupId>
-                        <artifactId>hibernate-jpa-2.1-api</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
 
             <dependency>

@@ -29,7 +29,7 @@
 
   <artifactId>camel-huaweicloud-obs</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: Huawei Cloud :: OBS Component</name>
+  <name>Camel :: Huawei Cloud :: OBS</name>
   <description>To provide stable, secure, efficient, and easy-to-use cloud storage service on Huawei Cloud</description>
 
   <dependencies>

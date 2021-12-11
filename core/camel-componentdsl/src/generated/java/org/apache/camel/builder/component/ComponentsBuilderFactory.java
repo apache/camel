@@ -646,7 +646,7 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AzureStorageBlobComponentBuilderFactory.azureStorageBlob();
     }
     /**
-     * Azure storage datalake service (camel-azure-storage-datalake)
+     * Azure Storage Datalake Service (camel-azure-storage-datalake)
      * Camel Azure Datalake Gen2 Component
      * 
      * Category: cloud,file
@@ -4484,6 +4484,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.VertxKafkaComponentBuilderFactory.VertxKafkaComponentBuilder vertxKafka() {
         return org.apache.camel.builder.component.dsl.VertxKafkaComponentBuilderFactory.vertxKafka();
     }

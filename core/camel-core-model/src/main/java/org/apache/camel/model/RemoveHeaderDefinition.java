@@ -30,11 +30,8 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "removeHeader")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemoveHeaderDefinition extends NoOutputDefinition<RemoveHeaderDefinition> {
-    @XmlAttribute
+    @XmlAttribute(required = true)
     private String name;
-    @XmlAttribute
-    @Deprecated
-    private String headerName;
 
     public RemoveHeaderDefinition() {
     }
@@ -69,16 +66,4 @@ public class RemoveHeaderDefinition extends NoOutputDefinition<RemoveHeaderDefin
         this.name = name;
     }
 
-    @Deprecated
-    public String getHeaderName() {
-        return headerName;
-    }
-
-    /**
-     * Name of header to remove (deprecated use name instead)
-     */
-    @Deprecated
-    public void setHeaderName(String headerName) {
-        this.headerName = headerName;
-    }
 }

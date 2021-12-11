@@ -82,6 +82,10 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "heartbeatIntervalMs": target.getConfiguration().setHeartbeatIntervalMs(property(camelContext, java.lang.Integer.class, value)); return true;
         case "interceptorclasses":
         case "interceptorClasses": target.getConfiguration().setInterceptorClasses(property(camelContext, java.lang.String.class, value)); return true;
+        case "kafkaclientfactory":
+        case "kafkaClientFactory": target.setKafkaClientFactory(property(camelContext, org.apache.camel.component.kafka.KafkaClientFactory.class, value)); return true;
+        case "kafkamanualcommitfactory":
+        case "kafkaManualCommitFactory": target.setKafkaManualCommitFactory(property(camelContext, org.apache.camel.component.kafka.KafkaManualCommitFactory.class, value)); return true;
         case "kerberosbeforereloginmintime":
         case "kerberosBeforeReloginMinTime": target.getConfiguration().setKerberosBeforeReloginMinTime(property(camelContext, java.lang.Integer.class, value)); return true;
         case "kerberosinitcmd":
@@ -284,6 +288,10 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "heartbeatIntervalMs": return java.lang.Integer.class;
         case "interceptorclasses":
         case "interceptorClasses": return java.lang.String.class;
+        case "kafkaclientfactory":
+        case "kafkaClientFactory": return org.apache.camel.component.kafka.KafkaClientFactory.class;
+        case "kafkamanualcommitfactory":
+        case "kafkaManualCommitFactory": return org.apache.camel.component.kafka.KafkaManualCommitFactory.class;
         case "kerberosbeforereloginmintime":
         case "kerberosBeforeReloginMinTime": return java.lang.Integer.class;
         case "kerberosinitcmd":
@@ -487,6 +495,10 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "heartbeatIntervalMs": return target.getConfiguration().getHeartbeatIntervalMs();
         case "interceptorclasses":
         case "interceptorClasses": return target.getConfiguration().getInterceptorClasses();
+        case "kafkaclientfactory":
+        case "kafkaClientFactory": return target.getKafkaClientFactory();
+        case "kafkamanualcommitfactory":
+        case "kafkaManualCommitFactory": return target.getKafkaManualCommitFactory();
         case "kerberosbeforereloginmintime":
         case "kerberosBeforeReloginMinTime": return target.getConfiguration().getKerberosBeforeReloginMinTime();
         case "kerberosinitcmd":

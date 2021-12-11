@@ -27,6 +27,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.RouteTemplateContext;
 import org.apache.camel.spi.BeanRepository;
 import org.apache.camel.support.LocalBeanRegistry;
+import org.apache.camel.util.StringHelper;
 
 /**
  * Default {@link RouteTemplateContext}.
@@ -104,6 +105,23 @@ public final class DefaultRouteTemplateContext implements RouteTemplateContext {
     @Override
     public Map<String, Object> getParameters() {
         return parameters;
+    }
+
+    @Override
+    public boolean hasParameter(String name) {
+        if (parameters.containsKey(name)) {
+            return true;
+        }
+        // lookup key with both dash and camel style
+        name = StringHelper.dashToCamelCase(name);
+        if (parameters.containsKey(name)) {
+            return true;
+        }
+        name = StringHelper.camelCaseToDash(name);
+        if (parameters.containsKey(name)) {
+            return true;
+        }
+        return false;
     }
 
     @Override

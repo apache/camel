@@ -33,9 +33,14 @@ import org.apache.camel.util.ObjectHelper;
 public interface HealthCheckRegistry extends CamelContextAware, StaticService, IdAware {
 
     /**
+     * Service factory name.
+     */
+    String NAME = "default-registry";
+
+    /**
      * Service factory key.
      */
-    String FACTORY = "health-check-registry";
+    String FACTORY = "health-check/" + NAME;
 
     /**
      * Whether Health Check is enabled globally
@@ -110,4 +115,10 @@ public interface HealthCheckRegistry extends CamelContextAware, StaticService, I
      * Returns a sequential {@code Stream} with the known {@link HealthCheck} as its source.
      */
     Stream<HealthCheck> stream();
+
+    /**
+     * Loads custom health checks by scanning classpath.
+     */
+    void loadHealthChecks();
+
 }

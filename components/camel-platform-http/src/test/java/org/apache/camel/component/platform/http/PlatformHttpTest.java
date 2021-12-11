@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.platform.http;
 
+import java.util.Iterator;
+
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
@@ -47,6 +49,12 @@ public class PlatformHttpTest extends AbstractPlatformHttpTest {
         int statusCode = response.getStatusCode();
         assertEquals(200, statusCode);
         assertEquals("TEST", response.body().asString().trim());
+
+        PlatformHttpComponent phc = getContext().getComponent("platform-http", PlatformHttpComponent.class);
+        assertEquals(2, phc.getHttpEndpoints().size());
+        Iterator<String> it = phc.getHttpEndpoints().iterator();
+        assertEquals("/get", it.next());
+        assertEquals("/post", it.next());
     }
 
     @Override

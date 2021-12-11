@@ -65,7 +65,7 @@
     <avro-ipc-netty-version>1.10.2</avro-ipc-netty-version>
     <avro-version>1.10.2</avro-version>
     <awaitility-version>4.1.1</awaitility-version>
-    <aws-java-sdk2-version>2.17.89</aws-java-sdk2-version>
+    <aws-java-sdk2-version>2.17.99</aws-java-sdk2-version>
     <aws-xray-version>2.6.1</aws-xray-version>
     <axiom-version>1.2.14</axiom-version>
     <azure-cosmos-version>4.20.0</azure-cosmos-version>
@@ -169,7 +169,7 @@
     <cxf.xjc.jvmArgs></cxf.xjc.jvmArgs>
     <datasonnet-mapper-version>2.1.4</datasonnet-mapper-version>
     <debezium-mysql-connector-version>8.0.27</debezium-mysql-connector-version>
-    <debezium-version>1.7.0.Final</debezium-version>
+    <debezium-version>1.7.1.Final</debezium-version>
     <deltaspike-version>1.9.4</deltaspike-version>
     <depends-maven-plugin-version>1.4.0</depends-maven-plugin-version>
     <derby-version>10.14.2.0</derby-version>
@@ -270,7 +270,7 @@
     <huaweicloud-sdk-version>3.0.59</huaweicloud-sdk-version>
     <hystrix-version>1.5.18</hystrix-version>
     <ical4j-version>1.0.7</ical4j-version>
-    <icu4j-version>69.1</icu4j-version>
+    <icu4j-version>70.1</icu4j-version>
     <ignite-version>2.10.0</ignite-version>
     <impsort-maven-plugin-version>1.6.0</impsort-maven-plugin-version>
     <infinispan-version>13.0.2.Final</infinispan-version>
@@ -290,6 +290,7 @@
     <jakarta-mail-version>1.6.6</jakarta-mail-version>
     <jakarta.el-version>3.0.3</jakarta.el-version>
     <jandex-version>2.4.1.Final</jandex-version>
+    <jansi-version>1.18</jansi-version>
     <jasminb-jsonapi-version>0.11</jasminb-jsonapi-version>
     <jasn1-version>1.11.3</jasn1-version>
     <jasypt-version>1.9.3</jasypt-version>
@@ -313,7 +314,7 @@
     <jboss-marshalling-version>1.4.10.Final</jboss-marshalling-version>
     <jboss-transaction-spi.version>7.5.1.Final</jboss-transaction-spi.version>
     <jboss-xnio-version>3.3.8.Final</jboss-xnio-version>
-    <jbpm-version>7.61.0.Final</jbpm-version>
+    <jbpm-version>7.62.0.Final</jbpm-version>
     <jcache-bundle-version>1.1.1_1</jcache-bundle-version>
     <jclouds-google-guava-version>18.0</jclouds-google-guava-version>
     <jclouds-google-guava-version-range>[18.0,19.0)</jclouds-google-guava-version-range>
@@ -376,12 +377,12 @@
     <leveldb-guava-version>21.0</leveldb-guava-version>
     <leveldb-version>0.12</leveldb-version>
     <leveldbjni-version>1.8</leveldbjni-version>
-    <libphonenumber-version>8.12.36</libphonenumber-version>
+    <libphonenumber-version>8.12.38</libphonenumber-version>
     <libthrift-version>0.14.1</libthrift-version>
     <lifecycle-mapping-version>1.0.0</lifecycle-mapping-version>
     <lightcouch-version>0.2.0</lightcouch-version>
-    <log4j2-version>2.13.3</log4j2-version>
-    <logback-version>1.2.3</logback-version>
+    <log4j2-version>2.15.0</log4j2-version>
+    <logback-version>1.2.7</logback-version>
     <lucene-version>8.11.0</lucene-version>
     <lucene-version-range>[8,9)</lucene-version-range>
     <maven-antrun-plugin-version>1.6</maven-antrun-plugin-version>
@@ -416,7 +417,7 @@
     <mina-version>2.1.4</mina-version>
     <minidns-version>0.3.4</minidns-version>
     <minimal-json-version>0.9.5</minimal-json-version>
-    <minio-version>8.3.3</minio-version>
+    <minio-version>8.3.4</minio-version>
     <mock-javamail-version>1.9</mock-javamail-version>
     <mockito-version>3.12.4</mockito-version>
     <mockwebserver-version>0.1.8</mockwebserver-version>
@@ -519,7 +520,7 @@
     <spring-integration-version>5.5.6</spring-integration-version>
     <spring-ldap-version>2.3.4.RELEASE</spring-ldap-version>
     <spring-rabbitmq-version>2.4.0</spring-rabbitmq-version>
-    <spring-security-version>5.5.3</spring-security-version>
+    <spring-security-version>5.6.0</spring-security-version>
     <spring-version>${spring5-version}</spring-version>
     <spring-version-range>[5,6)</spring-version-range>
     <spring-ws-version>3.1.1</spring-ws-version>

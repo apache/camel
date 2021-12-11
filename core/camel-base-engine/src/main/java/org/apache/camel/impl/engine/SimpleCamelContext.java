@@ -27,6 +27,7 @@ import org.apache.camel.RouteTemplateContext;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.health.HealthCheckRegistry;
+import org.apache.camel.health.HealthCheckResolver;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
@@ -274,6 +275,11 @@ public class SimpleCamelContext extends AbstractCamelContext {
     @Override
     protected DataFormatResolver createDataFormatResolver() {
         return new DefaultDataFormatResolver();
+    }
+
+    @Override
+    protected HealthCheckResolver createHealthCheckResolver() {
+        return new DefaultHealthCheckResolver();
     }
 
     @Override

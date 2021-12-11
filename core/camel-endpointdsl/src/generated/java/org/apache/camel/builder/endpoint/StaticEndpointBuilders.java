@@ -2054,7 +2054,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.BlobEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Azure storage datalake service (camel-azure-storage-datalake)
+     * Azure Storage Datalake Service (camel-azure-storage-datalake)
      * Camel Azure Datalake Gen2 Component
      * 
      * Category: cloud,file
@@ -2077,7 +2077,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.DataLakeEndpointBuilderFactory.endpointBuilder("azure-storage-datalake", path);
     }
     /**
-     * Azure storage datalake service (camel-azure-storage-datalake)
+     * Azure Storage Datalake Service (camel-azure-storage-datalake)
      * Camel Azure Datalake Gen2 Component
      * 
      * Category: cloud,file
@@ -15454,6 +15454,7 @@ public class StaticEndpointBuilders {
      * @param path topic
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.VertxKafkaEndpointBuilderFactory.VertxKafkaEndpointBuilder vertxKafka(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.VertxKafkaEndpointBuilderFactory.endpointBuilder("vertx-kafka", path);
@@ -15478,6 +15479,7 @@ public class StaticEndpointBuilders {
      * @param path topic
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.VertxKafkaEndpointBuilderFactory.VertxKafkaEndpointBuilder vertxKafka(
             String componentName,
             String path) {

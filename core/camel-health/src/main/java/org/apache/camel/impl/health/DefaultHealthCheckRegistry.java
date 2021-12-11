@@ -16,6 +16,7 @@
  */
 package org.apache.camel.impl.health;
 
+import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -28,17 +29,18 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
-import org.apache.camel.spi.FactoryFinder;
-import org.apache.camel.spi.annotations.JdkService;
+import org.apache.camel.health.HealthCheckResolver;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.TimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Default {@link HealthCheckRegistry}.
  */
-@JdkService(HealthCheckRegistry.FACTORY)
+@org.apache.camel.spi.annotations.HealthCheck(HealthCheckRegistry.NAME)
 @DeferredContextBinding
 public class DefaultHealthCheckRegistry extends ServiceSupport implements HealthCheckRegistry {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultHealthCheckRegistry.class);
@@ -48,6 +50,7 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
     private final Set<HealthCheckRepository> repositories;
     private CamelContext camelContext;
     private boolean enabled = true;
+    private volatile boolean loadHealthChecksDone;
 
     public DefaultHealthCheckRegistry() {
         this(null);
@@ -123,16 +126,8 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
         HealthCheck answer = checks.stream().filter(h -> h.getId().equals(id)).findFirst()
                 .orElse(camelContext.getRegistry().findByTypeWithName(HealthCheck.class).get(id));
         if (answer == null) {
-            // discover via classpath (try first via -health-check and then id as-is)
-            FactoryFinder ff = camelContext.adapt(ExtendedCamelContext.class).getDefaultFactoryFinder();
-            Class<? extends HealthCheck> clazz
-                    = (Class<? extends HealthCheck>) ff.findOptionalClass(id + "-health-check").orElse(null);
-            if (clazz == null) {
-                clazz = (Class<? extends HealthCheck>) ff.findOptionalClass(id).orElse(null);
-            }
-            if (clazz != null) {
-                answer = camelContext.getInjector().newInstance(clazz);
-            }
+            HealthCheckResolver resolver = camelContext.adapt(ExtendedCamelContext.class).getHealthCheckResolver();
+            answer = resolver.resolveHealthCheck(id);
         }
 
         return answer;
@@ -144,15 +139,8 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
                 .orElse(camelContext.getRegistry().findByTypeWithName(HealthCheckRepository.class).get(id));
         if (answer == null) {
             // discover via classpath (try first via -health-check-repository and then id as-is)
-            FactoryFinder ff = camelContext.adapt(ExtendedCamelContext.class).getDefaultFactoryFinder();
-            Class<? extends HealthCheckRepository> clazz = (Class<? extends HealthCheckRepository>) ff
-                    .findOptionalClass(id + "-health-check-repository").orElse(null);
-            if (clazz == null) {
-                clazz = (Class<? extends HealthCheckRepository>) ff.findOptionalClass(id).orElse(null);
-            }
-            if (clazz != null) {
-                answer = camelContext.getInjector().newInstance(clazz);
-            }
+            HealthCheckResolver resolver = camelContext.adapt(ExtendedCamelContext.class).getHealthCheckResolver();
+            answer = resolver.resolveHealthCheckRepository(id);
         }
 
         return answer;
@@ -237,6 +225,24 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
                     repositories.stream().flatMap(HealthCheckRepository::stream)).distinct();
         }
         return Stream.empty();
+    }
+
+    @Override
+    public void loadHealthChecks() {
+        StopWatch watch = new StopWatch();
+
+        if (!loadHealthChecksDone) {
+            loadHealthChecksDone = true;
+
+            DefaultHealthChecksLoader loader = new DefaultHealthChecksLoader(camelContext);
+            Collection<HealthCheck> col = loader.loadHealthChecks();
+
+            // report how many health checks we have loaded
+            if (col.size() > 0) {
+                String time = TimeUtils.printDuration(watch.taken());
+                LOG.info("Health checks (scanned: {}) loaded in {}", col.size(), time);
+            }
+        }
     }
 
     private void checkIfAccepted(Object obj) {

@@ -22,6 +22,7 @@ import java.util.Random;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Predicate;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
@@ -78,6 +79,7 @@ import org.slf4j.LoggerFactory;
  * If you want to set a starting delay, then use 0 as the first limit, eg: <tt>0:1000;5:5000</tt> will use 1 sec delay
  * until attempt number 5 where it will use 5 seconds going forward.
  */
+@Configurer
 public class RedeliveryPolicy implements Cloneable, Serializable {
     // default policy using out of the box settings which can be shared
     public static final RedeliveryPolicy DEFAULT_POLICY = new RedeliveryPolicy();

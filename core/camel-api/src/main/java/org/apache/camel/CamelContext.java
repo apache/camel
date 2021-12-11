@@ -1172,6 +1172,16 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     void setLoadTypeConverters(Boolean loadTypeConverters);
 
     /**
+     * Whether to load custom health checks by scanning classpath.
+     */
+    Boolean isLoadHealthChecks();
+
+    /**
+     * Whether to load custom health checks by scanning classpath.
+     */
+    void setLoadHealthChecks(Boolean loadHealthChecks);
+
+    /**
      * Whether or not type converter statistics is enabled.
      * <p/>
      * By default the type converter utilization statistics is disabled. <b>Notice:</b> If enabled then there is a

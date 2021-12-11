@@ -29,8 +29,8 @@
 
     <artifactId>camel-microprofile-parent</artifactId>
     <packaging>pom</packaging>
-    <name>Camel :: Microprofile :: Parent</name>
-    <description>Camel Microprofile parent</description>
+    <name>Camel :: MicroProfile :: Parent</name>
+    <description>Camel MicroProfile Parent</description>
 
     <modules>
         <module>camel-microprofile-config</module>

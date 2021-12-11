@@ -64,4 +64,9 @@ public class CamelMicroProfilePropertiesSource implements LoadablePropertiesSour
 
         return answer;
     }
+
+    @Override
+    public void reloadProperties(String location) {
+        // noop
+    }
 }

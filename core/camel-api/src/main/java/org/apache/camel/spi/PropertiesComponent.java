@@ -212,4 +212,12 @@ public interface PropertiesComponent extends StaticService {
      */
     void setEncoding(String encoding);
 
+    /**
+     * Reload properties from the given location patterns.
+     *
+     * @param  pattern patterns, or null to reload from all known locations
+     * @return         true if some properties was reloaded
+     */
+    boolean reloadProperties(String pattern);
+
 }

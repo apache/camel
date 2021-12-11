@@ -14,98 +14,85 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.kafka.producer.support;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.LongAdder;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.Exchange;
-import org.apache.camel.Message;
-import org.apache.camel.component.kafka.KafkaConfiguration;
-import org.apache.camel.component.kafka.KafkaConstants;
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class KafkaProducerCallBack implements Callback {
+import static org.apache.camel.component.kafka.producer.support.ProducerUtil.setException;
+import static org.apache.camel.component.kafka.producer.support.ProducerUtil.setRecordMetadata;
+
+public final class KafkaProducerCallBack implements Callback {
     private static final Logger LOG = LoggerFactory.getLogger(KafkaProducerCallBack.class);
 
     private final Object body;
     private final AsyncCallback callback;
-    private final AtomicInteger count = new AtomicInteger(1);
-    private final List<RecordMetadata> recordMetadatas = new ArrayList<>();
+    private final LongAdder count = new LongAdder();
     private final ExecutorService workerPool;
-
-    public KafkaProducerCallBack(Object body, ExecutorService workerPool, KafkaConfiguration configuration) {
-        this(body, null, workerPool, configuration);
-    }
+    private final boolean record;
+    private final List<RecordMetadata> recordMetadataList = new ArrayList<>();
 
     public KafkaProducerCallBack(Object body, AsyncCallback callback, ExecutorService workerPool,
-                                 KafkaConfiguration configuration) {
+                                 boolean record) {
         this.body = body;
         this.callback = callback;
-        this.workerPool = Objects.requireNonNull(workerPool, "A worker pool must be provided");
+        // The worker pool should be created for both sync and async modes, so checking it
+        // is merely a safeguard
+        assert workerPool != null;
+        this.workerPool = workerPool;
+        this.record = record;
+        count.increment();
 
-        if (configuration.isRecordMetadata()) {
-            if (body instanceof Exchange) {
-                Exchange ex = (Exchange) body;
-                ex.getMessage().setHeader(KafkaConstants.KAFKA_RECORDMETA, recordMetadatas);
-            }
-            if (body instanceof Message) {
-                Message msg = (Message) body;
-                msg.setHeader(KafkaConstants.KAFKA_RECORDMETA, recordMetadatas);
-            }
+        if (record) {
+            setRecordMetadata(body, recordMetadataList);
         }
     }
 
     public void increment() {
-        count.incrementAndGet();
+        count.increment();
     }
 
     public boolean allSent() {
-        if (count.decrementAndGet() == 0) {
+        count.decrement();
+        if (count.intValue() == 0) {
             LOG.trace("All messages sent, continue routing.");
             // was able to get all the work done while queuing the requests
-            if (callback != null) {
-                callback.done(true);
-            }
+            callback.done(true);
+
             return true;
         }
+
         return false;
     }
 
     @Override
     public void onCompletion(RecordMetadata recordMetadata, Exception e) {
-        if (e != null) {
-            if (body instanceof Exchange) {
-                ((Exchange) body).setException(e);
-            }
-            if (body instanceof Message && ((Message) body).getExchange() != null) {
-                ((Message) body).getExchange().setException(e);
-            }
+        setException(body, e);
+
+        if (record) {
+            recordMetadataList.add(recordMetadata);
         }
 
-        recordMetadatas.add(recordMetadata);
-
-        if (count.decrementAndGet() == 0) {
+        count.decrement();
+        if (count.intValue() == 0) {
             // use worker pool to continue routing the exchange
             // as this thread is from Kafka Callback and should not be used
             // by Camel routing
-            workerPool.submit(new Runnable() {
-                @Override
-                public void run() {
-                    LOG.trace("All messages sent, continue routing.");
-                    if (callback != null) {
-                        callback.done(false);
-                    }
-                }
-            });
+            workerPool.submit(this::doContinueRouting);
         }
     }
+
+    private void doContinueRouting() {
+        LOG.trace("All messages sent, continue routing (within thread).");
+        callback.done(false);
+    }
+
 }

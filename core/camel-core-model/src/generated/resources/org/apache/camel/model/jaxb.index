@@ -63,6 +63,7 @@ Resilience4jConfigurationDefinition
 RestContextRefDefinition
 RollbackDefinition
 RouteBuilderDefinition
+RouteConfigurationContextRefDefinition
 RouteConfigurationDefinition
 RouteConfigurationsDefinition
 RouteContextRefDefinition

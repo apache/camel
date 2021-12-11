@@ -124,6 +124,14 @@ public interface RouteTemplateContext extends HasCamelContext {
     Map<String, Object> getParameters();
 
     /**
+     * Whether the route template has a parameter with the given name
+     *
+     * @param  name the parameter name
+     * @return      true if exists
+     */
+    boolean hasParameter(String name);
+
+    /**
      * Gets the local bean repository for the route template when creating the new route
      */
     BeanRepository getLocalBeanRepository();

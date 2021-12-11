@@ -94,7 +94,9 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
                         return new NoSuchSObjectException(restErrors);
                     }
 
-                    return new SalesforceException(restErrors, statusCode);
+                    return new SalesforceException(
+                            restErrors, statusCode,
+                            "Unexpected error: " + reason + ". See exception `errors` property for detail.");
                 }
             }
         } catch (IOException e) {

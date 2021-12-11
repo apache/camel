@@ -784,8 +784,8 @@ Delete up to 200 records, returning a list of DeleteSObjectResult objects. Mixed
 |===
 | Parameter | Type | Description | Default | Required
 
-| ids | List of String or comma-separated string | A list of up to 200 IDs of objects to be deleted. | | x
-| allOrNone | boolean | Indicates whether to roll back the entire request when the upsert of any object fails (true) or to continue with the independent upsert of other objects in the request. | false |
+| `sObjectIds` or request body | List of String or comma-separated string | A list of up to 200 IDs of objects to be deleted. | | x
+| `allOrNone` | boolean | Indicates whether to roll back the entire request when the deletion of any object fails (true) or to continue with the independent deletion of other objects in the request. | false |
 |===
 
 

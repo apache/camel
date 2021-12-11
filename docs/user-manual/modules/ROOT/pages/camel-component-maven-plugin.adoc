@@ -51,3 +51,64 @@ This will attach the plugin `generate` goal to Maven's `process-classes`,
 in order to generate all the necessary files being described above upon compilation.
 
 Thus, `mvn test`, `mvn package`, `mvn verify` and `mvn install` phases should run this plugin.
+
+=== Configuring output directory
+
+The plugin will by default generate outputs to
+
+- `src/generated/java` - for generated java source code
+- `src/generated/resources` - for generated resource files
+
+To include these folders with the Java compiler, then you can configure Maven to include those directories:
+
+[source,xml]
+----
+<plugin>
+    <groupId>org.codehaus.mojo</groupId>
+    <artifactId>build-helper-maven-plugin</artifactId>
+    <executions>
+        <execution>
+            <phase>generate-sources</phase>
+            <goals>
+                <goal>add-source</goal>
+                <goal>add-resource</goal>
+            </goals>
+            <configuration>
+                <sources>
+                    <source>src/generated/java</source>
+                </sources>
+                <resources>
+                    <resource>
+                        <directory>src/generated/resources</directory>
+                    </resource>
+                </resources>
+            </configuration>
+        </execution>
+    </executions>
+</plugin>
+----
+
+However, if you want, you can also configure the `camel-component-maven-plugin` to output directly
+to `src/main` as shown (then you do not need to use the `build-helper-maven-plugin` as we do above):
+
+[source,xml]
+----
+<plugin>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-component-maven-plugin</artifactId>
+  <version>${camel-version}</version>
+  <configuration>
+    <sourcesOutputDir>src/main/java</sourcesOutputDir>
+    <resourcesOutputDir>src/main/resources</resourcesOutputDir>
+  </configuration>
+  <executions>
+    <execution>
+      <id>generate</id>
+      <goals>
+        <goal>generate</goal>
+      </goals>
+      <phase>process-classes</phase>
+    </execution>
+   </executions>
+</plugin>
+----

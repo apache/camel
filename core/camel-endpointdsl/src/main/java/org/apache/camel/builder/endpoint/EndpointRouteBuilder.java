@@ -73,6 +73,7 @@ public abstract class EndpointRouteBuilder extends RouteBuilder implements Endpo
             @Override
             public void configure() throws Exception {
                 CamelContextAware.trySetCamelContext(resource, getContext());
+                setResource(resource);
 
                 try (Reader reader = resource.getReader()) {
                     consumer.accept(reader, this);

@@ -252,6 +252,45 @@ In this example the route is assigned the _yamlError_ route configuration by the
 Routes and route configuration are not required to use the same language. For example you can code
 route configurations in Java, and then use XML DSL for the routes, and they would work together.
 
+== Route Configuration in classic Spring/Blueprint XML
+
+When using XML DSL with `camel-spring-xml` or `camel-blueprint`
+then you can code your route configurations in `<routeConfigurationContext>` snippets
+in sepearte XML files as shown below:
+
+[source,xml]
+----
+<routeConfigurationContext id="myConf" xmlns="http://camel.apache.org/schema/spring">
+    <routeConfiguration id="xmlError">
+        <onException>
+            <exception>java.lang.Exception</exception>
+            <handled><constant>true</constant></handled>
+            <log message="XML WARN: ${exception.message}"/>
+        </onException>
+    </routeConfiguration>
+</routeConfigurationContext>
+----
+
+Then from `<camelContext>` you can refer to these XML snippets by their ids:
+
+[source,xml]
+----
+<camelContext id="myCamel" xmlns="http://camel.apache.org/schema/spring">
+
+    <!-- refer to the ID on the context that has the route configurations (see above) -->
+    <routeConfigurationContextRef ref="myConf"/>
+
+    <!-- routes can then assign which configuration to use -->
+    <route routeConfigurationId="xmlError">
+        <from uri="timer:xml?period=5s"/>
+        <log message="I am XML"/>
+        <throwException exceptionType="java.lang.Exception" message="Some kind of XML error"/>
+    </route>
+</route>
+----
+
+In this example the route is assigned the _xmlError_ route configuration by the exact ID.
+
 == Packaging route configurations in reusable JARs
 
 You can package common route configurations into JARs which you can then use together with

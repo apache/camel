@@ -23,8 +23,23 @@ public class RouteReloadedEvent extends AbstractRouteEvent implements CamelEvent
 
     private static final long serialVersionUID = 7966471393751298718L;
 
-    public RouteReloadedEvent(Route source) {
+    private final int index;
+    private final int total;
+
+    public RouteReloadedEvent(Route source, int index, int total) {
         super(source);
+        this.index = index;
+        this.total = total;
+    }
+
+    @Override
+    public int getIndex() {
+        return index;
+    }
+
+    @Override
+    public int getTotal() {
+        return total;
     }
 
     @Override

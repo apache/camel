@@ -101,24 +101,20 @@ public class SesComponentConfigurationTest extends CamelTestSupport {
         replyAddress.add("replyTo2@example.com");
 
         context.getRegistry().bind("amazonSESClient", mock);
-        context.getRegistry().bind("toList", to);
-        context.getRegistry().bind("replyToList", replyAddress);
         Ses2Component component = context.getComponent("aws2-ses", Ses2Component.class);
         Ses2Endpoint endpoint = (Ses2Endpoint) component
                 .createEndpoint("aws2-ses://from@example.com?amazonSESClient=#amazonSESClient&accessKey=xxx"
-                                + "&secretKey=yyy&to=#toList&subject=Subject"
-                                + "&returnPath=bounce@example.com&replyToAddresses=#replyToList");
+                                + "&secretKey=yyy&to=to1@example.com,to2@example.com&subject=Subject"
+                                + "&returnPath=bounce@example.com&replyToAddresses=replyTo1@example.com,replyTo2@example.com");
 
         assertEquals("from@example.com", endpoint.getConfiguration().getFrom());
         assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
         assertNotNull(endpoint.getConfiguration().getAmazonSESClient());
-        assertEquals(2, endpoint.getConfiguration().getTo().size());
         assertTrue(endpoint.getConfiguration().getTo().contains("to1@example.com"));
         assertTrue(endpoint.getConfiguration().getTo().contains("to2@example.com"));
         assertEquals("Subject", endpoint.getConfiguration().getSubject());
         assertEquals("bounce@example.com", endpoint.getConfiguration().getReturnPath());
-        assertEquals(2, endpoint.getConfiguration().getReplyToAddresses().size());
         assertTrue(endpoint.getConfiguration().getReplyToAddresses().contains("replyTo1@example.com"));
         assertTrue(endpoint.getConfiguration().getReplyToAddresses().contains("replyTo2@example.com"));
     }

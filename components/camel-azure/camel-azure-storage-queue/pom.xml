@@ -29,7 +29,7 @@
     <artifactId>camel-azure-storage-queue</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: Azure Storage Queue</name>
+    <name>Camel :: Azure :: Storage Queue</name>
     <description>Camel Azure Storage Queue Service Component</description>
 
     <properties>

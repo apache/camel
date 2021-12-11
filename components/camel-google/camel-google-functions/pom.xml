@@ -30,7 +30,7 @@
 
     <artifactId>camel-google-functions</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Google Functions</name>
+    <name>Camel :: Google :: Functions</name>
     <description>Camel Component for Google Cloud Platform Functions</description>
 
     <properties>

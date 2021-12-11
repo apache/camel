@@ -41,7 +41,7 @@ public interface DataLakeEndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint consumers for the Azure storage datalake service
+     * Builder for endpoint consumers for the Azure Storage Datalake Service
      * component.
      */
     public interface DataLakeEndpointConsumerBuilder
@@ -1303,8 +1303,8 @@ public interface DataLakeEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint consumers for the Azure storage datalake
-     * service component.
+     * Advanced builder for endpoint consumers for the Azure Storage Datalake
+     * Service component.
      */
     public interface AdvancedDataLakeEndpointConsumerBuilder
             extends
@@ -1423,7 +1423,7 @@ public interface DataLakeEndpointBuilderFactory {
     }
 
     /**
-     * Builder for endpoint producers for the Azure storage datalake service
+     * Builder for endpoint producers for the Azure Storage Datalake Service
      * component.
      */
     public interface DataLakeEndpointProducerBuilder
@@ -2210,8 +2210,8 @@ public interface DataLakeEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint producers for the Azure storage datalake
-     * service component.
+     * Advanced builder for endpoint producers for the Azure Storage Datalake
+     * Service component.
      */
     public interface AdvancedDataLakeEndpointProducerBuilder
             extends
@@ -2222,7 +2222,7 @@ public interface DataLakeEndpointBuilderFactory {
     }
 
     /**
-     * Builder for endpoint for the Azure storage datalake service component.
+     * Builder for endpoint for the Azure Storage Datalake Service component.
      */
     public interface DataLakeEndpointBuilder
             extends
@@ -2921,7 +2921,7 @@ public interface DataLakeEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the Azure storage datalake service
+     * Advanced builder for endpoint for the Azure Storage Datalake Service
      * component.
      */
     public interface AdvancedDataLakeEndpointBuilder
@@ -2957,7 +2957,7 @@ public interface DataLakeEndpointBuilderFactory {
 
     public interface DataLakeBuilders {
         /**
-         * Azure storage datalake service (camel-azure-storage-datalake)
+         * Azure Storage Datalake Service (camel-azure-storage-datalake)
          * Camel Azure Datalake Gen2 Component
          * 
          * Category: cloud,file
@@ -2980,7 +2980,7 @@ public interface DataLakeEndpointBuilderFactory {
             return DataLakeEndpointBuilderFactory.endpointBuilder("azure-storage-datalake", path);
         }
         /**
-         * Azure storage datalake service (camel-azure-storage-datalake)
+         * Azure Storage Datalake Service (camel-azure-storage-datalake)
          * Camel Azure Datalake Gen2 Component
          * 
          * Category: cloud,file

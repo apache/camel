@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.kafka.serde;
 
 import java.math.BigInteger;
@@ -24,8 +23,8 @@ import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.builder.ValueBuilder;
 
 public final class KafkaSerdeHelper {
-    private KafkaSerdeHelper() {
 
+    private KafkaSerdeHelper() {
     }
 
     public static ValueBuilder numericHeader(String name) {
@@ -33,9 +32,7 @@ public final class KafkaSerdeHelper {
             @Override
             public Object evaluate(Exchange exchange) {
                 byte[] id = exchange.getIn().getHeader(name, byte[].class);
-
                 BigInteger bi = new BigInteger(id);
-
                 return String.valueOf(bi.longValue());
             }
         });

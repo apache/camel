@@ -78,10 +78,7 @@ public class DefaultVertxHttpBinding implements VertxHttpBinding {
         }
 
         // Resolve the URI to use which is either a combination of headers HTTP_URI & HTTP_PATH or the HTTP URI configured on the endpoint
-        URI uri = VertxHttpHelper.resolveHttpURI(exchange);
-        if (uri == null) {
-            uri = configuration.getHttpUri();
-        }
+        URI uri = VertxHttpHelper.resolveHttpURI(exchange, endpoint);
 
         WebClient webClient = endpoint.getWebClient();
         HttpRequest<Buffer> request;
@@ -251,10 +248,7 @@ public class DefaultVertxHttpBinding implements VertxHttpBinding {
             Map<String, String> headers = new HashMap<>();
             result.headers().names().forEach(header -> headers.put(header, result.getHeader(header)));
 
-            URI httpURI = VertxHttpHelper.resolveHttpURI(exchange);
-            if (httpURI == null) {
-                httpURI = configuration.getHttpUri();
-            }
+            URI httpURI = VertxHttpHelper.resolveHttpURI(exchange, endpoint);
             exception = new HttpOperationFailedException(
                     httpURI.toString(), result.statusCode(), result.statusMessage(), location, headers, result.bodyAsString());
         }

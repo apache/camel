@@ -31,6 +31,7 @@ import io.vertx.core.MultiMap;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpMethod;
+import io.vertx.ext.auth.User;
 import io.vertx.ext.web.FileUpload;
 import io.vertx.ext.web.Route;
 import io.vertx.ext.web.RoutingContext;
@@ -219,12 +220,19 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
     private Exchange toExchange(RoutingContext ctx) {
         final Exchange exchange = createExchange(false);
         exchange.setPattern(ExchangePattern.InOut);
+
         final Message in = toCamelMessage(ctx, exchange);
         final String charset = ctx.parsedHeaders().contentType().parameter("charset");
         if (charset != null) {
             exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, charset);
             in.setHeader(Exchange.HTTP_CHARACTER_ENCODING, charset);
         }
+
+        User user = ctx.user();
+        if (user != null) {
+            in.setHeader(VertxPlatformHttpConstants.AUTHENTICATED_USER, user);
+        }
+
         return exchange;
     }
 
@@ -256,8 +264,6 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
                 populateAttachments(ctx.fileUploads(), result);
             }
         } else {
-            // extract body by myself if undertow parser didn't handle and the method is allowed to have one
-            // body is extracted as byte[] then auto TypeConverter kicks in
             Method m = Method.valueOf(ctx.request().method().name());
             if (m.canHaveBody()) {
                 final Buffer body = ctx.getBody();

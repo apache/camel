@@ -4,7 +4,7 @@
     "name": "vertx-kafka",
     "title": "Vert.x Kafka",
     "description": "Sent and receive messages to\/from an Apache Kafka broker using vert.x Kafka client",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "3.7.0",
     "label": "messaging",
     "javaType": "org.apache.camel.component.vertx.kafka.VertxKafkaComponent",

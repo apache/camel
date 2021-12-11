@@ -21,7 +21,7 @@ import java.util.Collections;
 
 import org.apache.camel.component.kafka.consumer.support.KafkaRecordProcessor;
 import org.apache.camel.spi.StateRepository;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.common.TopicPartition;
 import org.slf4j.Logger;
@@ -31,7 +31,7 @@ public class DefaultKafkaManualSyncCommit extends DefaultKafkaManualCommit imple
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultKafkaManualSyncCommit.class);
 
-    public DefaultKafkaManualSyncCommit(KafkaConsumer consumer, String topicName, String threadId,
+    public DefaultKafkaManualSyncCommit(Consumer consumer, String topicName, String threadId,
                                         StateRepository<String, String> offsetRepository, TopicPartition partition,
                                         long recordOffset, long commitTimeout) {
         super(consumer, topicName, threadId, offsetRepository, partition, recordOffset, commitTimeout);

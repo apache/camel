@@ -300,7 +300,7 @@ The same example in XML DSL would be:
   <from uri="direct:start"/>
   <setHeader name="numberOfBooks">
     <jsonpath headerName="books" resultType="int">$..store.book.length()</jsonpath>
-  </transform>
+  </setHeader>
   <to uri="mock:result"/>
 </route>
 ----

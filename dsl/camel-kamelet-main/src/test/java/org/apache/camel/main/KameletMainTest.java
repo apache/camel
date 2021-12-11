@@ -16,6 +16,7 @@
  */
 package org.apache.camel.main;
 
+import org.apache.camel.StartupSummaryLevel;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -35,6 +36,7 @@ public class KameletMainTest {
     @Test
     public void testReload() throws Exception {
         KameletMain main = new KameletMain();
+        main.configure().setStartupSummaryLevel(StartupSummaryLevel.Verbose);
         main.setDownload(true);
         main.configure().withDurationMaxMessages(10);
         main.configure().withDurationMaxAction("stop");

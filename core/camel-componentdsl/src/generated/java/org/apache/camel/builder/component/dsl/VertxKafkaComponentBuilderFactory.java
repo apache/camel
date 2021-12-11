@@ -42,6 +42,7 @@ public interface VertxKafkaComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static VertxKafkaComponentBuilder vertxKafka() {
         return new VertxKafkaComponentBuilderImpl();
     }

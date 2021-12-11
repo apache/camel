@@ -79,7 +79,6 @@ public class ConsumerLocalTest extends GoogleCloudStorageBaseTest {
             });
         }
 
-        Thread.sleep(5000);
         assertMockEndpointsSatisfied();
 
     }

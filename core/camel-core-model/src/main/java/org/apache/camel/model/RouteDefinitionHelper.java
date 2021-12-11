@@ -228,17 +228,17 @@ public final class RouteDefinitionHelper {
     /**
      * Find verb associated with the route by mapping uri
      */
-    private static VerbDefinition findVerbDefinition(RestDefinition rest, String endpointUri) {
+    private static VerbDefinition findVerbDefinition(RestDefinition rest, String endpointUri) throws Exception {
         VerbDefinition ret = null;
         String preVerbUri = "";
+        String target = URISupport.normalizeUri(endpointUri);
         for (VerbDefinition verb : rest.getVerbs()) {
-            String verbUri = rest.buildFromUri(verb);
-            if (endpointUri.startsWith(verbUri) && preVerbUri.length() < verbUri.length()) {
-                // if there are multiple verb uri match, select the most
-                // specific one
+            String verbUri = URISupport.normalizeUri(rest.buildFromUri(verb));
+            if (target.startsWith(verbUri) && preVerbUri.length() < verbUri.length()) {
+                // if there are multiple verb uri match, select the most specific one
                 // for example if the endpoint Uri is
                 // rest:get:/user:/{id}/user?produces=text%2Fplain
-                // then the verbUri rest:get:/user:/{id}/user should overweigh
+                // then the verbUri rest:get:/user:/{id}/user should overrule
                 // the est:get:/user:/{id}
                 preVerbUri = verbUri;
                 ret = verb;

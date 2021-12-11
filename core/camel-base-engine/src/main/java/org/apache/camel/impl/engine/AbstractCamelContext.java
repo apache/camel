@@ -81,6 +81,7 @@ import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.health.HealthCheckRegistry;
+import org.apache.camel.health.HealthCheckResolver;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
 import org.apache.camel.spi.AnnotationScanTypeConverters;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
@@ -258,6 +259,7 @@ public abstract class AbstractCamelContext extends BaseService
     private Boolean streamCache = Boolean.FALSE;
     private Boolean disableJMX = Boolean.FALSE;
     private Boolean loadTypeConverters = Boolean.FALSE;
+    private Boolean loadHealthChecks = Boolean.FALSE;
     private Boolean typeConverterStatisticsEnabled = Boolean.FALSE;
     private Boolean dumpRoutes = Boolean.FALSE;
     private Boolean useMDCLogging = Boolean.FALSE;
@@ -290,6 +292,7 @@ public abstract class AbstractCamelContext extends BaseService
     private volatile ConfigurerResolver configurerResolver;
     private volatile UriFactoryResolver uriFactoryResolver;
     private volatile DataFormatResolver dataFormatResolver;
+    private volatile HealthCheckResolver healthCheckResolver;
     private volatile ManagementStrategy managementStrategy;
     private volatile ManagementMBeanAssembler managementMBeanAssembler;
     private volatile RestRegistryFactory restRegistryFactory;
@@ -2734,7 +2737,19 @@ public abstract class AbstractCamelContext extends BaseService
 
         // ensure additional type converters is loaded
         if (loadTypeConverters && typeConverter instanceof AnnotationScanTypeConverters) {
+            StartupStep step2 = startupStepRecorder.beginStep(CamelContext.class, null, "Scan TypeConverters");
             ((AnnotationScanTypeConverters) typeConverter).scanTypeConverters();
+            startupStepRecorder.endStep(step2);
+        }
+
+        // ensure additional health checks is loaded
+        if (loadHealthChecks) {
+            StartupStep step3 = startupStepRecorder.beginStep(CamelContext.class, null, "Scan HealthChecks");
+            HealthCheckRegistry hcr = getExtension(HealthCheckRegistry.class);
+            if (hcr != null) {
+                hcr.loadHealthChecks();
+            }
+            startupStepRecorder.endStep(step3);
         }
 
         // custom properties may use property placeholders so resolve those
@@ -2818,7 +2833,7 @@ public abstract class AbstractCamelContext extends BaseService
 
         bindDataFormats();
 
-        // start components
+        // init components
         ServiceHelper.initService(components.values());
 
         // create route definitions from route templates if we have any sources
@@ -2878,7 +2893,7 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     protected void doStart() throws Exception {
         if (firstStartDone) {
-            // its not good practice to reset a camel context
+            // its not good practice resetting a camel context
             LOG.warn("Starting CamelContext: {} after the context has been stopped is not recommended", getName());
         }
         StartupStep step = startupStepRecorder.beginStep(CamelContext.class, getName(), "Start CamelContext");
@@ -3053,8 +3068,13 @@ public abstract class AbstractCamelContext extends BaseService
                 // use basic endpoint uri to not log verbose details or potential sensitive data
                 String uri = order.getRoute().getEndpoint().getEndpointBaseUri();
                 uri = URISupport.sanitizeUri(uri);
-                lines.add(String.format("    %s %s (%s)", status, id, uri));
-
+                String loc = order.getRoute().getSourceResource() != null
+                        ? order.getRoute().getSourceResource().getLocation() : null;
+                if (startupSummaryLevel == StartupSummaryLevel.Verbose && loc != null) {
+                    lines.add(String.format("    %s %s (%s) (source: %s)", status, id, uri, loc));
+                } else {
+                    lines.add(String.format("    %s %s (%s)", status, id, uri));
+                }
                 String cid = order.getRoute().getConfigurationId();
                 if (cid != null) {
                     configs.add(String.format("    %s (%s)", id, cid));
@@ -3072,7 +3092,12 @@ public abstract class AbstractCamelContext extends BaseService
                     // use basic endpoint uri to not log verbose details or potential sensitive data
                     String uri = route.getEndpoint().getEndpointBaseUri();
                     uri = URISupport.sanitizeUri(uri);
-                    lines.add(String.format("    %s %s (%s)", status, id, uri));
+                    String loc = route.getSourceResource() != null ? route.getSourceResource().getLocation() : null;
+                    if (startupSummaryLevel == StartupSummaryLevel.Verbose && loc != null) {
+                        lines.add(String.format("    %s %s (%s) (source: %s)", status, id, uri, loc));
+                    } else {
+                        lines.add(String.format("    %s %s (%s)", status, id, uri));
+                    }
 
                     String cid = route.getConfigurationId();
                     if (cid != null) {
@@ -3755,6 +3780,7 @@ public abstract class AbstractCamelContext extends BaseService
         getComponentResolver();
         getComponentNameResolver();
         getDataFormatResolver();
+        getHealthCheckResolver();
 
         getExecutorServiceManager();
         getExchangeFactoryManager();
@@ -4191,6 +4217,16 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     @Override
+    public Boolean isLoadHealthChecks() {
+        return loadHealthChecks != null && loadHealthChecks;
+    }
+
+    @Override
+    public void setLoadHealthChecks(Boolean loadHealthChecks) {
+        this.loadHealthChecks = loadHealthChecks;
+    }
+
+    @Override
     public Boolean isTypeConverterStatisticsEnabled() {
         return typeConverterStatisticsEnabled != null && typeConverterStatisticsEnabled;
     }
@@ -4330,6 +4366,23 @@ public abstract class AbstractCamelContext extends BaseService
             startupStepRecorder.endStep(step);
         }
         return answer;
+    }
+
+    @Override
+    public HealthCheckResolver getHealthCheckResolver() {
+        if (healthCheckResolver == null) {
+            synchronized (lock) {
+                if (healthCheckResolver == null) {
+                    setHealthCheckResolver(createHealthCheckResolver());
+                }
+            }
+        }
+        return healthCheckResolver;
+    }
+
+    @Override
+    public void setHealthCheckResolver(HealthCheckResolver healthCheckResolver) {
+        this.healthCheckResolver = doAddService(healthCheckResolver);
     }
 
     @Override
@@ -5027,6 +5080,8 @@ public abstract class AbstractCamelContext extends BaseService
     protected abstract RouteFactory createRouteFactory();
 
     protected abstract DataFormatResolver createDataFormatResolver();
+
+    protected abstract HealthCheckResolver createHealthCheckResolver();
 
     protected abstract MessageHistoryFactory createMessageHistoryFactory();
 

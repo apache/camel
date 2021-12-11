@@ -22,6 +22,7 @@
 ** xref:rest-dsl.adoc[Working with REST and Rest DSL]
 ** xref:writing-components.adoc[Writing Components]
 ** xref:release-guide.adoc[Release guide]
+*** xref:release-guide-website.adoc[Adding doc versions to the website]
 ** xref:improving-the-documentation.adoc[Improving the Documentation]
 * xref:migration-and-upgrade.adoc[Migration and Upgrade]
 ** xref:camel-3-migration-guide.adoc[Camel 2.x to 3.0 Migration Guide]

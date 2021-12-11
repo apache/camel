@@ -14,23 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.kafka.consumer.support;
 
 import org.apache.camel.component.kafka.KafkaConfiguration;
 import org.apache.camel.spi.StateRepository;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.consumer.Consumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class ResumeStrategyFactory {
+
     /**
      * A NO-OP resume strategy that does nothing (i.e.: no resume)
      */
     private static class NoOpKafkaConsumerResumeStrategy implements KafkaConsumerResumeStrategy {
         @SuppressWarnings("unused")
         @Override
-        public void resume(KafkaConsumer<?, ?> consumer) {
+        public void resume(Consumer<?, ?> consumer) {
             // NO-OP
         }
     }
@@ -42,7 +42,6 @@ public final class ResumeStrategyFactory {
     }
 
     public static KafkaConsumerResumeStrategy newResumeStrategy(KafkaConfiguration configuration) {
-
         if (configuration.getResumeStrategy() != null) {
             return configuration.getResumeStrategy();
         }

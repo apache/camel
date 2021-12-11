@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.kafka.producer.support;
 
 import java.util.Iterator;
@@ -30,7 +29,7 @@ import org.apache.kafka.common.header.Header;
 
 import static org.apache.camel.component.kafka.producer.support.ProducerUtil.tryConvertToSerializedType;
 
-public class KeyValueHolderIterator implements Iterator<KeyValueHolder<Object, ProducerRecord>> {
+public class KeyValueHolderIterator implements Iterator<KeyValueHolder<Object, ProducerRecord<Object, Object>>> {
     private final Iterator<Object> msgList;
     private final Exchange exchange;
     private final KafkaConfiguration kafkaConfiguration;
@@ -52,91 +51,101 @@ public class KeyValueHolderIterator implements Iterator<KeyValueHolder<Object, P
     }
 
     @Override
-    public KeyValueHolder<Object, ProducerRecord> next() {
+    public KeyValueHolder<Object, ProducerRecord<Object, Object>> next() {
         // must convert each entry of the iterator into the value
         // according to the serializer
-        Object next = msgList.next();
-        String innerTopic = msgTopic;
-        Object innerKey = null;
-        Integer innerPartitionKey = null;
-        Long innerTimestamp = null;
+        final Object body = msgList.next();
 
-        Object value = next;
-        Exchange ex = null;
-        Object body = next;
+        if (body instanceof Exchange || body instanceof Message) {
+            final Message innerMessage = getInnerMessage(body);
+            final Exchange innerExchange = getInnerExchange(body);
 
-        if (next instanceof Exchange || next instanceof Message) {
-            Exchange innerExchange = null;
-            Message innerMessage = null;
-            if (next instanceof Exchange) {
-                innerExchange = (Exchange) next;
-                innerMessage = innerExchange.getIn();
-            } else {
-                innerMessage = (Message) next;
-            }
+            final String innerTopic = getInnerTopic(innerMessage);
+            final Integer innerPartitionKey = getInnerPartitionKey(innerMessage);
+            final Object innerKey = getInnerKey(innerExchange, innerMessage);
+            final Long innerTimestamp = getOverrideTimestamp(innerMessage);
 
-            innerTopic = getInnerTopic(innerTopic, innerMessage);
+            final Exchange ex = innerExchange == null ? exchange : innerExchange;
 
-            if (innerMessage.getHeader(KafkaConstants.PARTITION_KEY) != null) {
-                innerPartitionKey = getInnerPartitionKey(innerMessage);
-            }
-
-            if (innerMessage.getHeader(KafkaConstants.KEY) != null) {
-                innerKey = getInnerKey(innerExchange, innerMessage);
-            }
-
-            innerTimestamp = getOverrideTimestamp(innerTimestamp, innerMessage);
-
-            ex = innerExchange == null ? exchange : innerExchange;
-            value = tryConvertToSerializedType(ex, innerMessage.getBody(),
+            final Object value = tryConvertToSerializedType(ex, innerMessage.getBody(),
                     kafkaConfiguration.getValueSerializer());
+
+            return new KeyValueHolder<>(
+                    body,
+                    new ProducerRecord<>(
+                            innerTopic, innerPartitionKey, innerTimestamp, innerKey, value, propagatedHeaders));
         }
 
-        return new KeyValueHolder(
+        return new KeyValueHolder<>(
                 body,
-                new ProducerRecord(
-                        innerTopic, innerPartitionKey, innerTimestamp, innerKey, value, propagatedHeaders));
+                new ProducerRecord<>(
+                        msgTopic, null, null, null, body, propagatedHeaders));
     }
 
-    private boolean hasValidTimestampHeader(Message innerMessage) {
-        if (innerMessage.getHeader(KafkaConstants.OVERRIDE_TIMESTAMP) != null) {
-            return innerMessage.getHeader(KafkaConstants.OVERRIDE_TIMESTAMP) instanceof Long;
+    private Message getInnerMessage(Object body) {
+        if (body instanceof Exchange) {
+            return ((Exchange) body).getIn();
+        }
+
+        return (Message) body;
+    }
+
+    private Exchange getInnerExchange(Object body) {
+        if (body instanceof Exchange) {
+            return (Exchange) body;
+        }
+
+        return null;
+    }
+
+    private boolean hasValidTimestampHeader(Object timeStamp) {
+        if (timeStamp != null) {
+            return timeStamp instanceof Long;
         }
 
         return false;
     }
 
-    private Long getOverrideTimestamp(Long innerTimestamp, Message innerMessage) {
-        if (hasValidTimestampHeader(innerMessage)) {
-            innerTimestamp = (Long) innerMessage.removeHeader(KafkaConstants.OVERRIDE_TIMESTAMP);
+    private Long getOverrideTimestamp(Message innerMessage) {
+        Long timeStamp = null;
+        Object overrideTimeStamp = innerMessage.removeHeader(KafkaConstants.OVERRIDE_TIMESTAMP);
+        if (overrideTimeStamp != null) {
+            timeStamp = exchange.getContext().getTypeConverter().convertTo(Long.class, exchange, overrideTimeStamp);
         }
-
-        return innerTimestamp;
+        return timeStamp;
     }
 
-    private String getInnerTopic(String innerTopic, Message innerMessage) {
+    private String getInnerTopic(Message innerMessage) {
         if (innerMessage.getHeader(KafkaConstants.OVERRIDE_TOPIC) != null) {
-            innerTopic = (String) innerMessage.removeHeader(KafkaConstants.OVERRIDE_TOPIC);
+            return (String) innerMessage.removeHeader(KafkaConstants.OVERRIDE_TOPIC);
         }
 
-        return innerTopic;
+        return msgTopic;
     }
 
-    private Object getInnerKey(Exchange innerExchange, Message innerMmessage) {
-        Object innerKey;
-        innerKey = kafkaConfiguration.getKey() != null
-                ? kafkaConfiguration.getKey() : innerMmessage.getHeader(KafkaConstants.KEY);
+    private Object getInnerKey(Exchange innerExchange, Message innerMessage) {
+        Object innerKey = innerMessage.getHeader(KafkaConstants.KEY);
         if (innerKey != null) {
-            innerKey = tryConvertToSerializedType(innerExchange, innerKey,
-                    kafkaConfiguration.getKeySerializer());
+
+            innerKey = kafkaConfiguration.getKey() != null ? kafkaConfiguration.getKey() : innerKey;
+
+            if (innerKey != null) {
+                innerKey = tryConvertToSerializedType(innerExchange, innerKey,
+                        kafkaConfiguration.getKeySerializer());
+            }
+
+            return innerKey;
         }
-        return innerKey;
+
+        return null;
     }
 
     private Integer getInnerPartitionKey(Message innerMessage) {
+        Integer partitionKey = innerMessage.getHeader(KafkaConstants.PARTITION_KEY, Integer.class);
+
         return kafkaConfiguration.getPartitionKey() != null
                 ? kafkaConfiguration.getPartitionKey()
-                : innerMessage.getHeader(KafkaConstants.PARTITION_KEY, Integer.class);
+                : partitionKey;
     }
 
     @Override

@@ -63,7 +63,7 @@ class KameletYamlRoutes extends YamlRoutesBuilderLoaderSupport implements CamelC
         final List<String> dependencies = new ArrayList<>();
 
         Node deps = nodeAt(node, "/spec/dependencies");
-        if (deps.getNodeType() == NodeType.SEQUENCE) {
+        if (deps != null && deps.getNodeType() == NodeType.SEQUENCE) {
             SequenceNode sn = (SequenceNode) deps;
             for (Node child : sn.getValue()) {
                 if (child.getNodeType() == NodeType.SCALAR) {

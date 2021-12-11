@@ -31,7 +31,7 @@ import org.apache.camel.component.azure.storage.datalake.DataLakeComponent;
 public interface AzureStorageDatalakeComponentBuilderFactory {
 
     /**
-     * Azure storage datalake service (camel-azure-storage-datalake)
+     * Azure Storage Datalake Service (camel-azure-storage-datalake)
      * Camel Azure Datalake Gen2 Component
      * 
      * Category: cloud,file
@@ -45,7 +45,7 @@ public interface AzureStorageDatalakeComponentBuilderFactory {
     }
 
     /**
-     * Builder for the Azure storage datalake service component.
+     * Builder for the Azure Storage Datalake Service component.
      */
     interface AzureStorageDatalakeComponentBuilder
             extends

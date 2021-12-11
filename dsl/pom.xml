@@ -30,8 +30,8 @@
     <artifactId>dsl</artifactId>
     <packaging>pom</packaging>
 
-    <name>Camel :: DSLs Modules</name>
-    <description>Camel DSLs Modules</description>
+    <name>Camel :: DSL :: Parent</name>
+    <description>Camel DSL Parent</description>
 
     <modules>
         <module>camel-dsl-support</module>

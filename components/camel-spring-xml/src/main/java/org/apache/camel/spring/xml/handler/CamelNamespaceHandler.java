@@ -47,6 +47,7 @@ import org.apache.camel.spring.xml.CamelFluentProducerTemplateFactoryBean;
 import org.apache.camel.spring.xml.CamelProducerTemplateFactoryBean;
 import org.apache.camel.spring.xml.CamelRedeliveryPolicyFactoryBean;
 import org.apache.camel.spring.xml.CamelRestContextFactoryBean;
+import org.apache.camel.spring.xml.CamelRouteConfigurationContextFactoryBean;
 import org.apache.camel.spring.xml.CamelRouteContextFactoryBean;
 import org.apache.camel.spring.xml.CamelRouteTemplateContextFactoryBean;
 import org.apache.camel.spring.xml.CamelThreadPoolFactoryBean;
@@ -126,6 +127,8 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
 
     @Override
     public void init() {
+        // register routeContext parser
+        registerParser("routeConfigurationContext", new RouteConfigurationContextDefinitionParser());
         // register routeTemplateContext parser
         registerParser("routeTemplateContext", new RouteTemplateContextDefinitionParser());
         // register restContext parser
@@ -256,6 +259,36 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
             if (value instanceof CamelRouteContextFactoryBean) {
                 CamelRouteContextFactoryBean factoryBean = (CamelRouteContextFactoryBean) value;
                 builder.addPropertyValue("routes", factoryBean.getRoutes());
+            }
+
+            // lets inject the namespaces into any namespace aware POJOs
+            injectNamespaces(element, binder);
+        }
+    }
+
+    protected class RouteConfigurationContextDefinitionParser extends BeanDefinitionParser {
+
+        public RouteConfigurationContextDefinitionParser() {
+            super(CamelRouteConfigurationContextFactoryBean.class, false);
+        }
+
+        @Override
+        protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+            doBeforeParse(element);
+            super.doParse(element, parserContext, builder);
+
+            // now lets parse the routes with JAXB
+            Binder<Node> binder;
+            try {
+                binder = getJaxbContext().createBinder();
+            } catch (JAXBException e) {
+                throw new BeanDefinitionStoreException("Failed to create the JAXB binder", e);
+            }
+            Object value = parseUsingJaxb(element, parserContext, binder);
+
+            if (value instanceof CamelRouteConfigurationContextFactoryBean) {
+                CamelRouteConfigurationContextFactoryBean factoryBean = (CamelRouteConfigurationContextFactoryBean) value;
+                builder.addPropertyValue("routeConfigurations", factoryBean.getRouteConfigurations());
             }
 
             // lets inject the namespaces into any namespace aware POJOs
@@ -401,6 +434,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                 builder.addPropertyValue("validators", factoryBean.getValidators());
                 builder.addPropertyValue("onCompletions", factoryBean.getOnCompletions());
                 builder.addPropertyValue("onExceptions", factoryBean.getOnExceptions());
+                builder.addPropertyValue("routeConfigurationRefs", factoryBean.getRouteConfigurationRefs());
                 builder.addPropertyValue("routeTemplateRefs", factoryBean.getRouteTemplateRefs());
                 builder.addPropertyValue("builderRefs", factoryBean.getBuilderRefs());
                 builder.addPropertyValue("routeRefs", factoryBean.getRouteRefs());

@@ -29,7 +29,7 @@
     <artifactId>camel-azure-eventhubs</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: Azure Event Hubs</name>
+    <name>Camel :: Azure :: Event Hubs</name>
     <description>Camel Azure Event Hubs Component</description>
 
     <properties>

@@ -22,6 +22,9 @@ import java.util.List;
 
 import org.apache.camel.support.jsse.SSLContextParameters;
 
+/**
+ * HTTP server configuration
+ */
 public class VertxPlatformHttpServerConfiguration {
     public static final String DEFAULT_BIND_HOST = "0.0.0.0";
     public static final int DEFAULT_BIND_PORT = 8080;
@@ -37,6 +40,22 @@ public class VertxPlatformHttpServerConfiguration {
 
     private BodyHandler bodyHandler = new BodyHandler();
     private Cors cors = new Cors();
+
+    public int getPort() {
+        return getBindPort();
+    }
+
+    public void setPort(int port) {
+        setBindPort(port);
+    }
+
+    public void setHost(String host) {
+        setBindHost(host);
+    }
+
+    public String getHost() {
+        return getBindHost();
+    }
 
     public String getBindHost() {
         return bindHost;

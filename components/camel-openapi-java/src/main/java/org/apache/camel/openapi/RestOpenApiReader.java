@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -30,6 +31,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -73,6 +75,11 @@ import io.apicurio.datamodels.openapi.v3.models.Oas30Schema;
 import io.apicurio.datamodels.openapi.v3.models.Oas30SchemaDefinition;
 import io.apicurio.datamodels.openapi.v3.models.Oas30SecurityScheme;
 import io.apicurio.datamodels.openapi.v3.visitors.Oas30AllNodeVisitor;
+import io.swagger.v3.oas.models.media.BinarySchema;
+import io.swagger.v3.oas.models.media.ByteArraySchema;
+import io.swagger.v3.oas.models.media.DateSchema;
+import io.swagger.v3.oas.models.media.DateTimeSchema;
+import io.swagger.v3.oas.models.media.PasswordSchema;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestOperationParamDefinition;
@@ -650,6 +657,21 @@ public class RestOpenApiReader {
                                 if (arrayType.equalsIgnoreCase("boolean")) {
                                     defineSchemas(parameter30, allowableValues, Boolean.class);
                                 }
+                                if (arrayType.equalsIgnoreCase("byte")) {
+                                    defineSchemas(parameter30, allowableValues, ByteArraySchema.class);
+                                }
+                                if (arrayType.equalsIgnoreCase("binary")) {
+                                    defineSchemas(parameter30, allowableValues, BinarySchema.class);
+                                }
+                                if (arrayType.equalsIgnoreCase("date")) {
+                                    defineSchemas(parameter30, allowableValues, DateSchema.class);
+                                }
+                                if (arrayType.equalsIgnoreCase("date-time")) {
+                                    defineSchemas(parameter30, allowableValues, DateTimeSchema.class);
+                                }
+                                if (arrayType.equalsIgnoreCase("password")) {
+                                    defineSchemas(parameter30, allowableValues, PasswordSchema.class);
+                                }
                             }
                         }
                     }
@@ -1005,6 +1027,10 @@ public class RestOpenApiReader {
             } else {
                 convertAndSetItemsEnum(items, allowableValues, type);
             }
+        } else if (Objects.equals(serializableParameter.type, "array")) {
+            Oas20Items oas20Items = serializableParameter.createItems();
+            oas20Items.type = type.getSimpleName().toLowerCase();
+            serializableParameter.items = oas20Items;
         }
     }
 
@@ -1018,6 +1044,42 @@ public class RestOpenApiReader {
             } else {
                 convertAndSetItemsEnum(serializableParameter.schema, allowableValues, type);
             }
+        } else if (Objects.equals(((Oas30Schema) serializableParameter.schema).type, "array")) {
+            Oas30Schema parameterSchema = (Oas30Schema) serializableParameter.schema;
+            OasSchema itemsSchema = parameterSchema.createItemsSchema();
+
+            if (Integer.class.equals(type)) {
+                itemsSchema.type = "number";
+                itemsSchema.format = "int32";
+            } else if (Long.class.equals(type)) {
+                itemsSchema.type = "number";
+                itemsSchema.format = "int64";
+            } else if (Float.class.equals(type)) {
+                itemsSchema.type = "number";
+                itemsSchema.format = "float";
+            } else if (Double.class.equals(type)) {
+                itemsSchema.type = "number";
+                itemsSchema.format = "double";
+            } else if (ByteArraySchema.class.equals(type)) {
+                itemsSchema.type = "string";
+                itemsSchema.format = "byte";
+            } else if (BinarySchema.class.equals(type)) {
+                itemsSchema.type = "string";
+                itemsSchema.format = "binary";
+            } else if (Date.class.equals(type)) {
+                itemsSchema.type = "string";
+                itemsSchema.format = "date";
+            } else if (DateTimeSchema.class.equals(type)) {
+                itemsSchema.type = "string";
+                itemsSchema.format = "date-time";
+            } else if (PasswordSchema.class.equals(type)) {
+                itemsSchema.type = "string";
+                itemsSchema.format = "password";
+            } else {
+                itemsSchema.type = "string";
+            }
+
+            parameterSchema.items = itemsSchema;
         }
     }
 

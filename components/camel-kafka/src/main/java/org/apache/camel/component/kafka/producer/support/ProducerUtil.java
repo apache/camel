@@ -14,19 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.kafka.producer.support;
 
 import java.nio.ByteBuffer;
+import java.util.Collections;
+import java.util.List;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.component.kafka.KafkaConstants;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.utils.Bytes;
 
 public final class ProducerUtil {
 
     private ProducerUtil() {
-
     }
 
     public static Object tryConvertToSerializedType(Exchange exchange, Object object, String valueSerializer) {
@@ -51,5 +53,33 @@ public final class ProducerUtil {
         }
 
         return answer != null ? answer : object;
+    }
+
+    static void setException(Object body, Exception e) {
+        if (e != null) {
+            if (body instanceof Exchange) {
+                ((Exchange) body).setException(e);
+            }
+            if (body instanceof Message && ((Message) body).getExchange() != null) {
+                ((Message) body).getExchange().setException(e);
+            }
+        }
+    }
+
+    static void setRecordMetadata(Object body, RecordMetadata recordMetadata) {
+        final List<RecordMetadata> recordMetadataList = Collections.singletonList(recordMetadata);
+
+        setRecordMetadata(body, recordMetadataList);
+    }
+
+    public static void setRecordMetadata(Object body, List<RecordMetadata> recordMetadataList) {
+        if (body instanceof Exchange) {
+            Exchange ex = (Exchange) body;
+            ex.getMessage().setHeader(KafkaConstants.KAFKA_RECORDMETA, recordMetadataList);
+        }
+        if (body instanceof Message) {
+            Message msg = (Message) body;
+            msg.setHeader(KafkaConstants.KAFKA_RECORDMETA, recordMetadataList);
+        }
     }
 }

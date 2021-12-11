@@ -22,8 +22,8 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import org.apache.camel.component.kafka.KafkaConfiguration;
+import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRebalanceListener;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.TopicPartition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,13 +36,13 @@ public class PartitionAssignmentListener implements ConsumerRebalanceListener {
     private final String threadId;
     private final String topicName;
     private final KafkaConfiguration configuration;
-    private final KafkaConsumer consumer;
+    private final Consumer consumer;
     private final Map<String, Long> lastProcessedOffset;
     private final KafkaConsumerResumeStrategy resumeStrategy;
     private Supplier<Boolean> stopStateSupplier;
 
     public PartitionAssignmentListener(String threadId, String topicName, KafkaConfiguration configuration,
-                                       KafkaConsumer consumer, Map<String, Long> lastProcessedOffset,
+                                       Consumer consumer, Map<String, Long> lastProcessedOffset,
                                        Supplier<Boolean> stopStateSupplier) {
         this.threadId = threadId;
         this.topicName = topicName;
@@ -51,7 +51,7 @@ public class PartitionAssignmentListener implements ConsumerRebalanceListener {
         this.lastProcessedOffset = lastProcessedOffset;
         this.stopStateSupplier = stopStateSupplier;
 
-        resumeStrategy = ResumeStrategyFactory.newResumeStrategy(configuration);
+        this.resumeStrategy = ResumeStrategyFactory.newResumeStrategy(configuration);
     }
 
     @Override

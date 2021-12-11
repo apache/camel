@@ -62,6 +62,7 @@ import org.apache.camel.StartupSummaryLevel;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.ValueHolder;
 import org.apache.camel.catalog.RuntimeCamelCatalog;
+import org.apache.camel.health.HealthCheckResolver;
 import org.apache.camel.impl.converter.CoreTypeConverterRegistry;
 import org.apache.camel.impl.engine.DefaultComponentResolver;
 import org.apache.camel.impl.engine.DefaultDataFormatResolver;
@@ -165,6 +166,7 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     private final ComponentNameResolver componentNameResolver;
     private final LanguageResolver languageResolver;
     private final DataFormatResolver dataFormatResolver;
+    private final HealthCheckResolver healthCheckResolver;
     private final UuidGenerator uuidGenerator;
     private final EndpointRegistry<? extends ValueHolder<String>> endpoints;
     private final Map<String, Component> components;
@@ -214,6 +216,7 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
         componentNameResolver = context.adapt(ExtendedCamelContext.class).getComponentNameResolver();
         languageResolver = context.adapt(ExtendedCamelContext.class).getLanguageResolver();
         dataFormatResolver = context.adapt(ExtendedCamelContext.class).getDataFormatResolver();
+        healthCheckResolver = context.adapt(ExtendedCamelContext.class).getHealthCheckResolver();
         endpoints = context.getEndpointRegistry();
         components = context.getComponentNames().stream().collect(Collectors.toMap(s -> s, context::hasComponent));
         languages = context.getLanguageNames().stream().collect(Collectors.toMap(s -> s, context::resolveLanguage));
@@ -554,6 +557,16 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
 
     @Override
     public void setDataFormatResolver(DataFormatResolver dataFormatResolver) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public HealthCheckResolver getHealthCheckResolver() {
+        return healthCheckResolver;
+    }
+
+    @Override
+    public void setHealthCheckResolver(HealthCheckResolver healthCheckResolver) {
         throw new UnsupportedOperationException();
     }
 
@@ -1161,6 +1174,16 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
 
     @Override
     public void setLoadTypeConverters(Boolean loadTypeConverters) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Boolean isLoadHealthChecks() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setLoadHealthChecks(Boolean loadHealthChecks) {
         throw new UnsupportedOperationException();
     }
 

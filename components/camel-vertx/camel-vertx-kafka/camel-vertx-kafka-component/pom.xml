@@ -28,7 +28,7 @@
 
     <artifactId>camel-vertx-kafka</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Vert.x :: Kafka</name>
+    <name>Camel :: Vert.x :: Kafka (deprecated)</name>
     <description>Camel Vertx Kafka support</description>
 
     <properties>

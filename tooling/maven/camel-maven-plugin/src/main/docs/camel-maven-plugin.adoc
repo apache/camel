@@ -33,6 +33,7 @@ The maven plugin *run* goal supports the following options which can be configur
 | durationIdle | -1 | Sets the idle time duration (seconds) duration that the application can be idle before terminating. A value <= 0 will run forever.
 | durationMaxMessages | -1 | Sets the duration of maximum number of messages that the application will process before terminating.
 | logClasspath | false | Whether to log the classpath when starting
+| logLevel | OFF | Whether to use built-in console logging (uses log4j), which does not require to add any logging dependency to your project. However, the logging is fixed to log to the console, with a color style that is similar to Spring Boot. You can change the root logging level to: FATAL, ERROR, WARN, INFO, DEBUG, TRACE, OFF
 |===
 
 
@@ -70,9 +71,9 @@ You can enable this in the configuration using:
 </plugin>
 ----
 
-=== Using live reload of XML files
+=== Using built-in logging
 
-You can configure the plugin to scan for XML file changes and trigger a reload of the Camel routes which are contained in those XML files.
+If you want quickly to have logging to console, you can use the built-in logging by setting the logging level as shown:
 
 [source,xml]
 ----
@@ -80,16 +81,16 @@ You can configure the plugin to scan for XML file changes and trigger a reload o
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-maven-plugin</artifactId>
   <configuration>
-    <fileWatcherDirectory>src/main/resources/META-INF/spring</fileWatcherDirectory>
+    <logLevel>INFO</logLevel>
   </configuration>
 </plugin>
 ----
 
-Then the plugin watches this directory. This allows you to edit the source code from your editor and save the file, and have
-    the running Camel application pickup those changes.
+This runs the application with console logging, in color that is similar to Spring Boot logging.
+This is default turned off, to use the configured logging system in the project.
 
-Notice its only changes of Camel routes, eg `<routes>`, or `<route>` which is supported.
-You cannot change Spring or OSGi Blueprint `<bean>` elements.
+The idea with the built-in logging is that you sometimes want to avoid messing with setting
+up logging, and just want a quick and easy log to console that looks good.
 
 
 == camel:prepare-fatjar

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.aws2.ses.integration;
 
-import java.util.Collections;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
@@ -42,7 +40,7 @@ public class SesComponentManualIT extends CamelTestSupport {
         Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(Ses2Constants.SUBJECT, "This is my subject");
-                exchange.getIn().setHeader(Ses2Constants.TO, Collections.singletonList("to@example.com"));
+                exchange.getIn().setHeader(Ses2Constants.TO, "to@example.com");
                 exchange.getIn().setBody("This is my message text.");
             }
         });

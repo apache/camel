@@ -65,6 +65,7 @@ import org.slf4j.LoggerFactory;
 public abstract class RouteBuilder extends BuilderSupport implements RoutesBuilder, Ordered {
     protected Logger log = LoggerFactory.getLogger(getClass());
 
+    private Resource resource;
     private final AtomicBoolean initialized = new AtomicBoolean();
     private final List<RouteBuilderLifecycleStrategy> lifecycleInterceptors = new ArrayList<>();
     private final List<TransformerBuilder> transformerBuilders = new ArrayList<>();
@@ -81,6 +82,20 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
 
     public RouteBuilder(CamelContext context) {
         super(context);
+    }
+
+    /**
+     * The {@link Resource} which is the source code for this route (such as XML, YAML, Groovy or Java source file)
+     */
+    public Resource getResource() {
+        return resource;
+    }
+
+    /**
+     * Sets the {@link Resource} which is the source code for this route (such as XML, YAML, Groovy or Java source file)
+     */
+    public void setResource(Resource resource) {
+        this.resource = resource;
     }
 
     /**
@@ -590,6 +605,9 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
             }
 
             configure();
+
+            // remember the source resource
+            getRouteCollection().setResource(getResource());
 
             for (RouteDefinition route : getRouteCollection().getRoutes()) {
                 // ensure the route is prepared after configure method is complete

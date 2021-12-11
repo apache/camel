@@ -89,11 +89,25 @@ public interface ManagedBacklogDebuggerMBean {
     @ManagedOperation(description = "Steps to next node in step mode")
     void step();
 
+    /**
+     * @deprecated use {@link #breakpoints()}
+     */
     @ManagedOperation(description = "Return the node ids which has breakpoints")
+    @Deprecated
     Set<String> getBreakpoints();
 
+    @ManagedOperation(description = "Return the node ids which has breakpoints")
+    Set<String> breakpoints();
+
+    /**
+     * @deprecated use {@link #suspendedBreakpointNodeIds()}
+     */
     @ManagedOperation(description = "Return the node ids which is currently suspended")
+    @Deprecated
     Set<String> getSuspendedBreakpointNodeIds();
+
+    @ManagedOperation(description = "Return the node ids which is currently suspended")
+    Set<String> suspendedBreakpointNodeIds();
 
     @ManagedOperation(description = "Disables a breakpoint")
     void disableBreakpoint(String nodeId);

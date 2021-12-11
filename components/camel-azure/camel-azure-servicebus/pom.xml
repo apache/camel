@@ -29,7 +29,7 @@
     <artifactId>camel-azure-servicebus</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: Azure ServiceBus</name>
+    <name>Camel :: Azure :: ServiceBus</name>
     <description>Camel Azure ServiceBus Component</description>
 
     <properties>

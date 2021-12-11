@@ -1,10 +1,17 @@
 = Camel JBang
 
-A JBang-based Camel app for searching for kamelets, components, languages, running routes.
+A JBang-based Camel app for easily running Camel routes.
 
 The `camel-jbang` is available from *Camel 3.12* and newer versions.
 
-When running Camel JBang, it is possible to set the Camel version to use. For instance, to run the commands with the version 3.14.0, define the `camel.jbang.version` property in the command line.
+== Installation
+
+It is not necessary to install Camel JBang. However, if you prefer to do so, JBang makes it easy for us by providing an installation feature that works with Github. If you have JBang installed on your system, then you can run the following command to install CamelJBang:
+
+[source,bash]
+----
+jbang app install CamelJBang@apache/camel
+----
 
 == Using Camel JBang
 
@@ -19,6 +26,14 @@ jbang CamelJBang@apache/camel [command]
 
 All the commands support the `--help` and will display the appropriate help if that flag is provided.
 
+=== Troubleshooting
+
+When using https://www.jbang.dev/[JBang] then JBang stores state in `~/.jbang` directory.
+This is also the location where JBang stores downloaded JARs.
+
+So if you find problems with JBang using what is seems like an outdated JAR, then you can
+try to delete this directory, or parts of it.
+
 === Using a specific Camel version
 
 You can specify which Camel version to run as shown:
@@ -28,9 +43,188 @@ You can specify which Camel version to run as shown:
 jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel [command]
 ----
 
+== Running Routes
+
+You can run Camel routes from any of the supported xref:dsl.adoc[DSLs] in Camel such as YAML, XML, Java, Groovy.
+
+For example to run YAML-based routes which also refer to Kamelets in the catalog.
+In order to do so, write a YAML-based file with the `route`, the `steps` and the `to` destination for the route. The following example, shows a route that uses the Timer Source Kamelet to produce messages every second. The body of the messages will be logged to the standard output. Subsequently, they will be sent to a AMQP 1.0 compliant broker using the JMS AMQ 1.0 Sink Kamelet.
+
+[source,yaml]
+----
+- route:
+    id: "hello"
+    from:
+      uri: "kamelet:timer-source"
+      parameters:
+        period: 1000
+        message: "Hello Camel JBang"
+    steps:
+      - log: "${body}"
+      - to:
+          uri: "kamelet:jms-amqp-10-sink"
+          parameters:
+            remoteURI: amqp://localhost:61616
+            destinationName: test-queue
+----
+
+Execute the following command to run this route:
+
+[source,bash]
+----
+jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel run jms-amqp-10-sink-binding.yaml
+----
+
+NOTE: it is necessary to have a AMQP 1.0 broker, such as Apache Artemis, running locally and listening on port 61616. Adjust the route accordingly if using a different address for the broker.
+
+=== Running Routes from multiple files
+
+You can run more than 1 file, for example to run two YAML files you can do:
+
+[source,bash]
+----
+jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel run one.yaml two.yaml
+----
+
+You can also mix different xref:dsl.adoc[DSLs] such as yaml and Java:
+
+[source,bash]
+----
+jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel run one.yaml hello.java
+----
+
+You can also use wildcards (i.e. `*`) to match multiple files, such as running all the yaml files:
+
+[source,bash]
+----
+jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel run *.yaml
+----
+
+Or you can run all files starting with foo*
+
+[source,bash]
+----
+jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel run foo*
+----
+
+TIP: The run goal can also detect files that are `properties`.
+
+=== Live reload
+
+You can enable live reload of the route(s) when the source file is updated (saved),
+using the `--reload` options as shown:
+
+[source,bash]
+----
+jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel run jms-amqp-10-sink-binding.yaml --reload
+----
+
+Then while the Camel application is running, you can update the YAML route and update when saving.
+
+NOTE: The live reload is meant for development purposes, and if you encounter problems with reloading
+such as JVM class loading issues, then you may need to restart the application.
+
+=== Running routes hosted on GitHub
+
+You can run a route that is hosted on GitHub using Camels xref:components:others:resourceresolver-github.adoc[github] resource loader.
+
+For example to run one of the Camel K examples you can do:
+
+[source,bash]
+----
+jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel run run github:apache:camel-k:examples/languages/routes.yaml
+----
+
+=== Running local Kamelets
+
+You can also use Camel JBang to try local Kamelets, without the need to publish them on Github or package them in a jar.
+
+[source,bash]
+----
+jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel run --local-kamelet-dir=/path/to/local/kamelets earthquake.yaml
+----
+
+=== Running Camel K integrations or bindings
+
+Camel also supports running Camel K integrations and binding files, which are in CRD format (Kubernetes Custom Resource Definitions).
+
+For example a kamelet binding file named `joke.yaml`:
+
+[source,yaml]
+----
+apiVersion: camel.apache.org/v1alpha1
+kind: KameletBinding
+metadata:
+  name: joke
+spec:
+  source:
+    ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: chuck-norris-source
+    properties:
+      period: 2000
+  sink:
+    ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: log-sink
+    properties:
+      show-headers: false
+----
+
+Can be run with CamelJBang:
+
+[source,bash]
+----
+jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel run joke.yaml
+----
+
+=== Using platform-http component
+
+When a route is started from `platform-http` then CamelJBang will automatically include a VertX HTTP server
+running on port 8080. For example the following route in a file named `server.yaml`:
+
+[source,yaml]
+----
+- from:
+    uri: "platform-http:/hello"
+    steps:
+      - set-body:
+          constant: "Hello World"
+----
+
+Can be run with
+
+[source,bash]
+----
+jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel run server.yaml
+----
+
+And you can call the HTTP service with:
+
+[source,bash]
+----
+curl http://localhost:8080/hello
+Hello World%
+----
+
+=== Debugging
+
+You can debug both CamelJBang@apache/camel and your integration scripts by making use of the `--debug` flag provided by JBang:
+
+[source,bash]
+----
+jbang --debug CamelJBang@apache/camel run /path/to/integration.java
+[jbang] Building jar...
+Listening for transport dt_socket at address: 4004
+----
+
+As you can see the default listening port is 4004 but can be configured as described in https://www.jbang.dev/documentation/guide/latest/debugging.html[JBang Debugging].
+
 === Search
 
-You can use the CLI to search for kamelets, components, languages and miscelaneous components (others). Running the following command will present a list of items that can be searched:
+You can use the CLI to search for kamelets, components, languages and miscellaneous components (others). Running the following command will present a list of items that can be searched:
 
 [source,bash]
 ----
@@ -117,80 +311,4 @@ You can also generate bindings that can be run by CamelJBang or Camel Core, but 
 [source,bash]
 ----
 jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel init binding --destination /path/to/destination/directory/ --kamelet sftp-source --project core
-----
-
-
-== Running Routes
-
-At the moment it is possible to run YAML-based routes which also refer to Kamelets in the catalog.
-
-In order to do so, write a YAML-based file with the `route`, the `steps` and the `to` destination for the route. The following example, shows a route that uses the Timer Source Kamelet to produce messages every second. The body of the messages will be logged to the standard output. Subsequently, they will be sent to a AMQP 1.0 compliant broker using the JMS AMQ 1.0 Sink Kamelet.
-
-[source,yaml]
-----
-- route:
-    id: "hello"
-    from:
-      uri: "kamelet:timer-source"
-      parameters:
-        period: 1000
-        message: "Hello Camel JBang"
-    steps:
-      - log: "${body}"
-      - to:
-          uri: "kamelet:jms-amqp-10-sink"
-          parameters:
-            remoteURI: amqp://localhost:61616
-            destinationName: test-queue
-----
-
-Execute the following command to run this route:
-
-[source,bash]
-----
-jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel run jms-amqp-10-sink-binding.yaml
-----
-
-NOTE: it is necessary to have a AMQP 1.0 broker, such as Apache Artemis, running locally and listening on port 61616. Adjust the route accordingly if using a different address for the broker.
-
-=== Live reload
-
-You can enable live reload of the route(s) when the source file is updated (saved),
-using the `--reload` options as shown:
-
-[source,bash]
-----
-jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel run jms-amqp-10-sink-binding.yaml --reload
-----
-
-Then while the Camel application is running, you can update the YAML route and update when saving.
-
-=== Running routes hosted on GitHub
-
-You can run a route that is hosted on GitHub using Camels xref:components:others:resourceresolver-github.adoc[github] resource loader.
-
-For example to run one of the Camel K examples you can do:
-
-[source,bash]
-----
-jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel run run github:apache:camel-k:examples/languages/routes.yaml
-----
-
-=== Running local Kamelets
-
-You can also use Camel JBang to try local Kamelets, without the need to publish them on Github or package them in a jar.
-
-[source,bash]
-----
-jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel run --local-kamelet-dir=/path/to/local/kamelets earthquake.yaml
-----
-
-
-== Installation
-
-It is not necessary to install Camel JBang. However, if you prefer to do so, JBang makes it easy for us by providing an installation feature that works with Github. If you have JBang installed on your system, then you can run the following command to install CamelJBang:
-
-[source,bash]
-----
-jbang app install CamelJBang@apache/camel
 ----
