@@ -37,6 +37,7 @@ import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.google.cloud.pubsub.v1.MessageReceiver;
 import com.google.cloud.pubsub.v1.Publisher;
 import com.google.cloud.pubsub.v1.Subscriber;
+import com.google.cloud.pubsub.v1.stub.PublisherStubSettings;
 import com.google.cloud.pubsub.v1.stub.SubscriberStub;
 import com.google.cloud.pubsub.v1.stub.SubscriberStubSettings;
 import com.google.common.cache.Cache;
@@ -220,7 +221,8 @@ public class GooglePubsubComponent extends DefaultComponent {
         if (endpoint.isAuthenticate()) {
             credentialsProvider = FixedCredentialsProvider.create(ObjectHelper.isEmpty(endpoint.getServiceAccountKey())
                     ? GoogleCredentials.getApplicationDefault() : ServiceAccountCredentials.fromStream(ResourceHelper
-                            .resolveMandatoryResourceAsInputStream(getCamelContext(), endpoint.getServiceAccountKey())));
+                            .resolveMandatoryResourceAsInputStream(getCamelContext(), endpoint.getServiceAccountKey()))
+                            .createScoped(PublisherStubSettings.getDefaultServiceScopes()));
         } else {
             credentialsProvider = NoCredentialsProvider.create();
         }
