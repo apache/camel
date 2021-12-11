@@ -16,14 +16,19 @@
  */
 package org.apache.camel.impl.engine;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.DefaultTracingParametersProvider;
 import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
 import org.apache.camel.NamedRoute;
 import org.apache.camel.Route;
+import org.apache.camel.TracingParametersProvider;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.Tracer;
 import org.apache.camel.support.CamelContextHelper;
@@ -42,7 +47,11 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultTracer extends ServiceSupport implements CamelContextAware, Tracer {
 
-    private static final String TRACING_OUTPUT = "%-4.4s [%-12.12s] [%-33.33s]";
+    public static final int GROUP_ROUTE_ID_LENGTH = 12;
+    public static final int GROUP_LABEL_LENGTH = 33;
+    private static final String TRACING_OUTPUT = "%-4.4s";
+    private static final String TRACING_OUTPUT_GROUP_ROUTE_ID = "[%-{{GROUP_ROUTE_ID_LENGTH}}.{{GROUP_ROUTE_ID_LENGTH}}s]";
+    private static final String TRACING_OUTPUT_GROUP_LABEL = "[%-{{GROUP_LABEL_LENGTH}}.{{GROUP_LABEL_LENGTH}}s]";
 
     // use a fixed logger name so its easy to spot
     private static final Logger LOG = LoggerFactory.getLogger("org.apache.camel.Tracing");
@@ -55,6 +64,19 @@ public class DefaultTracer extends ServiceSupport implements CamelContextAware, 
     private String tracePattern;
     private transient String[] patterns;
     private boolean traceBeforeAndAfterRoute = true;
+
+    private final Map<String, TracingParametersProvider> parametersProviders = new HashMap<>();
+    private final TracingParametersProvider defaultParametersProvider = new TracingParametersProvider() {
+        @Override
+        public Integer getGroupRouteIdLength() {
+            return GROUP_ROUTE_ID_LENGTH;
+        }
+
+        @Override
+        public Integer getGroupLabelLength() {
+            return GROUP_LABEL_LENGTH;
+        }
+    };
 
     public DefaultTracer() {
         DefaultExchangeFormatter formatter = new DefaultExchangeFormatter();
@@ -77,7 +99,6 @@ public class DefaultTracer extends ServiceSupport implements CamelContextAware, 
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void traceBeforeNode(NamedNode node, Exchange exchange) {
         if (shouldTrace(node)) {
             traceCounter++;
@@ -90,7 +111,7 @@ public class DefaultTracer extends ServiceSupport implements CamelContextAware, 
             String label = URISupport.sanitizeUri(StringHelper.limitLength(node.getLabel(), 50));
 
             StringBuilder sb = new StringBuilder();
-            sb.append(String.format(TRACING_OUTPUT, "   ", routeId, label));
+            sb.append(String.format(assembleOutputStringFormatter(routeId), "   ", routeId, label));
             sb.append(" ");
             String data = exchangeFormatter.format(exchange);
             sb.append(data);
@@ -109,6 +130,7 @@ public class DefaultTracer extends ServiceSupport implements CamelContextAware, 
         if (!traceBeforeAndAfterRoute) {
             return;
         }
+        String routeId = ExpressionBuilder.routeIdExpression().evaluate(exchange, String.class);
 
         // we need to avoid leak the sensible information here
         // the sanitizeUri takes a very long time for very long string and the format cuts this to
@@ -122,7 +144,7 @@ public class DefaultTracer extends ServiceSupport implements CamelContextAware, 
         String arrow = original ? "*-->" : "--->";
 
         StringBuilder sb = new StringBuilder();
-        sb.append(String.format(TRACING_OUTPUT, arrow, route.getRouteId(), label));
+        sb.append(String.format(assembleOutputStringFormatter(routeId), arrow, route.getRouteId(), label));
         sb.append(" ");
         String data = exchangeFormatter.format(exchange);
         sb.append(data);
@@ -148,7 +170,7 @@ public class DefaultTracer extends ServiceSupport implements CamelContextAware, 
         String arrow = original ? "*<--" : "<---";
 
         StringBuilder sb = new StringBuilder();
-        sb.append(String.format(TRACING_OUTPUT, arrow, route.getId(), label));
+        sb.append(String.format(assembleOutputStringFormatter(route.getRouteId()), arrow, route.getId(), label));
         sb.append(" ");
         String data = exchangeFormatter.format(exchange);
         sb.append(data);
@@ -236,6 +258,14 @@ public class DefaultTracer extends ServiceSupport implements CamelContextAware, 
     }
 
     @Override
+    public void addParametersProvider(String routeId, TracingParametersProvider provider) {
+        this.parametersProviders.put(routeId,
+                new DefaultTracingParametersProvider(
+                        ifNull(provider.getGroupRouteIdLength(), GROUP_ROUTE_ID_LENGTH),
+                        ifNull(provider.getGroupLabelLength(), GROUP_LABEL_LENGTH)));
+    }
+
+    @Override
     public void setExchangeFormatter(ExchangeFormatter exchangeFormatter) {
         this.exchangeFormatter = exchangeFormatter;
     }
@@ -271,5 +301,32 @@ public class DefaultTracer extends ServiceSupport implements CamelContextAware, 
     @Override
     protected void doStop() throws Exception {
         // noop
+    }
+
+    private String assembleOutputStringFormatter(String routeId) {
+        TracingParametersProvider parametersProvider = findParametersProvider(routeId);
+
+        StringBuilder sb = new StringBuilder(TRACING_OUTPUT);
+        if (parametersProvider.getGroupRouteIdLength() > 0) {
+            String groupRouteId = TRACING_OUTPUT_GROUP_ROUTE_ID
+                    .replaceAll("\\{\\{GROUP_ROUTE_ID_LENGTH}}", String.valueOf(parametersProvider.getGroupRouteIdLength()));
+            sb.append(" ");
+            sb.append(groupRouteId);
+        }
+        if (parametersProvider.getGroupLabelLength() > 0) {
+            String groupRouteId = TRACING_OUTPUT_GROUP_LABEL
+                    .replaceAll("\\{\\{GROUP_LABEL_LENGTH}}", String.valueOf(parametersProvider.getGroupLabelLength()));
+            sb.append(" ");
+            sb.append(groupRouteId);
+        }
+        return sb.toString();
+    }
+
+    private TracingParametersProvider findParametersProvider(String routeId) {
+        return parametersProviders.getOrDefault(routeId, defaultParametersProvider);
+    }
+
+    private <T> T ifNull(T value, T defaultValue) {
+        return Optional.ofNullable(value).orElse(defaultValue);
     }
 }

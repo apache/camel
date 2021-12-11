@@ -109,6 +109,8 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
             Boolean isTrace = parseBoolean(definition.getTrace());
             if (isTrace != null) {
                 route.setTracing(isTrace);
+                route.setTracingOutputGroupRouteIdLength(definition.getTracingOutputGroupRouteIdLength());
+                route.setTracingOutputGroupLabelLength(definition.getTracingOutputGroupLabelLength());
                 if (isTrace) {
                     LOG.debug("Tracing is enabled on route: {}", definition.getId());
                     // tracing is added in the DefaultChannel so we can enable

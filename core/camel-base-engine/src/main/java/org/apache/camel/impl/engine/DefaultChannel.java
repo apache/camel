@@ -25,6 +25,7 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Channel;
+import org.apache.camel.DefaultTracingParametersProvider;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NamedNode;
@@ -200,6 +201,9 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
         if (route.isTracing() || camelContext.isTracingStandby()) {
             // add logger tracer
             Tracer tracer = camelContext.getTracer();
+            tracer.addParametersProvider(routeDefinition.getRouteId(),
+                    new DefaultTracingParametersProvider(
+                            route.getTracingOutputGroupRouteIdLength(), route.getTracingOutputGroupLabelLength()));
             addAdvice(new TracingAdvice(tracer, targetOutputDef, routeDefinition, first));
         }
 

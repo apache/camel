@@ -70,6 +70,8 @@ public class DefaultRoute extends ServiceSupport implements Route {
     private final List<InterceptStrategy> interceptStrategies = new ArrayList<>(0);
     private ManagementInterceptStrategy managementInterceptStrategy;
     private Boolean trace;
+    private Integer tracingOutputGroupRouteIdLength;
+    private Integer tracingOutputGroupLabelLength;
     private Boolean backlogTrace;
     private Boolean debug;
     private Boolean messageHistory;
@@ -562,6 +564,26 @@ public class DefaultRoute extends ServiceSupport implements Route {
         if (list != previous && ObjectHelper.isNotEmpty(previous) && ObjectHelper.isNotEmpty(list)) {
             throw new IllegalStateException("Multiple references with different handlers");
         }
+    }
+
+    @Override
+    public Integer getTracingOutputGroupRouteIdLength() {
+        return tracingOutputGroupRouteIdLength;
+    }
+
+    @Override
+    public void setTracingOutputGroupRouteIdLength(Integer length) {
+        this.tracingOutputGroupRouteIdLength = length;
+    }
+
+    @Override
+    public Integer getTracingOutputGroupLabelLength() {
+        return tracingOutputGroupLabelLength;
+    }
+
+    @Override
+    public void setTracingOutputGroupLabelLength(Integer length) {
+        this.tracingOutputGroupLabelLength = length;
     }
 
     @Override

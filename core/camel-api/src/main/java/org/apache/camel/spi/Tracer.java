@@ -21,6 +21,7 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.NamedRoute;
 import org.apache.camel.Route;
 import org.apache.camel.StaticService;
+import org.apache.camel.TracingParametersProvider;
 
 /**
  * SPI for tracing messages.
@@ -89,7 +90,7 @@ public interface Tracer extends StaticService {
 
     /**
      * Whether the tracer is standby.
-     *
+     * <p>
      * If a tracer is in standby then the tracer is activated during startup and are ready to be enabled manually via
      * JMX or calling the enabled method.
      */
@@ -97,7 +98,7 @@ public interface Tracer extends StaticService {
 
     /**
      * Whether the tracer is standby.
-     *
+     * <p>
      * If a tracer is in standby then the tracer is activated during startup and are ready to be enabled manually via
      * JMX or calling the enabled method.
      */
@@ -134,4 +135,13 @@ public interface Tracer extends StaticService {
      * To use a custom exchange formatter for formatting the output of the {@link Exchange} in the trace logs.
      */
     void setExchangeFormatter(ExchangeFormatter exchangeFormatter);
+
+    /**
+     * To register tracing parameters provider for route defined by route id
+     *
+     * @param routeId  Route ID
+     * @param provider Parameters provider
+     */
+    default void addParametersProvider(String routeId, TracingParametersProvider provider) {
+    }
 }

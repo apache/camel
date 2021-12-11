@@ -360,4 +360,27 @@ public interface Route extends RuntimeConfiguration {
      */
     void addErrorHandlerFactoryReference(ErrorHandlerFactory source, ErrorHandlerFactory target);
 
+    /**
+     * Length of tracing output group Route-Id
+     */
+    Integer getTracingOutputGroupRouteIdLength();
+
+    /**
+     * Length of tracing output group Route-Id
+     * 
+     * @param length symbols count to trim Route-Id block of tracing output
+     */
+    void setTracingOutputGroupRouteIdLength(Integer length);
+
+    /**
+     * Length of tracing output group Label
+     */
+    Integer getTracingOutputGroupLabelLength();
+
+    /**
+     * Length of tracing output group Label
+     * 
+     * @param length symbols count to trim Label block of tracing output
+     */
+    void setTracingOutputGroupLabelLength(Integer length);
 }

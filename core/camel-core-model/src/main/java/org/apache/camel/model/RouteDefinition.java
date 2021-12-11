@@ -64,6 +64,8 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
     private String group;
     private String streamCache;
     private String trace;
+    private Integer tracingOutputGroupRouteIdLength;
+    private Integer tracingOutputGroupLabelLength;
     private String messageHistory;
     private String logMask;
     private String delayer;
@@ -332,6 +334,21 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
      */
     public RouteDefinition tracing(String tracing) {
         setTrace(tracing);
+        return this;
+    }
+
+    /**
+     * Enable tracing for this route, adjusting output groups lengths
+     *
+     * @param  tracing            whether to use tracing (true or false), the value can be a property placeholder
+     * @param  groupRouteIdLength length of output group Route-Id, must be non-negative. Pass null for defaults.
+     * @param  groupLabelLength   length of output group Label, must be non-negative. Pass null for defaults.
+     * @return                    the builder
+     */
+    public RouteDefinition tracing(String tracing, Integer groupRouteIdLength, Integer groupLabelLength) {
+        setTrace(tracing);
+        this.tracingOutputGroupRouteIdLength = groupRouteIdLength;
+        this.tracingOutputGroupLabelLength = groupLabelLength;
         return this;
     }
 
@@ -827,6 +844,34 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
     @Metadata(javaType = "java.lang.Boolean")
     public void setTrace(String trace) {
         this.trace = trace;
+    }
+
+    /**
+     * Length of tracing output group Route-Id
+     */
+    public Integer getTracingOutputGroupRouteIdLength() {
+        return tracingOutputGroupRouteIdLength;
+    }
+
+    /**
+     * Length of tracing output group Route-Id
+     */
+    public void setTracingOutputGroupRouteIdLength(Integer length) {
+        this.tracingOutputGroupRouteIdLength = length;
+    }
+
+    /**
+     * Length of tracing output group Label
+     */
+    public Integer getTracingOutputGroupLabelLength() {
+        return tracingOutputGroupLabelLength;
+    }
+
+    /**
+     * Length of tracing output group Label
+     */
+    public void setTracingOutputGroupLabelLength(Integer length) {
+        this.tracingOutputGroupLabelLength = length;
     }
 
     /**
