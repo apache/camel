@@ -16,6 +16,8 @@
  */
 package org.apache.camel.maven;
 
+import java.nio.file.Paths;
+
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -47,7 +49,7 @@ public class DevMojo extends RunMojo {
         }
 
         System.setProperty("camel.main.routesReloadEnabled", "true");
-        System.setProperty("camel.main.routesReloadDirectory", routesReloadDirectory);
+        System.setProperty("camel.main.routesReloadDirectory", Paths.get(routesReloadDirectory).toAbsolutePath().toString());
         System.setProperty("camel.main.routesReloadDirectoryRecursive", "true");
         System.setProperty("camel.main.durationMaxAction", "stop");
         System.setProperty("camel.main.routesReloadPattern",
