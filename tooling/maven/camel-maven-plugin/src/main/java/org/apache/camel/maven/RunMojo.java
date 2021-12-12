@@ -309,7 +309,7 @@ public class RunMojo extends AbstractExecMojo {
         String skip = System.getProperties().getProperty("maven.test.skip");
         if (skip == null || "false".equals(skip)) {
             // lets log a INFO about how to skip tests if you want to so you can run faster
-            getLog().info("You can skip tests from the command line using: mvn camel:run -Dmaven.test.skip=true");
+            getLog().info("You can skip tests from the command line using: mvn " + goal() + " -Dmaven.test.skip=true");
         }
 
         boolean usingSpringJavaConfigureMain = false;
@@ -476,6 +476,10 @@ public class RunMojo extends AbstractExecMojo {
         }
 
         registerSourceRoots();
+    }
+
+    protected String goal() {
+        return "camel:run";
     }
 
     /**

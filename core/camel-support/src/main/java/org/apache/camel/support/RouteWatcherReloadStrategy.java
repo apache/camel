@@ -17,6 +17,8 @@
 package org.apache.camel.support;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -103,7 +105,7 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                     // strip starting directory, so we have a relative name to the starting folder
                     String path = f.getAbsolutePath();
                     if (path.startsWith(base)) {
-                        path = path.substring(base.length());
+                        path = path.substring(path.lastIndexOf("/"));
                     }
                     path = FileUtil.stripLeadingSeparator(path);
 
@@ -165,7 +167,7 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                 getCamelContext().getEndpointRegistry().clear();
             }
 
-            if (resource != null) {
+            if (resource != null && Files.exists(Paths.get(resource.getURI()))) {
                 sources.add(resource);
             }
 
