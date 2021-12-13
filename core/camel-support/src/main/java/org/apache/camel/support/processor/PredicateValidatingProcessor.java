@@ -20,6 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
+import org.apache.camel.support.ThrowingPredicate;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -48,6 +49,9 @@ public class PredicateValidatingProcessor extends ServiceSupport implements Proc
         }
 
         if (!matches) {
+            if (predicate instanceof ThrowingPredicate) {
+                throw ((ThrowingPredicate) predicate).getValidationException(exchange);
+            }
             throw new PredicateValidationException(exchange, predicate);
         }
     }
