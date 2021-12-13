@@ -147,31 +147,6 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
         }
     }
 
-    protected static boolean equalResourceLocation(Resource source, Resource target) {
-        if (source == null || target == null) {
-            return false;
-        }
-
-        // use URI to match as file/classpath resources may refer to the same uri
-        URI u1 = source.getURI();
-        URI u2 = target.getURI();
-        boolean answer = u1.equals(u2);
-        if (!answer) {
-            // file and classpath may refer to the same when they have
-            // src/main/resources && target/classes
-            String s1 = u1.toString();
-            String s2 = u2.toString();
-            s1 = s1.replace("src/main/resources/", "");
-            s2 = s2.replace("src/main/resources/", "");
-            s1 = s1.replace("src/test/resources/", "");
-            s2 = s2.replace("src/test/resources/", "");
-            s1 = s1.replace("target/classes/", "");
-            s2 = s2.replace("target/classes/", "");
-            answer = s1.equals(s2);
-        }
-        return answer;
-    }
-
     protected void onRouteReload(Resource resource) {
         // remember all existing resources
         List<Resource> sources = new ArrayList<>();
@@ -254,6 +229,27 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeException(e);
         }
+    }
+
+    /**
+     * Whether the two resources are loading the same resource
+     */
+    private static boolean equalResourceLocation(Resource source, Resource target) {
+        if (source == null || target == null) {
+            return false;
+        }
+
+        // use URI to match as file/classpath resources may refer to the same uri
+        URI u1 = source.getURI();
+        URI u2 = target.getURI();
+        boolean answer = u1.equals(u2);
+        if (!answer) {
+            // file and classpath may refer to the same when they have src/main/resources && target/classes
+            String s1 = u1.toString().replace("src/main/resources/", "").replace("src/test/resources/", "").replace("target/classes/", "");
+            String s2 = u2.toString().replace("src/main/resources/", "").replace("src/test/resources/", "").replace("target/classes/", "");
+            answer = s1.equals(s2);
+        }
+        return answer;
     }
 
 }
