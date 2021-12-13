@@ -16,9 +16,13 @@
  */
 package org.apache.camel.management.mbean;
 
+import java.io.Serializable;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedResource;
@@ -26,6 +30,10 @@ import org.apache.camel.api.management.mbean.ManagedBacklogDebuggerMBean;
 import org.apache.camel.impl.debugger.BacklogDebugger;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
+import org.apache.commons.lang3.SerializationException;
+import org.apache.commons.lang3.SerializationUtils;
 
 @ManagedResource(description = "Managed BacklogDebugger")
 public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
@@ -273,5 +281,66 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
     @Override
     public void setFallbackTimeout(long fallbackTimeout) {
         backlogDebugger.setFallbackTimeout(fallbackTimeout);
+    }
+
+    @Override
+    public String dumpExchangePropertiesAsXml(String id) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<properties>");
+        Exchange suspendedExchange = backlogDebugger.getSuspendedExchange(id);
+        if (suspendedExchange != null) {
+            Map<String, Object> properties = suspendedExchange.getAllProperties();
+            properties.forEach((propertyName, propertyValue) -> {
+                String type = ObjectHelper.classCanonicalName(propertyValue);
+                sb.append("<property name=\"").append(propertyName).append("\"");
+                if (type != null) {
+                    sb.append(" type=\"").append(type).append("\"");
+                }
+                sb.append(">");
+                // dump property value as XML, use Camel type converter to convert
+                // to String
+                if (propertyValue != null) {
+                    try {
+                        String xml = suspendedExchange.getContext().getTypeConverter().tryConvertTo(String.class,
+                                suspendedExchange, propertyValue);
+                        if (xml != null) {
+                            // must always xml encode
+                            sb.append(StringHelper.xmlEncode(xml));
+                        }
+                    } catch (Throwable e) {
+                        // ignore as the body is for logging purpose
+                    }
+                }
+                sb.append("</property>\n");
+            });
+        }
+        sb.append("</properties>");
+        return sb.toString();
+    }
+
+    @Override
+    public Object evaluateExpressionAtBreakpoint(String id, String language, String expression) {
+        Exchange suspendedExchange = null;
+        try {
+            Language lan = camelContext.resolveLanguage(language);
+            Expression expr = lan.createExpression(expression);
+            suspendedExchange = backlogDebugger.getSuspendedExchange(id);
+            if (suspendedExchange != null) {
+                Object result = expr.evaluate(suspendedExchange, Object.class);
+                //Test if result is serializable
+                try {
+                    byte[] data = SerializationUtils.serialize((Serializable) result);
+                } catch (SerializationException se) {
+                    String resultStr = suspendedExchange.getContext().getTypeConverter().tryConvertTo(String.class, result);
+                    if (resultStr != null) {
+                        result = resultStr;
+                    }
+                }
+                return result;
+            }
+        } catch (Exception e) {
+            return e;
+        }
+        return null;
     }
 }
