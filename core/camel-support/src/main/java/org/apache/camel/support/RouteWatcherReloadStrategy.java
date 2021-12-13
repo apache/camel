@@ -245,8 +245,10 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
         boolean answer = u1.equals(u2);
         if (!answer) {
             // file and classpath may refer to the same when they have src/main/resources && target/classes
-            String s1 = u1.toString().replace("src/main/resources/", "").replace("src/test/resources/", "").replace("target/classes/", "");
-            String s2 = u2.toString().replace("src/main/resources/", "").replace("src/test/resources/", "").replace("target/classes/", "");
+            String s1 = u1.toString().replace("src/main/resources/", "").replace("src/test/resources/", "")
+                    .replace("target/classes/", "");
+            String s2 = u2.toString().replace("src/main/resources/", "").replace("src/test/resources/", "")
+                    .replace("target/classes/", "");
             answer = s1.equals(s2);
         }
         return answer;
