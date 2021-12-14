@@ -17,36 +17,23 @@
 package org.apache.camel;
 
 /**
- * Represents a node in the {@link org.apache.camel.model routes} which is identified by an id.
+ * An entity that can point to a given line number from a source {@link org.apache.camel.spi.Resource} such as YAML and
+ * XML DSL parsers.
  */
-public interface NamedNode extends LineNumberAware {
+public interface LineNumberAware {
 
     /**
-     * Gets the value of the id property.
-     */
-    String getId();
-
-    /**
-     * Returns a short name for this node which can be useful for ID generation or referring to related resources like
-     * images
+     * The line number of this entity.
      *
-     * @return defaults to "node" but derived nodes should overload this to provide a unique name
+     * @return -1 if line number is not possible to know
      */
-    String getShortName();
+    int getLineNumber();
 
     /**
-     * Returns a label to describe this node such as the expression if some kind of expression node
+     * Sets the line number of this entity. parsing the source file and provide the line number representing this node.
+     *
+     * @param lineNumber the line number
      */
-    String getLabel();
-
-    /**
-     * Returns the description text or null if there is no description text associated with this node
-     */
-    String getDescriptionText();
-
-    /**
-     * Returns the parent
-     */
-    NamedNode getParent();
+    void setLineNumber(int lineNumber);
 
 }
