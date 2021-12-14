@@ -384,7 +384,7 @@
     <lifecycle-mapping-version>1.0.0</lifecycle-mapping-version>
     <lightcouch-version>0.2.0</lightcouch-version>
     <log4j2-version>2.16.0</log4j2-version>
-    <logback-version>1.2.7</logback-version>
+    <logback-version>1.2.8</logback-version>
     <lucene-version>8.6.1</lucene-version>
     <lucene-version-range>[8,9)</lucene-version-range>
     <lucene3-version>3.6.0</lucene3-version>
