@@ -332,7 +332,7 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
             suspendedExchange = backlogDebugger.getSuspendedExchange(id);
             if (suspendedExchange != null) {
                 Object result = null;
-                Class resultClass = Class.forName(resultType);
+                Class resultClass = camelContext.getClassResolver().resolveClass(resultType);
                 if (!resultClass.isAssignableFrom(Boolean.class)) {
                     Expression expr = lan.createExpression(expression);
                     result = expr.evaluate(suspendedExchange, resultClass);
