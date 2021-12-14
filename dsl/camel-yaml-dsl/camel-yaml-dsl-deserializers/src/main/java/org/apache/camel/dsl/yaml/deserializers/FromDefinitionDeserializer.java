@@ -33,13 +33,21 @@ import org.snakeyaml.engine.v2.nodes.Node;
                   @YamlProperty(name = "parameters", type = "object")
           })
 public class FromDefinitionDeserializer implements ConstructNode {
+
     @Override
     public Object construct(Node node) {
         String uri = YamlSupport.creteEndpointUri(node, EndpointConsumerDeserializersResolver::resolveEndpointUri);
         if (uri == null) {
             throw new IllegalStateException("The endpoint URI must be set");
         }
+        FromDefinition target = new FromDefinition(uri);
 
-        return new FromDefinition(uri);
+        // enrich model with line number
+        if (node.getStartMark().isPresent()) {
+            int line = node.getStartMark().get().getLine();
+            target.setLineNumber(line);
+        }
+
+        return target;
     }
 }
