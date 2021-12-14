@@ -24,6 +24,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedBacklogDebuggerMBean;
@@ -319,14 +320,26 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
     }
 
     @Override
-    public Object evaluateExpressionAtBreakpoint(String id, String language, String expression) {
+    public String evaluateExpressionAtBreakpoint(String id, String language, String expression) {
+        return evaluateExpressionAtBreakpoint(id, language, expression, "java.lang.String").toString();
+    }
+
+    @Override
+    public Object evaluateExpressionAtBreakpoint(String id, String language, String expression, String resultType) {
         Exchange suspendedExchange = null;
         try {
             Language lan = camelContext.resolveLanguage(language);
-            Expression expr = lan.createExpression(expression);
             suspendedExchange = backlogDebugger.getSuspendedExchange(id);
             if (suspendedExchange != null) {
-                Object result = expr.evaluate(suspendedExchange, Object.class);
+                Object result = null;
+                Class resultClass = Class.forName(resultType);
+                if (!resultClass.isAssignableFrom(Boolean.class)) {
+                    Expression expr = lan.createExpression(expression);
+                    result = expr.evaluate(suspendedExchange, resultClass);
+                } else {
+                    Predicate pred = lan.createPredicate(expression);
+                    result = pred.matches(suspendedExchange);
+                }
                 //Test if result is serializable
                 try {
                     byte[] data = SerializationUtils.serialize((Serializable) result);

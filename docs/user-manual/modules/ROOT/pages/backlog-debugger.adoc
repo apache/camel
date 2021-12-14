@@ -39,7 +39,8 @@ NOTE: This requires to enabled JMX by including `camel-management` JAR in the cl
 |`dumpTracedMessagesAsXml(nodeId)` |`String` |To dump the debugged messages from the give node id in XML format.
 |`enableBreakpoint(nodeId)` |`void` |To active a breakpoint which has been temporary disabled.
 |`enableDebugger` |`void` |To enable the debugger
-|`evaluateExpressionAtBreakpoint(nodeId, language, expression)` | `Object`|To evaluate an expression in any supported language (e.g. Simple, CSimple, etc.)
+|`evaluateExpressionAtBreakpoint(nodeId, language, expression)` | `String`|To evaluate an expression in any supported language (e.g. Simple, CSimple, etc.) and convert the result to String
+|`evaluateExpressionAtBreakpoint(nodeId, language, expression, resultType)` | `Object`|To evaluate an expression in any supported language (e.g. Simple, CSimple, etc.) and return the result as a given result type
 |`getBreakpoints` |`Set<String>` |To get a set of all the nodes which has a breakpoint added.
 |`getDebuggerCounter` |`long` |Gets the total number of debugged messages.
 |`getSuspendedBreakpointNodeIds` |`Set<String>` |To get a set of all the nodes which has suspended breakpoints (eg an Exchange at the breakpoint which is suspended).

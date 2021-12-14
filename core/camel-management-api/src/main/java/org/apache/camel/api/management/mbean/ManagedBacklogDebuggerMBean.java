@@ -155,5 +155,8 @@ public interface ManagedBacklogDebuggerMBean {
     String dumpExchangePropertiesAsXml(String id);
 
     @ManagedOperation(description = "Evaluates the expression at a given breakpoint Id")
-    Object evaluateExpressionAtBreakpoint(String id, String language, String expression);
+    Object evaluateExpressionAtBreakpoint(String id, String language, String expression, String resultType);
+
+    @ManagedOperation(description = "Evaluates the expression at a given breakpoint Id and returns the result as String")
+    String evaluateExpressionAtBreakpoint(String id, String language, String expression);
 }
