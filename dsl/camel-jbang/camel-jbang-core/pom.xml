@@ -73,6 +73,11 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-platform-http-vertx</artifactId>
         </dependency>
+        <!-- JMX to gather runtime statistics -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-management</artifactId>
+        </dependency>
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
