@@ -333,11 +333,13 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
             if (suspendedExchange != null) {
                 Object result = null;
                 Class resultClass = camelContext.getClassResolver().resolveClass(resultType);
-                if (!resultClass.isAssignableFrom(Boolean.class)) {
+                if (!Boolean.class.isAssignableFrom(resultClass)) {
                     Expression expr = lan.createExpression(expression);
+                    expr.init(camelContext);
                     result = expr.evaluate(suspendedExchange, resultClass);
                 } else {
                     Predicate pred = lan.createPredicate(expression);
+                    pred.init(camelContext);
                     result = pred.matches(suspendedExchange);
                 }
                 //Test if result is serializable
