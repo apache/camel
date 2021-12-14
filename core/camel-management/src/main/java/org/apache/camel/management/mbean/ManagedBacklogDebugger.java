@@ -16,7 +16,9 @@
  */
 package org.apache.camel.management.mbean;
 
-import java.io.Serializable;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.Map;
 import java.util.Set;
 
@@ -33,8 +35,6 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
-import org.apache.commons.lang3.SerializationException;
-import org.apache.commons.lang3.SerializationUtils;
 
 @ManagedResource(description = "Managed BacklogDebugger")
 public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
@@ -341,9 +341,7 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
                     result = pred.matches(suspendedExchange);
                 }
                 //Test if result is serializable
-                try {
-                    byte[] data = SerializationUtils.serialize((Serializable) result);
-                } catch (SerializationException se) {
+                if (!isSerializable(result)) {
                     String resultStr = suspendedExchange.getContext().getTypeConverter().tryConvertTo(String.class, result);
                     if (resultStr != null) {
                         result = resultStr;
@@ -355,5 +353,15 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
             return e;
         }
         return null;
+    }
+
+    private boolean isSerializable(Object obj) {
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream(512);
+        try (ObjectOutputStream out = new ObjectOutputStream(baos)) {
+            out.writeObject(obj);
+            return true;
+        } catch (final IOException ex) {
+            return false;
+        }
     }
 }
