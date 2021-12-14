@@ -382,7 +382,7 @@
     <lifecycle-mapping-version>1.0.0</lifecycle-mapping-version>
     <lightcouch-version>0.2.0</lightcouch-version>
     <log4j2-version>2.16.0</log4j2-version>
-    <logback-version>1.2.7</logback-version>
+    <logback-version>1.2.8</logback-version>
     <lucene-version>8.11.0</lucene-version>
     <lucene-version-range>[8,9)</lucene-version-range>
     <maven-antrun-plugin-version>1.6</maven-antrun-plugin-version>
