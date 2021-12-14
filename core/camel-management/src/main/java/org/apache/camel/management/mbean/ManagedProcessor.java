@@ -95,6 +95,12 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
     }
 
     @Override
+    public Integer getSourceLineNumber() {
+        int line = definition.getLineNumber();
+        return line >= 0 ? line : null;
+    }
+
+    @Override
     public Boolean getSupportExtendedInformation() {
         return false;
     }
