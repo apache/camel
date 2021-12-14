@@ -16,6 +16,8 @@
  */
 package org.apache.camel.maven;
 
+import java.io.File;
+
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -46,6 +48,9 @@ public class DevMojo extends RunMojo {
         } else {
             dir = "src/main/resources";
         }
+
+        // use absolute path for dir
+        dir = new File(dir).getAbsolutePath();
 
         System.setProperty("camel.main.routesReloadEnabled", "true");
         System.setProperty("camel.main.routesReloadDirectory", dir);
