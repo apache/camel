@@ -533,6 +533,10 @@ public abstract class AbstractJacksonDataFormat extends ServiceSupport
 
     @Override
     protected void doStart() throws Exception {
+        if (useList) {
+            setCollectionType(ArrayList.class);
+        }
+
         boolean objectMapperFoundRegistry = false;
         if (objectMapper == null) {
             // lookup if there is a single default mapper we can use
@@ -559,9 +563,6 @@ public abstract class AbstractJacksonDataFormat extends ServiceSupport
         }
 
         if (!objectMapperFoundRegistry) {
-            if (useList) {
-                setCollectionType(ArrayList.class);
-            }
             if (include != null) {
                 JsonInclude.Include inc
                         = getCamelContext().getTypeConverter().mandatoryConvertTo(JsonInclude.Include.class, include);
