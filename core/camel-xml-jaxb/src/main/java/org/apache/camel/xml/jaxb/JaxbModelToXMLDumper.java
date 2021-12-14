@@ -116,10 +116,6 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
             String prefix = nsPrefix.equals("xmlns") ? nsPrefix : "xmlns:" + nsPrefix;
             documentElement.setAttribute(prefix, entry.getValue());
         }
-        // enrich line number
-        if (definition.getLineNumber() >= 0) {
-            documentElement.setAttribute("sourceLineNumber", "" + definition.getLineNumber());
-        }
 
         // We invoke the type converter directly because we need to pass some
         // custom XML output options
