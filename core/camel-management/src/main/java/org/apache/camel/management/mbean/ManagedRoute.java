@@ -452,8 +452,10 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
 
                 // and now add the sorted list of processors to the xml output
                 for (ManagedProcessorMBean processor : mps) {
-                    sb.append("    <processorStat").append(String.format(" id=\"%s\" index=\"%s\" state=\"%s\"",
-                            processor.getProcessorId(), processor.getIndex(), processor.getState()));
+                    int line = processor.getSourceLineNumber() != null ? processor.getSourceLineNumber() : -1;
+                    sb.append("    <processorStat")
+                            .append(String.format(" id=\"%s\" index=\"%s\" state=\"%s\" sourceLineNumber=\"%s\"",
+                                    processor.getProcessorId(), processor.getIndex(), processor.getState(), line));
                     // do we have an accumulated time then append that
                     Long accTime = accumulatedTimes.get(processor.getProcessorId());
                     if (accTime != null) {
@@ -476,6 +478,9 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         StringBuilder answer = new StringBuilder();
         answer.append("<routeStat").append(String.format(" id=\"%s\"", route.getId()))
                 .append(String.format(" state=\"%s\"", getState()));
+        if (sourceLocation != null) {
+            answer.append(String.format(" sourceLocation=\"%s\"", getSourceLocation()));
+        }
         // use substring as we only want the attributes
         String stat = dumpStatsAsXml(fullStats);
         answer.append(" exchangesInflight=\"").append(getInflightExchanges()).append("\"");
@@ -528,8 +533,11 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
 
             // and now add the sorted list of steps to the xml output
             for (ManagedStepMBean step : mps) {
-                sb.append("    <stepStat").append(String.format(" id=\"%s\" index=\"%s\" state=\"%s\"", step.getProcessorId(),
-                        step.getIndex(), step.getState()));
+                int line = step.getSourceLineNumber() != null ? step.getSourceLineNumber() : -1;
+                sb.append("    <stepStat")
+                        .append(String.format(" id=\"%s\" index=\"%s\" state=\"%s\" sourceLineNumber=\"%s\"",
+                                step.getProcessorId(),
+                                step.getIndex(), step.getState(), line));
                 // use substring as we only want the attributes
                 sb.append(" ").append(step.dumpStatsAsXml(fullStats).substring(7)).append("\n");
             }
@@ -539,6 +547,9 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         StringBuilder answer = new StringBuilder();
         answer.append("<routeStat").append(String.format(" id=\"%s\"", route.getId()))
                 .append(String.format(" state=\"%s\"", getState()));
+        if (sourceLocation != null) {
+            answer.append(String.format(" sourceLocation=\"%s\"", getSourceLocation()));
+        }
         // use substring as we only want the attributes
         String stat = dumpStatsAsXml(fullStats);
         answer.append(" exchangesInflight=\"").append(getInflightExchanges()).append("\"");

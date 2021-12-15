@@ -19,23 +19,41 @@ package org.apache.camel.api.management.mbean;
 import java.io.Serializable;
 
 /**
- * Represents a traced message by the {@link org.apache.camel.processor.interceptor.BacklogTracer}.
+ * Represents a traced message by the BacklogTracer.
  */
 public interface BacklogTracerEventMessage extends Serializable {
 
     String ROOT_TAG = "backlogTracerEventMessage";
     String TIMESTAMP_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 
+    /**
+     * Unique id of the traced message
+     */
     long getUid();
 
+    /**
+     * Timestamp of the traced event
+     */
     long getTimestamp();
 
+    /**
+     * Route id
+     */
     String getRouteId();
 
+    /**
+     * Node id where the message is being routed to
+     */
     String getToNode();
 
+    /**
+     * The exchange id
+     */
     String getExchangeId();
 
+    /**
+     * The content of the message as XML (body and headers)
+     */
     String getMessageAsXml();
 
     /**

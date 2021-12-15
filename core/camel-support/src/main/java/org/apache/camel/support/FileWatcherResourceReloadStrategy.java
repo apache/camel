@@ -85,6 +85,10 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
     }
 
     public void setFolder(String folder) {
+        // clip file: prefix if mistakenly specified
+        if (folder != null && folder.startsWith("file:")) {
+            folder = folder.substring(5);
+        }
         this.folder = folder;
     }
 

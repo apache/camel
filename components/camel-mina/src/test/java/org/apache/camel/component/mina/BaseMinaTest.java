@@ -16,12 +16,15 @@
  */
 package org.apache.camel.component.mina;
 
+import java.util.Collections;
+
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.support.jsse.ClientAuthentication;
 import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.SSLContextServerParameters;
+import org.apache.camel.support.jsse.SecureSocketProtocolsParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -71,6 +74,13 @@ public abstract class BaseMinaTest extends CamelTestSupport {
         scsp.setClientAuthentication(ClientAuthentication.WANT.name());
 
         SSLContextParameters sslContextParameters = new SSLContextParameters();
+
+        //with tls 1.3 there are random failures, 1.2 is used instead
+        //(see https://issues.apache.org/jira/browse/DIRMINA-1132) 
+        SecureSocketProtocolsParameters secureSocketProtocols = new SecureSocketProtocolsParameters();
+        secureSocketProtocols.setSecureSocketProtocol(Collections.singletonList("TLSv1.2"));
+        sslContextParameters.setSecureSocketProtocols(secureSocketProtocols);
+
         sslContextParameters.setKeyManagers(kmp);
         sslContextParameters.setTrustManagers(tmp);
         sslContextParameters.setServerParameters(scsp);

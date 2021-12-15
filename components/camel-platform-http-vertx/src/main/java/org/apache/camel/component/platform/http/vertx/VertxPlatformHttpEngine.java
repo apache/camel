@@ -23,7 +23,6 @@ import java.util.List;
 import io.vertx.core.Handler;
 import io.vertx.ext.web.RoutingContext;
 import org.apache.camel.Consumer;
-import org.apache.camel.Experimental;
 import org.apache.camel.Processor;
 import org.apache.camel.component.platform.http.PlatformHttpConstants;
 import org.apache.camel.component.platform.http.PlatformHttpEndpoint;
@@ -34,7 +33,6 @@ import org.apache.camel.support.service.ServiceSupport;
 /**
  * Implementation of the {@link PlatformHttpEngine} based on Vert.x Web.
  */
-@Experimental
 @JdkService(PlatformHttpConstants.PLATFORM_HTTP_ENGINE_FACTORY)
 public class VertxPlatformHttpEngine extends ServiceSupport implements PlatformHttpEngine {
     private List<Handler<RoutingContext>> handlers;
