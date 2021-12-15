@@ -33,9 +33,6 @@ import org.apache.camel.support.component.AbstractApiComponent;
 public class FhirComponent extends AbstractApiComponent<FhirApiName, FhirConfiguration, FhirApiCollection> {
 
     @Metadata(label = "advanced")
-    FhirConfiguration configuration;
-
-    @Metadata(label = "advanced")
     private IGenericClient client;
 
     public FhirComponent() {
@@ -74,18 +71,4 @@ public class FhirComponent extends AbstractApiComponent<FhirApiName, FhirConfigu
         }
         return result;
     }
-
-    /**
-     * To use the shared configuration
-     */
-    @Override
-    public void setConfiguration(FhirConfiguration configuration) {
-        super.setConfiguration(configuration);
-    }
-
-    @Override
-    public FhirConfiguration getConfiguration() {
-        return super.getConfiguration();
-    }
-
 }
