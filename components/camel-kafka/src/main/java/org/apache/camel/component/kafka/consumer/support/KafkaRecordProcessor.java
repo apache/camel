@@ -54,30 +54,6 @@ public class KafkaRecordProcessor {
     private final String threadId;
     private final ConcurrentLinkedQueue<KafkaAsyncManualCommit> asyncCommits;
 
-    public static final class ProcessResult {
-        private static final ProcessResult UNPROCESSED_RESULT = new ProcessResult(false, START_OFFSET);
-
-        private boolean breakOnErrorHit;
-        private long partitionLastOffset;
-
-        private ProcessResult(boolean breakOnErrorHit, long partitionLastOffset) {
-            this.breakOnErrorHit = breakOnErrorHit;
-            this.partitionLastOffset = partitionLastOffset;
-        }
-
-        public boolean isBreakOnErrorHit() {
-            return breakOnErrorHit;
-        }
-
-        public long getPartitionLastOffset() {
-            return partitionLastOffset;
-        }
-
-        public static ProcessResult newUnprocessed() {
-            return UNPROCESSED_RESULT;
-        }
-    }
-
     public KafkaRecordProcessor(boolean autoCommitEnabled, KafkaConfiguration configuration,
                                 Processor processor, Consumer<?, ?> consumer,
                                 KafkaManualCommitFactory manualCommitFactory,
@@ -121,9 +97,9 @@ public class KafkaRecordProcessor {
                         headerDeserializer.deserialize(header.key(), header.value())));
     }
 
-    public ProcessResult processExchange(
+    public ProcessingResult processExchange(
             Exchange exchange, TopicPartition partition, boolean partitionHasNext,
-            boolean recordHasNext, ConsumerRecord<Object, Object> record, ProcessResult lastResult,
+            boolean recordHasNext, ConsumerRecord<Object, Object> record, ProcessingResult lastResult,
             ExceptionHandler exceptionHandler) {
 
         Message message = exchange.getMessage();
@@ -156,10 +132,10 @@ public class KafkaRecordProcessor {
             boolean breakOnErrorExit = processException(exchange, partition, lastResult.getPartitionLastOffset(),
                     exceptionHandler);
 
-            return new ProcessResult(breakOnErrorExit, lastResult.getPartitionLastOffset());
+            return new ProcessingResult(breakOnErrorExit, lastResult.getPartitionLastOffset());
         }
 
-        return new ProcessResult(false, record.offset());
+        return new ProcessingResult(false, record.offset());
     }
 
     private boolean processException(
