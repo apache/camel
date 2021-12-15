@@ -142,6 +142,9 @@ public interface ManagedBacklogDebuggerMBean {
     @ManagedOperation(description = "Dumps the messages in xml format from the suspended breakpoint at the given node")
     String dumpTracedMessagesAsXml(String nodeId);
 
+    @ManagedOperation(description = "Dumps the messages in xml format from the suspended breakpoint at the given node, optionally including the exchange properties")
+    String dumpTracedMessagesAsXml(String nodeId, boolean includeExchangeProperties);
+
     @ManagedAttribute(description = "Number of total debugged messages")
     long getDebugCounter();
 
@@ -150,9 +153,6 @@ public interface ManagedBacklogDebuggerMBean {
 
     @ManagedOperation(description = "Used for validating if a given predicate is valid or not")
     String validateConditionalBreakpoint(String language, String predicate);
-
-    @ManagedOperation(description = "Dumps the exchange properties in xml format from the suspended breakpoint at the given node")
-    String dumpExchangePropertiesAsXml(String id);
 
     @ManagedOperation(description = "Evaluates the expression at a given breakpoint Id")
     Object evaluateExpressionAtBreakpoint(String id, String language, String expression, String resultType);

@@ -35,8 +35,8 @@ NOTE: This requires to enabled JMX by including `camel-management` JAR in the cl
 |`addConditionalBreakpoint(nodeId, language, predicate)` |`void` |To add a conditional breakpoint at the given node. The predicate is created from the language parameter.
 |`disableBreakpoint(nodeId)` |`void` |To disable a breakpoint temporary.
 |`disableDebugger` |`void` |To disable the debugger
-|`dumpExchangePropertiesAsXml(nodeId)` |`String`|To dump the properties of the suspended Exchange at the given node in XML format.
 |`dumpTracedMessagesAsXml(nodeId)` |`String` |To dump the debugged messages from the give node id in XML format.
+|`dumpTracedMessagesAsXml(nodeId, boolean)` |`String` |To dump the debugged messages from the give node id in XML format, optionally including the exchange properties.
 |`enableBreakpoint(nodeId)` |`void` |To active a breakpoint which has been temporary disabled.
 |`enableDebugger` |`void` |To enable the debugger
 |`evaluateExpressionAtBreakpoint(nodeId, language, expression)` | `String`|To evaluate an expression in any supported language (e.g. Simple, CSimple, etc.) and convert the result to String

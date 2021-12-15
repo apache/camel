@@ -708,12 +708,12 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         });
 
         // there should be an exchange property 'myProperty'
-        String xml = (String) mbeanServer.invoke(on, "dumpExchangePropertiesAsXml", new Object[] { "bar" },
-                new String[] { "java.lang.String" });
+        String xml = (String) mbeanServer.invoke(on, "dumpTracedMessagesAsXml", new Object[] { "bar", true },
+                new String[] { "java.lang.String", "boolean" });
         assertNotNull(xml);
         log.info(xml);
 
-        assertTrue(xml.contains("<property name=\"myProperty\" type=\"java.lang.String\">myValue</property>"),
+        assertTrue(xml.contains("<exchangeProperty name=\"myProperty\" type=\"java.lang.String\">myValue</exchangeProperty>"),
                 "Should contain myProperty");
 
         resetMocks();
@@ -787,7 +787,7 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         log.info(response.toString());
 
         assertTrue(response.getClass().isAssignableFrom(String.class));
-        assertTrue("myValue".equals(response));
+        assertEquals("myValue", response);
 
         // same as before but assume string by default
         response = mbeanServer.invoke(on, "evaluateExpressionAtBreakpoint",
@@ -798,7 +798,27 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         log.info(response.toString());
 
         assertTrue(response.getClass().isAssignableFrom(String.class));
-        assertTrue("myValue".equals(response));
+        assertEquals("myValue", response);
+
+        mbeanServer.invoke(on, "setMessageHeaderOnBreakpoint",
+                new Object[] { "bar", "CamelDatasonnetOutputMediaType", "application/json" },
+                new String[] { "java.lang.String", "java.lang.String", "java.lang.Object" });
+
+        // evaluate datasonnet expression
+        response = mbeanServer.invoke(on, "evaluateExpressionAtBreakpoint",
+                new Object[] {
+                        "bar", "datasonnet", "/** DataSonnet\n" +
+                                             "version=2.0\n" +
+                                             "output application/json\n" +
+                                             "*/\n{ result: body }",
+                        "java.lang.String" },
+                new String[] { "java.lang.String", "java.lang.String", "java.lang.String", "java.lang.String" });
+
+        assertNotNull(response);
+        log.info(response.toString());
+
+        assertTrue(response.getClass().isAssignableFrom(String.class));
+        assertEquals("{\"result\":\"Hello World\"}", response);
 
         resetMocks();
         mock.expectedMessageCount(1);
@@ -824,6 +844,9 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
 
                 from("seda:start?concurrentConsumers=2")
                         .setProperty("myProperty", constant("myValue")).id("setProp")
+                        .setProperty("dsProperty",
+                                datasonnet("{ foo: \"bar\"}", String.class, "text/plain", "application/json"))
+                        .id("setDSProp")
                         .to("log:foo").id("foo")
                         .to("log:bar").id("bar")
                         .transform().constant("Bye World").id("transform")
