@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.azure.cosmosdb;
 
-import java.util.List;
-
 import com.azure.cosmos.ConsistencyLevel;
 import com.azure.cosmos.CosmosAsyncClient;
 import com.azure.cosmos.models.ChangeFeedProcessorOptions;

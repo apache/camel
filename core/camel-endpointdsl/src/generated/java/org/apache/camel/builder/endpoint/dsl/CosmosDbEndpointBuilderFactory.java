@@ -16,7 +16,6 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.util.List;
 import javax.annotation.Generated;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
@@ -417,28 +416,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * the SDK will prefer to use the regions in the container in the order
          * they are specified to perform operations.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param preferredRegions the value to set
-         * @return the dsl builder
-         */
-        default CosmosDbEndpointConsumerBuilder preferredRegions(
-                List<String> preferredRegions) {
-            doSetProperty("preferredRegions", preferredRegions);
-            return this;
-        }
-        /**
-         * Sets the preferred regions for geo-replicated database accounts. For
-         * example, East US as the preferred region. When
-         * EnableEndpointDiscovery is true and PreferredRegions is non-empty,
-         * the SDK will prefer to use the regions in the container in the order
-         * they are specified to perform operations.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -1221,28 +1199,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * the SDK will prefer to use the regions in the container in the order
          * they are specified to perform operations.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param preferredRegions the value to set
-         * @return the dsl builder
-         */
-        default CosmosDbEndpointProducerBuilder preferredRegions(
-                List<String> preferredRegions) {
-            doSetProperty("preferredRegions", preferredRegions);
-            return this;
-        }
-        /**
-         * Sets the preferred regions for geo-replicated database accounts. For
-         * example, East US as the preferred region. When
-         * EnableEndpointDiscovery is true and PreferredRegions is non-empty,
-         * the SDK will prefer to use the regions in the container in the order
-         * they are specified to perform operations.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -1930,28 +1887,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * the SDK will prefer to use the regions in the container in the order
          * they are specified to perform operations.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param preferredRegions the value to set
-         * @return the dsl builder
-         */
-        default CosmosDbEndpointBuilder preferredRegions(
-                List<String> preferredRegions) {
-            doSetProperty("preferredRegions", preferredRegions);
-            return this;
-        }
-        /**
-         * Sets the preferred regions for geo-replicated database accounts. For
-         * example, East US as the preferred region. When
-         * EnableEndpointDiscovery is true and PreferredRegions is non-empty,
-         * the SDK will prefer to use the regions in the container in the order
-         * they are specified to perform operations.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
          * 
