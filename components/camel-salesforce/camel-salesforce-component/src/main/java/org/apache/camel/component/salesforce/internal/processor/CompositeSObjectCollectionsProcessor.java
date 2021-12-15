@@ -172,7 +172,7 @@ public class CompositeSObjectCollectionsProcessor extends AbstractSalesforceProc
             final Exchange exchange, final Optional<? extends List<?>> responseBody, final Map<String, String> headers,
             final SalesforceException exception, final AsyncCallback callback) {
         try {
-            if (!responseBody.isPresent()) {
+            if (exception != null) {
                 exchange.setException(exception);
             } else {
                 Message in = exchange.getIn();
