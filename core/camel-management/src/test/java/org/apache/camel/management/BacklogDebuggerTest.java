@@ -800,26 +800,6 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         assertTrue(response.getClass().isAssignableFrom(String.class));
         assertEquals("myValue", response);
 
-        mbeanServer.invoke(on, "setMessageHeaderOnBreakpoint",
-                new Object[] { "bar", "CamelDatasonnetOutputMediaType", "application/json" },
-                new String[] { "java.lang.String", "java.lang.String", "java.lang.Object" });
-
-        // evaluate datasonnet expression
-        response = mbeanServer.invoke(on, "evaluateExpressionAtBreakpoint",
-                new Object[] {
-                        "bar", "datasonnet", "/** DataSonnet\n" +
-                                             "version=2.0\n" +
-                                             "output application/json\n" +
-                                             "*/\n{ result: body }",
-                        "java.lang.String" },
-                new String[] { "java.lang.String", "java.lang.String", "java.lang.String", "java.lang.String" });
-
-        assertNotNull(response);
-        log.info(response.toString());
-
-        assertTrue(response.getClass().isAssignableFrom(String.class));
-        assertEquals("{\"result\":\"Hello World\"}", response);
-
         resetMocks();
         mock.expectedMessageCount(1);
 
@@ -844,9 +824,6 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
 
                 from("seda:start?concurrentConsumers=2")
                         .setProperty("myProperty", constant("myValue")).id("setProp")
-                        .setProperty("dsProperty",
-                                datasonnet("{ foo: \"bar\"}", String.class, "text/plain", "application/json"))
-                        .id("setDSProp")
                         .to("log:foo").id("foo")
                         .to("log:bar").id("bar")
                         .transform().constant("Bye World").id("transform")
