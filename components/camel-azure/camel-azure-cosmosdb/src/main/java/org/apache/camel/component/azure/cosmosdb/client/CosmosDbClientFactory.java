@@ -21,6 +21,9 @@ import com.azure.cosmos.CosmosClient;
 import com.azure.cosmos.CosmosClientBuilder;
 import org.apache.camel.component.azure.cosmosdb.CosmosDbConfiguration;
 
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 public final class CosmosDbClientFactory {
 
     private CosmosDbClientFactory() {
@@ -42,7 +45,9 @@ public final class CosmosDbClientFactory {
                 .endpoint(configuration.getDatabaseEndpoint())
                 .contentResponseOnWriteEnabled(configuration.isContentResponseOnWriteEnabled())
                 .consistencyLevel(configuration.getConsistencyLevel())
-                .preferredRegions(configuration.getPreferredRegions())
+                .preferredRegions(Stream.of(configuration.getPreferredRegions().split(","))
+                        .map(String::trim)
+                        .collect(Collectors.toList()))
                 .connectionSharingAcrossClientsEnabled(configuration.isConnectionSharingAcrossClientsEnabled())
                 .clientTelemetryEnabled(configuration.isClientTelemetryEnabled())
                 .multipleWriteRegionsEnabled(configuration.isMultipleWriteRegionsEnabled())

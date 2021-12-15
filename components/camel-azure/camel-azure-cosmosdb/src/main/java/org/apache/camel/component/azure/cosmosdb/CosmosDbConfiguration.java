@@ -51,7 +51,7 @@ public class CosmosDbConfiguration implements Cloneable {
     @UriParam(label = "common", defaultValue = "SESSION")
     private ConsistencyLevel consistencyLevel = ConsistencyLevel.SESSION;
     @UriParam(label = "common")
-    private List<String> preferredRegions;
+    private String preferredRegions;
     @UriParam(label = "common", defaultValue = "false")
     private boolean clientTelemetryEnabled;
     @UriParam(label = "common", defaultValue = "false")
@@ -268,11 +268,11 @@ public class CosmosDbConfiguration implements Cloneable {
      * When EnableEndpointDiscovery is true and PreferredRegions is non-empty, the SDK will prefer to use the regions in
      * the container in the order they are specified to perform operations.
      */
-    public List<String> getPreferredRegions() {
+    public String getPreferredRegions() {
         return preferredRegions;
     }
 
-    public void setPreferredRegions(List<String> preferredRegions) {
+    public void setPreferredRegions(String preferredRegions) {
         this.preferredRegions = preferredRegions;
     }
 
