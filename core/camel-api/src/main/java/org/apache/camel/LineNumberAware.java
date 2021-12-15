@@ -14,33 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.commands;
+package org.apache.camel;
 
-import java.util.concurrent.Callable;
+/**
+ * An entity that can point to a given line number from a source {@link org.apache.camel.spi.Resource} such as YAML and
+ * XML DSL parsers.
+ */
+public interface LineNumberAware {
 
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
+    /**
+     * The line number of this entity.
+     *
+     * @return -1 if line number is not possible to know
+     */
+    int getLineNumber();
 
-@Command(name = "search", description = "Search for Kamelets, components and patterns (use --help)")
-class Search extends AbstractSearch implements Callable<Integer> {
-    //CHECKSTYLE:OFF
-    @Option(names = { "-h", "--help" }, usageHelp = true, description = "Display the help and sub-commands")
-    private boolean helpRequested = false;
-    //CHECKSTYLE:ON
+    /**
+     * Sets the line number of this entity. parsing the source file and provide the line number representing this node.
+     *
+     * @param lineNumber the line number
+     */
+    void setLineNumber(int lineNumber);
 
-    public Search() {
-        super(null, null);
-    }
-
-    public void printHeader() {
-        // NO-OP
-    }
-
-    @Override
-    public Integer call() throws Exception {
-        new CommandLine(this).execute("--help");
-
-        return 0;
-    }
 }

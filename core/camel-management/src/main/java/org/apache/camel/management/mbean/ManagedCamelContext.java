@@ -524,6 +524,10 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
                         = context.getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedRouteMBean.class);
                 sb.append("    <routeStat")
                         .append(String.format(" id=\"%s\" state=\"%s\"", route.getRouteId(), route.getState()));
+                if (route.getSourceLocation() != null) {
+                    sb.append(String.format(" sourceLocation=\"%s\"", route.getSourceLocation()));
+                }
+
                 // use substring as we only want the attributes
                 stat = route.dumpStatsAsXml(fullStats);
                 sb.append(" exchangesInflight=\"").append(route.getExchangesInflight()).append("\"");
@@ -533,10 +537,12 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
                 if (includeProcessors) {
                     sb.append("      <processorStats>\n");
                     for (ManagedProcessorMBean processor : processors) {
+                        int line = processor.getSourceLineNumber() != null ? processor.getSourceLineNumber() : -1;
                         // the processor must belong to this route
                         if (route.getRouteId().equals(processor.getRouteId())) {
-                            sb.append("        <processorStat").append(String.format(" id=\"%s\" index=\"%s\" state=\"%s\"",
-                                    processor.getProcessorId(), processor.getIndex(), processor.getState()));
+                            sb.append("        <processorStat")
+                                    .append(String.format(" id=\"%s\" index=\"%s\" state=\"%s\" sourceLineNumber=\"%s\"",
+                                            processor.getProcessorId(), processor.getIndex(), processor.getState(), line));
                             // use substring as we only want the attributes
                             stat = processor.dumpStatsAsXml(fullStats);
                             sb.append(" exchangesInflight=\"").append(processor.getExchangesInflight()).append("\"");
@@ -590,6 +596,10 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
                         = context.getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedRouteMBean.class);
                 sb.append("    <routeStat")
                         .append(String.format(" id=\"%s\" state=\"%s\"", route.getRouteId(), route.getState()));
+                if (route.getSourceLocation() != null) {
+                    sb.append(String.format(" sourceLocation=\"%s\"", route.getSourceLocation()));
+                }
+
                 // use substring as we only want the attributes
                 stat = route.dumpStatsAsXml(fullStats);
                 sb.append(" exchangesInflight=\"").append(route.getExchangesInflight()).append("\"");
@@ -597,14 +607,16 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
 
                 // add steps details if needed
                 sb.append("      <stepStats>\n");
-                for (ManagedProcessorMBean processor : steps) {
+                for (ManagedProcessorMBean step : steps) {
                     // the step must belong to this route
-                    if (route.getRouteId().equals(processor.getRouteId())) {
-                        sb.append("        <stepStat").append(String.format(" id=\"%s\" index=\"%s\" state=\"%s\"",
-                                processor.getProcessorId(), processor.getIndex(), processor.getState()));
+                    if (route.getRouteId().equals(step.getRouteId())) {
+                        int line = step.getSourceLineNumber() != null ? step.getSourceLineNumber() : -1;
+                        sb.append("        <stepStat")
+                                .append(String.format(" id=\"%s\" index=\"%s\" state=\"%s\" sourceLineNumber=\"%s\"",
+                                        step.getProcessorId(), step.getIndex(), step.getState(), line));
                         // use substring as we only want the attributes
-                        stat = processor.dumpStatsAsXml(fullStats);
-                        sb.append(" exchangesInflight=\"").append(processor.getExchangesInflight()).append("\"");
+                        stat = step.dumpStatsAsXml(fullStats);
+                        sb.append(" exchangesInflight=\"").append(step.getExchangesInflight()).append("\"");
                         sb.append(" ").append(stat, 7, stat.length()).append("\n");
                     }
                     sb.append("      </stepStats>\n");

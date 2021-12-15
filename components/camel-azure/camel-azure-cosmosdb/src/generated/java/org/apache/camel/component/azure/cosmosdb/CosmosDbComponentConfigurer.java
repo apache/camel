@@ -75,7 +75,7 @@ public class CosmosDbComponentConfigurer extends PropertyConfigurerSupport imple
         case "multipleWriteRegionsEnabled": getOrCreateConfiguration(target).setMultipleWriteRegionsEnabled(property(camelContext, boolean.class, value)); return true;
         case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.azure.cosmosdb.CosmosDbOperationsDefinition.class, value)); return true;
         case "preferredregions":
-        case "preferredRegions": getOrCreateConfiguration(target).setPreferredRegions(property(camelContext, java.util.List.class, value)); return true;
+        case "preferredRegions": getOrCreateConfiguration(target).setPreferredRegions(property(camelContext, java.lang.String.class, value)); return true;
         case "query": getOrCreateConfiguration(target).setQuery(property(camelContext, java.lang.String.class, value)); return true;
         case "queryrequestoptions":
         case "queryRequestOptions": getOrCreateConfiguration(target).setQueryRequestOptions(property(camelContext, com.azure.cosmos.models.CosmosQueryRequestOptions.class, value)); return true;
@@ -142,7 +142,7 @@ public class CosmosDbComponentConfigurer extends PropertyConfigurerSupport imple
         case "multipleWriteRegionsEnabled": return boolean.class;
         case "operation": return org.apache.camel.component.azure.cosmosdb.CosmosDbOperationsDefinition.class;
         case "preferredregions":
-        case "preferredRegions": return java.util.List.class;
+        case "preferredRegions": return java.lang.String.class;
         case "query": return java.lang.String.class;
         case "queryrequestoptions":
         case "queryRequestOptions": return com.azure.cosmos.models.CosmosQueryRequestOptions.class;
@@ -213,15 +213,6 @@ public class CosmosDbComponentConfigurer extends PropertyConfigurerSupport imple
         case "readRequestsFallbackEnabled": return getOrCreateConfiguration(target).isReadRequestsFallbackEnabled();
         case "throughputproperties":
         case "throughputProperties": return getOrCreateConfiguration(target).getThroughputProperties();
-        default: return null;
-        }
-    }
-
-    @Override
-    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
-        case "preferredregions":
-        case "preferredRegions": return java.lang.String.class;
         default: return null;
         }
     }

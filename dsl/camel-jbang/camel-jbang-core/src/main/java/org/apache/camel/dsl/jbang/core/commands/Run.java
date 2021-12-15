@@ -34,7 +34,7 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
-@Command(name = "run", description = "Run a Kamelet")
+@Command(name = "run", description = "Run Camel")
 class Run implements Callable<Integer> {
     private CamelContext context;
     private File lockFile;

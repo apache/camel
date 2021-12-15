@@ -176,6 +176,37 @@ public interface RestSwaggerEndpointBuilderFactory {
             return this;
         }
         /**
+         * Resolve references in Swagger specification.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param resolveReferences the value to set
+         * @return the dsl builder
+         */
+        default RestSwaggerEndpointBuilder resolveReferences(
+                Boolean resolveReferences) {
+            doSetProperty("resolveReferences", resolveReferences);
+            return this;
+        }
+        /**
+         * Resolve references in Swagger specification.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param resolveReferences the value to set
+         * @return the dsl builder
+         */
+        default RestSwaggerEndpointBuilder resolveReferences(
+                String resolveReferences) {
+            doSetProperty("resolveReferences", resolveReferences);
+            return this;
+        }
+        /**
          * To configure security using SSLContextParameters.
          * 
          * The option is a:

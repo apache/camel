@@ -49,6 +49,7 @@ public abstract class AbstractInitKamelet {
     protected File resolveResource(File destinationDirectory) throws IOException, CamelException {
         KameletMain main = new KameletMain();
         main.start();
+
         CamelContext context = main.getCamelContext();
 
         try (GitHubResourceResolver resolver = new GitHubResourceResolver()) {
@@ -56,20 +57,17 @@ public abstract class AbstractInitKamelet {
             resolver.setBranch(branch);
 
             Resource resource = resolver.resolve(resourceLocation);
-
             if (!resource.exists()) {
                 throw new CamelException("The resource does not exist");
             }
 
             String fileName = FilenameUtils.getName(resource.getURL().getPath());
-
             LOG.debug("Destination directory for the downloaded resources: {}", destinationDirectory.getAbsolutePath());
             LOG.debug("Downloaded resource file name: {}", fileName);
             File outputFile = new File(destinationDirectory, fileName);
 
             File parentDir = outputFile.getParentFile();
             if (!parentDir.exists()) {
-
                 if (!parentDir.mkdirs()) {
                     LOG.warn("Failed to create the output directory: {}. It may have been created already", parentDir);
                 }
@@ -89,11 +87,8 @@ public abstract class AbstractInitKamelet {
 
     protected void bootstrap(String branch, String baseResourceLocation, String destination)
             throws IOException, CamelException {
-
         setBranch(branch);
         setResourceLocation(baseResourceLocation, "camel-kamelets:templates/init-template.properties");
-
         resolveResource(new File(destination));
-
     }
 }

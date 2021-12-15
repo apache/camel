@@ -136,6 +136,10 @@ public final class RestSwaggerComponent extends DefaultComponent implements SSLC
               defaultValue = "false")
     private boolean useGlobalSslContextParameters;
 
+    @Metadata(description = "Resolve references in Swagger specification.", label = "producer",
+              defaultValue = "false")
+    private Boolean resolveReferences;
+
     public RestSwaggerComponent() {
     }
 
@@ -217,4 +221,11 @@ public final class RestSwaggerComponent extends DefaultComponent implements SSLC
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
+    public Boolean getResolveReferences() {
+        return resolveReferences;
+    }
+
+    public void setResolveReferences(Boolean resolveReferences) {
+        this.resolveReferences = resolveReferences;
+    }
 }

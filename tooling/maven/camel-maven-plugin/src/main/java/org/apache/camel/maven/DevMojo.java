@@ -16,6 +16,8 @@
  */
 package org.apache.camel.maven;
 
+import java.io.File;
+
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -38,16 +40,20 @@ public class DevMojo extends RunMojo {
      */
     @Override
     protected void beforeBootstrapCamel() throws Exception {
-        String routesReloadDirectory = "src/main/resources";
-
+        String dir;
         if (routesDirectory != null) {
-            routesReloadDirectory = routesDirectory;
-        } else if (routesDirectory == null && project.getResources().size() == 1) {
-            routesReloadDirectory = project.getResources().get(0).getDirectory();
+            dir = routesDirectory;
+        } else if (project.getResources().size() == 1) {
+            dir = project.getResources().get(0).getDirectory();
+        } else {
+            dir = "src/main/resources";
         }
 
+        // use absolute path for dir
+        dir = new File(dir).getAbsolutePath();
+
         System.setProperty("camel.main.routesReloadEnabled", "true");
-        System.setProperty("camel.main.routesReloadDirectory", routesReloadDirectory);
+        System.setProperty("camel.main.routesReloadDirectory", dir);
         System.setProperty("camel.main.routesReloadDirectoryRecursive", "true");
         System.setProperty("camel.main.durationMaxAction", "stop");
         System.setProperty("camel.main.routesReloadPattern",

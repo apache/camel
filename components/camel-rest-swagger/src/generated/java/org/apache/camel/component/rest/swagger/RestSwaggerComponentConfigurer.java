@@ -32,6 +32,8 @@ public class RestSwaggerComponentConfigurer extends PropertyConfigurerSupport im
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "produces": target.setProduces(property(camelContext, java.lang.String.class, value)); return true;
+        case "resolvereferences":
+        case "resolveReferences": target.setResolveReferences(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "specificationuri":
         case "specificationUri": target.setSpecificationUri(property(camelContext, java.net.URI.class, value)); return true;
         case "sslcontextparameters":
@@ -56,6 +58,8 @@ public class RestSwaggerComponentConfigurer extends PropertyConfigurerSupport im
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "produces": return java.lang.String.class;
+        case "resolvereferences":
+        case "resolveReferences": return java.lang.Boolean.class;
         case "specificationuri":
         case "specificationUri": return java.net.URI.class;
         case "sslcontextparameters":
@@ -81,6 +85,8 @@ public class RestSwaggerComponentConfigurer extends PropertyConfigurerSupport im
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "produces": return target.getProduces();
+        case "resolvereferences":
+        case "resolveReferences": return target.getResolveReferences();
         case "specificationuri":
         case "specificationUri": return target.getSpecificationUri();
         case "sslcontextparameters":

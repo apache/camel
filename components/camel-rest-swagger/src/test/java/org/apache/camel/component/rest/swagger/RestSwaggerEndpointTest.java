@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import io.swagger.models.HttpMethod;
 import io.swagger.models.Operation;
 import io.swagger.models.Scheme;
 import io.swagger.models.Swagger;
@@ -72,6 +73,22 @@ public class RestSwaggerEndpointTest {
         assertThat(endpoint.queryParameter(new QueryParameter())).isEqualTo("");
         assertThat(endpoint.queryParameter(new QueryParameter().name("param"))).isEqualTo("param={param?}");
         assertThat(endpoint.queryParameter(new QueryParameter().name("literal"))).isEqualTo("literal=value");
+    }
+
+    @Test
+    public void shouldComputeQueryParameterReferences() throws IOException {
+        final CamelContext camelContext = mock(CamelContext.class);
+        when(camelContext.getClassResolver()).thenReturn(new DefaultClassResolver());
+
+        assertThat(
+                RestSwaggerEndpoint
+                        .loadSpecificationFrom(camelContext, RestSwaggerComponent.DEFAULT_SPECIFICATION_URI, null, true)
+                        .getPaths().get("/pet/findByTags").getOperationMap().get(HttpMethod.GET).getParameters()
+                        .stream()
+                        .filter(p -> "offset".equals(p.getName()))
+                        .findAny()
+                        .orElse(null))
+                                .isNotNull();
     }
 
     @Test
@@ -339,8 +356,9 @@ public class RestSwaggerEndpointTest {
         when(camelContext.getClassResolver()).thenReturn(new DefaultClassResolver());
 
         assertThat(
-                RestSwaggerEndpoint.loadSpecificationFrom(camelContext, RestSwaggerComponent.DEFAULT_SPECIFICATION_URI, null))
-                        .isNotNull();
+                RestSwaggerEndpoint.loadSpecificationFrom(camelContext, RestSwaggerComponent.DEFAULT_SPECIFICATION_URI, null,
+                        false))
+                                .isNotNull();
     }
 
     @Test
@@ -368,7 +386,7 @@ public class RestSwaggerEndpointTest {
 
         final URI uri = URI.create("non-existant.json");
         assertThrows(IllegalArgumentException.class,
-                () -> RestSwaggerEndpoint.loadSpecificationFrom(camelContext, uri, null));
+                () -> RestSwaggerEndpoint.loadSpecificationFrom(camelContext, uri, null, false));
     }
 
     @Test
