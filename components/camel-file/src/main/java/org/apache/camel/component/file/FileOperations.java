@@ -381,10 +381,15 @@ public class FileOperations implements GenericFileOperations<File> {
                 // buffer the reader
                 in = IOHelper.buffered(in);
                 writeFileByReaderWithCharset(in, file, charset);
-            } else if (exchange.getIn().getBody() instanceof String &&
-                    ((String) exchange.getIn().getBody()).length() < endpoint.getBufferSize()) {
-                writeFileFromString((String) exchange.getIn().getBody(), file);
             } else {
+                // If the body is a string of reasonable size, write it directly
+                if (exchange.getIn().getBody() instanceof String) {
+                    String stringBody = (String) exchange.getIn().getBody();
+                    if (stringBody.length() < endpoint.getBufferSize()) {
+                        writeFileByString(stringBody, file);
+                        return true;
+                    }
+                }
                 // fallback and use stream based
                 InputStream in = exchange.getIn().getMandatoryBody(InputStream.class);
                 writeFileByStream(in, file);
@@ -408,16 +413,6 @@ public class FileOperations implements GenericFileOperations<File> {
             throw new GenericFileOperationFailedException("Cannot store file: " + file, e);
         } catch (InvalidPayloadException e) {
             throw new GenericFileOperationFailedException("Cannot store file: " + file, e);
-        }
-    }
-
-    private void writeFileFromString(String body, File target) throws IOException {
-        boolean append = endpoint.getFileExist() == GenericFileExist.Append;
-        Files.writeString(target.toPath(), body, StandardOpenOption.WRITE,
-                append ? StandardOpenOption.APPEND : StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
-        if (append && endpoint.getAppendChars() != null) {
-            Files.writeString(target.toPath(), endpoint.getAppendChars(), StandardOpenOption.WRITE,
-                    StandardOpenOption.APPEND);
         }
     }
 
@@ -510,6 +505,16 @@ public class FileOperations implements GenericFileOperations<File> {
             }
         } finally {
             IOHelper.close(in, target.getName(), LOG);
+        }
+    }
+
+    private void writeFileByString(String body, File target) throws IOException {
+        boolean append = endpoint.getFileExist() == GenericFileExist.Append;
+        Files.writeString(target.toPath(), body, StandardOpenOption.WRITE,
+                append ? StandardOpenOption.APPEND : StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
+        if (append && endpoint.getAppendChars() != null) {
+            Files.writeString(target.toPath(), endpoint.getAppendChars(), StandardOpenOption.WRITE,
+                    StandardOpenOption.APPEND);
         }
     }
 
