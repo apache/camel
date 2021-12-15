@@ -410,8 +410,8 @@ public interface CosmosDbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the preferred regions for geo-replicated database accounts. For
-         * example, East US as the preferred region. When
+         * Sets the comma separated preferred regions for geo-replicated
+         * database accounts. For example, East US as the preferred region. When
          * EnableEndpointDiscovery is true and PreferredRegions is non-empty,
          * the SDK will prefer to use the regions in the container in the order
          * they are specified to perform operations.
@@ -1193,8 +1193,8 @@ public interface CosmosDbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the preferred regions for geo-replicated database accounts. For
-         * example, East US as the preferred region. When
+         * Sets the comma separated preferred regions for geo-replicated
+         * database accounts. For example, East US as the preferred region. When
          * EnableEndpointDiscovery is true and PreferredRegions is non-empty,
          * the SDK will prefer to use the regions in the container in the order
          * they are specified to perform operations.
@@ -1881,8 +1881,8 @@ public interface CosmosDbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the preferred regions for geo-replicated database accounts. For
-         * example, East US as the preferred region. When
+         * Sets the comma separated preferred regions for geo-replicated
+         * database accounts. For example, East US as the preferred region. When
          * EnableEndpointDiscovery is true and PreferredRegions is non-empty,
          * the SDK will prefer to use the regions in the container in the order
          * they are specified to perform operations.
