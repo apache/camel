@@ -17,7 +17,6 @@
 package org.apache.camel.management.mbean;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.Map;
 import java.util.Set;
@@ -303,13 +302,13 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
 
     @Override
     public Object evaluateExpressionAtBreakpoint(String id, String language, String expression, String resultType) {
-        Exchange suspendedExchange = null;
+        Exchange suspendedExchange;
         try {
             Language lan = camelContext.resolveLanguage(language);
             suspendedExchange = backlogDebugger.getSuspendedExchange(id);
             if (suspendedExchange != null) {
-                Object result = null;
-                Class resultClass = camelContext.getClassResolver().resolveClass(resultType);
+                Object result;
+                Class<?> resultClass = camelContext.getClassResolver().resolveMandatoryClass(resultType);
                 if (!Boolean.class.isAssignableFrom(resultClass)) {
                     Expression expr = lan.createExpression(expression);
                     expr.init(camelContext);
@@ -329,17 +328,17 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
                 return result;
             }
         } catch (Exception e) {
-            return e;
+            return e.getMessage();
         }
         return null;
     }
 
-    private boolean isSerializable(Object obj) {
+    private static boolean isSerializable(Object obj) {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream(512);
         try (ObjectOutputStream out = new ObjectOutputStream(baos)) {
             out.writeObject(obj);
             return true;
-        } catch (final IOException ex) {
+        } catch (Exception e) {
             return false;
         }
     }
