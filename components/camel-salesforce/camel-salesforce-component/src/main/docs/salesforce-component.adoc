@@ -421,7 +421,7 @@ salesforce:apexCall[/yourApexRestUrl][?options]
 ----
 
 You can supply the apexUrl either in the endpoint (see above), or as the `apexUrl` option as listed in the table below.
-In either case the Apex URL can contain placeholders in the format of `{headerName}`. E.g., for the Apex URL `MyApexClass/{id}`,
+In either case the Apex URL can contain placeholders in the format of `\{headerName}`. E.g., for the Apex URL `MyApexClass/\{id}`,
 the value of the header named `id` will be used to replace the placeholder.
 
 |===
