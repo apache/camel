@@ -9,3 +9,32 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 === API changes
 
 Added `getScheme` method to `org.apache.camel.spi.Resource`.
+
+=== camel-yaml-dsl
+
+Removed `steps` from `route` because steps should only be configured on `from` making
+the DSL consistent and similar to Java DSL.
+
+Before it was possible to do:
+
+[source,yaml]
+----
+- route:
+    id: demo-route
+    from:
+      uri: "timer:info"
+    steps:
+      - log: "message"
+----
+
+This should correctly be done with `steps` as child of `from`:
+
+[source,yaml]
+----
+- route:
+    id: demo-route
+    from:
+      uri: "timer:info"
+      steps:
+        - log: "message"
+----
