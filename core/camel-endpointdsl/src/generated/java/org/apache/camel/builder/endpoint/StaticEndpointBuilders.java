@@ -8674,7 +8674,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * JsonPatch (camel-json-patch)
-     * JsonPatch component which transform JSON using JSON patch (RFC 6902).
+     * Transforms JSON using JSON patch (RFC 6902).
      * 
      * Category: transformation
      * Since: 3.12
@@ -8698,7 +8698,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * JsonPatch (camel-json-patch)
-     * JsonPatch component which transform JSON using JSON patch (RFC 6902).
+     * Transforms JSON using JSON patch (RFC 6902).
      * 
      * Category: transformation
      * Since: 3.12
