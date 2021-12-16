@@ -380,47 +380,6 @@ The https://developer.salesforce.com/docs/atlas.en-us.change_data_capture.meta/c
 is a good fit to better know the subtleties of implementing a change data capture integration application.
 The dynamic nature of change event body fields, high level replication steps as well as security considerations could be of interest.
 
-== Examples
-
-=== Uploading a document to a ContentWorkspace
-
-Create the ContentVersion in Java, using a Processor instance:
-
-[source,java]
-----
-public class ContentProcessor implements Processor {
-    public void process(Exchange exchange) throws Exception {
-        Message message = exchange.getIn();
-
-        ContentVersion cv = new ContentVersion();
-        ContentWorkspace cw = getWorkspace(exchange);
-        cv.setFirstPublishLocationId(cw.getId());
-        cv.setTitle("test document");
-        cv.setPathOnClient("test_doc.html");
-        byte[] document = message.getBody(byte[].class);
-        ObjectMapper mapper = new ObjectMapper();
-        String enc = mapper.convertValue(document, String.class);
-        cv.setVersionDataUrl(enc);
-        message.setBody(cv);
-    }
-
-    protected ContentWorkspace getWorkSpace(Exchange exchange) {
-        // Look up the content workspace somehow, maybe use enrich() to add it to a
-        // header that can be extracted here
-        ....
-    }
-} 
-----
-
-Give the output from the processor to the Salesforce component:
-
-[source,java]
-----
-from("file:///home/camel/library")
-    .to(new ContentProcessor())     // convert bytes from the file into a ContentVersion SObject 
-                                    // for the salesforce component
-    .to("salesforce:createSObject"); 
-----
 
 == Using Salesforce Limits API
 
@@ -449,6 +408,36 @@ from("direct:querySalesforce")
         .setBody(constant("Used up Salesforce API limits, leaving 10% for critical routes"))
     .endChoice()
 ----
+
+== Invoking Apex REST endpoints
+
+You can https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_rest_intro.htm[expose your Apex class and methods]
+so that external applications can access your code and your application through the REST architecture.
+
+The URI format for invoking Apex REST is:
+
+----
+salesforce:apexCall[/yourApexRestUrl][?options]
+----
+
+You can supply the apexUrl either in the endpoint (see above), or as the `apexUrl` option as listed in the table below.
+In either case the Apex URL can contain placeholders in the format of `{headerName}`. E.g., for the Apex URL `MyApexClass/{id}`,
+the value of the header named `id` will be used to replace the placeholder.
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| request body | `Map<String, Object>` if `GET`, otherwise `String` or `InputStream`| In the case of a `GET`, the body (`Map` instance)
+is transformed into query parameters. For other HTTP methods, the body is used for the HTTP body. | |
+| `apexUrl` | `String` | The portion of the endpoint URL after `https://instance.salesforce.com/services/apexrest/`, e.g., 'MyApexClass/' | |
+| `apexMethod` | `String` | The HTTP method (e.g. `GET`, `POST`) to use. | `GET` |
+| `rawPayload` | `Boolean` | If true, Camel will not serialize the request or response bodies. | false |
+| Header: `apexQueryParam.[paramName]` | Object | Headers that override apex parameters passed in the endpoint. | false |
+| `sObjectName` | `String` | Name of sObject (e.g. `Merchandise__c`) used to deserialize the response | false |
+| `sObjectClass` | `String` | Fully qualified class name used to deserialize the response | false |
+|===
+
+
 
 == Working with approvals
 
@@ -797,6 +786,46 @@ send null values to salesforce, use the `fieldsToNull` property, as follows:
 [source,java]
 ----
 accountSObject.getFieldsToNull().add("Site");
+----
+
+== Uploading a document to a ContentWorkspace
+
+Create the ContentVersion in Java, using a Processor instance:
+
+[source,java]
+----
+public class ContentProcessor implements Processor {
+    public void process(Exchange exchange) throws Exception {
+        Message message = exchange.getIn();
+
+        ContentVersion cv = new ContentVersion();
+        ContentWorkspace cw = getWorkspace(exchange);
+        cv.setFirstPublishLocationId(cw.getId());
+        cv.setTitle("test document");
+        cv.setPathOnClient("test_doc.html");
+        byte[] document = message.getBody(byte[].class);
+        ObjectMapper mapper = new ObjectMapper();
+        String enc = mapper.convertValue(document, String.class);
+        cv.setVersionDataUrl(enc);
+        message.setBody(cv);
+    }
+
+    protected ContentWorkspace getWorkSpace(Exchange exchange) {
+        // Look up the content workspace somehow, maybe use enrich() to add it to a
+        // header that can be extracted here
+        ....
+    }
+}
+----
+
+Give the output from the processor to the Salesforce component:
+
+[source,java]
+----
+from("file:///home/camel/library")
+    .to(new ContentProcessor())     // convert bytes from the file into a ContentVersion SObject
+                                    // for the salesforce component
+    .to("salesforce:createSObject");
 ----
 
 == Generating SOQL query strings
