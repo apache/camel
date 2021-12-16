@@ -61,8 +61,8 @@ class LineNumberTest extends YamlTestSupport {
                 - route:
                     from:
                       uri: "direct:info"
-                    steps:
-                      - log: "message"
+                      steps:
+                        - log: "message"
             '''
         then:
         context.routeDefinitions.size() == 1
