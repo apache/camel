@@ -20,93 +20,24 @@ public class FhirComponentConfigurer extends PropertyConfigurerSupport implement
     private static final Map<String, Object> ALL_OPTIONS;
     static {
         Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("encoding", java.lang.String.class);
-        map.put("fhirVersion", java.lang.String.class);
-        map.put("log", boolean.class);
-        map.put("prettyPrint", boolean.class);
-        map.put("serverUrl", java.lang.String.class);
         map.put("bridgeErrorHandler", boolean.class);
         map.put("lazyStartProducer", boolean.class);
         map.put("autowiredEnabled", boolean.class);
-        map.put("client", ca.uhn.fhir.rest.client.api.IGenericClient.class);
-        map.put("clientFactory", ca.uhn.fhir.rest.client.api.IRestfulClientFactory.class);
-        map.put("compress", boolean.class);
         map.put("configuration", org.apache.camel.component.fhir.FhirConfiguration.class);
-        map.put("connectionTimeout", java.lang.Integer.class);
-        map.put("deferModelScanning", boolean.class);
-        map.put("fhirContext", ca.uhn.fhir.context.FhirContext.class);
-        map.put("forceConformanceCheck", boolean.class);
-        map.put("sessionCookie", java.lang.String.class);
-        map.put("socketTimeout", java.lang.Integer.class);
-        map.put("summary", java.lang.String.class);
-        map.put("validationMode", java.lang.String.class);
-        map.put("proxyHost", java.lang.String.class);
-        map.put("proxyPassword", java.lang.String.class);
-        map.put("proxyPort", java.lang.Integer.class);
-        map.put("proxyUser", java.lang.String.class);
-        map.put("accessToken", java.lang.String.class);
-        map.put("password", java.lang.String.class);
-        map.put("username", java.lang.String.class);
         ALL_OPTIONS = map;
-    }
-
-    private org.apache.camel.component.fhir.FhirConfiguration getOrCreateConfiguration(FhirComponent target) {
-        if (target.getConfiguration() == null) {
-            target.setConfiguration(new org.apache.camel.component.fhir.FhirConfiguration());
-        }
-        return target.getConfiguration();
     }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         FhirComponent target = (FhirComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "accesstoken":
-        case "accessToken": getOrCreateConfiguration(target).setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "client": getOrCreateConfiguration(target).setClient(property(camelContext, ca.uhn.fhir.rest.client.api.IGenericClient.class, value)); return true;
-        case "clientfactory":
-        case "clientFactory": getOrCreateConfiguration(target).setClientFactory(property(camelContext, ca.uhn.fhir.rest.client.api.IRestfulClientFactory.class, value)); return true;
-        case "compress": getOrCreateConfiguration(target).setCompress(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.fhir.FhirConfiguration.class, value)); return true;
-        case "connectiontimeout":
-        case "connectionTimeout": getOrCreateConfiguration(target).setConnectionTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "defermodelscanning":
-        case "deferModelScanning": getOrCreateConfiguration(target).setDeferModelScanning(property(camelContext, boolean.class, value)); return true;
-        case "encoding": getOrCreateConfiguration(target).setEncoding(property(camelContext, java.lang.String.class, value)); return true;
-        case "fhircontext":
-        case "fhirContext": getOrCreateConfiguration(target).setFhirContext(property(camelContext, ca.uhn.fhir.context.FhirContext.class, value)); return true;
-        case "fhirversion":
-        case "fhirVersion": getOrCreateConfiguration(target).setFhirVersion(property(camelContext, java.lang.String.class, value)); return true;
-        case "forceconformancecheck":
-        case "forceConformanceCheck": getOrCreateConfiguration(target).setForceConformanceCheck(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "log": getOrCreateConfiguration(target).setLog(property(camelContext, boolean.class, value)); return true;
-        case "password": getOrCreateConfiguration(target).setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "prettyprint":
-        case "prettyPrint": getOrCreateConfiguration(target).setPrettyPrint(property(camelContext, boolean.class, value)); return true;
-        case "proxyhost":
-        case "proxyHost": getOrCreateConfiguration(target).setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
-        case "proxypassword":
-        case "proxyPassword": getOrCreateConfiguration(target).setProxyPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "proxyport":
-        case "proxyPort": getOrCreateConfiguration(target).setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "proxyuser":
-        case "proxyUser": getOrCreateConfiguration(target).setProxyUser(property(camelContext, java.lang.String.class, value)); return true;
-        case "serverurl":
-        case "serverUrl": getOrCreateConfiguration(target).setServerUrl(property(camelContext, java.lang.String.class, value)); return true;
-        case "sessioncookie":
-        case "sessionCookie": getOrCreateConfiguration(target).setSessionCookie(property(camelContext, java.lang.String.class, value)); return true;
-        case "sockettimeout":
-        case "socketTimeout": getOrCreateConfiguration(target).setSocketTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "summary": getOrCreateConfiguration(target).setSummary(property(camelContext, java.lang.String.class, value)); return true;
-        case "username": getOrCreateConfiguration(target).setUsername(property(camelContext, java.lang.String.class, value)); return true;
-        case "validationmode":
-        case "validationMode": getOrCreateConfiguration(target).setValidationMode(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -119,52 +50,13 @@ public class FhirComponentConfigurer extends PropertyConfigurerSupport implement
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "accesstoken":
-        case "accessToken": return java.lang.String.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
-        case "client": return ca.uhn.fhir.rest.client.api.IGenericClient.class;
-        case "clientfactory":
-        case "clientFactory": return ca.uhn.fhir.rest.client.api.IRestfulClientFactory.class;
-        case "compress": return boolean.class;
         case "configuration": return org.apache.camel.component.fhir.FhirConfiguration.class;
-        case "connectiontimeout":
-        case "connectionTimeout": return java.lang.Integer.class;
-        case "defermodelscanning":
-        case "deferModelScanning": return boolean.class;
-        case "encoding": return java.lang.String.class;
-        case "fhircontext":
-        case "fhirContext": return ca.uhn.fhir.context.FhirContext.class;
-        case "fhirversion":
-        case "fhirVersion": return java.lang.String.class;
-        case "forceconformancecheck":
-        case "forceConformanceCheck": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
-        case "log": return boolean.class;
-        case "password": return java.lang.String.class;
-        case "prettyprint":
-        case "prettyPrint": return boolean.class;
-        case "proxyhost":
-        case "proxyHost": return java.lang.String.class;
-        case "proxypassword":
-        case "proxyPassword": return java.lang.String.class;
-        case "proxyport":
-        case "proxyPort": return java.lang.Integer.class;
-        case "proxyuser":
-        case "proxyUser": return java.lang.String.class;
-        case "serverurl":
-        case "serverUrl": return java.lang.String.class;
-        case "sessioncookie":
-        case "sessionCookie": return java.lang.String.class;
-        case "sockettimeout":
-        case "socketTimeout": return java.lang.Integer.class;
-        case "summary": return java.lang.String.class;
-        case "username": return java.lang.String.class;
-        case "validationmode":
-        case "validationMode": return java.lang.String.class;
         default: return null;
         }
     }
@@ -173,52 +65,13 @@ public class FhirComponentConfigurer extends PropertyConfigurerSupport implement
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         FhirComponent target = (FhirComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "accesstoken":
-        case "accessToken": return getOrCreateConfiguration(target).getAccessToken();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
-        case "client": return getOrCreateConfiguration(target).getClient();
-        case "clientfactory":
-        case "clientFactory": return getOrCreateConfiguration(target).getClientFactory();
-        case "compress": return getOrCreateConfiguration(target).isCompress();
         case "configuration": return target.getConfiguration();
-        case "connectiontimeout":
-        case "connectionTimeout": return getOrCreateConfiguration(target).getConnectionTimeout();
-        case "defermodelscanning":
-        case "deferModelScanning": return getOrCreateConfiguration(target).isDeferModelScanning();
-        case "encoding": return getOrCreateConfiguration(target).getEncoding();
-        case "fhircontext":
-        case "fhirContext": return getOrCreateConfiguration(target).getFhirContext();
-        case "fhirversion":
-        case "fhirVersion": return getOrCreateConfiguration(target).getFhirVersion();
-        case "forceconformancecheck":
-        case "forceConformanceCheck": return getOrCreateConfiguration(target).isForceConformanceCheck();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
-        case "log": return getOrCreateConfiguration(target).isLog();
-        case "password": return getOrCreateConfiguration(target).getPassword();
-        case "prettyprint":
-        case "prettyPrint": return getOrCreateConfiguration(target).isPrettyPrint();
-        case "proxyhost":
-        case "proxyHost": return getOrCreateConfiguration(target).getProxyHost();
-        case "proxypassword":
-        case "proxyPassword": return getOrCreateConfiguration(target).getProxyPassword();
-        case "proxyport":
-        case "proxyPort": return getOrCreateConfiguration(target).getProxyPort();
-        case "proxyuser":
-        case "proxyUser": return getOrCreateConfiguration(target).getProxyUser();
-        case "serverurl":
-        case "serverUrl": return getOrCreateConfiguration(target).getServerUrl();
-        case "sessioncookie":
-        case "sessionCookie": return getOrCreateConfiguration(target).getSessionCookie();
-        case "sockettimeout":
-        case "socketTimeout": return getOrCreateConfiguration(target).getSocketTimeout();
-        case "summary": return getOrCreateConfiguration(target).getSummary();
-        case "username": return getOrCreateConfiguration(target).getUsername();
-        case "validationmode":
-        case "validationMode": return getOrCreateConfiguration(target).getValidationMode();
         default: return null;
         }
     }
