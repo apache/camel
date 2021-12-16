@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "json-patch",
     "title": "JsonPatch",
-    "description": "JsonPatch component which transform JSON using JSON patch (RFC 6902).",
+    "description": "Transforms JSON using JSON patch (RFC 6902).",
     "deprecated": false,
     "firstVersion": "3.12.0",
     "label": "transformation",
