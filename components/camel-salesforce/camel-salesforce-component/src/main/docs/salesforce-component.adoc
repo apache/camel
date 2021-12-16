@@ -429,12 +429,12 @@ the value of the header named `id` will be used to replace the placeholder.
 
 | request body | `Map<String, Object>` if `GET`, otherwise `String` or `InputStream`| In the case of a `GET`, the body (`Map` instance)
 is transformed into query parameters. For other HTTP methods, the body is used for the HTTP body. | |
-| `apexUrl` | `String` | The portion of the endpoint URL after `https://instance.salesforce.com/services/apexrest/`, e.g., 'MyApexClass/' | |
+| `apexUrl` | `String` | The portion of the endpoint URL after `https://instance.salesforce.com/services/apexrest/`, e.g., 'MyApexClass/' | | Yes, unless supplied in endpoint
 | `apexMethod` | `String` | The HTTP method (e.g. `GET`, `POST`) to use. | `GET` |
 | `rawPayload` | `Boolean` | If true, Camel will not serialize the request or response bodies. | false |
-| Header: `apexQueryParam.[paramName]` | Object | Headers that override apex parameters passed in the endpoint. | false |
-| `sObjectName` | `String` | Name of sObject (e.g. `Merchandise__c`) used to deserialize the response | false |
-| `sObjectClass` | `String` | Fully qualified class name used to deserialize the response | false |
+| Header: `apexQueryParam.[paramName]` | Object | Headers that override apex parameters passed in the endpoint. |  |
+| `sObjectName` | `String` | Name of sObject (e.g. `Merchandise__c`) used to deserialize the response |  | If `rawPayload` is false and `sObjectClass` not supplied
+| `sObjectClass` | `String` | Fully qualified class name used to deserialize the response |  | If `rawPayload` is false and `sObjectName` not supplied
 |===
 
 
