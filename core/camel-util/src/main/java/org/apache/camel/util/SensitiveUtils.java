@@ -71,6 +71,8 @@ public final class SensitiveUtils {
                     "privatekeypassword",
                     "proxyauthpassword",
                     "proxyauthusername",
+                    "proxypassword",
+                    "proxyuser",
                     "publickeyid",
                     "publishkey",
                     "queueownerawsaccountid",
