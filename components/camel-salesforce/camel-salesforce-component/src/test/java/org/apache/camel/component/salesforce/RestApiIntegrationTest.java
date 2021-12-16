@@ -76,7 +76,7 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
 
     /**
      * Request DTO for Salesforce APEX REST calls. See
-     * https://www.salesforce.com/us/developer/docs/apexcode/Content/apex_rest_methods.htm.
+     * https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_rest_methods.htm.
      */
     public static class MerchandiseRequest extends AbstractDTOBase {
         private Merchandise__c merchandise;
@@ -96,7 +96,7 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
 
     /**
      * Response DTO for Salesforce APEX REST calls. See
-     * https://www.salesforce.com/us/developer/docs/apexcode/Content/apex_rest_methods.htm.
+     * https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_rest_methods.htm.
      */
     public static class MerchandiseResponse extends Merchandise__c {
         // XML response contains a type string with the SObject type name
