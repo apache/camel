@@ -803,7 +803,7 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
                             + Merchandise__c.class.getName());
 
                 from("direct:apexCallPatch").to("salesforce:apexCall/Merchandise/"
-                                                + "&apexMethod=PATCH&sObjectClass=" + MerchandiseResponse.class.getName());
+                                                + "?apexMethod=PATCH&sObjectClass=" + MerchandiseResponse.class.getName());
 
                 from("direct:createSObjectContinueOnException").onException(Exception.class).continued(true).end()
                         .to("salesforce:createSObject");
