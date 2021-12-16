@@ -71,7 +71,7 @@ public class FhirConfigurationIT extends AbstractFhirTestSupport {
         fhirConfiguration.setFhirVersion("DSTU3");
         component.setConfiguration(fhirConfiguration);
 
-        component.getClient(fhirConfiguration).registerInterceptor(this.mockClientInterceptor);
+        component.createClient(fhirConfiguration).registerInterceptor(this.mockClientInterceptor);
 
         this.componentConfiguration = fhirConfiguration;
         context.addComponent("fhir", component);

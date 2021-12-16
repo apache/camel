@@ -26,14 +26,11 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.component.AbstractApiComponent;
 
-/**
- * Represents the component that manages {@link FhirEndpoint}.
- */
 @Component("fhir")
 public class FhirComponent extends AbstractApiComponent<FhirApiName, FhirConfiguration, FhirApiCollection> {
 
     @Metadata(label = "advanced")
-    private IGenericClient client;
+    private FhirConfiguration configuration;
 
     public FhirComponent() {
         super(FhirEndpoint.class, FhirApiName.class, FhirApiCollection.getCollection());
@@ -54,21 +51,29 @@ public class FhirComponent extends AbstractApiComponent<FhirApiName, FhirConfigu
             FhirConfiguration endpointConfiguration) {
         endpointConfiguration.setApiName(apiName);
         endpointConfiguration.setMethodName(methodName);
+
+        // ensure a client is set on the config
+        if (endpointConfiguration.getClient() == null) {
+            endpointConfiguration.setClient(createClient(endpointConfiguration));
+        }
+
         return new FhirEndpoint(uri, this, apiName, methodName, endpointConfiguration);
     }
 
-    public IGenericClient getClient(FhirConfiguration endpointConfiguration) {
-        final IGenericClient result;
-        if (endpointConfiguration.equals(this.configuration)) {
-            synchronized (this) {
-                if (client == null) {
-                    client = FhirHelper.createClient(this.configuration, getCamelContext());
-                }
-            }
-            result = client;
-        } else {
-            result = FhirHelper.createClient(endpointConfiguration, getCamelContext());
-        }
-        return result;
+    protected IGenericClient createClient(FhirConfiguration config) {
+        return FhirHelper.createClient(config, getCamelContext());
+    }
+
+    @Override
+    public FhirConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    /**
+     * To use the shared configuration
+     */
+    @Override
+    public void setConfiguration(FhirConfiguration configuration) {
+        this.configuration = configuration;
     }
 }
