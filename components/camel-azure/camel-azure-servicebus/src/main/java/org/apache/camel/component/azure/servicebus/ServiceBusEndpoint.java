@@ -26,10 +26,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * The azure-servicebus component that integrates Azure ServiceBus. Azure ServiceBus is a fully managed enterprise
- * integration message broker. Service Bus can decouple applications and services. Service Bus offers a reliable and
- * secure platform for asynchronous transfer of data and state. Data is transferred between different applications and
- * services using messages.
+ * Send and receive messages to/from Azure Event Bus.
  */
 @UriEndpoint(firstVersion = "3.12.0", scheme = "azure-servicebus", title = "Azure ServiceBus",
              syntax = "azure-servicebus:queueNameOrTopicName", category = {

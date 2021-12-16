@@ -26,9 +26,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * The azure-eventhubs component that integrates Azure Event Hubs using AMQP protocol. Azure EventHubs is a highly
- * scalable publish-subscribe service that can ingest millions of events per second and stream them to multiple
- * consumers.
+ * Send and receive events to/from Azure Event Hubs using AMQP protocol.
  */
 @UriEndpoint(firstVersion = "3.5.0", scheme = "azure-eventhubs", title = "Azure Event Hubs",
              syntax = "azure-eventhubs:namespace/eventHubName", category = {

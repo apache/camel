@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "azure-servicebus",
     "title": "Azure ServiceBus",
-    "description": "The azure-servicebus component that integrates Azure ServiceBus. Azure ServiceBus is a fully managed enterprise integration message broker. Service Bus can decouple applications and services. Service Bus offers a reliable and secure platform for asynchronous transfer of data and state. Data is transferred between different applications and services using messages.",
+    "description": "Send and receive messages to\/from Azure Event Bus.",
     "deprecated": false,
     "firstVersion": "3.12.0",
     "label": "cloud,messaging",

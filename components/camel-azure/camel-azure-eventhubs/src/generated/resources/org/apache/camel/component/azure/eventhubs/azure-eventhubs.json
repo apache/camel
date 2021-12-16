@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "azure-eventhubs",
     "title": "Azure Event Hubs",
-    "description": "The azure-eventhubs component that integrates Azure Event Hubs using AMQP protocol. Azure EventHubs is a highly scalable publish-subscribe service that can ingest millions of events per second and stream them to multiple consumers.",
+    "description": "Send and receive events to\/from Azure Event Hubs using AMQP protocol.",
     "deprecated": false,
     "firstVersion": "3.5.0",
     "label": "cloud,messaging",
