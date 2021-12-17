@@ -139,7 +139,11 @@ public interface ManagedBacklogDebuggerMBean {
     @ManagedAttribute(description = "Whether to include file based message body in the trace message.")
     void setBodyIncludeFiles(boolean bodyIncludeFiles);
 
+    /**
+     * @deprecated use {@link #dumpTracedMessagesAsXml(String, boolean)}
+     */
     @ManagedOperation(description = "Dumps the messages in xml format from the suspended breakpoint at the given node")
+    @Deprecated
     String dumpTracedMessagesAsXml(String nodeId);
 
     @ManagedOperation(description = "Dumps the messages in xml format from the suspended breakpoint at the given node, optionally including the exchange properties")
