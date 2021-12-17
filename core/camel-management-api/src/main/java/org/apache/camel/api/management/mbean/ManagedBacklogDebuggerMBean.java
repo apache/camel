@@ -121,16 +121,16 @@ public interface ManagedBacklogDebuggerMBean {
     @ManagedAttribute(description = "Number of maximum chars in the message body in the trace message. Use zero or negative value to have unlimited size.")
     void setBodyMaxChars(int bodyMaxChars);
 
-    @ManagedAttribute(description = "Fallback Timeout in seconds when block the message processing in Camel.")
+    @ManagedAttribute(description = "Fallback Timeout in seconds when block the message processing in Camel")
     long getFallbackTimeout();
 
-    @ManagedAttribute(description = "Fallback Timeout in seconds when block the message processing in Camel.")
+    @ManagedAttribute(description = "Fallback Timeout in seconds when block the message processing in Camel")
     void setFallbackTimeout(long fallbackTimeout);
 
-    @ManagedAttribute(description = "Whether to include stream based message body in the trace message.")
+    @ManagedAttribute(description = "Whether to include stream based message body in the trace message")
     boolean isBodyIncludeStreams();
 
-    @ManagedAttribute(description = "Whether to include stream based message body in the trace message.")
+    @ManagedAttribute(description = "Whether to include stream based message body in the trace message")
     void setBodyIncludeStreams(boolean bodyIncludeStreams);
 
     @ManagedAttribute(description = "Whether to include file based message body in the trace message.")
@@ -155,12 +155,12 @@ public interface ManagedBacklogDebuggerMBean {
     @ManagedOperation(description = "Resets the debug counter")
     void resetDebugCounter();
 
-    @ManagedOperation(description = "Used for validating if a given predicate is valid or not")
+    @ManagedOperation(description = "Used for validating if a given breakpoint condition (predicate) is valid or not")
     String validateConditionalBreakpoint(String language, String predicate);
 
-    @ManagedOperation(description = "Evaluates the expression at a given breakpoint Id")
-    Object evaluateExpressionAtBreakpoint(String id, String language, String expression, String resultType);
+    @ManagedOperation(description = "Evaluates the expression at a given breakpoint node id")
+    Object evaluateExpressionAtBreakpoint(String nodeId, String language, String expression, String resultType);
 
-    @ManagedOperation(description = "Evaluates the expression at a given breakpoint Id and returns the result as String")
-    String evaluateExpressionAtBreakpoint(String id, String language, String expression);
+    @ManagedOperation(description = "Evaluates the expression at a given breakpoint node id and returns the result as String")
+    String evaluateExpressionAtBreakpoint(String nodeId, String language, String expression);
 }

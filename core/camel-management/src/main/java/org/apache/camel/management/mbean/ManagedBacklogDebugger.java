@@ -296,16 +296,16 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
     }
 
     @Override
-    public String evaluateExpressionAtBreakpoint(String id, String language, String expression) {
-        return evaluateExpressionAtBreakpoint(id, language, expression, "java.lang.String").toString();
+    public String evaluateExpressionAtBreakpoint(String nodeId, String language, String expression) {
+        return evaluateExpressionAtBreakpoint(nodeId, language, expression, "java.lang.String").toString();
     }
 
     @Override
-    public Object evaluateExpressionAtBreakpoint(String id, String language, String expression, String resultType) {
+    public Object evaluateExpressionAtBreakpoint(String nodeId, String language, String expression, String resultType) {
         Exchange suspendedExchange;
         try {
             Language lan = camelContext.resolveLanguage(language);
-            suspendedExchange = backlogDebugger.getSuspendedExchange(id);
+            suspendedExchange = backlogDebugger.getSuspendedExchange(nodeId);
             if (suspendedExchange != null) {
                 Object result;
                 Class<?> resultClass = camelContext.getClassResolver().resolveMandatoryClass(resultType);
