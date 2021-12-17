@@ -43,19 +43,29 @@ public interface PostRevisionsSPI {
     @Path("/v{apiVersion}/posts/{postId}/revisions")
     @Produces(MediaType.APPLICATION_JSON)
     List<PostRevision> list(
-            @PathParam("apiVersion") String apiVersion, @PathParam("postId") int postId,
-            @QueryParam("context") Context context);
+            @PathParam("apiVersion")
+            String apiVersion, @PathParam("postId")
+            int postId,
+            @QueryParam("context")
+            Context context);
 
     @GET
     @Path("/v{apiVersion}/posts/{postId}/revisions/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     PostRevision retrieveRevision(
-            @PathParam("apiVersion") String apiVersion, @PathParam("postId") int postId, @PathParam("id") int revisionId,
-            @QueryParam("context") Context context);
+            @PathParam("apiVersion")
+            String apiVersion, @PathParam("postId")
+            int postId, @PathParam("id")
+            int revisionId,
+            @QueryParam("context")
+            Context context);
 
     @DELETE
     @Path("/v{apiVersion}/posts/{postId}/revisions/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    void delete(@PathParam("apiVersion") String apiVersion, @PathParam("postId") int postId, @PathParam("id") int revisionId);
+    void delete(@PathParam("apiVersion")
+    String apiVersion, @PathParam("postId")
+    int postId, @PathParam("id")
+    int revisionId);
 
 }

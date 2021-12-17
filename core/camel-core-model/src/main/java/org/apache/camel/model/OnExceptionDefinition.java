@@ -200,7 +200,8 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
      * @param  handled predicate that determines true or false
      * @return         the builder
      */
-    public OnExceptionDefinition handled(@AsPredicate Predicate handled) {
+    public OnExceptionDefinition handled(@AsPredicate
+    Predicate handled) {
         setHandledPolicy(handled);
         return this;
     }
@@ -211,7 +212,8 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
      * @param  handled expression that determines true or false
      * @return         the builder
      */
-    public OnExceptionDefinition handled(@AsPredicate Expression handled) {
+    public OnExceptionDefinition handled(@AsPredicate
+    Expression handled) {
         setHandledPolicy(ExpressionToPredicateAdapter.toPredicate(handled));
         return this;
     }
@@ -237,7 +239,8 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
      * @param  continued predicate that determines true or false
      * @return           the builder
      */
-    public OnExceptionDefinition continued(@AsPredicate Predicate continued) {
+    public OnExceptionDefinition continued(@AsPredicate
+    Predicate continued) {
         setContinuedPolicy(continued);
         return this;
     }
@@ -250,7 +253,8 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
      * @param  continued expression that determines true or false
      * @return           the builder
      */
-    public OnExceptionDefinition continued(@AsPredicate Expression continued) {
+    public OnExceptionDefinition continued(@AsPredicate
+    Expression continued) {
         setContinuedPolicy(ExpressionToPredicateAdapter.toPredicate(continued));
         return this;
     }
@@ -264,7 +268,8 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
      * @param  predicate predicate that determines true or false
      * @return           the builder
      */
-    public OnExceptionDefinition onWhen(@AsPredicate Predicate predicate) {
+    public OnExceptionDefinition onWhen(@AsPredicate
+    Predicate predicate) {
         setOnWhen(new WhenDefinition(predicate));
         return this;
     }
@@ -277,7 +282,8 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
      * @param  retryWhile predicate that determines when to stop retrying
      * @return            the builder
      */
-    public OnExceptionDefinition retryWhile(@AsPredicate Predicate retryWhile) {
+    public OnExceptionDefinition retryWhile(@AsPredicate
+    Predicate retryWhile) {
         setRetryWhilePolicy(retryWhile);
         return this;
     }

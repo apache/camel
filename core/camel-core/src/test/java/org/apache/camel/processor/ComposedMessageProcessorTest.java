@@ -118,7 +118,8 @@ public class ComposedMessageProcessorTest extends ContextTestSupport {
         }
 
         // START SNIPPET: e4
-        public static boolean isWidget(@Body OrderItem orderItem) {
+        public static boolean isWidget(@Body
+        OrderItem orderItem) {
             return orderItem.type.equals("widget");
         }
         // END SNIPPET: e4
@@ -129,7 +130,8 @@ public class ComposedMessageProcessorTest extends ContextTestSupport {
      */
     // START SNIPPET: e5
     public static final class WidgetInventory {
-        public void checkInventory(@Body OrderItem orderItem) {
+        public void checkInventory(@Body
+        OrderItem orderItem) {
             assertEquals("widget", orderItem.type);
             if (orderItem.quantity < 10) {
                 orderItem.valid = true;
@@ -143,7 +145,8 @@ public class ComposedMessageProcessorTest extends ContextTestSupport {
      */
     // START SNIPPET: e6
     public static final class GadgetInventory {
-        public void checkInventory(@Body OrderItem orderItem) {
+        public void checkInventory(@Body
+        OrderItem orderItem) {
             assertEquals("gadget", orderItem.type);
             if (orderItem.quantity < 20) {
                 orderItem.valid = true;

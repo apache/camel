@@ -8,7 +8,7 @@ using spring transactions.
 
 image::eip/TransactionalClientSolution.gif[image]
 
-Transaction Oriented Endpoints like xref:components::jms-component.adoc[JMS] support using a
+Transaction Oriented Endpoints like xref:ROOT:jms-component.adoc[JMS] support using a
 transaction for both inbound and outbound message exchanges. Endpoints
 that support transactions will participate in the current transaction
 context that they are called from.
@@ -288,9 +288,9 @@ route as transacted using the *transacted* tag.
 
 When a route is marked as transacted using *transacted* Camel will
 automatic use `TransactionErrorHandler` as the
-xref:latest@manual:ROOT:error-handler.adoc[Error Handler]. This error handler supports basically the same
-feature set as the xref:latest@manual:ROOT:defaulterrorhandler.adoc[DefaultErrorHandler],
-so you can for instance use xref:latest@manual:ROOT:exception-clause.adoc[Exception Clause]
+xref:manual:ROOT:error-handler.adoc[Error Handler]. This error handler supports basically the same
+feature set as the xref:manual:ROOT:defaulterrorhandler.adoc[DefaultErrorHandler],
+so you can for instance use xref:manual:ROOT:exception-clause.adoc[Exception Clause]
 as well.
 
 [[TransactionalClient-IntegrationTestingwithSpring]]

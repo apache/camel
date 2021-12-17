@@ -60,11 +60,13 @@ public class XPathAnnotationResultTypeTest extends CamelTestSupport {
     public static class MyBean {
         public String abText;
 
-        public String readImplicit(@XPath("upper-case(//a/b/text())") String abText) {
+        public String readImplicit(@XPath("upper-case(//a/b/text())")
+        String abText) {
             return abText;
         }
 
-        public String readExplicit(@XPath(value = "upper-case(//a/b/text())", resultType = String.class) String abText) {
+        public String readExplicit(@XPath(value = "upper-case(//a/b/text())", resultType = String.class)
+        String abText) {
             return abText;
         }
     }

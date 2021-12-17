@@ -38,24 +38,29 @@ public class CustomerServiceResource {
 
     @GET
     @Path("/customers/{id}/")
-    public Customer getCustomer(@PathParam("id") String id) {
+    public Customer getCustomer(@PathParam("id")
+    String id) {
         return null;
     }
 
     @PUT
     @Path("/customers/{id}")
-    public Response updateCustomer(Customer customer, @PathParam("id") String id) {
+    public Response updateCustomer(Customer customer, @PathParam("id")
+    String id) {
         return null;
     }
 
     @POST
     @Path("/customers/")
-    public Response newCustomer(Customer customer, @PathParam("type") String type, @QueryParam("age") int age) {
+    public Response newCustomer(Customer customer, @PathParam("type")
+    String type, @QueryParam("age")
+    int age) {
         return null;
     }
 
     @Path("/customers/vip/{status}")
-    public VipCustomerResource vipCustomer(@PathParam("status") String status) {
+    public VipCustomerResource vipCustomer(@PathParam("status")
+    String status) {
         return new VipCustomerResource();
     }
 

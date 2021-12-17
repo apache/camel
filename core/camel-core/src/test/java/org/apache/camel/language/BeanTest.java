@@ -141,7 +141,8 @@ public class BeanTest extends LanguageTestSupport {
             return echo;
         }
 
-        public boolean isFooHeaderAbc(@Header("foo") String foo) {
+        public boolean isFooHeaderAbc(@Header("foo")
+        String foo) {
             return "abc".equals(foo);
         }
     }

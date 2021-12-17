@@ -120,7 +120,8 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
      * @param  predicate predicate that determines true or false
      * @return           the builder
      */
-    public TryDefinition onWhen(@AsPredicate Predicate predicate) {
+    public TryDefinition onWhen(@AsPredicate
+    Predicate predicate) {
         // we must use a delegate so we can use the fluent builder based on
         // TryDefinition
         // to configure all with try .. catch .. finally

@@ -46,7 +46,8 @@ public class CustomerService {
 
     @GET
     @Path("/customers/{id}/")
-    public Customer getCustomer(@PathParam("id") String id) {
+    public Customer getCustomer(@PathParam("id")
+    String id) {
         long idNumber = Long.parseLong(id);
         Customer c = customers.get(idNumber);
         return c;
@@ -54,7 +55,8 @@ public class CustomerService {
 
     @GET
     @Path("/customers")
-    public Customer getCustomerByQueryParam(@QueryParam("id") String id) {
+    public Customer getCustomerByQueryParam(@QueryParam("id")
+    String id) {
         long idNumber = Long.parseLong(id);
         Customer c = customers.get(idNumber);
         return c;
@@ -109,7 +111,8 @@ public class CustomerService {
 
     @DELETE
     @Path("/customers/{id}/")
-    public Response deleteCustomer(@PathParam("id") String id) {
+    public Response deleteCustomer(@PathParam("id")
+    String id) {
         long idNumber = Long.parseLong(id);
         Customer c = customers.get(idNumber);
 
@@ -127,7 +130,8 @@ public class CustomerService {
     }
 
     @Path("/orders/{orderId}/")
-    public Order getOrder(@PathParam("orderId") String orderId) {
+    public Order getOrder(@PathParam("orderId")
+    String orderId) {
         long idNumber = Long.parseLong(orderId);
         Order c = orders.get(idNumber);
         return c;

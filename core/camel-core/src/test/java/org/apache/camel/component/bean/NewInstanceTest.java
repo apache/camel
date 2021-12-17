@@ -84,7 +84,8 @@ public class NewInstanceTest extends ContextTestSupport {
             return "MyBean[" + id + "]";
         }
 
-        public int read(@Body String body) {
+        public int read(@Body
+        String body) {
             LOG.info("read() method called with: {} on {}", body, this);
             return id;
         }

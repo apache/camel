@@ -29,7 +29,8 @@ public class AutowireConstructorTwoBean {
         this.counter = null;
     }
 
-    public AutowireConstructorTwoBean(@Autowired MyBeanCounter counter) {
+    public AutowireConstructorTwoBean(@Autowired
+    MyBeanCounter counter) {
         this.counter = counter;
     }
 

@@ -73,7 +73,8 @@ public class JaxWSCamelTestSupport extends CamelTestSupport {
         Response<String> getSomethingAsync();
 
         @WebMethod(operationName = "getSomething")
-        Future<?> getSomethingAsync(@WebParam(name = "asyncHandler", targetNamespace = "") AsyncHandler<String> asyncHandler);
+        Future<?> getSomethingAsync(@WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<String> asyncHandler);
     }
 
     public static class SampleWSImpl implements SampleWS {

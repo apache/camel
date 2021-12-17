@@ -22,7 +22,8 @@ import javax.ws.rs.PathParam;
 
 public class SubresourceService {
     @Path("/customers/{id}")
-    public SubConsumer getCustomer(@PathParam("id") int id) {
+    public SubConsumer getCustomer(@PathParam("id")
+    int id) {
         SubConsumer cust = null; // Find a customer object
         return cust;
     }

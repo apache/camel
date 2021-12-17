@@ -96,7 +96,8 @@ public class ChoiceWhenBeanExpressionWithExceptionTest extends ContextTestSuppor
     }
 
     public static class MyBean {
-        public boolean isGradeA(@Body Student student) {
+        public boolean isGradeA(@Body
+        Student student) {
             throw new RuntimeException("Bean predicated threw exception!");
         }
     }

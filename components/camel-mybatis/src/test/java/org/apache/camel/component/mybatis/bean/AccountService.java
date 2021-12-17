@@ -28,7 +28,8 @@ public interface AccountService {
 
     @Select("select ACC_ID as id, ACC_FIRST_NAME as firstName, ACC_LAST_NAME as lastName"
             + ", ACC_EMAIL as emailAddress from ACCOUNT where ACC_ID = #{id}")
-    Account selectBeanAccountById(@Param("id") int no);
+    Account selectBeanAccountById(@Param("id")
+    int no);
 
     @Select("select * from ACCOUNT order by ACC_ID")
     @ResultMap("Account.AccountResult")

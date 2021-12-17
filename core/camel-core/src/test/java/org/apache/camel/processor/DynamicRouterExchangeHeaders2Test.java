@@ -88,7 +88,9 @@ public class DynamicRouterExchangeHeaders2Test extends ContextTestSupport {
      * @param  previous the previous slip
      * @return          endpoints to go, or <tt>null</tt> to indicate the end
      */
-    public String slip(String body, @Headers Map<String, Object> headers, @Header(Exchange.SLIP_ENDPOINT) String previous) {
+    public String slip(String body, @Headers
+    Map<String, Object> headers, @Header(Exchange.SLIP_ENDPOINT)
+    String previous) {
         bodies.add(body);
         if (previous != null) {
             previouses.add(previous);

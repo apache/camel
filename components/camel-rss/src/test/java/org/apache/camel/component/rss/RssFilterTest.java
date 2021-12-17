@@ -56,7 +56,8 @@ public class RssFilterTest extends CamelTestSupport {
 
     // START SNIPPET: ex2
     public static class FilterBean {
-        public boolean titleContainsCamel(@Body SyndFeed feed) {
+        public boolean titleContainsCamel(@Body
+        SyndFeed feed) {
             SyndEntry firstEntry = feed.getEntries().get(0);
             return firstEntry.getTitle().contains("Camel");
         }

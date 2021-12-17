@@ -85,7 +85,8 @@ public class InterceptDefinition extends OutputDefinition<InterceptDefinition> {
      * @param  predicate the predicate
      * @return           the builder
      */
-    public InterceptDefinition when(@AsPredicate Predicate predicate) {
+    public InterceptDefinition when(@AsPredicate
+    Predicate predicate) {
         WhenDefinition when = new WhenDefinition(predicate);
         addOutput(when);
         return this;

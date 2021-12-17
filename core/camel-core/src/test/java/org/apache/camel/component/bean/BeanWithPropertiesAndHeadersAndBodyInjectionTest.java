@@ -90,7 +90,10 @@ public class BeanWithPropertiesAndHeadersAndBodyInjectionTest extends ContextTes
             return "MyBean[foo: " + foo + " bar: " + bar + " body: " + body + "]";
         }
 
-        public void myMethod(@ExchangeProperties Map<?, ?> foo, @Headers Map<?, ?> bar, @Body String body) {
+        public void myMethod(@ExchangeProperties
+        Map<?, ?> foo, @Headers
+        Map<?, ?> bar, @Body
+        String body) {
             this.foo = foo;
             this.bar = bar;
             this.body = body;

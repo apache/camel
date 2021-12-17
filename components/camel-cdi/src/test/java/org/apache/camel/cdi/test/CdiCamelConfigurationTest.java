@@ -54,7 +54,8 @@ public class CdiCamelConfigurationTest {
                 .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
-    static void configuration(@Observes CdiCamelConfiguration configuration) {
+    static void configuration(@Observes
+    CdiCamelConfiguration configuration) {
         configMethodHasBeenCalled = true;
         configuration.autoConfigureRoutes(false);
     }

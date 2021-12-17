@@ -33,13 +33,16 @@ public class VipCustomerResource {
 
     @PUT
     @Path("/{id}")
-    public Response updateVipCustomer(@PathParam("id") String id, Customer customer) {
+    public Response updateVipCustomer(@PathParam("id")
+    String id, Customer customer) {
         return null;
     }
 
     @DELETE
     @Path("/{id}")
-    public Response deleteVipCustomer(@PathParam("id") String id, @QueryParam("sendEmail") Boolean sendEmail) {
+    public Response deleteVipCustomer(@PathParam("id")
+    String id, @QueryParam("sendEmail")
+    Boolean sendEmail) {
         return null;
     }
 

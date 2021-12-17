@@ -171,7 +171,8 @@ public class RequestReplyExample {
     }
 
     public static class FixSessionRouter {
-        public String route(@Header("sessionID") String sessionID) {
+        public String route(@Header("sessionID")
+        String sessionID) {
             return String.format("quickfix:examples/inprocess.cfg?sessionID=%s", sessionID);
         }
     }

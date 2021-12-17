@@ -39,18 +39,23 @@ public interface ProxyProducerInterface {
     @GET
     @Produces("application/json")
     @Path("/getCustomer")
-    Response getCustomer(@QueryParam("id") Integer id);
+    Response getCustomer(@QueryParam("id")
+    Integer id);
 
     @GET
     @Produces("application/json")
     @Path("/getSpecificThreeCustomers")
     Response getSpecificThreeCustomers(
-            @QueryParam("c1") Integer customerId1, @QueryParam("c2") Integer customerId2,
-            @QueryParam("c3") Integer customerId3);
+            @QueryParam("c1")
+            Integer customerId1, @QueryParam("c2")
+            Integer customerId2,
+            @QueryParam("c3")
+            Integer customerId3);
 
     @DELETE
     @Path("/deleteCustomer")
-    Response deleteCustomer(@QueryParam("id") Integer id);
+    Response deleteCustomer(@QueryParam("id")
+    Integer id);
 
     @POST
     @Consumes("application/json")
@@ -65,12 +70,14 @@ public interface ProxyProducerInterface {
     @GET
     @Produces("application/json")
     @Path("/getCustomerWithoutResponse")
-    Customer getCustomerWithoutResponse(@QueryParam("c1") Integer customerId1);
+    Customer getCustomerWithoutResponse(@QueryParam("c1")
+    Integer customerId1);
 
     @POST
     @Produces("application/json")
     @Consumes("application/json")
     @Path("/checkCustomer")
-    Response checkIfCustomerExists(@QueryParam("c1") Integer customerId1, Customer customer);
+    Response checkIfCustomerExists(@QueryParam("c1")
+    Integer customerId1, Customer customer);
 
 }

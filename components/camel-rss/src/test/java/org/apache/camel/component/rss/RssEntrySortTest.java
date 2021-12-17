@@ -64,7 +64,8 @@ public class RssEntrySortTest extends CamelTestSupport {
     }
 
     public static class MyBean {
-        public Date getPubDate(@Body Object body) {
+        public Date getPubDate(@Body
+        Object body) {
             SyndFeed feed = (SyndFeed) body;
             SyndEntry syndEntry = feed.getEntries().get(0);
             Date date = syndEntry.getUpdatedDate();

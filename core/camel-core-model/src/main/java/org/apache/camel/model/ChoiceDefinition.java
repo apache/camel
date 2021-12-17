@@ -163,7 +163,8 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> impl
      * @param  predicate the predicate
      * @return           the builder
      */
-    public ChoiceDefinition when(@AsPredicate Predicate predicate) {
+    public ChoiceDefinition when(@AsPredicate
+    Predicate predicate) {
         addClause(new WhenDefinition(predicate));
         return this;
     }

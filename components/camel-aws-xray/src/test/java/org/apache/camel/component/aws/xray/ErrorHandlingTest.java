@@ -119,7 +119,8 @@ public class ErrorHandlingTest extends CamelAwsXRayTestSupport {
         private static int counter;
 
         @Handler
-        public String convertBodyToUpperCase(@Body String body) throws Exception {
+        public String convertBodyToUpperCase(@Body
+        String body) throws Exception {
             String converted = body.toUpperCase();
             if (counter < 3) {
                 counter++;

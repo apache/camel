@@ -30,7 +30,8 @@ public class MyBean {
     private ProducerTemplate producer;
 
     @Consume("activemq:Test.BindingQueue")
-    public void myMethod(@Headers Map<?, ?> headers, String body) {
+    public void myMethod(@Headers
+    Map<?, ?> headers, String body) {
         this.headers = headers;
         this.body = body;
 

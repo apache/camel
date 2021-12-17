@@ -70,74 +70,98 @@ public class CamelRouteEventNotifierTest {
     private List<CamelEvent> otherFiredEvents = new ArrayList<>();
 
     private void onRouteAddedEventEventAll(
-            @Observes RouteAddedEvent event,
-            @Named("all") List<CamelEvent> events) {
+            @Observes
+            RouteAddedEvent event,
+            @Named("all")
+            List<CamelEvent> events) {
         events.add(event);
     }
 
     private void onRouteAddedEventEventSimple(
-            @Observes @Named("simple") RouteAddedEvent event,
-            @Named("simple") List<CamelEvent> events) {
+            @Observes @Named("simple")
+            RouteAddedEvent event,
+            @Named("simple")
+            List<CamelEvent> events) {
         events.add(event);
     }
 
     private void onRouteAddedEventEventOther(
-            @Observes @Named("other") RouteAddedEvent event,
-            @Named("other") List<CamelEvent> events) {
+            @Observes @Named("other")
+            RouteAddedEvent event,
+            @Named("other")
+            List<CamelEvent> events) {
         events.add(event);
     }
 
     private void onRouteStartedEventEventAll(
-            @Observes RouteStartedEvent event,
-            @Named("all") List<CamelEvent> events) {
+            @Observes
+            RouteStartedEvent event,
+            @Named("all")
+            List<CamelEvent> events) {
         events.add(event);
     }
 
     private void onRouteStartedEventEventSimple(
-            @Observes @Named("simple") RouteStartedEvent event,
-            @Named("simple") List<CamelEvent> events) {
+            @Observes @Named("simple")
+            RouteStartedEvent event,
+            @Named("simple")
+            List<CamelEvent> events) {
         events.add(event);
     }
 
     private void onRouteStartedEventEventOther(
-            @Observes @Named("other") RouteStartedEvent event,
-            @Named("other") List<CamelEvent> events) {
+            @Observes @Named("other")
+            RouteStartedEvent event,
+            @Named("other")
+            List<CamelEvent> events) {
         events.add(event);
     }
 
     private void onRouteStoppedEventEventAll(
-            @Observes RouteStoppedEvent event,
-            @Named("all") List<CamelEvent> events) {
+            @Observes
+            RouteStoppedEvent event,
+            @Named("all")
+            List<CamelEvent> events) {
         events.add(event);
     }
 
     private void onRouteStoppedEventEventSimple(
-            @Observes @Named("simple") RouteStoppedEvent event,
-            @Named("simple") List<CamelEvent> events) {
+            @Observes @Named("simple")
+            RouteStoppedEvent event,
+            @Named("simple")
+            List<CamelEvent> events) {
         events.add(event);
     }
 
     private void onRouteStoppedEventEventOther(
-            @Observes @Named("other") RouteStoppedEvent event,
-            @Named("other") List<CamelEvent> events) {
+            @Observes @Named("other")
+            RouteStoppedEvent event,
+            @Named("other")
+            List<CamelEvent> events) {
         events.add(event);
     }
 
     private void onRouteRemovedEventEventAll(
-            @Observes RouteRemovedEvent event,
-            @Named("all") List<CamelEvent> events) {
+            @Observes
+            RouteRemovedEvent event,
+            @Named("all")
+            List<CamelEvent> events) {
         events.add(event);
     }
 
     private void onRouteRemovedEventEventSimple(
-            @Observes @Named("simple") RouteRemovedEvent event,
-            @Named("simple") List<CamelEvent> events) {
+            @Observes @Named("simple")
+            RouteRemovedEvent event,
+            @Named("simple")
+            List<CamelEvent> events) {
         events.add(event);
     }
 
     private void onRouteRemovedEventEventOther(
-            @Observes @Named("other") RouteRemovedEvent event,
-            @Named("other") List<CamelEvent> events) {
+            @Observes @Named("other")
+            RouteRemovedEvent event,
+            @Named("other")
+            List<CamelEvent> events) {
         events.add(event);
     }
 
@@ -155,9 +179,12 @@ public class CamelRouteEventNotifierTest {
     @Test
     @InSequence(1)
     public void startedCamelContext(
-            @Named("all") List<CamelEvent> all,
-            @Named("simple") List<CamelEvent> simple,
-            @Named("other") List<CamelEvent> other) {
+            @Named("all")
+            List<CamelEvent> all,
+            @Named("simple")
+            List<CamelEvent> simple,
+            @Named("other")
+            List<CamelEvent> other) {
         assertThat("Events fired are incorrect!", all,
                 contains(
                         both(
@@ -194,9 +221,12 @@ public class CamelRouteEventNotifierTest {
     @InSequence(3)
     public void stopCamelContext(
             CamelContext context,
-            @Named("all") List<CamelEvent> all,
-            @Named("simple") List<CamelEvent> simple,
-            @Named("other") List<CamelEvent> other)
+            @Named("all")
+            List<CamelEvent> all,
+            @Named("simple")
+            List<CamelEvent> simple,
+            @Named("other")
+            List<CamelEvent> other)
             throws Exception {
         context.stop();
 

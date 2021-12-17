@@ -82,7 +82,8 @@ public class ValidatorBuilder {
      * @see              PredicateValidatorDefinition, ProcessorValidator
      * @param expression validation expression
      */
-    public ValidatorBuilder withExpression(@AsPredicate Expression expression) {
+    public ValidatorBuilder withExpression(@AsPredicate
+    Expression expression) {
         resetType();
         this.expression = new ExpressionDefinition(expression);
         return this;
@@ -94,7 +95,8 @@ public class ValidatorBuilder {
      * @see             PredicateValidatorDefinition, ProcessorValidator
      * @param predicate validation predicate
      */
-    public ValidatorBuilder withExpression(@AsPredicate Predicate predicate) {
+    public ValidatorBuilder withExpression(@AsPredicate
+    Predicate predicate) {
         resetType();
         this.expression = new ExpressionDefinition(predicate);
         return this;

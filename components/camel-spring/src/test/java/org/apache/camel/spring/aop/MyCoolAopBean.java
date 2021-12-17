@@ -24,7 +24,10 @@ import org.apache.camel.Headers;
 
 public class MyCoolAopBean {
 
-    public String hello(@Body String body, @Header("foo") String foo, @Headers Map<String, Object> headers) {
+    public String hello(@Body
+    String body, @Header("foo")
+    String foo, @Headers
+    Map<String, Object> headers) {
         String s = body.replaceFirst("Hello", "Bye");
 
         if (!foo.equals("ABC")) {

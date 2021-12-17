@@ -65,7 +65,9 @@ public class DynamicRouterEventNotifierTest extends ContextTestSupport {
         };
     }
 
-    public String slip(@Body String body, @Header(Exchange.SLIP_ENDPOINT) String previous) {
+    public String slip(@Body
+    String body, @Header(Exchange.SLIP_ENDPOINT)
+    String previous) {
         if (previous == null) {
             return "mock:x";
         } else if ("mock://x".equals(previous)) {

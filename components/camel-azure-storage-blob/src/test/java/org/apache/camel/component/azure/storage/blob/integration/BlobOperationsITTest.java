@@ -86,7 +86,8 @@ class BlobOperationsITTest extends BaseIT {
     }
 
     @Test
-    void testGetBlob(@TempDir Path testDir) throws IOException {
+    void testGetBlob(@TempDir
+    Path testDir) throws IOException {
         final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper(randomBlobName);
         final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
 
@@ -117,7 +118,8 @@ class BlobOperationsITTest extends BaseIT {
     }
 
     @Test
-    void testDownloadToFile(@TempDir Path testDir) throws IOException {
+    void testDownloadToFile(@TempDir
+    Path testDir) throws IOException {
         final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper(randomBlobName);
         final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
 

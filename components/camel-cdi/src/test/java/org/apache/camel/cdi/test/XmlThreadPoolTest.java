@@ -62,7 +62,8 @@ public class XmlThreadPoolTest {
     }
 
     @Test
-    public void verifyThreadPool(@Named("thread-pool") ExecutorService executor) {
+    public void verifyThreadPool(@Named("thread-pool")
+    ExecutorService executor) {
         assertThat("Thread pool is incorrect!", executor, is(notNullValue()));
     }
 

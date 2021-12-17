@@ -151,7 +151,8 @@ public class JmsResequencerTest extends CamelTestSupport {
             return "MyBean:" + name;
         }
 
-        public void read(@Body String body) {
+        public void read(@Body
+        String body) {
             this.body = body;
             LOG.info(name + " read() method on " + this + " with body: " + body);
         }

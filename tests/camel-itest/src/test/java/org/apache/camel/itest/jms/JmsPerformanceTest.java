@@ -117,7 +117,8 @@ public class JmsPerformanceTest extends CamelTestSupport {
     }
 
     protected class MyBean {
-        public void onMessage(@Header("counter") int counter, Object body) {
+        public void onMessage(@Header("counter")
+        int counter, Object body) {
             // the invocation of this method happens inside the same thread so no need for a thread-safe list here
             receivedHeaders.add(counter);
             receivedMessages.add(body);

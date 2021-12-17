@@ -92,8 +92,10 @@ public class BeanAnnotationParameterTwoTest extends ContextTestSupport {
     public static final class MyBean {
 
         public String callA(
-                @Bean(ref = "GreetingService", method = "english") String greeting,
-                @Bean(ref = "GreetingService", method = "french") String french, String body) {
+                @Bean(ref = "GreetingService", method = "english")
+                String greeting,
+                @Bean(ref = "GreetingService", method = "french")
+                String french, String body) {
             return greeting + "/" + french + " " + body;
         }
 

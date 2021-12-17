@@ -128,7 +128,8 @@ public class MainIoCTest {
         }
 
         @BindToRegistry
-        public SedaComponent seda(@BeanInject BlockingQueueFactory qf) {
+        public SedaComponent seda(@BeanInject
+        BlockingQueueFactory qf) {
             SedaComponent seda = new SedaComponent();
             seda.setDefaultQueueFactory(qf);
             return seda;
@@ -136,9 +137,12 @@ public class MainIoCTest {
 
         @BindToRegistry("coolStuff")
         public String cool(
-                @BeanInject MyCoolBean cool,
-                @PropertyInject(value = "magic", defaultValue = "456") int num,
-                @BeanInject("myBar") MyBar bar) {
+                @BeanInject
+                MyCoolBean cool,
+                @PropertyInject(value = "magic", defaultValue = "456")
+                int num,
+                @BeanInject("myBar")
+                MyBar bar) {
             // should lookup MyCoolBean type from the registry and find the property
             assertNotNull(cool);
             assertEquals(456, num);

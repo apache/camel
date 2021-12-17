@@ -33,10 +33,13 @@ public interface DefaultSEI {
 
     @Oneway
     @WebMethod(operationName = "InvokeOneWay")
-    void invokeOneWay(@WebParam(partName = "InvokeOneWayRequest", mode = WebParam.Mode.IN) String in);
+    void invokeOneWay(@WebParam(partName = "InvokeOneWayRequest", mode = WebParam.Mode.IN)
+    String in);
 
     @WebMethod(operationName = "Invoke")
     void invoke(
-            @WebParam(partName = "InvokeRequest", mode = WebParam.Mode.IN) String in,
-            @WebParam(partName = "InvokeResponse", mode = WebParam.Mode.OUT) String out);
+            @WebParam(partName = "InvokeRequest", mode = WebParam.Mode.IN)
+            String in,
+            @WebParam(partName = "InvokeResponse", mode = WebParam.Mode.OUT)
+            String out);
 }

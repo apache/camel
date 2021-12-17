@@ -23,7 +23,8 @@ import org.apache.camel.util.ObjectHelper;
 
 public class SoapPayloadBean {
 
-    public String doSomething(@XQuery("//payload") Document payload, TypeConverter converter) {
+    public String doSomething(@XQuery("//payload")
+    Document payload, TypeConverter converter) {
         // grab the DOM payload
         ObjectHelper.notNull(payload, "@XQuery payload");
 

@@ -77,7 +77,8 @@ public class RawEventEndpointCdi12Test {
     }
 
     @Test
-    public void sendMessageToProducer(@Uri("direct:produce") ProducerTemplate producer) throws InterruptedException {
+    public void sendMessageToProducer(@Uri("direct:produce")
+    ProducerTemplate producer) throws InterruptedException {
         long random = Math.round(Math.random() * Long.MAX_VALUE);
         produced.expectedMessageCount(1);
         produced.expectedBodiesReceived(random);
@@ -105,7 +106,9 @@ class RawEventRoute extends RouteBuilder {
 @ApplicationScoped
 class RawEventObserver {
 
-    void collectEvents(@Observes long event, @Uri("mock:produced") ProducerTemplate producer) {
+    void collectEvents(@Observes
+    long event, @Uri("mock:produced")
+    ProducerTemplate producer) {
         producer.sendBody(event);
     }
 }

@@ -60,7 +60,8 @@ public class JsonPathCBRTest extends CamelTestSupport {
     }
 
     public static class BeanPredicate {
-        public boolean checkPrice(@JsonPath("$.store.bicycle.price") double price) {
+        public boolean checkPrice(@JsonPath("$.store.bicycle.price")
+        double price) {
             return price < 100;
         }
     }

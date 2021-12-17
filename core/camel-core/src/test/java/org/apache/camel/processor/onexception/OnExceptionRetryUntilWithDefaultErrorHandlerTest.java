@@ -73,8 +73,11 @@ public class OnExceptionRetryUntilWithDefaultErrorHandlerTest extends ContextTes
         // using bean binding we can bind the information from the exchange to
         // the types we have in our method signature
         public boolean retry(
-                @Header(Exchange.REDELIVERY_COUNTER) Integer counter, @Body String body,
-                @ExchangeException Exception causedBy) {
+                @Header(Exchange.REDELIVERY_COUNTER)
+                Integer counter, @Body
+                String body,
+                @ExchangeException
+                Exception causedBy) {
             // NOTE: counter is the redelivery attempt, will start from 1
             invoked++;
 

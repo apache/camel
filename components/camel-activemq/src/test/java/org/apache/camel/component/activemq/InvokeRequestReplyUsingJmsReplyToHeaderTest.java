@@ -112,7 +112,8 @@ public class InvokeRequestReplyUsingJmsReplyToHeaderTest extends CamelTestSuppor
     protected static class MyServer {
         private Map<String, Object> headers;
 
-        public String process(@Headers Map<String, Object> headers, String body) {
+        public String process(@Headers
+        Map<String, Object> headers, String body) {
             this.headers = headers;
             LOG.info("process() invoked with headers: " + headers);
             return "Hello " + body;

@@ -71,7 +71,8 @@ public class CamelSalesforceMojoOutputTest {
     public Set<String> sources;
 
     @Test
-    public void testProcessDescription(@TempDir File pkgDir) throws Exception {
+    public void testProcessDescription(@TempDir
+    File pkgDir) throws Exception {
         final GenerateMojo.GeneratorUtility utility = mojo.new GeneratorUtility();
 
         final RestClient client = mockRestClient();

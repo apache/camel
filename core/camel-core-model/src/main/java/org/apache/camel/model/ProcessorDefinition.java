@@ -214,7 +214,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param  uri the endpoint to send to
      * @return     the builder
      */
-    public Type to(@AsEndpointUri String uri) {
+    public Type to(@AsEndpointUri
+    String uri) {
         addOutput(new ToDefinition(uri));
         return asType();
     }
@@ -236,7 +237,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param  uri the dynamic endpoint to send to (resolved using simple language by default)
      * @return     the builder
      */
-    public Type toD(@AsEndpointUri String uri) {
+    public Type toD(@AsEndpointUri
+    String uri) {
         ToDynamicDefinition answer = new ToDynamicDefinition();
         answer.setUri(uri);
         addOutput(answer);
@@ -249,7 +251,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param  endpointProducerBuilder the dynamic endpoint to send to (resolved using simple language by default)
      * @return                         the builder
      */
-    public Type toD(@AsEndpointUri EndpointProducerBuilder endpointProducerBuilder) {
+    public Type toD(@AsEndpointUri
+    EndpointProducerBuilder endpointProducerBuilder) {
         ToDynamicDefinition answer = new ToDynamicDefinition();
         answer.setEndpointProducerBuilder(endpointProducerBuilder);
         addOutput(answer);
@@ -264,7 +267,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *                   cache and reuse producers.
      * @return           the builder
      */
-    public Type toD(@AsEndpointUri String uri, int cacheSize) {
+    public Type toD(@AsEndpointUri
+    String uri, int cacheSize) {
         ToDynamicDefinition answer = new ToDynamicDefinition();
         answer.setUri(uri);
         answer.setCacheSize(Integer.toString(cacheSize));
@@ -280,7 +284,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *                                 which is used to cache and reuse producers.
      * @return                         the builder
      */
-    public Type toD(@AsEndpointUri EndpointProducerBuilder endpointProducerBuilder, int cacheSize) {
+    public Type toD(@AsEndpointUri
+    EndpointProducerBuilder endpointProducerBuilder, int cacheSize) {
         ToDynamicDefinition answer = new ToDynamicDefinition();
         answer.setEndpointProducerBuilder(endpointProducerBuilder);
         answer.setCacheSize(Integer.toString(cacheSize));
@@ -296,7 +301,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *                               endpoint
      * @return                       the builder
      */
-    public Type toD(@AsEndpointUri String uri, boolean ignoreInvalidEndpoint) {
+    public Type toD(@AsEndpointUri
+    String uri, boolean ignoreInvalidEndpoint) {
         ToDynamicDefinition answer = new ToDynamicDefinition();
         answer.setUri(uri);
         answer.setIgnoreInvalidEndpoint(Boolean.toString(ignoreInvalidEndpoint));
@@ -312,7 +318,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *                                 endpoint
      * @return                         the builder
      */
-    public Type toD(@AsEndpointUri EndpointProducerBuilder endpointProducerBuilder, boolean ignoreInvalidEndpoint) {
+    public Type toD(@AsEndpointUri
+    EndpointProducerBuilder endpointProducerBuilder, boolean ignoreInvalidEndpoint) {
         ToDynamicDefinition answer = new ToDynamicDefinition();
         answer.setEndpointProducerBuilder(endpointProducerBuilder);
         answer.setIgnoreInvalidEndpoint(Boolean.toString(ignoreInvalidEndpoint));
@@ -327,7 +334,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param  args arguments for the string formatting of the uri
      * @return      the builder
      */
-    public Type toF(@AsEndpointUri String uri, Object... args) {
+    public Type toF(@AsEndpointUri
+    String uri, Object... args) {
         addOutput(new ToDefinition(String.format(uri, args)));
         return asType();
     }
@@ -363,7 +371,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param  uri  the endpoint uri to use for calling the service
      * @return      the builder
      */
-    public Type serviceCall(String name, @AsEndpointUri String uri) {
+    public Type serviceCall(String name, @AsEndpointUri
+    String uri) {
         ServiceCallDefinition answer = new ServiceCallDefinition();
         answer.setName(name);
         answer.setUri(uri);
@@ -388,7 +397,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param  endpoint the endpoint to send to
      * @return          the builder
      */
-    public Type to(@AsEndpointUri EndpointProducerBuilder endpoint) {
+    public Type to(@AsEndpointUri
+    EndpointProducerBuilder endpoint) {
         addOutput(new ToDefinition(endpoint));
         return asType();
     }
@@ -402,7 +412,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param  uri     the endpoint to send to
      * @return         the builder
      */
-    public Type to(ExchangePattern pattern, @AsEndpointUri String uri) {
+    public Type to(ExchangePattern pattern, @AsEndpointUri
+    String uri) {
         addOutput(new ToDefinition(uri, pattern));
         return asType();
     }
@@ -441,7 +452,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param  uris list of endpoints to send to
      * @return      the builder
      */
-    public Type to(@AsEndpointUri String... uris) {
+    public Type to(@AsEndpointUri
+    String... uris) {
         for (String uri : uris) {
             addOutput(new ToDefinition(uri));
         }
@@ -481,7 +493,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param  endpoints list of endpoints to send to
      * @return           the builder
      */
-    public Type to(@AsEndpointUri EndpointProducerBuilder... endpoints) {
+    public Type to(@AsEndpointUri
+    EndpointProducerBuilder... endpoints) {
         for (EndpointProducerBuilder endpoint : endpoints) {
             addOutput(new ToDefinition(endpoint));
         }
@@ -497,7 +510,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param  uris    list of endpoints to send to
      * @return         the builder
      */
-    public Type to(ExchangePattern pattern, @AsEndpointUri String... uris) {
+    public Type to(ExchangePattern pattern, @AsEndpointUri
+    String... uris) {
         for (String uri : uris) {
             addOutput(new ToDefinition(uri, pattern));
         }
@@ -544,7 +558,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param  endpoints list of endpoints to send to
      * @return           the builder
      */
-    public Type to(ExchangePattern pattern, @AsEndpointUri EndpointProducerBuilder... endpoints) {
+    public Type to(ExchangePattern pattern, @AsEndpointUri
+    EndpointProducerBuilder... endpoints) {
         for (EndpointProducerBuilder endpoint : endpoints) {
             addOutput(new ToDefinition(endpoint, pattern));
         }
@@ -576,7 +591,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @deprecated     use to where you can specify the exchange pattern as well
      */
     @Deprecated
-    public Type inOnly(@AsEndpointUri String uri) {
+    public Type inOnly(@AsEndpointUri
+    String uri) {
         return to(ExchangePattern.InOnly, uri);
     }
 
@@ -606,7 +622,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @deprecated      use to where you can specify the exchange pattern as well
      */
     @Deprecated
-    public Type inOnly(@AsEndpointUri String... uris) {
+    public Type inOnly(@AsEndpointUri
+    String... uris) {
         return to(ExchangePattern.InOnly, uris);
     }
 
@@ -621,7 +638,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @deprecated           use to where you can specify the exchange pattern as well
      */
     @Deprecated
-    public Type inOnly(@AsEndpointUri Endpoint... endpoints) {
+    public Type inOnly(@AsEndpointUri
+    Endpoint... endpoints) {
         return to(ExchangePattern.InOnly, endpoints);
     }
 
@@ -651,7 +669,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @deprecated     use to where you can specify the exchange pattern as well
      */
     @Deprecated
-    public Type inOut(@AsEndpointUri String uri) {
+    public Type inOut(@AsEndpointUri
+    String uri) {
         return to(ExchangePattern.InOut, uri);
     }
 
@@ -681,7 +700,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @deprecated      use to where you can specify the exchange pattern as well
      */
     @Deprecated
-    public Type inOut(@AsEndpointUri String... uris) {
+    public Type inOut(@AsEndpointUri
+    String... uris) {
         return to(ExchangePattern.InOut, uris);
     }
 
@@ -905,7 +925,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param  uris list of endpoints
      * @return      the builder
      */
-    public Type pipeline(@AsEndpointUri String... uris) {
+    public Type pipeline(@AsEndpointUri
+    String... uris) {
         PipelineDefinition answer = new PipelineDefinition();
         addOutput(answer);
         answer.to(uris);
@@ -1195,7 +1216,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param  predicate predicate to use
      * @return           the builder
      */
-    public FilterDefinition filter(@AsPredicate Predicate predicate) {
+    public FilterDefinition filter(@AsPredicate
+    Predicate predicate) {
         FilterDefinition filter = new FilterDefinition(predicate);
         addOutput(filter);
         return filter;
@@ -1208,7 +1230,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param  expression the predicate expression to use
      * @return            the builder
      */
-    public FilterDefinition filter(@AsPredicate ExpressionDefinition expression) {
+    public FilterDefinition filter(@AsPredicate
+    ExpressionDefinition expression) {
         FilterDefinition filter = new FilterDefinition(expression);
         addOutput(filter);
         return filter;
@@ -1222,7 +1245,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param  expression the expression
      * @return            the builder
      */
-    public FilterDefinition filter(String language, @AsPredicate String expression) {
+    public FilterDefinition filter(String language, @AsPredicate
+    String expression) {
         return filter(new LanguageExpression(language, expression));
     }
 
@@ -1233,7 +1257,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param  expression the expression
      * @return            the builder
      */
-    public ValidateDefinition validate(@AsPredicate Expression expression) {
+    public ValidateDefinition validate(@AsPredicate
+    Expression expression) {
         ValidateDefinition answer = new ValidateDefinition(expression);
         addOutput(answer);
         return answer;
@@ -1246,7 +1271,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param  predicate the predicate
      * @return           the builder
      */
-    public ValidateDefinition validate(@AsPredicate Predicate predicate) {
+    public ValidateDefinition validate(@AsPredicate
+    Predicate predicate) {
         ValidateDefinition answer = new ValidateDefinition(predicate);
         addOutput(answer);
         return answer;
@@ -1428,7 +1454,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param  recipients expression to decide the destinations
      * @return            the builder
      */
-    public RecipientListDefinition<Type> recipientList(@AsEndpointUri Expression recipients) {
+    public RecipientListDefinition<Type> recipientList(@AsEndpointUri
+    Expression recipients) {
         RecipientListDefinition<Type> answer = new RecipientListDefinition<>(recipients);
         addOutput(answer);
         return answer;
@@ -1442,7 +1469,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param  delimiter  a custom delimiter to use
      * @return            the builder
      */
-    public RecipientListDefinition<Type> recipientList(@AsEndpointUri Expression recipients, String delimiter) {
+    public RecipientListDefinition<Type> recipientList(@AsEndpointUri
+    Expression recipients, String delimiter) {
         RecipientListDefinition<Type> answer = new RecipientListDefinition<>(recipients);
         answer.setDelimiter(delimiter);
         addOutput(answer);
@@ -1488,7 +1516,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param  uriDelimiter is the delimiter that will be used to split up the list of URIs in the routing slip.
      * @return              the builder
      */
-    public RoutingSlipDefinition<Type> routingSlip(@AsEndpointUri Expression expression, String uriDelimiter) {
+    public RoutingSlipDefinition<Type> routingSlip(@AsEndpointUri
+    Expression expression, String uriDelimiter) {
         RoutingSlipDefinition<Type> answer = new RoutingSlipDefinition<>(expression, uriDelimiter);
         addOutput(answer);
         return answer;
@@ -1506,7 +1535,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param  expression to decide the destinations
      * @return            the builder
      */
-    public RoutingSlipDefinition<Type> routingSlip(@AsEndpointUri Expression expression) {
+    public RoutingSlipDefinition<Type> routingSlip(@AsEndpointUri
+    Expression expression) {
         RoutingSlipDefinition<Type> answer = new RoutingSlipDefinition<>(expression);
         addOutput(answer);
         return answer;
@@ -1542,7 +1572,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *                    to indicate no more destinations.
      * @return            the builder
      */
-    public DynamicRouterDefinition<Type> dynamicRouter(@AsEndpointUri Expression expression) {
+    public DynamicRouterDefinition<Type> dynamicRouter(@AsEndpointUri
+    Expression expression) {
         DynamicRouterDefinition<Type> answer = new DynamicRouterDefinition<>(expression);
         addOutput(answer);
         return answer;
@@ -1932,7 +1963,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param  predicate the while loop predicate
      * @return           the builder
      */
-    public LoopDefinition loopDoWhile(@AsPredicate Predicate predicate) {
+    public LoopDefinition loopDoWhile(@AsPredicate
+    Predicate predicate) {
         LoopDefinition loop = new LoopDefinition(predicate);
         addOutput(loop);
         return loop;
@@ -2081,7 +2113,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param  endpoint the endpoint to wiretap to
      * @return          the builder
      */
-    public WireTapDefinition<Type> wireTap(@AsEndpointUri EndpointProducerBuilder endpoint) {
+    public WireTapDefinition<Type> wireTap(@AsEndpointUri
+    EndpointProducerBuilder endpoint) {
         WireTapDefinition answer = new WireTapDefinition();
         answer.setEndpointProducerBuilder(endpoint);
         addOutput(answer);
@@ -2096,7 +2129,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param  uri the dynamic endpoint to wiretap to (resolved using simple language by default)
      * @return     the builder
      */
-    public WireTapDefinition<Type> wireTap(@AsEndpointUri String uri) {
+    public WireTapDefinition<Type> wireTap(@AsEndpointUri
+    String uri) {
         WireTapDefinition answer = new WireTapDefinition();
         answer.setUri(uri);
         addOutput(answer);
@@ -2836,7 +2870,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return             the builder
      * @see                org.apache.camel.processor.Enricher
      */
-    public Type enrich(@AsEndpointUri String resourceUri) {
+    public Type enrich(@AsEndpointUri
+    String resourceUri) {
         return enrich(resourceUri, null);
     }
 
@@ -2849,7 +2884,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return                     the builder
      * @see                        org.apache.camel.processor.Enricher
      */
-    public Type enrich(@AsEndpointUri String resourceUri, AggregationStrategy aggregationStrategy) {
+    public Type enrich(@AsEndpointUri
+    String resourceUri, AggregationStrategy aggregationStrategy) {
         return enrich(resourceUri, aggregationStrategy, false);
     }
 
@@ -2864,7 +2900,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return             the builder
      * @see                org.apache.camel.processor.Enricher
      */
-    public Type enrich(@AsEndpointUri EndpointProducerBuilder resourceUri) {
+    public Type enrich(@AsEndpointUri
+    EndpointProducerBuilder resourceUri) {
         return enrich(resourceUri, null);
     }
 
@@ -2877,7 +2914,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return                     the builder
      * @see                        org.apache.camel.processor.Enricher
      */
-    public Type enrich(@AsEndpointUri EndpointProducerBuilder resourceUri, AggregationStrategy aggregationStrategy) {
+    public Type enrich(@AsEndpointUri
+    EndpointProducerBuilder resourceUri, AggregationStrategy aggregationStrategy) {
         return enrich(resourceUri, aggregationStrategy, false);
     }
 
@@ -2900,7 +2938,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return             the builder
      * @see                org.apache.camel.processor.Enricher
      */
-    public EnrichClause<ProcessorDefinition<Type>> enrichWith(@AsEndpointUri String resourceUri) {
+    public EnrichClause<ProcessorDefinition<Type>> enrichWith(@AsEndpointUri
+    String resourceUri) {
         EnrichClause<ProcessorDefinition<Type>> clause = new EnrichClause<>(this);
         enrich(resourceUri, clause);
         return clause;
@@ -2911,7 +2950,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * additional data obtained from a <code>resourceUri</code> and with an aggregation strategy created using a fluent
      * builder.
      */
-    public EnrichClause<ProcessorDefinition<Type>> enrichWith(@AsEndpointUri String resourceUri, boolean aggregateOnException) {
+    public EnrichClause<ProcessorDefinition<Type>> enrichWith(@AsEndpointUri
+    String resourceUri, boolean aggregateOnException) {
         EnrichClause<ProcessorDefinition<Type>> clause = new EnrichClause<>(this);
         enrich(resourceUri, clause, aggregateOnException, false);
         return clause;
@@ -2923,7 +2963,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * builder.
      */
     public EnrichClause<ProcessorDefinition<Type>> enrichWith(
-            @AsEndpointUri String resourceUri, boolean aggregateOnException, boolean shareUnitOfWork) {
+            @AsEndpointUri
+            String resourceUri, boolean aggregateOnException, boolean shareUnitOfWork) {
         EnrichClause<ProcessorDefinition<Type>> clause = new EnrichClause<>(this);
         enrich(resourceUri, clause, aggregateOnException, shareUnitOfWork);
         return clause;
@@ -2948,7 +2989,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return             the builder
      * @see                org.apache.camel.processor.Enricher
      */
-    public EnrichClause<ProcessorDefinition<Type>> enrichWith(@AsEndpointUri EndpointProducerBuilder resourceUri) {
+    public EnrichClause<ProcessorDefinition<Type>> enrichWith(@AsEndpointUri
+    EndpointProducerBuilder resourceUri) {
         return enrichWith(resourceUri.getUri());
     }
 
@@ -2958,7 +3000,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * builder.
      */
     public EnrichClause<ProcessorDefinition<Type>> enrichWith(
-            @AsEndpointUri EndpointProducerBuilder resourceUri, boolean aggregateOnException) {
+            @AsEndpointUri
+            EndpointProducerBuilder resourceUri, boolean aggregateOnException) {
         EnrichClause<ProcessorDefinition<Type>> clause = new EnrichClause<>(this);
         enrich(resourceUri, clause, aggregateOnException, false);
         return clause;
@@ -2970,7 +3013,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * builder.
      */
     public EnrichClause<ProcessorDefinition<Type>> enrichWith(
-            @AsEndpointUri EndpointProducerBuilder resourceUri, boolean aggregateOnException, boolean shareUnitOfWork) {
+            @AsEndpointUri
+            EndpointProducerBuilder resourceUri, boolean aggregateOnException, boolean shareUnitOfWork) {
         EnrichClause<ProcessorDefinition<Type>> clause = new EnrichClause<>(this);
         enrich(resourceUri, clause, aggregateOnException, shareUnitOfWork);
         return clause;
@@ -2989,7 +3033,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @see                         org.apache.camel.processor.Enricher
      */
     public Type enrich(
-            @AsEndpointUri String resourceUri, AggregationStrategy aggregationStrategy, boolean aggregateOnException) {
+            @AsEndpointUri
+            String resourceUri, AggregationStrategy aggregationStrategy, boolean aggregateOnException) {
         return enrich(resourceUri, aggregationStrategy, aggregateOnException, false);
     }
 
@@ -3007,7 +3052,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @see                         org.apache.camel.processor.Enricher
      */
     public Type enrich(
-            @AsEndpointUri String resourceUri, AggregationStrategy aggregationStrategy, boolean aggregateOnException,
+            @AsEndpointUri
+            String resourceUri, AggregationStrategy aggregationStrategy, boolean aggregateOnException,
             boolean shareUnitOfWork) {
         EnrichDefinition answer = new EnrichDefinition();
         answer.setExpression(new ConstantExpression(resourceUri));
@@ -3031,7 +3077,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @see                         org.apache.camel.processor.Enricher
      */
     public Type enrich(
-            @AsEndpointUri EndpointProducerBuilder resourceUri, AggregationStrategy aggregationStrategy,
+            @AsEndpointUri
+            EndpointProducerBuilder resourceUri, AggregationStrategy aggregationStrategy,
             boolean aggregateOnException) {
         return enrich(resourceUri, aggregationStrategy, aggregateOnException, false);
     }
@@ -3050,7 +3097,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @see                         org.apache.camel.processor.Enricher
      */
     public Type enrich(
-            @AsEndpointUri EndpointProducerBuilder resourceUri, AggregationStrategy aggregationStrategy,
+            @AsEndpointUri
+            EndpointProducerBuilder resourceUri, AggregationStrategy aggregationStrategy,
             boolean aggregateOnException, boolean shareUnitOfWork) {
         EnrichDefinition answer = new EnrichDefinition();
         answer.setExpression(resourceUri.expr());
@@ -3093,7 +3141,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return             the builder
      * @see                org.apache.camel.processor.PollEnricher
      */
-    public Type pollEnrich(@AsEndpointUri String resourceUri) {
+    public Type pollEnrich(@AsEndpointUri
+    String resourceUri) {
         return pollEnrich(resourceUri, null);
     }
 
@@ -3113,7 +3162,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return                     the builder
      * @see                        org.apache.camel.processor.PollEnricher
      */
-    public Type pollEnrich(@AsEndpointUri String resourceUri, AggregationStrategy aggregationStrategy) {
+    public Type pollEnrich(@AsEndpointUri
+    String resourceUri, AggregationStrategy aggregationStrategy) {
         return pollEnrich(resourceUri, -1, aggregationStrategy);
     }
 
@@ -3135,7 +3185,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return                     the builder
      * @see                        org.apache.camel.processor.PollEnricher
      */
-    public Type pollEnrich(@AsEndpointUri String resourceUri, long timeout, AggregationStrategy aggregationStrategy) {
+    public Type pollEnrich(@AsEndpointUri
+    String resourceUri, long timeout, AggregationStrategy aggregationStrategy) {
         return pollEnrich(resourceUri, timeout, aggregationStrategy, false);
     }
 
@@ -3157,7 +3208,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return                        the builder
      * @see                           org.apache.camel.processor.PollEnricher
      */
-    public Type pollEnrich(@AsEndpointUri String resourceUri, long timeout, String aggregationStrategyRef) {
+    public Type pollEnrich(@AsEndpointUri
+    String resourceUri, long timeout, String aggregationStrategyRef) {
         return pollEnrich(resourceUri, timeout, aggregationStrategyRef, false);
     }
 
@@ -3249,7 +3301,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * additional data obtained from a <code>resourceUri</code> and with an aggregation strategy created using a fluent
      * builder using a {@link org.apache.camel.PollingConsumer} to poll the endpoint.
      */
-    public EnrichClause<ProcessorDefinition<Type>> pollEnrichWith(@AsEndpointUri String resourceUri) {
+    public EnrichClause<ProcessorDefinition<Type>> pollEnrichWith(@AsEndpointUri
+    String resourceUri) {
         return pollEnrichWith(resourceUri, -1);
     }
 
@@ -3258,7 +3311,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * additional data obtained from a <code>resourceUri</code> and with an aggregation strategy created using a fluent
      * builder using a {@link org.apache.camel.PollingConsumer} to poll the endpoint.
      */
-    public EnrichClause<ProcessorDefinition<Type>> pollEnrichWith(@AsEndpointUri String resourceUri, long timeout) {
+    public EnrichClause<ProcessorDefinition<Type>> pollEnrichWith(@AsEndpointUri
+    String resourceUri, long timeout) {
         return pollEnrichWith(resourceUri, timeout, false);
     }
 
@@ -3268,7 +3322,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * builder using a {@link org.apache.camel.PollingConsumer} to poll the endpoint.
      */
     public EnrichClause<ProcessorDefinition<Type>> pollEnrichWith(
-            @AsEndpointUri String resourceUri, long timeout, boolean aggregateOnException) {
+            @AsEndpointUri
+            String resourceUri, long timeout, boolean aggregateOnException) {
         EnrichClause<ProcessorDefinition<Type>> clause = new EnrichClause<>(this);
         pollEnrich(resourceUri, timeout, clause, aggregateOnException);
         return clause;
@@ -3326,7 +3381,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @see                         org.apache.camel.processor.PollEnricher
      */
     public Type pollEnrich(
-            @AsEndpointUri String resourceUri, long timeout, AggregationStrategy aggregationStrategy,
+            @AsEndpointUri
+            String resourceUri, long timeout, AggregationStrategy aggregationStrategy,
             boolean aggregateOnException) {
         return pollEnrich(new ConstantExpression(resourceUri), timeout, aggregationStrategy, aggregateOnException);
     }
@@ -3353,7 +3409,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @see                           org.apache.camel.processor.PollEnricher
      */
     public Type pollEnrich(
-            @AsEndpointUri String resourceUri, long timeout, String aggregationStrategyRef, boolean aggregateOnException) {
+            @AsEndpointUri
+            String resourceUri, long timeout, String aggregationStrategyRef, boolean aggregateOnException) {
         return pollEnrich(new ConstantExpression(resourceUri), timeout, aggregationStrategyRef, aggregateOnException);
     }
 
@@ -3374,7 +3431,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return             the builder
      * @see                org.apache.camel.processor.PollEnricher
      */
-    public Type pollEnrich(@AsEndpointUri String resourceUri, long timeout) {
+    public Type pollEnrich(@AsEndpointUri
+    String resourceUri, long timeout) {
         return pollEnrich(resourceUri, timeout, (String) null);
     }
 
@@ -3400,7 +3458,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @see                         org.apache.camel.processor.PollEnricher
      */
     public Type pollEnrich(
-            @AsEndpointUri EndpointProducerBuilder resourceUri, long timeout, AggregationStrategy aggregationStrategy,
+            @AsEndpointUri
+            EndpointProducerBuilder resourceUri, long timeout, AggregationStrategy aggregationStrategy,
             boolean aggregateOnException) {
         return pollEnrich(resourceUri.expr(), timeout, aggregationStrategy, aggregateOnException);
     }
@@ -3427,7 +3486,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @see                           org.apache.camel.processor.PollEnricher
      */
     public Type pollEnrich(
-            @AsEndpointUri EndpointProducerBuilder resourceUri, long timeout, String aggregationStrategyRef,
+            @AsEndpointUri
+            EndpointProducerBuilder resourceUri, long timeout, String aggregationStrategyRef,
             boolean aggregateOnException) {
         return pollEnrich(resourceUri.expr(), timeout, aggregationStrategyRef, aggregateOnException);
     }
@@ -3449,7 +3509,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return             the builder
      * @see                org.apache.camel.processor.PollEnricher
      */
-    public Type pollEnrich(@AsEndpointUri EndpointProducerBuilder resourceUri, long timeout) {
+    public Type pollEnrich(@AsEndpointUri
+    EndpointProducerBuilder resourceUri, long timeout) {
         return pollEnrich(resourceUri, timeout, (String) null);
     }
 
@@ -3475,7 +3536,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @see                           org.apache.camel.processor.PollEnricher
      */
     public Type pollEnrich(
-            @AsEndpointUri Expression expression, long timeout, String aggregationStrategyRef, boolean aggregateOnException) {
+            @AsEndpointUri
+            Expression expression, long timeout, String aggregationStrategyRef, boolean aggregateOnException) {
         PollEnrichDefinition pollEnrich = new PollEnrichDefinition();
         pollEnrich.setExpression(expression);
         pollEnrich.setTimeout(Long.toString(timeout));
@@ -3507,7 +3569,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @see                         org.apache.camel.processor.PollEnricher
      */
     public Type pollEnrich(
-            @AsEndpointUri Expression expression, long timeout, AggregationStrategy aggregationStrategy,
+            @AsEndpointUri
+            Expression expression, long timeout, AggregationStrategy aggregationStrategy,
             boolean aggregateOnException) {
         PollEnrichDefinition pollEnrich = new PollEnrichDefinition();
         pollEnrich.setExpression(expression);

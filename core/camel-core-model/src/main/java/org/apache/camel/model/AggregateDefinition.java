@@ -140,7 +140,8 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
     public AggregateDefinition() {
     }
 
-    public AggregateDefinition(@AsPredicate Predicate predicate) {
+    public AggregateDefinition(@AsPredicate
+    Predicate predicate) {
         this(ExpressionNodeHelper.toExpressionDefinition(predicate));
     }
 
@@ -913,7 +914,8 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
      * AggregationStrategy object implements Predicate, the aggregationStrategy object will be used as the
      * completionPredicate.
      */
-    public AggregateDefinition completionPredicate(@AsPredicate Predicate predicate) {
+    public AggregateDefinition completionPredicate(@AsPredicate
+    Predicate predicate) {
         checkNoCompletedPredicate();
         setCompletionPredicate(new ExpressionSubElementDefinition(predicate));
         return this;
@@ -946,7 +948,8 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
      * AggregationStrategy object implements Predicate, the aggregationStrategy object will be used as the
      * completionPredicate.
      */
-    public AggregateDefinition completion(@AsPredicate Predicate predicate) {
+    public AggregateDefinition completion(@AsPredicate
+    Predicate predicate) {
         return completionPredicate(predicate);
     }
 

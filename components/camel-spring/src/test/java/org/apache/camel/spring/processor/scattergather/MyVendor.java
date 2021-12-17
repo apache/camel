@@ -32,7 +32,8 @@ public class MyVendor {
         this.beerPrice = beerPrice;
     }
 
-    public void getQuote(@XPath("/quote_request/@item") String item, Exchange exchange) throws Exception {
+    public void getQuote(@XPath("/quote_request/@item")
+    String item, Exchange exchange) throws Exception {
         if ("beer".equals(item)) {
             exchange.getIn().setBody(beerPrice);
             quoteAggregator.send(exchange);

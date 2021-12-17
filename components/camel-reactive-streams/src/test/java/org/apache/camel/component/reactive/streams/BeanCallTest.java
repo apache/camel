@@ -245,7 +245,8 @@ public class BeanCallTest extends CamelTestSupport {
                 .map(l -> "HelloBody " + l);
     }
 
-    public Publisher<String> processHeader(@Header("myheader") Publisher<Integer> data) {
+    public Publisher<String> processHeader(@Header("myheader")
+    Publisher<Integer> data) {
         return Flowable.fromPublisher(data)
                 .map(l -> "HelloHeader " + l);
     }

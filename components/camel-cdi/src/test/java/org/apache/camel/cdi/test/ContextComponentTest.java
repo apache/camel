@@ -81,8 +81,10 @@ public class ContextComponentTest {
     @Test
     @InSequence(2)
     public void sendMessageToInbound(
-            @Uri("direct:inbound") ProducerTemplate inbound,
-            @Uri("mock:outbound") MockEndpoint outbound)
+            @Uri("direct:inbound")
+            ProducerTemplate inbound,
+            @Uri("mock:outbound")
+            MockEndpoint outbound)
             throws InterruptedException {
         outbound.expectedMessageCount(1);
         outbound.expectedBodiesReceived("second-first-test");

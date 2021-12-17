@@ -21,8 +21,8 @@ when a xref:message.adoc[Message] is available for processing.
 
 The following demonstrates a
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Processor.html[Processor]
-defined in the Camel xref:latest@manual:ROOT:registry.adoc[Registry] which is
-invoked when an event occurs from a xref:components::jms-component.adoc[JMS] queue.
+defined in the Camel xref:manual:ROOT:registry.adoc[Registry] which is
+invoked when an event occurs from a xref:ROOT:jms-component.adoc[JMS] queue.
 
 [source,java]
 ----
@@ -30,7 +30,7 @@ from("jms:queue:foo")
     .processRef("processor");
 ----
 
-**Using the xref:latest@manual:ROOT:spring-xml-extensions.adoc[Spring XML Extensions]**
+**Using the xref:manual:ROOT:spring-xml-extensions.adoc[Spring XML Extensions]**
 
 [source,xml]
 ----
@@ -49,8 +49,8 @@ For more details see:
 == Using This Pattern
 
 If you would like to use this EIP Pattern then please read the
-xref:latest@manual:ROOT:getting-started.adoc[Getting Started], you may also find the
-xref:latest@manual:ROOT:architecture.adoc[Architecture] useful particularly the description
-of xref:latest@manual:ROOT:endpoint.adoc[Endpoint] and xref:latest@manual:ROOT:uris.adoc[URIs]. Then you could
-try out some of the xref:latest@manual:ROOT:examples.adoc[Examples] first before trying
+xref:manual:ROOT:getting-started.adoc[Getting Started], you may also find the
+xref:manual:ROOT:architecture.adoc[Architecture] useful particularly the description
+of xref:manual:ROOT:endpoint.adoc[Endpoint] and xref:manual:ROOT:uris.adoc[URIs]. Then you could
+try out some of the xref:manual:ROOT:examples.adoc[Examples] first before trying
 this pattern out.

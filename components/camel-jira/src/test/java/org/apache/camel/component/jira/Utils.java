@@ -171,13 +171,15 @@ public final class Utils {
         return new Worklog(selfUri, issueUri, null, null, comment, now, null, null, minutesSpent, null);
     }
 
-    private static Map<String, URI> buildUserAvatarUris(@Nullable String user, Long avatarId) throws Exception {
+    private static Map<String, URI> buildUserAvatarUris(@Nullable
+    String user, Long avatarId) throws Exception {
         final ImmutableMap.Builder<String, URI> builder = ImmutableMap.builder();
         builder.put(S48_48, buildUserAvatarUri(user, avatarId));
         return builder.build();
     }
 
-    private static URI buildUserAvatarUri(@Nullable String userName, Long avatarId) throws Exception {
+    private static URI buildUserAvatarUri(@Nullable
+    String userName, Long avatarId) throws Exception {
         // secure/useravatar?size=small&ownerId=admin&avatarId=10054
         final StringBuilder sb = new StringBuilder("secure/useravatar?");
 

@@ -132,7 +132,8 @@ public class CatchDefinition extends OutputDefinition<CatchDefinition> {
      * @param  predicate predicate that determines true or false
      * @return           the builder
      */
-    public CatchDefinition onWhen(@AsPredicate Predicate predicate) {
+    public CatchDefinition onWhen(@AsPredicate
+    Predicate predicate) {
         setOnWhen(new WhenDefinition(predicate));
         return this;
     }

@@ -21,6 +21,8 @@ import org.apache.camel.Header;
 
 public interface MyAuditService {
 
-    void auditMessage(@Header("uuid") String uuid, @Body String body);
+    void auditMessage(@Header("uuid")
+    String uuid, @Body
+    String body);
 
 }

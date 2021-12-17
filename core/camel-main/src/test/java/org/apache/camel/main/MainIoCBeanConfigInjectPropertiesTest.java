@@ -70,7 +70,8 @@ public class MainIoCBeanConfigInjectPropertiesTest {
     public static class MyRouteBuilder extends RouteBuilder {
 
         @BindToRegistry("bar")
-        public MyBar createBar(@BeanConfigInject("bar") Properties config) {
+        public MyBar createBar(@BeanConfigInject("bar")
+        Properties config) {
             assertEquals(2, config.size());
             assertNull(config.get("foo"));
 

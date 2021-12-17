@@ -23,7 +23,8 @@ public class TestBean {
 
     private String subject;
 
-    public void onMethod(@MyXPath("/*/@subject") String subject) {
+    public void onMethod(@MyXPath("/*/@subject")
+    String subject) {
         this.subject = subject;
     }
 

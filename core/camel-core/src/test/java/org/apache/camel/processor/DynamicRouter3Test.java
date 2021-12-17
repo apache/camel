@@ -47,7 +47,8 @@ public class DynamicRouter3Test extends ContextTestSupport {
         };
     }
 
-    public String slip(String body, @Header(Exchange.SLIP_ENDPOINT) String previous) {
+    public String slip(String body, @Header(Exchange.SLIP_ENDPOINT)
+    String previous) {
         if (previous == null) {
             return "mock:a,mock:b";
         } else if ("mock://b".equals(previous)) {

@@ -78,7 +78,8 @@ public class DynamicRouterExchangePropertiesTest extends ContextTestSupport {
      * @param  properties the exchange properties where we can store state between invocations
      * @return            endpoints to go, or <tt>null</tt> to indicate the end
      */
-    public String slip(String body, @ExchangeProperties Map<String, Object> properties) {
+    public String slip(String body, @ExchangeProperties
+    Map<String, Object> properties) {
         bodies.add(body);
 
         // get the state from the exchange properties and keep track how many

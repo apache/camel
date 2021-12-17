@@ -71,7 +71,8 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
      * @param  uri the from uri
      * @return     the builder
      */
-    public RouteDefinition from(@AsEndpointUri String uri) {
+    public RouteDefinition from(@AsEndpointUri
+    String uri) {
         return route.from(uri);
     }
 

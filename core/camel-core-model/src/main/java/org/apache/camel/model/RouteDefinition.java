@@ -86,7 +86,8 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
     public RouteDefinition() {
     }
 
-    public RouteDefinition(@AsEndpointUri String uri) {
+    public RouteDefinition(@AsEndpointUri
+    String uri) {
         from(uri);
     }
 
@@ -97,7 +98,8 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
     /**
      * This route is created from the REST DSL.
      */
-    public void fromRest(@AsEndpointUri String uri) {
+    public void fromRest(@AsEndpointUri
+    String uri) {
         if (uri != null) {
             from(uri);
         }
@@ -173,7 +175,8 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
      * @param  uri the from uri
      * @return     the builder
      */
-    public RouteDefinition from(@AsEndpointUri String uri) {
+    public RouteDefinition from(@AsEndpointUri
+    String uri) {
         setInput(new FromDefinition(uri));
         return this;
     }

@@ -127,11 +127,13 @@ public class JmsBeanMethodHeaderTest extends CamelTestSupport {
             // just to confuse Camel with more public methods to choose among
         }
 
-        public String approveLoan(@Body String body) {
+        public String approveLoan(@Body
+        String body) {
             return "Yes";
         }
 
-        public String approveSuperLoan(@Body String body) {
+        public String approveSuperLoan(@Body
+        String body) {
             return "No";
         }
 

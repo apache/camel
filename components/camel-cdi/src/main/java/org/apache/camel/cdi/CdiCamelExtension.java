@@ -132,7 +132,8 @@ public class CdiCamelExtension implements Extension {
         return contextQualifiers;
     }
 
-    private void processAnnotatedType(@Observes ProcessAnnotatedType<?> pat) {
+    private void processAnnotatedType(@Observes
+    ProcessAnnotatedType<?> pat) {
         if (pat.getAnnotatedType().isAnnotationPresent(Vetoed.class)) {
             pat.veto();
         }
@@ -151,42 +152,51 @@ public class CdiCamelExtension implements Extension {
         }
     }
 
-    private <T extends CamelContext> void camelContextBeans(@Observes ProcessInjectionTarget<T> pit, BeanManager manager) {
+    private <T extends CamelContext> void camelContextBeans(@Observes
+    ProcessInjectionTarget<T> pit, BeanManager manager) {
         pit.setInjectionTarget(
                 environment.camelContextInjectionTarget(pit.getInjectionTarget(), pit.getAnnotatedType(), manager, this));
     }
 
-    private <T extends CamelContext> void camelContextProducers(@Observes ProcessProducer<?, T> pp, BeanManager manager) {
+    private <T extends CamelContext> void camelContextProducers(@Observes
+    ProcessProducer<?, T> pp, BeanManager manager) {
         pp.setProducer(environment.camelContextProducer(pp.getProducer(), pp.getAnnotatedMember(), manager, this));
     }
 
-    private <T> void camelBeansPostProcessor(@Observes ProcessInjectionTarget<T> pit, BeanManager manager) {
+    private <T> void camelBeansPostProcessor(@Observes
+    ProcessInjectionTarget<T> pit, BeanManager manager) {
         if (camelBeans.contains(pit.getAnnotatedType())) {
             pit.setInjectionTarget(new CamelBeanInjectionTarget<>(pit.getInjectionTarget(), manager));
         }
     }
 
-    private <T extends CamelContextAware> void camelContextAware(@Observes ProcessInjectionTarget<T> pit, BeanManager manager) {
+    private <T extends CamelContextAware> void camelContextAware(@Observes
+    ProcessInjectionTarget<T> pit, BeanManager manager) {
         pit.setInjectionTarget(new CamelBeanInjectionTarget<>(pit.getInjectionTarget(), manager));
     }
 
-    private <T extends Endpoint> void endpointBeans(@Observes ProcessProducerMethod<T, CdiCamelFactory> ppm) {
+    private <T extends Endpoint> void endpointBeans(@Observes
+    ProcessProducerMethod<T, CdiCamelFactory> ppm) {
         producerBeans.put(ppm.getAnnotatedProducerMethod().getJavaMember(), ppm.getBean());
     }
 
-    private void consumerTemplateBeans(@Observes ProcessProducerMethod<ConsumerTemplate, CdiCamelFactory> ppm) {
+    private void consumerTemplateBeans(@Observes
+    ProcessProducerMethod<ConsumerTemplate, CdiCamelFactory> ppm) {
         producerBeans.put(ppm.getAnnotatedProducerMethod().getJavaMember(), ppm.getBean());
     }
 
-    private void producerTemplateBeans(@Observes ProcessProducerMethod<ProducerTemplate, CdiCamelFactory> ppm) {
+    private void producerTemplateBeans(@Observes
+    ProcessProducerMethod<ProducerTemplate, CdiCamelFactory> ppm) {
         producerBeans.put(ppm.getAnnotatedProducerMethod().getJavaMember(), ppm.getBean());
     }
 
-    private void fluentProducerTemplateBeans(@Observes ProcessProducerMethod<FluentProducerTemplate, CdiCamelFactory> ppm) {
+    private void fluentProducerTemplateBeans(@Observes
+    ProcessProducerMethod<FluentProducerTemplate, CdiCamelFactory> ppm) {
         producerBeans.put(ppm.getAnnotatedProducerMethod().getJavaMember(), ppm.getBean());
     }
 
-    private void camelFactoryProducers(@Observes ProcessAnnotatedType<CdiCamelFactory> pat, BeanManager manager) {
+    private void camelFactoryProducers(@Observes
+    ProcessAnnotatedType<CdiCamelFactory> pat, BeanManager manager) {
         pat.setAnnotatedType(
                 new AnnotatedTypeDelegate<>(
                         pat.getAnnotatedType(), pat.getAnnotatedType().getMethods().stream()
@@ -203,7 +213,8 @@ public class CdiCamelExtension implements Extension {
                                 .collect(toSet())));
     }
 
-    private <T extends CamelEvent> void camelEventNotifiers(@Observes ProcessObserverMethod<T, ?> pom) {
+    private <T extends CamelEvent> void camelEventNotifiers(@Observes
+    ProcessObserverMethod<T, ?> pom) {
         // Only activate Camel event notifiers for explicit Camel event observers, that is, an observer method for a super type won't activate notifiers.
         Type type = pom.getObserverMethod().getObservedType();
         // Camel events are raw types
@@ -220,15 +231,18 @@ public class CdiCamelExtension implements Extension {
         }
     }
 
-    private void beans(@Observes ProcessProducerField<?, ?> pb) {
+    private void beans(@Observes
+    ProcessProducerField<?, ?> pb) {
         cdiBeans.add(pb.getBean());
     }
 
-    private void beans(@Observes ProcessProducerMethod<?, ?> pb) {
+    private void beans(@Observes
+    ProcessProducerMethod<?, ?> pb) {
         cdiBeans.add(pb.getBean());
     }
 
-    private void beans(@Observes ProcessBean<?> pb, BeanManager manager) {
+    private void beans(@Observes
+    ProcessBean<?> pb, BeanManager manager) {
         cdiBeans.add(pb.getBean());
         // Lookup for CDI event endpoint injection points
         pb.getBean().getInjectionPoints().stream()
@@ -242,7 +256,8 @@ public class CdiCamelExtension implements Extension {
                 });
     }
 
-    private void afterBeanDiscovery(@Observes AfterBeanDiscovery abd, BeanManager manager) {
+    private void afterBeanDiscovery(@Observes
+    AfterBeanDiscovery abd, BeanManager manager) {
         // The set of extra Camel CDI beans
         Set<SyntheticBean<?>> extraBeans = new HashSet<>();
 
@@ -365,7 +380,8 @@ public class CdiCamelExtension implements Extension {
                 bean -> "CdiCamelContext bean with qualifiers " + bean.getQualifiers());
     }
 
-    private void afterDeploymentValidation(@Observes AfterDeploymentValidation adv, BeanManager manager) {
+    private void afterDeploymentValidation(@Observes
+    AfterDeploymentValidation adv, BeanManager manager) {
         // Send event for Camel CDI configuration
         manager.fireEvent(configuration);
         configuration.unmodifiable();

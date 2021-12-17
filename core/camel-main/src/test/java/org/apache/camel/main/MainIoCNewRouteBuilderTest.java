@@ -95,7 +95,8 @@ public class MainIoCNewRouteBuilderTest {
     public static class MyRouteBuilder extends RouteBuilder {
 
         @BindToRegistry("bar")
-        public MyBar createBar(@PropertyInject("hello") String hello) {
+        public MyBar createBar(@PropertyInject("hello")
+        String hello) {
             return new MyBar(hello);
         }
 

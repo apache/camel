@@ -48,7 +48,8 @@ public class TempReplyToIssueTest extends CamelTestSupport {
     final Destination jmsReplyTo,
             @Header("JMSCorrelationID")
             final String id,
-            @Body String body, Exchange exchange)
+            @Body
+            String body, Exchange exchange)
             throws Exception {
         assertNotNull(jmsReplyTo);
         assertTrue(jmsReplyTo.toString().startsWith("temp-queue"), "Should be a temp queue");

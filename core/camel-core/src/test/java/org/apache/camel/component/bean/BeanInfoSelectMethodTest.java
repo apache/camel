@@ -78,11 +78,14 @@ public class BeanInfoSelectMethodTest extends ContextTestSupport {
             return "Exception";
         }
 
-        public String handleFailure(@Body String order, @ExchangeException IllegalArgumentException e) {
+        public String handleFailure(@Body
+        String order, @ExchangeException
+        IllegalArgumentException e) {
             return "Failure";
         }
 
-        public String handleOrder(@Body String order) {
+        public String handleOrder(@Body
+        String order) {
             return "Order";
         }
     }

@@ -70,7 +70,8 @@ public class MainIoCBeanConfigInjectMapTest {
     public static class MyRouteBuilder extends RouteBuilder {
 
         @BindToRegistry("bar")
-        public MyBar createBar(@BeanConfigInject("bar") Map config) {
+        public MyBar createBar(@BeanConfigInject("bar")
+        Map config) {
             assertEquals(2, config.size());
             assertNull(config.get("foo"));
 

@@ -62,7 +62,8 @@ public class NoTCCLSetTest {
         assertThat(classLoaders.iterator().next(), is(CamelContext.class.getClassLoader()));
     }
 
-    private void configuration(@Observes CdiCamelConfiguration configuration) {
+    private void configuration(@Observes
+    CdiCamelConfiguration configuration) {
         // Nullify TCCL before CamelContext creation
         Thread.currentThread().setContextClassLoader(null);
     }

@@ -12,7 +12,7 @@ you to combine a number of messages together into a single message.
 
 image::eip/Aggregator.gif[image]
 
-A correlation xref:latest@manual:ROOT:expression.adoc[Expression] is used to determine the
+A correlation xref:manual:ROOT:expression.adoc[Expression] is used to determine the
 messages which should be aggregated together. If you want to aggregate
 all messages into a single message, just use a constant expression. An
 AggregationStrategy is used to combine all the message exchanges for a
@@ -115,7 +115,7 @@ class ArrayListAggregationStrategy implements AggregationStrategy {
 
 == About completion
 
-When aggregation xref:latest@manual:ROOT:exchange.adoc[Exchange]s at some point you need to
+When aggregation xref:manual:ROOT:exchange.adoc[Exchange]s at some point you need to
 indicate that the aggregated exchanges is complete, so they can be send
 out of the aggregator. Camel allows you to indicate completion in
 various ways as follows:
@@ -127,7 +127,7 @@ key within the period.
 exchanges are completed.
 * completionSize - Is a number indicating that after X aggregated
 exchanges it's complete.
-* completionPredicate - Runs a xref:latest@manual:ROOT:predicate.adoc[Predicate] when a new
+* completionPredicate - Runs a xref:manual:ROOT:predicate.adoc[Predicate] when a new
 exchange is aggregated to determine if we are complete or not.
 The configured aggregationStrategy can implement the
 Predicate interface and will be used as the completionPredicate if no
@@ -136,7 +136,7 @@ override the `preComplete` method and will be used as
 the completionPredicate in pre-complete check mode. See further below
 for more details.
 * completionFromBatchConsumer - Special option for
-xref:latest@manual:ROOT:batch-consumer.adoc[Batch Consumer] which allows you to complete
+xref:manual:ROOT:batch-consumer.adoc[Batch Consumer] which allows you to complete
 when all the messages from the batch has been aggregated.
 * forceCompletionOnStop - Indicates to complete all current
 aggregated exchanges when the context is stopped
@@ -156,9 +156,9 @@ aggregator. If not provided Camel will thrown an Exception on startup.
 == Pre-completion mode
 
 There can be use-cases where you want the incoming
-xref:latest@manual:ROOT:exchange.adoc[Exchange] to determine if the correlation group
+xref:manual:ROOT:exchange.adoc[Exchange] to determine if the correlation group
 should pre-complete, and then the incoming
-xref:latest@manual:ROOT:exchange.adoc[Exchange] is starting a new group from scratch. o
+xref:manual:ROOT:exchange.adoc[Exchange] is starting a new group from scratch. o
 determine this the `AggregationStrategy` must override the `canPreComplete` method
 which has to return `true`.
 
@@ -193,7 +193,7 @@ consumer etc)
 The aggregator provides a pluggable repository which you can implement
 your own `org.apache.camel.spi.AggregationRepository`. +
  If you need persistent repository then you can use either Camel
-xref:components:others:leveldb.adoc[LevelDB], or xref:components::sql-component.adoc[SQL Component] components.
+xref:components:others:leveldb.adoc[LevelDB], or xref:ROOT:sql-component.adoc[SQL Component] components.
 
 == Using TimeoutAwareAggregationStrategy
 
@@ -558,7 +558,7 @@ without using POJOs then you may have `null` as `oldExchange` or
 Aggregate EIP will invoke the
 `AggregationStrategy` with `oldExchange` as null, for the first
 Exchange incoming to the aggregator. And then for
-subsequent xref:latest@manual:ROOT:exchange.adoc[Exchange]s then `oldExchange` and
+subsequent xref:manual:ROOT:exchange.adoc[Exchange]s then `oldExchange` and
 `newExchange` parameters are both not null.
 
 Example with Content Enricher EIP and no data

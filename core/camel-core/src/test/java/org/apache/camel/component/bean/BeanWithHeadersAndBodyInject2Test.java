@@ -114,7 +114,8 @@ public class BeanWithHeadersAndBodyInject2Test extends ContextTestSupport {
         public Object body;
         public List<User> users;
 
-        public void myMethod(@Header(value = "users") List<User> users, Object body) {
+        public void myMethod(@Header(value = "users")
+        List<User> users, Object body) {
             LOG.info("myMethod() method called on " + this);
             LOG.info(" users " + users);
             this.body = body;

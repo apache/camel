@@ -97,7 +97,8 @@ public class BeanTracingTest extends CamelAwsXRayTestSupport {
     public static class TraceBean {
 
         @Handler
-        public String convertBodyToUpperCase(@Body String body) {
+        public String convertBodyToUpperCase(@Body
+        String body) {
             String converted = body.toUpperCase();
             AWSXRay.getCurrentSegment().putAnnotation("body", converted);
             AWSXRay.getCurrentSegment().putMetadata("originBody", body);

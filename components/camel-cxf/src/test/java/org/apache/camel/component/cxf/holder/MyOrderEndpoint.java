@@ -29,6 +29,8 @@ public interface MyOrderEndpoint {
 
     @RequestWrapper(className = "org.apache.camel.component.cxf.holder.MyOrderType")
     String mySecureOrder(
-            @WebParam(name = "iAmount") int iAmount,
-            @WebParam(mode = WebParam.Mode.INOUT, name = "ENVELOPE_HEADER", header = true) Holder<String> envelopeHeader);
+            @WebParam(name = "iAmount")
+            int iAmount,
+            @WebParam(mode = WebParam.Mode.INOUT, name = "ENVELOPE_HEADER", header = true)
+            Holder<String> envelopeHeader);
 }

@@ -65,8 +65,10 @@ public class ProduceTemplateTest {
     @Test
     @InSequence(2)
     public void sendMessageToInbound(
-            @Uri("direct:inbound") ProducerTemplate in,
-            @Uri("mock:outbound") MockEndpoint out)
+            @Uri("direct:inbound")
+            ProducerTemplate in,
+            @Uri("mock:outbound")
+            MockEndpoint out)
             throws InterruptedException {
         out.expectedMessageCount(1);
         out.expectedBodiesReceived("test-processed");

@@ -28,7 +28,8 @@ public class PropertyInjectBean {
     private String property;
 
     @Handler
-    public void process(@Headers Map<String, Object> headers) {
+    public void process(@Headers
+    Map<String, Object> headers) {
         headers.put("header", property);
     }
 

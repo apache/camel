@@ -47,7 +47,8 @@ final class CamelCdiTestExtension implements Extension {
      *
      * @see Beans
      */
-    private <T> void alternatives(@Observes @WithAnnotations(Alternative.class) ProcessAnnotatedType<T> pat) {
+    private <T> void alternatives(@Observes @WithAnnotations(Alternative.class)
+    ProcessAnnotatedType<T> pat) {
         AnnotatedType<T> type = pat.getAnnotatedType();
 
         if (!Arrays.asList(beans.alternatives()).contains(type.getJavaClass())) {

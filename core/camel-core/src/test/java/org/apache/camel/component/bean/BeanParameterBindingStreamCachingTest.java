@@ -46,7 +46,9 @@ public class BeanParameterBindingStreamCachingTest extends ContextTestSupport {
 
     public static class Foo {
 
-        public static String hello(@Simple("${body}") String body, @Simple("${body}") String body2) {
+        public static String hello(@Simple("${body}")
+        String body, @Simple("${body}")
+        String body2) {
             // we should be able to read the stream multiple times
             return body.toLowerCase() + body2.toUpperCase();
         }

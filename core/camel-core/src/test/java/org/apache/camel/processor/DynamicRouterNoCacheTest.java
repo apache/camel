@@ -70,7 +70,8 @@ public class DynamicRouterNoCacheTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:a", body, "recipientListHeader", "mock:x,mock:y,mock:z");
     }
 
-    public String slip(@Headers Map headers) {
+    public String slip(@Headers
+    Map headers) {
         String header = (String) headers.get("recipientListHeader");
         if (ObjectHelper.isEmpty(header)) {
             return null;

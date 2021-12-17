@@ -105,7 +105,8 @@ public class ErrorTest extends CamelAwsXRayTestSupport {
     public static class TraceBean {
 
         @Handler
-        public String convertBodyToUpperCase(@Body String body) throws Exception {
+        public String convertBodyToUpperCase(@Body
+        String body) throws Exception {
             throw new Exception("test");
         }
 

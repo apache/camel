@@ -202,7 +202,8 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
      * @param  predicate predicate that determines true or false
      * @return           the builder
      */
-    public OnCompletionDefinition onWhen(@AsPredicate Predicate predicate) {
+    public OnCompletionDefinition onWhen(@AsPredicate
+    Predicate predicate) {
         setOnWhen(new WhenDefinition(predicate));
         return this;
     }

@@ -7,7 +7,7 @@ patterns] by using the `JMSReplyTo` header.
 
 image::eip/ReturnAddressSolution.gif[image]
 
-For example when using xref:components::jms-component.adoc[JMS] with InOut the component will
+For example when using xref:ROOT:jms-component.adoc[JMS] with InOut the component will
 by default return to the address given in `JMSReplyTo`.
 
 *Requestor Code*

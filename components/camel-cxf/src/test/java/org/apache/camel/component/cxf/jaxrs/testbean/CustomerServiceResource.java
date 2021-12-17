@@ -30,7 +30,8 @@ public interface CustomerServiceResource {
 
     @GET
     @Path("/customers/{id}/")
-    Customer getCustomer(@PathParam("id") String id);
+    Customer getCustomer(@PathParam("id")
+    String id);
 
     @PUT
     @Path("/customers/")
@@ -45,7 +46,8 @@ public interface CustomerServiceResource {
             "application/xml", "text/plain",
             "application/json" })
     Object invoke(
-            @PathParam("id") String id,
+            @PathParam("id")
+            String id,
             String payload);
 }
 // END SNIPPET: example

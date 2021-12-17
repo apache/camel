@@ -30,13 +30,17 @@ public class MockLoadBalancingPolicy extends DefaultLoadBalancingPolicy {
 
     public static boolean used;
 
-    public MockLoadBalancingPolicy(@NonNull DriverContext context, @NonNull String profileName) {
+    public MockLoadBalancingPolicy(@NonNull
+    DriverContext context, @NonNull
+    String profileName) {
         super(context, profileName);
     }
 
     @NonNull
     @Override
-    public Queue<Node> newQueryPlan(@Nullable Request request, @Nullable Session session) {
+    public Queue<Node> newQueryPlan(@Nullable
+    Request request, @Nullable
+    Session session) {
         MockLoadBalancingPolicy.used = true;
         return super.newQueryPlan(request, session);
     }

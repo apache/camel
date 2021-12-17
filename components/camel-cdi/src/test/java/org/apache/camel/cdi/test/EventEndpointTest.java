@@ -215,31 +215,38 @@ public class EventEndpointTest {
 
         private final List<Long> barQualifierEvents = new ArrayList<>();
 
-        void collectObjectEvents(@Observes Object event) {
+        void collectObjectEvents(@Observes
+        Object event) {
             objectEvents.add(event);
         }
 
-        void collectStringEvents(@Observes String event) {
+        void collectStringEvents(@Observes
+        String event) {
             stringEvents.add(event);
         }
 
-        void collectStringPayloadEvents(@Observes EventPayloadString event) {
+        void collectStringPayloadEvents(@Observes
+        EventPayloadString event) {
             stringPayloadEvents.add(event);
         }
 
-        void collectIntegerPayloadEvents(@Observes EventPayloadInteger event) {
+        void collectIntegerPayloadEvents(@Observes
+        EventPayloadInteger event) {
             integerPayloadEvents.add(event);
         }
 
-        void collectDefaultQualifierEvents(@Observes @Default Object event) {
+        void collectDefaultQualifierEvents(@Observes @Default
+        Object event) {
             defaultQualifierEvents.add(event);
         }
 
-        void collectFooQualifierEvents(@Observes @FooQualifier Long event) {
+        void collectFooQualifierEvents(@Observes @FooQualifier
+        Long event) {
             fooQualifierEvents.add(event);
         }
 
-        void collectBarQualifierEvents(@Observes @BarQualifier Long event) {
+        void collectBarQualifierEvents(@Observes @BarQualifier
+        Long event) {
             barQualifierEvents.add(event);
         }
 

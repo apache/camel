@@ -248,11 +248,13 @@ public class BeanOverloadedMethodTest extends ContextTestSupport {
             return "Hello " + name;
         }
 
-        public String hello(String name, @Header("country") String country) {
+        public String hello(String name, @Header("country")
+        String country) {
             return "Hello " + name + " you are from " + country;
         }
 
-        public String times(String name, @Header("times") int times) {
+        public String times(String name, @Header("times")
+        int times) {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < times; i++) {
                 sb.append(name);
@@ -260,7 +262,8 @@ public class BeanOverloadedMethodTest extends ContextTestSupport {
             return sb.toString();
         }
 
-        public String times(byte[] data, @Header("times") int times) {
+        public String times(byte[] data, @Header("times")
+        int times) {
             String s = new String(data);
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < times; i++) {

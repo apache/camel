@@ -86,7 +86,8 @@ public class PropertyInjectAnnotationParameterTest extends ContextTestSupport {
 
     public static final class MyBean {
 
-        public String callA(@PropertyInject("greeting") String greeting, String body) {
+        public String callA(@PropertyInject("greeting")
+        String greeting, String body) {
             return greeting + " " + body;
         }
 
@@ -94,7 +95,8 @@ public class PropertyInjectAnnotationParameterTest extends ContextTestSupport {
 
     public static final class MyOtherBean {
 
-        public String callA(@PropertyInject(value = "bye", defaultValue = "Goodbye") String bye, String body) {
+        public String callA(@PropertyInject(value = "bye", defaultValue = "Goodbye")
+        String bye, String body) {
             return bye + " " + body;
         }
 
@@ -102,7 +104,8 @@ public class PropertyInjectAnnotationParameterTest extends ContextTestSupport {
 
     public static final class MyCounterBean {
 
-        public String callA(@PropertyInject("times") int times, String body) {
+        public String callA(@PropertyInject("times")
+        int times, String body) {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < times; i++) {
                 sb.append(body);

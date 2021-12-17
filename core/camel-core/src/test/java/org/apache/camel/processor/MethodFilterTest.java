@@ -64,7 +64,8 @@ public class MethodFilterTest extends ContextTestSupport {
 
     // START SNIPPET: filter
     public static class MyBean {
-        public boolean matches(@Header("foo") String location) {
+        public boolean matches(@Header("foo")
+        String location) {
             return "London".equals(location);
         }
     }

@@ -51,7 +51,8 @@ public class CxfRsCamelTransportTest extends CamelSpringTestSupport {
         @Path("/hello/{name}")
         @Consumes("text/plain")
         @Produces("text/plain")
-        String hello(@PathParam("name") String name);
+        String hello(@PathParam("name")
+        String name);
     }
 
     @Path("/greeting")
@@ -62,7 +63,8 @@ public class CxfRsCamelTransportTest extends CamelSpringTestSupport {
         @Path("/hello/{name}")
         @Consumes("text/plain")
         @Produces("text/plain")
-        public String hello(@PathParam("name") String name) {
+        public String hello(@PathParam("name")
+        String name) {
             return String.format("Hello, %s!", name);
         }
     }

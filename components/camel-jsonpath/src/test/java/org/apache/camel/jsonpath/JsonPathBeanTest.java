@@ -62,9 +62,12 @@ public class JsonPathBeanTest extends CamelTestSupport {
     protected static class FullNameBean {
         // middle name is optional
         public static String getName(
-                @JsonPath("person.firstname") String first,
-                @JsonPath(value = "person.middlename", options = Option.SUPPRESS_EXCEPTIONS) String middle,
-                @JsonPath("person.lastname") String last) {
+                @JsonPath("person.firstname")
+                String first,
+                @JsonPath(value = "person.middlename", options = Option.SUPPRESS_EXCEPTIONS)
+                String middle,
+                @JsonPath("person.lastname")
+                String last) {
             if (middle != null) {
                 return first + " " + middle + " " + last;
             }

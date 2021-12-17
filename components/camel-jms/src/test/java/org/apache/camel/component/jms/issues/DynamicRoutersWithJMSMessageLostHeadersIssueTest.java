@@ -93,7 +93,8 @@ public class DynamicRoutersWithJMSMessageLostHeadersIssueTest extends CamelTestS
 
     public static class DynamicRouter {
 
-        public String dynamicRoute(Exchange exchange, @Header(Exchange.SLIP_ENDPOINT) String previous) {
+        public String dynamicRoute(Exchange exchange, @Header(Exchange.SLIP_ENDPOINT)
+        String previous) {
             if (previous == null) {
                 return "file://target/outbox";
             } else {

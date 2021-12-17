@@ -70,7 +70,8 @@ public class BeanWithExchangeExceptionAnnotationTest extends ContextTestSupport 
             throw new MyCustomException("I'm being thrown!!");
         }
 
-        public void handleException(@ExchangeException Exception exception) {
+        public void handleException(@ExchangeException
+        Exception exception) {
             assertNotNull(exception);
             assertEquals("I'm being thrown!!", exception.getMessage());
         }

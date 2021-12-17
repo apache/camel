@@ -119,7 +119,9 @@ public class DynamicRouterWithInterceptorTest extends ContextTestSupport {
         };
     }
 
-    public String slip(@Body String body, @Header(Exchange.SLIP_ENDPOINT) String previous) {
+    public String slip(@Body
+    String body, @Header(Exchange.SLIP_ENDPOINT)
+    String previous) {
         if (previous == null) {
             return "direct:foo";
         } else if ("Bye World".equals(body) && "direct://foo".equals(previous)) {

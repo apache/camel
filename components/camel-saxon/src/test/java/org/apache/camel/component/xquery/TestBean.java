@@ -19,7 +19,8 @@ package org.apache.camel.component.xquery;
 public class TestBean {
     private String subject;
 
-    public void onMethod(@XQuery("/*/@subject") String subject) {
+    public void onMethod(@XQuery("/*/@subject")
+    String subject) {
         this.subject = subject;
     }
 

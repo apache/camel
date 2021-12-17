@@ -48,7 +48,9 @@ public class JmsRequestReplyManualReplyTest extends CamelTestSupport {
     }
 
     @Consume("activemq:queue:foo")
-    public void doSomething(@Header("JMSReplyTo") Destination jmsReplyTo, @Body String body) throws Exception {
+    public void doSomething(@Header("JMSReplyTo")
+    Destination jmsReplyTo, @Body
+    String body) throws Exception {
         assertEquals("Hello World", body);
 
         String endpointName = "activemq:" + jmsReplyTo.toString();

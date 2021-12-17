@@ -82,7 +82,9 @@ public class SoroushBotWS {
     @GET
     @Path("{token}/getMessage")
     @Produces(MediaType.SERVER_SENT_EVENTS)
-    public void getMessage(@PathParam("token") String token, @Context SseEventSink sink) {
+    public void getMessage(@PathParam("token")
+    String token, @Context
+    SseEventSink sink) {
         int messageCount = getNumberOfMessage(token);
         int delay = getMessageDelay(token);
         LogManager.getLogger().info("new connection for getting " + messageCount + " message");
@@ -126,7 +128,8 @@ public class SoroushBotWS {
 
     @POST
     @Path("{token}/sendMessage")
-    public Response sendMessage(SoroushMessage soroushMessage, @PathParam("token") String token) {
+    public Response sendMessage(SoroushMessage soroushMessage, @PathParam("token")
+    String token) {
         String tokenLower = token.toLowerCase();
         Scanner s = new Scanner(tokenLower);
         if (s.next().equals("retry")) {
@@ -146,9 +149,12 @@ public class SoroushBotWS {
     @Path("{token}/uploadFile")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response uploadFile(
-            @PathParam("token") String token,
-            @FormDataParam("file") InputStream fileInputStream,
-            @FormDataParam("file") FormDataContentDisposition fileMetaData)
+            @PathParam("token")
+            String token,
+            @FormDataParam("file")
+            InputStream fileInputStream,
+            @FormDataParam("file")
+            FormDataContentDisposition fileMetaData)
             throws IOException {
         String key = Integer.toString(random.nextInt());
         fileIdToContent.put(key, new String(IOUtils.readFully(fileInputStream, -1, false)));
@@ -158,7 +164,9 @@ public class SoroushBotWS {
     @GET
     @Path("{token}/downloadFile/{key}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public Response downloadFile(@PathParam("token") String token, @PathParam("key") String key) {
+    public Response downloadFile(@PathParam("token")
+    String token, @PathParam("key")
+    String key) {
         String content = fileIdToContent.get(key);
         if (content == null) {
             return Response.status(404).build();

@@ -38,11 +38,13 @@ public class ChoiceWithTranfromTest extends ContextTestSupport {
     }
 
     public static class MyBean {
-        public String processRejectedMessage(@Body String message) {
+        public String processRejectedMessage(@Body
+        String message) {
             return "Rejecting " + message;
         }
 
-        public String processMessage(@Body String message) {
+        public String processMessage(@Body
+        String message) {
             return "Processing " + message;
         }
     }

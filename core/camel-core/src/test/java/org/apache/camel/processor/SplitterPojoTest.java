@@ -118,7 +118,9 @@ public class SplitterPojoTest extends ContextTestSupport {
          * @param  body   the payload of the incoming message
          * @return        a list containing each part splitted
          */
-        public List<Message> splitMessage(@Header(value = "user") String header, @Body String body, CamelContext camelContext) {
+        public List<Message> splitMessage(@Header(value = "user")
+        String header, @Body
+        String body, CamelContext camelContext) {
             // we can leverage the Parameter Binding Annotations
             // http://camel.apache.org/parameter-binding-annotations.html
             // to access the message header and body at same time,

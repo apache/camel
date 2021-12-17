@@ -64,7 +64,8 @@ public class BodyAnnotationToDisambiguateMethodsTest extends ContextTestSupport 
             fail("bar() called with: " + body);
         }
 
-        public void foo(@Body String body) {
+        public void foo(@Body
+        String body) {
             this.body = body;
             LOG.info("foo() method called on " + this);
         }

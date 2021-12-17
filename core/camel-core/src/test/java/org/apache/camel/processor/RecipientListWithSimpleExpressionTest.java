@@ -69,7 +69,8 @@ public class RecipientListWithSimpleExpressionTest extends ContextTestSupport {
     public static class MyBeanRouter {
 
         @org.apache.camel.RecipientList
-        public String route(@Header("queue") String queue) {
+        public String route(@Header("queue")
+        String queue) {
             return "mock:" + queue;
         }
     }

@@ -32,7 +32,8 @@ public class ConsumeMethodBean {
     private ProducerTemplate producer;
 
     @Consume("seda:inbound")
-    public void consume(@Body String body) {
+    public void consume(@Body
+    String body) {
         producer.sendBody(body);
     }
 }

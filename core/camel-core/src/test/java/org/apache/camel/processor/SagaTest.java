@@ -156,7 +156,8 @@ public class SagaTest extends ContextTestSupport {
             this.totalCredit = totalCredit;
         }
 
-        public synchronized void reserveCredit(String id, @Header("amount") int amount) {
+        public synchronized void reserveCredit(String id, @Header("amount")
+        int amount) {
             int credit = getCredit();
             if (amount > credit) {
                 throw new IllegalStateException("Insufficient credit");

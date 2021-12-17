@@ -22,7 +22,8 @@ public class AutowireConstructorBean {
 
     private final MyBeanCounter counter;
 
-    public AutowireConstructorBean(@Autowired MyBeanCounter counter) {
+    public AutowireConstructorBean(@Autowired
+    MyBeanCounter counter) {
         this.counter = counter;
     }
 

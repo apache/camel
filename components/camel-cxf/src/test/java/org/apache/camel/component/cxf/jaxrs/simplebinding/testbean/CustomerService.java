@@ -35,18 +35,24 @@ public interface CustomerService {
 
     @GET
     @Path("/customers/{id}/")
-    Customer getCustomer(@PathParam("id") String id, @QueryParam("test") String test);
+    Customer getCustomer(@PathParam("id")
+    String id, @QueryParam("test")
+    String test);
 
     @PUT
     @Path("/customers/{id}")
-    Response updateCustomer(Customer customer, @PathParam("id") String id);
+    Response updateCustomer(Customer customer, @PathParam("id")
+    String id);
 
     @POST
     @Path("/customers/")
-    Response newCustomer(Customer customer, @PathParam("type") String type, @QueryParam("age") int age);
+    Response newCustomer(Customer customer, @PathParam("type")
+    String type, @QueryParam("age")
+    int age);
 
     @Path("/customers/vip/{status}")
-    VipCustomerResource vipCustomer(@PathParam("status") String status);
+    VipCustomerResource vipCustomer(@PathParam("status")
+    String status);
 
     @Consumes("image/jpeg")
     @POST

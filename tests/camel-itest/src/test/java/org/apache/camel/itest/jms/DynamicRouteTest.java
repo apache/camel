@@ -86,7 +86,8 @@ public class DynamicRouteTest extends CamelTestSupport {
     }
 
     public static class MyDynamicRouter {
-        public String route(String methodName, @Header(Exchange.SLIP_ENDPOINT) String previous) {
+        public String route(String methodName, @Header(Exchange.SLIP_ENDPOINT)
+        String previous) {
 
             if (previous != null && previous.startsWith("bean://myBean?method")) {
                 // we get the result here and stop routing

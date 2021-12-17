@@ -105,7 +105,8 @@ public class EIPTracingTest extends CamelAwsXRayTestSupport {
     public static class TraceBean {
 
         @Handler
-        public String convertBocyToUpperCase(@Body String body) {
+        public String convertBocyToUpperCase(@Body
+        String body) {
             String converted = body.toUpperCase();
             AWSXRay.getCurrentSegment().putAnnotation("body", converted);
             AWSXRay.getCurrentSegment().putMetadata("originBody", body);

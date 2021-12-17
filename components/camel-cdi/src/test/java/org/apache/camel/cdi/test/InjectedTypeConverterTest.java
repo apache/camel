@@ -80,8 +80,10 @@ public class InjectedTypeConverterTest {
 
     @Test
     public void sendMessageToInbound(
-            @Uri("direct:inbound") ProducerTemplate inbound,
-            @Uri("mock:outbound") MockEndpoint outbound)
+            @Uri("direct:inbound")
+            ProducerTemplate inbound,
+            @Uri("mock:outbound")
+            MockEndpoint outbound)
             throws InterruptedException {
         outbound.expectedMessageCount(1);
 

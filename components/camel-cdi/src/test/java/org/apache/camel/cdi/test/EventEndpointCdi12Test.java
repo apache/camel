@@ -211,31 +211,38 @@ public class EventEndpointCdi12Test {
 
         private final List<Long> barQualifierEvents = new ArrayList<>();
 
-        void collectObjectEvents(@Observes Object event) {
+        void collectObjectEvents(@Observes
+        Object event) {
             objectEvents.add(event);
         }
 
-        void collectStringEvents(@Observes String event) {
+        void collectStringEvents(@Observes
+        String event) {
             stringEvents.add(event);
         }
 
-        void collectStringPayloadEvents(@Observes EventPayload<String> event) {
+        void collectStringPayloadEvents(@Observes
+        EventPayload<String> event) {
             stringPayloadEvents.add(event);
         }
 
-        void collectIntegerPayloadEvents(@Observes EventPayload<Integer> event) {
+        void collectIntegerPayloadEvents(@Observes
+        EventPayload<Integer> event) {
             integerPayloadEvents.add(event);
         }
 
-        void collectDefaultQualifierEvents(@Observes @Default Object event) {
+        void collectDefaultQualifierEvents(@Observes @Default
+        Object event) {
             defaultQualifierEvents.add(event);
         }
 
-        void collectFooQualifierEvents(@Observes @FooQualifier Long event) {
+        void collectFooQualifierEvents(@Observes @FooQualifier
+        Long event) {
             fooQualifierEvents.add(event);
         }
 
-        void collectBarQualifierEvents(@Observes @BarQualifier Long event) {
+        void collectBarQualifierEvents(@Observes @BarQualifier
+        Long event) {
             barQualifierEvents.add(event);
         }
 

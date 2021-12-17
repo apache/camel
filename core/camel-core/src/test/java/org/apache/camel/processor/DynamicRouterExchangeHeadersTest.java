@@ -78,7 +78,8 @@ public class DynamicRouterExchangeHeadersTest extends ContextTestSupport {
      * @param  headers the message headers where we can store state between invocations
      * @return         endpoints to go, or <tt>null</tt> to indicate the end
      */
-    public String slip(String body, @Headers Map<String, Object> headers) {
+    public String slip(String body, @Headers
+    Map<String, Object> headers) {
         bodies.add(body);
 
         // get the state from the message headers and keep track how many times

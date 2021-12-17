@@ -57,7 +57,8 @@ public class DynamicRouter2Test extends ContextTestSupport {
      * @param  previous the previous slip
      * @return          endpoints to go, or <tt>null</tt> to indicate the end
      */
-    public String slip(String body, @Header(Exchange.SLIP_ENDPOINT) String previous) {
+    public String slip(String body, @Header(Exchange.SLIP_ENDPOINT)
+    String previous) {
         if (previous == null) {
             return "mock:a";
         } else if ("mock://a".equals(previous)) {

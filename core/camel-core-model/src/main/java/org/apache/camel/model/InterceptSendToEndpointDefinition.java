@@ -92,7 +92,8 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
      * @param  predicate the predicate
      * @return           the builder
      */
-    public InterceptSendToEndpointDefinition when(@AsPredicate Predicate predicate) {
+    public InterceptSendToEndpointDefinition when(@AsPredicate
+    Predicate predicate) {
         WhenDefinition when = new WhenDefinition(predicate);
         addOutput(when);
         return this;

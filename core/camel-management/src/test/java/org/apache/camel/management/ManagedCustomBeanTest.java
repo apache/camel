@@ -88,7 +88,8 @@ public class ManagedCustomBeanTest extends ManagementTestSupport {
             this.foo = foo;
         }
 
-        public String doSomething(String body, @Headers Map<Object, Object> headers) throws Exception {
+        public String doSomething(String body, @Headers
+        Map<Object, Object> headers) throws Exception {
             headers.put("foo", foo);
             return "Hello " + body;
         }

@@ -64,7 +64,8 @@ public class AtomEntrySortTest extends CamelTestSupport {
     }
 
     public static class MyBean {
-        public Date getPubDate(@Body Object body) {
+        public Date getPubDate(@Body
+        Object body) {
             Entry syndEntry = (Entry) body;
             return syndEntry.getUpdated();
         }

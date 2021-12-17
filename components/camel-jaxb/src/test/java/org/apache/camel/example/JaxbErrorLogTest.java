@@ -53,7 +53,8 @@ public class JaxbErrorLogTest extends CamelTestSupport {
 
     public static final class FailingBean {
         @Handler
-        public void handle(@Body CannotMarshal body) {
+        public void handle(@Body
+        CannotMarshal body) {
             if (body.getMessageNo() == 2) {
                 // fail on second message
                 throw new RuntimeException("Kaboom");

@@ -37,7 +37,8 @@ public class BodyInAggregatingStrategy implements AggregationStrategy {
     /**
      * An expression used to determine if the aggregation is complete
      */
-    public boolean isCompleted(@ExchangeProperty(Exchange.AGGREGATED_SIZE) Integer aggregated) {
+    public boolean isCompleted(@ExchangeProperty(Exchange.AGGREGATED_SIZE)
+    Integer aggregated) {
         if (aggregated == null) {
             return false;
         }

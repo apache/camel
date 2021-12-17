@@ -80,7 +80,8 @@ public class RoutingSlipDataModificationTest extends ContextTestSupport {
         public MyBean() {
         }
 
-        public String modifyData(@Body String body) {
+        public String modifyData(@Body
+        String body) {
             return body + body;
         }
     }

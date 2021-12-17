@@ -89,7 +89,8 @@ public class MainIoCNewRouteBuilderComplexTest {
         }
 
         @BindToRegistry("bar")
-        public MyBar createBar(@PropertyInject(value = "bye", defaultValue = "Hi") String hello, MyDude dude) {
+        public MyBar createBar(@PropertyInject(value = "bye", defaultValue = "Hi")
+        String hello, MyDude dude) {
             // should be invoked #2
             return new MyBar(hello + " " + dude.name);
         }

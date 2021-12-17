@@ -47,36 +47,58 @@ public interface CategoriesSPI {
     @Path("/v{apiVersion}/categories")
     @Produces(MediaType.APPLICATION_JSON)
     List<Category> list(
-            @PathParam("apiVersion") String apiVersion, @QueryParam("context") Context context,
-            @QueryParam("page") Integer page, @QueryParam("per_page") Integer perPage,
-            @QueryParam("search") String search, @QueryParam("exclude") List<Integer> exclude,
-            @QueryParam("include") List<Integer> include, @QueryParam("order") Order order,
-            @QueryParam("orderby") CategoryOrderBy orderBy, @QueryParam("hide_empty") Boolean hideEmpty,
-            @QueryParam("parent") Integer parent, @QueryParam("post") Integer post,
-            @QueryParam("slug") String slug);
+            @PathParam("apiVersion")
+            String apiVersion, @QueryParam("context")
+            Context context,
+            @QueryParam("page")
+            Integer page, @QueryParam("per_page")
+            Integer perPage,
+            @QueryParam("search")
+            String search, @QueryParam("exclude")
+            List<Integer> exclude,
+            @QueryParam("include")
+            List<Integer> include, @QueryParam("order")
+            Order order,
+            @QueryParam("orderby")
+            CategoryOrderBy orderBy, @QueryParam("hide_empty")
+            Boolean hideEmpty,
+            @QueryParam("parent")
+            Integer parent, @QueryParam("post")
+            Integer post,
+            @QueryParam("slug")
+            String slug);
 
     @GET
     @Path("/v{apiVersion}/categories/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     Category retrieve(
-            @PathParam("apiVersion") String apiVersion, @PathParam("id") int categoryId,
-            @QueryParam("context") Context context);
+            @PathParam("apiVersion")
+            String apiVersion, @PathParam("id")
+            int categoryId,
+            @QueryParam("context")
+            Context context);
 
     @POST
     @Path("/v{apiVersion}/categories/")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    Category create(@PathParam("apiVersion") String apiVersion, Category category);
+    Category create(@PathParam("apiVersion")
+    String apiVersion, Category category);
 
     @POST
     @Path("/v{apiVersion}/categories/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    Category update(@PathParam("apiVersion") String apiVersion, @PathParam("id") int categoryId, Category category);
+    Category update(@PathParam("apiVersion")
+    String apiVersion, @PathParam("id")
+    int categoryId, Category category);
 
     @DELETE
     @Path("/v{apiVersion}/categories/{id}")
     Category delete(
-            @PathParam("apiVersion") String apiVersion, @PathParam("id") int categoryId, @QueryParam("force") boolean force);
+            @PathParam("apiVersion")
+            String apiVersion, @PathParam("id")
+            int categoryId, @QueryParam("force")
+            boolean force);
 
 }

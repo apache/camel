@@ -84,7 +84,9 @@ public class PropertyInjectTest {
 
     @Test
     @InSequence(2)
-    public void sendMessageToInbound(@Uri("direct:in") ProducerTemplate in, @Uri("mock:out") MockEndpoint out)
+    public void sendMessageToInbound(@Uri("direct:in")
+    ProducerTemplate in, @Uri("mock:out")
+    MockEndpoint out)
             throws InterruptedException {
         out.expectedMessageCount(1);
         out.expectedBodiesReceived("test");

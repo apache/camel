@@ -80,7 +80,8 @@ public class ChoiceWhenBeanExpressionTest extends ContextTestSupport {
     }
 
     public static class MyBean {
-        public boolean isGradeA(@Body Student student) {
+        public boolean isGradeA(@Body
+        Student student) {
             return student.getGrade() >= 90;
         }
     }

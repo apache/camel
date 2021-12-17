@@ -22,7 +22,8 @@ import org.apache.camel.Header;
 
 public class BeanWithHeaderAnnotation {
 
-    public String hello(String body, @Header("foo") Document doc) {
+    public String hello(String body, @Header("foo")
+    Document doc) {
         return body;
     }
 }

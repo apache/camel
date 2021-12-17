@@ -30,22 +30,27 @@ public class MyBeanBindingConsumer {
     private ProducerTemplate template;
 
     @Consume("direct:startBeanExpression")
-    public void doSomethingBeanExpression(String payload, @Bean(ref = "myCounter") int count) {
+    public void doSomethingBeanExpression(String payload, @Bean(ref = "myCounter")
+    int count) {
         template.sendBodyAndHeader("mock:result", "Bye " + payload, "count", count);
     }
 
     @Consume("direct:startConstantExpression")
-    public void doSomethingConstantExpression(String payload, @Simple("5") int count) {
+    public void doSomethingConstantExpression(String payload, @Simple("5")
+    int count) {
         template.sendBodyAndHeader("mock:result", "Bye " + payload, "count", count);
     }
 
     @Consume("direct:startHeaderExpression")
-    public void doSomethingHeaderExpression(String payload, @Header("number") int count) {
+    public void doSomethingHeaderExpression(String payload, @Header("number")
+    int count) {
         template.sendBodyAndHeader("mock:result", "Bye " + payload, "count", count);
     }
 
     @Consume("direct:startMany")
-    public void doSomethingManyExpression(String payload, @Simple("5") int count, @Header("number") int number) {
+    public void doSomethingManyExpression(String payload, @Simple("5")
+    int count, @Header("number")
+    int number) {
         template.sendBodyAndHeader("mock:result", "Bye " + payload, "count", count * number);
     }
 

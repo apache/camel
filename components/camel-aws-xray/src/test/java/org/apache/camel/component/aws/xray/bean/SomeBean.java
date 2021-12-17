@@ -34,7 +34,8 @@ import org.apache.camel.component.aws.xray.XRayTracer;
 public class SomeBean {
 
     @Handler
-    public void doSomething(@Headers Map<String, Object> headers, CamelContext context) {
+    public void doSomething(@Headers
+    Map<String, Object> headers, CamelContext context) {
 
         ProducerTemplate template = context.createProducerTemplate();
         String body = "New exchange test";

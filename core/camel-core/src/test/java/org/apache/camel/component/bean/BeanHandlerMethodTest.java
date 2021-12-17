@@ -117,14 +117,16 @@ public class BeanHandlerMethodTest extends ContextTestSupport {
     public interface MyBaseInterface {
 
         @Handler
-        String hello(@Body String hi);
+        String hello(@Body
+        String hi);
 
     }
 
     public abstract static class MyAbstractBean implements MyBaseInterface {
 
         @Override
-        public String hello(@Body String hi) {
+        public String hello(@Body
+        String hi) {
             return "Hello " + hi;
         }
 
@@ -141,7 +143,8 @@ public class BeanHandlerMethodTest extends ContextTestSupport {
 
     public static class MyNoDummyBean {
 
-        public String hello(@Body String hi) {
+        public String hello(@Body
+        String hi) {
             return "Hello " + hi;
         }
 
@@ -187,7 +190,8 @@ public class BeanHandlerMethodTest extends ContextTestSupport {
             return "Hello " + hi;
         }
 
-        public String bye(@Body String input) {
+        public String bye(@Body
+        String input) {
             fail("Should not invoke me");
             return null;
         }
@@ -196,12 +200,17 @@ public class BeanHandlerMethodTest extends ContextTestSupport {
 
     public static class MyNoHandlerBean {
 
-        public String hello(@Body String input, @Header("name") String name, @Header("age") int age) {
+        public String hello(@Body
+        String input, @Header("name")
+        String name, @Header("age")
+        int age) {
             fail("Should not invoke me");
             return null;
         }
 
-        public String greeting(@Body String input, @Header("name") String name) {
+        public String greeting(@Body
+        String input, @Header("name")
+        String name) {
             fail("Should not invoke me");
             return null;
         }
@@ -221,7 +230,8 @@ public class BeanHandlerMethodTest extends ContextTestSupport {
         }
 
         @Handler
-        public String bye(@Body String input) {
+        public String bye(@Body
+        String input) {
             fail("Should not invoke me");
             return null;
         }

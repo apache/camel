@@ -63,7 +63,8 @@ public class BeanWithExpressionInjectionPredicateTest extends ContextTestSupport
         public String body;
         public boolean foo;
 
-        public void read(String body, @Simple("${header.foo} != null") boolean foo) {
+        public void read(String body, @Simple("${header.foo} != null")
+        boolean foo) {
             this.body = body;
             this.foo = foo;
         }

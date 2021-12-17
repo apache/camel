@@ -47,8 +47,10 @@ public class BeanWithXPathInjectionUsingResultTypeTest extends ContextTestSuppor
         public String abText;
 
         public void read(
-                @XPath("//a/b/text()") String ab,
-                @XPath(value = "concat('a',//a/b)", resultType = String.class) String abText) {
+                @XPath("//a/b/text()")
+                String ab,
+                @XPath(value = "concat('a',//a/b)", resultType = String.class)
+                String abText) {
             this.ab = ab;
             this.abText = abText;
         }

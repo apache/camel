@@ -34,7 +34,8 @@ public class CamelContextProducerMethod {
         return context;
     }
 
-    void stopContext(@Disposes CamelContext context) throws Exception {
+    void stopContext(@Disposes
+    CamelContext context) throws Exception {
         context.stop();
     }
 }

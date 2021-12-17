@@ -69,23 +69,28 @@ public class CamelEventNotifierTest {
     @ApplicationScoped
     private List<Class> firedEvents = new ArrayList<>();
 
-    private void onCamelContextStartingEvent(@Observes CamelContextStartingEvent event, List<Class> events) {
+    private void onCamelContextStartingEvent(@Observes
+    CamelContextStartingEvent event, List<Class> events) {
         events.add(CamelContextStartingEvent.class);
     }
 
-    private void onCamelContextStartedEvent(@Observes CamelContextStartedEvent event, List<Class> events) {
+    private void onCamelContextStartedEvent(@Observes
+    CamelContextStartedEvent event, List<Class> events) {
         events.add(CamelContextStartedEvent.class);
     }
 
-    private void onExchangeEvent(@Observes ExchangeEvent event, List<Class> events) {
+    private void onExchangeEvent(@Observes
+    ExchangeEvent event, List<Class> events) {
         events.add(event.getClass().getInterfaces()[0]);
     }
 
-    private void onCamelContextStoppingEvent(@Observes CamelContextStoppingEvent event, List<Class> events) {
+    private void onCamelContextStoppingEvent(@Observes
+    CamelContextStoppingEvent event, List<Class> events) {
         events.add(CamelContextStoppingEvent.class);
     }
 
-    private void onCamelContextStoppedEvent(@Observes CamelContextStoppedEvent event, List<Class> events) {
+    private void onCamelContextStoppedEvent(@Observes
+    CamelContextStoppedEvent event, List<Class> events) {
         events.add(CamelContextStoppedEvent.class);
     }
 

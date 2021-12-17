@@ -109,22 +109,29 @@ public class BeanWithAnnotationInheritedTest extends ContextTestSupport {
     }
 
     private interface I1 {
-        String m1(@Header("foo") String h1, @Header("bar") String h2);
+        String m1(@Header("foo")
+        String h1, @Header("bar")
+        String h2);
 
-        String m2(@Header("foo") String h1, String h2);
+        String m2(@Header("foo")
+        String h1, String h2);
     }
 
     private interface I2 {
-        String m2(String h1, @Header("bar") String h2);
+        String m2(String h1, @Header("bar")
+        String h2);
 
-        String m3(@Header("foo") String h1, String h2);
+        String m3(@Header("foo")
+        String h1, String h2);
 
-        String m4(@Header("foo") String h1, String h2);
+        String m4(@Header("foo")
+        String h1, String h2);
     }
 
     private abstract static class A implements I2 {
         @Override
-        public String m3(String h1, @Header("bar") String h2) {
+        public String m3(String h1, @Header("bar")
+        String h2) {
             return h1 + h2;
         }
     }
@@ -141,7 +148,8 @@ public class BeanWithAnnotationInheritedTest extends ContextTestSupport {
         }
 
         @Override
-        public String m4(String h1, @Header("bar") String h2) {
+        public String m4(String h1, @Header("bar")
+        String h2) {
             return h1 + h2;
         }
     }

@@ -108,7 +108,8 @@ public class TerserExpressionTest extends CamelTestSupport {
     }
 
     public class TerserBean {
-        public String patientId(@Hl7Terser(value = "PID-3-1") String patientId) {
+        public String patientId(@Hl7Terser(value = "PID-3-1")
+        String patientId) {
             return patientId;
         }
     }

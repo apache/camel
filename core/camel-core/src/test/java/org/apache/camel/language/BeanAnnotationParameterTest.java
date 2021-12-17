@@ -91,7 +91,8 @@ public class BeanAnnotationParameterTest extends ContextTestSupport {
 
     public static final class MyBean {
 
-        public String callA(@Bean(ref = "GreetingService", method = "english") String greeting, String body) {
+        public String callA(@Bean(ref = "GreetingService", method = "english")
+        String greeting, String body) {
             return greeting + " " + body;
         }
 

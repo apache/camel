@@ -69,12 +69,16 @@ public class FileBeanParameterBindingTest extends ContextTestSupport {
 
     public static class MyFooBean {
 
-        public void before(@Header("bar") Integer bar, @Header(Exchange.FILE_NAME) String name) {
+        public void before(@Header("bar")
+        Integer bar, @Header(Exchange.FILE_NAME)
+        String name) {
             assertNull(bar, "There should be no bar");
             assertEquals("hello.txt", name);
         }
 
-        public void after(@Header("bar") Integer bar, @Header(Exchange.FILE_NAME) String name) {
+        public void after(@Header("bar")
+        Integer bar, @Header(Exchange.FILE_NAME)
+        String name) {
             assertNotNull(bar, "There should be bar");
             assertEquals(123, bar.intValue());
             assertEquals("hello.txt", name);

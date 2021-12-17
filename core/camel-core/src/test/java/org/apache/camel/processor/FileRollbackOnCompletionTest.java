@@ -62,7 +62,8 @@ public class FileRollbackOnCompletionTest extends ContextTestSupport {
             return "Order confirmed: " + order;
         }
 
-        public void sendMail(String body, @Header("to") String to) {
+        public void sendMail(String body, @Header("to")
+        String to) {
             // simulate fatal error if we refer to a special no
             if (to.equals("FATAL")) {
                 throw new IllegalArgumentException("Simulated fatal error");

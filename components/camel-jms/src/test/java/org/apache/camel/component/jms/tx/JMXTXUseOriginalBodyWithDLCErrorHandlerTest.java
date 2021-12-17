@@ -102,7 +102,8 @@ public class JMXTXUseOriginalBodyWithDLCErrorHandlerTest extends JMXTXUseOrigina
 
     public static class FooBean {
         @Handler
-        public String process(@Body String body) {
+        public String process(@Body
+        String body) {
             return "oh no";
         }
     }

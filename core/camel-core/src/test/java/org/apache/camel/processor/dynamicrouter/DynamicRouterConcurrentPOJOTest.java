@@ -71,7 +71,8 @@ public class DynamicRouterConcurrentPOJOTest extends ContextTestSupport {
         }
 
         @DynamicRouter
-        public String route(@Header(Exchange.SLIP_ENDPOINT) String previous) {
+        public String route(@Header(Exchange.SLIP_ENDPOINT)
+        String previous) {
             if (previous == null) {
                 return target;
             } else {

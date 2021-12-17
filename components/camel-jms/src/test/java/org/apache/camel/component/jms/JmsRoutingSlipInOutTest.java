@@ -77,7 +77,8 @@ public class JmsRoutingSlipInOutTest extends CamelTestSupport {
 
     public static final class MyBean {
 
-        public void createSlip(@Headers Map<String, Object> headers) {
+        public void createSlip(@Headers
+        Map<String, Object> headers) {
             headers.put("mySlip", "activemq:queue:a,activemq:queue:b");
         }
 

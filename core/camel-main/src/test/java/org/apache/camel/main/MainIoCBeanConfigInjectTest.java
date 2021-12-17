@@ -87,7 +87,8 @@ public class MainIoCBeanConfigInjectTest {
     public static class MyRouteBuilder extends RouteBuilder {
 
         @BindToRegistry("bar")
-        public MyBar createBar(@BeanConfigInject("bar") MyBarConfig config) {
+        public MyBar createBar(@BeanConfigInject("bar")
+        MyBarConfig config) {
             String text = config.getName() + " (minimum age: " + config.getAge() + ")";
             return new MyBar(text);
         }

@@ -35,7 +35,8 @@ public class TestResource {
     @GET
     @Path("test/{param}")
     @Produces(MediaType.TEXT_PLAIN)
-    public Response test(@Min(7) @PathParam("param") int param) {
+    public Response test(@Min(7) @PathParam("param")
+    int param) {
         LOG.info("param: {}", param);
         return Response.ok().entity(param).build();
     }

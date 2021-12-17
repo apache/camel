@@ -47,7 +47,9 @@ public class JoorBeanTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    public static String priority(@Joor("((int) body) / 2 > 10") boolean high, @Header("user") String user) {
+    public static String priority(@Joor("((int) body) / 2 > 10")
+    boolean high, @Header("user")
+    String user) {
         if (high) {
             return "User " + user + " is a high roller";
         } else {

@@ -85,7 +85,8 @@ public class CharlesSplitUseBeanAsErrorHandlerIssueTest extends ContextTestSuppo
 
     public static class MyErrorHandlerBean {
 
-        public String handleError(String body, @ExchangeException Exception e) {
+        public String handleError(String body, @ExchangeException
+        Exception e) {
             return "Handled " + body + " Cause by " + e.getMessage();
         }
 

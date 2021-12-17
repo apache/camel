@@ -62,7 +62,8 @@ public class XmlServiceExporterTest {
     }
 
     @Test
-    public void invokeService(@Named("service") Service service) {
+    public void invokeService(@Named("service")
+    Service service) {
         String response = service.service("request");
         assertThat("Response is incorrect!", response,
                 is(equalTo("test response to [request]")));
