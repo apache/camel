@@ -17,6 +17,7 @@
 package org.apache.camel.component.salesforce;
 
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
@@ -53,6 +54,7 @@ import org.apache.camel.component.salesforce.dto.generated.Task;
 import org.apache.camel.component.salesforce.dto.generated.User;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.jsse.SSLContextParameters;
+import org.apache.commons.io.IOUtils;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.ContentResponse;
 import org.eclipse.jetty.client.api.Request;
@@ -203,6 +205,12 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
 
         merchandise = template().requestBody("direct:apexCallPatch", new MerchandiseRequest(merchandise), Merchandise__c.class);
         assertNotNull(merchandise);
+
+        Exchange exchange = new DefaultExchange(context);
+        template.send("direct:apexCallPostCustomError", exchange);
+        SalesforceException exception = exchange.getException(SalesforceException.class);
+        assertNotNull(exception);
+        assertEquals("test response", IOUtils.toString(exception.getResponseContent(), StandardCharsets.UTF_8));
     }
 
     @Test
@@ -804,6 +812,9 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
 
                 from("direct:apexCallPatch").to("salesforce:apexCall/Merchandise/"
                                                 + "?apexMethod=PATCH&sObjectClass=" + MerchandiseResponse.class.getName());
+
+                from("direct:apexCallPostCustomError").to("salesforce:apexCall/Merchandise/"
+                                                          + "?apexMethod=POST&sObjectClass=java.lang.String");
 
                 from("direct:createSObjectContinueOnException").onException(Exception.class).continued(true).end()
                         .to("salesforce:createSObject");
