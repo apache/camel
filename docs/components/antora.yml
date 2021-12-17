@@ -22,7 +22,7 @@
 name: components
 title: Camel Components
 version: 3.14.x
-display-version: 3.14.x
+display-version: 3.14.x (LTS)
 
 nav:
   - modules/ROOT/nav.adoc
