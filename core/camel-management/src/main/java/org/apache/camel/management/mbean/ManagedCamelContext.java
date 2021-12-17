@@ -47,6 +47,7 @@ import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.api.management.mbean.ManagedStepMBean;
 import org.apache.camel.model.Model;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RouteTemplatesDefinition;
@@ -436,7 +437,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
             return null;
         }
 
-        // use a routes definition to dump the routes
+        // use routes definition to dump the routes
         RoutesDefinition def = new RoutesDefinition();
         def.setRoutes(routes);
 
@@ -652,6 +653,68 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
     }
 
     @Override
+    public String dumpRoutesSourceLocationsAsXml() throws Exception {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<routeLocations>");
+
+        MBeanServer server = getContext().getManagementStrategy().getManagementAgent().getMBeanServer();
+        if (server != null) {
+            // gather all the routes for this CamelContext, which requires JMX
+            List<ManagedRouteMBean> routes = new ArrayList<>();
+            String prefix = getContext().getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
+            ObjectName query = ObjectName
+                    .getInstance(jmxDomain + ":context=" + prefix + getContext().getManagementName() + ",type=routes,*");
+            Set<ObjectName> names = server.queryNames(query, null);
+            for (ObjectName on : names) {
+                ManagedRouteMBean route
+                        = context.getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedRouteMBean.class);
+                routes.add(route);
+            }
+            routes.sort(new RouteMBeans());
+
+            List<ManagedProcessorMBean> processors = new ArrayList<>();
+            // gather all the processors for this CamelContext, which requires JMX
+            query = ObjectName
+                    .getInstance(jmxDomain + ":context=" + prefix + getContext().getManagementName() + ",type=processors,*");
+            names = server.queryNames(query, null);
+            for (ObjectName on : names) {
+                ManagedProcessorMBean processor
+                        = context.getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedProcessorMBean.class);
+                processors.add(processor);
+            }
+            processors.sort(new OrderProcessorMBeans());
+
+            // loop the routes, and append the node ids (via processor)
+            for (ManagedRouteMBean route : routes) {
+                // grab route consumer
+                RouteDefinition rd = context.adapt(ModelCamelContext.class).getRouteDefinition(route.getRouteId());
+                if (rd != null) {
+                    String id = rd.getRouteId();
+                    int line = rd.getInput().getLineNumber();
+                    String location = route.getSourceLocation() != null ? route.getSourceLocation() : "";
+                    sb.append("\n    <routeLocation")
+                            .append(String.format(
+                                    " routeId=\"%s\" id=\"%s\" index=\"%s\" sourceLocation=\"%s\" sourceLineNumber=\"%s\"/>",
+                                    route.getRouteId(), id, 0, location, line));
+                }
+                for (ManagedProcessorMBean processor : processors) {
+                    // the step must belong to this route
+                    if (route.getRouteId().equals(processor.getRouteId())) {
+                        int line = processor.getSourceLineNumber() != null ? processor.getSourceLineNumber() : -1;
+                        String location = route.getSourceLocation() != null ? route.getSourceLocation() : "";
+                        sb.append("\n    <routeLocation")
+                                .append(String.format(
+                                        " routeId=\"%s\" id=\"%s\" index=\"%s\" sourceLocation=\"%s\" sourceLineNumber=\"%s\"/>",
+                                        route.getRouteId(), processor.getProcessorId(), processor.getIndex(), location, line));
+                    }
+                }
+            }
+        }
+        sb.append("\n</routeLocations>");
+        return sb.toString();
+    }
+
+    @Override
     public boolean createEndpoint(String uri) throws Exception {
         if (context.hasEndpoint(uri) != null) {
             // endpoint already exists
@@ -730,6 +793,17 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         @Override
         public int compare(ManagedProcessorMBean o1, ManagedProcessorMBean o2) {
             return o1.getIndex().compareTo(o2.getIndex());
+        }
+    }
+
+    /**
+     * Used for sorting the routes mbeans accordingly to their ids.
+     */
+    private static final class RouteMBeans implements Comparator<ManagedRouteMBean> {
+
+        @Override
+        public int compare(ManagedRouteMBean o1, ManagedRouteMBean o2) {
+            return o1.getRouteId().compareToIgnoreCase(o2.getRouteId());
         }
     }
 

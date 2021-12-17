@@ -53,6 +53,7 @@ import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.api.management.mbean.ManagedStepMBean;
 import org.apache.camel.api.management.mbean.RouteError;
 import org.apache.camel.model.Model;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.spi.InflightRepository;
@@ -567,6 +568,56 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
 
         answer.append("</routeStat>");
         return answer.toString();
+    }
+
+    @Override
+    public String dumpRouteSourceLocationsAsXml() throws Exception {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<routeLocations>");
+
+        MBeanServer server = getContext().getManagementStrategy().getManagementAgent().getMBeanServer();
+        if (server != null) {
+            String prefix = getContext().getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
+            List<ManagedProcessorMBean> processors = new ArrayList<>();
+            // gather all the processors for this CamelContext, which requires JMX
+            ObjectName query = ObjectName
+                    .getInstance(jmxDomain + ":context=" + prefix + getContext().getManagementName() + ",type=processors,*");
+            Set<ObjectName> names = server.queryNames(query, null);
+            for (ObjectName on : names) {
+                ManagedProcessorMBean processor
+                        = context.getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedProcessorMBean.class);
+                // the processor must belong to this route
+                if (getRouteId().equals(processor.getRouteId())) {
+                    processors.add(processor);
+                }
+            }
+            processors.sort(new OrderProcessorMBeans());
+
+            // grab route consumer
+            RouteDefinition rd = context.adapt(ModelCamelContext.class).getRouteDefinition(route.getRouteId());
+            if (rd != null) {
+                String id = rd.getRouteId();
+                int line = rd.getInput().getLineNumber();
+                String location = getSourceLocation() != null ? getSourceLocation() : "";
+                sb.append("\n    <routeLocation")
+                        .append(String.format(
+                                " routeId=\"%s\" id=\"%s\" index=\"%s\" sourceLocation=\"%s\" sourceLineNumber=\"%s\"/>",
+                                route.getRouteId(), id, 0, location, line));
+            }
+            for (ManagedProcessorMBean processor : processors) {
+                // the step must belong to this route
+                if (route.getRouteId().equals(processor.getRouteId())) {
+                    int line = processor.getSourceLineNumber() != null ? processor.getSourceLineNumber() : -1;
+                    String location = getSourceLocation() != null ? getSourceLocation() : "";
+                    sb.append("\n    <routeLocation")
+                            .append(String.format(
+                                    " routeId=\"%s\" id=\"%s\" index=\"%s\" sourceLocation=\"%s\" sourceLineNumber=\"%s\"/>",
+                                    route.getRouteId(), processor.getProcessorId(), processor.getIndex(), location, line));
+                }
+            }
+        }
+        sb.append("\n</routeLocations>");
+        return sb.toString();
     }
 
     @Override

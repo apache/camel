@@ -333,16 +333,6 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
         return null;
     }
 
-    private static boolean isSerializable(Object obj) {
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream(512);
-        try (ObjectOutputStream out = new ObjectOutputStream(baos)) {
-            out.writeObject(obj);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
     private String dumpExchangePropertiesAsXml(String id) {
         StringBuilder sb = new StringBuilder();
         sb.append("  <exchangeProperties>\n");
@@ -375,6 +365,16 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
         }
         sb.append("  </exchangeProperties>");
         return sb.toString();
+    }
+
+    private static boolean isSerializable(Object obj) {
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream(512);
+        try (ObjectOutputStream out = new ObjectOutputStream(baos)) {
+            out.writeObject(obj);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
 }

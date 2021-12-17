@@ -211,6 +211,9 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     @ManagedOperation(description = "Dumps the route templates as XML")
     String dumpRouteTemplatesAsXml() throws Exception;
 
+    @ManagedOperation(description = "Dumps all routes with mappings between node ids and their source location/line-number (currently only XML and YAML routes supported) as XML")
+    String dumpRoutesSourceLocationsAsXml() throws Exception;
+
     /**
      * Creates the endpoint by the given uri
      *
