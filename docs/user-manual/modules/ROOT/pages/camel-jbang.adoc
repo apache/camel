@@ -59,13 +59,13 @@ In order to do so, write a YAML-based file with the `route`, the `steps` and the
       parameters:
         period: 1000
         message: "Hello Camel JBang"
-    steps:
-      - log: "${body}"
-      - to:
-          uri: "kamelet:jms-amqp-10-sink"
-          parameters:
-            remoteURI: amqp://localhost:61616
-            destinationName: test-queue
+      steps:
+        - log: "${body}"
+        - to:
+            uri: "kamelet:jms-amqp-10-sink"
+            parameters:
+              remoteURI: amqp://localhost:61616
+              destinationName: test-queue
 ----
 
 Execute the following command to run this route:
