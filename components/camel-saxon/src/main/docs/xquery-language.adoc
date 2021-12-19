@@ -5,7 +5,6 @@
 :description: Evaluates an XQuery expressions against an XML payload.
 :since: 1.0
 :supportlevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/xquery.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: saxon
 

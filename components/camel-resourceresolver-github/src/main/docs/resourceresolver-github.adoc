@@ -5,7 +5,6 @@
 :description: Resource resolver to load files from GitHub
 :since: 3.11
 :supportlevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/resourceresolver-github.adoc[opts=optional]
 
 *Since Camel {since}*
 

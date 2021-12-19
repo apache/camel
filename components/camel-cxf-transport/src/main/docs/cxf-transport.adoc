@@ -5,7 +5,6 @@
 :description: Camel Transport for Apache CXF
 :since: 2.8
 :supportlevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/cxf-transport.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: cxf-transport
 

@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :component-header: Only producer is supported
 :core:
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/dataset-test.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: dataset
 

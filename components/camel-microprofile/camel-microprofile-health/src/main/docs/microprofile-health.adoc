@@ -5,7 +5,6 @@
 :description: Expose Camel health checks via MicroProfile Health
 :since: 3.0
 :supportlevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/microprofile-health.adoc[opts=optional]
 
 *Since Camel {since}*
 
