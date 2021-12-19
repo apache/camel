@@ -664,10 +664,6 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
                 }
             }
 
-            newLines.add(
-                    "include::{cq-version}@camel-quarkus:ROOT:partial$reference/" + kind + "s/" + name
-                         + ".adoc[opts=optional]");
-
             if (!manualAttributes.isEmpty()) {
                 newLines.add("//Manually maintained attributes");
                 for (Map.Entry<String, String> entry : manualAttributes.entrySet()) {
