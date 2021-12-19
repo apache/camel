@@ -6,7 +6,6 @@
 :description: Camel DSL with Kotlin
 :supportlevel: Experimental/Preview
 :since: 3
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/kotlin-dsl.adoc[opts=optional]
 //Manually maintained attributes
 :group: DSL
 
