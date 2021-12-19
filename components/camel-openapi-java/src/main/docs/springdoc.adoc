@@ -6,7 +6,6 @@
 :description: Springdoc Swagger UI for openapi-java in spring boot
 :since: 3.14
 //:supportlevel: Stable
-//include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/openapi-java.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: springdoc
 :starter-artifactid: camel-springdoc-starter

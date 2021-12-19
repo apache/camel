@@ -6,7 +6,6 @@
 :description: Camel DSL with JavaScript
 :supportlevel: Experimental/Preview
 :since: 3
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/js-dsl.adoc[opts=optional]
 //Manually maintained attributes
 :group: DSL
 
