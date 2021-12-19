@@ -36,8 +36,6 @@ public final class NodeIds {
 
     public static final String HEADER_NODE_IDS = "CamelMiloNodeIds";
 
-    public static final String HEADER_NODE_ID = "CamelMiloNodeId";
-
     private NodeIds() {
     }
 

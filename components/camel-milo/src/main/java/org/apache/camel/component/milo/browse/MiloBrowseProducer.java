@@ -36,7 +36,6 @@ import org.eclipse.milo.opcua.stack.core.types.structured.ReferenceDescription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static java.lang.Boolean.TRUE;
 import static org.apache.camel.component.milo.NodeIds.HEADER_NODE_IDS;
 
 public class MiloBrowseProducer extends DefaultAsyncProducer {
@@ -45,12 +44,9 @@ public class MiloBrowseProducer extends DefaultAsyncProducer {
 
     private MiloClientConnection connection;
 
-    private final boolean defaultAwaitWrites;
+    public MiloBrowseProducer(final MiloBrowseEndpoint endpoint) {
 
-    public MiloBrowseProducer(final MiloBrowseEndpoint endpoint, final boolean defaultAwaitWrites) {
         super(endpoint);
-
-        this.defaultAwaitWrites = defaultAwaitWrites;
     }
 
     @Override
@@ -90,7 +86,9 @@ public class MiloBrowseProducer extends DefaultAsyncProducer {
             message.removeHeader(HEADER_NODE_IDS);
             if (null == nodes) {
 
-                return false;
+                LOG.warn("Browse nodes: No node ids specified");
+                async.done(true);
+                return true;
             }
 
             for (final Object node : nodes) {
@@ -108,6 +106,7 @@ public class MiloBrowseProducer extends DefaultAsyncProducer {
         final CompletableFuture<?> future = this.connection
                 .browse(expandedNodeIds, endpoint.getDirection(), endpoint.getNodeClassMask(), depth, endpoint.getFilter(),
                         subTypes, endpoint.getMaxNodeIdsPerRequest())
+
                 .thenApply(browseResults -> {
 
                     final List<String> expandedNodes = browseResults.values().stream()
@@ -123,16 +122,28 @@ public class MiloBrowseProducer extends DefaultAsyncProducer {
                     exchange.getMessage().setBody(browseResults);
 
                     return browseResults;
+                })
+
+                .whenComplete((actual, error) -> {
+
+                    final String expandedNodeIdsString = expandedNodeIds.stream()
+                            .map(ExpandedNodeId::toParseableString)
+                            .collect(Collectors.joining(", "));
+
+                    if (actual != null) {
+
+                        LOG.debug("Browse node(s) {} -> {} result(s)", expandedNodeIdsString, actual.size());
+
+                    } else {
+
+                        LOG.error("Browse node(s) {} -> failed: {}", expandedNodeIdsString, error.getMessage());
+                        exchange.setException(error);
+                    }
+
+                    async.done(false);
                 });
 
-        final Boolean await = message.getHeader("await", this.defaultAwaitWrites, Boolean.class);
-
-        if (TRUE.equals(await)) {
-            future.whenComplete((v, ex) -> async.done(false));
-            return false;
-        } else {
-            return true;
-        }
+        return false;
     }
 
 }

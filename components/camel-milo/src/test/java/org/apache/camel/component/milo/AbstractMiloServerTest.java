@@ -31,6 +31,8 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.eclipse.milo.opcua.stack.core.security.SecurityPolicy;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
 import org.opentest4j.AssertionFailedError;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -39,6 +41,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public abstract class AbstractMiloServerTest extends CamelTestSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractMiloServerTest.class);
 
     private int serverPort;
 
@@ -163,8 +167,7 @@ public abstract class AbstractMiloServerTest extends CamelTestSupport {
                 consumer.accept(exchange);
                 return true;
             } catch (AssertionFailedError error) {
-                System.err.println("Assertion error: " + error.getMessage());
-                error.printStackTrace(System.err);
+                LOG.error("Assertion error: " + error.getMessage(), error);
                 return false;
             }
         };

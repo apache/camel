@@ -40,8 +40,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Connect to OPC UA servers using the binary protocol for browsing the node tree.
  */
-@UriEndpoint(firstVersion = "3.13.0", scheme = "milo-browse", syntax = "milo-browse:endpointUri", title = "OPC UA Browser",
-             category = { Category.IOT })
+@UriEndpoint(firstVersion = "3.15.0", scheme = "milo-browse", syntax = "milo-browse:endpointUri", title = "OPC UA Browser",
+             category = { Category.IOT }, producerOnly = true)
 public class MiloBrowseEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(MiloBrowseEndpoint.class);
@@ -65,7 +65,8 @@ public class MiloBrowseEndpoint extends DefaultEndpoint {
      * The direction to browse (forward, inverse, ...)
      */
     @UriParam(defaultValue = "Forward",
-              defaultValueNote = "The direction to browse; See org.eclipse.milo.opcua.stack.core.types.enumerated.BrowseDirection")
+              enums = "Forward,Inverse,Both",
+              defaultValueNote = "The direction to browse; see org.eclipse.milo.opcua.stack.core.types.enumerated.BrowseDirection")
     private BrowseDirection direction = BrowseDirection.Forward;
 
     /**
@@ -115,12 +116,6 @@ public class MiloBrowseEndpoint extends DefaultEndpoint {
     @UriParam
     private MiloClientConfiguration configuration;
 
-    /**
-     * Default "await" setting for writes
-     */
-    @UriParam
-    private boolean defaultAwaitWrites;
-
     public MiloBrowseEndpoint(final String uri, final MiloBrowseComponent component, final String endpointUri,
                               final MiloClientConnectionManager connectionManager) {
         super(uri, component);
@@ -143,7 +138,7 @@ public class MiloBrowseEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        return new MiloBrowseProducer(this, defaultAwaitWrites);
+        return new MiloBrowseProducer(this);
     }
 
     @Override
@@ -183,14 +178,6 @@ public class MiloBrowseEndpoint extends DefaultEndpoint {
         return direction;
     }
 
-    public void setDirection(String direction) {
-        try {
-            this.direction = BrowseDirection.valueOf(direction);
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Browsing direction '" + direction + "' not supported", e);
-        }
-    }
-
     public boolean isIncludeSubTypes() {
         return includeSubTypes;
     }
@@ -226,14 +213,6 @@ public class MiloBrowseEndpoint extends DefaultEndpoint {
         this.direction = direction;
     }
 
-    public boolean isDefaultAwaitWrites() {
-        return defaultAwaitWrites;
-    }
-
-    public void setDefaultAwaitWrites(boolean defaultAwaitWrites) {
-        this.defaultAwaitWrites = defaultAwaitWrites;
-    }
-
     public boolean isRecursive() {
         return recursive;
     }
@@ -264,31 +243,5 @@ public class MiloBrowseEndpoint extends DefaultEndpoint {
 
     public void setMaxNodeIdsPerRequest(int maxNodeIdsPerRequest) {
         this.maxNodeIdsPerRequest = maxNodeIdsPerRequest;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        if (!super.equals(o)) {
-            return false;
-        }
-        MiloBrowseEndpoint that = (MiloBrowseEndpoint) o;
-        boolean nodeClassEquality = nodeClassMask == that.nodeClassMask && Objects.equals(nodeClasses, that.nodeClasses);
-        return includeSubTypes == that.includeSubTypes && recursive == that.recursive
-                && depth == that.depth && maxNodeIdsPerRequest == that.maxNodeIdsPerRequest
-                && defaultAwaitWrites == that.defaultAwaitWrites && Objects.equals(endpointUri, that.endpointUri)
-                && Objects.equals(node, that.node) && direction == that.direction && nodeClassEquality
-                && Objects.equals(filter, that.filter);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), endpointUri, node, direction, includeSubTypes, nodeClasses, nodeClassMask,
-                recursive, depth, filter, maxNodeIdsPerRequest, defaultAwaitWrites);
     }
 }

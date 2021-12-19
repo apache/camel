@@ -104,7 +104,7 @@ public class SubscriptionManager {
             LOG.info("Transfer failed {} : {}", subscription.getSubscriptionId(), statusCode);
 
             // we simply tear it down and build it up again
-            handleConnectionFailue(new RuntimeCamelException("Subscription failed to reconnect"));
+            handleConnectionFailure(new RuntimeCamelException("Subscription failed to reconnect"));
         }
 
         @Override
@@ -245,7 +245,7 @@ public class SubscriptionManager {
             try {
                 putSubscriptions(subscriptions);
             } catch (final Exception e) {
-                handleConnectionFailue(e);
+                handleConnectionFailure(e);
             }
         }
 
@@ -506,13 +506,16 @@ public class SubscriptionManager {
                         // Fail a bit more gracefully in case of missing results
                         if (partials.size() != browseDescriptions.size()) {
 
-                            // @TODO: Replace with Java 9 functionality
                             final CompletableFuture<Map<ExpandedNodeId, BrowseResult>> failedFuture = new CompletableFuture<>();
                             failedFuture.completeExceptionally(new IllegalArgumentException(
-                                    format(
-                                            "Invalid number of browse results: %s, expected %s", partials.size(),
-                                            browseDescriptions.size())));
+                                    format("Invalid number of browse results: %s, expected %s",
+                                            partials.size(), browseDescriptions.size())));
                             return failedFuture;
+
+                            /* @TODO: Replace with Java 9 functionality like follows
+                            return CompletableFuture.failedFuture(new IllegalArgumentException(
+                                    format("Invalid number of browse results: %s, expected %s", partials.size(),
+                                            browseDescriptions.size()))); */
                         }
 
                         final List<CompletableFuture<Map<ExpandedNodeId, BrowseResult>>> futures = new ArrayList<>();
@@ -540,7 +543,7 @@ public class SubscriptionManager {
 
                     .thenCompose(__ -> {
 
-                        List<NodeId> nodeIds = Stream.of(futures).map(CompletableFuture::join)
+                        final List<NodeId> nodeIds = Stream.of(futures).map(CompletableFuture::join)
                                 .collect(Collectors.toList());
 
                         return completedFuture(nodeIds.stream().map(nodeId -> new BrowseDescription(
@@ -548,27 +551,7 @@ public class SubscriptionManager {
                                 uint(BrowseResultMask.All.getValue()))).collect(Collectors.toList()));
                     })
 
-                    .thenCompose(descriptions -> browse(descriptions, depth, maxDepth, pattern, maxNodesPerRequest))
-
-                    .whenComplete((actual, error) -> {
-
-                        if (!LOG.isErrorEnabled()) {
-
-                            return;
-                        }
-
-                        final String expandedNodeIdsString = expandedNodeIds.stream()
-                                .map(ExpandedNodeId::toParseableString)
-                                .collect(Collectors.joining(", "));
-
-                        if (actual != null) {
-                            LOG.debug("Browse node(s) {} -> {} result(s)", expandedNodeIdsString, actual.size());
-
-                        } else {
-                            LOG.error("Browse node(s) {} -> failed: {}", expandedNodeIdsString, error);
-                        }
-                    });
-
+                    .thenCompose(descriptions -> browse(descriptions, depth, maxDepth, pattern, maxNodesPerRequest));
         }
     }
 
@@ -591,7 +574,7 @@ public class SubscriptionManager {
         connect();
     }
 
-    private synchronized void handleConnectionFailue(final Throwable e) {
+    private synchronized void handleConnectionFailure(final Throwable e) {
         if (this.connected != null) {
             this.connected.dispose();
             this.connected = null;
@@ -851,7 +834,7 @@ public class SubscriptionManager {
             try {
                 worker.work(this.connected);
             } catch (final Exception e) {
-                handleConnectionFailue(e);
+                handleConnectionFailure(e);
             }
         }
     }
@@ -899,7 +882,7 @@ public class SubscriptionManager {
                 // handle outside the lock, running using
                 // handleAsync
                 if (e != null) {
-                    handleConnectionFailue(e);
+                    handleConnectionFailure(e);
                 }
                 return null;
             }, this.executor);
@@ -916,7 +899,7 @@ public class SubscriptionManager {
                 // handle outside the lock, running using
                 // handleAsync
                 if (e != null) {
-                    handleConnectionFailue(e);
+                    handleConnectionFailure(e);
                 }
                 return null;
             }, this.executor);
@@ -933,7 +916,7 @@ public class SubscriptionManager {
                 // handle outside the lock, running using
                 // handleAsync
                 if (e != null) {
-                    handleConnectionFailue(e);
+                    handleConnectionFailure(e);
                 }
                 return nodes;
             }, this.executor);
@@ -954,7 +937,7 @@ public class SubscriptionManager {
                         // handle outside the lock, running using
                         // handleAsync
                         if (e != null) {
-                            handleConnectionFailue(e);
+                            handleConnectionFailure(e);
                         }
                         return browseResult;
                     }, this.executor);

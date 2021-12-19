@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.EndpointInject;
+import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
@@ -76,7 +77,7 @@ public class BrowseServerTest extends AbstractMiloServerTest {
             = "milo-browse:opc.tcp://foo:bar@127.0.0.1:@@port@@";
 
     private static final String MILO_BROWSE_ROOT
-            = MILO_BROWSE_BASE + "?overrideHost=true&defaultAwaitWrites=true&allowedSecurityPolicies=None";
+            = MILO_BROWSE_BASE + "?overrideHost=true&allowedSecurityPolicies=None";
 
     private static final String MILO_BROWSE_WITHOUT_SUB_TYPES
             = MILO_BROWSE_ROOT + "&includeSubTypes=false";
@@ -347,10 +348,11 @@ public class BrowseServerTest extends AbstractMiloServerTest {
     public void testBrowseInvalid() throws Exception {
         mock1.reset();
         mock1.setExpectedCount(0);
-        producer1.send(ExchangeBuilder.anExchange(context)
+        final Exchange exchange = producer1.send(ExchangeBuilder.anExchange(context)
                 .withHeader(NodeIds.HEADER_NODE_IDS, Collections.singletonList("invalidNodeId"))
                 .build());
         assertIsSatisfied(5, TimeUnit.SECONDS, mock1);
+        assertNotNull(exchange.getException());
     }
 
     // Test node classes option, searching for types

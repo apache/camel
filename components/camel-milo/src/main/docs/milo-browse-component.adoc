@@ -3,9 +3,9 @@
 :shortname: milo-browse
 :artifactid: camel-milo
 :description: Connect to OPC UA servers using the binary protocol for browsing the node tree.
-:since: 3.xx
+:since: 3.15
 :supportlevel: Preview
-:component-header:Only producer is supported
+:component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/milo-browse.adoc[opts=optional]
 
 *Since Camel {since}*
@@ -75,7 +75,6 @@ from("direct:start")
 
     // Browse sub tree
     .setHeader("CamelMiloNodeIds", constant(Arrays.asList("ns=1;s=folder-id")))
-    .setHeader("await", constant(true)) // await: parameter "defaultAwaitWrites"
     .enrich("milo-browse:opc.tcp://localhost:4334", (oldExchange, newExchange) -> newExchange)
 
     // Filter specific ids
