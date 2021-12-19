@@ -5,7 +5,6 @@
 :description: Marshal and unmarshal iCal (.ics) documents to/from model objects provided by the iCal4j library.
 :since: 2.12
 :supportlevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/ical.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: ical
 

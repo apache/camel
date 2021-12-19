@@ -5,7 +5,6 @@
 :description: Bridging Eclipse MicroProfile Config with Camel properties
 :since: 3.0
 :supportlevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/microprofile-config.adoc[opts=optional]
 
 *Since Camel {since}*
 

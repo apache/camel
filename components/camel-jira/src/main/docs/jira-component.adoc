@@ -6,7 +6,6 @@
 :since: 3.0
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/jira.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: jira
 

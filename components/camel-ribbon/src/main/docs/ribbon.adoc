@@ -6,7 +6,6 @@
 :since: 2.18
 :supportlevel: Stable-deprecated
 :deprecated: *deprecated*
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/ribbon.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: ribbon
 

@@ -6,7 +6,6 @@
 :since: 3.4
 :supportlevel: Stable
 :component-header: Only producer is supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws2-athena.adoc[opts=optional]
 //Manually maintained attributes
 :group: AWS
 :camel-spring-boot-name: aws2-athena

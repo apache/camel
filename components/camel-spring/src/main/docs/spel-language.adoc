@@ -5,7 +5,6 @@
 :description: Evaluates a Spring expression (SpEL).
 :since: 2.7
 :supportlevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/spel.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: spring
 

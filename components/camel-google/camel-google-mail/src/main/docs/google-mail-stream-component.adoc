@@ -6,7 +6,6 @@
 :since: 2.22
 :supportlevel: Stable
 :component-header: Only consumer is supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/google-mail-stream.adoc[opts=optional]
 //Manually maintained attributes
 :group: Google
 :camel-spring-boot-name: google-mail

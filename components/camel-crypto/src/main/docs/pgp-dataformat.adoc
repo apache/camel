@@ -5,7 +5,6 @@
 :description: Encrypt and decrypt messages using Java Cryptographic Extension (JCE) and PGP.
 :since: 2.9
 :supportlevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/pgp.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: crypto
 
