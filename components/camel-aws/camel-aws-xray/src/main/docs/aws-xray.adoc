@@ -5,7 +5,6 @@
 :description: Distributed tracing using AWS XRay
 :since: 2.21
 :supportlevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/aws-xray.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: aws-xray
 

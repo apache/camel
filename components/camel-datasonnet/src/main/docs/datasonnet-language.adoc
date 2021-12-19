@@ -5,7 +5,6 @@
 :description: To use DataSonnet scripts for message transformations.
 :since: 3.7
 :supportlevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/datasonnet.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: datasonnet
 

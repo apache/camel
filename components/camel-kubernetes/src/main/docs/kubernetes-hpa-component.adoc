@@ -6,7 +6,6 @@
 :since: 2.23
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/kubernetes-hpa.adoc[opts=optional]
 //Manually maintained attributes
 :group: Kubernetes
 :camel-spring-boot-name: kubernetes
