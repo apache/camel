@@ -6,7 +6,6 @@
 :since: 2.1
 :supportlevel: Stable
 :component-header: Only producer is supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/lpr.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: printer
 

@@ -5,7 +5,6 @@
 :description: Marshal POJOs to JSON and back using XStream
 :since: 2.0
 :supportlevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/json-xstream.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: xstream
 

@@ -5,7 +5,6 @@
 :description: Security using Shiro
 :since: 2.5
 :supportlevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/shiro.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: shiro
 

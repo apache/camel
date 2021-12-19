@@ -5,7 +5,6 @@
 :description: Marshal POJOs to Avro and back using Jackson.
 :since: 3.10
 :supportlevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/avro-jackson.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: jackson-avro
 

@@ -6,7 +6,6 @@
 :since: 2.20
 :supportlevel: Stable
 :component-header: Only producer is supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/json-validator.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: json-validator
 

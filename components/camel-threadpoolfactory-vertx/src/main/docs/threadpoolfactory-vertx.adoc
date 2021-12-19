@@ -5,7 +5,6 @@
 :description: ThreadPoolFactory for camel-core using Vert.x
 :since: 3.5
 :supportlevel: Preview
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/threadpoolfactory-vertx.adoc[opts=optional]
 
 *Since Camel {since}*
 

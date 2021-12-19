@@ -6,7 +6,6 @@
 :since: 3.0
 :supportlevel: Stable
 :component-header: Only producer is supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/xj.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: xj
 

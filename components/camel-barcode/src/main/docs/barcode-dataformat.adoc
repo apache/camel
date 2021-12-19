@@ -5,7 +5,6 @@
 :description: Transform strings to various 1D/2D barcode bitmap formats and back.
 :since: 2.14
 :supportlevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/barcode.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: barcode
 
