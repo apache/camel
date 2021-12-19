@@ -1,0 +1,118 @@
+= Dynamic Router Component
+:doctitle: Dynamic Router
+:shortname: dynamic-router
+:artifactid: camel-dynamic-router
+:description: The Dynamic Router component routes exchanges to recipients, and the recipients (and their rules) may change at runtime.
+:since: 3.15
+:supportlevel: Preview
+:component-header: Both producer and consumer are supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Dynamic Router Component is an implementation of the Dynamic Router EIP.  Participants may send subscription messages over a special control channel, at runtime, to specify the conditions under which messages are routed to their endpoint (also provided in the control channel message).  In this way, the Dynamic Router is an extension of the content-based router EIP.  When a recipient wishes to remove itself, it can also send a message to unsubscribe.
+
+== URI format
+
+[source]
+----
+dynamic-router:channel[?options]
+----
+
+The `channel` is the routing channel that allows messaging to be logically separate from other channels.  Any string that can be included in a URI is a valid channel name.  Each channel can have a set of participant subscriptions, and can consume messages to be routed to appropriate recipients.  The only reserved channel is the `control` channel.  This is a single channel that handles control messages for participants to subscribe or unsubscribe for messaging over a desired channel.
+
+// component-configure options: START
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+// endpoint options: END
+
+== Usage
+
+The Dynamic Router component is used in the same way that other components are used.  Simply include the dynamic-router URI as a consumer in a route, along with the channel name.
+
+In Java:
+
+.Example Java DSL Route Definition
+[source,java]
+----
+// Send message to the Dynamic Router channel named "jupiter"
+from("direct:start").to("dynamic-router:jupiter");
+----
+
+And the same route using XML DSL:
+
+.Example XML Route Definition
+[source,xml]
+----
+<route>
+   <from uri="direct:start"/>
+   <to uri="dynamic-router:jupiter"/>
+</route>
+----
+
+== Subscribing
+
+Participating recipients may subscribe by sending a `DynamicRouterControlMessage` to the `control` channel.  An example subscribe message might look like the following:
+
+.Example Subscribe Message
+[source,java]
+----
+// Send a message to the Dynamic Router "billing" channel
+// to subscribe to billing messages, with a priority of 10
+DynamicRouterControlMessage billingSubMsg = new SubscribeMessageBuilder()
+                .id("billingSubscription")
+                .channel("billing")
+                .priority(10)
+                .endpointUri(myBillingNotificationUri)
+                .predicate(new SomeBillingPredicate())
+                .build();
+template.sendBody("dynamic-router:control", billingSubMsg);
+----
+
+The parameters, in order, are:
+
+1. _Subscription ID_:  When unsubscribing, this is the only way to identify the subscription to remove.
+2. _Channel Name_:  The dynamic router can have multiple channels, where the subscriptions (the registered rules and endpoints) are kept completely separate from the other channels.  This is equivalent to a VLAN in networking.
+3. _Priority_:  A new subscription will be inserted into the rule base in order of precedence; lower numbers have higher priority.
+4. _Endpoint URI_:  If an evaluation of the rules in the rule base determines that the exchange is appropriate for the recipient, it is sent to this URI.
+5. _Predicate_:  For evaluating the exchange to determine if a message should be routed to the supplied URI.
+
+== Unsubscribing
+
+Participating recipients may unsubscribe by sending a `DynamicRouterControlMessage` to the `control` channel.  An example unsubscribe message might look like the following:
+
+.Example Unsubscribe Message
+[source,java]
+----
+// Send message to the Dynamic Router "billing" channel
+// to unsubscribe from billing messages
+DynamicRouterControlMessage unsubscribeMsg = new UnsubscribeMessageBuilder()
+                .id("billingSubscription")
+                .channel("billing")
+                .build();
+template.sendBody("dynamic-router:control", unsubscribeMsg);
+----
+
+The builder for an unsubscribe message only requires the id and channel name.
+
+== The Dynamic Rule Base
+
+To determine if an exchange is suitable for any of the participants, all predicates for the participants that are subscribed to the channel are evaluated until the first result of "true" is found.  The exchange will be routed to the corresponding endpoint.  The rule base contains a default filter that is registered at the least priority (which is the highest integer number).  Like the "default" case of a switch statement in Java, any message that is not appropriate for any registered participants will be processed by this filter.  The filter logs information about the dropped message at *debug* level, by default.  To turn the level up to *warn*, include `warnDroppedMessage=true` in the component URI.
+
+Rules are registered in a channel, and they are logically separate from rules in another channel.  Subscription IDs must be unique within a channel, although multiple subscriptions of the same name may coexist in a dynamic router instance if they are in separate channels.
+
+The Dynamic Router employs the use of https://camel.apache.org/manual/predicate.html[Predicates] as rules.  Any valid predicate may be used to determine the suitability of exchanges for a participating recipient, whether they are simple or compound predicates.  Although it is advised to view the complete documentation, an example simple predicate might look like the following:
+
+.Example simple predicate
+[source,java]
+----
+// The "messageType" must be "payment"
+Predicate msgType = header("messageType").isEqualTo("payment");
+----

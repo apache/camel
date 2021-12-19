@@ -69,6 +69,7 @@ public final class EndpointConsumerDeserializersResolver implements YamlDeserial
             case "disruptor-vm":
             case "docker":
             case "dropbox":
+            case "dynamic-router":
             case "ehcache":
             case "elsql":
             case "etcd-stats":
