@@ -93,6 +93,7 @@ public class MiloClientProducer extends DefaultAsyncProducer {
             future.whenComplete((v, ex) -> async.done(false));
             return false;
         } else {
+            async.done(true);
             return true;
         }
     }
