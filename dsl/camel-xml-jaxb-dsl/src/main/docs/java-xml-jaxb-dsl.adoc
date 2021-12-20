@@ -4,7 +4,6 @@
 :artifactId: camel-xml-jaxb-dsl
 :description: Camel DSL with YAML
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/xml-jaxb-dsl.adoc[opts=optional]
 //Manually maintained attributes
 :group: DSL
 

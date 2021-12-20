@@ -6,7 +6,6 @@
 :supportLevel: Experimental
 :since: 3.
 :supportLevel: Preview
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/kotlin-dsl.adoc[opts=optional]
 //Manually maintained attributes
 :group: DSL
 

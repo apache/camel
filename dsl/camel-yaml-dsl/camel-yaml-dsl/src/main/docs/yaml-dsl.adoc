@@ -5,7 +5,6 @@
 :description: Camel DSL with YAML
 :since: 3.9
 :supportLevel: Preview
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/yaml-dsl.adoc[opts=optional]
 //Manually maintained attributes
 :group: DSL
 
