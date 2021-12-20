@@ -6,7 +6,6 @@
 :since: 2.9
 :supportlevel: Stable-deprecated
 :deprecated: *deprecated*
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/test.adoc[opts=optional]
 
 *Since Camel {since}*
 

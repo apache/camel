@@ -6,7 +6,6 @@
 :since: 3.5
 :supportlevel: Stable
 :component-header: Only producer is supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/vertx-http.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: vertx-http
 

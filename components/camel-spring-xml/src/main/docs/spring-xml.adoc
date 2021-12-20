@@ -5,7 +5,6 @@
 :description: Camel Spring with XML DSL
 :since: 3.9
 :supportlevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/spring-xml.adoc[opts=optional]
 
 *Since Camel {since}*
 

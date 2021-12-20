@@ -5,7 +5,6 @@
 :description: Parse (potentially invalid) HTML into valid HTML or DOM.
 :since: 2.0
 :supportlevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/tidyMarkup.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: tagsoup
 

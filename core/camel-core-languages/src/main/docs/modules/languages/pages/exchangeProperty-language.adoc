@@ -5,7 +5,6 @@
 :description: Gets a property from the Exchange.
 :since: 2.0
 :supportlevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/exchangeProperty.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: core
 :starter-artifactid: camel-core-starter

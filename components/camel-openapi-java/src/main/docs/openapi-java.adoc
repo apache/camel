@@ -5,7 +5,6 @@
 :description: Rest-dsl support for using openapi doc
 :since: 3.1
 :supportlevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/openapi-java.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: openapi-java
 
