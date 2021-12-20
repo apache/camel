@@ -6,7 +6,6 @@
 :description: Main to run Kamelet standalone
 :since: 3.11
 :supportlevel: Preview
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/kamelet-main.adoc[opts=optional]
 //Manually maintained attributes
 :group: DSL
 
