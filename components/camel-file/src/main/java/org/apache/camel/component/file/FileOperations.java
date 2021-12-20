@@ -381,15 +381,11 @@ public class FileOperations implements GenericFileOperations<File> {
                 // buffer the reader
                 in = IOHelper.buffered(in);
                 writeFileByReaderWithCharset(in, file, charset);
+            } else if (exchange.getIn().getBody() instanceof String) {
+                // If the body is a string, write it directly
+                String stringBody = (String) exchange.getIn().getBody();
+                writeFileByString(stringBody, file);
             } else {
-                // If the body is a string of reasonable size, write it directly
-                if (exchange.getIn().getBody() instanceof String) {
-                    String stringBody = (String) exchange.getIn().getBody();
-                    if (stringBody.length() < endpoint.getBufferSize()) {
-                        writeFileByString(stringBody, file);
-                        return true;
-                    }
-                }
                 // fallback and use stream based
                 InputStream in = exchange.getIn().getMandatoryBody(InputStream.class);
                 writeFileByStream(in, file);
