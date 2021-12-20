@@ -85,24 +85,26 @@ public class Ddb2Endpoint extends ScheduledPollEndpoint {
         String tableName = getConfiguration().getTableName();
         LOG.trace("Querying whether table [{}] already exists...", tableName);
 
-        try {
-            DescribeTableRequest.Builder request = DescribeTableRequest.builder().tableName(tableName);
-            TableDescription tableDescription = ddbClient.describeTable(request.build()).table();
-            if (!isTableActive(tableDescription)) {
-                waitForTableToBecomeAvailable(tableName);
-            }
+        if (configuration.isEnabledInitialDescribeTable()) {
+            try {
+                DescribeTableRequest.Builder request = DescribeTableRequest.builder().tableName(tableName);
+                TableDescription tableDescription = ddbClient.describeTable(request.build()).table();
+                if (!isTableActive(tableDescription)) {
+                    waitForTableToBecomeAvailable(tableName);
+                }
 
-            LOG.trace("Table [{}] already exists", tableName);
-            return;
-        } catch (ResourceNotFoundException e) {
-            LOG.trace("Table [{}] doesn't exist yet", tableName);
-            LOG.trace("Creating table [{}]...", tableName);
-            TableDescription tableDescription = createTable(tableName);
-            if (!isTableActive(tableDescription)) {
-                waitForTableToBecomeAvailable(tableName);
-            }
+                LOG.trace("Table [{}] already exists", tableName);
+                return;
+            } catch (ResourceNotFoundException e) {
+                LOG.trace("Table [{}] doesn't exist yet", tableName);
+                LOG.trace("Creating table [{}]...", tableName);
+                TableDescription tableDescription = createTable(tableName);
+                if (!isTableActive(tableDescription)) {
+                    waitForTableToBecomeAvailable(tableName);
+                }
 
-            LOG.trace("Table [{}] created", tableName);
+                LOG.trace("Table [{}] created", tableName);
+            }
         }
     }
 
