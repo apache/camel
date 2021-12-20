@@ -268,6 +268,37 @@ public interface LogEndpointBuilderFactory {
             return this;
         }
         /**
+         * Log exchange body as-is (ex. log(${body}).
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param plain the value to set
+         * @return the dsl builder
+         */
+        default LogEndpointBuilder plain(boolean plain) {
+            doSetProperty("plain", plain);
+            return this;
+        }
+        /**
+         * Log exchange body as-is (ex. log(${body}).
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param plain the value to set
+         * @return the dsl builder
+         */
+        default LogEndpointBuilder plain(String plain) {
+            doSetProperty("plain", plain);
+            return this;
+        }
+        /**
          * Limits the number of characters logged per line.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
