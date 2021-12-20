@@ -6,7 +6,6 @@
 :description: Camel DSL with Groovy
 :supportlevel: Experimental/Preview
 :since: 3
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/groovy-dsl.adoc[opts=optional]
 //Manually maintained attributes
 :group: DSL
 
