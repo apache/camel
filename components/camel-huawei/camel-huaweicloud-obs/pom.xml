@@ -51,6 +51,12 @@
       <groupId>com.huaweicloud</groupId>
       <artifactId>esdk-obs-java</artifactId>
       <version>${huaweicloud-obs-version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.logging.log4j</groupId>
+          <artifactId>log4j-core</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
