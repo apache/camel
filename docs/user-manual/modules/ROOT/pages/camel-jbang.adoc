@@ -26,6 +26,8 @@ jbang CamelJBang@apache/camel [command]
 
 All the commands support the `--help` and will display the appropriate help if that flag is provided.
 
+However if you have installed CamelJBang with `jbang app install` then you can use `CamelJBang` instead of `jbang CamelJBang@apache/camel`
+
 === Troubleshooting
 
 When using https://www.jbang.dev/[JBang] then JBang stores state in `~/.jbang` directory.
@@ -72,7 +74,7 @@ Execute the following command to run this route:
 
 [source,bash]
 ----
-jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel run jms-amqp-10-sink-binding.yaml
+CamelJBang run jms-amqp-10-sink-binding.yaml
 ----
 
 NOTE: it is necessary to have a AMQP 1.0 broker, such as Apache Artemis, running locally and listening on port 61616. Adjust the route accordingly if using a different address for the broker.
@@ -83,28 +85,28 @@ You can run more than 1 file, for example to run two YAML files you can do:
 
 [source,bash]
 ----
-jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel run one.yaml two.yaml
+CamelJBang run one.yaml two.yaml
 ----
 
 You can also mix different xref:dsl.adoc[DSLs] such as yaml and Java:
 
 [source,bash]
 ----
-jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel run one.yaml hello.java
+CamelJBang run one.yaml hello.java
 ----
 
 You can also use wildcards (i.e. `*`) to match multiple files, such as running all the yaml files:
 
 [source,bash]
 ----
-jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel run *.yaml
+CamelJBang run *.yaml
 ----
 
 Or you can run all files starting with foo*
 
 [source,bash]
 ----
-jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel run foo*
+CamelJBang run foo*
 ----
 
 TIP: The run goal can also detect files that are `properties`.
@@ -116,7 +118,7 @@ using the `--reload` options as shown:
 
 [source,bash]
 ----
-jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel run jms-amqp-10-sink-binding.yaml --reload
+CamelJBang run jms-amqp-10-sink-binding.yaml --reload
 ----
 
 Then while the Camel application is running, you can update the YAML route and update when saving.
@@ -132,7 +134,7 @@ For example to run one of the Camel K examples you can do:
 
 [source,bash]
 ----
-jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel run run github:apache:camel-k:examples/languages/routes.yaml
+CamelJBang run run github:apache:camel-k:examples/languages/routes.yaml
 ----
 
 === Running local Kamelets
@@ -141,7 +143,7 @@ You can also use Camel JBang to try local Kamelets, without the need to publish 
 
 [source,bash]
 ----
-jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel run --local-kamelet-dir=/path/to/local/kamelets earthquake.yaml
+CamelJBang run --local-kamelet-dir=/path/to/local/kamelets earthquake.yaml
 ----
 
 === Running Camel K integrations or bindings
@@ -177,7 +179,7 @@ Can be run with CamelJBang:
 
 [source,bash]
 ----
-jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel run joke.yaml
+CamelJBang run joke.yaml
 ----
 
 === Using platform-http component
@@ -198,7 +200,7 @@ Can be run with
 
 [source,bash]
 ----
-jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel run server.yaml
+CamelJBang run server.yaml
 ----
 
 And you can call the HTTP service with:
@@ -215,7 +217,7 @@ You can debug both CamelJBang@apache/camel and your integration scripts by makin
 
 [source,bash]
 ----
-jbang --debug CamelJBang@apache/camel run /path/to/integration.java
+CamelJBang --debug run /path/to/integration.java
 [jbang] Building jar...
 Listening for transport dt_socket at address: 4004
 ----
@@ -228,21 +230,21 @@ You can use the CLI to search for kamelets, components, languages and miscellane
 
 [source,bash]
 ----
-jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel search --help
+CamelJBang search --help
 ----
 
 For example, to search for kamelets named `jms`, you can use:
 
 [source,bash]
 ----
-jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel search kamelets --search-term=jms
+CamelJBang search kamelets --search-term=jms
 ----
 
 To list all the kamelets, just run the command without any search term:
 
 [source,bash]
 ----
-jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel search kamelets
+CamelJBang search kamelets
 ----
 
 
@@ -274,7 +276,7 @@ To bootstrap the Kamelet run:
 
 [source,bash]
 ----
-jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel  init kamelet --bootstrap
+CamelJBang init kamelet --bootstrap
 ----
 
 This will create a sub-directory called `work` in the current directory with a properties file named `init-template.properties` inside it.
@@ -285,7 +287,7 @@ After you have filled the values, you can generate the Kamelet using:
 
 [source,bash]
 ----
-jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel init kamelet --properties-path work/init-template.properties
+CamelJBang init kamelet --properties-path work/init-template.properties
 ----
 
 Running this command will create a new file in the `work` directory. The name of the generated file is determined by the `kameletMetadataName` property in the properties file. As such, parsing the default properties file would generate a file named `my-sample-sink.kamelet.yaml` in the directory.
@@ -301,7 +303,7 @@ To execute this feature run:
 
 [source,bash]
 ----
-jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel init binding --destination /path/to/destination/directory/ --kamelet sftp-source
+CamelJBang init binding --destination /path/to/destination/directory/ --kamelet sftp-source
 ----
 
 This will create a new sample YAML binding file that can be modified and used in Camel K.
@@ -310,5 +312,5 @@ You can also generate bindings that can be run by CamelJBang or Camel Core, but 
 
 [source,bash]
 ----
-jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel init binding --destination /path/to/destination/directory/ --kamelet sftp-source --project core
+CamelJBang init binding --destination /path/to/destination/directory/ --kamelet sftp-source --project core
 ----
