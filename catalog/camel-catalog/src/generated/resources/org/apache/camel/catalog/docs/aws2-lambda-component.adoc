@@ -7,7 +7,7 @@
 :since: 3.2
 :supportLevel: Stable
 :component-header: Only producer is supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws2-lambda.adoc[opts=optional]
+$reference/components/aws2-lambda.adoc[opts=optional]
 //Manually maintained attributes
 :group: AWS 2
 :camel-spring-boot-name: aws2-lambda

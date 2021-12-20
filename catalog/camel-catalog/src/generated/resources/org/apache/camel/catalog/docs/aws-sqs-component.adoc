@@ -7,7 +7,7 @@
 :since: 2.6
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws-sqs.adoc[opts=optional]
+$reference/components/aws-sqs.adoc[opts=optional]
 //Manually maintained attributes
 :group: AWS
 :camel-spring-boot-name: aws-sqs

@@ -8,7 +8,7 @@
 :description: Distributed tracing common interfaces
 :since: 3.5
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/tracing.adoc[opts=optional]
+$reference/others/tracing.adoc[opts=optional]
 
 *Since Camel {since}*
 

@@ -8,7 +8,7 @@
 :description: Encode and decode data structures using Abstract Syntax Notation One (ASN.1).
 :since: 2.20
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/asn1.adoc[opts=optional]
+$reference/dataformats/asn1.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: asn1
 

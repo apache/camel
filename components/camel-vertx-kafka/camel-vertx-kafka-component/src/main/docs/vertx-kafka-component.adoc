@@ -7,7 +7,7 @@
 :since: 3.7
 :supportLevel: Preview
 :component-header: Both producer and consumer are supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/vertx-kafka.adoc[opts=optional]
+$reference/components/vertx-kafka.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: vertx-kafka
 

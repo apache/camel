@@ -9,7 +9,7 @@
 :since: 2.9
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/jclouds.adoc[opts=optional]
+$reference/components/jclouds.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: jclouds
 

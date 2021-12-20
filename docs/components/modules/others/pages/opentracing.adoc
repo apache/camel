@@ -8,7 +8,7 @@
 :description: Distributed tracing using OpenTracing
 :since: 2.19
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/opentracing.adoc[opts=optional]
+$reference/others/opentracing.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: opentracing
 

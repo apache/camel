@@ -8,7 +8,7 @@
 :description: Evaluate a Spring Expression Language (SpEL) expression against the Camel Exchange.
 :since: 2.7
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/spel.adoc[opts=optional]
+$reference/languages/spel.adoc[opts=optional]
 //Manually maintained attributes
 :group: Spring
 :camel-spring-boot-name: spring

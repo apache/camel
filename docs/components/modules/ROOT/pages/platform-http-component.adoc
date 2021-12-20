@@ -9,7 +9,7 @@
 :since: 3.0
 :supportLevel: Stable
 :component-header: Only consumer is supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/platform-http.adoc[opts=optional]
+$reference/components/platform-http.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: platform-http
 

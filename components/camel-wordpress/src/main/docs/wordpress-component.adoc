@@ -7,7 +7,7 @@
 :since: 2.21
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/wordpress.adoc[opts=optional]
+$reference/components/wordpress.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: wordpress
 

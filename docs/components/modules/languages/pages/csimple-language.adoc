@@ -8,7 +8,7 @@
 :description: Evaluate a compile simple expression language.
 :since: 3.7
 :supportLevel: Preview
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/csimple.adoc[opts=optional]
+$reference/languages/csimple.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: core
 :starter-artifactid: camel-core-starter

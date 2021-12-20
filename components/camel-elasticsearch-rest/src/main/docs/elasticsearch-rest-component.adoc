@@ -7,7 +7,7 @@
 :since: 2.21
 :supportLevel: Stable
 :component-header: Only producer is supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/elasticsearch-rest.adoc[opts=optional]
+$reference/components/elasticsearch-rest.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: elasticsearch-rest
 

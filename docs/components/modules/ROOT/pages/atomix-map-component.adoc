@@ -9,7 +9,7 @@
 :since: 2.20
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/atomix-map.adoc[opts=optional]
+$reference/components/atomix-map.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: atomix
 

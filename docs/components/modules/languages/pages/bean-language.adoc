@@ -8,7 +8,7 @@
 :description: Call a method of the specified Java bean passing the Exchange, Body or specific headers to it.
 :since: 1.3
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/bean.adoc[opts=optional]
+$reference/languages/bean.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: bean
 

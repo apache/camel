@@ -6,7 +6,7 @@
 :description: jOOR compiler for csimple language
 :since: 3.7
 :supportLevel: Preview
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/csimple-joor.adoc[opts=optional]
+$reference/others/csimple-joor.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: csimple-joor
 

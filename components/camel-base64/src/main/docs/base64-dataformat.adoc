@@ -6,7 +6,7 @@
 :description: Encode and decode data using Base64.
 :since: 2.11
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/base64.adoc[opts=optional]
+$reference/dataformats/base64.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: base64
 
