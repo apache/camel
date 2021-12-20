@@ -9,7 +9,6 @@
 :since: 2.0
 :supportLevel: Stable-deprecated
 :deprecated: *deprecated*
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/spring-javaconfig.adoc[opts=optional]
 //Manually maintained attributes
 :group: Spring
 :camel-spring-boot-name: spring-javaconfig

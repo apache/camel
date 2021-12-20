@@ -6,7 +6,6 @@
 :description: Marshal and unmarshal Java lists and maps to/from flat files (such as CSV, delimited, or fixed length formats) using Flatpack library.
 :since: 2.1
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/flatpack.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: flatpack
 

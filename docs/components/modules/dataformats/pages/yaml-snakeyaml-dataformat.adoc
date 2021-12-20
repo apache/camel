@@ -8,7 +8,6 @@
 :description: Marshal and unmarshal Java objects to and from YAML using SnakeYAML
 :since: 2.17
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/yaml-snakeyaml.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: snakeyaml
 

@@ -8,7 +8,6 @@
 :description: Distributed tracing using OpenTelemetry
 :since: 3.5
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/opentelemetry.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: opentelemetry
 

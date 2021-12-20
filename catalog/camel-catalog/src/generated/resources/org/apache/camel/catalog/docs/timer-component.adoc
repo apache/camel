@@ -8,7 +8,6 @@
 :supportLevel: Stable
 :component-header: Only consumer is supported
 :core:
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/timer.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: timer
 

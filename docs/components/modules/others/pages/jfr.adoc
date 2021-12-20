@@ -8,7 +8,6 @@
 :description: Diagnose Camel applications with Java Flight Recorder
 :since: 3.8
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/jfr.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: jfr
 

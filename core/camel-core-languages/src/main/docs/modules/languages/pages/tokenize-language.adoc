@@ -6,7 +6,6 @@
 :description: Tokenize text payloads using the specified delimiter patterns.
 :since: 2.0
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/tokenize.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: core
 :starter-artifactid: camel-core-starter

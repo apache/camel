@@ -8,7 +8,6 @@
 :description: Marshal and unmarshal POJOs to/from XML using XStream library.
 :since: 1.3
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/xstream.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: xstream
 

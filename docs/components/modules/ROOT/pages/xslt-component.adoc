@@ -10,7 +10,6 @@
 :supportLevel: Stable
 :component-header: Only producer is supported
 :core:
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/xslt.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: xslt
 

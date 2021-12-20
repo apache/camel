@@ -6,7 +6,6 @@
 :description: Evaluate an MVEL template against the Camel Exchange.
 :since: 2.0
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/mvel.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: mvel
 

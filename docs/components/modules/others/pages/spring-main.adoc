@@ -8,7 +8,6 @@
 :description: Camel Spring Main support
 :since: 3.2
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/spring-main.adoc[opts=optional]
 //Manually maintained attributes
 :group: Spring
 

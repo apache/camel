@@ -6,7 +6,6 @@
 :description: Bridging Eclipse MicroProfile Health with Camel health checks
 :since: 3.0
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/microprofile-health.adoc[opts=optional]
 
 *Since Camel {since}*
 

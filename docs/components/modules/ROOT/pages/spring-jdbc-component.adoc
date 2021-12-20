@@ -9,7 +9,6 @@
 :since: 3.10
 :supportLevel: Stable
 :component-header: Only producer is supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/spring-jdbc.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: spring-jdbc
 
