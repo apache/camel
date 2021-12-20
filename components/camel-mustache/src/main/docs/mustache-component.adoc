@@ -6,7 +6,6 @@
 :since: 2.12
 :supportlevel: Stable
 :component-header: Only producer is supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/mustache.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: mustache
 

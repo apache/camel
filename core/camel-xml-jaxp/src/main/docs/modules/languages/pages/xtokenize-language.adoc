@@ -5,7 +5,6 @@
 :description: Tokenize XML payloads.
 :since: 2.14
 :supportlevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/xtokenize.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: xml-jaxp
 

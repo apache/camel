@@ -4,9 +4,8 @@
 :artifactid: camel-huaweicloud-dms
 :description: To integrate with a fully managed, high-performance message queuing service on Huawei Cloud
 :since: 3.12
-:supportlevel: Preview
+:supportlevel: Stable
 :component-header: Only producer is supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/hwcloud-dms.adoc[opts=optional]
 //Manually maintained attributes
 :group: Huawei Cloud
 :camel-spring-boot-name: huaweicloud-dms

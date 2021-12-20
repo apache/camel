@@ -5,7 +5,6 @@
 :description: Marshal POJOs to JSON and back using Johnzon
 :since: 2.18
 :supportlevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/json-johnzon.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: johnzon
 

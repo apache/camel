@@ -6,7 +6,6 @@
 :since: 3.10
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/azure-cosmosdb.adoc[opts=optional]
 //Manually maintained attributes
 :group: Azure
 :camel-spring-boot-name: azure-cosmosdb

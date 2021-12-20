@@ -6,7 +6,6 @@
 :since: 3.9
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/google-storage.adoc[opts=optional]
 //Manually maintained attributes
 :group: Google
 :camel-spring-boot-name: google-storage

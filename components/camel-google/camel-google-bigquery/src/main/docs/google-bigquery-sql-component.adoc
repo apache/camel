@@ -6,7 +6,6 @@
 :since: 2.23
 :supportlevel: Stable
 :component-header: Only producer is supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/google-bigquery-sql.adoc[opts=optional]
 //Manually maintained attributes
 :group: Google
 :camel-spring-boot-name: google-bigquery

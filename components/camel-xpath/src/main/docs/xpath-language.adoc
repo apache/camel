@@ -5,7 +5,6 @@
 :description: Evaluates an XPath expression against an XML payload.
 :since: 1.1
 :supportlevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/xpath.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: xpath
 

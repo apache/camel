@@ -5,7 +5,6 @@
 :description: Security using Jasypt
 :since: 2.5
 :supportlevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/jasypt.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: jasypt
 
