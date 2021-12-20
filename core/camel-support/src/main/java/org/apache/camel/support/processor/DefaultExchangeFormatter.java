@@ -97,6 +97,8 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
     @UriParam(label = "formatting", enums = "Default,Tab,Fixed", defaultValue = "Default",
               description = "Sets the outputs style to use.")
     private OutputStyle style = OutputStyle.Default;
+    @UriParam(defaultValue = "false", description = "If enabled only the body will be printed out")
+    private boolean plain;
 
     private StringBuilder style(StringBuilder sb, String label) {
         if (style == OutputStyle.Default) {
@@ -119,6 +121,11 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
         Message in = exchange.getIn();
 
         StringBuilder sb = new StringBuilder();
+
+        if (plain) {
+            return getBodyAsString(in);
+        }
+
         if (showAll || showExchangeId) {
             if (multiline) {
                 sb.append(SEPARATOR);
@@ -442,6 +449,17 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
      */
     public void setStyle(OutputStyle style) {
         this.style = style;
+    }
+
+    public boolean isPlain() {
+        return plain;
+    }
+
+    /**
+     * If enabled only the body will be printed out
+     */
+    public void setPlain(boolean plain) {
+        this.plain = plain;
     }
 
     // Implementation methods
