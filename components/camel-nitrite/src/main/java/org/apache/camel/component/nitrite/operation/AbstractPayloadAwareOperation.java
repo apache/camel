@@ -18,9 +18,9 @@ package org.apache.camel.component.nitrite.operation;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
-import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.component.nitrite.AbstractNitriteOperation;
 import org.apache.camel.component.nitrite.NitriteEndpoint;
+import org.apache.camel.support.builder.ExpressionBuilder;
 import org.dizitart.no2.Document;
 
 public abstract class AbstractPayloadAwareOperation extends AbstractNitriteOperation {

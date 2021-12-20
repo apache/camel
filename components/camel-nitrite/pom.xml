@@ -33,9 +33,10 @@
   <description>Camel Nitrite component</description>
 
   <dependencies>
+
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core-engine</artifactId>
+      <artifactId>camel-support</artifactId>
     </dependency>
 
     <dependency>
