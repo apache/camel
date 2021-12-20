@@ -33,7 +33,7 @@
 
     <properties>
         <firstVersion>3.15.0</firstVersion>
-        <label>core</label>
+        <label>tooling</label>
     </properties>
 
     <dependencies>
@@ -42,10 +42,16 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-support</artifactId>
         </dependency>
+
         <!-- JMX is needed for Camel Debugger -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-management</artifactId>
+        </dependency>
+        <!-- jaxb needed for dumping messages as XML -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-xml-jaxb</artifactId>
         </dependency>
 
     </dependencies>
