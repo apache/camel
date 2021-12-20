@@ -5,7 +5,6 @@
 :artifactid: camel-xml-io-dsl
 :description: Camel DSL with YAML
 :supportlevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/xml-io-dsl.adoc[opts=optional]
 //Manually maintained attributes
 :group: DSL
 
