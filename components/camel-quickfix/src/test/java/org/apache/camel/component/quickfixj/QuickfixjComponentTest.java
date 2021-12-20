@@ -173,7 +173,7 @@ public class QuickfixjComponentTest {
         assertThat(component.getProvisionalEngines().get(settingsFile.getName()).isInitialized(), is(true));
         assertThat(component.getProvisionalEngines().get(settingsFile.getName()).isStarted(), is(false));
         assertThat(component.getEngines().size(), is(0));
-        assertThat(((QuickfixjEndpoint) e1).getSessionID(), is(nullValue()));
+        assertThat(((QuickfixjEndpoint) e1).getSID(), is(nullValue()));
 
         writeSettings(settings, false);
 
@@ -184,7 +184,7 @@ public class QuickfixjComponentTest {
         assertThat(component.getProvisionalEngines().get(settingsFile.getName()).isInitialized(), is(true));
         assertThat(component.getProvisionalEngines().get(settingsFile.getName()).isStarted(), is(false));
         assertThat(component.getEngines().size(), is(0));
-        assertThat(((QuickfixjEndpoint) e2).getSessionID(), is(nullValue()));
+        assertThat(((QuickfixjEndpoint) e2).getSID(), is(nullValue()));
 
         // will start the component
         camelContext.start();
@@ -219,7 +219,7 @@ public class QuickfixjComponentTest {
         assertThat(component.getEngines().get(settingsFile.getName()).isInitialized(), is(true));
         assertThat(component.getEngines().get(settingsFile.getName()).isStarted(), is(true));
         assertThat(component.getProvisionalEngines().size(), is(0));
-        assertThat(((QuickfixjEndpoint) e1).getSessionID(), is(nullValue()));
+        assertThat(((QuickfixjEndpoint) e1).getSID(), is(nullValue()));
 
         Endpoint e2 = component.createEndpoint(getEndpointUri(settingsFile.getName(), sessionID));
         assertThat(component.getEngines().size(), is(1));
@@ -227,7 +227,7 @@ public class QuickfixjComponentTest {
         assertThat(component.getEngines().get(settingsFile.getName()).isInitialized(), is(true));
         assertThat(component.getEngines().get(settingsFile.getName()).isStarted(), is(true));
         assertThat(component.getProvisionalEngines().size(), is(0));
-        assertThat(((QuickfixjEndpoint) e2).getSessionID(), is(sessionID));
+        assertThat(((QuickfixjEndpoint) e2).getSID(), is(sessionID));
     }
 
     @Test

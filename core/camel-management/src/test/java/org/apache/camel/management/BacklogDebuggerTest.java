@@ -670,6 +670,150 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         assertEquals(Boolean.FALSE, stepMode, "Should not be in step mode");
     }
 
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testBacklogDebuggerExchangeProperties() throws Exception {
+        MBeanServer mbeanServer = getMBeanServer();
+        ObjectName on = new ObjectName(
+                "org.apache.camel:context=" + context.getManagementName() + ",type=tracer,name=BacklogDebugger");
+        assertNotNull(on);
+        mbeanServer.isRegistered(on);
+
+        Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
+        assertEquals(Boolean.FALSE, enabled, "Should not be enabled");
+
+        // enable debugger
+        mbeanServer.invoke(on, "enableDebugger", null, null);
+
+        enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
+        assertEquals(Boolean.TRUE, enabled, "Should be enabled");
+
+        // add breakpoint at bar
+        mbeanServer.invoke(on, "addBreakpoint", new Object[] { "bar" }, new String[] { "java.lang.String" });
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(0);
+        mock.setSleepForEmptyTest(100);
+
+        template.sendBody("seda:start", "Hello World");
+
+        assertMockEndpointsSatisfied();
+
+        // wait for breakpoint at bar
+        await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> {
+            Set<String> suspended = (Set<String>) mbeanServer.invoke(on, "getSuspendedBreakpointNodeIds", null, null);
+            assertNotNull(suspended);
+            assertEquals(1, suspended.size());
+            assertEquals("bar", suspended.iterator().next());
+        });
+
+        // there should be an exchange property 'myProperty'
+        String xml = (String) mbeanServer.invoke(on, "dumpTracedMessagesAsXml", new Object[] { "bar", true },
+                new String[] { "java.lang.String", "boolean" });
+        assertNotNull(xml);
+        log.info(xml);
+
+        assertTrue(xml.contains("<exchangeProperty name=\"myProperty\" type=\"java.lang.String\">myValue</exchangeProperty>"),
+                "Should contain myProperty");
+
+        resetMocks();
+        mock.expectedMessageCount(1);
+
+        // resume breakpoint
+        mbeanServer.invoke(on, "resumeBreakpoint", new Object[] { "bar" }, new String[] { "java.lang.String" });
+
+        assertMockEndpointsSatisfied();
+
+        // and no suspended anymore
+        Set<String> nodes = (Set<String>) mbeanServer.invoke(on, "getSuspendedBreakpointNodeIds", null, null);
+        assertNotNull(nodes);
+        assertEquals(0, nodes.size());
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testBacklogDebuggerEvaluateExpression() throws Exception {
+        MBeanServer mbeanServer = getMBeanServer();
+        ObjectName on = new ObjectName(
+                "org.apache.camel:context=" + context.getManagementName() + ",type=tracer,name=BacklogDebugger");
+        assertNotNull(on);
+        mbeanServer.isRegistered(on);
+
+        Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
+        assertEquals(Boolean.FALSE, enabled, "Should not be enabled");
+
+        // enable debugger
+        mbeanServer.invoke(on, "enableDebugger", null, null);
+
+        enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
+        assertEquals(Boolean.TRUE, enabled, "Should be enabled");
+
+        // add breakpoint at bar
+        mbeanServer.invoke(on, "addBreakpoint", new Object[] { "bar" }, new String[] { "java.lang.String" });
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(0);
+        mock.setSleepForEmptyTest(100);
+
+        template.sendBody("seda:start", "Hello World");
+
+        assertMockEndpointsSatisfied();
+
+        // wait for breakpoint at bar
+        await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> {
+            Set<String> suspended = (Set<String>) mbeanServer.invoke(on, "getSuspendedBreakpointNodeIds", null, null);
+            assertNotNull(suspended);
+            assertEquals(1, suspended.size());
+            assertEquals("bar", suspended.iterator().next());
+        });
+
+        // evaluate expression, should return true
+        Object response = mbeanServer.invoke(on, "evaluateExpressionAtBreakpoint",
+                new Object[] { "bar", "simple", "${body} contains 'Hello'", "java.lang.Boolean" },
+                new String[] { "java.lang.String", "java.lang.String", "java.lang.String", "java.lang.String" });
+
+        assertNotNull(response);
+        log.info(response.toString());
+
+        assertTrue(response.getClass().isAssignableFrom(Boolean.class));
+        assertTrue((Boolean) response);
+
+        // evaluate another expression, should return value
+        response = mbeanServer.invoke(on, "evaluateExpressionAtBreakpoint",
+                new Object[] { "bar", "simple", "${exchangeProperty.myProperty}", "java.lang.String" },
+                new String[] { "java.lang.String", "java.lang.String", "java.lang.String", "java.lang.String" });
+
+        assertNotNull(response);
+        log.info(response.toString());
+
+        assertTrue(response.getClass().isAssignableFrom(String.class));
+        assertEquals("myValue", response);
+
+        // same as before but assume string by default
+        response = mbeanServer.invoke(on, "evaluateExpressionAtBreakpoint",
+                new Object[] { "bar", "simple", "${exchangeProperty.myProperty}" },
+                new String[] { "java.lang.String", "java.lang.String", "java.lang.String" });
+
+        assertNotNull(response);
+        log.info(response.toString());
+
+        assertTrue(response.getClass().isAssignableFrom(String.class));
+        assertEquals("myValue", response);
+
+        resetMocks();
+        mock.expectedMessageCount(1);
+
+        // resume breakpoint
+        mbeanServer.invoke(on, "resumeBreakpoint", new Object[] { "bar" }, new String[] { "java.lang.String" });
+
+        assertMockEndpointsSatisfied();
+
+        // and no suspended anymore
+        Set<String> nodes = (Set<String>) mbeanServer.invoke(on, "getSuspendedBreakpointNodeIds", null, null);
+        assertNotNull(nodes);
+        assertEquals(0, nodes.size());
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -679,6 +823,7 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
                 context.setDebugging(true);
 
                 from("seda:start?concurrentConsumers=2")
+                        .setProperty("myProperty", constant("myValue")).id("setProp")
                         .to("log:foo").id("foo")
                         .to("log:bar").id("bar")
                         .transform().constant("Bye World").id("transform")

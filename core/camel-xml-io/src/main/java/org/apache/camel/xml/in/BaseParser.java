@@ -31,17 +31,14 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import org.apache.camel.LineNumberAware;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.xml.io.MXParser;
 import org.apache.camel.xml.io.XmlPullParser;
 import org.apache.camel.xml.io.XmlPullParserException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class BaseParser {
-
-    private static final Logger LOG = LoggerFactory.getLogger(BaseParser.class);
 
     protected final MXParser parser;
     protected String namespace;
@@ -71,6 +68,9 @@ public class BaseParser {
     protected <T> T doParse(
             T definition, AttributeHandler<T> attributeHandler, ElementHandler<T> elementHandler, ValueHandler<T> valueHandler)
             throws IOException, XmlPullParserException {
+        if (definition instanceof LineNumberAware) {
+            ((LineNumberAware) definition).setLineNumber(parser.getLineNumber());
+        }
         if (definition instanceof NamespaceAware) {
             final Map<String, String> namespaces = new LinkedHashMap<>();
             for (int i = 0; i < parser.getNamespaceCount(parser.getDepth()); i++) {

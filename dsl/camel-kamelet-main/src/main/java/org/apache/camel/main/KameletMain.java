@@ -17,6 +17,7 @@
 package org.apache.camel.main;
 
 import java.util.Map;
+import java.util.Objects;
 
 import groovy.lang.GroovyClassLoader;
 import org.apache.camel.CamelContext;
@@ -29,10 +30,23 @@ import org.apache.camel.spi.Registry;
  * A Main class for booting up Camel with Kamelet in standalone mode.
  */
 public class KameletMain extends MainCommandLineSupport {
+    public static final String DEFAULT_KAMELETS_LOCATION = "classpath:/kamelets,github:apache:camel-kamelets/kamelets";
 
     private static ClassLoader kameletClassLoader;
     protected final MainRegistry registry = new MainRegistry();
     private boolean download = true;
+
+    public KameletMain() {
+        configureInitialProperties(DEFAULT_KAMELETS_LOCATION);
+    }
+
+    public KameletMain(String overrides) {
+        Objects.requireNonNull(overrides);
+
+        String locations = overrides + "," + DEFAULT_KAMELETS_LOCATION;
+
+        configureInitialProperties(locations);
+    }
 
     public static void main(String... args) throws Exception {
         KameletMain main = new KameletMain();
@@ -110,7 +124,7 @@ public class KameletMain extends MainCommandLineSupport {
         super.doStart();
         if (getCamelContext() != null) {
             try {
-                // if we were veto started then mark as completed
+                // if we were vetoed started then mark as completed
                 getCamelContext().start();
             } finally {
                 if (getCamelContext().isVetoStarted()) {
@@ -147,18 +161,33 @@ public class KameletMain extends MainCommandLineSupport {
         answer.setApplicationContextClassLoader(kameletClassLoader);
         answer.setRegistry(registry);
 
-        addInitialProperty("camel.component.kamelet.location", "classpath:/kamelets,github:apache:camel-kamelets");
-        addInitialProperty("camel.main.lightweight", "true");
+        // embed HTTP server if port is specified
+        Object port = getInitialProperties().get("camel.jbang.platform-http.port");
+        if (port != null) {
+            VertxHttpServer.registerServer(answer, Integer.parseInt(port.toString()));
+        }
 
         if (download) {
             try {
-                answer.addService(new DependencyDownloader());
+                // use resolver that can auto downloaded
+                answer.setComponentResolver(new DependencyDownloaderComponentResolver(answer));
+                answer.setDataFormatResolver(new DependencyDownloaderDataFormatResolver(answer));
+                answer.setLanguageResolver(new DependencyDownloaderLanguageResolver(answer));
+                answer.setRoutesLoader(new DependencyDownloaderRoutesLoader());
+                answer.addService(new DependencyDownloaderKamelet());
             } catch (Exception e) {
                 throw RuntimeCamelException.wrapRuntimeException(e);
             }
         }
 
         return answer;
+    }
+
+    /**
+     * Sets initial properties that are specific to camel-kamelet-main
+     */
+    protected void configureInitialProperties(String location) {
+        addInitialProperty("camel.component.kamelet.location", location);
     }
 
 }

@@ -38,6 +38,7 @@ public class DefaultErrorHandlerOnPrepareTest extends ContextTestSupport {
         assertTrue(out.isFailed(), "Should be failed");
         assertIsInstanceOf(IllegalArgumentException.class, out.getException());
         assertEquals("Forced", out.getIn().getHeader("FailedBecause"));
+        assertEquals("foo", out.getIn().getHeader("FailedAtRoute"));
     }
 
     @Override
@@ -47,7 +48,9 @@ public class DefaultErrorHandlerOnPrepareTest extends ContextTestSupport {
             public void configure() throws Exception {
                 errorHandler(defaultErrorHandler().onPrepareFailure(new MyPrepareProcessor()));
 
-                from("direct:start").log("Incoming ${body}").throwException(new IllegalArgumentException("Forced"));
+                from("direct:start")
+                        .routeId("foo")
+                        .log("Incoming ${body}").throwException(new IllegalArgumentException("Forced"));
             }
         };
     }
@@ -58,6 +61,7 @@ public class DefaultErrorHandlerOnPrepareTest extends ContextTestSupport {
         public void process(Exchange exchange) throws Exception {
             Exception cause = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
             exchange.getIn().setHeader("FailedBecause", cause.getMessage());
+            exchange.getIn().setHeader("FailedAtRoute", exchange.getProperty(Exchange.FAILURE_ROUTE_ID, String.class));
         }
     }
 }

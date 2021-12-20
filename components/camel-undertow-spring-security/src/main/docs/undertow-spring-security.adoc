@@ -5,7 +5,6 @@
 :description: Spring Security Provider for camel-undertow
 :since: 3.3
 :supportlevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/undertow-spring-security.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: undertow-spring-security
 

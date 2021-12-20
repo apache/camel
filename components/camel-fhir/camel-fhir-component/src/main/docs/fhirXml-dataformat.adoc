@@ -5,7 +5,6 @@
 :description: Marshall and unmarshall FHIR objects to/from XML.
 :since: 2.21
 :supportlevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/fhirXml.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: fhir
 

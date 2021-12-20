@@ -6,7 +6,6 @@
 :since: 3.0
 :supportlevel: Stable-deprecated
 :deprecated: *deprecated*
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/caffeine-lrucache.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: caffeine-lrucache
 

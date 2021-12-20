@@ -123,5 +123,10 @@ public enum BlobOperationsDefinition {
      * Returns transaction logs of all the changes that occur to the blobs and the blob metadata in your storage
      * account. The change feed provides ordered, guaranteed, durable, immutable, read-only log of these changes.
      */
-    getChangeFeed
+    getChangeFeed,
+    /**
+     * Returns transaction logs of all the changes that occur to the blobs and the blob metadata in your storage
+     * account. The change feed provides ordered, guaranteed, durable, immutable, read-only log of these changes.
+     */
+    copyBlob
 }

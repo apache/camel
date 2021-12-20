@@ -38,7 +38,7 @@ public class MllpInvalidMessageExceptionTest extends MllpExceptionTestSupport {
      */
     @Test
     public void testConstructorOne() throws Exception {
-        instance = new MllpInvalidMessageException(EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES);
+        instance = new MllpInvalidMessageException(EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, LOG_PHI_TRUE);
 
         assertTrue(instance.getMessage().startsWith(EXCEPTION_MESSAGE));
         assertNull(instance.getCause());
@@ -53,7 +53,7 @@ public class MllpInvalidMessageExceptionTest extends MllpExceptionTestSupport {
      */
     @Test
     public void testConstructorTwo() throws Exception {
-        instance = new MllpInvalidMessageException(EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, CAUSE);
+        instance = new MllpInvalidMessageException(EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, CAUSE, LOG_PHI_TRUE);
 
         assertTrue(instance.getMessage().startsWith(EXCEPTION_MESSAGE));
         assertSame(CAUSE, instance.getCause());

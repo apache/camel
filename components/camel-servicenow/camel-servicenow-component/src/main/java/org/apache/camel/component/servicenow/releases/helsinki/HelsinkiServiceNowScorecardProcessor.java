@@ -31,7 +31,7 @@ import static org.apache.camel.component.servicenow.ServiceNowConstants.ACTION_S
 
 class HelsinkiServiceNowScorecardProcessor extends AbstractServiceNowProcessor {
 
-    HelsinkiServiceNowScorecardProcessor(ServiceNowEndpoint endpoint) throws Exception {
+    HelsinkiServiceNowScorecardProcessor(ServiceNowEndpoint endpoint) {
         super(endpoint);
 
         addDispatcher(ACTION_RETRIEVE, ACTION_SUBJECT_PERFORMANCE_ANALYTICS, this::retrievePerformanceAnalytics);

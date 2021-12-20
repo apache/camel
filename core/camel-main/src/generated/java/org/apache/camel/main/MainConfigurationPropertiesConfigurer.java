@@ -53,10 +53,14 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "Configurations": target.setConfigurations(property(camelContext, java.util.List.class, value)); return true;
         case "consumertemplatecachesize":
         case "ConsumerTemplateCacheSize": target.setConsumerTemplateCacheSize(property(camelContext, int.class, value)); return true;
+        case "debugging":
+        case "Debugging": target.setDebugging(property(camelContext, boolean.class, value)); return true;
         case "dumproutes":
         case "DumpRoutes": target.setDumpRoutes(property(camelContext, boolean.class, value)); return true;
         case "durationhitexitcode":
         case "DurationHitExitCode": target.setDurationHitExitCode(property(camelContext, int.class, value)); return true;
+        case "durationmaxaction":
+        case "DurationMaxAction": target.setDurationMaxAction(property(camelContext, java.lang.String.class, value)); return true;
         case "durationmaxidleseconds":
         case "DurationMaxIdleSeconds": target.setDurationMaxIdleSeconds(property(camelContext, int.class, value)); return true;
         case "durationmaxmessages":
@@ -95,6 +99,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "JmxManagementStatisticsLevel": target.setJmxManagementStatisticsLevel(property(camelContext, org.apache.camel.ManagementStatisticsLevel.class, value)); return true;
         case "lightweight":
         case "Lightweight": target.setLightweight(property(camelContext, boolean.class, value)); return true;
+        case "loadhealthchecks":
+        case "LoadHealthChecks": target.setLoadHealthChecks(property(camelContext, boolean.class, value)); return true;
         case "loadtypeconverters":
         case "LoadTypeConverters": target.setLoadTypeConverters(property(camelContext, boolean.class, value)); return true;
         case "logdebugmaxchars":
@@ -151,6 +157,18 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "RoutesExcludePattern": target.setRoutesExcludePattern(property(camelContext, java.lang.String.class, value)); return true;
         case "routesincludepattern":
         case "RoutesIncludePattern": target.setRoutesIncludePattern(property(camelContext, java.lang.String.class, value)); return true;
+        case "routesreloaddirectory":
+        case "RoutesReloadDirectory": target.setRoutesReloadDirectory(property(camelContext, java.lang.String.class, value)); return true;
+        case "routesreloaddirectoryrecursive":
+        case "RoutesReloadDirectoryRecursive": target.setRoutesReloadDirectoryRecursive(property(camelContext, boolean.class, value)); return true;
+        case "routesreloadenabled":
+        case "RoutesReloadEnabled": target.setRoutesReloadEnabled(property(camelContext, boolean.class, value)); return true;
+        case "routesreloadpattern":
+        case "RoutesReloadPattern": target.setRoutesReloadPattern(property(camelContext, java.lang.String.class, value)); return true;
+        case "routesreloadremoveallroutes":
+        case "RoutesReloadRemoveAllRoutes": target.setRoutesReloadRemoveAllRoutes(property(camelContext, boolean.class, value)); return true;
+        case "routesreloadrestartduration":
+        case "RoutesReloadRestartDuration": target.setRoutesReloadRestartDuration(property(camelContext, boolean.class, value)); return true;
         case "shutdownloginflightexchangesontimeout":
         case "ShutdownLogInflightExchangesOnTimeout": target.setShutdownLogInflightExchangesOnTimeout(property(camelContext, boolean.class, value)); return true;
         case "shutdownnowontimeout":
@@ -250,10 +268,14 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "Configurations": return java.util.List.class;
         case "consumertemplatecachesize":
         case "ConsumerTemplateCacheSize": return int.class;
+        case "debugging":
+        case "Debugging": return boolean.class;
         case "dumproutes":
         case "DumpRoutes": return boolean.class;
         case "durationhitexitcode":
         case "DurationHitExitCode": return int.class;
+        case "durationmaxaction":
+        case "DurationMaxAction": return java.lang.String.class;
         case "durationmaxidleseconds":
         case "DurationMaxIdleSeconds": return int.class;
         case "durationmaxmessages":
@@ -292,6 +314,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "JmxManagementStatisticsLevel": return org.apache.camel.ManagementStatisticsLevel.class;
         case "lightweight":
         case "Lightweight": return boolean.class;
+        case "loadhealthchecks":
+        case "LoadHealthChecks": return boolean.class;
         case "loadtypeconverters":
         case "LoadTypeConverters": return boolean.class;
         case "logdebugmaxchars":
@@ -348,6 +372,18 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "RoutesExcludePattern": return java.lang.String.class;
         case "routesincludepattern":
         case "RoutesIncludePattern": return java.lang.String.class;
+        case "routesreloaddirectory":
+        case "RoutesReloadDirectory": return java.lang.String.class;
+        case "routesreloaddirectoryrecursive":
+        case "RoutesReloadDirectoryRecursive": return boolean.class;
+        case "routesreloadenabled":
+        case "RoutesReloadEnabled": return boolean.class;
+        case "routesreloadpattern":
+        case "RoutesReloadPattern": return java.lang.String.class;
+        case "routesreloadremoveallroutes":
+        case "RoutesReloadRemoveAllRoutes": return boolean.class;
+        case "routesreloadrestartduration":
+        case "RoutesReloadRestartDuration": return boolean.class;
         case "shutdownloginflightexchangesontimeout":
         case "ShutdownLogInflightExchangesOnTimeout": return boolean.class;
         case "shutdownnowontimeout":
@@ -448,10 +484,14 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "Configurations": return target.getConfigurations();
         case "consumertemplatecachesize":
         case "ConsumerTemplateCacheSize": return target.getConsumerTemplateCacheSize();
+        case "debugging":
+        case "Debugging": return target.isDebugging();
         case "dumproutes":
         case "DumpRoutes": return target.isDumpRoutes();
         case "durationhitexitcode":
         case "DurationHitExitCode": return target.getDurationHitExitCode();
+        case "durationmaxaction":
+        case "DurationMaxAction": return target.getDurationMaxAction();
         case "durationmaxidleseconds":
         case "DurationMaxIdleSeconds": return target.getDurationMaxIdleSeconds();
         case "durationmaxmessages":
@@ -490,6 +530,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "JmxManagementStatisticsLevel": return target.getJmxManagementStatisticsLevel();
         case "lightweight":
         case "Lightweight": return target.isLightweight();
+        case "loadhealthchecks":
+        case "LoadHealthChecks": return target.isLoadHealthChecks();
         case "loadtypeconverters":
         case "LoadTypeConverters": return target.isLoadTypeConverters();
         case "logdebugmaxchars":
@@ -546,6 +588,18 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "RoutesExcludePattern": return target.getRoutesExcludePattern();
         case "routesincludepattern":
         case "RoutesIncludePattern": return target.getRoutesIncludePattern();
+        case "routesreloaddirectory":
+        case "RoutesReloadDirectory": return target.getRoutesReloadDirectory();
+        case "routesreloaddirectoryrecursive":
+        case "RoutesReloadDirectoryRecursive": return target.isRoutesReloadDirectoryRecursive();
+        case "routesreloadenabled":
+        case "RoutesReloadEnabled": return target.isRoutesReloadEnabled();
+        case "routesreloadpattern":
+        case "RoutesReloadPattern": return target.getRoutesReloadPattern();
+        case "routesreloadremoveallroutes":
+        case "RoutesReloadRemoveAllRoutes": return target.isRoutesReloadRemoveAllRoutes();
+        case "routesreloadrestartduration":
+        case "RoutesReloadRestartDuration": return target.isRoutesReloadRestartDuration();
         case "shutdownloginflightexchangesontimeout":
         case "ShutdownLogInflightExchangesOnTimeout": return target.isShutdownLogInflightExchangesOnTimeout();
         case "shutdownnowontimeout":

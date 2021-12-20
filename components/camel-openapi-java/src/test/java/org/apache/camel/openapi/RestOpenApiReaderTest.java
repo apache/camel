@@ -49,7 +49,9 @@ public class RestOpenApiReaderTest extends CamelTestSupport {
             public void configure() throws Exception {
                 rest("/hello").consumes("application/json").produces("application/json").get("/hi/{name}")
                         .description("Saying hi").param().name("name").type(RestParamType.path)
-                        .dataType("string").description("Who is it").example("Donald Duck").endParam().to("log:hi")
+                        .dataType("string").description("Who is it").example("Donald Duck").endParam()
+                        .param().name("filter").description("Filters to apply to the entity.").type(RestParamType.query)
+                        .dataType("array").arrayType("date-time").endParam().to("log:hi")
                         .get("/bye/{name}").description("Saying bye").param().name("name")
                         .type(RestParamType.path).dataType("string").description("Who is it").example("Donald Duck").endParam()
                         .responseMessage().code(200).message("A reply number")
@@ -98,7 +100,7 @@ public class RestOpenApiReaderTest extends CamelTestSupport {
         assertTrue(json.contains("\"x-example\" : \"Donald Duck\""));
         assertTrue(json.contains("\"success\" : \"123\""));
         assertTrue(json.contains("\"error\" : \"-1\""));
-        assertTrue(json.contains("\"type\" : \"string\""));
+        assertTrue(json.contains("\"type\" : \"array\""));
 
         context.stop();
     }
@@ -136,7 +138,8 @@ public class RestOpenApiReaderTest extends CamelTestSupport {
         assertTrue(json.contains("\"x-example\" : \"Donald Duck\""));
         assertTrue(json.contains("\"success\" : \"123\""));
         assertTrue(json.contains("\"error\" : \"-1\""));
-        assertTrue(json.contains("\"type\" : \"string\""));
+        assertTrue(json.contains("\"type\" : \"array\""));
+        assertTrue(json.contains("\"format\" : \"date-time\""));
 
         context.stop();
     }

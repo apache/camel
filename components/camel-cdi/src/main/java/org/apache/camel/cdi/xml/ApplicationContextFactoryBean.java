@@ -40,6 +40,9 @@ public class ApplicationContextFactoryBean {
     @XmlElement(name = "import")
     private List<ImportDefinition> imports = new ArrayList<>();
 
+    @XmlElement(name = "routeConfigurationContext")
+    private List<RouteConfigurationContextDefinition> routeConfigurationContexts = new ArrayList<>();
+
     @XmlElement(name = "restContext")
     private List<RestContextDefinition> restContexts = new ArrayList<>();
 
@@ -96,6 +99,14 @@ public class ApplicationContextFactoryBean {
 
     public void setRouteContexts(List<RouteContextDefinition> routeContexts) {
         this.routeContexts = routeContexts;
+    }
+
+    public List<RouteConfigurationContextDefinition> getRouteConfigurationContexts() {
+        return routeConfigurationContexts;
+    }
+
+    public void setRouteConfigurationContexts(List<RouteConfigurationContextDefinition> routeConfigurationContexts) {
+        this.routeConfigurationContexts = routeConfigurationContexts;
     }
 
     public List<RouteTemplateContextDefinition> getRouteTemplateContexts() {

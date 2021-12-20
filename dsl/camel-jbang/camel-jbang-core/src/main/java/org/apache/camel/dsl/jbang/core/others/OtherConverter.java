@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.dsl.jbang.core.others;
 
 import java.util.regex.Matcher;
@@ -23,6 +22,7 @@ import org.apache.camel.dsl.jbang.core.api.Converter;
 import org.apache.camel.dsl.jbang.core.types.Other;
 
 public class OtherConverter implements Converter<Other> {
+
     @Override
     public Other convert(Matcher matcher) {
         Other other = new Other();

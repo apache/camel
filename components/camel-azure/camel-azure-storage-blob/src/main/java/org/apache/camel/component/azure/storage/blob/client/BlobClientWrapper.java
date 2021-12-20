@@ -19,8 +19,10 @@ package org.apache.camel.component.azure.storage.blob.client;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.time.Duration;
+import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import com.azure.core.http.HttpHeaders;
@@ -28,6 +30,9 @@ import com.azure.core.http.rest.Response;
 import com.azure.core.http.rest.ResponseBase;
 import com.azure.core.util.Context;
 import com.azure.storage.blob.BlobClient;
+import com.azure.storage.blob.BlobContainerClient;
+import com.azure.storage.blob.BlobServiceClient;
+import com.azure.storage.blob.BlobServiceClientBuilder;
 import com.azure.storage.blob.models.AccessTier;
 import com.azure.storage.blob.models.AppendBlobItem;
 import com.azure.storage.blob.models.AppendBlobRequestConditions;
@@ -46,15 +51,17 @@ import com.azure.storage.blob.models.PageBlobRequestConditions;
 import com.azure.storage.blob.models.PageList;
 import com.azure.storage.blob.models.PageRange;
 import com.azure.storage.blob.models.ParallelTransferOptions;
+import com.azure.storage.blob.sas.BlobSasPermission;
 import com.azure.storage.blob.sas.BlobServiceSasSignatureValues;
 import com.azure.storage.blob.specialized.AppendBlobClient;
 import com.azure.storage.blob.specialized.BlobInputStream;
 import com.azure.storage.blob.specialized.BlockBlobClient;
 import com.azure.storage.blob.specialized.PageBlobClient;
+import com.azure.storage.common.StorageSharedKeyCredential;
 import org.apache.camel.util.ObjectHelper;
 
 public class BlobClientWrapper {
-
+    private static final String SERVICE_URI_SEGMENT = ".blob.core.windows.net";
     private final BlobClient client;
 
     public BlobClientWrapper(final BlobClient client) {
@@ -146,6 +153,26 @@ public class BlobClientWrapper {
             final AppendBlobRequestConditions appendBlobRequestConditions, final Duration timeout) {
         return getAppendBlobClient().appendBlockWithResponse(data, length, contentMd5, appendBlobRequestConditions, timeout,
                 Context.NONE);
+    }
+
+    public String copyBlob(String sourceBlobName, String accountName, String containerName, String accessKey) {
+        BlobServiceClient blobServiceClient = new BlobServiceClientBuilder()
+                .endpoint(String.format(Locale.ROOT, "https://%s" + SERVICE_URI_SEGMENT, accountName))
+                .credential(new StorageSharedKeyCredential(accountName, accessKey))
+                .buildClient();
+        BlobContainerClient sourceContainerClient = blobServiceClient.getBlobContainerClient(containerName);
+        BlobClient sourceBlob = sourceContainerClient.getBlobClient(sourceBlobName);
+
+        OffsetDateTime expiryTime = OffsetDateTime.now().plusSeconds(5L);
+        BlobSasPermission permission = new BlobSasPermission().setReadPermission(true);
+        BlobServiceSasSignatureValues values = new BlobServiceSasSignatureValues(expiryTime, permission)
+                .setStartTime(OffsetDateTime.now());
+        String sasToken = sourceBlob.generateSas(values);
+
+        String res = client.copyFromUrl(sourceBlob.getBlobUrl() + "?" + sasToken);
+
+        return res;
+
     }
 
     public boolean appendBlobExists() {

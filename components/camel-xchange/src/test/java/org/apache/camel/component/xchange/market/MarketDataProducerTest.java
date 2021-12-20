@@ -19,12 +19,14 @@ package org.apache.camel.component.xchange.market;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.marketdata.Ticker;
 
 import static org.apache.camel.component.xchange.XChangeConfiguration.HEADER_CURRENCY_PAIR;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@EnabledIfSystemProperty(named = "enable.xchange.itests", matches = "true", disabledReason = "Requires API credentials")
 public class MarketDataProducerTest extends CamelTestSupport {
 
     @Override

@@ -5,7 +5,6 @@
 :description: Reactive Executor for camel-core using Vert.x
 :since: 3.0
 :supportlevel: Experimental
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/reactive-executor-vertx.adoc[opts=optional]
 
 *Since Camel {since}*
 

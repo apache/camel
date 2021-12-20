@@ -18,29 +18,29 @@ package org.apache.camel.component.kafka;
 
 import java.util.Properties;
 
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.consumer.Consumer;
+import org.apache.kafka.clients.producer.Producer;
 
 /**
- * Factory to create a new {@link KafkaConsumer} and {@link KafkaProducer} instances.
+ * Factory to create a new Kafka {@link Consumer} and Kafka {@link Producer} instances.
  */
 public interface KafkaClientFactory {
 
     /**
-     * Creates a new instance of the {@link KafkaProducer} class.
+     * Creates a new instance of the Kafka {@link Producer} class.
      * 
      * @param  kafkaProps The producer configs.
      * @return            an instance of Kafka producer.
      */
-    KafkaProducer getProducer(Properties kafkaProps);
+    Producer getProducer(Properties kafkaProps);
 
     /**
-     * Creates a new instance of the {@link KafkaConsumer} class.
+     * Creates a new instance of the Kafka {@link Consumer} class.
      * 
      * @param  kafkaProps The consumer configs.
      * @return            an instance of Kafka consumer.
      */
-    KafkaConsumer getConsumer(Properties kafkaProps);
+    Consumer getConsumer(Properties kafkaProps);
 
     /**
      * URL of the Kafka brokers to use. The format is host1:port1,host2:port2, and the list can be a subset of brokers

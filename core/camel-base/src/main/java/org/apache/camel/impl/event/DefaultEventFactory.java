@@ -131,6 +131,11 @@ public class DefaultEventFactory implements EventFactory {
     }
 
     @Override
+    public CamelEvent createRouteReloaded(Route route, int index, int total) {
+        return new RouteReloadedEvent(route, index, total);
+    }
+
+    @Override
     public CamelEvent createExchangeCreatedEvent(Exchange exchange) {
         return new ExchangeCreatedEvent(exchange);
     }

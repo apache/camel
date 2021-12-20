@@ -78,7 +78,7 @@ public class XmlMainTest {
     public void testMainRoutesCollectorScanWildcardDirFilePath() throws Exception {
         doTestMain(
                 "file:src/test/resources/**/*.xml",
-                "**/org/apache/camel/dsl/**,**/camel-rests.xml,**/camel-template.xml");
+                "**/org/apache/camel/dsl/**,**/camel-rests.xml,**/camel-template.xml,**/reload/*");
     }
 
     @Test

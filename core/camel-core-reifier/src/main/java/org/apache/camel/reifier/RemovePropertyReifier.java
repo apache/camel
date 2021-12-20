@@ -21,7 +21,6 @@ import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RemovePropertyDefinition;
 import org.apache.camel.processor.RemovePropertyProcessor;
-import org.apache.camel.util.ObjectHelper;
 
 public class RemovePropertyReifier extends ProcessorReifier<RemovePropertyDefinition> {
 
@@ -31,7 +30,10 @@ public class RemovePropertyReifier extends ProcessorReifier<RemovePropertyDefini
 
     @Override
     public Processor createProcessor() throws Exception {
-        ObjectHelper.notNull(definition.getPropertyName(), "propertyName", this);
-        return new RemovePropertyProcessor(parseString(definition.getPropertyName()));
+        String name = definition.getName();
+        if (name == null) {
+            name = definition.getPropertyName();
+        }
+        return new RemovePropertyProcessor(parseString(name));
     }
 }

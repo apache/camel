@@ -30,8 +30,12 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
 
-@UriEndpoint(firstVersion = "3.8.0", scheme = "azure-storage-datalake", title = "Azure storage datalake service",
-             syntax = "azure-storage-datalake:accountName/fileSystemName", category = { Category.CLOUD, Category.FILE })
+/**
+ * Sends and receives files to/from Azure DataLake Storage.
+ */
+@UriEndpoint(firstVersion = "3.8.0", scheme = "azure-storage-datalake", title = "Azure Storage Datalake Service",
+             syntax = "azure-storage-datalake:accountName/fileSystemName",
+             category = { Category.CLOUD, Category.FILE, Category.BIGDATA })
 public class DataLakeEndpoint extends ScheduledPollEndpoint {
 
     @UriParam(description = "service client of datalake")

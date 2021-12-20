@@ -340,15 +340,19 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
             final Document openapi, final OasOperation operation, final String method,
             final String uriTemplate)
             throws Exception {
-        final String basePath = determineBasePath(openapi);
-        final String componentEndpointUri = "rest:" + method + ":" + basePath + ":" + uriTemplate;
 
-        final CamelContext camelContext = getCamelContext();
-
-        final Endpoint endpoint = camelContext.getEndpoint(componentEndpointUri);
+        CamelContext camelContext = getCamelContext();
 
         Map<String, Object> params = determineEndpointParameters(openapi, operation);
         boolean hasHost = params.containsKey("host");
+
+        String basePath = determineBasePath(openapi);
+        String componentEndpointUri = "rest:" + method + ":" + basePath + ":" + uriTemplate;
+        if (hasHost) {
+            componentEndpointUri += "?host=" + params.get("host");
+        }
+
+        Endpoint endpoint = camelContext.getEndpoint(componentEndpointUri);
         // let the rest endpoint configure itself
         endpoint.configureProperties(params);
 

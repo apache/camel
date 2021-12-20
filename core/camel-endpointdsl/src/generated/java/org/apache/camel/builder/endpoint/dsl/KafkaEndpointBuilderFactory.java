@@ -1851,6 +1851,86 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
+         * Factory to use for creating KafkaManualCommit instances. This allows
+         * to plugin a custom factory to create custom KafkaManualCommit
+         * instances in case special logic is needed when doing manual commits
+         * that deviates from the default implementation that comes out of the
+         * box.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.kafka.KafkaManualCommitFactory&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param kafkaManualCommitFactory the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKafkaEndpointConsumerBuilder kafkaManualCommitFactory(
+                Object kafkaManualCommitFactory) {
+            doSetProperty("kafkaManualCommitFactory", kafkaManualCommitFactory);
+            return this;
+        }
+        /**
+         * Factory to use for creating KafkaManualCommit instances. This allows
+         * to plugin a custom factory to create custom KafkaManualCommit
+         * instances in case special logic is needed when doing manual commits
+         * that deviates from the default implementation that comes out of the
+         * box.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.kafka.KafkaManualCommitFactory&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param kafkaManualCommitFactory the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKafkaEndpointConsumerBuilder kafkaManualCommitFactory(
+                String kafkaManualCommitFactory) {
+            doSetProperty("kafkaManualCommitFactory", kafkaManualCommitFactory);
+            return this;
+        }
+        /**
+         * Factory to use for creating
+         * org.apache.kafka.clients.consumer.KafkaConsumer and
+         * org.apache.kafka.clients.producer.KafkaProducer instances. This
+         * allows to configure a custom factory to create instances with logic
+         * that extends the vanilla Kafka clients.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.kafka.KafkaClientFactory&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param kafkaClientFactory the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKafkaEndpointConsumerBuilder kafkaClientFactory(
+                Object kafkaClientFactory) {
+            doSetProperty("kafkaClientFactory", kafkaClientFactory);
+            return this;
+        }
+        /**
+         * Factory to use for creating
+         * org.apache.kafka.clients.consumer.KafkaConsumer and
+         * org.apache.kafka.clients.producer.KafkaProducer instances. This
+         * allows to configure a custom factory to create instances with logic
+         * that extends the vanilla Kafka clients.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.kafka.KafkaClientFactory&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param kafkaClientFactory the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKafkaEndpointConsumerBuilder kafkaClientFactory(
+                String kafkaClientFactory) {
+            doSetProperty("kafkaClientFactory", kafkaClientFactory);
+            return this;
+        }
+        /**
          * Sets whether synchronous processing should be strictly used.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -3796,6 +3876,46 @@ public interface KafkaEndpointBuilderFactory {
             return (KafkaEndpointProducerBuilder) this;
         }
         /**
+         * Factory to use for creating
+         * org.apache.kafka.clients.consumer.KafkaConsumer and
+         * org.apache.kafka.clients.producer.KafkaProducer instances. This
+         * allows to configure a custom factory to create instances with logic
+         * that extends the vanilla Kafka clients.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.kafka.KafkaClientFactory&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param kafkaClientFactory the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKafkaEndpointProducerBuilder kafkaClientFactory(
+                Object kafkaClientFactory) {
+            doSetProperty("kafkaClientFactory", kafkaClientFactory);
+            return this;
+        }
+        /**
+         * Factory to use for creating
+         * org.apache.kafka.clients.consumer.KafkaConsumer and
+         * org.apache.kafka.clients.producer.KafkaProducer instances. This
+         * allows to configure a custom factory to create instances with logic
+         * that extends the vanilla Kafka clients.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.kafka.KafkaClientFactory&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param kafkaClientFactory the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKafkaEndpointProducerBuilder kafkaClientFactory(
+                String kafkaClientFactory) {
+            doSetProperty("kafkaClientFactory", kafkaClientFactory);
+            return this;
+        }
+        /**
          * Sets whether synchronous processing should be strictly used.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -4478,6 +4598,46 @@ public interface KafkaEndpointBuilderFactory {
                 AdvancedKafkaEndpointProducerBuilder {
         default KafkaEndpointBuilder basic() {
             return (KafkaEndpointBuilder) this;
+        }
+        /**
+         * Factory to use for creating
+         * org.apache.kafka.clients.consumer.KafkaConsumer and
+         * org.apache.kafka.clients.producer.KafkaProducer instances. This
+         * allows to configure a custom factory to create instances with logic
+         * that extends the vanilla Kafka clients.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.kafka.KafkaClientFactory&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param kafkaClientFactory the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKafkaEndpointBuilder kafkaClientFactory(
+                Object kafkaClientFactory) {
+            doSetProperty("kafkaClientFactory", kafkaClientFactory);
+            return this;
+        }
+        /**
+         * Factory to use for creating
+         * org.apache.kafka.clients.consumer.KafkaConsumer and
+         * org.apache.kafka.clients.producer.KafkaProducer instances. This
+         * allows to configure a custom factory to create instances with logic
+         * that extends the vanilla Kafka clients.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.kafka.KafkaClientFactory&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param kafkaClientFactory the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKafkaEndpointBuilder kafkaClientFactory(
+                String kafkaClientFactory) {
+            doSetProperty("kafkaClientFactory", kafkaClientFactory);
+            return this;
         }
         /**
          * Sets whether synchronous processing should be strictly used.

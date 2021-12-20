@@ -551,7 +551,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
             caseAdded = true;
 
             setProperty.beginControlFlow("case \"steps\":");
-            setProperty.addStatement("setSteps(target, node);");
+            setProperty.addStatement("setSteps(target, node)");
             setProperty.addStatement("break");
             setProperty.endControlFlow();
 
@@ -907,7 +907,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
 
         ClassInfo c = view.getClassByName(field.type().name());
         if (c != null && c.isEnum()) {
-            cb.addStatement("target.set$L($L.valueOf(asText(node)))", StringHelper.capitalize(field.name()), field.type().name().toString());
+            cb.addStatement("target.set$L(asEnum(node, $L.class))", StringHelper.capitalize(field.name()), field.type().name().toString());
             cb.addStatement("break");
 
             Set<String> values = new TreeSet<>();
@@ -1050,7 +1050,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
 
         ClassInfo c = view.getClassByName(parameterType.name());
         if (c != null && c.isEnum()) {
-            cb.addStatement("target.$L($L.valueOf(asText(node)))", method.name(), parameterType);
+            cb.addStatement("target.$L(asEnum(node, $L.class))", method.name(), parameterType);
             cb.addStatement("break");
 
             Set<String> values = new TreeSet<>();

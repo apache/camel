@@ -38,6 +38,16 @@ public class SplunkHECEndpointTest {
     }
 
     @Test
+    public void testIpAddressValid() {
+        SplunkHECConfiguration configuration = new SplunkHECConfiguration();
+        SplunkHECComponent component = new SplunkHECComponent();
+        SplunkHECEndpoint endpoint = new SplunkHECEndpoint(
+                "splunk-hec:192.168.0.1:18808/11111111-1111-1111-1111-111111111111", component, configuration);
+        assertEquals("192.168.0.1:18808", endpoint.getSplunkURL());
+        assertEquals("11111111-1111-1111-1111-111111111111", endpoint.getToken());
+    }
+
+    @Test
     public void testLocalHostValid() {
         SplunkHECConfiguration configuration = new SplunkHECConfiguration();
         SplunkHECComponent component = new SplunkHECComponent();

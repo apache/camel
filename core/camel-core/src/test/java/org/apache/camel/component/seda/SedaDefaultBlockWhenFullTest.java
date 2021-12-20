@@ -20,12 +20,14 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests that a Seda component properly set blockWhenFull on endpoints.
  */
+@Timeout(20)
 public class SedaDefaultBlockWhenFullTest extends ContextTestSupport {
 
     private static final int QUEUE_SIZE = 1;

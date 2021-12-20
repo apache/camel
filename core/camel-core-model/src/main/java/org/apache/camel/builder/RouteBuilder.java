@@ -18,8 +18,10 @@ package org.apache.camel.builder;
 
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
@@ -63,6 +65,7 @@ import org.slf4j.LoggerFactory;
 public abstract class RouteBuilder extends BuilderSupport implements RoutesBuilder, Ordered {
     protected Logger log = LoggerFactory.getLogger(getClass());
 
+    private Resource resource;
     private final AtomicBoolean initialized = new AtomicBoolean();
     private final List<RouteBuilderLifecycleStrategy> lifecycleInterceptors = new ArrayList<>();
     private final List<TransformerBuilder> transformerBuilders = new ArrayList<>();
@@ -79,6 +82,20 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
 
     public RouteBuilder(CamelContext context) {
         super(context);
+    }
+
+    /**
+     * The {@link Resource} which is the source code for this route (such as XML, YAML, Groovy or Java source file)
+     */
+    public Resource getResource() {
+        return resource;
+    }
+
+    /**
+     * Sets the {@link Resource} which is the source code for this route (such as XML, YAML, Groovy or Java source file)
+     */
+    public void setResource(Resource resource) {
+        this.resource = resource;
     }
 
     /**
@@ -490,6 +507,40 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         }
     }
 
+    @Override
+    public Set<String> updateRoutesToCamelContext(CamelContext context) throws Exception {
+        Set<String> answer = new LinkedHashSet<>();
+
+        // must configure routes before rests
+        configureRoutes(context);
+        configureRests(context);
+
+        // but populate rests before routes, as we want to turn rests into routes
+        populateRests();
+        populateTransformers();
+        populateValidators();
+        populateRouteTemplates();
+
+        // ensure routes are prepared before being populated
+        for (RouteDefinition route : routeCollection.getRoutes()) {
+            routeCollection.prepareRoute(route);
+        }
+
+        // trigger update of the routes
+        populateOrUpdateRoutes();
+
+        if (this instanceof OnCamelContextEvent) {
+            context.addLifecycleStrategy(LifecycleStrategySupport.adapt((OnCamelContextEvent) this));
+        }
+
+        for (RouteDefinition route : routeCollection.getRoutes()) {
+            String id = route.getRouteId();
+            answer.add(id);
+        }
+
+        return answer;
+    }
+
     /**
      * Configures the routes
      *
@@ -555,6 +606,9 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
 
             configure();
 
+            // remember the source resource
+            getRouteCollection().setResource(getResource());
+
             for (RouteDefinition route : getRouteCollection().getRoutes()) {
                 // ensure the route is prepared after configure method is complete
                 getRouteCollection().prepareRoute(route);
@@ -581,6 +635,20 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
             throw new IllegalArgumentException("CamelContext has not been injected!");
         }
         getRouteCollection().setCamelContext(camelContext);
+        camelContext.getExtension(Model.class).addRouteDefinitions(getRouteCollection().getRoutes());
+    }
+
+    protected void populateOrUpdateRoutes() throws Exception {
+        CamelContext camelContext = getContext();
+        if (camelContext == null) {
+            throw new IllegalArgumentException("CamelContext has not been injected!");
+        }
+        getRouteCollection().setCamelContext(camelContext);
+        // must stop and remove existing running routes
+        for (RouteDefinition route : getRouteCollection().getRoutes()) {
+            camelContext.getRouteController().stopRoute(route.getRouteId());
+            camelContext.removeRoute(route.getRouteId());
+        }
         camelContext.getExtension(Model.class).addRouteDefinitions(getRouteCollection().getRoutes());
     }
 

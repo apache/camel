@@ -85,11 +85,11 @@ public class DefaultCompositeSObjectCollectionsApiClient extends AbstractClientB
         doHttpRequest(request, new ClientResponseCallback() {
             @Override
             public void onResponse(InputStream response, Map<String, String> headers, SalesforceException ex) {
-                callback.onResponse(
-                        tryToReadListResponse(
-                                sobjectType, response),
-                        headers,
-                        ex);
+                Optional<List<T>> body = Optional.empty();
+                if (ex == null) {
+                    body = tryToReadListResponse(sobjectType, response);
+                }
+                callback.onResponse(body, headers, ex);
             }
         });
     }
@@ -124,9 +124,11 @@ public class DefaultCompositeSObjectCollectionsApiClient extends AbstractClientB
         doHttpRequest(request, new ClientResponseCallback() {
             @Override
             public void onResponse(InputStream response, Map<String, String> headers, SalesforceException ex) {
-                callback.onResponse(
-                        tryToReadListResponse(SaveSObjectResult.class, response),
-                        headers, ex);
+                Optional<List<SaveSObjectResult>> body = Optional.empty();
+                if (ex == null) {
+                    body = tryToReadListResponse(SaveSObjectResult.class, response);
+                }
+                callback.onResponse(body, headers, ex);
             }
         });
     }
@@ -152,9 +154,11 @@ public class DefaultCompositeSObjectCollectionsApiClient extends AbstractClientB
         doHttpRequest(request, new ClientResponseCallback() {
             @Override
             public void onResponse(InputStream response, Map<String, String> headers, SalesforceException ex) {
-                callback.onResponse(
-                        tryToReadListResponse(UpsertSObjectResult.class, response),
-                        headers, ex);
+                Optional<List<UpsertSObjectResult>> body = Optional.empty();
+                if (ex == null) {
+                    body = tryToReadListResponse(UpsertSObjectResult.class, response);
+                }
+                callback.onResponse(body, headers, ex);
             }
         });
     }
@@ -172,9 +176,11 @@ public class DefaultCompositeSObjectCollectionsApiClient extends AbstractClientB
         doHttpRequest(request, new ClientResponseCallback() {
             @Override
             public void onResponse(InputStream response, Map<String, String> headers, SalesforceException ex) {
-                callback.onResponse(
-                        tryToReadListResponse(DeleteSObjectResult.class, response),
-                        headers, ex);
+                Optional<List<DeleteSObjectResult>> body = Optional.empty();
+                if (ex == null) {
+                    body = tryToReadListResponse(DeleteSObjectResult.class, response);
+                }
+                callback.onResponse(body, headers, ex);
             }
         });
     }

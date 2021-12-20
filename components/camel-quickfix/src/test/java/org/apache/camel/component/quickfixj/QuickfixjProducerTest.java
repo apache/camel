@@ -70,7 +70,7 @@ public class QuickfixjProducerTest {
 
         Mockito.when(mockCamelMessage.getBody(Message.class)).thenReturn(inboundFixMessage);
 
-        Mockito.when(mockEndpoint.getSessionID()).thenReturn(sessionID);
+        Mockito.when(mockEndpoint.getSID()).thenReturn(sessionID);
 
         producer = Mockito.spy(new QuickfixjProducer(mockEndpoint));
     }

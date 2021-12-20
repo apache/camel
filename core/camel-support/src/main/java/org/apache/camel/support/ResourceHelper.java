@@ -264,12 +264,7 @@ public final class ResourceHelper {
      * @return          a resource wrapping the given byte array
      */
     public static Resource fromBytes(String location, byte[] content) {
-        return new Resource() {
-            @Override
-            public String getLocation() {
-                return location;
-            }
-
+        return new ResourceSupport("mem", location) {
             @Override
             public boolean exists() {
                 return true;

@@ -16,7 +16,10 @@
  */
 package org.apache.camel.component.platform.http;
 
+import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -45,14 +48,16 @@ import org.slf4j.LoggerFactory;
  */
 @Component("platform-http")
 public class PlatformHttpComponent extends DefaultComponent implements RestConsumerFactory, RestApiConsumerFactory {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PlatformHttpComponent.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PlatformHttpComponent.class);
 
     @Metadata(label = "advanced", description = "An HTTP Server engine implementation to serve the requests")
     private volatile PlatformHttpEngine engine;
 
+    private final Set<String> httpEndpoints = new TreeSet<>();
+
     private volatile boolean localEngine;
 
-    private final Object lock;
+    private final Object lock = new Object();
 
     public PlatformHttpComponent() {
         this(null);
@@ -60,15 +65,13 @@ public class PlatformHttpComponent extends DefaultComponent implements RestConsu
 
     public PlatformHttpComponent(CamelContext context) {
         super(context);
-
-        this.lock = new Object();
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         PlatformHttpEndpoint endpoint = new PlatformHttpEndpoint(uri, remaining, this);
         endpoint.setPlatformHttpEngine(engine);
-
+        setProperties(endpoint, parameters);
         return endpoint;
     }
 
@@ -77,8 +80,12 @@ public class PlatformHttpComponent extends DefaultComponent implements RestConsu
             CamelContext camelContext, Processor processor, String contextPath,
             RestConfiguration configuration, Map<String, Object> parameters)
             throws Exception {
+
         // reuse the createConsumer method we already have. The api need to use GET and match on uri prefix
-        return doCreateConsumer(camelContext, processor, "GET", contextPath, null, null, null, configuration, parameters, true);
+        Consumer consumer = doCreateConsumer(camelContext, processor, "GET", contextPath, null, null, null, configuration,
+                parameters, true);
+        addHttpEndpoint(contextPath);
+        return consumer;
     }
 
     @Override
@@ -87,8 +94,36 @@ public class PlatformHttpComponent extends DefaultComponent implements RestConsu
             String uriTemplate,
             String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters)
             throws Exception {
-        return doCreateConsumer(camelContext, processor, verb, basePath, uriTemplate, consumes, produces, configuration,
-                parameters, false);
+        Consumer consumer
+                = doCreateConsumer(camelContext, processor, verb, basePath, uriTemplate, consumes, produces, configuration,
+                        parameters, false);
+        if (uriTemplate != null) {
+            addHttpEndpoint(basePath + "/" + uriTemplate);
+        } else {
+            addHttpEndpoint(basePath);
+        }
+        return consumer;
+    }
+
+    /**
+     * Adds a known http endpoint managed by this component.
+     */
+    public void addHttpEndpoint(String uri) {
+        httpEndpoints.add(uri);
+    }
+
+    /**
+     * Removes a known http endpoint managed by this component.
+     */
+    public void removeHttpEndpoint(String uri) {
+        httpEndpoints.remove(uri);
+    }
+
+    /**
+     * Lists the known http endpoints managed by this component. The endpoints are without host:port/[context-path]
+     */
+    public Set<String> getHttpEndpoints() {
+        return Collections.unmodifiableSet(httpEndpoints);
     }
 
     @Override
@@ -182,13 +217,13 @@ public class PlatformHttpComponent extends DefaultComponent implements RestConsu
         if (engine == null) {
             synchronized (lock) {
                 if (engine == null) {
-                    LOGGER.debug("Lookup platform http engine from registry");
+                    LOG.debug("Lookup platform http engine from registry");
 
                     engine = getCamelContext().getRegistry()
                             .lookupByNameAndType(PlatformHttpConstants.PLATFORM_HTTP_ENGINE_NAME, PlatformHttpEngine.class);
 
                     if (engine == null) {
-                        LOGGER.debug("Lookup platform http engine from factory");
+                        LOG.debug("Lookup platform http engine from factory");
 
                         engine = getCamelContext()
                                 .adapt(ExtendedCamelContext.class)
@@ -216,7 +251,7 @@ public class PlatformHttpComponent extends DefaultComponent implements RestConsu
         try {
             RestConfiguration config = CamelContextHelper.getRestConfiguration(getCamelContext(), "platform-http");
 
-            // configure additional options on  configuration
+            // configure additional options on configuration
             if (config.getComponentProperties() != null && !config.getComponentProperties().isEmpty()) {
                 setProperties(this, config.getComponentProperties());
             }

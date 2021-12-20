@@ -99,7 +99,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         String id = definition.idOrCreate(camelContext.adapt(ExtendedCamelContext.class).getNodeIdFactory());
         String desc = definition.getDescriptionText();
         Route route = camelContext.adapt(ExtendedCamelContext.class).getRouteFactory().createRoute(camelContext, definition, id,
-                desc, endpoint);
+                desc, endpoint, definition.getResource());
 
         // configure error handler
         route.setErrorHandlerFactory(definition.getErrorHandlerFactory());

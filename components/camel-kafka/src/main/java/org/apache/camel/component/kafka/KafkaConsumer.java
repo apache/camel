@@ -118,10 +118,6 @@ public class KafkaConsumer extends DefaultConsumer {
         for (int i = 0; i < endpoint.getConfiguration().getConsumersCount(); i++) {
             KafkaFetchRecords task = new KafkaFetchRecords(
                     this, pollExceptionStrategy, bridge, topic, pattern, i + "", getProps());
-            // pre-initialize task during startup so if there is any error we
-            // have it thrown asap
-            task.preInit();
-
             executor.submit(task);
 
             tasks.add(task);
@@ -148,7 +144,7 @@ public class KafkaConsumer extends DefaultConsumer {
                 LOG.debug("Shutting down Kafka consumer worker threads with timeout {} millis", timeout);
                 if (!executor.awaitTermination(timeout, TimeUnit.MILLISECONDS)) {
                     LOG.warn("Shutting down Kafka {} consumer worker threads did not finish within {} millis",
-                            tasks.size());
+                            tasks.size(), timeout);
                 }
             }
 

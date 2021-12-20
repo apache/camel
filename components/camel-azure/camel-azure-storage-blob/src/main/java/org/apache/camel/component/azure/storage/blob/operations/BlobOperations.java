@@ -296,6 +296,25 @@ public class BlobOperations {
         return BlobOperationResponse.createWithEmptyBody(response);
     }
 
+    public BlobOperationResponse copyBlob(final Exchange exchange) {
+        LOG.trace("Creating an append blob [{}] from exchange [{}]...", configurationProxy.getBlobName(exchange), exchange);
+
+        String sourceBlobName = configurationProxy.getBlobName(exchange);
+        String sourceAccountName = exchange.getMessage().getHeader(BlobConstants.SOURCE_BLOB_ACCOUNT_NAME, String.class);
+        if (ObjectHelper.isEmpty(sourceAccountName)) {
+            throw new IllegalArgumentException("Source Account Name must be specified for copyBlob Operation");
+        }
+        String sourceContainerName = exchange.getMessage().getHeader(BlobConstants.SOURCE_BLOB_CONTAINER_NAME, String.class);
+        if (ObjectHelper.isEmpty(sourceAccountName)) {
+            throw new IllegalArgumentException("Source Container Name must be specified for copyBlob Operation");
+        }
+        final String response
+                = client.copyBlob(sourceBlobName, sourceAccountName, sourceContainerName,
+                        configurationProxy.getConfiguration().getSourceBlobAccessKey());
+
+        return BlobOperationResponse.create(response);
+    }
+
     public BlobOperationResponse commitAppendBlob(final Exchange exchange) throws IOException {
         ObjectHelper.notNull(exchange, "exchange cannot be null");
 

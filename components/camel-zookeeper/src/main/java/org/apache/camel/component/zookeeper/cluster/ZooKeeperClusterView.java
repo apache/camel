@@ -76,7 +76,8 @@ final class ZooKeeperClusterView extends AbstractCamelClusterView {
                     : Optional.of(new CuratorClusterMember(participant));
         } catch (KeeperException.NoNodeException e) {
             LOGGER.debug("Failed to get get master because node '{}' does not yet exist (error: '{}')",
-                    configuration.getBasePath(), e.getMessage());
+                    getFullPath(),
+                    e.getMessage());
             return Optional.empty();
         } catch (Exception e) {
             throw new RuntimeCamelException(e);
@@ -96,7 +97,8 @@ final class ZooKeeperClusterView extends AbstractCamelClusterView {
                     .collect(Collectors.toList());
         } catch (KeeperException.NoNodeException e) {
             LOGGER.debug("Failed to get members because node '{}' does not yet exist (error: '{}')",
-                    configuration.getBasePath(), e.getMessage());
+                    getFullPath(),
+                    e.getMessage());
             return Collections.emptyList();
         } catch (Exception e) {
             throw new RuntimeCamelException(e);
@@ -106,7 +108,7 @@ final class ZooKeeperClusterView extends AbstractCamelClusterView {
     @Override
     protected void doStart() throws Exception {
         if (leaderSelector == null) {
-            leaderSelector = new LeaderSelector(client, configuration.getBasePath(), new CamelLeaderElectionListener());
+            leaderSelector = new LeaderSelector(client, getFullPath(), new CamelLeaderElectionListener());
             leaderSelector.setId(getClusterService().getId());
             leaderSelector.start();
         } else {
@@ -127,6 +129,10 @@ final class ZooKeeperClusterView extends AbstractCamelClusterView {
         if (leaderSelector != null) {
             leaderSelector.close();
         }
+    }
+
+    private String getFullPath() {
+        return configuration.getBasePath() + "/" + getNamespace();
     }
 
     // ***********************************************

@@ -81,6 +81,7 @@ public final class SensitiveUtils {
                     "secretkey",
                     "securerandom",
                     "sharedaccesskey",
+                    "sourceblobaccesskey",
                     "sslkeypassword",
                     "sslkeystore",
                     "sslkeystorepassword",

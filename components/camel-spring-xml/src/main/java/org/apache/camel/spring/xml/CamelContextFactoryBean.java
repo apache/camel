@@ -57,6 +57,7 @@ import org.apache.camel.model.PackageScanDefinition;
 import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.model.RestContextRefDefinition;
 import org.apache.camel.model.RouteBuilderDefinition;
+import org.apache.camel.model.RouteConfigurationContextRefDefinition;
 import org.apache.camel.model.RouteConfigurationDefinition;
 import org.apache.camel.model.RouteContextRefDefinition;
 import org.apache.camel.model.RouteDefinition;
@@ -180,6 +181,9 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     @XmlAttribute
     private String typeConverterStatisticsEnabled;
     @XmlAttribute
+    @Metadata(defaultValue = "false")
+    private String loadHealthChecks;
+    @XmlAttribute
     private String inflightRepositoryBrowseEnabled;
     @XmlAttribute
     @Metadata(defaultValue = "Override")
@@ -228,6 +232,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     private FaultToleranceConfigurationDefinition defaultFaultToleranceConfiguration;
     @XmlElement(name = "faultToleranceConfiguration", type = Resilience4jConfigurationDefinition.class)
     private List<FaultToleranceConfigurationDefinition> faultToleranceConfigurations;
+    @XmlElement(name = "routeConfigurationContextRef")
+    private List<RouteConfigurationContextRefDefinition> routeConfigurationRefs = new ArrayList<>();
     @XmlElement(name = "routeTemplateContextRef")
     private List<RouteTemplateContextRefDefinition> routeTemplateRefs = new ArrayList<>();
     @XmlElement(name = "routeBuilder")
@@ -1157,6 +1163,18 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     }
 
     @Override
+    public String getLoadHealthChecks() {
+        return loadHealthChecks;
+    }
+
+    /**
+     * Whether to load custom health checks by scanning classpath.
+     */
+    public void setLoadHealthChecks(String loadHealthChecks) {
+        this.loadHealthChecks = loadHealthChecks;
+    }
+
+    @Override
     public String getTypeConverterStatisticsEnabled() {
         return typeConverterStatisticsEnabled;
     }
@@ -1207,6 +1225,18 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     @Override
     public CamelJMXAgentDefinition getCamelJMXAgent() {
         return camelJMXAgent;
+    }
+
+    @Override
+    public List<RouteConfigurationContextRefDefinition> getRouteConfigurationRefs() {
+        return routeConfigurationRefs;
+    }
+
+    /**
+     * Refers to XML route configurations to include as route configurations in this CamelContext.
+     */
+    public void setRouteConfigurationRefs(List<RouteConfigurationContextRefDefinition> routeConfigurationRefs) {
+        this.routeConfigurationRefs = routeConfigurationRefs;
     }
 
     @Override

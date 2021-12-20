@@ -169,6 +169,22 @@ public interface RestSwaggerComponentBuilderFactory {
             return this;
         }
         /**
+         * Resolve references in Swagger specification.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param resolveReferences the value to set
+         * @return the dsl builder
+         */
+        default RestSwaggerComponentBuilder resolveReferences(
+                java.lang.Boolean resolveReferences) {
+            doSetProperty("resolveReferences", resolveReferences);
+            return this;
+        }
+        /**
          * Path to the Swagger specification file. The scheme, host base path
          * are taken from this specification, but these can be overridden with
          * properties on the component or endpoint level. If not given the
@@ -268,6 +284,7 @@ public interface RestSwaggerComponentBuilderFactory {
             case "host": ((RestSwaggerComponent) component).setHost((java.lang.String) value); return true;
             case "lazyStartProducer": ((RestSwaggerComponent) component).setLazyStartProducer((boolean) value); return true;
             case "produces": ((RestSwaggerComponent) component).setProduces((java.lang.String) value); return true;
+            case "resolveReferences": ((RestSwaggerComponent) component).setResolveReferences((java.lang.Boolean) value); return true;
             case "specificationUri": ((RestSwaggerComponent) component).setSpecificationUri((java.net.URI) value); return true;
             case "autowiredEnabled": ((RestSwaggerComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "sslContextParameters": ((RestSwaggerComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;

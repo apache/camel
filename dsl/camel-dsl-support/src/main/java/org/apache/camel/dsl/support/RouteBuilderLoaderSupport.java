@@ -59,6 +59,7 @@ public abstract class RouteBuilderLoaderSupport extends RoutesBuilderLoaderSuppo
     public RoutesBuilder loadRoutesBuilder(Resource resource) throws Exception {
         final RouteBuilder builder = doLoadRouteBuilder(resource);
         CamelContextAware.trySetCamelContext(builder, getCamelContext());
+        builder.setResource(resource);
 
         if (recorder != null) {
             StartupStep step = recorder.beginStep(

@@ -144,7 +144,7 @@ public class CompositeSObjectCollectionsProcessor extends AbstractSalesforceProc
             throws SalesforceException {
         List<String> ids = getListParameter(SalesforceEndpointConfig.SOBJECT_IDS, exchange, USE_BODY, NOT_OPTIONAL);
         boolean allOrNone = Boolean.parseBoolean(
-                getParameter(SalesforceEndpointConfig.ALL_OR_NONE, exchange, USE_BODY, IS_OPTIONAL));
+                getParameter(SalesforceEndpointConfig.ALL_OR_NONE, exchange, IGNORE_BODY, IS_OPTIONAL));
         compositeClient.submitDeleteCompositeCollections(ids, allOrNone, determineHeaders(exchange),
                 (response, responseHeaders, exception) -> processResponse(exchange, response,
                         responseHeaders, exception, callback));
@@ -172,7 +172,7 @@ public class CompositeSObjectCollectionsProcessor extends AbstractSalesforceProc
             final Exchange exchange, final Optional<? extends List<?>> responseBody, final Map<String, String> headers,
             final SalesforceException exception, final AsyncCallback callback) {
         try {
-            if (!responseBody.isPresent()) {
+            if (exception != null) {
                 exchange.setException(exception);
             } else {
                 Message in = exchange.getIn();

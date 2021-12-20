@@ -49,7 +49,7 @@ class KafkaFetchRecords implements Runnable {
     private static final Logger LOG = LoggerFactory.getLogger(KafkaFetchRecords.class);
 
     private final KafkaConsumer kafkaConsumer;
-    private org.apache.kafka.clients.consumer.KafkaConsumer consumer;
+    private org.apache.kafka.clients.consumer.Consumer consumer;
     private final String topicName;
     private final Pattern topicPattern;
     private final String threadId;
@@ -62,7 +62,8 @@ class KafkaFetchRecords implements Runnable {
     private final ConcurrentLinkedQueue<KafkaAsyncManualCommit> asyncCommits = new ConcurrentLinkedQueue<>();
 
     private boolean retry = true;
-    private boolean reconnect = true;
+    private boolean reconnect; // must be false at init (this is the policy whether to reconnect)
+    private boolean connected; // this is the state (connected or not)
 
     KafkaFetchRecords(KafkaConsumer kafkaConsumer, PollExceptionStrategy pollExceptionStrategy,
                       BridgeExceptionHandlerToErrorHandler bridge, String topicName, Pattern topicPattern, String id,
@@ -76,33 +77,29 @@ class KafkaFetchRecords implements Runnable {
         this.kafkaProps = kafkaProps;
     }
 
-    void preInit() {
-        createConsumer();
-    }
-
     @Override
     public void run() {
         if (!isKafkaConsumerRunnable()) {
             return;
         }
 
-        if (isRetrying() || isReconnecting()) {
+        do {
             try {
-                if (isReconnecting()) {
-                    // re-initialize on re-connect so we have a fresh consumer
+                if (!isConnected()) {
                     createConsumer();
+
+                    initializeConsumer();
+                    setConnected(true);
                 }
             } catch (Exception e) {
+                setConnected(false);
                 // ensure this is logged so users can see the problem
                 LOG.warn("Error creating org.apache.kafka.clients.consumer.KafkaConsumer due {}", e.getMessage(), e);
+                continue;
             }
 
-            long delay = kafkaConsumer.getEndpoint().getConfiguration().getPollTimeoutMs();
-            String prefix = isReconnecting() ? "Reconnecting" : "Retrying";
-            LOG.info("{} {} to topic {} after {} ms", prefix, threadId, topicName, delay);
-
-            doRun();
-        }
+            startPolling();
+        } while ((isRetrying() || isReconnect()) && isKafkaConsumerRunnable());
 
         LOG.info("Terminating KafkaConsumer thread: {} receiving from topic: {}", threadId, topicName);
         safeUnsubscribe();
@@ -117,6 +114,11 @@ class KafkaFetchRecords implements Runnable {
             Thread.currentThread()
                     .setContextClassLoader(org.apache.kafka.clients.consumer.KafkaConsumer.class.getClassLoader());
 
+            // The Kafka consumer should be null at the first try. For every other reconnection event, it will not
+            long delay = kafkaConsumer.getEndpoint().getConfiguration().getPollTimeoutMs();
+            final String prefix = this.consumer == null ? "Connecting" : "Reconnecting";
+            LOG.info("{} Kafka consumer thread ID {} with poll timeout of {} ms", prefix, threadId, delay);
+
             // this may throw an exception if something is wrong with kafka consumer
             this.consumer = kafkaConsumer.getEndpoint().getKafkaClientFactory().getConsumer(kafkaProps);
         } finally {
@@ -124,19 +126,14 @@ class KafkaFetchRecords implements Runnable {
         }
     }
 
-    protected void doRun() {
-        if (isReconnecting()) {
-            subscribe();
+    private void initializeConsumer() {
+        subscribe();
 
-            // set reconnect to false as the connection and resume is done at this point
-            setReconnect(false);
+        // set reconnect to false as the connection and resume is done at this point
+        setConnected(false);
 
-            // set retry to true to continue polling
-            setRetry(true);
-        }
-
-        // start polling
-        startPolling();
+        // set retry to true to continue polling
+        setRetry(true);
     }
 
     private void subscribe() {
@@ -169,7 +166,7 @@ class KafkaFetchRecords implements Runnable {
             KafkaRecordProcessor kafkaRecordProcessor = buildKafkaRecordProcessor();
 
             Duration pollDuration = Duration.ofMillis(pollTimeoutMs);
-            while (isKafkaConsumerRunnable() && isRetrying() && !isReconnecting()) {
+            while (isKafkaConsumerRunnable() && isRetrying() && isConnected()) {
                 ConsumerRecords<Object, Object> allRecords = consumer.poll(pollDuration);
 
                 processAsyncCommits();
@@ -177,7 +174,7 @@ class KafkaFetchRecords implements Runnable {
                 partitionLastOffset = processPolledRecords(allRecords, kafkaRecordProcessor);
             }
 
-            if (!isReconnecting()) {
+            if (!isConnected()) {
                 LOG.debug("Not reconnecting, check whether to auto-commit or not ...");
                 commit();
             }
@@ -267,7 +264,7 @@ class KafkaFetchRecords implements Runnable {
         LOG.warn("Requesting the consumer to stop based on polling exception strategy");
 
         setRetry(false);
-        setReconnect(false);
+        setConnected(false);
     }
 
     private void handlePollDiscard(long partitionLastOffset) {
@@ -291,6 +288,7 @@ class KafkaFetchRecords implements Runnable {
 
         // re-connect so the consumer can try the same message again
         setReconnect(true);
+        setConnected(false);
 
         // to close the current consumer
         setRetry(false);
@@ -347,6 +345,7 @@ class KafkaFetchRecords implements Runnable {
             LOG.debug("We hit an error ... setting flags to force reconnect");
             // force re-connect
             setReconnect(true);
+            setConnected(false);
             setRetry(false); // to close the current consumer
         }
 
@@ -405,7 +404,7 @@ class KafkaFetchRecords implements Runnable {
                 kafkaConsumer.getEndpoint().getConfiguration(),
                 kafkaConsumer.getProcessor(),
                 consumer,
-                kafkaConsumer.getEndpoint().getComponent().getKafkaManualCommitFactory(), threadId, asyncCommits);
+                kafkaConsumer.getEndpoint().getKafkaManualCommitFactory(), threadId, asyncCommits);
     }
 
     private void seekToNextOffset(long partitionLastOffset) {
@@ -438,7 +437,7 @@ class KafkaFetchRecords implements Runnable {
         retry = value;
     }
 
-    private boolean isReconnecting() {
+    private boolean isReconnect() {
         return reconnect;
     }
 
@@ -498,4 +497,11 @@ class KafkaFetchRecords implements Runnable {
                 && kafkaConsumer.getEndpoint().getConfiguration().getAutoCommitEnable();
     }
 
+    public boolean isConnected() {
+        return connected;
+    }
+
+    public void setConnected(boolean connected) {
+        this.connected = connected;
+    }
 }

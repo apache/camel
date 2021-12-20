@@ -69,24 +69,29 @@ public class TelegramConsumerHealthCheckErrorTest extends TelegramTestSupport {
 
         // if we grab the health check by id, we can also check it afterwards
         HealthCheck hc = hcr.getCheck("consumer:telegram").get();
+
+        // wait until we have the error
+        Awaitility.waitAtMost(5, TimeUnit.SECONDS).until(
+                () -> {
+                    HealthCheck.Result rc = hc.call();
+                    Long count = (Long) rc.getDetails().get(HealthCheck.FAILURE_ERROR_COUNT);
+                    return count != null && count > 0;
+                });
+
         HealthCheck.Result rc = hc.call();
 
         // and get the detailed error message (and exception)
         Assertions.assertEquals(HealthCheck.State.DOWN, rc.getState());
         String msg = rc.getMessage().get();
         long count = (long) rc.getDetails().get(HealthCheck.FAILURE_ERROR_COUNT);
-        if (count == 0) {
-            Assertions.assertEquals("Consumer has not yet polled route: telegram (telegram://bots)", msg);
-        } else {
-            Assertions.assertEquals("Consumer failed polling " + count + " times route: telegram (telegram://bots)", msg);
-        }
-        Assertions.assertEquals("telegram://bots?authorizationToken=mock-token",
-                rc.getDetails().get(HealthCheck.FAILURE_ENDPOINT_URI));
+        Assertions.assertEquals("Consumer failed polling " + count + " times route: telegram (telegram://bots)", msg);
+        // test that the uri is masked
+        Assertions.assertEquals("telegram://bots?authorizationToken=xxxxxx",
+                rc.getDetails().get(HealthCheck.ENDPOINT_URI));
 
-        if (rc.getError().isPresent()) {
-            Throwable e = rc.getError().get();
-            Assertions.assertTrue(e.getMessage().contains("401 Unauthorized"));
-        }
+        Throwable e = rc.getError().get();
+        Assertions.assertTrue(e.getMessage().contains("401 Unauthorized"));
+        Assertions.assertEquals(401, rc.getDetails().get(HealthCheck.HTTP_RESPONSE_CODE));
     }
 
     @Override

@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.google.functions;
 
-import java.io.FileInputStream;
+import java.io.InputStream;
 
 import com.google.api.gax.core.FixedCredentialsProvider;
 import com.google.auth.Credentials;
@@ -25,6 +25,7 @@ import com.google.cloud.functions.v1.CloudFunctionsServiceClient;
 import com.google.cloud.functions.v1.CloudFunctionsServiceSettings;
 import com.google.common.base.Strings;
 import org.apache.camel.CamelContext;
+import org.apache.camel.support.ResourceHelper;
 
 public final class GoogleCloudFunctionsClientFactory {
     /**
@@ -39,8 +40,10 @@ public final class GoogleCloudFunctionsClientFactory {
             throws Exception {
         CloudFunctionsServiceClient cloudFunctionsClient = null;
         if (!Strings.isNullOrEmpty(configuration.getServiceAccountKey())) {
+            InputStream resolveMandatoryResourceAsInputStream
+                    = ResourceHelper.resolveMandatoryResourceAsInputStream(context, configuration.getServiceAccountKey());
             Credentials myCredentials = ServiceAccountCredentials
-                    .fromStream(new FileInputStream(configuration.getServiceAccountKey()));
+                    .fromStream(resolveMandatoryResourceAsInputStream);
             CloudFunctionsServiceSettings settings = CloudFunctionsServiceSettings.newBuilder()
                     .setCredentialsProvider(FixedCredentialsProvider.create(myCredentials)).build();
             cloudFunctionsClient = CloudFunctionsServiceClient.create(settings);

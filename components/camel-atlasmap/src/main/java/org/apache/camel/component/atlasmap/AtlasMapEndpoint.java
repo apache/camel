@@ -65,6 +65,8 @@ public class AtlasMapEndpoint extends ResourceEndpoint {
     private String targetMapName;
     @UriParam(defaultValue = "MAP")
     private TargetMapMode targetMapMode = TargetMapMode.MAP;
+    @UriParam(defaultValue = "false")
+    private boolean forceReload;
 
     public enum TargetMapMode {
         MAP,
@@ -151,6 +153,21 @@ public class AtlasMapEndpoint extends ResourceEndpoint {
         return this.targetMapMode;
     }
 
+    /**
+     * Whether to enable or disable force reload mode. This is set to false by default and ADM file is loaded from a
+     * file only on a first Exchange, and AtlasContext will be reused after that until endpoint is recreated. If this is
+     * set to true, ADM file will be loaded from a file on every Exchange.
+     * 
+     * @param forceReload true to enable force reload
+     */
+    public void setForceReload(boolean forceReload) {
+        this.forceReload = forceReload;
+    }
+
+    public boolean isForceReload() {
+        return forceReload;
+    }
+
     public AtlasMapEndpoint findOrCreateEndpoint(String uri, String newResourceUri) {
         String newUri = uri.replace(getResourceUri(), newResourceUri);
         log.debug("Getting endpoint with URI: {}", newUri);
@@ -216,12 +233,12 @@ public class AtlasMapEndpoint extends ResourceEndpoint {
             // remove the header to avoid it being propagated in the routing
             incomingMessage.removeHeader(AtlasMapConstants.ATLAS_MAPPING);
             return atlasContextFactory.createContext(JSON, is);
-        } else if (getAtlasContext() != null) {
+        } else if (getAtlasContext() != null && !forceReload) {
             // no mapping specified in header, and found an existing context
             return getAtlasContext();
         }
 
-        // No mapping in header, and no existing context. Create new one from resourceUri
+        // No mapping in header, and no existing context or force reload is enabled. Create new one from resourceUri
         if (log.isDebugEnabled()) {
             log.debug("Atlas mapping content read from resourceUri: {} for endpoint {}",
                     path, getEndpointUri());

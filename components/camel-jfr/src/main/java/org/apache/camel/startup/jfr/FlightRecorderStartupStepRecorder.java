@@ -44,6 +44,11 @@ public class FlightRecorderStartupStepRecorder extends DefaultStartupStepRecorde
     private Recording rec;
     private FlightRecorderListener frl;
 
+    public FlightRecorderStartupStepRecorder() {
+        // should default be enabled if discovered from classpath
+        setEnabled(true);
+    }
+
     @Override
     public void doStart() throws Exception {
         super.doStart();
@@ -65,7 +70,8 @@ public class FlightRecorderStartupStepRecorder extends DefaultStartupStepRecorde
             if (getStartupRecorderDuration() == 0) {
                 if (rec.getDestination() != null) {
                     rec.setDumpOnExit(true);
-                    LOG.info("Java flight recorder will be saved to file on JVM exit: {}", rec.getDestination());
+                    LOG.info("Java flight recorder with profile: {} will be saved to file on JVM exit: {}",
+                            getRecordingProfile(), rec.getDestination());
                 }
             } else if (getStartupRecorderDuration() > 0) {
                 rec.setDuration(Duration.ofSeconds(getStartupRecorderDuration()));

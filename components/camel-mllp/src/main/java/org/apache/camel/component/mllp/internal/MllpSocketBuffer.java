@@ -25,6 +25,7 @@ import java.net.SocketTimeoutException;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 
+import org.apache.camel.component.mllp.MllpComponent;
 import org.apache.camel.component.mllp.MllpEndpoint;
 import org.apache.camel.component.mllp.MllpProtocolConstants;
 import org.apache.camel.component.mllp.MllpSocketException;
@@ -55,7 +56,8 @@ public class MllpSocketBuffer {
         }
         this.endpoint = endpoint;
         this.charset = endpoint.getCharsetName();
-        this.hl7Util = new Hl7Util(endpoint.getComponent().getLogPhiMaxBytes());
+        MllpComponent component = endpoint.getComponent();
+        this.hl7Util = new Hl7Util(component.getLogPhiMaxBytes(), component.getLogPhi());
 
         buffer = new byte[MIN_BUFFER_SIZE];
     }

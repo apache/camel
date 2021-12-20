@@ -86,7 +86,7 @@ public interface SalesforceComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Default: 50.0
+         * Default: 53.0
          * Group: common
          * 
          * @param apiVersion the value to set
@@ -158,6 +158,22 @@ public interface SalesforceComponentBuilderFactory {
         default SalesforceComponentBuilder defaultReplayId(
                 java.lang.Long defaultReplayId) {
             doSetProperty("defaultReplayId", defaultReplayId);
+            return this;
+        }
+        /**
+         * ReplayId to fall back to after an Invalid Replay Id response.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * 
+         * Default: -1
+         * Group: common
+         * 
+         * @param fallBackReplayId the value to set
+         * @return the dsl builder
+         */
+        default SalesforceComponentBuilder fallBackReplayId(
+                java.lang.Long fallBackReplayId) {
+            doSetProperty("fallBackReplayId", fallBackReplayId);
             return this;
         }
         /**
@@ -1543,6 +1559,7 @@ public interface SalesforceComponentBuilderFactory {
             case "batchId": getOrCreateConfiguration((SalesforceComponent) component).setBatchId((java.lang.String) value); return true;
             case "contentType": getOrCreateConfiguration((SalesforceComponent) component).setContentType((org.apache.camel.component.salesforce.api.dto.bulk.ContentType) value); return true;
             case "defaultReplayId": getOrCreateConfiguration((SalesforceComponent) component).setDefaultReplayId((java.lang.Long) value); return true;
+            case "fallBackReplayId": getOrCreateConfiguration((SalesforceComponent) component).setFallBackReplayId((java.lang.Long) value); return true;
             case "format": getOrCreateConfiguration((SalesforceComponent) component).setFormat((org.apache.camel.component.salesforce.internal.PayloadFormat) value); return true;
             case "httpClient": getOrCreateConfiguration((SalesforceComponent) component).setHttpClient((org.apache.camel.component.salesforce.SalesforceHttpClient) value); return true;
             case "httpClientConnectionTimeout": ((SalesforceComponent) component).setHttpClientConnectionTimeout((long) value); return true;

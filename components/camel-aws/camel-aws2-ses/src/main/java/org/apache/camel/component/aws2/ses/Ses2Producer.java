@@ -20,12 +20,16 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -122,11 +126,17 @@ public class Ses2Producer extends DefaultProducer {
 
     @SuppressWarnings("unchecked")
     private Collection<String> determineReplyToAddresses(Exchange exchange) {
-        List<String> replyToAddresses = exchange.getIn().getHeader(Ses2Constants.REPLY_TO_ADDRESSES, List.class);
+        String replyToAddresses = exchange.getIn().getHeader(Ses2Constants.REPLY_TO_ADDRESSES, String.class);
         if (replyToAddresses == null) {
             replyToAddresses = getConfiguration().getReplyToAddresses();
         }
-        return replyToAddresses;
+        if (ObjectHelper.isNotEmpty(replyToAddresses)) {
+            return Stream.of(replyToAddresses.split(","))
+                    .map(String::trim)
+                    .collect(Collectors.toList());
+        } else {
+            return Collections.emptyList();
+        }
     }
 
     private String determineReturnPath(Exchange exchange) {
@@ -137,22 +147,29 @@ public class Ses2Producer extends DefaultProducer {
         return returnPath;
     }
 
-    @SuppressWarnings("unchecked")
     private Destination determineTo(Exchange exchange) {
-        List<String> to = exchange.getIn().getHeader(Ses2Constants.TO, List.class);
+        String to = exchange.getIn().getHeader(Ses2Constants.TO, String.class);
         if (to == null) {
             to = getConfiguration().getTo();
         }
-        return Destination.builder().toAddresses(to).build();
+        List<String> destinations = Stream.of(to.split(","))
+                .map(String::trim)
+                .collect(Collectors.toList());
+        return Destination.builder().toAddresses(destinations).build();
     }
 
-    @SuppressWarnings("unchecked")
     private List<String> determineRawTo(Exchange exchange) {
-        List<String> to = exchange.getIn().getHeader(Ses2Constants.TO, List.class);
+        String to = exchange.getIn().getHeader(Ses2Constants.TO, String.class);
         if (to == null) {
             to = getConfiguration().getTo();
         }
-        return to;
+        if (ObjectHelper.isNotEmpty(to)) {
+            return Stream.of(to.split(","))
+                    .map(String::trim)
+                    .collect(Collectors.toList());
+        } else {
+            return Collections.emptyList();
+        }
     }
 
     private String determineFrom(Exchange exchange) {

@@ -22,7 +22,7 @@ import org.apache.camel.Ordered;
  * A source for properties.
  * <p/>
  * A source can implement {@link Ordered} to control the ordering of which sources are used by the Camel properties
- * component. The source with the highest precedence (lowest number) will be used first.
+ * component. The source with the highest precedence (the lowest number) will be used first.
  */
 public interface PropertiesSource {
 

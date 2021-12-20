@@ -5,7 +5,6 @@
 :description: Archive files into tarballs or extract files from tarballs.
 :since: 2.16
 :supportlevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/tarfile.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: tarfile
 

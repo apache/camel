@@ -59,7 +59,7 @@ public final class DefaultResourceResolvers {
         public Resource createResource(String location, String remaining) {
             final File path = new File(tryDecodeUri(remaining));
 
-            return new ResourceSupport(location) {
+            return new ResourceSupport(SCHEME, location) {
                 @Override
                 public boolean exists() {
                     return path.exists();
@@ -110,7 +110,7 @@ public final class DefaultResourceResolvers {
 
         @Override
         public Resource createResource(String location, String remaining) {
-            return new ResourceSupport(location) {
+            return new ResourceSupport(SCHEME, location) {
                 @Override
                 public boolean exists() {
                     URLConnection connection = null;
@@ -169,7 +169,7 @@ public final class DefaultResourceResolvers {
         public Resource createResource(String location, String remaining) {
             final String path = getPath(remaining);
 
-            return new ResourceSupport(location) {
+            return new ResourceSupport(SCHEME, location) {
                 @Override
                 public boolean exists() {
                     return getURI() != null;
@@ -234,7 +234,7 @@ public final class DefaultResourceResolvers {
         public Resource createResource(String location, String remaining) {
             final String val = CamelContextHelper.lookup(getCamelContext(), remaining, String.class);
 
-            return new ResourceSupport(location) {
+            return new ResourceSupport(SCHEME, location) {
                 @Override
                 public boolean exists() {
                     return val != null;
@@ -265,7 +265,7 @@ public final class DefaultResourceResolvers {
 
         @Override
         public Resource createResource(String location, String remaining) {
-            return new ResourceSupport(location) {
+            return new ResourceSupport(SCHEME, location) {
                 @Override
                 public boolean exists() {
                     return remaining != null;
@@ -278,9 +278,7 @@ public final class DefaultResourceResolvers {
                     }
 
                     final byte[] decoded = Base64.getDecoder().decode(remaining);
-                    final InputStream is = new ByteArrayInputStream(decoded);
-
-                    return is;
+                    return new ByteArrayInputStream(decoded);
                 }
             };
         }
@@ -300,7 +298,7 @@ public final class DefaultResourceResolvers {
 
         @Override
         public Resource createResource(String location, String remaining) {
-            return new ResourceSupport(location) {
+            return new ResourceSupport(SCHEME, location) {
                 @Override
                 public boolean exists() {
                     return remaining != null;
@@ -334,7 +332,7 @@ public final class DefaultResourceResolvers {
 
         @Override
         public Resource createResource(String location, String remaining) {
-            return new ResourceSupport(location) {
+            return new ResourceSupport(SCHEME, location) {
                 @Override
                 public boolean exists() {
                     return remaining != null;

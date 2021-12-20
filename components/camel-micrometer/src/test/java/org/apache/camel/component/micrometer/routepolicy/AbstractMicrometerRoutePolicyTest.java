@@ -29,7 +29,7 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AbstractMicrometerRoutePolicyTest extends CamelTestSupport {
+public abstract class AbstractMicrometerRoutePolicyTest extends CamelTestSupport {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
     protected CompositeMeterRegistry meterRegistry;

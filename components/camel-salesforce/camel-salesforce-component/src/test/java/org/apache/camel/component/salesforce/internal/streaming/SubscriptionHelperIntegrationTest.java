@@ -54,15 +54,10 @@ import static org.mockito.Mockito.when;
 public class SubscriptionHelperIntegrationTest {
 
     final CamelContext camel;
-
     final SalesforceEndpointConfig config = new SalesforceEndpointConfig();
-
     final BlockingQueue<String> messages = new LinkedBlockingDeque<>();
-
     final SalesforceComponent salesforce;
-
     final StubServer server;
-
     final SubscriptionHelper subscription;
 
     SalesforceConsumer toUnsubscribe;
@@ -78,33 +73,25 @@ public class SubscriptionHelperIntegrationTest {
         @Override
         public boolean matches(final Message message) {
             final Map<String, Object> data = message.getDataAsMap();
-
             @SuppressWarnings("unchecked")
             final Map<String, Object> event = (Map<String, Object>) data.get("event");
-
             @SuppressWarnings("unchecked")
             final Map<String, Object> sobject = (Map<String, Object>) data.get("sobject");
-
             return "created".equals(event.get("type")) && name.equals(sobject.get("Name"));
         }
 
         static Message messageForAccountCreationWithName(final String name) {
             return argThat(new MessageArgumentMatcher(name));
         }
-
     }
 
     public SubscriptionHelperIntegrationTest() throws SalesforceException {
         server = new StubServer();
-
         LoggerFactory.getLogger(SubscriptionHelperIntegrationTest.class).info("Port for wireshark to filter: {}",
                 server.port());
-
         final String instanceUrl = "http://localhost:" + server.port();
-
         server.replyTo("POST", "/services/oauth2/token",
                 "{\"instance_url\":\"" + instanceUrl + "\",\"access_token\":\"token\"}");
-
         server.replyTo("GET", "/services/oauth2/revoke?token=token", 200);
 
         server.replyTo("POST", "/cometd/" + SalesforceEndpointConfig.DEFAULT_VERSION + "/handshake", "[\n"
@@ -250,8 +237,19 @@ public class SubscriptionHelperIntegrationTest {
         verify(consumer, Mockito.timeout(100)).processMessage(any(ClientSessionChannel.class),
                 messageForAccountCreationWithName("shouldResubscribeOnConnectionFailures 1"));
 
-        // terminate server abruptly by closing the connection (sends FIN, ACK)
-        server.abruptlyRestart();
+        // send failed connection message w/o reconnect advice so we handshake again
+
+        messages.add("[\n" +
+                     "  {\n" +
+                     "    \"clientId\": \"5ra4927ikfky6cb12juthkpofeu8\",\n" +
+                     "    \"channel\": \"/meta/connect\",\n" +
+                     "    \"id\": \"$id\",\n" +
+                     "    \"successful\": false,\n" +
+                     "    \"advice\": {\n" +
+                     "       \"reconnect\": \"none\"\n" +
+                     "    }\n" +
+                     "  }\n" +
+                     "]");
 
         // queue next message for when the client recovers
         messages.add("[\n"

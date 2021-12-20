@@ -378,14 +378,18 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
 
         // create a Jetty HttpClient if not already set
         if (httpClient == null) {
-            final SSLContextParameters contextParameters = Optional.ofNullable(sslContextParameters)
-                    .orElseGet(() -> Optional.ofNullable(retrieveGlobalSslContextParameters())
-                            .orElseGet(() -> new SSLContextParameters()));
+            if (config != null && config.getHttpClient() != null) {
+                httpClient = config.getHttpClient();
+            } else {
+                final SSLContextParameters contextParameters = Optional.ofNullable(sslContextParameters)
+                        .orElseGet(() -> Optional.ofNullable(retrieveGlobalSslContextParameters())
+                                .orElseGet(() -> new SSLContextParameters()));
 
-            final SslContextFactory sslContextFactory = new SslContextFactory();
-            sslContextFactory.setSslContext(contextParameters.createSSLContext(getCamelContext()));
+                final SslContextFactory sslContextFactory = new SslContextFactory();
+                sslContextFactory.setSslContext(contextParameters.createSSLContext(getCamelContext()));
 
-            httpClient = createHttpClient(this, sslContextFactory, getCamelContext(), workerPoolSize, workerPoolMaxSize);
+                httpClient = createHttpClient(this, sslContextFactory, getCamelContext(), workerPoolSize, workerPoolMaxSize);
+            }
             if (config != null) {
                 config.setHttpClient(httpClient);
             }

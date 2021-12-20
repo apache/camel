@@ -20,14 +20,22 @@ import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 
 import javax.activation.DataHandler;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
+import io.vertx.core.json.JsonObject;
+import io.vertx.ext.auth.User;
+import io.vertx.ext.auth.authentication.AuthenticationProvider;
+import io.vertx.ext.auth.properties.PropertyFileAuthentication;
+import io.vertx.ext.web.handler.BasicAuthHandler;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Message;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.platform.http.PlatformHttpComponent;
@@ -46,6 +54,8 @@ import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class VertxPlatformHttpEngineTest {
     public static SSLContextParameters serverSSLParameters;
@@ -136,6 +146,12 @@ public class VertxPlatformHttpEngineTest {
                     .then()
                     .statusCode(200)
                     .body(equalTo("POST"));
+
+            PlatformHttpComponent phc = context.getComponent("platform-http", PlatformHttpComponent.class);
+            assertEquals(2, phc.getHttpEndpoints().size());
+            Iterator<String> it = phc.getHttpEndpoints().iterator();
+            assertEquals("/get", it.next());
+            assertEquals("/post", it.next());
 
         } finally {
             context.stop();
@@ -483,6 +499,58 @@ public class VertxPlatformHttpEngineTest {
                     .body(is("Hello Camel Platform HTTP Vert.x"));
         } finally {
             context.stop();
+        }
+    }
+
+    @Test
+    public void testUserAuthentication() throws Exception {
+        Vertx vertx = Vertx.vertx();
+        AuthenticationProvider authProvider = PropertyFileAuthentication.create(vertx, "authentication/auth.properties");
+        BasicAuthHandler basicAuthHandler = BasicAuthHandler.create(authProvider);
+
+        CamelContext context = createCamelContext();
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("platform-http:/secure")
+                        .process(exchange -> {
+                            Message message = exchange.getMessage();
+                            message.setBody("Secure Route");
+
+                            User user = message.getHeader(VertxPlatformHttpConstants.AUTHENTICATED_USER, User.class);
+                            assertThat(user).isNotNull();
+
+                            JsonObject principal = user.principal();
+                            assertThat(principal).isNotNull();
+                            assertThat(principal.getString("username")).isEqualTo("camel");
+                        });
+            }
+        });
+
+        context.getRegistry().bind("vertx", vertx);
+
+        try {
+            context.start();
+
+            VertxPlatformHttpRouter router = VertxPlatformHttpRouter.lookup(context);
+            router.route().order(0).handler(basicAuthHandler);
+
+            RestAssured.get("/secure")
+                    .then()
+                    .statusCode(401);
+
+            RestAssured.given()
+                    .auth()
+                    .basic("camel", "s3cr3t")
+                    .get("/secure")
+                    .then()
+                    .statusCode(200)
+                    .header("Authorization", notNullValue())
+                    .body(is("Secure Route"));
+
+        } finally {
+            context.stop();
+            vertx.close();
         }
     }
 

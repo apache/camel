@@ -142,7 +142,7 @@ public class BlobConsumer extends ScheduledBatchPollingConsumer {
             exchange.adapt(ExtendedExchange.class).addOnCompletion(new Synchronization() {
                 @Override
                 public void onComplete(Exchange exchange) {
-                    LOG.trace("Complected from processing all exchanges...");
+                    LOG.trace("Completed from processing all exchanges...");
                 }
 
                 @Override

@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Unit test with InOut however we want sometimes to not send a response.
@@ -40,14 +40,11 @@ public class MinaInOutWithForcedNoResponseTest extends BaseMinaTest {
     }
 
     @Test
-    public void testNoResponseDisconnectOnNoReplyFalse() throws Exception {
-        try {
-            template.requestBody("mina:tcp://localhost:" + port2 + "?sync=true&timeout=100", "London");
-            Thread.sleep(1000);
-            fail("Should throw an exception");
-        } catch (RuntimeCamelException e) {
-            assertIsInstanceOf(ExchangeTimedOutException.class, e.getCause());
-        }
+    public void testNoResponseDisconnectOnNoReplyFalse() {
+        RuntimeCamelException e = assertThrows(RuntimeCamelException.class,
+                () -> template.requestBody("mina:tcp://localhost:" + port2 + "?sync=true&timeout=100", "London"),
+                "Should throw an exception");
+        assertIsInstanceOf(ExchangeTimedOutException.class, e.getCause());
     }
 
     @Override

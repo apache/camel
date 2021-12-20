@@ -73,6 +73,16 @@ class InternalRouteController implements RouteController {
     }
 
     @Override
+    public void stopAllRoutes() throws Exception {
+        abstractCamelContext.stopAllRoutes();
+    }
+
+    @Override
+    public void removeAllRoutes() throws Exception {
+        abstractCamelContext.removeAllRoutes();
+    }
+
+    @Override
     public boolean isStartingRoutes() {
         return abstractCamelContext.isStartingRoutes();
     }
@@ -99,7 +109,7 @@ class InternalRouteController implements RouteController {
 
     @Override
     public boolean stopRoute(String routeId, long timeout, TimeUnit timeUnit, boolean abortAfterTimeout) throws Exception {
-        return abstractCamelContext.stopRoute(routeId, timeout, timeUnit, abortAfterTimeout);
+        return abstractCamelContext.stopRoute(routeId, timeout, timeUnit, abortAfterTimeout, LoggingLevel.INFO);
     }
 
     @Override

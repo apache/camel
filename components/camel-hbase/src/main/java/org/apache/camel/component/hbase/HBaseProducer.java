@@ -104,7 +104,7 @@ public class HBaseProducer extends DefaultProducer {
     /**
      * Creates an HBase {@link Put} on a specific row, using a collection of values (family/column/value pairs).
      */
-    private Put createPut(HBaseRow hRow) throws Exception {
+    private Put createPut(HBaseRow hRow) {
         ObjectHelper.notNull(hRow, "HBase row");
         ObjectHelper.notNull(hRow.getId(), "HBase row id");
         ObjectHelper.notNull(hRow.getCells(), "HBase cells");
@@ -181,7 +181,7 @@ public class HBaseProducer extends DefaultProducer {
     /**
      * Creates an HBase {@link Delete} on a specific row, using a collection of values (family/column/value pairs).
      */
-    private Delete createDeleteRow(HBaseRow hRow) throws Exception {
+    private Delete createDeleteRow(HBaseRow hRow) {
         ObjectHelper.notNull(hRow, "HBase row");
         ObjectHelper.notNull(hRow.getId(), "HBase row id");
         return new Delete(endpoint.getCamelContext().getTypeConverter().convertTo(byte[].class, hRow.getId()));

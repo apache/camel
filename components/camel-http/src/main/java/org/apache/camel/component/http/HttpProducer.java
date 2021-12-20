@@ -592,17 +592,17 @@ public class HttpProducer extends DefaultProducer {
         // these checks are checks that is done in HttpHelper.createURL and HttpHelper.createURI methods
         boolean create = false;
         Message in = exchange.getIn();
-        if (in.getHeader("CamelRestHttpUri") != null) {
+        if (in.getHeader(Exchange.REST_HTTP_URI) != null) {
             create = true;
-        } else if (in.getHeader("CamelHttpUri") != null && !getEndpoint().isBridgeEndpoint()) {
+        } else if (in.getHeader(Exchange.HTTP_URI) != null && !getEndpoint().isBridgeEndpoint()) {
             create = true;
-        } else if (in.getHeader("CamelHttpPath") != null) {
+        } else if (in.getHeader(Exchange.HTTP_PATH) != null) {
             create = true;
-        } else if (in.getHeader("CamelRestHttpQuery") != null) {
+        } else if (in.getHeader(Exchange.REST_HTTP_QUERY) != null) {
             create = true;
         } else if (in.getHeader("CamelHttpRawQuery") != null) {
             create = true;
-        } else if (in.getHeader("CamelHttpQuery") != null) {
+        } else if (in.getHeader(Exchange.HTTP_QUERY) != null) {
             create = true;
         }
 

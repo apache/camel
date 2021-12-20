@@ -16,10 +16,14 @@
  */
 package org.apache.camel.component.azure.cosmosdb.client;
 
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import com.azure.cosmos.CosmosAsyncClient;
 import com.azure.cosmos.CosmosClient;
 import com.azure.cosmos.CosmosClientBuilder;
 import org.apache.camel.component.azure.cosmosdb.CosmosDbConfiguration;
+import org.apache.camel.util.ObjectHelper;
 
 public final class CosmosDbClientFactory {
 
@@ -37,15 +41,21 @@ public final class CosmosDbClientFactory {
     }
 
     private static CosmosClientBuilder createBasicClient(final CosmosDbConfiguration configuration) {
-        return new CosmosClientBuilder()
+        CosmosClientBuilder builder = new CosmosClientBuilder()
                 .key(configuration.getAccountKey())
                 .endpoint(configuration.getDatabaseEndpoint())
                 .contentResponseOnWriteEnabled(configuration.isContentResponseOnWriteEnabled())
                 .consistencyLevel(configuration.getConsistencyLevel())
-                .preferredRegions(configuration.getPreferredRegions())
                 .connectionSharingAcrossClientsEnabled(configuration.isConnectionSharingAcrossClientsEnabled())
                 .clientTelemetryEnabled(configuration.isClientTelemetryEnabled())
                 .multipleWriteRegionsEnabled(configuration.isMultipleWriteRegionsEnabled())
                 .readRequestsFallbackEnabled(configuration.isReadRequestsFallbackEnabled());
+        if (ObjectHelper.isNotEmpty(configuration.getPreferredRegions())) {
+            builder.preferredRegions(Stream.of(configuration.getPreferredRegions().split(","))
+                    .map(String::trim)
+                    .collect(Collectors.toList()));
+        }
+
+        return builder;
     }
 }

@@ -96,6 +96,10 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
     private String autoDiscoverSchemaResolver;
+    @XmlAttribute
+    @Metadata(description = "If set then Jackson will use the the defined Property Naming Strategy."
+                            + "Possible values are: LOWER_CAMEL_CASE, LOWER_DOT_CASE, LOWER_CASE, KEBAB_CASE, SNAKE_CASE and UPPER_CAMEL_CASE")
+    private String namingStrategy;
 
     public JsonDataFormat() {
         super("json");
@@ -432,6 +436,18 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         this.autoDiscoverSchemaResolver = autoDiscoverSchemaResolver;
     }
 
+    public String getNamingStrategy() {
+        return namingStrategy;
+    }
+
+    /**
+     * If set then Jackson will use the the defined Property Naming Strategy. Possible values are: LOWER_CAMEL_CASE,
+     * LOWER_DOT_CASE, LOWER_CASE, KEBAB_CASE, SNAKE_CASE and UPPER_CAMEL_CASE
+     */
+    public void setNamingStrategy(String namingStrategy) {
+        this.namingStrategy = namingStrategy;
+    }
+
     //
     // Fluent builders
     //
@@ -566,6 +582,11 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
 
     public JsonDataFormat dropRootNode(String dropRootNode) {
         this.dropRootNode = dropRootNode;
+        return this;
+    }
+
+    public JsonDataFormat namingStrategy(String namingStrategy) {
+        this.namingStrategy = namingStrategy;
         return this;
     }
 

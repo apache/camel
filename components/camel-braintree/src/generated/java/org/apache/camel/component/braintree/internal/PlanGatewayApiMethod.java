@@ -22,7 +22,23 @@ public enum PlanGatewayApiMethod implements ApiMethod {
 
     ALL(
         java.util.List.class,
-        "all");
+        "all"),
+
+    CREATE(
+        com.braintreegateway.Result.class,
+        "create",
+        arg("request", com.braintreegateway.PlanRequest.class)),
+
+    FIND(
+        com.braintreegateway.Plan.class,
+        "find",
+        arg("id", String.class)),
+
+    UPDATE(
+        com.braintreegateway.Result.class,
+        "update",
+        arg("id", String.class),
+        arg("request", com.braintreegateway.PlanRequest.class));
 
     private final ApiMethod apiMethod;
 

@@ -50,10 +50,12 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
 
     private static final String CALLBACK_HANDLER_CLASS_CONFIG = "sasl.login.callback.handler.class";
 
-    private KafkaClientFactory kafkaClientFactory;
-
     @UriParam
     private KafkaConfiguration configuration = new KafkaConfiguration();
+    @UriParam(label = "advanced")
+    private KafkaClientFactory kafkaClientFactory;
+    @UriParam(label = "consumer,advanced")
+    private KafkaManualCommitFactory kafkaManualCommitFactory;
 
     public KafkaEndpoint() {
     }
@@ -79,13 +81,37 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
         return this.kafkaClientFactory;
     }
 
+    /**
+     * Factory to use for creating {@link org.apache.kafka.clients.consumer.KafkaConsumer} and
+     * {@link org.apache.kafka.clients.producer.KafkaProducer} instances. This allows to configure a custom factory to
+     * create instances with logic that extends the vanilla Kafka clients.
+     */
+    public void setKafkaClientFactory(KafkaClientFactory kafkaClientFactory) {
+        this.kafkaClientFactory = kafkaClientFactory;
+    }
+
+    public KafkaManualCommitFactory getKafkaManualCommitFactory() {
+        return kafkaManualCommitFactory;
+    }
+
+    /**
+     * Factory to use for creating {@link KafkaManualCommit} instances. This allows to plugin a custom factory to create
+     * custom {@link KafkaManualCommit} instances in case special logic is needed when doing manual commits that
+     * deviates from the default implementation that comes out of the box.
+     */
+    public void setKafkaManualCommitFactory(KafkaManualCommitFactory kafkaManualCommitFactory) {
+        this.kafkaManualCommitFactory = kafkaManualCommitFactory;
+    }
+
     @Override
     protected void doBuild() throws Exception {
         super.doBuild();
 
-        kafkaClientFactory = getComponent().getKafkaClientFactory();
         if (kafkaClientFactory == null) {
-            kafkaClientFactory = new DefaultKafkaClientFactory();
+            kafkaClientFactory = getComponent().getKafkaClientFactory();
+        }
+        if (kafkaManualCommitFactory == null) {
+            kafkaManualCommitFactory = getComponent().getKafkaManualCommitFactory();
         }
     }
 

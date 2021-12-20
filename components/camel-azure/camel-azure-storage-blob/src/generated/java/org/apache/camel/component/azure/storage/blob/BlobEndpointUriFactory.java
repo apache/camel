@@ -20,7 +20,7 @@ public class BlobEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(49);
+        Set<String> props = new HashSet<>(50);
         props.add("blobName");
         props.add("prefix");
         props.add("initialDelay");
@@ -70,9 +70,11 @@ public class BlobEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("changeFeedContext");
         props.add("pageBlobSize");
         props.add("operation");
+        props.add("sourceBlobAccessKey");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(1);
+        Set<String> secretProps = new HashSet<>(2);
         secretProps.add("accessKey");
+        secretProps.add("sourceBlobAccessKey");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
     }
 

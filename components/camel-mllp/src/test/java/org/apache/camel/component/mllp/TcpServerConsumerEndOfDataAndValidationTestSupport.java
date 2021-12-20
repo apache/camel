@@ -37,6 +37,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.mllp.MllpExceptionTestSupport.*;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -337,7 +338,7 @@ public abstract class TcpServerConsumerEndOfDataAndValidationTestSupport extends
                             "PID" + MllpProtocolConstants.START_OF_BLOCK)
                     : Hl7TestMessageGenerator.generateMessage(i + 1);
 
-            log.debug("Sending message {}", new Hl7Util(5120).convertToPrintFriendlyString(message));
+            log.debug("Sending message {}", new Hl7Util(5120, LOG_PHI_TRUE).convertToPrintFriendlyString(message));
 
             mllpClient.sendMessageAndWaitForAcknowledgement(message);
         }

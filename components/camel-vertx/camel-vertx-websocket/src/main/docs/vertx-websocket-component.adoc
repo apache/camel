@@ -6,7 +6,6 @@
 :since: 3.5
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/vertx-websocket.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: vertx-websocket
 
@@ -14,7 +13,7 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/vertx-webs
 
 *{component-header}*
 
-The http://vertx.io/[Vert.x] WebSocket component provides WebSocket capabilities as a WebSocket server, or as a client to connect to existing an WebSocket.
+The http://vertx.io/[Vert.x] WebSocket component provides WebSocket capabilities as a WebSocket server, or as a client to connect to an existing WebSocket.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:

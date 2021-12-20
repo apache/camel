@@ -18,15 +18,14 @@ package org.apache.camel.component.grpc;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-import com.google.common.base.Stopwatch;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -87,16 +86,16 @@ public class GrpcProducerSyncTest extends CamelTestSupport {
 
     @Test
     public void testPingSyncSyncMultipleInvocation() throws Exception {
-        final Stopwatch stopwatch = Stopwatch.createStarted();
+        final StopWatch stopwatch = new StopWatch();
         // Multiple sync methods call for average performance estimation
         for (int id = 0; id < MULTIPLE_RUN_TEST_COUNT; id++) {
             PingRequest pingRequest = PingRequest.newBuilder().setPingName(GRPC_TEST_PING_VALUE + id).setPingId(id).build();
             Object pongResponse = template.requestBody("direct:grpc-sync-sync", pingRequest);
             assertEquals(((PongResponse) pongResponse).getPongId(), id);
         }
-        LOG.info("Multiple sync invocation time {} milliseconds, everage operations/sec {}",
-                stopwatch.stop().elapsed(TimeUnit.MILLISECONDS),
-                Math.round(1000 * MULTIPLE_RUN_TEST_COUNT / stopwatch.elapsed(TimeUnit.MILLISECONDS)));
+        LOG.info("Multiple sync invocation time {} milliseconds, average operations/sec {}",
+                stopwatch.taken(),
+                Math.round(1000 * MULTIPLE_RUN_TEST_COUNT / stopwatch.taken()));
     }
 
     @Test

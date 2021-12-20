@@ -17,6 +17,7 @@
 package org.apache.camel.component.rabbitmq.integration;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
@@ -28,6 +29,7 @@ import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.infra.rabbitmq.services.ConnectionProperties;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -87,9 +89,8 @@ public class RabbitMQConsumerReplyToIT extends AbstractRabbitMQIT {
     }
 
     private void assertThatBodiesReceivedIn(final List<String> received, final String... expected) throws InterruptedException {
-        Thread.sleep(500);
+        Awaitility.await().atMost(Duration.ofSeconds(1)).untilAsserted(() -> assertListSize(received, expected.length));
 
-        assertListSize(received, expected.length);
         for (String body : expected) {
             assertEquals(body, received.get(0));
         }

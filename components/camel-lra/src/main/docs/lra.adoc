@@ -5,7 +5,6 @@
 :description: Camel saga binding for Long-Running-Action framework
 :since: 2.21
 :supportlevel: Preview
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/lra.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: lra
 

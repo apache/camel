@@ -39,7 +39,7 @@ public class MllpNegativeAcknowledgementExceptionTest extends MllpExceptionTestS
     @Test
     public void testConstructorOne() throws Exception {
         instance = new MllpNegativeAcknowledgementExceptionStub(
-                EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES);
+                EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, LOG_PHI_TRUE);
 
         assertTrue(instance.getMessage().startsWith(EXCEPTION_MESSAGE));
         assertNull(instance.getCause());
@@ -55,7 +55,7 @@ public class MllpNegativeAcknowledgementExceptionTest extends MllpExceptionTestS
     @Test
     public void testConstructorTwo() throws Exception {
         instance = new MllpNegativeAcknowledgementExceptionStub(
-                EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, CAUSE);
+                EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, CAUSE, LOG_PHI_TRUE);
 
         assertTrue(instance.getMessage().startsWith(EXCEPTION_MESSAGE));
         assertSame(CAUSE, instance.getCause());
@@ -71,20 +71,20 @@ public class MllpNegativeAcknowledgementExceptionTest extends MllpExceptionTestS
     @Test
     public void testGetAcknowledgmentType() throws Exception {
         instance = new MllpNegativeAcknowledgementExceptionStub(
-                EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES);
+                EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, LOG_PHI_TRUE);
 
         assertNull(instance.getAcknowledgmentType());
     }
 
     static class MllpNegativeAcknowledgementExceptionStub extends MllpNegativeAcknowledgementException {
 
-        MllpNegativeAcknowledgementExceptionStub(String message, byte[] hl7Message, byte[] hl7Acknowledgement) {
-            super(message, hl7Message, hl7Acknowledgement);
+        MllpNegativeAcknowledgementExceptionStub(String message, byte[] hl7Message, byte[] hl7Acknowledgement, boolean logPhi) {
+            super(message, hl7Message, hl7Acknowledgement, logPhi);
         }
 
         MllpNegativeAcknowledgementExceptionStub(String message, byte[] hl7Message, byte[] hl7Acknowledgement,
-                                                 Throwable cause) {
-            super(message, hl7Message, hl7Acknowledgement, cause);
+                                                 Throwable cause, boolean logPhi) {
+            super(message, hl7Message, hl7Acknowledgement, cause, logPhi);
         }
 
         @Override

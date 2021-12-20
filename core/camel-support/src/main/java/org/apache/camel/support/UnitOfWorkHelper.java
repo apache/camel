@@ -66,7 +66,6 @@ public final class UnitOfWorkHelper {
             LOG.warn("Exception occurred during done UnitOfWork for Exchange: {}. This exception will be ignored.",
                     exchange, e);
         }
-
     }
 
     public static void doneSynchronizations(Exchange exchange, List<Synchronization> synchronizations, Logger log) {

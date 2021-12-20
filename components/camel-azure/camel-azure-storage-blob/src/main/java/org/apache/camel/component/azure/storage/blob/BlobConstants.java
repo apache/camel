@@ -81,6 +81,9 @@ public final class BlobConstants {
     public static final String LIST_BLOB_CONTAINERS_OPTIONS = HEADER_PREFIX + "ListBlobContainersOptions";
     public static final String PARALLEL_TRANSFER_OPTIONS = HEADER_PREFIX + "ParallelTransferOptions";
     public static final String DOWNLOAD_LINK_EXPIRATION = HEADER_PREFIX + "DownloadLinkExpiration";
+    public static final String SOURCE_BLOB_ACCOUNT_NAME = HEADER_PREFIX + "SourceBlobAccountName";
+    public static final String SOURCE_BLOB_CONTAINER_NAME = HEADER_PREFIX + "SourceBlobContainerName";
+    public static final String DESTINATION_BLOB_NAME = HEADER_PREFIX + "DestinationBlobContainerName";
     // changefeed
     public static final String CHANGE_FEED_START_TIME = HEADER_PREFIX + "ChangeFeedStartTime";
     public static final String CHANGE_FEED_END_TIME = HEADER_PREFIX + "ChangeFeedEndTime";

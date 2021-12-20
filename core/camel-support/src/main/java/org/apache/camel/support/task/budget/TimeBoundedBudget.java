@@ -20,6 +20,9 @@ package org.apache.camel.support.task.budget;
 import java.time.Duration;
 import java.time.Instant;
 
+/**
+ * This task budget limits the execution by both a maximum amount of time for the execution.
+ */
 public class TimeBoundedBudget implements TimeBudget {
     public static final long UNLIMITED_DURATION = -1;
 
@@ -52,8 +55,8 @@ public class TimeBoundedBudget implements TimeBudget {
 
     @Override
     public boolean canContinue() {
-        // ... the time budget is exhausted
-        if (Duration.between(startTime, Instant.now()).toMillis() >= maxDuration) {
+        // ... if time budget is NOT exhausted
+        if (elapsed().toMillis() >= maxDuration) {
             return false;
         }
 
@@ -63,5 +66,10 @@ public class TimeBoundedBudget implements TimeBudget {
     @Override
     public boolean next() {
         return true;
+    }
+
+    @Override
+    public Duration elapsed() {
+        return Duration.between(startTime, Instant.now());
     }
 }

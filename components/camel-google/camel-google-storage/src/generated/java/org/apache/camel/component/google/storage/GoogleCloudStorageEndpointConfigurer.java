@@ -36,6 +36,8 @@ public class GoogleCloudStorageEndpointConfigurer extends PropertyConfigurerSupp
         case "deleteAfterRead": target.getConfiguration().setDeleteAfterRead(property(camelContext, boolean.class, value)); return true;
         case "destinationbucket":
         case "destinationBucket": target.getConfiguration().setDestinationBucket(property(camelContext, java.lang.String.class, value)); return true;
+        case "downloadfilename":
+        case "downloadFileName": target.getConfiguration().setDownloadFileName(property(camelContext, java.lang.String.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
@@ -108,6 +110,8 @@ public class GoogleCloudStorageEndpointConfigurer extends PropertyConfigurerSupp
         case "deleteAfterRead": return boolean.class;
         case "destinationbucket":
         case "destinationBucket": return java.lang.String.class;
+        case "downloadfilename":
+        case "downloadFileName": return java.lang.String.class;
         case "exceptionhandler":
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
@@ -176,6 +180,8 @@ public class GoogleCloudStorageEndpointConfigurer extends PropertyConfigurerSupp
         case "deleteAfterRead": return target.getConfiguration().isDeleteAfterRead();
         case "destinationbucket":
         case "destinationBucket": return target.getConfiguration().getDestinationBucket();
+        case "downloadfilename":
+        case "downloadFileName": return target.getConfiguration().getDownloadFileName();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":

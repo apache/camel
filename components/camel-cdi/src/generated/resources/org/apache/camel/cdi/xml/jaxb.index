@@ -9,6 +9,7 @@ ImportDefinition
 ProducerTemplateFactoryBean
 RedeliveryPolicyFactoryBean
 RestContextDefinition
+RouteConfigurationContextDefinition
 RouteContextDefinition
 RouteTemplateContextDefinition
 ThreadPoolFactoryBean

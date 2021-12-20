@@ -37,6 +37,8 @@ public class GooglePubsubComponentConfigurer extends PropertyConfigurerSupport i
         case "publisherTerminationTimeout": target.setPublisherTerminationTimeout(property(camelContext, int.class, value)); return true;
         case "serviceaccountkey":
         case "serviceAccountKey": target.setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "synchronouspullretryablecodes":
+        case "synchronousPullRetryableCodes": target.setSynchronousPullRetryableCodes(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -60,6 +62,8 @@ public class GooglePubsubComponentConfigurer extends PropertyConfigurerSupport i
         case "publisherTerminationTimeout": return int.class;
         case "serviceaccountkey":
         case "serviceAccountKey": return java.lang.String.class;
+        case "synchronouspullretryablecodes":
+        case "synchronousPullRetryableCodes": return java.lang.String.class;
         default: return null;
         }
     }
@@ -84,6 +88,8 @@ public class GooglePubsubComponentConfigurer extends PropertyConfigurerSupport i
         case "publisherTerminationTimeout": return target.getPublisherTerminationTimeout();
         case "serviceaccountkey":
         case "serviceAccountKey": return target.getServiceAccountKey();
+        case "synchronouspullretryablecodes":
+        case "synchronousPullRetryableCodes": return target.getSynchronousPullRetryableCodes();
         default: return null;
         }
     }

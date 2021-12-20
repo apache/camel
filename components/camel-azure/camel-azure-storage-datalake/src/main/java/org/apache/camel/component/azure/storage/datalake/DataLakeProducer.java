@@ -110,7 +110,7 @@ public class DataLakeProducer extends DefaultProducer {
 
     private void setResponse(final Exchange exchange, final DataLakeOperationResponse dataLakeOperationResponse) {
         exchange.getMessage().setBody(dataLakeOperationResponse.getBody());
-        exchange.getMessage().setHeaders(dataLakeOperationResponse.getHeaders());
+        exchange.getMessage().getHeaders().putAll(dataLakeOperationResponse.getHeaders());
     }
 
     private DataLakeOperationsDefinition determineOperation(final Exchange exchange) {

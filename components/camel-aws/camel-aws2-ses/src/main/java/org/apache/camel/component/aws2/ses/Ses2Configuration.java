@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.aws2.ses;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
@@ -43,11 +40,11 @@ public class Ses2Configuration implements Cloneable {
     @UriParam
     private String subject;
     @UriParam
-    private List<String> to;
+    private String to;
     @UriParam
     private String returnPath;
     @UriParam
-    private List<String> replyToAddresses;
+    private String replyToAddresses;
     @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS")
     private Protocol proxyProtocol = Protocol.HTTPS;
     @UriParam
@@ -98,22 +95,15 @@ public class Ses2Configuration implements Cloneable {
         this.from = from;
     }
 
-    public List<String> getTo() {
+    public String getTo() {
         return to;
     }
 
     /**
-     * List of destination email address. Can be overriden with 'CamelAwsSesTo' header.
-     */
-    public void setTo(List<String> to) {
-        this.to = to;
-    }
-
-    /**
-     * List of destination email address. Can be overriden with 'CamelAwsSesTo' header.
+     * List of comma separated destination email address. Can be overriden with 'CamelAwsSesTo' header.
      */
     public void setTo(String to) {
-        this.to = Arrays.asList(to.split(","));
+        this.to = to;
     }
 
     public String getSecretKey() {
@@ -150,19 +140,16 @@ public class Ses2Configuration implements Cloneable {
         this.returnPath = returnPath;
     }
 
-    public List<String> getReplyToAddresses() {
+    public String getReplyToAddresses() {
         return replyToAddresses;
     }
 
     /**
-     * List of reply-to email address(es) for the message, override it using 'CamelAwsSesReplyToAddresses' header.
+     * List of comma separated reply-to email address(es) for the message, override it using
+     * 'CamelAwsSesReplyToAddresses' header.
      */
-    public void setReplyToAddresses(List<String> replyToAddresses) {
-        this.replyToAddresses = replyToAddresses;
-    }
-
     public void setReplyToAddresses(String replyToAddresses) {
-        this.replyToAddresses = Arrays.asList(replyToAddresses.split(","));
+        this.replyToAddresses = replyToAddresses;
     }
 
     public Protocol getProxyProtocol() {

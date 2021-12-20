@@ -6118,6 +6118,7 @@ public interface VertxKafkaEndpointBuilderFactory {
          * @param path topic
          * @return the dsl builder
          */
+        @Deprecated
         default VertxKafkaEndpointBuilder vertxKafka(String path) {
             return VertxKafkaEndpointBuilderFactory.endpointBuilder("vertx-kafka", path);
         }
@@ -6142,12 +6143,14 @@ public interface VertxKafkaEndpointBuilderFactory {
          * @param path topic
          * @return the dsl builder
          */
+        @Deprecated
         default VertxKafkaEndpointBuilder vertxKafka(
                 String componentName,
                 String path) {
             return VertxKafkaEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
+    @Deprecated
     static VertxKafkaEndpointBuilder endpointBuilder(
             String componentName,
             String path) {

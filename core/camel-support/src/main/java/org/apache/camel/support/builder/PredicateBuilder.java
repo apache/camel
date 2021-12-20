@@ -54,7 +54,7 @@ public class PredicateBuilder {
 
             @Override
             public void init(CamelContext camelContext) {
-                predicate.init(camelContext);
+                predicate.initPredicate(camelContext);
             }
 
             @Override
@@ -77,8 +77,8 @@ public class PredicateBuilder {
 
             @Override
             public void init(CamelContext camelContext) {
-                left.init(camelContext);
-                right.init(camelContext);
+                left.initPredicate(camelContext);
+                right.initPredicate(camelContext);
             }
 
             @Override
@@ -102,8 +102,8 @@ public class PredicateBuilder {
 
             @Override
             public void init(CamelContext camelContext) {
-                left.init(camelContext);
-                right.init(camelContext);
+                left.initPredicate(camelContext);
+                right.initPredicate(camelContext);
             }
 
             @Override
@@ -162,7 +162,7 @@ public class PredicateBuilder {
             @Override
             public void init(CamelContext camelContext) {
                 for (Predicate in : predicates) {
-                    in.init(camelContext);
+                    in.initPredicate(camelContext);
                 }
             }
 
@@ -376,7 +376,7 @@ public class PredicateBuilder {
                 if (leftValue == null) {
                     // the left operator is null so its true
                     return true;
-                } 
+                }
 
                 return ObjectHelper.typeCoerceEquals(exchange.getContext().getTypeConverter(), leftValue, rightValue);
             }

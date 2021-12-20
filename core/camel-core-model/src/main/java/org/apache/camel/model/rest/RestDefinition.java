@@ -16,7 +16,6 @@
  */
 package org.apache.camel.model.rest;
 
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -792,13 +791,11 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         }
 
         if (!options.isEmpty()) {
-            String query;
             try {
-                query = URISupport.createQueryString(options);
-            } catch (URISyntaxException e) {
+                from = URISupport.appendParametersToURI(from, options);
+            } catch (Exception e) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
-            from = from + "?" + query;
         }
 
         // we use the same uri as the producer (so we have a little route for
@@ -885,9 +882,6 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
 
             route.setRestBindingDefinition(binding);
 
-            // create the from endpoint uri which is using the rest component
-            String from = buildFromUri(verb);
-
             // append options
             Map<String, Object> options = new HashMap<>();
             // verb takes precedence over configuration on rest
@@ -934,16 +928,6 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                 options.put("description", description);
             }
 
-            if (!options.isEmpty()) {
-                String query;
-                try {
-                    query = URISupport.createQueryString(options);
-                } catch (URISyntaxException e) {
-                    throw RuntimeCamelException.wrapRuntimeCamelException(e);
-                }
-                from = from + "?" + query;
-            }
-
             String path = getPath();
             String s1 = FileUtil.stripTrailingSeparator(path);
             String s2 = FileUtil.stripLeadingSeparator(verb.getUri());
@@ -957,42 +941,17 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             }
 
             // each {} is a parameter (url templating)
-            if (allPath != null) {
-                String[] arr = allPath.split("\\/");
-                for (String a : arr) {
-                    // need to resolve property placeholders first
-                    try {
-                        a = camelContext.resolvePropertyPlaceholders(a);
-                    } catch (Exception e) {
-                        throw RuntimeCamelException.wrapRuntimeCamelException(e);
-                    }
-
-                    Matcher m = Pattern.compile("\\{(.*?)\\}").matcher(a);
-                    while (m.find()) {
-                        String key = m.group(1);
-                        //  merge if exists
-                        boolean found = false;
-                        for (RestOperationParamDefinition param : verb.getParams()) {
-                            // name is mandatory
-                            String name = param.getName();
-                            StringHelper.notEmpty(name, "parameter name");
-                            // need to resolve property placeholders first
-                            try {
-                                name = camelContext.resolvePropertyPlaceholders(name);
-                            } catch (Exception e) {
-                                throw RuntimeCamelException.wrapRuntimeCamelException(e);
-                            }
-                            if (name.equalsIgnoreCase(key)) {
-                                param.type(RestParamType.path);
-                                found = true;
-                                break;
-                            }
-                        }
-                        if (!found) {
-                            param(verb).name(key).type(RestParamType.path).endParam();
-                        }
-                    }
-                }
+            Set<String> toRemove = null;
+            if (allPath != null && allPath.contains("?")) {
+                // special when having query parameters
+                String path1 = StringHelper.before(allPath, "?");
+                uriTemplating(camelContext, verb, path1, false);
+                String path2 = StringHelper.after(allPath, "?");
+                // there may be some query parameters that are templates which we then must remove
+                toRemove = uriTemplating(camelContext, verb, path2, true);
+            } else {
+                // no query parameters
+                uriTemplating(camelContext, verb, allPath, false);
             }
 
             if (verb.getType() != null) {
@@ -1010,11 +969,89 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                 }
             }
 
+            // create the from endpoint uri which is using the rest component
+            String from = buildFromUri(verb);
+
+            // rebuild uri without these query parameters
+            if (toRemove != null && !toRemove.isEmpty()) {
+                try {
+                    Map<String, Object> query = URISupport.parseQuery(URISupport.extractQuery(from));
+                    // remove if the value matches, eg: auth={myAuth}
+                    toRemove.forEach(v -> {
+                        query.values().removeIf(qv -> qv.toString().equals(v));
+                    });
+                    from = URISupport.stripQuery(from);
+                    if (!query.isEmpty()) {
+                        String q = URISupport.createQueryString(query);
+                        from = URISupport.stripQuery(from) + "?" + q;
+                    }
+                } catch (Exception e) {
+                    throw RuntimeCamelException.wrapRuntimeCamelException(e);
+                }
+            }
+
+            // append additional options
+            if (!options.isEmpty()) {
+                try {
+                    from = URISupport.appendParametersToURI(from, options);
+                } catch (Exception e) {
+                    throw RuntimeCamelException.wrapRuntimeCamelException(e);
+                }
+            }
+
             // the route should be from this rest endpoint
             route.fromRest(from);
             route.setRestDefinition(this);
             answer.add(route);
         }
+    }
+
+    private Set<String> uriTemplating(
+            CamelContext camelContext, VerbDefinition verb,
+            String path, boolean query) {
+
+        if (path == null) {
+            return null;
+        }
+
+        Set<String> params = new HashSet<>();
+        String[] arr = path.split("\\/");
+        for (String a : arr) {
+            // need to resolve property placeholders first
+            try {
+                a = camelContext.resolvePropertyPlaceholders(a);
+            } catch (Exception e) {
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
+            }
+
+            Matcher m = Pattern.compile("\\{(.*?)\\}").matcher(a);
+            while (m.find()) {
+                String key = m.group(1);
+                params.add("{" + key + "}");
+                //  merge if exists
+                boolean found = false;
+                for (RestOperationParamDefinition param : verb.getParams()) {
+                    // name is mandatory
+                    String name = param.getName();
+                    StringHelper.notEmpty(name, "parameter name");
+                    // need to resolve property placeholders first
+                    try {
+                        name = camelContext.resolvePropertyPlaceholders(name);
+                    } catch (Exception e) {
+                        throw RuntimeCamelException.wrapRuntimeCamelException(e);
+                    }
+                    if (name.equalsIgnoreCase(key)) {
+                        param.type(query ? RestParamType.query : RestParamType.path);
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    param(verb).name(key).type(query ? RestParamType.query : RestParamType.path).endParam();
+                }
+            }
+        }
+        return params;
     }
 
     private String buildUri(VerbDefinition verb) {

@@ -22,7 +22,7 @@ import org.apache.camel.component.google.storage.GoogleCloudStorageComponent;
 import org.apache.camel.component.google.storage.localstorage.LocalStorageHelper;
 import org.apache.camel.test.junit5.CamelTestSupport;
 
-public class GoogleCloudStorageBaseTest extends CamelTestSupport {
+public abstract class GoogleCloudStorageBaseTest extends CamelTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

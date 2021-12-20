@@ -35,6 +35,7 @@ import com.datasonnet.document.DefaultDocument;
 import com.datasonnet.document.Document;
 import com.datasonnet.document.MediaType;
 import com.datasonnet.document.MediaTypes;
+import com.datasonnet.header.Header;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeExpressionException;
@@ -101,7 +102,7 @@ public class DatasonnetExpression extends ExpressionAdapter implements Expressio
 
     private Document<?> doEvaluate(Exchange exchange) {
         MediaType bodyMT = bodyMediaType;
-        if (bodyMT == null) {
+        if (bodyMT == null && !expression.startsWith(Header.DATASONNET_HEADER)) {
             //Try to auto-detect input mime type if it was not explicitly set
             String typeHeader = exchange.getProperty(DatasonnetConstants.BODY_MEDIATYPE,
                     exchange.getIn().getHeader(Exchange.CONTENT_TYPE), String.class);

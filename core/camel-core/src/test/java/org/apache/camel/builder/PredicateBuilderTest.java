@@ -30,7 +30,6 @@ import org.junit.jupiter.api.Test;
 import static org.apache.camel.builder.Builder.constant;
 import static org.apache.camel.builder.PredicateBuilder.in;
 import static org.apache.camel.builder.PredicateBuilder.not;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class PredicateBuilderTest extends TestSupport {
 
@@ -171,13 +170,7 @@ public class PredicateBuilderTest extends TestSupport {
         assertMatches(body().not().isInstanceOf(Integer.class));
         assertMatches(header("name").not().isEqualTo("Claus"));
         assertMatches(header("size").not().isLessThan(7));
-
-        try {
-            assertMatches(header("name").not().isEqualTo("James"));
-            fail("Should fail");
-        } catch (AssertionError e) {
-            // expected
-        }
+        assertDoesNotMatch(header("name").not().isEqualTo("James"));
     }
 
     @Override

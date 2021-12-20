@@ -27,6 +27,8 @@ public class Ddb2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "amazonDDBClient": target.getConfiguration().setAmazonDDBClient(property(camelContext, software.amazon.awssdk.services.dynamodb.DynamoDbClient.class, value)); return true;
         case "consistentread":
         case "consistentRead": target.getConfiguration().setConsistentRead(property(camelContext, boolean.class, value)); return true;
+        case "enabledinitialdescribetable":
+        case "enabledInitialDescribeTable": target.getConfiguration().setEnabledInitialDescribeTable(property(camelContext, boolean.class, value)); return true;
         case "keyattributename":
         case "keyAttributeName": target.getConfiguration().setKeyAttributeName(property(camelContext, java.lang.String.class, value)); return true;
         case "keyattributetype":
@@ -75,6 +77,8 @@ public class Ddb2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "amazonDDBClient": return software.amazon.awssdk.services.dynamodb.DynamoDbClient.class;
         case "consistentread":
         case "consistentRead": return boolean.class;
+        case "enabledinitialdescribetable":
+        case "enabledInitialDescribeTable": return boolean.class;
         case "keyattributename":
         case "keyAttributeName": return java.lang.String.class;
         case "keyattributetype":
@@ -119,6 +123,8 @@ public class Ddb2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "amazonDDBClient": return target.getConfiguration().getAmazonDDBClient();
         case "consistentread":
         case "consistentRead": return target.getConfiguration().isConsistentRead();
+        case "enabledinitialdescribetable":
+        case "enabledInitialDescribeTable": return target.getConfiguration().isEnabledInitialDescribeTable();
         case "keyattributename":
         case "keyAttributeName": return target.getConfiguration().getKeyAttributeName();
         case "keyattributetype":

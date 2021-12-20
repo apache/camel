@@ -68,11 +68,20 @@ class MarshalTest extends YamlTestSupport {
                              data-format-type:
                                json: {}
                           - to: "mock:result"
+                    '''),
+                asResource('data-format-library-case', '''
+                    - from:
+                        uri: "direct:start"
+                        steps:    
+                          - marshal:
+                             json: 
+                               library: gson
+                          - to: "mock:result"
                     ''')
             ]
 
             expected << [
-                'json-gson', 'json-gson', 'json-jackson', 'json-jackson'
+                'json-gson', 'json-gson', 'json-jackson', 'json-jackson', 'json-gson'
             ]
     }
 }

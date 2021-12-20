@@ -14,25 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.kafka.producer.support;
-
-import java.util.Arrays;
-import java.util.List;
 
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.RecordMetadata;
 
 public final class DelegatingCallback implements Callback {
 
-    private final List<Callback> callbacks;
+    private final Callback callback1;
+    private final Callback callback2;
 
-    public DelegatingCallback(Callback... callbacks) {
-        this.callbacks = Arrays.asList(callbacks);
+    public DelegatingCallback(Callback callback1, Callback callback2) {
+        this.callback1 = callback1;
+        this.callback2 = callback2;
     }
 
     @Override
     public void onCompletion(RecordMetadata metadata, Exception exception) {
-        callbacks.forEach(c -> c.onCompletion(metadata, exception));
+        callback1.onCompletion(metadata, exception);
+        callback2.onCompletion(metadata, exception);
+
     }
 }

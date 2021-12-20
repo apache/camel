@@ -564,7 +564,7 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
      *
      * @throws SoroushException if soroush reject the file
      */
-    void handleFileUpload(SoroushMessage message) throws SoroushException, InterruptedException {
+    void handleFileUpload(SoroushMessage message) {
         LOG.trace("try to upload file(s) to server if exists for message: {}", message);
 
         InputStream file = message.getFile();

@@ -17,8 +17,11 @@
 
 package org.apache.camel.support.task;
 
+import java.time.Duration;
+import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import org.apache.camel.support.task.budget.IterationBudget;
 import org.slf4j.Logger;
@@ -57,6 +60,7 @@ public class ForegroundTask implements BlockingTask {
 
     private final String name;
     private IterationBudget budget;
+    private Duration elapsed = Duration.ZERO;
 
     ForegroundTask(IterationBudget budget, String name) {
         this.budget = budget;
@@ -73,7 +77,7 @@ public class ForegroundTask implements BlockingTask {
 
             while (budget.next()) {
                 if (predicate.test(payload)) {
-                    LOG.info("Task {} is complete after {} iterations and it is ready to continue",
+                    LOG.debug("Task {} is complete after {} iterations and it is ready to continue",
                             name, budget.iteration());
                     completed = true;
                     break;
@@ -84,8 +88,10 @@ public class ForegroundTask implements BlockingTask {
                 }
             }
         } catch (InterruptedException e) {
-            LOG.warn("Interrupted {} while waiting for the repeatable task to execute", name);
+            LOG.warn("Interrupted {} while waiting for the repeatable task to finish", name);
             Thread.currentThread().interrupt();
+        } finally {
+            elapsed = budget.elapsed();
         }
 
         return completed;
@@ -102,7 +108,7 @@ public class ForegroundTask implements BlockingTask {
 
             while (budget.next()) {
                 if (supplier.getAsBoolean()) {
-                    LOG.info("Task {} is complete after {} iterations and it is ready to continue",
+                    LOG.debug("Task {} is complete after {} iterations and it is ready to continue",
                             name, budget.iteration());
                     completed = true;
 
@@ -114,10 +120,53 @@ public class ForegroundTask implements BlockingTask {
                 }
             }
         } catch (InterruptedException e) {
-            LOG.warn("Interrupted {} while waiting for the repeatable task to execute", name);
+            LOG.warn("Interrupted {} while waiting for the repeatable task to finish", name);
             Thread.currentThread().interrupt();
+        } finally {
+            elapsed = budget.elapsed();
         }
 
         return completed;
+    }
+
+    /**
+     * Run a task until it produces a result
+     * 
+     * @param  supplier  the supplier of the result
+     * @param  predicate a predicate to test if the result is acceptable
+     * @param  <T>       the type for the result
+     * @return           An optional with the result
+     */
+    public <T> Optional<T> run(Supplier<T> supplier, Predicate<T> predicate) {
+        try {
+            if (budget.initialDelay() > 0) {
+                Thread.sleep(budget.initialDelay());
+            }
+
+            while (budget.next()) {
+                T ret = supplier.get();
+                if (predicate.test(ret)) {
+                    LOG.debug("Task {} is complete after {} iterations and it is ready to continue",
+                            name, budget.iteration());
+                    return Optional.ofNullable(ret);
+                }
+
+                if (budget.canContinue()) {
+                    Thread.sleep(budget.interval());
+                }
+            }
+        } catch (InterruptedException e) {
+            LOG.warn("Interrupted {} while waiting for the repeatable task to finish", name);
+            Thread.currentThread().interrupt();
+        } finally {
+            elapsed = budget.elapsed();
+        }
+
+        return Optional.empty();
+    }
+
+    @Override
+    public Duration elapsed() {
+        return elapsed;
     }
 }

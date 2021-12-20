@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.dsl.jbang.core.common.exceptions;
 
 import java.io.File;
@@ -22,6 +21,7 @@ import java.io.File;
 import org.apache.camel.CamelException;
 
 public class ResourceAlreadyExists extends CamelException {
+
     public ResourceAlreadyExists(File resource) {
         super("The destination file already exists: " + resource.getAbsolutePath());
     }

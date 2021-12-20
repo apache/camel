@@ -24,16 +24,20 @@ import org.apache.kudu.test.KuduTestHarness;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * Use this class to run tests agains a local basic Kudu server. This local kudu server is spinned up by
+ * Use this class to run tests against a local basic Kudu server. This local kudu server is spinned up by
  * https://kudu.apache.org/docs/developing.html#_using_the_kudu_binary_test_jar
  */
 public class IntegrationKuduConfiguration implements BeforeEachCallback, AfterEachCallback {
+    private static final Logger LOG = LoggerFactory.getLogger(IntegrationKuduConfiguration.class);
 
-    Internal internal = new Internal();
+    private final Internal internal = new Internal();
+    private boolean hasKuduHarness;
 
     public IntegrationKuduConfiguration() {
     }
@@ -47,13 +51,25 @@ public class IntegrationKuduConfiguration implements BeforeEachCallback, AfterEa
     }
 
     @Override
-    public void afterEach(ExtensionContext context) throws Exception {
-        internal.after();
+    public void afterEach(ExtensionContext context) {
+        if (hasKuduHarness) {
+            internal.after();
+        }
     }
 
     @Override
-    public void beforeEach(ExtensionContext context) throws Exception {
-        internal.before();
+    public void beforeEach(ExtensionContext context) {
+        try {
+            internal.before();
+            hasKuduHarness = true;
+        } catch (Exception e) {
+            hasKuduHarness = false;
+            LOG.debug("Kudu harness is not runnable because: {}", e.getMessage(), e);
+        }
+    }
+
+    public boolean hasKuduHarness() {
+        return hasKuduHarness;
     }
 
     static class Internal extends KuduTestHarness {

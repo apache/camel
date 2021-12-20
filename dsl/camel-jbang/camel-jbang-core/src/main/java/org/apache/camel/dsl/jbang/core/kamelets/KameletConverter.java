@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.dsl.jbang.core.kamelets;
 
 import java.util.regex.Matcher;
@@ -23,6 +22,7 @@ import org.apache.camel.dsl.jbang.core.api.Converter;
 import org.apache.camel.dsl.jbang.core.types.Kamelet;
 
 public class KameletConverter implements Converter<Kamelet> {
+
     public Kamelet convert(Matcher matcher) {
         Kamelet kamelet = new Kamelet();
 

@@ -160,5 +160,10 @@ public class PropertiesComponentPropertiesSourceTest {
 
             return props;
         }
+
+        @Override
+        public void reloadProperties(String location) {
+            // noop
+        }
     }
 }

@@ -17,9 +17,18 @@
 
 package org.apache.camel.support.task;
 
+import java.time.Duration;
+
 /**
  * A task defines a piece of code that may be executed - in the foreground or background - within a certain budget that
  * is specific to the task type.
  */
 public interface Task {
+
+    /**
+     * How long it took to run the task
+     * 
+     * @return The duration to execute the task
+     */
+    Duration elapsed();
 }

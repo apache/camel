@@ -27,9 +27,9 @@ public class ElasticsearchComponentConfigurer extends PropertyConfigurerSupport 
         case "connectiontimeout":
         case "connectionTimeout": target.setConnectionTimeout(property(camelContext, int.class, value)); return true;
         case "enablessl":
-        case "enableSSL": target.setEnableSSL(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "enableSSL": target.setEnableSSL(property(camelContext, boolean.class, value)); return true;
         case "enablesniffer":
-        case "enableSniffer": target.setEnableSniffer(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "enableSniffer": target.setEnableSniffer(property(camelContext, boolean.class, value)); return true;
         case "hostaddresses":
         case "hostAddresses": target.setHostAddresses(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
@@ -62,9 +62,9 @@ public class ElasticsearchComponentConfigurer extends PropertyConfigurerSupport 
         case "connectiontimeout":
         case "connectionTimeout": return int.class;
         case "enablessl":
-        case "enableSSL": return java.lang.Boolean.class;
+        case "enableSSL": return boolean.class;
         case "enablesniffer":
-        case "enableSniffer": return java.lang.Boolean.class;
+        case "enableSniffer": return boolean.class;
         case "hostaddresses":
         case "hostAddresses": return java.lang.String.class;
         case "lazystartproducer":
@@ -93,9 +93,9 @@ public class ElasticsearchComponentConfigurer extends PropertyConfigurerSupport 
         case "connectiontimeout":
         case "connectionTimeout": return target.getConnectionTimeout();
         case "enablessl":
-        case "enableSSL": return target.getEnableSSL();
+        case "enableSSL": return target.isEnableSSL();
         case "enablesniffer":
-        case "enableSniffer": return target.getEnableSniffer();
+        case "enableSniffer": return target.isEnableSniffer();
         case "hostaddresses":
         case "hostAddresses": return target.getHostAddresses();
         case "lazystartproducer":

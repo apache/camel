@@ -59,6 +59,8 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "contentType": getOrCreateConfig(target).setContentType(property(camelContext, org.apache.camel.component.salesforce.api.dto.bulk.ContentType.class, value)); return true;
         case "defaultreplayid":
         case "defaultReplayId": getOrCreateConfig(target).setDefaultReplayId(property(camelContext, java.lang.Long.class, value)); return true;
+        case "fallbackreplayid":
+        case "fallBackReplayId": getOrCreateConfig(target).setFallBackReplayId(property(camelContext, java.lang.Long.class, value)); return true;
         case "format": getOrCreateConfig(target).setFormat(property(camelContext, org.apache.camel.component.salesforce.internal.PayloadFormat.class, value)); return true;
         case "httpclient":
         case "httpClient": getOrCreateConfig(target).setHttpClient(property(camelContext, org.apache.camel.component.salesforce.SalesforceHttpClient.class, value)); return true;
@@ -237,6 +239,8 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "contentType": return org.apache.camel.component.salesforce.api.dto.bulk.ContentType.class;
         case "defaultreplayid":
         case "defaultReplayId": return java.lang.Long.class;
+        case "fallbackreplayid":
+        case "fallBackReplayId": return java.lang.Long.class;
         case "format": return org.apache.camel.component.salesforce.internal.PayloadFormat.class;
         case "httpclient":
         case "httpClient": return org.apache.camel.component.salesforce.SalesforceHttpClient.class;
@@ -416,6 +420,8 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "contentType": return getOrCreateConfig(target).getContentType();
         case "defaultreplayid":
         case "defaultReplayId": return getOrCreateConfig(target).getDefaultReplayId();
+        case "fallbackreplayid":
+        case "fallBackReplayId": return getOrCreateConfig(target).getFallBackReplayId();
         case "format": return getOrCreateConfig(target).getFormat();
         case "httpclient":
         case "httpClient": return getOrCreateConfig(target).getHttpClient();

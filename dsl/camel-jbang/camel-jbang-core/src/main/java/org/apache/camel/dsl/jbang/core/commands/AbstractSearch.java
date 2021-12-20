@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.BufferedReader;
@@ -62,7 +61,6 @@ public abstract class AbstractSearch {
             resolver.setBranch(branch);
 
             Resource resource = resolver.resolve(resourceLocation);
-
             if (!resource.exists()) {
                 throw new ResourceDoesNotExist(resource);
             }
@@ -76,17 +74,12 @@ public abstract class AbstractSearch {
     private void readFileByLine(File indexFile, Extractor extractor) throws IOException {
         FileReader indexFileReader = new FileReader(indexFile);
         try (BufferedReader br = new BufferedReader(indexFileReader)) {
-
             String line;
             do {
                 line = br.readLine();
-
-                if (line == null) {
-                    break;
+                if (line != null) {
+                    extractor.extract(line);
                 }
-
-                extractor.extract(line);
-
             } while (line != null);
         }
     }
@@ -95,18 +88,14 @@ public abstract class AbstractSearch {
 
     public void search(Extractor extractor) throws ResourceDoesNotExist, IOException {
         File indexFile = getIndexFile();
-
         printHeader();
-
         readFileByLine(indexFile, extractor);
     }
 
     private File getIndexFile() throws ResourceDoesNotExist, IOException {
         File indexFile = new File("index");
         indexFile.deleteOnExit();
-
         downloadResource(indexFile);
-
         return indexFile;
     }
 }

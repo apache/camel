@@ -87,7 +87,7 @@ public class SimpleNotificationProducer extends DefaultProducer {
 
     /**
      * Publish message service operations
-     * 
+     *
      * @param endpoint
      * @param exchange
      * @param clientConfigurations
@@ -147,7 +147,7 @@ public class SimpleNotificationProducer extends DefaultProducer {
 
     /**
      * maps api response parameters as exchange property
-     * 
+     *
      * @param exchange
      * @param response
      */
@@ -165,7 +165,7 @@ public class SimpleNotificationProducer extends DefaultProducer {
 
     /**
      * validation and initialization of SmnClient object
-     * 
+     *
      * @param simpleNotificationEndpoint
      * @param clientConfigurations
      */
@@ -257,7 +257,7 @@ public class SimpleNotificationProducer extends DefaultProducer {
 
     /**
      * initialization of smn client. this is lazily initialized on the first message
-     * 
+     *
      * @param  clientConfigurations
      * @return
      */
@@ -265,17 +265,14 @@ public class SimpleNotificationProducer extends DefaultProducer {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Initializing Smn client");
         }
-        HttpConfig httpConfig = null;
-
-        if (clientConfigurations.getProxyHost() != null) {
-            httpConfig = HttpConfig.getDefaultHttpConfig();
-            httpConfig.withProxyHost(clientConfigurations.getProxyHost())
-                    .withProxyPort(clientConfigurations.getProxyPort())
-                    .setIgnoreSSLVerification(clientConfigurations.isIgnoreSslVerification());
-
-            if (clientConfigurations.getProxyUser() != null) {
-                httpConfig.withProxyUsername(clientConfigurations.getProxyUser());
-                httpConfig.withProxyPassword(clientConfigurations.getProxyPassword());
+        HttpConfig httpConfig
+                = HttpConfig.getDefaultHttpConfig().withIgnoreSSLVerification(clientConfigurations.isIgnoreSslVerification());
+        if (!StringUtils.isEmpty(clientConfigurations.getProxyHost())) {
+            httpConfig.setProxyHost(clientConfigurations.getProxyHost());
+            httpConfig.setProxyPort(clientConfigurations.getProxyPort());
+            if (!StringUtils.isEmpty(clientConfigurations.getProxyUser())) {
+                httpConfig.setProxyUsername(clientConfigurations.getProxyUser());
+                httpConfig.setProxyPassword(clientConfigurations.getProxyPassword());
             }
         }
 
@@ -303,7 +300,7 @@ public class SimpleNotificationProducer extends DefaultProducer {
 
     /**
      * validation of all user inputs before attempting to invoke a service operation
-     * 
+     *
      * @param simpleNotificationEndpoint
      * @param exchange
      * @param clientConfigurations

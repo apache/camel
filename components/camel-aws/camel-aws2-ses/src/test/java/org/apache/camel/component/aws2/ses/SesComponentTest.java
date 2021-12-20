@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.aws2.ses;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.camel.BindToRegistry;
@@ -34,12 +33,6 @@ public class SesComponentTest extends CamelTestSupport {
 
     @BindToRegistry("amazonSESClient")
     private AmazonSESClientMock sesClient = new AmazonSESClientMock();
-
-    @BindToRegistry("toList")
-    private List<String> toList = Arrays.asList("to1@example.com", "to2@example.com");
-
-    @BindToRegistry("replyToList")
-    private List<String> replyToList = Arrays.asList("replyTo1@example.com", "replyTo2@example.com");
 
     @Test
     public void sendInOnlyMessageUsingUrlOptions() throws Exception {
@@ -83,10 +76,10 @@ public class SesComponentTest extends CamelTestSupport {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody("This is my message text.");
                 exchange.getIn().setHeader(Ses2Constants.FROM, "anotherFrom@example.com");
-                exchange.getIn().setHeader(Ses2Constants.TO, Arrays.asList("anotherTo1@example.com", "anotherTo2@example.com"));
+                exchange.getIn().setHeader(Ses2Constants.TO, "anotherTo1@example.com, anotherTo2@example.com");
                 exchange.getIn().setHeader(Ses2Constants.RETURN_PATH, "anotherBounce@example.com");
                 exchange.getIn().setHeader(Ses2Constants.REPLY_TO_ADDRESSES,
-                        Arrays.asList("anotherReplyTo1@example.com", "anotherReplyTo2@example.com"));
+                        "anotherReplyTo1@example.com, anotherReplyTo2@example.com");
                 exchange.getIn().setHeader(Ses2Constants.SUBJECT, "anotherSubject");
             }
         });
@@ -111,9 +104,10 @@ public class SesComponentTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("aws2-ses://from@example.com" + "?to=#toList" + "&subject=Subject"
-                                        + "&returnPath=bounce@example.com" + "&replyToAddresses=#replyToList"
-                                        + "&amazonSESClient=#amazonSESClient");
+                from("direct:start")
+                        .to("aws2-ses://from@example.com" + "?to=to1@example.com,to2@example.com" + "&subject=Subject"
+                            + "&returnPath=bounce@example.com" + "&replyToAddresses=replyTo1@example.com,replyTo2@example.com"
+                            + "&amazonSESClient=#amazonSESClient");
             }
         };
     }

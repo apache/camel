@@ -34,7 +34,7 @@ import static org.apache.camel.component.servicenow.ServiceNowConstants.ACTION_U
 
 class HelsinkiServiceNowServiceCatalogCartsProcessor extends AbstractServiceNowProcessor {
 
-    HelsinkiServiceNowServiceCatalogCartsProcessor(ServiceNowEndpoint endpoint) throws Exception {
+    HelsinkiServiceNowServiceCatalogCartsProcessor(ServiceNowEndpoint endpoint) {
         super(endpoint);
 
         addDispatcher(ACTION_RETRIEVE, ACTION_SUBJECT_DELIVERY_ADDRESS, this::retrieveDeliveryAddress);

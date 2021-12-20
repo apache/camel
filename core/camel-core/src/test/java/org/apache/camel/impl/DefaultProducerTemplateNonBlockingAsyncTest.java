@@ -22,10 +22,12 @@ import java.util.concurrent.ExecutionException;
 import org.apache.camel.Exchange;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
+@Timeout(20)
 public class DefaultProducerTemplateNonBlockingAsyncTest extends DefaultProducerTemplateAsyncTest {
     @Override
     @BeforeEach

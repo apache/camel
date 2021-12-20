@@ -63,7 +63,7 @@ public final class VertxHttpHelper {
     /**
      * Resolves a HTTP URI and path string from the given exchange message headers
      */
-    public static URI resolveHttpURI(Exchange exchange) throws URISyntaxException {
+    public static URI resolveHttpURI(Exchange exchange, VertxHttpEndpoint endpoint) throws URISyntaxException {
         Message message = exchange.getMessage();
         String uri = (String) message.removeHeader(Exchange.REST_HTTP_URI);
 
@@ -71,8 +71,8 @@ public final class VertxHttpHelper {
             uri = message.getHeader(Exchange.HTTP_URI, String.class);
         }
 
-        if (ObjectHelper.isEmpty(uri)) {
-            return null;
+        if (uri == null) {
+            uri = endpoint.getConfiguration().getHttpUri().toASCIIString();
         }
 
         // Resolve property placeholders that may be present in the URI

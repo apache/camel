@@ -89,11 +89,25 @@ public interface ManagedBacklogDebuggerMBean {
     @ManagedOperation(description = "Steps to next node in step mode")
     void step();
 
+    /**
+     * @deprecated use {@link #breakpoints()}
+     */
     @ManagedOperation(description = "Return the node ids which has breakpoints")
+    @Deprecated
     Set<String> getBreakpoints();
 
+    @ManagedOperation(description = "Return the node ids which has breakpoints")
+    Set<String> breakpoints();
+
+    /**
+     * @deprecated use {@link #suspendedBreakpointNodeIds()}
+     */
     @ManagedOperation(description = "Return the node ids which is currently suspended")
+    @Deprecated
     Set<String> getSuspendedBreakpointNodeIds();
+
+    @ManagedOperation(description = "Return the node ids which is currently suspended")
+    Set<String> suspendedBreakpointNodeIds();
 
     @ManagedOperation(description = "Disables a breakpoint")
     void disableBreakpoint(String nodeId);
@@ -107,16 +121,16 @@ public interface ManagedBacklogDebuggerMBean {
     @ManagedAttribute(description = "Number of maximum chars in the message body in the trace message. Use zero or negative value to have unlimited size.")
     void setBodyMaxChars(int bodyMaxChars);
 
-    @ManagedAttribute(description = "Fallback Timeout in seconds when block the message processing in Camel.")
+    @ManagedAttribute(description = "Fallback Timeout in seconds when block the message processing in Camel")
     long getFallbackTimeout();
 
-    @ManagedAttribute(description = "Fallback Timeout in seconds when block the message processing in Camel.")
+    @ManagedAttribute(description = "Fallback Timeout in seconds when block the message processing in Camel")
     void setFallbackTimeout(long fallbackTimeout);
 
-    @ManagedAttribute(description = "Whether to include stream based message body in the trace message.")
+    @ManagedAttribute(description = "Whether to include stream based message body in the trace message")
     boolean isBodyIncludeStreams();
 
-    @ManagedAttribute(description = "Whether to include stream based message body in the trace message.")
+    @ManagedAttribute(description = "Whether to include stream based message body in the trace message")
     void setBodyIncludeStreams(boolean bodyIncludeStreams);
 
     @ManagedAttribute(description = "Whether to include file based message body in the trace message.")
@@ -125,8 +139,15 @@ public interface ManagedBacklogDebuggerMBean {
     @ManagedAttribute(description = "Whether to include file based message body in the trace message.")
     void setBodyIncludeFiles(boolean bodyIncludeFiles);
 
+    /**
+     * @deprecated use {@link #dumpTracedMessagesAsXml(String, boolean)}
+     */
     @ManagedOperation(description = "Dumps the messages in xml format from the suspended breakpoint at the given node")
+    @Deprecated
     String dumpTracedMessagesAsXml(String nodeId);
+
+    @ManagedOperation(description = "Dumps the messages in xml format from the suspended breakpoint at the given node, optionally including the exchange properties")
+    String dumpTracedMessagesAsXml(String nodeId, boolean includeExchangeProperties);
 
     @ManagedAttribute(description = "Number of total debugged messages")
     long getDebugCounter();
@@ -134,7 +155,12 @@ public interface ManagedBacklogDebuggerMBean {
     @ManagedOperation(description = "Resets the debug counter")
     void resetDebugCounter();
 
-    @ManagedOperation(description = "Used for validating if a given predicate is valid or not")
+    @ManagedOperation(description = "Used for validating if a given breakpoint condition (predicate) is valid or not")
     String validateConditionalBreakpoint(String language, String predicate);
 
+    @ManagedOperation(description = "Evaluates the expression at a given breakpoint node id")
+    Object evaluateExpressionAtBreakpoint(String nodeId, String language, String expression, String resultType);
+
+    @ManagedOperation(description = "Evaluates the expression at a given breakpoint node id and returns the result as String")
+    String evaluateExpressionAtBreakpoint(String nodeId, String language, String expression);
 }

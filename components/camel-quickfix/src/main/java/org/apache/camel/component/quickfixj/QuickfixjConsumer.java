@@ -36,15 +36,28 @@ public class QuickfixjConsumer extends DefaultConsumer {
     }
 
     @Override
+    public QuickfixjEndpoint getEndpoint() {
+        return (QuickfixjEndpoint) super.getEndpoint();
+    }
+
+    @Override
     protected void doStart() throws Exception {
-        ((QuickfixjEndpoint) getEndpoint()).ensureInitialized();
+        getEndpoint().addConsumer(this);
+        getEndpoint().ensureInitialized();
         super.doStart();
     }
 
-    public void onExchange(Exchange exchange) throws Exception {
+    @Override
+    protected void doStop() throws Exception {
+        getEndpoint().removeConsumer(this);
+        super.doStop();
+    }
+
+    public void onExchange(Exchange exchange) {
         if (isStarted()) {
             try {
                 getProcessor().process(exchange);
+
                 if (exchange.getPattern().isOutCapable() && exchange.hasOut()) {
                     sendOutMessage(exchange);
                 }

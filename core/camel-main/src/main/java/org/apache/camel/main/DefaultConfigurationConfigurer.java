@@ -75,6 +75,7 @@ import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.support.ClassicUuidGenerator;
 import org.apache.camel.support.DefaultUuidGenerator;
 import org.apache.camel.support.OffUuidGenerator;
+import org.apache.camel.support.RouteWatcherReloadStrategy;
 import org.apache.camel.support.ShortUuidGenerator;
 import org.apache.camel.support.SimpleUuidGenerator;
 import org.apache.camel.support.jsse.GlobalSSLContextParametersSupplier;
@@ -225,6 +226,14 @@ public final class DefaultConfigurationConfigurer {
         camelContext.setUseMDCLogging(config.isUseMdcLogging());
         camelContext.setMDCLoggingKeysPattern(config.getMdcLoggingKeysPattern());
         camelContext.setLoadTypeConverters(config.isLoadTypeConverters());
+        camelContext.setLoadHealthChecks(config.isLoadHealthChecks());
+        if (config.isRoutesReloadEnabled()) {
+            RouteWatcherReloadStrategy reloader = new RouteWatcherReloadStrategy(
+                    config.getRoutesReloadDirectory(), config.isRoutesReloadDirectoryRecursive());
+            reloader.setPattern(config.getRoutesReloadPattern());
+            reloader.setRemoveAllRoutes(config.isRoutesReloadRemoveAllRoutes());
+            camelContext.addService(reloader);
+        }
 
         if (camelContext.getManagementStrategy().getManagementAgent() != null) {
             camelContext.getManagementStrategy().getManagementAgent()
@@ -250,6 +259,7 @@ public final class DefaultConfigurationConfigurer {
         camelContext.getGlobalEndpointConfiguration().setBridgeErrorHandler(config.isEndpointBridgeErrorHandler());
         camelContext.getGlobalEndpointConfiguration().setLazyStartProducer(config.isEndpointLazyStartProducer());
 
+        camelContext.setDebugging(config.isDebugging());
         camelContext.setBacklogTracing(config.isBacklogTracing());
         camelContext.setTracing(config.isTracing());
         camelContext.setTracingStandby(config.isTracingStandby());

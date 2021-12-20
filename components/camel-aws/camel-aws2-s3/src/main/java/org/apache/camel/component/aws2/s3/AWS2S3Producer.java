@@ -209,9 +209,11 @@ public class AWS2S3Producer extends DefaultProducer {
 
                 LOG.trace("Uploading part [{}] for {}", part, keyName);
                 try (InputStream fileInputStream = new FileInputStream(filePayload)) {
-                    long skipped = fileInputStream.skip(filePosition);
-                    if (skipped == 0) {
-                        LOG.warn("While trying to upload the file {} file, 0 bytes were skipped", keyName);
+                    if (filePosition > 0) {
+                        long skipped = fileInputStream.skip(filePosition);
+                        if (skipped == 0) {
+                            LOG.warn("While trying to upload the file {} file, 0 bytes were skipped", keyName);
+                        }
                     }
 
                     String etag = getEndpoint().getS3Client()

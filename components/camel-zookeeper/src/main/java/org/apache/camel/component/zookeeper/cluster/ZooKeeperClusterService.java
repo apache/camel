@@ -146,11 +146,11 @@ public class ZooKeeperClusterService extends AbstractCamelClusterService<ZooKeep
         configuration.setConnectionTimeout(connectionTimeout, connectionTimeotUnit);
     }
 
-    public TimeUnit getConnectionTimeotUnit() {
+    public TimeUnit getConnectionTimeoutUnit() {
         return configuration.getConnectionTimeoutUnit();
     }
 
-    public void setConnectionTimeotUnit(TimeUnit connectionTimeotUnit) {
+    public void setConnectionTimeoutUnit(TimeUnit connectionTimeotUnit) {
         configuration.setConnectionTimeoutUnit(connectionTimeotUnit);
     }
 

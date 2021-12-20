@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.dsl.jbang.core.kamelets;
 
 import org.apache.camel.dsl.jbang.core.api.Printer;
 import org.apache.camel.dsl.jbang.core.types.Kamelet;
 
 public class KameletPrinter implements Printer<Kamelet> {
+
     @Override
     public void inject(Kamelet kamelet) {
         System.out.printf("%-35s %-45s %s%n", kamelet.name, kamelet.description, kamelet.link);

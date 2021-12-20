@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.dsl.jbang.core.components;
 
 import org.apache.camel.dsl.jbang.core.api.Printer;
 import org.apache.camel.dsl.jbang.core.types.Component;
 
 public class ComponentPrinter implements Printer<Component> {
+
     @Override
     public void inject(Component component) {
         System.out.printf("%-35s %-45s %s%n", component.shortName, component.description, component.link);

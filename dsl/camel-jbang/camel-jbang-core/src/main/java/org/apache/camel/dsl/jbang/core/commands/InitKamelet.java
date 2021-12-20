@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.File;
@@ -29,7 +28,7 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
-@Command(name = "kamelet", description = "Provide init templates for kamelets")
+@Command(name = "kamelet", description = "Create a new Kamelet")
 class InitKamelet extends AbstractInitKamelet implements Callable<Integer> {
     //CHECKSTYLE:OFF
     @Option(names = { "-h", "--help" }, usageHelp = true, description = "Display the help and sub-commands")

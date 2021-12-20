@@ -95,6 +95,8 @@ public class BlobConfiguration implements Cloneable {
     private Context changeFeedContext;
     @UriParam(label = "common")
     private String regex;
+    @UriParam(label = "security", secret = true)
+    private String sourceBlobAccessKey;
 
     /**
      * Azure account name to be used for authentication with azure blob services
@@ -421,6 +423,18 @@ public class BlobConfiguration implements Cloneable {
 
     public void setRegex(String regex) {
         this.regex = regex;
+    }
+
+    public String getSourceBlobAccessKey() {
+        return sourceBlobAccessKey;
+    }
+
+    /**
+     * Source Blob Access Key: for copyblob operation, sadly, we need to have an accessKey for the source blob we want
+     * to copy Passing an accessKey as header, it's unsafe so we could set as key.
+     */
+    public void setSourceBlobAccessKey(String sourceBlobAccessKey) {
+        this.sourceBlobAccessKey = sourceBlobAccessKey;
     }
 
     // *************************************************

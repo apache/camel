@@ -81,6 +81,8 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "regex": getOrCreateConfiguration(target).setRegex(property(camelContext, java.lang.String.class, value)); return true;
         case "serviceclient":
         case "serviceClient": getOrCreateConfiguration(target).setServiceClient(property(camelContext, com.azure.storage.blob.BlobServiceClient.class, value)); return true;
+        case "sourceblobaccesskey":
+        case "sourceBlobAccessKey": getOrCreateConfiguration(target).setSourceBlobAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "timeout": getOrCreateConfiguration(target).setTimeout(property(camelContext, java.time.Duration.class, value)); return true;
         default: return false;
         }
@@ -147,6 +149,8 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "regex": return java.lang.String.class;
         case "serviceclient":
         case "serviceClient": return com.azure.storage.blob.BlobServiceClient.class;
+        case "sourceblobaccesskey":
+        case "sourceBlobAccessKey": return java.lang.String.class;
         case "timeout": return java.time.Duration.class;
         default: return null;
         }
@@ -209,6 +213,8 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "regex": return getOrCreateConfiguration(target).getRegex();
         case "serviceclient":
         case "serviceClient": return getOrCreateConfiguration(target).getServiceClient();
+        case "sourceblobaccesskey":
+        case "sourceBlobAccessKey": return getOrCreateConfiguration(target).getSourceBlobAccessKey();
         case "timeout": return getOrCreateConfiguration(target).getTimeout();
         default: return null;
         }

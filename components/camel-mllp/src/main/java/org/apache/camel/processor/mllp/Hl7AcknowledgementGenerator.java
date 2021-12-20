@@ -58,8 +58,8 @@ public class Hl7AcknowledgementGenerator extends ServiceSupport implements Proce
 
     @Override
     protected void doStart() throws Exception {
-        int logPhiMaxBytes = getCamelContext().getComponent("mllp", MllpComponent.class).getLogPhiMaxBytes();
-        this.hl7Util = new Hl7Util(logPhiMaxBytes);
+        MllpComponent component = getCamelContext().getComponent("mllp", MllpComponent.class);
+        this.hl7Util = new Hl7Util(component.getLogPhiMaxBytes(), component.getLogPhi());
     }
 
     @Override

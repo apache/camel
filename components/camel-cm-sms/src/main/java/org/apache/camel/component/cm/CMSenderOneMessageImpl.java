@@ -20,7 +20,7 @@ import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 import javax.xml.XMLConstants;
@@ -181,7 +181,7 @@ public class CMSenderOneMessageImpl implements CMSender {
 
         final HttpClient client = HttpClientBuilder.create().build();
         final HttpPost post = new HttpPost(urlString);
-        post.setEntity(new StringEntity(requestString, Charset.forName("UTF-8")));
+        post.setEntity(new StringEntity(requestString, StandardCharsets.UTF_8));
 
         try {
 
@@ -237,17 +237,12 @@ public class CMSenderOneMessageImpl implements CMSender {
                     } else if (line.contains(CMConstants.ERROR_INVALID_PRODUCT_TOKEN)) {
                         throw new InvalidProductTokenException();
                     } else {
-
-                        // SO FAR i would expect other kind of ERROR.
-
-                        // MSISDN correctness and message validity is client
-                        // responsibility
-                        throw new CMResponseException("CHECK ME. I am not expecting this. ");
+                        throw new CMResponseException(line);
                     }
                 }
 
                 // Ok. Line is EMPTY - successfully submitted
-                LOG.debug("Result of the request processing: Successfully submited");
+                LOG.debug("Result of the request processing: Successfully submitted");
             }
         } catch (final IOException io) {
             throw new CMDirectException(io);

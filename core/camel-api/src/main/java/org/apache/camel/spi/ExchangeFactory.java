@@ -31,7 +31,7 @@ import org.apache.camel.NonManagedService;
  * contract as we only want to control the created {@link Exchange} that comes into Camel via {@link Consumer} or
  * {@link org.apache.camel.PollingConsumer}.
  * <p/>
- * The factory is pluggable which allows to use different strategies. The default factory will create a new
+ * The factory is pluggable which allows using different strategies. The default factory will create a new
  * {@link Exchange} instance, and the pooled factory will pool and reuse exchanges.
  *
  * @see ProcessorExchangeFactory

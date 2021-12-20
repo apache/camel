@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.management.JMException;
 import javax.management.ObjectName;
@@ -30,6 +31,7 @@ import javax.management.ObjectName;
 import org.apache.camel.CamelContext;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.URISupport;
 import org.quickfixj.jmx.JmxExporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,13 +95,14 @@ public class QuickfixjEngine extends ServiceSupport {
     private LogFactory sessionLogFactory;
     private MessageFactory messageFactory;
     private final MessageCorrelator messageCorrelator = new MessageCorrelator();
-    private List<QuickfixjEventListener> eventListeners = new CopyOnWriteArrayList<>();
+    private final List<QuickfixjEventListener> eventListeners = new CopyOnWriteArrayList<>();
     private final String uri;
     private ObjectName acceptorObjectName;
     private ObjectName initiatorObjectName;
     private final SessionSettings settings;
     private final AtomicBoolean initialized = new AtomicBoolean();
-    private boolean lazy;
+    private final boolean lazy;
+    private final AtomicInteger refCount = new AtomicInteger();
 
     public enum ThreadModel {
         ThreadPerConnector,
@@ -134,7 +137,7 @@ public class QuickfixjEngine extends ServiceSupport {
                            boolean lazy) throws Exception {
         addEventListener(messageCorrelator);
 
-        this.uri = uri;
+        this.uri = URISupport.sanitizeUri(uri);
         this.lazy = lazy;
         this.settings = settings;
 
@@ -154,6 +157,14 @@ public class QuickfixjEngine extends ServiceSupport {
         }
     }
 
+    public int incRefCount() {
+        return refCount.incrementAndGet();
+    }
+
+    public int decRefCount() {
+        return refCount.decrementAndGet();
+    }
+
     /**
      * Initializes the engine on demand. May be called immediately in constructor or when needed. If initializing later,
      * it should be started afterwards.
@@ -161,6 +172,9 @@ public class QuickfixjEngine extends ServiceSupport {
     void initializeEngine()
             throws ConfigError,
             FieldConvertError, JMException {
+
+        LOG.debug("Initializing QuickFIX/J Engine: {}", uri);
+
         if (messageFactory == null) {
             messageFactory = new DefaultMessageFactory();
         }
@@ -223,6 +237,8 @@ public class QuickfixjEngine extends ServiceSupport {
         } finally {
             Thread.currentThread().setContextClassLoader(ccl);
         }
+
+        LOG.debug("Initialized QuickFIX/J Engine: {}", uri);
         initialized.set(true);
     }
 
@@ -233,6 +249,8 @@ public class QuickfixjEngine extends ServiceSupport {
 
     @Override
     protected void doStart() throws Exception {
+        LOG.debug("Starting QuickFIX/J Engine: {}", uri);
+
         if (acceptor != null) {
             acceptor.start();
             if (jmxExporter != null) {
@@ -249,6 +267,8 @@ public class QuickfixjEngine extends ServiceSupport {
 
     @Override
     protected void doStop() throws Exception {
+        LOG.debug("Stopping QuickFIX/J Engine: {}", uri);
+
         if (acceptor != null) {
             acceptor.stop();
 

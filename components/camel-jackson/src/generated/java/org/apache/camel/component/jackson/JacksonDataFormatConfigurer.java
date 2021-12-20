@@ -54,6 +54,8 @@ public class JacksonDataFormatConfigurer extends PropertyConfigurerSupport imple
         case "schemaResolver": dataformat.setSchemaResolver(property(camelContext, org.apache.camel.component.jackson.SchemaResolver.class, value)); return true;
         case "autodiscoverschemaresolver":
         case "autoDiscoverSchemaResolver": dataformat.setAutoDiscoverSchemaResolver(property(camelContext, boolean.class, value)); return true;
+        case "namingstrategy":
+        case "namingStrategy": dataformat.setNamingStrategy(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }

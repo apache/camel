@@ -158,6 +158,11 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
         return props;
     }
 
+    @Override
+    public void reloadProperties(String location) {
+        // not possible with spring
+    }
+
     private class BridgePropertyPlaceholderResolver implements PropertyPlaceholderHelper.PlaceholderResolver {
 
         private final PropertiesLookup properties;

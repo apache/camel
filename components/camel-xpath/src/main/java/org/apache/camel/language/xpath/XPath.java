@@ -58,4 +58,20 @@ public @interface XPath {
      * be applied to the body instead.
      */
     String headerName() default "";
+
+    /**
+     * Whether to log namespaces which can assist during troubleshooting
+     */
+    boolean logNamespaces() default false;
+
+    /**
+     * Whether to enable pre-compiling the xpath expression during initialization phase. pre-compile is enabled by
+     * default.
+     *
+     * This can be used to turn off, for example in cases the compilation phase is desired at the starting phase, such
+     * as if the application is ahead of time compiled (for example with camel-quarkus) which would then load the xpath
+     * factory of the built operating system, and not a JVM runtime.
+     */
+    boolean preCompile() default true;
+
 }

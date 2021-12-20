@@ -32,6 +32,11 @@ import java.nio.charset.StandardCharsets;
 public interface Resource {
 
     /**
+     * The scheme of the resource such as file, classpath, http
+     */
+    String getScheme();
+
+    /**
      * The location of the resource.
      */
     String getLocation();

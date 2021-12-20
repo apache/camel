@@ -41,7 +41,7 @@ import org.apache.camel.spi.UriParams;
 public class SalesforceEndpointConfig implements Cloneable {
 
     // default API version
-    public static final String DEFAULT_VERSION = "50.0";
+    public static final String DEFAULT_VERSION = "53.0";
 
     // general parameter
     public static final String API_VERSION = "apiVersion";
@@ -90,6 +90,7 @@ public class SalesforceEndpointConfig implements Cloneable {
 
     // parameters for Streaming API
     public static final String DEFAULT_REPLAY_ID = "defaultReplayId";
+    public static final String FALL_BACK_REPLAY_ID = "fallBackReplayId";
     public static final String INITIAL_REPLAY_ID_MAP = "initialReplayIdMap";
     public static final long REPLAY_FROM_TIP = -1L;
 
@@ -205,6 +206,11 @@ public class SalesforceEndpointConfig implements Cloneable {
     @UriParam(description = "Default replayId setting if no value is found in initialReplayIdMap",
               defaultValue = "" + REPLAY_FROM_TIP)
     private Long defaultReplayId = REPLAY_FROM_TIP;
+
+    @UriParam(description = "ReplayId to fall back to after an Invalid Replay Id response",
+              defaultValue = "" + REPLAY_FROM_TIP)
+    private Long fallBackReplayId = REPLAY_FROM_TIP;
+
     @UriParam
     private Map<String, Long> initialReplayIdMap;
 
@@ -789,6 +795,7 @@ public class SalesforceEndpointConfig implements Cloneable {
 
         // add streaming API properties
         valueMap.put(DEFAULT_REPLAY_ID, defaultReplayId);
+        valueMap.put(FALL_BACK_REPLAY_ID, fallBackReplayId);
         valueMap.put(INITIAL_REPLAY_ID_MAP, initialReplayIdMap);
 
         valueMap.put(NOT_FOUND_BEHAVIOUR, notFoundBehaviour);
@@ -823,6 +830,17 @@ public class SalesforceEndpointConfig implements Cloneable {
      */
     public void setInitialReplayIdMap(Map<String, Long> initialReplayIdMap) {
         this.initialReplayIdMap = initialReplayIdMap;
+    }
+
+    public Long getFallBackReplayId() {
+        return fallBackReplayId;
+    }
+
+    /**
+     * ReplayId to fall back to after an Invalid Replay Id response
+     */
+    public void setFallBackReplayId(Long fallBackReplayId) {
+        this.fallBackReplayId = fallBackReplayId;
     }
 
     public Integer getLimit() {

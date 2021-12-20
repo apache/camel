@@ -32,7 +32,7 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 
-public class GoogleCloudFunctionsBaseTest extends CamelTestSupport {
+public abstract class GoogleCloudFunctionsBaseTest extends CamelTestSupport {
 
     protected static MockServiceHelper mockServiceHelper;
     protected static MockCloudFunctionsService mockCloudFunctionsService;

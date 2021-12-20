@@ -305,6 +305,8 @@ public abstract class AbstractClientBase extends ServiceSupport
                 answer.put(headerName, header.getValue());
             }
         }
+        answer.put(Exchange.HTTP_RESPONSE_CODE, String.valueOf(response.getStatus()));
+        answer.put(Exchange.HTTP_RESPONSE_TEXT, response.getReason());
 
         return answer;
     }

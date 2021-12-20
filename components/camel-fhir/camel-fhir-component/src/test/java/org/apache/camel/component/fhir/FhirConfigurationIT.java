@@ -20,6 +20,7 @@ import java.util.List;
 
 import ca.uhn.fhir.rest.api.EncodingEnum;
 import ca.uhn.fhir.rest.api.SummaryEnum;
+import ca.uhn.fhir.rest.client.api.IClientInterceptor;
 import ca.uhn.fhir.rest.client.impl.GenericClient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
@@ -28,12 +29,17 @@ import org.apache.camel.component.fhir.internal.FhirApiCollection;
 import org.apache.camel.component.fhir.internal.FhirCreateApiMethod;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test class for {@link FhirConfiguration} APIs.
  */
+@ExtendWith(MockitoExtension.class)
 public class FhirConfigurationIT extends AbstractFhirTestSupport {
 
     private static final String PATH_PREFIX = FhirApiCollection.getCollection().getApiName(FhirCreateApiMethod.class).getName();
@@ -42,6 +48,9 @@ public class FhirConfigurationIT extends AbstractFhirTestSupport {
                                            + "encoding=JSON&summary=TEXT&compress=true&username=art&password=tatum&sessionCookie=mycookie%3DChips%20Ahoy"
                                            + "&accessToken=token&serverUrl=http://localhost:8080/hapi-fhir-jpaserver-example/baseDstu3&fhirVersion=DSTU3";
     private FhirConfiguration componentConfiguration;
+
+    @Mock
+    private IClientInterceptor mockClientInterceptor;
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -61,6 +70,9 @@ public class FhirConfigurationIT extends AbstractFhirTestSupport {
         fhirConfiguration.setServerUrl("http://localhost:8080/hapi-fhir-jpaserver-example/baseDstu3");
         fhirConfiguration.setFhirVersion("DSTU3");
         component.setConfiguration(fhirConfiguration);
+
+        component.createClient(fhirConfiguration).registerInterceptor(this.mockClientInterceptor);
+
         this.componentConfiguration = fhirConfiguration;
         context.addComponent("fhir", component);
 
@@ -77,7 +89,9 @@ public class FhirConfigurationIT extends AbstractFhirTestSupport {
         assertEquals(EncodingEnum.JSON, client.getEncoding());
         assertEquals(SummaryEnum.TEXT, client.getSummary());
         List<Object> interceptors = client.getInterceptorService().getAllRegisteredInterceptors();
-        assertEquals(5, interceptors.size());
+        assertEquals(6, interceptors.size());
+
+        assertTrue(interceptors.contains(this.mockClientInterceptor), "User defined IClientInterceptor not found");
 
         long counter = context.adapt(ExtendedCamelContext.class).getBeanIntrospection().getInvokedCounter();
         assertEquals(0, counter, "Should not use reflection");

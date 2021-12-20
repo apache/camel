@@ -3,31 +3,267 @@
 The Apache Camel project loves your help with improving the documentation, whether its
 a tiny typo fix, or adding more details to an existing component, etc.
 
+NOTE: This page only describes working with the 'documentation' portion of the website.
+Other portions are written in markdown and built using Hugo.
+
+== Simple changes
+
+If there's an `edit this page` button at the top right of the page and you wish to propose a simple change such as fixing a typo or rewording something, use this xref:faq:how-do-i-edit-the-website.adoc[very simple process].
+For more complicated changes, including changing xrefs, adding, removing or renaming pages, and significant organizational changes, please use the process described on this page.
+
 == Where to find the documentation
 
-All of the documentation accessible in the left-hand navigation panel on the website
-is managed in the link:https://asciidoc.org/[AsciiDoc format].
+All of the documentation accessible in the left-hand navigation panel in the documentation portion of the website is managed in the link:https://asciidoc.org/[AsciiDoc format] and built with the https://antora.org[Antora] static site generator.
+As of November 2021, by far the most capable Asciidoc editor is the Intellij Asciidoc plugin, which works with  all Intellij editor products including the free IDEA Community Edition.
+The plugin preview is more capable than viewing a local Asciidoc file with a browser plugin as it has some understanding of Antora structure.
+Note that the only reliable way to preview your changes is with a full build of the Antora portion of the website.
 
 The files have the extension `.adoc` and are managed in the Camel repositories.
-They are found in two different places in the repositories:
+General documentation is usually directly editable.
+Component specific documentation is partially or entirely generated from other metadata sources which are in turn generated from the code, often from javadoc.
+Altering generated documentation requires finding the original source, which varies by project.
+Editable pages are found in several different places in the repositories:
 
-* In the `src/main/docs` folder for each component or camel module
-* In the `/docs/user-manual` folder for the User Manual and FAQ pages.
+Main camel repository::
+Camel components::: In the `src/main/docs` folder for the component or camel module.
+These are symlinked to under `docs/components`.
+EIPs::: In the `core/camel-core-engine/src/main/docs` folder.
+Core languages::: In the `core/camel-core-languages/src/main/docs` folder.
+Note that many languages are under `components`.
+User manual and FAQS::: In the `/docs/user-manual` folder.
+Camel Karaf:: In the `docs` folder.
+Camel Spring Boot:: Most documentation is generated and appended to the component documentation it applies to.
+Editable pages are under `docs/spring-boot` and `core/camel-spring-boot/src/main/docs` and `core/camel-spring-boot-xml/src/main/docs`.
 
-== Editing the documentation for a component
+Other subprojects::
+camel-k, camel-k-runtime::: Under `docs`.
+There is no generated `camel-k` documentation.
+camel-kafka-connector::: Editable pages are under `docs`.
+Most documentation is generated directly from the generated json files for each connector under `connectors/<connector-name>/src/generated/resources`.
+camel-kamelets::: Only `docs/modules/ROOT/pages/index.adoc` is editable.
+All other documentation is generated from the kamelet yaml descriptors.
+camel-quarkus::: Editable pages are under `docs`.
+Pages under `docs/modules/ROOT/pages/reference/components` and `docs/modules/ROOT/pages/reference/extensions` are generated, including optional snippets from e.g. `extensions/activemq/src/main/doc`.
+camel-quarkus-examples::: Editable pages are under `docs`.
 
-* It's easy as opening a Pull Request
-* You'll find on each component under `src/main/docs` an `.adoc` file(s)
- ** This file contains a static part and a dynamically generated part: the former can be edited directly in the .adoc file, while the latter needs your intervention on the javadoc
- ** After you modify the javadoc, you'll need to rebuild the component and the .adoc will be automatically updated
-* The generated .adoc file can be previewed in a browser using a plugin
-* Create a commit and raise a Pull Request
- 
-== Edit the user manual or FAQs
+== Creating a documentation pull request.
 
-These .adoc files are edited directly in `/docs/user-manual/modules/ROOT/pages` and `docs/user-manual/modules/faq/pages`.
-If you add a new page, don't forget to add it to the nav.adoc file which represents the table of contents shown in the left-hand navigation panel in the website.
-After editing the file, you will need to raise a Pull Request for your changes.
+NOTE: Simple changes such as typo fixes or rewording can usually be done directly at GitHub after pressing the `edit this page` button at the top left of each page.
+Note that if the page source starts with a comment that the page is copied or generated this will not work!
+Please do not use this method if you are changing any xrefs or making significant changes to format; instead follow the procedure below.
 
-For more information see xref:faq:how-do-i-edit-the-website.adoc[How do I edit the website].
+. Fork/clone the appropriate repository from GitHub and switch to the branch you are working with.
+. Create a branch for your work with a name starting with the original branch name, e.g. `git switch -c main-doc-fix`
+. Edit the `.adoc` sources as needed.
+Preview your work in the Intellij Asciidoc plugin preview or in a browser with an Asciidoctor extension installed.
+. Do a xref:#_local_build_instructions[local website build with your changes].
+//=== The following workflow may be usable after https://gitlab.com/antora/antora/-/issues/831 is implemented, perhaps with the aid of an Antora extension.
+//. Commit and push your work and create a PR in the (sub)project repository.
+//Note the PR number, e.g. #456
+//. Fork/clone the camel-website repository, and create an appropriate branch, e.g. `git switch -c camel-quarkus-main-456`.
+//. Locate the project you are working with in the `antora-playbook.yml` under `sources`, and locate the branch you have altered under the appropriate `-url`.
+//Leaving the original branch as a comment, alter the branch to e.g. `- pull/456` using the PR number you noted earlier.
+//. Commit the change to the playbook, push it to your `camel-website` fork, and open a PR against `camel-website`.
+//CI will build your change and, if successful, will deploy a preview on Netlify.
+//There will be an email with the preview URL.
+//. Check for build problems and examine the preview.
+//. Upon approval, your content PR will be merged.
+//Unless you have made a considerably more extensive change than described above, the `camel-website` PR will not need to be merged and may be closed.
+//
+//=== Currently usable workflow
+. Commit and push your work and create a PR in the (sub)project repository.
+. Fork/clone the camel-website repository, and create an appropriate branch, e.g. `git switch -c camel-quarkus-main-456`.
+. Locate the project you are working with in the `antora-playbook.yml` under `sources`, and locate the branch you have altered under the appropriate `-url`.
+.. Comment out the original source URL and replace it with the URL of your fork.
+.. Leaving the original branch as a comment, alter the branch to e.g. `- main-doc-fix` using your branch name.
+.. Make sure that all other branches used for the documentation are up to date in your fork.
+To do this, for each such branch, execute
+[source,console]
+----
+git switch <branch>
+git pull
+git push <fork>
+----
+. Commit the change to the playbook, push it to your `camel-website` fork, and open a PR against `camel-website`.
+CI will build your change and, if successful, will deploy a preview on Netlify.
+There will be an email with the preview URL.
+. Check for build problems and examine the preview.
+. Upon approval, your content PR will be merged.
+Unless you have made a considerably more extensive change than described above, the `camel-website` PR will not need to be merged and may be closed.
 
+[#_local_build_instructions]
+== How to build the website locally, with your changes
+
+First, make sure you have yarn, version >= 3.1.0, installed globally.
+
+=== Directory layout and initial setup
+
+You need a single directory, such as `camel`, that contains all the camel subprojects you are working with, and the `camel-website` project.
+
+[source,console]
+----
+cd camel
+git clone https://github.com/apache/camel-website.git
+----
+
+Unless you are on a linux system you will need to adjust the yarn cache/unplugged to work with your OS:
+
+[source,console]
+----
+cd camel-website
+yarn update:cache
+----
+
+Run a build against the remote source repos to check that it works and to build a local copy of the UI:
+
+[source,console]
+----
+yarn build-all
+----
+
+=== Adjusting the playbook to include local changes
+
+The Antora build is specified in the `camel-website:antora-playbook.yml` playbook.
+The content repositories are specified under the `content/sources` key.
+Locate the subproject you are working on and change the `url` to point to the local checkout of the subproject, e.g.
+
+[source,yml]
+----
+#    - url: https://github.com/apache/camel-quarkus.git <1>
+    - url: ./../camel-quarkus <2>
+      branches:
+        - main
+        - 2.5.x
+        - 2.4.x
+      start_path: docs
+----
+<1> Leaving the original can help setting up the playbook for a PR build.
+<2> This relative path depends on the organization of all your camel projects in a `camel` directory.
+
+Your local changes will need to be on a branch, so change the branch name, e.g.
+
+[source,yml]
+----
+#    - url: https://github.com/apache/camel-quarkus.git
+    - url: ./../camel-quarkus
+      branches:
+#        - main
+        - main-doc-fixes
+        - 2.5.x
+        - 2.4.x
+      start_path: docs
+----
+
+Make sure that every branch used in the documentation is present locally and up to date.
+In the subproject directory, for each branch, run e.g.
+
+[source, console]
+----
+git switch 2.5.x
+git pull
+----
+
+Now you are ready to build your work locally, in `camel-website`:
+
+[source, console]
+----
+yarn build:antora
+# or yarn build to include hugo content.
+----
+
+Note that Antora will use the file system state of your main checked-out branch, whether or not these changes are committed.
+If you have additional git worktrees checked out, you can have Antora use the file system state of these also, see https://docs.antora.org/antora/3.0/playbook/content-worktrees/[the Antora worktrees documentation].
+
+If you do a full build and have Docker available locally you can view your build served with httpd by running `local-httpd-in-docker.sh`.
+
+== New, renamed, or removed pages
+
+* Add, rename, or remove the xref for your page in the appropriate nav.adoc file.
+* Build the entire website and check for broken xrefs: these will appear as errors in the Antora log output.
+
+== Changed xrefs
+
+First, read xref:#_a_guide_to_xrefs[]
+
+* Build the entire website and check for broken xrefs.
+
+== Adding a new component version
+
+See xref:release-guide-website.adoc[].
+
+== A guide to xrefs
+
+For a general explanation of Antora xref syntax see https://docs.antora.org/antora/3.0/page/xref/[the Antora documentation].
+Due to the logical structure of the Camel documentation, xrefs will have a very limited choice of structure.
+
+IMPORTANT: A bit of confusion is possible here between Antora components and Camel components.
+Generally an Antora component corresponds more or less to a Camel subproject, and never to a camel commponent.
+All the camel components are documented in an Antora component named `components`.
+In this section the word `component` means an Antora component.
+
+IMPORTANT: Antora components may be `distributed` which means that the content comes from more than one place, possibly from different repositories.
+For instance, the `components` component has content from the main camel repository under the start_paths `docs/components` and `core/camel-core-engine/src/main/docs` and from the `camel-spring-boot` repository under `components-starter` and `docs/components`.
+Furthermore the content may not appear in the normal Antora structure but may be collected from a more maven-project-friendly arrangement with an Antora extension.
+
+=== xrefs within an (Antora) component
+
+Generally there will never be a reason to refer from one version of a component to another version.
+To assure this happens without maintenance issues, leave out the version and component segments from the xref, e.g. in the `components` component
+
+[source,adoc,subs=+attributes]
+xref{blank}:eips:enterprise-integration-patterns.adoc[]
+
+NOT
+
+[source,adoc,subs=+attributes]
+xref{blank}:next@components:eips:enterprise-integration-patterns.adoc[]
+
+Do this no matter how many locations the component is distributed over.
+
+An xref within the same module can leave out the module segment, although it does no harm.
+
+Do not specify the component name: if you do, the link will be to the `latest` (non-prerelease, i.e., non-`next`) version, not the current version.
+
+=== Links to the user manual
+
+The user-manual component is https://docs.antora.org/antora/3.0/component-with-no-version/[unversioned].
+Leave out the version segment.
+For example, this will link to this page from anywhere in the documentation:
+
+[source,adoc]
+xref:manual::improving-the-documentation.adoc[]
+
+=== Links between subprojects
+
+Each camel subproject relates to other subprojects, and each version of a subproject relates to specific versions of these other subprojects.
+These subproject versions are specified in the `antora.yml` component descriptor for the documentation component for that subproject.
+Note that for distributed components each start path has a component descriptor but only one has the additional `asciidoc/attributes` key.
+For example,
+
+[source,yaml]
+----
+name: camel-kafka-connector
+title: Camel Kafka Connector
+version: next
+prerelease: true
+display-version: Next (Pre-release)
+
+nav:
+- modules/ROOT/nav.adoc
+
+asciidoc:
+  attributes:
+    camel-version: 3.12.x
+    camel-k-runtime-version: 1.8.0
+    camel-k-version:
+    camel-kamelets-version: 0.3.0
+----
+
+NOTE: Setting these up is WIP
+
+Use these attributes to refer to documentation for the related subproject, e.g.
+
+[source,adoc]
+xref{blank}:{camel-version}@components:eips:enterprise-integration-patterns.adoc[]
+
+If there's a missing attribute, please raise an issue rather than using a concrete version.

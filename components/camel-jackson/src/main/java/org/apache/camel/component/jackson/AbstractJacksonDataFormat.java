@@ -33,6 +33,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import org.apache.camel.CamelContext;
@@ -80,6 +82,7 @@ public abstract class AbstractJacksonDataFormat extends ServiceSupport
     private boolean autoDiscoverObjectMapper;
     private SchemaResolver schemaResolver;
     private boolean autoDiscoverSchemaResolver = true;
+    private String namingStrategy;
 
     /**
      * Use the default Jackson {@link ObjectMapper} and {@link Object}
@@ -283,6 +286,14 @@ public abstract class AbstractJacksonDataFormat extends ServiceSupport
 
     public List<Module> getModules() {
         return modules;
+    }
+
+    public String getNamingStrategy() {
+        return namingStrategy;
+    }
+
+    public void setNamingStrategy(String namingStrategy) {
+        this.namingStrategy = namingStrategy;
     }
 
     /**
@@ -522,6 +533,10 @@ public abstract class AbstractJacksonDataFormat extends ServiceSupport
 
     @Override
     protected void doStart() throws Exception {
+        if (useList) {
+            setCollectionType(ArrayList.class);
+        }
+
         boolean objectMapperFoundRegistry = false;
         if (objectMapper == null) {
             // lookup if there is a single default mapper we can use
@@ -548,9 +563,6 @@ public abstract class AbstractJacksonDataFormat extends ServiceSupport
         }
 
         if (!objectMapperFoundRegistry) {
-            if (useList) {
-                setCollectionType(ArrayList.class);
-            }
             if (include != null) {
                 JsonInclude.Include inc
                         = getCamelContext().getTypeConverter().mandatoryConvertTo(JsonInclude.Include.class, include);
@@ -647,6 +659,13 @@ public abstract class AbstractJacksonDataFormat extends ServiceSupport
                 LOG.debug("Setting timezone to Object Mapper: {}", timezone);
                 objectMapper.setTimeZone(timezone);
             }
+
+            if (org.apache.camel.util.ObjectHelper.isNotEmpty(namingStrategy)) {
+                PropertyNamingStrategy selectedNamingStrategy = determineNamingStrategy(namingStrategy);
+                if (org.apache.camel.util.ObjectHelper.isNotEmpty(selectedNamingStrategy)) {
+                    objectMapper.setPropertyNamingStrategy(selectedNamingStrategy);
+                }
+            }
         } else {
             LOG.debug("The objectMapper was already found in the registry, no customizations will be applied");
         }
@@ -666,6 +685,33 @@ public abstract class AbstractJacksonDataFormat extends ServiceSupport
         } else {
             LOG.debug("The option autoDiscoverSchemaResolver is set to false, Camel won't search in the registry");
         }
+    }
+
+    private PropertyNamingStrategy determineNamingStrategy(String namingStrategy) {
+        PropertyNamingStrategy strategy = null;
+        switch (namingStrategy) {
+            case "LOWER_CAMEL_CASE":
+                strategy = PropertyNamingStrategies.LOWER_CAMEL_CASE;
+                break;
+            case "LOWER_DOT_CASE":
+                strategy = PropertyNamingStrategies.LOWER_DOT_CASE;
+                break;
+            case "LOWER_CASE":
+                strategy = PropertyNamingStrategies.LOWER_CASE;
+                break;
+            case "KEBAB_CASE":
+                strategy = PropertyNamingStrategies.KEBAB_CASE;
+                break;
+            case "SNAKE_CASE":
+                strategy = PropertyNamingStrategies.SNAKE_CASE;
+                break;
+            case "UPPER_CAMEL_CASE":
+                strategy = PropertyNamingStrategies.UPPER_CAMEL_CASE;
+                break;
+            default:
+                break;
+        }
+        return strategy;
     }
 
     @Override

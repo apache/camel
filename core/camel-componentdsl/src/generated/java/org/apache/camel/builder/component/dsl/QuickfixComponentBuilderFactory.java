@@ -53,6 +53,26 @@ public interface QuickfixComponentBuilderFactory {
             extends
                 ComponentBuilder<QuickfixjComponent> {
         /**
+         * Whether to eager stop engines when there are no active consumer or
+         * producers using the engine. For example when stopping a route, then
+         * the engine can be stopped as well. And when the route is started,
+         * then the engine is started again. This can be turned off to only stop
+         * the engines when Camel is shutdown.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param eagerStopEngines the value to set
+         * @return the dsl builder
+         */
+        default QuickfixComponentBuilder eagerStopEngines(
+                boolean eagerStopEngines) {
+            doSetProperty("eagerStopEngines", eagerStopEngines);
+            return this;
+        }
+        /**
          * If set to true, the engines will be created and started when needed
          * (when first message is send).
          * 
@@ -200,6 +220,7 @@ public interface QuickfixComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "eagerStopEngines": ((QuickfixjComponent) component).setEagerStopEngines((boolean) value); return true;
             case "lazyCreateEngines": ((QuickfixjComponent) component).setLazyCreateEngines((boolean) value); return true;
             case "bridgeErrorHandler": ((QuickfixjComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((QuickfixjComponent) component).setLazyStartProducer((boolean) value); return true;

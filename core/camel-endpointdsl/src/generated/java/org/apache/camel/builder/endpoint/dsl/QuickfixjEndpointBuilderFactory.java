@@ -43,7 +43,7 @@ public interface QuickfixjEndpointBuilderFactory {
             return (AdvancedQuickfixjEndpointConsumerBuilder) this;
         }
         /**
-         * This option allows to create QuickFIX/J engine on demand. Value true
+         * This option allows creating QuickFIX/J engine on demand. Value true
          * means the engine is started when first message is send or there's
          * consumer configured in route definition. When false value is used,
          * the engine is started at the endpoint creation. When this parameter
@@ -64,7 +64,7 @@ public interface QuickfixjEndpointBuilderFactory {
             return this;
         }
         /**
-         * This option allows to create QuickFIX/J engine on demand. Value true
+         * This option allows creating QuickFIX/J engine on demand. Value true
          * means the engine is started when first message is send or there's
          * consumer configured in route definition. When false value is used,
          * the engine is started at the endpoint creation. When this parameter
@@ -90,24 +90,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * of the sessionID is:
          * (BeginString):(SenderCompID)/(SenderSubID)/(SenderLocationID)-(TargetCompID)/(TargetSubID)/(TargetLocationID).
          * 
-         * The option is a: &lt;code&gt;quickfix.SessionID&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param sessionID the value to set
-         * @return the dsl builder
-         */
-        default QuickfixjEndpointConsumerBuilder sessionID(Object sessionID) {
-            doSetProperty("sessionID", sessionID);
-            return this;
-        }
-        /**
-         * The optional sessionID identifies a specific FIX session. The format
-         * of the sessionID is:
-         * (BeginString):(SenderCompID)/(SenderSubID)/(SenderLocationID)-(TargetCompID)/(TargetSubID)/(TargetLocationID).
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;quickfix.SessionID&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -256,7 +239,7 @@ public interface QuickfixjEndpointBuilderFactory {
             return (AdvancedQuickfixjEndpointProducerBuilder) this;
         }
         /**
-         * This option allows to create QuickFIX/J engine on demand. Value true
+         * This option allows creating QuickFIX/J engine on demand. Value true
          * means the engine is started when first message is send or there's
          * consumer configured in route definition. When false value is used,
          * the engine is started at the endpoint creation. When this parameter
@@ -277,7 +260,7 @@ public interface QuickfixjEndpointBuilderFactory {
             return this;
         }
         /**
-         * This option allows to create QuickFIX/J engine on demand. Value true
+         * This option allows creating QuickFIX/J engine on demand. Value true
          * means the engine is started when first message is send or there's
          * consumer configured in route definition. When false value is used,
          * the engine is started at the endpoint creation. When this parameter
@@ -303,24 +286,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * of the sessionID is:
          * (BeginString):(SenderCompID)/(SenderSubID)/(SenderLocationID)-(TargetCompID)/(TargetSubID)/(TargetLocationID).
          * 
-         * The option is a: &lt;code&gt;quickfix.SessionID&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param sessionID the value to set
-         * @return the dsl builder
-         */
-        default QuickfixjEndpointProducerBuilder sessionID(Object sessionID) {
-            doSetProperty("sessionID", sessionID);
-            return this;
-        }
-        /**
-         * The optional sessionID identifies a specific FIX session. The format
-         * of the sessionID is:
-         * (BeginString):(SenderCompID)/(SenderSubID)/(SenderLocationID)-(TargetCompID)/(TargetSubID)/(TargetLocationID).
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;quickfix.SessionID&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -404,7 +370,7 @@ public interface QuickfixjEndpointBuilderFactory {
             return (AdvancedQuickfixjEndpointBuilder) this;
         }
         /**
-         * This option allows to create QuickFIX/J engine on demand. Value true
+         * This option allows creating QuickFIX/J engine on demand. Value true
          * means the engine is started when first message is send or there's
          * consumer configured in route definition. When false value is used,
          * the engine is started at the endpoint creation. When this parameter
@@ -425,7 +391,7 @@ public interface QuickfixjEndpointBuilderFactory {
             return this;
         }
         /**
-         * This option allows to create QuickFIX/J engine on demand. Value true
+         * This option allows creating QuickFIX/J engine on demand. Value true
          * means the engine is started when first message is send or there's
          * consumer configured in route definition. When false value is used,
          * the engine is started at the endpoint creation. When this parameter
@@ -451,24 +417,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * of the sessionID is:
          * (BeginString):(SenderCompID)/(SenderSubID)/(SenderLocationID)-(TargetCompID)/(TargetSubID)/(TargetLocationID).
          * 
-         * The option is a: &lt;code&gt;quickfix.SessionID&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param sessionID the value to set
-         * @return the dsl builder
-         */
-        default QuickfixjEndpointBuilder sessionID(Object sessionID) {
-            doSetProperty("sessionID", sessionID);
-            return this;
-        }
-        /**
-         * The optional sessionID identifies a specific FIX session. The format
-         * of the sessionID is:
-         * (BeginString):(SenderCompID)/(SenderSubID)/(SenderLocationID)-(TargetCompID)/(TargetSubID)/(TargetLocationID).
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;quickfix.SessionID&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
          * 

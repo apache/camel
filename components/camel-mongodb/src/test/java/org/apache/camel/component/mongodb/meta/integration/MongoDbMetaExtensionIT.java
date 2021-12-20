@@ -18,6 +18,7 @@ package org.apache.camel.component.mongodb.meta.integration;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.mongodb.client.model.CreateCollectionOptions;
@@ -104,7 +105,7 @@ public class MongoDbMetaExtensionIT extends AbstractMongoDbITSupport {
     }
 
     @Test
-    public void testMissingCollection() throws Exception {
+    public void testMissingCollection() {
         // When
         final String database = "test";
         final String collection = "missingCollection";
@@ -117,27 +118,28 @@ public class MongoDbMetaExtensionIT extends AbstractMongoDbITSupport {
         parameters.put("user", USER);
         parameters.put("password", PASSWORD);
 
+        final Optional<MetaDataExtension.MetaData> meta
+                = component.getExtension(MetaDataExtension.class).get().meta(parameters);
+
         // Then
-        assertThrows(IllegalArgumentException.class, () -> {
-            component.getExtension(MetaDataExtension.class).get().meta(parameters).orElseThrow(IllegalArgumentException::new);
-        });
+        assertThrows(IllegalArgumentException.class, () -> meta.orElseThrow(IllegalArgumentException::new));
     }
 
     @Test
-    public void testMissingParameters() throws Exception {
+    public void testMissingParameters() {
         // When
         MongoDbComponent component = this.getComponent();
         // Given
         Map<String, Object> parameters = new HashMap<>();
 
+        final MetaDataExtension metaDataExtension = component.getExtension(MetaDataExtension.class).get();
+
         // Then
-        assertThrows(IllegalArgumentException.class, () -> {
-            component.getExtension(MetaDataExtension.class).get().meta(parameters).orElseThrow(IllegalArgumentException::new);
-        });
+        assertThrows(IllegalArgumentException.class, () -> metaDataExtension.meta(parameters));
     }
 
     @Test
-    public void testNotValidatedCollection() throws Exception {
+    public void testNotValidatedCollection() {
         // When
         final String database = "test";
         final String collection = "notValidatedCollection";
@@ -151,11 +153,11 @@ public class MongoDbMetaExtensionIT extends AbstractMongoDbITSupport {
         parameters.put("user", USER);
         parameters.put("password", PASSWORD);
 
+        final Optional<MetaDataExtension.MetaData> meta
+                = component.getExtension(MetaDataExtension.class).get().meta(parameters);
+
         // Then
-        assertThrows(UnsupportedOperationException.class, () -> {
-            component.getExtension(MetaDataExtension.class).get().meta(parameters)
-                    .orElseThrow(UnsupportedOperationException::new);
-        });
+        assertThrows(UnsupportedOperationException.class, () -> meta.orElseThrow(UnsupportedOperationException::new));
     }
 
 }

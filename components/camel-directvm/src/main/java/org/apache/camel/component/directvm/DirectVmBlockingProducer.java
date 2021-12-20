@@ -16,9 +16,15 @@
  */
 package org.apache.camel.component.directvm;
 
+import java.time.Duration;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultAsyncProducer;
+import org.apache.camel.support.task.ForegroundTask;
+import org.apache.camel.support.task.Tasks;
+import org.apache.camel.support.task.budget.Budgets;
+import org.apache.camel.support.task.budget.IterationBoundedBudget;
 import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,25 +85,19 @@ public class DirectVmBlockingProducer extends DefaultAsyncProducer {
         return answer;
     }
 
-    private DirectVmConsumer awaitConsumer() throws InterruptedException {
-        DirectVmConsumer answer = null;
+    private DirectVmConsumer awaitConsumer() {
+        ForegroundTask task = Tasks.foregroundTask().withBudget(Budgets.iterationTimeBudget()
+                .withMaxIterations(IterationBoundedBudget.UNLIMITED_ITERATIONS)
+                .withMaxDuration(Duration.ofMillis(endpoint.getTimeout()))
+                .withInterval(Duration.ofMillis(500))
+                .build())
+                .build();
 
         StopWatch watch = new StopWatch();
-        boolean done = false;
-        while (!done) {
-            // sleep a bit to give chance for the consumer to be ready
-            Thread.sleep(500);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Waited {} for consumer to be ready", watch.taken());
-            }
+        DirectVmConsumer answer = task.run(endpoint::getConsumer, a -> a != null)
+                .orElse(null);
+        LOG.debug("Waited {} for consumer to be ready", watch.taken());
 
-            answer = endpoint.getConsumer();
-            if (answer != null) {
-                return answer;
-            }
-            // we are done if we hit the timeout
-            done = watch.taken() >= endpoint.getTimeout();
-        }
         return answer;
     }
 

@@ -2,11 +2,10 @@
 :doctitle: Azure Event Hubs
 :shortname: azure-eventhubs
 :artifactid: camel-azure-eventhubs
-:description: The azure-eventhubs component that integrates Azure Event Hubs using AMQP protocol. Azure EventHubs is a highly scalable publish-subscribe service that can ingest millions of events per second and stream them to multiple consumers.
+:description: Send and receive events to/from Azure Event Hubs using AMQP protocol.
 :since: 3.5
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/azure-eventhubs.adoc[opts=optional]
 //Manually maintained attributes
 :group: Azure
 :camel-spring-boot-name: azure-eventhubs

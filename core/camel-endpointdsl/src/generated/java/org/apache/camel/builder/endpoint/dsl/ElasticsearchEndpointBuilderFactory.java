@@ -36,6 +36,9 @@ public interface ElasticsearchEndpointBuilderFactory {
     public interface ElasticsearchEndpointBuilder
             extends
                 EndpointProducerBuilder {
+        default AdvancedElasticsearchEndpointBuilder advanced() {
+            return (AdvancedElasticsearchEndpointBuilder) this;
+        }
         /**
          * The time in ms to wait before connection will timeout.
          * 
@@ -100,70 +103,6 @@ public interface ElasticsearchEndpointBuilderFactory {
             return this;
         }
         /**
-         * Enable automatically discover nodes from a running Elasticsearch
-         * cluster.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param enableSniffer the value to set
-         * @return the dsl builder
-         */
-        default ElasticsearchEndpointBuilder enableSniffer(boolean enableSniffer) {
-            doSetProperty("enableSniffer", enableSniffer);
-            return this;
-        }
-        /**
-         * Enable automatically discover nodes from a running Elasticsearch
-         * cluster.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param enableSniffer the value to set
-         * @return the dsl builder
-         */
-        default ElasticsearchEndpointBuilder enableSniffer(String enableSniffer) {
-            doSetProperty("enableSniffer", enableSniffer);
-            return this;
-        }
-        /**
-         * Enable SSL.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param enableSSL the value to set
-         * @return the dsl builder
-         */
-        default ElasticsearchEndpointBuilder enableSSL(boolean enableSSL) {
-            doSetProperty("enableSSL", enableSSL);
-            return this;
-        }
-        /**
-         * Enable SSL.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param enableSSL the value to set
-         * @return the dsl builder
-         */
-        default ElasticsearchEndpointBuilder enableSSL(String enableSSL) {
-            doSetProperty("enableSSL", enableSSL);
-            return this;
-        }
-        /**
          * Starting index of the response.
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
@@ -198,7 +137,6 @@ public interface ElasticsearchEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Required: true
          * Group: producer
          * 
          * @param hostAddresses the value to set
@@ -395,75 +333,6 @@ public interface ElasticsearchEndpointBuilderFactory {
             return this;
         }
         /**
-         * The delay of a sniff execution scheduled after a failure (in
-         * milliseconds).
-         * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Default: 60000
-         * Group: producer
-         * 
-         * @param sniffAfterFailureDelay the value to set
-         * @return the dsl builder
-         */
-        default ElasticsearchEndpointBuilder sniffAfterFailureDelay(
-                int sniffAfterFailureDelay) {
-            doSetProperty("sniffAfterFailureDelay", sniffAfterFailureDelay);
-            return this;
-        }
-        /**
-         * The delay of a sniff execution scheduled after a failure (in
-         * milliseconds).
-         * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Default: 60000
-         * Group: producer
-         * 
-         * @param sniffAfterFailureDelay the value to set
-         * @return the dsl builder
-         */
-        default ElasticsearchEndpointBuilder sniffAfterFailureDelay(
-                String sniffAfterFailureDelay) {
-            doSetProperty("sniffAfterFailureDelay", sniffAfterFailureDelay);
-            return this;
-        }
-        /**
-         * The interval between consecutive ordinary sniff executions in
-         * milliseconds. Will be honoured when sniffOnFailure is disabled or
-         * when there are no failures between consecutive sniff executions.
-         * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Default: 300000
-         * Group: producer
-         * 
-         * @param snifferInterval the value to set
-         * @return the dsl builder
-         */
-        default ElasticsearchEndpointBuilder snifferInterval(int snifferInterval) {
-            doSetProperty("snifferInterval", snifferInterval);
-            return this;
-        }
-        /**
-         * The interval between consecutive ordinary sniff executions in
-         * milliseconds. Will be honoured when sniffOnFailure is disabled or
-         * when there are no failures between consecutive sniff executions.
-         * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Default: 300000
-         * Group: producer
-         * 
-         * @param snifferInterval the value to set
-         * @return the dsl builder
-         */
-        default ElasticsearchEndpointBuilder snifferInterval(
-                String snifferInterval) {
-            doSetProperty("snifferInterval", snifferInterval);
-            return this;
-        }
-        /**
          * The timeout in ms to wait before the socket will timeout.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
@@ -558,6 +427,153 @@ public interface ElasticsearchEndpointBuilderFactory {
             doSetProperty("waitForActiveShards", waitForActiveShards);
             return this;
         }
+        /**
+         * Enable SSL.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param enableSSL the value to set
+         * @return the dsl builder
+         */
+        default ElasticsearchEndpointBuilder enableSSL(boolean enableSSL) {
+            doSetProperty("enableSSL", enableSSL);
+            return this;
+        }
+        /**
+         * Enable SSL.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param enableSSL the value to set
+         * @return the dsl builder
+         */
+        default ElasticsearchEndpointBuilder enableSSL(String enableSSL) {
+            doSetProperty("enableSSL", enableSSL);
+            return this;
+        }
+    }
+
+    /**
+     * Advanced builder for endpoint for the Elasticsearch Rest component.
+     */
+    public interface AdvancedElasticsearchEndpointBuilder
+            extends
+                EndpointProducerBuilder {
+        default ElasticsearchEndpointBuilder basic() {
+            return (ElasticsearchEndpointBuilder) this;
+        }
+        /**
+         * Enable automatically discover nodes from a running Elasticsearch
+         * cluster.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param enableSniffer the value to set
+         * @return the dsl builder
+         */
+        default AdvancedElasticsearchEndpointBuilder enableSniffer(
+                boolean enableSniffer) {
+            doSetProperty("enableSniffer", enableSniffer);
+            return this;
+        }
+        /**
+         * Enable automatically discover nodes from a running Elasticsearch
+         * cluster.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param enableSniffer the value to set
+         * @return the dsl builder
+         */
+        default AdvancedElasticsearchEndpointBuilder enableSniffer(
+                String enableSniffer) {
+            doSetProperty("enableSniffer", enableSniffer);
+            return this;
+        }
+        /**
+         * The delay of a sniff execution scheduled after a failure (in
+         * milliseconds).
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 60000
+         * Group: advanced
+         * 
+         * @param sniffAfterFailureDelay the value to set
+         * @return the dsl builder
+         */
+        default AdvancedElasticsearchEndpointBuilder sniffAfterFailureDelay(
+                int sniffAfterFailureDelay) {
+            doSetProperty("sniffAfterFailureDelay", sniffAfterFailureDelay);
+            return this;
+        }
+        /**
+         * The delay of a sniff execution scheduled after a failure (in
+         * milliseconds).
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 60000
+         * Group: advanced
+         * 
+         * @param sniffAfterFailureDelay the value to set
+         * @return the dsl builder
+         */
+        default AdvancedElasticsearchEndpointBuilder sniffAfterFailureDelay(
+                String sniffAfterFailureDelay) {
+            doSetProperty("sniffAfterFailureDelay", sniffAfterFailureDelay);
+            return this;
+        }
+        /**
+         * The interval between consecutive ordinary sniff executions in
+         * milliseconds. Will be honoured when sniffOnFailure is disabled or
+         * when there are no failures between consecutive sniff executions.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 300000
+         * Group: advanced
+         * 
+         * @param snifferInterval the value to set
+         * @return the dsl builder
+         */
+        default AdvancedElasticsearchEndpointBuilder snifferInterval(
+                int snifferInterval) {
+            doSetProperty("snifferInterval", snifferInterval);
+            return this;
+        }
+        /**
+         * The interval between consecutive ordinary sniff executions in
+         * milliseconds. Will be honoured when sniffOnFailure is disabled or
+         * when there are no failures between consecutive sniff executions.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 300000
+         * Group: advanced
+         * 
+         * @param snifferInterval the value to set
+         * @return the dsl builder
+         */
+        default AdvancedElasticsearchEndpointBuilder snifferInterval(
+                String snifferInterval) {
+            doSetProperty("snifferInterval", snifferInterval);
+            return this;
+        }
     }
 
     /**
@@ -626,7 +642,7 @@ public interface ElasticsearchEndpointBuilderFactory {
     static ElasticsearchEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class ElasticsearchEndpointBuilderImpl extends AbstractEndpointBuilder implements ElasticsearchEndpointBuilder {
+        class ElasticsearchEndpointBuilderImpl extends AbstractEndpointBuilder implements ElasticsearchEndpointBuilder, AdvancedElasticsearchEndpointBuilder {
             public ElasticsearchEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

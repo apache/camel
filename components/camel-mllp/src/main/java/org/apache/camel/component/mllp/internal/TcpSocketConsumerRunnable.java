@@ -45,13 +45,15 @@ public class TcpSocketConsumerRunnable implements Runnable {
     private final String remoteAddress;
     private final String combinedAddress;
     private final Hl7Util hl7Util;
+    private final boolean logPhi;
 
     public TcpSocketConsumerRunnable(MllpTcpServerConsumer consumer, Socket clientSocket, MllpSocketBuffer mllpBuffer,
-                                     Hl7Util hl7Util) {
+                                     Hl7Util hl7Util, boolean logPhi) {
         this.consumer = consumer;
         // this.setName(createThreadName(clientSocket));
         this.clientSocket = clientSocket;
         this.hl7Util = hl7Util;
+        this.logPhi = logPhi;
 
         SocketAddress localSocketAddress = clientSocket.getLocalSocketAddress();
         if (localSocketAddress != null) {
@@ -192,7 +194,8 @@ public class TcpSocketConsumerRunnable implements Runnable {
                     } else {
                         mllpBuffer.resetSocket(clientSocket);
                         new MllpInvalidMessageException(
-                                "Timeout receiving complete message payload", mllpBuffer.toByteArrayAndReset(), timeoutEx);
+                                "Timeout receiving complete message payload", mllpBuffer.toByteArrayAndReset(), timeoutEx,
+                                logPhi);
                         consumer.handleMessageTimeout("Timeout receiving complete message payload",
                                 mllpBuffer.toByteArrayAndReset(), timeoutEx);
                     }

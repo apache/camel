@@ -1256,6 +1256,22 @@ Reusable configuration for Camel route(s).
     </xs:annotation>
   </xs:element>
 
+  <xs:element name="routeConfigurationContext" type="tns:camelRouteConfigurationContextFactoryBean">
+    <xs:annotation>
+      <xs:documentation xml:lang="en"><![CDATA[
+Configuration of route configurations using XML
+      ]]></xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="routeConfigurationContextRef" type="tns:routeConfigurationContextRefDefinition">
+    <xs:annotation>
+      <xs:documentation xml:lang="en"><![CDATA[
+To refer to an XML file with route configuration defined using the xml-dsl
+      ]]></xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
   <xs:element name="routeConfigurations" type="tns:routeConfigurationsDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
@@ -7611,6 +7627,15 @@ Default value: true
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="namingStrategy" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+If set then Jackson will use the the defined Property Naming Strategy.Possible
+values are: LOWER_CAMEL_CASE, LOWER_DOT_CASE, LOWER_CASE, KEBAB_CASE, SNAKE_CASE
+and UPPER_CAMEL_CASE.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -10201,17 +10226,10 @@ backward compatibility. Default value: false
     <xs:complexContent>
       <xs:extension base="tns:noOutputDefinition">
         <xs:sequence/>
-        <xs:attribute name="name" type="xs:string">
+        <xs:attribute name="name" type="xs:string" use="required">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Name of header to remove.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="headerName" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Deprecated: Name of header to remove (deprecated use name instead).
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -10276,7 +10294,14 @@ in-sensitive).
     <xs:complexContent>
       <xs:extension base="tns:noOutputDefinition">
         <xs:sequence/>
-        <xs:attribute name="propertyName" type="xs:string" use="required">
+        <xs:attribute name="propertyName" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Deprecated: Name of property to remove.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="name" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Name of property to remove.
@@ -10548,6 +10573,17 @@ Reference to the route builder instance.
         </xs:attribute>
       </xs:extension>
     </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="routeConfigurationContextRefDefinition">
+    <xs:sequence/>
+    <xs:attribute name="ref" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en"><![CDATA[
+Reference to the route templates in the xml dsl.
+        ]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
   </xs:complexType>
 
   <xs:complexType name="routeConfigurationDefinition">
@@ -13673,7 +13709,7 @@ The XPath object model to use.
         <xs:attribute name="logNamespaces" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Whether to log namespaces which can assist during trouble shooting. Default
+Whether to log namespaces which can assist during troubleshooting. Default
 value: false
             ]]></xs:documentation>
           </xs:annotation>
@@ -15011,6 +15047,7 @@ MicroProfile Circuit Breaker EIP configurations.
               ]]></xs:documentation>
             </xs:annotation>
           </xs:element>
+          <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:routeConfigurationContextRef"/>
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:routeTemplateContextRef"/>
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:routeBuilder"/>
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:routeContextRef"/>
@@ -15313,6 +15350,13 @@ org.apache.camel.api.management.mbean.ManagedTypeConverterRegistryMBean mbean.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="loadHealthChecks" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Whether to load custom health checks by scanning classpath. Default value: false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="inflightRepositoryBrowseEnabled" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
@@ -15591,6 +15635,16 @@ Sets a reference to a thread pool to be used by the error handler.
       <xs:extension base="tns:identifiedType">
         <xs:sequence>
           <xs:element maxOccurs="unbounded" ref="tns:rest"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="camelRouteConfigurationContextFactoryBean">
+    <xs:complexContent>
+      <xs:extension base="tns:identifiedType">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" ref="tns:routeConfiguration"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

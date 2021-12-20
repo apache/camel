@@ -5,7 +5,6 @@
 :description: File related capabilities for the Simple language
 :since: 1.1
 :supportlevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/file.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: core
 :starter-artifactid: camel-core-starter

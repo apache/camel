@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws2.kinesis;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.aws2.kinesis.consumer.KinesisResumeStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -82,6 +83,11 @@ public class Kinesis2Configuration implements Cloneable {
                             +
                             "static credentials to be passed in.")
     private boolean useDefaultCredentialsProvider;
+
+    @UriParam(label = "consumer",
+              description = "Defines a resume strategy for AWS Kinesis. The default strategy reads the sequenceNumber if provided",
+              defaultValue = "KinesisUserConfigurationResumeStrategy")
+    private KinesisResumeStrategy resumeStrategy;
 
     public KinesisClient getAmazonKinesisClient() {
         return amazonKinesisClient;
@@ -225,6 +231,14 @@ public class Kinesis2Configuration implements Cloneable {
 
     public void setUseDefaultCredentialsProvider(boolean useDefaultCredentialsProvider) {
         this.useDefaultCredentialsProvider = useDefaultCredentialsProvider;
+    }
+
+    public KinesisResumeStrategy getResumeStrategy() {
+        return resumeStrategy;
+    }
+
+    public void setResumeStrategy(KinesisResumeStrategy resumeStrategy) {
+        this.resumeStrategy = resumeStrategy;
     }
 
     // *************************************************

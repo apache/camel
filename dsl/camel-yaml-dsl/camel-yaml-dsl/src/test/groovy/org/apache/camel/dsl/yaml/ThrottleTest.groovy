@@ -30,7 +30,7 @@ class ThrottleTest extends YamlTestSupport {
             with(context.routeDefinitions[0].outputs[0], ThrottleDefinition) {
                 with (expression, ConstantExpression) {
                     language == 'constant'
-                    expression == '5s'
+                    expression == '5'
                 }
                 executorServiceRef == 'myExecutor'
             }
@@ -41,7 +41,7 @@ class ThrottleTest extends YamlTestSupport {
                         uri: "direct:start"
                         steps:    
                           - throttle:  
-                              constant: "5s"
+                              constant: "5"
                               executor-service-ref: "myExecutor"
                           - to: "mock:result"
                     '''),
@@ -51,7 +51,7 @@ class ThrottleTest extends YamlTestSupport {
                         steps:    
                           - throttle: 
                               expression: 
-                                constant: "5s"
+                                constant: "5"
                               executor-service-ref: "myExecutor"
                           - to: "mock:result"
                     ''')

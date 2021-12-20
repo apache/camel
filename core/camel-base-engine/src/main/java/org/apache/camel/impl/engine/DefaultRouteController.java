@@ -95,6 +95,16 @@ public class DefaultRouteController extends ServiceSupport implements RouteContr
     }
 
     @Override
+    public void stopAllRoutes() throws Exception {
+        getInternalRouteController().stopAllRoutes();
+    }
+
+    @Override
+    public void removeAllRoutes() throws Exception {
+        getInternalRouteController().removeAllRoutes();
+    }
+
+    @Override
     public boolean isStartingRoutes() {
         return getInternalRouteController().isStartingRoutes();
     }

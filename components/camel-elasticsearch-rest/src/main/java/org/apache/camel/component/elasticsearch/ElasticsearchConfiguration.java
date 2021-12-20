@@ -28,7 +28,6 @@ import org.apache.http.HttpHost;
 public class ElasticsearchConfiguration {
 
     private List<HttpHost> hostAddressesList;
-
     private String user;
     private String password;
 
@@ -46,7 +45,6 @@ public class ElasticsearchConfiguration {
     @UriParam(defaultValue = "" + ElasticsearchConstants.DEFAULT_FOR_WAIT_ACTIVE_SHARDS)
     private int waitForActiveShards = ElasticsearchConstants.DEFAULT_FOR_WAIT_ACTIVE_SHARDS;
     @UriParam
-    @Metadata(required = true)
     private String hostAddresses;
     @UriParam(defaultValue = "" + ElasticsearchConstants.DEFAULT_SOCKET_TIMEOUT)
     private int socketTimeout = ElasticsearchConstants.DEFAULT_SOCKET_TIMEOUT;
@@ -54,19 +52,19 @@ public class ElasticsearchConfiguration {
     private int maxRetryTimeout = ElasticsearchConstants.MAX_RETRY_TIMEOUT;
     @UriParam(defaultValue = "" + ElasticsearchConstants.DEFAULT_CONNECTION_TIMEOUT)
     private int connectionTimeout = ElasticsearchConstants.DEFAULT_CONNECTION_TIMEOUT;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean disconnect;
-    @UriParam(defaultValue = "false")
+    @UriParam(label = "security")
     private boolean enableSSL;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean useScroll;
     @UriParam(defaultValue = "" + ElasticsearchConstants.DEFAULT_SCROLL_KEEP_ALIVE_MS)
     private int scrollKeepAliveMs = ElasticsearchConstants.DEFAULT_SCROLL_KEEP_ALIVE_MS;
-    @UriParam
+    @UriParam(label = "advanced")
     private boolean enableSniffer;
-    @UriParam(defaultValue = "" + ElasticsearchConstants.DEFAULT_SNIFFER_INTERVAL)
+    @UriParam(label = "advanced", defaultValue = "" + ElasticsearchConstants.DEFAULT_SNIFFER_INTERVAL)
     private int snifferInterval = ElasticsearchConstants.DEFAULT_SNIFFER_INTERVAL;
-    @UriParam(defaultValue = "" + ElasticsearchConstants.DEFAULT_AFTER_FAILURE_DELAY)
+    @UriParam(label = "advanced", defaultValue = "" + ElasticsearchConstants.DEFAULT_AFTER_FAILURE_DELAY)
     private int sniffAfterFailureDelay = ElasticsearchConstants.DEFAULT_AFTER_FAILURE_DELAY;
 
     /**

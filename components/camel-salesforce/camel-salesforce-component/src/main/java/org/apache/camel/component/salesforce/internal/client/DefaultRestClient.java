@@ -89,12 +89,25 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
                     choices = objectMapper.readValue(responseContent, TypeReferences.STRING_LIST_TYPE);
                     return new SalesforceMultipleChoicesException(reason, statusCode, choices);
                 } else {
-                    final List<RestError> restErrors = readErrorsFrom(responseContent, objectMapper);
+                    List<RestError> restErrors = null;
+                    try {
+                        restErrors = readErrorsFrom(responseContent, objectMapper);
+                    } catch (IOException ignored) {
+                        // ok. could be a custom response
+                    }
+                    try {
+                        responseContent.reset();
+                    } catch (Throwable t) {
+                        log.warn("Unable to reset HTTP response content input stream.");
+                    }
                     if (statusCode == HttpStatus.NOT_FOUND_404) {
                         return new NoSuchSObjectException(restErrors);
                     }
 
-                    return new SalesforceException(restErrors, statusCode);
+                    return new SalesforceException(
+                            restErrors, statusCode,
+                            "Unexpected error: " + reason + ". See exception `errors` property for detail.",
+                            responseContent);
                 }
             }
         } catch (IOException e) {

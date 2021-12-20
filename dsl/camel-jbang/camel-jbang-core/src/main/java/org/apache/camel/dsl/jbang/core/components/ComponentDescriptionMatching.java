@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.dsl.jbang.core.components;
 
 import org.apache.camel.dsl.jbang.core.types.Component;

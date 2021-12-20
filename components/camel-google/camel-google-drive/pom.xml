@@ -24,12 +24,12 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-google-parent</artifactId>
-        <version>3.13.0-SNAPSHOT</version>
+        <version>3.15.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-google-drive</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Google Drive</name>
+    <name>Camel :: Google :: Drive</name>
     <description>Camel Component for GoogleDrive</description>
 
     <properties>
@@ -53,6 +53,12 @@
             <groupId>com.google.api-client</groupId>
             <artifactId>google-api-client</artifactId>
             <version>${google-api-client-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.code.findbugs</groupId>
+                    <artifactId>jsr305</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.google.oauth-client</groupId>
@@ -63,6 +69,12 @@
             <groupId>com.google.http-client</groupId>
             <artifactId>google-http-client-jackson2</artifactId>
             <version>${google-api-client-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.code.findbugs</groupId>
+                    <artifactId>jsr305</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.google.apis</groupId>

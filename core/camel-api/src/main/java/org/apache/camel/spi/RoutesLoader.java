@@ -18,6 +18,8 @@ package org.apache.camel.spi;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RouteConfigurationsBuilder;
@@ -69,6 +71,42 @@ public interface RoutesLoader extends CamelContextAware {
         for (RoutesBuilder builder : builders) {
             getCamelContext().addRoutes(builder);
         }
+    }
+
+    /**
+     * Loads or updates existing {@link RoutesBuilder} from the give list of {@link Resource} into the current
+     * {@link org.apache.camel.CamelContext}.
+     *
+     * If a route is loaded with a route id for an existing route, then the existing route is stopped and remove, so it
+     * can be updated.
+     *
+     * @param  resources the resources to be loaded or updated.
+     * @return           route ids for the routes that was loaded or updated.
+     */
+    default Set<String> updateRoutes(Resource... resources) throws Exception {
+        return updateRoutes(Arrays.asList(resources));
+    }
+
+    /**
+     * Loads or updates existing {@link RoutesBuilder} from the give list of {@link Resource} into the current
+     * {@link org.apache.camel.CamelContext}.
+     *
+     * If a route is loaded with a route id for an existing route, then the existing route is stopped and remove, so it
+     * can be updated.
+     *
+     * @param  resources the resources to be loaded or updated.
+     * @return           route ids for the routes that was loaded or updated.
+     */
+    default Set<String> updateRoutes(Collection<Resource> resources) throws Exception {
+        Set<String> answer = new LinkedHashSet<>();
+        Collection<RoutesBuilder> builders = findRoutesBuilders(resources);
+        for (RoutesBuilder builder : builders) {
+            // update any existing routes
+            Set<String> ids = builder.updateRoutesToCamelContext(getCamelContext());
+            answer.addAll(ids);
+        }
+
+        return answer;
     }
 
     /**
