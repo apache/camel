@@ -7,7 +7,6 @@
 :since: 3.11
 :supportLevel: Preview
 :component-header: Only producer is supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/hwcloud-functiongraph.adoc[opts=optional]
 //Manually maintained attributes
 :group: Huawei Cloud
 :camel-spring-boot-name: huaweicloud-functiongraph

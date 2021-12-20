@@ -8,7 +8,6 @@
 :description: Resource resolver to load files from GitHub
 :since: 3.11
 :supportLevel: Preview
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/resourceresolver-github.adoc[opts=optional]
 
 *Since Camel {since}*
 

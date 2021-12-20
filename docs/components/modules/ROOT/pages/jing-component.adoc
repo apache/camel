@@ -9,7 +9,6 @@
 :since: 1.1
 :supportLevel: Stable
 :component-header: Only producer is supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/jing.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: jing
 

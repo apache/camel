@@ -6,7 +6,6 @@
 :description: Encrypt and decrypt messages using Java Cryptography Extension (JCE).
 :since: 2.3
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/crypto.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: crypto
 

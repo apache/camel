@@ -8,7 +8,6 @@
 :description: Distributed message tracing using Zipkin
 :since: 2.18
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/zipkin.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: zipkin
 

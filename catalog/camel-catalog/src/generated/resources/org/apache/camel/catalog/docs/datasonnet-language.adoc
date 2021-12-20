@@ -6,7 +6,6 @@
 :description: To use DataSonnet scripts in Camel expressions or predicates.
 :since: 3.7
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/datasonnet.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: datasonnet
 
