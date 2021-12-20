@@ -8,6 +8,7 @@
 ** xref:cdi.adoc[CDI]
 ** xref:csimple-joor.adoc[CSimple jOOR]
 ** xref:cxf-transport.adoc[CXF Transport]
+** xref:debug.adoc[Debug]
 ** xref:dsl.adoc[DSL]
 *** xref:groovy-dsl.adoc[Groovy Dsl]
 *** xref:java-joor-dsl.adoc[Java Joor Dsl]

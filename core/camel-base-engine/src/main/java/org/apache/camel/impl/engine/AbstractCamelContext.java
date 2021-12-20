@@ -4117,6 +4117,11 @@ public abstract class AbstractCamelContext extends BaseService
                         factory = (ManagementStrategyFactory) object;
                     }
                 }
+                // detect if camel debugger should be enabled if on classpath
+                if (getBootstrapFactoryFinder().findClass(Debugger.FACTORY).isPresent()) {
+                    LOG.info("Detected and enabling Camel Debugging");
+                    setDebugging(true);
+                }
             } catch (Exception e) {
                 LOG.warn("Cannot create JmxManagementStrategyFactory. Will fallback and disable JMX.", e);
             }

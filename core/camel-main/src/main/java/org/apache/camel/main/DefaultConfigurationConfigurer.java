@@ -259,7 +259,11 @@ public final class DefaultConfigurationConfigurer {
         camelContext.getGlobalEndpointConfiguration().setBridgeErrorHandler(config.isEndpointBridgeErrorHandler());
         camelContext.getGlobalEndpointConfiguration().setLazyStartProducer(config.isEndpointLazyStartProducer());
 
-        camelContext.setDebugging(config.isDebugging());
+        if (config.isDebugging()) {
+            // debug may be enabled via camel-debug JAR on classpath so if config is false (default)
+            // then do not change setting on camel-context
+            camelContext.setDebugging(true);
+        }
         camelContext.setBacklogTracing(config.isBacklogTracing());
         camelContext.setTracing(config.isTracing());
         camelContext.setTracingStandby(config.isTracingStandby());
