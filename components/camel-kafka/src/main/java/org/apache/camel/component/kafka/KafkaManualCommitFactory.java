@@ -20,7 +20,7 @@ import java.util.Collection;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.StateRepository;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.common.TopicPartition;
 
 /**
@@ -32,7 +32,7 @@ public interface KafkaManualCommitFactory {
      * Creates a new instance
      */
     KafkaManualCommit newInstance(
-            Exchange exchange, KafkaConsumer consumer, String topicName, String threadId,
+            Exchange exchange, Consumer consumer, String topicName, String threadId,
             StateRepository<String, String> offsetRepository,
             TopicPartition partition, long recordOffset, long commitTimeout, Collection<KafkaAsyncManualCommit> asyncCommits);
 }

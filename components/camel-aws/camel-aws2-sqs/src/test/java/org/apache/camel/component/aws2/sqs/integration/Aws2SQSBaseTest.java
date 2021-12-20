@@ -28,7 +28,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class Aws2SQSBaseTest extends CamelTestSupport {
+public abstract class Aws2SQSBaseTest extends CamelTestSupport {
 
     @RegisterExtension
     public static AWSService service = AWSServiceFactory.createSQSService();

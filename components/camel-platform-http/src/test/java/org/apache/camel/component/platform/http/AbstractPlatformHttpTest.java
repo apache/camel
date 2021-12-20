@@ -58,6 +58,10 @@ abstract class AbstractPlatformHttpTest {
         };
     }
 
+    protected CamelContext getContext() {
+        return ctx;
+    }
+
     @AfterAll
     public static void tearDown() throws Exception {
         synchronized (LOCK) {

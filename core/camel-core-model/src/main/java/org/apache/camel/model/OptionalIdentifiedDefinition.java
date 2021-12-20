@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import org.apache.camel.NamedNode;
@@ -38,6 +39,7 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
     private String id;
     private Boolean customId;
     private DescriptionDefinition description;
+    private transient int lineNumber = -1;
 
     @Override
     public String getId() {
@@ -78,6 +80,17 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
     @Override
     public NamedNode getParent() {
         return null;
+    }
+
+    @Override
+    public int getLineNumber() {
+        return lineNumber;
+    }
+
+    @Override
+    @XmlTransient
+    public void setLineNumber(int lineNumber) {
+        this.lineNumber = lineNumber;
     }
 
     // Fluent API

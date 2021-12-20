@@ -69,6 +69,7 @@ import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.model.RestContextRefDefinition;
 import org.apache.camel.model.RollbackDefinition;
 import org.apache.camel.model.RouteBuilderDefinition;
+import org.apache.camel.model.RouteConfigurationContextRefDefinition;
 import org.apache.camel.model.RouteContextRefDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateParameterDefinition;
@@ -493,7 +494,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    setSteps(target, node);;
+                    setSteps(target, node);
                     break;
                 }
                 default: {
@@ -678,7 +679,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "library": {
-                    target.setLibrary(org.apache.camel.model.dataformat.AvroLibrary.valueOf(asText(node)));
+                    target.setLibrary(asEnum(node, org.apache.camel.model.dataformat.AvroLibrary.class));
                     break;
                 }
                 case "module-class-names": {
@@ -1493,7 +1494,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    setSteps(target, node);;
+                    setSteps(target, node);
                     break;
                 }
                 default: {
@@ -1555,7 +1556,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    setSteps(target, node);;
+                    setSteps(target, node);
                     break;
                 }
                 default: {
@@ -1638,7 +1639,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    setSteps(target, node);;
+                    setSteps(target, node);
                     break;
                 }
                 default: {
@@ -4129,7 +4130,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    setSteps(target, node);;
+                    setSteps(target, node);
                     break;
                 }
                 default: {
@@ -5179,7 +5180,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    setSteps(target, node);;
+                    setSteps(target, node);
                     break;
                 }
                 default: {
@@ -5241,7 +5242,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    setSteps(target, node);;
+                    setSteps(target, node);
                     break;
                 }
                 default: {
@@ -5487,7 +5488,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    setSteps(target, node);;
+                    setSteps(target, node);
                     break;
                 }
                 default: {
@@ -5925,7 +5926,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    setSteps(target, node);;
+                    setSteps(target, node);
                     break;
                 }
                 default: {
@@ -6448,7 +6449,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    setSteps(target, node);;
+                    setSteps(target, node);
                     break;
                 }
                 default: {
@@ -6709,7 +6710,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    setSteps(target, node);;
+                    setSteps(target, node);
                     break;
                 }
                 default: {
@@ -6774,7 +6775,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    setSteps(target, node);;
+                    setSteps(target, node);
                     break;
                 }
                 default: {
@@ -6851,7 +6852,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    setSteps(target, node);;
+                    setSteps(target, node);
                     break;
                 }
                 default: {
@@ -7371,7 +7372,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "library": {
-                    target.setLibrary(org.apache.camel.model.dataformat.JsonLibrary.valueOf(asText(node)));
+                    target.setLibrary(asEnum(node, org.apache.camel.model.dataformat.JsonLibrary.class));
                     break;
                 }
                 case "module-class-names": {
@@ -7891,7 +7892,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    setSteps(target, node);;
+                    setSteps(target, node);
                     break;
                 }
                 default: {
@@ -8079,7 +8080,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    setSteps(target, node);;
+                    setSteps(target, node);
                     break;
                 }
                 default: {
@@ -8657,7 +8658,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    setSteps(target, node);;
+                    setSteps(target, node);
                     break;
                 }
                 default: {
@@ -8901,7 +8902,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    setSteps(target, node);;
+                    setSteps(target, node);
                     break;
                 }
                 default: {
@@ -9021,7 +9022,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    setSteps(target, node);;
+                    setSteps(target, node);
                     break;
                 }
                 default: {
@@ -9080,7 +9081,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    setSteps(target, node);;
+                    setSteps(target, node);
                     break;
                 }
                 default: {
@@ -9192,7 +9193,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    setSteps(target, node);;
+                    setSteps(target, node);
                     break;
                 }
                 default: {
@@ -9241,7 +9242,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    setSteps(target, node);;
+                    setSteps(target, node);
                     break;
                 }
                 default: {
@@ -9671,7 +9672,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    setSteps(target, node);;
+                    setSteps(target, node);
                     break;
                 }
                 default: {
@@ -9721,7 +9722,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    setSteps(target, node);;
+                    setSteps(target, node);
                     break;
                 }
                 default: {
@@ -9777,7 +9778,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    setSteps(target, node);;
+                    setSteps(target, node);
                     break;
                 }
                 default: {
@@ -10046,7 +10047,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    setSteps(target, node);;
+                    setSteps(target, node);
                     break;
                 }
                 default: {
@@ -10304,7 +10305,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "library": {
-                    target.setLibrary(org.apache.camel.model.dataformat.ProtobufLibrary.valueOf(asText(node)));
+                    target.setLibrary(asEnum(node, org.apache.camel.model.dataformat.ProtobufLibrary.class));
                     break;
                 }
                 case "module-class-names": {
@@ -10507,7 +10508,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    setSteps(target, node);;
+                    setSteps(target, node);
                     break;
                 }
                 default: {
@@ -10952,9 +10953,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     "removeHeader"
             },
             properties = {
-                    @YamlProperty(name = "header-name", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
-                    @YamlProperty(name = "name", type = "string")
+                    @YamlProperty(name = "name", type = "string", required = true)
             }
     )
     public static class RemoveHeaderDefinitionDeserializer extends YamlDeserializerBase<RemoveHeaderDefinition> {
@@ -10976,11 +10976,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(RemoveHeaderDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
-                case "header-name": {
-                    String val = asText(node);
-                    target.setHeaderName(val);
-                    break;
-                }
                 case "inherit-error-handler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
@@ -11151,7 +11146,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             },
             properties = {
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
-                    @YamlProperty(name = "property-name", type = "string", required = true)
+                    @YamlProperty(name = "name", type = "string"),
+                    @YamlProperty(name = "property-name", type = "string")
             }
     )
     public static class RemovePropertyDefinitionDeserializer extends YamlDeserializerBase<RemovePropertyDefinition> {
@@ -11176,6 +11172,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "inherit-error-handler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
+                    break;
+                }
+                case "name": {
+                    String val = asText(node);
+                    target.setName(val);
                     break;
                 }
                 case "property-name": {
@@ -11264,7 +11265,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    setSteps(target, node);;
+                    setSteps(target, node);
                     break;
                 }
                 default: {
@@ -11583,7 +11584,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "binding-mode": {
-                    target.setBindingMode(org.apache.camel.model.rest.RestBindingMode.valueOf(asText(node)));
+                    target.setBindingMode(asEnum(node, org.apache.camel.model.rest.RestBindingMode.class));
                     break;
                 }
                 case "client-request-validation": {
@@ -11637,7 +11638,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "host-name-resolver": {
-                    target.setHostNameResolver(org.apache.camel.model.rest.RestHostNameResolver.valueOf(asText(node)));
+                    target.setHostNameResolver(asEnum(node, org.apache.camel.model.rest.RestHostNameResolver.class));
                     break;
                 }
                 case "json-data-format": {
@@ -11945,7 +11946,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "collection-format": {
-                    target.setCollectionFormat(org.apache.camel.model.rest.CollectionFormat.valueOf(asText(node)));
+                    target.setCollectionFormat(asEnum(node, org.apache.camel.model.rest.CollectionFormat.class));
                     break;
                 }
                 case "data-format": {
@@ -11984,7 +11985,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "type": {
-                    target.setType(org.apache.camel.model.rest.RestParamType.valueOf(asText(node)));
+                    target.setType(asEnum(node, org.apache.camel.model.rest.RestParamType.class));
                     break;
                 }
                 default: {
@@ -12038,7 +12039,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "collection-format": {
-                    target.setCollectionFormat(org.apache.camel.model.rest.CollectionFormat.valueOf(asText(node)));
+                    target.setCollectionFormat(asEnum(node, org.apache.camel.model.rest.CollectionFormat.class));
                     break;
                 }
                 case "data-format": {
@@ -12918,6 +12919,42 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
+            types = org.apache.camel.model.RouteConfigurationContextRefDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            nodes = {
+                    "route-configuration-context-ref",
+                    "routeConfigurationContextRef"
+            },
+            properties = @YamlProperty(name = "ref", type = "string", required = true)
+    )
+    public static class RouteConfigurationContextRefDefinitionDeserializer extends YamlDeserializerBase<RouteConfigurationContextRefDefinition> {
+        public RouteConfigurationContextRefDefinitionDeserializer() {
+            super(RouteConfigurationContextRefDefinition.class);
+        }
+
+        @Override
+        protected RouteConfigurationContextRefDefinition newInstance() {
+            return new RouteConfigurationContextRefDefinition();
+        }
+
+        @Override
+        protected boolean setProperty(RouteConfigurationContextRefDefinition target,
+                String propertyKey, String propertyName, Node node) {
+            switch(propertyKey) {
+                case "ref": {
+                    String val = asText(node);
+                    target.setRef(val);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
             types = org.apache.camel.model.RouteContextRefDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = {
@@ -12998,7 +13035,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    setSteps(target, node);;
+                    setSteps(target, node);
                     break;
                 }
                 default: {
@@ -13385,7 +13422,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    setSteps(target, node);;
+                    setSteps(target, node);
                     break;
                 }
                 default: {
@@ -14933,7 +14970,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    setSteps(target, node);;
+                    setSteps(target, node);
                     break;
                 }
                 default: {
@@ -15042,7 +15079,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    setSteps(target, node);;
+                    setSteps(target, node);
                     break;
                 }
                 default: {
@@ -16143,7 +16180,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    setSteps(target, node);;
+                    setSteps(target, node);
                     break;
                 }
                 default: {
@@ -16336,7 +16373,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    setSteps(target, node);;
+                    setSteps(target, node);
                     break;
                 }
                 default: {
@@ -17369,7 +17406,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    setSteps(target, node);;
+                    setSteps(target, node);
                     break;
                 }
                 default: {
@@ -17479,7 +17516,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    setSteps(target, node);;
+                    setSteps(target, node);
                     break;
                 }
                 default: {
@@ -17548,7 +17585,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    setSteps(target, node);;
+                    setSteps(target, node);
                     break;
                 }
                 default: {
@@ -18296,7 +18333,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "library": {
-                    target.setLibrary(org.apache.camel.model.dataformat.YAMLLibrary.valueOf(asText(node)));
+                    target.setLibrary(asEnum(node, org.apache.camel.model.dataformat.YAMLLibrary.class));
                     break;
                 }
                 case "max-aliases-for-collections": {

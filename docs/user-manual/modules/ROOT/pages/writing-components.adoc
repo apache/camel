@@ -5,19 +5,19 @@ whether they be routing components, transformers, transports etc. The
 idea of a component is to be a factory and manager of
 xref:endpoint.adoc[Endpoints].
 
-Here are the main steps to writing a component:
+Here are the main steps to add a new component:
 
 * Write a POJO which implements the `Component` interface. The simplest approach is just to derive from `DefaultComponent`.
-* To support auto-discovery of your component add a file to
+* To support auto-discovery of your component, add a file of
 `META-INF/services/org/apache/camel/component/FOO` where FOO is the URI
 scheme for your component and any related endpoints created on the fly.
-The latter file should contain the definition of the component class.
+This file should contain the information of the component class full name.
 For example if your component is implemented by the
-`com.example.CustomComponent` class, the service file should contain the
+`com.example.CustomComponent` class, the file should contain the
 following line -- `class=com.example.CustomComponent`.
 
 Users can then either explicitly create your component, configure it and
-register with a `CamelContext` or users can use a URI which auto-creates your component.
+register it with a `CamelContext` or they can use a URI which auto-creates your component.
 
 [NOTE]
 ====

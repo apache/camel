@@ -80,11 +80,13 @@ public class AtlasMapComponent extends DefaultComponent {
         String sourceMapName = getAndRemoveParameter(parameters, "sourceMapName", String.class);
         String targetMapName = getAndRemoveParameter(parameters, "targetMapName", String.class);
         TargetMapMode targetMapMode = getAndRemoveParameter(parameters, "targetMapMode", TargetMapMode.class);
+        boolean forceReload = getAndRemoveParameter(parameters, "forceAdmReload", Boolean.class, Boolean.FALSE);
         AtlasMapEndpoint endpoint = new AtlasMapEndpoint(uri, this, remaining);
         setProperties(endpoint, parameters);
         endpoint.setContentCache(cache);
         endpoint.setSourceMapName(sourceMapName);
         endpoint.setTargetMapName(targetMapName);
+        endpoint.setForceReload(forceReload);
         endpoint.setAtlasContextFactory(getOrCreateAtlasContextFactory());
         if (targetMapMode != null) {
             endpoint.setTargetMapMode(targetMapMode);

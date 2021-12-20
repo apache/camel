@@ -22,7 +22,7 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
-@Command(name = "init", description = "Provide init templates for kamelets and bindings")
+@Command(name = "init", description = "Creates Kamelets (use --help)")
 class Init implements Callable<Integer> {
     //CHECKSTYLE:OFF
     @Option(names = { "-h", "--help" }, usageHelp = true, description = "Display the help and sub-commands")

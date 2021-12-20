@@ -5,7 +5,6 @@
 :description: Compression and decompress streams using java.util.zip.ZipStream.
 :since: 2.11
 :supportlevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/zipfile.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: zipfile
 

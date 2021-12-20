@@ -20,13 +20,12 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.health.HealthCheckResultBuilder;
-import org.apache.camel.spi.annotations.JdkService;
 
 /**
  * {@link org.apache.camel.health.HealthCheck} that checks the status of the {@link CamelContext} whether its started or
  * not.
  */
-@JdkService("context-health-check")
+@org.apache.camel.spi.annotations.HealthCheck("context-check")
 public final class ContextHealthCheck extends AbstractHealthCheck {
     private CamelContext camelContext;
 

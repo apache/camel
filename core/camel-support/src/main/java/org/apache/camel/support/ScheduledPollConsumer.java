@@ -16,6 +16,7 @@
  */
 package org.apache.camel.support;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
@@ -29,7 +30,9 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.PollingConsumerPollingStrategy;
 import org.apache.camel.Processor;
 import org.apache.camel.Suspendable;
+import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckAware;
+import org.apache.camel.spi.HttpResponseAware;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
 import org.apache.camel.spi.ScheduledPollConsumerScheduler;
 import org.apache.camel.support.service.ServiceHelper;
@@ -73,7 +76,9 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
     private volatile long errorCounter;
     private volatile long successCounter;
     private volatile Throwable lastError;
+    private volatile Map<String, Object> lastErrorDetails;
     private final AtomicLong counter = new AtomicLong();
+    private volatile boolean firstPoolDone;
 
     public ScheduledPollConsumer(Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -255,12 +260,24 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
             successCounter = 0;
             errorCounter++;
             lastError = cause;
+            // enrich last error with http response code if possible
+            if (cause instanceof HttpResponseAware) {
+                int code = ((HttpResponseAware) cause).getHttpResponseCode();
+                if (code > 0) {
+                    addLastErrorDetail(HealthCheck.HTTP_RESPONSE_CODE, code);
+                }
+            }
         } else {
             idleCounter = polledMessages == 0 ? ++idleCounter : 0;
             successCounter++;
             errorCounter = 0;
             lastError = null;
+            lastErrorDetails = null;
         }
+
+        // now first pool is done after the poll is complete
+        firstPoolDone = true;
+
         LOG.trace("doRun() done with idleCounter={}, successCounter={}, errorCounter={}", idleCounter, successCounter,
                 errorCounter);
 
@@ -459,11 +476,50 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
     }
 
     /**
+     * Whether a first pool attempt has been done (also if the consumer has been restarted)
+     */
+    protected boolean isFirstPoolDone() {
+        return firstPoolDone;
+    }
+
+    /**
      * Gets the last caused error (exception) for the last poll that failed. When the consumer is successfully again,
      * then the error resets to null.
      */
     protected Throwable getLastError() {
         return lastError;
+    }
+
+    /**
+     * Gets the last caused error (exception) details for the last poll that failed. When the consumer is successfully
+     * again, then the error resets to null.
+     *
+     * Some consumers can provide additional error details here, besides the caused exception. For example if the
+     * consumer uses HTTP then the {@link org.apache.camel.health.HealthCheck#HTTP_RESPONSE_CODE} can be included.
+     *
+     * @return error details, or null if no details exists.
+     */
+    protected Map<String, Object> getLastErrorDetails() {
+        return lastErrorDetails;
+    }
+
+    /**
+     * Adds a detail to the last caused error (exception) for the last poll that failed. When the consumer is
+     * successfully again, then the error resets to null.
+     *
+     * Some consumers can provide additional error details here, besides the caused exception. For example if the
+     * consumer uses HTTP then the {@link org.apache.camel.health.HealthCheck#HTTP_RESPONSE_CODE} can be included.
+     *
+     * @param key   the key (see {@link org.apache.camel.health.HealthCheck})
+     * @param value the value
+     */
+    protected void addLastErrorDetail(String key, Object value) {
+        if (lastErrorDetails == null) {
+            lastErrorDetails = new HashMap<>();
+        }
+        if (lastErrorDetails != null) {
+            lastErrorDetails.put(key, value);
+        }
     }
 
     /**
@@ -570,6 +626,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
         errorCounter = 0;
         successCounter = 0;
         counter.set(0);
+        firstPoolDone = false;
 
         super.doStop();
     }

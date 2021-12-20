@@ -80,13 +80,18 @@ public class PlatformHttpEndpoint extends DefaultEndpoint implements AsyncEndpoi
     }
 
     @Override
+    public PlatformHttpComponent getComponent() {
+        return (PlatformHttpComponent) super.getComponent();
+    }
+
+    @Override
     public Producer createProducer() throws Exception {
         throw new UnsupportedOperationException("Producer is not supported");
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new DefaultConsumer(this, processor) {
+        Consumer consumer = new DefaultConsumer(this, processor) {
             private Consumer delegatedConsumer;
 
             @Override
@@ -105,11 +110,13 @@ public class PlatformHttpEndpoint extends DefaultEndpoint implements AsyncEndpoi
             protected void doStart() throws Exception {
                 super.doStart();
                 ServiceHelper.startService(delegatedConsumer);
+                getComponent().addHttpEndpoint(getPath());
             }
 
             @Override
             protected void doStop() throws Exception {
                 super.doStop();
+                getComponent().removeHttpEndpoint(getPath());
                 ServiceHelper.stopAndShutdownServices(delegatedConsumer);
             }
 
@@ -125,6 +132,8 @@ public class PlatformHttpEndpoint extends DefaultEndpoint implements AsyncEndpoi
                 super.doSuspend();
             }
         };
+        configureConsumer(consumer);
+        return consumer;
     }
 
     @Override

@@ -20,6 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Route;
+import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RouteFactory;
 
 /**
@@ -29,7 +30,8 @@ public class DefaultRouteFactory implements RouteFactory {
 
     @Override
     public Route createRoute(
-            CamelContext camelContext, NamedNode routeDefinition, String routeId, String routeDescription, Endpoint endpoint) {
-        return new DefaultRoute(camelContext, routeDefinition, routeId, routeDescription, endpoint);
+            CamelContext camelContext, NamedNode routeDefinition, String routeId, String routeDescription,
+            Endpoint endpoint, Resource resource) {
+        return new DefaultRoute(camelContext, routeDefinition, routeId, routeDescription, endpoint, resource);
     }
 }

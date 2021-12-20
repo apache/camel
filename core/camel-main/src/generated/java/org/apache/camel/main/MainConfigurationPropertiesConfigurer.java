@@ -53,6 +53,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "Configurations": target.setConfigurations(property(camelContext, java.util.List.class, value)); return true;
         case "consumertemplatecachesize":
         case "ConsumerTemplateCacheSize": target.setConsumerTemplateCacheSize(property(camelContext, int.class, value)); return true;
+        case "debugging":
+        case "Debugging": target.setDebugging(property(camelContext, boolean.class, value)); return true;
         case "dumproutes":
         case "DumpRoutes": target.setDumpRoutes(property(camelContext, boolean.class, value)); return true;
         case "durationhitexitcode":
@@ -97,6 +99,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "JmxManagementStatisticsLevel": target.setJmxManagementStatisticsLevel(property(camelContext, org.apache.camel.ManagementStatisticsLevel.class, value)); return true;
         case "lightweight":
         case "Lightweight": target.setLightweight(property(camelContext, boolean.class, value)); return true;
+        case "loadhealthchecks":
+        case "LoadHealthChecks": target.setLoadHealthChecks(property(camelContext, boolean.class, value)); return true;
         case "loadtypeconverters":
         case "LoadTypeConverters": target.setLoadTypeConverters(property(camelContext, boolean.class, value)); return true;
         case "logdebugmaxchars":
@@ -264,6 +268,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "Configurations": return java.util.List.class;
         case "consumertemplatecachesize":
         case "ConsumerTemplateCacheSize": return int.class;
+        case "debugging":
+        case "Debugging": return boolean.class;
         case "dumproutes":
         case "DumpRoutes": return boolean.class;
         case "durationhitexitcode":
@@ -308,6 +314,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "JmxManagementStatisticsLevel": return org.apache.camel.ManagementStatisticsLevel.class;
         case "lightweight":
         case "Lightweight": return boolean.class;
+        case "loadhealthchecks":
+        case "LoadHealthChecks": return boolean.class;
         case "loadtypeconverters":
         case "LoadTypeConverters": return boolean.class;
         case "logdebugmaxchars":
@@ -476,6 +484,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "Configurations": return target.getConfigurations();
         case "consumertemplatecachesize":
         case "ConsumerTemplateCacheSize": return target.getConsumerTemplateCacheSize();
+        case "debugging":
+        case "Debugging": return target.isDebugging();
         case "dumproutes":
         case "DumpRoutes": return target.isDumpRoutes();
         case "durationhitexitcode":
@@ -520,6 +530,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "JmxManagementStatisticsLevel": return target.getJmxManagementStatisticsLevel();
         case "lightweight":
         case "Lightweight": return target.isLightweight();
+        case "loadhealthchecks":
+        case "LoadHealthChecks": return target.isLoadHealthChecks();
         case "loadtypeconverters":
         case "LoadTypeConverters": return target.isLoadTypeConverters();
         case "logdebugmaxchars":

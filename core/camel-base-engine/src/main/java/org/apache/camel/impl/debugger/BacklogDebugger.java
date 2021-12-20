@@ -194,7 +194,7 @@ public final class BacklogDebugger extends ServiceSupport {
             debugger.removeBreakpoint(breakpoint);
             breakpoints.put(nodeId, breakpoint);
             debugger.addBreakpoint(breakpoint, breakpoint);
-        } else if (breakpoint.getCondition() != null) {
+        } else {
             logger.log("Updating conditional breakpoint " + nodeId + " [" + predicate + "]");
             breakpoint.setCondition(condition);
         }

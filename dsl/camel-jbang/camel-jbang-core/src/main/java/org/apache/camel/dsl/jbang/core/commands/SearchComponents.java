@@ -28,7 +28,7 @@ import org.apache.camel.dsl.jbang.core.types.Component;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
-@Command(name = "components", description = "Search for Camel Core components")
+@Command(name = "components", description = "Search for Camel components")
 class SearchComponents extends AbstractSearch implements Callable<Integer> {
 
     /*

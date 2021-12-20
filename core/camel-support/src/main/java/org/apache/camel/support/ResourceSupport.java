@@ -22,10 +22,17 @@ import org.apache.camel.spi.Resource;
  * Base class for {@link Resource} implementations.
  */
 public abstract class ResourceSupport implements Resource {
+    private final String scheme;
     private final String location;
 
-    protected ResourceSupport(String location) {
+    protected ResourceSupport(String scheme, String location) {
+        this.scheme = scheme;
         this.location = location;
+    }
+
+    @Override
+    public String getScheme() {
+        return scheme;
     }
 
     @Override
@@ -35,8 +42,6 @@ public abstract class ResourceSupport implements Resource {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "{" +
-               "location=" + getLocation() +
-               '}';
+        return "Resource[" + scheme + ":" + location + "]";
     }
 }

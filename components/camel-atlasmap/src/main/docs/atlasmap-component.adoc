@@ -6,7 +6,6 @@
 :since: 3.7
 :supportlevel: Stable
 :component-header: Only producer is supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/atlasmap.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: atlasmap
 
@@ -15,8 +14,9 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/atlasmap.a
 *{component-header}*
 
 The AtlasMap component allows you to process data mapping using an
-http://www.atlasmap.io/[AtlasMap] data mapping definition. It could be
-either an ADM archive file or mapping definition JSON file.
+http://www.atlasmap.io/[AtlasMap] data mapping definition. The AtlasMap mapping definition
+is packaged as an ADM archive file when it is exported from the AtlasMap Data Mapper UI.
+NOTE: Although it is possible to load mapping definition JSON file without being packaged into ADM archive file, some features will not work  in that way. It is recommended to always use ADM archive file for other than developer test purpose.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:

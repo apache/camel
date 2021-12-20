@@ -23,6 +23,7 @@ import java.util.Set;
 
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.ManagementInterceptStrategy;
+import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RouteError;
 import org.apache.camel.spi.RoutePolicy;
@@ -132,6 +133,13 @@ public interface Route extends RuntimeConfiguration {
      * @return the configuration, or <tt>null</tt> if no configuration has been configured.
      */
     String getConfigurationId();
+
+    /**
+     * Gets the source resource that this route is located from
+     *
+     * @return the source, or null if this route is not loaded from a resource
+     */
+    Resource getSourceResource();
 
     /**
      * Gets the camel context

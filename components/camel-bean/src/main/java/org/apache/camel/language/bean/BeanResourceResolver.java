@@ -26,13 +26,14 @@ import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.ResourceResolver;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.ResourceResolverSupport;
+import org.apache.camel.support.ResourceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @ResourceResolver(BeanResourceResolver.SCHEME)
 public class BeanResourceResolver extends ResourceResolverSupport {
     public static final String SCHEME = "bean";
-    private static final Logger LOGGER = LoggerFactory.getLogger(BeanResourceResolver.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BeanResourceResolver.class);
 
     public BeanResourceResolver() {
         super(SCHEME);
@@ -40,14 +41,9 @@ public class BeanResourceResolver extends ResourceResolverSupport {
 
     @Override
     public Resource createResource(String location, String remaining) {
-        LOGGER.trace("Creating resource from expression {}", remaining);
+        LOG.trace("Creating resource from calling bean: {}", remaining);
 
-        return new Resource() {
-            @Override
-            public String getLocation() {
-                return location;
-            }
-
+        return new ResourceSupport(SCHEME, location) {
             @Override
             public boolean exists() {
                 return false;

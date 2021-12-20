@@ -88,24 +88,25 @@ public class CouchbaseEndpointTest {
     public void testCouchbaseEndpointCreateProducer() throws Exception {
         Map<String, Object> params = new HashMap<>();
         params.put("bucket", "bucket");
+
+        CouchbaseComponent component = new CouchbaseComponent();
+
         assertThrows(IllegalArgumentException.class,
-                () -> new CouchbaseComponent()
-                        .createEndpoint("couchbase:localhost:80/bucket", "couchbase:localhost:80/bucket", params)
-                        .createProducer());
+                () -> component.createEndpoint("couchbase:localhost:80/bucket", "couchbase:localhost:80/bucket", params));
     }
 
     @Test
-    public void testCouchbaseEndpointCreateConsumer() throws Exception {
+    public void testCouchbaseEndpointCreateConsumer() {
         Processor p = exchange -> {
             // Nothing to do
         };
         Map<String, Object> params = new HashMap<>();
         params.put("bucket", "bucket");
 
+        CouchbaseComponent component = new CouchbaseComponent();
+
         assertThrows(IllegalArgumentException.class,
-                () -> new CouchbaseComponent()
-                        .createEndpoint("couchbase:localhost:80/bucket", "couchbase:localhost:80/bucket", params)
-                        .createConsumer(p));
+                () -> component.createEndpoint("couchbase:localhost:80/bucket", "couchbase:localhost:80/bucket", params));
     }
 
     @Test

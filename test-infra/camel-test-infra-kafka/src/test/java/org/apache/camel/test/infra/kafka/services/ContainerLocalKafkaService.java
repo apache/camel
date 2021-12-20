@@ -22,6 +22,7 @@ import org.apache.camel.test.infra.kafka.common.KafkaProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.KafkaContainer;
+import org.testcontainers.utility.DockerImageName;
 
 public class ContainerLocalKafkaService implements KafkaService, ContainerService<KafkaContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(ContainerLocalKafkaService.class);
@@ -64,5 +65,16 @@ public class ContainerLocalKafkaService implements KafkaService, ContainerServic
     @Override
     public KafkaContainer getContainer() {
         return kafka;
+    }
+
+    public static ContainerLocalKafkaService kafka2Container() {
+        return new ContainerLocalKafkaService();
+    }
+
+    public static ContainerLocalKafkaService kafka3Container() {
+        KafkaContainer container = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.0.0"));
+        container = container.withEmbeddedZookeeper();
+
+        return new ContainerLocalKafkaService(container);
     }
 }

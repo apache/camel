@@ -16,10 +16,15 @@
  */
 package org.apache.camel.component.salesforce.internal.client;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
+import java.util.List;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
 import org.apache.camel.component.salesforce.api.SalesforceException;
+import org.apache.camel.component.salesforce.api.dto.RestError;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.eclipse.jetty.client.HttpContentResponse;
 import org.eclipse.jetty.client.HttpConversation;
@@ -45,12 +50,14 @@ public class SalesforceSecurityHandler implements ProtocolHandler {
     private static final Logger LOG = LoggerFactory.getLogger(SalesforceSecurityHandler.class);
 
     private static final String AUTHENTICATION_RETRIES_ATTRIBUTE = SalesforceSecurityHandler.class.getName().concat(".retries");
+    private static final String EXPIRED_PASSWORD_CODE = "INVALID_OPERATION_WITH_EXPIRED_PASSWORD";
 
     private final SalesforceHttpClient httpClient;
     private final SalesforceSession session;
     private final int maxAuthenticationRetries;
     private final int maxContentLength;
     private final ResponseNotifier notifier;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public SalesforceSecurityHandler(SalesforceHttpClient httpClient) {
 
@@ -159,6 +166,22 @@ public class SalesforceSecurityHandler implements ProtocolHandler {
             // request failed authentication?
             if (status == HttpStatus.UNAUTHORIZED_401) {
 
+                // Salesforce will allow successful login with an expired password, but any subsequent
+                // API calls will fail with a 401 and message about expired password.
+                // It's fatal. User must reset password.
+                List<RestError> errors = Collections.emptyList();
+                try {
+                    errors = client.readErrorsFrom(getContentAsInputStream(), objectMapper);
+                } catch (IOException e) {
+                    LOG.warn("Unable to deserialize errors from response body.");
+                }
+                if (errors.stream().anyMatch(error -> EXPIRED_PASSWORD_CODE.equals(error.getErrorCode()))) {
+                    SalesforceException salesforceException = createSalesforceException(client, status,
+                            reason);
+                    forwardFailureComplete(request, null, response, salesforceException);
+                    return;
+                }
+
                 // REST token expiry
                 LOG.warn("Retrying on Salesforce authentication error [{}]: [{}]", status, reason);
 
@@ -186,6 +209,16 @@ public class SalesforceSecurityHandler implements ProtocolHandler {
                     forwardSuccessComplete(request, response);
                 }
             }
+        }
+
+        private SalesforceException createSalesforceException(AbstractClientBase client, int statusCode, String reason) {
+            List<RestError> restErrors = Collections.emptyList();
+            try {
+                restErrors = client.readErrorsFrom(getContentAsInputStream(), new ObjectMapper());
+            } catch (IOException e) {
+                LOG.warn("Unable to deserialize errors from response body.");
+            }
+            return new SalesforceException(restErrors, statusCode);
         }
 
         protected void retryOnFailure(
@@ -286,6 +319,7 @@ public class SalesforceSecurityHandler implements ProtocolHandler {
             notifier.forwardFailureComplete(conversation.getResponseListeners(), request, requestFailure, response,
                     responseFailure);
         }
+
     }
 
     // no @Override annotation here to keep it compatible with Jetty 9.2,

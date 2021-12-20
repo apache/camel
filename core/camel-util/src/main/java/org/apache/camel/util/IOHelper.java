@@ -473,6 +473,30 @@ public final class IOHelper {
     }
 
     /**
+     * Writes the text to the file.
+     */
+    public static void writeText(String text, File file) throws IOException {
+        if (!file.exists()) {
+            String path = FileUtil.onlyPath(file.getPath());
+            if (path != null) {
+                new File(path).mkdirs();
+            }
+        }
+        writeText(text, new FileOutputStream(file, false));
+    }
+
+    /**
+     * Writes the text to the stream.
+     */
+    public static void writeText(String text, OutputStream os) throws IOException {
+        try {
+            os.write(text.getBytes());
+        } finally {
+            close(os);
+        }
+    }
+
+    /**
      * Get the charset name from the content type string
      *
      * @param  contentType the content type

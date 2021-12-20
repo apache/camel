@@ -5,7 +5,6 @@
 :description: Implementation of the Platform HTTP Engine based on Vert.x Web
 :since: 3.2
 :supportlevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/platform-http-vertx.adoc[opts=optional]
 
 *Since Camel {since}*
 
@@ -20,6 +19,21 @@ configure an existing instance using the getter/setter on the `VertxPlatformHttp
 
 To use this implementation all you need to do is to add the `camel-platform-http-vertx` dependency to the classpath,
 and the platform http component should auto-detect this.
+
+== Message Headers
+
+[width="100%",cols="10%,20%,70%",options="header",]
+|=======================================================================
+|Name |Type |Description
+
+|`CamelVertxPlatformHttpAuthenticatedUser` |`io.vertx.ext.auth.User` |If an authenticated user is present on the Vert.x Web `RoutingContext`, this header is populated with a `User` object continaing the `Principal`.
+|=======================================================================
+
+Camel also populates *all* request.parameter and Camel also populates *all* request.parameter and request.headers. For
+example, given a client request with the URL,
+`\http://myserver/myserver?orderid=123`, the exchange will contain a
+header named `orderid` with the value 123.
+request.headers. For example, given a client request with the URL, `\http://myserver/myserver?orderid=123`, the exchange will contain a header named `orderid` with the value 123.
 
 == VertxPlatformHttpServer
 

@@ -135,13 +135,13 @@ public class GitProducerTest extends GitTestSupport {
     }
 
     @Test
-    public void doubleCloneOperationTest() throws Exception {
-        assertThrows(CamelExecutionException.class, () -> {
-            template.sendBody("direct:clone", "");
-            template.sendBody("direct:clone", "");
-            File gitDir = new File(gitLocalRepo, ".git");
-            assertEquals(true, gitDir.exists());
-        });
+    public void doubleCloneOperationTest() {
+        template.sendBody("direct:clone", "");
+
+        assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:clone", ""));
+
+        File gitDir = new File(gitLocalRepo, ".git");
+        assertEquals(true, gitDir.exists());
     }
 
     @Test

@@ -353,6 +353,16 @@ public interface CamelEvent {
         default Type getType() {
             return Type.RouteReloaded;
         }
+
+        /**
+         * The route index in this batch (starts from 1)
+         */
+        int getIndex();
+
+        /**
+         * Total number of routes being reloaded in this batch
+         */
+        int getTotal();
     }
 
     interface RouteStartingEvent extends RouteEvent {

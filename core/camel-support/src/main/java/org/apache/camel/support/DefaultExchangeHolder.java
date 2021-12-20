@@ -25,7 +25,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.util.ObjectHelper;
@@ -231,25 +230,12 @@ public class DefaultExchangeHolder implements Serializable {
     }
 
     private Map<String, Object> safeSetProperties(Exchange exchange, boolean allowSerializedHeaders) {
-        if (exchange.hasProperties()) {
-            Map<String, Object> map = checkValidExchangePropertyObjects("properties", exchange, exchange.getProperties(),
-                    allowSerializedHeaders);
-            if (map != null && !map.isEmpty()) {
-                properties = new LinkedHashMap<>(map);
-            }
-        }
         // also include the internal properties
-        Map<String, Object> map = checkValidExchangePropertyObjects("properties", exchange,
-                exchange.adapt(ExtendedExchange.class).getInternalProperties(),
+        Map<String, Object> map = checkValidExchangePropertyObjects("properties", exchange, exchange.getAllProperties(),
                 allowSerializedHeaders);
         if (map != null && !map.isEmpty()) {
-            if (properties == null) {
-                properties = new LinkedHashMap<>(map);
-            } else {
-                properties.putAll(map);
-            }
+            properties = new LinkedHashMap<>(map);
         }
-
         return null;
     }
 

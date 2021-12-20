@@ -16,13 +16,14 @@
  */
 package org.apache.camel.component.microprofile.faulttolerance;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class FaultToleranceRouteFallbackViaNetworkTest extends CamelTestSupport {
 
@@ -33,14 +34,12 @@ public class FaultToleranceRouteFallbackViaNetworkTest extends CamelTestSupport 
 
     @Test
     public void testFaultTolerance() throws Exception {
-        try {
-            context.addRoutes(createRouteBuilder());
-            context.start();
-            fail("Should throw exception");
-        } catch (Exception e) {
-            assertIsInstanceOf(UnsupportedOperationException.class, e.getCause());
-            assertEquals("camel-microprofile-fault-tolerance does not support onFallbackViaNetwork", e.getCause().getMessage());
-        }
+        context.addRoutes(createRouteBuilder());
+
+        RuntimeCamelException exception = assertThrows(RuntimeCamelException.class, () -> context.start());
+        assertIsInstanceOf(UnsupportedOperationException.class, exception.getCause());
+        assertEquals("camel-microprofile-fault-tolerance does not support onFallbackViaNetwork",
+                exception.getCause().getMessage());
     }
 
     @Override

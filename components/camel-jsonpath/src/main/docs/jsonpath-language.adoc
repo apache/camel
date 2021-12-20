@@ -5,7 +5,6 @@
 :description: Evaluates a JSONPath expression against a JSON message body.
 :since: 2.13
 :supportlevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/jsonpath.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: jsonpath
 
@@ -300,7 +299,7 @@ The same example in XML DSL would be:
   <from uri="direct:start"/>
   <setHeader name="numberOfBooks">
     <jsonpath headerName="books" resultType="int">$..store.book.length()</jsonpath>
-  </transform>
+  </setHeader>
   <to uri="mock:result"/>
 </route>
 ----

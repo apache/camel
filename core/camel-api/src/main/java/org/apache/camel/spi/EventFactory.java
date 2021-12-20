@@ -199,9 +199,11 @@ public interface EventFactory {
      * Creates an {@link CamelEvent} for {@link Route} has been reloaded successfully.
      *
      * @param  route the route
+     * @param  index the route index in this batch
+     * @param  total total number of routes being reloaded in this batch
      * @return       the reloaded event
      */
-    CamelEvent createRouteReloaded(Route route);
+    CamelEvent createRouteReloaded(Route route, int index, int total);
 
     /**
      * Creates an {@link CamelEvent} when an {@link org.apache.camel.Exchange} has been created

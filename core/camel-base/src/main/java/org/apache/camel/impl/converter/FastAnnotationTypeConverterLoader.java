@@ -19,6 +19,7 @@ package org.apache.camel.impl.converter;
 import org.apache.camel.Converter;
 import org.apache.camel.spi.PackageScanClassResolver;
 
+@Deprecated
 public final class FastAnnotationTypeConverterLoader extends AnnotationTypeConverterLoader {
 
     public FastAnnotationTypeConverterLoader(PackageScanClassResolver resolver) {

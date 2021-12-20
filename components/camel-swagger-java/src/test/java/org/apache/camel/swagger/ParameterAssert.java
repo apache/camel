@@ -57,7 +57,8 @@ public final class ParameterAssert extends ObjectAssert<Parameter> {
 
     public ParameterAssert hasName(final String name) {
         final String actualName = actual.getName();
-        Assertions.assertThat(actualName).as("Parameter name should equal %s, but it's %s", name, actualName);
+        Assertions.assertThat(actualName).as("Parameter name should equal %s, but it's %s", name, actualName)
+                .isEqualTo(name);
 
         return this;
     }

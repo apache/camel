@@ -30,8 +30,11 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "removeProperty")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemovePropertyDefinition extends NoOutputDefinition<RemovePropertyDefinition> {
-    @XmlAttribute(required = true)
+    @XmlAttribute
+    @Deprecated
     private String propertyName;
+    @XmlAttribute
+    private String name;
 
     public RemovePropertyDefinition() {
     }
@@ -56,13 +59,28 @@ public class RemovePropertyDefinition extends NoOutputDefinition<RemovePropertyD
     }
 
     /**
-     * Name of property to remove
+     * Name of property to remove.
+     *
+     * @deprecated use name instead
      */
+    @Deprecated
     public void setPropertyName(String propertyName) {
         this.propertyName = propertyName;
     }
 
+    @Deprecated
     public String getPropertyName() {
         return propertyName;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Name of property to remove.
+     */
+    public void setName(String name) {
+        this.name = name;
     }
 }

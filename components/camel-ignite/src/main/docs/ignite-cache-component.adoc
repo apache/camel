@@ -6,7 +6,6 @@
 :since: 2.17
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/ignite-cache.adoc[opts=optional]
 //Manually maintained attributes
 :group: Ignite
 :camel-spring-boot-name: ignite

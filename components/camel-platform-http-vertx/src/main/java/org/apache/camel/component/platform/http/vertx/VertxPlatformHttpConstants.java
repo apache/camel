@@ -14,34 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor.intercept;
+package org.apache.camel.component.platform.http.vertx;
 
-import org.apache.camel.builder.RouteBuilder;
+public final class VertxPlatformHttpConstants {
 
-public class IntercepFromWithPredicateTest extends InterceptFromRouteTestSupport {
+    public static final String AUTHENTICATED_USER = "CamelVertxPlatformHttpAuthenticatedUser";
 
-    @Override
-    protected RouteBuilder createRouteBuilder() {
-        return new RouteBuilder() {
-            public void configure() {
-                // intercept with a predicate test
-                interceptFrom().when(header("foo").isEqualTo("bar")).to("mock:b").stop();
-
-                from("direct:start").to("mock:a");
-            }
-        };
+    private VertxPlatformHttpConstants() {
     }
-
-    @Override
-    protected void prepareMatchingTest() {
-        a.expectedMessageCount(0);
-        b.expectedMessageCount(1);
-    }
-
-    @Override
-    protected void prepareNonMatchingTest() {
-        a.expectedMessageCount(1);
-        b.expectedMessageCount(0);
-    }
-
 }

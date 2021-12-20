@@ -14,30 +14,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.converter.crypto;
+package org.apache.camel.processor.intercept;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
 
-public class PGPKeyAccessDataFormatTest extends CamelTestSupport {
+public class InterceptFromWithPredicateTest extends InterceptFromRouteTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
+                // intercept with a predicate test
+                interceptFrom().when(header("foo").isEqualTo("bar")).to("mock:b").stop();
 
-                PGPPublicKeyAccessor publicKeyAccessor = new DefaultPGPPublicKeyAccessor(PGPDataFormatTest.getPublicKeyRing());
-                PGPSecretKeyAccessor secretKeyAccessor
-                        = new DefaultPGPSecretKeyAccessor(PGPDataFormatTest.getSecKeyRing(), "sdude", "BC");
-                try (PGPKeyAccessDataFormat dt = new PGPKeyAccessDataFormat()) {
-                    dt.setPublicKeyAccessor(publicKeyAccessor);
-                    dt.setSecretKeyAccessor(secretKeyAccessor);
-                    dt.setKeyUserid("sdude");
-                    dt.setSignatureKeyUserid("sdude");
-                }
+                from("direct:start").to("mock:a");
             }
         };
+    }
+
+    @Override
+    protected void prepareMatchingTest() {
+        a.expectedMessageCount(0);
+        b.expectedMessageCount(1);
+    }
+
+    @Override
+    protected void prepareNonMatchingTest() {
+        a.expectedMessageCount(1);
+        b.expectedMessageCount(0);
     }
 
 }

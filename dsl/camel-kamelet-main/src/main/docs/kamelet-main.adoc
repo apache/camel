@@ -6,7 +6,6 @@
 :description: Main to run Kamelet standalone
 :since: 3.11
 :supportlevel: Preview
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/kamelet-main.adoc[opts=optional]
 //Manually maintained attributes
 :group: DSL
 
@@ -21,7 +20,7 @@ The `KameletMain` is pre-configured with the following properties:
 
 [source,properties]
 ----
-camel.component.kamelet.location = classpath:/kamelets,github:apache:camel-kamelets
+camel.component.kamelet.location = classpath:/kamelets,github:apache:camel-kamelets/kamelets
 camel.main.routes-include-pattern = classpath:camel/*
 camel.main.routes-reload-enabled = true
 camel.main.routes-reload-directory = src/main/resources

@@ -33,6 +33,7 @@ public final class KafkaServiceFactory {
                 .addLocalMapping(ContainerLocalKafkaService::new)
                 .addMapping("local-strimzi-container", StrimziService::new)
                 .addRemoteMapping(RemoteKafkaService::new)
+                .addMapping("local-kafka3-container", ContainerLocalKafkaService::kafka3Container)
                 .build();
     }
 }

@@ -30,12 +30,14 @@ public class ScheduledPollConsumerHealthCheck implements HealthCheck {
 
     private final ScheduledPollConsumer consumer;
     private final String id;
-    private final String sanitizedUri; // used for error message which should mask sensitive details
+    private final String sanitizedBaseUri;
+    private final String sanitizedUri;
 
     public ScheduledPollConsumerHealthCheck(ScheduledPollConsumer consumer, String id) {
         this.consumer = consumer;
         this.id = id;
-        this.sanitizedUri = URISupport.sanitizeUri(consumer.getEndpoint().getEndpointBaseUri());
+        this.sanitizedBaseUri = URISupport.sanitizeUri(consumer.getEndpoint().getEndpointBaseUri());
+        this.sanitizedUri = URISupport.sanitizeUri(consumer.getEndpoint().getEndpointUri());
     }
 
     @Override
@@ -46,14 +48,17 @@ public class ScheduledPollConsumerHealthCheck implements HealthCheck {
     @Override
     public Result call(Map<String, Object> options) {
         final HealthCheckResultBuilder builder = HealthCheckResultBuilder.on(this);
-        builder.detail(FAILURE_ENDPOINT_URI, consumer.getEndpoint().getEndpointUri());
+
+        // ensure to sanitize uri, so we do not show sensitive information such as passwords
+        builder.detail(ENDPOINT_URI, sanitizedUri);
+        builder.detail(FAILURE_ENDPOINT_URI, sanitizedUri);
 
         long ec = consumer.getErrorCounter();
-        long cnt = consumer.getCounter();
+        boolean first = consumer.isFirstPoolDone();
         Throwable cause = consumer.getLastError();
 
-        // can only be healthy if we have at least one poll and there are no errors
-        boolean healthy = cnt > 0 && ec == 0;
+        // can only be healthy if we have at least one poll done and there are no errors
+        boolean healthy = first && ec == 0;
         if (healthy) {
             builder.up();
         } else {
@@ -62,12 +67,17 @@ public class ScheduledPollConsumerHealthCheck implements HealthCheck {
             String rid = consumer.getRouteId();
             if (ec > 0) {
                 String msg = "Consumer failed polling %s times route: %s (%s)";
-                builder.message(String.format(msg, ec, rid, sanitizedUri));
+                builder.message(String.format(msg, ec, rid, sanitizedBaseUri));
             } else {
                 String msg = "Consumer has not yet polled route: %s (%s)";
-                builder.message(String.format(msg, rid, sanitizedUri));
+                builder.message(String.format(msg, rid, sanitizedBaseUri));
             }
             builder.error(cause);
+
+            // include any additional details
+            if (consumer.getLastErrorDetails() != null) {
+                builder.details(consumer.getLastErrorDetails());
+            }
         }
 
         return builder.build();

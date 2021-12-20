@@ -462,7 +462,7 @@ public final class EventHelper {
         return answer;
     }
 
-    public static boolean notifyRouteReloaded(CamelContext context, Route route) {
+    public static boolean notifyRouteReloaded(CamelContext context, Route route, int index, int total) {
         ManagementStrategy management = context.getManagementStrategy();
         if (management == null) {
             return false;
@@ -490,7 +490,7 @@ public final class EventHelper {
 
             if (event == null) {
                 // only create event once
-                event = factory.createRouteReloaded(route);
+                event = factory.createRouteReloaded(route, index, total);
                 if (event == null) {
                     // factory could not create event so exit
                     return false;

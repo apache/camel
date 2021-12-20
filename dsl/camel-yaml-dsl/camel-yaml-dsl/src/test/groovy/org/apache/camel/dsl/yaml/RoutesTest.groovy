@@ -101,8 +101,8 @@ class RoutesTest extends YamlTestSupport {
                 - route:
                     from:
                       uri: "direct:info"
-                    steps:
-                      - log: "message"
+                      steps:
+                        - log: "message"
             '''
         then:
             context.routeDefinitions.size() == 1
@@ -124,8 +124,8 @@ class RoutesTest extends YamlTestSupport {
                       uri: "direct:info"
                       parameters:
                         timeout: 1234
-                    steps:
-                      - log: "message"
+                      steps:
+                        - log: "message"
             '''
         then:
             context.routeDefinitions.size() == 1
@@ -137,5 +137,28 @@ class RoutesTest extends YamlTestSupport {
                     message == 'message'
                 }
             }
+    }
+
+    def "load route inlined"() {
+        when:
+        loadRoutes '''
+                - route:
+                    id: demo-route
+                    from:
+                      uri: "direct:info"
+                      steps:
+                        - log: "message"
+            '''
+        then:
+        context.routeDefinitions.size() == 1
+
+        with(context.routeDefinitions[0], RouteDefinition) {
+            routeId == 'demo-route'
+            input.endpointUri == 'direct:info'
+
+            with (outputs[0], LogDefinition) {
+                message == 'message'
+            }
+        }
     }
 }

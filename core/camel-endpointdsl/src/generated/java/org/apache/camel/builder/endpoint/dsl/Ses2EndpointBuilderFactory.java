@@ -16,7 +16,6 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.util.List;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -238,28 +237,10 @@ public interface Ses2EndpointBuilderFactory {
             return this;
         }
         /**
-         * List of reply-to email address(es) for the message, override it using
-         * 'CamelAwsSesReplyToAddresses' header.
+         * List of comma separated reply-to email address(es) for the message,
+         * override it using 'CamelAwsSesReplyToAddresses' header.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param replyToAddresses the value to set
-         * @return the dsl builder
-         */
-        default Ses2EndpointBuilder replyToAddresses(
-                List<String> replyToAddresses) {
-            doSetProperty("replyToAddresses", replyToAddresses);
-            return this;
-        }
-        /**
-         * List of reply-to email address(es) for the message, override it using
-         * 'CamelAwsSesReplyToAddresses' header.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
          * 
@@ -301,27 +282,10 @@ public interface Ses2EndpointBuilderFactory {
             return this;
         }
         /**
-         * List of destination email address. Can be overriden with
-         * 'CamelAwsSesTo' header.
+         * List of comma separated destination email address. Can be overriden
+         * with 'CamelAwsSesTo' header.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param to the value to set
-         * @return the dsl builder
-         */
-        default Ses2EndpointBuilder to(List<String> to) {
-            doSetProperty("to", to);
-            return this;
-        }
-        /**
-         * List of destination email address. Can be overriden with
-         * 'CamelAwsSesTo' header.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
          * 

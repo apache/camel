@@ -19,10 +19,11 @@ package org.apache.camel.http.base;
 import java.util.Map;
 
 import org.apache.camel.CamelException;
+import org.apache.camel.spi.HttpResponseAware;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 
-public class HttpOperationFailedException extends CamelException {
+public class HttpOperationFailedException extends CamelException implements HttpResponseAware {
     private static final long serialVersionUID = -8721487434390572634L;
     private final String uri;
     private final String redirectLocation;
@@ -76,4 +77,23 @@ public class HttpOperationFailedException extends CamelException {
         return responseBody;
     }
 
+    @Override
+    public int getHttpResponseCode() {
+        return statusCode;
+    }
+
+    @Override
+    public void setHttpResponseCode(int code) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String getHttpResponseStatus() {
+        return statusText;
+    }
+
+    @Override
+    public void setHttpResponseStatus(String status) {
+        throw new UnsupportedOperationException();
+    }
 }

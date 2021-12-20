@@ -17,6 +17,7 @@
 package org.apache.camel.xml.in;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -32,6 +33,7 @@ import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.SetBodyDefinition;
 import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.model.rest.RestsDefinition;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -114,6 +116,19 @@ public class ModelParserTest {
         final Map<String, String> namespaces = xPath.getNamespaces();
         assertNotNull(namespaces);
         assertEquals("http://camel.apache.org/foo", namespaces.get("foo"));
+    }
+
+    @Test
+    public void testLineNumber() throws Exception {
+        Path dir = getResourceFolder();
+        File file = new File(dir.toFile(), "setHeader.xml");
+        ModelParser parser = new ModelParser(new FileInputStream(file), NAMESPACE);
+        RoutesDefinition routes = parser.parseRoutesDefinition().orElse(null);
+        assertNotNull(routes);
+        RouteDefinition route = routes.getRoutes().get(0);
+        Assertions.assertEquals(22, route.getInput().getLineNumber());
+        Assertions.assertEquals(23, route.getOutputs().get(0).getLineNumber());
+        Assertions.assertEquals(26, route.getOutputs().get(1).getLineNumber());
     }
 
     private Path getResourceFolder() {

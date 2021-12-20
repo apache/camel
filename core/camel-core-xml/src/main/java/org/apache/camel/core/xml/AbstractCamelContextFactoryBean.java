@@ -73,6 +73,7 @@ import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.model.RestContextRefDefinition;
 import org.apache.camel.model.RouteBuilderDefinition;
 import org.apache.camel.model.RouteConfigurationContainer;
+import org.apache.camel.model.RouteConfigurationContextRefDefinition;
 import org.apache.camel.model.RouteConfigurationDefinition;
 import org.apache.camel.model.RouteContainer;
 import org.apache.camel.model.RouteContextRefDefinition;
@@ -208,6 +209,11 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         if (getLoadTypeConverters() != null) {
             String s = getContext().resolvePropertyPlaceholders(getLoadTypeConverters());
             getContext().setLoadTypeConverters(Boolean.parseBoolean(s));
+        }
+        // setup whether to load health checks as early as possible
+        if (getLoadHealthChecks() != null) {
+            String s = getContext().resolvePropertyPlaceholders(getLoadHealthChecks());
+            getContext().setLoadHealthChecks(Boolean.parseBoolean(s));
         }
 
         // then set custom properties
@@ -449,6 +455,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             getContext().adapt(ExtendedCamelContext.class).setupRoutes(false);
 
             // add route configurations
+            initRouteConfigurationRefs();
             getContext().addRouteConfigurations(getRouteConfigurations());
 
             // init route templates
@@ -863,6 +870,19 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         }
     }
 
+    protected void initRouteConfigurationRefs() throws Exception {
+        // add route configuration refs to existing route configurations
+        if (getRouteConfigurationRefs() != null) {
+            for (RouteConfigurationContextRefDefinition ref : getRouteConfigurationRefs()) {
+                List<RouteConfigurationDefinition> defs = ref.lookupRouteConfigurations(getContext());
+                for (RouteConfigurationDefinition def : defs) {
+                    LOG.debug("Adding route configuration from {} -> {}", ref, def);
+                    getRouteConfigurations().add(def);
+                }
+            }
+        }
+    }
+
     protected void initRouteTemplateRefs() throws Exception {
         // add route template refs to existing route templates
         if (getRouteTemplateRefs() != null) {
@@ -992,6 +1012,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
     public abstract String getLoadTypeConverters();
 
+    public abstract String getLoadHealthChecks();
+
     public abstract String getInflightRepositoryBrowseEnabled();
 
     public abstract String getTypeConverterStatisticsEnabled();
@@ -1005,6 +1027,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
     public abstract CamelStreamCachingStrategyDefinition getCamelStreamCachingStrategy();
 
     public abstract CamelRouteControllerDefinition getCamelRouteController();
+
+    public abstract List<RouteConfigurationContextRefDefinition> getRouteConfigurationRefs();
 
     public abstract List<RouteBuilderDefinition> getBuilderRefs();
 

@@ -25,7 +25,7 @@ import org.apache.camel.dsl.jbang.core.common.exceptions.ResourceAlreadyExists;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
-@Command(name = "binding", description = "Provide init templates for kamelet bindings")
+@Command(name = "binding", description = "Create a new Kamelet Binding")
 class InitBinding extends AbstractInitKamelet implements Callable<Integer> {
     //CHECKSTYLE:OFF
     @Option(names = { "-h", "--help" }, usageHelp = true, description = "Display the help and sub-commands")

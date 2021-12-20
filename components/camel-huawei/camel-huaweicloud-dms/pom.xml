@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-huawei-parent</artifactId>
-    <version>3.14.0-SNAPSHOT</version>
+    <version>3.15.0-SNAPSHOT</version>
   </parent>
 
   <properties>
@@ -33,7 +33,7 @@
 
   <artifactId>camel-huaweicloud-dms</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: Huawei Cloud :: DMS Component</name>
+  <name>Camel :: Huawei Cloud :: DMS</name>
   <description>To integrate with a fully managed, high-performance message queuing service on Huawei Cloud</description>
 
   <dependencies>

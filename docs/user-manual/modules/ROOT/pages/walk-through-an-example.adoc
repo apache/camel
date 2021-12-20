@@ -72,7 +72,7 @@ http://activemq.apache.org/configuring-transports.html[brokerURL] used
 to connect to ActiveMQ
 
 In normal use, an external system would be firing messages or events
-directly into Camel through one if its xref:components::index.adoc[Components]
+directly into Camel through one of its xref:components::index.adoc[Components]
 but we are going to use tha xref:producertemplate.adoc[ProducerTemplate]
 which is a really easy way for testing your
 configuration:

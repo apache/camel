@@ -18,13 +18,12 @@ package org.apache.camel.dsl.jbang.core.common;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
-import org.apache.logging.log4j.core.config.DefaultConfiguration;
 import org.slf4j.LoggerFactory;
 
 public final class RuntimeUtil {
 
     static {
-        Configurator.initialize(new DefaultConfiguration());
+        Configurator.initialize("CamelJBang", "log4j2.properties");
     }
 
     private RuntimeUtil() {

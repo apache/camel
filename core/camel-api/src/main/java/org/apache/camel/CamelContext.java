@@ -600,7 +600,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      *
      * @param  routeId   the route id
      * @return           <tt>true</tt> if the route was removed, <tt>false</tt> if the route could not be removed
-     *                   because its not stopped
+     *                   because it's not stopped
      * @throws Exception is thrown if the route could not be shutdown for whatever reason
      */
     boolean removeRoute(String routeId) throws Exception;
@@ -633,6 +633,14 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      */
     String addRouteFromTemplate(String routeId, String routeTemplateId, RouteTemplateContext routeTemplateContext)
             throws Exception;
+
+    /**
+     * Removes the route templates matching the pattern
+     *
+     * @param  pattern   pattern, such as * for all, or foo* to remove all foo templates
+     * @throws Exception is thrown if error during removing route templates
+     */
+    void removeRouteTemplates(String pattern) throws Exception;
 
     /**
      * Adds the given route policy factory
@@ -1162,6 +1170,16 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @param loadTypeConverters whether to load custom type converters using classpath scanning.
      */
     void setLoadTypeConverters(Boolean loadTypeConverters);
+
+    /**
+     * Whether to load custom health checks by scanning classpath.
+     */
+    Boolean isLoadHealthChecks();
+
+    /**
+     * Whether to load custom health checks by scanning classpath.
+     */
+    void setLoadHealthChecks(Boolean loadHealthChecks);
 
     /**
      * Whether or not type converter statistics is enabled.

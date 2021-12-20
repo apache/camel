@@ -6,7 +6,6 @@
 :since: 2.19
 :supportlevel: Stable
 :component-header: Only producer is supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/openstack-swift.adoc[opts=optional]
 //Manually maintained attributes
 :group: OpenStack
 :camel-spring-boot-name: openstack

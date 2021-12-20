@@ -600,10 +600,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Azure Event Hubs (camel-azure-eventhubs)
-     * The azure-eventhubs component that integrates Azure Event Hubs using AMQP
-     * protocol. Azure EventHubs is a highly scalable publish-subscribe service
-     * that can ingest millions of events per second and stream them to multiple
-     * consumers.
+     * Send and receive events to/from Azure Event Hubs using AMQP protocol.
      * 
      * Category: cloud,messaging
      * Since: 3.5
@@ -616,12 +613,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Azure ServiceBus (camel-azure-servicebus)
-     * The azure-servicebus component that integrates Azure ServiceBus. Azure
-     * ServiceBus is a fully managed enterprise integration message broker.
-     * Service Bus can decouple applications and services. Service Bus offers a
-     * reliable and secure platform for asynchronous transfer of data and state.
-     * Data is transferred between different applications and services using
-     * messages.
+     * Send and receive messages to/from Azure Event Bus.
      * 
      * Category: cloud,messaging
      * Since: 3.12
@@ -634,7 +626,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Azure Storage Blob Service (camel-azure-storage-blob)
-     * Store and retrieve blobs from Azure Storage Blob Service using SDK v12.
+     * Store and retrieve blobs from Azure Storage Blob Service.
      * 
      * Category: cloud,file
      * Since: 3.3
@@ -646,10 +638,10 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AzureStorageBlobComponentBuilderFactory.azureStorageBlob();
     }
     /**
-     * Azure storage datalake service (camel-azure-storage-datalake)
-     * Camel Azure Datalake Gen2 Component
+     * Azure Storage Datalake Service (camel-azure-storage-datalake)
+     * Sends and receives files to/from Azure DataLake Storage.
      * 
-     * Category: cloud,file
+     * Category: cloud,file,bigdata
      * Since: 3.8
      * Maven coordinates: org.apache.camel:camel-azure-storage-datalake
      * 
@@ -660,8 +652,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Azure Storage Queue Service (camel-azure-storage-queue)
-     * The azure-storage-queue component is used for storing and retrieving the
-     * messages to/from Azure Storage Queue using Azure SDK v12.
+     * Stores and retrieves messages to/from Azure Storage Queue.
      * 
      * Category: cloud,messaging
      * Since: 3.3
@@ -2544,7 +2535,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * JsonPatch (camel-json-patch)
-     * JsonPatch component which transform JSON using JSON patch (RFC 6902).
+     * Transforms JSON using JSON patch (RFC 6902).
      * 
      * Category: transformation
      * Since: 3.12
@@ -4484,6 +4475,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.VertxKafkaComponentBuilderFactory.VertxKafkaComponentBuilder vertxKafka() {
         return org.apache.camel.builder.component.dsl.VertxKafkaComponentBuilderFactory.vertxKafka();
     }

@@ -19,27 +19,45 @@ package org.apache.camel.dsl.yaml.deserializers;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerResolver;
 import org.apache.camel.dsl.yaml.common.YamlSupport;
 import org.apache.camel.model.FromDefinition;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.annotations.YamlProperty;
 import org.apache.camel.spi.annotations.YamlType;
 import org.snakeyaml.engine.v2.api.ConstructNode;
 import org.snakeyaml.engine.v2.nodes.Node;
 
 @YamlType(
-          inline = true,
+          inline = false,
           types = FromDefinition.class,
           order = YamlDeserializerResolver.ORDER_DEFAULT,
           properties = {
                   @YamlProperty(name = "uri", type = "string", required = true),
-                  @YamlProperty(name = "parameters", type = "object")
+                  @YamlProperty(name = "parameters", type = "object"),
+                  @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition", required = true)
           })
 public class FromDefinitionDeserializer implements ConstructNode {
+
     @Override
     public Object construct(Node node) {
-        String uri = YamlSupport.creteEndpointUri(node, EndpointConsumerDeserializersResolver::resolveEndpointUri);
+
+        // from must be wrapped in a route, so use existing route or create a new route
+        RouteDefinition route = (RouteDefinition) node.getProperty(RouteDefinition.class.getName());
+        if (route == null) {
+            route = new RouteDefinition();
+        }
+
+        String uri = YamlSupport.creteEndpointUri(node, EndpointConsumerDeserializersResolver::resolveEndpointUri, route);
         if (uri == null) {
             throw new IllegalStateException("The endpoint URI must be set");
         }
+        FromDefinition target = new FromDefinition(uri);
+        // set from as input on the route
+        route.setInput(target);
 
-        return new FromDefinition(uri);
+        // enrich model with line number
+        if (node.getStartMark().isPresent()) {
+            int line = node.getStartMark().get().getLine();
+            target.setLineNumber(line);
+        }
+        return target;
     }
 }

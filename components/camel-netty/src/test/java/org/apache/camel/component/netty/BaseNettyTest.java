@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 /**
  *
  */
-public class BaseNettyTest extends CamelTestSupport {
+public abstract class BaseNettyTest extends CamelTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(BaseNettyTest.class);
 

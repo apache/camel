@@ -30,10 +30,6 @@ public class RemoveHeaderReifier extends ProcessorReifier<RemoveHeaderDefinition
 
     @Override
     public Processor createProcessor() throws Exception {
-        String name = definition.getName();
-        if (name == null) {
-            name = definition.getHeaderName();
-        }
-        return new RemoveHeaderProcessor(parseString(name));
+        return new RemoveHeaderProcessor(parseString(definition.getName()));
     }
 }

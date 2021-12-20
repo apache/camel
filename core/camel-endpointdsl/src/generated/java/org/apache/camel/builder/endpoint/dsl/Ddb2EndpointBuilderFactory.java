@@ -98,6 +98,41 @@ public interface Ddb2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Set whether the initial Describe table operation in the DDB Endpoint
+         * must be done, or not.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param enabledInitialDescribeTable the value to set
+         * @return the dsl builder
+         */
+        default Ddb2EndpointBuilder enabledInitialDescribeTable(
+                boolean enabledInitialDescribeTable) {
+            doSetProperty("enabledInitialDescribeTable", enabledInitialDescribeTable);
+            return this;
+        }
+        /**
+         * Set whether the initial Describe table operation in the DDB Endpoint
+         * must be done, or not.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param enabledInitialDescribeTable the value to set
+         * @return the dsl builder
+         */
+        default Ddb2EndpointBuilder enabledInitialDescribeTable(
+                String enabledInitialDescribeTable) {
+            doSetProperty("enabledInitialDescribeTable", enabledInitialDescribeTable);
+            return this;
+        }
+        /**
          * Attribute name when creating table.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.

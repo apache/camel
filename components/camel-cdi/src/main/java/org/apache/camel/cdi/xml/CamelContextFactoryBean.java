@@ -58,6 +58,7 @@ import org.apache.camel.model.PackageScanDefinition;
 import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.model.RestContextRefDefinition;
 import org.apache.camel.model.RouteBuilderDefinition;
+import org.apache.camel.model.RouteConfigurationContextRefDefinition;
 import org.apache.camel.model.RouteConfigurationDefinition;
 import org.apache.camel.model.RouteContextRefDefinition;
 import org.apache.camel.model.RouteDefinition;
@@ -170,6 +171,9 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
     private String typeConverterStatisticsEnabled;
 
     @XmlAttribute
+    private String loadHealthChecks;
+
+    @XmlAttribute
     private String inflightRepositoryBrowseEnabled;
 
     @XmlAttribute
@@ -241,6 +245,9 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
 
     @XmlElement(name = "export", type = CamelServiceExporterDefinition.class)
     private List<CamelServiceExporterDefinition> exports;
+
+    @XmlElement(name = "routeConfigurationContextRef")
+    private List<RouteConfigurationContextRefDefinition> routeConfigurationRefs = new ArrayList<>();
 
     @XmlElement(name = "routeTemplateContextRef")
     private List<RouteTemplateContextRefDefinition> routeTemplateRefs = new ArrayList<>();
@@ -894,6 +901,15 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
     }
 
     @Override
+    public String getLoadHealthChecks() {
+        return loadHealthChecks;
+    }
+
+    public void setLoadHealthChecks(String loadHealthChecks) {
+        this.loadHealthChecks = loadHealthChecks;
+    }
+
+    @Override
     public String getInflightRepositoryBrowseEnabled() {
         return inflightRepositoryBrowseEnabled;
     }
@@ -927,6 +943,15 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
 
     public void setCamelJMXAgent(CamelJMXAgentDefinition agent) {
         camelJMXAgent = agent;
+    }
+
+    @Override
+    public List<RouteConfigurationContextRefDefinition> getRouteConfigurationRefs() {
+        return routeConfigurationRefs;
+    }
+
+    public void setRouteConfigurationRefs(List<RouteConfigurationContextRefDefinition> routeConfigurationRefs) {
+        this.routeConfigurationRefs = routeConfigurationRefs;
     }
 
     @Override

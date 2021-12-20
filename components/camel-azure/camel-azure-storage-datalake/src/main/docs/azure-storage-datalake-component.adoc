@@ -1,12 +1,11 @@
-= Azure storage datalake service Component
-:doctitle: Azure storage datalake service
+= Azure Storage Datalake Service Component
+:doctitle: Azure Storage Datalake Service
 :shortname: azure-storage-datalake
 :artifactid: camel-azure-storage-datalake
-:description: Camel Azure Datalake Gen2 Component
+:description: Sends and receives files to/from Azure DataLake Storage.
 :since: 3.8
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/azure-storage-datalake.adoc[opts=optional]
 //Manually maintained attributes
 :group: Azure
 :camel-spring-boot-name: azure-storage-datalake

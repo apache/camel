@@ -36,4 +36,3 @@ asciidoc:
   attributes:
     index-table-format: width="100%",cols="4,3,3,3,6",options="header"
 #  | Data Format | Artifact | Support Level | Since | Description
-    cq-version: next

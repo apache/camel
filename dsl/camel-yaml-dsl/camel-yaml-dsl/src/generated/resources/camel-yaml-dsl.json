@@ -936,20 +936,22 @@
         }
       },
       "org.apache.camel.model.FromDefinition" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "parameters" : {
-              "type" : "object"
-            },
-            "uri" : {
-              "type" : "string"
+        "type" : "object",
+        "properties" : {
+          "parameters" : {
+            "type" : "object"
+          },
+          "steps" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.ProcessorDefinition"
             }
+          },
+          "uri" : {
+            "type" : "string"
           }
-        } ],
-        "required" : [ "uri" ]
+        },
+        "required" : [ "steps", "uri" ]
       },
       "org.apache.camel.model.GlobalOptionDefinition" : {
         "type" : "object",
@@ -1948,9 +1950,6 @@
         }, {
           "type" : "object",
           "properties" : {
-            "header-name" : {
-              "type" : "string"
-            },
             "inherit-error-handler" : {
               "type" : "boolean"
             },
@@ -1958,7 +1957,8 @@
               "type" : "string"
             }
           }
-        } ]
+        } ],
+        "required" : [ "name" ]
       },
       "org.apache.camel.model.RemoveHeadersDefinition" : {
         "oneOf" : [ {
@@ -2007,12 +2007,14 @@
             "inherit-error-handler" : {
               "type" : "boolean"
             },
+            "name" : {
+              "type" : "string"
+            },
             "property-name" : {
               "type" : "string"
             }
           }
-        } ],
-        "required" : [ "property-name" ]
+        } ]
       },
       "org.apache.camel.model.ResequenceDefinition" : {
         "type" : "object",
@@ -2131,6 +2133,15 @@
         } ],
         "required" : [ "ref" ]
       },
+      "org.apache.camel.model.RouteConfigurationContextRefDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "ref" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "ref" ]
+      },
       "org.apache.camel.model.RouteConfigurationDefinition" : {
         "oneOf" : [ {
           "type" : "string"
@@ -2196,15 +2207,9 @@
           },
           "route-configuration-id" : {
             "type" : "string"
-          },
-          "steps" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.ProcessorDefinition"
-            }
           }
         },
-        "required" : [ "from", "steps" ]
+        "required" : [ "from" ]
       },
       "org.apache.camel.model.RouteTemplateBeanDefinition" : {
         "oneOf" : [ {

@@ -1,12 +1,12 @@
-= Vert.x Kafka Component
+= Vert.x Kafka Component (deprecated)
 :doctitle: Vert.x Kafka
 :shortname: vertx-kafka
 :artifactid: camel-vertx-kafka
 :description: Sent and receive messages to/from an Apache Kafka broker using vert.x Kafka client
 :since: 3.7
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :component-header: Both producer and consumer are supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/vertx-kafka.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: vertx-kafka
 

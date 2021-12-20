@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
+import java.util.StringJoiner;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -28,18 +29,19 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.util.ObjectHelper;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
-@Command(name = "run", description = "Run a Kamelet")
+@Command(name = "run", description = "Run Camel")
 class Run implements Callable<Integer> {
     private CamelContext context;
     private File lockFile;
     private ScheduledExecutorService executor;
 
-    @Parameters(description = "The path to the kamelet binding", arity = "0..1")
-    private String binding;
+    @Parameters(description = "The Camel file(s) to run", arity = "1")
+    private String[] files;
 
     //CHECKSTYLE:OFF
     @Option(names = { "-h", "--help" }, usageHelp = true, description = "Display the help and sub-commands")
@@ -76,6 +78,13 @@ class Run implements Callable<Integer> {
             description = "Whether to create a temporary file lock, which upon deleting triggers this process to terminate")
     private boolean fileLock = true;
 
+    @Option(names = { "--local-kamelet-dir" },
+            description = "Local directory to load Kamelets from (take precedence))")
+    private String localKameletDir;
+
+    @Option(names = { "--port" }, description = "Embeds a local HTTP server on this port")
+    private int port;
+
     @Override
     public Integer call() throws Exception {
         if (stopRequested) {
@@ -105,7 +114,14 @@ class Run implements Callable<Integer> {
         // configure logging first
         RuntimeUtil.configureLog(loggingLevel);
 
-        KameletMain main = new KameletMain();
+        KameletMain main;
+
+        if (localKameletDir == null) {
+            main = new KameletMain();
+        } else {
+            main = new KameletMain("file://" + localKameletDir);
+        }
+
         main.addInitialProperty("camel.main.name", name);
         // shutdown quickly
         main.addInitialProperty("camel.main.shutdownTimeout", "5");
@@ -121,6 +137,9 @@ class Run implements Callable<Integer> {
         }
         if (maxIdleSeconds > 0) {
             main.addInitialProperty("camel.main.durationMaxIdleSeconds", String.valueOf(maxIdleSeconds));
+        }
+        if (port > 0) {
+            main.addInitialProperty("camel.jbang.platform-http.port", String.valueOf(port));
         }
 
         if (fileLock) {
@@ -139,28 +158,60 @@ class Run implements Callable<Integer> {
             }, 1000, 1000, TimeUnit.MILLISECONDS);
         }
 
-        if (!ResourceHelper.hasScheme(binding) && !binding.startsWith("github:")) {
-            binding = "file:" + binding;
+        StringJoiner js = new StringJoiner(",");
+        StringJoiner sjReload = new StringJoiner(",");
+        for (String file : files) {
+            // check for properties files
+            if (file.endsWith(".properties")) {
+                if (!ResourceHelper.hasScheme(file) && !file.startsWith("github:")) {
+                    file = "file:" + file;
+                }
+                if (ObjectHelper.isEmpty(propertiesFiles)) {
+                    propertiesFiles = file;
+                } else {
+                    propertiesFiles = propertiesFiles + "," + file;
+                }
+                if (reload && file.startsWith("file:")) {
+                    // we can only reload if file based
+                    sjReload.add(file.substring(5));
+                }
+                continue;
+            }
+
+            // Camel DSL files
+            if (!ResourceHelper.hasScheme(file) && !file.startsWith("github:")) {
+                file = "file:" + file;
+            }
+            if (file.startsWith("file:")) {
+                // check if file exist
+                File inputFile = new File(file.substring(5));
+                if (!inputFile.exists() && !inputFile.isFile()) {
+                    System.err.println("File does not exist: " + file);
+                    return 1;
+                }
+            }
+
+            // automatic map github https urls to github resolver
+            if (file.startsWith("https://github.com/")) {
+                file = mapGithubUrl(file);
+            }
+
+            js.add(file);
+            if (reload && file.startsWith("file:")) {
+                // we can only reload if file based
+                sjReload.add(file.substring(5));
+            }
         }
-        main.addInitialProperty("camel.main.routesIncludePattern", binding);
+        main.addInitialProperty("camel.main.routesIncludePattern", js.toString());
 
-        if (binding.startsWith("file:")) {
-            // check if file exist
-            File bindingFile = new File(binding.substring(5));
-            if (!bindingFile.exists() && !bindingFile.isFile()) {
-                System.err.println("The binding file does not exist");
-                return 1;
-            }
-
-            // we can only reload if file based
-            if (reload) {
-                main.addInitialProperty("camel.main.routesReloadEnabled", "true");
-                main.addInitialProperty("camel.main.routesReloadDirectory", ".");
-                // skip file: as prefix
-                main.addInitialProperty("camel.main.routesReloadPattern", binding.substring(5));
-                // do not shutdown the JVM but stop routes when max duration is triggered
-                main.addInitialProperty("camel.main.durationMaxAction", "stop");
-            }
+        // we can only reload if file based
+        if (reload && sjReload.length() > 0) {
+            main.addInitialProperty("camel.main.routesReloadEnabled", "true");
+            main.addInitialProperty("camel.main.routesReloadDirectory", ".");
+            // skip file: as prefix
+            main.addInitialProperty("camel.main.routesReloadPattern", sjReload.toString());
+            // do not shutdown the JVM but stop routes when max duration is triggered
+            main.addInitialProperty("camel.main.durationMaxAction", "stop");
         }
 
         if (propertiesFiles != null) {
@@ -197,5 +248,17 @@ class Run implements Callable<Integer> {
         lockFile.deleteOnExit();
 
         return lockFile;
+    }
+
+    private static String mapGithubUrl(String url) {
+        // strip https://github.com/
+        url = url.substring(19);
+        // https://github.com/apache/camel-k/blob/main/examples/languages/routes.kts
+        // https://github.com/apache/camel-k/blob/v1.7.0/examples/languages/routes.kts
+        url = url.replaceFirst("/", ":");
+        url = url.replaceFirst("/", ":");
+        url = url.replaceFirst("blob/", "");
+        url = url.replaceFirst("/", ":");
+        return "github:" + url;
     }
 }

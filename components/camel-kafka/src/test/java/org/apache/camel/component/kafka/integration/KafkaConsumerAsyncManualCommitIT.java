@@ -19,6 +19,7 @@ package org.apache.camel.component.kafka.integration;
 import java.util.Collections;
 import java.util.Properties;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -26,8 +27,8 @@ import org.apache.camel.builder.AggregationStrategies;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kafka.DefaultKafkaManualAsyncCommitFactory;
 import org.apache.camel.component.kafka.KafkaConstants;
-import org.apache.camel.component.kafka.KafkaEndpoint;
 import org.apache.camel.component.kafka.KafkaManualCommit;
+import org.apache.camel.component.kafka.KafkaManualCommitFactory;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.junit.jupiter.api.AfterEach;
@@ -42,7 +43,7 @@ public class KafkaConsumerAsyncManualCommitIT extends BaseEmbeddedKafkaTestSuppo
 
     @EndpointInject("kafka:" + TOPIC
                     + "?groupId=group1&sessionTimeoutMs=30000&autoCommitEnable=false"
-                    + "&allowManualCommit=true&autoOffsetReset=earliest")
+                    + "&allowManualCommit=true&autoOffsetReset=earliest&kafkaManualCommitFactory=#testFactory")
     private Endpoint from;
 
     @EndpointInject("mock:result")
@@ -50,6 +51,9 @@ public class KafkaConsumerAsyncManualCommitIT extends BaseEmbeddedKafkaTestSuppo
 
     @EndpointInject("mock:resultBar")
     private MockEndpoint toBar;
+
+    @BindToRegistry("testFactory")
+    private KafkaManualCommitFactory manualCommitFactory = new DefaultKafkaManualAsyncCommitFactory();
 
     private org.apache.kafka.clients.producer.KafkaProducer<String, String> producer;
 
@@ -70,14 +74,13 @@ public class KafkaConsumerAsyncManualCommitIT extends BaseEmbeddedKafkaTestSuppo
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-        ((KafkaEndpoint) from).getComponent().setKafkaManualCommitFactory(new DefaultKafkaManualAsyncCommitFactory());
         return new RouteBuilder() {
 
             @Override
             public void configure() {
                 from(from).routeId("foo").to("direct:aggregate");
                 // With sync manual commit, this would throw a concurrent modification exception
-                // It can be usesd in aggregator with completion timeout/interval for instance
+                // It can be used in aggregator with completion timeout/interval for instance
                 // WARN: records from one partition must be processed by one unique thread
                 from("direct:aggregate").routeId("aggregate").to(to)
                         .aggregate()

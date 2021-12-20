@@ -815,12 +815,11 @@ public class ModelParser extends BaseParser {
     }
     protected RemoveHeaderDefinition doParseRemoveHeaderDefinition() throws IOException, XmlPullParserException {
         return doParse(new RemoveHeaderDefinition(), (def, key, val) -> {
-            switch (key) {
-                case "headerName": def.setHeaderName(val); break;
-                case "name": def.setName(val); break;
-                default: return processorDefinitionAttributeHandler().accept(def, key, val);
+            if ("name".equals(key)) {
+                def.setName(val);
+                return true;
             }
-            return true;
+            return processorDefinitionAttributeHandler().accept(def, key, val);
         }, optionalIdentifiedDefinitionElementHandler(), noValueHandler());
     }
     protected RemoveHeadersDefinition doParseRemoveHeadersDefinition() throws IOException, XmlPullParserException {
@@ -845,11 +844,12 @@ public class ModelParser extends BaseParser {
     }
     protected RemovePropertyDefinition doParseRemovePropertyDefinition() throws IOException, XmlPullParserException {
         return doParse(new RemovePropertyDefinition(), (def, key, val) -> {
-            if ("propertyName".equals(key)) {
-                def.setPropertyName(val);
-                return true;
+            switch (key) {
+                case "name": def.setName(val); break;
+                case "propertyName": def.setPropertyName(val); break;
+                default: return processorDefinitionAttributeHandler().accept(def, key, val);
             }
-            return processorDefinitionAttributeHandler().accept(def, key, val);
+            return true;
         }, optionalIdentifiedDefinitionElementHandler(), noValueHandler());
     }
     protected ResequenceDefinition doParseResequenceDefinition() throws IOException, XmlPullParserException {
@@ -934,6 +934,15 @@ public class ModelParser extends BaseParser {
                 return true;
             }
             return identifiedTypeAttributeHandler().accept(def, key, val);
+        }, noElementHandler(), noValueHandler());
+    }
+    protected RouteConfigurationContextRefDefinition doParseRouteConfigurationContextRefDefinition() throws IOException, XmlPullParserException {
+        return doParse(new RouteConfigurationContextRefDefinition(), (def, key, val) -> {
+            if ("ref".equals(key)) {
+                def.setRef(val);
+                return true;
+            }
+            return false;
         }, noElementHandler(), noValueHandler());
     }
     protected RouteConfigurationDefinition doParseRouteConfigurationDefinition() throws IOException, XmlPullParserException {

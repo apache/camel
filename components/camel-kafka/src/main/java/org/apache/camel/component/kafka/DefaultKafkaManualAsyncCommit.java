@@ -21,7 +21,7 @@ import java.util.Collections;
 
 import org.apache.camel.component.kafka.consumer.support.KafkaRecordProcessor;
 import org.apache.camel.spi.StateRepository;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.common.TopicPartition;
 import org.slf4j.Logger;
@@ -33,7 +33,7 @@ public class DefaultKafkaManualAsyncCommit extends DefaultKafkaManualCommit impl
 
     private final Collection<KafkaAsyncManualCommit> asyncCommits;
 
-    public DefaultKafkaManualAsyncCommit(KafkaConsumer consumer, String topicName, String threadId,
+    public DefaultKafkaManualAsyncCommit(Consumer consumer, String topicName, String threadId,
                                          StateRepository<String, String> offsetRepository, TopicPartition partition,
                                          long recordOffset, long commitTimeout,
                                          Collection<KafkaAsyncManualCommit> asyncCommits) {

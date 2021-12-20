@@ -32,6 +32,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.StaticService;
 import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.LoadablePropertiesSource;
@@ -39,6 +40,7 @@ import org.apache.camel.spi.PropertiesFunction;
 import org.apache.camel.spi.PropertiesSource;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.OrderedComparator;
+import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.FilePathResolver;
@@ -574,6 +576,32 @@ public class PropertiesComponent extends ServiceSupport
 
     public List<PropertiesSource> getSources() {
         return sources;
+    }
+
+    @ManagedOperation(description = "Reload properties from the given location patterns")
+    @Override
+    public boolean reloadProperties(String pattern) {
+        if (ObjectHelper.isEmpty(pattern)) {
+            pattern = "*";
+        }
+        LOG.debug("Reloading properties (pattern: {})", pattern);
+        boolean answer = false;
+
+        // find sources with this location to reload
+        for (PropertiesSource source : sources) {
+            if (source instanceof LocationPropertiesSource && source instanceof LoadablePropertiesSource) {
+                LocationPropertiesSource loc = (LocationPropertiesSource) source;
+                LoadablePropertiesSource loadable = (LoadablePropertiesSource) source;
+                String schemeAndPath = loc.getLocation().getResolver() + ":" + loc.getLocation().getPath();
+                String path = loc.getLocation().getPath();
+                if (PatternHelper.matchPattern(schemeAndPath, pattern) || PatternHelper.matchPattern(path, pattern)) {
+                    loadable.reloadProperties(schemeAndPath);
+                    LOG.trace("Reloaded properties: {}", schemeAndPath);
+                    answer = true;
+                }
+            }
+        }
+        return answer;
     }
 
     @Override

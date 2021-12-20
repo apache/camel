@@ -17,12 +17,12 @@
 package org.apache.camel.component.kafka;
 
 import org.apache.camel.spi.StateRepository;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.common.TopicPartition;
 
 public abstract class DefaultKafkaManualCommit implements KafkaManualCommit {
 
-    private final KafkaConsumer consumer;
+    private final Consumer consumer;
     private final String topicName;
     private final String threadId;
     private final StateRepository<String, String> offsetRepository;
@@ -30,7 +30,7 @@ public abstract class DefaultKafkaManualCommit implements KafkaManualCommit {
     private final long recordOffset;
     private final long commitTimeout;
 
-    public DefaultKafkaManualCommit(KafkaConsumer consumer, String topicName, String threadId,
+    public DefaultKafkaManualCommit(Consumer consumer, String topicName, String threadId,
                                     StateRepository<String, String> offsetRepository, TopicPartition partition,
                                     long recordOffset, long commitTimeout) {
         this.consumer = consumer;
@@ -55,7 +55,7 @@ public abstract class DefaultKafkaManualCommit implements KafkaManualCommit {
         return String.valueOf(offset);
     }
 
-    public KafkaConsumer getConsumer() {
+    public Consumer getConsumer() {
         return consumer;
     }
 

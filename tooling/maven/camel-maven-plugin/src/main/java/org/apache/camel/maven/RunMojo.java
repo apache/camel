@@ -27,7 +27,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -113,6 +112,17 @@ public class RunMojo extends AbstractExecMojo {
     protected boolean logClasspath;
 
     /**
+     * Whether to use built-in console logging (uses log4j), which does not require to add any logging dependency to
+     * your project.
+     *
+     * However, the logging is fixed to log to the console, with a color style that is similar to Spring Boot.
+     *
+     * You can change the root logging level to: FATAL, ERROR, WARN, INFO, DEBUG, TRACE, OFF
+     */
+    @Parameter(property = "camel.logLevel", defaultValue = "OFF")
+    protected String logLevel;
+
+    /**
      * Whether to use CDI when running, instead of Spring
      */
     @Parameter(property = "camel.useCDI")
@@ -194,12 +204,6 @@ public class RunMojo extends AbstractExecMojo {
      */
     @Parameter(property = "camel.configAdminFileName")
     private String configAdminFileName;
-
-    /**
-     * To watch the directory for file changes which triggers a live reload of the Camel routes on-the-fly.
-     */
-    @Parameter(property = "camel.fileWatcherDirectory")
-    private String fileWatcherDirectory;
 
     /**
      * The class arguments.
@@ -305,7 +309,7 @@ public class RunMojo extends AbstractExecMojo {
         String skip = System.getProperties().getProperty("maven.test.skip");
         if (skip == null || "false".equals(skip)) {
             // lets log a INFO about how to skip tests if you want to so you can run faster
-            getLog().info("You can skip tests from the command line using: mvn camel:run -Dmaven.test.skip=true");
+            getLog().info("You can skip tests from the command line using: mvn " + goal() + " -Dmaven.test.skip=true");
         }
 
         boolean usingSpringJavaConfigureMain = false;
@@ -331,10 +335,6 @@ public class RunMojo extends AbstractExecMojo {
         List<String> args = new ArrayList<>();
         if (trace) {
             args.add("-t");
-        }
-        if (fileWatcherDirectory != null) {
-            args.add("-watch");
-            args.add(fileWatcherDirectory);
         }
 
         if (applicationContextUri != null) {
@@ -476,6 +476,10 @@ public class RunMojo extends AbstractExecMojo {
         }
 
         registerSourceRoots();
+    }
+
+    protected String goal() {
+        return "camel:run";
     }
 
     /**
@@ -684,7 +688,7 @@ public class RunMojo extends AbstractExecMojo {
      * @throws MojoExecutionException
      */
     private ClassLoader getClassLoader() throws MojoExecutionException {
-        Set<URL> classpathURLs = new LinkedHashSet<>();
+        List<URL> classpathURLs = new ArrayList<>();
         // project classpath must be first
         this.addRelevantProjectDependenciesToClasspath(classpathURLs);
         // and extra plugin classpath
@@ -692,10 +696,18 @@ public class RunMojo extends AbstractExecMojo {
         // and plugin classpath last
         this.addRelevantPluginDependenciesToClasspath(classpathURLs);
 
+        if (!logLevel.equals("OFF")) {
+            getLog().info("Using built-in logging level: " + logLevel);
+            // and extra plugin classpath
+            this.addConsoleLogDependenciesToClasspath(classpathURLs);
+            // setup logging
+            LoggingUtil.configureLog(logLevel);
+        }
+
         if (logClasspath) {
             getLog().info("Classpath:");
             for (URL url : classpathURLs) {
-                getLog().info("  " + url.getFile().toString());
+                getLog().info("  " + url.getFile());
             }
         }
         return new URLClassLoader(classpathURLs.toArray(new URL[classpathURLs.size()]));
@@ -708,7 +720,7 @@ public class RunMojo extends AbstractExecMojo {
      * @param  path                   classpath of {@link java.net.URL} objects
      * @throws MojoExecutionException
      */
-    private void addRelevantPluginDependenciesToClasspath(Set<URL> path) throws MojoExecutionException {
+    private void addRelevantPluginDependenciesToClasspath(List<URL> path) throws MojoExecutionException {
         if (hasCommandlineArgs()) {
             arguments = parseCommandlineArgs();
         }
@@ -745,7 +757,7 @@ public class RunMojo extends AbstractExecMojo {
      * @param  path                   classpath of {@link java.net.URL} objects
      * @throws MojoExecutionException
      */
-    private void addExtraPluginDependenciesToClasspath(Set<URL> path) throws MojoExecutionException {
+    private void addExtraPluginDependenciesToClasspath(List<URL> path) throws MojoExecutionException {
         if (extraPluginDependencyArtifactId == null && extendedPluginDependencyArtifactId == null) {
             return;
         }
@@ -776,12 +788,36 @@ public class RunMojo extends AbstractExecMojo {
     }
 
     /**
+     * Adds the JARs needed for using the built-in logging to console
+     */
+    private void addConsoleLogDependenciesToClasspath(List<URL> path) throws MojoExecutionException {
+        try {
+            Set<Artifact> artifacts = new HashSet<>(this.pluginDependencies);
+            for (Artifact artifact : artifacts) {
+                // add these loggers in the beginning so they are first
+                if (artifact.getArtifactId().equals("jansi")) {
+                    // jansi for logging in color
+                    path.add(0, artifact.getFile().toURI().toURL());
+                } else if (artifact.getGroupId().equals("org.apache.logging.log4j")) {
+                    // add log4j as this is needed
+                    path.add(0, artifact.getFile().toURI().toURL());
+                } else if (artifact.getArtifactId().equals("camel-maven-plugin")) {
+                    // add ourselves
+                    path.add(0, artifact.getFile().toURI().toURL());
+                }
+            }
+        } catch (MalformedURLException e) {
+            throw new MojoExecutionException("Error during setting up classpath", e);
+        }
+    }
+
+    /**
      * Add any relevant project dependencies to the classpath. Takes includeProjectDependencies into consideration.
      *
      * @param  path                   classpath of {@link java.net.URL} objects
      * @throws MojoExecutionException
      */
-    private void addRelevantProjectDependenciesToClasspath(Set<URL> path) throws MojoExecutionException {
+    private void addRelevantProjectDependenciesToClasspath(List<URL> path) throws MojoExecutionException {
         if (this.includeProjectDependencies) {
             try {
                 getLog().debug("Project Dependencies will be included.");

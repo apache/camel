@@ -33,8 +33,8 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
     private KafkaConfiguration configuration = new KafkaConfiguration();
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
-    @Metadata(label = "consumer,advanced")
-    private KafkaManualCommitFactory kafkaManualCommitFactory = new DefaultKafkaManualCommitFactory();
+    @Metadata(autowired = true, label = "consumer,advanced")
+    private KafkaManualCommitFactory kafkaManualCommitFactory;
     @Metadata(autowired = true, label = "advanced")
     private KafkaClientFactory kafkaClientFactory;
     @Metadata(autowired = true, label = "consumer,advanced")
@@ -146,4 +146,16 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
         this.pollExceptionStrategy = pollExceptionStrategy;
     }
 
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+
+        // if a factory was not autowired then create a default factory
+        if (kafkaClientFactory == null) {
+            kafkaClientFactory = new DefaultKafkaClientFactory();
+        }
+        if (kafkaManualCommitFactory == null) {
+            kafkaManualCommitFactory = new DefaultKafkaManualCommitFactory();
+        }
+    }
 }

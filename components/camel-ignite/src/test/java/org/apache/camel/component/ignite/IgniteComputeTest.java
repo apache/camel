@@ -139,15 +139,13 @@ public class IgniteComputeTest extends AbstractIgniteTest {
         Collection<String> colResult = template.requestBody("ignite-compute:" + resourceUid + "?executionType=BROADCAST",
                 TestIgniteComputeResources.TEST_CALLABLE,
                 Collection.class);
-        Assertions.assertThat(colResult).isNotNull();
-        Assertions.assertThat(colResult).containsExactly("hello", "hello", "hello");
+        Assertions.assertThat(colResult).isNotNull().containsExactly("hello", "hello", "hello");
 
         // Single Closure.
         colResult = template.requestBodyAndHeader("ignite-compute:" + resourceUid + "?executionType=BROADCAST",
                 TestIgniteComputeResources.TEST_CLOSURE,
                 IgniteConstants.IGNITE_COMPUTE_PARAMS, "Camel", Collection.class);
-        Assertions.assertThat(colResult).isNotNull();
-        Assertions.assertThat(colResult).containsExactly("hello Camel", "hello Camel", "hello Camel");
+        Assertions.assertThat(colResult).isNotNull().containsExactly("hello Camel", "hello Camel", "hello Camel");
     }
 
     @Test

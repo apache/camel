@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -74,7 +75,9 @@ import static org.apache.camel.component.rest.swagger.RestSwaggerHelper.isHostPa
 import static org.apache.camel.component.rest.swagger.RestSwaggerHelper.isMediaRange;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 import static org.apache.camel.util.ObjectHelper.notNull;
-import static org.apache.camel.util.StringHelper.*;
+import static org.apache.camel.util.StringHelper.after;
+import static org.apache.camel.util.StringHelper.before;
+import static org.apache.camel.util.StringHelper.notEmpty;
 
 /**
  * Configure REST producers based on a Swagger (OpenAPI) specification document delegating to a component implementing
@@ -146,6 +149,9 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
              defaultValueNote = "By default loads `swagger.json` file", label = "producer")
     private URI specificationUri = RestSwaggerComponent.DEFAULT_SPECIFICATION_URI;
 
+    @UriParam(description = "Resolve references in Swagger specification.", label = "producer")
+    private Boolean resolveReferences;
+
     public RestSwaggerEndpoint() {
         // help tooling instantiate endpoint
     }
@@ -174,7 +180,8 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
     public Producer createProducer() throws Exception {
         final CamelContext camelContext = getCamelContext();
 
-        final Swagger swagger = loadSpecificationFrom(camelContext, specificationUri, resolveSslContextParameters());
+        final Swagger swagger = loadSpecificationFrom(camelContext, specificationUri, resolveSslContextParameters(),
+                determineResolveReferences());
 
         final Map<String, Path> paths = swagger.getPaths();
 
@@ -289,6 +296,14 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
         this.specificationUri = notNull(specificationUri, "specificationUri");
     }
 
+    public Boolean getResolveReferences() {
+        return resolveReferences;
+    }
+
+    public void setResolveReferences(Boolean resolveReferences) {
+        this.resolveReferences = resolveReferences;
+    }
+
     RestSwaggerComponent component() {
         return (RestSwaggerComponent) getComponent();
     }
@@ -350,6 +365,13 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
         return Optional.ofNullable(componentName).orElse(component().getComponentName());
     }
 
+    Boolean determineResolveReferences() {
+        return Stream.of(getResolveReferences(), component().getResolveReferences())
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElse(false);
+    }
+
     Map<String, Object> determineEndpointParameters(final Swagger swagger, final Operation operation) {
         final Map<String, Object> parameters = new HashMap<>();
 
@@ -376,11 +398,11 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
 
         // what we produce is what the API defined by Swagger specification
         // consumes
-        final String determinedProducers = determineOption(swagger.getConsumes(), operation.getConsumes(),
+        final String determinedProduces = determineOption(swagger.getConsumes(), operation.getConsumes(),
                 component.getProduces(), produces);
 
-        if (isNotEmpty(determinedProducers)) {
-            parameters.put("produces", determinedProducers);
+        if (isNotEmpty(determinedProduces)) {
+            parameters.put("produces", determinedProduces);
         }
 
         final String queryParameters = determineQueryParameters(swagger, operation).map(this::queryParameter)
@@ -631,7 +653,8 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
      * @throws IOException
      */
     static Swagger loadSpecificationFrom(
-            final CamelContext camelContext, final URI uri, SSLContextParameters sslContextParameters)
+            final CamelContext camelContext, final URI uri, SSLContextParameters sslContextParameters,
+            boolean resolveReferences)
             throws IOException {
         final ObjectMapper mapper = Json.mapper();
 
@@ -641,9 +664,9 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
 
         if (sslContextParameters == null) {
             try (InputStream stream = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, uriAsString)) {
-                return parseInputStream(swaggerParser, mapper, stream);
+                return parseInputStream(swaggerParser, mapper, stream, resolveReferences);
             } catch (final Exception e) {
-                return loadSpecificationFallback(swaggerParser, uriAsString, e);
+                return loadSpecificationFallback(swaggerParser, uriAsString, e, resolveReferences);
             }
         }
 
@@ -654,15 +677,16 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
              HttpProducer p = (HttpProducer) e.createProducer();
              InputStream stream = p.getHttpClient().execute(new HttpGet(uri)).getEntity().getContent()) {
 
-            return parseInputStream(swaggerParser, mapper, stream);
+            return parseInputStream(swaggerParser, mapper, stream, resolveReferences);
         } catch (final Exception e) {
-            return loadSpecificationFallback(swaggerParser, uriAsString, e);
+            return loadSpecificationFallback(swaggerParser, uriAsString, e, resolveReferences);
         }
     }
 
-    static Swagger loadSpecificationFallback(SwaggerParser swaggerParser, String uriAsString, Exception originalException) {
+    static Swagger loadSpecificationFallback(
+            SwaggerParser swaggerParser, String uriAsString, Exception originalException, boolean resolveReferences) {
         // try Swaggers loader
-        final Swagger swagger = swaggerParser.read(uriAsString);
+        final Swagger swagger = swaggerParser.read(uriAsString, null, resolveReferences);
 
         if (swagger != null) {
             return swagger;
@@ -677,10 +701,12 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
                 originalException);
     }
 
-    static Swagger parseInputStream(SwaggerParser swaggerParser, ObjectMapper mapper, InputStream stream) throws IOException {
+    static Swagger parseInputStream(
+            SwaggerParser swaggerParser, ObjectMapper mapper, InputStream stream, boolean resolveReferences)
+            throws IOException {
         final JsonNode node = mapper.readTree(stream);
 
-        return swaggerParser.read(node);
+        return swaggerParser.read(node, resolveReferences);
     }
 
     static String pickBestScheme(final String specificationScheme, final List<Scheme> schemes) {

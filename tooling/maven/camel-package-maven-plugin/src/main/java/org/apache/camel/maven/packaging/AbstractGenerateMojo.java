@@ -24,11 +24,13 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipFile;
 
+import org.apache.camel.tooling.util.ReflectionHelper;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
@@ -68,10 +70,27 @@ public abstract class AbstractGenerateMojo extends AbstractMojo {
     protected abstract void doExecute() throws MojoFailureException, MojoExecutionException;
 
     protected void invoke(Class<? extends AbstractMojo> mojoClass) throws MojoExecutionException, MojoFailureException {
+        invoke(mojoClass, null);
+    }
+
+    protected void invoke(Class<? extends AbstractMojo> mojoClass, Map<String, Object> parameters)
+            throws MojoExecutionException, MojoFailureException {
         try {
-            AbstractMojo mojo = mojoClass.newInstance();
+            AbstractMojo mojo = mojoClass.getDeclaredConstructor().newInstance();
             mojo.setLog(getLog());
             mojo.setPluginContext(getPluginContext());
+
+            // set options using reflections
+            if (parameters != null && !parameters.isEmpty()) {
+                ReflectionHelper.doWithFields(mojoClass, field -> {
+                    for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+                        if (field.getName().equals(entry.getKey())) {
+                            ReflectionHelper.setField(field, mojo, entry.getValue());
+                        }
+                    }
+                });
+            }
+
             ((AbstractGeneratorMojo) mojo).execute(project, projectHelper, buildContext);
 
         } catch (MojoExecutionException | MojoFailureException e) {

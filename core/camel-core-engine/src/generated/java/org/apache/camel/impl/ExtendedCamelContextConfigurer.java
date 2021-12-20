@@ -79,6 +79,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "GlobalOptions": target.setGlobalOptions(property(camelContext, java.util.Map.class, value)); return true;
         case "headersmapfactory":
         case "HeadersMapFactory": target.setHeadersMapFactory(property(camelContext, org.apache.camel.spi.HeadersMapFactory.class, value)); return true;
+        case "healthcheckresolver":
+        case "HealthCheckResolver": target.setHealthCheckResolver(property(camelContext, org.apache.camel.health.HealthCheckResolver.class, value)); return true;
         case "inflightrepository":
         case "InflightRepository": target.setInflightRepository(property(camelContext, org.apache.camel.spi.InflightRepository.class, value)); return true;
         case "injector":
@@ -91,6 +93,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "LanguageResolver": target.setLanguageResolver(property(camelContext, org.apache.camel.spi.LanguageResolver.class, value)); return true;
         case "lightweight":
         case "Lightweight": target.setLightweight(property(camelContext, boolean.class, value)); return true;
+        case "loadhealthchecks":
+        case "LoadHealthChecks": target.setLoadHealthChecks(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "loadtypeconverters":
         case "LoadTypeConverters": target.setLoadTypeConverters(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "logexhaustedmessagebody":
@@ -258,6 +262,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "GlobalOptions": return java.util.Map.class;
         case "headersmapfactory":
         case "HeadersMapFactory": return org.apache.camel.spi.HeadersMapFactory.class;
+        case "healthcheckresolver":
+        case "HealthCheckResolver": return org.apache.camel.health.HealthCheckResolver.class;
         case "inflightrepository":
         case "InflightRepository": return org.apache.camel.spi.InflightRepository.class;
         case "injector":
@@ -270,6 +276,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "LanguageResolver": return org.apache.camel.spi.LanguageResolver.class;
         case "lightweight":
         case "Lightweight": return boolean.class;
+        case "loadhealthchecks":
+        case "LoadHealthChecks": return java.lang.Boolean.class;
         case "loadtypeconverters":
         case "LoadTypeConverters": return java.lang.Boolean.class;
         case "logexhaustedmessagebody":
@@ -438,6 +446,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "GlobalOptions": return target.getGlobalOptions();
         case "headersmapfactory":
         case "HeadersMapFactory": return target.getHeadersMapFactory();
+        case "healthcheckresolver":
+        case "HealthCheckResolver": return target.getHealthCheckResolver();
         case "inflightrepository":
         case "InflightRepository": return target.getInflightRepository();
         case "injector":
@@ -450,6 +460,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "LanguageResolver": return target.getLanguageResolver();
         case "lightweight":
         case "Lightweight": return target.isLightweight();
+        case "loadhealthchecks":
+        case "LoadHealthChecks": return target.isLoadHealthChecks();
         case "loadtypeconverters":
         case "LoadTypeConverters": return target.isLoadTypeConverters();
         case "logexhaustedmessagebody":

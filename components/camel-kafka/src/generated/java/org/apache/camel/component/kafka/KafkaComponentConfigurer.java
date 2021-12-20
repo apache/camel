@@ -236,7 +236,7 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
 
     @Override
     public String[] getAutowiredNames() {
-        return new String[]{"kafkaClientFactory","pollExceptionStrategy"};
+        return new String[]{"kafkaClientFactory","kafkaManualCommitFactory","pollExceptionStrategy"};
     }
 
     @Override

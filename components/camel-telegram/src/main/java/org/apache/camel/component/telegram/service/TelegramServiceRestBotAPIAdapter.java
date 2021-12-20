@@ -34,6 +34,7 @@ import io.netty.handler.codec.http.HttpHeaders;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.telegram.TelegramException;
 import org.apache.camel.component.telegram.TelegramService;
 import org.apache.camel.component.telegram.model.EditMessageCaptionMessage;
 import org.apache.camel.component.telegram.model.EditMessageDelete;
@@ -154,6 +155,7 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
         try {
             final Response response = asyncHttpClient.executeRequest(request).get();
             int code = response.getStatusCode();
+            String status = response.getStatusText();
             if (code >= 200 && code < 300) {
                 try {
                     final String responseBody = response.getResponseBody();
@@ -166,9 +168,10 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
                             "Could not parse the response from " + request.getMethod() + " " + request.getUrl(), e);
                 }
             } else {
-                throw new RuntimeCamelException(
+                throw new TelegramException(
                         "Could not " + request.getMethod() + " " + request.getUrl() + ": " + response.getStatusCode() + " "
-                                                + response.getStatusText());
+                                            + response.getStatusText(),
+                        response.getStatusCode(), response.getStatusText());
             }
         } catch (ExecutionException e) {
             throw new RuntimeCamelException("Could not request " + request.getMethod() + " " + request.getUrl(), e);

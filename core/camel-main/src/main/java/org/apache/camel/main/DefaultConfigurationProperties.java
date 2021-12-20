@@ -52,6 +52,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private int producerTemplateCacheSize = 1000;
     private int consumerTemplateCacheSize = 1000;
     private boolean loadTypeConverters;
+    private boolean loadHealthChecks;
     private int logDebugMaxChars;
     private boolean streamCachingEnabled;
     private String streamCachingSpoolDirectory;
@@ -63,6 +64,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private int streamCachingBufferSize;
     private boolean streamCachingRemoveSpoolDirectoryWhenStopping = true;
     private boolean streamCachingStatisticsEnabled;
+    private boolean debugging;
     private boolean backlogTracing;
     private boolean tracing;
     private boolean tracingStandby;
@@ -363,6 +365,17 @@ public abstract class DefaultConfigurationProperties<T> {
         this.loadTypeConverters = loadTypeConverters;
     }
 
+    public boolean isLoadHealthChecks() {
+        return loadHealthChecks;
+    }
+
+    /**
+     * Whether to load custom health checks by scanning classpath.
+     */
+    public void setLoadHealthChecks(boolean loadHealthChecks) {
+        this.loadHealthChecks = loadHealthChecks;
+    }
+
     public int getLogDebugMaxChars() {
         return logDebugMaxChars;
     }
@@ -534,6 +547,19 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setTracingPattern(String tracingPattern) {
         this.tracingPattern = tracingPattern;
+    }
+
+    public boolean isDebugging() {
+        return debugging;
+    }
+
+    /**
+     * Sets whether debugging is enabled or not.
+     *
+     * Default is false.
+     */
+    public void setDebugging(boolean debugging) {
+        this.debugging = debugging;
     }
 
     public boolean isBacklogTracing() {
@@ -1547,6 +1573,14 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withLoadTypeConverters(boolean loadTypeConverters) {
         this.loadTypeConverters = loadTypeConverters;
+        return (T) this;
+    }
+
+    /**
+     * Whether to load custom health checks by scanning classpath.
+     */
+    public T withLoadHealthChecks(boolean loadHealthChecks) {
+        this.loadHealthChecks = loadHealthChecks;
         return (T) this;
     }
 

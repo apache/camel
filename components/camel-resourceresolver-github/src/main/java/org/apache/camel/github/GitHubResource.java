@@ -31,7 +31,7 @@ public final class GitHubResource extends ResourceSupport {
     private boolean init;
 
     public GitHubResource(CamelContext camelContext, String location) {
-        super(location);
+        super("github", location);
         this.camelContext = camelContext;
     }
 

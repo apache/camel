@@ -108,7 +108,7 @@ If you want to specify a route id, then use `routeId` as follows, where the name
 ----
 TemplatedRouteBuilder.builder(context, "myTemplate")
     .routeId("myCoolRoute")
-    .parameter("name", "one
+    .parameter("name", "one")
     .parameter("greeting", "hello")
     .parameter("myPeriod", "5s")
     .add();
@@ -450,7 +450,7 @@ then you can create the local bean using Java lambda style as previously documen
 ==== Configuring the type of the created bean
 
 When using scripting languages to create the local bean, then Camel would not know what type (fully qualified class name)
-then created bean is. The type is therefore unassigned (is set as `java.lang.Object`) which is a slight limitation.
+the created bean is. The type is therefore unassigned (is set as `java.lang.Object`) which is a slight limitation.
 
 If you use dependency injection by type, or have the need for looking up the local bean from the Camel `Registry` via its type,
 then you must provide this information in the route template with `beanType` as shown:

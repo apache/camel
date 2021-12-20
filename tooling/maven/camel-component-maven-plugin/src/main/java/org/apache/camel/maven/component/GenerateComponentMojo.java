@@ -16,6 +16,10 @@
  */
 package org.apache.camel.maven.component;
 
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.maven.packaging.AbstractGenerateMojo;
 import org.apache.camel.maven.packaging.EndpointSchemaGeneratorMojo;
 import org.apache.camel.maven.packaging.GenerateConfigurerMojo;
@@ -42,8 +46,21 @@ import org.sonatype.plexus.build.incremental.BuildContext;
       defaultPhase = LifecyclePhase.PROCESS_CLASSES)
 public class GenerateComponentMojo extends AbstractGenerateMojo {
 
+    /**
+     * The output directory for generated java source code
+     */
+    @Parameter(defaultValue = "${project.basedir}/src/generated/java")
+    protected File sourcesOutputDir;
+
+    /**
+     * The output directory for generated resource source code
+     */
+    @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
+    protected File resourcesOutputDir;
+
     @Parameter(property = "project", required = true, readonly = true)
     protected MavenProject currentProject;
+
     @Component
     protected MavenProjectHelper currentProjectHelper;
     @Component
@@ -63,19 +80,28 @@ public class GenerateComponentMojo extends AbstractGenerateMojo {
         // do not sync pom file for this goal as we are standalone
         project.setContextValue("syncPomFile", "false");
 
+        Map<String, Object> parameters = new HashMap<>();
+        if (sourcesOutputDir != null) {
+            parameters.put("sourcesOutputDir", sourcesOutputDir);
+        }
+        if (resourcesOutputDir != null) {
+            parameters.put("resourcesOutputDir", resourcesOutputDir);
+        }
+
         // jandex
-        invoke(PackageJandexMojo.class);
+        invoke(PackageJandexMojo.class, parameters);
         // generate-type-converter-loader
-        invoke(TypeConverterLoaderGeneratorMojo.class);
+        invoke(TypeConverterLoaderGeneratorMojo.class, parameters);
         // generate-spi
-        invoke(SpiGeneratorMojo.class);
+        invoke(SpiGeneratorMojo.class, parameters);
         // generate-configurer
-        invoke(GenerateConfigurerMojo.class);
+        invoke(GenerateConfigurerMojo.class, parameters);
         // generate-endpoint-schema
-        invoke(EndpointSchemaGeneratorMojo.class);
+        invoke(EndpointSchemaGeneratorMojo.class, parameters);
         // prepare-components
-        invoke(PrepareComponentMojo.class);
+        invoke(PrepareComponentMojo.class, parameters);
         // validate-components
-        invoke(ValidateComponentMojo.class);
+        invoke(ValidateComponentMojo.class, parameters);
     }
+
 }
