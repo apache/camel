@@ -9,7 +9,7 @@
 :since: 2.16
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/git.adoc[opts=optional]
+$reference/components/git.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: git
 

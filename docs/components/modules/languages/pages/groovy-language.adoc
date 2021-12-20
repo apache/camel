@@ -8,7 +8,7 @@
 :description: Evaluate a Groovy script.
 :since: 1.3
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/groovy.adoc[opts=optional]
+$reference/languages/groovy.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: groovy
 

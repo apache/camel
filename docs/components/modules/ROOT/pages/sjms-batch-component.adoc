@@ -9,7 +9,7 @@
 :since: 2.16
 :supportLevel: Stable
 :component-header: Only consumer is supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/sjms-batch.adoc[opts=optional]
+$reference/components/sjms-batch.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: sjms
 

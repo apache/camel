@@ -7,7 +7,7 @@
 :since: 2.21
 :supportLevel: Stable
 :component-header: Only producer is supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws-kms.adoc[opts=optional]
+$reference/components/aws-kms.adoc[opts=optional]
 //Manually maintained attributes
 :group: AWS
 :camel-spring-boot-name: aws-kms

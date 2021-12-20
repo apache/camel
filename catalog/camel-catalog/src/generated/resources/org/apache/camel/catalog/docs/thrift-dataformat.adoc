@@ -6,7 +6,7 @@
 :description: Serialize and deserialize messages using Apache Thrift binary data format.
 :since: 2.20
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/thrift.adoc[opts=optional]
+$reference/dataformats/thrift.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: thrift
 

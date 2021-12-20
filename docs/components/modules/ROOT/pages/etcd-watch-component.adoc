@@ -9,7 +9,7 @@
 :since: 2.18
 :supportLevel: Stable
 :component-header: Only consumer is supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/etcd-watch.adoc[opts=optional]
+$reference/components/etcd-watch.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: etcd
 

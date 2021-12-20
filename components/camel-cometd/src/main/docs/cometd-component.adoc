@@ -7,7 +7,7 @@
 :since: 2.0
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/cometd.adoc[opts=optional]
+$reference/components/cometd.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: cometd
 

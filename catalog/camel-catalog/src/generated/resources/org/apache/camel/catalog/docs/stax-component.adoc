@@ -7,7 +7,7 @@
 :since: 2.9
 :supportLevel: Stable
 :component-header: Only producer is supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/stax.adoc[opts=optional]
+$reference/components/stax.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: stax
 

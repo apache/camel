@@ -8,7 +8,7 @@
 :supportLevel: Stable
 :component-header: Only consumer is supported
 :core:
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/scheduler.adoc[opts=optional]
+$reference/components/scheduler.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: scheduler
 

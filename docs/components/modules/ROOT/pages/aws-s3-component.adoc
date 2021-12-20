@@ -9,7 +9,7 @@
 :since: 2.8
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws-s3.adoc[opts=optional]
+$reference/components/aws-s3.adoc[opts=optional]
 //Manually maintained attributes
 :group: AWS
 :camel-spring-boot-name: aws-s3

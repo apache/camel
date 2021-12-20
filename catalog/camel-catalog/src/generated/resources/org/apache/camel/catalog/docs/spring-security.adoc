@@ -6,7 +6,7 @@
 :description: Security using Spring Security
 :since: 2.3
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/spring-security.adoc[opts=optional]
+$reference/others/spring-security.adoc[opts=optional]
 //Manually maintained attributes
 :group: Spring
 :camel-spring-boot-name: spring-security

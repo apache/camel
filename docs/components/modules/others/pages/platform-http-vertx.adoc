@@ -8,7 +8,7 @@
 :description: Implementation of the Platform HTTP Engine based on Vert.x Web
 :since: 3.2
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/platform-http-vertx.adoc[opts=optional]
+$reference/others/platform-http-vertx.adoc[opts=optional]
 
 *Since Camel {since}*
 

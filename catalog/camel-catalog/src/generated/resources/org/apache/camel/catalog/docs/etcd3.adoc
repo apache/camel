@@ -6,7 +6,7 @@
 :description: Aggregation repository using EtcD as datastore
 :since: 3.5
 :supportLevel: Preview
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/etcd3.adoc[opts=optional]
+$reference/others/etcd3.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: etcd3
 

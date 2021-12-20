@@ -7,7 +7,7 @@
 :since: 2.17
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/kubernetes-nodes.adoc[opts=optional]
+$reference/components/kubernetes-nodes.adoc[opts=optional]
 //Manually maintained attributes
 :group: Kubernetes
 :camel-spring-boot-name: kubernetes

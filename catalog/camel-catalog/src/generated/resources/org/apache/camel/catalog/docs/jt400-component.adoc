@@ -7,7 +7,7 @@
 :since: 1.5
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/jt400.adoc[opts=optional]
+$reference/components/jt400.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: jt400
 

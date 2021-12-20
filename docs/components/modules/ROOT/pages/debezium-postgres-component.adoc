@@ -9,7 +9,7 @@
 :since: 3.0
 :supportLevel: Stable
 :component-header: Only consumer is supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/debezium-postgres.adoc[opts=optional]
+$reference/components/debezium-postgres.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: debezium-postgres
 

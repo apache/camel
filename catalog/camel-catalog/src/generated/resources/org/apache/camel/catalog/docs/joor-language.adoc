@@ -6,7 +6,7 @@
 :description: Evaluate a jOOR (Java compiled once at runtime) expression language.
 :since: 3.7
 :supportLevel: Preview
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/joor.adoc[opts=optional]
+$reference/languages/joor.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: joor
 

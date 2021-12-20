@@ -6,7 +6,7 @@
 :description: Support for attachments on Camel messages
 :since: 3.0
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/attachments.adoc[opts=optional]
+$reference/others/attachments.adoc[opts=optional]
 
 *Since Camel {since}*
 

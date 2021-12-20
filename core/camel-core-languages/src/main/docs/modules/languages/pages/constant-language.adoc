@@ -6,7 +6,7 @@
 :description: A fixed value set only once during the route startup.
 :since: 1.5
 :supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/constant.adoc[opts=optional]
+$reference/languages/constant.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: core
 :starter-artifactid: camel-core-starter

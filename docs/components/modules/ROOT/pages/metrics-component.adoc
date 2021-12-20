@@ -9,7 +9,7 @@
 :since: 2.14
 :supportLevel: Stable
 :component-header: Only producer is supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/metrics.adoc[opts=optional]
+$reference/components/metrics.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: metrics
 
