@@ -97,7 +97,7 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
     @UriParam(label = "formatting", enums = "Default,Tab,Fixed", defaultValue = "Default",
               description = "Sets the outputs style to use.")
     private OutputStyle style = OutputStyle.Default;
-    @UriParam(defaultValue = "false")
+    @UriParam(defaultValue = "false", description = "If enabled only the body will be printed out")
     private boolean plain;
 
     private StringBuilder style(StringBuilder sb, String label) {

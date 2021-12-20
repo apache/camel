@@ -268,7 +268,7 @@ public interface LogEndpointBuilderFactory {
             return this;
         }
         /**
-         * Log exchange body as-is (ex. log(${body}).
+         * If enabled only the body will be printed out.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -283,7 +283,7 @@ public interface LogEndpointBuilderFactory {
             return this;
         }
         /**
-         * Log exchange body as-is (ex. log(${body}).
+         * If enabled only the body will be printed out.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.

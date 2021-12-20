@@ -118,7 +118,7 @@ public class LogEndpoint extends ProcessorEndpoint {
     @UriParam(label = "formatting", enums = "Default,Tab,Fixed", defaultValue = "Default",
               description = "Sets the outputs style to use.")
     private DefaultExchangeFormatter.OutputStyle style = DefaultExchangeFormatter.OutputStyle.Default;
-    @UriParam(defaultValue = "false", description = "Log exchange body as-is (ex. log(\"${body}\").")
+    @UriParam(defaultValue = "false", description = "If enabled only the body will be printed out")
     private boolean plain;
 
     public LogEndpoint() {
