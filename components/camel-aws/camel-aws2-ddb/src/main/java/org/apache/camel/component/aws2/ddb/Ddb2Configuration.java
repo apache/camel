@@ -68,7 +68,7 @@ public class Ddb2Configuration implements Cloneable {
     @UriParam(defaultValue = "false")
     private boolean useDefaultCredentialsProvider;
     @UriParam(defaultValue = "true")
-    private boolean enabledInitialDescribeTable;
+    private boolean enabledInitialDescribeTable = true;
 
     public String getAccessKey() {
         return accessKey;
