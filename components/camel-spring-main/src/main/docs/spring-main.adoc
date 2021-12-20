@@ -5,7 +5,6 @@
 :description: Camel Spring Main support
 :since: 3.2
 :supportlevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/spring-main.adoc[opts=optional]
 
 *Since Camel {since}*
 

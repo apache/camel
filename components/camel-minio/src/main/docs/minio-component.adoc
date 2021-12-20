@@ -6,7 +6,6 @@
 :since: 3.5
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/minio.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: minio
 

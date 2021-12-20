@@ -5,7 +5,6 @@
 :description: Elytron Security Provider for camel-undertow
 :since: 3.1
 :supportlevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/elytron.adoc[opts=optional]
 
 *Since Camel {since}*
 

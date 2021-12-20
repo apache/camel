@@ -6,7 +6,6 @@
 :since: 2.22
 :supportlevel: Stable-deprecated
 :deprecated: *deprecated*
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/testcontainers-spring.adoc[opts=optional]
 
 *Since Camel {since}*
 

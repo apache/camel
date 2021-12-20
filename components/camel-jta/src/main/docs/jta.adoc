@@ -5,7 +5,6 @@
 :description: Using Camel With JTA Transaction Manager
 :since: 3.4
 :supportlevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/jta.adoc[opts=optional]
 
 *Since Camel {since}*
 
