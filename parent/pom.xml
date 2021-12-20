@@ -526,7 +526,7 @@
         <swagger-java-guava-version>27.1-jre</swagger-java-guava-version>
         <apicurio-version>1.1.16</apicurio-version>
         <stax-api-version>1.0.1</stax-api-version>
-        <stringtemplate-version>4.3</stringtemplate-version>
+        <stringtemplate-version>4.3.1</stringtemplate-version>
         <tagsoup-version>1.2.1</tagsoup-version>
         <templating-maven-plugin-version>1.0.0</templating-maven-plugin-version>
         <testcontainers-version>1.16.2</testcontainers-version>
