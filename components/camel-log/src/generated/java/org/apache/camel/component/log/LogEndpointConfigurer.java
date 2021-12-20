@@ -40,6 +40,7 @@ public class LogEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "maxchars":
         case "maxChars": target.setMaxChars(property(camelContext, int.class, value)); return true;
         case "multiline": target.setMultiline(property(camelContext, boolean.class, value)); return true;
+        case "plain": target.setPlain(property(camelContext, boolean.class, value)); return true;
         case "showall":
         case "showAll": target.setShowAll(property(camelContext, boolean.class, value)); return true;
         case "showallproperties":
@@ -97,6 +98,7 @@ public class LogEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "maxchars":
         case "maxChars": return int.class;
         case "multiline": return boolean.class;
+        case "plain": return boolean.class;
         case "showall":
         case "showAll": return boolean.class;
         case "showallproperties":
@@ -155,6 +157,7 @@ public class LogEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "maxchars":
         case "maxChars": return target.getMaxChars();
         case "multiline": return target.isMultiline();
+        case "plain": return target.isPlain();
         case "showall":
         case "showAll": return target.isShowAll();
         case "showallproperties":

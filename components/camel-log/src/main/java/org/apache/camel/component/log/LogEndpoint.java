@@ -118,6 +118,8 @@ public class LogEndpoint extends ProcessorEndpoint {
     @UriParam(label = "formatting", enums = "Default,Tab,Fixed", defaultValue = "Default",
               description = "Sets the outputs style to use.")
     private DefaultExchangeFormatter.OutputStyle style = DefaultExchangeFormatter.OutputStyle.Default;
+    @UriParam(defaultValue = "false", description = "If enabled only the body will be printed out")
+    private boolean plain;
 
     public LogEndpoint() {
     }
@@ -145,7 +147,7 @@ public class LogEndpoint extends ProcessorEndpoint {
 
             // are any options configured if not we can optimize to use shared default
             boolean changed = !showExchangePattern || !skipBodyLineSeparator || !showBody || !showBodyType || maxChars != 10000
-                    || style != DefaultExchangeFormatter.OutputStyle.Default;
+                    || style != DefaultExchangeFormatter.OutputStyle.Default || plain;
             changed |= showExchangeId || showProperties || showAllProperties || showHeaders || showException
                     || showCaughtException
                     || showStackTrace;
@@ -153,6 +155,7 @@ public class LogEndpoint extends ProcessorEndpoint {
 
             if (changed) {
                 DefaultExchangeFormatter def = new DefaultExchangeFormatter();
+                def.setPlain(plain);
                 def.setShowAll(showAll);
                 def.setShowBody(showBody);
                 def.setShowBodyType(showBodyType);
@@ -541,5 +544,13 @@ public class LogEndpoint extends ProcessorEndpoint {
 
     public void setStyle(DefaultExchangeFormatter.OutputStyle style) {
         this.style = style;
+    }
+
+    public boolean isPlain() {
+        return plain;
+    }
+
+    public void setPlain(boolean plain) {
+        this.plain = plain;
     }
 }

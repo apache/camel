@@ -101,6 +101,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Debugger;
+import org.apache.camel.spi.DebuggerFactory;
 import org.apache.camel.spi.DeferServiceFactory;
 import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.spi.EndpointStrategy;
@@ -4115,6 +4116,17 @@ public abstract class AbstractCamelContext extends BaseService
                     Object object = finder.newInstance("ManagementStrategyFactory").orElse(null);
                     if (object instanceof ManagementStrategyFactory) {
                         factory = (ManagementStrategyFactory) object;
+                    }
+                }
+                // detect if camel-debug is on classpath that enables debugging
+                DebuggerFactory df
+                        = getBootstrapFactoryFinder().newInstance(Debugger.FACTORY, DebuggerFactory.class).orElse(null);
+                if (df != null) {
+                    LOG.info("Detected: {} enabling Camel Debugging", df);
+                    setDebugging(true);
+                    Debugger debugger = df.createDebugger(this);
+                    if (debugger != null) {
+                        setDebugger(debugger);
                     }
                 }
             } catch (Exception e) {

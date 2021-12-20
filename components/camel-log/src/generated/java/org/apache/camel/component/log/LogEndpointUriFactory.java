@@ -20,7 +20,7 @@ public class LogEndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(28);
+        Set<String> props = new HashSet<>(29);
         props.add("showProperties");
         props.add("showStreams");
         props.add("showHeaders");
@@ -30,6 +30,7 @@ public class LogEndpointUriFactory extends org.apache.camel.support.component.En
         props.add("groupActiveOnly");
         props.add("showFiles");
         props.add("showAll");
+        props.add("plain");
         props.add("exchangeFormatter");
         props.add("maxChars");
         props.add("loggerName");
