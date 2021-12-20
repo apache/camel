@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.google.functions;
 
-import java.io.FileInputStream;
 import java.io.InputStream;
 
 import com.google.api.gax.core.FixedCredentialsProvider;
