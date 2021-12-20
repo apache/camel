@@ -26,12 +26,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.api.parallel.Isolated;
 
 /**
  * Unit test to verify that using DLC with redelivery and delays with blocking threads. As threads comes cheap these
  * days in the modern JVM its no biggie. And for transactions you should use the same thread anyway.
  */
 @Timeout(20)
+@Isolated("Does not play well with parallel execution")
 public class DeadLetterChannelRedeliverWithDelayBlockingTest extends ContextTestSupport {
 
     private static int counter;

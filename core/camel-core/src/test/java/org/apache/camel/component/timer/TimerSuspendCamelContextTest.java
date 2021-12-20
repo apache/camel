@@ -20,7 +20,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
+@Isolated("Flaky when run in parallel test mode")
 public class TimerSuspendCamelContextTest extends ContextTestSupport {
 
     @Test

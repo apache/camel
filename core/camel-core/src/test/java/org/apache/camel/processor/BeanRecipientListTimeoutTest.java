@@ -24,10 +24,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@Isolated("Parallel execution can cause timeout before all multicast messages are sent")
 public class BeanRecipientListTimeoutTest extends ContextTestSupport {
 
     private volatile Exchange receivedExchange;

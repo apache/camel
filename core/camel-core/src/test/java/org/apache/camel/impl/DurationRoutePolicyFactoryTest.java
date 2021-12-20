@@ -57,7 +57,7 @@ public class DurationRoutePolicyFactoryTest extends ContextTestSupport {
 
                 getContext().addRoutePolicyFactory(factory);
 
-                from("timer:foo?period=100").routeId("foo").to("mock:foo");
+                from("timer:foo?delay=100&period=100").routeId("foo").to("mock:foo");
             }
         };
     }

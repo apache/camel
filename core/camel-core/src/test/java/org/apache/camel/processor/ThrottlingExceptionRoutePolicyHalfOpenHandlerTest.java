@@ -30,11 +30,13 @@ import org.apache.camel.throttling.ThrottlingExceptionHalfOpenHandler;
 import org.apache.camel.throttling.ThrottlingExceptionRoutePolicy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.awaitility.Awaitility.await;
 
+@Isolated("Does not play well with parallel execution")
 public class ThrottlingExceptionRoutePolicyHalfOpenHandlerTest extends ContextTestSupport {
     private static Logger log = LoggerFactory.getLogger(ThrottlingExceptionRoutePolicyHalfOpenHandlerTest.class);
 

@@ -36,7 +36,7 @@ public class AggregateTimeoutWithExecutorServiceTest extends ContextTestSupport 
 
     @Test
     public void testThreadNotUsedForEveryAggregatorWithCustomExecutorService() throws Exception {
-        assertTrue(aggregateThreadsCount() < NUM_AGGREGATORS,
+        assertTrue(aggregateThreadsCount(context.getName()) < NUM_AGGREGATORS,
                 "There should not be a thread for every aggregator when using a shared thread pool");
 
         // sanity check to make sure were testing routes that work
@@ -54,13 +54,14 @@ public class AggregateTimeoutWithExecutorServiceTest extends ContextTestSupport 
         assertMockEndpointsSatisfied();
     }
 
-    public static int aggregateThreadsCount() {
+    public static int aggregateThreadsCount(String contextName) {
         int count = 0;
         ThreadGroup threadGroup = Thread.currentThread().getThreadGroup();
         Thread[] threads = new Thread[threadGroup.activeCount()];
         threadGroup.enumerate(threads);
         for (Thread thread : threads) {
-            if (thread != null && thread.getName().contains(AggregateProcessor.AGGREGATE_TIMEOUT_CHECKER)) {
+            if (thread != null && thread.getName().contains(AggregateProcessor.AGGREGATE_TIMEOUT_CHECKER)
+                    && thread.getName().contains(contextName)) {
                 ++count;
             }
         }
