@@ -5,7 +5,6 @@
 :description: Get the value of a HL7 message field specified by terse location specification syntax.
 :since: 2.11
 :supportlevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/hl7terser.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: hl7
 

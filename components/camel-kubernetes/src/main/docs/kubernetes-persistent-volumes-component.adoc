@@ -6,7 +6,6 @@
 :since: 2.17
 :supportlevel: Stable
 :component-header: Only producer is supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/kubernetes-persistent-volumes.adoc[opts=optional]
 //Manually maintained attributes
 :group: Kubernetes
 :camel-spring-boot-name: kubernetes

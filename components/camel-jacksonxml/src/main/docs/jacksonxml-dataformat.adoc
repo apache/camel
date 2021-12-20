@@ -5,7 +5,6 @@
 :description: Unmarshal a XML payloads to POJOs and back using XMLMapper extension of Jackson.
 :since: 2.16
 :supportlevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/jacksonxml.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: jacksonxml
 

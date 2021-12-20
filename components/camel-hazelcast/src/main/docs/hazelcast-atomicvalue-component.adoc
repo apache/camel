@@ -6,7 +6,6 @@
 :since: 2.7
 :supportlevel: Stable
 :component-header: Only producer is supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/hazelcast-atomicvalue.adoc[opts=optional]
 //Manually maintained attributes
 :group: Hazelcast
 :camel-spring-boot-name: hazelcast
