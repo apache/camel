@@ -16,13 +16,35 @@
  */
 package org.apache.camel.impl.debugger;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.Debugger;
+import org.apache.camel.spi.DebuggerFactory;
 import org.apache.camel.spi.annotations.JdkService;
+import org.apache.camel.support.LifecycleStrategySupport;
 
 @JdkService(Debugger.FACTORY)
-public class CamelDebuggerFactory {
+public class CamelDebuggerFactory implements DebuggerFactory {
 
-    // noop - just detect on classpath and automatic enable debugger
+    @Override
+    public Debugger createDebugger(CamelContext camelContext) throws Exception {
+        // must enable message history for debugger to capture more details
+        camelContext.setMessageHistory(true);
+
+        BacklogDebugger backlog = BacklogDebugger.createDebugger(camelContext);
+        // we need to enable debugger after context is started
+        camelContext.adapt(ExtendedCamelContext.class).addLifecycleStrategy(new LifecycleStrategySupport() {
+
+            @Override
+            public void onContextStarted(CamelContext context) {
+                backlog.enableDebugger();
+            }
+        });
+        camelContext.addService(backlog);
+
+        // return null as we fool camel-core into using this backlog debugger as we added it as a service
+        return null;
+    }
 
     @Override
     public String toString() {
