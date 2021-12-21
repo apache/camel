@@ -104,8 +104,6 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
     @Parameter(defaultValue = "org.apache.camel.builder.component.dsl")
     protected String componentsDslFactoriesPackageName;
 
-    DynamicClassLoader projectClassLoader;
-
     @Override
     public void execute(MavenProject project, MavenProjectHelper projectHelper, BuildContext buildContext)
             throws MojoFailureException, MojoExecutionException {
@@ -118,12 +116,6 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        try {
-            projectClassLoader = DynamicClassLoader.createDynamicClassLoader(project.getTestClasspathElements());
-        } catch (org.apache.maven.artifact.DependencyResolutionRequiredException e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
-
         File camelDir = findCamelDirectory(baseDir, "dsl/camel-componentdsl");
         if (camelDir == null) {
             getLog().debug("No dsl/camel-componentdsl folder found, skipping execution");
@@ -208,7 +200,7 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
             final ComponentModel componentModel)
             throws MojoFailureException {
         final ComponentDslBuilderFactoryGenerator componentDslBuilderFactoryGenerator = ComponentDslBuilderFactoryGenerator
-                .generateClass(componentModel, projectClassLoader, componentsDslPackageName);
+                .generateClass(componentModel, getProjectClassLoader(), componentsDslPackageName);
         boolean updated = writeSourceIfChanged(componentDslBuilderFactoryGenerator.printClassAsString(),
                 componentsDslFactoriesPackageName.replace('.', '/'),
                 componentDslBuilderFactoryGenerator.getGeneratedClassName() + ".java", sourcesOutputDir);
@@ -237,7 +229,7 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
     private void syncAndGenerateComponentsBuilderFactories(final Set<ComponentModel> componentCachedModels)
             throws MojoFailureException {
         final ComponentsBuilderFactoryGenerator componentsBuilderFactoryGenerator = ComponentsBuilderFactoryGenerator
-                .generateClass(componentCachedModels, projectClassLoader, componentsDslPackageName);
+                .generateClass(componentCachedModels, getProjectClassLoader(), componentsDslPackageName);
         boolean updated = writeSourceIfChanged(componentsBuilderFactoryGenerator.printClassAsString(),
                 componentsDslPackageName.replace('.', '/'), componentsBuilderFactoryGenerator.getGeneratedClassName() + ".java",
                 sourcesOutputDir);
