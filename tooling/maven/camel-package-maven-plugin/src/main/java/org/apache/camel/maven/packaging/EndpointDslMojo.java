@@ -17,7 +17,6 @@
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
-import java.io.IOError;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.LineNumberReader;
@@ -26,8 +25,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -41,6 +40,7 @@ import java.util.stream.Stream;
 
 import javax.annotation.Generated;
 
+import org.apache.camel.tooling.model.BaseModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.ComponentModel.EndpointOptionModel;
 import org.apache.camel.tooling.model.JsonMapper;
@@ -120,6 +120,12 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
     @Parameter
     protected File outputResourcesDir;
 
+    /**
+     * The components directory where all the Apache Camel components are
+     */
+    @Parameter(defaultValue = "${project.build.directory}/../../../components")
+    protected File componentsDir;
+
     @Override
     public void execute(MavenProject project, MavenProjectHelper projectHelper, BuildContext buildContext)
             throws MojoFailureException, MojoExecutionException {
@@ -148,56 +154,115 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
             componentsMetadata = outputResourcesDir.toPath().resolve("metadata.json").toFile();
         }
 
-        Map<File, Supplier<String>> files;
-
-        try (Stream<Path> pathStream = Files.find(buildDir.toPath(), Integer.MAX_VALUE, super::isJsonFile)) {
-            files = pathStream.collect(Collectors.toMap(Path::toFile, s -> cache(() -> loadJson(s.toFile()))));
-        } catch (IOException e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        Collection<Path> allJsonFiles = new TreeSet<>();
+        Stream.of(componentsDir.toPath())
+                .filter(dir -> !"target".equals(dir.getFileName().toString()))
+                .flatMap(p -> getComponentPath(p).stream())
+                .filter(dir -> Files.isDirectory(dir.resolve("src")))
+                .map(p -> p.resolve("target/classes"))
+                .flatMap(PackageHelper::walk).forEach(p -> {
+                    String f = p.getFileName().toString();
+                    if (f.endsWith(PackageHelper.JSON_SUFIX)) {
+                        allJsonFiles.add(p);
+                    }
+                });
+        final Map<Path, BaseModel<?>> allModels
+                = allJsonFiles.stream().collect(Collectors.toMap(p -> p, JsonMapper::generateModel));
+        Set<ComponentModel> models = allJsonFiles.stream()
+                .filter(p -> allModels.get(p) instanceof ComponentModel)
+                .map(p -> (ComponentModel) allModels.get(p))
+                .collect(Collectors.toCollection(TreeSet::new));
 
         // generate component endpoint DSL files and write them
         Lock lock = LOCKS.computeIfAbsent(root, d -> new ReentrantLock());
         lock.lock();
         try {
-            executeComponent(files);
+            executeComponent(models);
         } finally {
             lock.unlock();
         }
     }
 
-    private static String loadJson(File file) {
-        try {
-            return loadText(file);
-        } catch (IOException e) {
-            throw new IOError(e);
+    private List<Path> getComponentPath(Path dir) {
+        switch (dir.getFileName().toString()) {
+            case "camel-as2":
+                return Collections.singletonList(dir.resolve("camel-as2-component"));
+            case "camel-avro-rpc":
+                return Collections.singletonList(dir.resolve("camel-avro-rpc-component"));
+            case "camel-salesforce":
+                return Collections.singletonList(dir.resolve("camel-salesforce-component"));
+            case "camel-olingo2":
+                return Collections.singletonList(dir.resolve("camel-olingo2-component"));
+            case "camel-olingo4":
+                return Collections.singletonList(dir.resolve("camel-olingo4-component"));
+            case "camel-box":
+                return Collections.singletonList(dir.resolve("camel-box-component"));
+            case "camel-servicenow":
+                return Collections.singletonList(dir.resolve("camel-servicenow-component"));
+            case "camel-fhir":
+                return Collections.singletonList(dir.resolve("camel-fhir-component"));
+            case "camel-infinispan":
+                return Arrays.asList(dir.resolve("camel-infinispan"), dir.resolve("camel-infinispan-embedded"));
+            case "camel-azure":
+                return Arrays.asList(dir.resolve("camel-azure-eventhubs"), dir.resolve("camel-azure-storage-blob"),
+                        dir.resolve("camel-azure-storage-datalake"), dir.resolve("camel-azure-cosmosdb"),
+                        dir.resolve("camel-azure-storage-queue"));
+            case "camel-google":
+                return Arrays.asList(dir.resolve("camel-google-bigquery"), dir.resolve("camel-google-calendar"),
+                        dir.resolve("camel-google-drive"), dir.resolve("camel-google-mail"), dir.resolve("camel-google-pubsub"),
+                        dir.resolve("camel-google-sheets"),
+                        dir.resolve("camel-google-storage"), dir.resolve("camel-google-functions"));
+            case "camel-debezium":
+                return Arrays.asList(dir.resolve("camel-debezium-mongodb"), dir.resolve("camel-debezium-mysql"),
+                        dir.resolve("camel-debezium-postgres"), dir.resolve("camel-debezium-sqlserver"));
+            case "camel-microprofile":
+                return Arrays.asList(dir.resolve("camel-microprofile-config"),
+                        dir.resolve("camel-microprofile-fault-tolerance"),
+                        dir.resolve("camel-microprofile-health"), dir.resolve("camel-microprofile-metrics"));
+            case "camel-test":
+                return Arrays.asList(dir.resolve("camel-test"),
+                        dir.resolve("camel-test-cdi"),
+                        dir.resolve("camel-testcontainers"), dir.resolve("camel-testcontainers-junit5"),
+                        dir.resolve("camel-testcontainers-spring"), dir.resolve("camel-testcontainers-spring-junit5"),
+                        dir.resolve("camel-test-junit5"), dir.resolve("camel-test-spring"),
+                        dir.resolve("camel-test-spring-junit5"));
+            case "camel-aws":
+                return Arrays.asList(dir.resolve("camel-aws2-athena"), dir.resolve("camel-aws2-cw"),
+                        dir.resolve("camel-aws2-ddb"), dir.resolve("camel-aws2-ec2"),
+                        dir.resolve("camel-aws2-ecs"), dir.resolve("camel-aws2-eks"), dir.resolve("camel-aws2-eventbridge"),
+                        dir.resolve("camel-aws2-iam"),
+                        dir.resolve("camel-aws2-kinesis"), dir.resolve("camel-aws2-kms"), dir.resolve("camel-aws2-lambda"),
+                        dir.resolve("camel-aws2-mq"),
+                        dir.resolve("camel-aws2-msk"), dir.resolve("camel-aws2-s3"), dir.resolve("camel-aws2-ses"),
+                        dir.resolve("camel-aws2-sns"),
+                        dir.resolve("camel-aws2-sqs"), dir.resolve("camel-aws2-sts"), dir.resolve("camel-aws2-translate"),
+                        dir.resolve("camel-aws-xray"), dir.resolve("camel-aws-secrets-manager"));
+            case "camel-vertx":
+                return Arrays.asList(dir.resolve("camel-vertx"),
+                        dir.resolve("camel-vertx-http"),
+                        dir.resolve("camel-vertx-kafka").resolve("camel-vertx-kafka-component"),
+                        dir.resolve("camel-vertx-websocket"));
+            case "camel-huawei":
+                return Arrays.asList(dir.resolve("camel-huaweicloud-functiongraph"),
+                        dir.resolve("camel-huaweicloud-smn"),
+                        dir.resolve("camel-huaweicloud-iam"),
+                        dir.resolve("camel-huaweicloud-dms"),
+                        dir.resolve("camel-huaweicloud-imagerecognition"),
+                        dir.resolve("camel-huaweicloud-obs"));
+            default:
+                return Collections.singletonList(dir);
         }
     }
 
-    private void executeComponent(Map<File, Supplier<String>> jsonFiles) throws MojoFailureException {
-        // find the component names
-        Set<String> componentNames = new TreeSet<>();
-        findComponentNames(buildDir, componentNames);
-
-        // create auto configuration for the components
-        if (!componentNames.isEmpty()) {
-            getLog().debug("Found " + componentNames.size() + " components");
-
-            List<ComponentModel> allModels = new LinkedList<>();
-            for (String componentName : componentNames) {
-                String json = loadComponentJson(jsonFiles, componentName);
-                if (json != null) {
-                    ComponentModel model = JsonMapper.generateComponentModel(json);
-                    allModels.add(model);
-                }
-            }
+    private void executeComponent(Set<ComponentModel> allModels) throws MojoFailureException {
+        if (!allModels.isEmpty()) {
+            getLog().debug("Found " + allModels.size() + " components");
 
             // Group the models by implementing classes
             Map<String, List<ComponentModel>> grModels
                     = allModels.stream().collect(Collectors.groupingBy(ComponentModel::getJavaType));
             for (List<ComponentModel> compModels : grModels.values()) {
-                ComponentModel model = compModels.get(0); // They should be
-                                                         // equivalent
+                ComponentModel model = compModels.get(0); // They should be equivalent
                 List<String> aliases = compModels.stream().map(ComponentModel::getScheme).sorted().collect(Collectors.toList());
 
                 String overrideComponentName = null;

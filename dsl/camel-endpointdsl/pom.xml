@@ -114,7 +114,7 @@
                 <artifactId>camel-package-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>generate</id>
+                        <id>generate-endpoint-dsl</id>
                         <goals>
                             <goal>generate-endpoint-dsl</goal>
                         </goals>
