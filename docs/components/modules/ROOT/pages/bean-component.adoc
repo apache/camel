@@ -10,7 +10,6 @@
 :supportLevel: Stable
 :component-header: Only producer is supported
 :core:
-$reference/components/bean.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: bean
 

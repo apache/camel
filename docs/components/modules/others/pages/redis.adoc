@@ -8,7 +8,6 @@
 :description: Aggregation repository using Redis as datastore
 :since: 3.5
 :supportLevel: Preview
-$reference/others/redis.adoc[opts=optional]
 
 *Since Camel {since}*
 

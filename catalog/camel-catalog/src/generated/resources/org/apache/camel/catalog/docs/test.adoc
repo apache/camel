@@ -6,7 +6,6 @@
 :description: Camel unit testing
 :since: 2.9
 :supportLevel: Stable
-$reference/others/test.adoc[opts=optional]
 
 *Since Camel {since}*
 

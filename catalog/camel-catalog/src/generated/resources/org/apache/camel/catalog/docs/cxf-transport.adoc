@@ -6,7 +6,6 @@
 :description: Camel Transport for Apache CXF
 :since: 2.8
 :supportLevel: Stable
-$reference/others/cxf-transport.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: cxf-transport
 

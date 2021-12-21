@@ -8,7 +8,6 @@
 :description: Camel unit testing with JUnit 5
 :since: 3.0
 :supportLevel: Stable
-$reference/others/test-junit5.adoc[opts=optional]
 
 *Since Camel {since}*
 

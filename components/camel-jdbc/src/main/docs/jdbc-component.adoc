@@ -7,7 +7,6 @@
 :since: 1.2
 :supportLevel: Stable
 :component-header: Only producer is supported
-$reference/components/jdbc.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: jdbc
 

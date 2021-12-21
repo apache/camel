@@ -8,7 +8,6 @@
 :description: Camel support for testcontainers
 :since: 2.22
 :supportLevel: Stable
-$reference/others/testcontainers.adoc[opts=optional]
 
 *Since Camel {since}*
 

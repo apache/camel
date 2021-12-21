@@ -8,7 +8,6 @@
 :description: Distributed tracing using AWS XRay
 :since: 2.21
 :supportLevel: Stable
-$reference/others/aws-xray.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: aws-xray
 

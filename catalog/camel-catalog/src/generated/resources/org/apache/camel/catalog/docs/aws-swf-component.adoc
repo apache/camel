@@ -7,7 +7,6 @@
 :since: 2.13
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
-$reference/components/aws-swf.adoc[opts=optional]
 //Manually maintained attributes
 :group: AWS
 :camel-spring-boot-name: aws-swf

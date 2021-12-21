@@ -8,7 +8,6 @@
 :description: Encrypt and decrypt XML payloads using Apache Santuario.
 :since: 2.0
 :supportLevel: Stable
-$reference/dataformats/secureXML.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: xmlsecurity
 

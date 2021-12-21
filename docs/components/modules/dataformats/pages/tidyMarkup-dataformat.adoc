@@ -8,7 +8,6 @@
 :description: Parse (potentially invalid) HTML into valid HTML or DOM.
 :since: 2.0
 :supportLevel: Stable
-$reference/dataformats/tidyMarkup.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: tagsoup
 

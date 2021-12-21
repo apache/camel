@@ -6,7 +6,6 @@
 :description: Camel Spring Main support
 :since: 3.2
 :supportLevel: Stable
-$reference/others/spring-main.adoc[opts=optional]
 //Manually maintained attributes
 :group: Spring
 

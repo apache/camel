@@ -8,7 +8,6 @@
 :description: Unmarshal a CBOR payload to POJO and back.
 :since: 3.0
 :supportLevel: Stable
-$reference/dataformats/cbor.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: cbor
 

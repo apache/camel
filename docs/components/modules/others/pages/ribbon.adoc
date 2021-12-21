@@ -8,7 +8,6 @@
 :description: Using Netflix Ribbon for client side load balancing
 :since: 2.18
 :supportLevel: Stable
-$reference/others/ribbon.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: ribbon
 

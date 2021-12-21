@@ -7,7 +7,6 @@
 :since: 2.20
 :supportLevel: Stable
 :component-header: Only producer is supported
-$reference/components/caffeine-loadcache.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: caffeine
 

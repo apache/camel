@@ -6,7 +6,6 @@
 :description: Encode and decode data using Base64.
 :since: 2.11
 :supportLevel: Stable
-$reference/dataformats/base64.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: base64
 

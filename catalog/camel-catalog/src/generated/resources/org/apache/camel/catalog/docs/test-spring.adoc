@@ -6,7 +6,6 @@
 :description: Camel unit testing with Spring
 :since: 2.10
 :supportLevel: Stable
-$reference/others/test-spring.adoc[opts=optional]
 
 *Since Camel {since}*
 

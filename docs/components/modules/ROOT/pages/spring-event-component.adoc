@@ -9,7 +9,6 @@
 :since: 1.4
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
-$reference/components/spring-event.adoc[opts=optional]
 //Manually maintained attributes
 :group: Spring
 :camel-spring-boot-name: spring

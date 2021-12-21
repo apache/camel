@@ -7,7 +7,6 @@
 :since: 2.19
 :supportLevel: Stable
 :component-header: Only producer is supported
-$reference/components/openstack-glance.adoc[opts=optional]
 //Manually maintained attributes
 :group: OpenStack
 :camel-spring-boot-name: openstack

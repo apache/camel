@@ -8,7 +8,6 @@
 :description: Compression and decompress streams using java.util.zip.ZipStream.
 :since: 2.11
 :supportLevel: Stable
-$reference/dataformats/zipfile.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: zipfile
 

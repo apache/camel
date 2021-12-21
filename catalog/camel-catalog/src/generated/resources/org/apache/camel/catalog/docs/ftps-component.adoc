@@ -7,7 +7,6 @@
 :since: 2.2
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
-$reference/components/ftps.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: ftp
 

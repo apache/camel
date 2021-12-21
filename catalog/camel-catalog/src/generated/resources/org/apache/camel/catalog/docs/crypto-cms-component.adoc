@@ -8,7 +8,6 @@
 :supportLevel: Stable-deprecated
 :deprecated: *deprecated*
 :component-header: Only producer is supported
-$reference/components/crypto-cms.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: crypto-cms
 

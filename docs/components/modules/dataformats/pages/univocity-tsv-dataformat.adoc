@@ -8,7 +8,6 @@
 :description: Marshal and unmarshal Java objects from and to TSV (Tab-Separated Values) records using UniVocity Parsers.
 :since: 2.15
 :supportLevel: Stable
-$reference/dataformats/univocity-tsv.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: univocity-parsers
 

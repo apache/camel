@@ -9,7 +9,6 @@
 :since: 2.16
 :supportLevel: Stable
 :component-header: Only producer is supported
-$reference/components/aws-ec2.adoc[opts=optional]
 //Manually maintained attributes
 :group: AWS
 :camel-spring-boot-name: aws-ec2

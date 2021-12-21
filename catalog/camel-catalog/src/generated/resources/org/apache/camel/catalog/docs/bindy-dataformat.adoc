@@ -6,7 +6,6 @@
 :description: Marshal and unmarshal between POJOs and key-value pair (KVP) format using Camel Bindy
 :since: 2.0
 :supportLevel: Stable
-$reference/dataformats/bindy.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: bindy
 

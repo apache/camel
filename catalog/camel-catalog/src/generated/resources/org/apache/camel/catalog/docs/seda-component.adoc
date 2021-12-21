@@ -8,7 +8,6 @@
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 :core:
-$reference/components/seda.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: seda
 

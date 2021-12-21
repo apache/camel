@@ -6,7 +6,6 @@
 :description: Using LevelDB as persistent EIP store
 :since: 2.10
 :supportLevel: Stable
-$reference/others/leveldb.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: leveldb
 

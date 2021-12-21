@@ -7,7 +7,6 @@
 :since: 2.23
 :supportLevel: Stable
 :component-header: Only consumer is supported
-$reference/components/google-calendar-stream.adoc[opts=optional]
 //Manually maintained attributes
 :group: Google
 :camel-spring-boot-name: google-calendar

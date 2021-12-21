@@ -9,7 +9,6 @@
 :since: 2.19
 :supportLevel: Stable
 :component-header: Only producer is supported
-$reference/components/bonita.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: bonita
 

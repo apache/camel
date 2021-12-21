@@ -6,7 +6,6 @@
 :description: Evaluate a Spring Expression Language (SpEL) expression against the Camel Exchange.
 :since: 2.7
 :supportLevel: Stable
-$reference/languages/spel.adoc[opts=optional]
 //Manually maintained attributes
 :group: Spring
 :camel-spring-boot-name: spring

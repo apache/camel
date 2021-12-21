@@ -7,7 +7,6 @@
 :since: 3.0
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
-$reference/components/robotframework.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: robotframework
 

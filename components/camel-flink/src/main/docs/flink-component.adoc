@@ -7,7 +7,6 @@
 :since: 2.18
 :supportLevel: Stable
 :component-header: Only producer is supported
-$reference/components/flink.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: flink
 
