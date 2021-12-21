@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -210,7 +214,8 @@ public interface XsltEndpointBuilderFactory {
          * @param output the value to set
          * @return the dsl builder
          */
-        default XsltEndpointBuilder output(XsltOutput output) {
+        default XsltEndpointBuilder output(
+                org.apache.camel.component.xslt.XsltOutput output) {
             doSetProperty("output", output);
             return this;
         }
@@ -294,7 +299,8 @@ public interface XsltEndpointBuilderFactory {
          * @param entityResolver the value to set
          * @return the dsl builder
          */
-        default AdvancedXsltEndpointBuilder entityResolver(Object entityResolver) {
+        default AdvancedXsltEndpointBuilder entityResolver(
+                org.xml.sax.EntityResolver entityResolver) {
             doSetProperty("entityResolver", entityResolver);
             return this;
         }
@@ -329,7 +335,8 @@ public interface XsltEndpointBuilderFactory {
          * @param errorListener the value to set
          * @return the dsl builder
          */
-        default AdvancedXsltEndpointBuilder errorListener(Object errorListener) {
+        default AdvancedXsltEndpointBuilder errorListener(
+                javax.xml.transform.ErrorListener errorListener) {
             doSetProperty("errorListener", errorListener);
             return this;
         }
@@ -366,7 +373,7 @@ public interface XsltEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedXsltEndpointBuilder resultHandlerFactory(
-                Object resultHandlerFactory) {
+                org.apache.camel.component.xslt.ResultHandlerFactory resultHandlerFactory) {
             doSetProperty("resultHandlerFactory", resultHandlerFactory);
             return this;
         }
@@ -400,7 +407,7 @@ public interface XsltEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedXsltEndpointBuilder transformerFactory(
-                Object transformerFactory) {
+                javax.xml.transform.TransformerFactory transformerFactory) {
             doSetProperty("transformerFactory", transformerFactory);
             return this;
         }
@@ -449,7 +456,7 @@ public interface XsltEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedXsltEndpointBuilder transformerFactoryConfigurationStrategy(
-                Object transformerFactoryConfigurationStrategy) {
+                org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy transformerFactoryConfigurationStrategy) {
             doSetProperty("transformerFactoryConfigurationStrategy", transformerFactoryConfigurationStrategy);
             return this;
         }
@@ -481,7 +488,8 @@ public interface XsltEndpointBuilderFactory {
          * @param uriResolver the value to set
          * @return the dsl builder
          */
-        default AdvancedXsltEndpointBuilder uriResolver(Object uriResolver) {
+        default AdvancedXsltEndpointBuilder uriResolver(
+                javax.xml.transform.URIResolver uriResolver) {
             doSetProperty("uriResolver", uriResolver);
             return this;
         }
@@ -500,17 +508,6 @@ public interface XsltEndpointBuilderFactory {
             doSetProperty("uriResolver", uriResolver);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for <code>org.apache.camel.component.xslt.XsltOutput</code>
-     * enum.
-     */
-    enum XsltOutput {
-        string,
-        bytes,
-        DOM,
-        file;
     }
 
     public interface XsltBuilders {

@@ -16,12 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Expose websocket endpoints using JSR356.
@@ -147,7 +149,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedJSR356WebSocketEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -182,7 +184,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedJSR356WebSocketEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }

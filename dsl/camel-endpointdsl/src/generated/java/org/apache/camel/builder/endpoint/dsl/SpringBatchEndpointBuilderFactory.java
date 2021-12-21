@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -80,7 +84,8 @@ public interface SpringBatchEndpointBuilderFactory {
          * @param jobLauncher the value to set
          * @return the dsl builder
          */
-        default SpringBatchEndpointBuilder jobLauncher(Object jobLauncher) {
+        default SpringBatchEndpointBuilder jobLauncher(
+                org.springframework.batch.core.launch.JobLauncher jobLauncher) {
             doSetProperty("jobLauncher", jobLauncher);
             return this;
         }
@@ -110,7 +115,8 @@ public interface SpringBatchEndpointBuilderFactory {
          * @param jobRegistry the value to set
          * @return the dsl builder
          */
-        default SpringBatchEndpointBuilder jobRegistry(Object jobRegistry) {
+        default SpringBatchEndpointBuilder jobRegistry(
+                org.springframework.batch.core.configuration.JobRegistry jobRegistry) {
             doSetProperty("jobRegistry", jobRegistry);
             return this;
         }

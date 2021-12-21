@@ -16,13 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Connect to OPC UA servers using the binary protocol for acquiring telemetry
@@ -71,7 +72,7 @@ public interface MiloClientEndpointBuilderFactory {
          * @return the dsl builder
          */
         default MiloClientEndpointConsumerBuilder dataChangeFilterDeadbandType(
-                Object dataChangeFilterDeadbandType) {
+                org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger dataChangeFilterDeadbandType) {
             doSetProperty("dataChangeFilterDeadbandType", dataChangeFilterDeadbandType);
             return this;
         }
@@ -137,7 +138,7 @@ public interface MiloClientEndpointBuilderFactory {
          * @return the dsl builder
          */
         default MiloClientEndpointConsumerBuilder dataChangeFilterTrigger(
-                DataChangeTrigger dataChangeFilterTrigger) {
+                org.eclipse.milo.opcua.stack.core.types.enumerated.DataChangeTrigger dataChangeFilterTrigger) {
             doSetProperty("dataChangeFilterTrigger", dataChangeFilterTrigger);
             return this;
         }
@@ -246,7 +247,7 @@ public interface MiloClientEndpointBuilderFactory {
          * @return the dsl builder
          */
         default MiloClientEndpointConsumerBuilder monitorFilterType(
-                MonitorFilterType monitorFilterType) {
+                org.apache.camel.component.milo.client.MonitorFilterType monitorFilterType) {
             doSetProperty("monitorFilterType", monitorFilterType);
             return this;
         }
@@ -362,25 +363,7 @@ public interface MiloClientEndpointBuilderFactory {
          * A set of allowed security policy URIs. Default is to accept all and
          * use the highest.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.Set&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
-         * 
-         * Group: client
-         * 
-         * @param allowedSecurityPolicies the value to set
-         * @return the dsl builder
-         */
-        default MiloClientEndpointConsumerBuilder allowedSecurityPolicies(
-                Set<String> allowedSecurityPolicies) {
-            doSetProperty("allowedSecurityPolicies", allowedSecurityPolicies);
-            return this;
-        }
-        /**
-         * A set of allowed security policy URIs. Default is to accept all and
-         * use the highest.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.Set&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: client
          * 
@@ -774,7 +757,7 @@ public interface MiloClientEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedMiloClientEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -809,7 +792,7 @@ public interface MiloClientEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedMiloClientEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -868,7 +851,7 @@ public interface MiloClientEndpointBuilderFactory {
          * @return the dsl builder
          */
         default MiloClientEndpointProducerBuilder dataChangeFilterDeadbandType(
-                Object dataChangeFilterDeadbandType) {
+                org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger dataChangeFilterDeadbandType) {
             doSetProperty("dataChangeFilterDeadbandType", dataChangeFilterDeadbandType);
             return this;
         }
@@ -934,7 +917,7 @@ public interface MiloClientEndpointBuilderFactory {
          * @return the dsl builder
          */
         default MiloClientEndpointProducerBuilder dataChangeFilterTrigger(
-                DataChangeTrigger dataChangeFilterTrigger) {
+                org.eclipse.milo.opcua.stack.core.types.enumerated.DataChangeTrigger dataChangeFilterTrigger) {
             doSetProperty("dataChangeFilterTrigger", dataChangeFilterTrigger);
             return this;
         }
@@ -1043,7 +1026,7 @@ public interface MiloClientEndpointBuilderFactory {
          * @return the dsl builder
          */
         default MiloClientEndpointProducerBuilder monitorFilterType(
-                MonitorFilterType monitorFilterType) {
+                org.apache.camel.component.milo.client.MonitorFilterType monitorFilterType) {
             doSetProperty("monitorFilterType", monitorFilterType);
             return this;
         }
@@ -1163,25 +1146,7 @@ public interface MiloClientEndpointBuilderFactory {
          * A set of allowed security policy URIs. Default is to accept all and
          * use the highest.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.Set&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
-         * 
-         * Group: client
-         * 
-         * @param allowedSecurityPolicies the value to set
-         * @return the dsl builder
-         */
-        default MiloClientEndpointProducerBuilder allowedSecurityPolicies(
-                Set<String> allowedSecurityPolicies) {
-            doSetProperty("allowedSecurityPolicies", allowedSecurityPolicies);
-            return this;
-        }
-        /**
-         * A set of allowed security policy URIs. Default is to accept all and
-         * use the highest.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.Set&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: client
          * 
@@ -1600,7 +1565,7 @@ public interface MiloClientEndpointBuilderFactory {
          * @return the dsl builder
          */
         default MiloClientEndpointBuilder dataChangeFilterDeadbandType(
-                Object dataChangeFilterDeadbandType) {
+                org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger dataChangeFilterDeadbandType) {
             doSetProperty("dataChangeFilterDeadbandType", dataChangeFilterDeadbandType);
             return this;
         }
@@ -1666,7 +1631,7 @@ public interface MiloClientEndpointBuilderFactory {
          * @return the dsl builder
          */
         default MiloClientEndpointBuilder dataChangeFilterTrigger(
-                DataChangeTrigger dataChangeFilterTrigger) {
+                org.eclipse.milo.opcua.stack.core.types.enumerated.DataChangeTrigger dataChangeFilterTrigger) {
             doSetProperty("dataChangeFilterTrigger", dataChangeFilterTrigger);
             return this;
         }
@@ -1775,7 +1740,7 @@ public interface MiloClientEndpointBuilderFactory {
          * @return the dsl builder
          */
         default MiloClientEndpointBuilder monitorFilterType(
-                MonitorFilterType monitorFilterType) {
+                org.apache.camel.component.milo.client.MonitorFilterType monitorFilterType) {
             doSetProperty("monitorFilterType", monitorFilterType);
             return this;
         }
@@ -1846,25 +1811,7 @@ public interface MiloClientEndpointBuilderFactory {
          * A set of allowed security policy URIs. Default is to accept all and
          * use the highest.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.Set&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
-         * 
-         * Group: client
-         * 
-         * @param allowedSecurityPolicies the value to set
-         * @return the dsl builder
-         */
-        default MiloClientEndpointBuilder allowedSecurityPolicies(
-                Set<String> allowedSecurityPolicies) {
-            doSetProperty("allowedSecurityPolicies", allowedSecurityPolicies);
-            return this;
-        }
-        /**
-         * A set of allowed security policy URIs. Default is to accept all and
-         * use the highest.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.Set&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: client
          * 
@@ -2233,25 +2180,6 @@ public interface MiloClientEndpointBuilderFactory {
         default MiloClientEndpointBuilder basic() {
             return (MiloClientEndpointBuilder) this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.eclipse.milo.opcua.stack.core.types.enumerated.DataChangeTrigger</code> enum.
-     */
-    enum DataChangeTrigger {
-        Status,
-        StatusValue,
-        StatusValueTimestamp;
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.milo.client.MonitorFilterType</code>
-     * enum.
-     */
-    enum MonitorFilterType {
-        dataChangeFilter;
     }
 
     public interface MiloClientBuilders {

@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -46,7 +50,8 @@ public interface KeystoneEndpointBuilderFactory {
          * @param config the value to set
          * @return the dsl builder
          */
-        default KeystoneEndpointBuilder config(Object config) {
+        default KeystoneEndpointBuilder config(
+                org.openstack4j.core.transport.Config config) {
             doSetProperty("config", config);
             return this;
         }

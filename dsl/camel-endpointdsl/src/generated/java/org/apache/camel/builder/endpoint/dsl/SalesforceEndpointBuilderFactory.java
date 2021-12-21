@@ -16,13 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Communicate with Salesforce using Java DTOs.
@@ -68,7 +69,7 @@ public interface SalesforceEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SalesforceEndpointConsumerBuilder apexQueryParams(
-                Map<String, Object> apexQueryParams) {
+                Map<java.lang.String, java.lang.Object> apexQueryParams) {
             doSetProperty("apexQueryParams", apexQueryParams);
             return this;
         }
@@ -164,7 +165,7 @@ public interface SalesforceEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SalesforceEndpointConsumerBuilder contentType(
-                ContentType contentType) {
+                org.apache.camel.component.salesforce.api.dto.bulk.ContentType contentType) {
             doSetProperty("contentType", contentType);
             return this;
         }
@@ -262,7 +263,8 @@ public interface SalesforceEndpointBuilderFactory {
          * @param format the value to set
          * @return the dsl builder
          */
-        default SalesforceEndpointConsumerBuilder format(PayloadFormat format) {
+        default SalesforceEndpointConsumerBuilder format(
+                org.apache.camel.component.salesforce.internal.PayloadFormat format) {
             doSetProperty("format", format);
             return this;
         }
@@ -294,7 +296,8 @@ public interface SalesforceEndpointBuilderFactory {
          * @param httpClient the value to set
          * @return the dsl builder
          */
-        default SalesforceEndpointConsumerBuilder httpClient(Object httpClient) {
+        default SalesforceEndpointConsumerBuilder httpClient(
+                org.apache.camel.component.salesforce.SalesforceHttpClient httpClient) {
             doSetProperty("httpClient", httpClient);
             return this;
         }
@@ -356,7 +359,7 @@ public interface SalesforceEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SalesforceEndpointConsumerBuilder initialReplayIdMap(
-                Map<String, Long> initialReplayIdMap) {
+                Map<java.lang.String, java.lang.Long> initialReplayIdMap) {
             doSetProperty("initialReplayIdMap", initialReplayIdMap);
             return this;
         }
@@ -542,7 +545,7 @@ public interface SalesforceEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SalesforceEndpointConsumerBuilder notFoundBehaviour(
-                NotFoundBehaviour notFoundBehaviour) {
+                org.apache.camel.component.salesforce.NotFoundBehaviour notFoundBehaviour) {
             doSetProperty("notFoundBehaviour", notFoundBehaviour);
             return this;
         }
@@ -578,7 +581,7 @@ public interface SalesforceEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SalesforceEndpointConsumerBuilder notifyForFields(
-                NotifyForFieldsEnum notifyForFields) {
+                org.apache.camel.component.salesforce.internal.dto.NotifyForFieldsEnum notifyForFields) {
             doSetProperty("notifyForFields", notifyForFields);
             return this;
         }
@@ -673,7 +676,7 @@ public interface SalesforceEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SalesforceEndpointConsumerBuilder notifyForOperations(
-                NotifyForOperationsEnum notifyForOperations) {
+                org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum notifyForOperations) {
             doSetProperty("notifyForOperations", notifyForOperations);
             return this;
         }
@@ -772,7 +775,7 @@ public interface SalesforceEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SalesforceEndpointConsumerBuilder objectMapper(
-                Object objectMapper) {
+                com.fasterxml.jackson.databind.ObjectMapper objectMapper) {
             doSetProperty("objectMapper", objectMapper);
             return this;
         }
@@ -971,7 +974,7 @@ public interface SalesforceEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SalesforceEndpointConsumerBuilder reportMetadata(
-                Object reportMetadata) {
+                org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportMetadata reportMetadata) {
             doSetProperty("reportMetadata", reportMetadata);
             return this;
         }
@@ -1273,7 +1276,7 @@ public interface SalesforceEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSalesforceEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -1308,7 +1311,7 @@ public interface SalesforceEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSalesforceEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -1365,7 +1368,7 @@ public interface SalesforceEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SalesforceEndpointProducerBuilder apexQueryParams(
-                Map<String, Object> apexQueryParams) {
+                Map<java.lang.String, java.lang.Object> apexQueryParams) {
             doSetProperty("apexQueryParams", apexQueryParams);
             return this;
         }
@@ -1461,7 +1464,7 @@ public interface SalesforceEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SalesforceEndpointProducerBuilder contentType(
-                ContentType contentType) {
+                org.apache.camel.component.salesforce.api.dto.bulk.ContentType contentType) {
             doSetProperty("contentType", contentType);
             return this;
         }
@@ -1559,7 +1562,8 @@ public interface SalesforceEndpointBuilderFactory {
          * @param format the value to set
          * @return the dsl builder
          */
-        default SalesforceEndpointProducerBuilder format(PayloadFormat format) {
+        default SalesforceEndpointProducerBuilder format(
+                org.apache.camel.component.salesforce.internal.PayloadFormat format) {
             doSetProperty("format", format);
             return this;
         }
@@ -1591,7 +1595,8 @@ public interface SalesforceEndpointBuilderFactory {
          * @param httpClient the value to set
          * @return the dsl builder
          */
-        default SalesforceEndpointProducerBuilder httpClient(Object httpClient) {
+        default SalesforceEndpointProducerBuilder httpClient(
+                org.apache.camel.component.salesforce.SalesforceHttpClient httpClient) {
             doSetProperty("httpClient", httpClient);
             return this;
         }
@@ -1653,7 +1658,7 @@ public interface SalesforceEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SalesforceEndpointProducerBuilder initialReplayIdMap(
-                Map<String, Long> initialReplayIdMap) {
+                Map<java.lang.String, java.lang.Long> initialReplayIdMap) {
             doSetProperty("initialReplayIdMap", initialReplayIdMap);
             return this;
         }
@@ -1839,7 +1844,7 @@ public interface SalesforceEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SalesforceEndpointProducerBuilder notFoundBehaviour(
-                NotFoundBehaviour notFoundBehaviour) {
+                org.apache.camel.component.salesforce.NotFoundBehaviour notFoundBehaviour) {
             doSetProperty("notFoundBehaviour", notFoundBehaviour);
             return this;
         }
@@ -1875,7 +1880,7 @@ public interface SalesforceEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SalesforceEndpointProducerBuilder notifyForFields(
-                NotifyForFieldsEnum notifyForFields) {
+                org.apache.camel.component.salesforce.internal.dto.NotifyForFieldsEnum notifyForFields) {
             doSetProperty("notifyForFields", notifyForFields);
             return this;
         }
@@ -1970,7 +1975,7 @@ public interface SalesforceEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SalesforceEndpointProducerBuilder notifyForOperations(
-                NotifyForOperationsEnum notifyForOperations) {
+                org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum notifyForOperations) {
             doSetProperty("notifyForOperations", notifyForOperations);
             return this;
         }
@@ -2069,7 +2074,7 @@ public interface SalesforceEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SalesforceEndpointProducerBuilder objectMapper(
-                Object objectMapper) {
+                com.fasterxml.jackson.databind.ObjectMapper objectMapper) {
             doSetProperty("objectMapper", objectMapper);
             return this;
         }
@@ -2268,7 +2273,7 @@ public interface SalesforceEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SalesforceEndpointProducerBuilder reportMetadata(
-                Object reportMetadata) {
+                org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportMetadata reportMetadata) {
             doSetProperty("reportMetadata", reportMetadata);
             return this;
         }
@@ -2692,7 +2697,7 @@ public interface SalesforceEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SalesforceEndpointBuilder apexQueryParams(
-                Map<String, Object> apexQueryParams) {
+                Map<java.lang.String, java.lang.Object> apexQueryParams) {
             doSetProperty("apexQueryParams", apexQueryParams);
             return this;
         }
@@ -2785,7 +2790,8 @@ public interface SalesforceEndpointBuilderFactory {
          * @param contentType the value to set
          * @return the dsl builder
          */
-        default SalesforceEndpointBuilder contentType(ContentType contentType) {
+        default SalesforceEndpointBuilder contentType(
+                org.apache.camel.component.salesforce.api.dto.bulk.ContentType contentType) {
             doSetProperty("contentType", contentType);
             return this;
         }
@@ -2880,7 +2886,8 @@ public interface SalesforceEndpointBuilderFactory {
          * @param format the value to set
          * @return the dsl builder
          */
-        default SalesforceEndpointBuilder format(PayloadFormat format) {
+        default SalesforceEndpointBuilder format(
+                org.apache.camel.component.salesforce.internal.PayloadFormat format) {
             doSetProperty("format", format);
             return this;
         }
@@ -2912,7 +2919,8 @@ public interface SalesforceEndpointBuilderFactory {
          * @param httpClient the value to set
          * @return the dsl builder
          */
-        default SalesforceEndpointBuilder httpClient(Object httpClient) {
+        default SalesforceEndpointBuilder httpClient(
+                org.apache.camel.component.salesforce.SalesforceHttpClient httpClient) {
             doSetProperty("httpClient", httpClient);
             return this;
         }
@@ -2972,7 +2980,7 @@ public interface SalesforceEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SalesforceEndpointBuilder initialReplayIdMap(
-                Map<String, Long> initialReplayIdMap) {
+                Map<java.lang.String, java.lang.Long> initialReplayIdMap) {
             doSetProperty("initialReplayIdMap", initialReplayIdMap);
             return this;
         }
@@ -3158,7 +3166,7 @@ public interface SalesforceEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SalesforceEndpointBuilder notFoundBehaviour(
-                NotFoundBehaviour notFoundBehaviour) {
+                org.apache.camel.component.salesforce.NotFoundBehaviour notFoundBehaviour) {
             doSetProperty("notFoundBehaviour", notFoundBehaviour);
             return this;
         }
@@ -3194,7 +3202,7 @@ public interface SalesforceEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SalesforceEndpointBuilder notifyForFields(
-                NotifyForFieldsEnum notifyForFields) {
+                org.apache.camel.component.salesforce.internal.dto.NotifyForFieldsEnum notifyForFields) {
             doSetProperty("notifyForFields", notifyForFields);
             return this;
         }
@@ -3288,7 +3296,7 @@ public interface SalesforceEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SalesforceEndpointBuilder notifyForOperations(
-                NotifyForOperationsEnum notifyForOperations) {
+                org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum notifyForOperations) {
             doSetProperty("notifyForOperations", notifyForOperations);
             return this;
         }
@@ -3386,7 +3394,8 @@ public interface SalesforceEndpointBuilderFactory {
          * @param objectMapper the value to set
          * @return the dsl builder
          */
-        default SalesforceEndpointBuilder objectMapper(Object objectMapper) {
+        default SalesforceEndpointBuilder objectMapper(
+                com.fasterxml.jackson.databind.ObjectMapper objectMapper) {
             doSetProperty("objectMapper", objectMapper);
             return this;
         }
@@ -3582,7 +3591,8 @@ public interface SalesforceEndpointBuilderFactory {
          * @param reportMetadata the value to set
          * @return the dsl builder
          */
-        default SalesforceEndpointBuilder reportMetadata(Object reportMetadata) {
+        default SalesforceEndpointBuilder reportMetadata(
+                org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportMetadata reportMetadata) {
             doSetProperty("reportMetadata", reportMetadata);
             return this;
         }
@@ -3788,61 +3798,6 @@ public interface SalesforceEndpointBuilderFactory {
         default SalesforceEndpointBuilder basic() {
             return (SalesforceEndpointBuilder) this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.salesforce.api.dto.bulk.ContentType</code> enum.
-     */
-    enum ContentType {
-        XML,
-        CSV,
-        JSON,
-        ZIP_XML,
-        ZIP_CSV,
-        ZIP_JSON;
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.salesforce.internal.PayloadFormat</code>
-     * enum.
-     */
-    enum PayloadFormat {
-        JSON,
-        XML;
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.salesforce.NotFoundBehaviour</code>
-     * enum.
-     */
-    enum NotFoundBehaviour {
-        EXCEPTION,
-        NULL;
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.salesforce.internal.dto.NotifyForFieldsEnum</code> enum.
-     */
-    enum NotifyForFieldsEnum {
-        ALL,
-        REFERENCED,
-        SELECT,
-        WHERE;
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum</code> enum.
-     */
-    enum NotifyForOperationsEnum {
-        ALL,
-        CREATE,
-        EXTENDED,
-        UPDATE;
     }
 
     public interface SalesforceBuilders {

@@ -16,13 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.HeaderFilterStrategy;
 
 /**
  * Send and receive messages from NATS messaging system.
@@ -657,7 +658,7 @@ public interface NatsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default NatsEndpointConsumerBuilder sslContextParameters(
-                Object sslContextParameters) {
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
@@ -703,7 +704,7 @@ public interface NatsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedNatsEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -738,7 +739,7 @@ public interface NatsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedNatsEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -769,7 +770,8 @@ public interface NatsEndpointBuilderFactory {
          * @param connection the value to set
          * @return the dsl builder
          */
-        default AdvancedNatsEndpointConsumerBuilder connection(Object connection) {
+        default AdvancedNatsEndpointConsumerBuilder connection(
+                io.nats.client.Connection connection) {
             doSetProperty("connection", connection);
             return this;
         }
@@ -801,7 +803,7 @@ public interface NatsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedNatsEndpointConsumerBuilder headerFilterStrategy(
-                HeaderFilterStrategy headerFilterStrategy) {
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
@@ -1439,7 +1441,7 @@ public interface NatsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default NatsEndpointProducerBuilder sslContextParameters(
-                Object sslContextParameters) {
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
@@ -1481,7 +1483,8 @@ public interface NatsEndpointBuilderFactory {
          * @param connection the value to set
          * @return the dsl builder
          */
-        default AdvancedNatsEndpointProducerBuilder connection(Object connection) {
+        default AdvancedNatsEndpointProducerBuilder connection(
+                io.nats.client.Connection connection) {
             doSetProperty("connection", connection);
             return this;
         }
@@ -1513,7 +1516,7 @@ public interface NatsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedNatsEndpointProducerBuilder headerFilterStrategy(
-                HeaderFilterStrategy headerFilterStrategy) {
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
@@ -2052,7 +2055,7 @@ public interface NatsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default NatsEndpointBuilder sslContextParameters(
-                Object sslContextParameters) {
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
@@ -2095,7 +2098,8 @@ public interface NatsEndpointBuilderFactory {
          * @param connection the value to set
          * @return the dsl builder
          */
-        default AdvancedNatsEndpointBuilder connection(Object connection) {
+        default AdvancedNatsEndpointBuilder connection(
+                io.nats.client.Connection connection) {
             doSetProperty("connection", connection);
             return this;
         }
@@ -2127,7 +2131,7 @@ public interface NatsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedNatsEndpointBuilder headerFilterStrategy(
-                HeaderFilterStrategy headerFilterStrategy) {
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }

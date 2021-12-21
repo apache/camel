@@ -16,12 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Perform operations against Corda blockchain platform using corda-rpc library.
@@ -105,7 +107,7 @@ public interface CordaEndpointBuilderFactory {
          * @return the dsl builder
          */
         default CordaEndpointConsumerBuilder pageSpecification(
-                Object pageSpecification) {
+                net.corda.core.node.services.vault.PageSpecification pageSpecification) {
             doSetProperty("pageSpecification", pageSpecification);
             return this;
         }
@@ -179,7 +181,8 @@ public interface CordaEndpointBuilderFactory {
          * @param sort the value to set
          * @return the dsl builder
          */
-        default CordaEndpointConsumerBuilder sort(Object sort) {
+        default CordaEndpointConsumerBuilder sort(
+                net.corda.core.node.services.vault.Sort sort) {
             doSetProperty("sort", sort);
             return this;
         }
@@ -259,7 +262,7 @@ public interface CordaEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedCordaEndpointConsumerBuilder contractStateClass(
-                Class<Object> contractStateClass) {
+                Class<net.corda.core.contracts.ContractState> contractStateClass) {
             doSetProperty("contractStateClass", contractStateClass);
             return this;
         }
@@ -301,7 +304,7 @@ public interface CordaEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedCordaEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -336,7 +339,7 @@ public interface CordaEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedCordaEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -408,7 +411,7 @@ public interface CordaEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedCordaEndpointConsumerBuilder flowLogicClass(
-                Class<Object> flowLogicClass) {
+                Class<net.corda.core.flows.FlowLogic<java.lang.Object>> flowLogicClass) {
             doSetProperty("flowLogicClass", flowLogicClass);
             return this;
         }
@@ -444,7 +447,7 @@ public interface CordaEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedCordaEndpointConsumerBuilder queryCriteria(
-                Object queryCriteria) {
+                net.corda.core.node.services.vault.QueryCriteria queryCriteria) {
             doSetProperty("queryCriteria", queryCriteria);
             return this;
         }

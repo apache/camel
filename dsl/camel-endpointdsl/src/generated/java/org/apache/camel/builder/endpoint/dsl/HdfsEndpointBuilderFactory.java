@@ -16,17 +16,15 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
 import java.util.Map;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.PollingConsumerPollStrategy;
 
 /**
  * Read and write from/to an HDFS filesystem using Hadoop 2.x.
@@ -102,7 +100,7 @@ public interface HdfsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default HdfsEndpointConsumerBuilder fileSystemType(
-                HdfsFileSystemType fileSystemType) {
+                org.apache.camel.component.hdfs.HdfsFileSystemType fileSystemType) {
             doSetProperty("fileSystemType", fileSystemType);
             return this;
         }
@@ -136,7 +134,8 @@ public interface HdfsEndpointBuilderFactory {
          * @param fileType the value to set
          * @return the dsl builder
          */
-        default HdfsEndpointConsumerBuilder fileType(HdfsFileType fileType) {
+        default HdfsEndpointConsumerBuilder fileType(
+                org.apache.camel.component.hdfs.HdfsFileType fileType) {
             doSetProperty("fileType", fileType);
             return this;
         }
@@ -171,7 +170,8 @@ public interface HdfsEndpointBuilderFactory {
          * @param keyType the value to set
          * @return the dsl builder
          */
-        default HdfsEndpointConsumerBuilder keyType(WritableType keyType) {
+        default HdfsEndpointConsumerBuilder keyType(
+                org.apache.camel.component.hdfs.WritableType keyType) {
             doSetProperty("keyType", keyType);
             return this;
         }
@@ -235,7 +235,8 @@ public interface HdfsEndpointBuilderFactory {
          * @param valueType the value to set
          * @return the dsl builder
          */
-        default HdfsEndpointConsumerBuilder valueType(WritableType valueType) {
+        default HdfsEndpointConsumerBuilder valueType(
+                org.apache.camel.component.hdfs.WritableType valueType) {
             doSetProperty("valueType", valueType);
             return this;
         }
@@ -678,7 +679,7 @@ public interface HdfsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default HdfsEndpointConsumerBuilder runLoggingLevel(
-                LoggingLevel runLoggingLevel) {
+                org.apache.camel.LoggingLevel runLoggingLevel) {
             doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
@@ -981,7 +982,7 @@ public interface HdfsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedHdfsEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -1016,7 +1017,7 @@ public interface HdfsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedHdfsEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -1051,7 +1052,7 @@ public interface HdfsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedHdfsEndpointConsumerBuilder pollStrategy(
-                PollingConsumerPollStrategy pollStrategy) {
+                org.apache.camel.spi.PollingConsumerPollStrategy pollStrategy) {
             doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
@@ -1213,7 +1214,7 @@ public interface HdfsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedHdfsEndpointConsumerBuilder compressionCodec(
-                HdfsCompressionCodec compressionCodec) {
+                org.apache.camel.component.hdfs.HdfsCompressionCodec compressionCodec) {
             doSetProperty("compressionCodec", compressionCodec);
             return this;
         }
@@ -1238,7 +1239,7 @@ public interface HdfsEndpointBuilderFactory {
          * The compression type to use (is default not in use).
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.hadoop.io.SequenceFile$CompressionType&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.hadoop.io.SequenceFile.CompressionType&lt;/code&gt; type.
          * 
          * Default: NONE
          * Group: advanced
@@ -1247,7 +1248,7 @@ public interface HdfsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedHdfsEndpointConsumerBuilder compressionType(
-                CompressionType compressionType) {
+                org.apache.hadoop.io.SequenceFile.CompressionType compressionType) {
             doSetProperty("compressionType", compressionType);
             return this;
         }
@@ -1255,7 +1256,7 @@ public interface HdfsEndpointBuilderFactory {
          * The compression type to use (is default not in use).
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.hadoop.io.SequenceFile$CompressionType&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.hadoop.io.SequenceFile.CompressionType&lt;/code&gt; type.
          * 
          * Default: NONE
          * Group: advanced
@@ -1429,7 +1430,7 @@ public interface HdfsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default HdfsEndpointProducerBuilder fileSystemType(
-                HdfsFileSystemType fileSystemType) {
+                org.apache.camel.component.hdfs.HdfsFileSystemType fileSystemType) {
             doSetProperty("fileSystemType", fileSystemType);
             return this;
         }
@@ -1463,7 +1464,8 @@ public interface HdfsEndpointBuilderFactory {
          * @param fileType the value to set
          * @return the dsl builder
          */
-        default HdfsEndpointProducerBuilder fileType(HdfsFileType fileType) {
+        default HdfsEndpointProducerBuilder fileType(
+                org.apache.camel.component.hdfs.HdfsFileType fileType) {
             doSetProperty("fileType", fileType);
             return this;
         }
@@ -1498,7 +1500,8 @@ public interface HdfsEndpointBuilderFactory {
          * @param keyType the value to set
          * @return the dsl builder
          */
-        default HdfsEndpointProducerBuilder keyType(WritableType keyType) {
+        default HdfsEndpointProducerBuilder keyType(
+                org.apache.camel.component.hdfs.WritableType keyType) {
             doSetProperty("keyType", keyType);
             return this;
         }
@@ -1562,7 +1565,8 @@ public interface HdfsEndpointBuilderFactory {
          * @param valueType the value to set
          * @return the dsl builder
          */
-        default HdfsEndpointProducerBuilder valueType(WritableType valueType) {
+        default HdfsEndpointProducerBuilder valueType(
+                org.apache.camel.component.hdfs.WritableType valueType) {
             doSetProperty("valueType", valueType);
             return this;
         }
@@ -1894,7 +1898,7 @@ public interface HdfsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedHdfsEndpointProducerBuilder compressionCodec(
-                HdfsCompressionCodec compressionCodec) {
+                org.apache.camel.component.hdfs.HdfsCompressionCodec compressionCodec) {
             doSetProperty("compressionCodec", compressionCodec);
             return this;
         }
@@ -1919,7 +1923,7 @@ public interface HdfsEndpointBuilderFactory {
          * The compression type to use (is default not in use).
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.hadoop.io.SequenceFile$CompressionType&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.hadoop.io.SequenceFile.CompressionType&lt;/code&gt; type.
          * 
          * Default: NONE
          * Group: advanced
@@ -1928,7 +1932,7 @@ public interface HdfsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedHdfsEndpointProducerBuilder compressionType(
-                CompressionType compressionType) {
+                org.apache.hadoop.io.SequenceFile.CompressionType compressionType) {
             doSetProperty("compressionType", compressionType);
             return this;
         }
@@ -1936,7 +1940,7 @@ public interface HdfsEndpointBuilderFactory {
          * The compression type to use (is default not in use).
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.hadoop.io.SequenceFile$CompressionType&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.hadoop.io.SequenceFile.CompressionType&lt;/code&gt; type.
          * 
          * Default: NONE
          * Group: advanced
@@ -2109,7 +2113,7 @@ public interface HdfsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default HdfsEndpointBuilder fileSystemType(
-                HdfsFileSystemType fileSystemType) {
+                org.apache.camel.component.hdfs.HdfsFileSystemType fileSystemType) {
             doSetProperty("fileSystemType", fileSystemType);
             return this;
         }
@@ -2143,7 +2147,8 @@ public interface HdfsEndpointBuilderFactory {
          * @param fileType the value to set
          * @return the dsl builder
          */
-        default HdfsEndpointBuilder fileType(HdfsFileType fileType) {
+        default HdfsEndpointBuilder fileType(
+                org.apache.camel.component.hdfs.HdfsFileType fileType) {
             doSetProperty("fileType", fileType);
             return this;
         }
@@ -2178,7 +2183,8 @@ public interface HdfsEndpointBuilderFactory {
          * @param keyType the value to set
          * @return the dsl builder
          */
-        default HdfsEndpointBuilder keyType(WritableType keyType) {
+        default HdfsEndpointBuilder keyType(
+                org.apache.camel.component.hdfs.WritableType keyType) {
             doSetProperty("keyType", keyType);
             return this;
         }
@@ -2242,7 +2248,8 @@ public interface HdfsEndpointBuilderFactory {
          * @param valueType the value to set
          * @return the dsl builder
          */
-        default HdfsEndpointBuilder valueType(WritableType valueType) {
+        default HdfsEndpointBuilder valueType(
+                org.apache.camel.component.hdfs.WritableType valueType) {
             doSetProperty("valueType", valueType);
             return this;
         }
@@ -2461,7 +2468,7 @@ public interface HdfsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedHdfsEndpointBuilder compressionCodec(
-                HdfsCompressionCodec compressionCodec) {
+                org.apache.camel.component.hdfs.HdfsCompressionCodec compressionCodec) {
             doSetProperty("compressionCodec", compressionCodec);
             return this;
         }
@@ -2486,7 +2493,7 @@ public interface HdfsEndpointBuilderFactory {
          * The compression type to use (is default not in use).
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.hadoop.io.SequenceFile$CompressionType&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.hadoop.io.SequenceFile.CompressionType&lt;/code&gt; type.
          * 
          * Default: NONE
          * Group: advanced
@@ -2495,7 +2502,7 @@ public interface HdfsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedHdfsEndpointBuilder compressionType(
-                CompressionType compressionType) {
+                org.apache.hadoop.io.SequenceFile.CompressionType compressionType) {
             doSetProperty("compressionType", compressionType);
             return this;
         }
@@ -2503,7 +2510,7 @@ public interface HdfsEndpointBuilderFactory {
          * The compression type to use (is default not in use).
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.hadoop.io.SequenceFile$CompressionType&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.hadoop.io.SequenceFile.CompressionType&lt;/code&gt; type.
          * 
          * Default: NONE
          * Group: advanced
@@ -2606,63 +2613,6 @@ public interface HdfsEndpointBuilderFactory {
             doSetProperty("splitStrategy", splitStrategy);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.hdfs.HdfsFileSystemType</code> enum.
-     */
-    enum HdfsFileSystemType {
-        LOCAL,
-        HDFS;
-    }
-
-    /**
-     * Proxy enum for <code>org.apache.camel.component.hdfs.HdfsFileType</code>
-     * enum.
-     */
-    enum HdfsFileType {
-        NORMAL_FILE,
-        SEQUENCE_FILE,
-        MAP_FILE,
-        BLOOMMAP_FILE,
-        ARRAY_FILE;
-    }
-
-    /**
-     * Proxy enum for <code>org.apache.camel.component.hdfs.WritableType</code>
-     * enum.
-     */
-    enum WritableType {
-        NULL,
-        BOOLEAN,
-        BYTE,
-        INT,
-        FLOAT,
-        LONG,
-        DOUBLE,
-        TEXT,
-        BYTES;
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.hdfs.HdfsCompressionCodec</code> enum.
-     */
-    enum HdfsCompressionCodec {
-        DEFAULT,
-        GZIP,
-        BZIP2;
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.hadoop.io.SequenceFile$CompressionType</code> enum.
-     */
-    enum CompressionType {
-        NONE,
-        RECORD,
-        BLOCK;
     }
 
     public interface HdfsBuilders {

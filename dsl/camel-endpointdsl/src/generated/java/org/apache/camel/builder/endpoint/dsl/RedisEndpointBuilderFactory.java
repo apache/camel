@@ -16,12 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Send and receive messages from Redis.
@@ -71,7 +73,8 @@ public interface RedisEndpointBuilderFactory {
          * @param command the value to set
          * @return the dsl builder
          */
-        default RedisEndpointConsumerBuilder command(Command command) {
+        default RedisEndpointConsumerBuilder command(
+                org.apache.camel.component.redis.Command command) {
             doSetProperty("command", command);
             return this;
         }
@@ -106,7 +109,7 @@ public interface RedisEndpointBuilderFactory {
          * @return the dsl builder
          */
         default RedisEndpointConsumerBuilder connectionFactory(
-                Object connectionFactory) {
+                org.springframework.data.redis.connection.RedisConnectionFactory connectionFactory) {
             doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
@@ -137,7 +140,8 @@ public interface RedisEndpointBuilderFactory {
          * @param redisTemplate the value to set
          * @return the dsl builder
          */
-        default RedisEndpointConsumerBuilder redisTemplate(Object redisTemplate) {
+        default RedisEndpointConsumerBuilder redisTemplate(
+                org.springframework.data.redis.core.RedisTemplate redisTemplate) {
             doSetProperty("redisTemplate", redisTemplate);
             return this;
         }
@@ -167,7 +171,8 @@ public interface RedisEndpointBuilderFactory {
          * @param serializer the value to set
          * @return the dsl builder
          */
-        default RedisEndpointConsumerBuilder serializer(Object serializer) {
+        default RedisEndpointConsumerBuilder serializer(
+                org.springframework.data.redis.serializer.RedisSerializer serializer) {
             doSetProperty("serializer", serializer);
             return this;
         }
@@ -257,7 +262,7 @@ public interface RedisEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedRedisEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -292,7 +297,7 @@ public interface RedisEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedRedisEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -325,7 +330,7 @@ public interface RedisEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedRedisEndpointConsumerBuilder listenerContainer(
-                Object listenerContainer) {
+                org.springframework.data.redis.listener.RedisMessageListenerContainer listenerContainer) {
             doSetProperty("listenerContainer", listenerContainer);
             return this;
         }
@@ -387,7 +392,8 @@ public interface RedisEndpointBuilderFactory {
          * @param command the value to set
          * @return the dsl builder
          */
-        default RedisEndpointProducerBuilder command(Command command) {
+        default RedisEndpointProducerBuilder command(
+                org.apache.camel.component.redis.Command command) {
             doSetProperty("command", command);
             return this;
         }
@@ -422,7 +428,7 @@ public interface RedisEndpointBuilderFactory {
          * @return the dsl builder
          */
         default RedisEndpointProducerBuilder connectionFactory(
-                Object connectionFactory) {
+                org.springframework.data.redis.connection.RedisConnectionFactory connectionFactory) {
             doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
@@ -453,7 +459,8 @@ public interface RedisEndpointBuilderFactory {
          * @param redisTemplate the value to set
          * @return the dsl builder
          */
-        default RedisEndpointProducerBuilder redisTemplate(Object redisTemplate) {
+        default RedisEndpointProducerBuilder redisTemplate(
+                org.springframework.data.redis.core.RedisTemplate redisTemplate) {
             doSetProperty("redisTemplate", redisTemplate);
             return this;
         }
@@ -483,7 +490,8 @@ public interface RedisEndpointBuilderFactory {
          * @param serializer the value to set
          * @return the dsl builder
          */
-        default RedisEndpointProducerBuilder serializer(Object serializer) {
+        default RedisEndpointProducerBuilder serializer(
+                org.springframework.data.redis.serializer.RedisSerializer serializer) {
             doSetProperty("serializer", serializer);
             return this;
         }
@@ -604,7 +612,8 @@ public interface RedisEndpointBuilderFactory {
          * @param command the value to set
          * @return the dsl builder
          */
-        default RedisEndpointBuilder command(Command command) {
+        default RedisEndpointBuilder command(
+                org.apache.camel.component.redis.Command command) {
             doSetProperty("command", command);
             return this;
         }
@@ -638,7 +647,8 @@ public interface RedisEndpointBuilderFactory {
          * @param connectionFactory the value to set
          * @return the dsl builder
          */
-        default RedisEndpointBuilder connectionFactory(Object connectionFactory) {
+        default RedisEndpointBuilder connectionFactory(
+                org.springframework.data.redis.connection.RedisConnectionFactory connectionFactory) {
             doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
@@ -668,7 +678,8 @@ public interface RedisEndpointBuilderFactory {
          * @param redisTemplate the value to set
          * @return the dsl builder
          */
-        default RedisEndpointBuilder redisTemplate(Object redisTemplate) {
+        default RedisEndpointBuilder redisTemplate(
+                org.springframework.data.redis.core.RedisTemplate redisTemplate) {
             doSetProperty("redisTemplate", redisTemplate);
             return this;
         }
@@ -698,7 +709,8 @@ public interface RedisEndpointBuilderFactory {
          * @param serializer the value to set
          * @return the dsl builder
          */
-        default RedisEndpointBuilder serializer(Object serializer) {
+        default RedisEndpointBuilder serializer(
+                org.springframework.data.redis.serializer.RedisSerializer serializer) {
             doSetProperty("serializer", serializer);
             return this;
         }
@@ -729,142 +741,6 @@ public interface RedisEndpointBuilderFactory {
         default RedisEndpointBuilder basic() {
             return (RedisEndpointBuilder) this;
         }
-    }
-
-    /**
-     * Proxy enum for <code>org.apache.camel.component.redis.Command</code>
-     * enum.
-     */
-    enum Command {
-        PING,
-        SET,
-        GET,
-        QUIT,
-        EXISTS,
-        DEL,
-        TYPE,
-        FLUSHDB,
-        KEYS,
-        RANDOMKEY,
-        RENAME,
-        RENAMENX,
-        RENAMEX,
-        DBSIZE,
-        EXPIRE,
-        EXPIREAT,
-        TTL,
-        SELECT,
-        MOVE,
-        FLUSHALL,
-        GETSET,
-        MGET,
-        SETNX,
-        SETEX,
-        MSET,
-        MSETNX,
-        DECRBY,
-        DECR,
-        INCRBY,
-        INCR,
-        APPEND,
-        SUBSTR,
-        HSET,
-        HGET,
-        HSETNX,
-        HMSET,
-        HMGET,
-        HINCRBY,
-        HEXISTS,
-        HDEL,
-        HLEN,
-        HKEYS,
-        HVALS,
-        HGETALL,
-        RPUSH,
-        LPUSH,
-        LLEN,
-        LRANGE,
-        LTRIM,
-        LINDEX,
-        LSET,
-        LREM,
-        LPOP,
-        RPOP,
-        RPOPLPUSH,
-        SADD,
-        SMEMBERS,
-        SREM,
-        SPOP,
-        SMOVE,
-        SCARD,
-        SISMEMBER,
-        SINTER,
-        SINTERSTORE,
-        SUNION,
-        SUNIONSTORE,
-        SDIFF,
-        SDIFFSTORE,
-        SRANDMEMBER,
-        ZADD,
-        ZRANGE,
-        ZREM,
-        ZINCRBY,
-        ZRANK,
-        ZREVRANK,
-        ZREVRANGE,
-        ZCARD,
-        ZSCORE,
-        MULTI,
-        DISCARD,
-        EXEC,
-        WATCH,
-        UNWATCH,
-        SORT,
-        BLPOP,
-        BRPOP,
-        AUTH,
-        SUBSCRIBE,
-        PUBLISH,
-        UNSUBSCRIBE,
-        PSUBSCRIBE,
-        PUNSUBSCRIBE,
-        ZCOUNT,
-        ZRANGEBYSCORE,
-        ZREVRANGEBYSCORE,
-        ZREMRANGEBYRANK,
-        ZREMRANGEBYSCORE,
-        ZUNIONSTORE,
-        ZINTERSTORE,
-        SAVE,
-        BGSAVE,
-        BGREWRITEAOF,
-        LASTSAVE,
-        SHUTDOWN,
-        INFO,
-        MONITOR,
-        SLAVEOF,
-        CONFIG,
-        STRLEN,
-        SYNC,
-        LPUSHX,
-        PERSIST,
-        RPUSHX,
-        ECHO,
-        LINSERT,
-        DEBUG,
-        BRPOPLPUSH,
-        SETBIT,
-        GETBIT,
-        SETRANGE,
-        GETRANGE,
-        PEXPIRE,
-        PEXPIREAT,
-        GEOADD,
-        GEODIST,
-        GEOHASH,
-        GEOPOS,
-        GEORADIUS,
-        GEORADIUSBYMEMBER;
     }
 
     public interface RedisBuilders {

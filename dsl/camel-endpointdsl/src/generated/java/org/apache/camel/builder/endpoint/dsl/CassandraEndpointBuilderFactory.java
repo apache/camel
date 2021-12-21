@@ -16,17 +16,15 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
 import java.util.Map;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.PollingConsumerPollStrategy;
 
 /**
  * Integrate with Cassandra 2.0 using the CQL3 API (not the Thrift API). Based
@@ -73,7 +71,7 @@ public interface CassandraEndpointBuilderFactory {
          * @return the dsl builder
          */
         default CassandraEndpointConsumerBuilder consistencyLevel(
-                DefaultConsistencyLevel consistencyLevel) {
+                com.datastax.oss.driver.api.core.DefaultConsistencyLevel consistencyLevel) {
             doSetProperty("consistencyLevel", consistencyLevel);
             return this;
         }
@@ -198,7 +196,7 @@ public interface CassandraEndpointBuilderFactory {
          * @return the dsl builder
          */
         default CassandraEndpointConsumerBuilder resultSetConversionStrategy(
-                Object resultSetConversionStrategy) {
+                org.apache.camel.component.cassandra.ResultSetConversionStrategy resultSetConversionStrategy) {
             doSetProperty("resultSetConversionStrategy", resultSetConversionStrategy);
             return this;
         }
@@ -231,7 +229,8 @@ public interface CassandraEndpointBuilderFactory {
          * @param session the value to set
          * @return the dsl builder
          */
-        default CassandraEndpointConsumerBuilder session(Object session) {
+        default CassandraEndpointConsumerBuilder session(
+                com.datastax.oss.driver.api.core.CqlSession session) {
             doSetProperty("session", session);
             return this;
         }
@@ -591,7 +590,7 @@ public interface CassandraEndpointBuilderFactory {
          * @return the dsl builder
          */
         default CassandraEndpointConsumerBuilder runLoggingLevel(
-                LoggingLevel runLoggingLevel) {
+                org.apache.camel.LoggingLevel runLoggingLevel) {
             doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
@@ -849,7 +848,7 @@ public interface CassandraEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedCassandraEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -884,7 +883,7 @@ public interface CassandraEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedCassandraEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -919,7 +918,7 @@ public interface CassandraEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedCassandraEndpointConsumerBuilder pollStrategy(
-                PollingConsumerPollStrategy pollStrategy) {
+                org.apache.camel.spi.PollingConsumerPollStrategy pollStrategy) {
             doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
@@ -979,7 +978,7 @@ public interface CassandraEndpointBuilderFactory {
          * @return the dsl builder
          */
         default CassandraEndpointProducerBuilder consistencyLevel(
-                DefaultConsistencyLevel consistencyLevel) {
+                com.datastax.oss.driver.api.core.DefaultConsistencyLevel consistencyLevel) {
             doSetProperty("consistencyLevel", consistencyLevel);
             return this;
         }
@@ -1104,7 +1103,7 @@ public interface CassandraEndpointBuilderFactory {
          * @return the dsl builder
          */
         default CassandraEndpointProducerBuilder resultSetConversionStrategy(
-                Object resultSetConversionStrategy) {
+                org.apache.camel.component.cassandra.ResultSetConversionStrategy resultSetConversionStrategy) {
             doSetProperty("resultSetConversionStrategy", resultSetConversionStrategy);
             return this;
         }
@@ -1137,7 +1136,8 @@ public interface CassandraEndpointBuilderFactory {
          * @param session the value to set
          * @return the dsl builder
          */
-        default CassandraEndpointProducerBuilder session(Object session) {
+        default CassandraEndpointProducerBuilder session(
+                com.datastax.oss.driver.api.core.CqlSession session) {
             doSetProperty("session", session);
             return this;
         }
@@ -1269,7 +1269,7 @@ public interface CassandraEndpointBuilderFactory {
          * @return the dsl builder
          */
         default CassandraEndpointBuilder consistencyLevel(
-                DefaultConsistencyLevel consistencyLevel) {
+                com.datastax.oss.driver.api.core.DefaultConsistencyLevel consistencyLevel) {
             doSetProperty("consistencyLevel", consistencyLevel);
             return this;
         }
@@ -1394,7 +1394,7 @@ public interface CassandraEndpointBuilderFactory {
          * @return the dsl builder
          */
         default CassandraEndpointBuilder resultSetConversionStrategy(
-                Object resultSetConversionStrategy) {
+                org.apache.camel.component.cassandra.ResultSetConversionStrategy resultSetConversionStrategy) {
             doSetProperty("resultSetConversionStrategy", resultSetConversionStrategy);
             return this;
         }
@@ -1427,7 +1427,8 @@ public interface CassandraEndpointBuilderFactory {
          * @param session the value to set
          * @return the dsl builder
          */
-        default CassandraEndpointBuilder session(Object session) {
+        default CassandraEndpointBuilder session(
+                com.datastax.oss.driver.api.core.CqlSession session) {
             doSetProperty("session", session);
             return this;
         }
@@ -1473,25 +1474,6 @@ public interface CassandraEndpointBuilderFactory {
         default CassandraEndpointBuilder basic() {
             return (CassandraEndpointBuilder) this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>com.datastax.oss.driver.api.core.DefaultConsistencyLevel</code>
-     * enum.
-     */
-    enum DefaultConsistencyLevel {
-        ANY,
-        ONE,
-        TWO,
-        THREE,
-        QUORUM,
-        ALL,
-        LOCAL_ONE,
-        LOCAL_QUORUM,
-        EACH_QUORUM,
-        SERIAL,
-        LOCAL_SERIAL;
     }
 
     public interface CassandraBuilders {

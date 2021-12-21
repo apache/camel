@@ -16,7 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -248,7 +251,8 @@ public interface XJEndpointBuilderFactory {
          * @param output the value to set
          * @return the dsl builder
          */
-        default XJEndpointBuilder output(XsltOutput output) {
+        default XJEndpointBuilder output(
+                org.apache.camel.component.xslt.XsltOutput output) {
             doSetProperty("output", output);
             return this;
         }
@@ -288,7 +292,7 @@ public interface XJEndpointBuilderFactory {
          * @return the dsl builder
          */
         default XJEndpointBuilder transformDirection(
-                TransformDirection transformDirection) {
+                org.apache.camel.component.xj.TransformDirection transformDirection) {
             doSetProperty("transformDirection", transformDirection);
             return this;
         }
@@ -364,7 +368,8 @@ public interface XJEndpointBuilderFactory {
          * @param entityResolver the value to set
          * @return the dsl builder
          */
-        default AdvancedXJEndpointBuilder entityResolver(Object entityResolver) {
+        default AdvancedXJEndpointBuilder entityResolver(
+                org.xml.sax.EntityResolver entityResolver) {
             doSetProperty("entityResolver", entityResolver);
             return this;
         }
@@ -399,7 +404,8 @@ public interface XJEndpointBuilderFactory {
          * @param errorListener the value to set
          * @return the dsl builder
          */
-        default AdvancedXJEndpointBuilder errorListener(Object errorListener) {
+        default AdvancedXJEndpointBuilder errorListener(
+                javax.xml.transform.ErrorListener errorListener) {
             doSetProperty("errorListener", errorListener);
             return this;
         }
@@ -436,7 +442,7 @@ public interface XJEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedXJEndpointBuilder resultHandlerFactory(
-                Object resultHandlerFactory) {
+                org.apache.camel.component.xslt.ResultHandlerFactory resultHandlerFactory) {
             doSetProperty("resultHandlerFactory", resultHandlerFactory);
             return this;
         }
@@ -470,7 +476,7 @@ public interface XJEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedXJEndpointBuilder saxonConfiguration(
-                Object saxonConfiguration) {
+                net.sf.saxon.Configuration saxonConfiguration) {
             doSetProperty("saxonConfiguration", saxonConfiguration);
             return this;
         }
@@ -496,27 +502,7 @@ public interface XJEndpointBuilderFactory {
          * camel-saxon to the classpath. The function is looked up in the
          * registry, where you can comma to separate multiple values to lookup.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param saxonExtensionFunctions the value to set
-         * @return the dsl builder
-         */
-        default AdvancedXJEndpointBuilder saxonExtensionFunctions(
-                List<Object> saxonExtensionFunctions) {
-            doSetProperty("saxonExtensionFunctions", saxonExtensionFunctions);
-            return this;
-        }
-        /**
-         * Allows you to use a custom
-         * net.sf.saxon.lib.ExtensionFunctionDefinition. You would need to add
-         * camel-saxon to the classpath. The function is looked up in the
-         * registry, where you can comma to separate multiple values to lookup.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -540,7 +526,7 @@ public interface XJEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedXJEndpointBuilder transformerFactory(
-                Object transformerFactory) {
+                javax.xml.transform.TransformerFactory transformerFactory) {
             doSetProperty("transformerFactory", transformerFactory);
             return this;
         }
@@ -589,7 +575,7 @@ public interface XJEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedXJEndpointBuilder transformerFactoryConfigurationStrategy(
-                Object transformerFactoryConfigurationStrategy) {
+                org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy transformerFactoryConfigurationStrategy) {
             doSetProperty("transformerFactoryConfigurationStrategy", transformerFactoryConfigurationStrategy);
             return this;
         }
@@ -621,7 +607,8 @@ public interface XJEndpointBuilderFactory {
          * @param uriResolver the value to set
          * @return the dsl builder
          */
-        default AdvancedXJEndpointBuilder uriResolver(Object uriResolver) {
+        default AdvancedXJEndpointBuilder uriResolver(
+                javax.xml.transform.URIResolver uriResolver) {
             doSetProperty("uriResolver", uriResolver);
             return this;
         }
@@ -640,26 +627,6 @@ public interface XJEndpointBuilderFactory {
             doSetProperty("uriResolver", uriResolver);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for <code>org.apache.camel.component.xslt.XsltOutput</code>
-     * enum.
-     */
-    enum XsltOutput {
-        string,
-        bytes,
-        DOM,
-        file;
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.xj.TransformDirection</code> enum.
-     */
-    enum TransformDirection {
-        XML2JSON,
-        JSON2XML;
     }
 
     public interface XJBuilders {

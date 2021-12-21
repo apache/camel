@@ -16,15 +16,15 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
 import java.util.Map;
-import java.util.Set;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.HeaderFilterStrategy;
 
 /**
  * Expose HTTP and WebSocket endpoints and access external HTTP/WebSocket
@@ -221,7 +221,7 @@ public interface UndertowEndpointBuilderFactory {
          * If enabled and an Exchange failed processing on the consumer side the
          * response's body won't contain the exception's stack trace.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
@@ -230,7 +230,7 @@ public interface UndertowEndpointBuilderFactory {
          * @return the dsl builder
          */
         default UndertowEndpointConsumerBuilder muteException(
-                boolean muteException) {
+                Boolean muteException) {
             doSetProperty("muteException", muteException);
             return this;
         }
@@ -238,8 +238,8 @@ public interface UndertowEndpointBuilderFactory {
          * If enabled and an Exchange failed processing on the consumer side the
          * response's body won't contain the exception's stack trace.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
@@ -400,7 +400,7 @@ public interface UndertowEndpointBuilderFactory {
          * @return the dsl builder
          */
         default UndertowEndpointConsumerBuilder securityProvider(
-                Object securityProvider) {
+                org.apache.camel.component.undertow.spi.UndertowSecurityProvider securityProvider) {
             doSetProperty("securityProvider", securityProvider);
             return this;
         }
@@ -434,7 +434,7 @@ public interface UndertowEndpointBuilderFactory {
          * @return the dsl builder
          */
         default UndertowEndpointConsumerBuilder sslContextParameters(
-                Object sslContextParameters) {
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
@@ -517,7 +517,7 @@ public interface UndertowEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedUndertowEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -552,7 +552,7 @@ public interface UndertowEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedUndertowEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -581,30 +581,7 @@ public interface UndertowEndpointBuilderFactory {
          * number. If you need different handlers, then use different port
          * numbers.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.Set&amp;lt;org.apache.camel.component.undertow.HttpHandlerRegistrationInfo&amp;gt;&lt;/code&gt; type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param handlers the value to set
-         * @return the dsl builder
-         */
-        default AdvancedUndertowEndpointConsumerBuilder handlers(
-                Set<Object> handlers) {
-            doSetProperty("handlers", handlers);
-            return this;
-        }
-        /**
-         * Specifies a comma-delimited set of io.undertow.server.HttpHandler
-         * instances to lookup in your Registry. These handlers are added to the
-         * Undertow handler chain (for example, to add security). Important: You
-         * can not use different handlers with different Undertow endpoints
-         * using the same port number. The handlers is associated to the port
-         * number. If you need different handlers, then use different port
-         * numbers.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.Set&amp;lt;org.apache.camel.component.undertow.HttpHandlerRegistrationInfo&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
          * 
@@ -628,7 +605,7 @@ public interface UndertowEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedUndertowEndpointConsumerBuilder accessLogReceiver(
-                Object accessLogReceiver) {
+                io.undertow.server.handlers.accesslog.AccessLogReceiver accessLogReceiver) {
             doSetProperty("accessLogReceiver", accessLogReceiver);
             return this;
         }
@@ -663,7 +640,7 @@ public interface UndertowEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedUndertowEndpointConsumerBuilder headerFilterStrategy(
-                HeaderFilterStrategy headerFilterStrategy) {
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
@@ -698,7 +675,7 @@ public interface UndertowEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedUndertowEndpointConsumerBuilder undertowHttpBinding(
-                Object undertowHttpBinding) {
+                org.apache.camel.component.undertow.UndertowHttpBinding undertowHttpBinding) {
             doSetProperty("undertowHttpBinding", undertowHttpBinding);
             return this;
         }
@@ -786,7 +763,7 @@ public interface UndertowEndpointBuilderFactory {
          * @return the dsl builder
          */
         default UndertowEndpointProducerBuilder cookieHandler(
-                Object cookieHandler) {
+                org.apache.camel.http.base.cookie.CookieHandler cookieHandler) {
             doSetProperty("cookieHandler", cookieHandler);
             return this;
         }
@@ -1139,7 +1116,7 @@ public interface UndertowEndpointBuilderFactory {
          * @return the dsl builder
          */
         default UndertowEndpointProducerBuilder securityProvider(
-                Object securityProvider) {
+                org.apache.camel.component.undertow.spi.UndertowSecurityProvider securityProvider) {
             doSetProperty("securityProvider", securityProvider);
             return this;
         }
@@ -1173,7 +1150,7 @@ public interface UndertowEndpointBuilderFactory {
          * @return the dsl builder
          */
         default UndertowEndpointProducerBuilder sslContextParameters(
-                Object sslContextParameters) {
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
@@ -1283,7 +1260,7 @@ public interface UndertowEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedUndertowEndpointProducerBuilder accessLogReceiver(
-                Object accessLogReceiver) {
+                io.undertow.server.handlers.accesslog.AccessLogReceiver accessLogReceiver) {
             doSetProperty("accessLogReceiver", accessLogReceiver);
             return this;
         }
@@ -1318,7 +1295,7 @@ public interface UndertowEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedUndertowEndpointProducerBuilder headerFilterStrategy(
-                HeaderFilterStrategy headerFilterStrategy) {
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
@@ -1353,7 +1330,7 @@ public interface UndertowEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedUndertowEndpointProducerBuilder undertowHttpBinding(
-                Object undertowHttpBinding) {
+                org.apache.camel.component.undertow.UndertowHttpBinding undertowHttpBinding) {
             doSetProperty("undertowHttpBinding", undertowHttpBinding);
             return this;
         }
@@ -1494,7 +1471,8 @@ public interface UndertowEndpointBuilderFactory {
          * @param securityProvider the value to set
          * @return the dsl builder
          */
-        default UndertowEndpointBuilder securityProvider(Object securityProvider) {
+        default UndertowEndpointBuilder securityProvider(
+                org.apache.camel.component.undertow.spi.UndertowSecurityProvider securityProvider) {
             doSetProperty("securityProvider", securityProvider);
             return this;
         }
@@ -1527,7 +1505,7 @@ public interface UndertowEndpointBuilderFactory {
          * @return the dsl builder
          */
         default UndertowEndpointBuilder sslContextParameters(
-                Object sslContextParameters) {
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
@@ -1572,7 +1550,7 @@ public interface UndertowEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedUndertowEndpointBuilder accessLogReceiver(
-                Object accessLogReceiver) {
+                io.undertow.server.handlers.accesslog.AccessLogReceiver accessLogReceiver) {
             doSetProperty("accessLogReceiver", accessLogReceiver);
             return this;
         }
@@ -1607,7 +1585,7 @@ public interface UndertowEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedUndertowEndpointBuilder headerFilterStrategy(
-                HeaderFilterStrategy headerFilterStrategy) {
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
@@ -1642,7 +1620,7 @@ public interface UndertowEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedUndertowEndpointBuilder undertowHttpBinding(
-                Object undertowHttpBinding) {
+                org.apache.camel.component.undertow.UndertowHttpBinding undertowHttpBinding) {
             doSetProperty("undertowHttpBinding", undertowHttpBinding);
             return this;
         }

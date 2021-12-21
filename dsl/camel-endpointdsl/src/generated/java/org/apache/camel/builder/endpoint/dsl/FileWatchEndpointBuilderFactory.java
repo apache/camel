@@ -16,13 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Get notified about file events in a directory using
@@ -180,7 +181,8 @@ public interface FileWatchEndpointBuilderFactory {
          * @param events the value to set
          * @return the dsl builder
          */
-        default FileWatchEndpointBuilder events(Set<FileEventEnum> events) {
+        default FileWatchEndpointBuilder events(
+                Set<org.apache.camel.component.file.watch.constants.FileEventEnum> events) {
             doSetProperty("events", events);
             return this;
         }
@@ -216,7 +218,8 @@ public interface FileWatchEndpointBuilderFactory {
          * @param fileHasher the value to set
          * @return the dsl builder
          */
-        default FileWatchEndpointBuilder fileHasher(Object fileHasher) {
+        default FileWatchEndpointBuilder fileHasher(
+                io.methvin.watcher.hashing.FileHasher fileHasher) {
             doSetProperty("fileHasher", fileHasher);
             return this;
         }
@@ -400,7 +403,7 @@ public interface FileWatchEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedFileWatchEndpointBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -435,7 +438,7 @@ public interface FileWatchEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedFileWatchEndpointBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -455,16 +458,6 @@ public interface FileWatchEndpointBuilderFactory {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.file.watch.constants.FileEventEnum</code> enum.
-     */
-    enum FileEventEnum {
-        CREATE,
-        DELETE,
-        MODIFY;
     }
 
     public interface FileWatchBuilders {

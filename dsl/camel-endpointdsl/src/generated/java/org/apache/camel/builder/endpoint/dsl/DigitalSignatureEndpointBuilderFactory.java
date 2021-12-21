@@ -16,11 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.security.KeyStore;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.SecureRandom;
-import java.security.cert.Certificate;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -111,7 +110,8 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * @param keystore the value to set
          * @return the dsl builder
          */
-        default DigitalSignatureEndpointBuilder keystore(KeyStore keystore) {
+        default DigitalSignatureEndpointBuilder keystore(
+                java.security.KeyStore keystore) {
             doSetProperty("keystore", keystore);
             return this;
         }
@@ -210,7 +210,8 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * @param privateKey the value to set
          * @return the dsl builder
          */
-        default DigitalSignatureEndpointBuilder privateKey(PrivateKey privateKey) {
+        default DigitalSignatureEndpointBuilder privateKey(
+                java.security.PrivateKey privateKey) {
             doSetProperty("privateKey", privateKey);
             return this;
         }
@@ -379,7 +380,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedDigitalSignatureEndpointBuilder certificate(
-                Certificate certificate) {
+                java.security.cert.Certificate certificate) {
             doSetProperty("certificate", certificate);
             return this;
         }
@@ -457,7 +458,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedDigitalSignatureEndpointBuilder keyStoreParameters(
-                Object keyStoreParameters) {
+                org.apache.camel.support.jsse.KeyStoreParameters keyStoreParameters) {
             doSetProperty("keyStoreParameters", keyStoreParameters);
             return this;
         }
@@ -496,7 +497,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedDigitalSignatureEndpointBuilder publicKey(
-                PublicKey publicKey) {
+                java.security.PublicKey publicKey) {
             doSetProperty("publicKey", publicKey);
             return this;
         }
@@ -529,7 +530,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedDigitalSignatureEndpointBuilder secureRandom(
-                SecureRandom secureRandom) {
+                java.security.SecureRandom secureRandom) {
             doSetProperty("secureRandom", secureRandom);
             return this;
         }

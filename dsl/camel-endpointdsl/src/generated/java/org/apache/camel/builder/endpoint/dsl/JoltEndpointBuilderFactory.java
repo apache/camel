@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -158,7 +162,8 @@ public interface JoltEndpointBuilderFactory {
          * @param inputType the value to set
          * @return the dsl builder
          */
-        default JoltEndpointBuilder inputType(JoltInputOutputType inputType) {
+        default JoltEndpointBuilder inputType(
+                org.apache.camel.component.jolt.JoltInputOutputType inputType) {
             doSetProperty("inputType", inputType);
             return this;
         }
@@ -237,7 +242,8 @@ public interface JoltEndpointBuilderFactory {
          * @param outputType the value to set
          * @return the dsl builder
          */
-        default JoltEndpointBuilder outputType(JoltInputOutputType outputType) {
+        default JoltEndpointBuilder outputType(
+                org.apache.camel.component.jolt.JoltInputOutputType outputType) {
             doSetProperty("outputType", outputType);
             return this;
         }
@@ -270,7 +276,8 @@ public interface JoltEndpointBuilderFactory {
          * @param transformDsl the value to set
          * @return the dsl builder
          */
-        default JoltEndpointBuilder transformDsl(JoltTransformType transformDsl) {
+        default JoltEndpointBuilder transformDsl(
+                org.apache.camel.component.jolt.JoltTransformType transformDsl) {
             doSetProperty("transformDsl", transformDsl);
             return this;
         }
@@ -291,27 +298,6 @@ public interface JoltEndpointBuilderFactory {
             doSetProperty("transformDsl", transformDsl);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.jolt.JoltInputOutputType</code> enum.
-     */
-    enum JoltInputOutputType {
-        Hydrated,
-        JsonString;
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.jolt.JoltTransformType</code> enum.
-     */
-    enum JoltTransformType {
-        Chainr,
-        Shiftr,
-        Defaultr,
-        Removr,
-        Sortr;
     }
 
     public interface JoltBuilders {

@@ -16,13 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Send and receive SMS messages using a SMSC (Short Message Service Center).
@@ -162,7 +163,7 @@ public interface SmppEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SmppEndpointConsumerBuilder splittingPolicy(
-                SmppSplittingPolicy splittingPolicy) {
+                org.apache.camel.component.smpp.SmppSplittingPolicy splittingPolicy) {
             doSetProperty("splittingPolicy", splittingPolicy);
             return this;
         }
@@ -442,7 +443,7 @@ public interface SmppEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SmppEndpointConsumerBuilder proxyHeaders(
-                Map<String, String> proxyHeaders) {
+                Map<java.lang.String, java.lang.String> proxyHeaders) {
             doSetProperty("proxyHeaders", proxyHeaders);
             return this;
         }
@@ -549,7 +550,7 @@ public interface SmppEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSmppEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -584,7 +585,7 @@ public interface SmppEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSmppEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -722,7 +723,7 @@ public interface SmppEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSmppEndpointConsumerBuilder sessionStateListener(
-                Object sessionStateListener) {
+                org.jsmpp.session.SessionStateListener sessionStateListener) {
             doSetProperty("sessionStateListener", sessionStateListener);
             return this;
         }
@@ -948,7 +949,7 @@ public interface SmppEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SmppEndpointProducerBuilder splittingPolicy(
-                SmppSplittingPolicy splittingPolicy) {
+                org.apache.camel.component.smpp.SmppSplittingPolicy splittingPolicy) {
             doSetProperty("splittingPolicy", splittingPolicy);
             return this;
         }
@@ -1664,7 +1665,7 @@ public interface SmppEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SmppEndpointProducerBuilder proxyHeaders(
-                Map<String, String> proxyHeaders) {
+                Map<java.lang.String, java.lang.String> proxyHeaders) {
             doSetProperty("proxyHeaders", proxyHeaders);
             return this;
         }
@@ -1874,7 +1875,7 @@ public interface SmppEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSmppEndpointProducerBuilder sessionStateListener(
-                Object sessionStateListener) {
+                org.jsmpp.session.SessionStateListener sessionStateListener) {
             doSetProperty("sessionStateListener", sessionStateListener);
             return this;
         }
@@ -2101,7 +2102,7 @@ public interface SmppEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SmppEndpointBuilder splittingPolicy(
-                SmppSplittingPolicy splittingPolicy) {
+                org.apache.camel.component.smpp.SmppSplittingPolicy splittingPolicy) {
             doSetProperty("splittingPolicy", splittingPolicy);
             return this;
         }
@@ -2316,7 +2317,7 @@ public interface SmppEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SmppEndpointBuilder proxyHeaders(
-                Map<String, String> proxyHeaders) {
+                Map<java.lang.String, java.lang.String> proxyHeaders) {
             doSetProperty("proxyHeaders", proxyHeaders);
             return this;
         }
@@ -2527,7 +2528,7 @@ public interface SmppEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSmppEndpointBuilder sessionStateListener(
-                Object sessionStateListener) {
+                org.jsmpp.session.SessionStateListener sessionStateListener) {
             doSetProperty("sessionStateListener", sessionStateListener);
             return this;
         }
@@ -2622,16 +2623,6 @@ public interface SmppEndpointBuilderFactory {
             doSetProperty("transactionTimer", transactionTimer);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.smpp.SmppSplittingPolicy</code> enum.
-     */
-    enum SmppSplittingPolicy {
-        ALLOW,
-        REJECT,
-        TRUNCATE;
     }
 
     public interface SmppBuilders {

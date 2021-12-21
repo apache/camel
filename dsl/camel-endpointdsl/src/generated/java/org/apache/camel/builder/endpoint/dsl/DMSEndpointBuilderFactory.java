@@ -16,7 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -79,7 +82,8 @@ public interface DMSEndpointBuilderFactory {
          * @param availableZones the value to set
          * @return the dsl builder
          */
-        default DMSEndpointBuilder availableZones(List<String> availableZones) {
+        default DMSEndpointBuilder availableZones(
+                List<java.lang.String> availableZones) {
             doSetProperty("availableZones", availableZones);
             return this;
         }
@@ -485,7 +489,8 @@ public interface DMSEndpointBuilderFactory {
          * @param serviceKeys the value to set
          * @return the dsl builder
          */
-        default DMSEndpointBuilder serviceKeys(Object serviceKeys) {
+        default DMSEndpointBuilder serviceKeys(
+                org.apache.camel.component.huaweicloud.common.models.ServiceKeys serviceKeys) {
             doSetProperty("serviceKeys", serviceKeys);
             return this;
         }

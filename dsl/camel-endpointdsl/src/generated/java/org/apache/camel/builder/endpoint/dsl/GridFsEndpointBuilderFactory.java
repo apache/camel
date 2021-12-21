@@ -16,12 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Interact with MongoDB GridFS.
@@ -89,7 +91,7 @@ public interface GridFsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default GridFsEndpointConsumerBuilder readPreference(
-                Object readPreference) {
+                com.mongodb.ReadPreference readPreference) {
             doSetProperty("readPreference", readPreference);
             return this;
         }
@@ -127,7 +129,8 @@ public interface GridFsEndpointBuilderFactory {
          * @param writeConcern the value to set
          * @return the dsl builder
          */
-        default GridFsEndpointConsumerBuilder writeConcern(Object writeConcern) {
+        default GridFsEndpointConsumerBuilder writeConcern(
+                com.mongodb.WriteConcern writeConcern) {
             doSetProperty("writeConcern", writeConcern);
             return this;
         }
@@ -335,7 +338,7 @@ public interface GridFsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default GridFsEndpointConsumerBuilder queryStrategy(
-                QueryStrategy queryStrategy) {
+                org.apache.camel.component.mongodb.gridfs.QueryStrategy queryStrategy) {
             doSetProperty("queryStrategy", queryStrategy);
             return this;
         }
@@ -382,7 +385,7 @@ public interface GridFsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedGridFsEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -417,7 +420,7 @@ public interface GridFsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedGridFsEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -496,7 +499,7 @@ public interface GridFsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default GridFsEndpointProducerBuilder readPreference(
-                Object readPreference) {
+                com.mongodb.ReadPreference readPreference) {
             doSetProperty("readPreference", readPreference);
             return this;
         }
@@ -534,7 +537,8 @@ public interface GridFsEndpointBuilderFactory {
          * @param writeConcern the value to set
          * @return the dsl builder
          */
-        default GridFsEndpointProducerBuilder writeConcern(Object writeConcern) {
+        default GridFsEndpointProducerBuilder writeConcern(
+                com.mongodb.WriteConcern writeConcern) {
             doSetProperty("writeConcern", writeConcern);
             return this;
         }
@@ -688,7 +692,8 @@ public interface GridFsEndpointBuilderFactory {
          * @param readPreference the value to set
          * @return the dsl builder
          */
-        default GridFsEndpointBuilder readPreference(Object readPreference) {
+        default GridFsEndpointBuilder readPreference(
+                com.mongodb.ReadPreference readPreference) {
             doSetProperty("readPreference", readPreference);
             return this;
         }
@@ -725,7 +730,8 @@ public interface GridFsEndpointBuilderFactory {
          * @param writeConcern the value to set
          * @return the dsl builder
          */
-        default GridFsEndpointBuilder writeConcern(Object writeConcern) {
+        default GridFsEndpointBuilder writeConcern(
+                com.mongodb.WriteConcern writeConcern) {
             doSetProperty("writeConcern", writeConcern);
             return this;
         }
@@ -758,19 +764,6 @@ public interface GridFsEndpointBuilderFactory {
         default GridFsEndpointBuilder basic() {
             return (GridFsEndpointBuilder) this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.mongodb.gridfs.QueryStrategy</code>
-     * enum.
-     */
-    enum QueryStrategy {
-        TimeStamp,
-        PersistentTimestamp,
-        FileAttribute,
-        TimeStampAndFileAttribute,
-        PersistentTimestampAndFileAttribute;
     }
 
     public interface GridFsBuilders {

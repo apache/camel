@@ -16,13 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.WaitForTaskToComplete;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Provides asynchronous SEDA behavior using LMAX Disruptor.
@@ -215,7 +216,7 @@ public interface DisruptorEndpointBuilderFactory {
          * @return the dsl builder
          */
         default DisruptorEndpointConsumerBuilder waitStrategy(
-                DisruptorWaitStrategy waitStrategy) {
+                org.apache.camel.component.disruptor.DisruptorWaitStrategy waitStrategy) {
             doSetProperty("waitStrategy", waitStrategy);
             return this;
         }
@@ -264,7 +265,7 @@ public interface DisruptorEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedDisruptorEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -299,7 +300,7 @@ public interface DisruptorEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedDisruptorEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -476,7 +477,7 @@ public interface DisruptorEndpointBuilderFactory {
          * @return the dsl builder
          */
         default DisruptorEndpointProducerBuilder producerType(
-                DisruptorProducerType producerType) {
+                org.apache.camel.component.disruptor.DisruptorProducerType producerType) {
             doSetProperty("producerType", producerType);
             return this;
         }
@@ -551,7 +552,7 @@ public interface DisruptorEndpointBuilderFactory {
          * @return the dsl builder
          */
         default DisruptorEndpointProducerBuilder waitForTaskToComplete(
-                WaitForTaskToComplete waitForTaskToComplete) {
+                org.apache.camel.WaitForTaskToComplete waitForTaskToComplete) {
             doSetProperty("waitForTaskToComplete", waitForTaskToComplete);
             return this;
         }
@@ -651,28 +652,6 @@ public interface DisruptorEndpointBuilderFactory {
         default DisruptorEndpointBuilder basic() {
             return (DisruptorEndpointBuilder) this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.disruptor.DisruptorWaitStrategy</code>
-     * enum.
-     */
-    enum DisruptorWaitStrategy {
-        Blocking,
-        Sleeping,
-        BusySpin,
-        Yielding;
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.disruptor.DisruptorProducerType</code>
-     * enum.
-     */
-    enum DisruptorProducerType {
-        Single,
-        Multi;
     }
 
     public interface DisruptorBuilders {

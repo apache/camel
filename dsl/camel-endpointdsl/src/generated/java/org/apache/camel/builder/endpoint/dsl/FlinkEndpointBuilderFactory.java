@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -76,7 +80,8 @@ public interface FlinkEndpointBuilderFactory {
          * @param dataSet the value to set
          * @return the dsl builder
          */
-        default FlinkEndpointBuilder dataSet(Object dataSet) {
+        default FlinkEndpointBuilder dataSet(
+                org.apache.flink.api.java.DataSet dataSet) {
             doSetProperty("dataSet", dataSet);
             return this;
         }
@@ -106,7 +111,8 @@ public interface FlinkEndpointBuilderFactory {
          * @param dataSetCallback the value to set
          * @return the dsl builder
          */
-        default FlinkEndpointBuilder dataSetCallback(Object dataSetCallback) {
+        default FlinkEndpointBuilder dataSetCallback(
+                org.apache.camel.component.flink.DataSetCallback dataSetCallback) {
             doSetProperty("dataSetCallback", dataSetCallback);
             return this;
         }
@@ -136,7 +142,8 @@ public interface FlinkEndpointBuilderFactory {
          * @param dataStream the value to set
          * @return the dsl builder
          */
-        default FlinkEndpointBuilder dataStream(Object dataStream) {
+        default FlinkEndpointBuilder dataStream(
+                org.apache.flink.streaming.api.datastream.DataStream dataStream) {
             doSetProperty("dataStream", dataStream);
             return this;
         }
@@ -167,7 +174,7 @@ public interface FlinkEndpointBuilderFactory {
          * @return the dsl builder
          */
         default FlinkEndpointBuilder dataStreamCallback(
-                Object dataStreamCallback) {
+                org.apache.camel.component.flink.DataStreamCallback dataStreamCallback) {
             doSetProperty("dataStreamCallback", dataStreamCallback);
             return this;
         }

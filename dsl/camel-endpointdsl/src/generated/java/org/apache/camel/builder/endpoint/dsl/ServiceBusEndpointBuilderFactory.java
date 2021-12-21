@@ -16,14 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.time.Duration;
-import java.time.OffsetDateTime;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Send and receive messages to/from Azure Event Bus.
@@ -56,7 +56,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ServiceBusEndpointConsumerBuilder amqpRetryOptions(
-                Object amqpRetryOptions) {
+                com.azure.core.amqp.AmqpRetryOptions amqpRetryOptions) {
             doSetProperty("amqpRetryOptions", amqpRetryOptions);
             return this;
         }
@@ -91,7 +91,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ServiceBusEndpointConsumerBuilder amqpTransportType(
-                AmqpTransportType amqpTransportType) {
+                com.azure.core.amqp.AmqpTransportType amqpTransportType) {
             doSetProperty("amqpTransportType", amqpTransportType);
             return this;
         }
@@ -128,7 +128,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ServiceBusEndpointConsumerBuilder clientOptions(
-                Object clientOptions) {
+                com.azure.core.util.ClientOptions clientOptions) {
             doSetProperty("clientOptions", clientOptions);
             return this;
         }
@@ -165,7 +165,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ServiceBusEndpointConsumerBuilder proxyOptions(
-                Object proxyOptions) {
+                com.azure.core.amqp.ProxyOptions proxyOptions) {
             doSetProperty("proxyOptions", proxyOptions);
             return this;
         }
@@ -202,7 +202,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ServiceBusEndpointConsumerBuilder serviceBusType(
-                ServiceBusType serviceBusType) {
+                org.apache.camel.component.azure.servicebus.ServiceBusType serviceBusType) {
             doSetProperty("serviceBusType", serviceBusType);
             return this;
         }
@@ -283,7 +283,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ServiceBusEndpointConsumerBuilder consumerOperation(
-                ServiceBusConsumerOperationDefinition consumerOperation) {
+                org.apache.camel.component.azure.servicebus.ServiceBusConsumerOperationDefinition consumerOperation) {
             doSetProperty("consumerOperation", consumerOperation);
             return this;
         }
@@ -364,7 +364,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ServiceBusEndpointConsumerBuilder maxAutoLockRenewDuration(
-                Duration maxAutoLockRenewDuration) {
+                java.time.Duration maxAutoLockRenewDuration) {
             doSetProperty("maxAutoLockRenewDuration", maxAutoLockRenewDuration);
             return this;
         }
@@ -482,7 +482,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ServiceBusEndpointConsumerBuilder receiverAsyncClient(
-                Object receiverAsyncClient) {
+                com.azure.messaging.servicebus.ServiceBusReceiverAsyncClient receiverAsyncClient) {
             doSetProperty("receiverAsyncClient", receiverAsyncClient);
             return this;
         }
@@ -516,7 +516,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ServiceBusEndpointConsumerBuilder serviceBusReceiveMode(
-                ServiceBusReceiveMode serviceBusReceiveMode) {
+                com.azure.messaging.servicebus.models.ServiceBusReceiveMode serviceBusReceiveMode) {
             doSetProperty("serviceBusReceiveMode", serviceBusReceiveMode);
             return this;
         }
@@ -548,7 +548,8 @@ public interface ServiceBusEndpointBuilderFactory {
          * @param subQueue the value to set
          * @return the dsl builder
          */
-        default ServiceBusEndpointConsumerBuilder subQueue(SubQueue subQueue) {
+        default ServiceBusEndpointConsumerBuilder subQueue(
+                com.azure.messaging.servicebus.models.SubQueue subQueue) {
             doSetProperty("subQueue", subQueue);
             return this;
         }
@@ -627,7 +628,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedServiceBusEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -662,7 +663,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedServiceBusEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -706,7 +707,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ServiceBusEndpointProducerBuilder amqpRetryOptions(
-                Object amqpRetryOptions) {
+                com.azure.core.amqp.AmqpRetryOptions amqpRetryOptions) {
             doSetProperty("amqpRetryOptions", amqpRetryOptions);
             return this;
         }
@@ -741,7 +742,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ServiceBusEndpointProducerBuilder amqpTransportType(
-                AmqpTransportType amqpTransportType) {
+                com.azure.core.amqp.AmqpTransportType amqpTransportType) {
             doSetProperty("amqpTransportType", amqpTransportType);
             return this;
         }
@@ -778,7 +779,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ServiceBusEndpointProducerBuilder clientOptions(
-                Object clientOptions) {
+                com.azure.core.util.ClientOptions clientOptions) {
             doSetProperty("clientOptions", clientOptions);
             return this;
         }
@@ -815,7 +816,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ServiceBusEndpointProducerBuilder proxyOptions(
-                Object proxyOptions) {
+                com.azure.core.amqp.ProxyOptions proxyOptions) {
             doSetProperty("proxyOptions", proxyOptions);
             return this;
         }
@@ -852,7 +853,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ServiceBusEndpointProducerBuilder serviceBusType(
-                ServiceBusType serviceBusType) {
+                org.apache.camel.component.azure.servicebus.ServiceBusType serviceBusType) {
             doSetProperty("serviceBusType", serviceBusType);
             return this;
         }
@@ -937,7 +938,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ServiceBusEndpointProducerBuilder producerOperation(
-                ServiceBusProducerOperationDefinition producerOperation) {
+                org.apache.camel.component.azure.servicebus.ServiceBusProducerOperationDefinition producerOperation) {
             doSetProperty("producerOperation", producerOperation);
             return this;
         }
@@ -971,7 +972,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ServiceBusEndpointProducerBuilder scheduledEnqueueTime(
-                OffsetDateTime scheduledEnqueueTime) {
+                java.time.OffsetDateTime scheduledEnqueueTime) {
             doSetProperty("scheduledEnqueueTime", scheduledEnqueueTime);
             return this;
         }
@@ -1004,7 +1005,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ServiceBusEndpointProducerBuilder senderAsyncClient(
-                Object senderAsyncClient) {
+                com.azure.messaging.servicebus.ServiceBusSenderAsyncClient senderAsyncClient) {
             doSetProperty("senderAsyncClient", senderAsyncClient);
             return this;
         }
@@ -1037,7 +1038,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ServiceBusEndpointProducerBuilder serviceBusTransactionContext(
-                Object serviceBusTransactionContext) {
+                com.azure.messaging.servicebus.ServiceBusTransactionContext serviceBusTransactionContext) {
             doSetProperty("serviceBusTransactionContext", serviceBusTransactionContext);
             return this;
         }
@@ -1112,7 +1113,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ServiceBusEndpointBuilder amqpRetryOptions(
-                Object amqpRetryOptions) {
+                com.azure.core.amqp.AmqpRetryOptions amqpRetryOptions) {
             doSetProperty("amqpRetryOptions", amqpRetryOptions);
             return this;
         }
@@ -1147,7 +1148,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ServiceBusEndpointBuilder amqpTransportType(
-                AmqpTransportType amqpTransportType) {
+                com.azure.core.amqp.AmqpTransportType amqpTransportType) {
             doSetProperty("amqpTransportType", amqpTransportType);
             return this;
         }
@@ -1183,7 +1184,8 @@ public interface ServiceBusEndpointBuilderFactory {
          * @param clientOptions the value to set
          * @return the dsl builder
          */
-        default ServiceBusEndpointBuilder clientOptions(Object clientOptions) {
+        default ServiceBusEndpointBuilder clientOptions(
+                com.azure.core.util.ClientOptions clientOptions) {
             doSetProperty("clientOptions", clientOptions);
             return this;
         }
@@ -1218,7 +1220,8 @@ public interface ServiceBusEndpointBuilderFactory {
          * @param proxyOptions the value to set
          * @return the dsl builder
          */
-        default ServiceBusEndpointBuilder proxyOptions(Object proxyOptions) {
+        default ServiceBusEndpointBuilder proxyOptions(
+                com.azure.core.amqp.ProxyOptions proxyOptions) {
             doSetProperty("proxyOptions", proxyOptions);
             return this;
         }
@@ -1254,7 +1257,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ServiceBusEndpointBuilder serviceBusType(
-                ServiceBusType serviceBusType) {
+                org.apache.camel.component.azure.servicebus.ServiceBusType serviceBusType) {
             doSetProperty("serviceBusType", serviceBusType);
             return this;
         }
@@ -1305,62 +1308,6 @@ public interface ServiceBusEndpointBuilderFactory {
         default ServiceBusEndpointBuilder basic() {
             return (ServiceBusEndpointBuilder) this;
         }
-    }
-
-    /**
-     * Proxy enum for <code>com.azure.core.amqp.AmqpTransportType</code> enum.
-     */
-    enum AmqpTransportType {
-        AMQP,
-        AMQP_WEB_SOCKETS;
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.azure.servicebus.ServiceBusType</code>
-     * enum.
-     */
-    enum ServiceBusType {
-        queue,
-        topic;
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.azure.servicebus.ServiceBusConsumerOperationDefinition</code> enum.
-     */
-    enum ServiceBusConsumerOperationDefinition {
-        receiveMessages,
-        peekMessages;
-    }
-
-    /**
-     * Proxy enum for
-     * <code>com.azure.messaging.servicebus.models.ServiceBusReceiveMode</code>
-     * enum.
-     */
-    enum ServiceBusReceiveMode {
-        PEEK_LOCK,
-        RECEIVE_AND_DELETE;
-    }
-
-    /**
-     * Proxy enum for
-     * <code>com.azure.messaging.servicebus.models.SubQueue</code> enum.
-     */
-    enum SubQueue {
-        NONE,
-        DEAD_LETTER_QUEUE,
-        TRANSFER_DEAD_LETTER_QUEUE;
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.azure.servicebus.ServiceBusProducerOperationDefinition</code> enum.
-     */
-    enum ServiceBusProducerOperationDefinition {
-        sendMessages,
-        scheduleMessages;
     }
 
     public interface ServiceBusBuilders {

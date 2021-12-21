@@ -16,12 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Perform cache operations on an Ignite cache or consume changes from a
@@ -308,7 +310,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * @return the dsl builder
          */
         default IgniteCacheEndpointConsumerBuilder remoteFilter(
-                Object remoteFilter) {
+                org.apache.ignite.cache.CacheEntryEventSerializableFilter<java.lang.Object, java.lang.Object> remoteFilter) {
             doSetProperty("remoteFilter", remoteFilter);
             return this;
         }
@@ -388,7 +390,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedIgniteCacheEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -423,7 +425,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedIgniteCacheEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -529,14 +531,15 @@ public interface IgniteCacheEndpointBuilderFactory {
          * for the Continuous Query Consumer.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.ignite.cache.query.Query&amp;lt;javax.cache.Cache$Entry&amp;lt;java.lang.Object, java.lang.Object&amp;gt;&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.ignite.cache.query.Query&amp;lt;javax.cache.Cache.Entry&amp;lt;java.lang.Object, java.lang.Object&amp;gt;&amp;gt;&lt;/code&gt; type.
          * 
          * Group: consumer
          * 
          * @param query the value to set
          * @return the dsl builder
          */
-        default IgniteCacheEndpointProducerBuilder query(Object query) {
+        default IgniteCacheEndpointProducerBuilder query(
+                org.apache.ignite.cache.query.Query<javax.cache.Cache.Entry<java.lang.Object, java.lang.Object>> query) {
             doSetProperty("query", query);
             return this;
         }
@@ -545,7 +548,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * for the Continuous Query Consumer.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.ignite.cache.query.Query&amp;lt;javax.cache.Cache$Entry&amp;lt;java.lang.Object, java.lang.Object&amp;gt;&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.ignite.cache.query.Query&amp;lt;javax.cache.Cache.Entry&amp;lt;java.lang.Object, java.lang.Object&amp;gt;&amp;gt;&lt;/code&gt; type.
          * 
          * Group: consumer
          * 
@@ -570,7 +573,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * @return the dsl builder
          */
         default IgniteCacheEndpointProducerBuilder cachePeekMode(
-                CachePeekMode cachePeekMode) {
+                org.apache.ignite.cache.CachePeekMode cachePeekMode) {
             doSetProperty("cachePeekMode", cachePeekMode);
             return this;
         }
@@ -687,7 +690,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * @return the dsl builder
          */
         default IgniteCacheEndpointProducerBuilder operation(
-                IgniteCacheOperation operation) {
+                org.apache.camel.component.ignite.cache.IgniteCacheOperation operation) {
             doSetProperty("operation", operation);
             return this;
         }
@@ -812,33 +815,6 @@ public interface IgniteCacheEndpointBuilderFactory {
         default IgniteCacheEndpointBuilder basic() {
             return (IgniteCacheEndpointBuilder) this;
         }
-    }
-
-    /**
-     * Proxy enum for <code>org.apache.ignite.cache.CachePeekMode</code> enum.
-     */
-    enum CachePeekMode {
-        ALL,
-        NEAR,
-        PRIMARY,
-        BACKUP,
-        ONHEAP,
-        OFFHEAP;
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.ignite.cache.IgniteCacheOperation</code>
-     * enum.
-     */
-    enum IgniteCacheOperation {
-        GET,
-        PUT,
-        REMOVE,
-        SIZE,
-        REBALANCE,
-        QUERY,
-        CLEAR;
     }
 
     public interface IgniteCacheBuilders {

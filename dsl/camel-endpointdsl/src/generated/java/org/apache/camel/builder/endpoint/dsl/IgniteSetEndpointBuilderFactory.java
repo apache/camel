@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -47,7 +51,8 @@ public interface IgniteSetEndpointBuilderFactory {
          * @param configuration the value to set
          * @return the dsl builder
          */
-        default IgniteSetEndpointBuilder configuration(Object configuration) {
+        default IgniteSetEndpointBuilder configuration(
+                org.apache.ignite.configuration.CollectionConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
         }
@@ -131,7 +136,8 @@ public interface IgniteSetEndpointBuilderFactory {
          * @param operation the value to set
          * @return the dsl builder
          */
-        default IgniteSetEndpointBuilder operation(IgniteSetOperation operation) {
+        default IgniteSetEndpointBuilder operation(
+                org.apache.camel.component.ignite.set.IgniteSetOperation operation) {
             doSetProperty("operation", operation);
             return this;
         }
@@ -223,22 +229,6 @@ public interface IgniteSetEndpointBuilderFactory {
             doSetProperty("treatCollectionsAsCacheObjects", treatCollectionsAsCacheObjects);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.ignite.set.IgniteSetOperation</code>
-     * enum.
-     */
-    enum IgniteSetOperation {
-        CONTAINS,
-        ADD,
-        SIZE,
-        REMOVE,
-        ITERATOR,
-        CLEAR,
-        RETAIN_ALL,
-        ARRAY;
     }
 
     public interface IgniteSetBuilders {

@@ -16,12 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Perform operations on Hazelcast distributed set.
@@ -54,7 +56,7 @@ public interface HazelcastSetEndpointBuilderFactory {
          * @return the dsl builder
          */
         default HazelcastSetEndpointConsumerBuilder defaultOperation(
-                HazelcastOperation defaultOperation) {
+                org.apache.camel.component.hazelcast.HazelcastOperation defaultOperation) {
             doSetProperty("defaultOperation", defaultOperation);
             return this;
         }
@@ -88,7 +90,7 @@ public interface HazelcastSetEndpointBuilderFactory {
          * @return the dsl builder
          */
         default HazelcastSetEndpointConsumerBuilder hazelcastInstance(
-                Object hazelcastInstance) {
+                com.hazelcast.core.HazelcastInstance hazelcastInstance) {
             doSetProperty("hazelcastInstance", hazelcastInstance);
             return this;
         }
@@ -197,7 +199,7 @@ public interface HazelcastSetEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedHazelcastSetEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -232,7 +234,7 @@ public interface HazelcastSetEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedHazelcastSetEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -276,7 +278,7 @@ public interface HazelcastSetEndpointBuilderFactory {
          * @return the dsl builder
          */
         default HazelcastSetEndpointProducerBuilder defaultOperation(
-                HazelcastOperation defaultOperation) {
+                org.apache.camel.component.hazelcast.HazelcastOperation defaultOperation) {
             doSetProperty("defaultOperation", defaultOperation);
             return this;
         }
@@ -310,7 +312,7 @@ public interface HazelcastSetEndpointBuilderFactory {
          * @return the dsl builder
          */
         default HazelcastSetEndpointProducerBuilder hazelcastInstance(
-                Object hazelcastInstance) {
+                com.hazelcast.core.HazelcastInstance hazelcastInstance) {
             doSetProperty("hazelcastInstance", hazelcastInstance);
             return this;
         }
@@ -433,7 +435,7 @@ public interface HazelcastSetEndpointBuilderFactory {
          * @return the dsl builder
          */
         default HazelcastSetEndpointBuilder defaultOperation(
-                HazelcastOperation defaultOperation) {
+                org.apache.camel.component.hazelcast.HazelcastOperation defaultOperation) {
             doSetProperty("defaultOperation", defaultOperation);
             return this;
         }
@@ -467,7 +469,7 @@ public interface HazelcastSetEndpointBuilderFactory {
          * @return the dsl builder
          */
         default HazelcastSetEndpointBuilder hazelcastInstance(
-                Object hazelcastInstance) {
+                com.hazelcast.core.HazelcastInstance hazelcastInstance) {
             doSetProperty("hazelcastInstance", hazelcastInstance);
             return this;
         }
@@ -517,50 +519,6 @@ public interface HazelcastSetEndpointBuilderFactory {
         default HazelcastSetEndpointBuilder basic() {
             return (HazelcastSetEndpointBuilder) this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
-     * enum.
-     */
-    enum HazelcastOperation {
-        PUT,
-        DELETE,
-        GET,
-        UPDATE,
-        QUERY,
-        GET_ALL,
-        CLEAR,
-        PUT_IF_ABSENT,
-        ADD_ALL,
-        REMOVE_ALL,
-        RETAIN_ALL,
-        EVICT,
-        EVICT_ALL,
-        VALUE_COUNT,
-        CONTAINS_KEY,
-        CONTAINS_VALUE,
-        GET_KEYS,
-        REMOVE_VALUE,
-        INCREMENT,
-        DECREMENT,
-        SET_VALUE,
-        DESTROY,
-        COMPARE_AND_SET,
-        GET_AND_ADD,
-        ADD,
-        OFFER,
-        PEEK,
-        POLL,
-        REMAINING_CAPACITY,
-        DRAIN_TO,
-        REMOVE_IF,
-        TAKE,
-        PUBLISH,
-        READ_ONCE_HEAD,
-        READ_ONCE_TAIL,
-        CAPACITY;
     }
 
     public interface HazelcastSetBuilders {

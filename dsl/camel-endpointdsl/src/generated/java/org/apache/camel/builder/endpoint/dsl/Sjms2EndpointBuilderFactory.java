@@ -16,13 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.HeaderFilterStrategy;
 
 /**
  * Send and receive messages to/from a JMS Queue or Topic using plain JMS 2.x
@@ -57,7 +58,7 @@ public interface Sjms2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default Sjms2EndpointConsumerBuilder acknowledgementMode(
-                SessionAcknowledgementType acknowledgementMode) {
+                org.apache.camel.component.sjms.jms.SessionAcknowledgementType acknowledgementMode) {
             doSetProperty("acknowledgementMode", acknowledgementMode);
             return this;
         }
@@ -92,7 +93,7 @@ public interface Sjms2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default Sjms2EndpointConsumerBuilder connectionFactory(
-                Object connectionFactory) {
+                javax.jms.ConnectionFactory connectionFactory) {
             doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
@@ -647,7 +648,7 @@ public interface Sjms2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSjms2EndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -682,7 +683,7 @@ public interface Sjms2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSjms2EndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -854,7 +855,7 @@ public interface Sjms2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSjms2EndpointConsumerBuilder destinationCreationStrategy(
-                Object destinationCreationStrategy) {
+                org.apache.camel.component.sjms.jms.DestinationCreationStrategy destinationCreationStrategy) {
             doSetProperty("destinationCreationStrategy", destinationCreationStrategy);
             return this;
         }
@@ -887,7 +888,7 @@ public interface Sjms2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSjms2EndpointConsumerBuilder exceptionListener(
-                Object exceptionListener) {
+                javax.jms.ExceptionListener exceptionListener) {
             doSetProperty("exceptionListener", exceptionListener);
             return this;
         }
@@ -922,7 +923,7 @@ public interface Sjms2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSjms2EndpointConsumerBuilder headerFilterStrategy(
-                HeaderFilterStrategy headerFilterStrategy) {
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
@@ -1003,7 +1004,7 @@ public interface Sjms2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSjms2EndpointConsumerBuilder jmsKeyFormatStrategy(
-                Object jmsKeyFormatStrategy) {
+                org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy jmsKeyFormatStrategy) {
             doSetProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
             return this;
         }
@@ -1082,7 +1083,7 @@ public interface Sjms2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSjms2EndpointConsumerBuilder messageCreatedStrategy(
-                Object messageCreatedStrategy) {
+                org.apache.camel.component.sjms.jms.MessageCreatedStrategy messageCreatedStrategy) {
             doSetProperty("messageCreatedStrategy", messageCreatedStrategy);
             return this;
         }
@@ -1257,7 +1258,7 @@ public interface Sjms2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default Sjms2EndpointProducerBuilder acknowledgementMode(
-                SessionAcknowledgementType acknowledgementMode) {
+                org.apache.camel.component.sjms.jms.SessionAcknowledgementType acknowledgementMode) {
             doSetProperty("acknowledgementMode", acknowledgementMode);
             return this;
         }
@@ -1292,7 +1293,7 @@ public interface Sjms2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default Sjms2EndpointProducerBuilder connectionFactory(
-                Object connectionFactory) {
+                javax.jms.ConnectionFactory connectionFactory) {
             doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
@@ -1637,7 +1638,8 @@ public interface Sjms2EndpointBuilderFactory {
          * @param replyToType the value to set
          * @return the dsl builder
          */
-        default Sjms2EndpointProducerBuilder replyToType(ReplyToType replyToType) {
+        default Sjms2EndpointProducerBuilder replyToType(
+                org.apache.camel.component.sjms.ReplyToType replyToType) {
             doSetProperty("replyToType", replyToType);
             return this;
         }
@@ -2048,7 +2050,7 @@ public interface Sjms2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSjms2EndpointProducerBuilder destinationCreationStrategy(
-                Object destinationCreationStrategy) {
+                org.apache.camel.component.sjms.jms.DestinationCreationStrategy destinationCreationStrategy) {
             doSetProperty("destinationCreationStrategy", destinationCreationStrategy);
             return this;
         }
@@ -2081,7 +2083,7 @@ public interface Sjms2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSjms2EndpointProducerBuilder exceptionListener(
-                Object exceptionListener) {
+                javax.jms.ExceptionListener exceptionListener) {
             doSetProperty("exceptionListener", exceptionListener);
             return this;
         }
@@ -2116,7 +2118,7 @@ public interface Sjms2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSjms2EndpointProducerBuilder headerFilterStrategy(
-                HeaderFilterStrategy headerFilterStrategy) {
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
@@ -2197,7 +2199,7 @@ public interface Sjms2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSjms2EndpointProducerBuilder jmsKeyFormatStrategy(
-                Object jmsKeyFormatStrategy) {
+                org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy jmsKeyFormatStrategy) {
             doSetProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
             return this;
         }
@@ -2276,7 +2278,7 @@ public interface Sjms2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSjms2EndpointProducerBuilder messageCreatedStrategy(
-                Object messageCreatedStrategy) {
+                org.apache.camel.component.sjms.jms.MessageCreatedStrategy messageCreatedStrategy) {
             doSetProperty("messageCreatedStrategy", messageCreatedStrategy);
             return this;
         }
@@ -2452,7 +2454,7 @@ public interface Sjms2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default Sjms2EndpointBuilder acknowledgementMode(
-                SessionAcknowledgementType acknowledgementMode) {
+                org.apache.camel.component.sjms.jms.SessionAcknowledgementType acknowledgementMode) {
             doSetProperty("acknowledgementMode", acknowledgementMode);
             return this;
         }
@@ -2486,7 +2488,8 @@ public interface Sjms2EndpointBuilderFactory {
          * @param connectionFactory the value to set
          * @return the dsl builder
          */
-        default Sjms2EndpointBuilder connectionFactory(Object connectionFactory) {
+        default Sjms2EndpointBuilder connectionFactory(
+                javax.jms.ConnectionFactory connectionFactory) {
             doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
@@ -2748,7 +2751,7 @@ public interface Sjms2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSjms2EndpointBuilder destinationCreationStrategy(
-                Object destinationCreationStrategy) {
+                org.apache.camel.component.sjms.jms.DestinationCreationStrategy destinationCreationStrategy) {
             doSetProperty("destinationCreationStrategy", destinationCreationStrategy);
             return this;
         }
@@ -2781,7 +2784,7 @@ public interface Sjms2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSjms2EndpointBuilder exceptionListener(
-                Object exceptionListener) {
+                javax.jms.ExceptionListener exceptionListener) {
             doSetProperty("exceptionListener", exceptionListener);
             return this;
         }
@@ -2816,7 +2819,7 @@ public interface Sjms2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSjms2EndpointBuilder headerFilterStrategy(
-                HeaderFilterStrategy headerFilterStrategy) {
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
@@ -2897,7 +2900,7 @@ public interface Sjms2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSjms2EndpointBuilder jmsKeyFormatStrategy(
-                Object jmsKeyFormatStrategy) {
+                org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy jmsKeyFormatStrategy) {
             doSetProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
             return this;
         }
@@ -2974,7 +2977,7 @@ public interface Sjms2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSjms2EndpointBuilder messageCreatedStrategy(
-                Object messageCreatedStrategy) {
+                org.apache.camel.component.sjms.jms.MessageCreatedStrategy messageCreatedStrategy) {
             doSetProperty("messageCreatedStrategy", messageCreatedStrategy);
             return this;
         }
@@ -3122,26 +3125,6 @@ public interface Sjms2EndpointBuilderFactory {
             doSetProperty("transferException", transferException);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.sjms.jms.SessionAcknowledgementType</code> enum.
-     */
-    enum SessionAcknowledgementType {
-        AUTO_ACKNOWLEDGE,
-        CLIENT_ACKNOWLEDGE,
-        DUPS_OK_ACKNOWLEDGE,
-        SESSION_TRANSACTED;
-    }
-
-    /**
-     * Proxy enum for <code>org.apache.camel.component.sjms.ReplyToType</code>
-     * enum.
-     */
-    enum ReplyToType {
-        Temporary,
-        Exclusive;
     }
 
     public interface Sjms2Builders {

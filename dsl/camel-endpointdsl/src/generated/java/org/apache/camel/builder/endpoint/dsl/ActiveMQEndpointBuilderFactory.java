@@ -16,15 +16,15 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
 import java.util.Map;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.HeaderFilterStrategy;
 
 /**
  * Send messages to (or consume from) Apache ActiveMQ. This component extends
@@ -76,7 +76,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ActiveMQEndpointConsumerBuilder connectionFactory(
-                Object connectionFactory) {
+                javax.jms.ConnectionFactory connectionFactory) {
             doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
@@ -176,7 +176,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ActiveMQEndpointConsumerBuilder jmsMessageType(
-                JmsMessageType jmsMessageType) {
+                org.apache.camel.component.jms.JmsMessageType jmsMessageType) {
             doSetProperty("jmsMessageType", jmsMessageType);
             return this;
         }
@@ -717,7 +717,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ActiveMQEndpointConsumerBuilder errorHandlerLoggingLevel(
-                LoggingLevel errorHandlerLoggingLevel) {
+                org.apache.camel.LoggingLevel errorHandlerLoggingLevel) {
             doSetProperty("errorHandlerLoggingLevel", errorHandlerLoggingLevel);
             return this;
         }
@@ -1026,7 +1026,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedActiveMQEndpointConsumerBuilder consumerType(
-                ConsumerType consumerType) {
+                org.apache.camel.component.jms.ConsumerType consumerType) {
             doSetProperty("consumerType", consumerType);
             return this;
         }
@@ -1078,7 +1078,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedActiveMQEndpointConsumerBuilder defaultTaskExecutorType(
-                DefaultTaskExecutorType defaultTaskExecutorType) {
+                org.apache.camel.component.jms.DefaultTaskExecutorType defaultTaskExecutorType) {
             doSetProperty("defaultTaskExecutorType", defaultTaskExecutorType);
             return this;
         }
@@ -1232,7 +1232,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedActiveMQEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -1267,7 +1267,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedActiveMQEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -1374,7 +1374,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedActiveMQEndpointConsumerBuilder taskExecutor(
-                Object taskExecutor) {
+                org.springframework.core.task.TaskExecutor taskExecutor) {
             doSetProperty("taskExecutor", taskExecutor);
             return this;
         }
@@ -1572,7 +1572,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedActiveMQEndpointConsumerBuilder destinationResolver(
-                Object destinationResolver) {
+                org.springframework.jms.support.destination.DestinationResolver destinationResolver) {
             doSetProperty("destinationResolver", destinationResolver);
             return this;
         }
@@ -1613,7 +1613,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedActiveMQEndpointConsumerBuilder errorHandler(
-                Object errorHandler) {
+                org.springframework.util.ErrorHandler errorHandler) {
             doSetProperty("errorHandler", errorHandler);
             return this;
         }
@@ -1652,7 +1652,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedActiveMQEndpointConsumerBuilder exceptionListener(
-                Object exceptionListener) {
+                javax.jms.ExceptionListener exceptionListener) {
             doSetProperty("exceptionListener", exceptionListener);
             return this;
         }
@@ -1687,7 +1687,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedActiveMQEndpointConsumerBuilder headerFilterStrategy(
-                HeaderFilterStrategy headerFilterStrategy) {
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
@@ -1842,7 +1842,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedActiveMQEndpointConsumerBuilder jmsKeyFormatStrategy(
-                Object jmsKeyFormatStrategy) {
+                org.apache.camel.component.jms.JmsKeyFormatStrategy jmsKeyFormatStrategy) {
             doSetProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
             return this;
         }
@@ -1957,7 +1957,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedActiveMQEndpointConsumerBuilder messageConverter(
-                Object messageConverter) {
+                org.springframework.jms.support.converter.MessageConverter messageConverter) {
             doSetProperty("messageConverter", messageConverter);
             return this;
         }
@@ -1993,7 +1993,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedActiveMQEndpointConsumerBuilder messageCreatedStrategy(
-                Object messageCreatedStrategy) {
+                org.apache.camel.component.jms.MessageCreatedStrategy messageCreatedStrategy) {
             doSetProperty("messageCreatedStrategy", messageCreatedStrategy);
             return this;
         }
@@ -2072,7 +2072,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedActiveMQEndpointConsumerBuilder messageListenerContainerFactory(
-                Object messageListenerContainerFactory) {
+                org.apache.camel.component.jms.MessageListenerContainerFactory messageListenerContainerFactory) {
             doSetProperty("messageListenerContainerFactory", messageListenerContainerFactory);
             return this;
         }
@@ -2581,7 +2581,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedActiveMQEndpointConsumerBuilder transactionManager(
-                Object transactionManager) {
+                org.springframework.transaction.PlatformTransactionManager transactionManager) {
             doSetProperty("transactionManager", transactionManager);
             return this;
         }
@@ -2692,7 +2692,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ActiveMQEndpointProducerBuilder connectionFactory(
-                Object connectionFactory) {
+                javax.jms.ConnectionFactory connectionFactory) {
             doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
@@ -2792,7 +2792,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ActiveMQEndpointProducerBuilder jmsMessageType(
-                JmsMessageType jmsMessageType) {
+                org.apache.camel.component.jms.JmsMessageType jmsMessageType) {
             doSetProperty("jmsMessageType", jmsMessageType);
             return this;
         }
@@ -3327,7 +3327,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ActiveMQEndpointProducerBuilder replyToType(
-                ReplyToType replyToType) {
+                org.apache.camel.component.jms.ReplyToType replyToType) {
             doSetProperty("replyToType", replyToType);
             return this;
         }
@@ -4069,7 +4069,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedActiveMQEndpointProducerBuilder destinationResolver(
-                Object destinationResolver) {
+                org.springframework.jms.support.destination.DestinationResolver destinationResolver) {
             doSetProperty("destinationResolver", destinationResolver);
             return this;
         }
@@ -4110,7 +4110,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedActiveMQEndpointProducerBuilder errorHandler(
-                Object errorHandler) {
+                org.springframework.util.ErrorHandler errorHandler) {
             doSetProperty("errorHandler", errorHandler);
             return this;
         }
@@ -4149,7 +4149,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedActiveMQEndpointProducerBuilder exceptionListener(
-                Object exceptionListener) {
+                javax.jms.ExceptionListener exceptionListener) {
             doSetProperty("exceptionListener", exceptionListener);
             return this;
         }
@@ -4184,7 +4184,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedActiveMQEndpointProducerBuilder headerFilterStrategy(
-                HeaderFilterStrategy headerFilterStrategy) {
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
@@ -4339,7 +4339,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedActiveMQEndpointProducerBuilder jmsKeyFormatStrategy(
-                Object jmsKeyFormatStrategy) {
+                org.apache.camel.component.jms.JmsKeyFormatStrategy jmsKeyFormatStrategy) {
             doSetProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
             return this;
         }
@@ -4454,7 +4454,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedActiveMQEndpointProducerBuilder messageConverter(
-                Object messageConverter) {
+                org.springframework.jms.support.converter.MessageConverter messageConverter) {
             doSetProperty("messageConverter", messageConverter);
             return this;
         }
@@ -4490,7 +4490,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedActiveMQEndpointProducerBuilder messageCreatedStrategy(
-                Object messageCreatedStrategy) {
+                org.apache.camel.component.jms.MessageCreatedStrategy messageCreatedStrategy) {
             doSetProperty("messageCreatedStrategy", messageCreatedStrategy);
             return this;
         }
@@ -4569,7 +4569,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedActiveMQEndpointProducerBuilder messageListenerContainerFactory(
-                Object messageListenerContainerFactory) {
+                org.apache.camel.component.jms.MessageListenerContainerFactory messageListenerContainerFactory) {
             doSetProperty("messageListenerContainerFactory", messageListenerContainerFactory);
             return this;
         }
@@ -5078,7 +5078,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedActiveMQEndpointProducerBuilder transactionManager(
-                Object transactionManager) {
+                org.springframework.transaction.PlatformTransactionManager transactionManager) {
             doSetProperty("transactionManager", transactionManager);
             return this;
         }
@@ -5190,7 +5190,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ActiveMQEndpointBuilder connectionFactory(
-                Object connectionFactory) {
+                javax.jms.ConnectionFactory connectionFactory) {
             doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
@@ -5288,7 +5288,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ActiveMQEndpointBuilder jmsMessageType(
-                JmsMessageType jmsMessageType) {
+                org.apache.camel.component.jms.JmsMessageType jmsMessageType) {
             doSetProperty("jmsMessageType", jmsMessageType);
             return this;
         }
@@ -5680,7 +5680,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedActiveMQEndpointBuilder destinationResolver(
-                Object destinationResolver) {
+                org.springframework.jms.support.destination.DestinationResolver destinationResolver) {
             doSetProperty("destinationResolver", destinationResolver);
             return this;
         }
@@ -5720,7 +5720,8 @@ public interface ActiveMQEndpointBuilderFactory {
          * @param errorHandler the value to set
          * @return the dsl builder
          */
-        default AdvancedActiveMQEndpointBuilder errorHandler(Object errorHandler) {
+        default AdvancedActiveMQEndpointBuilder errorHandler(
+                org.springframework.util.ErrorHandler errorHandler) {
             doSetProperty("errorHandler", errorHandler);
             return this;
         }
@@ -5758,7 +5759,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedActiveMQEndpointBuilder exceptionListener(
-                Object exceptionListener) {
+                javax.jms.ExceptionListener exceptionListener) {
             doSetProperty("exceptionListener", exceptionListener);
             return this;
         }
@@ -5793,7 +5794,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedActiveMQEndpointBuilder headerFilterStrategy(
-                HeaderFilterStrategy headerFilterStrategy) {
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
@@ -5948,7 +5949,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedActiveMQEndpointBuilder jmsKeyFormatStrategy(
-                Object jmsKeyFormatStrategy) {
+                org.apache.camel.component.jms.JmsKeyFormatStrategy jmsKeyFormatStrategy) {
             doSetProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
             return this;
         }
@@ -6063,7 +6064,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedActiveMQEndpointBuilder messageConverter(
-                Object messageConverter) {
+                org.springframework.jms.support.converter.MessageConverter messageConverter) {
             doSetProperty("messageConverter", messageConverter);
             return this;
         }
@@ -6099,7 +6100,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedActiveMQEndpointBuilder messageCreatedStrategy(
-                Object messageCreatedStrategy) {
+                org.apache.camel.component.jms.MessageCreatedStrategy messageCreatedStrategy) {
             doSetProperty("messageCreatedStrategy", messageCreatedStrategy);
             return this;
         }
@@ -6178,7 +6179,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedActiveMQEndpointBuilder messageListenerContainerFactory(
-                Object messageListenerContainerFactory) {
+                org.apache.camel.component.jms.MessageListenerContainerFactory messageListenerContainerFactory) {
             doSetProperty("messageListenerContainerFactory", messageListenerContainerFactory);
             return this;
         }
@@ -6685,7 +6686,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedActiveMQEndpointBuilder transactionManager(
-                Object transactionManager) {
+                org.springframework.transaction.PlatformTransactionManager transactionManager) {
             doSetProperty("transactionManager", transactionManager);
             return this;
         }
@@ -6754,48 +6755,6 @@ public interface ActiveMQEndpointBuilderFactory {
             doSetProperty("transactionTimeout", transactionTimeout);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for <code>org.apache.camel.component.jms.JmsMessageType</code>
-     * enum.
-     */
-    enum JmsMessageType {
-        Bytes,
-        Map,
-        Object,
-        Stream,
-        Text,
-        Blob;
-    }
-
-    /**
-     * Proxy enum for <code>org.apache.camel.component.jms.ConsumerType</code>
-     * enum.
-     */
-    enum ConsumerType {
-        Simple,
-        Default,
-        Custom;
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.jms.DefaultTaskExecutorType</code> enum.
-     */
-    enum DefaultTaskExecutorType {
-        ThreadPool,
-        SimpleAsync;
-    }
-
-    /**
-     * Proxy enum for <code>org.apache.camel.component.jms.ReplyToType</code>
-     * enum.
-     */
-    enum ReplyToType {
-        Temporary,
-        Shared,
-        Exclusive;
     }
 
     public interface ActiveMQBuilders {

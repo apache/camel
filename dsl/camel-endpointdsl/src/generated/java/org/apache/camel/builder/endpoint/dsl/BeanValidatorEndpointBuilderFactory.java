@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -160,7 +164,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedBeanValidatorEndpointBuilder constraintValidatorFactory(
-                Object constraintValidatorFactory) {
+                javax.validation.ConstraintValidatorFactory constraintValidatorFactory) {
             doSetProperty("constraintValidatorFactory", constraintValidatorFactory);
             return this;
         }
@@ -193,7 +197,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedBeanValidatorEndpointBuilder messageInterpolator(
-                Object messageInterpolator) {
+                javax.validation.MessageInterpolator messageInterpolator) {
             doSetProperty("messageInterpolator", messageInterpolator);
             return this;
         }
@@ -225,7 +229,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedBeanValidatorEndpointBuilder traversableResolver(
-                Object traversableResolver) {
+                javax.validation.TraversableResolver traversableResolver) {
             doSetProperty("traversableResolver", traversableResolver);
             return this;
         }
@@ -258,7 +262,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedBeanValidatorEndpointBuilder validationProviderResolver(
-                Object validationProviderResolver) {
+                javax.validation.ValidationProviderResolver validationProviderResolver) {
             doSetProperty("validationProviderResolver", validationProviderResolver);
             return this;
         }
@@ -291,7 +295,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedBeanValidatorEndpointBuilder validatorFactory(
-                Object validatorFactory) {
+                javax.validation.ValidatorFactory validatorFactory) {
             doSetProperty("validatorFactory", validatorFactory);
             return this;
         }

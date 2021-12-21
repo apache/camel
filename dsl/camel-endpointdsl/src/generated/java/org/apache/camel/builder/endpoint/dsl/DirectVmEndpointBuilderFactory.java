@@ -16,13 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.HeaderFilterStrategy;
 
 /**
  * Call another endpoint from any Camel Context in the same JVM synchronously.
@@ -113,7 +114,7 @@ public interface DirectVmEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedDirectVmEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -148,7 +149,7 @@ public interface DirectVmEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedDirectVmEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -389,7 +390,7 @@ public interface DirectVmEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedDirectVmEndpointProducerBuilder headerFilterStrategy(
-                HeaderFilterStrategy headerFilterStrategy) {
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }

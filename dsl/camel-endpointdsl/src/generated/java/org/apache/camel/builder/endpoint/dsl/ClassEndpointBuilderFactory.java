@@ -16,9 +16,12 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
 import java.util.Map;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.BeanScope;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
@@ -109,7 +112,7 @@ public interface ClassEndpointBuilderFactory {
          * @param scope the value to set
          * @return the dsl builder
          */
-        default ClassEndpointBuilder scope(BeanScope scope) {
+        default ClassEndpointBuilder scope(org.apache.camel.BeanScope scope) {
             doSetProperty("scope", scope);
             return this;
         }

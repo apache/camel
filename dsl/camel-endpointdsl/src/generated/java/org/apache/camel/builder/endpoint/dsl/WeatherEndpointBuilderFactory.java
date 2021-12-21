@@ -16,18 +16,15 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.util.List;
+import java.util.*;
 import java.util.Map;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.PollingConsumerPollStrategy;
 
 /**
  * Poll the weather information from Open Weather Map.
@@ -89,7 +86,8 @@ public interface WeatherEndpointBuilderFactory {
          * @param language the value to set
          * @return the dsl builder
          */
-        default WeatherEndpointConsumerBuilder language(WeatherLanguage language) {
+        default WeatherEndpointConsumerBuilder language(
+                org.apache.camel.component.weather.WeatherLanguage language) {
             doSetProperty("language", language);
             return this;
         }
@@ -121,7 +119,8 @@ public interface WeatherEndpointBuilderFactory {
          * @param mode the value to set
          * @return the dsl builder
          */
-        default WeatherEndpointConsumerBuilder mode(WeatherMode mode) {
+        default WeatherEndpointConsumerBuilder mode(
+                org.apache.camel.component.weather.WeatherMode mode) {
             doSetProperty("mode", mode);
             return this;
         }
@@ -169,7 +168,8 @@ public interface WeatherEndpointBuilderFactory {
          * @param units the value to set
          * @return the dsl builder
          */
-        default WeatherEndpointConsumerBuilder units(WeatherUnits units) {
+        default WeatherEndpointConsumerBuilder units(
+                org.apache.camel.component.weather.WeatherUnits units) {
             doSetProperty("units", units);
             return this;
         }
@@ -199,7 +199,8 @@ public interface WeatherEndpointBuilderFactory {
          * @param weatherApi the value to set
          * @return the dsl builder
          */
-        default WeatherEndpointConsumerBuilder weatherApi(WeatherApi weatherApi) {
+        default WeatherEndpointConsumerBuilder weatherApi(
+                org.apache.camel.component.weather.WeatherApi weatherApi) {
             doSetProperty("weatherApi", weatherApi);
             return this;
         }
@@ -331,24 +332,7 @@ public interface WeatherEndpointBuilderFactory {
          * List of id's of city/stations. You can separate multiple ids by
          * comma.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
-         * 
-         * Group: filter
-         * 
-         * @param ids the value to set
-         * @return the dsl builder
-         */
-        default WeatherEndpointConsumerBuilder ids(List<String> ids) {
-            doSetProperty("ids", ids);
-            return this;
-        }
-        /**
-         * List of id's of city/stations. You can separate multiple ids by
-         * comma.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: filter
          * 
@@ -730,7 +714,7 @@ public interface WeatherEndpointBuilderFactory {
          * @return the dsl builder
          */
         default WeatherEndpointConsumerBuilder runLoggingLevel(
-                LoggingLevel runLoggingLevel) {
+                org.apache.camel.LoggingLevel runLoggingLevel) {
             doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
@@ -1021,7 +1005,7 @@ public interface WeatherEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedWeatherEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -1056,7 +1040,7 @@ public interface WeatherEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedWeatherEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -1091,7 +1075,7 @@ public interface WeatherEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedWeatherEndpointConsumerBuilder pollStrategy(
-                PollingConsumerPollStrategy pollStrategy) {
+                org.apache.camel.spi.PollingConsumerPollStrategy pollStrategy) {
             doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
@@ -1129,7 +1113,7 @@ public interface WeatherEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedWeatherEndpointConsumerBuilder geoLocationProvider(
-                Object geoLocationProvider) {
+                org.apache.camel.component.weather.geolocation.GeoLocationProvider geoLocationProvider) {
             doSetProperty("geoLocationProvider", geoLocationProvider);
             return this;
         }
@@ -1165,7 +1149,7 @@ public interface WeatherEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedWeatherEndpointConsumerBuilder httpClient(
-                Object httpClient) {
+                org.apache.http.impl.client.CloseableHttpClient httpClient) {
             doSetProperty("httpClient", httpClient);
             return this;
         }
@@ -1239,7 +1223,8 @@ public interface WeatherEndpointBuilderFactory {
          * @param language the value to set
          * @return the dsl builder
          */
-        default WeatherEndpointProducerBuilder language(WeatherLanguage language) {
+        default WeatherEndpointProducerBuilder language(
+                org.apache.camel.component.weather.WeatherLanguage language) {
             doSetProperty("language", language);
             return this;
         }
@@ -1271,7 +1256,8 @@ public interface WeatherEndpointBuilderFactory {
          * @param mode the value to set
          * @return the dsl builder
          */
-        default WeatherEndpointProducerBuilder mode(WeatherMode mode) {
+        default WeatherEndpointProducerBuilder mode(
+                org.apache.camel.component.weather.WeatherMode mode) {
             doSetProperty("mode", mode);
             return this;
         }
@@ -1319,7 +1305,8 @@ public interface WeatherEndpointBuilderFactory {
          * @param units the value to set
          * @return the dsl builder
          */
-        default WeatherEndpointProducerBuilder units(WeatherUnits units) {
+        default WeatherEndpointProducerBuilder units(
+                org.apache.camel.component.weather.WeatherUnits units) {
             doSetProperty("units", units);
             return this;
         }
@@ -1349,7 +1336,8 @@ public interface WeatherEndpointBuilderFactory {
          * @param weatherApi the value to set
          * @return the dsl builder
          */
-        default WeatherEndpointProducerBuilder weatherApi(WeatherApi weatherApi) {
+        default WeatherEndpointProducerBuilder weatherApi(
+                org.apache.camel.component.weather.WeatherApi weatherApi) {
             doSetProperty("weatherApi", weatherApi);
             return this;
         }
@@ -1450,24 +1438,7 @@ public interface WeatherEndpointBuilderFactory {
          * List of id's of city/stations. You can separate multiple ids by
          * comma.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
-         * 
-         * Group: filter
-         * 
-         * @param ids the value to set
-         * @return the dsl builder
-         */
-        default WeatherEndpointProducerBuilder ids(List<String> ids) {
-            doSetProperty("ids", ids);
-            return this;
-        }
-        /**
-         * List of id's of city/stations. You can separate multiple ids by
-         * comma.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: filter
          * 
@@ -1663,7 +1634,7 @@ public interface WeatherEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedWeatherEndpointProducerBuilder geoLocationProvider(
-                Object geoLocationProvider) {
+                org.apache.camel.component.weather.geolocation.GeoLocationProvider geoLocationProvider) {
             doSetProperty("geoLocationProvider", geoLocationProvider);
             return this;
         }
@@ -1699,7 +1670,7 @@ public interface WeatherEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedWeatherEndpointProducerBuilder httpClient(
-                Object httpClient) {
+                org.apache.http.impl.client.CloseableHttpClient httpClient) {
             doSetProperty("httpClient", httpClient);
             return this;
         }
@@ -1774,7 +1745,8 @@ public interface WeatherEndpointBuilderFactory {
          * @param language the value to set
          * @return the dsl builder
          */
-        default WeatherEndpointBuilder language(WeatherLanguage language) {
+        default WeatherEndpointBuilder language(
+                org.apache.camel.component.weather.WeatherLanguage language) {
             doSetProperty("language", language);
             return this;
         }
@@ -1806,7 +1778,8 @@ public interface WeatherEndpointBuilderFactory {
          * @param mode the value to set
          * @return the dsl builder
          */
-        default WeatherEndpointBuilder mode(WeatherMode mode) {
+        default WeatherEndpointBuilder mode(
+                org.apache.camel.component.weather.WeatherMode mode) {
             doSetProperty("mode", mode);
             return this;
         }
@@ -1854,7 +1827,8 @@ public interface WeatherEndpointBuilderFactory {
          * @param units the value to set
          * @return the dsl builder
          */
-        default WeatherEndpointBuilder units(WeatherUnits units) {
+        default WeatherEndpointBuilder units(
+                org.apache.camel.component.weather.WeatherUnits units) {
             doSetProperty("units", units);
             return this;
         }
@@ -1884,7 +1858,8 @@ public interface WeatherEndpointBuilderFactory {
          * @param weatherApi the value to set
          * @return the dsl builder
          */
-        default WeatherEndpointBuilder weatherApi(WeatherApi weatherApi) {
+        default WeatherEndpointBuilder weatherApi(
+                org.apache.camel.component.weather.WeatherApi weatherApi) {
             doSetProperty("weatherApi", weatherApi);
             return this;
         }
@@ -1936,24 +1911,7 @@ public interface WeatherEndpointBuilderFactory {
          * List of id's of city/stations. You can separate multiple ids by
          * comma.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
-         * 
-         * Group: filter
-         * 
-         * @param ids the value to set
-         * @return the dsl builder
-         */
-        default WeatherEndpointBuilder ids(List<String> ids) {
-            doSetProperty("ids", ids);
-            return this;
-        }
-        /**
-         * List of id's of city/stations. You can separate multiple ids by
-         * comma.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: filter
          * 
@@ -2150,7 +2108,7 @@ public interface WeatherEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedWeatherEndpointBuilder geoLocationProvider(
-                Object geoLocationProvider) {
+                org.apache.camel.component.weather.geolocation.GeoLocationProvider geoLocationProvider) {
             doSetProperty("geoLocationProvider", geoLocationProvider);
             return this;
         }
@@ -2185,7 +2143,8 @@ public interface WeatherEndpointBuilderFactory {
          * @param httpClient the value to set
          * @return the dsl builder
          */
-        default AdvancedWeatherEndpointBuilder httpClient(Object httpClient) {
+        default AdvancedWeatherEndpointBuilder httpClient(
+                org.apache.http.impl.client.CloseableHttpClient httpClient) {
             doSetProperty("httpClient", httpClient);
             return this;
         }
@@ -2205,66 +2164,6 @@ public interface WeatherEndpointBuilderFactory {
             doSetProperty("httpClient", httpClient);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.weather.WeatherLanguage</code> enum.
-     */
-    enum WeatherLanguage {
-        en,
-        ru,
-        it,
-        es,
-        sp,
-        uk,
-        ua,
-        de,
-        pt,
-        ro,
-        pl,
-        fi,
-        nl,
-        fr,
-        bg,
-        sv,
-        se,
-        zh_tw,
-        zh,
-        zh_cn,
-        tr,
-        hr,
-        ca;
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.weather.WeatherMode</code> enum.
-     */
-    enum WeatherMode {
-        HTML,
-        JSON,
-        XML;
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.weather.WeatherUnits</code> enum.
-     */
-    enum WeatherUnits {
-        IMPERIAL,
-        METRIC;
-    }
-
-    /**
-     * Proxy enum for <code>org.apache.camel.component.weather.WeatherApi</code>
-     * enum.
-     */
-    enum WeatherApi {
-        Current,
-        Station,
-        Hourly,
-        Daily;
     }
 
     public interface WeatherBuilders {

@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -130,7 +134,7 @@ public interface GoogleCloudFunctionsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default GoogleCloudFunctionsEndpointBuilder operation(
-                GoogleCloudFunctionsOperations operation) {
+                org.apache.camel.component.google.functions.GoogleCloudFunctionsOperations operation) {
             doSetProperty("operation", operation);
             return this;
         }
@@ -218,7 +222,8 @@ public interface GoogleCloudFunctionsEndpointBuilderFactory {
          * @param client the value to set
          * @return the dsl builder
          */
-        default AdvancedGoogleCloudFunctionsEndpointBuilder client(Object client) {
+        default AdvancedGoogleCloudFunctionsEndpointBuilder client(
+                com.google.cloud.functions.v1.CloudFunctionsServiceClient client) {
             doSetProperty("client", client);
             return this;
         }
@@ -237,21 +242,6 @@ public interface GoogleCloudFunctionsEndpointBuilderFactory {
             doSetProperty("client", client);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.google.functions.GoogleCloudFunctionsOperations</code> enum.
-     */
-    enum GoogleCloudFunctionsOperations {
-        listFunctions,
-        getFunction,
-        callFunction,
-        generateDownloadUrl,
-        generateUploadUrl,
-        createFunction,
-        updateFunction,
-        deleteFunction;
     }
 
     public interface GoogleCloudFunctionsBuilders {

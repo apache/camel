@@ -16,13 +16,15 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
 import java.util.Map;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Send and receive messages from RabbitMQ instances.
@@ -142,7 +144,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder connectionFactory(
-                Object connectionFactory) {
+                com.rabbitmq.client.ConnectionFactory connectionFactory) {
             doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
@@ -1038,7 +1040,8 @@ public interface RabbitMQEndpointBuilderFactory {
          * @param trustManager the value to set
          * @return the dsl builder
          */
-        default RabbitMQEndpointConsumerBuilder trustManager(Object trustManager) {
+        default RabbitMQEndpointConsumerBuilder trustManager(
+                javax.net.ssl.TrustManager trustManager) {
             doSetProperty("trustManager", trustManager);
             return this;
         }
@@ -1099,7 +1102,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -1134,7 +1137,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -1299,7 +1302,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointConsumerBuilder clientProperties(
-                Map<String, Object> clientProperties) {
+                Map<java.lang.String, java.lang.Object> clientProperties) {
             doSetProperty("clientProperties", clientProperties);
             return this;
         }
@@ -1333,7 +1336,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointConsumerBuilder connectionFactoryExceptionHandler(
-                Object connectionFactoryExceptionHandler) {
+                com.rabbitmq.client.ExceptionHandler connectionFactoryExceptionHandler) {
             doSetProperty("connectionFactoryExceptionHandler", connectionFactoryExceptionHandler);
             return this;
         }
@@ -1761,7 +1764,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder connectionFactory(
-                Object connectionFactory) {
+                com.rabbitmq.client.ConnectionFactory connectionFactory) {
             doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
@@ -2240,7 +2243,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder additionalHeaders(
-                Map<String, Object> additionalHeaders) {
+                Map<java.lang.String, java.lang.Object> additionalHeaders) {
             doSetProperty("additionalHeaders", additionalHeaders);
             return this;
         }
@@ -2277,7 +2280,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder additionalProperties(
-                Map<String, Object> additionalProperties) {
+                Map<java.lang.String, java.lang.Object> additionalProperties) {
             doSetProperty("additionalProperties", additionalProperties);
             return this;
         }
@@ -2744,7 +2747,8 @@ public interface RabbitMQEndpointBuilderFactory {
          * @param trustManager the value to set
          * @return the dsl builder
          */
-        default RabbitMQEndpointProducerBuilder trustManager(Object trustManager) {
+        default RabbitMQEndpointProducerBuilder trustManager(
+                javax.net.ssl.TrustManager trustManager) {
             doSetProperty("trustManager", trustManager);
             return this;
         }
@@ -2901,7 +2905,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointProducerBuilder clientProperties(
-                Map<String, Object> clientProperties) {
+                Map<java.lang.String, java.lang.Object> clientProperties) {
             doSetProperty("clientProperties", clientProperties);
             return this;
         }
@@ -2935,7 +2939,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointProducerBuilder connectionFactoryExceptionHandler(
-                Object connectionFactoryExceptionHandler) {
+                com.rabbitmq.client.ExceptionHandler connectionFactoryExceptionHandler) {
             doSetProperty("connectionFactoryExceptionHandler", connectionFactoryExceptionHandler);
             return this;
         }
@@ -3364,7 +3368,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default RabbitMQEndpointBuilder connectionFactory(
-                Object connectionFactory) {
+                com.rabbitmq.client.ConnectionFactory connectionFactory) {
             doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
@@ -3865,7 +3869,8 @@ public interface RabbitMQEndpointBuilderFactory {
          * @param trustManager the value to set
          * @return the dsl builder
          */
-        default RabbitMQEndpointBuilder trustManager(Object trustManager) {
+        default RabbitMQEndpointBuilder trustManager(
+                javax.net.ssl.TrustManager trustManager) {
             doSetProperty("trustManager", trustManager);
             return this;
         }
@@ -4021,7 +4026,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointBuilder clientProperties(
-                Map<String, Object> clientProperties) {
+                Map<java.lang.String, java.lang.Object> clientProperties) {
             doSetProperty("clientProperties", clientProperties);
             return this;
         }
@@ -4055,7 +4060,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointBuilder connectionFactoryExceptionHandler(
-                Object connectionFactoryExceptionHandler) {
+                com.rabbitmq.client.ExceptionHandler connectionFactoryExceptionHandler) {
             doSetProperty("connectionFactoryExceptionHandler", connectionFactoryExceptionHandler);
             return this;
         }

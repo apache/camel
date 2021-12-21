@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -130,7 +134,8 @@ public interface SchematronEndpointBuilderFactory {
          * @param rules the value to set
          * @return the dsl builder
          */
-        default SchematronEndpointBuilder rules(Object rules) {
+        default SchematronEndpointBuilder rules(
+                javax.xml.transform.Templates rules) {
             doSetProperty("rules", rules);
             return this;
         }
@@ -172,7 +177,8 @@ public interface SchematronEndpointBuilderFactory {
          * @param uriResolver the value to set
          * @return the dsl builder
          */
-        default AdvancedSchematronEndpointBuilder uriResolver(Object uriResolver) {
+        default AdvancedSchematronEndpointBuilder uriResolver(
+                javax.xml.transform.URIResolver uriResolver) {
             doSetProperty("uriResolver", uriResolver);
             return this;
         }

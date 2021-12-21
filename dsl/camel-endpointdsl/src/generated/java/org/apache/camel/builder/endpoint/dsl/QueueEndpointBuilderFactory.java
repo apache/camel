@@ -16,18 +16,15 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.time.Duration;
+import java.util.*;
 import java.util.Map;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.PollingConsumerPollStrategy;
 
 /**
  * Stores and retrieves messages to/from Azure Storage Queue.
@@ -67,7 +64,8 @@ public interface QueueEndpointBuilderFactory {
          * @param serviceClient the value to set
          * @return the dsl builder
          */
-        default QueueEndpointConsumerBuilder serviceClient(Object serviceClient) {
+        default QueueEndpointConsumerBuilder serviceClient(
+                com.azure.storage.queue.QueueServiceClient serviceClient) {
             doSetProperty("serviceClient", serviceClient);
             return this;
         }
@@ -252,7 +250,7 @@ public interface QueueEndpointBuilderFactory {
          * @param timeout the value to set
          * @return the dsl builder
          */
-        default QueueEndpointConsumerBuilder timeout(Duration timeout) {
+        default QueueEndpointConsumerBuilder timeout(java.time.Duration timeout) {
             doSetProperty("timeout", timeout);
             return this;
         }
@@ -289,7 +287,8 @@ public interface QueueEndpointBuilderFactory {
          * @param timeToLive the value to set
          * @return the dsl builder
          */
-        default QueueEndpointConsumerBuilder timeToLive(Duration timeToLive) {
+        default QueueEndpointConsumerBuilder timeToLive(
+                java.time.Duration timeToLive) {
             doSetProperty("timeToLive", timeToLive);
             return this;
         }
@@ -330,7 +329,7 @@ public interface QueueEndpointBuilderFactory {
          * @return the dsl builder
          */
         default QueueEndpointConsumerBuilder visibilityTimeout(
-                Duration visibilityTimeout) {
+                java.time.Duration visibilityTimeout) {
             doSetProperty("visibilityTimeout", visibilityTimeout);
             return this;
         }
@@ -600,7 +599,7 @@ public interface QueueEndpointBuilderFactory {
          * @return the dsl builder
          */
         default QueueEndpointConsumerBuilder runLoggingLevel(
-                LoggingLevel runLoggingLevel) {
+                org.apache.camel.LoggingLevel runLoggingLevel) {
             doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
@@ -857,7 +856,8 @@ public interface QueueEndpointBuilderFactory {
          * @param credentials the value to set
          * @return the dsl builder
          */
-        default QueueEndpointConsumerBuilder credentials(Object credentials) {
+        default QueueEndpointConsumerBuilder credentials(
+                com.azure.storage.common.StorageSharedKeyCredential credentials) {
             doSetProperty("credentials", credentials);
             return this;
         }
@@ -904,7 +904,7 @@ public interface QueueEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedQueueEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -939,7 +939,7 @@ public interface QueueEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedQueueEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -974,7 +974,7 @@ public interface QueueEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedQueueEndpointConsumerBuilder pollStrategy(
-                PollingConsumerPollStrategy pollStrategy) {
+                org.apache.camel.spi.PollingConsumerPollStrategy pollStrategy) {
             doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
@@ -1028,7 +1028,8 @@ public interface QueueEndpointBuilderFactory {
          * @param serviceClient the value to set
          * @return the dsl builder
          */
-        default QueueEndpointProducerBuilder serviceClient(Object serviceClient) {
+        default QueueEndpointProducerBuilder serviceClient(
+                com.azure.storage.queue.QueueServiceClient serviceClient) {
             doSetProperty("serviceClient", serviceClient);
             return this;
         }
@@ -1149,7 +1150,7 @@ public interface QueueEndpointBuilderFactory {
          * @return the dsl builder
          */
         default QueueEndpointProducerBuilder operation(
-                QueueOperationDefinition operation) {
+                org.apache.camel.component.azure.storage.queue.QueueOperationDefinition operation) {
             doSetProperty("operation", operation);
             return this;
         }
@@ -1246,7 +1247,7 @@ public interface QueueEndpointBuilderFactory {
          * @param timeout the value to set
          * @return the dsl builder
          */
-        default QueueEndpointProducerBuilder timeout(Duration timeout) {
+        default QueueEndpointProducerBuilder timeout(java.time.Duration timeout) {
             doSetProperty("timeout", timeout);
             return this;
         }
@@ -1283,7 +1284,8 @@ public interface QueueEndpointBuilderFactory {
          * @param timeToLive the value to set
          * @return the dsl builder
          */
-        default QueueEndpointProducerBuilder timeToLive(Duration timeToLive) {
+        default QueueEndpointProducerBuilder timeToLive(
+                java.time.Duration timeToLive) {
             doSetProperty("timeToLive", timeToLive);
             return this;
         }
@@ -1324,7 +1326,7 @@ public interface QueueEndpointBuilderFactory {
          * @return the dsl builder
          */
         default QueueEndpointProducerBuilder visibilityTimeout(
-                Duration visibilityTimeout) {
+                java.time.Duration visibilityTimeout) {
             doSetProperty("visibilityTimeout", visibilityTimeout);
             return this;
         }
@@ -1376,7 +1378,8 @@ public interface QueueEndpointBuilderFactory {
          * @param credentials the value to set
          * @return the dsl builder
          */
-        default QueueEndpointProducerBuilder credentials(Object credentials) {
+        default QueueEndpointProducerBuilder credentials(
+                com.azure.storage.common.StorageSharedKeyCredential credentials) {
             doSetProperty("credentials", credentials);
             return this;
         }
@@ -1439,7 +1442,8 @@ public interface QueueEndpointBuilderFactory {
          * @param serviceClient the value to set
          * @return the dsl builder
          */
-        default QueueEndpointBuilder serviceClient(Object serviceClient) {
+        default QueueEndpointBuilder serviceClient(
+                com.azure.storage.queue.QueueServiceClient serviceClient) {
             doSetProperty("serviceClient", serviceClient);
             return this;
         }
@@ -1544,7 +1548,7 @@ public interface QueueEndpointBuilderFactory {
          * @param timeout the value to set
          * @return the dsl builder
          */
-        default QueueEndpointBuilder timeout(Duration timeout) {
+        default QueueEndpointBuilder timeout(java.time.Duration timeout) {
             doSetProperty("timeout", timeout);
             return this;
         }
@@ -1581,7 +1585,7 @@ public interface QueueEndpointBuilderFactory {
          * @param timeToLive the value to set
          * @return the dsl builder
          */
-        default QueueEndpointBuilder timeToLive(Duration timeToLive) {
+        default QueueEndpointBuilder timeToLive(java.time.Duration timeToLive) {
             doSetProperty("timeToLive", timeToLive);
             return this;
         }
@@ -1622,7 +1626,7 @@ public interface QueueEndpointBuilderFactory {
          * @return the dsl builder
          */
         default QueueEndpointBuilder visibilityTimeout(
-                Duration visibilityTimeout) {
+                java.time.Duration visibilityTimeout) {
             doSetProperty("visibilityTimeout", visibilityTimeout);
             return this;
         }
@@ -1673,7 +1677,8 @@ public interface QueueEndpointBuilderFactory {
          * @param credentials the value to set
          * @return the dsl builder
          */
-        default QueueEndpointBuilder credentials(Object credentials) {
+        default QueueEndpointBuilder credentials(
+                com.azure.storage.common.StorageSharedKeyCredential credentials) {
             doSetProperty("credentials", credentials);
             return this;
         }
@@ -1706,22 +1711,6 @@ public interface QueueEndpointBuilderFactory {
         default QueueEndpointBuilder basic() {
             return (QueueEndpointBuilder) this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.azure.storage.queue.QueueOperationDefinition</code> enum.
-     */
-    enum QueueOperationDefinition {
-        listQueues,
-        createQueue,
-        deleteQueue,
-        clearQueue,
-        sendMessage,
-        deleteMessage,
-        receiveMessages,
-        peekMessages,
-        updateMessage;
     }
 
     public interface QueueBuilders {

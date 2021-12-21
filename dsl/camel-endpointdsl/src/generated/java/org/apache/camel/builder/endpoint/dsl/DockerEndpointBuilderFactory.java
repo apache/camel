@@ -16,13 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Manage Docker containers.
@@ -309,7 +310,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedDockerEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -344,7 +345,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedDockerEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -525,7 +526,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedDockerEndpointConsumerBuilder parameters(
-                Map<String, Object> parameters) {
+                Map<java.lang.String, java.lang.Object> parameters) {
             doSetProperty("parameters", parameters);
             return this;
         }
@@ -1021,7 +1022,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedDockerEndpointProducerBuilder parameters(
-                Map<String, Object> parameters) {
+                Map<java.lang.String, java.lang.Object> parameters) {
             doSetProperty("parameters", parameters);
             return this;
         }
@@ -1467,7 +1468,7 @@ public interface DockerEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedDockerEndpointBuilder parameters(
-                Map<String, Object> parameters) {
+                Map<java.lang.String, java.lang.Object> parameters) {
             doSetProperty("parameters", parameters);
             return this;
         }

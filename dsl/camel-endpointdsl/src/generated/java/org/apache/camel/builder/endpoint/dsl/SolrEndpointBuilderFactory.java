@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -141,7 +145,8 @@ public interface SolrEndpointBuilderFactory {
          * @param httpClient the value to set
          * @return the dsl builder
          */
-        default SolrEndpointBuilder httpClient(Object httpClient) {
+        default SolrEndpointBuilder httpClient(
+                org.apache.http.client.HttpClient httpClient) {
             doSetProperty("httpClient", httpClient);
             return this;
         }
@@ -311,7 +316,8 @@ public interface SolrEndpointBuilderFactory {
          * @param solrClient the value to set
          * @return the dsl builder
          */
-        default SolrEndpointBuilder solrClient(Object solrClient) {
+        default SolrEndpointBuilder solrClient(
+                org.apache.solr.client.solrj.SolrClient solrClient) {
             doSetProperty("solrClient", solrClient);
             return this;
         }

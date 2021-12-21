@@ -16,12 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Access Nitrite databases.
@@ -69,7 +71,7 @@ public interface NitriteEndpointBuilderFactory {
          * @return the dsl builder
          */
         default NitriteEndpointConsumerBuilder repositoryClass(
-                Class<Object> repositoryClass) {
+                Class<java.lang.Object> repositoryClass) {
             doSetProperty("repositoryClass", repositoryClass);
             return this;
         }
@@ -207,7 +209,7 @@ public interface NitriteEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedNitriteEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -242,7 +244,7 @@ public interface NitriteEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedNitriteEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -301,7 +303,7 @@ public interface NitriteEndpointBuilderFactory {
          * @return the dsl builder
          */
         default NitriteEndpointProducerBuilder repositoryClass(
-                Class<Object> repositoryClass) {
+                Class<java.lang.Object> repositoryClass) {
             doSetProperty("repositoryClass", repositoryClass);
             return this;
         }
@@ -468,7 +470,7 @@ public interface NitriteEndpointBuilderFactory {
          * @return the dsl builder
          */
         default NitriteEndpointBuilder repositoryClass(
-                Class<Object> repositoryClass) {
+                Class<java.lang.Object> repositoryClass) {
             doSetProperty("repositoryClass", repositoryClass);
             return this;
         }

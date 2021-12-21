@@ -16,7 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -107,7 +110,7 @@ public interface XmlVerifierEndpointBuilderFactory {
          * @return the dsl builder
          */
         default XmlVerifierEndpointBuilder cryptoContextProperties(
-                Map<String, Object> cryptoContextProperties) {
+                Map<java.lang.String, java.lang.Object> cryptoContextProperties) {
             doSetProperty("cryptoContextProperties", cryptoContextProperties);
             return this;
         }
@@ -181,7 +184,8 @@ public interface XmlVerifierEndpointBuilderFactory {
          * @param keySelector the value to set
          * @return the dsl builder
          */
-        default XmlVerifierEndpointBuilder keySelector(Object keySelector) {
+        default XmlVerifierEndpointBuilder keySelector(
+                javax.xml.crypto.KeySelector keySelector) {
             doSetProperty("keySelector", keySelector);
             return this;
         }
@@ -477,7 +481,7 @@ public interface XmlVerifierEndpointBuilderFactory {
          * @return the dsl builder
          */
         default XmlVerifierEndpointBuilder validationFailedHandler(
-                Object validationFailedHandler) {
+                org.apache.camel.component.xmlsecurity.api.ValidationFailedHandler validationFailedHandler) {
             doSetProperty("validationFailedHandler", validationFailedHandler);
             return this;
         }
@@ -537,7 +541,7 @@ public interface XmlVerifierEndpointBuilderFactory {
          * @return the dsl builder
          */
         default XmlVerifierEndpointBuilder xmlSignature2Message(
-                Object xmlSignature2Message) {
+                org.apache.camel.component.xmlsecurity.api.XmlSignature2Message xmlSignature2Message) {
             doSetProperty("xmlSignature2Message", xmlSignature2Message);
             return this;
         }
@@ -592,7 +596,7 @@ public interface XmlVerifierEndpointBuilderFactory {
          * @return the dsl builder
          */
         default XmlVerifierEndpointBuilder xmlSignatureChecker(
-                Object xmlSignatureChecker) {
+                org.apache.camel.component.xmlsecurity.api.XmlSignatureChecker xmlSignatureChecker) {
             doSetProperty("xmlSignatureChecker", xmlSignatureChecker);
             return this;
         }
@@ -641,7 +645,7 @@ public interface XmlVerifierEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedXmlVerifierEndpointBuilder uriDereferencer(
-                Object uriDereferencer) {
+                javax.xml.crypto.URIDereferencer uriDereferencer) {
             doSetProperty("uriDereferencer", uriDereferencer);
             return this;
         }

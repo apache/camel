@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -45,7 +49,8 @@ public interface Ddb2EndpointBuilderFactory {
          * @param amazonDDBClient the value to set
          * @return the dsl builder
          */
-        default Ddb2EndpointBuilder amazonDDBClient(Object amazonDDBClient) {
+        default Ddb2EndpointBuilder amazonDDBClient(
+                software.amazon.awssdk.services.dynamodb.DynamoDbClient amazonDDBClient) {
             doSetProperty("amazonDDBClient", amazonDDBClient);
             return this;
         }
@@ -233,7 +238,8 @@ public interface Ddb2EndpointBuilderFactory {
          * @param operation the value to set
          * @return the dsl builder
          */
-        default Ddb2EndpointBuilder operation(Ddb2Operations operation) {
+        default Ddb2EndpointBuilder operation(
+                org.apache.camel.component.aws2.ddb.Ddb2Operations operation) {
             doSetProperty("operation", operation);
             return this;
         }
@@ -347,7 +353,8 @@ public interface Ddb2EndpointBuilderFactory {
          * @param proxyProtocol the value to set
          * @return the dsl builder
          */
-        default Ddb2EndpointBuilder proxyProtocol(Protocol proxyProtocol) {
+        default Ddb2EndpointBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
@@ -559,31 +566,6 @@ public interface Ddb2EndpointBuilderFactory {
             doSetProperty("secretKey", secretKey);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.aws2.ddb.Ddb2Operations</code> enum.
-     */
-    enum Ddb2Operations {
-        BatchGetItems,
-        DeleteItem,
-        DeleteTable,
-        DescribeTable,
-        GetItem,
-        PutItem,
-        Query,
-        Scan,
-        UpdateItem,
-        UpdateTable;
-    }
-
-    /**
-     * Proxy enum for <code>software.amazon.awssdk.core.Protocol</code> enum.
-     */
-    enum Protocol {
-        HTTP,
-        HTTPS;
     }
 
     public interface Ddb2Builders {

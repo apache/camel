@@ -16,14 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Communicate with MQTT message brokers using Eclipse Paho MQTT v5 Client.
@@ -323,7 +323,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * @return the dsl builder
          */
         default PahoMqtt5EndpointConsumerBuilder persistence(
-                PahoMqtt5Persistence persistence) {
+                org.apache.camel.component.paho.mqtt5.PahoMqtt5Persistence persistence) {
             doSetProperty("persistence", persistence);
             return this;
         }
@@ -547,7 +547,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * @return the dsl builder
          */
         default PahoMqtt5EndpointConsumerBuilder willMqttProperties(
-                Object willMqttProperties) {
+                org.eclipse.paho.mqttv5.common.packet.MqttProperties willMqttProperties) {
             doSetProperty("willMqttProperties", willMqttProperties);
             return this;
         }
@@ -790,7 +790,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * @return the dsl builder
          */
         default PahoMqtt5EndpointConsumerBuilder socketFactory(
-                Object socketFactory) {
+                javax.net.SocketFactory socketFactory) {
             doSetProperty("socketFactory", socketFactory);
             return this;
         }
@@ -935,7 +935,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * @return the dsl builder
          */
         default PahoMqtt5EndpointConsumerBuilder sslHostnameVerifier(
-                Object sslHostnameVerifier) {
+                javax.net.ssl.HostnameVerifier sslHostnameVerifier) {
             doSetProperty("sslHostnameVerifier", sslHostnameVerifier);
             return this;
         }
@@ -998,7 +998,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedPahoMqtt5EndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -1033,7 +1033,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedPahoMqtt5EndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -1065,7 +1065,8 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * @param client the value to set
          * @return the dsl builder
          */
-        default AdvancedPahoMqtt5EndpointConsumerBuilder client(Object client) {
+        default AdvancedPahoMqtt5EndpointConsumerBuilder client(
+                org.eclipse.paho.mqttv5.client.MqttClient client) {
             doSetProperty("client", client);
             return this;
         }
@@ -1097,7 +1098,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedPahoMqtt5EndpointConsumerBuilder customWebSocketHeaders(
-                Map<String, String> customWebSocketHeaders) {
+                Map<java.lang.String, java.lang.String> customWebSocketHeaders) {
             doSetProperty("customWebSocketHeaders", customWebSocketHeaders);
             return this;
         }
@@ -1445,7 +1446,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * @return the dsl builder
          */
         default PahoMqtt5EndpointProducerBuilder persistence(
-                PahoMqtt5Persistence persistence) {
+                org.apache.camel.component.paho.mqtt5.PahoMqtt5Persistence persistence) {
             doSetProperty("persistence", persistence);
             return this;
         }
@@ -1669,7 +1670,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * @return the dsl builder
          */
         default PahoMqtt5EndpointProducerBuilder willMqttProperties(
-                Object willMqttProperties) {
+                org.eclipse.paho.mqttv5.common.packet.MqttProperties willMqttProperties) {
             doSetProperty("willMqttProperties", willMqttProperties);
             return this;
         }
@@ -1916,7 +1917,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * @return the dsl builder
          */
         default PahoMqtt5EndpointProducerBuilder socketFactory(
-                Object socketFactory) {
+                javax.net.SocketFactory socketFactory) {
             doSetProperty("socketFactory", socketFactory);
             return this;
         }
@@ -2061,7 +2062,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * @return the dsl builder
          */
         default PahoMqtt5EndpointProducerBuilder sslHostnameVerifier(
-                Object sslHostnameVerifier) {
+                javax.net.ssl.HostnameVerifier sslHostnameVerifier) {
             doSetProperty("sslHostnameVerifier", sslHostnameVerifier);
             return this;
         }
@@ -2121,7 +2122,8 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * @param client the value to set
          * @return the dsl builder
          */
-        default AdvancedPahoMqtt5EndpointProducerBuilder client(Object client) {
+        default AdvancedPahoMqtt5EndpointProducerBuilder client(
+                org.eclipse.paho.mqttv5.client.MqttClient client) {
             doSetProperty("client", client);
             return this;
         }
@@ -2153,7 +2155,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedPahoMqtt5EndpointProducerBuilder customWebSocketHeaders(
-                Map<String, String> customWebSocketHeaders) {
+                Map<java.lang.String, java.lang.String> customWebSocketHeaders) {
             doSetProperty("customWebSocketHeaders", customWebSocketHeaders);
             return this;
         }
@@ -2499,7 +2501,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * @return the dsl builder
          */
         default PahoMqtt5EndpointBuilder persistence(
-                PahoMqtt5Persistence persistence) {
+                org.apache.camel.component.paho.mqtt5.PahoMqtt5Persistence persistence) {
             doSetProperty("persistence", persistence);
             return this;
         }
@@ -2721,7 +2723,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * @return the dsl builder
          */
         default PahoMqtt5EndpointBuilder willMqttProperties(
-                Object willMqttProperties) {
+                org.eclipse.paho.mqttv5.common.packet.MqttProperties willMqttProperties) {
             doSetProperty("willMqttProperties", willMqttProperties);
             return this;
         }
@@ -2916,7 +2918,8 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * @param socketFactory the value to set
          * @return the dsl builder
          */
-        default PahoMqtt5EndpointBuilder socketFactory(Object socketFactory) {
+        default PahoMqtt5EndpointBuilder socketFactory(
+                javax.net.SocketFactory socketFactory) {
             doSetProperty("socketFactory", socketFactory);
             return this;
         }
@@ -3059,7 +3062,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * @return the dsl builder
          */
         default PahoMqtt5EndpointBuilder sslHostnameVerifier(
-                Object sslHostnameVerifier) {
+                javax.net.ssl.HostnameVerifier sslHostnameVerifier) {
             doSetProperty("sslHostnameVerifier", sslHostnameVerifier);
             return this;
         }
@@ -3120,7 +3123,8 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * @param client the value to set
          * @return the dsl builder
          */
-        default AdvancedPahoMqtt5EndpointBuilder client(Object client) {
+        default AdvancedPahoMqtt5EndpointBuilder client(
+                org.eclipse.paho.mqttv5.client.MqttClient client) {
             doSetProperty("client", client);
             return this;
         }
@@ -3152,7 +3156,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedPahoMqtt5EndpointBuilder customWebSocketHeaders(
-                Map<String, String> customWebSocketHeaders) {
+                Map<java.lang.String, java.lang.String> customWebSocketHeaders) {
             doSetProperty("customWebSocketHeaders", customWebSocketHeaders);
             return this;
         }
@@ -3209,16 +3213,6 @@ public interface PahoMqtt5EndpointBuilderFactory {
             doSetProperty("executorServiceTimeout", executorServiceTimeout);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.paho.mqtt5.PahoMqtt5Persistence</code>
-     * enum.
-     */
-    enum PahoMqtt5Persistence {
-        FILE,
-        MEMORY;
     }
 
     public interface PahoMqtt5Builders {

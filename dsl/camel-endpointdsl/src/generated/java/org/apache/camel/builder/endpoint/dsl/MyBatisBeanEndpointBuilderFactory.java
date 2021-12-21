@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -52,7 +56,7 @@ public interface MyBatisBeanEndpointBuilderFactory {
          * @return the dsl builder
          */
         default MyBatisBeanEndpointBuilder executorType(
-                ExecutorType executorType) {
+                org.apache.ibatis.session.ExecutorType executorType) {
             doSetProperty("executorType", executorType);
             return this;
         }
@@ -162,15 +166,6 @@ public interface MyBatisBeanEndpointBuilderFactory {
             doSetProperty("outputHeader", outputHeader);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for <code>org.apache.ibatis.session.ExecutorType</code> enum.
-     */
-    enum ExecutorType {
-        SIMPLE,
-        REUSE,
-        BATCH;
     }
 
     public interface MyBatisBeanBuilders {

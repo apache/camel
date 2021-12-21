@@ -16,12 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Expose REST services or call external REST services.
@@ -218,7 +220,7 @@ public interface RestEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedRestEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -253,7 +255,7 @@ public interface RestEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedRestEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -378,7 +380,7 @@ public interface RestEndpointBuilderFactory {
          * from json or xml to outType.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.RestConfiguration$RestBindingMode&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.spi.RestConfiguration.RestBindingMode&lt;/code&gt; type.
          * 
          * Group: producer
          * 
@@ -386,7 +388,7 @@ public interface RestEndpointBuilderFactory {
          * @return the dsl builder
          */
         default RestEndpointProducerBuilder bindingMode(
-                RestBindingMode bindingMode) {
+                org.apache.camel.spi.RestConfiguration.RestBindingMode bindingMode) {
             doSetProperty("bindingMode", bindingMode);
             return this;
         }
@@ -397,7 +399,7 @@ public interface RestEndpointBuilderFactory {
          * from json or xml to outType.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.RestConfiguration$RestBindingMode&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.spi.RestConfiguration.RestBindingMode&lt;/code&gt; type.
          * 
          * Group: producer
          * 
@@ -616,18 +618,6 @@ public interface RestEndpointBuilderFactory {
         default RestEndpointBuilder basic() {
             return (RestEndpointBuilder) this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.spi.RestConfiguration$RestBindingMode</code> enum.
-     */
-    enum RestBindingMode {
-        auto,
-        off,
-        json,
-        xml,
-        json_xml;
     }
 
     public interface RestBuilders {

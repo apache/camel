@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -218,7 +222,7 @@ public interface RestSwaggerEndpointBuilderFactory {
          * @return the dsl builder
          */
         default RestSwaggerEndpointBuilder sslContextParameters(
-                Object sslContextParameters) {
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }

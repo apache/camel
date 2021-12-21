@@ -16,18 +16,15 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.util.List;
+import java.util.*;
 import java.util.Map;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.PollingConsumerPollStrategy;
 
 /**
  * Manage files in Google Drive.
@@ -76,7 +73,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * @return the dsl builder
          */
         default GoogleDriveEndpointConsumerBuilder clientFactory(
-                Object clientFactory) {
+                org.apache.camel.component.google.drive.GoogleDriveClientFactory clientFactory) {
             doSetProperty("clientFactory", clientFactory);
             return this;
         }
@@ -138,7 +135,8 @@ public interface GoogleDriveEndpointBuilderFactory {
          * @param scopes the value to set
          * @return the dsl builder
          */
-        default GoogleDriveEndpointConsumerBuilder scopes(List<String> scopes) {
+        default GoogleDriveEndpointConsumerBuilder scopes(
+                List<java.lang.String> scopes) {
             doSetProperty("scopes", scopes);
             return this;
         }
@@ -487,7 +485,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * @return the dsl builder
          */
         default GoogleDriveEndpointConsumerBuilder runLoggingLevel(
-                LoggingLevel runLoggingLevel) {
+                org.apache.camel.LoggingLevel runLoggingLevel) {
             doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
@@ -794,7 +792,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedGoogleDriveEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -829,7 +827,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedGoogleDriveEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -864,7 +862,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedGoogleDriveEndpointConsumerBuilder pollStrategy(
-                PollingConsumerPollStrategy pollStrategy) {
+                org.apache.camel.spi.PollingConsumerPollStrategy pollStrategy) {
             doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
@@ -927,7 +925,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * @return the dsl builder
          */
         default GoogleDriveEndpointProducerBuilder clientFactory(
-                Object clientFactory) {
+                org.apache.camel.component.google.drive.GoogleDriveClientFactory clientFactory) {
             doSetProperty("clientFactory", clientFactory);
             return this;
         }
@@ -989,7 +987,8 @@ public interface GoogleDriveEndpointBuilderFactory {
          * @param scopes the value to set
          * @return the dsl builder
          */
-        default GoogleDriveEndpointProducerBuilder scopes(List<String> scopes) {
+        default GoogleDriveEndpointProducerBuilder scopes(
+                List<java.lang.String> scopes) {
             doSetProperty("scopes", scopes);
             return this;
         }
@@ -1158,7 +1157,8 @@ public interface GoogleDriveEndpointBuilderFactory {
          * @param clientFactory the value to set
          * @return the dsl builder
          */
-        default GoogleDriveEndpointBuilder clientFactory(Object clientFactory) {
+        default GoogleDriveEndpointBuilder clientFactory(
+                org.apache.camel.component.google.drive.GoogleDriveClientFactory clientFactory) {
             doSetProperty("clientFactory", clientFactory);
             return this;
         }
@@ -1219,7 +1219,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * @param scopes the value to set
          * @return the dsl builder
          */
-        default GoogleDriveEndpointBuilder scopes(List<String> scopes) {
+        default GoogleDriveEndpointBuilder scopes(List<java.lang.String> scopes) {
             doSetProperty("scopes", scopes);
             return this;
         }

@@ -16,12 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Send and receive messages from/to Apache Pulsar messaging system.
@@ -538,7 +540,7 @@ public interface PulsarEndpointBuilderFactory {
          * @return the dsl builder
          */
         default PulsarEndpointConsumerBuilder subscriptionInitialPosition(
-                SubscriptionInitialPosition subscriptionInitialPosition) {
+                org.apache.camel.component.pulsar.utils.consumers.SubscriptionInitialPosition subscriptionInitialPosition) {
             doSetProperty("subscriptionInitialPosition", subscriptionInitialPosition);
             return this;
         }
@@ -591,7 +593,7 @@ public interface PulsarEndpointBuilderFactory {
          * @return the dsl builder
          */
         default PulsarEndpointConsumerBuilder subscriptionTopicsMode(
-                RegexSubscriptionMode subscriptionTopicsMode) {
+                org.apache.pulsar.client.api.RegexSubscriptionMode subscriptionTopicsMode) {
             doSetProperty("subscriptionTopicsMode", subscriptionTopicsMode);
             return this;
         }
@@ -628,7 +630,7 @@ public interface PulsarEndpointBuilderFactory {
          * @return the dsl builder
          */
         default PulsarEndpointConsumerBuilder subscriptionType(
-                SubscriptionType subscriptionType) {
+                org.apache.camel.component.pulsar.utils.consumers.SubscriptionType subscriptionType) {
             doSetProperty("subscriptionType", subscriptionType);
             return this;
         }
@@ -710,7 +712,7 @@ public interface PulsarEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedPulsarEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -745,7 +747,7 @@ public interface PulsarEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedPulsarEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -836,7 +838,7 @@ public interface PulsarEndpointBuilderFactory {
          * @return the dsl builder
          */
         default PulsarEndpointProducerBuilder batcherBuilder(
-                Object batcherBuilder) {
+                org.apache.pulsar.client.api.BatcherBuilder batcherBuilder) {
             doSetProperty("batcherBuilder", batcherBuilder);
             return this;
         }
@@ -1008,7 +1010,7 @@ public interface PulsarEndpointBuilderFactory {
          * @return the dsl builder
          */
         default PulsarEndpointProducerBuilder compressionType(
-                CompressionType compressionType) {
+                org.apache.pulsar.client.api.CompressionType compressionType) {
             doSetProperty("compressionType", compressionType);
             return this;
         }
@@ -1197,7 +1199,8 @@ public interface PulsarEndpointBuilderFactory {
          * @param messageRouter the value to set
          * @return the dsl builder
          */
-        default PulsarEndpointProducerBuilder messageRouter(Object messageRouter) {
+        default PulsarEndpointProducerBuilder messageRouter(
+                org.apache.pulsar.client.api.MessageRouter messageRouter) {
             doSetProperty("messageRouter", messageRouter);
             return this;
         }
@@ -1230,7 +1233,7 @@ public interface PulsarEndpointBuilderFactory {
          * @return the dsl builder
          */
         default PulsarEndpointProducerBuilder messageRoutingMode(
-                MessageRoutingMode messageRoutingMode) {
+                org.apache.pulsar.client.api.MessageRoutingMode messageRoutingMode) {
             doSetProperty("messageRoutingMode", messageRoutingMode);
             return this;
         }
@@ -1377,58 +1380,6 @@ public interface PulsarEndpointBuilderFactory {
         default PulsarEndpointBuilder basic() {
             return (PulsarEndpointBuilder) this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.pulsar.utils.consumers.SubscriptionInitialPosition</code> enum.
-     */
-    enum SubscriptionInitialPosition {
-        EARLIEST,
-        LATEST;
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.pulsar.client.api.RegexSubscriptionMode</code> enum.
-     */
-    enum RegexSubscriptionMode {
-        PersistentOnly,
-        NonPersistentOnly,
-        AllTopics;
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.pulsar.utils.consumers.SubscriptionType</code> enum.
-     */
-    enum SubscriptionType {
-        EXCLUSIVE,
-        SHARED,
-        FAILOVER,
-        KEY_SHARED;
-    }
-
-    /**
-     * Proxy enum for <code>org.apache.pulsar.client.api.CompressionType</code>
-     * enum.
-     */
-    enum CompressionType {
-        NONE,
-        LZ4,
-        ZLIB,
-        ZSTD,
-        SNAPPY;
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.pulsar.client.api.MessageRoutingMode</code> enum.
-     */
-    enum MessageRoutingMode {
-        SinglePartition,
-        RoundRobinPartition,
-        CustomPartition;
     }
 
     public interface PulsarBuilders {

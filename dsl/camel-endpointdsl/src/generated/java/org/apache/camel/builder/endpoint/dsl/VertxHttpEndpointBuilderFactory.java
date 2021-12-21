@@ -16,11 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.HeaderFilterStrategy;
 
 /**
  * Send requests to external HTTP servers using Vert.x
@@ -81,7 +84,8 @@ public interface VertxHttpEndpointBuilderFactory {
          * @param cookieStore the value to set
          * @return the dsl builder
          */
-        default VertxHttpEndpointBuilder cookieStore(Object cookieStore) {
+        default VertxHttpEndpointBuilder cookieStore(
+                io.vertx.ext.web.client.spi.CookieStore cookieStore) {
             doSetProperty("cookieStore", cookieStore);
             return this;
         }
@@ -118,7 +122,7 @@ public interface VertxHttpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default VertxHttpEndpointBuilder headerFilterStrategy(
-                HeaderFilterStrategy headerFilterStrategy) {
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
@@ -153,7 +157,8 @@ public interface VertxHttpEndpointBuilderFactory {
          * @param httpMethod the value to set
          * @return the dsl builder
          */
-        default VertxHttpEndpointBuilder httpMethod(Object httpMethod) {
+        default VertxHttpEndpointBuilder httpMethod(
+                io.vertx.core.http.HttpMethod httpMethod) {
             doSetProperty("httpMethod", httpMethod);
             return this;
         }
@@ -479,7 +484,7 @@ public interface VertxHttpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default VertxHttpEndpointBuilder vertxHttpBinding(
-                Object vertxHttpBinding) {
+                org.apache.camel.component.vertx.http.VertxHttpBinding vertxHttpBinding) {
             doSetProperty("vertxHttpBinding", vertxHttpBinding);
             return this;
         }
@@ -513,7 +518,7 @@ public interface VertxHttpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default VertxHttpEndpointBuilder webClientOptions(
-                Object webClientOptions) {
+                io.vertx.ext.web.client.WebClientOptions webClientOptions) {
             doSetProperty("webClientOptions", webClientOptions);
             return this;
         }
@@ -602,7 +607,8 @@ public interface VertxHttpEndpointBuilderFactory {
          * @param proxyType the value to set
          * @return the dsl builder
          */
-        default VertxHttpEndpointBuilder proxyType(ProxyType proxyType) {
+        default VertxHttpEndpointBuilder proxyType(
+                io.vertx.core.net.ProxyType proxyType) {
             doSetProperty("proxyType", proxyType);
             return this;
         }
@@ -691,7 +697,7 @@ public interface VertxHttpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default VertxHttpEndpointBuilder sslContextParameters(
-                Object sslContextParameters) {
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
@@ -711,15 +717,6 @@ public interface VertxHttpEndpointBuilderFactory {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for <code>io.vertx.core.net.ProxyType</code> enum.
-     */
-    enum ProxyType {
-        HTTP,
-        SOCKS4,
-        SOCKS5;
     }
 
     public interface VertxHttpBuilders {

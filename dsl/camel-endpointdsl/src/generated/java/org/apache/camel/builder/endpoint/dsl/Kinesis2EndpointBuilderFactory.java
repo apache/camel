@@ -16,17 +16,15 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
 import java.util.Map;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.PollingConsumerPollStrategy;
 
 /**
  * Consume and produce records from and to AWS Kinesis Streams using AWS SDK
@@ -59,7 +57,7 @@ public interface Kinesis2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder amazonKinesisClient(
-                Object amazonKinesisClient) {
+                software.amazon.awssdk.services.kinesis.KinesisClient amazonKinesisClient) {
             doSetProperty("amazonKinesisClient", amazonKinesisClient);
             return this;
         }
@@ -201,7 +199,7 @@ public interface Kinesis2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder proxyProtocol(
-                Protocol proxyProtocol) {
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
@@ -385,7 +383,7 @@ public interface Kinesis2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder iteratorType(
-                ShardIteratorType iteratorType) {
+                software.amazon.awssdk.services.kinesis.model.ShardIteratorType iteratorType) {
             doSetProperty("iteratorType", iteratorType);
             return this;
         }
@@ -451,7 +449,7 @@ public interface Kinesis2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder resumeStrategy(
-                Object resumeStrategy) {
+                org.apache.camel.component.aws2.kinesis.consumer.KinesisResumeStrategy resumeStrategy) {
             doSetProperty("resumeStrategy", resumeStrategy);
             return this;
         }
@@ -542,7 +540,7 @@ public interface Kinesis2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder shardClosed(
-                Kinesis2ShardClosedStrategyEnum shardClosed) {
+                org.apache.camel.component.aws2.kinesis.Kinesis2ShardClosedStrategyEnum shardClosed) {
             doSetProperty("shardClosed", shardClosed);
             return this;
         }
@@ -826,7 +824,7 @@ public interface Kinesis2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder runLoggingLevel(
-                LoggingLevel runLoggingLevel) {
+                org.apache.camel.LoggingLevel runLoggingLevel) {
             doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
@@ -1112,7 +1110,7 @@ public interface Kinesis2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedKinesis2EndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -1147,7 +1145,7 @@ public interface Kinesis2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedKinesis2EndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -1182,7 +1180,7 @@ public interface Kinesis2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedKinesis2EndpointConsumerBuilder pollStrategy(
-                PollingConsumerPollStrategy pollStrategy) {
+                org.apache.camel.spi.PollingConsumerPollStrategy pollStrategy) {
             doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
@@ -1228,7 +1226,7 @@ public interface Kinesis2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default Kinesis2EndpointProducerBuilder amazonKinesisClient(
-                Object amazonKinesisClient) {
+                software.amazon.awssdk.services.kinesis.KinesisClient amazonKinesisClient) {
             doSetProperty("amazonKinesisClient", amazonKinesisClient);
             return this;
         }
@@ -1370,7 +1368,7 @@ public interface Kinesis2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default Kinesis2EndpointProducerBuilder proxyProtocol(
-                Protocol proxyProtocol) {
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
@@ -1608,7 +1606,7 @@ public interface Kinesis2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default Kinesis2EndpointBuilder amazonKinesisClient(
-                Object amazonKinesisClient) {
+                software.amazon.awssdk.services.kinesis.KinesisClient amazonKinesisClient) {
             doSetProperty("amazonKinesisClient", amazonKinesisClient);
             return this;
         }
@@ -1748,7 +1746,8 @@ public interface Kinesis2EndpointBuilderFactory {
          * @param proxyProtocol the value to set
          * @return the dsl builder
          */
-        default Kinesis2EndpointBuilder proxyProtocol(Protocol proxyProtocol) {
+        default Kinesis2EndpointBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
@@ -1913,37 +1912,6 @@ public interface Kinesis2EndpointBuilderFactory {
         default Kinesis2EndpointBuilder basic() {
             return (Kinesis2EndpointBuilder) this;
         }
-    }
-
-    /**
-     * Proxy enum for <code>software.amazon.awssdk.core.Protocol</code> enum.
-     */
-    enum Protocol {
-        HTTP,
-        HTTPS;
-    }
-
-    /**
-     * Proxy enum for
-     * <code>software.amazon.awssdk.services.kinesis.model.ShardIteratorType</code> enum.
-     */
-    enum ShardIteratorType {
-        AT_SEQUENCE_NUMBER,
-        AFTER_SEQUENCE_NUMBER,
-        TRIM_HORIZON,
-        LATEST,
-        AT_TIMESTAMP,
-        UNKNOWN_TO_SDK_VERSION;
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.aws2.kinesis.Kinesis2ShardClosedStrategyEnum</code> enum.
-     */
-    enum Kinesis2ShardClosedStrategyEnum {
-        ignore,
-        fail,
-        silent;
     }
 
     public interface Kinesis2Builders {

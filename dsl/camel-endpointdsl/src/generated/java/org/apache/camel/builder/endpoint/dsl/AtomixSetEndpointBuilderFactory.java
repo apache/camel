@@ -16,15 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Access Atomix's distributed set.
@@ -47,15 +46,14 @@ public interface AtomixSetEndpointBuilderFactory {
         /**
          * The Atomix instance to use.
          * 
-         * The option is a: &lt;code&gt;io.atomix.AtomixClient&lt;/code&gt;
-         * type.
+         * The option is a: &lt;code&gt;io.atomix.Atomix&lt;/code&gt; type.
          * 
          * Group: common
          * 
          * @param atomix the value to set
          * @return the dsl builder
          */
-        default AtomixSetEndpointConsumerBuilder atomix(Object atomix) {
+        default AtomixSetEndpointConsumerBuilder atomix(io.atomix.Atomix atomix) {
             doSetProperty("atomix", atomix);
             return this;
         }
@@ -63,7 +61,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * The Atomix instance to use.
          * 
          * The option will be converted to a
-         * &lt;code&gt;io.atomix.AtomixClient&lt;/code&gt; type.
+         * &lt;code&gt;io.atomix.Atomix&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -93,7 +91,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * The default action.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.atomix.client.set.AtomixSet$Action&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.atomix.client.set.AtomixSet.Action&lt;/code&gt; type.
          * 
          * Default: ADD
          * Group: common
@@ -102,7 +100,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AtomixSetEndpointConsumerBuilder defaultAction(
-                Action defaultAction) {
+                org.apache.camel.component.atomix.client.set.AtomixSet.Action defaultAction) {
             doSetProperty("defaultAction", defaultAction);
             return this;
         }
@@ -110,7 +108,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * The default action.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.atomix.client.set.AtomixSet$Action&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.atomix.client.set.AtomixSet.Action&lt;/code&gt; type.
          * 
          * Default: ADD
          * Group: common
@@ -126,23 +124,7 @@ public interface AtomixSetEndpointBuilderFactory {
         /**
          * The address of the nodes composing the cluster.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;io.atomix.catalyst.transport.Address&amp;gt;&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param nodes the value to set
-         * @return the dsl builder
-         */
-        default AtomixSetEndpointConsumerBuilder nodes(List<Object> nodes) {
-            doSetProperty("nodes", nodes);
-            return this;
-        }
-        /**
-         * The address of the nodes composing the cluster.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;io.atomix.catalyst.transport.Address&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -283,7 +265,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedAtomixSetEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -318,7 +300,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedAtomixSetEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -449,7 +431,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedAtomixSetEndpointConsumerBuilder readConsistency(
-                ReadConsistency readConsistency) {
+                io.atomix.resource.ReadConsistency readConsistency) {
             doSetProperty("readConsistency", readConsistency);
             return this;
         }
@@ -481,7 +463,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedAtomixSetEndpointConsumerBuilder resourceConfigs(
-                Map<String, Properties> resourceConfigs) {
+                Map<java.lang.String, java.util.Properties> resourceConfigs) {
             doSetProperty("resourceConfigs", resourceConfigs);
             return this;
         }
@@ -514,7 +496,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedAtomixSetEndpointConsumerBuilder resourceOptions(
-                Map<String, Properties> resourceOptions) {
+                Map<java.lang.String, java.util.Properties> resourceOptions) {
             doSetProperty("resourceOptions", resourceOptions);
             return this;
         }
@@ -549,15 +531,14 @@ public interface AtomixSetEndpointBuilderFactory {
         /**
          * The Atomix instance to use.
          * 
-         * The option is a: &lt;code&gt;io.atomix.AtomixClient&lt;/code&gt;
-         * type.
+         * The option is a: &lt;code&gt;io.atomix.Atomix&lt;/code&gt; type.
          * 
          * Group: common
          * 
          * @param atomix the value to set
          * @return the dsl builder
          */
-        default AtomixSetEndpointProducerBuilder atomix(Object atomix) {
+        default AtomixSetEndpointProducerBuilder atomix(io.atomix.Atomix atomix) {
             doSetProperty("atomix", atomix);
             return this;
         }
@@ -565,7 +546,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * The Atomix instance to use.
          * 
          * The option will be converted to a
-         * &lt;code&gt;io.atomix.AtomixClient&lt;/code&gt; type.
+         * &lt;code&gt;io.atomix.Atomix&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -595,7 +576,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * The default action.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.atomix.client.set.AtomixSet$Action&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.atomix.client.set.AtomixSet.Action&lt;/code&gt; type.
          * 
          * Default: ADD
          * Group: common
@@ -604,7 +585,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AtomixSetEndpointProducerBuilder defaultAction(
-                Action defaultAction) {
+                org.apache.camel.component.atomix.client.set.AtomixSet.Action defaultAction) {
             doSetProperty("defaultAction", defaultAction);
             return this;
         }
@@ -612,7 +593,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * The default action.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.atomix.client.set.AtomixSet$Action&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.atomix.client.set.AtomixSet.Action&lt;/code&gt; type.
          * 
          * Default: ADD
          * Group: common
@@ -628,23 +609,7 @@ public interface AtomixSetEndpointBuilderFactory {
         /**
          * The address of the nodes composing the cluster.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;io.atomix.catalyst.transport.Address&amp;gt;&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param nodes the value to set
-         * @return the dsl builder
-         */
-        default AtomixSetEndpointProducerBuilder nodes(List<Object> nodes) {
-            doSetProperty("nodes", nodes);
-            return this;
-        }
-        /**
-         * The address of the nodes composing the cluster.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;io.atomix.catalyst.transport.Address&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -885,7 +850,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedAtomixSetEndpointProducerBuilder readConsistency(
-                ReadConsistency readConsistency) {
+                io.atomix.resource.ReadConsistency readConsistency) {
             doSetProperty("readConsistency", readConsistency);
             return this;
         }
@@ -917,7 +882,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedAtomixSetEndpointProducerBuilder resourceConfigs(
-                Map<String, Properties> resourceConfigs) {
+                Map<java.lang.String, java.util.Properties> resourceConfigs) {
             doSetProperty("resourceConfigs", resourceConfigs);
             return this;
         }
@@ -950,7 +915,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedAtomixSetEndpointProducerBuilder resourceOptions(
-                Map<String, Properties> resourceOptions) {
+                Map<java.lang.String, java.util.Properties> resourceOptions) {
             doSetProperty("resourceOptions", resourceOptions);
             return this;
         }
@@ -986,15 +951,14 @@ public interface AtomixSetEndpointBuilderFactory {
         /**
          * The Atomix instance to use.
          * 
-         * The option is a: &lt;code&gt;io.atomix.AtomixClient&lt;/code&gt;
-         * type.
+         * The option is a: &lt;code&gt;io.atomix.Atomix&lt;/code&gt; type.
          * 
          * Group: common
          * 
          * @param atomix the value to set
          * @return the dsl builder
          */
-        default AtomixSetEndpointBuilder atomix(Object atomix) {
+        default AtomixSetEndpointBuilder atomix(io.atomix.Atomix atomix) {
             doSetProperty("atomix", atomix);
             return this;
         }
@@ -1002,7 +966,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * The Atomix instance to use.
          * 
          * The option will be converted to a
-         * &lt;code&gt;io.atomix.AtomixClient&lt;/code&gt; type.
+         * &lt;code&gt;io.atomix.Atomix&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -1032,7 +996,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * The default action.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.atomix.client.set.AtomixSet$Action&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.atomix.client.set.AtomixSet.Action&lt;/code&gt; type.
          * 
          * Default: ADD
          * Group: common
@@ -1040,7 +1004,8 @@ public interface AtomixSetEndpointBuilderFactory {
          * @param defaultAction the value to set
          * @return the dsl builder
          */
-        default AtomixSetEndpointBuilder defaultAction(Action defaultAction) {
+        default AtomixSetEndpointBuilder defaultAction(
+                org.apache.camel.component.atomix.client.set.AtomixSet.Action defaultAction) {
             doSetProperty("defaultAction", defaultAction);
             return this;
         }
@@ -1048,7 +1013,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * The default action.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.atomix.client.set.AtomixSet$Action&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.atomix.client.set.AtomixSet.Action&lt;/code&gt; type.
          * 
          * Default: ADD
          * Group: common
@@ -1063,23 +1028,7 @@ public interface AtomixSetEndpointBuilderFactory {
         /**
          * The address of the nodes composing the cluster.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;io.atomix.catalyst.transport.Address&amp;gt;&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param nodes the value to set
-         * @return the dsl builder
-         */
-        default AtomixSetEndpointBuilder nodes(List<Object> nodes) {
-            doSetProperty("nodes", nodes);
-            return this;
-        }
-        /**
-         * The address of the nodes composing the cluster.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;io.atomix.catalyst.transport.Address&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -1269,7 +1218,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedAtomixSetEndpointBuilder readConsistency(
-                ReadConsistency readConsistency) {
+                io.atomix.resource.ReadConsistency readConsistency) {
             doSetProperty("readConsistency", readConsistency);
             return this;
         }
@@ -1301,7 +1250,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedAtomixSetEndpointBuilder resourceConfigs(
-                Map<String, Properties> resourceConfigs) {
+                Map<java.lang.String, java.util.Properties> resourceConfigs) {
             doSetProperty("resourceConfigs", resourceConfigs);
             return this;
         }
@@ -1334,7 +1283,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedAtomixSetEndpointBuilder resourceOptions(
-                Map<String, Properties> resourceOptions) {
+                Map<java.lang.String, java.util.Properties> resourceOptions) {
             doSetProperty("resourceOptions", resourceOptions);
             return this;
         }
@@ -1355,29 +1304,6 @@ public interface AtomixSetEndpointBuilderFactory {
             doSetProperty("resourceOptions", resourceOptions);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.atomix.client.set.AtomixSet$Action</code> enum.
-     */
-    enum Action {
-        ADD,
-        CLEAR,
-        CONTAINS,
-        IS_EMPTY,
-        REMOVE,
-        SIZE;
-    }
-
-    /**
-     * Proxy enum for <code>io.atomix.resource.ReadConsistency</code> enum.
-     */
-    enum ReadConsistency {
-        ATOMIC,
-        ATOMIC_LEASE,
-        SEQUENTIAL,
-        LOCAL;
     }
 
     public interface AtomixSetBuilders {

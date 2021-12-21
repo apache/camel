@@ -16,17 +16,15 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
 import java.util.Map;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.PollingConsumerPollStrategy;
 
 /**
  * Communicate with OData 4.0 services using Apache Olingo OData API.
@@ -143,7 +141,7 @@ public interface Olingo4EndpointBuilderFactory {
          * @return the dsl builder
          */
         default Olingo4EndpointConsumerBuilder httpHeaders(
-                Map<String, String> httpHeaders) {
+                Map<java.lang.String, java.lang.String> httpHeaders) {
             doSetProperty("httpHeaders", httpHeaders);
             return this;
         }
@@ -189,7 +187,8 @@ public interface Olingo4EndpointBuilderFactory {
          * @param proxy the value to set
          * @return the dsl builder
          */
-        default Olingo4EndpointConsumerBuilder proxy(Object proxy) {
+        default Olingo4EndpointConsumerBuilder proxy(
+                org.apache.http.HttpHost proxy) {
             doSetProperty("proxy", proxy);
             return this;
         }
@@ -616,7 +615,7 @@ public interface Olingo4EndpointBuilderFactory {
          * @return the dsl builder
          */
         default Olingo4EndpointConsumerBuilder runLoggingLevel(
-                LoggingLevel runLoggingLevel) {
+                org.apache.camel.LoggingLevel runLoggingLevel) {
             doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
@@ -860,7 +859,7 @@ public interface Olingo4EndpointBuilderFactory {
          * @return the dsl builder
          */
         default Olingo4EndpointConsumerBuilder sslContextParameters(
-                Object sslContextParameters) {
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
@@ -906,7 +905,7 @@ public interface Olingo4EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedOlingo4EndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -941,7 +940,7 @@ public interface Olingo4EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedOlingo4EndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -976,7 +975,7 @@ public interface Olingo4EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedOlingo4EndpointConsumerBuilder pollStrategy(
-                PollingConsumerPollStrategy pollStrategy) {
+                org.apache.camel.spi.PollingConsumerPollStrategy pollStrategy) {
             doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
@@ -1014,7 +1013,7 @@ public interface Olingo4EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedOlingo4EndpointConsumerBuilder httpAsyncClientBuilder(
-                Object httpAsyncClientBuilder) {
+                org.apache.http.impl.nio.client.HttpAsyncClientBuilder httpAsyncClientBuilder) {
             doSetProperty("httpAsyncClientBuilder", httpAsyncClientBuilder);
             return this;
         }
@@ -1052,7 +1051,7 @@ public interface Olingo4EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedOlingo4EndpointConsumerBuilder httpClientBuilder(
-                Object httpClientBuilder) {
+                org.apache.http.impl.client.HttpClientBuilder httpClientBuilder) {
             doSetProperty("httpClientBuilder", httpClientBuilder);
             return this;
         }
@@ -1183,7 +1182,7 @@ public interface Olingo4EndpointBuilderFactory {
          * @return the dsl builder
          */
         default Olingo4EndpointProducerBuilder httpHeaders(
-                Map<String, String> httpHeaders) {
+                Map<java.lang.String, java.lang.String> httpHeaders) {
             doSetProperty("httpHeaders", httpHeaders);
             return this;
         }
@@ -1229,7 +1228,8 @@ public interface Olingo4EndpointBuilderFactory {
          * @param proxy the value to set
          * @return the dsl builder
          */
-        default Olingo4EndpointProducerBuilder proxy(Object proxy) {
+        default Olingo4EndpointProducerBuilder proxy(
+                org.apache.http.HttpHost proxy) {
             doSetProperty("proxy", proxy);
             return this;
         }
@@ -1357,7 +1357,7 @@ public interface Olingo4EndpointBuilderFactory {
          * @return the dsl builder
          */
         default Olingo4EndpointProducerBuilder sslContextParameters(
-                Object sslContextParameters) {
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
@@ -1403,7 +1403,7 @@ public interface Olingo4EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedOlingo4EndpointProducerBuilder httpAsyncClientBuilder(
-                Object httpAsyncClientBuilder) {
+                org.apache.http.impl.nio.client.HttpAsyncClientBuilder httpAsyncClientBuilder) {
             doSetProperty("httpAsyncClientBuilder", httpAsyncClientBuilder);
             return this;
         }
@@ -1441,7 +1441,7 @@ public interface Olingo4EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedOlingo4EndpointProducerBuilder httpClientBuilder(
-                Object httpClientBuilder) {
+                org.apache.http.impl.client.HttpClientBuilder httpClientBuilder) {
             doSetProperty("httpClientBuilder", httpClientBuilder);
             return this;
         }
@@ -1572,7 +1572,7 @@ public interface Olingo4EndpointBuilderFactory {
          * @return the dsl builder
          */
         default Olingo4EndpointBuilder httpHeaders(
-                Map<String, String> httpHeaders) {
+                Map<java.lang.String, java.lang.String> httpHeaders) {
             doSetProperty("httpHeaders", httpHeaders);
             return this;
         }
@@ -1618,7 +1618,7 @@ public interface Olingo4EndpointBuilderFactory {
          * @param proxy the value to set
          * @return the dsl builder
          */
-        default Olingo4EndpointBuilder proxy(Object proxy) {
+        default Olingo4EndpointBuilder proxy(org.apache.http.HttpHost proxy) {
             doSetProperty("proxy", proxy);
             return this;
         }
@@ -1696,7 +1696,7 @@ public interface Olingo4EndpointBuilderFactory {
          * @return the dsl builder
          */
         default Olingo4EndpointBuilder sslContextParameters(
-                Object sslContextParameters) {
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
@@ -1743,7 +1743,7 @@ public interface Olingo4EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedOlingo4EndpointBuilder httpAsyncClientBuilder(
-                Object httpAsyncClientBuilder) {
+                org.apache.http.impl.nio.client.HttpAsyncClientBuilder httpAsyncClientBuilder) {
             doSetProperty("httpAsyncClientBuilder", httpAsyncClientBuilder);
             return this;
         }
@@ -1781,7 +1781,7 @@ public interface Olingo4EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedOlingo4EndpointBuilder httpClientBuilder(
-                Object httpClientBuilder) {
+                org.apache.http.impl.client.HttpClientBuilder httpClientBuilder) {
             doSetProperty("httpClientBuilder", httpClientBuilder);
             return this;
         }

@@ -16,13 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.util.TimeZone;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * IEC 60870 supervisory control and data acquisition (SCADA) client using
@@ -55,7 +56,7 @@ public interface ClientEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ClientEndpointConsumerBuilder dataModuleOptions(
-                Object dataModuleOptions) {
+                org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions dataModuleOptions) {
             doSetProperty("dataModuleOptions", dataModuleOptions);
             return this;
         }
@@ -87,7 +88,7 @@ public interface ClientEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ClientEndpointConsumerBuilder protocolOptions(
-                Object protocolOptions) {
+                org.eclipse.neoscada.protocol.iec60870.ProtocolOptions protocolOptions) {
             doSetProperty("protocolOptions", protocolOptions);
             return this;
         }
@@ -197,7 +198,7 @@ public interface ClientEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ClientEndpointConsumerBuilder adsuAddressType(
-                ASDUAddressType adsuAddressType) {
+                org.eclipse.neoscada.protocol.iec60870.ASDUAddressType adsuAddressType) {
             doSetProperty("adsuAddressType", adsuAddressType);
             return this;
         }
@@ -229,7 +230,7 @@ public interface ClientEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ClientEndpointConsumerBuilder causeOfTransmissionType(
-                CauseOfTransmissionType causeOfTransmissionType) {
+                org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType causeOfTransmissionType) {
             doSetProperty("causeOfTransmissionType", causeOfTransmissionType);
             return this;
         }
@@ -261,7 +262,7 @@ public interface ClientEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ClientEndpointConsumerBuilder informationObjectAddressType(
-                InformationObjectAddressType informationObjectAddressType) {
+                org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType informationObjectAddressType) {
             doSetProperty("informationObjectAddressType", informationObjectAddressType);
             return this;
         }
@@ -606,7 +607,7 @@ public interface ClientEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedClientEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -641,7 +642,7 @@ public interface ClientEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedClientEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -684,7 +685,7 @@ public interface ClientEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ClientEndpointProducerBuilder dataModuleOptions(
-                Object dataModuleOptions) {
+                org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions dataModuleOptions) {
             doSetProperty("dataModuleOptions", dataModuleOptions);
             return this;
         }
@@ -716,7 +717,7 @@ public interface ClientEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ClientEndpointProducerBuilder protocolOptions(
-                Object protocolOptions) {
+                org.eclipse.neoscada.protocol.iec60870.ProtocolOptions protocolOptions) {
             doSetProperty("protocolOptions", protocolOptions);
             return this;
         }
@@ -830,7 +831,7 @@ public interface ClientEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ClientEndpointProducerBuilder adsuAddressType(
-                ASDUAddressType adsuAddressType) {
+                org.eclipse.neoscada.protocol.iec60870.ASDUAddressType adsuAddressType) {
             doSetProperty("adsuAddressType", adsuAddressType);
             return this;
         }
@@ -862,7 +863,7 @@ public interface ClientEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ClientEndpointProducerBuilder causeOfTransmissionType(
-                CauseOfTransmissionType causeOfTransmissionType) {
+                org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType causeOfTransmissionType) {
             doSetProperty("causeOfTransmissionType", causeOfTransmissionType);
             return this;
         }
@@ -894,7 +895,7 @@ public interface ClientEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ClientEndpointProducerBuilder informationObjectAddressType(
-                InformationObjectAddressType informationObjectAddressType) {
+                org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType informationObjectAddressType) {
             doSetProperty("informationObjectAddressType", informationObjectAddressType);
             return this;
         }
@@ -1247,7 +1248,8 @@ public interface ClientEndpointBuilderFactory {
          * @param dataModuleOptions the value to set
          * @return the dsl builder
          */
-        default ClientEndpointBuilder dataModuleOptions(Object dataModuleOptions) {
+        default ClientEndpointBuilder dataModuleOptions(
+                org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions dataModuleOptions) {
             doSetProperty("dataModuleOptions", dataModuleOptions);
             return this;
         }
@@ -1277,7 +1279,8 @@ public interface ClientEndpointBuilderFactory {
          * @param protocolOptions the value to set
          * @return the dsl builder
          */
-        default ClientEndpointBuilder protocolOptions(Object protocolOptions) {
+        default ClientEndpointBuilder protocolOptions(
+                org.eclipse.neoscada.protocol.iec60870.ProtocolOptions protocolOptions) {
             doSetProperty("protocolOptions", protocolOptions);
             return this;
         }
@@ -1339,7 +1342,7 @@ public interface ClientEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ClientEndpointBuilder adsuAddressType(
-                ASDUAddressType adsuAddressType) {
+                org.eclipse.neoscada.protocol.iec60870.ASDUAddressType adsuAddressType) {
             doSetProperty("adsuAddressType", adsuAddressType);
             return this;
         }
@@ -1370,7 +1373,7 @@ public interface ClientEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ClientEndpointBuilder causeOfTransmissionType(
-                CauseOfTransmissionType causeOfTransmissionType) {
+                org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType causeOfTransmissionType) {
             doSetProperty("causeOfTransmissionType", causeOfTransmissionType);
             return this;
         }
@@ -1402,7 +1405,7 @@ public interface ClientEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ClientEndpointBuilder informationObjectAddressType(
-                InformationObjectAddressType informationObjectAddressType) {
+                org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType informationObjectAddressType) {
             doSetProperty("informationObjectAddressType", informationObjectAddressType);
             return this;
         }
@@ -1727,34 +1730,6 @@ public interface ClientEndpointBuilderFactory {
         default ClientEndpointBuilder basic() {
             return (ClientEndpointBuilder) this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.eclipse.neoscada.protocol.iec60870.ASDUAddressType</code> enum.
-     */
-    enum ASDUAddressType {
-        SIZE_1,
-        SIZE_2;
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType</code> enum.
-     */
-    enum CauseOfTransmissionType {
-        SIZE_1,
-        SIZE_2;
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType</code> enum.
-     */
-    enum InformationObjectAddressType {
-        SIZE_1,
-        SIZE_2,
-        SIZE_3;
     }
 
     public interface ClientBuilders {

@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -172,7 +176,8 @@ public interface FunctionGraphEndpointBuilderFactory {
          * @param serviceKeys the value to set
          * @return the dsl builder
          */
-        default FunctionGraphEndpointBuilder serviceKeys(Object serviceKeys) {
+        default FunctionGraphEndpointBuilder serviceKeys(
+                org.apache.camel.component.huaweicloud.common.models.ServiceKeys serviceKeys) {
             doSetProperty("serviceKeys", serviceKeys);
             return this;
         }

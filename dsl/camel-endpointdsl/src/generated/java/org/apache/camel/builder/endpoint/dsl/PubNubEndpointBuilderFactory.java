@@ -16,12 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Send and receive messages to/from PubNub data stream network for connected
@@ -264,7 +266,7 @@ public interface PubNubEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedPubNubEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -299,7 +301,7 @@ public interface PubNubEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedPubNubEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -329,7 +331,8 @@ public interface PubNubEndpointBuilderFactory {
          * @param pubnub the value to set
          * @return the dsl builder
          */
-        default AdvancedPubNubEndpointConsumerBuilder pubnub(Object pubnub) {
+        default AdvancedPubNubEndpointConsumerBuilder pubnub(
+                com.pubnub.api.PubNub pubnub) {
             doSetProperty("pubnub", pubnub);
             return this;
         }
@@ -574,7 +577,8 @@ public interface PubNubEndpointBuilderFactory {
          * @param pubnub the value to set
          * @return the dsl builder
          */
-        default AdvancedPubNubEndpointProducerBuilder pubnub(Object pubnub) {
+        default AdvancedPubNubEndpointProducerBuilder pubnub(
+                com.pubnub.api.PubNub pubnub) {
             doSetProperty("pubnub", pubnub);
             return this;
         }
@@ -747,7 +751,8 @@ public interface PubNubEndpointBuilderFactory {
          * @param pubnub the value to set
          * @return the dsl builder
          */
-        default AdvancedPubNubEndpointBuilder pubnub(Object pubnub) {
+        default AdvancedPubNubEndpointBuilder pubnub(
+                com.pubnub.api.PubNub pubnub) {
             doSetProperty("pubnub", pubnub);
             return this;
         }

@@ -16,18 +16,15 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.util.List;
+import java.util.*;
 import java.util.Map;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.PollingConsumerPollStrategy;
 
 /**
  * Poll for changes in a Google Calendar.
@@ -262,7 +259,8 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * @param scopes the value to set
          * @return the dsl builder
          */
-        default GoogleCalendarStreamEndpointBuilder scopes(List<String> scopes) {
+        default GoogleCalendarStreamEndpointBuilder scopes(
+                List<java.lang.String> scopes) {
             doSetProperty("scopes", scopes);
             return this;
         }
@@ -599,7 +597,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * @return the dsl builder
          */
         default GoogleCalendarStreamEndpointBuilder runLoggingLevel(
-                LoggingLevel runLoggingLevel) {
+                org.apache.camel.LoggingLevel runLoggingLevel) {
             doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
@@ -952,7 +950,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedGoogleCalendarStreamEndpointBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -987,7 +985,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedGoogleCalendarStreamEndpointBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -1022,7 +1020,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedGoogleCalendarStreamEndpointBuilder pollStrategy(
-                PollingConsumerPollStrategy pollStrategy) {
+                org.apache.camel.spi.PollingConsumerPollStrategy pollStrategy) {
             doSetProperty("pollStrategy", pollStrategy);
             return this;
         }

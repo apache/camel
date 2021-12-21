@@ -16,12 +16,15 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
 import java.util.Map;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.HeaderFilterStrategy;
 
 /**
  * Send requests to external HTTP servers using Apache HTTP Client 4.x.
@@ -148,7 +151,7 @@ public interface HttpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default HttpEndpointBuilder headerFilterStrategy(
-                HeaderFilterStrategy headerFilterStrategy) {
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
@@ -346,7 +349,8 @@ public interface HttpEndpointBuilderFactory {
          * @param httpMethod the value to set
          * @return the dsl builder
          */
-        default HttpEndpointBuilder httpMethod(HttpMethods httpMethod) {
+        default HttpEndpointBuilder httpMethod(
+                org.apache.camel.http.common.HttpMethods httpMethod) {
             doSetProperty("httpMethod", httpMethod);
             return this;
         }
@@ -647,22 +651,21 @@ public interface HttpEndpointBuilderFactory {
         /**
          * Proxy authentication port.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: proxy
          * 
          * @param proxyAuthPort the value to set
          * @return the dsl builder
          */
-        default HttpEndpointBuilder proxyAuthPort(Integer proxyAuthPort) {
+        default HttpEndpointBuilder proxyAuthPort(int proxyAuthPort) {
             doSetProperty("proxyAuthPort", proxyAuthPort);
             return this;
         }
         /**
          * Proxy authentication port.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: proxy
          * 
@@ -880,7 +883,7 @@ public interface HttpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default HttpEndpointBuilder sslContextParameters(
-                Object sslContextParameters) {
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
@@ -917,7 +920,7 @@ public interface HttpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default HttpEndpointBuilder x509HostnameVerifier(
-                Object x509HostnameVerifier) {
+                javax.net.ssl.HostnameVerifier x509HostnameVerifier) {
             doSetProperty("x509HostnameVerifier", x509HostnameVerifier);
             return this;
         }
@@ -962,7 +965,8 @@ public interface HttpEndpointBuilderFactory {
          * @param httpBinding the value to set
          * @return the dsl builder
          */
-        default AdvancedHttpEndpointBuilder httpBinding(Object httpBinding) {
+        default AdvancedHttpEndpointBuilder httpBinding(
+                org.apache.camel.http.common.HttpBinding httpBinding) {
             doSetProperty("httpBinding", httpBinding);
             return this;
         }
@@ -994,7 +998,8 @@ public interface HttpEndpointBuilderFactory {
          * @param cookieHandler the value to set
          * @return the dsl builder
          */
-        default AdvancedHttpEndpointBuilder cookieHandler(Object cookieHandler) {
+        default AdvancedHttpEndpointBuilder cookieHandler(
+                org.apache.camel.http.base.cookie.CookieHandler cookieHandler) {
             doSetProperty("cookieHandler", cookieHandler);
             return this;
         }
@@ -1030,7 +1035,8 @@ public interface HttpEndpointBuilderFactory {
          * @param cookieStore the value to set
          * @return the dsl builder
          */
-        default AdvancedHttpEndpointBuilder cookieStore(Object cookieStore) {
+        default AdvancedHttpEndpointBuilder cookieStore(
+                org.apache.http.client.CookieStore cookieStore) {
             doSetProperty("cookieStore", cookieStore);
             return this;
         }
@@ -1250,7 +1256,8 @@ public interface HttpEndpointBuilderFactory {
          * @param clientBuilder the value to set
          * @return the dsl builder
          */
-        default AdvancedHttpEndpointBuilder clientBuilder(Object clientBuilder) {
+        default AdvancedHttpEndpointBuilder clientBuilder(
+                org.apache.http.impl.client.HttpClientBuilder clientBuilder) {
             doSetProperty("clientBuilder", clientBuilder);
             return this;
         }
@@ -1283,7 +1290,7 @@ public interface HttpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedHttpEndpointBuilder clientConnectionManager(
-                Object clientConnectionManager) {
+                org.apache.http.conn.HttpClientConnectionManager clientConnectionManager) {
             doSetProperty("clientConnectionManager", clientConnectionManager);
             return this;
         }
@@ -1346,7 +1353,8 @@ public interface HttpEndpointBuilderFactory {
          * @param httpClient the value to set
          * @return the dsl builder
          */
-        default AdvancedHttpEndpointBuilder httpClient(Object httpClient) {
+        default AdvancedHttpEndpointBuilder httpClient(
+                org.apache.http.client.HttpClient httpClient) {
             doSetProperty("httpClient", httpClient);
             return this;
         }
@@ -1379,7 +1387,7 @@ public interface HttpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedHttpEndpointBuilder httpClientConfigurer(
-                Object httpClientConfigurer) {
+                org.apache.camel.component.http.HttpClientConfigurer httpClientConfigurer) {
             doSetProperty("httpClientConfigurer", httpClientConfigurer);
             return this;
         }
@@ -1451,7 +1459,8 @@ public interface HttpEndpointBuilderFactory {
          * @param httpContext the value to set
          * @return the dsl builder
          */
-        default AdvancedHttpEndpointBuilder httpContext(Object httpContext) {
+        default AdvancedHttpEndpointBuilder httpContext(
+                org.apache.http.protocol.HttpContext httpContext) {
             doSetProperty("httpContext", httpContext);
             return this;
         }
@@ -1535,21 +1544,6 @@ public interface HttpEndpointBuilderFactory {
             doSetProperty("useSystemProperties", useSystemProperties);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for <code>org.apache.camel.http.common.HttpMethods</code>
-     * enum.
-     */
-    enum HttpMethods {
-        GET,
-        POST,
-        PUT,
-        DELETE,
-        HEAD,
-        OPTIONS,
-        TRACE,
-        PATCH;
     }
 
     public interface HttpBuilders {

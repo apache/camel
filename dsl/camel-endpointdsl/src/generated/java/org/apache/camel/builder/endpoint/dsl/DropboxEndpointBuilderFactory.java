@@ -16,12 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Upload, download and manage files, folders, groups, collaborations, etc on
@@ -68,7 +70,8 @@ public interface DropboxEndpointBuilderFactory {
          * @param client the value to set
          * @return the dsl builder
          */
-        default DropboxEndpointConsumerBuilder client(Object client) {
+        default DropboxEndpointConsumerBuilder client(
+                com.dropbox.core.v2.DbxClientV2 client) {
             doSetProperty("client", client);
             return this;
         }
@@ -178,7 +181,7 @@ public interface DropboxEndpointBuilderFactory {
          * @return the dsl builder
          */
         default DropboxEndpointConsumerBuilder uploadMode(
-                DropboxUploadMode uploadMode) {
+                org.apache.camel.component.dropbox.util.DropboxUploadMode uploadMode) {
             doSetProperty("uploadMode", uploadMode);
             return this;
         }
@@ -271,7 +274,7 @@ public interface DropboxEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedDropboxEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -306,7 +309,7 @@ public interface DropboxEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedDropboxEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -363,7 +366,8 @@ public interface DropboxEndpointBuilderFactory {
          * @param client the value to set
          * @return the dsl builder
          */
-        default DropboxEndpointProducerBuilder client(Object client) {
+        default DropboxEndpointProducerBuilder client(
+                com.dropbox.core.v2.DbxClientV2 client) {
             doSetProperty("client", client);
             return this;
         }
@@ -473,7 +477,7 @@ public interface DropboxEndpointBuilderFactory {
          * @return the dsl builder
          */
         default DropboxEndpointProducerBuilder uploadMode(
-                DropboxUploadMode uploadMode) {
+                org.apache.camel.component.dropbox.util.DropboxUploadMode uploadMode) {
             doSetProperty("uploadMode", uploadMode);
             return this;
         }
@@ -593,7 +597,8 @@ public interface DropboxEndpointBuilderFactory {
          * @param client the value to set
          * @return the dsl builder
          */
-        default DropboxEndpointBuilder client(Object client) {
+        default DropboxEndpointBuilder client(
+                com.dropbox.core.v2.DbxClientV2 client) {
             doSetProperty("client", client);
             return this;
         }
@@ -700,7 +705,8 @@ public interface DropboxEndpointBuilderFactory {
          * @param uploadMode the value to set
          * @return the dsl builder
          */
-        default DropboxEndpointBuilder uploadMode(DropboxUploadMode uploadMode) {
+        default DropboxEndpointBuilder uploadMode(
+                org.apache.camel.component.dropbox.util.DropboxUploadMode uploadMode) {
             doSetProperty("uploadMode", uploadMode);
             return this;
         }
@@ -734,16 +740,6 @@ public interface DropboxEndpointBuilderFactory {
         default DropboxEndpointBuilder basic() {
             return (DropboxEndpointBuilder) this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.dropbox.util.DropboxUploadMode</code>
-     * enum.
-     */
-    enum DropboxUploadMode {
-        add,
-        force;
     }
 
     public interface DropboxBuilders {

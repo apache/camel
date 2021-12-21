@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -45,7 +49,8 @@ public interface KMS2EndpointBuilderFactory {
          * @param kmsClient the value to set
          * @return the dsl builder
          */
-        default KMS2EndpointBuilder kmsClient(Object kmsClient) {
+        default KMS2EndpointBuilder kmsClient(
+                software.amazon.awssdk.services.kms.KmsClient kmsClient) {
             doSetProperty("kmsClient", kmsClient);
             return this;
         }
@@ -123,7 +128,8 @@ public interface KMS2EndpointBuilderFactory {
          * @param operation the value to set
          * @return the dsl builder
          */
-        default KMS2EndpointBuilder operation(KMS2Operations operation) {
+        default KMS2EndpointBuilder operation(
+                org.apache.camel.component.aws2.kms.KMS2Operations operation) {
             doSetProperty("operation", operation);
             return this;
         }
@@ -262,7 +268,8 @@ public interface KMS2EndpointBuilderFactory {
          * @param proxyProtocol the value to set
          * @return the dsl builder
          */
-        default KMS2EndpointBuilder proxyProtocol(Protocol proxyProtocol) {
+        default KMS2EndpointBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
@@ -415,27 +422,6 @@ public interface KMS2EndpointBuilderFactory {
             doSetProperty("secretKey", secretKey);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.aws2.kms.KMS2Operations</code> enum.
-     */
-    enum KMS2Operations {
-        listKeys,
-        createKey,
-        disableKey,
-        scheduleKeyDeletion,
-        describeKey,
-        enableKey;
-    }
-
-    /**
-     * Proxy enum for <code>software.amazon.awssdk.core.Protocol</code> enum.
-     */
-    enum Protocol {
-        HTTP,
-        HTTPS;
     }
 
     public interface KMS2Builders {

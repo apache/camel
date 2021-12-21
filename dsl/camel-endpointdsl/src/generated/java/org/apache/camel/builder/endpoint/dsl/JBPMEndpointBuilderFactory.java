@@ -16,14 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Interact with jBPM workflow engine over REST.
@@ -365,7 +365,8 @@ public interface JBPMEndpointBuilderFactory {
          * @param task the value to set
          * @return the dsl builder
          */
-        default JBPMEndpointConsumerBuilder task(Object task) {
+        default JBPMEndpointConsumerBuilder task(
+                org.kie.api.task.model.Task task) {
             doSetProperty("task", task);
             return this;
         }
@@ -570,7 +571,8 @@ public interface JBPMEndpointBuilderFactory {
          * @param statuses the value to set
          * @return the dsl builder
          */
-        default JBPMEndpointConsumerBuilder statuses(List<String> statuses) {
+        default JBPMEndpointConsumerBuilder statuses(
+                List<java.lang.String> statuses) {
             doSetProperty("statuses", statuses);
             return this;
         }
@@ -643,7 +645,7 @@ public interface JBPMEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedJBPMEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -678,7 +680,7 @@ public interface JBPMEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedJBPMEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -743,7 +745,7 @@ public interface JBPMEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedJBPMEndpointConsumerBuilder entities(
-                List<String> entities) {
+                List<java.lang.String> entities) {
             doSetProperty("entities", entities);
             return this;
         }
@@ -805,7 +807,7 @@ public interface JBPMEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedJBPMEndpointConsumerBuilder parameters(
-                Map<String, Object> parameters) {
+                Map<java.lang.String, java.lang.Object> parameters) {
             doSetProperty("parameters", parameters);
             return this;
         }
@@ -1158,7 +1160,8 @@ public interface JBPMEndpointBuilderFactory {
          * @param task the value to set
          * @return the dsl builder
          */
-        default JBPMEndpointProducerBuilder task(Object task) {
+        default JBPMEndpointProducerBuilder task(
+                org.kie.api.task.model.Task task) {
             doSetProperty("task", task);
             return this;
         }
@@ -1382,7 +1385,8 @@ public interface JBPMEndpointBuilderFactory {
          * @param statuses the value to set
          * @return the dsl builder
          */
-        default JBPMEndpointProducerBuilder statuses(List<String> statuses) {
+        default JBPMEndpointProducerBuilder statuses(
+                List<java.lang.String> statuses) {
             doSetProperty("statuses", statuses);
             return this;
         }
@@ -1452,7 +1456,7 @@ public interface JBPMEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedJBPMEndpointProducerBuilder entities(
-                List<String> entities) {
+                List<java.lang.String> entities) {
             doSetProperty("entities", entities);
             return this;
         }
@@ -1514,7 +1518,7 @@ public interface JBPMEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedJBPMEndpointProducerBuilder parameters(
-                Map<String, Object> parameters) {
+                Map<java.lang.String, java.lang.Object> parameters) {
             doSetProperty("parameters", parameters);
             return this;
         }
@@ -1864,7 +1868,7 @@ public interface JBPMEndpointBuilderFactory {
          * @param task the value to set
          * @return the dsl builder
          */
-        default JBPMEndpointBuilder task(Object task) {
+        default JBPMEndpointBuilder task(org.kie.api.task.model.Task task) {
             doSetProperty("task", task);
             return this;
         }
@@ -2024,7 +2028,7 @@ public interface JBPMEndpointBuilderFactory {
          * @param statuses the value to set
          * @return the dsl builder
          */
-        default JBPMEndpointBuilder statuses(List<String> statuses) {
+        default JBPMEndpointBuilder statuses(List<java.lang.String> statuses) {
             doSetProperty("statuses", statuses);
             return this;
         }
@@ -2094,7 +2098,8 @@ public interface JBPMEndpointBuilderFactory {
          * @param entities the value to set
          * @return the dsl builder
          */
-        default AdvancedJBPMEndpointBuilder entities(List<String> entities) {
+        default AdvancedJBPMEndpointBuilder entities(
+                List<java.lang.String> entities) {
             doSetProperty("entities", entities);
             return this;
         }
@@ -2156,7 +2161,7 @@ public interface JBPMEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedJBPMEndpointBuilder parameters(
-                Map<String, Object> parameters) {
+                Map<java.lang.String, java.lang.Object> parameters) {
             doSetProperty("parameters", parameters);
             return this;
         }

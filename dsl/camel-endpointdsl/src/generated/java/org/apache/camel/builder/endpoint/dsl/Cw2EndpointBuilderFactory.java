@@ -16,7 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.time.Instant;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -46,7 +49,8 @@ public interface Cw2EndpointBuilderFactory {
          * @param amazonCwClient the value to set
          * @return the dsl builder
          */
-        default Cw2EndpointBuilder amazonCwClient(Object amazonCwClient) {
+        default Cw2EndpointBuilder amazonCwClient(
+                software.amazon.awssdk.services.cloudwatch.CloudWatchClient amazonCwClient) {
             doSetProperty("amazonCwClient", amazonCwClient);
             return this;
         }
@@ -214,7 +218,8 @@ public interface Cw2EndpointBuilderFactory {
          * @param proxyProtocol the value to set
          * @return the dsl builder
          */
-        default Cw2EndpointBuilder proxyProtocol(Protocol proxyProtocol) {
+        default Cw2EndpointBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
@@ -261,7 +266,7 @@ public interface Cw2EndpointBuilderFactory {
          * @param timestamp the value to set
          * @return the dsl builder
          */
-        default Cw2EndpointBuilder timestamp(Instant timestamp) {
+        default Cw2EndpointBuilder timestamp(java.time.Instant timestamp) {
             doSetProperty("timestamp", timestamp);
             return this;
         }
@@ -439,14 +444,6 @@ public interface Cw2EndpointBuilderFactory {
             doSetProperty("secretKey", secretKey);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for <code>software.amazon.awssdk.core.Protocol</code> enum.
-     */
-    enum Protocol {
-        HTTP,
-        HTTPS;
     }
 
     public interface Cw2Builders {

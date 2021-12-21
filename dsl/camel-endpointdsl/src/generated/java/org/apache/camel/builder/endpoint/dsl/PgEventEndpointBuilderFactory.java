@@ -16,12 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Send and receive PostgreSQL events via LISTEN and NOTIFY commands.
@@ -52,7 +54,8 @@ public interface PgEventEndpointBuilderFactory {
          * @param datasource the value to set
          * @return the dsl builder
          */
-        default PgEventEndpointConsumerBuilder datasource(Object datasource) {
+        default PgEventEndpointConsumerBuilder datasource(
+                javax.sql.DataSource datasource) {
             doSetProperty("datasource", datasource);
             return this;
         }
@@ -173,7 +176,7 @@ public interface PgEventEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedPgEventEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -208,7 +211,7 @@ public interface PgEventEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedPgEventEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -250,7 +253,8 @@ public interface PgEventEndpointBuilderFactory {
          * @param datasource the value to set
          * @return the dsl builder
          */
-        default PgEventEndpointProducerBuilder datasource(Object datasource) {
+        default PgEventEndpointProducerBuilder datasource(
+                javax.sql.DataSource datasource) {
             doSetProperty("datasource", datasource);
             return this;
         }
@@ -383,7 +387,8 @@ public interface PgEventEndpointBuilderFactory {
          * @param datasource the value to set
          * @return the dsl builder
          */
-        default PgEventEndpointBuilder datasource(Object datasource) {
+        default PgEventEndpointBuilder datasource(
+                javax.sql.DataSource datasource) {
             doSetProperty("datasource", datasource);
             return this;
         }

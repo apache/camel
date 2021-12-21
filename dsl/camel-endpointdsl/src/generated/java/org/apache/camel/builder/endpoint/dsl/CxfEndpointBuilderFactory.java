@@ -16,14 +16,15 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
 import java.util.Map;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.HeaderFilterStrategy;
 
 /**
  * Expose SOAP WebServices using Apache CXF or connect to external WebServices
@@ -57,7 +58,8 @@ public interface CxfEndpointBuilderFactory {
          * @param dataFormat the value to set
          * @return the dsl builder
          */
-        default CxfEndpointConsumerBuilder dataFormat(DataFormat dataFormat) {
+        default CxfEndpointConsumerBuilder dataFormat(
+                org.apache.camel.component.cxf.DataFormat dataFormat) {
             doSetProperty("dataFormat", dataFormat);
             return this;
         }
@@ -350,7 +352,7 @@ public interface CxfEndpointBuilderFactory {
          * @return the dsl builder
          */
         default CxfEndpointConsumerBuilder serviceClass(
-                Class<Object> serviceClass) {
+                Class<java.lang.Object> serviceClass) {
             doSetProperty("serviceClass", serviceClass);
             return this;
         }
@@ -426,7 +428,7 @@ public interface CxfEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedCxfEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -461,7 +463,7 @@ public interface CxfEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedCxfEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -528,7 +530,7 @@ public interface CxfEndpointBuilderFactory {
          * @param bus the value to set
          * @return the dsl builder
          */
-        default AdvancedCxfEndpointConsumerBuilder bus(Object bus) {
+        default AdvancedCxfEndpointConsumerBuilder bus(org.apache.cxf.Bus bus) {
             doSetProperty("bus", bus);
             return this;
         }
@@ -596,7 +598,8 @@ public interface CxfEndpointBuilderFactory {
          * @param cxfBinding the value to set
          * @return the dsl builder
          */
-        default AdvancedCxfEndpointConsumerBuilder cxfBinding(Object cxfBinding) {
+        default AdvancedCxfEndpointConsumerBuilder cxfBinding(
+                org.apache.camel.component.cxf.CxfBinding cxfBinding) {
             doSetProperty("cxfBinding", cxfBinding);
             return this;
         }
@@ -634,7 +637,7 @@ public interface CxfEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedCxfEndpointConsumerBuilder cxfConfigurer(
-                Object cxfConfigurer) {
+                org.apache.camel.component.cxf.CxfConfigurer cxfConfigurer) {
             doSetProperty("cxfConfigurer", cxfConfigurer);
             return this;
         }
@@ -704,7 +707,7 @@ public interface CxfEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedCxfEndpointConsumerBuilder headerFilterStrategy(
-                HeaderFilterStrategy headerFilterStrategy) {
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
@@ -898,7 +901,8 @@ public interface CxfEndpointBuilderFactory {
          * @param dataFormat the value to set
          * @return the dsl builder
          */
-        default CxfEndpointProducerBuilder dataFormat(DataFormat dataFormat) {
+        default CxfEndpointProducerBuilder dataFormat(
+                org.apache.camel.component.cxf.DataFormat dataFormat) {
             doSetProperty("dataFormat", dataFormat);
             return this;
         }
@@ -965,7 +969,8 @@ public interface CxfEndpointBuilderFactory {
          * @param cookieHandler the value to set
          * @return the dsl builder
          */
-        default CxfEndpointProducerBuilder cookieHandler(Object cookieHandler) {
+        default CxfEndpointProducerBuilder cookieHandler(
+                org.apache.camel.http.base.cookie.CookieHandler cookieHandler) {
             doSetProperty("cookieHandler", cookieHandler);
             return this;
         }
@@ -1029,7 +1034,7 @@ public interface CxfEndpointBuilderFactory {
          * @return the dsl builder
          */
         default CxfEndpointProducerBuilder hostnameVerifier(
-                Object hostnameVerifier) {
+                javax.net.ssl.HostnameVerifier hostnameVerifier) {
             doSetProperty("hostnameVerifier", hostnameVerifier);
             return this;
         }
@@ -1112,7 +1117,7 @@ public interface CxfEndpointBuilderFactory {
          * @return the dsl builder
          */
         default CxfEndpointProducerBuilder sslContextParameters(
-                Object sslContextParameters) {
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
@@ -1356,7 +1361,7 @@ public interface CxfEndpointBuilderFactory {
          * @return the dsl builder
          */
         default CxfEndpointProducerBuilder serviceClass(
-                Class<Object> serviceClass) {
+                Class<java.lang.Object> serviceClass) {
             doSetProperty("serviceClass", serviceClass);
             return this;
         }
@@ -1497,7 +1502,7 @@ public interface CxfEndpointBuilderFactory {
          * @param bus the value to set
          * @return the dsl builder
          */
-        default AdvancedCxfEndpointProducerBuilder bus(Object bus) {
+        default AdvancedCxfEndpointProducerBuilder bus(org.apache.cxf.Bus bus) {
             doSetProperty("bus", bus);
             return this;
         }
@@ -1565,7 +1570,8 @@ public interface CxfEndpointBuilderFactory {
          * @param cxfBinding the value to set
          * @return the dsl builder
          */
-        default AdvancedCxfEndpointProducerBuilder cxfBinding(Object cxfBinding) {
+        default AdvancedCxfEndpointProducerBuilder cxfBinding(
+                org.apache.camel.component.cxf.CxfBinding cxfBinding) {
             doSetProperty("cxfBinding", cxfBinding);
             return this;
         }
@@ -1603,7 +1609,7 @@ public interface CxfEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedCxfEndpointProducerBuilder cxfConfigurer(
-                Object cxfConfigurer) {
+                org.apache.camel.component.cxf.CxfConfigurer cxfConfigurer) {
             doSetProperty("cxfConfigurer", cxfConfigurer);
             return this;
         }
@@ -1673,7 +1679,7 @@ public interface CxfEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedCxfEndpointProducerBuilder headerFilterStrategy(
-                HeaderFilterStrategy headerFilterStrategy) {
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
@@ -1868,7 +1874,8 @@ public interface CxfEndpointBuilderFactory {
          * @param dataFormat the value to set
          * @return the dsl builder
          */
-        default CxfEndpointBuilder dataFormat(DataFormat dataFormat) {
+        default CxfEndpointBuilder dataFormat(
+                org.apache.camel.component.cxf.DataFormat dataFormat) {
             doSetProperty("dataFormat", dataFormat);
             return this;
         }
@@ -2112,7 +2119,8 @@ public interface CxfEndpointBuilderFactory {
          * @param serviceClass the value to set
          * @return the dsl builder
          */
-        default CxfEndpointBuilder serviceClass(Class<Object> serviceClass) {
+        default CxfEndpointBuilder serviceClass(
+                Class<java.lang.Object> serviceClass) {
             doSetProperty("serviceClass", serviceClass);
             return this;
         }
@@ -2219,7 +2227,7 @@ public interface CxfEndpointBuilderFactory {
          * @param bus the value to set
          * @return the dsl builder
          */
-        default AdvancedCxfEndpointBuilder bus(Object bus) {
+        default AdvancedCxfEndpointBuilder bus(org.apache.cxf.Bus bus) {
             doSetProperty("bus", bus);
             return this;
         }
@@ -2287,7 +2295,8 @@ public interface CxfEndpointBuilderFactory {
          * @param cxfBinding the value to set
          * @return the dsl builder
          */
-        default AdvancedCxfEndpointBuilder cxfBinding(Object cxfBinding) {
+        default AdvancedCxfEndpointBuilder cxfBinding(
+                org.apache.camel.component.cxf.CxfBinding cxfBinding) {
             doSetProperty("cxfBinding", cxfBinding);
             return this;
         }
@@ -2324,7 +2333,8 @@ public interface CxfEndpointBuilderFactory {
          * @param cxfConfigurer the value to set
          * @return the dsl builder
          */
-        default AdvancedCxfEndpointBuilder cxfConfigurer(Object cxfConfigurer) {
+        default AdvancedCxfEndpointBuilder cxfConfigurer(
+                org.apache.camel.component.cxf.CxfConfigurer cxfConfigurer) {
             doSetProperty("cxfConfigurer", cxfConfigurer);
             return this;
         }
@@ -2393,7 +2403,7 @@ public interface CxfEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedCxfEndpointBuilder headerFilterStrategy(
-                HeaderFilterStrategy headerFilterStrategy) {
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
@@ -2559,18 +2569,6 @@ public interface CxfEndpointBuilderFactory {
             doSetProperty("skipPayloadMessagePartCheck", skipPayloadMessagePartCheck);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for <code>org.apache.camel.component.cxf.DataFormat</code>
-     * enum.
-     */
-    enum DataFormat {
-        PAYLOAD,
-        RAW,
-        MESSAGE,
-        CXF_MESSAGE,
-        POJO;
     }
 
     public interface CxfBuilders {

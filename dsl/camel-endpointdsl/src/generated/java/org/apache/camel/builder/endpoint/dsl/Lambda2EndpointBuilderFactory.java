@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -99,7 +103,8 @@ public interface Lambda2EndpointBuilderFactory {
          * @param operation the value to set
          * @return the dsl builder
          */
-        default Lambda2EndpointBuilder operation(Lambda2Operations operation) {
+        default Lambda2EndpointBuilder operation(
+                org.apache.camel.component.aws2.lambda.Lambda2Operations operation) {
             doSetProperty("operation", operation);
             return this;
         }
@@ -344,7 +349,8 @@ public interface Lambda2EndpointBuilderFactory {
          * @param proxyProtocol the value to set
          * @return the dsl builder
          */
-        default Lambda2EndpointBuilder proxyProtocol(Protocol proxyProtocol) {
+        default Lambda2EndpointBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
@@ -415,7 +421,7 @@ public interface Lambda2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedLambda2EndpointBuilder awsLambdaClient(
-                Object awsLambdaClient) {
+                software.amazon.awssdk.services.lambda.LambdaClient awsLambdaClient) {
             doSetProperty("awsLambdaClient", awsLambdaClient);
             return this;
         }
@@ -435,40 +441,6 @@ public interface Lambda2EndpointBuilderFactory {
             doSetProperty("awsLambdaClient", awsLambdaClient);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.aws2.lambda.Lambda2Operations</code>
-     * enum.
-     */
-    enum Lambda2Operations {
-        listFunctions,
-        getFunction,
-        createAlias,
-        deleteAlias,
-        getAlias,
-        listAliases,
-        createFunction,
-        deleteFunction,
-        invokeFunction,
-        updateFunction,
-        createEventSourceMapping,
-        deleteEventSourceMapping,
-        listEventSourceMapping,
-        listTags,
-        tagResource,
-        untagResource,
-        publishVersion,
-        listVersions;
-    }
-
-    /**
-     * Proxy enum for <code>software.amazon.awssdk.core.Protocol</code> enum.
-     */
-    enum Protocol {
-        HTTP,
-        HTTPS;
     }
 
     public interface Lambda2Builders {

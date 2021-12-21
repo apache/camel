@@ -16,12 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Call and expose remote procedures (RPC) with Apache Thrift data format and
@@ -55,7 +57,7 @@ public interface ThriftEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ThriftEndpointConsumerBuilder compressionType(
-                ThriftCompressionType compressionType) {
+                org.apache.camel.component.thrift.ThriftCompressionType compressionType) {
             doSetProperty("compressionType", compressionType);
             return this;
         }
@@ -89,7 +91,7 @@ public interface ThriftEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ThriftEndpointConsumerBuilder exchangeProtocol(
-                ThriftExchangeProtocol exchangeProtocol) {
+                org.apache.camel.component.thrift.ThriftExchangeProtocol exchangeProtocol) {
             doSetProperty("exchangeProtocol", exchangeProtocol);
             return this;
         }
@@ -256,7 +258,7 @@ public interface ThriftEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ThriftEndpointConsumerBuilder negotiationType(
-                ThriftNegotiationType negotiationType) {
+                org.apache.camel.component.thrift.ThriftNegotiationType negotiationType) {
             doSetProperty("negotiationType", negotiationType);
             return this;
         }
@@ -288,7 +290,8 @@ public interface ThriftEndpointBuilderFactory {
          * @param sslParameters the value to set
          * @return the dsl builder
          */
-        default ThriftEndpointConsumerBuilder sslParameters(Object sslParameters) {
+        default ThriftEndpointConsumerBuilder sslParameters(
+                org.apache.camel.support.jsse.SSLContextParameters sslParameters) {
             doSetProperty("sslParameters", sslParameters);
             return this;
         }
@@ -333,7 +336,7 @@ public interface ThriftEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedThriftEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -368,7 +371,7 @@ public interface ThriftEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedThriftEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -445,7 +448,7 @@ public interface ThriftEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ThriftEndpointProducerBuilder compressionType(
-                ThriftCompressionType compressionType) {
+                org.apache.camel.component.thrift.ThriftCompressionType compressionType) {
             doSetProperty("compressionType", compressionType);
             return this;
         }
@@ -479,7 +482,7 @@ public interface ThriftEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ThriftEndpointProducerBuilder exchangeProtocol(
-                ThriftExchangeProtocol exchangeProtocol) {
+                org.apache.camel.component.thrift.ThriftExchangeProtocol exchangeProtocol) {
             doSetProperty("exchangeProtocol", exchangeProtocol);
             return this;
         }
@@ -576,7 +579,7 @@ public interface ThriftEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ThriftEndpointProducerBuilder negotiationType(
-                ThriftNegotiationType negotiationType) {
+                org.apache.camel.component.thrift.ThriftNegotiationType negotiationType) {
             doSetProperty("negotiationType", negotiationType);
             return this;
         }
@@ -608,7 +611,8 @@ public interface ThriftEndpointBuilderFactory {
          * @param sslParameters the value to set
          * @return the dsl builder
          */
-        default ThriftEndpointProducerBuilder sslParameters(Object sslParameters) {
+        default ThriftEndpointProducerBuilder sslParameters(
+                org.apache.camel.support.jsse.SSLContextParameters sslParameters) {
             doSetProperty("sslParameters", sslParameters);
             return this;
         }
@@ -696,7 +700,7 @@ public interface ThriftEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ThriftEndpointBuilder compressionType(
-                ThriftCompressionType compressionType) {
+                org.apache.camel.component.thrift.ThriftCompressionType compressionType) {
             doSetProperty("compressionType", compressionType);
             return this;
         }
@@ -729,7 +733,7 @@ public interface ThriftEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ThriftEndpointBuilder exchangeProtocol(
-                ThriftExchangeProtocol exchangeProtocol) {
+                org.apache.camel.component.thrift.ThriftExchangeProtocol exchangeProtocol) {
             doSetProperty("exchangeProtocol", exchangeProtocol);
             return this;
         }
@@ -762,7 +766,7 @@ public interface ThriftEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ThriftEndpointBuilder negotiationType(
-                ThriftNegotiationType negotiationType) {
+                org.apache.camel.component.thrift.ThriftNegotiationType negotiationType) {
             doSetProperty("negotiationType", negotiationType);
             return this;
         }
@@ -793,7 +797,8 @@ public interface ThriftEndpointBuilderFactory {
          * @param sslParameters the value to set
          * @return the dsl builder
          */
-        default ThriftEndpointBuilder sslParameters(Object sslParameters) {
+        default ThriftEndpointBuilder sslParameters(
+                org.apache.camel.support.jsse.SSLContextParameters sslParameters) {
             doSetProperty("sslParameters", sslParameters);
             return this;
         }
@@ -855,39 +860,6 @@ public interface ThriftEndpointBuilderFactory {
             doSetProperty("synchronous", synchronous);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.thrift.ThriftCompressionType</code>
-     * enum.
-     */
-    enum ThriftCompressionType {
-        NONE,
-        ZLIB;
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.thrift.ThriftExchangeProtocol</code>
-     * enum.
-     */
-    enum ThriftExchangeProtocol {
-        BINARY,
-        JSON,
-        SJSON,
-        COMPACT;
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.thrift.ThriftNegotiationType</code>
-     * enum.
-     */
-    enum ThriftNegotiationType {
-        PLAINTEXT,
-        SSL,
-        SASL;
     }
 
     public interface ThriftBuilders {

@@ -16,13 +16,15 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
 import java.util.Map;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Manage posts and users using Wordpress API.
@@ -184,7 +186,7 @@ public interface WordpressEndpointBuilderFactory {
          * @return the dsl builder
          */
         default WordpressEndpointConsumerBuilder searchCriteria(
-                Object searchCriteria) {
+                org.apache.camel.component.wordpress.api.model.SearchCriteria searchCriteria) {
             doSetProperty("searchCriteria", searchCriteria);
             return this;
         }
@@ -305,7 +307,7 @@ public interface WordpressEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedWordpressEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -340,7 +342,7 @@ public interface WordpressEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedWordpressEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -513,7 +515,7 @@ public interface WordpressEndpointBuilderFactory {
          * @return the dsl builder
          */
         default WordpressEndpointProducerBuilder searchCriteria(
-                Object searchCriteria) {
+                org.apache.camel.component.wordpress.api.model.SearchCriteria searchCriteria) {
             doSetProperty("searchCriteria", searchCriteria);
             return this;
         }
@@ -774,7 +776,8 @@ public interface WordpressEndpointBuilderFactory {
          * @param searchCriteria the value to set
          * @return the dsl builder
          */
-        default WordpressEndpointBuilder searchCriteria(Object searchCriteria) {
+        default WordpressEndpointBuilder searchCriteria(
+                org.apache.camel.component.wordpress.api.model.SearchCriteria searchCriteria) {
             doSetProperty("searchCriteria", searchCriteria);
             return this;
         }

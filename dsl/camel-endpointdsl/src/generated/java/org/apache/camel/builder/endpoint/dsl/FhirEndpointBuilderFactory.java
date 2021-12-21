@@ -16,17 +16,15 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
 import java.util.Map;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.PollingConsumerPollStrategy;
 
 /**
  * Exchange information in the healthcare domain using the FHIR (Fast Healthcare
@@ -50,23 +48,7 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Encoding to use for all request.
          * 
-         * The option is a:
-         * &lt;code&gt;ca.uhn.fhir.rest.api.EncodingEnum&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param encoding the value to set
-         * @return the dsl builder
-         */
-        default FhirEndpointConsumerBuilder encoding(EncodingEnum encoding) {
-            doSetProperty("encoding", encoding);
-            return this;
-        }
-        /**
-         * Encoding to use for all request.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;ca.uhn.fhir.rest.api.EncodingEnum&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -80,25 +62,7 @@ public interface FhirEndpointBuilderFactory {
         /**
          * The FHIR Version to use.
          * 
-         * The option is a:
-         * &lt;code&gt;ca.uhn.fhir.context.FhirVersionEnum&lt;/code&gt; type.
-         * 
-         * Default: R4
-         * Group: common
-         * 
-         * @param fhirVersion the value to set
-         * @return the dsl builder
-         */
-        default FhirEndpointConsumerBuilder fhirVersion(
-                FhirVersionEnum fhirVersion) {
-            doSetProperty("fhirVersion", fhirVersion);
-            return this;
-        }
-        /**
-         * The FHIR Version to use.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;ca.uhn.fhir.context.FhirVersionEnum&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: R4
          * Group: common
@@ -596,7 +560,7 @@ public interface FhirEndpointBuilderFactory {
          * @return the dsl builder
          */
         default FhirEndpointConsumerBuilder runLoggingLevel(
-                LoggingLevel runLoggingLevel) {
+                org.apache.camel.LoggingLevel runLoggingLevel) {
             doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
@@ -893,7 +857,7 @@ public interface FhirEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedFhirEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -928,7 +892,7 @@ public interface FhirEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedFhirEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -963,7 +927,7 @@ public interface FhirEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedFhirEndpointConsumerBuilder pollStrategy(
-                PollingConsumerPollStrategy pollStrategy) {
+                org.apache.camel.spi.PollingConsumerPollStrategy pollStrategy) {
             doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
@@ -998,7 +962,8 @@ public interface FhirEndpointBuilderFactory {
          * @param client the value to set
          * @return the dsl builder
          */
-        default AdvancedFhirEndpointConsumerBuilder client(Object client) {
+        default AdvancedFhirEndpointConsumerBuilder client(
+                ca.uhn.fhir.rest.client.api.IGenericClient client) {
             doSetProperty("client", client);
             return this;
         }
@@ -1030,7 +995,7 @@ public interface FhirEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedFhirEndpointConsumerBuilder clientFactory(
-                Object clientFactory) {
+                ca.uhn.fhir.rest.client.api.IRestfulClientFactory clientFactory) {
             doSetProperty("clientFactory", clientFactory);
             return this;
         }
@@ -1164,7 +1129,7 @@ public interface FhirEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedFhirEndpointConsumerBuilder fhirContext(
-                Object fhirContext) {
+                ca.uhn.fhir.context.FhirContext fhirContext) {
             doSetProperty("fhirContext", fhirContext);
             return this;
         }
@@ -1269,23 +1234,7 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Request that the server modify the response using the _summary param.
          * 
-         * The option is a:
-         * &lt;code&gt;ca.uhn.fhir.rest.api.SummaryEnum&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param summary the value to set
-         * @return the dsl builder
-         */
-        default AdvancedFhirEndpointConsumerBuilder summary(SummaryEnum summary) {
-            doSetProperty("summary", summary);
-            return this;
-        }
-        /**
-         * Request that the server modify the response using the _summary param.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;ca.uhn.fhir.rest.api.SummaryEnum&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -1299,25 +1248,7 @@ public interface FhirEndpointBuilderFactory {
         /**
          * When should Camel validate the FHIR Server's conformance statement.
          * 
-         * The option is a:
-         * &lt;code&gt;ca.uhn.fhir.rest.client.api.ServerValidationModeEnum&lt;/code&gt; type.
-         * 
-         * Default: ONCE
-         * Group: advanced
-         * 
-         * @param validationMode the value to set
-         * @return the dsl builder
-         */
-        default AdvancedFhirEndpointConsumerBuilder validationMode(
-                ServerValidationModeEnum validationMode) {
-            doSetProperty("validationMode", validationMode);
-            return this;
-        }
-        /**
-         * When should Camel validate the FHIR Server's conformance statement.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;ca.uhn.fhir.rest.client.api.ServerValidationModeEnum&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: ONCE
          * Group: advanced
@@ -1344,23 +1275,7 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Encoding to use for all request.
          * 
-         * The option is a:
-         * &lt;code&gt;ca.uhn.fhir.rest.api.EncodingEnum&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param encoding the value to set
-         * @return the dsl builder
-         */
-        default FhirEndpointProducerBuilder encoding(EncodingEnum encoding) {
-            doSetProperty("encoding", encoding);
-            return this;
-        }
-        /**
-         * Encoding to use for all request.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;ca.uhn.fhir.rest.api.EncodingEnum&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -1374,25 +1289,7 @@ public interface FhirEndpointBuilderFactory {
         /**
          * The FHIR Version to use.
          * 
-         * The option is a:
-         * &lt;code&gt;ca.uhn.fhir.context.FhirVersionEnum&lt;/code&gt; type.
-         * 
-         * Default: R4
-         * Group: common
-         * 
-         * @param fhirVersion the value to set
-         * @return the dsl builder
-         */
-        default FhirEndpointProducerBuilder fhirVersion(
-                FhirVersionEnum fhirVersion) {
-            doSetProperty("fhirVersion", fhirVersion);
-            return this;
-        }
-        /**
-         * The FHIR Version to use.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;ca.uhn.fhir.context.FhirVersionEnum&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: R4
          * Group: common
@@ -1679,7 +1576,8 @@ public interface FhirEndpointBuilderFactory {
          * @param client the value to set
          * @return the dsl builder
          */
-        default AdvancedFhirEndpointProducerBuilder client(Object client) {
+        default AdvancedFhirEndpointProducerBuilder client(
+                ca.uhn.fhir.rest.client.api.IGenericClient client) {
             doSetProperty("client", client);
             return this;
         }
@@ -1711,7 +1609,7 @@ public interface FhirEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedFhirEndpointProducerBuilder clientFactory(
-                Object clientFactory) {
+                ca.uhn.fhir.rest.client.api.IRestfulClientFactory clientFactory) {
             doSetProperty("clientFactory", clientFactory);
             return this;
         }
@@ -1845,7 +1743,7 @@ public interface FhirEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedFhirEndpointProducerBuilder fhirContext(
-                Object fhirContext) {
+                ca.uhn.fhir.context.FhirContext fhirContext) {
             doSetProperty("fhirContext", fhirContext);
             return this;
         }
@@ -1950,23 +1848,7 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Request that the server modify the response using the _summary param.
          * 
-         * The option is a:
-         * &lt;code&gt;ca.uhn.fhir.rest.api.SummaryEnum&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param summary the value to set
-         * @return the dsl builder
-         */
-        default AdvancedFhirEndpointProducerBuilder summary(SummaryEnum summary) {
-            doSetProperty("summary", summary);
-            return this;
-        }
-        /**
-         * Request that the server modify the response using the _summary param.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;ca.uhn.fhir.rest.api.SummaryEnum&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -1980,25 +1862,7 @@ public interface FhirEndpointBuilderFactory {
         /**
          * When should Camel validate the FHIR Server's conformance statement.
          * 
-         * The option is a:
-         * &lt;code&gt;ca.uhn.fhir.rest.client.api.ServerValidationModeEnum&lt;/code&gt; type.
-         * 
-         * Default: ONCE
-         * Group: advanced
-         * 
-         * @param validationMode the value to set
-         * @return the dsl builder
-         */
-        default AdvancedFhirEndpointProducerBuilder validationMode(
-                ServerValidationModeEnum validationMode) {
-            doSetProperty("validationMode", validationMode);
-            return this;
-        }
-        /**
-         * When should Camel validate the FHIR Server's conformance statement.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;ca.uhn.fhir.rest.client.api.ServerValidationModeEnum&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: ONCE
          * Group: advanced
@@ -2026,23 +1890,7 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Encoding to use for all request.
          * 
-         * The option is a:
-         * &lt;code&gt;ca.uhn.fhir.rest.api.EncodingEnum&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param encoding the value to set
-         * @return the dsl builder
-         */
-        default FhirEndpointBuilder encoding(EncodingEnum encoding) {
-            doSetProperty("encoding", encoding);
-            return this;
-        }
-        /**
-         * Encoding to use for all request.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;ca.uhn.fhir.rest.api.EncodingEnum&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -2056,24 +1904,7 @@ public interface FhirEndpointBuilderFactory {
         /**
          * The FHIR Version to use.
          * 
-         * The option is a:
-         * &lt;code&gt;ca.uhn.fhir.context.FhirVersionEnum&lt;/code&gt; type.
-         * 
-         * Default: R4
-         * Group: common
-         * 
-         * @param fhirVersion the value to set
-         * @return the dsl builder
-         */
-        default FhirEndpointBuilder fhirVersion(FhirVersionEnum fhirVersion) {
-            doSetProperty("fhirVersion", fhirVersion);
-            return this;
-        }
-        /**
-         * The FHIR Version to use.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;ca.uhn.fhir.context.FhirVersionEnum&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: R4
          * Group: common
@@ -2312,7 +2143,8 @@ public interface FhirEndpointBuilderFactory {
          * @param client the value to set
          * @return the dsl builder
          */
-        default AdvancedFhirEndpointBuilder client(Object client) {
+        default AdvancedFhirEndpointBuilder client(
+                ca.uhn.fhir.rest.client.api.IGenericClient client) {
             doSetProperty("client", client);
             return this;
         }
@@ -2343,7 +2175,8 @@ public interface FhirEndpointBuilderFactory {
          * @param clientFactory the value to set
          * @return the dsl builder
          */
-        default AdvancedFhirEndpointBuilder clientFactory(Object clientFactory) {
+        default AdvancedFhirEndpointBuilder clientFactory(
+                ca.uhn.fhir.rest.client.api.IRestfulClientFactory clientFactory) {
             doSetProperty("clientFactory", clientFactory);
             return this;
         }
@@ -2475,7 +2308,8 @@ public interface FhirEndpointBuilderFactory {
          * @param fhirContext the value to set
          * @return the dsl builder
          */
-        default AdvancedFhirEndpointBuilder fhirContext(Object fhirContext) {
+        default AdvancedFhirEndpointBuilder fhirContext(
+                ca.uhn.fhir.context.FhirContext fhirContext) {
             doSetProperty("fhirContext", fhirContext);
             return this;
         }
@@ -2576,23 +2410,7 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Request that the server modify the response using the _summary param.
          * 
-         * The option is a:
-         * &lt;code&gt;ca.uhn.fhir.rest.api.SummaryEnum&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param summary the value to set
-         * @return the dsl builder
-         */
-        default AdvancedFhirEndpointBuilder summary(SummaryEnum summary) {
-            doSetProperty("summary", summary);
-            return this;
-        }
-        /**
-         * Request that the server modify the response using the _summary param.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;ca.uhn.fhir.rest.api.SummaryEnum&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -2606,25 +2424,7 @@ public interface FhirEndpointBuilderFactory {
         /**
          * When should Camel validate the FHIR Server's conformance statement.
          * 
-         * The option is a:
-         * &lt;code&gt;ca.uhn.fhir.rest.client.api.ServerValidationModeEnum&lt;/code&gt; type.
-         * 
-         * Default: ONCE
-         * Group: advanced
-         * 
-         * @param validationMode the value to set
-         * @return the dsl builder
-         */
-        default AdvancedFhirEndpointBuilder validationMode(
-                ServerValidationModeEnum validationMode) {
-            doSetProperty("validationMode", validationMode);
-            return this;
-        }
-        /**
-         * When should Camel validate the FHIR Server's conformance statement.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;ca.uhn.fhir.rest.client.api.ServerValidationModeEnum&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: ONCE
          * Group: advanced
@@ -2636,47 +2436,6 @@ public interface FhirEndpointBuilderFactory {
             doSetProperty("validationMode", validationMode);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for <code>ca.uhn.fhir.rest.api.EncodingEnum</code> enum.
-     */
-    enum EncodingEnum {
-        JSON,
-        XML,
-        RDF;
-    }
-
-    /**
-     * Proxy enum for <code>ca.uhn.fhir.context.FhirVersionEnum</code> enum.
-     */
-    enum FhirVersionEnum {
-        DSTU2,
-        DSTU2_HL7ORG,
-        DSTU2_1,
-        DSTU3,
-        R4,
-        R5;
-    }
-
-    /**
-     * Proxy enum for <code>ca.uhn.fhir.rest.api.SummaryEnum</code> enum.
-     */
-    enum SummaryEnum {
-        COUNT,
-        TEXT,
-        DATA,
-        TRUE,
-        FALSE;
-    }
-
-    /**
-     * Proxy enum for
-     * <code>ca.uhn.fhir.rest.client.api.ServerValidationModeEnum</code> enum.
-     */
-    enum ServerValidationModeEnum {
-        NEVER,
-        ONCE;
     }
 
     public interface FhirBuilders {

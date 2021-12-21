@@ -16,12 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Read from system-in and write to system-out and system-err streams.
@@ -193,7 +195,8 @@ public interface StreamEndpointBuilderFactory {
          * @param groupStrategy the value to set
          * @return the dsl builder
          */
-        default StreamEndpointConsumerBuilder groupStrategy(Object groupStrategy) {
+        default StreamEndpointConsumerBuilder groupStrategy(
+                org.apache.camel.component.stream.GroupStrategy groupStrategy) {
             doSetProperty("groupStrategy", groupStrategy);
             return this;
         }
@@ -417,7 +420,7 @@ public interface StreamEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedStreamEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -452,7 +455,7 @@ public interface StreamEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedStreamEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }

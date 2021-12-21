@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -93,7 +97,8 @@ public interface MSK2EndpointBuilderFactory {
          * @param mskClient the value to set
          * @return the dsl builder
          */
-        default MSK2EndpointBuilder mskClient(Object mskClient) {
+        default MSK2EndpointBuilder mskClient(
+                software.amazon.awssdk.services.kafka.KafkaClient mskClient) {
             doSetProperty("mskClient", mskClient);
             return this;
         }
@@ -124,7 +129,8 @@ public interface MSK2EndpointBuilderFactory {
          * @param operation the value to set
          * @return the dsl builder
          */
-        default MSK2EndpointBuilder operation(MSK2Operations operation) {
+        default MSK2EndpointBuilder operation(
+                org.apache.camel.component.aws2.msk.MSK2Operations operation) {
             doSetProperty("operation", operation);
             return this;
         }
@@ -263,7 +269,8 @@ public interface MSK2EndpointBuilderFactory {
          * @param proxyProtocol the value to set
          * @return the dsl builder
          */
-        default MSK2EndpointBuilder proxyProtocol(Protocol proxyProtocol) {
+        default MSK2EndpointBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
@@ -416,25 +423,6 @@ public interface MSK2EndpointBuilderFactory {
             doSetProperty("secretKey", secretKey);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.aws2.msk.MSK2Operations</code> enum.
-     */
-    enum MSK2Operations {
-        listClusters,
-        createCluster,
-        deleteCluster,
-        describeCluster;
-    }
-
-    /**
-     * Proxy enum for <code>software.amazon.awssdk.core.Protocol</code> enum.
-     */
-    enum Protocol {
-        HTTP,
-        HTTPS;
     }
 
     public interface MSK2Builders {

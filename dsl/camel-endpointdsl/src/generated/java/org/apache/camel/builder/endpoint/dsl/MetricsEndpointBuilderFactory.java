@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -46,7 +50,8 @@ public interface MetricsEndpointBuilderFactory {
          * @param action the value to set
          * @return the dsl builder
          */
-        default MetricsEndpointBuilder action(MetricsTimerAction action) {
+        default MetricsEndpointBuilder action(
+                org.apache.camel.component.metrics.MetricsTimerAction action) {
             doSetProperty("action", action);
             return this;
         }
@@ -259,15 +264,6 @@ public interface MetricsEndpointBuilderFactory {
             doSetProperty("value", value);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.metrics.MetricsTimerAction</code> enum.
-     */
-    enum MetricsTimerAction {
-        start,
-        stop;
     }
 
     public interface MetricsBuilders {

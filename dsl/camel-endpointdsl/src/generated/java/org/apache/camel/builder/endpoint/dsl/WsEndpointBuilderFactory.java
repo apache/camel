@@ -16,14 +16,15 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
 import java.util.Map;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.HeaderFilterStrategy;
 
 /**
  * Exchange data with external Websocket servers using Async Http Client.
@@ -127,7 +128,7 @@ public interface WsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default WsEndpointConsumerBuilder headerFilterStrategy(
-                HeaderFilterStrategy headerFilterStrategy) {
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
@@ -332,7 +333,7 @@ public interface WsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default WsEndpointConsumerBuilder sslContextParameters(
-                Object sslContextParameters) {
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
@@ -384,7 +385,7 @@ public interface WsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedWsEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -419,7 +420,7 @@ public interface WsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedWsEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -452,7 +453,8 @@ public interface WsEndpointBuilderFactory {
          * @param binding the value to set
          * @return the dsl builder
          */
-        default AdvancedWsEndpointConsumerBuilder binding(Object binding) {
+        default AdvancedWsEndpointConsumerBuilder binding(
+                org.apache.camel.component.ahc.AhcBinding binding) {
             doSetProperty("binding", binding);
             return this;
         }
@@ -487,7 +489,7 @@ public interface WsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedWsEndpointConsumerBuilder clientConfig(
-                Object clientConfig) {
+                org.asynchttpclient.AsyncHttpClientConfig clientConfig) {
             doSetProperty("clientConfig", clientConfig);
             return this;
         }
@@ -687,7 +689,7 @@ public interface WsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default WsEndpointProducerBuilder headerFilterStrategy(
-                HeaderFilterStrategy headerFilterStrategy) {
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
@@ -840,7 +842,8 @@ public interface WsEndpointBuilderFactory {
          * @param cookieHandler the value to set
          * @return the dsl builder
          */
-        default WsEndpointProducerBuilder cookieHandler(Object cookieHandler) {
+        default WsEndpointProducerBuilder cookieHandler(
+                org.apache.camel.http.base.cookie.CookieHandler cookieHandler) {
             doSetProperty("cookieHandler", cookieHandler);
             return this;
         }
@@ -956,7 +959,7 @@ public interface WsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default WsEndpointProducerBuilder sslContextParameters(
-                Object sslContextParameters) {
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
@@ -1006,7 +1009,8 @@ public interface WsEndpointBuilderFactory {
          * @param binding the value to set
          * @return the dsl builder
          */
-        default AdvancedWsEndpointProducerBuilder binding(Object binding) {
+        default AdvancedWsEndpointProducerBuilder binding(
+                org.apache.camel.component.ahc.AhcBinding binding) {
             doSetProperty("binding", binding);
             return this;
         }
@@ -1041,7 +1045,7 @@ public interface WsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedWsEndpointProducerBuilder clientConfig(
-                Object clientConfig) {
+                org.asynchttpclient.AsyncHttpClientConfig clientConfig) {
             doSetProperty("clientConfig", clientConfig);
             return this;
         }
@@ -1241,7 +1245,7 @@ public interface WsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default WsEndpointBuilder headerFilterStrategy(
-                HeaderFilterStrategy headerFilterStrategy) {
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
@@ -1364,7 +1368,7 @@ public interface WsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default WsEndpointBuilder sslContextParameters(
-                Object sslContextParameters) {
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
@@ -1415,7 +1419,8 @@ public interface WsEndpointBuilderFactory {
          * @param binding the value to set
          * @return the dsl builder
          */
-        default AdvancedWsEndpointBuilder binding(Object binding) {
+        default AdvancedWsEndpointBuilder binding(
+                org.apache.camel.component.ahc.AhcBinding binding) {
             doSetProperty("binding", binding);
             return this;
         }
@@ -1449,7 +1454,8 @@ public interface WsEndpointBuilderFactory {
          * @param clientConfig the value to set
          * @return the dsl builder
          */
-        default AdvancedWsEndpointBuilder clientConfig(Object clientConfig) {
+        default AdvancedWsEndpointBuilder clientConfig(
+                org.asynchttpclient.AsyncHttpClientConfig clientConfig) {
             doSetProperty("clientConfig", clientConfig);
             return this;
         }

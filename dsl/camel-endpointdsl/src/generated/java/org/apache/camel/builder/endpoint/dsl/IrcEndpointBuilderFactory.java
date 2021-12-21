@@ -16,12 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Send and receive messages to/from and IRC chat.
@@ -598,7 +600,7 @@ public interface IrcEndpointBuilderFactory {
          * @return the dsl builder
          */
         default IrcEndpointConsumerBuilder sslContextParameters(
-                Object sslContextParameters) {
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
@@ -634,7 +636,8 @@ public interface IrcEndpointBuilderFactory {
          * @param trustManager the value to set
          * @return the dsl builder
          */
-        default IrcEndpointConsumerBuilder trustManager(Object trustManager) {
+        default IrcEndpointConsumerBuilder trustManager(
+                org.schwering.irc.lib.ssl.SSLTrustManager trustManager) {
             doSetProperty("trustManager", trustManager);
             return this;
         }
@@ -694,7 +697,7 @@ public interface IrcEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedIrcEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -729,7 +732,7 @@ public interface IrcEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedIrcEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -1352,7 +1355,7 @@ public interface IrcEndpointBuilderFactory {
          * @return the dsl builder
          */
         default IrcEndpointProducerBuilder sslContextParameters(
-                Object sslContextParameters) {
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
@@ -1388,7 +1391,8 @@ public interface IrcEndpointBuilderFactory {
          * @param trustManager the value to set
          * @return the dsl builder
          */
-        default IrcEndpointProducerBuilder trustManager(Object trustManager) {
+        default IrcEndpointProducerBuilder trustManager(
+                org.schwering.irc.lib.ssl.SSLTrustManager trustManager) {
             doSetProperty("trustManager", trustManager);
             return this;
         }
@@ -1988,7 +1992,7 @@ public interface IrcEndpointBuilderFactory {
          * @return the dsl builder
          */
         default IrcEndpointBuilder sslContextParameters(
-                Object sslContextParameters) {
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
@@ -2024,7 +2028,8 @@ public interface IrcEndpointBuilderFactory {
          * @param trustManager the value to set
          * @return the dsl builder
          */
-        default IrcEndpointBuilder trustManager(Object trustManager) {
+        default IrcEndpointBuilder trustManager(
+                org.schwering.irc.lib.ssl.SSLTrustManager trustManager) {
             doSetProperty("trustManager", trustManager);
             return this;
         }

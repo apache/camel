@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -255,7 +259,8 @@ public interface IAMEndpointBuilderFactory {
          * @param serviceKeys the value to set
          * @return the dsl builder
          */
-        default IAMEndpointBuilder serviceKeys(Object serviceKeys) {
+        default IAMEndpointBuilder serviceKeys(
+                org.apache.camel.component.huaweicloud.common.models.ServiceKeys serviceKeys) {
             doSetProperty("serviceKeys", serviceKeys);
             return this;
         }

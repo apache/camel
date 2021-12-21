@@ -16,12 +16,15 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
 import java.util.Map;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.HeaderFilterStrategy;
 
 /**
  * Call external HTTP services using Async Http Client.
@@ -152,7 +155,8 @@ public interface AhcEndpointBuilderFactory {
          * @param cookieHandler the value to set
          * @return the dsl builder
          */
-        default AhcEndpointBuilder cookieHandler(Object cookieHandler) {
+        default AhcEndpointBuilder cookieHandler(
+                org.apache.camel.http.base.cookie.CookieHandler cookieHandler) {
             doSetProperty("cookieHandler", cookieHandler);
             return this;
         }
@@ -185,7 +189,7 @@ public interface AhcEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AhcEndpointBuilder headerFilterStrategy(
-                HeaderFilterStrategy headerFilterStrategy) {
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
@@ -355,7 +359,7 @@ public interface AhcEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AhcEndpointBuilder sslContextParameters(
-                Object sslContextParameters) {
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
@@ -404,7 +408,8 @@ public interface AhcEndpointBuilderFactory {
          * @param binding the value to set
          * @return the dsl builder
          */
-        default AdvancedAhcEndpointBuilder binding(Object binding) {
+        default AdvancedAhcEndpointBuilder binding(
+                org.apache.camel.component.ahc.AhcBinding binding) {
             doSetProperty("binding", binding);
             return this;
         }
@@ -438,7 +443,8 @@ public interface AhcEndpointBuilderFactory {
          * @param clientConfig the value to set
          * @return the dsl builder
          */
-        default AdvancedAhcEndpointBuilder clientConfig(Object clientConfig) {
+        default AdvancedAhcEndpointBuilder clientConfig(
+                org.asynchttpclient.AsyncHttpClientConfig clientConfig) {
             doSetProperty("clientConfig", clientConfig);
             return this;
         }

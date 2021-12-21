@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -119,7 +123,7 @@ public interface JsonataEndpointBuilderFactory {
          * @return the dsl builder
          */
         default JsonataEndpointBuilder inputType(
-                JsonataInputOutputType inputType) {
+                org.apache.camel.component.jsonata.JsonataInputOutputType inputType) {
             doSetProperty("inputType", inputType);
             return this;
         }
@@ -201,7 +205,7 @@ public interface JsonataEndpointBuilderFactory {
          * @return the dsl builder
          */
         default JsonataEndpointBuilder outputType(
-                JsonataInputOutputType outputType) {
+                org.apache.camel.component.jsonata.JsonataInputOutputType outputType) {
             doSetProperty("outputType", outputType);
             return this;
         }
@@ -221,16 +225,6 @@ public interface JsonataEndpointBuilderFactory {
             doSetProperty("outputType", outputType);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.jsonata.JsonataInputOutputType</code>
-     * enum.
-     */
-    enum JsonataInputOutputType {
-        Jackson,
-        JsonString;
     }
 
     public interface JsonataBuilders {

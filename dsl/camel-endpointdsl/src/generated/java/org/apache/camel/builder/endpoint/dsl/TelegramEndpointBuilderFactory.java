@@ -16,17 +16,15 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
 import java.util.Map;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.PollingConsumerPollStrategy;
 
 /**
  * Send and receive messages acting as a Telegram Bot Telegram Bot API.
@@ -250,7 +248,7 @@ public interface TelegramEndpointBuilderFactory {
          * @return the dsl builder
          */
         default TelegramEndpointConsumerBuilder proxyType(
-                TelegramProxyType proxyType) {
+                org.apache.camel.component.telegram.TelegramProxyType proxyType) {
             doSetProperty("proxyType", proxyType);
             return this;
         }
@@ -515,7 +513,7 @@ public interface TelegramEndpointBuilderFactory {
          * @return the dsl builder
          */
         default TelegramEndpointConsumerBuilder runLoggingLevel(
-                LoggingLevel runLoggingLevel) {
+                org.apache.camel.LoggingLevel runLoggingLevel) {
             doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
@@ -789,7 +787,7 @@ public interface TelegramEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedTelegramEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -824,7 +822,7 @@ public interface TelegramEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedTelegramEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -859,7 +857,7 @@ public interface TelegramEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedTelegramEndpointConsumerBuilder pollStrategy(
-                PollingConsumerPollStrategy pollStrategy) {
+                org.apache.camel.spi.PollingConsumerPollStrategy pollStrategy) {
             doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
@@ -945,7 +943,7 @@ public interface TelegramEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedTelegramEndpointConsumerBuilder clientConfig(
-                Object clientConfig) {
+                org.asynchttpclient.AsyncHttpClientConfig clientConfig) {
             doSetProperty("clientConfig", clientConfig);
             return this;
         }
@@ -1102,7 +1100,7 @@ public interface TelegramEndpointBuilderFactory {
          * @return the dsl builder
          */
         default TelegramEndpointProducerBuilder proxyType(
-                TelegramProxyType proxyType) {
+                org.apache.camel.component.telegram.TelegramProxyType proxyType) {
             doSetProperty("proxyType", proxyType);
             return this;
         }
@@ -1212,7 +1210,7 @@ public interface TelegramEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedTelegramEndpointProducerBuilder clientConfig(
-                Object clientConfig) {
+                org.asynchttpclient.AsyncHttpClientConfig clientConfig) {
             doSetProperty("clientConfig", clientConfig);
             return this;
         }
@@ -1301,7 +1299,8 @@ public interface TelegramEndpointBuilderFactory {
          * @param proxyType the value to set
          * @return the dsl builder
          */
-        default TelegramEndpointBuilder proxyType(TelegramProxyType proxyType) {
+        default TelegramEndpointBuilder proxyType(
+                org.apache.camel.component.telegram.TelegramProxyType proxyType) {
             doSetProperty("proxyType", proxyType);
             return this;
         }
@@ -1409,7 +1408,8 @@ public interface TelegramEndpointBuilderFactory {
          * @param clientConfig the value to set
          * @return the dsl builder
          */
-        default AdvancedTelegramEndpointBuilder clientConfig(Object clientConfig) {
+        default AdvancedTelegramEndpointBuilder clientConfig(
+                org.asynchttpclient.AsyncHttpClientConfig clientConfig) {
             doSetProperty("clientConfig", clientConfig);
             return this;
         }
@@ -1430,16 +1430,6 @@ public interface TelegramEndpointBuilderFactory {
             doSetProperty("clientConfig", clientConfig);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.telegram.TelegramProxyType</code> enum.
-     */
-    enum TelegramProxyType {
-        HTTP,
-        SOCKS4,
-        SOCKS5;
     }
 
     public interface TelegramBuilders {

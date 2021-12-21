@@ -16,14 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.math.BigInteger;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Interact with Ethereum nodes using web3j client API.
@@ -55,7 +55,8 @@ public interface Web3jEndpointBuilderFactory {
          * @param addresses the value to set
          * @return the dsl builder
          */
-        default Web3jEndpointConsumerBuilder addresses(List<String> addresses) {
+        default Web3jEndpointConsumerBuilder addresses(
+                List<java.lang.String> addresses) {
             doSetProperty("addresses", addresses);
             return this;
         }
@@ -149,7 +150,8 @@ public interface Web3jEndpointBuilderFactory {
          * @param gasLimit the value to set
          * @return the dsl builder
          */
-        default Web3jEndpointConsumerBuilder gasLimit(BigInteger gasLimit) {
+        default Web3jEndpointConsumerBuilder gasLimit(
+                java.math.BigInteger gasLimit) {
             doSetProperty("gasLimit", gasLimit);
             return this;
         }
@@ -179,7 +181,8 @@ public interface Web3jEndpointBuilderFactory {
          * @param privateFor the value to set
          * @return the dsl builder
          */
-        default Web3jEndpointConsumerBuilder privateFor(List<String> privateFor) {
+        default Web3jEndpointConsumerBuilder privateFor(
+                List<java.lang.String> privateFor) {
             doSetProperty("privateFor", privateFor);
             return this;
         }
@@ -263,24 +266,7 @@ public interface Web3jEndpointBuilderFactory {
          * Topics are order-dependent. Each topic can also be a list of topics.
          * Specify multiple topics separated by comma.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param topics the value to set
-         * @return the dsl builder
-         */
-        default Web3jEndpointConsumerBuilder topics(List<String> topics) {
-            doSetProperty("topics", topics);
-            return this;
-        }
-        /**
-         * Topics are order-dependent. Each topic can also be a list of topics.
-         * Specify multiple topics separated by comma.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -302,7 +288,8 @@ public interface Web3jEndpointBuilderFactory {
          * @param web3j the value to set
          * @return the dsl builder
          */
-        default Web3jEndpointConsumerBuilder web3j(Object web3j) {
+        default Web3jEndpointConsumerBuilder web3j(
+                org.web3j.protocol.Web3j web3j) {
             doSetProperty("web3j", web3j);
             return this;
         }
@@ -393,7 +380,7 @@ public interface Web3jEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedWeb3jEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -428,7 +415,7 @@ public interface Web3jEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedWeb3jEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -471,7 +458,8 @@ public interface Web3jEndpointBuilderFactory {
          * @param addresses the value to set
          * @return the dsl builder
          */
-        default Web3jEndpointProducerBuilder addresses(List<String> addresses) {
+        default Web3jEndpointProducerBuilder addresses(
+                List<java.lang.String> addresses) {
             doSetProperty("addresses", addresses);
             return this;
         }
@@ -565,7 +553,8 @@ public interface Web3jEndpointBuilderFactory {
          * @param gasLimit the value to set
          * @return the dsl builder
          */
-        default Web3jEndpointProducerBuilder gasLimit(BigInteger gasLimit) {
+        default Web3jEndpointProducerBuilder gasLimit(
+                java.math.BigInteger gasLimit) {
             doSetProperty("gasLimit", gasLimit);
             return this;
         }
@@ -595,7 +584,8 @@ public interface Web3jEndpointBuilderFactory {
          * @param privateFor the value to set
          * @return the dsl builder
          */
-        default Web3jEndpointProducerBuilder privateFor(List<String> privateFor) {
+        default Web3jEndpointProducerBuilder privateFor(
+                List<java.lang.String> privateFor) {
             doSetProperty("privateFor", privateFor);
             return this;
         }
@@ -679,24 +669,7 @@ public interface Web3jEndpointBuilderFactory {
          * Topics are order-dependent. Each topic can also be a list of topics.
          * Specify multiple topics separated by comma.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param topics the value to set
-         * @return the dsl builder
-         */
-        default Web3jEndpointProducerBuilder topics(List<String> topics) {
-            doSetProperty("topics", topics);
-            return this;
-        }
-        /**
-         * Topics are order-dependent. Each topic can also be a list of topics.
-         * Specify multiple topics separated by comma.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -718,7 +691,8 @@ public interface Web3jEndpointBuilderFactory {
          * @param web3j the value to set
          * @return the dsl builder
          */
-        default Web3jEndpointProducerBuilder web3j(Object web3j) {
+        default Web3jEndpointProducerBuilder web3j(
+                org.web3j.protocol.Web3j web3j) {
             doSetProperty("web3j", web3j);
             return this;
         }
@@ -834,7 +808,8 @@ public interface Web3jEndpointBuilderFactory {
          * @param filterId the value to set
          * @return the dsl builder
          */
-        default Web3jEndpointProducerBuilder filterId(BigInteger filterId) {
+        default Web3jEndpointProducerBuilder filterId(
+                java.math.BigInteger filterId) {
             doSetProperty("filterId", filterId);
             return this;
         }
@@ -863,7 +838,8 @@ public interface Web3jEndpointBuilderFactory {
          * @param gasPrice the value to set
          * @return the dsl builder
          */
-        default Web3jEndpointProducerBuilder gasPrice(BigInteger gasPrice) {
+        default Web3jEndpointProducerBuilder gasPrice(
+                java.math.BigInteger gasPrice) {
             doSetProperty("gasPrice", gasPrice);
             return this;
         }
@@ -921,7 +897,7 @@ public interface Web3jEndpointBuilderFactory {
          * @param index the value to set
          * @return the dsl builder
          */
-        default Web3jEndpointProducerBuilder index(BigInteger index) {
+        default Web3jEndpointProducerBuilder index(java.math.BigInteger index) {
             doSetProperty("index", index);
             return this;
         }
@@ -1058,7 +1034,8 @@ public interface Web3jEndpointBuilderFactory {
          * @param position the value to set
          * @return the dsl builder
          */
-        default Web3jEndpointProducerBuilder position(BigInteger position) {
+        default Web3jEndpointProducerBuilder position(
+                java.math.BigInteger position) {
             doSetProperty("position", position);
             return this;
         }
@@ -1087,7 +1064,8 @@ public interface Web3jEndpointBuilderFactory {
          * @param priority the value to set
          * @return the dsl builder
          */
-        default Web3jEndpointProducerBuilder priority(BigInteger priority) {
+        default Web3jEndpointProducerBuilder priority(
+                java.math.BigInteger priority) {
             doSetProperty("priority", priority);
             return this;
         }
@@ -1176,7 +1154,7 @@ public interface Web3jEndpointBuilderFactory {
          * @param ttl the value to set
          * @return the dsl builder
          */
-        default Web3jEndpointProducerBuilder ttl(BigInteger ttl) {
+        default Web3jEndpointProducerBuilder ttl(java.math.BigInteger ttl) {
             doSetProperty("ttl", ttl);
             return this;
         }
@@ -1205,7 +1183,7 @@ public interface Web3jEndpointBuilderFactory {
          * @param value the value to set
          * @return the dsl builder
          */
-        default Web3jEndpointProducerBuilder value(BigInteger value) {
+        default Web3jEndpointProducerBuilder value(java.math.BigInteger value) {
             doSetProperty("value", value);
             return this;
         }
@@ -1259,7 +1237,7 @@ public interface Web3jEndpointBuilderFactory {
          * @param addresses the value to set
          * @return the dsl builder
          */
-        default Web3jEndpointBuilder addresses(List<String> addresses) {
+        default Web3jEndpointBuilder addresses(List<java.lang.String> addresses) {
             doSetProperty("addresses", addresses);
             return this;
         }
@@ -1353,7 +1331,7 @@ public interface Web3jEndpointBuilderFactory {
          * @param gasLimit the value to set
          * @return the dsl builder
          */
-        default Web3jEndpointBuilder gasLimit(BigInteger gasLimit) {
+        default Web3jEndpointBuilder gasLimit(java.math.BigInteger gasLimit) {
             doSetProperty("gasLimit", gasLimit);
             return this;
         }
@@ -1383,7 +1361,8 @@ public interface Web3jEndpointBuilderFactory {
          * @param privateFor the value to set
          * @return the dsl builder
          */
-        default Web3jEndpointBuilder privateFor(List<String> privateFor) {
+        default Web3jEndpointBuilder privateFor(
+                List<java.lang.String> privateFor) {
             doSetProperty("privateFor", privateFor);
             return this;
         }
@@ -1467,24 +1446,7 @@ public interface Web3jEndpointBuilderFactory {
          * Topics are order-dependent. Each topic can also be a list of topics.
          * Specify multiple topics separated by comma.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param topics the value to set
-         * @return the dsl builder
-         */
-        default Web3jEndpointBuilder topics(List<String> topics) {
-            doSetProperty("topics", topics);
-            return this;
-        }
-        /**
-         * Topics are order-dependent. Each topic can also be a list of topics.
-         * Specify multiple topics separated by comma.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -1506,7 +1468,7 @@ public interface Web3jEndpointBuilderFactory {
          * @param web3j the value to set
          * @return the dsl builder
          */
-        default Web3jEndpointBuilder web3j(Object web3j) {
+        default Web3jEndpointBuilder web3j(org.web3j.protocol.Web3j web3j) {
             doSetProperty("web3j", web3j);
             return this;
         }

@@ -16,12 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Expose gRPC endpoints and access external gRPC endpoints.
@@ -204,7 +206,7 @@ public interface GrpcEndpointBuilderFactory {
          * @return the dsl builder
          */
         default GrpcEndpointConsumerBuilder consumerStrategy(
-                GrpcConsumerStrategy consumerStrategy) {
+                org.apache.camel.component.grpc.GrpcConsumerStrategy consumerStrategy) {
             doSetProperty("consumerStrategy", consumerStrategy);
             return this;
         }
@@ -387,7 +389,7 @@ public interface GrpcEndpointBuilderFactory {
          * @return the dsl builder
          */
         default GrpcEndpointConsumerBuilder authenticationType(
-                GrpcAuthType authenticationType) {
+                org.apache.camel.component.grpc.GrpcAuthType authenticationType) {
             doSetProperty("authenticationType", authenticationType);
             return this;
         }
@@ -422,7 +424,7 @@ public interface GrpcEndpointBuilderFactory {
          * @return the dsl builder
          */
         default GrpcEndpointConsumerBuilder jwtAlgorithm(
-                JwtAlgorithm jwtAlgorithm) {
+                org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm jwtAlgorithm) {
             doSetProperty("jwtAlgorithm", jwtAlgorithm);
             return this;
         }
@@ -541,7 +543,7 @@ public interface GrpcEndpointBuilderFactory {
          * @return the dsl builder
          */
         default GrpcEndpointConsumerBuilder negotiationType(
-                NegotiationType negotiationType) {
+                io.grpc.netty.NegotiationType negotiationType) {
             doSetProperty("negotiationType", negotiationType);
             return this;
         }
@@ -621,7 +623,7 @@ public interface GrpcEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedGrpcEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -656,7 +658,7 @@ public interface GrpcEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedGrpcEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -899,7 +901,7 @@ public interface GrpcEndpointBuilderFactory {
          * @return the dsl builder
          */
         default GrpcEndpointProducerBuilder producerStrategy(
-                GrpcProducerStrategy producerStrategy) {
+                org.apache.camel.component.grpc.GrpcProducerStrategy producerStrategy) {
             doSetProperty("producerStrategy", producerStrategy);
             return this;
         }
@@ -968,7 +970,7 @@ public interface GrpcEndpointBuilderFactory {
          * @return the dsl builder
          */
         default GrpcEndpointProducerBuilder authenticationType(
-                GrpcAuthType authenticationType) {
+                org.apache.camel.component.grpc.GrpcAuthType authenticationType) {
             doSetProperty("authenticationType", authenticationType);
             return this;
         }
@@ -1003,7 +1005,7 @@ public interface GrpcEndpointBuilderFactory {
          * @return the dsl builder
          */
         default GrpcEndpointProducerBuilder jwtAlgorithm(
-                JwtAlgorithm jwtAlgorithm) {
+                org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm jwtAlgorithm) {
             doSetProperty("jwtAlgorithm", jwtAlgorithm);
             return this;
         }
@@ -1122,7 +1124,7 @@ public interface GrpcEndpointBuilderFactory {
          * @return the dsl builder
          */
         default GrpcEndpointProducerBuilder negotiationType(
-                NegotiationType negotiationType) {
+                io.grpc.netty.NegotiationType negotiationType) {
             doSetProperty("negotiationType", negotiationType);
             return this;
         }
@@ -1343,7 +1345,7 @@ public interface GrpcEndpointBuilderFactory {
          * @return the dsl builder
          */
         default GrpcEndpointBuilder authenticationType(
-                GrpcAuthType authenticationType) {
+                org.apache.camel.component.grpc.GrpcAuthType authenticationType) {
             doSetProperty("authenticationType", authenticationType);
             return this;
         }
@@ -1376,7 +1378,8 @@ public interface GrpcEndpointBuilderFactory {
          * @param jwtAlgorithm the value to set
          * @return the dsl builder
          */
-        default GrpcEndpointBuilder jwtAlgorithm(JwtAlgorithm jwtAlgorithm) {
+        default GrpcEndpointBuilder jwtAlgorithm(
+                org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm jwtAlgorithm) {
             doSetProperty("jwtAlgorithm", jwtAlgorithm);
             return this;
         }
@@ -1495,7 +1498,7 @@ public interface GrpcEndpointBuilderFactory {
          * @return the dsl builder
          */
         default GrpcEndpointBuilder negotiationType(
-                NegotiationType negotiationType) {
+                io.grpc.netty.NegotiationType negotiationType) {
             doSetProperty("negotiationType", negotiationType);
             return this;
         }
@@ -1591,53 +1594,6 @@ public interface GrpcEndpointBuilderFactory {
             doSetProperty("synchronous", synchronous);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.grpc.GrpcConsumerStrategy</code> enum.
-     */
-    enum GrpcConsumerStrategy {
-        AGGREGATION,
-        PROPAGATION;
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.grpc.GrpcProducerStrategy</code> enum.
-     */
-    enum GrpcProducerStrategy {
-        SIMPLE,
-        STREAMING;
-    }
-
-    /**
-     * Proxy enum for <code>org.apache.camel.component.grpc.GrpcAuthType</code>
-     * enum.
-     */
-    enum GrpcAuthType {
-        NONE,
-        GOOGLE,
-        JWT;
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm</code> enum.
-     */
-    enum JwtAlgorithm {
-        HMAC256,
-        HMAC384,
-        HMAC512;
-    }
-
-    /**
-     * Proxy enum for <code>io.grpc.netty.NegotiationType</code> enum.
-     */
-    enum NegotiationType {
-        TLS,
-        PLAINTEXT_UPGRADE,
-        PLAINTEXT;
     }
 
     public interface GrpcBuilders {

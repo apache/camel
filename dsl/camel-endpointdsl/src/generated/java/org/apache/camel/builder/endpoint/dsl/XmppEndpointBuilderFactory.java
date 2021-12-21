@@ -16,13 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.HeaderFilterStrategy;
 
 /**
  * Send and receive messages to/from an XMPP chat server.
@@ -332,7 +333,7 @@ public interface XmppEndpointBuilderFactory {
          * @return the dsl builder
          */
         default XmppEndpointConsumerBuilder headerFilterStrategy(
-                HeaderFilterStrategy headerFilterStrategy) {
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
@@ -473,7 +474,7 @@ public interface XmppEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedXmppEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -508,7 +509,7 @@ public interface XmppEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedXmppEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -542,7 +543,7 @@ public interface XmppEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedXmppEndpointConsumerBuilder connectionConfig(
-                Object connectionConfig) {
+                org.jivesoftware.smack.ConnectionConfiguration connectionConfig) {
             doSetProperty("connectionConfig", connectionConfig);
             return this;
         }
@@ -796,7 +797,7 @@ public interface XmppEndpointBuilderFactory {
          * @return the dsl builder
          */
         default XmppEndpointProducerBuilder headerFilterStrategy(
-                HeaderFilterStrategy headerFilterStrategy) {
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
@@ -936,7 +937,7 @@ public interface XmppEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedXmppEndpointProducerBuilder connectionConfig(
-                Object connectionConfig) {
+                org.jivesoftware.smack.ConnectionConfiguration connectionConfig) {
             doSetProperty("connectionConfig", connectionConfig);
             return this;
         }
@@ -1142,7 +1143,7 @@ public interface XmppEndpointBuilderFactory {
          * @return the dsl builder
          */
         default XmppEndpointBuilder headerFilterStrategy(
-                HeaderFilterStrategy headerFilterStrategy) {
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
@@ -1281,7 +1282,7 @@ public interface XmppEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedXmppEndpointBuilder connectionConfig(
-                Object connectionConfig) {
+                org.jivesoftware.smack.ConnectionConfiguration connectionConfig) {
             doSetProperty("connectionConfig", connectionConfig);
             return this;
         }

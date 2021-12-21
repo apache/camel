@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -59,7 +63,8 @@ public interface AWS2EC2EndpointBuilderFactory {
          * @param amazonEc2Client the value to set
          * @return the dsl builder
          */
-        default AWS2EC2EndpointBuilder amazonEc2Client(Object amazonEc2Client) {
+        default AWS2EC2EndpointBuilder amazonEc2Client(
+                software.amazon.awssdk.services.ec2.Ec2Client amazonEc2Client) {
             doSetProperty("amazonEc2Client", amazonEc2Client);
             return this;
         }
@@ -142,7 +147,8 @@ public interface AWS2EC2EndpointBuilderFactory {
          * @param operation the value to set
          * @return the dsl builder
          */
-        default AWS2EC2EndpointBuilder operation(AWS2EC2Operations operation) {
+        default AWS2EC2EndpointBuilder operation(
+                org.apache.camel.component.aws2.ec2.AWS2EC2Operations operation) {
             doSetProperty("operation", operation);
             return this;
         }
@@ -284,7 +290,8 @@ public interface AWS2EC2EndpointBuilderFactory {
          * @param proxyProtocol the value to set
          * @return the dsl builder
          */
-        default AWS2EC2EndpointBuilder proxyProtocol(Protocol proxyProtocol) {
+        default AWS2EC2EndpointBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
@@ -423,32 +430,6 @@ public interface AWS2EC2EndpointBuilderFactory {
             doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.aws2.ec2.AWS2EC2Operations</code> enum.
-     */
-    enum AWS2EC2Operations {
-        createAndRunInstances,
-        startInstances,
-        stopInstances,
-        terminateInstances,
-        describeInstances,
-        describeInstancesStatus,
-        rebootInstances,
-        monitorInstances,
-        unmonitorInstances,
-        createTags,
-        deleteTags;
-    }
-
-    /**
-     * Proxy enum for <code>software.amazon.awssdk.core.Protocol</code> enum.
-     */
-    enum Protocol {
-        HTTP,
-        HTTPS;
     }
 
     public interface AWS2EC2Builders {

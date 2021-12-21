@@ -16,17 +16,15 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
 import java.util.Map;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.PollingConsumerPollStrategy;
 
 /**
  * Send and receive messages to/from Slack.
@@ -118,7 +116,7 @@ public interface SlackEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SlackEndpointConsumerBuilder conversationType(
-                ConversationType conversationType) {
+                com.slack.api.model.ConversationType conversationType) {
             doSetProperty("conversationType", conversationType);
             return this;
         }
@@ -480,7 +478,7 @@ public interface SlackEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SlackEndpointConsumerBuilder runLoggingLevel(
-                LoggingLevel runLoggingLevel) {
+                org.apache.camel.LoggingLevel runLoggingLevel) {
             doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
@@ -736,7 +734,7 @@ public interface SlackEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSlackEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -771,7 +769,7 @@ public interface SlackEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSlackEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -806,7 +804,7 @@ public interface SlackEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSlackEndpointConsumerBuilder pollStrategy(
-                PollingConsumerPollStrategy pollStrategy) {
+                org.apache.camel.spi.PollingConsumerPollStrategy pollStrategy) {
             doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
@@ -1013,16 +1011,6 @@ public interface SlackEndpointBuilderFactory {
         default SlackEndpointBuilder basic() {
             return (SlackEndpointBuilder) this;
         }
-    }
-
-    /**
-     * Proxy enum for <code>com.slack.api.model.ConversationType</code> enum.
-     */
-    enum ConversationType {
-        PUBLIC_CHANNEL,
-        PRIVATE_CHANNEL,
-        MPIM,
-        IM;
     }
 
     public interface SlackBuilders {

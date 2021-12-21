@@ -16,13 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.HeaderFilterStrategy;
 
 /**
  * Expose REST endpoints and access external REST servers.
@@ -517,7 +518,7 @@ public interface ResteasyEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedResteasyEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -552,7 +553,7 @@ public interface ResteasyEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedResteasyEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -767,7 +768,7 @@ public interface ResteasyEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedResteasyEndpointConsumerBuilder headerFilterStrategy(
-                HeaderFilterStrategy headerFilterStrategy) {
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
@@ -1258,7 +1259,7 @@ public interface ResteasyEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ResteasyEndpointProducerBuilder httpMethod(
-                HttpMethods httpMethod) {
+                org.apache.camel.http.common.HttpMethods httpMethod) {
             doSetProperty("httpMethod", httpMethod);
             return this;
         }
@@ -1509,7 +1510,7 @@ public interface ResteasyEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedResteasyEndpointProducerBuilder cookieHandler(
-                Object cookieHandler) {
+                org.apache.camel.http.base.cookie.CookieHandler cookieHandler) {
             doSetProperty("cookieHandler", cookieHandler);
             return this;
         }
@@ -1729,7 +1730,7 @@ public interface ResteasyEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedResteasyEndpointProducerBuilder headerFilterStrategy(
-                HeaderFilterStrategy headerFilterStrategy) {
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
@@ -2106,7 +2107,7 @@ public interface ResteasyEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedResteasyEndpointBuilder headerFilterStrategy(
-                HeaderFilterStrategy headerFilterStrategy) {
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
@@ -2229,21 +2230,6 @@ public interface ResteasyEndpointBuilderFactory {
             doSetProperty("useSystemProperties", useSystemProperties);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for <code>org.apache.camel.http.common.HttpMethods</code>
-     * enum.
-     */
-    enum HttpMethods {
-        GET,
-        POST,
-        PUT,
-        DELETE,
-        HEAD,
-        OPTIONS,
-        TRACE,
-        PATCH;
     }
 
     public interface ResteasyBuilders {

@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -48,7 +52,7 @@ public interface EventbridgeEndpointBuilderFactory {
          * @return the dsl builder
          */
         default EventbridgeEndpointBuilder eventbridgeClient(
-                Object eventbridgeClient) {
+                software.amazon.awssdk.services.eventbridge.EventBridgeClient eventbridgeClient) {
             doSetProperty("eventbridgeClient", eventbridgeClient);
             return this;
         }
@@ -146,7 +150,7 @@ public interface EventbridgeEndpointBuilderFactory {
          * @return the dsl builder
          */
         default EventbridgeEndpointBuilder operation(
-                EventbridgeOperations operation) {
+                org.apache.camel.component.aws2.eventbridge.EventbridgeOperations operation) {
             doSetProperty("operation", operation);
             return this;
         }
@@ -288,7 +292,8 @@ public interface EventbridgeEndpointBuilderFactory {
          * @param proxyProtocol the value to set
          * @return the dsl builder
          */
-        default EventbridgeEndpointBuilder proxyProtocol(Protocol proxyProtocol) {
+        default EventbridgeEndpointBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
@@ -441,31 +446,6 @@ public interface EventbridgeEndpointBuilderFactory {
             doSetProperty("secretKey", secretKey);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.aws2.eventbridge.EventbridgeOperations</code> enum.
-     */
-    enum EventbridgeOperations {
-        putRule,
-        putTargets,
-        removeTargets,
-        deleteRule,
-        enableRule,
-        disableRule,
-        describeRule,
-        listRules,
-        listTargetsByRule,
-        listRuleNamesByTarget;
-    }
-
-    /**
-     * Proxy enum for <code>software.amazon.awssdk.core.Protocol</code> enum.
-     */
-    enum Protocol {
-        HTTP,
-        HTTPS;
     }
 
     public interface EventbridgeBuilders {

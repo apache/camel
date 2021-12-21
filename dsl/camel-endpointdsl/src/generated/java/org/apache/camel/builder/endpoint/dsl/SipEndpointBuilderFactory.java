@@ -16,13 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Send and receive messages using the SIP protocol (used in
@@ -607,7 +608,7 @@ public interface SipEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -642,7 +643,7 @@ public interface SipEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -674,7 +675,7 @@ public interface SipEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder addressFactory(
-                Object addressFactory) {
+                javax.sip.address.AddressFactory addressFactory) {
             doSetProperty("addressFactory", addressFactory);
             return this;
         }
@@ -707,7 +708,7 @@ public interface SipEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder callIdHeader(
-                Object callIdHeader) {
+                javax.sip.header.CallIdHeader callIdHeader) {
             doSetProperty("callIdHeader", callIdHeader);
             return this;
         }
@@ -742,7 +743,7 @@ public interface SipEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder contactHeader(
-                Object contactHeader) {
+                javax.sip.header.ContactHeader contactHeader) {
             doSetProperty("contactHeader", contactHeader);
             return this;
         }
@@ -777,7 +778,7 @@ public interface SipEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder contentTypeHeader(
-                Object contentTypeHeader) {
+                javax.sip.header.ContentTypeHeader contentTypeHeader) {
             doSetProperty("contentTypeHeader", contentTypeHeader);
             return this;
         }
@@ -811,7 +812,7 @@ public interface SipEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder eventHeader(
-                Object eventHeader) {
+                javax.sip.header.EventHeader eventHeader) {
             doSetProperty("eventHeader", eventHeader);
             return this;
         }
@@ -845,7 +846,7 @@ public interface SipEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder expiresHeader(
-                Object expiresHeader) {
+                javax.sip.header.ExpiresHeader expiresHeader) {
             doSetProperty("expiresHeader", expiresHeader);
             return this;
         }
@@ -879,7 +880,7 @@ public interface SipEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder extensionHeader(
-                Object extensionHeader) {
+                javax.sip.header.ExtensionHeader extensionHeader) {
             doSetProperty("extensionHeader", extensionHeader);
             return this;
         }
@@ -912,7 +913,8 @@ public interface SipEndpointBuilderFactory {
          * @param fromHeader the value to set
          * @return the dsl builder
          */
-        default AdvancedSipEndpointConsumerBuilder fromHeader(Object fromHeader) {
+        default AdvancedSipEndpointConsumerBuilder fromHeader(
+                javax.sip.header.FromHeader fromHeader) {
             doSetProperty("fromHeader", fromHeader);
             return this;
         }
@@ -944,7 +946,7 @@ public interface SipEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder headerFactory(
-                Object headerFactory) {
+                javax.sip.header.HeaderFactory headerFactory) {
             doSetProperty("headerFactory", headerFactory);
             return this;
         }
@@ -976,7 +978,7 @@ public interface SipEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder listeningPoint(
-                Object listeningPoint) {
+                javax.sip.ListeningPoint listeningPoint) {
             doSetProperty("listeningPoint", listeningPoint);
             return this;
         }
@@ -1010,7 +1012,7 @@ public interface SipEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder maxForwardsHeader(
-                Object maxForwardsHeader) {
+                javax.sip.header.MaxForwardsHeader maxForwardsHeader) {
             doSetProperty("maxForwardsHeader", maxForwardsHeader);
             return this;
         }
@@ -1076,7 +1078,7 @@ public interface SipEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder messageFactory(
-                Object messageFactory) {
+                javax.sip.message.MessageFactory messageFactory) {
             doSetProperty("messageFactory", messageFactory);
             return this;
         }
@@ -1106,7 +1108,8 @@ public interface SipEndpointBuilderFactory {
          * @param sipFactory the value to set
          * @return the dsl builder
          */
-        default AdvancedSipEndpointConsumerBuilder sipFactory(Object sipFactory) {
+        default AdvancedSipEndpointConsumerBuilder sipFactory(
+                javax.sip.SipFactory sipFactory) {
             doSetProperty("sipFactory", sipFactory);
             return this;
         }
@@ -1135,7 +1138,8 @@ public interface SipEndpointBuilderFactory {
          * @param sipStack the value to set
          * @return the dsl builder
          */
-        default AdvancedSipEndpointConsumerBuilder sipStack(Object sipStack) {
+        default AdvancedSipEndpointConsumerBuilder sipStack(
+                javax.sip.SipStack sipStack) {
             doSetProperty("sipStack", sipStack);
             return this;
         }
@@ -1166,7 +1170,8 @@ public interface SipEndpointBuilderFactory {
          * @param sipUri the value to set
          * @return the dsl builder
          */
-        default AdvancedSipEndpointConsumerBuilder sipUri(Object sipUri) {
+        default AdvancedSipEndpointConsumerBuilder sipUri(
+                javax.sip.address.SipURI sipUri) {
             doSetProperty("sipUri", sipUri);
             return this;
         }
@@ -1198,7 +1203,8 @@ public interface SipEndpointBuilderFactory {
          * @param toHeader the value to set
          * @return the dsl builder
          */
-        default AdvancedSipEndpointConsumerBuilder toHeader(Object toHeader) {
+        default AdvancedSipEndpointConsumerBuilder toHeader(
+                javax.sip.header.ToHeader toHeader) {
             doSetProperty("toHeader", toHeader);
             return this;
         }
@@ -1233,7 +1239,7 @@ public interface SipEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder viaHeaders(
-                List<Object> viaHeaders) {
+                List<javax.sip.header.ViaHeader> viaHeaders) {
             doSetProperty("viaHeaders", viaHeaders);
             return this;
         }
@@ -1761,7 +1767,7 @@ public interface SipEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSipEndpointProducerBuilder addressFactory(
-                Object addressFactory) {
+                javax.sip.address.AddressFactory addressFactory) {
             doSetProperty("addressFactory", addressFactory);
             return this;
         }
@@ -1794,7 +1800,7 @@ public interface SipEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSipEndpointProducerBuilder callIdHeader(
-                Object callIdHeader) {
+                javax.sip.header.CallIdHeader callIdHeader) {
             doSetProperty("callIdHeader", callIdHeader);
             return this;
         }
@@ -1829,7 +1835,7 @@ public interface SipEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSipEndpointProducerBuilder contactHeader(
-                Object contactHeader) {
+                javax.sip.header.ContactHeader contactHeader) {
             doSetProperty("contactHeader", contactHeader);
             return this;
         }
@@ -1864,7 +1870,7 @@ public interface SipEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSipEndpointProducerBuilder contentTypeHeader(
-                Object contentTypeHeader) {
+                javax.sip.header.ContentTypeHeader contentTypeHeader) {
             doSetProperty("contentTypeHeader", contentTypeHeader);
             return this;
         }
@@ -1898,7 +1904,7 @@ public interface SipEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSipEndpointProducerBuilder eventHeader(
-                Object eventHeader) {
+                javax.sip.header.EventHeader eventHeader) {
             doSetProperty("eventHeader", eventHeader);
             return this;
         }
@@ -1932,7 +1938,7 @@ public interface SipEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSipEndpointProducerBuilder expiresHeader(
-                Object expiresHeader) {
+                javax.sip.header.ExpiresHeader expiresHeader) {
             doSetProperty("expiresHeader", expiresHeader);
             return this;
         }
@@ -1966,7 +1972,7 @@ public interface SipEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSipEndpointProducerBuilder extensionHeader(
-                Object extensionHeader) {
+                javax.sip.header.ExtensionHeader extensionHeader) {
             doSetProperty("extensionHeader", extensionHeader);
             return this;
         }
@@ -1999,7 +2005,8 @@ public interface SipEndpointBuilderFactory {
          * @param fromHeader the value to set
          * @return the dsl builder
          */
-        default AdvancedSipEndpointProducerBuilder fromHeader(Object fromHeader) {
+        default AdvancedSipEndpointProducerBuilder fromHeader(
+                javax.sip.header.FromHeader fromHeader) {
             doSetProperty("fromHeader", fromHeader);
             return this;
         }
@@ -2031,7 +2038,7 @@ public interface SipEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSipEndpointProducerBuilder headerFactory(
-                Object headerFactory) {
+                javax.sip.header.HeaderFactory headerFactory) {
             doSetProperty("headerFactory", headerFactory);
             return this;
         }
@@ -2063,7 +2070,7 @@ public interface SipEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSipEndpointProducerBuilder listeningPoint(
-                Object listeningPoint) {
+                javax.sip.ListeningPoint listeningPoint) {
             doSetProperty("listeningPoint", listeningPoint);
             return this;
         }
@@ -2097,7 +2104,7 @@ public interface SipEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSipEndpointProducerBuilder maxForwardsHeader(
-                Object maxForwardsHeader) {
+                javax.sip.header.MaxForwardsHeader maxForwardsHeader) {
             doSetProperty("maxForwardsHeader", maxForwardsHeader);
             return this;
         }
@@ -2163,7 +2170,7 @@ public interface SipEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSipEndpointProducerBuilder messageFactory(
-                Object messageFactory) {
+                javax.sip.message.MessageFactory messageFactory) {
             doSetProperty("messageFactory", messageFactory);
             return this;
         }
@@ -2193,7 +2200,8 @@ public interface SipEndpointBuilderFactory {
          * @param sipFactory the value to set
          * @return the dsl builder
          */
-        default AdvancedSipEndpointProducerBuilder sipFactory(Object sipFactory) {
+        default AdvancedSipEndpointProducerBuilder sipFactory(
+                javax.sip.SipFactory sipFactory) {
             doSetProperty("sipFactory", sipFactory);
             return this;
         }
@@ -2222,7 +2230,8 @@ public interface SipEndpointBuilderFactory {
          * @param sipStack the value to set
          * @return the dsl builder
          */
-        default AdvancedSipEndpointProducerBuilder sipStack(Object sipStack) {
+        default AdvancedSipEndpointProducerBuilder sipStack(
+                javax.sip.SipStack sipStack) {
             doSetProperty("sipStack", sipStack);
             return this;
         }
@@ -2253,7 +2262,8 @@ public interface SipEndpointBuilderFactory {
          * @param sipUri the value to set
          * @return the dsl builder
          */
-        default AdvancedSipEndpointProducerBuilder sipUri(Object sipUri) {
+        default AdvancedSipEndpointProducerBuilder sipUri(
+                javax.sip.address.SipURI sipUri) {
             doSetProperty("sipUri", sipUri);
             return this;
         }
@@ -2285,7 +2295,8 @@ public interface SipEndpointBuilderFactory {
          * @param toHeader the value to set
          * @return the dsl builder
          */
-        default AdvancedSipEndpointProducerBuilder toHeader(Object toHeader) {
+        default AdvancedSipEndpointProducerBuilder toHeader(
+                javax.sip.header.ToHeader toHeader) {
             doSetProperty("toHeader", toHeader);
             return this;
         }
@@ -2320,7 +2331,7 @@ public interface SipEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSipEndpointProducerBuilder viaHeaders(
-                List<Object> viaHeaders) {
+                List<javax.sip.header.ViaHeader> viaHeaders) {
             doSetProperty("viaHeaders", viaHeaders);
             return this;
         }
@@ -2797,7 +2808,8 @@ public interface SipEndpointBuilderFactory {
          * @param addressFactory the value to set
          * @return the dsl builder
          */
-        default AdvancedSipEndpointBuilder addressFactory(Object addressFactory) {
+        default AdvancedSipEndpointBuilder addressFactory(
+                javax.sip.address.AddressFactory addressFactory) {
             doSetProperty("addressFactory", addressFactory);
             return this;
         }
@@ -2828,7 +2840,8 @@ public interface SipEndpointBuilderFactory {
          * @param callIdHeader the value to set
          * @return the dsl builder
          */
-        default AdvancedSipEndpointBuilder callIdHeader(Object callIdHeader) {
+        default AdvancedSipEndpointBuilder callIdHeader(
+                javax.sip.header.CallIdHeader callIdHeader) {
             doSetProperty("callIdHeader", callIdHeader);
             return this;
         }
@@ -2861,7 +2874,8 @@ public interface SipEndpointBuilderFactory {
          * @param contactHeader the value to set
          * @return the dsl builder
          */
-        default AdvancedSipEndpointBuilder contactHeader(Object contactHeader) {
+        default AdvancedSipEndpointBuilder contactHeader(
+                javax.sip.header.ContactHeader contactHeader) {
             doSetProperty("contactHeader", contactHeader);
             return this;
         }
@@ -2895,7 +2909,7 @@ public interface SipEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSipEndpointBuilder contentTypeHeader(
-                Object contentTypeHeader) {
+                javax.sip.header.ContentTypeHeader contentTypeHeader) {
             doSetProperty("contentTypeHeader", contentTypeHeader);
             return this;
         }
@@ -2928,7 +2942,8 @@ public interface SipEndpointBuilderFactory {
          * @param eventHeader the value to set
          * @return the dsl builder
          */
-        default AdvancedSipEndpointBuilder eventHeader(Object eventHeader) {
+        default AdvancedSipEndpointBuilder eventHeader(
+                javax.sip.header.EventHeader eventHeader) {
             doSetProperty("eventHeader", eventHeader);
             return this;
         }
@@ -2960,7 +2975,8 @@ public interface SipEndpointBuilderFactory {
          * @param expiresHeader the value to set
          * @return the dsl builder
          */
-        default AdvancedSipEndpointBuilder expiresHeader(Object expiresHeader) {
+        default AdvancedSipEndpointBuilder expiresHeader(
+                javax.sip.header.ExpiresHeader expiresHeader) {
             doSetProperty("expiresHeader", expiresHeader);
             return this;
         }
@@ -2993,7 +3009,7 @@ public interface SipEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSipEndpointBuilder extensionHeader(
-                Object extensionHeader) {
+                javax.sip.header.ExtensionHeader extensionHeader) {
             doSetProperty("extensionHeader", extensionHeader);
             return this;
         }
@@ -3026,7 +3042,8 @@ public interface SipEndpointBuilderFactory {
          * @param fromHeader the value to set
          * @return the dsl builder
          */
-        default AdvancedSipEndpointBuilder fromHeader(Object fromHeader) {
+        default AdvancedSipEndpointBuilder fromHeader(
+                javax.sip.header.FromHeader fromHeader) {
             doSetProperty("fromHeader", fromHeader);
             return this;
         }
@@ -3057,7 +3074,8 @@ public interface SipEndpointBuilderFactory {
          * @param headerFactory the value to set
          * @return the dsl builder
          */
-        default AdvancedSipEndpointBuilder headerFactory(Object headerFactory) {
+        default AdvancedSipEndpointBuilder headerFactory(
+                javax.sip.header.HeaderFactory headerFactory) {
             doSetProperty("headerFactory", headerFactory);
             return this;
         }
@@ -3087,7 +3105,8 @@ public interface SipEndpointBuilderFactory {
          * @param listeningPoint the value to set
          * @return the dsl builder
          */
-        default AdvancedSipEndpointBuilder listeningPoint(Object listeningPoint) {
+        default AdvancedSipEndpointBuilder listeningPoint(
+                javax.sip.ListeningPoint listeningPoint) {
             doSetProperty("listeningPoint", listeningPoint);
             return this;
         }
@@ -3120,7 +3139,7 @@ public interface SipEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSipEndpointBuilder maxForwardsHeader(
-                Object maxForwardsHeader) {
+                javax.sip.header.MaxForwardsHeader maxForwardsHeader) {
             doSetProperty("maxForwardsHeader", maxForwardsHeader);
             return this;
         }
@@ -3183,7 +3202,8 @@ public interface SipEndpointBuilderFactory {
          * @param messageFactory the value to set
          * @return the dsl builder
          */
-        default AdvancedSipEndpointBuilder messageFactory(Object messageFactory) {
+        default AdvancedSipEndpointBuilder messageFactory(
+                javax.sip.message.MessageFactory messageFactory) {
             doSetProperty("messageFactory", messageFactory);
             return this;
         }
@@ -3212,7 +3232,8 @@ public interface SipEndpointBuilderFactory {
          * @param sipFactory the value to set
          * @return the dsl builder
          */
-        default AdvancedSipEndpointBuilder sipFactory(Object sipFactory) {
+        default AdvancedSipEndpointBuilder sipFactory(
+                javax.sip.SipFactory sipFactory) {
             doSetProperty("sipFactory", sipFactory);
             return this;
         }
@@ -3241,7 +3262,7 @@ public interface SipEndpointBuilderFactory {
          * @param sipStack the value to set
          * @return the dsl builder
          */
-        default AdvancedSipEndpointBuilder sipStack(Object sipStack) {
+        default AdvancedSipEndpointBuilder sipStack(javax.sip.SipStack sipStack) {
             doSetProperty("sipStack", sipStack);
             return this;
         }
@@ -3272,7 +3293,8 @@ public interface SipEndpointBuilderFactory {
          * @param sipUri the value to set
          * @return the dsl builder
          */
-        default AdvancedSipEndpointBuilder sipUri(Object sipUri) {
+        default AdvancedSipEndpointBuilder sipUri(
+                javax.sip.address.SipURI sipUri) {
             doSetProperty("sipUri", sipUri);
             return this;
         }
@@ -3304,7 +3326,8 @@ public interface SipEndpointBuilderFactory {
          * @param toHeader the value to set
          * @return the dsl builder
          */
-        default AdvancedSipEndpointBuilder toHeader(Object toHeader) {
+        default AdvancedSipEndpointBuilder toHeader(
+                javax.sip.header.ToHeader toHeader) {
             doSetProperty("toHeader", toHeader);
             return this;
         }
@@ -3338,7 +3361,8 @@ public interface SipEndpointBuilderFactory {
          * @param viaHeaders the value to set
          * @return the dsl builder
          */
-        default AdvancedSipEndpointBuilder viaHeaders(List<Object> viaHeaders) {
+        default AdvancedSipEndpointBuilder viaHeaders(
+                List<javax.sip.header.ViaHeader> viaHeaders) {
             doSetProperty("viaHeaders", viaHeaders);
             return this;
         }

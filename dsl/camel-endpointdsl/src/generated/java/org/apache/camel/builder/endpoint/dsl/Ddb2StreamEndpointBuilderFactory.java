@@ -16,17 +16,15 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
 import java.util.Map;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.PollingConsumerPollStrategy;
 
 /**
  * Receive messages from AWS DynamoDB Stream service using AWS SDK version 2.x.
@@ -58,7 +56,7 @@ public interface Ddb2StreamEndpointBuilderFactory {
          * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder amazonDynamoDbStreamsClient(
-                Object amazonDynamoDbStreamsClient) {
+                software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient amazonDynamoDbStreamsClient) {
             doSetProperty("amazonDynamoDbStreamsClient", amazonDynamoDbStreamsClient);
             return this;
         }
@@ -243,7 +241,8 @@ public interface Ddb2StreamEndpointBuilderFactory {
          * @param proxyProtocol the value to set
          * @return the dsl builder
          */
-        default Ddb2StreamEndpointBuilder proxyProtocol(Protocol proxyProtocol) {
+        default Ddb2StreamEndpointBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
@@ -318,7 +317,7 @@ public interface Ddb2StreamEndpointBuilderFactory {
          * has caught up to real-time.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.aws2.ddbstream.Ddb2StreamConfiguration$StreamIteratorType&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.aws2.ddbstream.Ddb2StreamConfiguration.StreamIteratorType&lt;/code&gt; type.
          * 
          * Default: FROM_LATEST
          * Group: consumer
@@ -327,7 +326,7 @@ public interface Ddb2StreamEndpointBuilderFactory {
          * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder streamIteratorType(
-                StreamIteratorType streamIteratorType) {
+                org.apache.camel.component.aws2.ddbstream.Ddb2StreamConfiguration.StreamIteratorType streamIteratorType) {
             doSetProperty("streamIteratorType", streamIteratorType);
             return this;
         }
@@ -337,7 +336,7 @@ public interface Ddb2StreamEndpointBuilderFactory {
          * has caught up to real-time.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.aws2.ddbstream.Ddb2StreamConfiguration$StreamIteratorType&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.aws2.ddbstream.Ddb2StreamConfiguration.StreamIteratorType&lt;/code&gt; type.
          * 
          * Default: FROM_LATEST
          * Group: consumer
@@ -683,7 +682,7 @@ public interface Ddb2StreamEndpointBuilderFactory {
          * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder runLoggingLevel(
-                LoggingLevel runLoggingLevel) {
+                org.apache.camel.LoggingLevel runLoggingLevel) {
             doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
@@ -964,7 +963,7 @@ public interface Ddb2StreamEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedDdb2StreamEndpointBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -999,7 +998,7 @@ public interface Ddb2StreamEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedDdb2StreamEndpointBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -1034,7 +1033,7 @@ public interface Ddb2StreamEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedDdb2StreamEndpointBuilder pollStrategy(
-                PollingConsumerPollStrategy pollStrategy) {
+                org.apache.camel.spi.PollingConsumerPollStrategy pollStrategy) {
             doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
@@ -1057,23 +1056,6 @@ public interface Ddb2StreamEndpointBuilderFactory {
             doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for <code>software.amazon.awssdk.core.Protocol</code> enum.
-     */
-    enum Protocol {
-        HTTP,
-        HTTPS;
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.aws2.ddbstream.Ddb2StreamConfiguration$StreamIteratorType</code> enum.
-     */
-    enum StreamIteratorType {
-        FROM_LATEST,
-        FROM_START;
     }
 
     public interface Ddb2StreamBuilders {

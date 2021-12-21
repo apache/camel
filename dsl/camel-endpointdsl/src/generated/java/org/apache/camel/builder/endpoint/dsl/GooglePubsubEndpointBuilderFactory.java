@@ -16,12 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Send and receive messages to/from Google Cloud Platform PubSub Service.
@@ -113,7 +115,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * process has to ack/nack explicitly.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.google.pubsub.GooglePubsubConstants$AckMode&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.google.pubsub.GooglePubsubConstants.AckMode&lt;/code&gt; type.
          * 
          * Default: AUTO
          * Group: consumer
@@ -121,7 +123,8 @@ public interface GooglePubsubEndpointBuilderFactory {
          * @param ackMode the value to set
          * @return the dsl builder
          */
-        default GooglePubsubEndpointConsumerBuilder ackMode(AckMode ackMode) {
+        default GooglePubsubEndpointConsumerBuilder ackMode(
+                org.apache.camel.component.google.pubsub.GooglePubsubConstants.AckMode ackMode) {
             doSetProperty("ackMode", ackMode);
             return this;
         }
@@ -130,7 +133,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * process has to ack/nack explicitly.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.google.pubsub.GooglePubsubConstants$AckMode&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.google.pubsub.GooglePubsubConstants.AckMode&lt;/code&gt; type.
          * 
          * Default: AUTO
          * Group: consumer
@@ -314,7 +317,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedGooglePubsubEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -349,7 +352,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedGooglePubsubEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -570,7 +573,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedGooglePubsubEndpointProducerBuilder serializer(
-                Object serializer) {
+                org.apache.camel.component.google.pubsub.serializer.GooglePubsubSerializer serializer) {
             doSetProperty("serializer", serializer);
             return this;
         }
@@ -680,15 +683,6 @@ public interface GooglePubsubEndpointBuilderFactory {
         default GooglePubsubEndpointBuilder basic() {
             return (GooglePubsubEndpointBuilder) this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.google.pubsub.GooglePubsubConstants$AckMode</code> enum.
-     */
-    enum AckMode {
-        AUTO,
-        NONE;
     }
 
     public interface GooglePubsubBuilders {

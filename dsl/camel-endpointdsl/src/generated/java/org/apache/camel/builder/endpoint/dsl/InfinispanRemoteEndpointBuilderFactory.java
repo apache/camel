@@ -16,14 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.util.Map;
-import java.util.function.BiFunction;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Read and write from/to Infinispan distributed key/value store and data grid.
@@ -69,7 +69,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * @return the dsl builder
          */
         default InfinispanRemoteEndpointConsumerBuilder queryBuilder(
-                Object queryBuilder) {
+                org.apache.camel.component.infinispan.InfinispanQueryBuilder queryBuilder) {
             doSetProperty("queryBuilder", queryBuilder);
             return this;
         }
@@ -177,7 +177,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * @return the dsl builder
          */
         default InfinispanRemoteEndpointConsumerBuilder customListener(
-                Object customListener) {
+                org.apache.camel.component.infinispan.remote.InfinispanRemoteCustomListener customListener) {
             doSetProperty("customListener", customListener);
             return this;
         }
@@ -315,7 +315,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedInfinispanRemoteEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -350,7 +350,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedInfinispanRemoteEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -382,7 +382,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedInfinispanRemoteEndpointConsumerBuilder cacheContainer(
-                Object cacheContainer) {
+                org.infinispan.client.hotrod.RemoteCacheManager cacheContainer) {
             doSetProperty("cacheContainer", cacheContainer);
             return this;
         }
@@ -415,7 +415,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedInfinispanRemoteEndpointConsumerBuilder cacheContainerConfiguration(
-                Object cacheContainerConfiguration) {
+                org.infinispan.client.hotrod.configuration.Configuration cacheContainerConfiguration) {
             doSetProperty("cacheContainerConfiguration", cacheContainerConfiguration);
             return this;
         }
@@ -448,7 +448,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedInfinispanRemoteEndpointConsumerBuilder configurationProperties(
-                Map<String, String> configurationProperties) {
+                Map<java.lang.String, java.lang.String> configurationProperties) {
             doSetProperty("configurationProperties", configurationProperties);
             return this;
         }
@@ -488,25 +488,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * A comma separated list of org.infinispan.client.hotrod.Flag to be
          * applied by default on each cache invocation.
          * 
-         * The option is a:
-         * &lt;code&gt;org.infinispan.client.hotrod.Flag[]&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param flags the value to set
-         * @return the dsl builder
-         */
-        default AdvancedInfinispanRemoteEndpointConsumerBuilder flags(
-                Flag[] flags) {
-            doSetProperty("flags", flags);
-            return this;
-        }
-        /**
-         * A comma separated list of org.infinispan.client.hotrod.Flag to be
-         * applied by default on each cache invocation.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.infinispan.client.hotrod.Flag[]&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -608,7 +590,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * @return the dsl builder
          */
         default InfinispanRemoteEndpointProducerBuilder queryBuilder(
-                Object queryBuilder) {
+                org.apache.camel.component.infinispan.InfinispanQueryBuilder queryBuilder) {
             doSetProperty("queryBuilder", queryBuilder);
             return this;
         }
@@ -810,7 +792,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * @return the dsl builder
          */
         default InfinispanRemoteEndpointProducerBuilder operation(
-                InfinispanOperation operation) {
+                org.apache.camel.component.infinispan.InfinispanOperation operation) {
             doSetProperty("operation", operation);
             return this;
         }
@@ -956,7 +938,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedInfinispanRemoteEndpointProducerBuilder cacheContainer(
-                Object cacheContainer) {
+                org.infinispan.client.hotrod.RemoteCacheManager cacheContainer) {
             doSetProperty("cacheContainer", cacheContainer);
             return this;
         }
@@ -989,7 +971,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedInfinispanRemoteEndpointProducerBuilder cacheContainerConfiguration(
-                Object cacheContainerConfiguration) {
+                org.infinispan.client.hotrod.configuration.Configuration cacheContainerConfiguration) {
             doSetProperty("cacheContainerConfiguration", cacheContainerConfiguration);
             return this;
         }
@@ -1022,7 +1004,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedInfinispanRemoteEndpointProducerBuilder configurationProperties(
-                Map<String, String> configurationProperties) {
+                Map<java.lang.String, java.lang.String> configurationProperties) {
             doSetProperty("configurationProperties", configurationProperties);
             return this;
         }
@@ -1062,25 +1044,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * A comma separated list of org.infinispan.client.hotrod.Flag to be
          * applied by default on each cache invocation.
          * 
-         * The option is a:
-         * &lt;code&gt;org.infinispan.client.hotrod.Flag[]&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param flags the value to set
-         * @return the dsl builder
-         */
-        default AdvancedInfinispanRemoteEndpointProducerBuilder flags(
-                Flag[] flags) {
-            doSetProperty("flags", flags);
-            return this;
-        }
-        /**
-         * A comma separated list of org.infinispan.client.hotrod.Flag to be
-         * applied by default on each cache invocation.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.infinispan.client.hotrod.Flag[]&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -1182,7 +1146,8 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * @param queryBuilder the value to set
          * @return the dsl builder
          */
-        default InfinispanRemoteEndpointBuilder queryBuilder(Object queryBuilder) {
+        default InfinispanRemoteEndpointBuilder queryBuilder(
+                org.apache.camel.component.infinispan.InfinispanQueryBuilder queryBuilder) {
             doSetProperty("queryBuilder", queryBuilder);
             return this;
         }
@@ -1329,7 +1294,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedInfinispanRemoteEndpointBuilder cacheContainer(
-                Object cacheContainer) {
+                org.infinispan.client.hotrod.RemoteCacheManager cacheContainer) {
             doSetProperty("cacheContainer", cacheContainer);
             return this;
         }
@@ -1362,7 +1327,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedInfinispanRemoteEndpointBuilder cacheContainerConfiguration(
-                Object cacheContainerConfiguration) {
+                org.infinispan.client.hotrod.configuration.Configuration cacheContainerConfiguration) {
             doSetProperty("cacheContainerConfiguration", cacheContainerConfiguration);
             return this;
         }
@@ -1395,7 +1360,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedInfinispanRemoteEndpointBuilder configurationProperties(
-                Map<String, String> configurationProperties) {
+                Map<java.lang.String, java.lang.String> configurationProperties) {
             doSetProperty("configurationProperties", configurationProperties);
             return this;
         }
@@ -1435,24 +1400,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * A comma separated list of org.infinispan.client.hotrod.Flag to be
          * applied by default on each cache invocation.
          * 
-         * The option is a:
-         * &lt;code&gt;org.infinispan.client.hotrod.Flag[]&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param flags the value to set
-         * @return the dsl builder
-         */
-        default AdvancedInfinispanRemoteEndpointBuilder flags(Flag[] flags) {
-            doSetProperty("flags", flags);
-            return this;
-        }
-        /**
-         * A comma separated list of org.infinispan.client.hotrod.Flag to be
-         * applied by default on each cache invocation.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.infinispan.client.hotrod.Flag[]&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -1516,47 +1464,6 @@ public interface InfinispanRemoteEndpointBuilderFactory {
             doSetProperty("resultHeader", resultHeader);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.infinispan.InfinispanOperation</code>
-     * enum.
-     */
-    enum InfinispanOperation {
-        PUT,
-        PUTASYNC,
-        PUTALL,
-        PUTALLASYNC,
-        PUTIFABSENT,
-        PUTIFABSENTASYNC,
-        GET,
-        GETORDEFAULT,
-        CONTAINSKEY,
-        CONTAINSVALUE,
-        REMOVE,
-        REMOVEASYNC,
-        REPLACE,
-        REPLACEASYNC,
-        SIZE,
-        CLEAR,
-        CLEARASYNC,
-        QUERY,
-        STATS,
-        COMPUTE,
-        COMPUTEASYNC;
-    }
-
-    /**
-     * Proxy enum for <code>org.infinispan.client.hotrod.Flag</code> enum.
-     */
-    enum Flag {
-        FORCE_RETURN_VALUE,
-        DEFAULT_LIFESPAN,
-        DEFAULT_MAXIDLE,
-        SKIP_CACHE_LOAD,
-        SKIP_INDEXING,
-        SKIP_LISTENER_NOTIFICATION;
     }
 
     public interface InfinispanRemoteBuilders {

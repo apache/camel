@@ -16,11 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExchangeFormatter;
 
 /**
  * Log messages to the underlying logging mechanism.
@@ -864,7 +867,7 @@ public interface LogEndpointBuilderFactory {
          * Sets the outputs style to use.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.support.processor.DefaultExchangeFormatter$OutputStyle&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.support.processor.DefaultExchangeFormatter.OutputStyle&lt;/code&gt; type.
          * 
          * Default: Default
          * Group: formatting
@@ -872,7 +875,8 @@ public interface LogEndpointBuilderFactory {
          * @param style the value to set
          * @return the dsl builder
          */
-        default LogEndpointBuilder style(OutputStyle style) {
+        default LogEndpointBuilder style(
+                org.apache.camel.support.processor.DefaultExchangeFormatter.OutputStyle style) {
             doSetProperty("style", style);
             return this;
         }
@@ -880,7 +884,7 @@ public interface LogEndpointBuilderFactory {
          * Sets the outputs style to use.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.support.processor.DefaultExchangeFormatter$OutputStyle&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.support.processor.DefaultExchangeFormatter.OutputStyle&lt;/code&gt; type.
          * 
          * Default: Default
          * Group: formatting
@@ -915,7 +919,7 @@ public interface LogEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedLogEndpointBuilder exchangeFormatter(
-                ExchangeFormatter exchangeFormatter) {
+                org.apache.camel.spi.ExchangeFormatter exchangeFormatter) {
             doSetProperty("exchangeFormatter", exchangeFormatter);
             return this;
         }
@@ -935,16 +939,6 @@ public interface LogEndpointBuilderFactory {
             doSetProperty("exchangeFormatter", exchangeFormatter);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.support.processor.DefaultExchangeFormatter$OutputStyle</code> enum.
-     */
-    enum OutputStyle {
-        Default,
-        Tab,
-        Fixed;
     }
 
     public interface LogBuilders {

@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -151,7 +155,7 @@ public interface GangliaEndpointBuilderFactory {
          * Send the UDP metric packets using MULTICAST or UNICAST.
          * 
          * The option is a:
-         * &lt;code&gt;info.ganglia.gmetric4j.gmetric.GMetric$UDPAddressingMode&lt;/code&gt; type.
+         * &lt;code&gt;info.ganglia.gmetric4j.gmetric.GMetric.UDPAddressingMode&lt;/code&gt; type.
          * 
          * Default: MULTICAST
          * Group: producer
@@ -159,7 +163,8 @@ public interface GangliaEndpointBuilderFactory {
          * @param mode the value to set
          * @return the dsl builder
          */
-        default GangliaEndpointBuilder mode(UDPAddressingMode mode) {
+        default GangliaEndpointBuilder mode(
+                info.ganglia.gmetric4j.gmetric.GMetric.UDPAddressingMode mode) {
             doSetProperty("mode", mode);
             return this;
         }
@@ -167,7 +172,7 @@ public interface GangliaEndpointBuilderFactory {
          * Send the UDP metric packets using MULTICAST or UNICAST.
          * 
          * The option will be converted to a
-         * &lt;code&gt;info.ganglia.gmetric4j.gmetric.GMetric$UDPAddressingMode&lt;/code&gt; type.
+         * &lt;code&gt;info.ganglia.gmetric4j.gmetric.GMetric.UDPAddressingMode&lt;/code&gt; type.
          * 
          * Default: MULTICAST
          * Group: producer
@@ -206,7 +211,8 @@ public interface GangliaEndpointBuilderFactory {
          * @param slope the value to set
          * @return the dsl builder
          */
-        default GangliaEndpointBuilder slope(GMetricSlope slope) {
+        default GangliaEndpointBuilder slope(
+                info.ganglia.gmetric4j.gmetric.GMetricSlope slope) {
             doSetProperty("slope", slope);
             return this;
         }
@@ -316,7 +322,8 @@ public interface GangliaEndpointBuilderFactory {
          * @param type the value to set
          * @return the dsl builder
          */
-        default GangliaEndpointBuilder type(GMetricType type) {
+        default GangliaEndpointBuilder type(
+                info.ganglia.gmetric4j.gmetric.GMetricType type) {
             doSetProperty("type", type);
             return this;
         }
@@ -386,43 +393,6 @@ public interface GangliaEndpointBuilderFactory {
             doSetProperty("wireFormat31x", wireFormat31x);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>info.ganglia.gmetric4j.gmetric.GMetric$UDPAddressingMode</code>
-     * enum.
-     */
-    enum UDPAddressingMode {
-        MULTICAST,
-        UNICAST;
-    }
-
-    /**
-     * Proxy enum for <code>info.ganglia.gmetric4j.gmetric.GMetricSlope</code>
-     * enum.
-     */
-    enum GMetricSlope {
-        ZERO,
-        POSITIVE,
-        NEGATIVE,
-        BOTH;
-    }
-
-    /**
-     * Proxy enum for <code>info.ganglia.gmetric4j.gmetric.GMetricType</code>
-     * enum.
-     */
-    enum GMetricType {
-        STRING,
-        INT8,
-        UINT8,
-        INT16,
-        UINT16,
-        INT32,
-        UINT32,
-        FLOAT,
-        DOUBLE;
     }
 
     public interface GangliaBuilders {

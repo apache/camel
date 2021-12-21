@@ -16,18 +16,15 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.io.File;
+import java.util.*;
 import java.util.Map;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.PollingConsumerPollStrategy;
 
 /**
  * Pass camel exchanges to acceptence test written in Robot DSL.
@@ -140,7 +137,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder argumentFile(
-                File argumentFile) {
+                java.io.File argumentFile) {
             doSetProperty("argumentFile", argumentFile);
             return this;
         }
@@ -234,7 +231,8 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * @param debugFile the value to set
          * @return the dsl builder
          */
-        default RobotFrameworkEndpointConsumerBuilder debugFile(File debugFile) {
+        default RobotFrameworkEndpointConsumerBuilder debugFile(
+                java.io.File debugFile) {
             doSetProperty("debugFile", debugFile);
             return this;
         }
@@ -402,7 +400,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * @param log the value to set
          * @return the dsl builder
          */
-        default RobotFrameworkEndpointConsumerBuilder log(File log) {
+        default RobotFrameworkEndpointConsumerBuilder log(java.io.File log) {
             doSetProperty("log", log);
             return this;
         }
@@ -572,7 +570,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * @param output the value to set
          * @return the dsl builder
          */
-        default RobotFrameworkEndpointConsumerBuilder output(File output) {
+        default RobotFrameworkEndpointConsumerBuilder output(java.io.File output) {
             doSetProperty("output", output);
             return this;
         }
@@ -602,7 +600,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder outputDirectory(
-                File outputDirectory) {
+                java.io.File outputDirectory) {
             doSetProperty("outputDirectory", outputDirectory);
             return this;
         }
@@ -647,7 +645,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * @param report the value to set
          * @return the dsl builder
          */
-        default RobotFrameworkEndpointConsumerBuilder report(File report) {
+        default RobotFrameworkEndpointConsumerBuilder report(java.io.File report) {
             doSetProperty("report", report);
             return this;
         }
@@ -743,7 +741,8 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * @param runFailed the value to set
          * @return the dsl builder
          */
-        default RobotFrameworkEndpointConsumerBuilder runFailed(File runFailed) {
+        default RobotFrameworkEndpointConsumerBuilder runFailed(
+                java.io.File runFailed) {
             doSetProperty("runFailed", runFailed);
             return this;
         }
@@ -1071,7 +1070,8 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * @param xunitFile the value to set
          * @return the dsl builder
          */
-        default RobotFrameworkEndpointConsumerBuilder xunitFile(File xunitFile) {
+        default RobotFrameworkEndpointConsumerBuilder xunitFile(
+                java.io.File xunitFile) {
             doSetProperty("xunitFile", xunitFile);
             return this;
         }
@@ -1422,7 +1422,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder runLoggingLevel(
-                LoggingLevel runLoggingLevel) {
+                org.apache.camel.LoggingLevel runLoggingLevel) {
             doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
@@ -1682,7 +1682,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedRobotFrameworkEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -1717,7 +1717,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedRobotFrameworkEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -1752,7 +1752,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedRobotFrameworkEndpointConsumerBuilder pollStrategy(
-                PollingConsumerPollStrategy pollStrategy) {
+                org.apache.camel.spi.PollingConsumerPollStrategy pollStrategy) {
             doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
@@ -1879,7 +1879,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder argumentFile(
-                File argumentFile) {
+                java.io.File argumentFile) {
             doSetProperty("argumentFile", argumentFile);
             return this;
         }
@@ -1973,7 +1973,8 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * @param debugFile the value to set
          * @return the dsl builder
          */
-        default RobotFrameworkEndpointProducerBuilder debugFile(File debugFile) {
+        default RobotFrameworkEndpointProducerBuilder debugFile(
+                java.io.File debugFile) {
             doSetProperty("debugFile", debugFile);
             return this;
         }
@@ -2141,7 +2142,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * @param log the value to set
          * @return the dsl builder
          */
-        default RobotFrameworkEndpointProducerBuilder log(File log) {
+        default RobotFrameworkEndpointProducerBuilder log(java.io.File log) {
             doSetProperty("log", log);
             return this;
         }
@@ -2311,7 +2312,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * @param output the value to set
          * @return the dsl builder
          */
-        default RobotFrameworkEndpointProducerBuilder output(File output) {
+        default RobotFrameworkEndpointProducerBuilder output(java.io.File output) {
             doSetProperty("output", output);
             return this;
         }
@@ -2341,7 +2342,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder outputDirectory(
-                File outputDirectory) {
+                java.io.File outputDirectory) {
             doSetProperty("outputDirectory", outputDirectory);
             return this;
         }
@@ -2386,7 +2387,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * @param report the value to set
          * @return the dsl builder
          */
-        default RobotFrameworkEndpointProducerBuilder report(File report) {
+        default RobotFrameworkEndpointProducerBuilder report(java.io.File report) {
             doSetProperty("report", report);
             return this;
         }
@@ -2482,7 +2483,8 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * @param runFailed the value to set
          * @return the dsl builder
          */
-        default RobotFrameworkEndpointProducerBuilder runFailed(File runFailed) {
+        default RobotFrameworkEndpointProducerBuilder runFailed(
+                java.io.File runFailed) {
             doSetProperty("runFailed", runFailed);
             return this;
         }
@@ -2810,7 +2812,8 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * @param xunitFile the value to set
          * @return the dsl builder
          */
-        default RobotFrameworkEndpointProducerBuilder xunitFile(File xunitFile) {
+        default RobotFrameworkEndpointProducerBuilder xunitFile(
+                java.io.File xunitFile) {
             doSetProperty("xunitFile", xunitFile);
             return this;
         }
@@ -2997,7 +3000,8 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * @param argumentFile the value to set
          * @return the dsl builder
          */
-        default RobotFrameworkEndpointBuilder argumentFile(File argumentFile) {
+        default RobotFrameworkEndpointBuilder argumentFile(
+                java.io.File argumentFile) {
             doSetProperty("argumentFile", argumentFile);
             return this;
         }
@@ -3087,7 +3091,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * @param debugFile the value to set
          * @return the dsl builder
          */
-        default RobotFrameworkEndpointBuilder debugFile(File debugFile) {
+        default RobotFrameworkEndpointBuilder debugFile(java.io.File debugFile) {
             doSetProperty("debugFile", debugFile);
             return this;
         }
@@ -3254,7 +3258,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * @param log the value to set
          * @return the dsl builder
          */
-        default RobotFrameworkEndpointBuilder log(File log) {
+        default RobotFrameworkEndpointBuilder log(java.io.File log) {
             doSetProperty("log", log);
             return this;
         }
@@ -3422,7 +3426,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * @param output the value to set
          * @return the dsl builder
          */
-        default RobotFrameworkEndpointBuilder output(File output) {
+        default RobotFrameworkEndpointBuilder output(java.io.File output) {
             doSetProperty("output", output);
             return this;
         }
@@ -3452,7 +3456,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder outputDirectory(
-                File outputDirectory) {
+                java.io.File outputDirectory) {
             doSetProperty("outputDirectory", outputDirectory);
             return this;
         }
@@ -3497,7 +3501,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * @param report the value to set
          * @return the dsl builder
          */
-        default RobotFrameworkEndpointBuilder report(File report) {
+        default RobotFrameworkEndpointBuilder report(java.io.File report) {
             doSetProperty("report", report);
             return this;
         }
@@ -3591,7 +3595,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * @param runFailed the value to set
          * @return the dsl builder
          */
-        default RobotFrameworkEndpointBuilder runFailed(File runFailed) {
+        default RobotFrameworkEndpointBuilder runFailed(java.io.File runFailed) {
             doSetProperty("runFailed", runFailed);
             return this;
         }
@@ -3915,7 +3919,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * @param xunitFile the value to set
          * @return the dsl builder
          */
-        default RobotFrameworkEndpointBuilder xunitFile(File xunitFile) {
+        default RobotFrameworkEndpointBuilder xunitFile(java.io.File xunitFile) {
             doSetProperty("xunitFile", xunitFile);
             return this;
         }

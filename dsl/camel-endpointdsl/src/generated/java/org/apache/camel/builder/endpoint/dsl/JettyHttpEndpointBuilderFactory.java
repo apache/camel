@@ -16,15 +16,15 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.util.List;
+import java.util.*;
 import java.util.Map;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.HeaderFilterStrategy;
 
 /**
  * Expose HTTP endpoints using Jetty 9.
@@ -152,7 +152,7 @@ public interface JettyHttpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default JettyHttpEndpointBuilder headerFilterStrategy(
-                HeaderFilterStrategy headerFilterStrategy) {
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
@@ -673,22 +673,22 @@ public interface JettyHttpEndpointBuilderFactory {
         /**
          * Whether or not to use Jetty continuations for the Jetty Server.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: consumer
          * 
          * @param useContinuation the value to set
          * @return the dsl builder
          */
-        default JettyHttpEndpointBuilder useContinuation(boolean useContinuation) {
+        default JettyHttpEndpointBuilder useContinuation(Boolean useContinuation) {
             doSetProperty("useContinuation", useContinuation);
             return this;
         }
         /**
          * Whether or not to use Jetty continuations for the Jetty Server.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: consumer
          * 
@@ -711,7 +711,7 @@ public interface JettyHttpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default JettyHttpEndpointBuilder sslContextParameters(
-                Object sslContextParameters) {
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
@@ -755,7 +755,8 @@ public interface JettyHttpEndpointBuilderFactory {
          * @param httpBinding the value to set
          * @return the dsl builder
          */
-        default AdvancedJettyHttpEndpointBuilder httpBinding(Object httpBinding) {
+        default AdvancedJettyHttpEndpointBuilder httpBinding(
+                org.apache.camel.http.common.HttpBinding httpBinding) {
             doSetProperty("httpBinding", httpBinding);
             return this;
         }
@@ -828,7 +829,7 @@ public interface JettyHttpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedJettyHttpEndpointBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -863,7 +864,7 @@ public interface JettyHttpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedJettyHttpEndpointBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -936,7 +937,8 @@ public interface JettyHttpEndpointBuilderFactory {
          * @param filters the value to set
          * @return the dsl builder
          */
-        default AdvancedJettyHttpEndpointBuilder filters(List<Object> filters) {
+        default AdvancedJettyHttpEndpointBuilder filters(
+                List<javax.servlet.Filter> filters) {
             doSetProperty("filters", filters);
             return this;
         }
@@ -972,7 +974,8 @@ public interface JettyHttpEndpointBuilderFactory {
          * @param handlers the value to set
          * @return the dsl builder
          */
-        default AdvancedJettyHttpEndpointBuilder handlers(List<Object> handlers) {
+        default AdvancedJettyHttpEndpointBuilder handlers(
+                List<org.eclipse.jetty.server.Handler> handlers) {
             doSetProperty("handlers", handlers);
             return this;
         }
@@ -1119,7 +1122,7 @@ public interface JettyHttpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedJettyHttpEndpointBuilder multipartFilter(
-                Object multipartFilter) {
+                javax.servlet.Filter multipartFilter) {
             doSetProperty("multipartFilter", multipartFilter);
             return this;
         }

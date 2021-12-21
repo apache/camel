@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -189,7 +193,7 @@ public interface ValidatorEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedValidatorEndpointBuilder errorHandler(
-                Object errorHandler) {
+                org.apache.camel.support.processor.validation.ValidatorErrorHandler errorHandler) {
             doSetProperty("errorHandler", errorHandler);
             return this;
         }
@@ -224,7 +228,7 @@ public interface ValidatorEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedValidatorEndpointBuilder resourceResolver(
-                Object resourceResolver) {
+                org.w3c.dom.ls.LSResourceResolver resourceResolver) {
             doSetProperty("resourceResolver", resourceResolver);
             return this;
         }
@@ -260,7 +264,7 @@ public interface ValidatorEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedValidatorEndpointBuilder resourceResolverFactory(
-                Object resourceResolverFactory) {
+                org.apache.camel.component.validator.ValidatorResourceResolverFactory resourceResolverFactory) {
             doSetProperty("resourceResolverFactory", resourceResolverFactory);
             return this;
         }
@@ -295,7 +299,7 @@ public interface ValidatorEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedValidatorEndpointBuilder schemaFactory(
-                Object schemaFactory) {
+                javax.xml.validation.SchemaFactory schemaFactory) {
             doSetProperty("schemaFactory", schemaFactory);
             return this;
         }

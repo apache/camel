@@ -16,15 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Access Atomix's group messaging.
@@ -47,15 +46,15 @@ public interface AtomixMessagingEndpointBuilderFactory {
         /**
          * The Atomix instance to use.
          * 
-         * The option is a: &lt;code&gt;io.atomix.AtomixClient&lt;/code&gt;
-         * type.
+         * The option is a: &lt;code&gt;io.atomix.Atomix&lt;/code&gt; type.
          * 
          * Group: common
          * 
          * @param atomix the value to set
          * @return the dsl builder
          */
-        default AtomixMessagingEndpointConsumerBuilder atomix(Object atomix) {
+        default AtomixMessagingEndpointConsumerBuilder atomix(
+                io.atomix.Atomix atomix) {
             doSetProperty("atomix", atomix);
             return this;
         }
@@ -63,7 +62,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The Atomix instance to use.
          * 
          * The option will be converted to a
-         * &lt;code&gt;io.atomix.AtomixClient&lt;/code&gt; type.
+         * &lt;code&gt;io.atomix.Atomix&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -78,7 +77,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The broadcast type.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.atomix.client.messaging.AtomixMessaging$BroadcastType&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.atomix.client.messaging.AtomixMessaging.BroadcastType&lt;/code&gt; type.
          * 
          * Default: ALL
          * Group: common
@@ -87,7 +86,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AtomixMessagingEndpointConsumerBuilder broadcastType(
-                BroadcastType broadcastType) {
+                org.apache.camel.component.atomix.client.messaging.AtomixMessaging.BroadcastType broadcastType) {
             doSetProperty("broadcastType", broadcastType);
             return this;
         }
@@ -95,7 +94,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The broadcast type.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.atomix.client.messaging.AtomixMessaging$BroadcastType&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.atomix.client.messaging.AtomixMessaging.BroadcastType&lt;/code&gt; type.
          * 
          * Default: ALL
          * Group: common
@@ -142,7 +141,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The default action.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.atomix.client.messaging.AtomixMessaging$Action&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.atomix.client.messaging.AtomixMessaging.Action&lt;/code&gt; type.
          * 
          * Default: DIRECT
          * Group: common
@@ -151,7 +150,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AtomixMessagingEndpointConsumerBuilder defaultAction(
-                Action defaultAction) {
+                org.apache.camel.component.atomix.client.messaging.AtomixMessaging.Action defaultAction) {
             doSetProperty("defaultAction", defaultAction);
             return this;
         }
@@ -159,7 +158,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The default action.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.atomix.client.messaging.AtomixMessaging$Action&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.atomix.client.messaging.AtomixMessaging.Action&lt;/code&gt; type.
          * 
          * Default: DIRECT
          * Group: common
@@ -190,23 +189,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
         /**
          * The address of the nodes composing the cluster.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;io.atomix.catalyst.transport.Address&amp;gt;&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param nodes the value to set
-         * @return the dsl builder
-         */
-        default AtomixMessagingEndpointConsumerBuilder nodes(List<Object> nodes) {
-            doSetProperty("nodes", nodes);
-            return this;
-        }
-        /**
-         * The address of the nodes composing the cluster.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;io.atomix.catalyst.transport.Address&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -320,7 +303,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedAtomixMessagingEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -355,7 +338,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedAtomixMessagingEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -486,7 +469,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedAtomixMessagingEndpointConsumerBuilder readConsistency(
-                ReadConsistency readConsistency) {
+                io.atomix.resource.ReadConsistency readConsistency) {
             doSetProperty("readConsistency", readConsistency);
             return this;
         }
@@ -518,7 +501,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedAtomixMessagingEndpointConsumerBuilder resourceConfigs(
-                Map<String, Properties> resourceConfigs) {
+                Map<java.lang.String, java.util.Properties> resourceConfigs) {
             doSetProperty("resourceConfigs", resourceConfigs);
             return this;
         }
@@ -551,7 +534,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedAtomixMessagingEndpointConsumerBuilder resourceOptions(
-                Map<String, Properties> resourceOptions) {
+                Map<java.lang.String, java.util.Properties> resourceOptions) {
             doSetProperty("resourceOptions", resourceOptions);
             return this;
         }
@@ -586,15 +569,15 @@ public interface AtomixMessagingEndpointBuilderFactory {
         /**
          * The Atomix instance to use.
          * 
-         * The option is a: &lt;code&gt;io.atomix.AtomixClient&lt;/code&gt;
-         * type.
+         * The option is a: &lt;code&gt;io.atomix.Atomix&lt;/code&gt; type.
          * 
          * Group: common
          * 
          * @param atomix the value to set
          * @return the dsl builder
          */
-        default AtomixMessagingEndpointProducerBuilder atomix(Object atomix) {
+        default AtomixMessagingEndpointProducerBuilder atomix(
+                io.atomix.Atomix atomix) {
             doSetProperty("atomix", atomix);
             return this;
         }
@@ -602,7 +585,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The Atomix instance to use.
          * 
          * The option will be converted to a
-         * &lt;code&gt;io.atomix.AtomixClient&lt;/code&gt; type.
+         * &lt;code&gt;io.atomix.Atomix&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -617,7 +600,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The broadcast type.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.atomix.client.messaging.AtomixMessaging$BroadcastType&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.atomix.client.messaging.AtomixMessaging.BroadcastType&lt;/code&gt; type.
          * 
          * Default: ALL
          * Group: common
@@ -626,7 +609,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AtomixMessagingEndpointProducerBuilder broadcastType(
-                BroadcastType broadcastType) {
+                org.apache.camel.component.atomix.client.messaging.AtomixMessaging.BroadcastType broadcastType) {
             doSetProperty("broadcastType", broadcastType);
             return this;
         }
@@ -634,7 +617,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The broadcast type.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.atomix.client.messaging.AtomixMessaging$BroadcastType&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.atomix.client.messaging.AtomixMessaging.BroadcastType&lt;/code&gt; type.
          * 
          * Default: ALL
          * Group: common
@@ -681,7 +664,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The default action.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.atomix.client.messaging.AtomixMessaging$Action&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.atomix.client.messaging.AtomixMessaging.Action&lt;/code&gt; type.
          * 
          * Default: DIRECT
          * Group: common
@@ -690,7 +673,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AtomixMessagingEndpointProducerBuilder defaultAction(
-                Action defaultAction) {
+                org.apache.camel.component.atomix.client.messaging.AtomixMessaging.Action defaultAction) {
             doSetProperty("defaultAction", defaultAction);
             return this;
         }
@@ -698,7 +681,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The default action.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.atomix.client.messaging.AtomixMessaging$Action&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.atomix.client.messaging.AtomixMessaging.Action&lt;/code&gt; type.
          * 
          * Default: DIRECT
          * Group: common
@@ -729,23 +712,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
         /**
          * The address of the nodes composing the cluster.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;io.atomix.catalyst.transport.Address&amp;gt;&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param nodes the value to set
-         * @return the dsl builder
-         */
-        default AtomixMessagingEndpointProducerBuilder nodes(List<Object> nodes) {
-            doSetProperty("nodes", nodes);
-            return this;
-        }
-        /**
-         * The address of the nodes composing the cluster.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;io.atomix.catalyst.transport.Address&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -959,7 +926,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedAtomixMessagingEndpointProducerBuilder readConsistency(
-                ReadConsistency readConsistency) {
+                io.atomix.resource.ReadConsistency readConsistency) {
             doSetProperty("readConsistency", readConsistency);
             return this;
         }
@@ -991,7 +958,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedAtomixMessagingEndpointProducerBuilder resourceConfigs(
-                Map<String, Properties> resourceConfigs) {
+                Map<java.lang.String, java.util.Properties> resourceConfigs) {
             doSetProperty("resourceConfigs", resourceConfigs);
             return this;
         }
@@ -1024,7 +991,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedAtomixMessagingEndpointProducerBuilder resourceOptions(
-                Map<String, Properties> resourceOptions) {
+                Map<java.lang.String, java.util.Properties> resourceOptions) {
             doSetProperty("resourceOptions", resourceOptions);
             return this;
         }
@@ -1060,15 +1027,14 @@ public interface AtomixMessagingEndpointBuilderFactory {
         /**
          * The Atomix instance to use.
          * 
-         * The option is a: &lt;code&gt;io.atomix.AtomixClient&lt;/code&gt;
-         * type.
+         * The option is a: &lt;code&gt;io.atomix.Atomix&lt;/code&gt; type.
          * 
          * Group: common
          * 
          * @param atomix the value to set
          * @return the dsl builder
          */
-        default AtomixMessagingEndpointBuilder atomix(Object atomix) {
+        default AtomixMessagingEndpointBuilder atomix(io.atomix.Atomix atomix) {
             doSetProperty("atomix", atomix);
             return this;
         }
@@ -1076,7 +1042,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The Atomix instance to use.
          * 
          * The option will be converted to a
-         * &lt;code&gt;io.atomix.AtomixClient&lt;/code&gt; type.
+         * &lt;code&gt;io.atomix.Atomix&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -1091,7 +1057,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The broadcast type.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.atomix.client.messaging.AtomixMessaging$BroadcastType&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.atomix.client.messaging.AtomixMessaging.BroadcastType&lt;/code&gt; type.
          * 
          * Default: ALL
          * Group: common
@@ -1100,7 +1066,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AtomixMessagingEndpointBuilder broadcastType(
-                BroadcastType broadcastType) {
+                org.apache.camel.component.atomix.client.messaging.AtomixMessaging.BroadcastType broadcastType) {
             doSetProperty("broadcastType", broadcastType);
             return this;
         }
@@ -1108,7 +1074,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The broadcast type.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.atomix.client.messaging.AtomixMessaging$BroadcastType&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.atomix.client.messaging.AtomixMessaging.BroadcastType&lt;/code&gt; type.
          * 
          * Default: ALL
          * Group: common
@@ -1154,7 +1120,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The default action.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.atomix.client.messaging.AtomixMessaging$Action&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.atomix.client.messaging.AtomixMessaging.Action&lt;/code&gt; type.
          * 
          * Default: DIRECT
          * Group: common
@@ -1163,7 +1129,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AtomixMessagingEndpointBuilder defaultAction(
-                Action defaultAction) {
+                org.apache.camel.component.atomix.client.messaging.AtomixMessaging.Action defaultAction) {
             doSetProperty("defaultAction", defaultAction);
             return this;
         }
@@ -1171,7 +1137,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The default action.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.atomix.client.messaging.AtomixMessaging$Action&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.atomix.client.messaging.AtomixMessaging.Action&lt;/code&gt; type.
          * 
          * Default: DIRECT
          * Group: common
@@ -1201,23 +1167,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
         /**
          * The address of the nodes composing the cluster.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;io.atomix.catalyst.transport.Address&amp;gt;&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param nodes the value to set
-         * @return the dsl builder
-         */
-        default AtomixMessagingEndpointBuilder nodes(List<Object> nodes) {
-            doSetProperty("nodes", nodes);
-            return this;
-        }
-        /**
-         * The address of the nodes composing the cluster.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;io.atomix.catalyst.transport.Address&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -1381,7 +1331,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedAtomixMessagingEndpointBuilder readConsistency(
-                ReadConsistency readConsistency) {
+                io.atomix.resource.ReadConsistency readConsistency) {
             doSetProperty("readConsistency", readConsistency);
             return this;
         }
@@ -1413,7 +1363,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedAtomixMessagingEndpointBuilder resourceConfigs(
-                Map<String, Properties> resourceConfigs) {
+                Map<java.lang.String, java.util.Properties> resourceConfigs) {
             doSetProperty("resourceConfigs", resourceConfigs);
             return this;
         }
@@ -1446,7 +1396,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedAtomixMessagingEndpointBuilder resourceOptions(
-                Map<String, Properties> resourceOptions) {
+                Map<java.lang.String, java.util.Properties> resourceOptions) {
             doSetProperty("resourceOptions", resourceOptions);
             return this;
         }
@@ -1467,34 +1417,6 @@ public interface AtomixMessagingEndpointBuilderFactory {
             doSetProperty("resourceOptions", resourceOptions);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.atomix.client.messaging.AtomixMessaging$BroadcastType</code> enum.
-     */
-    enum BroadcastType {
-        ALL,
-        RANDOM;
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.atomix.client.messaging.AtomixMessaging$Action</code> enum.
-     */
-    enum Action {
-        DIRECT,
-        BROADCAST;
-    }
-
-    /**
-     * Proxy enum for <code>io.atomix.resource.ReadConsistency</code> enum.
-     */
-    enum ReadConsistency {
-        ATOMIC,
-        ATOMIC_LEASE,
-        SEQUENTIAL,
-        LOCAL;
     }
 
     public interface AtomixMessagingBuilders {

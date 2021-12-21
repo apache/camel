@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -46,7 +50,8 @@ public interface MQ2EndpointBuilderFactory {
          * @param amazonMqClient the value to set
          * @return the dsl builder
          */
-        default MQ2EndpointBuilder amazonMqClient(Object amazonMqClient) {
+        default MQ2EndpointBuilder amazonMqClient(
+                software.amazon.awssdk.services.mq.MqClient amazonMqClient) {
             doSetProperty("amazonMqClient", amazonMqClient);
             return this;
         }
@@ -126,7 +131,8 @@ public interface MQ2EndpointBuilderFactory {
          * @param operation the value to set
          * @return the dsl builder
          */
-        default MQ2EndpointBuilder operation(MQ2Operations operation) {
+        default MQ2EndpointBuilder operation(
+                org.apache.camel.component.aws2.mq.MQ2Operations operation) {
             doSetProperty("operation", operation);
             return this;
         }
@@ -266,7 +272,8 @@ public interface MQ2EndpointBuilderFactory {
          * @param proxyProtocol the value to set
          * @return the dsl builder
          */
-        default MQ2EndpointBuilder proxyProtocol(Protocol proxyProtocol) {
+        default MQ2EndpointBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
@@ -419,27 +426,6 @@ public interface MQ2EndpointBuilderFactory {
             doSetProperty("secretKey", secretKey);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.aws2.mq.MQ2Operations</code> enum.
-     */
-    enum MQ2Operations {
-        listBrokers,
-        createBroker,
-        deleteBroker,
-        rebootBroker,
-        updateBroker,
-        describeBroker;
-    }
-
-    /**
-     * Proxy enum for <code>software.amazon.awssdk.core.Protocol</code> enum.
-     */
-    enum Protocol {
-        HTTP,
-        HTTPS;
     }
 
     public interface MQ2Builders {

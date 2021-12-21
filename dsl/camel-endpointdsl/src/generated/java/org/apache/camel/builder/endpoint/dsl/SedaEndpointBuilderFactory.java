@@ -16,14 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.util.concurrent.BlockingQueue;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.WaitForTaskToComplete;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Asynchronously call another endpoint from any Camel Context in the same JVM.
@@ -180,7 +180,7 @@ public interface SedaEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSedaEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -215,7 +215,7 @@ public interface SedaEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSedaEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -755,7 +755,7 @@ public interface SedaEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SedaEndpointProducerBuilder waitForTaskToComplete(
-                WaitForTaskToComplete waitForTaskToComplete) {
+                org.apache.camel.WaitForTaskToComplete waitForTaskToComplete) {
             doSetProperty("waitForTaskToComplete", waitForTaskToComplete);
             return this;
         }

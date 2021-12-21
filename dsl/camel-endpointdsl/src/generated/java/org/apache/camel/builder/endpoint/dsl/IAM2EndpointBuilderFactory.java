@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -46,7 +50,8 @@ public interface IAM2EndpointBuilderFactory {
          * @param iamClient the value to set
          * @return the dsl builder
          */
-        default IAM2EndpointBuilder iamClient(Object iamClient) {
+        default IAM2EndpointBuilder iamClient(
+                software.amazon.awssdk.services.iam.IamClient iamClient) {
             doSetProperty("iamClient", iamClient);
             return this;
         }
@@ -125,7 +130,8 @@ public interface IAM2EndpointBuilderFactory {
          * @param operation the value to set
          * @return the dsl builder
          */
-        default IAM2EndpointBuilder operation(IAM2Operations operation) {
+        default IAM2EndpointBuilder operation(
+                org.apache.camel.component.aws2.iam.IAM2Operations operation) {
             doSetProperty("operation", operation);
             return this;
         }
@@ -265,7 +271,8 @@ public interface IAM2EndpointBuilderFactory {
          * @param proxyProtocol the value to set
          * @return the dsl builder
          */
-        default IAM2EndpointBuilder proxyProtocol(Protocol proxyProtocol) {
+        default IAM2EndpointBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
@@ -419,34 +426,6 @@ public interface IAM2EndpointBuilderFactory {
             doSetProperty("secretKey", secretKey);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.aws2.iam.IAM2Operations</code> enum.
-     */
-    enum IAM2Operations {
-        listAccessKeys,
-        createUser,
-        deleteUser,
-        getUser,
-        listUsers,
-        createAccessKey,
-        deleteAccessKey,
-        updateAccessKey,
-        createGroup,
-        deleteGroup,
-        listGroups,
-        addUserToGroup,
-        removeUserFromGroup;
-    }
-
-    /**
-     * Proxy enum for <code>software.amazon.awssdk.core.Protocol</code> enum.
-     */
-    enum Protocol {
-        HTTP,
-        HTTPS;
     }
 
     public interface IAM2Builders {

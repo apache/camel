@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -79,7 +83,7 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default OpenshiftBuildsEndpointBuilder kubernetesClient(
-                Object kubernetesClient) {
+                io.fabric8.kubernetes.client.KubernetesClient kubernetesClient) {
             doSetProperty("kubernetesClient", kubernetesClient);
             return this;
         }

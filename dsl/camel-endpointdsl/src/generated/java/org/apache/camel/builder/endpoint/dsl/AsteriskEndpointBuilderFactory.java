@@ -16,12 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Interact with Asterisk PBX Server.
@@ -157,7 +159,7 @@ public interface AsteriskEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedAsteriskEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -192,7 +194,7 @@ public interface AsteriskEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedAsteriskEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -280,7 +282,8 @@ public interface AsteriskEndpointBuilderFactory {
          * @param action the value to set
          * @return the dsl builder
          */
-        default AsteriskEndpointProducerBuilder action(AsteriskAction action) {
+        default AsteriskEndpointProducerBuilder action(
+                org.apache.camel.component.asterisk.AsteriskAction action) {
             doSetProperty("action", action);
             return this;
         }
@@ -429,16 +432,6 @@ public interface AsteriskEndpointBuilderFactory {
         default AsteriskEndpointBuilder basic() {
             return (AsteriskEndpointBuilder) this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.asterisk.AsteriskAction</code> enum.
-     */
-    enum AsteriskAction {
-        QUEUE_STATUS,
-        SIP_PEERS,
-        EXTENSION_STATE;
     }
 
     public interface AsteriskBuilders {

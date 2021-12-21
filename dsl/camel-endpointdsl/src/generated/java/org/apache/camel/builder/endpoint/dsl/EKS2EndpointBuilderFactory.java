@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -46,7 +50,8 @@ public interface EKS2EndpointBuilderFactory {
          * @param eksClient the value to set
          * @return the dsl builder
          */
-        default EKS2EndpointBuilder eksClient(Object eksClient) {
+        default EKS2EndpointBuilder eksClient(
+                software.amazon.awssdk.services.eks.EksClient eksClient) {
             doSetProperty("eksClient", eksClient);
             return this;
         }
@@ -124,7 +129,8 @@ public interface EKS2EndpointBuilderFactory {
          * @param operation the value to set
          * @return the dsl builder
          */
-        default EKS2EndpointBuilder operation(EKS2Operations operation) {
+        default EKS2EndpointBuilder operation(
+                org.apache.camel.component.aws2.eks.EKS2Operations operation) {
             doSetProperty("operation", operation);
             return this;
         }
@@ -263,7 +269,8 @@ public interface EKS2EndpointBuilderFactory {
          * @param proxyProtocol the value to set
          * @return the dsl builder
          */
-        default EKS2EndpointBuilder proxyProtocol(Protocol proxyProtocol) {
+        default EKS2EndpointBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
@@ -416,25 +423,6 @@ public interface EKS2EndpointBuilderFactory {
             doSetProperty("secretKey", secretKey);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.aws2.eks.EKS2Operations</code> enum.
-     */
-    enum EKS2Operations {
-        listClusters,
-        describeCluster,
-        createCluster,
-        deleteCluster;
-    }
-
-    /**
-     * Proxy enum for <code>software.amazon.awssdk.core.Protocol</code> enum.
-     */
-    enum Protocol {
-        HTTP,
-        HTTPS;
     }
 
     public interface EKS2Builders {

@@ -16,17 +16,15 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
 import java.util.Map;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.PollingConsumerPollStrategy;
 
 /**
  * Performs a query, poll, insert, update or delete in a relational database
@@ -527,7 +525,7 @@ public interface MyBatisEndpointBuilderFactory {
          * @return the dsl builder
          */
         default MyBatisEndpointConsumerBuilder runLoggingLevel(
-                LoggingLevel runLoggingLevel) {
+                org.apache.camel.LoggingLevel runLoggingLevel) {
             doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
@@ -785,7 +783,7 @@ public interface MyBatisEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedMyBatisEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -820,7 +818,7 @@ public interface MyBatisEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedMyBatisEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -855,7 +853,7 @@ public interface MyBatisEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedMyBatisEndpointConsumerBuilder pollStrategy(
-                PollingConsumerPollStrategy pollStrategy) {
+                org.apache.camel.spi.PollingConsumerPollStrategy pollStrategy) {
             doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
@@ -890,7 +888,7 @@ public interface MyBatisEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedMyBatisEndpointConsumerBuilder processingStrategy(
-                Object processingStrategy) {
+                org.apache.camel.component.mybatis.MyBatisProcessingStrategy processingStrategy) {
             doSetProperty("processingStrategy", processingStrategy);
             return this;
         }
@@ -936,7 +934,7 @@ public interface MyBatisEndpointBuilderFactory {
          * @return the dsl builder
          */
         default MyBatisEndpointProducerBuilder executorType(
-                ExecutorType executorType) {
+                org.apache.ibatis.session.ExecutorType executorType) {
             doSetProperty("executorType", executorType);
             return this;
         }
@@ -1059,7 +1057,7 @@ public interface MyBatisEndpointBuilderFactory {
          * @return the dsl builder
          */
         default MyBatisEndpointProducerBuilder statementType(
-                StatementType statementType) {
+                org.apache.camel.component.mybatis.StatementType statementType) {
             doSetProperty("statementType", statementType);
             return this;
         }
@@ -1115,30 +1113,6 @@ public interface MyBatisEndpointBuilderFactory {
         default MyBatisEndpointBuilder basic() {
             return (MyBatisEndpointBuilder) this;
         }
-    }
-
-    /**
-     * Proxy enum for <code>org.apache.ibatis.session.ExecutorType</code> enum.
-     */
-    enum ExecutorType {
-        SIMPLE,
-        REUSE,
-        BATCH;
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.mybatis.StatementType</code> enum.
-     */
-    enum StatementType {
-        SelectOne,
-        SelectList,
-        Insert,
-        InsertList,
-        Update,
-        UpdateList,
-        Delete,
-        DeleteList;
     }
 
     public interface MyBatisBuilders {

@@ -16,13 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.HeaderFilterStrategy;
 
 /**
  * Expose WebSocket endpoints using the Atmosphere framework.
@@ -154,7 +155,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AtmosphereWebsocketEndpointConsumerBuilder headerFilterStrategy(
-                HeaderFilterStrategy headerFilterStrategy) {
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
@@ -527,7 +528,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedAtmosphereWebsocketEndpointConsumerBuilder httpBinding(
-                Object httpBinding) {
+                org.apache.camel.http.common.HttpBinding httpBinding) {
             doSetProperty("httpBinding", httpBinding);
             return this;
         }
@@ -644,7 +645,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedAtmosphereWebsocketEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -679,7 +680,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedAtmosphereWebsocketEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -1020,7 +1021,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AtmosphereWebsocketEndpointProducerBuilder headerFilterStrategy(
-                HeaderFilterStrategy headerFilterStrategy) {
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
@@ -1271,7 +1272,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedAtmosphereWebsocketEndpointProducerBuilder httpBinding(
-                Object httpBinding) {
+                org.apache.camel.http.common.HttpBinding httpBinding) {
             doSetProperty("httpBinding", httpBinding);
             return this;
         }
@@ -1415,7 +1416,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AtmosphereWebsocketEndpointBuilder headerFilterStrategy(
-                HeaderFilterStrategy headerFilterStrategy) {
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
@@ -1576,7 +1577,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedAtmosphereWebsocketEndpointBuilder httpBinding(
-                Object httpBinding) {
+                org.apache.camel.http.common.HttpBinding httpBinding) {
             doSetProperty("httpBinding", httpBinding);
             return this;
         }

@@ -16,12 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Perform operations on MongoDB documents and collections.
@@ -150,7 +152,7 @@ public interface MongoDbEndpointBuilderFactory {
          * @return the dsl builder
          */
         default MongoDbEndpointConsumerBuilder mongoConnection(
-                Object mongoConnection) {
+                com.mongodb.client.MongoClient mongoConnection) {
             doSetProperty("mongoConnection", mongoConnection);
             return this;
         }
@@ -183,7 +185,7 @@ public interface MongoDbEndpointBuilderFactory {
          * @return the dsl builder
          */
         default MongoDbEndpointConsumerBuilder operation(
-                MongoDbOperation operation) {
+                org.apache.camel.component.mongodb.MongoDbOperation operation) {
             doSetProperty("operation", operation);
             return this;
         }
@@ -217,7 +219,7 @@ public interface MongoDbEndpointBuilderFactory {
          * @return the dsl builder
          */
         default MongoDbEndpointConsumerBuilder outputType(
-                MongoDbOutputType outputType) {
+                org.apache.camel.component.mongodb.MongoDbOutputType outputType) {
             doSetProperty("outputType", outputType);
             return this;
         }
@@ -492,7 +494,7 @@ public interface MongoDbEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedMongoDbEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -527,7 +529,7 @@ public interface MongoDbEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedMongoDbEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -828,7 +830,7 @@ public interface MongoDbEndpointBuilderFactory {
          * @return the dsl builder
          */
         default MongoDbEndpointProducerBuilder mongoConnection(
-                Object mongoConnection) {
+                com.mongodb.client.MongoClient mongoConnection) {
             doSetProperty("mongoConnection", mongoConnection);
             return this;
         }
@@ -861,7 +863,7 @@ public interface MongoDbEndpointBuilderFactory {
          * @return the dsl builder
          */
         default MongoDbEndpointProducerBuilder operation(
-                MongoDbOperation operation) {
+                org.apache.camel.component.mongodb.MongoDbOperation operation) {
             doSetProperty("operation", operation);
             return this;
         }
@@ -895,7 +897,7 @@ public interface MongoDbEndpointBuilderFactory {
          * @return the dsl builder
          */
         default MongoDbEndpointProducerBuilder outputType(
-                MongoDbOutputType outputType) {
+                org.apache.camel.component.mongodb.MongoDbOutputType outputType) {
             doSetProperty("outputType", outputType);
             return this;
         }
@@ -1283,7 +1285,8 @@ public interface MongoDbEndpointBuilderFactory {
          * @param mongoConnection the value to set
          * @return the dsl builder
          */
-        default MongoDbEndpointBuilder mongoConnection(Object mongoConnection) {
+        default MongoDbEndpointBuilder mongoConnection(
+                com.mongodb.client.MongoClient mongoConnection) {
             doSetProperty("mongoConnection", mongoConnection);
             return this;
         }
@@ -1314,7 +1317,8 @@ public interface MongoDbEndpointBuilderFactory {
          * @param operation the value to set
          * @return the dsl builder
          */
-        default MongoDbEndpointBuilder operation(MongoDbOperation operation) {
+        default MongoDbEndpointBuilder operation(
+                org.apache.camel.component.mongodb.MongoDbOperation operation) {
             doSetProperty("operation", operation);
             return this;
         }
@@ -1347,7 +1351,8 @@ public interface MongoDbEndpointBuilderFactory {
          * @param outputType the value to set
          * @return the dsl builder
          */
-        default MongoDbEndpointBuilder outputType(MongoDbOutputType outputType) {
+        default MongoDbEndpointBuilder outputType(
+                org.apache.camel.component.mongodb.MongoDbOutputType outputType) {
             doSetProperty("outputType", outputType);
             return this;
         }
@@ -1567,37 +1572,6 @@ public interface MongoDbEndpointBuilderFactory {
             doSetProperty("writeResultAsHeader", writeResultAsHeader);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.mongodb.MongoDbOperation</code> enum.
-     */
-    enum MongoDbOperation {
-        findById,
-        findOneByQuery,
-        findAll,
-        findDistinct,
-        insert,
-        save,
-        update,
-        remove,
-        bulkWrite,
-        aggregate,
-        getDbStats,
-        getColStats,
-        count,
-        command;
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.mongodb.MongoDbOutputType</code> enum.
-     */
-    enum MongoDbOutputType {
-        DocumentList,
-        Document,
-        MongoIterable;
     }
 
     public interface MongoDbBuilders {

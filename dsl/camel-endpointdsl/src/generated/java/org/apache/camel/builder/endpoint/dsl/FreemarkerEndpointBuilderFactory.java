@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -129,7 +133,8 @@ public interface FreemarkerEndpointBuilderFactory {
          * @param configuration the value to set
          * @return the dsl builder
          */
-        default FreemarkerEndpointBuilder configuration(Object configuration) {
+        default FreemarkerEndpointBuilder configuration(
+                freemarker.template.Configuration configuration) {
             doSetProperty("configuration", configuration);
             return this;
         }

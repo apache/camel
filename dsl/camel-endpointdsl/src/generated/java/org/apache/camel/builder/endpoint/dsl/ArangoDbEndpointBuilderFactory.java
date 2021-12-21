@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -161,7 +165,8 @@ public interface ArangoDbEndpointBuilderFactory {
          * @param operation the value to set
          * @return the dsl builder
          */
-        default ArangoDbEndpointBuilder operation(ArangoDbOperation operation) {
+        default ArangoDbEndpointBuilder operation(
+                org.apache.camel.component.arangodb.ArangoDbOperation operation) {
             doSetProperty("operation", operation);
             return this;
         }
@@ -258,26 +263,6 @@ public interface ArangoDbEndpointBuilderFactory {
             doSetProperty("user", user);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.arangodb.ArangoDbOperation</code> enum.
-     */
-    enum ArangoDbOperation {
-        SAVE_DOCUMENT,
-        FIND_DOCUMENT_BY_KEY,
-        UPDATE_DOCUMENT,
-        DELETE_DOCUMENT,
-        AQL_QUERY,
-        SAVE_VERTEX,
-        FIND_VERTEX_BY_KEY,
-        UPDATE_VERTEX,
-        DELETE_VERTEX,
-        SAVE_EDGE,
-        FIND_EDGE_BY_KEY,
-        UPDATE_EDGE,
-        DELETE_EDGE;
     }
 
     public interface ArangoDbBuilders {

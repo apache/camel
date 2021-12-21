@@ -16,16 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.math.BigInteger;
-import java.time.Duration;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Integrate with Consul service discovery and configuration store.
@@ -56,7 +54,7 @@ public interface ConsulEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ConsulEndpointConsumerBuilder connectTimeout(
-                Duration connectTimeout) {
+                java.time.Duration connectTimeout) {
             doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
@@ -122,7 +120,8 @@ public interface ConsulEndpointBuilderFactory {
          * @param consulClient the value to set
          * @return the dsl builder
          */
-        default ConsulEndpointConsumerBuilder consulClient(Object consulClient) {
+        default ConsulEndpointConsumerBuilder consulClient(
+                com.orbitz.consul.Consul consulClient) {
             doSetProperty("consulClient", consulClient);
             return this;
         }
@@ -198,7 +197,8 @@ public interface ConsulEndpointBuilderFactory {
          * @param readTimeout the value to set
          * @return the dsl builder
          */
-        default ConsulEndpointConsumerBuilder readTimeout(Duration readTimeout) {
+        default ConsulEndpointConsumerBuilder readTimeout(
+                java.time.Duration readTimeout) {
             doSetProperty("readTimeout", readTimeout);
             return this;
         }
@@ -255,23 +255,7 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Set tags. You can separate multiple tags by comma.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.Set&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param tags the value to set
-         * @return the dsl builder
-         */
-        default ConsulEndpointConsumerBuilder tags(Set<String> tags) {
-            doSetProperty("tags", tags);
-            return this;
-        }
-        /**
-         * Set tags. You can separate multiple tags by comma.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.Set&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -306,7 +290,8 @@ public interface ConsulEndpointBuilderFactory {
          * @param writeTimeout the value to set
          * @return the dsl builder
          */
-        default ConsulEndpointConsumerBuilder writeTimeout(Duration writeTimeout) {
+        default ConsulEndpointConsumerBuilder writeTimeout(
+                java.time.Duration writeTimeout) {
             doSetProperty("writeTimeout", writeTimeout);
             return this;
         }
@@ -446,7 +431,7 @@ public interface ConsulEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ConsulEndpointConsumerBuilder sslContextParameters(
-                Object sslContextParameters) {
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
@@ -523,7 +508,8 @@ public interface ConsulEndpointBuilderFactory {
          * @param firstIndex the value to set
          * @return the dsl builder
          */
-        default ConsulEndpointConsumerBuilder firstIndex(BigInteger firstIndex) {
+        default ConsulEndpointConsumerBuilder firstIndex(
+                java.math.BigInteger firstIndex) {
             doSetProperty("firstIndex", firstIndex);
             return this;
         }
@@ -600,7 +586,7 @@ public interface ConsulEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedConsulEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -635,7 +621,7 @@ public interface ConsulEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedConsulEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -670,7 +656,7 @@ public interface ConsulEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedConsulEndpointConsumerBuilder consistencyMode(
-                Object consistencyMode) {
+                com.orbitz.consul.option.ConsistencyMode consistencyMode) {
             doSetProperty("consistencyMode", consistencyMode);
             return this;
         }
@@ -734,7 +720,7 @@ public interface ConsulEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedConsulEndpointConsumerBuilder nodeMeta(
-                List<String> nodeMeta) {
+                List<java.lang.String> nodeMeta) {
             doSetProperty("nodeMeta", nodeMeta);
             return this;
         }
@@ -775,7 +761,7 @@ public interface ConsulEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ConsulEndpointProducerBuilder connectTimeout(
-                Duration connectTimeout) {
+                java.time.Duration connectTimeout) {
             doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
@@ -841,7 +827,8 @@ public interface ConsulEndpointBuilderFactory {
          * @param consulClient the value to set
          * @return the dsl builder
          */
-        default ConsulEndpointProducerBuilder consulClient(Object consulClient) {
+        default ConsulEndpointProducerBuilder consulClient(
+                com.orbitz.consul.Consul consulClient) {
             doSetProperty("consulClient", consulClient);
             return this;
         }
@@ -917,7 +904,8 @@ public interface ConsulEndpointBuilderFactory {
          * @param readTimeout the value to set
          * @return the dsl builder
          */
-        default ConsulEndpointProducerBuilder readTimeout(Duration readTimeout) {
+        default ConsulEndpointProducerBuilder readTimeout(
+                java.time.Duration readTimeout) {
             doSetProperty("readTimeout", readTimeout);
             return this;
         }
@@ -974,23 +962,7 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Set tags. You can separate multiple tags by comma.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.Set&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param tags the value to set
-         * @return the dsl builder
-         */
-        default ConsulEndpointProducerBuilder tags(Set<String> tags) {
-            doSetProperty("tags", tags);
-            return this;
-        }
-        /**
-         * Set tags. You can separate multiple tags by comma.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.Set&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -1025,7 +997,8 @@ public interface ConsulEndpointBuilderFactory {
          * @param writeTimeout the value to set
          * @return the dsl builder
          */
-        default ConsulEndpointProducerBuilder writeTimeout(Duration writeTimeout) {
+        default ConsulEndpointProducerBuilder writeTimeout(
+                java.time.Duration writeTimeout) {
             doSetProperty("writeTimeout", writeTimeout);
             return this;
         }
@@ -1217,7 +1190,7 @@ public interface ConsulEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ConsulEndpointProducerBuilder sslContextParameters(
-                Object sslContextParameters) {
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
@@ -1278,7 +1251,7 @@ public interface ConsulEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedConsulEndpointProducerBuilder consistencyMode(
-                Object consistencyMode) {
+                com.orbitz.consul.option.ConsistencyMode consistencyMode) {
             doSetProperty("consistencyMode", consistencyMode);
             return this;
         }
@@ -1342,7 +1315,7 @@ public interface ConsulEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedConsulEndpointProducerBuilder nodeMeta(
-                List<String> nodeMeta) {
+                List<java.lang.String> nodeMeta) {
             doSetProperty("nodeMeta", nodeMeta);
             return this;
         }
@@ -1383,7 +1356,8 @@ public interface ConsulEndpointBuilderFactory {
          * @param connectTimeout the value to set
          * @return the dsl builder
          */
-        default ConsulEndpointBuilder connectTimeout(Duration connectTimeout) {
+        default ConsulEndpointBuilder connectTimeout(
+                java.time.Duration connectTimeout) {
             doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
@@ -1448,7 +1422,8 @@ public interface ConsulEndpointBuilderFactory {
          * @param consulClient the value to set
          * @return the dsl builder
          */
-        default ConsulEndpointBuilder consulClient(Object consulClient) {
+        default ConsulEndpointBuilder consulClient(
+                com.orbitz.consul.Consul consulClient) {
             doSetProperty("consulClient", consulClient);
             return this;
         }
@@ -1524,7 +1499,7 @@ public interface ConsulEndpointBuilderFactory {
          * @param readTimeout the value to set
          * @return the dsl builder
          */
-        default ConsulEndpointBuilder readTimeout(Duration readTimeout) {
+        default ConsulEndpointBuilder readTimeout(java.time.Duration readTimeout) {
             doSetProperty("readTimeout", readTimeout);
             return this;
         }
@@ -1579,23 +1554,7 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Set tags. You can separate multiple tags by comma.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.Set&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param tags the value to set
-         * @return the dsl builder
-         */
-        default ConsulEndpointBuilder tags(Set<String> tags) {
-            doSetProperty("tags", tags);
-            return this;
-        }
-        /**
-         * Set tags. You can separate multiple tags by comma.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.Set&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -1630,7 +1589,8 @@ public interface ConsulEndpointBuilderFactory {
          * @param writeTimeout the value to set
          * @return the dsl builder
          */
-        default ConsulEndpointBuilder writeTimeout(Duration writeTimeout) {
+        default ConsulEndpointBuilder writeTimeout(
+                java.time.Duration writeTimeout) {
             doSetProperty("writeTimeout", writeTimeout);
             return this;
         }
@@ -1724,7 +1684,7 @@ public interface ConsulEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ConsulEndpointBuilder sslContextParameters(
-                Object sslContextParameters) {
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
@@ -1786,7 +1746,7 @@ public interface ConsulEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedConsulEndpointBuilder consistencyMode(
-                Object consistencyMode) {
+                com.orbitz.consul.option.ConsistencyMode consistencyMode) {
             doSetProperty("consistencyMode", consistencyMode);
             return this;
         }
@@ -1848,7 +1808,8 @@ public interface ConsulEndpointBuilderFactory {
          * @param nodeMeta the value to set
          * @return the dsl builder
          */
-        default AdvancedConsulEndpointBuilder nodeMeta(List<String> nodeMeta) {
+        default AdvancedConsulEndpointBuilder nodeMeta(
+                List<java.lang.String> nodeMeta) {
             doSetProperty("nodeMeta", nodeMeta);
             return this;
         }

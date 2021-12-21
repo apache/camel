@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -123,7 +127,8 @@ public interface DrillEndpointBuilderFactory {
          * @param mode the value to set
          * @return the dsl builder
          */
-        default DrillEndpointBuilder mode(DrillConnectionMode mode) {
+        default DrillEndpointBuilder mode(
+                org.apache.camel.component.drill.DrillConnectionMode mode) {
             doSetProperty("mode", mode);
             return this;
         }
@@ -175,15 +180,6 @@ public interface DrillEndpointBuilderFactory {
             doSetProperty("port", port);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.drill.DrillConnectionMode</code> enum.
-     */
-    enum DrillConnectionMode {
-        ZK,
-        DRILLBIT;
     }
 
     public interface DrillBuilders {

@@ -16,14 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.security.PrivateKey;
-import java.security.cert.Certificate;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Transfer data securely and reliably using the AS2 protocol (RFC4130).
@@ -71,7 +71,7 @@ public interface AS2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AS2EndpointConsumerBuilder as2MessageStructure(
-                AS2MessageStructure as2MessageStructure) {
+                org.apache.camel.component.as2.api.AS2MessageStructure as2MessageStructure) {
             doSetProperty("as2MessageStructure", as2MessageStructure);
             return this;
         }
@@ -165,7 +165,7 @@ public interface AS2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AS2EndpointConsumerBuilder compressionAlgorithm(
-                AS2CompressionAlgorithm compressionAlgorithm) {
+                org.apache.camel.component.as2.api.AS2CompressionAlgorithm compressionAlgorithm) {
             doSetProperty("compressionAlgorithm", compressionAlgorithm);
             return this;
         }
@@ -197,7 +197,7 @@ public interface AS2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AS2EndpointConsumerBuilder decryptingPrivateKey(
-                PrivateKey decryptingPrivateKey) {
+                java.security.PrivateKey decryptingPrivateKey) {
             doSetProperty("decryptingPrivateKey", decryptingPrivateKey);
             return this;
         }
@@ -261,7 +261,8 @@ public interface AS2EndpointBuilderFactory {
          * @param ediMessageType the value to set
          * @return the dsl builder
          */
-        default AS2EndpointConsumerBuilder ediMessageType(Object ediMessageType) {
+        default AS2EndpointConsumerBuilder ediMessageType(
+                org.apache.http.entity.ContentType ediMessageType) {
             doSetProperty("ediMessageType", ediMessageType);
             return this;
         }
@@ -293,7 +294,7 @@ public interface AS2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AS2EndpointConsumerBuilder encryptingAlgorithm(
-                AS2EncryptionAlgorithm encryptingAlgorithm) {
+                org.apache.camel.component.as2.api.AS2EncryptionAlgorithm encryptingAlgorithm) {
             doSetProperty("encryptingAlgorithm", encryptingAlgorithm);
             return this;
         }
@@ -325,7 +326,7 @@ public interface AS2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AS2EndpointConsumerBuilder encryptingCertificateChain(
-                Certificate[] encryptingCertificateChain) {
+                java.security.cert.Certificate[] encryptingCertificateChain) {
             doSetProperty("encryptingCertificateChain", encryptingCertificateChain);
             return this;
         }
@@ -513,7 +514,7 @@ public interface AS2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AS2EndpointConsumerBuilder signingAlgorithm(
-                AS2SignatureAlgorithm signingAlgorithm) {
+                org.apache.camel.component.as2.api.AS2SignatureAlgorithm signingAlgorithm) {
             doSetProperty("signingAlgorithm", signingAlgorithm);
             return this;
         }
@@ -545,7 +546,7 @@ public interface AS2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AS2EndpointConsumerBuilder signingCertificateChain(
-                Certificate[] signingCertificateChain) {
+                java.security.cert.Certificate[] signingCertificateChain) {
             doSetProperty("signingCertificateChain", signingCertificateChain);
             return this;
         }
@@ -577,7 +578,7 @@ public interface AS2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AS2EndpointConsumerBuilder signingPrivateKey(
-                PrivateKey signingPrivateKey) {
+                java.security.PrivateKey signingPrivateKey) {
             doSetProperty("signingPrivateKey", signingPrivateKey);
             return this;
         }
@@ -698,7 +699,7 @@ public interface AS2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedAS2EndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -733,7 +734,7 @@ public interface AS2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedAS2EndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -792,7 +793,7 @@ public interface AS2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AS2EndpointProducerBuilder as2MessageStructure(
-                AS2MessageStructure as2MessageStructure) {
+                org.apache.camel.component.as2.api.AS2MessageStructure as2MessageStructure) {
             doSetProperty("as2MessageStructure", as2MessageStructure);
             return this;
         }
@@ -886,7 +887,7 @@ public interface AS2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AS2EndpointProducerBuilder compressionAlgorithm(
-                AS2CompressionAlgorithm compressionAlgorithm) {
+                org.apache.camel.component.as2.api.AS2CompressionAlgorithm compressionAlgorithm) {
             doSetProperty("compressionAlgorithm", compressionAlgorithm);
             return this;
         }
@@ -918,7 +919,7 @@ public interface AS2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AS2EndpointProducerBuilder decryptingPrivateKey(
-                PrivateKey decryptingPrivateKey) {
+                java.security.PrivateKey decryptingPrivateKey) {
             doSetProperty("decryptingPrivateKey", decryptingPrivateKey);
             return this;
         }
@@ -982,7 +983,8 @@ public interface AS2EndpointBuilderFactory {
          * @param ediMessageType the value to set
          * @return the dsl builder
          */
-        default AS2EndpointProducerBuilder ediMessageType(Object ediMessageType) {
+        default AS2EndpointProducerBuilder ediMessageType(
+                org.apache.http.entity.ContentType ediMessageType) {
             doSetProperty("ediMessageType", ediMessageType);
             return this;
         }
@@ -1014,7 +1016,7 @@ public interface AS2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AS2EndpointProducerBuilder encryptingAlgorithm(
-                AS2EncryptionAlgorithm encryptingAlgorithm) {
+                org.apache.camel.component.as2.api.AS2EncryptionAlgorithm encryptingAlgorithm) {
             doSetProperty("encryptingAlgorithm", encryptingAlgorithm);
             return this;
         }
@@ -1046,7 +1048,7 @@ public interface AS2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AS2EndpointProducerBuilder encryptingCertificateChain(
-                Certificate[] encryptingCertificateChain) {
+                java.security.cert.Certificate[] encryptingCertificateChain) {
             doSetProperty("encryptingCertificateChain", encryptingCertificateChain);
             return this;
         }
@@ -1234,7 +1236,7 @@ public interface AS2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AS2EndpointProducerBuilder signingAlgorithm(
-                AS2SignatureAlgorithm signingAlgorithm) {
+                org.apache.camel.component.as2.api.AS2SignatureAlgorithm signingAlgorithm) {
             doSetProperty("signingAlgorithm", signingAlgorithm);
             return this;
         }
@@ -1266,7 +1268,7 @@ public interface AS2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AS2EndpointProducerBuilder signingCertificateChain(
-                Certificate[] signingCertificateChain) {
+                java.security.cert.Certificate[] signingCertificateChain) {
             doSetProperty("signingCertificateChain", signingCertificateChain);
             return this;
         }
@@ -1298,7 +1300,7 @@ public interface AS2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AS2EndpointProducerBuilder signingPrivateKey(
-                PrivateKey signingPrivateKey) {
+                java.security.PrivateKey signingPrivateKey) {
             doSetProperty("signingPrivateKey", signingPrivateKey);
             return this;
         }
@@ -1493,7 +1495,7 @@ public interface AS2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AS2EndpointBuilder as2MessageStructure(
-                AS2MessageStructure as2MessageStructure) {
+                org.apache.camel.component.as2.api.AS2MessageStructure as2MessageStructure) {
             doSetProperty("as2MessageStructure", as2MessageStructure);
             return this;
         }
@@ -1586,7 +1588,7 @@ public interface AS2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AS2EndpointBuilder compressionAlgorithm(
-                AS2CompressionAlgorithm compressionAlgorithm) {
+                org.apache.camel.component.as2.api.AS2CompressionAlgorithm compressionAlgorithm) {
             doSetProperty("compressionAlgorithm", compressionAlgorithm);
             return this;
         }
@@ -1618,7 +1620,7 @@ public interface AS2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AS2EndpointBuilder decryptingPrivateKey(
-                PrivateKey decryptingPrivateKey) {
+                java.security.PrivateKey decryptingPrivateKey) {
             doSetProperty("decryptingPrivateKey", decryptingPrivateKey);
             return this;
         }
@@ -1682,7 +1684,8 @@ public interface AS2EndpointBuilderFactory {
          * @param ediMessageType the value to set
          * @return the dsl builder
          */
-        default AS2EndpointBuilder ediMessageType(Object ediMessageType) {
+        default AS2EndpointBuilder ediMessageType(
+                org.apache.http.entity.ContentType ediMessageType) {
             doSetProperty("ediMessageType", ediMessageType);
             return this;
         }
@@ -1714,7 +1717,7 @@ public interface AS2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AS2EndpointBuilder encryptingAlgorithm(
-                AS2EncryptionAlgorithm encryptingAlgorithm) {
+                org.apache.camel.component.as2.api.AS2EncryptionAlgorithm encryptingAlgorithm) {
             doSetProperty("encryptingAlgorithm", encryptingAlgorithm);
             return this;
         }
@@ -1746,7 +1749,7 @@ public interface AS2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AS2EndpointBuilder encryptingCertificateChain(
-                Certificate[] encryptingCertificateChain) {
+                java.security.cert.Certificate[] encryptingCertificateChain) {
             doSetProperty("encryptingCertificateChain", encryptingCertificateChain);
             return this;
         }
@@ -1931,7 +1934,7 @@ public interface AS2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AS2EndpointBuilder signingAlgorithm(
-                AS2SignatureAlgorithm signingAlgorithm) {
+                org.apache.camel.component.as2.api.AS2SignatureAlgorithm signingAlgorithm) {
             doSetProperty("signingAlgorithm", signingAlgorithm);
             return this;
         }
@@ -1962,7 +1965,7 @@ public interface AS2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AS2EndpointBuilder signingCertificateChain(
-                Certificate[] signingCertificateChain) {
+                java.security.cert.Certificate[] signingCertificateChain) {
             doSetProperty("signingCertificateChain", signingCertificateChain);
             return this;
         }
@@ -1994,7 +1997,7 @@ public interface AS2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AS2EndpointBuilder signingPrivateKey(
-                PrivateKey signingPrivateKey) {
+                java.security.PrivateKey signingPrivateKey) {
             doSetProperty("signingPrivateKey", signingPrivateKey);
             return this;
         }
@@ -2098,113 +2101,6 @@ public interface AS2EndpointBuilderFactory {
         default AS2EndpointBuilder basic() {
             return (AS2EndpointBuilder) this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.as2.api.AS2MessageStructure</code> enum.
-     */
-    enum AS2MessageStructure {
-        PLAIN,
-        SIGNED,
-        ENCRYPTED,
-        SIGNED_ENCRYPTED,
-        PLAIN_COMPRESSED,
-        SIGNED_COMPRESSED,
-        ENCRYPTED_COMPRESSED,
-        ENCRYPTED_COMPRESSED_SIGNED;
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.as2.api.AS2CompressionAlgorithm</code>
-     * enum.
-     */
-    enum AS2CompressionAlgorithm {
-        ZLIB;
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.as2.api.AS2EncryptionAlgorithm</code>
-     * enum.
-     */
-    enum AS2EncryptionAlgorithm {
-        AES128_CBC,
-        AES192_CBC,
-        AES256_CBC,
-        AES128_CCM,
-        AES192_CCM,
-        AES256_CCM,
-        AES128_GCM,
-        AES192_GCM,
-        AES256_GCM,
-        CAMELLIA128_CBC,
-        CAMELLIA192_CBC,
-        CAMELLIA256_CBC,
-        CAST5_CBC,
-        DES_CBC,
-        DES_EDE3_CBC,
-        GOST28147_GCFB,
-        IDEA_CBC,
-        RC2_CBC,
-        RC4,
-        SEED_CBC;
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.as2.api.AS2SignatureAlgorithm</code>
-     * enum.
-     */
-    enum AS2SignatureAlgorithm {
-        SHA3_224WITHRSA,
-        SHA3_256WITHRSA,
-        SHA3_384withRSA,
-        SHA3_512WITHRSA,
-        MD5WITHRSA,
-        SHA1WITHRSA,
-        MD2WITHRSA,
-        SHA224WITHRSA,
-        SHA256WITHRSA,
-        SHA384WITHRSA,
-        SHA512WITHRSA,
-        RIPEMD128WITHRSA,
-        RIPEMD160WITHRSA,
-        RIPEMD256WITHRSA,
-        SHA224WITHDSA,
-        SHA256WITHDSA,
-        SHA384WITHDSA,
-        SHA512WITHDSA,
-        SHA3_224WITHDSA,
-        SHA3_256WITHDSA,
-        SHA3_384WITHDSA,
-        SHA3_512WITHDSA,
-        SHA1WITHDSA,
-        SHA3_224WITHECDSA,
-        SHA3_256WITHECDSA,
-        SHA3_384WITHECDSA,
-        SHA3_512WITHECDSA,
-        SHA1WITHECDSA,
-        SHA224WITHECDSA,
-        SHA256WITHECDSA,
-        SHA384WITHECDSA,
-        SHA512WITHECDSA,
-        SHA1WITHPLAIN_ECDSA,
-        SHA224WITHPLAIN_ECDSA,
-        SHA256WITHPLAIN_ECDSA,
-        SHA384WITHPLAIN_ECDSA,
-        SHA512WITHPLAIN_ECDSA,
-        RIPEMD160WITHPLAIN_ECDSA,
-        SHA1WITHRSAANDMGF1,
-        SHA224WITHRSAANDMGF1,
-        SHA256WITHRSAANDMGF1,
-        SHA384WITHRSAANDMGF1,
-        SHA512WITHRSAANDMGF1,
-        SHA3_224WITHRSAANDMGF1,
-        SHA3_256WITHRSAANDMGF1,
-        SHA3_384WITHRSAANDMGF1,
-        SHA3_512WITHRSAANDMGF1;
     }
 
     public interface AS2Builders {

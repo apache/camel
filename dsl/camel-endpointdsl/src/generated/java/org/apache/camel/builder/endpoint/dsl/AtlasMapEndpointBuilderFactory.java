@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -221,7 +225,7 @@ public interface AtlasMapEndpointBuilderFactory {
          * properties. ).
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.atlasmap.AtlasMapEndpoint$TargetMapMode&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.atlasmap.AtlasMapEndpoint.TargetMapMode&lt;/code&gt; type.
          * 
          * Default: MAP
          * Group: producer
@@ -230,7 +234,7 @@ public interface AtlasMapEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AtlasMapEndpointBuilder targetMapMode(
-                TargetMapMode targetMapMode) {
+                org.apache.camel.component.atlasmap.AtlasMapEndpoint.TargetMapMode targetMapMode) {
             doSetProperty("targetMapMode", targetMapMode);
             return this;
         }
@@ -243,7 +247,7 @@ public interface AtlasMapEndpointBuilderFactory {
          * properties. ).
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.atlasmap.AtlasMapEndpoint$TargetMapMode&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.atlasmap.AtlasMapEndpoint.TargetMapMode&lt;/code&gt; type.
          * 
          * Default: MAP
          * Group: producer
@@ -272,16 +276,6 @@ public interface AtlasMapEndpointBuilderFactory {
             doSetProperty("targetMapName", targetMapName);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.atlasmap.AtlasMapEndpoint$TargetMapMode</code> enum.
-     */
-    enum TargetMapMode {
-        MAP,
-        MESSAGE_HEADER,
-        EXCHANGE_PROPERTY;
     }
 
     public interface AtlasMapBuilders {

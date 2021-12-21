@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -184,7 +188,8 @@ public interface MsvEndpointBuilderFactory {
          * @param errorHandler the value to set
          * @return the dsl builder
          */
-        default AdvancedMsvEndpointBuilder errorHandler(Object errorHandler) {
+        default AdvancedMsvEndpointBuilder errorHandler(
+                org.apache.camel.support.processor.validation.ValidatorErrorHandler errorHandler) {
             doSetProperty("errorHandler", errorHandler);
             return this;
         }
@@ -218,7 +223,7 @@ public interface MsvEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedMsvEndpointBuilder resourceResolver(
-                Object resourceResolver) {
+                org.w3c.dom.ls.LSResourceResolver resourceResolver) {
             doSetProperty("resourceResolver", resourceResolver);
             return this;
         }
@@ -254,7 +259,7 @@ public interface MsvEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedMsvEndpointBuilder resourceResolverFactory(
-                Object resourceResolverFactory) {
+                org.apache.camel.component.validator.ValidatorResourceResolverFactory resourceResolverFactory) {
             doSetProperty("resourceResolverFactory", resourceResolverFactory);
             return this;
         }
@@ -288,7 +293,8 @@ public interface MsvEndpointBuilderFactory {
          * @param schemaFactory the value to set
          * @return the dsl builder
          */
-        default AdvancedMsvEndpointBuilder schemaFactory(Object schemaFactory) {
+        default AdvancedMsvEndpointBuilder schemaFactory(
+                javax.xml.validation.SchemaFactory schemaFactory) {
             doSetProperty("schemaFactory", schemaFactory);
             return this;
         }

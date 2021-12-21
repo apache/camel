@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -132,7 +136,7 @@ public interface Translate2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default Translate2EndpointBuilder operation(
-                Translate2Operations operation) {
+                org.apache.camel.component.aws2.translate.Translate2Operations operation) {
             doSetProperty("operation", operation);
             return this;
         }
@@ -274,7 +278,8 @@ public interface Translate2EndpointBuilderFactory {
          * @param proxyProtocol the value to set
          * @return the dsl builder
          */
-        default Translate2EndpointBuilder proxyProtocol(Protocol proxyProtocol) {
+        default Translate2EndpointBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
@@ -350,7 +355,8 @@ public interface Translate2EndpointBuilderFactory {
          * @param translateClient the value to set
          * @return the dsl builder
          */
-        default Translate2EndpointBuilder translateClient(Object translateClient) {
+        default Translate2EndpointBuilder translateClient(
+                software.amazon.awssdk.services.translate.TranslateClient translateClient) {
             doSetProperty("translateClient", translateClient);
             return this;
         }
@@ -485,22 +491,6 @@ public interface Translate2EndpointBuilderFactory {
             doSetProperty("secretKey", secretKey);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.aws2.translate.Translate2Operations</code> enum.
-     */
-    enum Translate2Operations {
-        translateText;
-    }
-
-    /**
-     * Proxy enum for <code>software.amazon.awssdk.core.Protocol</code> enum.
-     */
-    enum Protocol {
-        HTTP,
-        HTTPS;
     }
 
     public interface Translate2Builders {

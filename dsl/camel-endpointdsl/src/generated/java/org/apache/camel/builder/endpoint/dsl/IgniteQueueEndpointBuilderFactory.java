@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -77,7 +81,8 @@ public interface IgniteQueueEndpointBuilderFactory {
          * @param configuration the value to set
          * @return the dsl builder
          */
-        default IgniteQueueEndpointBuilder configuration(Object configuration) {
+        default IgniteQueueEndpointBuilder configuration(
+                org.apache.ignite.configuration.CollectionConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
         }
@@ -162,7 +167,7 @@ public interface IgniteQueueEndpointBuilderFactory {
          * @return the dsl builder
          */
         default IgniteQueueEndpointBuilder operation(
-                IgniteQueueOperation operation) {
+                org.apache.camel.component.ignite.queue.IgniteQueueOperation operation) {
             doSetProperty("operation", operation);
             return this;
         }
@@ -283,29 +288,6 @@ public interface IgniteQueueEndpointBuilderFactory {
             doSetProperty("treatCollectionsAsCacheObjects", treatCollectionsAsCacheObjects);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.ignite.queue.IgniteQueueOperation</code>
-     * enum.
-     */
-    enum IgniteQueueOperation {
-        CONTAINS,
-        ADD,
-        SIZE,
-        REMOVE,
-        ITERATOR,
-        CLEAR,
-        RETAIN_ALL,
-        ARRAY,
-        DRAIN,
-        ELEMENT,
-        PEEK,
-        OFFER,
-        POLL,
-        TAKE,
-        PUT;
     }
 
     public interface IgniteQueueBuilders {

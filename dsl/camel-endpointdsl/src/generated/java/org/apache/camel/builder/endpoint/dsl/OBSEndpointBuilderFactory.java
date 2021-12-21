@@ -16,17 +16,15 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
 import java.util.Map;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.PollingConsumerPollStrategy;
 
 /**
  * To provide stable, secure, efficient, and easy-to-use cloud storage service
@@ -693,7 +691,7 @@ public interface OBSEndpointBuilderFactory {
          * @return the dsl builder
          */
         default OBSEndpointConsumerBuilder runLoggingLevel(
-                LoggingLevel runLoggingLevel) {
+                org.apache.camel.LoggingLevel runLoggingLevel) {
             doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
@@ -995,7 +993,8 @@ public interface OBSEndpointBuilderFactory {
          * @param serviceKeys the value to set
          * @return the dsl builder
          */
-        default OBSEndpointConsumerBuilder serviceKeys(Object serviceKeys) {
+        default OBSEndpointConsumerBuilder serviceKeys(
+                org.apache.camel.component.huaweicloud.common.models.ServiceKeys serviceKeys) {
             doSetProperty("serviceKeys", serviceKeys);
             return this;
         }
@@ -1041,7 +1040,7 @@ public interface OBSEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedOBSEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -1076,7 +1075,7 @@ public interface OBSEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedOBSEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -1111,7 +1110,7 @@ public interface OBSEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedOBSEndpointConsumerBuilder pollStrategy(
-                PollingConsumerPollStrategy pollStrategy) {
+                org.apache.camel.spi.PollingConsumerPollStrategy pollStrategy) {
             doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
@@ -1412,7 +1411,8 @@ public interface OBSEndpointBuilderFactory {
          * @param serviceKeys the value to set
          * @return the dsl builder
          */
-        default OBSEndpointProducerBuilder serviceKeys(Object serviceKeys) {
+        default OBSEndpointProducerBuilder serviceKeys(
+                org.apache.camel.component.huaweicloud.common.models.ServiceKeys serviceKeys) {
             doSetProperty("serviceKeys", serviceKeys);
             return this;
         }
@@ -1659,7 +1659,8 @@ public interface OBSEndpointBuilderFactory {
          * @param serviceKeys the value to set
          * @return the dsl builder
          */
-        default OBSEndpointBuilder serviceKeys(Object serviceKeys) {
+        default OBSEndpointBuilder serviceKeys(
+                org.apache.camel.component.huaweicloud.common.models.ServiceKeys serviceKeys) {
             doSetProperty("serviceKeys", serviceKeys);
             return this;
         }

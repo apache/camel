@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -252,7 +256,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ElasticsearchEndpointBuilder operation(
-                ElasticsearchOperation operation) {
+                org.apache.camel.component.elasticsearch.ElasticsearchOperation operation) {
             doSetProperty("operation", operation);
             return this;
         }
@@ -574,25 +578,6 @@ public interface ElasticsearchEndpointBuilderFactory {
             doSetProperty("snifferInterval", snifferInterval);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.elasticsearch.ElasticsearchOperation</code> enum.
-     */
-    enum ElasticsearchOperation {
-        Index,
-        Update,
-        Bulk,
-        BulkIndex,
-        GetById,
-        MultiGet,
-        MultiSearch,
-        Delete,
-        DeleteIndex,
-        Search,
-        Exists,
-        Ping;
     }
 
     public interface ElasticsearchBuilders {

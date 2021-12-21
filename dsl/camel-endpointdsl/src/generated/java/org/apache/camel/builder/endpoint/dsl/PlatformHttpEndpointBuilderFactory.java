@@ -16,13 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.HeaderFilterStrategy;
 
 /**
  * Expose HTTP endpoints using the HTTP server available in the current
@@ -196,7 +197,7 @@ public interface PlatformHttpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedPlatformHttpEndpointBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -231,7 +232,7 @@ public interface PlatformHttpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedPlatformHttpEndpointBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -282,7 +283,7 @@ public interface PlatformHttpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedPlatformHttpEndpointBuilder headerFilterStrategy(
-                HeaderFilterStrategy headerFilterStrategy) {
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
@@ -317,7 +318,7 @@ public interface PlatformHttpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedPlatformHttpEndpointBuilder platformHttpEngine(
-                Object platformHttpEngine) {
+                org.apache.camel.component.platform.http.spi.PlatformHttpEngine platformHttpEngine) {
             doSetProperty("platformHttpEngine", platformHttpEngine);
             return this;
         }

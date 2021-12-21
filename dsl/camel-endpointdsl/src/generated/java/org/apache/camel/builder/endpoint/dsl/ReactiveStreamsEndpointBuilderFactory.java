@@ -16,12 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Exchange messages with reactive stream processing libraries compatible with
@@ -300,7 +302,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedReactiveStreamsEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -335,7 +337,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedReactiveStreamsEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -379,7 +381,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ReactiveStreamsEndpointProducerBuilder backpressureStrategy(
-                ReactiveStreamsBackpressureStrategy backpressureStrategy) {
+                org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy backpressureStrategy) {
             doSetProperty("backpressureStrategy", backpressureStrategy);
             return this;
         }
@@ -485,16 +487,6 @@ public interface ReactiveStreamsEndpointBuilderFactory {
         default ReactiveStreamsEndpointBuilder basic() {
             return (ReactiveStreamsEndpointBuilder) this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy</code> enum.
-     */
-    enum ReactiveStreamsBackpressureStrategy {
-        BUFFER,
-        OLDEST,
-        LATEST;
     }
 
     public interface ReactiveStreamsBuilders {

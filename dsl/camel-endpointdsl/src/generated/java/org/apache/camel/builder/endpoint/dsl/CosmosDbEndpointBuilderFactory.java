@@ -16,12 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * To read and write records to the CosmosDB database on Azure cloud platform.
@@ -150,7 +152,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * @return the dsl builder
          */
         default CosmosDbEndpointConsumerBuilder consistencyLevel(
-                ConsistencyLevel consistencyLevel) {
+                com.azure.cosmos.ConsistencyLevel consistencyLevel) {
             doSetProperty("consistencyLevel", consistencyLevel);
             return this;
         }
@@ -250,7 +252,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * @return the dsl builder
          */
         default CosmosDbEndpointConsumerBuilder cosmosAsyncClient(
-                Object cosmosAsyncClient) {
+                com.azure.cosmos.CosmosAsyncClient cosmosAsyncClient) {
             doSetProperty("cosmosAsyncClient", cosmosAsyncClient);
             return this;
         }
@@ -484,7 +486,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * @return the dsl builder
          */
         default CosmosDbEndpointConsumerBuilder throughputProperties(
-                Object throughputProperties) {
+                com.azure.cosmos.models.ThroughputProperties throughputProperties) {
             doSetProperty("throughputProperties", throughputProperties);
             return this;
         }
@@ -566,7 +568,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * @return the dsl builder
          */
         default CosmosDbEndpointConsumerBuilder changeFeedProcessorOptions(
-                Object changeFeedProcessorOptions) {
+                com.azure.cosmos.models.ChangeFeedProcessorOptions changeFeedProcessorOptions) {
             doSetProperty("changeFeedProcessorOptions", changeFeedProcessorOptions);
             return this;
         }
@@ -758,7 +760,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedCosmosDbEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -793,7 +795,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedCosmosDbEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -933,7 +935,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * @return the dsl builder
          */
         default CosmosDbEndpointProducerBuilder consistencyLevel(
-                ConsistencyLevel consistencyLevel) {
+                com.azure.cosmos.ConsistencyLevel consistencyLevel) {
             doSetProperty("consistencyLevel", consistencyLevel);
             return this;
         }
@@ -1033,7 +1035,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * @return the dsl builder
          */
         default CosmosDbEndpointProducerBuilder cosmosAsyncClient(
-                Object cosmosAsyncClient) {
+                com.azure.cosmos.CosmosAsyncClient cosmosAsyncClient) {
             doSetProperty("cosmosAsyncClient", cosmosAsyncClient);
             return this;
         }
@@ -1267,7 +1269,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * @return the dsl builder
          */
         default CosmosDbEndpointProducerBuilder throughputProperties(
-                Object throughputProperties) {
+                com.azure.cosmos.models.ThroughputProperties throughputProperties) {
             doSetProperty("throughputProperties", throughputProperties);
             return this;
         }
@@ -1317,7 +1319,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * @return the dsl builder
          */
         default CosmosDbEndpointProducerBuilder itemPartitionKey(
-                Object itemPartitionKey) {
+                com.azure.cosmos.models.PartitionKey itemPartitionKey) {
             doSetProperty("itemPartitionKey", itemPartitionKey);
             return this;
         }
@@ -1402,7 +1404,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * @return the dsl builder
          */
         default CosmosDbEndpointProducerBuilder operation(
-                CosmosDbOperationsDefinition operation) {
+                org.apache.camel.component.azure.cosmosdb.CosmosDbOperationsDefinition operation) {
             doSetProperty("operation", operation);
             return this;
         }
@@ -1453,7 +1455,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * @return the dsl builder
          */
         default CosmosDbEndpointProducerBuilder queryRequestOptions(
-                Object queryRequestOptions) {
+                com.azure.cosmos.models.CosmosQueryRequestOptions queryRequestOptions) {
             doSetProperty("queryRequestOptions", queryRequestOptions);
             return this;
         }
@@ -1623,7 +1625,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * @return the dsl builder
          */
         default CosmosDbEndpointBuilder consistencyLevel(
-                ConsistencyLevel consistencyLevel) {
+                com.azure.cosmos.ConsistencyLevel consistencyLevel) {
             doSetProperty("consistencyLevel", consistencyLevel);
             return this;
         }
@@ -1722,7 +1724,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * @return the dsl builder
          */
         default CosmosDbEndpointBuilder cosmosAsyncClient(
-                Object cosmosAsyncClient) {
+                com.azure.cosmos.CosmosAsyncClient cosmosAsyncClient) {
             doSetProperty("cosmosAsyncClient", cosmosAsyncClient);
             return this;
         }
@@ -1954,7 +1956,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * @return the dsl builder
          */
         default CosmosDbEndpointBuilder throughputProperties(
-                Object throughputProperties) {
+                com.azure.cosmos.models.ThroughputProperties throughputProperties) {
             doSetProperty("throughputProperties", throughputProperties);
             return this;
         }
@@ -2003,41 +2005,6 @@ public interface CosmosDbEndpointBuilderFactory {
         default CosmosDbEndpointBuilder basic() {
             return (CosmosDbEndpointBuilder) this;
         }
-    }
-
-    /**
-     * Proxy enum for <code>com.azure.cosmos.ConsistencyLevel</code> enum.
-     */
-    enum ConsistencyLevel {
-        STRONG,
-        BOUNDED_STALENESS,
-        SESSION,
-        EVENTUAL,
-        CONSISTENT_PREFIX;
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.azure.cosmosdb.CosmosDbOperationsDefinition</code> enum.
-     */
-    enum CosmosDbOperationsDefinition {
-        listDatabases,
-        createDatabase,
-        queryDatabases,
-        deleteDatabase,
-        createContainer,
-        replaceDatabaseThroughput,
-        listContainers,
-        queryContainers,
-        deleteContainer,
-        replaceContainerThroughput,
-        createItem,
-        upsertItem,
-        deleteItem,
-        replaceItem,
-        readItem,
-        readAllItems,
-        queryItems;
     }
 
     public interface CosmosDbBuilders {

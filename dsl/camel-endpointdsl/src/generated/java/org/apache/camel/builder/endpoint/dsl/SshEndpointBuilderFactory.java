@@ -16,17 +16,15 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
 import java.util.Map;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.PollingConsumerPollStrategy;
 
 /**
  * Execute commands on remote hosts using SSH.
@@ -470,7 +468,7 @@ public interface SshEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SshEndpointConsumerBuilder runLoggingLevel(
-                LoggingLevel runLoggingLevel) {
+                org.apache.camel.LoggingLevel runLoggingLevel) {
             doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
@@ -743,7 +741,7 @@ public interface SshEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SshEndpointConsumerBuilder keyPairProvider(
-                Object keyPairProvider) {
+                org.apache.sshd.common.keyprovider.KeyPairProvider keyPairProvider) {
             doSetProperty("keyPairProvider", keyPairProvider);
             return this;
         }
@@ -837,7 +835,7 @@ public interface SshEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSshEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -872,7 +870,7 @@ public interface SshEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSshEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -907,7 +905,7 @@ public interface SshEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSshEndpointConsumerBuilder pollStrategy(
-                PollingConsumerPollStrategy pollStrategy) {
+                org.apache.camel.spi.PollingConsumerPollStrategy pollStrategy) {
             doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
@@ -1184,7 +1182,7 @@ public interface SshEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SshEndpointProducerBuilder keyPairProvider(
-                Object keyPairProvider) {
+                org.apache.sshd.common.keyprovider.KeyPairProvider keyPairProvider) {
             doSetProperty("keyPairProvider", keyPairProvider);
             return this;
         }
@@ -1465,7 +1463,8 @@ public interface SshEndpointBuilderFactory {
          * @param keyPairProvider the value to set
          * @return the dsl builder
          */
-        default SshEndpointBuilder keyPairProvider(Object keyPairProvider) {
+        default SshEndpointBuilder keyPairProvider(
+                org.apache.sshd.common.keyprovider.KeyPairProvider keyPairProvider) {
             doSetProperty("keyPairProvider", keyPairProvider);
             return this;
         }

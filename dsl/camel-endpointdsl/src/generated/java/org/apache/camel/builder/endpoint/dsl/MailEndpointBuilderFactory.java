@@ -16,20 +16,15 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
 import java.util.Map;
-import java.util.Properties;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.HeaderFilterStrategy;
-import org.apache.camel.spi.IdempotentRepository;
-import org.apache.camel.spi.PollingConsumerPollStrategy;
 
 /**
  * Send and receive emails using imap, pop3 and smtp protocols.
@@ -547,7 +542,7 @@ public interface MailEndpointBuilderFactory {
          * @return the dsl builder
          */
         default MailEndpointConsumerBuilder idempotentRepository(
-                IdempotentRepository idempotentRepository) {
+                org.apache.camel.spi.IdempotentRepository idempotentRepository) {
             doSetProperty("idempotentRepository", idempotentRepository);
             return this;
         }
@@ -906,7 +901,7 @@ public interface MailEndpointBuilderFactory {
          * @return the dsl builder
          */
         default MailEndpointConsumerBuilder runLoggingLevel(
-                LoggingLevel runLoggingLevel) {
+                org.apache.camel.LoggingLevel runLoggingLevel) {
             doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
@@ -1161,7 +1156,7 @@ public interface MailEndpointBuilderFactory {
          * @return the dsl builder
          */
         default MailEndpointConsumerBuilder sslContextParameters(
-                Object sslContextParameters) {
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
@@ -1208,7 +1203,8 @@ public interface MailEndpointBuilderFactory {
          * @param sortTerm the value to set
          * @return the dsl builder
          */
-        default MailEndpointConsumerBuilder sortTerm(Object[] sortTerm) {
+        default MailEndpointConsumerBuilder sortTerm(
+                com.sun.mail.imap.SortTerm[] sortTerm) {
             doSetProperty("sortTerm", sortTerm);
             return this;
         }
@@ -1255,7 +1251,7 @@ public interface MailEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedMailEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -1290,7 +1286,7 @@ public interface MailEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedMailEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -1378,7 +1374,7 @@ public interface MailEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedMailEndpointConsumerBuilder mailUidGenerator(
-                Object mailUidGenerator) {
+                org.apache.camel.component.mail.MailUidGenerator mailUidGenerator) {
             doSetProperty("mailUidGenerator", mailUidGenerator);
             return this;
         }
@@ -1461,7 +1457,7 @@ public interface MailEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedMailEndpointConsumerBuilder pollStrategy(
-                PollingConsumerPollStrategy pollStrategy) {
+                org.apache.camel.spi.PollingConsumerPollStrategy pollStrategy) {
             doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
@@ -1497,7 +1493,7 @@ public interface MailEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedMailEndpointConsumerBuilder postProcessAction(
-                Object postProcessAction) {
+                org.apache.camel.component.mail.MailBoxPostProcessAction postProcessAction) {
             doSetProperty("postProcessAction", postProcessAction);
             return this;
         }
@@ -1595,7 +1591,7 @@ public interface MailEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedMailEndpointConsumerBuilder attachmentsContentTransferEncodingResolver(
-                Object attachmentsContentTransferEncodingResolver) {
+                org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver attachmentsContentTransferEncodingResolver) {
             doSetProperty("attachmentsContentTransferEncodingResolver", attachmentsContentTransferEncodingResolver);
             return this;
         }
@@ -1630,7 +1626,7 @@ public interface MailEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedMailEndpointConsumerBuilder authenticator(
-                Object authenticator) {
+                org.apache.camel.component.mail.MailAuthenticator authenticator) {
             doSetProperty("authenticator", authenticator);
             return this;
         }
@@ -1665,7 +1661,8 @@ public interface MailEndpointBuilderFactory {
          * @param binding the value to set
          * @return the dsl builder
          */
-        default AdvancedMailEndpointConsumerBuilder binding(Object binding) {
+        default AdvancedMailEndpointConsumerBuilder binding(
+                org.apache.camel.component.mail.MailBinding binding) {
             doSetProperty("binding", binding);
             return this;
         }
@@ -1746,7 +1743,7 @@ public interface MailEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedMailEndpointConsumerBuilder contentTypeResolver(
-                Object contentTypeResolver) {
+                org.apache.camel.component.mail.ContentTypeResolver contentTypeResolver) {
             doSetProperty("contentTypeResolver", contentTypeResolver);
             return this;
         }
@@ -1813,7 +1810,7 @@ public interface MailEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedMailEndpointConsumerBuilder headerFilterStrategy(
-                HeaderFilterStrategy headerFilterStrategy) {
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
@@ -1960,7 +1957,8 @@ public interface MailEndpointBuilderFactory {
          * @param session the value to set
          * @return the dsl builder
          */
-        default AdvancedMailEndpointConsumerBuilder session(Object session) {
+        default AdvancedMailEndpointConsumerBuilder session(
+                javax.mail.Session session) {
             doSetProperty("session", session);
             return this;
         }
@@ -2192,7 +2190,7 @@ public interface MailEndpointBuilderFactory {
          * @return the dsl builder
          */
         default MailEndpointProducerBuilder sslContextParameters(
-                Object sslContextParameters) {
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
@@ -2250,7 +2248,7 @@ public interface MailEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedMailEndpointProducerBuilder javaMailSender(
-                Object javaMailSender) {
+                org.apache.camel.component.mail.JavaMailSender javaMailSender) {
             doSetProperty("javaMailSender", javaMailSender);
             return this;
         }
@@ -2348,7 +2346,7 @@ public interface MailEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedMailEndpointProducerBuilder attachmentsContentTransferEncodingResolver(
-                Object attachmentsContentTransferEncodingResolver) {
+                org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver attachmentsContentTransferEncodingResolver) {
             doSetProperty("attachmentsContentTransferEncodingResolver", attachmentsContentTransferEncodingResolver);
             return this;
         }
@@ -2383,7 +2381,7 @@ public interface MailEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedMailEndpointProducerBuilder authenticator(
-                Object authenticator) {
+                org.apache.camel.component.mail.MailAuthenticator authenticator) {
             doSetProperty("authenticator", authenticator);
             return this;
         }
@@ -2418,7 +2416,8 @@ public interface MailEndpointBuilderFactory {
          * @param binding the value to set
          * @return the dsl builder
          */
-        default AdvancedMailEndpointProducerBuilder binding(Object binding) {
+        default AdvancedMailEndpointProducerBuilder binding(
+                org.apache.camel.component.mail.MailBinding binding) {
             doSetProperty("binding", binding);
             return this;
         }
@@ -2499,7 +2498,7 @@ public interface MailEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedMailEndpointProducerBuilder contentTypeResolver(
-                Object contentTypeResolver) {
+                org.apache.camel.component.mail.ContentTypeResolver contentTypeResolver) {
             doSetProperty("contentTypeResolver", contentTypeResolver);
             return this;
         }
@@ -2566,7 +2565,7 @@ public interface MailEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedMailEndpointProducerBuilder headerFilterStrategy(
-                HeaderFilterStrategy headerFilterStrategy) {
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
@@ -2713,7 +2712,8 @@ public interface MailEndpointBuilderFactory {
          * @param session the value to set
          * @return the dsl builder
          */
-        default AdvancedMailEndpointProducerBuilder session(Object session) {
+        default AdvancedMailEndpointProducerBuilder session(
+                javax.mail.Session session) {
             doSetProperty("session", session);
             return this;
         }
@@ -2807,7 +2807,7 @@ public interface MailEndpointBuilderFactory {
          * @return the dsl builder
          */
         default MailEndpointBuilder sslContextParameters(
-                Object sslContextParameters) {
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
@@ -2930,7 +2930,7 @@ public interface MailEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedMailEndpointBuilder attachmentsContentTransferEncodingResolver(
-                Object attachmentsContentTransferEncodingResolver) {
+                org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver attachmentsContentTransferEncodingResolver) {
             doSetProperty("attachmentsContentTransferEncodingResolver", attachmentsContentTransferEncodingResolver);
             return this;
         }
@@ -2964,7 +2964,8 @@ public interface MailEndpointBuilderFactory {
          * @param authenticator the value to set
          * @return the dsl builder
          */
-        default AdvancedMailEndpointBuilder authenticator(Object authenticator) {
+        default AdvancedMailEndpointBuilder authenticator(
+                org.apache.camel.component.mail.MailAuthenticator authenticator) {
             doSetProperty("authenticator", authenticator);
             return this;
         }
@@ -2998,7 +2999,8 @@ public interface MailEndpointBuilderFactory {
          * @param binding the value to set
          * @return the dsl builder
          */
-        default AdvancedMailEndpointBuilder binding(Object binding) {
+        default AdvancedMailEndpointBuilder binding(
+                org.apache.camel.component.mail.MailBinding binding) {
             doSetProperty("binding", binding);
             return this;
         }
@@ -3078,7 +3080,7 @@ public interface MailEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedMailEndpointBuilder contentTypeResolver(
-                Object contentTypeResolver) {
+                org.apache.camel.component.mail.ContentTypeResolver contentTypeResolver) {
             doSetProperty("contentTypeResolver", contentTypeResolver);
             return this;
         }
@@ -3145,7 +3147,7 @@ public interface MailEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedMailEndpointBuilder headerFilterStrategy(
-                HeaderFilterStrategy headerFilterStrategy) {
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
@@ -3292,7 +3294,7 @@ public interface MailEndpointBuilderFactory {
          * @param session the value to set
          * @return the dsl builder
          */
-        default AdvancedMailEndpointBuilder session(Object session) {
+        default AdvancedMailEndpointBuilder session(javax.mail.Session session) {
             doSetProperty("session", session);
             return this;
         }

@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -160,7 +164,7 @@ public interface IgniteIdGenEndpointBuilderFactory {
          * @return the dsl builder
          */
         default IgniteIdGenEndpointBuilder operation(
-                IgniteIdGenOperation operation) {
+                org.apache.camel.component.ignite.idgen.IgniteIdGenOperation operation) {
             doSetProperty("operation", operation);
             return this;
         }
@@ -252,19 +256,6 @@ public interface IgniteIdGenEndpointBuilderFactory {
             doSetProperty("treatCollectionsAsCacheObjects", treatCollectionsAsCacheObjects);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.ignite.idgen.IgniteIdGenOperation</code>
-     * enum.
-     */
-    enum IgniteIdGenOperation {
-        ADD_AND_GET,
-        GET,
-        GET_AND_ADD,
-        GET_AND_INCREMENT,
-        INCREMENT_AND_GET;
     }
 
     public interface IgniteIdGenBuilders {

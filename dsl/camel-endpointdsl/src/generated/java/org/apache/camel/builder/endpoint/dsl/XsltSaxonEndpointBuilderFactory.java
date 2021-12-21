@@ -16,7 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -252,7 +255,8 @@ public interface XsltSaxonEndpointBuilderFactory {
          * @param output the value to set
          * @return the dsl builder
          */
-        default XsltSaxonEndpointBuilder output(XsltOutput output) {
+        default XsltSaxonEndpointBuilder output(
+                org.apache.camel.component.xslt.XsltOutput output) {
             doSetProperty("output", output);
             return this;
         }
@@ -337,7 +341,7 @@ public interface XsltSaxonEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedXsltSaxonEndpointBuilder entityResolver(
-                Object entityResolver) {
+                org.xml.sax.EntityResolver entityResolver) {
             doSetProperty("entityResolver", entityResolver);
             return this;
         }
@@ -374,7 +378,7 @@ public interface XsltSaxonEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedXsltSaxonEndpointBuilder errorListener(
-                Object errorListener) {
+                javax.xml.transform.ErrorListener errorListener) {
             doSetProperty("errorListener", errorListener);
             return this;
         }
@@ -412,7 +416,7 @@ public interface XsltSaxonEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedXsltSaxonEndpointBuilder resultHandlerFactory(
-                Object resultHandlerFactory) {
+                org.apache.camel.component.xslt.ResultHandlerFactory resultHandlerFactory) {
             doSetProperty("resultHandlerFactory", resultHandlerFactory);
             return this;
         }
@@ -446,7 +450,7 @@ public interface XsltSaxonEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedXsltSaxonEndpointBuilder saxonConfiguration(
-                Object saxonConfiguration) {
+                net.sf.saxon.Configuration saxonConfiguration) {
             doSetProperty("saxonConfiguration", saxonConfiguration);
             return this;
         }
@@ -472,27 +476,7 @@ public interface XsltSaxonEndpointBuilderFactory {
          * camel-saxon to the classpath. The function is looked up in the
          * registry, where you can comma to separate multiple values to lookup.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param saxonExtensionFunctions the value to set
-         * @return the dsl builder
-         */
-        default AdvancedXsltSaxonEndpointBuilder saxonExtensionFunctions(
-                List<Object> saxonExtensionFunctions) {
-            doSetProperty("saxonExtensionFunctions", saxonExtensionFunctions);
-            return this;
-        }
-        /**
-         * Allows you to use a custom
-         * net.sf.saxon.lib.ExtensionFunctionDefinition. You would need to add
-         * camel-saxon to the classpath. The function is looked up in the
-         * registry, where you can comma to separate multiple values to lookup.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -516,7 +500,7 @@ public interface XsltSaxonEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedXsltSaxonEndpointBuilder transformerFactory(
-                Object transformerFactory) {
+                javax.xml.transform.TransformerFactory transformerFactory) {
             doSetProperty("transformerFactory", transformerFactory);
             return this;
         }
@@ -565,7 +549,7 @@ public interface XsltSaxonEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedXsltSaxonEndpointBuilder transformerFactoryConfigurationStrategy(
-                Object transformerFactoryConfigurationStrategy) {
+                org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy transformerFactoryConfigurationStrategy) {
             doSetProperty("transformerFactoryConfigurationStrategy", transformerFactoryConfigurationStrategy);
             return this;
         }
@@ -597,7 +581,8 @@ public interface XsltSaxonEndpointBuilderFactory {
          * @param uriResolver the value to set
          * @return the dsl builder
          */
-        default AdvancedXsltSaxonEndpointBuilder uriResolver(Object uriResolver) {
+        default AdvancedXsltSaxonEndpointBuilder uriResolver(
+                javax.xml.transform.URIResolver uriResolver) {
             doSetProperty("uriResolver", uriResolver);
             return this;
         }
@@ -616,17 +601,6 @@ public interface XsltSaxonEndpointBuilderFactory {
             doSetProperty("uriResolver", uriResolver);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for <code>org.apache.camel.component.xslt.XsltOutput</code>
-     * enum.
-     */
-    enum XsltOutput {
-        string,
-        bytes,
-        DOM,
-        file;
     }
 
     public interface XsltSaxonBuilders {

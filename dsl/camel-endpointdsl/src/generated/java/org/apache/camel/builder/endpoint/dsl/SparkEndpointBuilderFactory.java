@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -76,7 +80,8 @@ public interface SparkEndpointBuilderFactory {
          * @param dataFrame the value to set
          * @return the dsl builder
          */
-        default SparkEndpointBuilder dataFrame(Object dataFrame) {
+        default SparkEndpointBuilder dataFrame(
+                org.apache.spark.sql.Dataset<org.apache.spark.sql.Row> dataFrame) {
             doSetProperty("dataFrame", dataFrame);
             return this;
         }
@@ -106,7 +111,8 @@ public interface SparkEndpointBuilderFactory {
          * @param dataFrameCallback the value to set
          * @return the dsl builder
          */
-        default SparkEndpointBuilder dataFrameCallback(Object dataFrameCallback) {
+        default SparkEndpointBuilder dataFrameCallback(
+                org.apache.camel.component.spark.DataFrameCallback dataFrameCallback) {
             doSetProperty("dataFrameCallback", dataFrameCallback);
             return this;
         }
@@ -183,7 +189,8 @@ public interface SparkEndpointBuilderFactory {
          * @param rdd the value to set
          * @return the dsl builder
          */
-        default SparkEndpointBuilder rdd(Object rdd) {
+        default SparkEndpointBuilder rdd(
+                org.apache.spark.api.java.JavaRDDLike rdd) {
             doSetProperty("rdd", rdd);
             return this;
         }
@@ -214,7 +221,8 @@ public interface SparkEndpointBuilderFactory {
          * @param rddCallback the value to set
          * @return the dsl builder
          */
-        default SparkEndpointBuilder rddCallback(Object rddCallback) {
+        default SparkEndpointBuilder rddCallback(
+                org.apache.camel.component.spark.RddCallback rddCallback) {
             doSetProperty("rddCallback", rddCallback);
             return this;
         }

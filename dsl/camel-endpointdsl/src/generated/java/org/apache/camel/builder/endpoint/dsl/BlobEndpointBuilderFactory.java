@@ -16,19 +16,15 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.time.Duration;
-import java.time.OffsetDateTime;
+import java.util.*;
 import java.util.Map;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.PollingConsumerPollStrategy;
 
 /**
  * Store and retrieve blobs from Azure Storage Blob Service.
@@ -117,7 +113,7 @@ public interface BlobEndpointBuilderFactory {
          * @return the dsl builder
          */
         default BlobEndpointConsumerBuilder blobServiceClient(
-                Object blobServiceClient) {
+                com.azure.storage.blob.BlobServiceClient blobServiceClient) {
             doSetProperty("blobServiceClient", blobServiceClient);
             return this;
         }
@@ -159,7 +155,8 @@ public interface BlobEndpointBuilderFactory {
          * @param blobType the value to set
          * @return the dsl builder
          */
-        default BlobEndpointConsumerBuilder blobType(BlobType blobType) {
+        default BlobEndpointConsumerBuilder blobType(
+                org.apache.camel.component.azure.storage.blob.BlobType blobType) {
             doSetProperty("blobType", blobType);
             return this;
         }
@@ -225,7 +222,8 @@ public interface BlobEndpointBuilderFactory {
          * @param credentials the value to set
          * @return the dsl builder
          */
-        default BlobEndpointConsumerBuilder credentials(Object credentials) {
+        default BlobEndpointConsumerBuilder credentials(
+                com.azure.storage.common.StorageSharedKeyCredential credentials) {
             doSetProperty("credentials", credentials);
             return this;
         }
@@ -414,7 +412,8 @@ public interface BlobEndpointBuilderFactory {
          * @param serviceClient the value to set
          * @return the dsl builder
          */
-        default BlobEndpointConsumerBuilder serviceClient(Object serviceClient) {
+        default BlobEndpointConsumerBuilder serviceClient(
+                com.azure.storage.blob.BlobServiceClient serviceClient) {
             doSetProperty("serviceClient", serviceClient);
             return this;
         }
@@ -453,7 +452,7 @@ public interface BlobEndpointBuilderFactory {
          * @param timeout the value to set
          * @return the dsl builder
          */
-        default BlobEndpointConsumerBuilder timeout(Duration timeout) {
+        default BlobEndpointConsumerBuilder timeout(java.time.Duration timeout) {
             doSetProperty("timeout", timeout);
             return this;
         }
@@ -798,7 +797,7 @@ public interface BlobEndpointBuilderFactory {
          * @return the dsl builder
          */
         default BlobEndpointConsumerBuilder runLoggingLevel(
-                LoggingLevel runLoggingLevel) {
+                org.apache.camel.LoggingLevel runLoggingLevel) {
             doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
@@ -1086,7 +1085,7 @@ public interface BlobEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedBlobEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -1121,7 +1120,7 @@ public interface BlobEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedBlobEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -1156,7 +1155,7 @@ public interface BlobEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedBlobEndpointConsumerBuilder pollStrategy(
-                PollingConsumerPollStrategy pollStrategy) {
+                org.apache.camel.spi.PollingConsumerPollStrategy pollStrategy) {
             doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
@@ -1259,7 +1258,7 @@ public interface BlobEndpointBuilderFactory {
          * @return the dsl builder
          */
         default BlobEndpointProducerBuilder blobServiceClient(
-                Object blobServiceClient) {
+                com.azure.storage.blob.BlobServiceClient blobServiceClient) {
             doSetProperty("blobServiceClient", blobServiceClient);
             return this;
         }
@@ -1301,7 +1300,8 @@ public interface BlobEndpointBuilderFactory {
          * @param blobType the value to set
          * @return the dsl builder
          */
-        default BlobEndpointProducerBuilder blobType(BlobType blobType) {
+        default BlobEndpointProducerBuilder blobType(
+                org.apache.camel.component.azure.storage.blob.BlobType blobType) {
             doSetProperty("blobType", blobType);
             return this;
         }
@@ -1367,7 +1367,8 @@ public interface BlobEndpointBuilderFactory {
          * @param credentials the value to set
          * @return the dsl builder
          */
-        default BlobEndpointProducerBuilder credentials(Object credentials) {
+        default BlobEndpointProducerBuilder credentials(
+                com.azure.storage.common.StorageSharedKeyCredential credentials) {
             doSetProperty("credentials", credentials);
             return this;
         }
@@ -1556,7 +1557,8 @@ public interface BlobEndpointBuilderFactory {
          * @param serviceClient the value to set
          * @return the dsl builder
          */
-        default BlobEndpointProducerBuilder serviceClient(Object serviceClient) {
+        default BlobEndpointProducerBuilder serviceClient(
+                com.azure.storage.blob.BlobServiceClient serviceClient) {
             doSetProperty("serviceClient", serviceClient);
             return this;
         }
@@ -1595,7 +1597,7 @@ public interface BlobEndpointBuilderFactory {
          * @param timeout the value to set
          * @return the dsl builder
          */
-        default BlobEndpointProducerBuilder timeout(Duration timeout) {
+        default BlobEndpointProducerBuilder timeout(java.time.Duration timeout) {
             doSetProperty("timeout", timeout);
             return this;
         }
@@ -1666,7 +1668,7 @@ public interface BlobEndpointBuilderFactory {
          * @return the dsl builder
          */
         default BlobEndpointProducerBuilder blockListType(
-                BlockListType blockListType) {
+                com.azure.storage.blob.models.BlockListType blockListType) {
             doSetProperty("blockListType", blockListType);
             return this;
         }
@@ -1701,7 +1703,7 @@ public interface BlobEndpointBuilderFactory {
          * @return the dsl builder
          */
         default BlobEndpointProducerBuilder changeFeedContext(
-                Object changeFeedContext) {
+                com.azure.core.util.Context changeFeedContext) {
             doSetProperty("changeFeedContext", changeFeedContext);
             return this;
         }
@@ -1739,7 +1741,7 @@ public interface BlobEndpointBuilderFactory {
          * @return the dsl builder
          */
         default BlobEndpointProducerBuilder changeFeedEndTime(
-                OffsetDateTime changeFeedEndTime) {
+                java.time.OffsetDateTime changeFeedEndTime) {
             doSetProperty("changeFeedEndTime", changeFeedEndTime);
             return this;
         }
@@ -1779,7 +1781,7 @@ public interface BlobEndpointBuilderFactory {
          * @return the dsl builder
          */
         default BlobEndpointProducerBuilder changeFeedStartTime(
-                OffsetDateTime changeFeedStartTime) {
+                java.time.OffsetDateTime changeFeedStartTime) {
             doSetProperty("changeFeedStartTime", changeFeedStartTime);
             return this;
         }
@@ -2034,7 +2036,7 @@ public interface BlobEndpointBuilderFactory {
          * @return the dsl builder
          */
         default BlobEndpointProducerBuilder operation(
-                BlobOperationsDefinition operation) {
+                org.apache.camel.component.azure.storage.blob.BlobOperationsDefinition operation) {
             doSetProperty("operation", operation);
             return this;
         }
@@ -2211,7 +2213,8 @@ public interface BlobEndpointBuilderFactory {
          * @param blobServiceClient the value to set
          * @return the dsl builder
          */
-        default BlobEndpointBuilder blobServiceClient(Object blobServiceClient) {
+        default BlobEndpointBuilder blobServiceClient(
+                com.azure.storage.blob.BlobServiceClient blobServiceClient) {
             doSetProperty("blobServiceClient", blobServiceClient);
             return this;
         }
@@ -2252,7 +2255,8 @@ public interface BlobEndpointBuilderFactory {
          * @param blobType the value to set
          * @return the dsl builder
          */
-        default BlobEndpointBuilder blobType(BlobType blobType) {
+        default BlobEndpointBuilder blobType(
+                org.apache.camel.component.azure.storage.blob.BlobType blobType) {
             doSetProperty("blobType", blobType);
             return this;
         }
@@ -2318,7 +2322,8 @@ public interface BlobEndpointBuilderFactory {
          * @param credentials the value to set
          * @return the dsl builder
          */
-        default BlobEndpointBuilder credentials(Object credentials) {
+        default BlobEndpointBuilder credentials(
+                com.azure.storage.common.StorageSharedKeyCredential credentials) {
             doSetProperty("credentials", credentials);
             return this;
         }
@@ -2503,7 +2508,8 @@ public interface BlobEndpointBuilderFactory {
          * @param serviceClient the value to set
          * @return the dsl builder
          */
-        default BlobEndpointBuilder serviceClient(Object serviceClient) {
+        default BlobEndpointBuilder serviceClient(
+                com.azure.storage.blob.BlobServiceClient serviceClient) {
             doSetProperty("serviceClient", serviceClient);
             return this;
         }
@@ -2542,7 +2548,7 @@ public interface BlobEndpointBuilderFactory {
          * @param timeout the value to set
          * @return the dsl builder
          */
-        default BlobEndpointBuilder timeout(Duration timeout) {
+        default BlobEndpointBuilder timeout(java.time.Duration timeout) {
             doSetProperty("timeout", timeout);
             return this;
         }
@@ -2607,54 +2613,6 @@ public interface BlobEndpointBuilderFactory {
         default BlobEndpointBuilder basic() {
             return (BlobEndpointBuilder) this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.azure.storage.blob.BlobType</code> enum.
-     */
-    enum BlobType {
-        blockblob,
-        appendblob,
-        pageblob;
-    }
-
-    /**
-     * Proxy enum for <code>com.azure.storage.blob.models.BlockListType</code>
-     * enum.
-     */
-    enum BlockListType {
-        COMMITTED,
-        UNCOMMITTED,
-        ALL;
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.azure.storage.blob.BlobOperationsDefinition</code> enum.
-     */
-    enum BlobOperationsDefinition {
-        listBlobContainers,
-        createBlobContainer,
-        deleteBlobContainer,
-        listBlobs,
-        getBlob,
-        deleteBlob,
-        downloadBlobToFile,
-        downloadLink,
-        uploadBlockBlob,
-        stageBlockBlobList,
-        commitBlobBlockList,
-        getBlobBlockList,
-        createAppendBlob,
-        commitAppendBlob,
-        createPageBlob,
-        uploadPageBlob,
-        resizePageBlob,
-        clearPageBlob,
-        getPageBlobRanges,
-        getChangeFeed,
-        copyBlob;
     }
 
     public interface BlobBuilders {

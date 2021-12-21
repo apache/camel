@@ -16,12 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Provide data for load and soak testing of your Camel application.
@@ -257,7 +259,7 @@ public interface DataSetEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedDataSetEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -292,7 +294,7 @@ public interface DataSetEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedDataSetEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -565,7 +567,7 @@ public interface DataSetEndpointBuilderFactory {
          * more detailed logging then set the logger to DEBUG level for the
          * org.apache.camel.component.mock.MockEndpoint class.
          * 
-         * The option is a: &lt;code&gt;org.slf4j.Logger&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
@@ -573,7 +575,7 @@ public interface DataSetEndpointBuilderFactory {
          * @param log the value to set
          * @return the dsl builder
          */
-        default DataSetEndpointProducerBuilder log(Object log) {
+        default DataSetEndpointProducerBuilder log(boolean log) {
             doSetProperty("log", log);
             return this;
         }
@@ -583,8 +585,8 @@ public interface DataSetEndpointBuilderFactory {
          * more detailed logging then set the logger to DEBUG level for the
          * org.apache.camel.component.mock.MockEndpoint class.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;org.slf4j.Logger&lt;/code&gt; type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer

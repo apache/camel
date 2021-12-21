@@ -16,17 +16,15 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
 import java.util.Map;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.PollingConsumerPollStrategy;
 
 /**
  * Retrieve and post-process Beanstalk jobs.
@@ -64,7 +62,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * @return the dsl builder
          */
         default BeanstalkEndpointConsumerBuilder command(
-                BeanstalkCommand command) {
+                org.apache.camel.component.beanstalk.BeanstalkCommand command) {
             doSetProperty("command", command);
             return this;
         }
@@ -272,7 +270,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * @return the dsl builder
          */
         default BeanstalkEndpointConsumerBuilder onFailure(
-                BeanstalkCommand onFailure) {
+                org.apache.camel.component.beanstalk.BeanstalkCommand onFailure) {
             doSetProperty("onFailure", onFailure);
             return this;
         }
@@ -603,7 +601,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * @return the dsl builder
          */
         default BeanstalkEndpointConsumerBuilder runLoggingLevel(
-                LoggingLevel runLoggingLevel) {
+                org.apache.camel.LoggingLevel runLoggingLevel) {
             doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
@@ -861,7 +859,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedBeanstalkEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -896,7 +894,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedBeanstalkEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -931,7 +929,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedBeanstalkEndpointConsumerBuilder pollStrategy(
-                PollingConsumerPollStrategy pollStrategy) {
+                org.apache.camel.spi.PollingConsumerPollStrategy pollStrategy) {
             doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
@@ -983,7 +981,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * @return the dsl builder
          */
         default BeanstalkEndpointProducerBuilder command(
-                BeanstalkCommand command) {
+                org.apache.camel.component.beanstalk.BeanstalkCommand command) {
             doSetProperty("command", command);
             return this;
         }
@@ -1190,7 +1188,8 @@ public interface BeanstalkEndpointBuilderFactory {
          * @param command the value to set
          * @return the dsl builder
          */
-        default BeanstalkEndpointBuilder command(BeanstalkCommand command) {
+        default BeanstalkEndpointBuilder command(
+                org.apache.camel.component.beanstalk.BeanstalkCommand command) {
             doSetProperty("command", command);
             return this;
         }
@@ -1319,19 +1318,6 @@ public interface BeanstalkEndpointBuilderFactory {
         default BeanstalkEndpointBuilder basic() {
             return (BeanstalkEndpointBuilder) this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.beanstalk.BeanstalkCommand</code> enum.
-     */
-    enum BeanstalkCommand {
-        bury,
-        release,
-        put,
-        touch,
-        delete,
-        kick;
     }
 
     public interface BeanstalkBuilders {

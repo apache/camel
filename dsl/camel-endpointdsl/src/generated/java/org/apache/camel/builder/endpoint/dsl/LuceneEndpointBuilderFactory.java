@@ -16,7 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.io.File;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -50,7 +53,8 @@ public interface LuceneEndpointBuilderFactory {
          * @param analyzer the value to set
          * @return the dsl builder
          */
-        default LuceneEndpointBuilder analyzer(Object analyzer) {
+        default LuceneEndpointBuilder analyzer(
+                org.apache.lucene.analysis.Analyzer analyzer) {
             doSetProperty("analyzer", analyzer);
             return this;
         }
@@ -84,7 +88,7 @@ public interface LuceneEndpointBuilderFactory {
          * @param indexDir the value to set
          * @return the dsl builder
          */
-        default LuceneEndpointBuilder indexDir(File indexDir) {
+        default LuceneEndpointBuilder indexDir(java.io.File indexDir) {
             doSetProperty("indexDir", indexDir);
             return this;
         }
@@ -191,7 +195,7 @@ public interface LuceneEndpointBuilderFactory {
          * @param srcDir the value to set
          * @return the dsl builder
          */
-        default LuceneEndpointBuilder srcDir(File srcDir) {
+        default LuceneEndpointBuilder srcDir(java.io.File srcDir) {
             doSetProperty("srcDir", srcDir);
             return this;
         }

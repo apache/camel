@@ -16,12 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Send and receive messages from NSQ realtime distributed messaging platform.
@@ -175,7 +177,7 @@ public interface NsqEndpointBuilderFactory {
          * @return the dsl builder
          */
         default NsqEndpointConsumerBuilder customNSQLookup(
-                Object customNSQLookup) {
+                com.github.brainlag.nsq.lookup.NSQLookup customNSQLookup) {
             doSetProperty("customNSQLookup", customNSQLookup);
             return this;
         }
@@ -395,7 +397,7 @@ public interface NsqEndpointBuilderFactory {
          * @return the dsl builder
          */
         default NsqEndpointConsumerBuilder sslContextParameters(
-                Object sslContextParameters) {
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
@@ -441,7 +443,7 @@ public interface NsqEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedNsqEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -476,7 +478,7 @@ public interface NsqEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedNsqEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -658,7 +660,7 @@ public interface NsqEndpointBuilderFactory {
          * @return the dsl builder
          */
         default NsqEndpointProducerBuilder sslContextParameters(
-                Object sslContextParameters) {
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
@@ -773,7 +775,7 @@ public interface NsqEndpointBuilderFactory {
          * @return the dsl builder
          */
         default NsqEndpointBuilder sslContextParameters(
-                Object sslContextParameters) {
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }

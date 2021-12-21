@@ -16,22 +16,15 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.util.Comparator;
+import java.util.*;
 import java.util.Map;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.Expression;
-import org.apache.camel.LoggingLevel;
-import org.apache.camel.Predicate;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.IdempotentRepository;
-import org.apache.camel.spi.PollingConsumerPollStrategy;
 
 /**
  * Upload and download files to/from FTP servers.
@@ -185,38 +178,7 @@ public interface FtpEndpointBuilderFactory {
          * used only once, and makes it easier as this avoids to temporary store
          * CamelFileName and have to restore it afterwards.
          * 
-         * The option is a: &lt;code&gt;org.apache.camel.Expression&lt;/code&gt;
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param fileName the value to set
-         * @return the dsl builder
-         */
-        default FtpEndpointConsumerBuilder fileName(Expression fileName) {
-            doSetProperty("fileName", fileName);
-            return this;
-        }
-        /**
-         * Use Expression such as File Language to dynamically set the filename.
-         * For consumers, it's used as a filename filter. For producers, it's
-         * used to evaluate the filename to write. If an expression is set, it
-         * take precedence over the CamelFileName header. (Note: The header
-         * itself can also be an Expression). The expression options support
-         * both String and Expression types. If the expression is a String type,
-         * it is always evaluated using the File Language. If the expression is
-         * an Expression type, the specified Expression type is used - this
-         * allows you, for instance, to use OGNL expressions. For the consumer,
-         * you can use it to filter filenames, so you can for instance consume
-         * today's file using the File Language syntax:
-         * mydata-${date:now:yyyyMMdd}.txt. The producers support the
-         * CamelOverruleFileName header which takes precedence over any existing
-         * CamelFileName header; the CamelOverruleFileName is a header that is
-         * used only once, and makes it easier as this avoids to temporary store
-         * CamelFileName and have to restore it afterwards.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.Expression&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -264,7 +226,7 @@ public interface FtpEndpointBuilderFactory {
          * default) Use existing path separator in file name.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator&lt;/code&gt; type.
          * 
          * Default: UNIX
          * Group: common
@@ -272,7 +234,8 @@ public interface FtpEndpointBuilderFactory {
          * @param separator the value to set
          * @return the dsl builder
          */
-        default FtpEndpointConsumerBuilder separator(PathSeparator separator) {
+        default FtpEndpointConsumerBuilder separator(
+                org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator separator) {
             doSetProperty("separator", separator);
             return this;
         }
@@ -282,7 +245,7 @@ public interface FtpEndpointBuilderFactory {
          * default) Use existing path separator in file name.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator&lt;/code&gt; type.
          * 
          * Default: UNIX
          * Group: common
@@ -344,7 +307,7 @@ public interface FtpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default FtpEndpointConsumerBuilder transferLoggingLevel(
-                LoggingLevel transferLoggingLevel) {
+                org.apache.camel.LoggingLevel transferLoggingLevel) {
             doSetProperty("transferLoggingLevel", transferLoggingLevel);
             return this;
         }
@@ -483,26 +446,7 @@ public interface FtpEndpointBuilderFactory {
          * When moving the files to the fail location Camel will handle the
          * error and will not pick up the file again.
          * 
-         * The option is a: &lt;code&gt;org.apache.camel.Expression&lt;/code&gt;
-         * type.
-         * 
-         * Group: consumer
-         * 
-         * @param moveFailed the value to set
-         * @return the dsl builder
-         */
-        default FtpEndpointConsumerBuilder moveFailed(Expression moveFailed) {
-            doSetProperty("moveFailed", moveFailed);
-            return this;
-        }
-        /**
-         * Sets the move failure expression based on Simple language. For
-         * example, to move files into a .error subdirectory use: .error. Note:
-         * When moving the files to the fail location Camel will handle the
-         * error and will not pick up the file again.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.Expression&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
          * 
@@ -555,25 +499,7 @@ public interface FtpEndpointBuilderFactory {
          * filename when moving it before processing. For example to move
          * in-progress files into the order directory set this value to order.
          * 
-         * The option is a: &lt;code&gt;org.apache.camel.Expression&lt;/code&gt;
-         * type.
-         * 
-         * Group: consumer
-         * 
-         * @param preMove the value to set
-         * @return the dsl builder
-         */
-        default FtpEndpointConsumerBuilder preMove(Expression preMove) {
-            doSetProperty("preMove", preMove);
-            return this;
-        }
-        /**
-         * Expression (such as File Language) used to dynamically set the
-         * filename when moving it before processing. For example to move
-         * in-progress files into the order directory set this value to order.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.Expression&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
          * 
@@ -931,7 +857,8 @@ public interface FtpEndpointBuilderFactory {
          * @param filter the value to set
          * @return the dsl builder
          */
-        default FtpEndpointConsumerBuilder filter(Object filter) {
+        default FtpEndpointConsumerBuilder filter(
+                org.apache.camel.component.file.GenericFileFilter<org.apache.commons.net.ftp.FTPFile> filter) {
             doSetProperty("filter", filter);
             return this;
         }
@@ -957,26 +884,7 @@ public interface FtpEndpointBuilderFactory {
          * on current date, you can use a simple date pattern such as
          * ${date:now:yyyMMdd}.
          * 
-         * The option is a: &lt;code&gt;org.apache.camel.Predicate&lt;/code&gt;
-         * type.
-         * 
-         * Group: filter
-         * 
-         * @param filterDirectory the value to set
-         * @return the dsl builder
-         */
-        default FtpEndpointConsumerBuilder filterDirectory(
-                Predicate filterDirectory) {
-            doSetProperty("filterDirectory", filterDirectory);
-            return this;
-        }
-        /**
-         * Filters the directory based on Simple language. For example to filter
-         * on current date, you can use a simple date pattern such as
-         * ${date:now:yyyMMdd}.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.Predicate&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: filter
          * 
@@ -992,24 +900,7 @@ public interface FtpEndpointBuilderFactory {
          * Filters the file based on Simple language. For example to filter on
          * file size, you can use ${file:size} 5000.
          * 
-         * The option is a: &lt;code&gt;org.apache.camel.Predicate&lt;/code&gt;
-         * type.
-         * 
-         * Group: filter
-         * 
-         * @param filterFile the value to set
-         * @return the dsl builder
-         */
-        default FtpEndpointConsumerBuilder filterFile(Predicate filterFile) {
-            doSetProperty("filterFile", filterFile);
-            return this;
-        }
-        /**
-         * Filters the file based on Simple language. For example to filter on
-         * file size, you can use ${file:size} 5000.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.Predicate&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: filter
          * 
@@ -1063,27 +954,7 @@ public interface FtpEndpointBuilderFactory {
          * file name and file size, you can do:
          * idempotentKey=${file:name}-${file:size}.
          * 
-         * The option is a: &lt;code&gt;org.apache.camel.Expression&lt;/code&gt;
-         * type.
-         * 
-         * Group: filter
-         * 
-         * @param idempotentKey the value to set
-         * @return the dsl builder
-         */
-        default FtpEndpointConsumerBuilder idempotentKey(
-                Expression idempotentKey) {
-            doSetProperty("idempotentKey", idempotentKey);
-            return this;
-        }
-        /**
-         * To use a custom idempotent key. By default the absolute path of the
-         * file is used. You can use the File Language, for example to use the
-         * file name and file size, you can do:
-         * idempotentKey=${file:name}-${file:size}.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.Expression&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: filter
          * 
@@ -1109,7 +980,7 @@ public interface FtpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default FtpEndpointConsumerBuilder idempotentRepository(
-                IdempotentRepository idempotentRepository) {
+                org.apache.camel.spi.IdempotentRepository idempotentRepository) {
             doSetProperty("idempotentRepository", idempotentRepository);
             return this;
         }
@@ -1285,25 +1156,7 @@ public interface FtpEndpointBuilderFactory {
          * filename when moving it after processing. To move files into a .done
          * subdirectory just enter .done.
          * 
-         * The option is a: &lt;code&gt;org.apache.camel.Expression&lt;/code&gt;
-         * type.
-         * 
-         * Group: filter
-         * 
-         * @param move the value to set
-         * @return the dsl builder
-         */
-        default FtpEndpointConsumerBuilder move(Expression move) {
-            doSetProperty("move", move);
-            return this;
-        }
-        /**
-         * Expression (such as Simple Language) used to dynamically set the
-         * filename when moving it after processing. To move files into a .done
-         * subdirectory just enter .done.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.Expression&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: filter
          * 
@@ -1328,7 +1181,7 @@ public interface FtpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default FtpEndpointConsumerBuilder exclusiveReadLockStrategy(
-                Object exclusiveReadLockStrategy) {
+                org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy<org.apache.commons.net.ftp.FTPFile> exclusiveReadLockStrategy) {
             doSetProperty("exclusiveReadLockStrategy", exclusiveReadLockStrategy);
             return this;
         }
@@ -1516,7 +1369,7 @@ public interface FtpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default FtpEndpointConsumerBuilder readLockLoggingLevel(
-                LoggingLevel readLockLoggingLevel) {
+                org.apache.camel.LoggingLevel readLockLoggingLevel) {
             doSetProperty("readLockLoggingLevel", readLockLoggingLevel);
             return this;
         }
@@ -2050,7 +1903,7 @@ public interface FtpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default FtpEndpointConsumerBuilder runLoggingLevel(
-                LoggingLevel runLoggingLevel) {
+                org.apache.camel.LoggingLevel runLoggingLevel) {
             doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
@@ -2356,25 +2209,7 @@ public interface FtpEndpointBuilderFactory {
          * you can have a sort by file name and as a 2nd group sort by modified
          * date.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.Comparator&amp;lt;org.apache.camel.Exchange&amp;gt;&lt;/code&gt; type.
-         * 
-         * Group: sort
-         * 
-         * @param sortBy the value to set
-         * @return the dsl builder
-         */
-        default FtpEndpointConsumerBuilder sortBy(Comparator<Exchange> sortBy) {
-            doSetProperty("sortBy", sortBy);
-            return this;
-        }
-        /**
-         * Built-in sort by using the File Language. Supports nested sorts, so
-         * you can have a sort by file name and as a 2nd group sort by modified
-         * date.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.Comparator&amp;lt;org.apache.camel.Exchange&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: sort
          * 
@@ -2396,7 +2231,8 @@ public interface FtpEndpointBuilderFactory {
          * @param sorter the value to set
          * @return the dsl builder
          */
-        default FtpEndpointConsumerBuilder sorter(Comparator<Object> sorter) {
+        default FtpEndpointConsumerBuilder sorter(
+                Comparator<org.apache.camel.component.file.GenericFile<org.apache.commons.net.ftp.FTPFile>> sorter) {
             doSetProperty("sorter", sorter);
             return this;
         }
@@ -2527,7 +2363,7 @@ public interface FtpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedFtpEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -2562,7 +2398,7 @@ public interface FtpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedFtpEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -2680,7 +2516,7 @@ public interface FtpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedFtpEndpointConsumerBuilder inProgressRepository(
-                IdempotentRepository inProgressRepository) {
+                org.apache.camel.spi.IdempotentRepository inProgressRepository) {
             doSetProperty("inProgressRepository", inProgressRepository);
             return this;
         }
@@ -2737,7 +2573,7 @@ public interface FtpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedFtpEndpointConsumerBuilder onCompletionExceptionHandler(
-                ExceptionHandler onCompletionExceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler onCompletionExceptionHandler) {
             doSetProperty("onCompletionExceptionHandler", onCompletionExceptionHandler);
             return this;
         }
@@ -2775,7 +2611,7 @@ public interface FtpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedFtpEndpointConsumerBuilder pollStrategy(
-                PollingConsumerPollStrategy pollStrategy) {
+                org.apache.camel.spi.PollingConsumerPollStrategy pollStrategy) {
             doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
@@ -2815,7 +2651,7 @@ public interface FtpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedFtpEndpointConsumerBuilder processStrategy(
-                Object processStrategy) {
+                org.apache.camel.component.file.GenericFileProcessStrategy<org.apache.commons.net.ftp.FTPFile> processStrategy) {
             doSetProperty("processStrategy", processStrategy);
             return this;
         }
@@ -3014,7 +2850,8 @@ public interface FtpEndpointBuilderFactory {
          * @param ftpClient the value to set
          * @return the dsl builder
          */
-        default AdvancedFtpEndpointConsumerBuilder ftpClient(Object ftpClient) {
+        default AdvancedFtpEndpointConsumerBuilder ftpClient(
+                org.apache.commons.net.ftp.FTPClient ftpClient) {
             doSetProperty("ftpClient", ftpClient);
             return this;
         }
@@ -3047,7 +2884,7 @@ public interface FtpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedFtpEndpointConsumerBuilder ftpClientConfig(
-                Object ftpClientConfig) {
+                org.apache.commons.net.ftp.FTPClientConfig ftpClientConfig) {
             doSetProperty("ftpClientConfig", ftpClientConfig);
             return this;
         }
@@ -3561,38 +3398,7 @@ public interface FtpEndpointBuilderFactory {
          * used only once, and makes it easier as this avoids to temporary store
          * CamelFileName and have to restore it afterwards.
          * 
-         * The option is a: &lt;code&gt;org.apache.camel.Expression&lt;/code&gt;
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param fileName the value to set
-         * @return the dsl builder
-         */
-        default FtpEndpointProducerBuilder fileName(Expression fileName) {
-            doSetProperty("fileName", fileName);
-            return this;
-        }
-        /**
-         * Use Expression such as File Language to dynamically set the filename.
-         * For consumers, it's used as a filename filter. For producers, it's
-         * used to evaluate the filename to write. If an expression is set, it
-         * take precedence over the CamelFileName header. (Note: The header
-         * itself can also be an Expression). The expression options support
-         * both String and Expression types. If the expression is a String type,
-         * it is always evaluated using the File Language. If the expression is
-         * an Expression type, the specified Expression type is used - this
-         * allows you, for instance, to use OGNL expressions. For the consumer,
-         * you can use it to filter filenames, so you can for instance consume
-         * today's file using the File Language syntax:
-         * mydata-${date:now:yyyyMMdd}.txt. The producers support the
-         * CamelOverruleFileName header which takes precedence over any existing
-         * CamelFileName header; the CamelOverruleFileName is a header that is
-         * used only once, and makes it easier as this avoids to temporary store
-         * CamelFileName and have to restore it afterwards.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.Expression&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -3640,7 +3446,7 @@ public interface FtpEndpointBuilderFactory {
          * default) Use existing path separator in file name.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator&lt;/code&gt; type.
          * 
          * Default: UNIX
          * Group: common
@@ -3648,7 +3454,8 @@ public interface FtpEndpointBuilderFactory {
          * @param separator the value to set
          * @return the dsl builder
          */
-        default FtpEndpointProducerBuilder separator(PathSeparator separator) {
+        default FtpEndpointProducerBuilder separator(
+                org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator separator) {
             doSetProperty("separator", separator);
             return this;
         }
@@ -3658,7 +3465,7 @@ public interface FtpEndpointBuilderFactory {
          * default) Use existing path separator in file name.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator&lt;/code&gt; type.
          * 
          * Default: UNIX
          * Group: common
@@ -3720,7 +3527,7 @@ public interface FtpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default FtpEndpointProducerBuilder transferLoggingLevel(
-                LoggingLevel transferLoggingLevel) {
+                org.apache.camel.LoggingLevel transferLoggingLevel) {
             doSetProperty("transferLoggingLevel", transferLoggingLevel);
             return this;
         }
@@ -3803,7 +3610,8 @@ public interface FtpEndpointBuilderFactory {
          * @param fileExist the value to set
          * @return the dsl builder
          */
-        default FtpEndpointProducerBuilder fileExist(GenericFileExist fileExist) {
+        default FtpEndpointProducerBuilder fileExist(
+                org.apache.camel.component.file.GenericFileExist fileExist) {
             doSetProperty("fileExist", fileExist);
             return this;
         }
@@ -3980,30 +3788,7 @@ public interface FtpEndpointBuilderFactory {
          * component, as the FTP component can only move any existing files to a
          * relative directory based on current dir as base.
          * 
-         * The option is a: &lt;code&gt;org.apache.camel.Expression&lt;/code&gt;
-         * type.
-         * 
-         * Group: producer
-         * 
-         * @param moveExisting the value to set
-         * @return the dsl builder
-         */
-        default FtpEndpointProducerBuilder moveExisting(Expression moveExisting) {
-            doSetProperty("moveExisting", moveExisting);
-            return this;
-        }
-        /**
-         * Expression (such as File Language) used to compute file name to use
-         * when fileExist=Move is configured. To move files into a backup
-         * subdirectory just enter backup. This option only supports the
-         * following File Language tokens: file:name, file:name.ext,
-         * file:name.noext, file:onlyname, file:onlyname.noext, file:ext, and
-         * file:parent. Notice the file:parent is not supported by the FTP
-         * component, as the FTP component can only move any existing files to a
-         * relative directory based on current dir as base.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.Expression&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
          * 
@@ -4023,29 +3808,7 @@ public interface FtpEndpointBuilderFactory {
          * dir/finalFilename then tempFileName is relative to that subdirectory
          * dir.
          * 
-         * The option is a: &lt;code&gt;org.apache.camel.Expression&lt;/code&gt;
-         * type.
-         * 
-         * Group: producer
-         * 
-         * @param tempFileName the value to set
-         * @return the dsl builder
-         */
-        default FtpEndpointProducerBuilder tempFileName(Expression tempFileName) {
-            doSetProperty("tempFileName", tempFileName);
-            return this;
-        }
-        /**
-         * The same as tempPrefix option but offering a more fine grained
-         * control on the naming of the temporary filename as it uses the File
-         * Language. The location for tempFilename is relative to the final file
-         * location in the option 'fileName', not the target directory in the
-         * base uri. For example if option fileName includes a directory prefix:
-         * dir/finalFilename then tempFileName is relative to that subdirectory
-         * dir.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.Expression&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
          * 
@@ -4386,7 +4149,7 @@ public interface FtpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedFtpEndpointProducerBuilder moveExistingFileStrategy(
-                Object moveExistingFileStrategy) {
+                org.apache.camel.component.file.strategy.FileMoveExistingStrategy moveExistingFileStrategy) {
             doSetProperty("moveExistingFileStrategy", moveExistingFileStrategy);
             return this;
         }
@@ -4578,7 +4341,8 @@ public interface FtpEndpointBuilderFactory {
          * @param ftpClient the value to set
          * @return the dsl builder
          */
-        default AdvancedFtpEndpointProducerBuilder ftpClient(Object ftpClient) {
+        default AdvancedFtpEndpointProducerBuilder ftpClient(
+                org.apache.commons.net.ftp.FTPClient ftpClient) {
             doSetProperty("ftpClient", ftpClient);
             return this;
         }
@@ -4611,7 +4375,7 @@ public interface FtpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedFtpEndpointProducerBuilder ftpClientConfig(
-                Object ftpClientConfig) {
+                org.apache.commons.net.ftp.FTPClientConfig ftpClientConfig) {
             doSetProperty("ftpClientConfig", ftpClientConfig);
             return this;
         }
@@ -5126,38 +4890,7 @@ public interface FtpEndpointBuilderFactory {
          * used only once, and makes it easier as this avoids to temporary store
          * CamelFileName and have to restore it afterwards.
          * 
-         * The option is a: &lt;code&gt;org.apache.camel.Expression&lt;/code&gt;
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param fileName the value to set
-         * @return the dsl builder
-         */
-        default FtpEndpointBuilder fileName(Expression fileName) {
-            doSetProperty("fileName", fileName);
-            return this;
-        }
-        /**
-         * Use Expression such as File Language to dynamically set the filename.
-         * For consumers, it's used as a filename filter. For producers, it's
-         * used to evaluate the filename to write. If an expression is set, it
-         * take precedence over the CamelFileName header. (Note: The header
-         * itself can also be an Expression). The expression options support
-         * both String and Expression types. If the expression is a String type,
-         * it is always evaluated using the File Language. If the expression is
-         * an Expression type, the specified Expression type is used - this
-         * allows you, for instance, to use OGNL expressions. For the consumer,
-         * you can use it to filter filenames, so you can for instance consume
-         * today's file using the File Language syntax:
-         * mydata-${date:now:yyyyMMdd}.txt. The producers support the
-         * CamelOverruleFileName header which takes precedence over any existing
-         * CamelFileName header; the CamelOverruleFileName is a header that is
-         * used only once, and makes it easier as this avoids to temporary store
-         * CamelFileName and have to restore it afterwards.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.Expression&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -5205,7 +4938,7 @@ public interface FtpEndpointBuilderFactory {
          * default) Use existing path separator in file name.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator&lt;/code&gt; type.
          * 
          * Default: UNIX
          * Group: common
@@ -5213,7 +4946,8 @@ public interface FtpEndpointBuilderFactory {
          * @param separator the value to set
          * @return the dsl builder
          */
-        default FtpEndpointBuilder separator(PathSeparator separator) {
+        default FtpEndpointBuilder separator(
+                org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator separator) {
             doSetProperty("separator", separator);
             return this;
         }
@@ -5223,7 +4957,7 @@ public interface FtpEndpointBuilderFactory {
          * default) Use existing path separator in file name.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator&lt;/code&gt; type.
          * 
          * Default: UNIX
          * Group: common
@@ -5285,7 +5019,7 @@ public interface FtpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default FtpEndpointBuilder transferLoggingLevel(
-                LoggingLevel transferLoggingLevel) {
+                org.apache.camel.LoggingLevel transferLoggingLevel) {
             doSetProperty("transferLoggingLevel", transferLoggingLevel);
             return this;
         }
@@ -5572,7 +5306,8 @@ public interface FtpEndpointBuilderFactory {
          * @param ftpClient the value to set
          * @return the dsl builder
          */
-        default AdvancedFtpEndpointBuilder ftpClient(Object ftpClient) {
+        default AdvancedFtpEndpointBuilder ftpClient(
+                org.apache.commons.net.ftp.FTPClient ftpClient) {
             doSetProperty("ftpClient", ftpClient);
             return this;
         }
@@ -5605,7 +5340,7 @@ public interface FtpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedFtpEndpointBuilder ftpClientConfig(
-                Object ftpClientConfig) {
+                org.apache.commons.net.ftp.FTPClientConfig ftpClientConfig) {
             doSetProperty("ftpClientConfig", ftpClientConfig);
             return this;
         }
@@ -5967,29 +5702,6 @@ public interface FtpEndpointBuilderFactory {
             doSetProperty("timeout", timeout);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator</code> enum.
-     */
-    enum PathSeparator {
-        UNIX,
-        Windows,
-        Auto;
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.file.GenericFileExist</code> enum.
-     */
-    enum GenericFileExist {
-        Override,
-        Append,
-        Fail,
-        Ignore,
-        Move,
-        TryRename;
     }
 
     public interface FtpBuilders {

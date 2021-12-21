@@ -16,17 +16,15 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
 import java.util.Map;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.PollingConsumerPollStrategy;
 
 /**
  * Receive traps and poll SNMP (Simple Network Management Protocol) capable
@@ -62,7 +60,8 @@ public interface SnmpEndpointBuilderFactory {
          * @param oids the value to set
          * @return the dsl builder
          */
-        default SnmpEndpointConsumerBuilder oids(Object oids) {
+        default SnmpEndpointConsumerBuilder oids(
+                org.apache.camel.component.snmp.OIDList oids) {
             doSetProperty("oids", oids);
             return this;
         }
@@ -249,7 +248,8 @@ public interface SnmpEndpointBuilderFactory {
          * @param type the value to set
          * @return the dsl builder
          */
-        default SnmpEndpointConsumerBuilder type(SnmpActionType type) {
+        default SnmpEndpointConsumerBuilder type(
+                org.apache.camel.component.snmp.SnmpActionType type) {
             doSetProperty("type", type);
             return this;
         }
@@ -626,7 +626,7 @@ public interface SnmpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SnmpEndpointConsumerBuilder runLoggingLevel(
-                LoggingLevel runLoggingLevel) {
+                org.apache.camel.LoggingLevel runLoggingLevel) {
             doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
@@ -1015,7 +1015,7 @@ public interface SnmpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSnmpEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -1050,7 +1050,7 @@ public interface SnmpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSnmpEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -1085,7 +1085,7 @@ public interface SnmpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSnmpEndpointConsumerBuilder pollStrategy(
-                PollingConsumerPollStrategy pollStrategy) {
+                org.apache.camel.spi.PollingConsumerPollStrategy pollStrategy) {
             doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
@@ -1134,7 +1134,8 @@ public interface SnmpEndpointBuilderFactory {
          * @param oids the value to set
          * @return the dsl builder
          */
-        default SnmpEndpointProducerBuilder oids(Object oids) {
+        default SnmpEndpointProducerBuilder oids(
+                org.apache.camel.component.snmp.OIDList oids) {
             doSetProperty("oids", oids);
             return this;
         }
@@ -1321,7 +1322,8 @@ public interface SnmpEndpointBuilderFactory {
          * @param type the value to set
          * @return the dsl builder
          */
-        default SnmpEndpointProducerBuilder type(SnmpActionType type) {
+        default SnmpEndpointProducerBuilder type(
+                org.apache.camel.component.snmp.SnmpActionType type) {
             doSetProperty("type", type);
             return this;
         }
@@ -1561,7 +1563,8 @@ public interface SnmpEndpointBuilderFactory {
          * @param oids the value to set
          * @return the dsl builder
          */
-        default SnmpEndpointBuilder oids(Object oids) {
+        default SnmpEndpointBuilder oids(
+                org.apache.camel.component.snmp.OIDList oids) {
             doSetProperty("oids", oids);
             return this;
         }
@@ -1747,7 +1750,8 @@ public interface SnmpEndpointBuilderFactory {
          * @param type the value to set
          * @return the dsl builder
          */
-        default SnmpEndpointBuilder type(SnmpActionType type) {
+        default SnmpEndpointBuilder type(
+                org.apache.camel.component.snmp.SnmpActionType type) {
             doSetProperty("type", type);
             return this;
         }
@@ -1910,16 +1914,6 @@ public interface SnmpEndpointBuilderFactory {
         default SnmpEndpointBuilder basic() {
             return (SnmpEndpointBuilder) this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.snmp.SnmpActionType</code> enum.
-     */
-    enum SnmpActionType {
-        TRAP,
-        POLL,
-        GET_NEXT;
     }
 
     public interface SnmpBuilders {

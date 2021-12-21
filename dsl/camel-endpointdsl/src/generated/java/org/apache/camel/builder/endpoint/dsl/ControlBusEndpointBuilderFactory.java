@@ -16,8 +16,11 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
@@ -156,7 +159,8 @@ public interface ControlBusEndpointBuilderFactory {
          * @param loggingLevel the value to set
          * @return the dsl builder
          */
-        default ControlBusEndpointBuilder loggingLevel(LoggingLevel loggingLevel) {
+        default ControlBusEndpointBuilder loggingLevel(
+                org.apache.camel.LoggingLevel loggingLevel) {
             doSetProperty("loggingLevel", loggingLevel);
             return this;
         }

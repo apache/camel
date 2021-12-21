@@ -16,12 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Produce or consume Apache Avro RPC services.
@@ -52,7 +54,8 @@ public interface AvroEndpointBuilderFactory {
          * @param protocol the value to set
          * @return the dsl builder
          */
-        default AvroEndpointConsumerBuilder protocol(Object protocol) {
+        default AvroEndpointConsumerBuilder protocol(
+                org.apache.avro.Protocol protocol) {
             doSetProperty("protocol", protocol);
             return this;
         }
@@ -258,7 +261,7 @@ public interface AvroEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedAvroEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -293,7 +296,7 @@ public interface AvroEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedAvroEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -335,7 +338,8 @@ public interface AvroEndpointBuilderFactory {
          * @param protocol the value to set
          * @return the dsl builder
          */
-        default AvroEndpointProducerBuilder protocol(Object protocol) {
+        default AvroEndpointProducerBuilder protocol(
+                org.apache.avro.Protocol protocol) {
             doSetProperty("protocol", protocol);
             return this;
         }
@@ -553,7 +557,7 @@ public interface AvroEndpointBuilderFactory {
          * @param protocol the value to set
          * @return the dsl builder
          */
-        default AvroEndpointBuilder protocol(Object protocol) {
+        default AvroEndpointBuilder protocol(org.apache.avro.Protocol protocol) {
             doSetProperty("protocol", protocol);
             return this;
         }

@@ -16,12 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Read and write data from to/from a CMIS compliant content repositories.
@@ -262,7 +264,7 @@ public interface CMISEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedCMISEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -297,7 +299,7 @@ public interface CMISEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedCMISEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -330,7 +332,7 @@ public interface CMISEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedCMISEndpointConsumerBuilder sessionFacadeFactory(
-                Object sessionFacadeFactory) {
+                org.apache.camel.component.cmis.CMISSessionFacadeFactory sessionFacadeFactory) {
             doSetProperty("sessionFacadeFactory", sessionFacadeFactory);
             return this;
         }
@@ -602,7 +604,7 @@ public interface CMISEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedCMISEndpointProducerBuilder sessionFacadeFactory(
-                Object sessionFacadeFactory) {
+                org.apache.camel.component.cmis.CMISSessionFacadeFactory sessionFacadeFactory) {
             doSetProperty("sessionFacadeFactory", sessionFacadeFactory);
             return this;
         }
@@ -794,7 +796,7 @@ public interface CMISEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedCMISEndpointBuilder sessionFacadeFactory(
-                Object sessionFacadeFactory) {
+                org.apache.camel.component.cmis.CMISSessionFacadeFactory sessionFacadeFactory) {
             doSetProperty("sessionFacadeFactory", sessionFacadeFactory);
             return this;
         }

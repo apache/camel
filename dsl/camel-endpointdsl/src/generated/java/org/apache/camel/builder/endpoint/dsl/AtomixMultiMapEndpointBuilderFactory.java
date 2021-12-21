@@ -16,9 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -45,15 +46,14 @@ public interface AtomixMultiMapEndpointBuilderFactory {
         /**
          * The Atomix instance to use.
          * 
-         * The option is a: &lt;code&gt;io.atomix.AtomixClient&lt;/code&gt;
-         * type.
+         * The option is a: &lt;code&gt;io.atomix.Atomix&lt;/code&gt; type.
          * 
          * Group: producer
          * 
          * @param atomix the value to set
          * @return the dsl builder
          */
-        default AtomixMultiMapEndpointBuilder atomix(Object atomix) {
+        default AtomixMultiMapEndpointBuilder atomix(io.atomix.Atomix atomix) {
             doSetProperty("atomix", atomix);
             return this;
         }
@@ -61,7 +61,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * The Atomix instance to use.
          * 
          * The option will be converted to a
-         * &lt;code&gt;io.atomix.AtomixClient&lt;/code&gt; type.
+         * &lt;code&gt;io.atomix.Atomix&lt;/code&gt; type.
          * 
          * Group: producer
          * 
@@ -91,7 +91,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * The default action.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.atomix.client.multimap.AtomixMultiMap$Action&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.atomix.client.multimap.AtomixMultiMap.Action&lt;/code&gt; type.
          * 
          * Default: PUT
          * Group: producer
@@ -99,7 +99,8 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * @param defaultAction the value to set
          * @return the dsl builder
          */
-        default AtomixMultiMapEndpointBuilder defaultAction(Action defaultAction) {
+        default AtomixMultiMapEndpointBuilder defaultAction(
+                org.apache.camel.component.atomix.client.multimap.AtomixMultiMap.Action defaultAction) {
             doSetProperty("defaultAction", defaultAction);
             return this;
         }
@@ -107,7 +108,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * The default action.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.atomix.client.multimap.AtomixMultiMap$Action&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.atomix.client.multimap.AtomixMultiMap.Action&lt;/code&gt; type.
          * 
          * Default: PUT
          * Group: producer
@@ -202,23 +203,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
         /**
          * The address of the nodes composing the cluster.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;io.atomix.catalyst.transport.Address&amp;gt;&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param nodes the value to set
-         * @return the dsl builder
-         */
-        default AtomixMultiMapEndpointBuilder nodes(List<Object> nodes) {
-            doSetProperty("nodes", nodes);
-            return this;
-        }
-        /**
-         * The address of the nodes composing the cluster.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;io.atomix.catalyst.transport.Address&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
          * 
@@ -408,7 +393,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedAtomixMultiMapEndpointBuilder readConsistency(
-                ReadConsistency readConsistency) {
+                io.atomix.resource.ReadConsistency readConsistency) {
             doSetProperty("readConsistency", readConsistency);
             return this;
         }
@@ -440,7 +425,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedAtomixMultiMapEndpointBuilder resourceConfigs(
-                Map<String, Properties> resourceConfigs) {
+                Map<java.lang.String, java.util.Properties> resourceConfigs) {
             doSetProperty("resourceConfigs", resourceConfigs);
             return this;
         }
@@ -473,7 +458,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedAtomixMultiMapEndpointBuilder resourceOptions(
-                Map<String, Properties> resourceOptions) {
+                Map<java.lang.String, java.util.Properties> resourceOptions) {
             doSetProperty("resourceOptions", resourceOptions);
             return this;
         }
@@ -494,31 +479,6 @@ public interface AtomixMultiMapEndpointBuilderFactory {
             doSetProperty("resourceOptions", resourceOptions);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.atomix.client.multimap.AtomixMultiMap$Action</code> enum.
-     */
-    enum Action {
-        PUT,
-        GET,
-        CLEAR,
-        SIZE,
-        CONTAINS_KEY,
-        IS_EMPTY,
-        REMOVE,
-        REMOVE_VALUE;
-    }
-
-    /**
-     * Proxy enum for <code>io.atomix.resource.ReadConsistency</code> enum.
-     */
-    enum ReadConsistency {
-        ATOMIC,
-        ATOMIC_LEASE,
-        SEQUENTIAL,
-        LOCAL;
     }
 
     public interface AtomixMultiMapBuilders {

@@ -16,13 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Upload, download and manage files, folders, groups, collaborations, etc. on
@@ -186,7 +187,7 @@ public interface BoxEndpointBuilderFactory {
          * @return the dsl builder
          */
         default BoxEndpointConsumerBuilder sslContextParameters(
-                Object sslContextParameters) {
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
@@ -261,7 +262,7 @@ public interface BoxEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedBoxEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -296,7 +297,7 @@ public interface BoxEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedBoxEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -328,7 +329,7 @@ public interface BoxEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedBoxEndpointConsumerBuilder httpParams(
-                Map<String, Object> httpParams) {
+                Map<java.lang.String, java.lang.Object> httpParams) {
             doSetProperty("httpParams", httpParams);
             return this;
         }
@@ -360,7 +361,7 @@ public interface BoxEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedBoxEndpointConsumerBuilder accessTokenCache(
-                Object accessTokenCache) {
+                com.box.sdk.IAccessTokenCache accessTokenCache) {
             doSetProperty("accessTokenCache", accessTokenCache);
             return this;
         }
@@ -394,7 +395,7 @@ public interface BoxEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedBoxEndpointConsumerBuilder encryptionAlgorithm(
-                EncryptionAlgorithm encryptionAlgorithm) {
+                com.box.sdk.EncryptionAlgorithm encryptionAlgorithm) {
             doSetProperty("encryptionAlgorithm", encryptionAlgorithm);
             return this;
         }
@@ -651,7 +652,7 @@ public interface BoxEndpointBuilderFactory {
          * @return the dsl builder
          */
         default BoxEndpointProducerBuilder sslContextParameters(
-                Object sslContextParameters) {
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
@@ -723,7 +724,7 @@ public interface BoxEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedBoxEndpointProducerBuilder httpParams(
-                Map<String, Object> httpParams) {
+                Map<java.lang.String, java.lang.Object> httpParams) {
             doSetProperty("httpParams", httpParams);
             return this;
         }
@@ -755,7 +756,7 @@ public interface BoxEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedBoxEndpointProducerBuilder accessTokenCache(
-                Object accessTokenCache) {
+                com.box.sdk.IAccessTokenCache accessTokenCache) {
             doSetProperty("accessTokenCache", accessTokenCache);
             return this;
         }
@@ -789,7 +790,7 @@ public interface BoxEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedBoxEndpointProducerBuilder encryptionAlgorithm(
-                EncryptionAlgorithm encryptionAlgorithm) {
+                com.box.sdk.EncryptionAlgorithm encryptionAlgorithm) {
             doSetProperty("encryptionAlgorithm", encryptionAlgorithm);
             return this;
         }
@@ -996,7 +997,7 @@ public interface BoxEndpointBuilderFactory {
          * @return the dsl builder
          */
         default BoxEndpointBuilder sslContextParameters(
-                Object sslContextParameters) {
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
@@ -1069,7 +1070,7 @@ public interface BoxEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedBoxEndpointBuilder httpParams(
-                Map<String, Object> httpParams) {
+                Map<java.lang.String, java.lang.Object> httpParams) {
             doSetProperty("httpParams", httpParams);
             return this;
         }
@@ -1101,7 +1102,7 @@ public interface BoxEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedBoxEndpointBuilder accessTokenCache(
-                Object accessTokenCache) {
+                com.box.sdk.IAccessTokenCache accessTokenCache) {
             doSetProperty("accessTokenCache", accessTokenCache);
             return this;
         }
@@ -1135,7 +1136,7 @@ public interface BoxEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedBoxEndpointBuilder encryptionAlgorithm(
-                EncryptionAlgorithm encryptionAlgorithm) {
+                com.box.sdk.EncryptionAlgorithm encryptionAlgorithm) {
             doSetProperty("encryptionAlgorithm", encryptionAlgorithm);
             return this;
         }
@@ -1188,15 +1189,6 @@ public interface BoxEndpointBuilderFactory {
             doSetProperty("maxCacheEntries", maxCacheEntries);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for <code>com.box.sdk.EncryptionAlgorithm</code> enum.
-     */
-    enum EncryptionAlgorithm {
-        RSA_SHA_256,
-        RSA_SHA_384,
-        RSA_SHA_512;
     }
 
     public interface BoxBuilders {

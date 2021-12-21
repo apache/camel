@@ -16,16 +16,15 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.HeaderFilterStrategy;
-import org.apache.camel.spi.StateRepository;
 
 /**
  * Sent and receive messages to/from an Apache Kafka broker.
@@ -141,7 +140,7 @@ public interface KafkaEndpointBuilderFactory {
          * @return the dsl builder
          */
         default KafkaEndpointConsumerBuilder headerFilterStrategy(
-                HeaderFilterStrategy headerFilterStrategy) {
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
@@ -797,7 +796,7 @@ public interface KafkaEndpointBuilderFactory {
          * @return the dsl builder
          */
         default KafkaEndpointConsumerBuilder headerDeserializer(
-                Object headerDeserializer) {
+                org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer headerDeserializer) {
             doSetProperty("headerDeserializer", headerDeserializer);
             return this;
         }
@@ -1013,7 +1012,7 @@ public interface KafkaEndpointBuilderFactory {
          * @return the dsl builder
          */
         default KafkaEndpointConsumerBuilder offsetRepository(
-                StateRepository<String, String> offsetRepository) {
+                org.apache.camel.spi.StateRepository<java.lang.String, java.lang.String> offsetRepository) {
             doSetProperty("offsetRepository", offsetRepository);
             return this;
         }
@@ -1075,7 +1074,8 @@ public interface KafkaEndpointBuilderFactory {
          * @param pollOnError the value to set
          * @return the dsl builder
          */
-        default KafkaEndpointConsumerBuilder pollOnError(PollOnError pollOnError) {
+        default KafkaEndpointConsumerBuilder pollOnError(
+                org.apache.camel.component.kafka.PollOnError pollOnError) {
             doSetProperty("pollOnError", pollOnError);
             return this;
         }
@@ -1156,7 +1156,7 @@ public interface KafkaEndpointBuilderFactory {
          * @return the dsl builder
          */
         default KafkaEndpointConsumerBuilder resumeStrategy(
-                Object resumeStrategy) {
+                org.apache.camel.component.kafka.consumer.support.KafkaConsumerResumeStrategy resumeStrategy) {
             doSetProperty("resumeStrategy", resumeStrategy);
             return this;
         }
@@ -1610,7 +1610,7 @@ public interface KafkaEndpointBuilderFactory {
          * @return the dsl builder
          */
         default KafkaEndpointConsumerBuilder sslContextParameters(
-                Object sslContextParameters) {
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
@@ -1795,7 +1795,7 @@ public interface KafkaEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedKafkaEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -1830,7 +1830,7 @@ public interface KafkaEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedKafkaEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -1866,7 +1866,7 @@ public interface KafkaEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedKafkaEndpointConsumerBuilder kafkaManualCommitFactory(
-                Object kafkaManualCommitFactory) {
+                org.apache.camel.component.kafka.KafkaManualCommitFactory kafkaManualCommitFactory) {
             doSetProperty("kafkaManualCommitFactory", kafkaManualCommitFactory);
             return this;
         }
@@ -1906,7 +1906,7 @@ public interface KafkaEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedKafkaEndpointConsumerBuilder kafkaClientFactory(
-                Object kafkaClientFactory) {
+                org.apache.camel.component.kafka.KafkaClientFactory kafkaClientFactory) {
             doSetProperty("kafkaClientFactory", kafkaClientFactory);
             return this;
         }
@@ -2070,7 +2070,7 @@ public interface KafkaEndpointBuilderFactory {
          * @return the dsl builder
          */
         default KafkaEndpointProducerBuilder headerFilterStrategy(
-                HeaderFilterStrategy headerFilterStrategy) {
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
@@ -2365,7 +2365,7 @@ public interface KafkaEndpointBuilderFactory {
          * @return the dsl builder
          */
         default KafkaEndpointProducerBuilder headerSerializer(
-                Object headerSerializer) {
+                org.apache.camel.component.kafka.serde.KafkaHeaderSerializer headerSerializer) {
             doSetProperty("headerSerializer", headerSerializer);
             return this;
         }
@@ -3627,7 +3627,7 @@ public interface KafkaEndpointBuilderFactory {
          * @return the dsl builder
          */
         default KafkaEndpointProducerBuilder sslContextParameters(
-                Object sslContextParameters) {
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
@@ -3891,7 +3891,7 @@ public interface KafkaEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedKafkaEndpointProducerBuilder kafkaClientFactory(
-                Object kafkaClientFactory) {
+                org.apache.camel.component.kafka.KafkaClientFactory kafkaClientFactory) {
             doSetProperty("kafkaClientFactory", kafkaClientFactory);
             return this;
         }
@@ -4056,7 +4056,7 @@ public interface KafkaEndpointBuilderFactory {
          * @return the dsl builder
          */
         default KafkaEndpointBuilder headerFilterStrategy(
-                HeaderFilterStrategy headerFilterStrategy) {
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
@@ -4430,7 +4430,7 @@ public interface KafkaEndpointBuilderFactory {
          * @return the dsl builder
          */
         default KafkaEndpointBuilder sslContextParameters(
-                Object sslContextParameters) {
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
@@ -4615,7 +4615,7 @@ public interface KafkaEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedKafkaEndpointBuilder kafkaClientFactory(
-                Object kafkaClientFactory) {
+                org.apache.camel.component.kafka.KafkaClientFactory kafkaClientFactory) {
             doSetProperty("kafkaClientFactory", kafkaClientFactory);
             return this;
         }
@@ -4670,18 +4670,6 @@ public interface KafkaEndpointBuilderFactory {
             doSetProperty("synchronous", synchronous);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for <code>org.apache.camel.component.kafka.PollOnError</code>
-     * enum.
-     */
-    enum PollOnError {
-        DISCARD,
-        ERROR_HANDLER,
-        RECONNECT,
-        RETRY,
-        STOP;
     }
 
     public interface KafkaBuilders {

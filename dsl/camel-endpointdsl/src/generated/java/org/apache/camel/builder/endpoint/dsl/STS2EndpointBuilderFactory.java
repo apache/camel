@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -94,7 +98,8 @@ public interface STS2EndpointBuilderFactory {
          * @param operation the value to set
          * @return the dsl builder
          */
-        default STS2EndpointBuilder operation(STS2Operations operation) {
+        default STS2EndpointBuilder operation(
+                org.apache.camel.component.aws2.sts.STS2Operations operation) {
             doSetProperty("operation", operation);
             return this;
         }
@@ -234,7 +239,8 @@ public interface STS2EndpointBuilderFactory {
          * @param proxyProtocol the value to set
          * @return the dsl builder
          */
-        default STS2EndpointBuilder proxyProtocol(Protocol proxyProtocol) {
+        default STS2EndpointBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
@@ -283,7 +289,8 @@ public interface STS2EndpointBuilderFactory {
          * @param stsClient the value to set
          * @return the dsl builder
          */
-        default STS2EndpointBuilder stsClient(Object stsClient) {
+        default STS2EndpointBuilder stsClient(
+                software.amazon.awssdk.services.sts.StsClient stsClient) {
             doSetProperty("stsClient", stsClient);
             return this;
         }
@@ -418,24 +425,6 @@ public interface STS2EndpointBuilderFactory {
             doSetProperty("secretKey", secretKey);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.aws2.sts.STS2Operations</code> enum.
-     */
-    enum STS2Operations {
-        assumeRole,
-        getSessionToken,
-        getFederationToken;
-    }
-
-    /**
-     * Proxy enum for <code>software.amazon.awssdk.core.Protocol</code> enum.
-     */
-    enum Protocol {
-        HTTP,
-        HTTPS;
     }
 
     public interface STS2Builders {

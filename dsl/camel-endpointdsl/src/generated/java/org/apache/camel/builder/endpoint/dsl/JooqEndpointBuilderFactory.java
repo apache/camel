@@ -16,17 +16,15 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
 import java.util.Map;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.PollingConsumerPollStrategy;
 
 /**
  * Store and retrieve Java objects from an SQL database using JOOQ.
@@ -58,7 +56,7 @@ public interface JooqEndpointBuilderFactory {
          * @return the dsl builder
          */
         default JooqEndpointConsumerBuilder databaseConfiguration(
-                Object databaseConfiguration) {
+                org.jooq.Configuration databaseConfiguration) {
             doSetProperty("databaseConfiguration", databaseConfiguration);
             return this;
         }
@@ -434,7 +432,7 @@ public interface JooqEndpointBuilderFactory {
          * @return the dsl builder
          */
         default JooqEndpointConsumerBuilder runLoggingLevel(
-                LoggingLevel runLoggingLevel) {
+                org.apache.camel.LoggingLevel runLoggingLevel) {
             doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
@@ -689,7 +687,7 @@ public interface JooqEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedJooqEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -724,7 +722,7 @@ public interface JooqEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedJooqEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -759,7 +757,7 @@ public interface JooqEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedJooqEndpointConsumerBuilder pollStrategy(
-                PollingConsumerPollStrategy pollStrategy) {
+                org.apache.camel.spi.PollingConsumerPollStrategy pollStrategy) {
             doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
@@ -805,7 +803,7 @@ public interface JooqEndpointBuilderFactory {
          * @return the dsl builder
          */
         default JooqEndpointProducerBuilder databaseConfiguration(
-                Object databaseConfiguration) {
+                org.jooq.Configuration databaseConfiguration) {
             doSetProperty("databaseConfiguration", databaseConfiguration);
             return this;
         }
@@ -886,7 +884,8 @@ public interface JooqEndpointBuilderFactory {
          * @param operation the value to set
          * @return the dsl builder
          */
-        default JooqEndpointProducerBuilder operation(JooqOperation operation) {
+        default JooqEndpointProducerBuilder operation(
+                org.apache.camel.component.jooq.JooqOperation operation) {
             doSetProperty("operation", operation);
             return this;
         }
@@ -955,7 +954,7 @@ public interface JooqEndpointBuilderFactory {
          * @return the dsl builder
          */
         default JooqEndpointBuilder databaseConfiguration(
-                Object databaseConfiguration) {
+                org.jooq.Configuration databaseConfiguration) {
             doSetProperty("databaseConfiguration", databaseConfiguration);
             return this;
         }
@@ -987,16 +986,6 @@ public interface JooqEndpointBuilderFactory {
         default JooqEndpointBuilder basic() {
             return (JooqEndpointBuilder) this;
         }
-    }
-
-    /**
-     * Proxy enum for <code>org.apache.camel.component.jooq.JooqOperation</code>
-     * enum.
-     */
-    enum JooqOperation {
-        EXECUTE,
-        FETCH,
-        NONE;
     }
 
     public interface JooqBuilders {

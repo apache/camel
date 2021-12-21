@@ -16,14 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Socket level networking using TCP or UDP with Apache Mina 2.x.
@@ -338,7 +338,8 @@ public interface MinaEndpointBuilderFactory {
          * @param codec the value to set
          * @return the dsl builder
          */
-        default MinaEndpointConsumerBuilder codec(Object codec) {
+        default MinaEndpointConsumerBuilder codec(
+                org.apache.mina.filter.codec.ProtocolCodecFactory codec) {
             doSetProperty("codec", codec);
             return this;
         }
@@ -452,7 +453,8 @@ public interface MinaEndpointBuilderFactory {
          * @param filters the value to set
          * @return the dsl builder
          */
-        default MinaEndpointConsumerBuilder filters(List<Object> filters) {
+        default MinaEndpointConsumerBuilder filters(
+                List<org.apache.mina.core.filterchain.IoFilter> filters) {
             doSetProperty("filters", filters);
             return this;
         }
@@ -520,7 +522,7 @@ public interface MinaEndpointBuilderFactory {
          * @return the dsl builder
          */
         default MinaEndpointConsumerBuilder textlineDelimiter(
-                MinaTextLineDelimiter textlineDelimiter) {
+                org.apache.camel.component.mina.MinaTextLineDelimiter textlineDelimiter) {
             doSetProperty("textlineDelimiter", textlineDelimiter);
             return this;
         }
@@ -585,7 +587,7 @@ public interface MinaEndpointBuilderFactory {
          * @return the dsl builder
          */
         default MinaEndpointConsumerBuilder sslContextParameters(
-                Object sslContextParameters) {
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
@@ -631,7 +633,7 @@ public interface MinaEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedMinaEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -666,7 +668,7 @@ public interface MinaEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedMinaEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -700,7 +702,7 @@ public interface MinaEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedMinaEndpointConsumerBuilder noReplyLogLevel(
-                LoggingLevel noReplyLogLevel) {
+                org.apache.camel.LoggingLevel noReplyLogLevel) {
             doSetProperty("noReplyLogLevel", noReplyLogLevel);
             return this;
         }
@@ -1144,7 +1146,8 @@ public interface MinaEndpointBuilderFactory {
          * @param codec the value to set
          * @return the dsl builder
          */
-        default MinaEndpointProducerBuilder codec(Object codec) {
+        default MinaEndpointProducerBuilder codec(
+                org.apache.mina.filter.codec.ProtocolCodecFactory codec) {
             doSetProperty("codec", codec);
             return this;
         }
@@ -1258,7 +1261,8 @@ public interface MinaEndpointBuilderFactory {
          * @param filters the value to set
          * @return the dsl builder
          */
-        default MinaEndpointProducerBuilder filters(List<Object> filters) {
+        default MinaEndpointProducerBuilder filters(
+                List<org.apache.mina.core.filterchain.IoFilter> filters) {
             doSetProperty("filters", filters);
             return this;
         }
@@ -1326,7 +1330,7 @@ public interface MinaEndpointBuilderFactory {
          * @return the dsl builder
          */
         default MinaEndpointProducerBuilder textlineDelimiter(
-                MinaTextLineDelimiter textlineDelimiter) {
+                org.apache.camel.component.mina.MinaTextLineDelimiter textlineDelimiter) {
             doSetProperty("textlineDelimiter", textlineDelimiter);
             return this;
         }
@@ -1391,7 +1395,7 @@ public interface MinaEndpointBuilderFactory {
          * @return the dsl builder
          */
         default MinaEndpointProducerBuilder sslContextParameters(
-                Object sslContextParameters) {
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
@@ -1864,7 +1868,8 @@ public interface MinaEndpointBuilderFactory {
          * @param codec the value to set
          * @return the dsl builder
          */
-        default MinaEndpointBuilder codec(Object codec) {
+        default MinaEndpointBuilder codec(
+                org.apache.mina.filter.codec.ProtocolCodecFactory codec) {
             doSetProperty("codec", codec);
             return this;
         }
@@ -1978,7 +1983,8 @@ public interface MinaEndpointBuilderFactory {
          * @param filters the value to set
          * @return the dsl builder
          */
-        default MinaEndpointBuilder filters(List<Object> filters) {
+        default MinaEndpointBuilder filters(
+                List<org.apache.mina.core.filterchain.IoFilter> filters) {
             doSetProperty("filters", filters);
             return this;
         }
@@ -2046,7 +2052,7 @@ public interface MinaEndpointBuilderFactory {
          * @return the dsl builder
          */
         default MinaEndpointBuilder textlineDelimiter(
-                MinaTextLineDelimiter textlineDelimiter) {
+                org.apache.camel.component.mina.MinaTextLineDelimiter textlineDelimiter) {
             doSetProperty("textlineDelimiter", textlineDelimiter);
             return this;
         }
@@ -2110,7 +2116,7 @@ public interface MinaEndpointBuilderFactory {
          * @return the dsl builder
          */
         default MinaEndpointBuilder sslContextParameters(
-                Object sslContextParameters) {
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
@@ -2286,18 +2292,6 @@ public interface MinaEndpointBuilderFactory {
             doSetProperty("transferExchange", transferExchange);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.mina.MinaTextLineDelimiter</code> enum.
-     */
-    enum MinaTextLineDelimiter {
-        DEFAULT,
-        AUTO,
-        UNIX,
-        WINDOWS,
-        MAC;
     }
 
     public interface MinaBuilders {

@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -188,7 +192,8 @@ public interface NagiosEndpointBuilderFactory {
          * @param encryption the value to set
          * @return the dsl builder
          */
-        default NagiosEndpointBuilder encryption(Encryption encryption) {
+        default NagiosEndpointBuilder encryption(
+                com.googlecode.jsendnsca.encryption.Encryption encryption) {
             doSetProperty("encryption", encryption);
             return this;
         }
@@ -221,20 +226,6 @@ public interface NagiosEndpointBuilderFactory {
             doSetProperty("password", password);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>com.googlecode.jsendnsca.encryption.Encryption</code> enum.
-     */
-    enum Encryption {
-        NONE,
-        TRIPLE_DES,
-        XOR,
-        RIJNDAEL128,
-        RIJNDAEL192,
-        RIJNDAEL256,
-        BLOWFISH;
     }
 
     public interface NagiosBuilders {

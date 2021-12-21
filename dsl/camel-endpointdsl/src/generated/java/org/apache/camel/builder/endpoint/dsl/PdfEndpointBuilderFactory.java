@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -281,7 +285,7 @@ public interface PdfEndpointBuilderFactory {
          * @return the dsl builder
          */
         default PdfEndpointBuilder textProcessingFactory(
-                TextProcessingFactory textProcessingFactory) {
+                org.apache.camel.component.pdf.TextProcessingFactory textProcessingFactory) {
             doSetProperty("textProcessingFactory", textProcessingFactory);
             return this;
         }
@@ -308,15 +312,6 @@ public interface PdfEndpointBuilderFactory {
             doSetProperty("textProcessingFactory", textProcessingFactory);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.pdf.TextProcessingFactory</code> enum.
-     */
-    enum TextProcessingFactory {
-        autoFormatting,
-        lineTermination;
     }
 
     public interface PdfBuilders {

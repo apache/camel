@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -157,7 +161,8 @@ public interface GeoCoderEndpointBuilderFactory {
          * @param type the value to set
          * @return the dsl builder
          */
-        default GeoCoderEndpointBuilder type(GeoCoderType type) {
+        default GeoCoderEndpointBuilder type(
+                org.apache.camel.component.geocoder.GeoCoderType type) {
             doSetProperty("type", type);
             return this;
         }
@@ -333,15 +338,6 @@ public interface GeoCoderEndpointBuilderFactory {
             doSetProperty("clientKey", clientKey);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.geocoder.GeoCoderType</code> enum.
-     */
-    enum GeoCoderType {
-        NOMINATIM,
-        GOOGLE;
     }
 
     public interface GeoCoderBuilders {

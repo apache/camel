@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -65,7 +69,8 @@ public interface CaffeineCacheEndpointBuilderFactory {
          * @param cacheLoader the value to set
          * @return the dsl builder
          */
-        default CaffeineCacheEndpointBuilder cacheLoader(Object cacheLoader) {
+        default CaffeineCacheEndpointBuilder cacheLoader(
+                com.github.benmanes.caffeine.cache.CacheLoader cacheLoader) {
             doSetProperty("cacheLoader", cacheLoader);
             return this;
         }
@@ -132,7 +137,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          * @return the dsl builder
          */
         default CaffeineCacheEndpointBuilder evictionType(
-                EvictionType evictionType) {
+                org.apache.camel.component.caffeine.EvictionType evictionType) {
             doSetProperty("evictionType", evictionType);
             return this;
         }
@@ -373,7 +378,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          * @return the dsl builder
          */
         default CaffeineCacheEndpointBuilder removalListener(
-                Object removalListener) {
+                com.github.benmanes.caffeine.cache.RemovalListener removalListener) {
             doSetProperty("removalListener", removalListener);
             return this;
         }
@@ -404,7 +409,8 @@ public interface CaffeineCacheEndpointBuilderFactory {
          * @param statsCounter the value to set
          * @return the dsl builder
          */
-        default CaffeineCacheEndpointBuilder statsCounter(Object statsCounter) {
+        default CaffeineCacheEndpointBuilder statsCounter(
+                com.github.benmanes.caffeine.cache.stats.StatsCounter statsCounter) {
             doSetProperty("statsCounter", statsCounter);
             return this;
         }
@@ -493,15 +499,6 @@ public interface CaffeineCacheEndpointBuilderFactory {
             doSetProperty("valueType", valueType);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.caffeine.EvictionType</code> enum.
-     */
-    enum EvictionType {
-        SIZE_BASED,
-        TIME_BASED;
     }
 
     public interface CaffeineCacheBuilders {

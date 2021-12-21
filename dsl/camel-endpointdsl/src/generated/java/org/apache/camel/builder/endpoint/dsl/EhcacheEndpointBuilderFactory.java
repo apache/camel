@@ -16,13 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Perform caching operations using Ehcache.
@@ -45,15 +46,16 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * The cache manager.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.ehcache.EhcacheManager&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;org.ehcache.CacheManager&lt;/code&gt;
+         * type.
          * 
          * Group: common
          * 
          * @param cacheManager the value to set
          * @return the dsl builder
          */
-        default EhcacheEndpointConsumerBuilder cacheManager(Object cacheManager) {
+        default EhcacheEndpointConsumerBuilder cacheManager(
+                org.ehcache.CacheManager cacheManager) {
             doSetProperty("cacheManager", cacheManager);
             return this;
         }
@@ -61,7 +63,7 @@ public interface EhcacheEndpointBuilderFactory {
          * The cache manager.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.ehcache.EhcacheManager&lt;/code&gt; type.
+         * &lt;code&gt;org.ehcache.CacheManager&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -84,7 +86,7 @@ public interface EhcacheEndpointBuilderFactory {
          * @return the dsl builder
          */
         default EhcacheEndpointConsumerBuilder cacheManagerConfiguration(
-                Object cacheManagerConfiguration) {
+                org.ehcache.config.Configuration cacheManagerConfiguration) {
             doSetProperty("cacheManagerConfiguration", cacheManagerConfiguration);
             return this;
         }
@@ -212,7 +214,7 @@ public interface EhcacheEndpointBuilderFactory {
          * @return the dsl builder
          */
         default EhcacheEndpointConsumerBuilder eventFiring(
-                EventFiring eventFiring) {
+                org.ehcache.event.EventFiring eventFiring) {
             doSetProperty("eventFiring", eventFiring);
             return this;
         }
@@ -245,7 +247,7 @@ public interface EhcacheEndpointBuilderFactory {
          * @return the dsl builder
          */
         default EhcacheEndpointConsumerBuilder eventOrdering(
-                EventOrdering eventOrdering) {
+                org.ehcache.event.EventOrdering eventOrdering) {
             doSetProperty("eventOrdering", eventOrdering);
             return this;
         }
@@ -308,7 +310,7 @@ public interface EhcacheEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedEhcacheEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -343,7 +345,7 @@ public interface EhcacheEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedEhcacheEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -367,7 +369,7 @@ public interface EhcacheEndpointBuilderFactory {
          * The default cache configuration to be used to create caches.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.ehcache.EhcacheConfiguration&lt;/code&gt; type.
+         * &lt;code&gt;org.ehcache.config.CacheConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -375,7 +377,7 @@ public interface EhcacheEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedEhcacheEndpointConsumerBuilder configuration(
-                Object configuration) {
+                org.ehcache.config.CacheConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
         }
@@ -383,7 +385,7 @@ public interface EhcacheEndpointBuilderFactory {
          * The default cache configuration to be used to create caches.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.ehcache.EhcacheConfiguration&lt;/code&gt; type.
+         * &lt;code&gt;org.ehcache.config.CacheConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -407,7 +409,7 @@ public interface EhcacheEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedEhcacheEndpointConsumerBuilder configurations(
-                Map<String, Object> configurations) {
+                Map<java.lang.String, org.ehcache.config.CacheConfiguration> configurations) {
             doSetProperty("configurations", configurations);
             return this;
         }
@@ -471,15 +473,16 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * The cache manager.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.ehcache.EhcacheManager&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;org.ehcache.CacheManager&lt;/code&gt;
+         * type.
          * 
          * Group: common
          * 
          * @param cacheManager the value to set
          * @return the dsl builder
          */
-        default EhcacheEndpointProducerBuilder cacheManager(Object cacheManager) {
+        default EhcacheEndpointProducerBuilder cacheManager(
+                org.ehcache.CacheManager cacheManager) {
             doSetProperty("cacheManager", cacheManager);
             return this;
         }
@@ -487,7 +490,7 @@ public interface EhcacheEndpointBuilderFactory {
          * The cache manager.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.ehcache.EhcacheManager&lt;/code&gt; type.
+         * &lt;code&gt;org.ehcache.CacheManager&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -510,7 +513,7 @@ public interface EhcacheEndpointBuilderFactory {
          * @return the dsl builder
          */
         default EhcacheEndpointProducerBuilder cacheManagerConfiguration(
-                Object cacheManagerConfiguration) {
+                org.ehcache.config.Configuration cacheManagerConfiguration) {
             doSetProperty("cacheManagerConfiguration", cacheManagerConfiguration);
             return this;
         }
@@ -690,7 +693,7 @@ public interface EhcacheEndpointBuilderFactory {
          * The default cache configuration to be used to create caches.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.ehcache.EhcacheConfiguration&lt;/code&gt; type.
+         * &lt;code&gt;org.ehcache.config.CacheConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -698,7 +701,7 @@ public interface EhcacheEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedEhcacheEndpointProducerBuilder configuration(
-                Object configuration) {
+                org.ehcache.config.CacheConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
         }
@@ -706,7 +709,7 @@ public interface EhcacheEndpointBuilderFactory {
          * The default cache configuration to be used to create caches.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.ehcache.EhcacheConfiguration&lt;/code&gt; type.
+         * &lt;code&gt;org.ehcache.config.CacheConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -730,7 +733,7 @@ public interface EhcacheEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedEhcacheEndpointProducerBuilder configurations(
-                Map<String, Object> configurations) {
+                Map<java.lang.String, org.ehcache.config.CacheConfiguration> configurations) {
             doSetProperty("configurations", configurations);
             return this;
         }
@@ -795,15 +798,16 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * The cache manager.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.ehcache.EhcacheManager&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;org.ehcache.CacheManager&lt;/code&gt;
+         * type.
          * 
          * Group: common
          * 
          * @param cacheManager the value to set
          * @return the dsl builder
          */
-        default EhcacheEndpointBuilder cacheManager(Object cacheManager) {
+        default EhcacheEndpointBuilder cacheManager(
+                org.ehcache.CacheManager cacheManager) {
             doSetProperty("cacheManager", cacheManager);
             return this;
         }
@@ -811,7 +815,7 @@ public interface EhcacheEndpointBuilderFactory {
          * The cache manager.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.ehcache.EhcacheManager&lt;/code&gt; type.
+         * &lt;code&gt;org.ehcache.CacheManager&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -834,7 +838,7 @@ public interface EhcacheEndpointBuilderFactory {
          * @return the dsl builder
          */
         default EhcacheEndpointBuilder cacheManagerConfiguration(
-                Object cacheManagerConfiguration) {
+                org.ehcache.config.Configuration cacheManagerConfiguration) {
             doSetProperty("cacheManagerConfiguration", cacheManagerConfiguration);
             return this;
         }
@@ -919,7 +923,7 @@ public interface EhcacheEndpointBuilderFactory {
          * The default cache configuration to be used to create caches.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.ehcache.EhcacheConfiguration&lt;/code&gt; type.
+         * &lt;code&gt;org.ehcache.config.CacheConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -927,7 +931,7 @@ public interface EhcacheEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedEhcacheEndpointBuilder configuration(
-                Object configuration) {
+                org.ehcache.config.CacheConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
         }
@@ -935,7 +939,7 @@ public interface EhcacheEndpointBuilderFactory {
          * The default cache configuration to be used to create caches.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.ehcache.EhcacheConfiguration&lt;/code&gt; type.
+         * &lt;code&gt;org.ehcache.config.CacheConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -959,7 +963,7 @@ public interface EhcacheEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedEhcacheEndpointBuilder configurations(
-                Map<String, Object> configurations) {
+                Map<java.lang.String, org.ehcache.config.CacheConfiguration> configurations) {
             doSetProperty("configurations", configurations);
             return this;
         }
@@ -1008,22 +1012,6 @@ public interface EhcacheEndpointBuilderFactory {
             doSetProperty("valueType", valueType);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for <code>org.ehcache.event.EventFiring</code> enum.
-     */
-    enum EventFiring {
-        ASYNCHRONOUS,
-        SYNCHRONOUS;
-    }
-
-    /**
-     * Proxy enum for <code>org.ehcache.event.EventOrdering</code> enum.
-     */
-    enum EventOrdering {
-        UNORDERED,
-        ORDERED;
     }
 
     public interface EhcacheBuilders {

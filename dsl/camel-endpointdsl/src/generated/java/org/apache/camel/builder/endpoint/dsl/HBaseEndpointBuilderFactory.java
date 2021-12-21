@@ -16,14 +16,15 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.util.List;
+import java.util.*;
 import java.util.Map;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Reading and write from/to an HBase store (Hadoop database).
@@ -56,7 +57,7 @@ public interface HBaseEndpointBuilderFactory {
          * @return the dsl builder
          */
         default HBaseEndpointConsumerBuilder cellMappingStrategyFactory(
-                Object cellMappingStrategyFactory) {
+                org.apache.camel.component.hbase.mapping.CellMappingStrategyFactory cellMappingStrategyFactory) {
             doSetProperty("cellMappingStrategyFactory", cellMappingStrategyFactory);
             return this;
         }
@@ -88,7 +89,8 @@ public interface HBaseEndpointBuilderFactory {
          * @param filters the value to set
          * @return the dsl builder
          */
-        default HBaseEndpointConsumerBuilder filters(List<Object> filters) {
+        default HBaseEndpointConsumerBuilder filters(
+                List<org.apache.hadoop.hbase.filter.Filter> filters) {
             doSetProperty("filters", filters);
             return this;
         }
@@ -205,7 +207,8 @@ public interface HBaseEndpointBuilderFactory {
          * @param rowModel the value to set
          * @return the dsl builder
          */
-        default HBaseEndpointConsumerBuilder rowModel(Object rowModel) {
+        default HBaseEndpointConsumerBuilder rowModel(
+                org.apache.camel.component.hbase.model.HBaseRow rowModel) {
             doSetProperty("rowModel", rowModel);
             return this;
         }
@@ -237,7 +240,7 @@ public interface HBaseEndpointBuilderFactory {
          * @return the dsl builder
          */
         default HBaseEndpointConsumerBuilder userGroupInformation(
-                Object userGroupInformation) {
+                org.apache.hadoop.security.UserGroupInformation userGroupInformation) {
             doSetProperty("userGroupInformation", userGroupInformation);
             return this;
         }
@@ -395,7 +398,8 @@ public interface HBaseEndpointBuilderFactory {
          * @param removeHandler the value to set
          * @return the dsl builder
          */
-        default HBaseEndpointConsumerBuilder removeHandler(Object removeHandler) {
+        default HBaseEndpointConsumerBuilder removeHandler(
+                org.apache.camel.component.hbase.HBaseRemoveHandler removeHandler) {
             doSetProperty("removeHandler", removeHandler);
             return this;
         }
@@ -441,7 +445,7 @@ public interface HBaseEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedHBaseEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -476,7 +480,7 @@ public interface HBaseEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedHBaseEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -520,7 +524,7 @@ public interface HBaseEndpointBuilderFactory {
          * @return the dsl builder
          */
         default HBaseEndpointProducerBuilder cellMappingStrategyFactory(
-                Object cellMappingStrategyFactory) {
+                org.apache.camel.component.hbase.mapping.CellMappingStrategyFactory cellMappingStrategyFactory) {
             doSetProperty("cellMappingStrategyFactory", cellMappingStrategyFactory);
             return this;
         }
@@ -552,7 +556,8 @@ public interface HBaseEndpointBuilderFactory {
          * @param filters the value to set
          * @return the dsl builder
          */
-        default HBaseEndpointProducerBuilder filters(List<Object> filters) {
+        default HBaseEndpointProducerBuilder filters(
+                List<org.apache.hadoop.hbase.filter.Filter> filters) {
             doSetProperty("filters", filters);
             return this;
         }
@@ -669,7 +674,8 @@ public interface HBaseEndpointBuilderFactory {
          * @param rowModel the value to set
          * @return the dsl builder
          */
-        default HBaseEndpointProducerBuilder rowModel(Object rowModel) {
+        default HBaseEndpointProducerBuilder rowModel(
+                org.apache.camel.component.hbase.model.HBaseRow rowModel) {
             doSetProperty("rowModel", rowModel);
             return this;
         }
@@ -701,7 +707,7 @@ public interface HBaseEndpointBuilderFactory {
          * @return the dsl builder
          */
         default HBaseEndpointProducerBuilder userGroupInformation(
-                Object userGroupInformation) {
+                org.apache.hadoop.security.UserGroupInformation userGroupInformation) {
             doSetProperty("userGroupInformation", userGroupInformation);
             return this;
         }
@@ -836,7 +842,7 @@ public interface HBaseEndpointBuilderFactory {
          * @return the dsl builder
          */
         default HBaseEndpointBuilder cellMappingStrategyFactory(
-                Object cellMappingStrategyFactory) {
+                org.apache.camel.component.hbase.mapping.CellMappingStrategyFactory cellMappingStrategyFactory) {
             doSetProperty("cellMappingStrategyFactory", cellMappingStrategyFactory);
             return this;
         }
@@ -868,7 +874,8 @@ public interface HBaseEndpointBuilderFactory {
          * @param filters the value to set
          * @return the dsl builder
          */
-        default HBaseEndpointBuilder filters(List<Object> filters) {
+        default HBaseEndpointBuilder filters(
+                List<org.apache.hadoop.hbase.filter.Filter> filters) {
             doSetProperty("filters", filters);
             return this;
         }
@@ -985,7 +992,8 @@ public interface HBaseEndpointBuilderFactory {
          * @param rowModel the value to set
          * @return the dsl builder
          */
-        default HBaseEndpointBuilder rowModel(Object rowModel) {
+        default HBaseEndpointBuilder rowModel(
+                org.apache.camel.component.hbase.model.HBaseRow rowModel) {
             doSetProperty("rowModel", rowModel);
             return this;
         }
@@ -1017,7 +1025,7 @@ public interface HBaseEndpointBuilderFactory {
          * @return the dsl builder
          */
         default HBaseEndpointBuilder userGroupInformation(
-                Object userGroupInformation) {
+                org.apache.hadoop.security.UserGroupInformation userGroupInformation) {
             doSetProperty("userGroupInformation", userGroupInformation);
             return this;
         }

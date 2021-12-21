@@ -16,12 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Perform operations on git repositories.
@@ -111,7 +113,8 @@ public interface GitEndpointBuilderFactory {
          * @param type the value to set
          * @return the dsl builder
          */
-        default GitEndpointConsumerBuilder type(GitType type) {
+        default GitEndpointConsumerBuilder type(
+                org.apache.camel.component.git.consumer.GitType type) {
             doSetProperty("type", type);
             return this;
         }
@@ -156,7 +159,7 @@ public interface GitEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedGitEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -191,7 +194,7 @@ public interface GitEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedGitEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -449,16 +452,6 @@ public interface GitEndpointBuilderFactory {
         default GitEndpointBuilder basic() {
             return (GitEndpointBuilder) this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.git.consumer.GitType</code> enum.
-     */
-    enum GitType {
-        COMMIT,
-        TAG,
-        BRANCH;
     }
 
     public interface GitBuilders {

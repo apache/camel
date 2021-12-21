@@ -16,17 +16,15 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.io.File;
-import java.util.List;
+import java.util.*;
 import java.util.Map;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.HeaderFilterStrategy;
 
 /**
  * Netty HTTP server and client using the Netty 4.x.
@@ -498,7 +496,8 @@ public interface NettyHttpEndpointBuilderFactory {
          * @param decoders the value to set
          * @return the dsl builder
          */
-        default NettyHttpEndpointConsumerBuilder decoders(List<Object> decoders) {
+        default NettyHttpEndpointConsumerBuilder decoders(
+                List<io.netty.channel.ChannelHandler> decoders) {
             doSetProperty("decoders", decoders);
             return this;
         }
@@ -534,7 +533,8 @@ public interface NettyHttpEndpointBuilderFactory {
          * @param encoders the value to set
          * @return the dsl builder
          */
-        default NettyHttpEndpointConsumerBuilder encoders(List<Object> encoders) {
+        default NettyHttpEndpointConsumerBuilder encoders(
+                List<io.netty.channel.ChannelHandler> encoders) {
             doSetProperty("encoders", encoders);
             return this;
         }
@@ -582,7 +582,8 @@ public interface NettyHttpEndpointBuilderFactory {
          * @param keyStoreFile the value to set
          * @return the dsl builder
          */
-        default NettyHttpEndpointConsumerBuilder keyStoreFile(File keyStoreFile) {
+        default NettyHttpEndpointConsumerBuilder keyStoreFile(
+                java.io.File keyStoreFile) {
             doSetProperty("keyStoreFile", keyStoreFile);
             return this;
         }
@@ -699,7 +700,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default NettyHttpEndpointConsumerBuilder securityConfiguration(
-                Object securityConfiguration) {
+                org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration securityConfiguration) {
             doSetProperty("securityConfiguration", securityConfiguration);
             return this;
         }
@@ -862,7 +863,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default NettyHttpEndpointConsumerBuilder sslContextParameters(
-                Object sslContextParameters) {
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
@@ -893,7 +894,8 @@ public interface NettyHttpEndpointBuilderFactory {
          * @param sslHandler the value to set
          * @return the dsl builder
          */
-        default NettyHttpEndpointConsumerBuilder sslHandler(Object sslHandler) {
+        default NettyHttpEndpointConsumerBuilder sslHandler(
+                io.netty.handler.ssl.SslHandler sslHandler) {
             doSetProperty("sslHandler", sslHandler);
             return this;
         }
@@ -923,7 +925,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default NettyHttpEndpointConsumerBuilder trustStoreFile(
-                File trustStoreFile) {
+                java.io.File trustStoreFile) {
             doSetProperty("trustStoreFile", trustStoreFile);
             return this;
         }
@@ -1055,7 +1057,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder bossGroup(
-                Object bossGroup) {
+                io.netty.channel.EventLoopGroup bossGroup) {
             doSetProperty("bossGroup", bossGroup);
             return this;
         }
@@ -1195,7 +1197,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -1230,7 +1232,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -1394,7 +1396,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder nettyServerBootstrapFactory(
-                Object nettyServerBootstrapFactory) {
+                org.apache.camel.component.netty.NettyServerBootstrapFactory nettyServerBootstrapFactory) {
             doSetProperty("nettyServerBootstrapFactory", nettyServerBootstrapFactory);
             return this;
         }
@@ -1427,7 +1429,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder nettySharedHttpServer(
-                Object nettySharedHttpServer) {
+                org.apache.camel.component.netty.http.NettySharedHttpServer nettySharedHttpServer) {
             doSetProperty("nettySharedHttpServer", nettySharedHttpServer);
             return this;
         }
@@ -1462,7 +1464,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder noReplyLogLevel(
-                LoggingLevel noReplyLogLevel) {
+                org.apache.camel.LoggingLevel noReplyLogLevel) {
             doSetProperty("noReplyLogLevel", noReplyLogLevel);
             return this;
         }
@@ -1501,7 +1503,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder serverClosedChannelExceptionCaughtLogLevel(
-                LoggingLevel serverClosedChannelExceptionCaughtLogLevel) {
+                org.apache.camel.LoggingLevel serverClosedChannelExceptionCaughtLogLevel) {
             doSetProperty("serverClosedChannelExceptionCaughtLogLevel", serverClosedChannelExceptionCaughtLogLevel);
             return this;
         }
@@ -1540,7 +1542,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder serverExceptionCaughtLogLevel(
-                LoggingLevel serverExceptionCaughtLogLevel) {
+                org.apache.camel.LoggingLevel serverExceptionCaughtLogLevel) {
             doSetProperty("serverExceptionCaughtLogLevel", serverExceptionCaughtLogLevel);
             return this;
         }
@@ -1574,7 +1576,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder serverInitializerFactory(
-                Object serverInitializerFactory) {
+                org.apache.camel.component.netty.ServerInitializerFactory serverInitializerFactory) {
             doSetProperty("serverInitializerFactory", serverInitializerFactory);
             return this;
         }
@@ -1760,7 +1762,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder channelGroup(
-                Object channelGroup) {
+                io.netty.channel.group.ChannelGroup channelGroup) {
             doSetProperty("channelGroup", channelGroup);
             return this;
         }
@@ -1793,7 +1795,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder configuration(
-                Object configuration) {
+                org.apache.camel.component.netty.http.NettyHttpConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
         }
@@ -1891,7 +1893,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder headerFilterStrategy(
-                HeaderFilterStrategy headerFilterStrategy) {
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
@@ -1968,7 +1970,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder nettyHttpBinding(
-                Object nettyHttpBinding) {
+                org.apache.camel.component.netty.http.NettyHttpBinding nettyHttpBinding) {
             doSetProperty("nettyHttpBinding", nettyHttpBinding);
             return this;
         }
@@ -2309,7 +2311,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder workerGroup(
-                Object workerGroup) {
+                io.netty.channel.EventLoopGroup workerGroup) {
             doSetProperty("workerGroup", workerGroup);
             return this;
         }
@@ -2642,7 +2644,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default NettyHttpEndpointProducerBuilder cookieHandler(
-                Object cookieHandler) {
+                org.apache.camel.http.base.cookie.CookieHandler cookieHandler) {
             doSetProperty("cookieHandler", cookieHandler);
             return this;
         }
@@ -2831,7 +2833,8 @@ public interface NettyHttpEndpointBuilderFactory {
          * @param decoders the value to set
          * @return the dsl builder
          */
-        default NettyHttpEndpointProducerBuilder decoders(List<Object> decoders) {
+        default NettyHttpEndpointProducerBuilder decoders(
+                List<io.netty.channel.ChannelHandler> decoders) {
             doSetProperty("decoders", decoders);
             return this;
         }
@@ -2867,7 +2870,8 @@ public interface NettyHttpEndpointBuilderFactory {
          * @param encoders the value to set
          * @return the dsl builder
          */
-        default NettyHttpEndpointProducerBuilder encoders(List<Object> encoders) {
+        default NettyHttpEndpointProducerBuilder encoders(
+                List<io.netty.channel.ChannelHandler> encoders) {
             doSetProperty("encoders", encoders);
             return this;
         }
@@ -2915,7 +2919,8 @@ public interface NettyHttpEndpointBuilderFactory {
          * @param keyStoreFile the value to set
          * @return the dsl builder
          */
-        default NettyHttpEndpointProducerBuilder keyStoreFile(File keyStoreFile) {
+        default NettyHttpEndpointProducerBuilder keyStoreFile(
+                java.io.File keyStoreFile) {
             doSetProperty("keyStoreFile", keyStoreFile);
             return this;
         }
@@ -3083,7 +3088,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default NettyHttpEndpointProducerBuilder sslContextParameters(
-                Object sslContextParameters) {
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
@@ -3114,7 +3119,8 @@ public interface NettyHttpEndpointBuilderFactory {
          * @param sslHandler the value to set
          * @return the dsl builder
          */
-        default NettyHttpEndpointProducerBuilder sslHandler(Object sslHandler) {
+        default NettyHttpEndpointProducerBuilder sslHandler(
+                io.netty.handler.ssl.SslHandler sslHandler) {
             doSetProperty("sslHandler", sslHandler);
             return this;
         }
@@ -3144,7 +3150,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default NettyHttpEndpointProducerBuilder trustStoreFile(
-                File trustStoreFile) {
+                java.io.File trustStoreFile) {
             doSetProperty("trustStoreFile", trustStoreFile);
             return this;
         }
@@ -3204,7 +3210,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointProducerBuilder clientInitializerFactory(
-                Object clientInitializerFactory) {
+                org.apache.camel.component.netty.ClientInitializerFactory clientInitializerFactory) {
             doSetProperty("clientInitializerFactory", clientInitializerFactory);
             return this;
         }
@@ -3551,7 +3557,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointProducerBuilder channelGroup(
-                Object channelGroup) {
+                io.netty.channel.group.ChannelGroup channelGroup) {
             doSetProperty("channelGroup", channelGroup);
             return this;
         }
@@ -3584,7 +3590,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointProducerBuilder configuration(
-                Object configuration) {
+                org.apache.camel.component.netty.http.NettyHttpConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
         }
@@ -3682,7 +3688,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointProducerBuilder headerFilterStrategy(
-                HeaderFilterStrategy headerFilterStrategy) {
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
@@ -3759,7 +3765,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointProducerBuilder nettyHttpBinding(
-                Object nettyHttpBinding) {
+                org.apache.camel.component.netty.http.NettyHttpBinding nettyHttpBinding) {
             doSetProperty("nettyHttpBinding", nettyHttpBinding);
             return this;
         }
@@ -4100,7 +4106,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointProducerBuilder workerGroup(
-                Object workerGroup) {
+                io.netty.channel.EventLoopGroup workerGroup) {
             doSetProperty("workerGroup", workerGroup);
             return this;
         }
@@ -4429,7 +4435,8 @@ public interface NettyHttpEndpointBuilderFactory {
          * @param decoders the value to set
          * @return the dsl builder
          */
-        default NettyHttpEndpointBuilder decoders(List<Object> decoders) {
+        default NettyHttpEndpointBuilder decoders(
+                List<io.netty.channel.ChannelHandler> decoders) {
             doSetProperty("decoders", decoders);
             return this;
         }
@@ -4465,7 +4472,8 @@ public interface NettyHttpEndpointBuilderFactory {
          * @param encoders the value to set
          * @return the dsl builder
          */
-        default NettyHttpEndpointBuilder encoders(List<Object> encoders) {
+        default NettyHttpEndpointBuilder encoders(
+                List<io.netty.channel.ChannelHandler> encoders) {
             doSetProperty("encoders", encoders);
             return this;
         }
@@ -4513,7 +4521,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * @param keyStoreFile the value to set
          * @return the dsl builder
          */
-        default NettyHttpEndpointBuilder keyStoreFile(File keyStoreFile) {
+        default NettyHttpEndpointBuilder keyStoreFile(java.io.File keyStoreFile) {
             doSetProperty("keyStoreFile", keyStoreFile);
             return this;
         }
@@ -4679,7 +4687,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default NettyHttpEndpointBuilder sslContextParameters(
-                Object sslContextParameters) {
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
@@ -4710,7 +4718,8 @@ public interface NettyHttpEndpointBuilderFactory {
          * @param sslHandler the value to set
          * @return the dsl builder
          */
-        default NettyHttpEndpointBuilder sslHandler(Object sslHandler) {
+        default NettyHttpEndpointBuilder sslHandler(
+                io.netty.handler.ssl.SslHandler sslHandler) {
             doSetProperty("sslHandler", sslHandler);
             return this;
         }
@@ -4739,7 +4748,8 @@ public interface NettyHttpEndpointBuilderFactory {
          * @param trustStoreFile the value to set
          * @return the dsl builder
          */
-        default NettyHttpEndpointBuilder trustStoreFile(File trustStoreFile) {
+        default NettyHttpEndpointBuilder trustStoreFile(
+                java.io.File trustStoreFile) {
             doSetProperty("trustStoreFile", trustStoreFile);
             return this;
         }
@@ -4838,7 +4848,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointBuilder channelGroup(
-                Object channelGroup) {
+                io.netty.channel.group.ChannelGroup channelGroup) {
             doSetProperty("channelGroup", channelGroup);
             return this;
         }
@@ -4871,7 +4881,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointBuilder configuration(
-                Object configuration) {
+                org.apache.camel.component.netty.http.NettyHttpConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
         }
@@ -4969,7 +4979,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointBuilder headerFilterStrategy(
-                HeaderFilterStrategy headerFilterStrategy) {
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
@@ -5046,7 +5056,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointBuilder nettyHttpBinding(
-                Object nettyHttpBinding) {
+                org.apache.camel.component.netty.http.NettyHttpBinding nettyHttpBinding) {
             doSetProperty("nettyHttpBinding", nettyHttpBinding);
             return this;
         }
@@ -5382,7 +5392,8 @@ public interface NettyHttpEndpointBuilderFactory {
          * @param workerGroup the value to set
          * @return the dsl builder
          */
-        default AdvancedNettyHttpEndpointBuilder workerGroup(Object workerGroup) {
+        default AdvancedNettyHttpEndpointBuilder workerGroup(
+                io.netty.channel.EventLoopGroup workerGroup) {
             doSetProperty("workerGroup", workerGroup);
             return this;
         }

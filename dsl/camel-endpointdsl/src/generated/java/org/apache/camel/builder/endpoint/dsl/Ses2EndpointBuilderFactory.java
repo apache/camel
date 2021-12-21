@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -45,7 +49,8 @@ public interface Ses2EndpointBuilderFactory {
          * @param amazonSESClient the value to set
          * @return the dsl builder
          */
-        default Ses2EndpointBuilder amazonSESClient(Object amazonSESClient) {
+        default Ses2EndpointBuilder amazonSESClient(
+                software.amazon.awssdk.services.ses.SesClient amazonSESClient) {
             doSetProperty("amazonSESClient", amazonSESClient);
             return this;
         }
@@ -199,7 +204,8 @@ public interface Ses2EndpointBuilderFactory {
          * @param proxyProtocol the value to set
          * @return the dsl builder
          */
-        default Ses2EndpointBuilder proxyProtocol(Protocol proxyProtocol) {
+        default Ses2EndpointBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
@@ -412,14 +418,6 @@ public interface Ses2EndpointBuilderFactory {
             doSetProperty("secretKey", secretKey);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for <code>software.amazon.awssdk.core.Protocol</code> enum.
-     */
-    enum Protocol {
-        HTTP,
-        HTTPS;
     }
 
     public interface Ses2Builders {

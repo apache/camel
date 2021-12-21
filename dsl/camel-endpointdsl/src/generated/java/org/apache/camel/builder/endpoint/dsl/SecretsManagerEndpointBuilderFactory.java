@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -130,7 +134,7 @@ public interface SecretsManagerEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SecretsManagerEndpointBuilder operation(
-                SecretsManagerOperations operation) {
+                org.apache.camel.component.aws.secretsmanager.SecretsManagerOperations operation) {
             doSetProperty("operation", operation);
             return this;
         }
@@ -273,7 +277,7 @@ public interface SecretsManagerEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SecretsManagerEndpointBuilder proxyProtocol(
-                Protocol proxyProtocol) {
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
@@ -323,7 +327,7 @@ public interface SecretsManagerEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SecretsManagerEndpointBuilder secretsManagerClient(
-                Object secretsManagerClient) {
+                software.amazon.awssdk.services.secretsmanager.SecretsManagerClient secretsManagerClient) {
             doSetProperty("secretsManagerClient", secretsManagerClient);
             return this;
         }
@@ -459,30 +463,6 @@ public interface SecretsManagerEndpointBuilderFactory {
             doSetProperty("secretKey", secretKey);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.aws.secretsmanager.SecretsManagerOperations</code> enum.
-     */
-    enum SecretsManagerOperations {
-        listSecrets,
-        createSecret,
-        getSecret,
-        describeSecret,
-        deleteSecret,
-        rotateSecret,
-        updateSecret,
-        restoreSecret,
-        replicateSecretToRegions;
-    }
-
-    /**
-     * Proxy enum for <code>software.amazon.awssdk.core.Protocol</code> enum.
-     */
-    enum Protocol {
-        HTTP,
-        HTTPS;
     }
 
     public interface SecretsManagerBuilders {

@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -93,7 +97,8 @@ public interface KuduEndpointBuilderFactory {
          * @param operation the value to set
          * @return the dsl builder
          */
-        default KuduEndpointBuilder operation(KuduOperations operation) {
+        default KuduEndpointBuilder operation(
+                org.apache.camel.component.kudu.KuduOperations operation) {
             doSetProperty("operation", operation);
             return this;
         }
@@ -112,16 +117,6 @@ public interface KuduEndpointBuilderFactory {
             doSetProperty("operation", operation);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.kudu.KuduOperations</code> enum.
-     */
-    enum KuduOperations {
-        INSERT,
-        CREATE_TABLE,
-        SCAN;
     }
 
     public interface KuduBuilders {

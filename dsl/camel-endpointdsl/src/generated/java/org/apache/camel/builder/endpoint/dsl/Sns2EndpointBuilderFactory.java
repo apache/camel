@@ -16,11 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.HeaderFilterStrategy;
 
 /**
  * Send messages to an AWS Simple Notification Topic using AWS SDK version 2.x.
@@ -47,7 +50,8 @@ public interface Sns2EndpointBuilderFactory {
          * @param amazonSNSClient the value to set
          * @return the dsl builder
          */
-        default Sns2EndpointBuilder amazonSNSClient(Object amazonSNSClient) {
+        default Sns2EndpointBuilder amazonSNSClient(
+                software.amazon.awssdk.services.sns.SnsClient amazonSNSClient) {
             doSetProperty("amazonSNSClient", amazonSNSClient);
             return this;
         }
@@ -110,7 +114,7 @@ public interface Sns2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default Sns2EndpointBuilder headerFilterStrategy(
-                HeaderFilterStrategy headerFilterStrategy) {
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
@@ -199,28 +203,7 @@ public interface Sns2EndpointBuilderFactory {
          * useContentBasedDeduplication. For the useContentBasedDeduplication
          * option, no messageDeduplicationId will be set on the message.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.aws2.sns.MessageDeduplicationIdStrategy&lt;/code&gt; type.
-         * 
-         * Default: useExchangeId
-         * Group: producer
-         * 
-         * @param messageDeduplicationIdStrategy the value to set
-         * @return the dsl builder
-         */
-        default Sns2EndpointBuilder messageDeduplicationIdStrategy(
-                Object messageDeduplicationIdStrategy) {
-            doSetProperty("messageDeduplicationIdStrategy", messageDeduplicationIdStrategy);
-            return this;
-        }
-        /**
-         * Only for FIFO Topic. Strategy for setting the messageDeduplicationId
-         * on the message. Can be one of the following options: useExchangeId,
-         * useContentBasedDeduplication. For the useContentBasedDeduplication
-         * option, no messageDeduplicationId will be set on the message.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.aws2.sns.MessageDeduplicationIdStrategy&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: useExchangeId
          * Group: producer
@@ -239,27 +222,7 @@ public interface Sns2EndpointBuilderFactory {
          * useExchangeId, usePropertyValue. For the usePropertyValue option, the
          * value of property CamelAwsMessageGroupId will be used.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.aws2.sns.MessageGroupIdStrategy&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param messageGroupIdStrategy the value to set
-         * @return the dsl builder
-         */
-        default Sns2EndpointBuilder messageGroupIdStrategy(
-                Object messageGroupIdStrategy) {
-            doSetProperty("messageGroupIdStrategy", messageGroupIdStrategy);
-            return this;
-        }
-        /**
-         * Only for FIFO Topic. Strategy for setting the messageGroupId on the
-         * message. Can be one of the following options: useConstant,
-         * useExchangeId, usePropertyValue. For the usePropertyValue option, the
-         * value of property CamelAwsMessageGroupId will be used.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.aws2.sns.MessageGroupIdStrategy&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
          * 
@@ -389,7 +352,8 @@ public interface Sns2EndpointBuilderFactory {
          * @param proxyProtocol the value to set
          * @return the dsl builder
          */
-        default Sns2EndpointBuilder proxyProtocol(Protocol proxyProtocol) {
+        default Sns2EndpointBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
@@ -635,14 +599,6 @@ public interface Sns2EndpointBuilderFactory {
             doSetProperty("secretKey", secretKey);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for <code>software.amazon.awssdk.core.Protocol</code> enum.
-     */
-    enum Protocol {
-        HTTP,
-        HTTPS;
     }
 
     public interface Sns2Builders {

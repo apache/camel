@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -165,7 +169,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * @return the dsl builder
          */
         default DigitalOceanEndpointBuilder resource(
-                DigitalOceanResources resource) {
+                org.apache.camel.component.digitalocean.constants.DigitalOceanResources resource) {
             doSetProperty("resource", resource);
             return this;
         }
@@ -294,7 +298,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedDigitalOceanEndpointBuilder digitalOceanClient(
-                Object digitalOceanClient) {
+                com.myjeeva.digitalocean.impl.DigitalOceanClient digitalOceanClient) {
             doSetProperty("digitalOceanClient", digitalOceanClient);
             return this;
         }
@@ -314,24 +318,6 @@ public interface DigitalOceanEndpointBuilderFactory {
             doSetProperty("digitalOceanClient", digitalOceanClient);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.digitalocean.constants.DigitalOceanResources</code> enum.
-     */
-    enum DigitalOceanResources {
-        account,
-        actions,
-        blockStorages,
-        droplets,
-        images,
-        snapshots,
-        keys,
-        regions,
-        sizes,
-        floatingIPs,
-        tags;
     }
 
     public interface DigitalOceanBuilders {

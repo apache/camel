@@ -16,17 +16,15 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
 import java.util.Map;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.PollingConsumerPollStrategy;
 
 /**
  * Publish or search for events in Splunk.
@@ -623,7 +621,7 @@ public interface SplunkEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder runLoggingLevel(
-                LoggingLevel runLoggingLevel) {
+                org.apache.camel.LoggingLevel runLoggingLevel) {
             doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
@@ -881,7 +879,7 @@ public interface SplunkEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder sslProtocol(
-                SSLSecurityProtocol sslProtocol) {
+                com.splunk.SSLSecurityProtocol sslProtocol) {
             doSetProperty("sslProtocol", sslProtocol);
             return this;
         }
@@ -978,7 +976,7 @@ public interface SplunkEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSplunkEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -1013,7 +1011,7 @@ public interface SplunkEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSplunkEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -1048,7 +1046,7 @@ public interface SplunkEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSplunkEndpointConsumerBuilder pollStrategy(
-                PollingConsumerPollStrategy pollStrategy) {
+                org.apache.camel.spi.PollingConsumerPollStrategy pollStrategy) {
             doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
@@ -1430,7 +1428,7 @@ public interface SplunkEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SplunkEndpointProducerBuilder sslProtocol(
-                SSLSecurityProtocol sslProtocol) {
+                com.splunk.SSLSecurityProtocol sslProtocol) {
             doSetProperty("sslProtocol", sslProtocol);
             return this;
         }
@@ -1669,7 +1667,7 @@ public interface SplunkEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SplunkEndpointBuilder sslProtocol(
-                SSLSecurityProtocol sslProtocol) {
+                com.splunk.SSLSecurityProtocol sslProtocol) {
             doSetProperty("sslProtocol", sslProtocol);
             return this;
         }
@@ -1752,16 +1750,6 @@ public interface SplunkEndpointBuilderFactory {
         default SplunkEndpointBuilder basic() {
             return (SplunkEndpointBuilder) this;
         }
-    }
-
-    /**
-     * Proxy enum for <code>com.splunk.SSLSecurityProtocol</code> enum.
-     */
-    enum SSLSecurityProtocol {
-        TLSv1_2,
-        TLSv1_1,
-        TLSv1,
-        SSLv3;
     }
 
     public interface SplunkBuilders {

@@ -16,23 +16,15 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.security.KeyPair;
-import java.util.Comparator;
+import java.util.*;
 import java.util.Map;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.Expression;
-import org.apache.camel.LoggingLevel;
-import org.apache.camel.Predicate;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.IdempotentRepository;
-import org.apache.camel.spi.PollingConsumerPollStrategy;
 
 /**
  * Upload and download files to/from SFTP servers.
@@ -186,38 +178,7 @@ public interface SftpEndpointBuilderFactory {
          * used only once, and makes it easier as this avoids to temporary store
          * CamelFileName and have to restore it afterwards.
          * 
-         * The option is a: &lt;code&gt;org.apache.camel.Expression&lt;/code&gt;
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param fileName the value to set
-         * @return the dsl builder
-         */
-        default SftpEndpointConsumerBuilder fileName(Expression fileName) {
-            doSetProperty("fileName", fileName);
-            return this;
-        }
-        /**
-         * Use Expression such as File Language to dynamically set the filename.
-         * For consumers, it's used as a filename filter. For producers, it's
-         * used to evaluate the filename to write. If an expression is set, it
-         * take precedence over the CamelFileName header. (Note: The header
-         * itself can also be an Expression). The expression options support
-         * both String and Expression types. If the expression is a String type,
-         * it is always evaluated using the File Language. If the expression is
-         * an Expression type, the specified Expression type is used - this
-         * allows you, for instance, to use OGNL expressions. For the consumer,
-         * you can use it to filter filenames, so you can for instance consume
-         * today's file using the File Language syntax:
-         * mydata-${date:now:yyyyMMdd}.txt. The producers support the
-         * CamelOverruleFileName header which takes precedence over any existing
-         * CamelFileName header; the CamelOverruleFileName is a header that is
-         * used only once, and makes it easier as this avoids to temporary store
-         * CamelFileName and have to restore it afterwards.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.Expression&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -242,7 +203,7 @@ public interface SftpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SftpEndpointConsumerBuilder jschLoggingLevel(
-                LoggingLevel jschLoggingLevel) {
+                org.apache.camel.LoggingLevel jschLoggingLevel) {
             doSetProperty("jschLoggingLevel", jschLoggingLevel);
             return this;
         }
@@ -301,7 +262,7 @@ public interface SftpEndpointBuilderFactory {
          * default) Use existing path separator in file name.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator&lt;/code&gt; type.
          * 
          * Default: UNIX
          * Group: common
@@ -309,7 +270,8 @@ public interface SftpEndpointBuilderFactory {
          * @param separator the value to set
          * @return the dsl builder
          */
-        default SftpEndpointConsumerBuilder separator(PathSeparator separator) {
+        default SftpEndpointConsumerBuilder separator(
+                org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator separator) {
             doSetProperty("separator", separator);
             return this;
         }
@@ -319,7 +281,7 @@ public interface SftpEndpointBuilderFactory {
          * default) Use existing path separator in file name.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator&lt;/code&gt; type.
          * 
          * Default: UNIX
          * Group: common
@@ -413,26 +375,7 @@ public interface SftpEndpointBuilderFactory {
          * When moving the files to the fail location Camel will handle the
          * error and will not pick up the file again.
          * 
-         * The option is a: &lt;code&gt;org.apache.camel.Expression&lt;/code&gt;
-         * type.
-         * 
-         * Group: consumer
-         * 
-         * @param moveFailed the value to set
-         * @return the dsl builder
-         */
-        default SftpEndpointConsumerBuilder moveFailed(Expression moveFailed) {
-            doSetProperty("moveFailed", moveFailed);
-            return this;
-        }
-        /**
-         * Sets the move failure expression based on Simple language. For
-         * example, to move files into a .error subdirectory use: .error. Note:
-         * When moving the files to the fail location Camel will handle the
-         * error and will not pick up the file again.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.Expression&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
          * 
@@ -485,25 +428,7 @@ public interface SftpEndpointBuilderFactory {
          * filename when moving it before processing. For example to move
          * in-progress files into the order directory set this value to order.
          * 
-         * The option is a: &lt;code&gt;org.apache.camel.Expression&lt;/code&gt;
-         * type.
-         * 
-         * Group: consumer
-         * 
-         * @param preMove the value to set
-         * @return the dsl builder
-         */
-        default SftpEndpointConsumerBuilder preMove(Expression preMove) {
-            doSetProperty("preMove", preMove);
-            return this;
-        }
-        /**
-         * Expression (such as File Language) used to dynamically set the
-         * filename when moving it before processing. For example to move
-         * in-progress files into the order directory set this value to order.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.Expression&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
          * 
@@ -823,7 +748,8 @@ public interface SftpEndpointBuilderFactory {
          * @param filter the value to set
          * @return the dsl builder
          */
-        default SftpEndpointConsumerBuilder filter(Object filter) {
+        default SftpEndpointConsumerBuilder filter(
+                org.apache.camel.component.file.GenericFileFilter<org.apache.camel.component.file.remote.SftpRemoteFile> filter) {
             doSetProperty("filter", filter);
             return this;
         }
@@ -849,26 +775,7 @@ public interface SftpEndpointBuilderFactory {
          * on current date, you can use a simple date pattern such as
          * ${date:now:yyyMMdd}.
          * 
-         * The option is a: &lt;code&gt;org.apache.camel.Predicate&lt;/code&gt;
-         * type.
-         * 
-         * Group: filter
-         * 
-         * @param filterDirectory the value to set
-         * @return the dsl builder
-         */
-        default SftpEndpointConsumerBuilder filterDirectory(
-                Predicate filterDirectory) {
-            doSetProperty("filterDirectory", filterDirectory);
-            return this;
-        }
-        /**
-         * Filters the directory based on Simple language. For example to filter
-         * on current date, you can use a simple date pattern such as
-         * ${date:now:yyyMMdd}.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.Predicate&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: filter
          * 
@@ -884,24 +791,7 @@ public interface SftpEndpointBuilderFactory {
          * Filters the file based on Simple language. For example to filter on
          * file size, you can use ${file:size} 5000.
          * 
-         * The option is a: &lt;code&gt;org.apache.camel.Predicate&lt;/code&gt;
-         * type.
-         * 
-         * Group: filter
-         * 
-         * @param filterFile the value to set
-         * @return the dsl builder
-         */
-        default SftpEndpointConsumerBuilder filterFile(Predicate filterFile) {
-            doSetProperty("filterFile", filterFile);
-            return this;
-        }
-        /**
-         * Filters the file based on Simple language. For example to filter on
-         * file size, you can use ${file:size} 5000.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.Predicate&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: filter
          * 
@@ -955,27 +845,7 @@ public interface SftpEndpointBuilderFactory {
          * file name and file size, you can do:
          * idempotentKey=${file:name}-${file:size}.
          * 
-         * The option is a: &lt;code&gt;org.apache.camel.Expression&lt;/code&gt;
-         * type.
-         * 
-         * Group: filter
-         * 
-         * @param idempotentKey the value to set
-         * @return the dsl builder
-         */
-        default SftpEndpointConsumerBuilder idempotentKey(
-                Expression idempotentKey) {
-            doSetProperty("idempotentKey", idempotentKey);
-            return this;
-        }
-        /**
-         * To use a custom idempotent key. By default the absolute path of the
-         * file is used. You can use the File Language, for example to use the
-         * file name and file size, you can do:
-         * idempotentKey=${file:name}-${file:size}.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.Expression&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: filter
          * 
@@ -1001,7 +871,7 @@ public interface SftpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SftpEndpointConsumerBuilder idempotentRepository(
-                IdempotentRepository idempotentRepository) {
+                org.apache.camel.spi.IdempotentRepository idempotentRepository) {
             doSetProperty("idempotentRepository", idempotentRepository);
             return this;
         }
@@ -1177,25 +1047,7 @@ public interface SftpEndpointBuilderFactory {
          * filename when moving it after processing. To move files into a .done
          * subdirectory just enter .done.
          * 
-         * The option is a: &lt;code&gt;org.apache.camel.Expression&lt;/code&gt;
-         * type.
-         * 
-         * Group: filter
-         * 
-         * @param move the value to set
-         * @return the dsl builder
-         */
-        default SftpEndpointConsumerBuilder move(Expression move) {
-            doSetProperty("move", move);
-            return this;
-        }
-        /**
-         * Expression (such as Simple Language) used to dynamically set the
-         * filename when moving it after processing. To move files into a .done
-         * subdirectory just enter .done.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.Expression&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: filter
          * 
@@ -1220,7 +1072,7 @@ public interface SftpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SftpEndpointConsumerBuilder exclusiveReadLockStrategy(
-                Object exclusiveReadLockStrategy) {
+                org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy<org.apache.camel.component.file.remote.SftpRemoteFile> exclusiveReadLockStrategy) {
             doSetProperty("exclusiveReadLockStrategy", exclusiveReadLockStrategy);
             return this;
         }
@@ -1567,7 +1419,7 @@ public interface SftpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SftpEndpointConsumerBuilder readLockLoggingLevel(
-                LoggingLevel readLockLoggingLevel) {
+                org.apache.camel.LoggingLevel readLockLoggingLevel) {
             doSetProperty("readLockLoggingLevel", readLockLoggingLevel);
             return this;
         }
@@ -2101,7 +1953,7 @@ public interface SftpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SftpEndpointConsumerBuilder runLoggingLevel(
-                LoggingLevel runLoggingLevel) {
+                org.apache.camel.LoggingLevel runLoggingLevel) {
             doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
@@ -2376,7 +2228,8 @@ public interface SftpEndpointBuilderFactory {
          * @param keyPair the value to set
          * @return the dsl builder
          */
-        default SftpEndpointConsumerBuilder keyPair(KeyPair keyPair) {
+        default SftpEndpointConsumerBuilder keyPair(
+                java.security.KeyPair keyPair) {
             doSetProperty("keyPair", keyPair);
             return this;
         }
@@ -2407,7 +2260,7 @@ public interface SftpEndpointBuilderFactory {
          * @param knownHosts the value to set
          * @return the dsl builder
          */
-        default SftpEndpointConsumerBuilder knownHosts(Byte[] knownHosts) {
+        default SftpEndpointConsumerBuilder knownHosts(byte[] knownHosts) {
             doSetProperty("knownHosts", knownHosts);
             return this;
         }
@@ -2499,7 +2352,7 @@ public interface SftpEndpointBuilderFactory {
          * @param privateKey the value to set
          * @return the dsl builder
          */
-        default SftpEndpointConsumerBuilder privateKey(Byte[] privateKey) {
+        default SftpEndpointConsumerBuilder privateKey(byte[] privateKey) {
             doSetProperty("privateKey", privateKey);
             return this;
         }
@@ -2666,25 +2519,7 @@ public interface SftpEndpointBuilderFactory {
          * you can have a sort by file name and as a 2nd group sort by modified
          * date.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.Comparator&amp;lt;org.apache.camel.Exchange&amp;gt;&lt;/code&gt; type.
-         * 
-         * Group: sort
-         * 
-         * @param sortBy the value to set
-         * @return the dsl builder
-         */
-        default SftpEndpointConsumerBuilder sortBy(Comparator<Exchange> sortBy) {
-            doSetProperty("sortBy", sortBy);
-            return this;
-        }
-        /**
-         * Built-in sort by using the File Language. Supports nested sorts, so
-         * you can have a sort by file name and as a 2nd group sort by modified
-         * date.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.Comparator&amp;lt;org.apache.camel.Exchange&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: sort
          * 
@@ -2706,7 +2541,8 @@ public interface SftpEndpointBuilderFactory {
          * @param sorter the value to set
          * @return the dsl builder
          */
-        default SftpEndpointConsumerBuilder sorter(Comparator<Object> sorter) {
+        default SftpEndpointConsumerBuilder sorter(
+                Comparator<org.apache.camel.component.file.GenericFile<org.apache.camel.component.file.remote.SftpRemoteFile>> sorter) {
             doSetProperty("sorter", sorter);
             return this;
         }
@@ -2837,7 +2673,7 @@ public interface SftpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSftpEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -2872,7 +2708,7 @@ public interface SftpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSftpEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -2949,7 +2785,7 @@ public interface SftpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSftpEndpointConsumerBuilder inProgressRepository(
-                IdempotentRepository inProgressRepository) {
+                org.apache.camel.spi.IdempotentRepository inProgressRepository) {
             doSetProperty("inProgressRepository", inProgressRepository);
             return this;
         }
@@ -3006,7 +2842,7 @@ public interface SftpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSftpEndpointConsumerBuilder onCompletionExceptionHandler(
-                ExceptionHandler onCompletionExceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler onCompletionExceptionHandler) {
             doSetProperty("onCompletionExceptionHandler", onCompletionExceptionHandler);
             return this;
         }
@@ -3044,7 +2880,7 @@ public interface SftpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSftpEndpointConsumerBuilder pollStrategy(
-                PollingConsumerPollStrategy pollStrategy) {
+                org.apache.camel.spi.PollingConsumerPollStrategy pollStrategy) {
             doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
@@ -3084,7 +2920,7 @@ public interface SftpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSftpEndpointConsumerBuilder processStrategy(
-                Object processStrategy) {
+                org.apache.camel.component.file.GenericFileProcessStrategy<org.apache.camel.component.file.remote.SftpRemoteFile> processStrategy) {
             doSetProperty("processStrategy", processStrategy);
             return this;
         }
@@ -3392,7 +3228,8 @@ public interface SftpEndpointBuilderFactory {
          * @param proxy the value to set
          * @return the dsl builder
          */
-        default AdvancedSftpEndpointConsumerBuilder proxy(Object proxy) {
+        default AdvancedSftpEndpointConsumerBuilder proxy(
+                com.jcraft.jsch.Proxy proxy) {
             doSetProperty("proxy", proxy);
             return this;
         }
@@ -3844,38 +3681,7 @@ public interface SftpEndpointBuilderFactory {
          * used only once, and makes it easier as this avoids to temporary store
          * CamelFileName and have to restore it afterwards.
          * 
-         * The option is a: &lt;code&gt;org.apache.camel.Expression&lt;/code&gt;
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param fileName the value to set
-         * @return the dsl builder
-         */
-        default SftpEndpointProducerBuilder fileName(Expression fileName) {
-            doSetProperty("fileName", fileName);
-            return this;
-        }
-        /**
-         * Use Expression such as File Language to dynamically set the filename.
-         * For consumers, it's used as a filename filter. For producers, it's
-         * used to evaluate the filename to write. If an expression is set, it
-         * take precedence over the CamelFileName header. (Note: The header
-         * itself can also be an Expression). The expression options support
-         * both String and Expression types. If the expression is a String type,
-         * it is always evaluated using the File Language. If the expression is
-         * an Expression type, the specified Expression type is used - this
-         * allows you, for instance, to use OGNL expressions. For the consumer,
-         * you can use it to filter filenames, so you can for instance consume
-         * today's file using the File Language syntax:
-         * mydata-${date:now:yyyyMMdd}.txt. The producers support the
-         * CamelOverruleFileName header which takes precedence over any existing
-         * CamelFileName header; the CamelOverruleFileName is a header that is
-         * used only once, and makes it easier as this avoids to temporary store
-         * CamelFileName and have to restore it afterwards.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.Expression&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -3900,7 +3706,7 @@ public interface SftpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SftpEndpointProducerBuilder jschLoggingLevel(
-                LoggingLevel jschLoggingLevel) {
+                org.apache.camel.LoggingLevel jschLoggingLevel) {
             doSetProperty("jschLoggingLevel", jschLoggingLevel);
             return this;
         }
@@ -3959,7 +3765,7 @@ public interface SftpEndpointBuilderFactory {
          * default) Use existing path separator in file name.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator&lt;/code&gt; type.
          * 
          * Default: UNIX
          * Group: common
@@ -3967,7 +3773,8 @@ public interface SftpEndpointBuilderFactory {
          * @param separator the value to set
          * @return the dsl builder
          */
-        default SftpEndpointProducerBuilder separator(PathSeparator separator) {
+        default SftpEndpointProducerBuilder separator(
+                org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator separator) {
             doSetProperty("separator", separator);
             return this;
         }
@@ -3977,7 +3784,7 @@ public interface SftpEndpointBuilderFactory {
          * default) Use existing path separator in file name.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator&lt;/code&gt; type.
          * 
          * Default: UNIX
          * Group: common
@@ -4015,7 +3822,8 @@ public interface SftpEndpointBuilderFactory {
          * @param fileExist the value to set
          * @return the dsl builder
          */
-        default SftpEndpointProducerBuilder fileExist(GenericFileExist fileExist) {
+        default SftpEndpointProducerBuilder fileExist(
+                org.apache.camel.component.file.GenericFileExist fileExist) {
             doSetProperty("fileExist", fileExist);
             return this;
         }
@@ -4192,30 +4000,7 @@ public interface SftpEndpointBuilderFactory {
          * component, as the FTP component can only move any existing files to a
          * relative directory based on current dir as base.
          * 
-         * The option is a: &lt;code&gt;org.apache.camel.Expression&lt;/code&gt;
-         * type.
-         * 
-         * Group: producer
-         * 
-         * @param moveExisting the value to set
-         * @return the dsl builder
-         */
-        default SftpEndpointProducerBuilder moveExisting(Expression moveExisting) {
-            doSetProperty("moveExisting", moveExisting);
-            return this;
-        }
-        /**
-         * Expression (such as File Language) used to compute file name to use
-         * when fileExist=Move is configured. To move files into a backup
-         * subdirectory just enter backup. This option only supports the
-         * following File Language tokens: file:name, file:name.ext,
-         * file:name.noext, file:onlyname, file:onlyname.noext, file:ext, and
-         * file:parent. Notice the file:parent is not supported by the FTP
-         * component, as the FTP component can only move any existing files to a
-         * relative directory based on current dir as base.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.Expression&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
          * 
@@ -4235,29 +4020,7 @@ public interface SftpEndpointBuilderFactory {
          * dir/finalFilename then tempFileName is relative to that subdirectory
          * dir.
          * 
-         * The option is a: &lt;code&gt;org.apache.camel.Expression&lt;/code&gt;
-         * type.
-         * 
-         * Group: producer
-         * 
-         * @param tempFileName the value to set
-         * @return the dsl builder
-         */
-        default SftpEndpointProducerBuilder tempFileName(Expression tempFileName) {
-            doSetProperty("tempFileName", tempFileName);
-            return this;
-        }
-        /**
-         * The same as tempPrefix option but offering a more fine grained
-         * control on the naming of the temporary filename as it uses the File
-         * Language. The location for tempFilename is relative to the final file
-         * location in the option 'fileName', not the target directory in the
-         * base uri. For example if option fileName includes a directory prefix:
-         * dir/finalFilename then tempFileName is relative to that subdirectory
-         * dir.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.Expression&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
          * 
@@ -4332,7 +4095,8 @@ public interface SftpEndpointBuilderFactory {
          * @param keyPair the value to set
          * @return the dsl builder
          */
-        default SftpEndpointProducerBuilder keyPair(KeyPair keyPair) {
+        default SftpEndpointProducerBuilder keyPair(
+                java.security.KeyPair keyPair) {
             doSetProperty("keyPair", keyPair);
             return this;
         }
@@ -4363,7 +4127,7 @@ public interface SftpEndpointBuilderFactory {
          * @param knownHosts the value to set
          * @return the dsl builder
          */
-        default SftpEndpointProducerBuilder knownHosts(Byte[] knownHosts) {
+        default SftpEndpointProducerBuilder knownHosts(byte[] knownHosts) {
             doSetProperty("knownHosts", knownHosts);
             return this;
         }
@@ -4455,7 +4219,7 @@ public interface SftpEndpointBuilderFactory {
          * @param privateKey the value to set
          * @return the dsl builder
          */
-        default SftpEndpointProducerBuilder privateKey(Byte[] privateKey) {
+        default SftpEndpointProducerBuilder privateKey(byte[] privateKey) {
             doSetProperty("privateKey", privateKey);
             return this;
         }
@@ -4871,7 +4635,7 @@ public interface SftpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSftpEndpointProducerBuilder moveExistingFileStrategy(
-                Object moveExistingFileStrategy) {
+                org.apache.camel.component.file.strategy.FileMoveExistingStrategy moveExistingFileStrategy) {
             doSetProperty("moveExistingFileStrategy", moveExistingFileStrategy);
             return this;
         }
@@ -5172,7 +4936,8 @@ public interface SftpEndpointBuilderFactory {
          * @param proxy the value to set
          * @return the dsl builder
          */
-        default AdvancedSftpEndpointProducerBuilder proxy(Object proxy) {
+        default AdvancedSftpEndpointProducerBuilder proxy(
+                com.jcraft.jsch.Proxy proxy) {
             doSetProperty("proxy", proxy);
             return this;
         }
@@ -5625,38 +5390,7 @@ public interface SftpEndpointBuilderFactory {
          * used only once, and makes it easier as this avoids to temporary store
          * CamelFileName and have to restore it afterwards.
          * 
-         * The option is a: &lt;code&gt;org.apache.camel.Expression&lt;/code&gt;
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param fileName the value to set
-         * @return the dsl builder
-         */
-        default SftpEndpointBuilder fileName(Expression fileName) {
-            doSetProperty("fileName", fileName);
-            return this;
-        }
-        /**
-         * Use Expression such as File Language to dynamically set the filename.
-         * For consumers, it's used as a filename filter. For producers, it's
-         * used to evaluate the filename to write. If an expression is set, it
-         * take precedence over the CamelFileName header. (Note: The header
-         * itself can also be an Expression). The expression options support
-         * both String and Expression types. If the expression is a String type,
-         * it is always evaluated using the File Language. If the expression is
-         * an Expression type, the specified Expression type is used - this
-         * allows you, for instance, to use OGNL expressions. For the consumer,
-         * you can use it to filter filenames, so you can for instance consume
-         * today's file using the File Language syntax:
-         * mydata-${date:now:yyyyMMdd}.txt. The producers support the
-         * CamelOverruleFileName header which takes precedence over any existing
-         * CamelFileName header; the CamelOverruleFileName is a header that is
-         * used only once, and makes it easier as this avoids to temporary store
-         * CamelFileName and have to restore it afterwards.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.Expression&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -5681,7 +5415,7 @@ public interface SftpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SftpEndpointBuilder jschLoggingLevel(
-                LoggingLevel jschLoggingLevel) {
+                org.apache.camel.LoggingLevel jschLoggingLevel) {
             doSetProperty("jschLoggingLevel", jschLoggingLevel);
             return this;
         }
@@ -5739,7 +5473,7 @@ public interface SftpEndpointBuilderFactory {
          * default) Use existing path separator in file name.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator&lt;/code&gt; type.
          * 
          * Default: UNIX
          * Group: common
@@ -5747,7 +5481,8 @@ public interface SftpEndpointBuilderFactory {
          * @param separator the value to set
          * @return the dsl builder
          */
-        default SftpEndpointBuilder separator(PathSeparator separator) {
+        default SftpEndpointBuilder separator(
+                org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator separator) {
             doSetProperty("separator", separator);
             return this;
         }
@@ -5757,7 +5492,7 @@ public interface SftpEndpointBuilderFactory {
          * default) Use existing path separator in file name.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator&lt;/code&gt; type.
          * 
          * Default: UNIX
          * Group: common
@@ -5815,7 +5550,7 @@ public interface SftpEndpointBuilderFactory {
          * @param keyPair the value to set
          * @return the dsl builder
          */
-        default SftpEndpointBuilder keyPair(KeyPair keyPair) {
+        default SftpEndpointBuilder keyPair(java.security.KeyPair keyPair) {
             doSetProperty("keyPair", keyPair);
             return this;
         }
@@ -5846,7 +5581,7 @@ public interface SftpEndpointBuilderFactory {
          * @param knownHosts the value to set
          * @return the dsl builder
          */
-        default SftpEndpointBuilder knownHosts(Byte[] knownHosts) {
+        default SftpEndpointBuilder knownHosts(byte[] knownHosts) {
             doSetProperty("knownHosts", knownHosts);
             return this;
         }
@@ -5938,7 +5673,7 @@ public interface SftpEndpointBuilderFactory {
          * @param privateKey the value to set
          * @return the dsl builder
          */
-        default SftpEndpointBuilder privateKey(Byte[] privateKey) {
+        default SftpEndpointBuilder privateKey(byte[] privateKey) {
             doSetProperty("privateKey", privateKey);
             return this;
         }
@@ -6361,7 +6096,7 @@ public interface SftpEndpointBuilderFactory {
          * @param proxy the value to set
          * @return the dsl builder
          */
-        default AdvancedSftpEndpointBuilder proxy(Object proxy) {
+        default AdvancedSftpEndpointBuilder proxy(com.jcraft.jsch.Proxy proxy) {
             doSetProperty("proxy", proxy);
             return this;
         }
@@ -6664,29 +6399,6 @@ public interface SftpEndpointBuilderFactory {
             doSetProperty("timeout", timeout);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator</code> enum.
-     */
-    enum PathSeparator {
-        UNIX,
-        Windows,
-        Auto;
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.file.GenericFileExist</code> enum.
-     */
-    enum GenericFileExist {
-        Override,
-        Append,
-        Fail,
-        Ignore,
-        Move,
-        TryRename;
     }
 
     public interface SftpBuilders {

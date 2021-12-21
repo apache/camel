@@ -16,17 +16,15 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
 import java.util.Map;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.PollingConsumerPollStrategy;
 
 /**
  * Perform SQL queries using Spring JDBC.
@@ -90,7 +88,8 @@ public interface SqlEndpointBuilderFactory {
          * @param dataSource the value to set
          * @return the dsl builder
          */
-        default SqlEndpointConsumerBuilder dataSource(Object dataSource) {
+        default SqlEndpointConsumerBuilder dataSource(
+                javax.sql.DataSource dataSource) {
             doSetProperty("dataSource", dataSource);
             return this;
         }
@@ -168,7 +167,8 @@ public interface SqlEndpointBuilderFactory {
          * @param outputType the value to set
          * @return the dsl builder
          */
-        default SqlEndpointConsumerBuilder outputType(SqlOutputType outputType) {
+        default SqlEndpointConsumerBuilder outputType(
+                org.apache.camel.component.sql.SqlOutputType outputType) {
             doSetProperty("outputType", outputType);
             return this;
         }
@@ -809,7 +809,7 @@ public interface SqlEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SqlEndpointConsumerBuilder runLoggingLevel(
-                LoggingLevel runLoggingLevel) {
+                org.apache.camel.LoggingLevel runLoggingLevel) {
             doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
@@ -1063,7 +1063,7 @@ public interface SqlEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSqlEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -1098,7 +1098,7 @@ public interface SqlEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSqlEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -1133,7 +1133,7 @@ public interface SqlEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSqlEndpointConsumerBuilder pollStrategy(
-                PollingConsumerPollStrategy pollStrategy) {
+                org.apache.camel.spi.PollingConsumerPollStrategy pollStrategy) {
             doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
@@ -1170,7 +1170,7 @@ public interface SqlEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSqlEndpointConsumerBuilder processingStrategy(
-                Object processingStrategy) {
+                org.apache.camel.component.sql.SqlProcessingStrategy processingStrategy) {
             doSetProperty("processingStrategy", processingStrategy);
             return this;
         }
@@ -1303,7 +1303,7 @@ public interface SqlEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSqlEndpointConsumerBuilder prepareStatementStrategy(
-                Object prepareStatementStrategy) {
+                org.apache.camel.component.sql.SqlPrepareStatementStrategy prepareStatementStrategy) {
             doSetProperty("prepareStatementStrategy", prepareStatementStrategy);
             return this;
         }
@@ -1454,7 +1454,8 @@ public interface SqlEndpointBuilderFactory {
          * @param dataSource the value to set
          * @return the dsl builder
          */
-        default SqlEndpointProducerBuilder dataSource(Object dataSource) {
+        default SqlEndpointProducerBuilder dataSource(
+                javax.sql.DataSource dataSource) {
             doSetProperty("dataSource", dataSource);
             return this;
         }
@@ -1532,7 +1533,8 @@ public interface SqlEndpointBuilderFactory {
          * @param outputType the value to set
          * @return the dsl builder
          */
-        default SqlEndpointProducerBuilder outputType(SqlOutputType outputType) {
+        default SqlEndpointProducerBuilder outputType(
+                org.apache.camel.component.sql.SqlOutputType outputType) {
             doSetProperty("outputType", outputType);
             return this;
         }
@@ -1875,7 +1877,7 @@ public interface SqlEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSqlEndpointProducerBuilder prepareStatementStrategy(
-                Object prepareStatementStrategy) {
+                org.apache.camel.component.sql.SqlPrepareStatementStrategy prepareStatementStrategy) {
             doSetProperty("prepareStatementStrategy", prepareStatementStrategy);
             return this;
         }
@@ -2027,7 +2029,7 @@ public interface SqlEndpointBuilderFactory {
          * @param dataSource the value to set
          * @return the dsl builder
          */
-        default SqlEndpointBuilder dataSource(Object dataSource) {
+        default SqlEndpointBuilder dataSource(javax.sql.DataSource dataSource) {
             doSetProperty("dataSource", dataSource);
             return this;
         }
@@ -2105,7 +2107,8 @@ public interface SqlEndpointBuilderFactory {
          * @param outputType the value to set
          * @return the dsl builder
          */
-        default SqlEndpointBuilder outputType(SqlOutputType outputType) {
+        default SqlEndpointBuilder outputType(
+                org.apache.camel.component.sql.SqlOutputType outputType) {
             doSetProperty("outputType", outputType);
             return this;
         }
@@ -2295,7 +2298,7 @@ public interface SqlEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSqlEndpointBuilder prepareStatementStrategy(
-                Object prepareStatementStrategy) {
+                org.apache.camel.component.sql.SqlPrepareStatementStrategy prepareStatementStrategy) {
             doSetProperty("prepareStatementStrategy", prepareStatementStrategy);
             return this;
         }
@@ -2389,16 +2392,6 @@ public interface SqlEndpointBuilderFactory {
             doSetProperty("usePlaceholder", usePlaceholder);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for <code>org.apache.camel.component.sql.SqlOutputType</code>
-     * enum.
-     */
-    enum SqlOutputType {
-        SelectOne,
-        SelectList,
-        StreamList;
     }
 
     public interface SqlBuilders {

@@ -16,7 +16,11 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
 import java.util.Map;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -145,7 +149,8 @@ public interface JdbcEndpointBuilderFactory {
          * @param outputType the value to set
          * @return the dsl builder
          */
-        default JdbcEndpointBuilder outputType(JdbcOutputType outputType) {
+        default JdbcEndpointBuilder outputType(
+                org.apache.camel.component.jdbc.JdbcOutputType outputType) {
             doSetProperty("outputType", outputType);
             return this;
         }
@@ -453,7 +458,8 @@ public interface JdbcEndpointBuilderFactory {
          * @param beanRowMapper the value to set
          * @return the dsl builder
          */
-        default AdvancedJdbcEndpointBuilder beanRowMapper(Object beanRowMapper) {
+        default AdvancedJdbcEndpointBuilder beanRowMapper(
+                org.apache.camel.component.jdbc.BeanRowMapper beanRowMapper) {
             doSetProperty("beanRowMapper", beanRowMapper);
             return this;
         }
@@ -490,7 +496,7 @@ public interface JdbcEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedJdbcEndpointBuilder connectionStrategy(
-                Object connectionStrategy) {
+                org.apache.camel.component.jdbc.ConnectionStrategy connectionStrategy) {
             doSetProperty("connectionStrategy", connectionStrategy);
             return this;
         }
@@ -527,7 +533,7 @@ public interface JdbcEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedJdbcEndpointBuilder prepareStatementStrategy(
-                Object prepareStatementStrategy) {
+                org.apache.camel.component.jdbc.JdbcPrepareStatementStrategy prepareStatementStrategy) {
             doSetProperty("prepareStatementStrategy", prepareStatementStrategy);
             return this;
         }
@@ -549,16 +555,6 @@ public interface JdbcEndpointBuilderFactory {
             doSetProperty("prepareStatementStrategy", prepareStatementStrategy);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.jdbc.JdbcOutputType</code> enum.
-     */
-    enum JdbcOutputType {
-        SelectOne,
-        SelectList,
-        StreamList;
     }
 
     public interface JdbcBuilders {

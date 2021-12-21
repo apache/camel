@@ -16,13 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Send and receive events to/from Azure Event Hubs using AMQP protocol.
@@ -55,7 +56,7 @@ public interface EventHubsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default EventHubsEndpointConsumerBuilder amqpRetryOptions(
-                Object amqpRetryOptions) {
+                com.azure.core.amqp.AmqpRetryOptions amqpRetryOptions) {
             doSetProperty("amqpRetryOptions", amqpRetryOptions);
             return this;
         }
@@ -90,7 +91,7 @@ public interface EventHubsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default EventHubsEndpointConsumerBuilder amqpTransportType(
-                AmqpTransportType amqpTransportType) {
+                com.azure.core.amqp.AmqpTransportType amqpTransportType) {
             doSetProperty("amqpTransportType", amqpTransportType);
             return this;
         }
@@ -176,7 +177,7 @@ public interface EventHubsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default EventHubsEndpointConsumerBuilder blobStorageSharedKeyCredential(
-                Object blobStorageSharedKeyCredential) {
+                com.azure.storage.common.StorageSharedKeyCredential blobStorageSharedKeyCredential) {
             doSetProperty("blobStorageSharedKeyCredential", blobStorageSharedKeyCredential);
             return this;
         }
@@ -261,7 +262,7 @@ public interface EventHubsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default EventHubsEndpointConsumerBuilder checkpointStore(
-                Object checkpointStore) {
+                com.azure.messaging.eventhubs.CheckpointStore checkpointStore) {
             doSetProperty("checkpointStore", checkpointStore);
             return this;
         }
@@ -323,7 +324,7 @@ public interface EventHubsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default EventHubsEndpointConsumerBuilder eventPosition(
-                Map<String, Object> eventPosition) {
+                Map<java.lang.String, com.azure.messaging.eventhubs.models.EventPosition> eventPosition) {
             doSetProperty("eventPosition", eventPosition);
             return this;
         }
@@ -461,7 +462,7 @@ public interface EventHubsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedEventHubsEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -496,7 +497,7 @@ public interface EventHubsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedEventHubsEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -540,7 +541,7 @@ public interface EventHubsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default EventHubsEndpointProducerBuilder amqpRetryOptions(
-                Object amqpRetryOptions) {
+                com.azure.core.amqp.AmqpRetryOptions amqpRetryOptions) {
             doSetProperty("amqpRetryOptions", amqpRetryOptions);
             return this;
         }
@@ -575,7 +576,7 @@ public interface EventHubsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default EventHubsEndpointProducerBuilder amqpTransportType(
-                AmqpTransportType amqpTransportType) {
+                com.azure.core.amqp.AmqpTransportType amqpTransportType) {
             doSetProperty("amqpTransportType", amqpTransportType);
             return this;
         }
@@ -705,7 +706,7 @@ public interface EventHubsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default EventHubsEndpointProducerBuilder producerAsyncClient(
-                Object producerAsyncClient) {
+                com.azure.messaging.eventhubs.EventHubProducerAsyncClient producerAsyncClient) {
             doSetProperty("producerAsyncClient", producerAsyncClient);
             return this;
         }
@@ -817,7 +818,7 @@ public interface EventHubsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default EventHubsEndpointBuilder amqpRetryOptions(
-                Object amqpRetryOptions) {
+                com.azure.core.amqp.AmqpRetryOptions amqpRetryOptions) {
             doSetProperty("amqpRetryOptions", amqpRetryOptions);
             return this;
         }
@@ -852,7 +853,7 @@ public interface EventHubsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default EventHubsEndpointBuilder amqpTransportType(
-                AmqpTransportType amqpTransportType) {
+                com.azure.core.amqp.AmqpTransportType amqpTransportType) {
             doSetProperty("amqpTransportType", amqpTransportType);
             return this;
         }
@@ -935,14 +936,6 @@ public interface EventHubsEndpointBuilderFactory {
         default EventHubsEndpointBuilder basic() {
             return (EventHubsEndpointBuilder) this;
         }
-    }
-
-    /**
-     * Proxy enum for <code>com.azure.core.amqp.AmqpTransportType</code> enum.
-     */
-    enum AmqpTransportType {
-        AMQP,
-        AMQP_WEB_SOCKETS;
     }
 
     public interface EventHubsBuilders {

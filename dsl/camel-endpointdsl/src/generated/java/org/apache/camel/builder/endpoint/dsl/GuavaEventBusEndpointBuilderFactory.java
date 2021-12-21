@@ -16,12 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Send and receive messages to/from Guava EventBus.
@@ -58,7 +60,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * @return the dsl builder
          */
         default GuavaEventBusEndpointConsumerBuilder eventClass(
-                Class<Object> eventClass) {
+                Class<java.lang.Object> eventClass) {
             doSetProperty("eventClass", eventClass);
             return this;
         }
@@ -99,7 +101,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * @return the dsl builder
          */
         default GuavaEventBusEndpointConsumerBuilder listenerInterface(
-                Class<Object> listenerInterface) {
+                Class<java.lang.Object> listenerInterface) {
             doSetProperty("listenerInterface", listenerInterface);
             return this;
         }
@@ -194,7 +196,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedGuavaEventBusEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -229,7 +231,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedGuavaEventBusEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -277,7 +279,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * @return the dsl builder
          */
         default GuavaEventBusEndpointProducerBuilder eventClass(
-                Class<Object> eventClass) {
+                Class<java.lang.Object> eventClass) {
             doSetProperty("eventClass", eventClass);
             return this;
         }
@@ -318,7 +320,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * @return the dsl builder
          */
         default GuavaEventBusEndpointProducerBuilder listenerInterface(
-                Class<Object> listenerInterface) {
+                Class<java.lang.Object> listenerInterface) {
             doSetProperty("listenerInterface", listenerInterface);
             return this;
         }
@@ -430,7 +432,8 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * @param eventClass the value to set
          * @return the dsl builder
          */
-        default GuavaEventBusEndpointBuilder eventClass(Class<Object> eventClass) {
+        default GuavaEventBusEndpointBuilder eventClass(
+                Class<java.lang.Object> eventClass) {
             doSetProperty("eventClass", eventClass);
             return this;
         }
@@ -470,7 +473,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * @return the dsl builder
          */
         default GuavaEventBusEndpointBuilder listenerInterface(
-                Class<Object> listenerInterface) {
+                Class<java.lang.Object> listenerInterface) {
             doSetProperty("listenerInterface", listenerInterface);
             return this;
         }

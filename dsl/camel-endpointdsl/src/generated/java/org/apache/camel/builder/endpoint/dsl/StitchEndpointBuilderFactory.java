@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -115,7 +119,8 @@ public interface StitchEndpointBuilderFactory {
          * @param region the value to set
          * @return the dsl builder
          */
-        default StitchEndpointBuilder region(StitchRegion region) {
+        default StitchEndpointBuilder region(
+                org.apache.camel.component.stitch.client.StitchRegion region) {
             doSetProperty("region", region);
             return this;
         }
@@ -146,7 +151,8 @@ public interface StitchEndpointBuilderFactory {
          * @param stitchSchema the value to set
          * @return the dsl builder
          */
-        default StitchEndpointBuilder stitchSchema(Object stitchSchema) {
+        default StitchEndpointBuilder stitchSchema(
+                org.apache.camel.component.stitch.client.models.StitchSchema stitchSchema) {
             doSetProperty("stitchSchema", stitchSchema);
             return this;
         }
@@ -207,7 +213,7 @@ public interface StitchEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedStitchEndpointBuilder connectionProvider(
-                Object connectionProvider) {
+                reactor.netty.resources.ConnectionProvider connectionProvider) {
             doSetProperty("connectionProvider", connectionProvider);
             return this;
         }
@@ -243,7 +249,8 @@ public interface StitchEndpointBuilderFactory {
          * @param httpClient the value to set
          * @return the dsl builder
          */
-        default AdvancedStitchEndpointBuilder httpClient(Object httpClient) {
+        default AdvancedStitchEndpointBuilder httpClient(
+                reactor.netty.http.client.HttpClient httpClient) {
             doSetProperty("httpClient", httpClient);
             return this;
         }
@@ -275,7 +282,8 @@ public interface StitchEndpointBuilderFactory {
          * @param stitchClient the value to set
          * @return the dsl builder
          */
-        default AdvancedStitchEndpointBuilder stitchClient(Object stitchClient) {
+        default AdvancedStitchEndpointBuilder stitchClient(
+                org.apache.camel.component.stitch.client.StitchClient stitchClient) {
             doSetProperty("stitchClient", stitchClient);
             return this;
         }
@@ -295,15 +303,6 @@ public interface StitchEndpointBuilderFactory {
             doSetProperty("stitchClient", stitchClient);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.stitch.client.StitchRegion</code> enum.
-     */
-    enum StitchRegion {
-        NORTH_AMERICA,
-        EUROPE;
     }
 
     public interface StitchBuilders {

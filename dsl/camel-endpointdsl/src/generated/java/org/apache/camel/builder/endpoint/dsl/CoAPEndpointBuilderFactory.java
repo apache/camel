@@ -16,14 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.security.PrivateKey;
-import java.security.PublicKey;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Send and receive messages to/from COAP capable devices.
@@ -171,7 +171,8 @@ public interface CoAPEndpointBuilderFactory {
          * @param privateKey the value to set
          * @return the dsl builder
          */
-        default CoAPEndpointConsumerBuilder privateKey(PrivateKey privateKey) {
+        default CoAPEndpointConsumerBuilder privateKey(
+                java.security.PrivateKey privateKey) {
             doSetProperty("privateKey", privateKey);
             return this;
         }
@@ -201,7 +202,8 @@ public interface CoAPEndpointBuilderFactory {
          * @param pskStore the value to set
          * @return the dsl builder
          */
-        default CoAPEndpointConsumerBuilder pskStore(Object pskStore) {
+        default CoAPEndpointConsumerBuilder pskStore(
+                org.eclipse.californium.scandium.dtls.pskstore.PskStore pskStore) {
             doSetProperty("pskStore", pskStore);
             return this;
         }
@@ -231,7 +233,8 @@ public interface CoAPEndpointBuilderFactory {
          * @param publicKey the value to set
          * @return the dsl builder
          */
-        default CoAPEndpointConsumerBuilder publicKey(PublicKey publicKey) {
+        default CoAPEndpointConsumerBuilder publicKey(
+                java.security.PublicKey publicKey) {
             doSetProperty("publicKey", publicKey);
             return this;
         }
@@ -301,7 +304,7 @@ public interface CoAPEndpointBuilderFactory {
          * @return the dsl builder
          */
         default CoAPEndpointConsumerBuilder sslContextParameters(
-                Object sslContextParameters) {
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
@@ -335,7 +338,7 @@ public interface CoAPEndpointBuilderFactory {
          * @return the dsl builder
          */
         default CoAPEndpointConsumerBuilder trustedRpkStore(
-                Object trustedRpkStore) {
+                org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore trustedRpkStore) {
             doSetProperty("trustedRpkStore", trustedRpkStore);
             return this;
         }
@@ -381,7 +384,7 @@ public interface CoAPEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedCoAPEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -416,7 +419,7 @@ public interface CoAPEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedCoAPEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -563,7 +566,8 @@ public interface CoAPEndpointBuilderFactory {
          * @param privateKey the value to set
          * @return the dsl builder
          */
-        default CoAPEndpointProducerBuilder privateKey(PrivateKey privateKey) {
+        default CoAPEndpointProducerBuilder privateKey(
+                java.security.PrivateKey privateKey) {
             doSetProperty("privateKey", privateKey);
             return this;
         }
@@ -593,7 +597,8 @@ public interface CoAPEndpointBuilderFactory {
          * @param pskStore the value to set
          * @return the dsl builder
          */
-        default CoAPEndpointProducerBuilder pskStore(Object pskStore) {
+        default CoAPEndpointProducerBuilder pskStore(
+                org.eclipse.californium.scandium.dtls.pskstore.PskStore pskStore) {
             doSetProperty("pskStore", pskStore);
             return this;
         }
@@ -623,7 +628,8 @@ public interface CoAPEndpointBuilderFactory {
          * @param publicKey the value to set
          * @return the dsl builder
          */
-        default CoAPEndpointProducerBuilder publicKey(PublicKey publicKey) {
+        default CoAPEndpointProducerBuilder publicKey(
+                java.security.PublicKey publicKey) {
             doSetProperty("publicKey", publicKey);
             return this;
         }
@@ -693,7 +699,7 @@ public interface CoAPEndpointBuilderFactory {
          * @return the dsl builder
          */
         default CoAPEndpointProducerBuilder sslContextParameters(
-                Object sslContextParameters) {
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
@@ -727,7 +733,7 @@ public interface CoAPEndpointBuilderFactory {
          * @return the dsl builder
          */
         default CoAPEndpointProducerBuilder trustedRpkStore(
-                Object trustedRpkStore) {
+                org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore trustedRpkStore) {
             doSetProperty("trustedRpkStore", trustedRpkStore);
             return this;
         }
@@ -837,7 +843,8 @@ public interface CoAPEndpointBuilderFactory {
          * @param privateKey the value to set
          * @return the dsl builder
          */
-        default CoAPEndpointBuilder privateKey(PrivateKey privateKey) {
+        default CoAPEndpointBuilder privateKey(
+                java.security.PrivateKey privateKey) {
             doSetProperty("privateKey", privateKey);
             return this;
         }
@@ -867,7 +874,8 @@ public interface CoAPEndpointBuilderFactory {
          * @param pskStore the value to set
          * @return the dsl builder
          */
-        default CoAPEndpointBuilder pskStore(Object pskStore) {
+        default CoAPEndpointBuilder pskStore(
+                org.eclipse.californium.scandium.dtls.pskstore.PskStore pskStore) {
             doSetProperty("pskStore", pskStore);
             return this;
         }
@@ -897,7 +905,7 @@ public interface CoAPEndpointBuilderFactory {
          * @param publicKey the value to set
          * @return the dsl builder
          */
-        default CoAPEndpointBuilder publicKey(PublicKey publicKey) {
+        default CoAPEndpointBuilder publicKey(java.security.PublicKey publicKey) {
             doSetProperty("publicKey", publicKey);
             return this;
         }
@@ -967,7 +975,7 @@ public interface CoAPEndpointBuilderFactory {
          * @return the dsl builder
          */
         default CoAPEndpointBuilder sslContextParameters(
-                Object sslContextParameters) {
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
@@ -1000,7 +1008,8 @@ public interface CoAPEndpointBuilderFactory {
          * @param trustedRpkStore the value to set
          * @return the dsl builder
          */
-        default CoAPEndpointBuilder trustedRpkStore(Object trustedRpkStore) {
+        default CoAPEndpointBuilder trustedRpkStore(
+                org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore trustedRpkStore) {
             doSetProperty("trustedRpkStore", trustedRpkStore);
             return this;
         }

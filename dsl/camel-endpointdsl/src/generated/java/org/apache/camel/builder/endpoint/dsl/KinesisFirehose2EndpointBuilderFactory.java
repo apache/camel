@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -49,7 +53,7 @@ public interface KinesisFirehose2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default KinesisFirehose2EndpointBuilder amazonKinesisFirehoseClient(
-                Object amazonKinesisFirehoseClient) {
+                software.amazon.awssdk.services.firehose.FirehoseClient amazonKinesisFirehoseClient) {
             doSetProperty("amazonKinesisFirehoseClient", amazonKinesisFirehoseClient);
             return this;
         }
@@ -198,7 +202,7 @@ public interface KinesisFirehose2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default KinesisFirehose2EndpointBuilder operation(
-                KinesisFirehose2Operations operation) {
+                org.apache.camel.component.aws2.firehose.KinesisFirehose2Operations operation) {
             doSetProperty("operation", operation);
             return this;
         }
@@ -278,7 +282,7 @@ public interface KinesisFirehose2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default KinesisFirehose2EndpointBuilder proxyProtocol(
-                Protocol proxyProtocol) {
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
@@ -433,26 +437,6 @@ public interface KinesisFirehose2EndpointBuilderFactory {
             doSetProperty("secretKey", secretKey);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.aws2.firehose.KinesisFirehose2Operations</code> enum.
-     */
-    enum KinesisFirehose2Operations {
-        sendBatchRecord,
-        createDeliveryStream,
-        deleteDeliveryStream,
-        describeDeliveryStream,
-        updateDestination;
-    }
-
-    /**
-     * Proxy enum for <code>software.amazon.awssdk.core.Protocol</code> enum.
-     */
-    enum Protocol {
-        HTTP,
-        HTTPS;
     }
 
     public interface KinesisFirehose2Builders {

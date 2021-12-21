@@ -16,12 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Perform operations on Kubernetes Nodes and get notified on Node changes.
@@ -83,7 +85,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * @return the dsl builder
          */
         default KubernetesNodesEndpointConsumerBuilder kubernetesClient(
-                Object kubernetesClient) {
+                io.fabric8.kubernetes.client.KubernetesClient kubernetesClient) {
             doSetProperty("kubernetesClient", kubernetesClient);
             return this;
         }
@@ -560,7 +562,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedKubernetesNodesEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -595,7 +597,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedKubernetesNodesEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -701,7 +703,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * @return the dsl builder
          */
         default KubernetesNodesEndpointProducerBuilder kubernetesClient(
-                Object kubernetesClient) {
+                io.fabric8.kubernetes.client.KubernetesClient kubernetesClient) {
             doSetProperty("kubernetesClient", kubernetesClient);
             return this;
         }
@@ -1106,7 +1108,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * @return the dsl builder
          */
         default KubernetesNodesEndpointBuilder kubernetesClient(
-                Object kubernetesClient) {
+                io.fabric8.kubernetes.client.KubernetesClient kubernetesClient) {
             doSetProperty("kubernetesClient", kubernetesClient);
             return this;
         }

@@ -16,12 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Expose WebSocket endpoints and connect to remote WebSocket servers using
@@ -113,7 +115,8 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * @param router the value to set
          * @return the dsl builder
          */
-        default VertxWebsocketEndpointConsumerBuilder router(Object router) {
+        default VertxWebsocketEndpointConsumerBuilder router(
+                io.vertx.ext.web.Router router) {
             doSetProperty("router", router);
             return this;
         }
@@ -145,7 +148,7 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * @return the dsl builder
          */
         default VertxWebsocketEndpointConsumerBuilder serverOptions(
-                Object serverOptions) {
+                io.vertx.core.http.HttpServerOptions serverOptions) {
             doSetProperty("serverOptions", serverOptions);
             return this;
         }
@@ -178,7 +181,7 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * @return the dsl builder
          */
         default VertxWebsocketEndpointConsumerBuilder sslContextParameters(
-                Object sslContextParameters) {
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
@@ -225,7 +228,7 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedVertxWebsocketEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -260,7 +263,7 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedVertxWebsocketEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -304,7 +307,7 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * @return the dsl builder
          */
         default VertxWebsocketEndpointProducerBuilder clientOptions(
-                Object clientOptions) {
+                io.vertx.core.http.HttpClientOptions clientOptions) {
             doSetProperty("clientOptions", clientOptions);
             return this;
         }
@@ -438,7 +441,7 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * @return the dsl builder
          */
         default VertxWebsocketEndpointProducerBuilder sslContextParameters(
-                Object sslContextParameters) {
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
@@ -494,7 +497,7 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * @return the dsl builder
          */
         default VertxWebsocketEndpointBuilder sslContextParameters(
-                Object sslContextParameters) {
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }

@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -164,7 +168,8 @@ public interface GraphqlEndpointBuilderFactory {
          * @param variables the value to set
          * @return the dsl builder
          */
-        default GraphqlEndpointBuilder variables(Object variables) {
+        default GraphqlEndpointBuilder variables(
+                org.apache.camel.util.json.JsonObject variables) {
             doSetProperty("variables", variables);
             return this;
         }

@@ -16,20 +16,15 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.nio.file.OpenOption;
-import java.time.Duration;
+import java.util.*;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.PollingConsumerPollStrategy;
 
 /**
  * Sends and receives files to/from Azure DataLake Storage.
@@ -105,7 +100,7 @@ public interface DataLakeEndpointBuilderFactory {
          * @return the dsl builder
          */
         default DataLakeEndpointConsumerBuilder clientSecretCredential(
-                Object clientSecretCredential) {
+                com.azure.identity.ClientSecretCredential clientSecretCredential) {
             doSetProperty("clientSecretCredential", clientSecretCredential);
             return this;
         }
@@ -229,7 +224,7 @@ public interface DataLakeEndpointBuilderFactory {
          * @return the dsl builder
          */
         default DataLakeEndpointConsumerBuilder dataLakeServiceClient(
-                Object dataLakeServiceClient) {
+                com.azure.storage.file.datalake.DataLakeServiceClient dataLakeServiceClient) {
             doSetProperty("dataLakeServiceClient", dataLakeServiceClient);
             return this;
         }
@@ -437,7 +432,7 @@ public interface DataLakeEndpointBuilderFactory {
          * @return the dsl builder
          */
         default DataLakeEndpointConsumerBuilder openOptions(
-                Set<OpenOption> openOptions) {
+                Set<java.nio.file.OpenOption> openOptions) {
             doSetProperty("openOptions", openOptions);
             return this;
         }
@@ -603,7 +598,7 @@ public interface DataLakeEndpointBuilderFactory {
          * @return the dsl builder
          */
         default DataLakeEndpointConsumerBuilder serviceClient(
-                Object serviceClient) {
+                com.azure.storage.file.datalake.DataLakeServiceClient serviceClient) {
             doSetProperty("serviceClient", serviceClient);
             return this;
         }
@@ -635,7 +630,7 @@ public interface DataLakeEndpointBuilderFactory {
          * @return the dsl builder
          */
         default DataLakeEndpointConsumerBuilder sharedKeyCredential(
-                Object sharedKeyCredential) {
+                com.azure.storage.common.StorageSharedKeyCredential sharedKeyCredential) {
             doSetProperty("sharedKeyCredential", sharedKeyCredential);
             return this;
         }
@@ -679,7 +674,8 @@ public interface DataLakeEndpointBuilderFactory {
          * @param timeout the value to set
          * @return the dsl builder
          */
-        default DataLakeEndpointConsumerBuilder timeout(Duration timeout) {
+        default DataLakeEndpointConsumerBuilder timeout(
+                java.time.Duration timeout) {
             doSetProperty("timeout", timeout);
             return this;
         }
@@ -1068,7 +1064,7 @@ public interface DataLakeEndpointBuilderFactory {
          * @return the dsl builder
          */
         default DataLakeEndpointConsumerBuilder runLoggingLevel(
-                LoggingLevel runLoggingLevel) {
+                org.apache.camel.LoggingLevel runLoggingLevel) {
             doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
@@ -1327,7 +1323,7 @@ public interface DataLakeEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedDataLakeEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -1362,7 +1358,7 @@ public interface DataLakeEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedDataLakeEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -1397,7 +1393,7 @@ public interface DataLakeEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedDataLakeEndpointConsumerBuilder pollStrategy(
-                PollingConsumerPollStrategy pollStrategy) {
+                org.apache.camel.spi.PollingConsumerPollStrategy pollStrategy) {
             doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
@@ -1487,7 +1483,7 @@ public interface DataLakeEndpointBuilderFactory {
          * @return the dsl builder
          */
         default DataLakeEndpointProducerBuilder clientSecretCredential(
-                Object clientSecretCredential) {
+                com.azure.identity.ClientSecretCredential clientSecretCredential) {
             doSetProperty("clientSecretCredential", clientSecretCredential);
             return this;
         }
@@ -1611,7 +1607,7 @@ public interface DataLakeEndpointBuilderFactory {
          * @return the dsl builder
          */
         default DataLakeEndpointProducerBuilder dataLakeServiceClient(
-                Object dataLakeServiceClient) {
+                com.azure.storage.file.datalake.DataLakeServiceClient dataLakeServiceClient) {
             doSetProperty("dataLakeServiceClient", dataLakeServiceClient);
             return this;
         }
@@ -1819,7 +1815,7 @@ public interface DataLakeEndpointBuilderFactory {
          * @return the dsl builder
          */
         default DataLakeEndpointProducerBuilder openOptions(
-                Set<OpenOption> openOptions) {
+                Set<java.nio.file.OpenOption> openOptions) {
             doSetProperty("openOptions", openOptions);
             return this;
         }
@@ -1985,7 +1981,7 @@ public interface DataLakeEndpointBuilderFactory {
          * @return the dsl builder
          */
         default DataLakeEndpointProducerBuilder serviceClient(
-                Object serviceClient) {
+                com.azure.storage.file.datalake.DataLakeServiceClient serviceClient) {
             doSetProperty("serviceClient", serviceClient);
             return this;
         }
@@ -2017,7 +2013,7 @@ public interface DataLakeEndpointBuilderFactory {
          * @return the dsl builder
          */
         default DataLakeEndpointProducerBuilder sharedKeyCredential(
-                Object sharedKeyCredential) {
+                com.azure.storage.common.StorageSharedKeyCredential sharedKeyCredential) {
             doSetProperty("sharedKeyCredential", sharedKeyCredential);
             return this;
         }
@@ -2061,7 +2057,8 @@ public interface DataLakeEndpointBuilderFactory {
          * @param timeout the value to set
          * @return the dsl builder
          */
-        default DataLakeEndpointProducerBuilder timeout(Duration timeout) {
+        default DataLakeEndpointProducerBuilder timeout(
+                java.time.Duration timeout) {
             doSetProperty("timeout", timeout);
             return this;
         }
@@ -2187,7 +2184,7 @@ public interface DataLakeEndpointBuilderFactory {
          * @return the dsl builder
          */
         default DataLakeEndpointProducerBuilder operation(
-                DataLakeOperationsDefinition operation) {
+                org.apache.camel.component.azure.storage.datalake.DataLakeOperationsDefinition operation) {
             doSetProperty("operation", operation);
             return this;
         }
@@ -2286,7 +2283,7 @@ public interface DataLakeEndpointBuilderFactory {
          * @return the dsl builder
          */
         default DataLakeEndpointBuilder clientSecretCredential(
-                Object clientSecretCredential) {
+                com.azure.identity.ClientSecretCredential clientSecretCredential) {
             doSetProperty("clientSecretCredential", clientSecretCredential);
             return this;
         }
@@ -2410,7 +2407,7 @@ public interface DataLakeEndpointBuilderFactory {
          * @return the dsl builder
          */
         default DataLakeEndpointBuilder dataLakeServiceClient(
-                Object dataLakeServiceClient) {
+                com.azure.storage.file.datalake.DataLakeServiceClient dataLakeServiceClient) {
             doSetProperty("dataLakeServiceClient", dataLakeServiceClient);
             return this;
         }
@@ -2614,7 +2611,8 @@ public interface DataLakeEndpointBuilderFactory {
          * @param openOptions the value to set
          * @return the dsl builder
          */
-        default DataLakeEndpointBuilder openOptions(Set<OpenOption> openOptions) {
+        default DataLakeEndpointBuilder openOptions(
+                Set<java.nio.file.OpenOption> openOptions) {
             doSetProperty("openOptions", openOptions);
             return this;
         }
@@ -2779,7 +2777,8 @@ public interface DataLakeEndpointBuilderFactory {
          * @param serviceClient the value to set
          * @return the dsl builder
          */
-        default DataLakeEndpointBuilder serviceClient(Object serviceClient) {
+        default DataLakeEndpointBuilder serviceClient(
+                com.azure.storage.file.datalake.DataLakeServiceClient serviceClient) {
             doSetProperty("serviceClient", serviceClient);
             return this;
         }
@@ -2810,7 +2809,7 @@ public interface DataLakeEndpointBuilderFactory {
          * @return the dsl builder
          */
         default DataLakeEndpointBuilder sharedKeyCredential(
-                Object sharedKeyCredential) {
+                com.azure.storage.common.StorageSharedKeyCredential sharedKeyCredential) {
             doSetProperty("sharedKeyCredential", sharedKeyCredential);
             return this;
         }
@@ -2854,7 +2853,7 @@ public interface DataLakeEndpointBuilderFactory {
          * @param timeout the value to set
          * @return the dsl builder
          */
-        default DataLakeEndpointBuilder timeout(Duration timeout) {
+        default DataLakeEndpointBuilder timeout(java.time.Duration timeout) {
             doSetProperty("timeout", timeout);
             return this;
         }
@@ -2931,28 +2930,6 @@ public interface DataLakeEndpointBuilderFactory {
         default DataLakeEndpointBuilder basic() {
             return (DataLakeEndpointBuilder) this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.azure.storage.datalake.DataLakeOperationsDefinition</code> enum.
-     */
-    enum DataLakeOperationsDefinition {
-        listFileSystem,
-        createFileSystem,
-        deleteFileSystem,
-        listPaths,
-        getFile,
-        downloadToFile,
-        downloadLink,
-        deleteFile,
-        appendToFile,
-        flushToFile,
-        uploadFromFile,
-        upload,
-        openQueryInputStream,
-        createFile,
-        deleteDirectory;
     }
 
     public interface DataLakeBuilders {

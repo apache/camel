@@ -16,17 +16,15 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
 import java.util.Map;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.PollingConsumerPollStrategy;
 
 /**
  * Use ElSql to define SQL queries. Extends the SQL Component.
@@ -91,7 +89,7 @@ public interface ElsqlEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ElsqlEndpointConsumerBuilder databaseVendor(
-                ElSqlDatabaseVendor databaseVendor) {
+                org.apache.camel.component.elsql.ElSqlDatabaseVendor databaseVendor) {
             doSetProperty("databaseVendor", databaseVendor);
             return this;
         }
@@ -122,7 +120,8 @@ public interface ElsqlEndpointBuilderFactory {
          * @param dataSource the value to set
          * @return the dsl builder
          */
-        default ElsqlEndpointConsumerBuilder dataSource(Object dataSource) {
+        default ElsqlEndpointConsumerBuilder dataSource(
+                javax.sql.DataSource dataSource) {
             doSetProperty("dataSource", dataSource);
             return this;
         }
@@ -200,7 +199,8 @@ public interface ElsqlEndpointBuilderFactory {
          * @param outputType the value to set
          * @return the dsl builder
          */
-        default ElsqlEndpointConsumerBuilder outputType(SqlOutputType outputType) {
+        default ElsqlEndpointConsumerBuilder outputType(
+                org.apache.camel.component.sql.SqlOutputType outputType) {
             doSetProperty("outputType", outputType);
             return this;
         }
@@ -841,7 +841,7 @@ public interface ElsqlEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ElsqlEndpointConsumerBuilder runLoggingLevel(
-                LoggingLevel runLoggingLevel) {
+                org.apache.camel.LoggingLevel runLoggingLevel) {
             doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
@@ -1097,7 +1097,7 @@ public interface ElsqlEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedElsqlEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -1132,7 +1132,7 @@ public interface ElsqlEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedElsqlEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -1167,7 +1167,7 @@ public interface ElsqlEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedElsqlEndpointConsumerBuilder pollStrategy(
-                PollingConsumerPollStrategy pollStrategy) {
+                org.apache.camel.spi.PollingConsumerPollStrategy pollStrategy) {
             doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
@@ -1204,7 +1204,7 @@ public interface ElsqlEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedElsqlEndpointConsumerBuilder processingStrategy(
-                Object processingStrategy) {
+                org.apache.camel.component.sql.SqlProcessingStrategy processingStrategy) {
             doSetProperty("processingStrategy", processingStrategy);
             return this;
         }
@@ -1282,7 +1282,7 @@ public interface ElsqlEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedElsqlEndpointConsumerBuilder elSqlConfig(
-                Object elSqlConfig) {
+                com.opengamma.elsql.ElSqlConfig elSqlConfig) {
             doSetProperty("elSqlConfig", elSqlConfig);
             return this;
         }
@@ -1371,7 +1371,7 @@ public interface ElsqlEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedElsqlEndpointConsumerBuilder prepareStatementStrategy(
-                Object prepareStatementStrategy) {
+                org.apache.camel.component.sql.SqlPrepareStatementStrategy prepareStatementStrategy) {
             doSetProperty("prepareStatementStrategy", prepareStatementStrategy);
             return this;
         }
@@ -1523,7 +1523,7 @@ public interface ElsqlEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ElsqlEndpointProducerBuilder databaseVendor(
-                ElSqlDatabaseVendor databaseVendor) {
+                org.apache.camel.component.elsql.ElSqlDatabaseVendor databaseVendor) {
             doSetProperty("databaseVendor", databaseVendor);
             return this;
         }
@@ -1554,7 +1554,8 @@ public interface ElsqlEndpointBuilderFactory {
          * @param dataSource the value to set
          * @return the dsl builder
          */
-        default ElsqlEndpointProducerBuilder dataSource(Object dataSource) {
+        default ElsqlEndpointProducerBuilder dataSource(
+                javax.sql.DataSource dataSource) {
             doSetProperty("dataSource", dataSource);
             return this;
         }
@@ -1632,7 +1633,8 @@ public interface ElsqlEndpointBuilderFactory {
          * @param outputType the value to set
          * @return the dsl builder
          */
-        default ElsqlEndpointProducerBuilder outputType(SqlOutputType outputType) {
+        default ElsqlEndpointProducerBuilder outputType(
+                org.apache.camel.component.sql.SqlOutputType outputType) {
             doSetProperty("outputType", outputType);
             return this;
         }
@@ -1920,7 +1922,7 @@ public interface ElsqlEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedElsqlEndpointProducerBuilder elSqlConfig(
-                Object elSqlConfig) {
+                com.opengamma.elsql.ElSqlConfig elSqlConfig) {
             doSetProperty("elSqlConfig", elSqlConfig);
             return this;
         }
@@ -2009,7 +2011,7 @@ public interface ElsqlEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedElsqlEndpointProducerBuilder prepareStatementStrategy(
-                Object prepareStatementStrategy) {
+                org.apache.camel.component.sql.SqlPrepareStatementStrategy prepareStatementStrategy) {
             doSetProperty("prepareStatementStrategy", prepareStatementStrategy);
             return this;
         }
@@ -2162,7 +2164,7 @@ public interface ElsqlEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ElsqlEndpointBuilder databaseVendor(
-                ElSqlDatabaseVendor databaseVendor) {
+                org.apache.camel.component.elsql.ElSqlDatabaseVendor databaseVendor) {
             doSetProperty("databaseVendor", databaseVendor);
             return this;
         }
@@ -2192,7 +2194,7 @@ public interface ElsqlEndpointBuilderFactory {
          * @param dataSource the value to set
          * @return the dsl builder
          */
-        default ElsqlEndpointBuilder dataSource(Object dataSource) {
+        default ElsqlEndpointBuilder dataSource(javax.sql.DataSource dataSource) {
             doSetProperty("dataSource", dataSource);
             return this;
         }
@@ -2270,7 +2272,8 @@ public interface ElsqlEndpointBuilderFactory {
          * @param outputType the value to set
          * @return the dsl builder
          */
-        default ElsqlEndpointBuilder outputType(SqlOutputType outputType) {
+        default ElsqlEndpointBuilder outputType(
+                org.apache.camel.component.sql.SqlOutputType outputType) {
             doSetProperty("outputType", outputType);
             return this;
         }
@@ -2406,7 +2409,8 @@ public interface ElsqlEndpointBuilderFactory {
          * @param elSqlConfig the value to set
          * @return the dsl builder
          */
-        default AdvancedElsqlEndpointBuilder elSqlConfig(Object elSqlConfig) {
+        default AdvancedElsqlEndpointBuilder elSqlConfig(
+                com.opengamma.elsql.ElSqlConfig elSqlConfig) {
             doSetProperty("elSqlConfig", elSqlConfig);
             return this;
         }
@@ -2492,7 +2496,7 @@ public interface ElsqlEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedElsqlEndpointBuilder prepareStatementStrategy(
-                Object prepareStatementStrategy) {
+                org.apache.camel.component.sql.SqlPrepareStatementStrategy prepareStatementStrategy) {
             doSetProperty("prepareStatementStrategy", prepareStatementStrategy);
             return this;
         }
@@ -2588,30 +2592,6 @@ public interface ElsqlEndpointBuilderFactory {
             doSetProperty("usePlaceholder", usePlaceholder);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.elsql.ElSqlDatabaseVendor</code> enum.
-     */
-    enum ElSqlDatabaseVendor {
-        Default,
-        Postgres,
-        HSql,
-        MySql,
-        Oracle,
-        SqlServer2008,
-        Veritca;
-    }
-
-    /**
-     * Proxy enum for <code>org.apache.camel.component.sql.SqlOutputType</code>
-     * enum.
-     */
-    enum SqlOutputType {
-        SelectOne,
-        SelectList,
-        StreamList;
     }
 
     public interface ElsqlBuilders {

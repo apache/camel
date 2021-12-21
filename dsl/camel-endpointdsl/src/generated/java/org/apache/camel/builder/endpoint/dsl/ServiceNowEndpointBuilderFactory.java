@@ -16,7 +16,11 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
 import java.util.Map;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -511,7 +515,8 @@ public interface ServiceNowEndpointBuilderFactory {
          * @param release the value to set
          * @return the dsl builder
          */
-        default ServiceNowEndpointBuilder release(ServiceNowRelease release) {
+        default ServiceNowEndpointBuilder release(
+                org.apache.camel.component.servicenow.ServiceNowRelease release) {
             doSetProperty("release", release);
             return this;
         }
@@ -954,7 +959,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ServiceNowEndpointBuilder sslContextParameters(
-                Object sslContextParameters) {
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
@@ -1058,7 +1063,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedServiceNowEndpointBuilder httpClientPolicy(
-                Object httpClientPolicy) {
+                org.apache.cxf.transports.http.configuration.HTTPClientPolicy httpClientPolicy) {
             doSetProperty("httpClientPolicy", httpClientPolicy);
             return this;
         }
@@ -1090,7 +1095,8 @@ public interface ServiceNowEndpointBuilderFactory {
          * @param mapper the value to set
          * @return the dsl builder
          */
-        default AdvancedServiceNowEndpointBuilder mapper(Object mapper) {
+        default AdvancedServiceNowEndpointBuilder mapper(
+                com.fasterxml.jackson.databind.ObjectMapper mapper) {
             doSetProperty("mapper", mapper);
             return this;
         }
@@ -1122,7 +1128,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedServiceNowEndpointBuilder proxyAuthorizationPolicy(
-                Object proxyAuthorizationPolicy) {
+                org.apache.cxf.configuration.security.ProxyAuthorizationPolicy proxyAuthorizationPolicy) {
             doSetProperty("proxyAuthorizationPolicy", proxyAuthorizationPolicy);
             return this;
         }
@@ -1194,17 +1200,6 @@ public interface ServiceNowEndpointBuilderFactory {
             doSetProperty("timeFormat", timeFormat);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.servicenow.ServiceNowRelease</code>
-     * enum.
-     */
-    enum ServiceNowRelease {
-        FUJI,
-        GENEVA,
-        HELSINKI;
     }
 
     public interface ServiceNowBuilders {

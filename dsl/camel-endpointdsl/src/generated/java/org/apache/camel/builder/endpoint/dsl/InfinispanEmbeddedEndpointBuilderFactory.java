@@ -16,13 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.util.function.BiFunction;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Read and write from/to Infinispan distributed key/value store and data grid.
@@ -54,7 +55,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * @return the dsl builder
          */
         default InfinispanEmbeddedEndpointConsumerBuilder queryBuilder(
-                Object queryBuilder) {
+                org.apache.camel.component.infinispan.InfinispanQueryBuilder queryBuilder) {
             doSetProperty("queryBuilder", queryBuilder);
             return this;
         }
@@ -164,7 +165,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * @return the dsl builder
          */
         default InfinispanEmbeddedEndpointConsumerBuilder customListener(
-                Object customListener) {
+                org.apache.camel.component.infinispan.embedded.InfinispanEmbeddedCustomListener customListener) {
             doSetProperty("customListener", customListener);
             return this;
         }
@@ -264,7 +265,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedInfinispanEmbeddedEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -299,7 +300,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedInfinispanEmbeddedEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -332,7 +333,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedInfinispanEmbeddedEndpointConsumerBuilder cacheContainer(
-                Object cacheContainer) {
+                org.infinispan.manager.EmbeddedCacheManager cacheContainer) {
             doSetProperty("cacheContainer", cacheContainer);
             return this;
         }
@@ -366,7 +367,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedInfinispanEmbeddedEndpointConsumerBuilder cacheContainerConfiguration(
-                Object cacheContainerConfiguration) {
+                org.infinispan.configuration.cache.Configuration cacheContainerConfiguration) {
             doSetProperty("cacheContainerConfiguration", cacheContainerConfiguration);
             return this;
         }
@@ -406,25 +407,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * A comma separated list of org.infinispan.context.Flag to be applied
          * by default on each cache invocation.
          * 
-         * The option is a:
-         * &lt;code&gt;org.infinispan.context.Flag[]&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param flags the value to set
-         * @return the dsl builder
-         */
-        default AdvancedInfinispanEmbeddedEndpointConsumerBuilder flags(
-                Flag[] flags) {
-            doSetProperty("flags", flags);
-            return this;
-        }
-        /**
-         * A comma separated list of org.infinispan.context.Flag to be applied
-         * by default on each cache invocation.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.infinispan.context.Flag[]&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -512,7 +495,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * @return the dsl builder
          */
         default InfinispanEmbeddedEndpointProducerBuilder queryBuilder(
-                Object queryBuilder) {
+                org.apache.camel.component.infinispan.InfinispanQueryBuilder queryBuilder) {
             doSetProperty("queryBuilder", queryBuilder);
             return this;
         }
@@ -685,7 +668,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * @return the dsl builder
          */
         default InfinispanEmbeddedEndpointProducerBuilder operation(
-                InfinispanOperation operation) {
+                org.apache.camel.component.infinispan.InfinispanOperation operation) {
             doSetProperty("operation", operation);
             return this;
         }
@@ -760,7 +743,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedInfinispanEmbeddedEndpointProducerBuilder cacheContainer(
-                Object cacheContainer) {
+                org.infinispan.manager.EmbeddedCacheManager cacheContainer) {
             doSetProperty("cacheContainer", cacheContainer);
             return this;
         }
@@ -794,7 +777,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedInfinispanEmbeddedEndpointProducerBuilder cacheContainerConfiguration(
-                Object cacheContainerConfiguration) {
+                org.infinispan.configuration.cache.Configuration cacheContainerConfiguration) {
             doSetProperty("cacheContainerConfiguration", cacheContainerConfiguration);
             return this;
         }
@@ -834,25 +817,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * A comma separated list of org.infinispan.context.Flag to be applied
          * by default on each cache invocation.
          * 
-         * The option is a:
-         * &lt;code&gt;org.infinispan.context.Flag[]&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param flags the value to set
-         * @return the dsl builder
-         */
-        default AdvancedInfinispanEmbeddedEndpointProducerBuilder flags(
-                Flag[] flags) {
-            doSetProperty("flags", flags);
-            return this;
-        }
-        /**
-         * A comma separated list of org.infinispan.context.Flag to be applied
-         * by default on each cache invocation.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.infinispan.context.Flag[]&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -941,7 +906,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * @return the dsl builder
          */
         default InfinispanEmbeddedEndpointBuilder queryBuilder(
-                Object queryBuilder) {
+                org.apache.camel.component.infinispan.InfinispanQueryBuilder queryBuilder) {
             doSetProperty("queryBuilder", queryBuilder);
             return this;
         }
@@ -986,7 +951,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedInfinispanEmbeddedEndpointBuilder cacheContainer(
-                Object cacheContainer) {
+                org.infinispan.manager.EmbeddedCacheManager cacheContainer) {
             doSetProperty("cacheContainer", cacheContainer);
             return this;
         }
@@ -1020,7 +985,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedInfinispanEmbeddedEndpointBuilder cacheContainerConfiguration(
-                Object cacheContainerConfiguration) {
+                org.infinispan.configuration.cache.Configuration cacheContainerConfiguration) {
             doSetProperty("cacheContainerConfiguration", cacheContainerConfiguration);
             return this;
         }
@@ -1060,24 +1025,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * A comma separated list of org.infinispan.context.Flag to be applied
          * by default on each cache invocation.
          * 
-         * The option is a:
-         * &lt;code&gt;org.infinispan.context.Flag[]&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param flags the value to set
-         * @return the dsl builder
-         */
-        default AdvancedInfinispanEmbeddedEndpointBuilder flags(Flag[] flags) {
-            doSetProperty("flags", flags);
-            return this;
-        }
-        /**
-         * A comma separated list of org.infinispan.context.Flag to be applied
-         * by default on each cache invocation.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.infinispan.context.Flag[]&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -1141,73 +1089,6 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
             doSetProperty("resultHeader", resultHeader);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.infinispan.InfinispanOperation</code>
-     * enum.
-     */
-    enum InfinispanOperation {
-        PUT,
-        PUTASYNC,
-        PUTALL,
-        PUTALLASYNC,
-        PUTIFABSENT,
-        PUTIFABSENTASYNC,
-        GET,
-        GETORDEFAULT,
-        CONTAINSKEY,
-        CONTAINSVALUE,
-        REMOVE,
-        REMOVEASYNC,
-        REPLACE,
-        REPLACEASYNC,
-        SIZE,
-        CLEAR,
-        CLEARASYNC,
-        QUERY,
-        STATS,
-        COMPUTE,
-        COMPUTEASYNC;
-    }
-
-    /**
-     * Proxy enum for <code>org.infinispan.context.Flag</code> enum.
-     */
-    enum Flag {
-        ZERO_LOCK_ACQUISITION_TIMEOUT,
-        CACHE_MODE_LOCAL,
-        SKIP_LOCKING,
-        FORCE_WRITE_LOCK,
-        FORCE_ASYNCHRONOUS,
-        FORCE_SYNCHRONOUS,
-        SKIP_CACHE_STORE,
-        SKIP_CACHE_LOAD,
-        FAIL_SILENTLY,
-        SKIP_REMOTE_LOOKUP,
-        SKIP_INDEXING,
-        PUT_FOR_EXTERNAL_READ,
-        PUT_FOR_STATE_TRANSFER,
-        PUT_FOR_X_SITE_STATE_TRANSFER,
-        SKIP_SHARED_CACHE_STORE,
-        SKIP_OWNERSHIP_CHECK,
-        IGNORE_RETURN_VALUES,
-        SKIP_XSITE_BACKUP,
-        SKIP_LISTENER_NOTIFICATION,
-        SKIP_STATISTICS,
-        OPERATION_HOTROD,
-        OPERATION_MEMCACHED,
-        SKIP_INDEX_CLEANUP,
-        COMMAND_RETRY,
-        ROLLING_UPGRADE,
-        REMOTE_ITERATION,
-        SKIP_SIZE_OPTIMIZATION,
-        IGNORE_TRANSACTION,
-        IRAC_UPDATE,
-        IRAC_STATE,
-        ALREADY_HAS_LOCK,
-        BACKUP_WRITE;
     }
 
     public interface InfinispanEmbeddedBuilders {

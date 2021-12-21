@@ -16,18 +16,15 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
 import java.util.Map;
-import java.util.Properties;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.PollingConsumerPollStrategy;
 
 /**
  * Query and/or transform XML payloads using XQuery and Saxon.
@@ -106,7 +103,7 @@ public interface XQueryEndpointBuilderFactory {
          * @return the dsl builder
          */
         default XQueryEndpointConsumerBuilder namespacePrefixes(
-                Map<String, String> namespacePrefixes) {
+                Map<java.lang.String, java.lang.String> namespacePrefixes) {
             doSetProperty("namespacePrefixes", namespacePrefixes);
             return this;
         }
@@ -141,7 +138,7 @@ public interface XQueryEndpointBuilderFactory {
          * @return the dsl builder
          */
         default XQueryEndpointConsumerBuilder resultsFormat(
-                ResultFormat resultsFormat) {
+                org.apache.camel.component.xquery.ResultFormat resultsFormat) {
             doSetProperty("resultsFormat", resultsFormat);
             return this;
         }
@@ -173,7 +170,7 @@ public interface XQueryEndpointBuilderFactory {
          * @return the dsl builder
          */
         default XQueryEndpointConsumerBuilder resultType(
-                Class<Object> resultType) {
+                Class<java.lang.Object> resultType) {
             doSetProperty("resultType", resultType);
             return this;
         }
@@ -550,7 +547,7 @@ public interface XQueryEndpointBuilderFactory {
          * @return the dsl builder
          */
         default XQueryEndpointConsumerBuilder runLoggingLevel(
-                LoggingLevel runLoggingLevel) {
+                org.apache.camel.LoggingLevel runLoggingLevel) {
             doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
@@ -807,7 +804,7 @@ public interface XQueryEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedXQueryEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -842,7 +839,7 @@ public interface XQueryEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedXQueryEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -877,7 +874,7 @@ public interface XQueryEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedXQueryEndpointConsumerBuilder pollStrategy(
-                PollingConsumerPollStrategy pollStrategy) {
+                org.apache.camel.spi.PollingConsumerPollStrategy pollStrategy) {
             doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
@@ -912,7 +909,7 @@ public interface XQueryEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedXQueryEndpointConsumerBuilder configuration(
-                Object configuration) {
+                net.sf.saxon.Configuration configuration) {
             doSetProperty("configuration", configuration);
             return this;
         }
@@ -944,7 +941,7 @@ public interface XQueryEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedXQueryEndpointConsumerBuilder configurationProperties(
-                Map<String, Object> configurationProperties) {
+                Map<java.lang.String, java.lang.Object> configurationProperties) {
             doSetProperty("configurationProperties", configurationProperties);
             return this;
         }
@@ -977,7 +974,7 @@ public interface XQueryEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedXQueryEndpointConsumerBuilder moduleURIResolver(
-                Object moduleURIResolver) {
+                net.sf.saxon.lib.ModuleURIResolver moduleURIResolver) {
             doSetProperty("moduleURIResolver", moduleURIResolver);
             return this;
         }
@@ -1009,7 +1006,7 @@ public interface XQueryEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedXQueryEndpointConsumerBuilder parameters(
-                Map<String, Object> parameters) {
+                Map<java.lang.String, java.lang.Object> parameters) {
             doSetProperty("parameters", parameters);
             return this;
         }
@@ -1073,7 +1070,7 @@ public interface XQueryEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedXQueryEndpointConsumerBuilder staticQueryContext(
-                Object staticQueryContext) {
+                net.sf.saxon.query.StaticQueryContext staticQueryContext) {
             doSetProperty("staticQueryContext", staticQueryContext);
             return this;
         }
@@ -1163,7 +1160,7 @@ public interface XQueryEndpointBuilderFactory {
          * @return the dsl builder
          */
         default XQueryEndpointProducerBuilder namespacePrefixes(
-                Map<String, String> namespacePrefixes) {
+                Map<java.lang.String, java.lang.String> namespacePrefixes) {
             doSetProperty("namespacePrefixes", namespacePrefixes);
             return this;
         }
@@ -1198,7 +1195,7 @@ public interface XQueryEndpointBuilderFactory {
          * @return the dsl builder
          */
         default XQueryEndpointProducerBuilder resultsFormat(
-                ResultFormat resultsFormat) {
+                org.apache.camel.component.xquery.ResultFormat resultsFormat) {
             doSetProperty("resultsFormat", resultsFormat);
             return this;
         }
@@ -1230,7 +1227,7 @@ public interface XQueryEndpointBuilderFactory {
          * @return the dsl builder
          */
         default XQueryEndpointProducerBuilder resultType(
-                Class<Object> resultType) {
+                Class<java.lang.Object> resultType) {
             doSetProperty("resultType", resultType);
             return this;
         }
@@ -1354,7 +1351,7 @@ public interface XQueryEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedXQueryEndpointProducerBuilder configuration(
-                Object configuration) {
+                net.sf.saxon.Configuration configuration) {
             doSetProperty("configuration", configuration);
             return this;
         }
@@ -1386,7 +1383,7 @@ public interface XQueryEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedXQueryEndpointProducerBuilder configurationProperties(
-                Map<String, Object> configurationProperties) {
+                Map<java.lang.String, java.lang.Object> configurationProperties) {
             doSetProperty("configurationProperties", configurationProperties);
             return this;
         }
@@ -1419,7 +1416,7 @@ public interface XQueryEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedXQueryEndpointProducerBuilder moduleURIResolver(
-                Object moduleURIResolver) {
+                net.sf.saxon.lib.ModuleURIResolver moduleURIResolver) {
             doSetProperty("moduleURIResolver", moduleURIResolver);
             return this;
         }
@@ -1451,7 +1448,7 @@ public interface XQueryEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedXQueryEndpointProducerBuilder parameters(
-                Map<String, Object> parameters) {
+                Map<java.lang.String, java.lang.Object> parameters) {
             doSetProperty("parameters", parameters);
             return this;
         }
@@ -1515,7 +1512,7 @@ public interface XQueryEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedXQueryEndpointProducerBuilder staticQueryContext(
-                Object staticQueryContext) {
+                net.sf.saxon.query.StaticQueryContext staticQueryContext) {
             doSetProperty("staticQueryContext", staticQueryContext);
             return this;
         }
@@ -1606,7 +1603,7 @@ public interface XQueryEndpointBuilderFactory {
          * @return the dsl builder
          */
         default XQueryEndpointBuilder namespacePrefixes(
-                Map<String, String> namespacePrefixes) {
+                Map<java.lang.String, java.lang.String> namespacePrefixes) {
             doSetProperty("namespacePrefixes", namespacePrefixes);
             return this;
         }
@@ -1639,7 +1636,8 @@ public interface XQueryEndpointBuilderFactory {
          * @param resultsFormat the value to set
          * @return the dsl builder
          */
-        default XQueryEndpointBuilder resultsFormat(ResultFormat resultsFormat) {
+        default XQueryEndpointBuilder resultsFormat(
+                org.apache.camel.component.xquery.ResultFormat resultsFormat) {
             doSetProperty("resultsFormat", resultsFormat);
             return this;
         }
@@ -1670,7 +1668,8 @@ public interface XQueryEndpointBuilderFactory {
          * @param resultType the value to set
          * @return the dsl builder
          */
-        default XQueryEndpointBuilder resultType(Class<Object> resultType) {
+        default XQueryEndpointBuilder resultType(
+                Class<java.lang.Object> resultType) {
             doSetProperty("resultType", resultType);
             return this;
         }
@@ -1745,7 +1744,8 @@ public interface XQueryEndpointBuilderFactory {
          * @param configuration the value to set
          * @return the dsl builder
          */
-        default AdvancedXQueryEndpointBuilder configuration(Object configuration) {
+        default AdvancedXQueryEndpointBuilder configuration(
+                net.sf.saxon.Configuration configuration) {
             doSetProperty("configuration", configuration);
             return this;
         }
@@ -1776,7 +1776,7 @@ public interface XQueryEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedXQueryEndpointBuilder configurationProperties(
-                Map<String, Object> configurationProperties) {
+                Map<java.lang.String, java.lang.Object> configurationProperties) {
             doSetProperty("configurationProperties", configurationProperties);
             return this;
         }
@@ -1809,7 +1809,7 @@ public interface XQueryEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedXQueryEndpointBuilder moduleURIResolver(
-                Object moduleURIResolver) {
+                net.sf.saxon.lib.ModuleURIResolver moduleURIResolver) {
             doSetProperty("moduleURIResolver", moduleURIResolver);
             return this;
         }
@@ -1841,7 +1841,7 @@ public interface XQueryEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedXQueryEndpointBuilder parameters(
-                Map<String, Object> parameters) {
+                Map<java.lang.String, java.lang.Object> parameters) {
             doSetProperty("parameters", parameters);
             return this;
         }
@@ -1902,7 +1902,7 @@ public interface XQueryEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedXQueryEndpointBuilder staticQueryContext(
-                Object staticQueryContext) {
+                net.sf.saxon.query.StaticQueryContext staticQueryContext) {
             doSetProperty("staticQueryContext", staticQueryContext);
             return this;
         }
@@ -1922,20 +1922,6 @@ public interface XQueryEndpointBuilderFactory {
             doSetProperty("staticQueryContext", staticQueryContext);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.xquery.ResultFormat</code> enum.
-     */
-    enum ResultFormat {
-        Bytes,
-        BytesSource,
-        DOM,
-        DOMSource,
-        List,
-        String,
-        StringSource;
     }
 
     public interface XQueryBuilders {

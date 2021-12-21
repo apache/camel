@@ -16,13 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.HeaderFilterStrategy;
 
 /**
  * Serve HTTP requests by a Servlet.
@@ -150,7 +151,7 @@ public interface ServletEndpointBuilderFactory {
          * @return the dsl builder
          */
         default ServletEndpointBuilder headerFilterStrategy(
-                HeaderFilterStrategy headerFilterStrategy) {
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
@@ -450,7 +451,8 @@ public interface ServletEndpointBuilderFactory {
          * @param httpBinding the value to set
          * @return the dsl builder
          */
-        default AdvancedServletEndpointBuilder httpBinding(Object httpBinding) {
+        default AdvancedServletEndpointBuilder httpBinding(
+                org.apache.camel.http.common.HttpBinding httpBinding) {
             doSetProperty("httpBinding", httpBinding);
             return this;
         }
@@ -566,7 +568,7 @@ public interface ServletEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedServletEndpointBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -601,7 +603,7 @@ public interface ServletEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedServletEndpointBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }

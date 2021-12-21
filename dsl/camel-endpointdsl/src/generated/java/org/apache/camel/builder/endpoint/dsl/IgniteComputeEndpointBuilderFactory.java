@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -49,7 +53,7 @@ public interface IgniteComputeEndpointBuilderFactory {
          * @return the dsl builder
          */
         default IgniteComputeEndpointBuilder clusterGroupExpression(
-                Object clusterGroupExpression) {
+                org.apache.camel.component.ignite.ClusterGroupExpression clusterGroupExpression) {
             doSetProperty("clusterGroupExpression", clusterGroupExpression);
             return this;
         }
@@ -100,7 +104,7 @@ public interface IgniteComputeEndpointBuilderFactory {
          * @return the dsl builder
          */
         default IgniteComputeEndpointBuilder executionType(
-                IgniteComputeExecutionType executionType) {
+                org.apache.camel.component.ignite.compute.IgniteComputeExecutionType executionType) {
             doSetProperty("executionType", executionType);
             return this;
         }
@@ -287,20 +291,6 @@ public interface IgniteComputeEndpointBuilderFactory {
             doSetProperty("treatCollectionsAsCacheObjects", treatCollectionsAsCacheObjects);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.ignite.compute.IgniteComputeExecutionType</code> enum.
-     */
-    enum IgniteComputeExecutionType {
-        CALL,
-        BROADCAST,
-        APPLY,
-        EXECUTE,
-        RUN,
-        AFFINITY_CALL,
-        AFFINITY_RUN;
     }
 
     public interface IgniteComputeBuilders {

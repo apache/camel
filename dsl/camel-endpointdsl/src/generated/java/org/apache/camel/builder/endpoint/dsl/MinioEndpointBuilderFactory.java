@@ -16,18 +16,15 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.time.ZonedDateTime;
+import java.util.*;
 import java.util.Map;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.PollingConsumerPollStrategy;
 
 /**
  * Store and retrieve objects from Minio Storage Service using Minio SDK.
@@ -91,7 +88,7 @@ public interface MinioEndpointBuilderFactory {
          * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder customHttpClient(
-                Object customHttpClient) {
+                okhttp3.OkHttpClient customHttpClient) {
             doSetProperty("customHttpClient", customHttpClient);
             return this;
         }
@@ -135,7 +132,8 @@ public interface MinioEndpointBuilderFactory {
          * @param minioClient the value to set
          * @return the dsl builder
          */
-        default MinioEndpointConsumerBuilder minioClient(Object minioClient) {
+        default MinioEndpointConsumerBuilder minioClient(
+                io.minio.MinioClient minioClient) {
             doSetProperty("minioClient", minioClient);
             return this;
         }
@@ -290,7 +288,7 @@ public interface MinioEndpointBuilderFactory {
          * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder serverSideEncryption(
-                Object serverSideEncryption) {
+                io.minio.ServerSideEncryption serverSideEncryption) {
             doSetProperty("serverSideEncryption", serverSideEncryption);
             return this;
         }
@@ -323,7 +321,7 @@ public interface MinioEndpointBuilderFactory {
          * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder serverSideEncryptionCustomerKey(
-                Object serverSideEncryptionCustomerKey) {
+                io.minio.ServerSideEncryptionCustomerKey serverSideEncryptionCustomerKey) {
             doSetProperty("serverSideEncryptionCustomerKey", serverSideEncryptionCustomerKey);
             return this;
         }
@@ -828,7 +826,7 @@ public interface MinioEndpointBuilderFactory {
          * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder modifiedSince(
-                ZonedDateTime modifiedSince) {
+                java.time.ZonedDateTime modifiedSince) {
             doSetProperty("modifiedSince", modifiedSince);
             return this;
         }
@@ -1046,7 +1044,7 @@ public interface MinioEndpointBuilderFactory {
          * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder unModifiedSince(
-                ZonedDateTime unModifiedSince) {
+                java.time.ZonedDateTime unModifiedSince) {
             doSetProperty("unModifiedSince", unModifiedSince);
             return this;
         }
@@ -1356,7 +1354,7 @@ public interface MinioEndpointBuilderFactory {
          * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder runLoggingLevel(
-                LoggingLevel runLoggingLevel) {
+                org.apache.camel.LoggingLevel runLoggingLevel) {
             doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
@@ -1642,7 +1640,7 @@ public interface MinioEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedMinioEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -1677,7 +1675,7 @@ public interface MinioEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedMinioEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -1712,7 +1710,7 @@ public interface MinioEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedMinioEndpointConsumerBuilder pollStrategy(
-                PollingConsumerPollStrategy pollStrategy) {
+                org.apache.camel.spi.PollingConsumerPollStrategy pollStrategy) {
             doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
@@ -1790,7 +1788,7 @@ public interface MinioEndpointBuilderFactory {
          * @return the dsl builder
          */
         default MinioEndpointProducerBuilder customHttpClient(
-                Object customHttpClient) {
+                okhttp3.OkHttpClient customHttpClient) {
             doSetProperty("customHttpClient", customHttpClient);
             return this;
         }
@@ -1834,7 +1832,8 @@ public interface MinioEndpointBuilderFactory {
          * @param minioClient the value to set
          * @return the dsl builder
          */
-        default MinioEndpointProducerBuilder minioClient(Object minioClient) {
+        default MinioEndpointProducerBuilder minioClient(
+                io.minio.MinioClient minioClient) {
             doSetProperty("minioClient", minioClient);
             return this;
         }
@@ -1989,7 +1988,7 @@ public interface MinioEndpointBuilderFactory {
          * @return the dsl builder
          */
         default MinioEndpointProducerBuilder serverSideEncryption(
-                Object serverSideEncryption) {
+                io.minio.ServerSideEncryption serverSideEncryption) {
             doSetProperty("serverSideEncryption", serverSideEncryption);
             return this;
         }
@@ -2022,7 +2021,7 @@ public interface MinioEndpointBuilderFactory {
          * @return the dsl builder
          */
         default MinioEndpointProducerBuilder serverSideEncryptionCustomerKey(
-                Object serverSideEncryptionCustomerKey) {
+                io.minio.ServerSideEncryptionCustomerKey serverSideEncryptionCustomerKey) {
             doSetProperty("serverSideEncryptionCustomerKey", serverSideEncryptionCustomerKey);
             return this;
         }
@@ -2151,7 +2150,8 @@ public interface MinioEndpointBuilderFactory {
          * @param operation the value to set
          * @return the dsl builder
          */
-        default MinioEndpointProducerBuilder operation(MinioOperations operation) {
+        default MinioEndpointProducerBuilder operation(
+                org.apache.camel.component.minio.MinioOperations operation) {
             doSetProperty("operation", operation);
             return this;
         }
@@ -2309,7 +2309,8 @@ public interface MinioEndpointBuilderFactory {
          * @param customHttpClient the value to set
          * @return the dsl builder
          */
-        default MinioEndpointBuilder customHttpClient(Object customHttpClient) {
+        default MinioEndpointBuilder customHttpClient(
+                okhttp3.OkHttpClient customHttpClient) {
             doSetProperty("customHttpClient", customHttpClient);
             return this;
         }
@@ -2352,7 +2353,8 @@ public interface MinioEndpointBuilderFactory {
          * @param minioClient the value to set
          * @return the dsl builder
          */
-        default MinioEndpointBuilder minioClient(Object minioClient) {
+        default MinioEndpointBuilder minioClient(
+                io.minio.MinioClient minioClient) {
             doSetProperty("minioClient", minioClient);
             return this;
         }
@@ -2507,7 +2509,7 @@ public interface MinioEndpointBuilderFactory {
          * @return the dsl builder
          */
         default MinioEndpointBuilder serverSideEncryption(
-                Object serverSideEncryption) {
+                io.minio.ServerSideEncryption serverSideEncryption) {
             doSetProperty("serverSideEncryption", serverSideEncryption);
             return this;
         }
@@ -2540,7 +2542,7 @@ public interface MinioEndpointBuilderFactory {
          * @return the dsl builder
          */
         default MinioEndpointBuilder serverSideEncryptionCustomerKey(
-                Object serverSideEncryptionCustomerKey) {
+                io.minio.ServerSideEncryptionCustomerKey serverSideEncryptionCustomerKey) {
             doSetProperty("serverSideEncryptionCustomerKey", serverSideEncryptionCustomerKey);
             return this;
         }
@@ -2603,21 +2605,6 @@ public interface MinioEndpointBuilderFactory {
         default MinioEndpointBuilder basic() {
             return (MinioEndpointBuilder) this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.minio.MinioOperations</code> enum.
-     */
-    enum MinioOperations {
-        copyObject,
-        listObjects,
-        deleteObject,
-        deleteObjects,
-        deleteBucket,
-        listBuckets,
-        getObject,
-        getPartialObject;
     }
 
     public interface MinioBuilders {

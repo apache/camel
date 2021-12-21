@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -97,7 +101,8 @@ public interface SpringLdapEndpointBuilderFactory {
          * @param operation the value to set
          * @return the dsl builder
          */
-        default SpringLdapEndpointBuilder operation(LdapOperation operation) {
+        default SpringLdapEndpointBuilder operation(
+                org.apache.camel.component.springldap.LdapOperation operation) {
             doSetProperty("operation", operation);
             return this;
         }
@@ -132,19 +137,6 @@ public interface SpringLdapEndpointBuilderFactory {
             doSetProperty("scope", scope);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.springldap.LdapOperation</code> enum.
-     */
-    enum LdapOperation {
-        SEARCH,
-        BIND,
-        UNBIND,
-        AUTHENTICATE,
-        MODIFY_ATTRIBUTES,
-        FUNCTION_DRIVEN;
     }
 
     public interface SpringLdapBuilders {

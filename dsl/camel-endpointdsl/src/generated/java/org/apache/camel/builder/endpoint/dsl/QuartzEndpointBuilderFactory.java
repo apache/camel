@@ -16,13 +16,15 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
 import java.util.Map;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Schedule sending of messages using the Quartz 2.x scheduler.
@@ -401,7 +403,7 @@ public interface QuartzEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedQuartzEndpointBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -436,7 +438,7 @@ public interface QuartzEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedQuartzEndpointBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -467,7 +469,7 @@ public interface QuartzEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedQuartzEndpointBuilder customCalendar(
-                Object customCalendar) {
+                org.quartz.Calendar customCalendar) {
             doSetProperty("customCalendar", customCalendar);
             return this;
         }

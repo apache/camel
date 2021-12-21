@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -92,7 +96,8 @@ public interface TikaEndpointBuilderFactory {
          * @param tikaConfig the value to set
          * @return the dsl builder
          */
-        default TikaEndpointBuilder tikaConfig(Object tikaConfig) {
+        default TikaEndpointBuilder tikaConfig(
+                org.apache.tika.config.TikaConfig tikaConfig) {
             doSetProperty("tikaConfig", tikaConfig);
             return this;
         }
@@ -156,7 +161,7 @@ public interface TikaEndpointBuilderFactory {
          * @return the dsl builder
          */
         default TikaEndpointBuilder tikaParseOutputFormat(
-                TikaParseOutputFormat tikaParseOutputFormat) {
+                org.apache.camel.component.tika.TikaParseOutputFormat tikaParseOutputFormat) {
             doSetProperty("tikaParseOutputFormat", tikaParseOutputFormat);
             return this;
         }
@@ -180,17 +185,6 @@ public interface TikaEndpointBuilderFactory {
             doSetProperty("tikaParseOutputFormat", tikaParseOutputFormat);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.tika.TikaParseOutputFormat</code> enum.
-     */
-    enum TikaParseOutputFormat {
-        xml,
-        html,
-        text,
-        textMain;
     }
 
     public interface TikaBuilders {

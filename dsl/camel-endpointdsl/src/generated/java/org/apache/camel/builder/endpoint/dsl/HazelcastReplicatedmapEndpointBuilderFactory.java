@@ -16,12 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Perform operations on Hazelcast replicated map.
@@ -55,7 +57,7 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * @return the dsl builder
          */
         default HazelcastReplicatedmapEndpointConsumerBuilder defaultOperation(
-                HazelcastOperation defaultOperation) {
+                org.apache.camel.component.hazelcast.HazelcastOperation defaultOperation) {
             doSetProperty("defaultOperation", defaultOperation);
             return this;
         }
@@ -89,7 +91,7 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * @return the dsl builder
          */
         default HazelcastReplicatedmapEndpointConsumerBuilder hazelcastInstance(
-                Object hazelcastInstance) {
+                com.hazelcast.core.HazelcastInstance hazelcastInstance) {
             doSetProperty("hazelcastInstance", hazelcastInstance);
             return this;
         }
@@ -199,7 +201,7 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedHazelcastReplicatedmapEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -234,7 +236,7 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedHazelcastReplicatedmapEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -279,7 +281,7 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * @return the dsl builder
          */
         default HazelcastReplicatedmapEndpointProducerBuilder defaultOperation(
-                HazelcastOperation defaultOperation) {
+                org.apache.camel.component.hazelcast.HazelcastOperation defaultOperation) {
             doSetProperty("defaultOperation", defaultOperation);
             return this;
         }
@@ -313,7 +315,7 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * @return the dsl builder
          */
         default HazelcastReplicatedmapEndpointProducerBuilder hazelcastInstance(
-                Object hazelcastInstance) {
+                com.hazelcast.core.HazelcastInstance hazelcastInstance) {
             doSetProperty("hazelcastInstance", hazelcastInstance);
             return this;
         }
@@ -437,7 +439,7 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * @return the dsl builder
          */
         default HazelcastReplicatedmapEndpointBuilder defaultOperation(
-                HazelcastOperation defaultOperation) {
+                org.apache.camel.component.hazelcast.HazelcastOperation defaultOperation) {
             doSetProperty("defaultOperation", defaultOperation);
             return this;
         }
@@ -471,7 +473,7 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * @return the dsl builder
          */
         default HazelcastReplicatedmapEndpointBuilder hazelcastInstance(
-                Object hazelcastInstance) {
+                com.hazelcast.core.HazelcastInstance hazelcastInstance) {
             doSetProperty("hazelcastInstance", hazelcastInstance);
             return this;
         }
@@ -521,50 +523,6 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         default HazelcastReplicatedmapEndpointBuilder basic() {
             return (HazelcastReplicatedmapEndpointBuilder) this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
-     * enum.
-     */
-    enum HazelcastOperation {
-        PUT,
-        DELETE,
-        GET,
-        UPDATE,
-        QUERY,
-        GET_ALL,
-        CLEAR,
-        PUT_IF_ABSENT,
-        ADD_ALL,
-        REMOVE_ALL,
-        RETAIN_ALL,
-        EVICT,
-        EVICT_ALL,
-        VALUE_COUNT,
-        CONTAINS_KEY,
-        CONTAINS_VALUE,
-        GET_KEYS,
-        REMOVE_VALUE,
-        INCREMENT,
-        DECREMENT,
-        SET_VALUE,
-        DESTROY,
-        COMPARE_AND_SET,
-        GET_AND_ADD,
-        ADD,
-        OFFER,
-        PEEK,
-        POLL,
-        REMAINING_CAPACITY,
-        DRAIN_TO,
-        REMOVE_IF,
-        TAKE,
-        PUBLISH,
-        READ_ONCE_HEAD,
-        READ_ONCE_TAIL,
-        CAPACITY;
     }
 
     public interface HazelcastReplicatedmapBuilders {

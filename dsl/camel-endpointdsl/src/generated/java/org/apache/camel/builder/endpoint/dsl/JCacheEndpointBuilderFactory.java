@@ -16,14 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Perform caching operations against JSR107/JCache.
@@ -56,7 +56,7 @@ public interface JCacheEndpointBuilderFactory {
          * @return the dsl builder
          */
         default JCacheEndpointConsumerBuilder cacheConfiguration(
-                Object cacheConfiguration) {
+                javax.cache.configuration.Configuration cacheConfiguration) {
             doSetProperty("cacheConfiguration", cacheConfiguration);
             return this;
         }
@@ -81,7 +81,7 @@ public interface JCacheEndpointBuilderFactory {
          * The Properties for the javax.cache.spi.CachingProvider to create the
          * CacheManager.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -89,7 +89,7 @@ public interface JCacheEndpointBuilderFactory {
          * @return the dsl builder
          */
         default JCacheEndpointConsumerBuilder cacheConfigurationProperties(
-                Map cacheConfigurationProperties) {
+                Properties cacheConfigurationProperties) {
             doSetProperty("cacheConfigurationProperties", cacheConfigurationProperties);
             return this;
         }
@@ -98,7 +98,7 @@ public interface JCacheEndpointBuilderFactory {
          * CacheManager.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&lt;/code&gt; type.
+         * &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -450,7 +450,7 @@ public interface JCacheEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedJCacheEndpointConsumerBuilder eventFilters(
-                List<Object> eventFilters) {
+                List<javax.cache.event.CacheEntryEventFilter> eventFilters) {
             doSetProperty("eventFilters", eventFilters);
             return this;
         }
@@ -486,7 +486,7 @@ public interface JCacheEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedJCacheEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -521,7 +521,7 @@ public interface JCacheEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedJCacheEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -553,7 +553,7 @@ public interface JCacheEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedJCacheEndpointConsumerBuilder cacheLoaderFactory(
-                Object cacheLoaderFactory) {
+                javax.cache.configuration.Factory<javax.cache.integration.CacheLoader> cacheLoaderFactory) {
             doSetProperty("cacheLoaderFactory", cacheLoaderFactory);
             return this;
         }
@@ -585,7 +585,7 @@ public interface JCacheEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedJCacheEndpointConsumerBuilder cacheWriterFactory(
-                Object cacheWriterFactory) {
+                javax.cache.configuration.Factory<javax.cache.integration.CacheWriter> cacheWriterFactory) {
             doSetProperty("cacheWriterFactory", cacheWriterFactory);
             return this;
         }
@@ -652,7 +652,7 @@ public interface JCacheEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedJCacheEndpointConsumerBuilder expiryPolicyFactory(
-                Object expiryPolicyFactory) {
+                javax.cache.configuration.Factory<javax.cache.expiry.ExpiryPolicy> expiryPolicyFactory) {
             doSetProperty("expiryPolicyFactory", expiryPolicyFactory);
             return this;
         }
@@ -731,7 +731,7 @@ public interface JCacheEndpointBuilderFactory {
          * @return the dsl builder
          */
         default JCacheEndpointProducerBuilder cacheConfiguration(
-                Object cacheConfiguration) {
+                javax.cache.configuration.Configuration cacheConfiguration) {
             doSetProperty("cacheConfiguration", cacheConfiguration);
             return this;
         }
@@ -756,7 +756,7 @@ public interface JCacheEndpointBuilderFactory {
          * The Properties for the javax.cache.spi.CachingProvider to create the
          * CacheManager.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -764,7 +764,7 @@ public interface JCacheEndpointBuilderFactory {
          * @return the dsl builder
          */
         default JCacheEndpointProducerBuilder cacheConfigurationProperties(
-                Map cacheConfigurationProperties) {
+                Properties cacheConfigurationProperties) {
             doSetProperty("cacheConfigurationProperties", cacheConfigurationProperties);
             return this;
         }
@@ -773,7 +773,7 @@ public interface JCacheEndpointBuilderFactory {
          * CacheManager.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&lt;/code&gt; type.
+         * &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -1063,7 +1063,7 @@ public interface JCacheEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedJCacheEndpointProducerBuilder cacheLoaderFactory(
-                Object cacheLoaderFactory) {
+                javax.cache.configuration.Factory<javax.cache.integration.CacheLoader> cacheLoaderFactory) {
             doSetProperty("cacheLoaderFactory", cacheLoaderFactory);
             return this;
         }
@@ -1095,7 +1095,7 @@ public interface JCacheEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedJCacheEndpointProducerBuilder cacheWriterFactory(
-                Object cacheWriterFactory) {
+                javax.cache.configuration.Factory<javax.cache.integration.CacheWriter> cacheWriterFactory) {
             doSetProperty("cacheWriterFactory", cacheWriterFactory);
             return this;
         }
@@ -1162,7 +1162,7 @@ public interface JCacheEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedJCacheEndpointProducerBuilder expiryPolicyFactory(
-                Object expiryPolicyFactory) {
+                javax.cache.configuration.Factory<javax.cache.expiry.ExpiryPolicy> expiryPolicyFactory) {
             doSetProperty("expiryPolicyFactory", expiryPolicyFactory);
             return this;
         }
@@ -1242,7 +1242,7 @@ public interface JCacheEndpointBuilderFactory {
          * @return the dsl builder
          */
         default JCacheEndpointBuilder cacheConfiguration(
-                Object cacheConfiguration) {
+                javax.cache.configuration.Configuration cacheConfiguration) {
             doSetProperty("cacheConfiguration", cacheConfiguration);
             return this;
         }
@@ -1267,7 +1267,7 @@ public interface JCacheEndpointBuilderFactory {
          * The Properties for the javax.cache.spi.CachingProvider to create the
          * CacheManager.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -1275,7 +1275,7 @@ public interface JCacheEndpointBuilderFactory {
          * @return the dsl builder
          */
         default JCacheEndpointBuilder cacheConfigurationProperties(
-                Map cacheConfigurationProperties) {
+                Properties cacheConfigurationProperties) {
             doSetProperty("cacheConfigurationProperties", cacheConfigurationProperties);
             return this;
         }
@@ -1284,7 +1284,7 @@ public interface JCacheEndpointBuilderFactory {
          * CacheManager.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&lt;/code&gt; type.
+         * &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -1506,7 +1506,7 @@ public interface JCacheEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedJCacheEndpointBuilder cacheLoaderFactory(
-                Object cacheLoaderFactory) {
+                javax.cache.configuration.Factory<javax.cache.integration.CacheLoader> cacheLoaderFactory) {
             doSetProperty("cacheLoaderFactory", cacheLoaderFactory);
             return this;
         }
@@ -1538,7 +1538,7 @@ public interface JCacheEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedJCacheEndpointBuilder cacheWriterFactory(
-                Object cacheWriterFactory) {
+                javax.cache.configuration.Factory<javax.cache.integration.CacheWriter> cacheWriterFactory) {
             doSetProperty("cacheWriterFactory", cacheWriterFactory);
             return this;
         }
@@ -1605,7 +1605,7 @@ public interface JCacheEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedJCacheEndpointBuilder expiryPolicyFactory(
-                Object expiryPolicyFactory) {
+                javax.cache.configuration.Factory<javax.cache.expiry.ExpiryPolicy> expiryPolicyFactory) {
             doSetProperty("expiryPolicyFactory", expiryPolicyFactory);
             return this;
         }

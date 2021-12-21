@@ -16,17 +16,15 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
 import java.util.Map;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.PollingConsumerPollStrategy;
 
 /**
  * Exchanges messages with an IBM i system using data queues, message queues, or
@@ -79,7 +77,7 @@ public interface Jt400EndpointBuilderFactory {
          * Sets the data format for sending messages.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.jt400.Jt400Configuration$Format&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.jt400.Jt400Configuration.Format&lt;/code&gt; type.
          * 
          * Default: text
          * Group: common
@@ -87,7 +85,8 @@ public interface Jt400EndpointBuilderFactory {
          * @param format the value to set
          * @return the dsl builder
          */
-        default Jt400EndpointConsumerBuilder format(Format format) {
+        default Jt400EndpointConsumerBuilder format(
+                org.apache.camel.component.jt400.Jt400Configuration.Format format) {
             doSetProperty("format", format);
             return this;
         }
@@ -95,7 +94,7 @@ public interface Jt400EndpointBuilderFactory {
          * Sets the data format for sending messages.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.jt400.Jt400Configuration$Format&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.jt400.Jt400Configuration.Format&lt;/code&gt; type.
          * 
          * Default: text
          * Group: common
@@ -236,7 +235,7 @@ public interface Jt400EndpointBuilderFactory {
          * or neither (SAME).
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.jt400.Jt400Configuration$MessageAction&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.jt400.Jt400Configuration.MessageAction&lt;/code&gt; type.
          * 
          * Default: OLD
          * Group: consumer
@@ -245,7 +244,7 @@ public interface Jt400EndpointBuilderFactory {
          * @return the dsl builder
          */
         default Jt400EndpointConsumerBuilder messageAction(
-                MessageAction messageAction) {
+                org.apache.camel.component.jt400.Jt400Configuration.MessageAction messageAction) {
             doSetProperty("messageAction", messageAction);
             return this;
         }
@@ -255,7 +254,7 @@ public interface Jt400EndpointBuilderFactory {
          * or neither (SAME).
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.jt400.Jt400Configuration$MessageAction&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.jt400.Jt400Configuration.MessageAction&lt;/code&gt; type.
          * 
          * Default: OLD
          * Group: consumer
@@ -303,7 +302,7 @@ public interface Jt400EndpointBuilderFactory {
          * Search type such as EQ for equal etc.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.jt400.Jt400Configuration$SearchType&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.jt400.Jt400Configuration.SearchType&lt;/code&gt; type.
          * 
          * Default: EQ
          * Group: consumer
@@ -311,7 +310,8 @@ public interface Jt400EndpointBuilderFactory {
          * @param searchType the value to set
          * @return the dsl builder
          */
-        default Jt400EndpointConsumerBuilder searchType(SearchType searchType) {
+        default Jt400EndpointConsumerBuilder searchType(
+                org.apache.camel.component.jt400.Jt400Configuration.SearchType searchType) {
             doSetProperty("searchType", searchType);
             return this;
         }
@@ -319,7 +319,7 @@ public interface Jt400EndpointBuilderFactory {
          * Search type such as EQ for equal etc.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.jt400.Jt400Configuration$SearchType&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.jt400.Jt400Configuration.SearchType&lt;/code&gt; type.
          * 
          * Default: EQ
          * Group: consumer
@@ -652,7 +652,7 @@ public interface Jt400EndpointBuilderFactory {
          * @return the dsl builder
          */
         default Jt400EndpointConsumerBuilder runLoggingLevel(
-                LoggingLevel runLoggingLevel) {
+                org.apache.camel.LoggingLevel runLoggingLevel) {
             doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
@@ -939,7 +939,7 @@ public interface Jt400EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedJt400EndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -974,7 +974,7 @@ public interface Jt400EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedJt400EndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -1009,7 +1009,7 @@ public interface Jt400EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedJt400EndpointConsumerBuilder pollStrategy(
-                PollingConsumerPollStrategy pollStrategy) {
+                org.apache.camel.spi.PollingConsumerPollStrategy pollStrategy) {
             doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
@@ -1075,7 +1075,7 @@ public interface Jt400EndpointBuilderFactory {
          * Sets the data format for sending messages.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.jt400.Jt400Configuration$Format&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.jt400.Jt400Configuration.Format&lt;/code&gt; type.
          * 
          * Default: text
          * Group: common
@@ -1083,7 +1083,8 @@ public interface Jt400EndpointBuilderFactory {
          * @param format the value to set
          * @return the dsl builder
          */
-        default Jt400EndpointProducerBuilder format(Format format) {
+        default Jt400EndpointProducerBuilder format(
+                org.apache.camel.component.jt400.Jt400Configuration.Format format) {
             doSetProperty("format", format);
             return this;
         }
@@ -1091,7 +1092,7 @@ public interface Jt400EndpointBuilderFactory {
          * Sets the data format for sending messages.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.jt400.Jt400Configuration$Format&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.jt400.Jt400Configuration.Format&lt;/code&gt; type.
          * 
          * Default: text
          * Group: common
@@ -1394,7 +1395,7 @@ public interface Jt400EndpointBuilderFactory {
          * Sets the data format for sending messages.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.jt400.Jt400Configuration$Format&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.jt400.Jt400Configuration.Format&lt;/code&gt; type.
          * 
          * Default: text
          * Group: common
@@ -1402,7 +1403,8 @@ public interface Jt400EndpointBuilderFactory {
          * @param format the value to set
          * @return the dsl builder
          */
-        default Jt400EndpointBuilder format(Format format) {
+        default Jt400EndpointBuilder format(
+                org.apache.camel.component.jt400.Jt400Configuration.Format format) {
             doSetProperty("format", format);
             return this;
         }
@@ -1410,7 +1412,7 @@ public interface Jt400EndpointBuilderFactory {
          * Sets the data format for sending messages.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.jt400.Jt400Configuration$Format&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.jt400.Jt400Configuration.Format&lt;/code&gt; type.
          * 
          * Default: text
          * Group: common
@@ -1543,39 +1545,6 @@ public interface Jt400EndpointBuilderFactory {
         default Jt400EndpointBuilder basic() {
             return (Jt400EndpointBuilder) this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.jt400.Jt400Configuration$Format</code>
-     * enum.
-     */
-    enum Format {
-        text,
-        binary;
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.jt400.Jt400Configuration$MessageAction</code> enum.
-     */
-    enum MessageAction {
-        OLD,
-        REMOVE,
-        SAME;
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.jt400.Jt400Configuration$SearchType</code> enum.
-     */
-    enum SearchType {
-        EQ,
-        NE,
-        LT,
-        LE,
-        GT,
-        GE;
     }
 
     public interface Jt400Builders {

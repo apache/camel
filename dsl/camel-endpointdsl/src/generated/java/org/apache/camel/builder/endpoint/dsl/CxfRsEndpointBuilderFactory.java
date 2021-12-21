@@ -16,14 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.HeaderFilterStrategy;
 
 /**
  * Expose JAX-RS REST services using Apache CXF or connect to external REST
@@ -55,7 +55,8 @@ public interface CxfRsEndpointBuilderFactory {
          * @param features the value to set
          * @return the dsl builder
          */
-        default CxfRsEndpointConsumerBuilder features(List<Object> features) {
+        default CxfRsEndpointConsumerBuilder features(
+                List<org.apache.cxf.feature.Feature> features) {
             doSetProperty("features", features);
             return this;
         }
@@ -162,25 +163,7 @@ public interface CxfRsEndpointBuilderFactory {
          * specify a string with a list of providers to lookup in the registy
          * separated by comma.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param providers the value to set
-         * @return the dsl builder
-         */
-        default CxfRsEndpointConsumerBuilder providers(List<Object> providers) {
-            doSetProperty("providers", providers);
-            return this;
-        }
-        /**
-         * Set custom JAX-RS provider(s) list to the CxfRs endpoint. You can
-         * specify a string with a list of providers to lookup in the registy
-         * separated by comma.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -204,7 +187,7 @@ public interface CxfRsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default CxfRsEndpointConsumerBuilder resourceClasses(
-                List<Class<Object>> resourceClasses) {
+                List<java.lang.Class<java.lang.Object>> resourceClasses) {
             doSetProperty("resourceClasses", resourceClasses);
             return this;
         }
@@ -238,7 +221,7 @@ public interface CxfRsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default CxfRsEndpointConsumerBuilder schemaLocations(
-                List<String> schemaLocations) {
+                List<java.lang.String> schemaLocations) {
             doSetProperty("schemaLocations", schemaLocations);
             return this;
         }
@@ -321,7 +304,7 @@ public interface CxfRsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default CxfRsEndpointConsumerBuilder bindingStyle(
-                BindingStyle bindingStyle) {
+                org.apache.camel.component.cxf.jaxrs.BindingStyle bindingStyle) {
             doSetProperty("bindingStyle", bindingStyle);
             return this;
         }
@@ -442,7 +425,7 @@ public interface CxfRsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedCxfRsEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -477,7 +460,7 @@ public interface CxfRsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedCxfRsEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -502,26 +485,7 @@ public interface CxfRsEndpointBuilderFactory {
          * want to export as REST service. Multiple beans can be separated by
          * comma.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param serviceBeans the value to set
-         * @return the dsl builder
-         */
-        default AdvancedCxfRsEndpointConsumerBuilder serviceBeans(
-                List<Object> serviceBeans) {
-            doSetProperty("serviceBeans", serviceBeans);
-            return this;
-        }
-        /**
-         * The service beans (the bean ids to lookup in the registry) which you
-         * want to export as REST service. Multiple beans can be separated by
-         * comma.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
          * 
@@ -545,7 +509,8 @@ public interface CxfRsEndpointBuilderFactory {
          * @param binding the value to set
          * @return the dsl builder
          */
-        default AdvancedCxfRsEndpointConsumerBuilder binding(Object binding) {
+        default AdvancedCxfRsEndpointConsumerBuilder binding(
+                org.apache.camel.component.cxf.jaxrs.CxfRsBinding binding) {
             doSetProperty("binding", binding);
             return this;
         }
@@ -575,7 +540,7 @@ public interface CxfRsEndpointBuilderFactory {
          * @param bus the value to set
          * @return the dsl builder
          */
-        default AdvancedCxfRsEndpointConsumerBuilder bus(Object bus) {
+        default AdvancedCxfRsEndpointConsumerBuilder bus(org.apache.cxf.Bus bus) {
             doSetProperty("bus", bus);
             return this;
         }
@@ -646,7 +611,7 @@ public interface CxfRsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedCxfRsEndpointConsumerBuilder cxfRsConfigurer(
-                Object cxfRsConfigurer) {
+                org.apache.camel.component.cxf.jaxrs.CxfRsConfigurer cxfRsConfigurer) {
             doSetProperty("cxfRsConfigurer", cxfRsConfigurer);
             return this;
         }
@@ -717,7 +682,7 @@ public interface CxfRsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedCxfRsEndpointConsumerBuilder headerFilterStrategy(
-                HeaderFilterStrategy headerFilterStrategy) {
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
@@ -837,7 +802,8 @@ public interface CxfRsEndpointBuilderFactory {
          * @param features the value to set
          * @return the dsl builder
          */
-        default CxfRsEndpointProducerBuilder features(List<Object> features) {
+        default CxfRsEndpointProducerBuilder features(
+                List<org.apache.cxf.feature.Feature> features) {
             doSetProperty("features", features);
             return this;
         }
@@ -944,25 +910,7 @@ public interface CxfRsEndpointBuilderFactory {
          * specify a string with a list of providers to lookup in the registy
          * separated by comma.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param providers the value to set
-         * @return the dsl builder
-         */
-        default CxfRsEndpointProducerBuilder providers(List<Object> providers) {
-            doSetProperty("providers", providers);
-            return this;
-        }
-        /**
-         * Set custom JAX-RS provider(s) list to the CxfRs endpoint. You can
-         * specify a string with a list of providers to lookup in the registy
-         * separated by comma.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -986,7 +934,7 @@ public interface CxfRsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default CxfRsEndpointProducerBuilder resourceClasses(
-                List<Class<Object>> resourceClasses) {
+                List<java.lang.Class<java.lang.Object>> resourceClasses) {
             doSetProperty("resourceClasses", resourceClasses);
             return this;
         }
@@ -1020,7 +968,7 @@ public interface CxfRsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default CxfRsEndpointProducerBuilder schemaLocations(
-                List<String> schemaLocations) {
+                List<java.lang.String> schemaLocations) {
             doSetProperty("schemaLocations", schemaLocations);
             return this;
         }
@@ -1087,7 +1035,8 @@ public interface CxfRsEndpointBuilderFactory {
          * @param cookieHandler the value to set
          * @return the dsl builder
          */
-        default CxfRsEndpointProducerBuilder cookieHandler(Object cookieHandler) {
+        default CxfRsEndpointProducerBuilder cookieHandler(
+                org.apache.camel.http.base.cookie.CookieHandler cookieHandler) {
             doSetProperty("cookieHandler", cookieHandler);
             return this;
         }
@@ -1119,7 +1068,7 @@ public interface CxfRsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default CxfRsEndpointProducerBuilder hostnameVerifier(
-                Object hostnameVerifier) {
+                javax.net.ssl.HostnameVerifier hostnameVerifier) {
             doSetProperty("hostnameVerifier", hostnameVerifier);
             return this;
         }
@@ -1202,7 +1151,7 @@ public interface CxfRsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default CxfRsEndpointProducerBuilder sslContextParameters(
-                Object sslContextParameters) {
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
@@ -1422,7 +1371,8 @@ public interface CxfRsEndpointBuilderFactory {
          * @param binding the value to set
          * @return the dsl builder
          */
-        default AdvancedCxfRsEndpointProducerBuilder binding(Object binding) {
+        default AdvancedCxfRsEndpointProducerBuilder binding(
+                org.apache.camel.component.cxf.jaxrs.CxfRsBinding binding) {
             doSetProperty("binding", binding);
             return this;
         }
@@ -1452,7 +1402,7 @@ public interface CxfRsEndpointBuilderFactory {
          * @param bus the value to set
          * @return the dsl builder
          */
-        default AdvancedCxfRsEndpointProducerBuilder bus(Object bus) {
+        default AdvancedCxfRsEndpointProducerBuilder bus(org.apache.cxf.Bus bus) {
             doSetProperty("bus", bus);
             return this;
         }
@@ -1523,7 +1473,7 @@ public interface CxfRsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedCxfRsEndpointProducerBuilder cxfRsConfigurer(
-                Object cxfRsConfigurer) {
+                org.apache.camel.component.cxf.jaxrs.CxfRsConfigurer cxfRsConfigurer) {
             doSetProperty("cxfRsConfigurer", cxfRsConfigurer);
             return this;
         }
@@ -1594,7 +1544,7 @@ public interface CxfRsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedCxfRsEndpointProducerBuilder headerFilterStrategy(
-                HeaderFilterStrategy headerFilterStrategy) {
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
@@ -1715,7 +1665,8 @@ public interface CxfRsEndpointBuilderFactory {
          * @param features the value to set
          * @return the dsl builder
          */
-        default CxfRsEndpointBuilder features(List<Object> features) {
+        default CxfRsEndpointBuilder features(
+                List<org.apache.cxf.feature.Feature> features) {
             doSetProperty("features", features);
             return this;
         }
@@ -1820,25 +1771,7 @@ public interface CxfRsEndpointBuilderFactory {
          * specify a string with a list of providers to lookup in the registy
          * separated by comma.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param providers the value to set
-         * @return the dsl builder
-         */
-        default CxfRsEndpointBuilder providers(List<Object> providers) {
-            doSetProperty("providers", providers);
-            return this;
-        }
-        /**
-         * Set custom JAX-RS provider(s) list to the CxfRs endpoint. You can
-         * specify a string with a list of providers to lookup in the registy
-         * separated by comma.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -1862,7 +1795,7 @@ public interface CxfRsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default CxfRsEndpointBuilder resourceClasses(
-                List<Class<Object>> resourceClasses) {
+                List<java.lang.Class<java.lang.Object>> resourceClasses) {
             doSetProperty("resourceClasses", resourceClasses);
             return this;
         }
@@ -1895,7 +1828,7 @@ public interface CxfRsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default CxfRsEndpointBuilder schemaLocations(
-                List<String> schemaLocations) {
+                List<java.lang.String> schemaLocations) {
             doSetProperty("schemaLocations", schemaLocations);
             return this;
         }
@@ -1972,7 +1905,8 @@ public interface CxfRsEndpointBuilderFactory {
          * @param binding the value to set
          * @return the dsl builder
          */
-        default AdvancedCxfRsEndpointBuilder binding(Object binding) {
+        default AdvancedCxfRsEndpointBuilder binding(
+                org.apache.camel.component.cxf.jaxrs.CxfRsBinding binding) {
             doSetProperty("binding", binding);
             return this;
         }
@@ -2002,7 +1936,7 @@ public interface CxfRsEndpointBuilderFactory {
          * @param bus the value to set
          * @return the dsl builder
          */
-        default AdvancedCxfRsEndpointBuilder bus(Object bus) {
+        default AdvancedCxfRsEndpointBuilder bus(org.apache.cxf.Bus bus) {
             doSetProperty("bus", bus);
             return this;
         }
@@ -2073,7 +2007,7 @@ public interface CxfRsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedCxfRsEndpointBuilder cxfRsConfigurer(
-                Object cxfRsConfigurer) {
+                org.apache.camel.component.cxf.jaxrs.CxfRsConfigurer cxfRsConfigurer) {
             doSetProperty("cxfRsConfigurer", cxfRsConfigurer);
             return this;
         }
@@ -2142,7 +2076,7 @@ public interface CxfRsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedCxfRsEndpointBuilder headerFilterStrategy(
-                HeaderFilterStrategy headerFilterStrategy) {
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
@@ -2240,16 +2174,6 @@ public interface CxfRsEndpointBuilderFactory {
             doSetProperty("propagateContexts", propagateContexts);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.cxf.jaxrs.BindingStyle</code> enum.
-     */
-    enum BindingStyle {
-        SimpleConsumer,
-        Default,
-        Custom;
     }
 
     public interface CxfRsBuilders {

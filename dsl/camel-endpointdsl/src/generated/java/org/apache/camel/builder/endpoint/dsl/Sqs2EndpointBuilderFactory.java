@@ -16,18 +16,15 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
 import java.util.Map;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.HeaderFilterStrategy;
-import org.apache.camel.spi.PollingConsumerPollStrategy;
 
 /**
  * Send and receive messages to/from AWS SQS service using AWS SDK version 2.x.
@@ -75,7 +72,7 @@ public interface Sqs2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder amazonSQSClient(
-                Object amazonSQSClient) {
+                software.amazon.awssdk.services.sqs.SqsClient amazonSQSClient) {
             doSetProperty("amazonSQSClient", amazonSQSClient);
             return this;
         }
@@ -141,7 +138,7 @@ public interface Sqs2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder headerFilterStrategy(
-                HeaderFilterStrategy headerFilterStrategy) {
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
@@ -224,7 +221,8 @@ public interface Sqs2EndpointBuilderFactory {
          * @param proxyProtocol the value to set
          * @return the dsl builder
          */
-        default Sqs2EndpointConsumerBuilder proxyProtocol(Protocol proxyProtocol) {
+        default Sqs2EndpointConsumerBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
@@ -1261,7 +1259,7 @@ public interface Sqs2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder runLoggingLevel(
-                LoggingLevel runLoggingLevel) {
+                org.apache.camel.LoggingLevel runLoggingLevel) {
             doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
@@ -1545,7 +1543,7 @@ public interface Sqs2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSqs2EndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -1580,7 +1578,7 @@ public interface Sqs2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSqs2EndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -1615,7 +1613,7 @@ public interface Sqs2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSqs2EndpointConsumerBuilder pollStrategy(
-                PollingConsumerPollStrategy pollStrategy) {
+                org.apache.camel.spi.PollingConsumerPollStrategy pollStrategy) {
             doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
@@ -1728,7 +1726,7 @@ public interface Sqs2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default Sqs2EndpointProducerBuilder amazonSQSClient(
-                Object amazonSQSClient) {
+                software.amazon.awssdk.services.sqs.SqsClient amazonSQSClient) {
             doSetProperty("amazonSQSClient", amazonSQSClient);
             return this;
         }
@@ -1794,7 +1792,7 @@ public interface Sqs2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default Sqs2EndpointProducerBuilder headerFilterStrategy(
-                HeaderFilterStrategy headerFilterStrategy) {
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
@@ -1877,7 +1875,8 @@ public interface Sqs2EndpointBuilderFactory {
          * @param proxyProtocol the value to set
          * @return the dsl builder
          */
-        default Sqs2EndpointProducerBuilder proxyProtocol(Protocol proxyProtocol) {
+        default Sqs2EndpointProducerBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
@@ -2116,28 +2115,7 @@ public interface Sqs2EndpointBuilderFactory {
          * useContentBasedDeduplication. For the useContentBasedDeduplication
          * option, no messageDeduplicationId will be set on the message.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.aws2.sqs.MessageDeduplicationIdStrategy&lt;/code&gt; type.
-         * 
-         * Default: useExchangeId
-         * Group: producer
-         * 
-         * @param messageDeduplicationIdStrategy the value to set
-         * @return the dsl builder
-         */
-        default Sqs2EndpointProducerBuilder messageDeduplicationIdStrategy(
-                Object messageDeduplicationIdStrategy) {
-            doSetProperty("messageDeduplicationIdStrategy", messageDeduplicationIdStrategy);
-            return this;
-        }
-        /**
-         * Only for FIFO queues. Strategy for setting the messageDeduplicationId
-         * on the message. Can be one of the following options: useExchangeId,
-         * useContentBasedDeduplication. For the useContentBasedDeduplication
-         * option, no messageDeduplicationId will be set on the message.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.aws2.sqs.MessageDeduplicationIdStrategy&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: useExchangeId
          * Group: producer
@@ -2156,27 +2134,7 @@ public interface Sqs2EndpointBuilderFactory {
          * useExchangeId, usePropertyValue. For the usePropertyValue option, the
          * value of property CamelAwsMessageGroupId will be used.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.aws2.sqs.MessageGroupIdStrategy&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param messageGroupIdStrategy the value to set
-         * @return the dsl builder
-         */
-        default Sqs2EndpointProducerBuilder messageGroupIdStrategy(
-                Object messageGroupIdStrategy) {
-            doSetProperty("messageGroupIdStrategy", messageGroupIdStrategy);
-            return this;
-        }
-        /**
-         * Only for FIFO queues. Strategy for setting the messageGroupId on the
-         * message. Can be one of the following options: useConstant,
-         * useExchangeId, usePropertyValue. For the usePropertyValue option, the
-         * value of property CamelAwsMessageGroupId will be used.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.aws2.sqs.MessageGroupIdStrategy&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
          * 
@@ -2200,7 +2158,8 @@ public interface Sqs2EndpointBuilderFactory {
          * @param operation the value to set
          * @return the dsl builder
          */
-        default Sqs2EndpointProducerBuilder operation(Sqs2Operations operation) {
+        default Sqs2EndpointProducerBuilder operation(
+                org.apache.camel.component.aws2.sqs.Sqs2Operations operation) {
             doSetProperty("operation", operation);
             return this;
         }
@@ -2524,7 +2483,8 @@ public interface Sqs2EndpointBuilderFactory {
          * @param amazonSQSClient the value to set
          * @return the dsl builder
          */
-        default Sqs2EndpointBuilder amazonSQSClient(Object amazonSQSClient) {
+        default Sqs2EndpointBuilder amazonSQSClient(
+                software.amazon.awssdk.services.sqs.SqsClient amazonSQSClient) {
             doSetProperty("amazonSQSClient", amazonSQSClient);
             return this;
         }
@@ -2587,7 +2547,7 @@ public interface Sqs2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default Sqs2EndpointBuilder headerFilterStrategy(
-                HeaderFilterStrategy headerFilterStrategy) {
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
@@ -2668,7 +2628,8 @@ public interface Sqs2EndpointBuilderFactory {
          * @param proxyProtocol the value to set
          * @return the dsl builder
          */
-        default Sqs2EndpointBuilder proxyProtocol(Protocol proxyProtocol) {
+        default Sqs2EndpointBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
@@ -3072,26 +3033,6 @@ public interface Sqs2EndpointBuilderFactory {
             doSetProperty("queueUrl", queueUrl);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for <code>software.amazon.awssdk.core.Protocol</code> enum.
-     */
-    enum Protocol {
-        HTTP,
-        HTTPS;
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.aws2.sqs.Sqs2Operations</code> enum.
-     */
-    enum Sqs2Operations {
-        sendBatchMessage,
-        deleteMessage,
-        listQueues,
-        purgeQueue,
-        deleteQueue;
     }
 
     public interface Sqs2Builders {

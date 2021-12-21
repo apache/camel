@@ -16,13 +16,15 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
 import java.util.Map;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Send and receive messages from RabbitMQ using Spring RabbitMQ client.
@@ -55,7 +57,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SpringRabbitMQEndpointConsumerBuilder connectionFactory(
-                Object connectionFactory) {
+                org.springframework.amqp.rabbit.connection.ConnectionFactory connectionFactory) {
             doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
@@ -207,7 +209,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SpringRabbitMQEndpointConsumerBuilder acknowledgeMode(
-                AcknowledgeMode acknowledgeMode) {
+                org.springframework.amqp.core.AcknowledgeMode acknowledgeMode) {
             doSetProperty("acknowledgeMode", acknowledgeMode);
             return this;
         }
@@ -674,7 +676,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
         /**
          * The number of consumers.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
          * 
@@ -682,14 +684,15 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSpringRabbitMQEndpointConsumerBuilder concurrentConsumers(
-                int concurrentConsumers) {
+                Integer concurrentConsumers) {
             doSetProperty("concurrentConsumers", concurrentConsumers);
             return this;
         }
         /**
          * The number of consumers.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
          * 
@@ -716,7 +719,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSpringRabbitMQEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -751,7 +754,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSpringRabbitMQEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -822,7 +825,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * Tell the broker how many messages to send in a single request. Often
          * this can be set quite high to improve throughput.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
          * 
@@ -830,7 +833,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSpringRabbitMQEndpointConsumerBuilder prefetchCount(
-                int prefetchCount) {
+                Integer prefetchCount) {
             doSetProperty("prefetchCount", prefetchCount);
             return this;
         }
@@ -838,7 +841,8 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * Tell the broker how many messages to send in a single request. Often
          * this can be set quite high to improve throughput.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
          * 
@@ -862,7 +866,8 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * @param retry the value to set
          * @return the dsl builder
          */
-        default AdvancedSpringRabbitMQEndpointConsumerBuilder retry(Object retry) {
+        default AdvancedSpringRabbitMQEndpointConsumerBuilder retry(
+                org.springframework.retry.interceptor.RetryOperationsInterceptor retry) {
             doSetProperty("retry", retry);
             return this;
         }
@@ -942,7 +947,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSpringRabbitMQEndpointConsumerBuilder messageConverter(
-                Object messageConverter) {
+                org.springframework.amqp.support.converter.MessageConverter messageConverter) {
             doSetProperty("messageConverter", messageConverter);
             return this;
         }
@@ -976,7 +981,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSpringRabbitMQEndpointConsumerBuilder messagePropertiesConverter(
-                Object messagePropertiesConverter) {
+                org.apache.camel.component.springrabbit.MessagePropertiesConverter messagePropertiesConverter) {
             doSetProperty("messagePropertiesConverter", messagePropertiesConverter);
             return this;
         }
@@ -1054,7 +1059,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SpringRabbitMQEndpointProducerBuilder connectionFactory(
-                Object connectionFactory) {
+                org.springframework.amqp.rabbit.connection.ConnectionFactory connectionFactory) {
             doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
@@ -1370,7 +1375,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSpringRabbitMQEndpointProducerBuilder messageConverter(
-                Object messageConverter) {
+                org.springframework.amqp.support.converter.MessageConverter messageConverter) {
             doSetProperty("messageConverter", messageConverter);
             return this;
         }
@@ -1404,7 +1409,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSpringRabbitMQEndpointProducerBuilder messagePropertiesConverter(
-                Object messagePropertiesConverter) {
+                org.apache.camel.component.springrabbit.MessagePropertiesConverter messagePropertiesConverter) {
             doSetProperty("messagePropertiesConverter", messagePropertiesConverter);
             return this;
         }
@@ -1483,7 +1488,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SpringRabbitMQEndpointBuilder connectionFactory(
-                Object connectionFactory) {
+                org.springframework.amqp.rabbit.connection.ConnectionFactory connectionFactory) {
             doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
@@ -1680,7 +1685,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSpringRabbitMQEndpointBuilder messageConverter(
-                Object messageConverter) {
+                org.springframework.amqp.support.converter.MessageConverter messageConverter) {
             doSetProperty("messageConverter", messageConverter);
             return this;
         }
@@ -1714,7 +1719,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSpringRabbitMQEndpointBuilder messagePropertiesConverter(
-                Object messagePropertiesConverter) {
+                org.apache.camel.component.springrabbit.MessagePropertiesConverter messagePropertiesConverter) {
             doSetProperty("messagePropertiesConverter", messagePropertiesConverter);
             return this;
         }
@@ -1768,16 +1773,6 @@ public interface SpringRabbitMQEndpointBuilderFactory {
             doSetProperty("synchronous", synchronous);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for <code>org.springframework.amqp.core.AcknowledgeMode</code>
-     * enum.
-     */
-    enum AcknowledgeMode {
-        NONE,
-        MANUAL,
-        AUTO;
     }
 
     public interface SpringRabbitMQBuilders {

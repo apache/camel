@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -74,7 +78,7 @@ public interface PrinterEndpointBuilderFactory {
          * @param docFlavor the value to set
          * @return the dsl builder
          */
-        default PrinterEndpointBuilder docFlavor(Object docFlavor) {
+        default PrinterEndpointBuilder docFlavor(javax.print.DocFlavor docFlavor) {
             doSetProperty("docFlavor", docFlavor);
             return this;
         }

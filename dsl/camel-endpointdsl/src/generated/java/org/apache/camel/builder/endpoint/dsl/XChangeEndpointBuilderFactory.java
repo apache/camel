@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -45,7 +49,8 @@ public interface XChangeEndpointBuilderFactory {
          * @param currency the value to set
          * @return the dsl builder
          */
-        default XChangeEndpointBuilder currency(Object currency) {
+        default XChangeEndpointBuilder currency(
+                org.knowm.xchange.currency.Currency currency) {
             doSetProperty("currency", currency);
             return this;
         }
@@ -131,7 +136,7 @@ public interface XChangeEndpointBuilderFactory {
          * The method to execute.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.xchange.XChangeConfiguration$XChangeMethod&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.xchange.XChangeConfiguration.XChangeMethod&lt;/code&gt; type.
          * 
          * Required: true
          * Group: producer
@@ -139,7 +144,8 @@ public interface XChangeEndpointBuilderFactory {
          * @param method the value to set
          * @return the dsl builder
          */
-        default XChangeEndpointBuilder method(XChangeMethod method) {
+        default XChangeEndpointBuilder method(
+                org.apache.camel.component.xchange.XChangeConfiguration.XChangeMethod method) {
             doSetProperty("method", method);
             return this;
         }
@@ -147,7 +153,7 @@ public interface XChangeEndpointBuilderFactory {
          * The method to execute.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.xchange.XChangeConfiguration$XChangeMethod&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.xchange.XChangeConfiguration.XChangeMethod&lt;/code&gt; type.
          * 
          * Required: true
          * Group: producer
@@ -163,7 +169,7 @@ public interface XChangeEndpointBuilderFactory {
          * The service to call.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.xchange.XChangeConfiguration$XChangeService&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.xchange.XChangeConfiguration.XChangeService&lt;/code&gt; type.
          * 
          * Required: true
          * Group: producer
@@ -171,7 +177,8 @@ public interface XChangeEndpointBuilderFactory {
          * @param service the value to set
          * @return the dsl builder
          */
-        default XChangeEndpointBuilder service(XChangeService service) {
+        default XChangeEndpointBuilder service(
+                org.apache.camel.component.xchange.XChangeConfiguration.XChangeService service) {
             doSetProperty("service", service);
             return this;
         }
@@ -179,7 +186,7 @@ public interface XChangeEndpointBuilderFactory {
          * The service to call.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.xchange.XChangeConfiguration$XChangeService&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.xchange.XChangeConfiguration.XChangeService&lt;/code&gt; type.
          * 
          * Required: true
          * Group: producer
@@ -191,31 +198,6 @@ public interface XChangeEndpointBuilderFactory {
             doSetProperty("service", service);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.xchange.XChangeConfiguration$XChangeMethod</code> enum.
-     */
-    enum XChangeMethod {
-        balances,
-        fundingHistory,
-        wallets,
-        currencies,
-        currencyMetaData,
-        currencyPairs,
-        currencyPairMetaData,
-        ticker;
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.xchange.XChangeConfiguration$XChangeService</code> enum.
-     */
-    enum XChangeService {
-        marketdata,
-        metadata,
-        account;
     }
 
     public interface XChangeBuilders {

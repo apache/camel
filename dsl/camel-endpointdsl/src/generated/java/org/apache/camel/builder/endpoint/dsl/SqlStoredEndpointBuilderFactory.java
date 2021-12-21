@@ -16,7 +16,11 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
 import java.util.Map;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -79,7 +83,8 @@ public interface SqlStoredEndpointBuilderFactory {
          * @param dataSource the value to set
          * @return the dsl builder
          */
-        default SqlStoredEndpointBuilder dataSource(Object dataSource) {
+        default SqlStoredEndpointBuilder dataSource(
+                javax.sql.DataSource dataSource) {
             doSetProperty("dataSource", dataSource);
             return this;
         }

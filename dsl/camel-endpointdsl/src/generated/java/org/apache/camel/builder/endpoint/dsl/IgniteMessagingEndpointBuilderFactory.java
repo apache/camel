@@ -16,12 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Send and receive messages from an Ignite topic.
@@ -183,7 +185,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedIgniteMessagingEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -218,7 +220,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedIgniteMessagingEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -331,7 +333,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * @return the dsl builder
          */
         default IgniteMessagingEndpointProducerBuilder clusterGroupExpression(
-                Object clusterGroupExpression) {
+                org.apache.camel.component.ignite.ClusterGroupExpression clusterGroupExpression) {
             doSetProperty("clusterGroupExpression", clusterGroupExpression);
             return this;
         }
@@ -413,7 +415,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * @return the dsl builder
          */
         default IgniteMessagingEndpointProducerBuilder sendMode(
-                IgniteMessagingSendMode sendMode) {
+                org.apache.camel.component.ignite.messaging.IgniteMessagingSendMode sendMode) {
             doSetProperty("sendMode", sendMode);
             return this;
         }
@@ -568,15 +570,6 @@ public interface IgniteMessagingEndpointBuilderFactory {
         default IgniteMessagingEndpointBuilder basic() {
             return (IgniteMessagingEndpointBuilder) this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.ignite.messaging.IgniteMessagingSendMode</code> enum.
-     */
-    enum IgniteMessagingSendMode {
-        ORDERED,
-        UNORDERED;
     }
 
     public interface IgniteMessagingBuilders {

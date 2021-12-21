@@ -16,12 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Access NoSQL databases using the Apache Gora framework.
@@ -228,7 +230,8 @@ public interface GoraEndpointBuilderFactory {
          * @param fields the value to set
          * @return the dsl builder
          */
-        default GoraEndpointConsumerBuilder fields(Object fields) {
+        default GoraEndpointConsumerBuilder fields(
+                com.google.common.base.Strings fields) {
             doSetProperty("fields", fields);
             return this;
         }
@@ -500,7 +503,7 @@ public interface GoraEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedGoraEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -535,7 +538,7 @@ public interface GoraEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedGoraEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -567,7 +570,7 @@ public interface GoraEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedGoraEndpointConsumerBuilder hadoopConfiguration(
-                Object hadoopConfiguration) {
+                org.apache.hadoop.conf.Configuration hadoopConfiguration) {
             doSetProperty("hadoopConfiguration", hadoopConfiguration);
             return this;
         }
@@ -745,7 +748,7 @@ public interface GoraEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedGoraEndpointProducerBuilder hadoopConfiguration(
-                Object hadoopConfiguration) {
+                org.apache.hadoop.conf.Configuration hadoopConfiguration) {
             doSetProperty("hadoopConfiguration", hadoopConfiguration);
             return this;
         }
@@ -843,7 +846,7 @@ public interface GoraEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedGoraEndpointBuilder hadoopConfiguration(
-                Object hadoopConfiguration) {
+                org.apache.hadoop.conf.Configuration hadoopConfiguration) {
             doSetProperty("hadoopConfiguration", hadoopConfiguration);
             return this;
         }

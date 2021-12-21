@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -63,7 +67,7 @@ public interface Athena2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default Athena2EndpointBuilder amazonAthenaClient(
-                Object amazonAthenaClient) {
+                software.amazon.awssdk.services.athena.AthenaClient amazonAthenaClient) {
             doSetProperty("amazonAthenaClient", amazonAthenaClient);
             return this;
         }
@@ -144,7 +148,7 @@ public interface Athena2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default Athena2EndpointBuilder encryptionOption(
-                EncryptionOption encryptionOption) {
+                software.amazon.awssdk.services.athena.model.EncryptionOption encryptionOption) {
             doSetProperty("encryptionOption", encryptionOption);
             return this;
         }
@@ -388,7 +392,8 @@ public interface Athena2EndpointBuilderFactory {
          * @param operation the value to set
          * @return the dsl builder
          */
-        default Athena2EndpointBuilder operation(Athena2Operations operation) {
+        default Athena2EndpointBuilder operation(
+                org.apache.camel.component.aws2.athena.Athena2Operations operation) {
             doSetProperty("operation", operation);
             return this;
         }
@@ -440,7 +445,8 @@ public interface Athena2EndpointBuilderFactory {
          * @param outputType the value to set
          * @return the dsl builder
          */
-        default Athena2EndpointBuilder outputType(Athena2OutputType outputType) {
+        default Athena2EndpointBuilder outputType(
+                org.apache.camel.component.aws2.athena.Athena2OutputType outputType) {
             doSetProperty("outputType", outputType);
             return this;
         }
@@ -519,7 +525,8 @@ public interface Athena2EndpointBuilderFactory {
          * @param proxyProtocol the value to set
          * @return the dsl builder
          */
-        default Athena2EndpointBuilder proxyProtocol(Protocol proxyProtocol) {
+        default Athena2EndpointBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
@@ -774,48 +781,6 @@ public interface Athena2EndpointBuilderFactory {
             doSetProperty("clientRequestToken", clientRequestToken);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>software.amazon.awssdk.services.athena.model.EncryptionOption</code> enum.
-     */
-    enum EncryptionOption {
-        SSE_S3,
-        SSE_KMS,
-        CSE_KMS,
-        UNKNOWN_TO_SDK_VERSION;
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.aws2.athena.Athena2Operations</code>
-     * enum.
-     */
-    enum Athena2Operations {
-        getQueryExecution,
-        getQueryResults,
-        listQueryExecutions,
-        startQueryExecution;
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.aws2.athena.Athena2OutputType</code>
-     * enum.
-     */
-    enum Athena2OutputType {
-        StreamList,
-        SelectList,
-        S3Pointer;
-    }
-
-    /**
-     * Proxy enum for <code>software.amazon.awssdk.core.Protocol</code> enum.
-     */
-    enum Protocol {
-        HTTP,
-        HTTPS;
     }
 
     public interface Athena2Builders {

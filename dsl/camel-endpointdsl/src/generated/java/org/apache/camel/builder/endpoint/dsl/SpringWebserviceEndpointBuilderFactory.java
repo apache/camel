@@ -16,13 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.net.URI;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Access external web services as a client or expose your own web services.
@@ -55,7 +56,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SpringWebserviceEndpointConsumerBuilder messageFilter(
-                Object messageFilter) {
+                org.apache.camel.component.spring.ws.filter.MessageFilter messageFilter) {
             doSetProperty("messageFilter", messageFilter);
             return this;
         }
@@ -89,7 +90,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SpringWebserviceEndpointConsumerBuilder messageIdStrategy(
-                Object messageIdStrategy) {
+                org.springframework.ws.soap.addressing.messageid.MessageIdStrategy messageIdStrategy) {
             doSetProperty("messageIdStrategy", messageIdStrategy);
             return this;
         }
@@ -170,7 +171,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SpringWebserviceEndpointConsumerBuilder endpointDispatcher(
-                Object endpointDispatcher) {
+                org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher endpointDispatcher) {
             doSetProperty("endpointDispatcher", endpointDispatcher);
             return this;
         }
@@ -211,7 +212,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SpringWebserviceEndpointConsumerBuilder endpointMapping(
-                Object endpointMapping) {
+                org.apache.camel.component.spring.ws.bean.CamelSpringWSEndpointMapping endpointMapping) {
             doSetProperty("endpointMapping", endpointMapping);
             return this;
         }
@@ -249,7 +250,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SpringWebserviceEndpointConsumerBuilder sslContextParameters(
-                Object sslContextParameters) {
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
@@ -296,7 +297,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSpringWebserviceEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -331,7 +332,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedSpringWebserviceEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -375,7 +376,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SpringWebserviceEndpointProducerBuilder messageFilter(
-                Object messageFilter) {
+                org.apache.camel.component.spring.ws.filter.MessageFilter messageFilter) {
             doSetProperty("messageFilter", messageFilter);
             return this;
         }
@@ -409,7 +410,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SpringWebserviceEndpointProducerBuilder messageIdStrategy(
-                Object messageIdStrategy) {
+                org.springframework.ws.soap.addressing.messageid.MessageIdStrategy messageIdStrategy) {
             doSetProperty("messageIdStrategy", messageIdStrategy);
             return this;
         }
@@ -526,7 +527,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SpringWebserviceEndpointProducerBuilder faultAction(
-                URI faultAction) {
+                java.net.URI faultAction) {
             doSetProperty("faultAction", faultAction);
             return this;
         }
@@ -562,7 +563,8 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * @param faultTo the value to set
          * @return the dsl builder
          */
-        default SpringWebserviceEndpointProducerBuilder faultTo(URI faultTo) {
+        default SpringWebserviceEndpointProducerBuilder faultTo(
+                java.net.URI faultTo) {
             doSetProperty("faultTo", faultTo);
             return this;
         }
@@ -646,7 +648,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SpringWebserviceEndpointProducerBuilder messageFactory(
-                Object messageFactory) {
+                org.springframework.ws.WebServiceMessageFactory messageFactory) {
             doSetProperty("messageFactory", messageFactory);
             return this;
         }
@@ -680,7 +682,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SpringWebserviceEndpointProducerBuilder messageSender(
-                Object messageSender) {
+                org.springframework.ws.transport.WebServiceMessageSender messageSender) {
             doSetProperty("messageSender", messageSender);
             return this;
         }
@@ -715,7 +717,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SpringWebserviceEndpointProducerBuilder outputAction(
-                URI outputAction) {
+                java.net.URI outputAction) {
             doSetProperty("outputAction", outputAction);
             return this;
         }
@@ -751,7 +753,8 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * @param replyTo the value to set
          * @return the dsl builder
          */
-        default SpringWebserviceEndpointProducerBuilder replyTo(URI replyTo) {
+        default SpringWebserviceEndpointProducerBuilder replyTo(
+                java.net.URI replyTo) {
             doSetProperty("replyTo", replyTo);
             return this;
         }
@@ -854,7 +857,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SpringWebserviceEndpointProducerBuilder webServiceTemplate(
-                Object webServiceTemplate) {
+                org.springframework.ws.client.core.WebServiceTemplate webServiceTemplate) {
             doSetProperty("webServiceTemplate", webServiceTemplate);
             return this;
         }
@@ -890,7 +893,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SpringWebserviceEndpointProducerBuilder wsAddressingAction(
-                URI wsAddressingAction) {
+                java.net.URI wsAddressingAction) {
             doSetProperty("wsAddressingAction", wsAddressingAction);
             return this;
         }
@@ -924,7 +927,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SpringWebserviceEndpointProducerBuilder sslContextParameters(
-                Object sslContextParameters) {
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
@@ -981,7 +984,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SpringWebserviceEndpointBuilder messageFilter(
-                Object messageFilter) {
+                org.apache.camel.component.spring.ws.filter.MessageFilter messageFilter) {
             doSetProperty("messageFilter", messageFilter);
             return this;
         }
@@ -1015,7 +1018,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SpringWebserviceEndpointBuilder messageIdStrategy(
-                Object messageIdStrategy) {
+                org.springframework.ws.soap.addressing.messageid.MessageIdStrategy messageIdStrategy) {
             doSetProperty("messageIdStrategy", messageIdStrategy);
             return this;
         }
@@ -1048,7 +1051,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * @return the dsl builder
          */
         default SpringWebserviceEndpointBuilder sslContextParameters(
-                Object sslContextParameters) {
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }

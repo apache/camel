@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -264,7 +268,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedJsonValidatorEndpointBuilder errorHandler(
-                Object errorHandler) {
+                org.apache.camel.component.jsonvalidator.JsonValidatorErrorHandler errorHandler) {
             doSetProperty("errorHandler", errorHandler);
             return this;
         }
@@ -300,7 +304,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedJsonValidatorEndpointBuilder uriSchemaLoader(
-                Object uriSchemaLoader) {
+                org.apache.camel.component.jsonvalidator.JsonUriSchemaLoader uriSchemaLoader) {
             doSetProperty("uriSchemaLoader", uriSchemaLoader);
             return this;
         }

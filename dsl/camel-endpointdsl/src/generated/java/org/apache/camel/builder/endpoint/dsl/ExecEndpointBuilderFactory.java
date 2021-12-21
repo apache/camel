@@ -16,8 +16,11 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
@@ -61,7 +64,8 @@ public interface ExecEndpointBuilderFactory {
          * @param binding the value to set
          * @return the dsl builder
          */
-        default ExecEndpointBuilder binding(Object binding) {
+        default ExecEndpointBuilder binding(
+                org.apache.camel.component.exec.ExecBinding binding) {
             doSetProperty("binding", binding);
             return this;
         }
@@ -95,7 +99,8 @@ public interface ExecEndpointBuilderFactory {
          * @param commandExecutor the value to set
          * @return the dsl builder
          */
-        default ExecEndpointBuilder commandExecutor(Object commandExecutor) {
+        default ExecEndpointBuilder commandExecutor(
+                org.apache.camel.component.exec.ExecCommandExecutor commandExecutor) {
             doSetProperty("commandExecutor", commandExecutor);
             return this;
         }
@@ -131,7 +136,8 @@ public interface ExecEndpointBuilderFactory {
          * @param commandLogLevel the value to set
          * @return the dsl builder
          */
-        default ExecEndpointBuilder commandLogLevel(LoggingLevel commandLogLevel) {
+        default ExecEndpointBuilder commandLogLevel(
+                org.apache.camel.LoggingLevel commandLogLevel) {
             doSetProperty("commandLogLevel", commandLogLevel);
             return this;
         }

@@ -16,12 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Communicate with external systems using the MLLP protocol.
@@ -561,7 +563,7 @@ public interface MllpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedMllpEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -597,7 +599,7 @@ public interface MllpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedMllpEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -1113,7 +1115,7 @@ public interface MllpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedMllpEndpointProducerBuilder idleTimeoutStrategy(
-                MllpIdleTimeoutStrategy idleTimeoutStrategy) {
+                org.apache.camel.component.mllp.MllpIdleTimeoutStrategy idleTimeoutStrategy) {
             doSetProperty("idleTimeoutStrategy", idleTimeoutStrategy);
             return this;
         }
@@ -1756,16 +1758,6 @@ public interface MllpEndpointBuilderFactory {
             doSetProperty("idleTimeout", idleTimeout);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.mllp.MllpIdleTimeoutStrategy</code>
-     * enum.
-     */
-    enum MllpIdleTimeoutStrategy {
-        RESET,
-        CLOSE;
     }
 
     public interface MllpBuilders {

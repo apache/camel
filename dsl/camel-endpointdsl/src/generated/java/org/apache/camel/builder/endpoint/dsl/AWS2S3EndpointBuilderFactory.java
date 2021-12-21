@@ -16,17 +16,15 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
 import java.util.Map;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.PollingConsumerPollStrategy;
 
 /**
  * Store and retrieve objects from AWS S3 Storage Service using AWS SDK version
@@ -60,7 +58,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AWS2S3EndpointConsumerBuilder amazonS3Client(
-                Object amazonS3Client) {
+                software.amazon.awssdk.services.s3.S3Client amazonS3Client) {
             doSetProperty("amazonS3Client", amazonS3Client);
             return this;
         }
@@ -94,7 +92,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AWS2S3EndpointConsumerBuilder amazonS3Presigner(
-                Object amazonS3Presigner) {
+                software.amazon.awssdk.services.s3.presigner.S3Presigner amazonS3Presigner) {
             doSetProperty("amazonS3Presigner", amazonS3Presigner);
             return this;
         }
@@ -289,7 +287,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AWS2S3EndpointConsumerBuilder proxyProtocol(
-                Protocol proxyProtocol) {
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
@@ -1124,7 +1122,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AWS2S3EndpointConsumerBuilder runLoggingLevel(
-                LoggingLevel runLoggingLevel) {
+                org.apache.camel.LoggingLevel runLoggingLevel) {
             doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
@@ -1498,7 +1496,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedAWS2S3EndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -1533,7 +1531,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedAWS2S3EndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -1568,7 +1566,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedAWS2S3EndpointConsumerBuilder pollStrategy(
-                PollingConsumerPollStrategy pollStrategy) {
+                org.apache.camel.spi.PollingConsumerPollStrategy pollStrategy) {
             doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
@@ -1615,7 +1613,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AWS2S3EndpointProducerBuilder amazonS3Client(
-                Object amazonS3Client) {
+                software.amazon.awssdk.services.s3.S3Client amazonS3Client) {
             doSetProperty("amazonS3Client", amazonS3Client);
             return this;
         }
@@ -1649,7 +1647,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AWS2S3EndpointProducerBuilder amazonS3Presigner(
-                Object amazonS3Presigner) {
+                software.amazon.awssdk.services.s3.presigner.S3Presigner amazonS3Presigner) {
             doSetProperty("amazonS3Presigner", amazonS3Presigner);
             return this;
         }
@@ -1844,7 +1842,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AWS2S3EndpointProducerBuilder proxyProtocol(
-                Protocol proxyProtocol) {
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
@@ -2176,7 +2174,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AWS2S3EndpointProducerBuilder namingStrategy(
-                AWSS3NamingStrategyEnum namingStrategy) {
+                org.apache.camel.component.aws2.s3.stream.AWSS3NamingStrategyEnum namingStrategy) {
             doSetProperty("namingStrategy", namingStrategy);
             return this;
         }
@@ -2209,7 +2207,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AWS2S3EndpointProducerBuilder operation(
-                AWS2S3Operations operation) {
+                org.apache.camel.component.aws2.s3.AWS2S3Operations operation) {
             doSetProperty("operation", operation);
             return this;
         }
@@ -2273,7 +2271,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AWS2S3EndpointProducerBuilder restartingPolicy(
-                AWSS3RestartingPolicyEnum restartingPolicy) {
+                org.apache.camel.component.aws2.s3.stream.AWSS3RestartingPolicyEnum restartingPolicy) {
             doSetProperty("restartingPolicy", restartingPolicy);
             return this;
         }
@@ -2565,7 +2563,8 @@ public interface AWS2S3EndpointBuilderFactory {
          * @param amazonS3Client the value to set
          * @return the dsl builder
          */
-        default AWS2S3EndpointBuilder amazonS3Client(Object amazonS3Client) {
+        default AWS2S3EndpointBuilder amazonS3Client(
+                software.amazon.awssdk.services.s3.S3Client amazonS3Client) {
             doSetProperty("amazonS3Client", amazonS3Client);
             return this;
         }
@@ -2597,7 +2596,8 @@ public interface AWS2S3EndpointBuilderFactory {
          * @param amazonS3Presigner the value to set
          * @return the dsl builder
          */
-        default AWS2S3EndpointBuilder amazonS3Presigner(Object amazonS3Presigner) {
+        default AWS2S3EndpointBuilder amazonS3Presigner(
+                software.amazon.awssdk.services.s3.presigner.S3Presigner amazonS3Presigner) {
             doSetProperty("amazonS3Presigner", amazonS3Presigner);
             return this;
         }
@@ -2786,7 +2786,8 @@ public interface AWS2S3EndpointBuilderFactory {
          * @param proxyProtocol the value to set
          * @return the dsl builder
          */
-        default AWS2S3EndpointBuilder proxyProtocol(Protocol proxyProtocol) {
+        default AWS2S3EndpointBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
@@ -2995,47 +2996,6 @@ public interface AWS2S3EndpointBuilderFactory {
             doSetProperty("customerKeyMD5", customerKeyMD5);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for <code>software.amazon.awssdk.core.Protocol</code> enum.
-     */
-    enum Protocol {
-        HTTP,
-        HTTPS;
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.aws2.s3.stream.AWSS3NamingStrategyEnum</code> enum.
-     */
-    enum AWSS3NamingStrategyEnum {
-        progressive,
-        random;
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.aws2.s3.AWS2S3Operations</code> enum.
-     */
-    enum AWS2S3Operations {
-        copyObject,
-        listObjects,
-        deleteObject,
-        deleteBucket,
-        listBuckets,
-        getObject,
-        getObjectRange,
-        createDownloadLink;
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.aws2.s3.stream.AWSS3RestartingPolicyEnum</code> enum.
-     */
-    enum AWSS3RestartingPolicyEnum {
-        override,
-        lastPart;
     }
 
     public interface AWS2S3Builders {

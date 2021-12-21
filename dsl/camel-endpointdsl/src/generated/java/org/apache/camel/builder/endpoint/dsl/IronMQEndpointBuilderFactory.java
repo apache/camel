@@ -16,17 +16,15 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
 import java.util.Map;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.PollingConsumerPollStrategy;
 
 /**
  * Send and receive messages to/from IronMQ an elastic and durable hosted
@@ -57,7 +55,8 @@ public interface IronMQEndpointBuilderFactory {
          * @param client the value to set
          * @return the dsl builder
          */
-        default IronMQEndpointConsumerBuilder client(Object client) {
+        default IronMQEndpointConsumerBuilder client(
+                io.iron.ironmq.Client client) {
             doSetProperty("client", client);
             return this;
         }
@@ -646,7 +645,7 @@ public interface IronMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default IronMQEndpointConsumerBuilder runLoggingLevel(
-                LoggingLevel runLoggingLevel) {
+                org.apache.camel.LoggingLevel runLoggingLevel) {
             doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
@@ -903,7 +902,7 @@ public interface IronMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedIronMQEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -938,7 +937,7 @@ public interface IronMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedIronMQEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -973,7 +972,7 @@ public interface IronMQEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedIronMQEndpointConsumerBuilder pollStrategy(
-                PollingConsumerPollStrategy pollStrategy) {
+                org.apache.camel.spi.PollingConsumerPollStrategy pollStrategy) {
             doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
@@ -1017,7 +1016,8 @@ public interface IronMQEndpointBuilderFactory {
          * @param client the value to set
          * @return the dsl builder
          */
-        default IronMQEndpointProducerBuilder client(Object client) {
+        default IronMQEndpointProducerBuilder client(
+                io.iron.ironmq.Client client) {
             doSetProperty("client", client);
             return this;
         }
@@ -1234,7 +1234,7 @@ public interface IronMQEndpointBuilderFactory {
          * @param client the value to set
          * @return the dsl builder
          */
-        default IronMQEndpointBuilder client(Object client) {
+        default IronMQEndpointBuilder client(io.iron.ironmq.Client client) {
             doSetProperty("client", client);
             return this;
         }

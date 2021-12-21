@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -49,7 +53,7 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
          * @return the dsl builder
          */
         default GoogleBigQuerySQLEndpointBuilder connectionFactory(
-                Object connectionFactory) {
+                org.apache.camel.component.google.bigquery.GoogleBigQueryConnectionFactory connectionFactory) {
             doSetProperty("connectionFactory", connectionFactory);
             return this;
         }

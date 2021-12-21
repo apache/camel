@@ -16,17 +16,15 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
 import java.util.Map;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.PollingConsumerPollStrategy;
 
 /**
  * Store and retrieve Java objects from databases using Java Persistence API
@@ -193,7 +191,8 @@ public interface JpaEndpointBuilderFactory {
          * @param resultClass the value to set
          * @return the dsl builder
          */
-        default JpaEndpointConsumerBuilder resultClass(Class<Object> resultClass) {
+        default JpaEndpointConsumerBuilder resultClass(
+                Class<java.lang.Object> resultClass) {
             doSetProperty("resultClass", resultClass);
             return this;
         }
@@ -341,7 +340,8 @@ public interface JpaEndpointBuilderFactory {
          * @param deleteHandler the value to set
          * @return the dsl builder
          */
-        default JpaEndpointConsumerBuilder deleteHandler(Object deleteHandler) {
+        default JpaEndpointConsumerBuilder deleteHandler(
+                org.apache.camel.component.jpa.DeleteHandler<java.lang.Object> deleteHandler) {
             doSetProperty("deleteHandler", deleteHandler);
             return this;
         }
@@ -374,7 +374,7 @@ public interface JpaEndpointBuilderFactory {
          * @return the dsl builder
          */
         default JpaEndpointConsumerBuilder lockModeType(
-                LockModeType lockModeType) {
+                javax.persistence.LockModeType lockModeType) {
             doSetProperty("lockModeType", lockModeType);
             return this;
         }
@@ -443,7 +443,7 @@ public interface JpaEndpointBuilderFactory {
          * @return the dsl builder
          */
         default JpaEndpointConsumerBuilder preDeleteHandler(
-                Object preDeleteHandler) {
+                org.apache.camel.component.jpa.DeleteHandler<java.lang.Object> preDeleteHandler) {
             doSetProperty("preDeleteHandler", preDeleteHandler);
             return this;
         }
@@ -818,7 +818,7 @@ public interface JpaEndpointBuilderFactory {
          * @return the dsl builder
          */
         default JpaEndpointConsumerBuilder runLoggingLevel(
-                LoggingLevel runLoggingLevel) {
+                org.apache.camel.LoggingLevel runLoggingLevel) {
             doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
@@ -1072,7 +1072,7 @@ public interface JpaEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedJpaEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
             doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
@@ -1107,7 +1107,7 @@ public interface JpaEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedJpaEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
+                org.apache.camel.ExchangePattern exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
@@ -1193,7 +1193,7 @@ public interface JpaEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedJpaEndpointConsumerBuilder pollStrategy(
-                PollingConsumerPollStrategy pollStrategy) {
+                org.apache.camel.spi.PollingConsumerPollStrategy pollStrategy) {
             doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
@@ -1450,7 +1450,8 @@ public interface JpaEndpointBuilderFactory {
          * @param resultClass the value to set
          * @return the dsl builder
          */
-        default JpaEndpointProducerBuilder resultClass(Class<Object> resultClass) {
+        default JpaEndpointProducerBuilder resultClass(
+                Class<java.lang.Object> resultClass) {
             doSetProperty("resultClass", resultClass);
             return this;
         }
@@ -1973,7 +1974,8 @@ public interface JpaEndpointBuilderFactory {
          * @param resultClass the value to set
          * @return the dsl builder
          */
-        default JpaEndpointBuilder resultClass(Class<Object> resultClass) {
+        default JpaEndpointBuilder resultClass(
+                Class<java.lang.Object> resultClass) {
             doSetProperty("resultClass", resultClass);
             return this;
         }
@@ -2084,20 +2086,6 @@ public interface JpaEndpointBuilderFactory {
             doSetProperty("sharedEntityManager", sharedEntityManager);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for <code>javax.persistence.LockModeType</code> enum.
-     */
-    enum LockModeType {
-        READ,
-        WRITE,
-        OPTIMISTIC,
-        OPTIMISTIC_FORCE_INCREMENT,
-        PESSIMISTIC_READ,
-        PESSIMISTIC_WRITE,
-        PESSIMISTIC_FORCE_INCREMENT,
-        NONE;
     }
 
     public interface JpaBuilders {

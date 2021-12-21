@@ -16,8 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -110,7 +112,7 @@ public interface XmlSignerEndpointBuilderFactory {
          * @return the dsl builder
          */
         default XmlSignerEndpointBuilder canonicalizationMethod(
-                Object canonicalizationMethod) {
+                javax.xml.crypto.AlgorithmMethod canonicalizationMethod) {
             doSetProperty("canonicalizationMethod", canonicalizationMethod);
             return this;
         }
@@ -240,7 +242,7 @@ public interface XmlSignerEndpointBuilderFactory {
          * @return the dsl builder
          */
         default XmlSignerEndpointBuilder cryptoContextProperties(
-                Map<String, Object> cryptoContextProperties) {
+                Map<java.lang.String, java.lang.Object> cryptoContextProperties) {
             doSetProperty("cryptoContextProperties", cryptoContextProperties);
             return this;
         }
@@ -337,7 +339,8 @@ public interface XmlSignerEndpointBuilderFactory {
          * @param keyAccessor the value to set
          * @return the dsl builder
          */
-        default XmlSignerEndpointBuilder keyAccessor(Object keyAccessor) {
+        default XmlSignerEndpointBuilder keyAccessor(
+                org.apache.camel.component.xmlsecurity.api.KeyAccessor keyAccessor) {
             doSetProperty("keyAccessor", keyAccessor);
             return this;
         }
@@ -519,7 +522,8 @@ public interface XmlSignerEndpointBuilderFactory {
          * @param parentXpath the value to set
          * @return the dsl builder
          */
-        default XmlSignerEndpointBuilder parentXpath(Object parentXpath) {
+        default XmlSignerEndpointBuilder parentXpath(
+                javax.xml.crypto.dsig.spec.XPathFilterParameterSpec parentXpath) {
             doSetProperty("parentXpath", parentXpath);
             return this;
         }
@@ -632,7 +636,8 @@ public interface XmlSignerEndpointBuilderFactory {
          * @param properties the value to set
          * @return the dsl builder
          */
-        default XmlSignerEndpointBuilder properties(Object properties) {
+        default XmlSignerEndpointBuilder properties(
+                org.apache.camel.component.xmlsecurity.api.XmlSignatureProperties properties) {
             doSetProperty("properties", properties);
             return this;
         }
@@ -724,7 +729,7 @@ public interface XmlSignerEndpointBuilderFactory {
          * @return the dsl builder
          */
         default XmlSignerEndpointBuilder transformMethods(
-                List<Object> transformMethods) {
+                List<javax.xml.crypto.AlgorithmMethod> transformMethods) {
             doSetProperty("transformMethods", transformMethods);
             return this;
         }
@@ -772,7 +777,7 @@ public interface XmlSignerEndpointBuilderFactory {
          * @return the dsl builder
          */
         default XmlSignerEndpointBuilder xpathsToIdAttributes(
-                List<Object> xpathsToIdAttributes) {
+                List<javax.xml.crypto.dsig.spec.XPathFilterParameterSpec> xpathsToIdAttributes) {
             doSetProperty("xpathsToIdAttributes", xpathsToIdAttributes);
             return this;
         }
@@ -830,7 +835,7 @@ public interface XmlSignerEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedXmlSignerEndpointBuilder uriDereferencer(
-                Object uriDereferencer) {
+                javax.xml.crypto.URIDereferencer uriDereferencer) {
             doSetProperty("uriDereferencer", uriDereferencer);
             return this;
         }
