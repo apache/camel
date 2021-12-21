@@ -172,7 +172,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                 });
             }
         }
-        Collections.sort(models, (o1, o2) -> o1.getScheme().compareToIgnoreCase(o2.getScheme()));
+        models.sort((o1, o2) -> o1.getScheme().compareToIgnoreCase(o2.getScheme()));
 
         // generate component endpoint DSL files and write them
         Lock lock = LOCKS.computeIfAbsent(root, d -> new ReentrantLock());
