@@ -213,7 +213,6 @@ public final class DefaultConfigurationConfigurer {
             LOG.warn("Using OffUuidGenerator (Only intended for development purposes)");
         }
 
-        camelContext.setMessageHistory(config.isMessageHistory());
         camelContext.setLogMask(config.isLogMask());
         camelContext.setLogExhaustedMessageBody(config.isLogExhaustedMessageBody());
         camelContext.setAutoStartup(config.isAutoStartup());
@@ -259,11 +258,15 @@ public final class DefaultConfigurationConfigurer {
         camelContext.getGlobalEndpointConfiguration().setBridgeErrorHandler(config.isEndpointBridgeErrorHandler());
         camelContext.getGlobalEndpointConfiguration().setLazyStartProducer(config.isEndpointLazyStartProducer());
 
+        // debug may be enabled via camel-debug JAR on classpath so if config is false (default)
+        // then do not change setting on camel-context
         if (config.isDebugging()) {
-            // debug may be enabled via camel-debug JAR on classpath so if config is false (default)
-            // then do not change setting on camel-context
             camelContext.setDebugging(true);
         }
+        if (config.isMessageHistory()) {
+            camelContext.setMessageHistory(true);
+        }
+
         camelContext.setBacklogTracing(config.isBacklogTracing());
         camelContext.setTracing(config.isTracing());
         camelContext.setTracingStandby(config.isTracingStandby());
