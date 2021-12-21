@@ -264,6 +264,10 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         javaClass.setPackage(componentsFactoriesPackageName);
         javaClass.setName(builderName + "Factory");
         javaClass.setClass(false);
+        javaClass.addImport("java.util.*");
+        javaClass.addImport("java.util.concurrent.*");
+        javaClass.addImport("java.util.function.*");
+        javaClass.addImport("java.util.stream.*");
         javaClass.addImport("org.apache.camel.builder.EndpointConsumerBuilder");
         javaClass.addImport("org.apache.camel.builder.EndpointProducerBuilder");
         javaClass.addImport("org.apache.camel.builder.endpoint.AbstractEndpointBuilder");
@@ -450,7 +454,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                 if (multiValued) {
                     // multi value option that takes one value
                     String desc = baseDesc.replace("@@REPLACE_ME@@",
-                            "\nThe option is a: <code>" + optionJavaType(option).replace("<", "&lt;").replace(">", "&gt;")
+                            "\nThe option is a: <code>" + option.getJavaType().replace("<", "&lt;").replace(">", "&gt;")
                                                                      + "</code> type.");
                     desc = JavadocHelper.xmlEncode(desc);
 
@@ -487,7 +491,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                 } else {
                     // regular option
                     String desc = baseDesc.replace("@@REPLACE_ME@@",
-                            "\nThe option is a: <code>" + optionJavaType(option).replace("<", "&lt;").replace(">", "&gt;")
+                            "\nThe option is a: <code>" + option.getJavaType().replace("<", "&lt;").replace(">", "&gt;")
                                                                      + "</code> type.");
                     desc = JavadocHelper.xmlEncode(desc);
 
@@ -508,7 +512,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                         // regular option by String parameter variant
                         desc = baseDesc.replace("@@REPLACE_ME@@",
                                 "\nThe option will be converted to a <code>"
-                                                                  + optionJavaType(option).replace("<", "&lt;").replace(">",
+                                                                  + option.getJavaType().replace("<", "&lt;").replace(">",
                                                                           "&gt;")
                                                                   + "</code> type.");
                         desc = JavadocHelper.xmlEncode(desc);
@@ -668,7 +672,16 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         String answer = option.getJavaType();
         if (answer.startsWith("java.lang.")) {
             return answer.substring(10);
+        } else if (answer.startsWith("java.util.concurrent.")) {
+            return answer.substring(21);
+        } else if (answer.startsWith("java.util.function.")) {
+            return answer.substring(19);
+        } else if (answer.startsWith("java.util.stream.")) {
+            return answer.substring(17);
+        } else if (answer.startsWith("java.util.")) {
+            return answer.substring(10);
         }
+
         return answer;
     }
 
