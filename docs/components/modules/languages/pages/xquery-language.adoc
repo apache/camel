@@ -8,7 +8,6 @@
 :description: Evaluate an XQuery expressions against an XML payload.
 :since: 1.0
 :supportLevel: Stable
-$reference/languages/xquery.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: saxon
 

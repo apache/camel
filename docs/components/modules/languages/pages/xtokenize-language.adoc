@@ -8,7 +8,6 @@
 :description: Tokenize XML payloads using the specified path expression.
 :since: 2.14
 :supportLevel: Stable
-$reference/languages/xtokenize.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: xml-jaxp
 

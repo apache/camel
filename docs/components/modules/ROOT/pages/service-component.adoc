@@ -9,7 +9,6 @@
 :since: 2.22
 :supportLevel: Stable
 :component-header: Only consumer is supported
-$reference/components/service.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: service
 

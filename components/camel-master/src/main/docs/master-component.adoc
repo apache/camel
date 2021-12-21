@@ -7,7 +7,6 @@
 :since: 2.20
 :supportLevel: Stable
 :component-header: Only consumer is supported
-$reference/components/master.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: master
 

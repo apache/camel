@@ -9,7 +9,6 @@
 :since: 3.7
 :supportLevel: Preview
 :component-header: Only producer is supported
-$reference/components/atlasmap.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: atlasmap
 

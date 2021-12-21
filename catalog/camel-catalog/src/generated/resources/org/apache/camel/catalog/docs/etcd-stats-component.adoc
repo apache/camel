@@ -7,7 +7,6 @@
 :since: 2.18
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
-$reference/components/etcd-stats.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: etcd
 

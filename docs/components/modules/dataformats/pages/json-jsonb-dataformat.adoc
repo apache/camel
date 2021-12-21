@@ -8,7 +8,6 @@
 :description: Marshal POJOs to JSON and back using JSON-B.
 :since: 3.7
 :supportLevel: Preview
-$reference/dataformats/json-jsonb.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: jsonb
 

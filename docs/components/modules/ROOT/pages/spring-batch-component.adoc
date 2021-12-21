@@ -9,7 +9,6 @@
 :since: 2.10
 :supportLevel: Stable
 :component-header: Only producer is supported
-$reference/components/spring-batch.adoc[opts=optional]
 //Manually maintained attributes
 :group: Spring
 :camel-spring-boot-name: spring-batch

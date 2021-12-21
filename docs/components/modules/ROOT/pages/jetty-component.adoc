@@ -9,7 +9,6 @@
 :since: 1.2
 :supportLevel: Stable
 :component-header: Only consumer is supported
-$reference/components/jetty.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: jetty
 

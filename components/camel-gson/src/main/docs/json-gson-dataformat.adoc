@@ -6,7 +6,6 @@
 :description: Marshal POJOs to JSON and back using Gson
 :since: 2.10
 :supportLevel: Stable
-$reference/dataformats/json-gson.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: gson
 

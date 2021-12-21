@@ -7,7 +7,6 @@
 :since: 2.11
 :supportLevel: Stable
 :component-header: Only producer is supported
-$reference/components/spring-ldap.adoc[opts=optional]
 //Manually maintained attributes
 :group: Spring
 :camel-spring-boot-name: spring-ldap

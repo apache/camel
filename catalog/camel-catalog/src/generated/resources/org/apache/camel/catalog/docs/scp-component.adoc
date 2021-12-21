@@ -7,7 +7,6 @@
 :since: 2.10
 :supportLevel: Stable
 :component-header: Only producer is supported
-$reference/components/scp.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: jsch
 

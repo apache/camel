@@ -9,7 +9,6 @@
 :since: 3.0
 :supportLevel: Stable
 :component-header: Only producer is supported
-$reference/components/kudu.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: kudu
 

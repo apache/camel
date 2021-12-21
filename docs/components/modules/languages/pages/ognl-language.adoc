@@ -8,7 +8,6 @@
 :description: Evaluate an Apache Commons Object Graph Navigation Library (OGNL) expression against the Camel Exchange.
 :since: 1.1
 :supportLevel: Stable
-$reference/languages/ognl.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: ognl
 

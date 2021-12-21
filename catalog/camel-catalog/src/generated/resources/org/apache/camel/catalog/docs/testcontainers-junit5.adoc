@@ -6,7 +6,6 @@
 :description: Camel support for testcontainers with JUnit 5
 :since: 3.0
 :supportLevel: Stable
-$reference/others/testcontainers-junit5.adoc[opts=optional]
 
 *Since Camel {since}*
 

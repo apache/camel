@@ -8,7 +8,6 @@
 :description: Aggregation repository using EtcD as datastore
 :since: 3.5
 :supportLevel: Preview
-$reference/others/etcd3.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: etcd3
 

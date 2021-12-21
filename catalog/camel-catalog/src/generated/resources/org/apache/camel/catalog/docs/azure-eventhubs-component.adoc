@@ -7,7 +7,6 @@
 :since: 3.5
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
-$reference/components/azure-eventhubs.adoc[opts=optional]
 //Manually maintained attributes
 :group: Azure
 :camel-spring-boot-name: azure-eventhubs

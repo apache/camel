@@ -9,7 +9,6 @@
 :since: 2.23
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
-$reference/components/kubernetes-job.adoc[opts=optional]
 //Manually maintained attributes
 :group: Kubernetes
 :camel-spring-boot-name: kubernetes

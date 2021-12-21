@@ -6,7 +6,6 @@
 :description: Distributed message tracing using Zipkin
 :since: 2.18
 :supportLevel: Stable
-$reference/others/zipkin.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: zipkin
 

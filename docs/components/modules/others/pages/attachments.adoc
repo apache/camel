@@ -8,7 +8,6 @@
 :description: Support for attachments on Camel messages
 :since: 3.0
 :supportLevel: Stable
-$reference/others/attachments.adoc[opts=optional]
 
 *Since Camel {since}*
 

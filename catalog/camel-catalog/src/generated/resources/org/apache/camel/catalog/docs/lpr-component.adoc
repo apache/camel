@@ -7,7 +7,6 @@
 :since: 2.1
 :supportLevel: Stable
 :component-header: Only producer is supported
-$reference/components/lpr.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: printer
 

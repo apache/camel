@@ -8,7 +8,6 @@
 :description: Evaluate a Groovy script.
 :since: 1.3
 :supportLevel: Stable
-$reference/languages/groovy.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: groovy
 

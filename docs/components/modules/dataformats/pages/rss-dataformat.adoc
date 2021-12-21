@@ -8,7 +8,6 @@
 :description: Transform from ROME SyndFeed Java Objects to XML and vice-versa.
 :since: 2.1
 :supportLevel: Stable
-$reference/dataformats/rss.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: rss
 

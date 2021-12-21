@@ -9,7 +9,6 @@
 :since: 3.5
 :supportLevel: Stable
 :component-header: Only producer is supported
-$reference/components/arangodb.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: arangodb
 

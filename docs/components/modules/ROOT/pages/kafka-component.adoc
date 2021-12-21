@@ -9,7 +9,6 @@
 :since: 2.13
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
-$reference/components/kafka.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: kafka
 

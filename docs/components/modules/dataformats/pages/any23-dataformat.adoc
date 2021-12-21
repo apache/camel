@@ -8,7 +8,6 @@
 :description: Extract RDF data from HTML documents.
 :since: 3.0
 :supportLevel: Stable
-$reference/dataformats/any23.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: any23
 

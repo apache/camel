@@ -7,7 +7,6 @@
 :since: 2.21
 :supportLevel: Stable
 :component-header: Only producer is supported
-$reference/components/xchange.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: xchange
 

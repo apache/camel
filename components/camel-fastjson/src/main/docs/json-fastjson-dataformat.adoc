@@ -6,7 +6,6 @@
 :description: Marshal POJOs to JSON and back using Fastjson
 :since: 2.20
 :supportLevel: Stable
-$reference/dataformats/json-fastjson.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: fastjson
 

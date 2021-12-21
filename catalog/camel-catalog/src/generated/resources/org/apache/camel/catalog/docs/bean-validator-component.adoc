@@ -7,7 +7,6 @@
 :since: 2.3
 :supportLevel: Stable
 :component-header: Only producer is supported
-$reference/components/bean-validator.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: bean-validator
 

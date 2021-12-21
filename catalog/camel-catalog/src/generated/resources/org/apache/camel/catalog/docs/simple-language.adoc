@@ -6,7 +6,6 @@
 :description: Evaluate Camel's built-in Simple language expression against the Camel Exchange.
 :since: 1.1
 :supportLevel: Stable
-$reference/languages/simple.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: core
 :starter-artifactid: camel-core-starter

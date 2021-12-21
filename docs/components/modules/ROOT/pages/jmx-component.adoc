@@ -9,7 +9,6 @@
 :since: 2.6
 :supportLevel: Stable
 :component-header: Only consumer is supported
-$reference/components/jmx.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: jmx
 

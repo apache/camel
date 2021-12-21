@@ -7,7 +7,6 @@
 :since: 3.4
 :supportLevel: Stable
 :component-header: Only producer is supported
-$reference/components/aws2-athena.adoc[opts=optional]
 //Manually maintained attributes
 :group: AWS 2
 :camel-spring-boot-name: aws2-athena

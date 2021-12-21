@@ -8,7 +8,6 @@
 :description: Elytron Security Provider for camel-undertow
 :since: 3.1
 :supportLevel: Stable
-$reference/others/elytron.adoc[opts=optional]
 
 *Since Camel {since}*
 

@@ -7,7 +7,6 @@
 :since: 2.7
 :supportLevel: Stable
 :component-header: Only producer is supported
-$reference/components/hazelcast-atomicvalue.adoc[opts=optional]
 //Manually maintained attributes
 :group: Hazelcast
 :camel-spring-boot-name: hazelcast

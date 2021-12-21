@@ -8,7 +8,6 @@
 :description: Marshall SyslogMessages to RFC3164 and RFC5424 messages and back.
 :since: 2.6
 :supportLevel: Stable
-$reference/dataformats/syslog.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: syslog
 

@@ -10,7 +10,6 @@
 :supportLevel: Stable
 :component-header: Only consumer is supported
 :core:
-$reference/components/scheduler.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: scheduler
 

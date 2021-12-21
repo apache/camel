@@ -6,7 +6,6 @@
 :description: Marshall and unmarshall FHIR objects to/from JSON.
 :since: 2.21
 :supportLevel: Stable
-$reference/dataformats/fhirJson.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: fhir
 

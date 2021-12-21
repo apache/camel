@@ -7,7 +7,6 @@
 :since: 2.18
 :supportLevel: Stable-deprecated
 :deprecated: *deprecated*
-$reference/others/hystrix.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: hystrix
 

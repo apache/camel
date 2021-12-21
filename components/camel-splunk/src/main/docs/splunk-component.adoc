@@ -7,7 +7,6 @@
 :since: 2.13
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
-$reference/components/splunk.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: splunk
 

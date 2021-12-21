@@ -6,7 +6,6 @@
 :description: Compress and decompress messages using java.util.zip.GZIPStream.
 :since: 2.0
 :supportLevel: Stable
-$reference/dataformats/gzipdeflater.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: zip-deflater
 

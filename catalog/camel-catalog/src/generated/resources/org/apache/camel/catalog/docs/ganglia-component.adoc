@@ -7,7 +7,6 @@
 :since: 2.15
 :supportLevel: Stable
 :component-header: Only producer is supported
-$reference/components/ganglia.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: ganglia
 

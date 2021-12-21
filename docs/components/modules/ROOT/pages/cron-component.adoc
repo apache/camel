@@ -9,7 +9,6 @@
 :since: 3.1
 :supportLevel: Stable
 :component-header: Only consumer is supported
-$reference/components/cron.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: cron
 

@@ -7,7 +7,6 @@
 :since: 3.3
 :supportLevel: Stable
 :component-header: Only producer is supported
-$reference/components/djl.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: djl
 

@@ -8,7 +8,6 @@
 :description: Distributed tracing common interfaces
 :since: 3.5
 :supportLevel: Stable
-$reference/others/tracing.adoc[opts=optional]
 
 *Since Camel {since}*
 

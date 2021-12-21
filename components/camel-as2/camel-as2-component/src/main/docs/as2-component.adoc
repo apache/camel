@@ -7,7 +7,6 @@
 :since: 2.22
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
-$reference/components/as2.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: as2
 

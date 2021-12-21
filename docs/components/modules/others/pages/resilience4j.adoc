@@ -8,7 +8,6 @@
 :description: Circuit Breaker EIP using Resilience4j
 :since: 3.0
 :supportLevel: Stable
-$reference/others/resilience4j.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: resilience4j
 
