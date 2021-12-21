@@ -80,7 +80,7 @@
         <avro-ipc-jetty-version>1.11.0</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.11.0</avro-ipc-netty-version>
         <awaitility-version>4.1.1</awaitility-version>
-        <aws-java-sdk2-version>2.17.100</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.17.101</aws-java-sdk2-version>
         <aws-xray-version>2.6.1</aws-xray-version>
         <axiom-version>1.2.14</axiom-version>
         <azure-jackson2-version>2.11.3</azure-jackson2-version>
@@ -262,7 +262,7 @@
         <isorelax-jaxp-bridge-version>1.1</isorelax-jaxp-bridge-version>
         <ivy-version>2.5.0</ivy-version>
         <jackson-version>1.9.12</jackson-version>
-        <jackson2-version>2.12.4</jackson2-version>
+        <jackson2-version>2.12.5</jackson2-version>
         <jackrabbit-version>2.21.9</jackrabbit-version>
         <jain-sip-ri-bundle-version>1.2.154_2</jain-sip-ri-bundle-version>
         <jasminb-jsonapi-version>0.11</jasminb-jsonapi-version>
@@ -292,7 +292,7 @@
         <glassfish-javax-json>1.0.4</glassfish-javax-json>
         <glassfish-jaxb-runtime-version>2.3.3</glassfish-jaxb-runtime-version>
         <jaxb2-maven-plugin-version>2.5.0</jaxb2-maven-plugin-version>
-        <jbpm-version>7.62.0.Final</jbpm-version>
+        <jbpm-version>7.63.0.Final</jbpm-version>
         <jboss-el-api_3.0_spec-version>2.0.0.Final</jboss-el-api_3.0_spec-version>
         <jboss-logging-version>3.4.0.Final</jboss-logging-version>
         <jboss-marshalling-version>1.4.10.Final</jboss-marshalling-version>
@@ -452,7 +452,7 @@
         <protonpack-version>1.8</protonpack-version>
         <protostream-version>4.4.1.Final</protostream-version>
         <pubnub-version>4.25.0</pubnub-version>
-        <pulsar-version>2.9.0</pulsar-version>
+        <pulsar-version>2.9.1</pulsar-version>
         <qpid-broker-version>8.0.6</qpid-broker-version>
         <qpid-proton-j-version>0.33.8</qpid-proton-j-version>
         <qpid-jms-client-version>0.59.0</qpid-jms-client-version>

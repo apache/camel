@@ -22,14 +22,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.LineNumberReader;
 import java.io.StringReader;
-import java.lang.reflect.Array;
-import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -44,11 +41,6 @@ import java.util.stream.Stream;
 
 import javax.annotation.Generated;
 
-import org.apache.camel.maven.packaging.generics.GenericsUtil;
-import org.apache.camel.spi.UriEndpoint;
-import org.apache.camel.spi.UriParam;
-import org.apache.camel.spi.UriParams;
-import org.apache.camel.spi.UriPath;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.ComponentModel.EndpointOptionModel;
 import org.apache.camel.tooling.model.JsonMapper;
@@ -56,7 +48,6 @@ import org.apache.camel.tooling.util.JavadocHelper;
 import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.tooling.util.Strings;
 import org.apache.camel.tooling.util.srcgen.GenericType;
-import org.apache.camel.tooling.util.srcgen.GenericType.BoundType;
 import org.apache.camel.tooling.util.srcgen.JavaClass;
 import org.apache.camel.tooling.util.srcgen.Method;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -85,22 +76,7 @@ import static org.apache.camel.tooling.util.PackageHelper.loadText;
       defaultPhase = LifecyclePhase.PROCESS_CLASSES)
 public class EndpointDslMojo extends AbstractGeneratorMojo {
 
-    private static final Map<String, Class<?>> PRIMITIVEMAP;
-
     private static final Map<Path, Lock> LOCKS = new ConcurrentHashMap<>();
-
-    static {
-        PRIMITIVEMAP = new HashMap<>();
-        PRIMITIVEMAP.put("boolean", java.lang.Boolean.class);
-        PRIMITIVEMAP.put("char", java.lang.Character.class);
-        PRIMITIVEMAP.put("long", java.lang.Long.class);
-        PRIMITIVEMAP.put("int", java.lang.Integer.class);
-        PRIMITIVEMAP.put("integer", java.lang.Integer.class);
-        PRIMITIVEMAP.put("byte", java.lang.Byte.class);
-        PRIMITIVEMAP.put("short", java.lang.Short.class);
-        PRIMITIVEMAP.put("double", java.lang.Double.class);
-        PRIMITIVEMAP.put("float", java.lang.Float.class);
-    }
 
     /**
      * The project build directory
@@ -173,9 +149,9 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        File camelDir = findCamelDirectory(baseDir, "core/camel-endpointdsl");
+        File camelDir = findCamelDirectory(baseDir, "dsl/camel-endpointdsl");
         if (camelDir == null) {
-            getLog().debug("No core/camel-endpointdsl folder found, skipping execution");
+            getLog().debug("No dsl/camel-endpointdsl folder found, skipping execution");
             return;
         }
         Path root = camelDir.toPath();
@@ -283,18 +259,18 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
             throws MojoFailureException {
         String componentClassName = model.getJavaType();
         String builderName = getEndpointName(componentClassName);
-        Class<?> realComponentClass = loadClass(componentClassName);
-        Class<?> realEndpointClass = loadClass(findEndpointClassName(componentClassName));
 
         final JavaClass javaClass = new JavaClass(getProjectClassLoader());
         javaClass.setPackage(componentsFactoriesPackageName);
         javaClass.setName(builderName + "Factory");
         javaClass.setClass(false);
+        javaClass.addImport("java.util.*");
+        javaClass.addImport("java.util.concurrent.*");
+        javaClass.addImport("java.util.function.*");
+        javaClass.addImport("java.util.stream.*");
         javaClass.addImport("org.apache.camel.builder.EndpointConsumerBuilder");
         javaClass.addImport("org.apache.camel.builder.EndpointProducerBuilder");
         javaClass.addImport("org.apache.camel.builder.endpoint.AbstractEndpointBuilder");
-
-        Map<String, JavaClass> enumClasses = new HashMap<>();
 
         boolean hasAdvanced = false;
         for (EndpointOptionModel option : model.getEndpointOptions()) {
@@ -309,8 +285,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         JavaClass producerClass = null;
         JavaClass advancedProducerClass = null;
 
-        if (!realEndpointClass.getAnnotation(UriEndpoint.class).producerOnly()
-                && !realEndpointClass.getAnnotation(UriEndpoint.class).consumerOnly()) {
+        if (!model.isProducerOnly() && !model.isConsumerOnly()) {
             String consumerName = builderName.replace("Endpoint", "EndpointConsumer");
             consumerClass = javaClass.addNestedType().setPublic().setClass(false);
             consumerClass.setName(consumerName);
@@ -359,9 +334,9 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         JavaClass advancedBuilderClass = null;
         builderClass = javaClass.addNestedType().setPublic().setClass(false);
         builderClass.setName(builderName);
-        if (realEndpointClass.getAnnotation(UriEndpoint.class).producerOnly()) {
+        if (model.isProducerOnly()) {
             builderClass.implementInterface("EndpointProducerBuilder");
-        } else if (realEndpointClass.getAnnotation(UriEndpoint.class).consumerOnly()) {
+        } else if (model.isConsumerOnly()) {
             builderClass.implementInterface("EndpointConsumerBuilder");
         } else {
             builderClass.implementInterface(consumerClass.getName());
@@ -373,9 +348,9 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         if (hasAdvanced) {
             advancedBuilderClass = javaClass.addNestedType().setPublic().setClass(false);
             advancedBuilderClass.setName("Advanced" + builderName);
-            if (realEndpointClass.getAnnotation(UriEndpoint.class).producerOnly()) {
+            if (model.isProducerOnly()) {
                 advancedBuilderClass.implementInterface("EndpointProducerBuilder");
-            } else if (realEndpointClass.getAnnotation(UriEndpoint.class).consumerOnly()) {
+            } else if (model.isConsumerOnly()) {
                 advancedBuilderClass.implementInterface("EndpointConsumerBuilder");
             } else {
                 advancedBuilderClass.implementInterface(advancedConsumerClass.getName());
@@ -438,16 +413,6 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                 }
             }
 
-            GenericType ogtype;
-            GenericType gtype;
-            try {
-                Field field = findField(realComponentClass, realEndpointClass, option);
-                ogtype = new GenericType(GenericsUtil.resolveType(realEndpointClass, field));
-                gtype = getType(javaClass, enumClasses, option.getEnums(), ogtype.toString());
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-
             for (JavaClass target : targets) {
                 if (target == null) {
                     continue;
@@ -489,7 +454,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                 if (multiValued) {
                     // multi value option that takes one value
                     String desc = baseDesc.replace("@@REPLACE_ME@@",
-                            "\nThe option is a: <code>" + ogtype.toString().replace("<", "&lt;").replace(">", "&gt;")
+                            "\nThe option is a: <code>" + option.getJavaType().replace("<", "&lt;").replace(">", "&gt;")
                                                                      + "</code> type.");
                     desc = JavadocHelper.xmlEncode(desc);
 
@@ -526,13 +491,13 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                 } else {
                     // regular option
                     String desc = baseDesc.replace("@@REPLACE_ME@@",
-                            "\nThe option is a: <code>" + ogtype.toString().replace("<", "&lt;").replace(">", "&gt;")
+                            "\nThe option is a: <code>" + option.getJavaType().replace("<", "&lt;").replace(">", "&gt;")
                                                                      + "</code> type.");
                     desc = JavadocHelper.xmlEncode(desc);
 
                     Method fluent = target.addMethod().setDefault().setName(option.getName())
                             .setReturnType(new GenericType(loadClass(target.getCanonicalName())))
-                            .addParameter(isPrimitive(ogtype.toString()) ? ogtype : gtype, option.getName())
+                            .addParameter(optionJavaType(option), option.getName())
                             .setBody("doSetProperty(\"" + option.getName() + "\", " + option.getName() + ");",
                                     "return this;\n");
                     if (option.isDeprecated()) {
@@ -543,11 +508,12 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                     text += "\n@return the dsl builder\n";
                     fluent.getJavaDoc().setText(text);
 
-                    if (ogtype.getRawClass() != String.class) {
+                    if (!"String".equals(optionJavaType(option))) {
                         // regular option by String parameter variant
                         desc = baseDesc.replace("@@REPLACE_ME@@",
                                 "\nThe option will be converted to a <code>"
-                                                                  + ogtype.toString().replace("<", "&lt;").replace(">", "&gt;")
+                                                                  + option.getJavaType().replace("<", "&lt;").replace(">",
+                                                                          "&gt;")
                                                                   + "</code> type.");
                         desc = JavadocHelper.xmlEncode(desc);
 
@@ -700,6 +666,23 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
 
         return writeSourceIfChanged(javaClass, componentsFactoriesPackageName.replace('.', '/'), builderName + "Factory.java",
                 false);
+    }
+
+    private static String optionJavaType(EndpointOptionModel option) {
+        String answer = option.getJavaType();
+        if (answer.startsWith("java.lang.")) {
+            return answer.substring(10);
+        } else if (answer.startsWith("java.util.concurrent.")) {
+            return answer.substring(21);
+        } else if (answer.startsWith("java.util.function.")) {
+            return answer.substring(19);
+        } else if (answer.startsWith("java.util.stream.")) {
+            return answer.substring(17);
+        } else if (answer.startsWith("java.util.")) {
+            return answer.substring(10);
+        }
+
+        return answer;
     }
 
     private static String pathParameterJavaDoc(ComponentModel model) {
@@ -974,169 +957,6 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
 
     private String getEndpointName(String type) {
         return getComponentNameFromType(type) + "EndpointBuilder";
-    }
-
-    private String findEndpointClassName(String type) {
-        String endpointName = type.replaceFirst("Component", "Endpoint");
-        //
-        // HACKS
-        //
-        switch (type) {
-            case "org.apache.camel.component.disruptor.vm.DisruptorVmComponent":
-                return "org.apache.camel.component.disruptor.DisruptorEndpoint";
-            case "org.apache.camel.component.etcd.EtcdComponent":
-                return "org.apache.camel.component.etcd.AbstractEtcdPollingEndpoint";
-            case "org.apache.camel.websocket.jsr356.JSR356WebSocketComponent":
-                return "org.apache.camel.websocket.jsr356.JSR356Endpoint";
-            default:
-                return endpointName;
-        }
-    }
-
-    private Field findField(Class<?> realComponentClass, Class<?> realEndpointClass, EndpointOptionModel option)
-            throws NoSuchFieldException {
-        Field field = null;
-        List<Class<?>> classes = new ArrayList<>();
-        classes.add(realComponentClass);
-        classes.add(realEndpointClass);
-        while (!classes.isEmpty()) {
-            Class cl = classes.remove(0);
-            for (Field f : cl.getDeclaredFields()) {
-                String n = f.getName();
-                UriPath path = f.getAnnotation(UriPath.class);
-                if (path != null && !Strings.isEmpty(path.name())) {
-                    n = path.name();
-                }
-                UriParam param = f.getAnnotation(UriParam.class);
-                if (param != null && !Strings.isEmpty(param.name())) {
-                    n = param.name();
-                }
-                if (n.equals(option.getName())) {
-                    field = f;
-                    break;
-                }
-                if (f.getType().isAnnotationPresent(UriParams.class)) {
-                    classes.add(f.getType());
-                }
-            }
-            if (field != null) {
-                break;
-            }
-            cl = cl.getSuperclass();
-            if (cl != null) {
-                classes.add(cl);
-            }
-        }
-        if (field == null) {
-            throw new NoSuchFieldException("Could not find field for option " + option.getName());
-        }
-        return field;
-    }
-
-    private static boolean isPrimitive(String type) {
-        return PRIMITIVEMAP.containsKey(type);
-    }
-
-    private GenericType getType(JavaClass javaClass, Map<String, JavaClass> enumClasses, List<String> enums, String type) {
-        type = type.trim();
-        // Check if this is an array
-        if (type.endsWith("[]")) {
-            GenericType t = getType(javaClass, enumClasses, enums, type.substring(0, type.length() - 2));
-            return new GenericType(Array.newInstance(t.getRawClass(), 0).getClass(), t);
-        }
-        // Check if this is a generic
-        int genericIndex = type.indexOf('<');
-        if (genericIndex > 0) {
-            if (!type.endsWith(">")) {
-                throw new IllegalArgumentException("Can not load type: " + type);
-            }
-            GenericType base = getType(javaClass, enumClasses, enums, type.substring(0, genericIndex));
-            if (base.getRawClass() == Object.class) {
-                return base;
-            }
-            String[] params = splitParams(type.substring(genericIndex + 1, type.length() - 1));
-            GenericType[] types = new GenericType[params.length];
-            for (int i = 0; i < params.length; i++) {
-                types[i] = getType(javaClass, enumClasses, enums, params[i]);
-            }
-            return new GenericType(base.getRawClass(), types);
-        }
-        // Primitive
-        if (isPrimitive(type)) {
-            return new GenericType(PRIMITIVEMAP.get(type));
-        }
-        // Extends
-        if (type.startsWith("? extends ")) {
-            String raw = type.substring("? extends ".length());
-            return new GenericType(loadClass(raw), BoundType.Extends);
-        }
-        // Super
-        if (type.startsWith("? super ")) {
-            String raw = type.substring("? extends ".length());
-            return new GenericType(loadClass(raw), BoundType.Super);
-        }
-        // Wildcard
-        if (type.equals("?")) {
-            return new GenericType(Object.class, BoundType.Extends);
-        }
-        if (loadClass(type).isEnum() && !isCamelCoreType(type)) {
-            String enumClassName = type.substring(type.lastIndexOf('.') + 1);
-            if (enumClassName.contains("$")) {
-                enumClassName = enumClassName.substring(enumClassName.indexOf('$') + 1);
-            }
-            JavaClass enumClass = enumClasses.get(enumClassName);
-            if (enumClass == null) {
-                enumClass = javaClass.addNestedType().setPackagePrivate().setName(enumClassName).setEnum(true);
-                enumClass.getJavaDoc().setText("Proxy enum for <code>" + type + "</code> enum.");
-                enumClasses.put(enumClassName, enumClass);
-                for (Object value : loadClass(type).getEnumConstants()) {
-                    enumClass.addValue((((Enum<?>) value).name()).replace('.', '_').replace('-', '_'));
-                }
-            }
-            type = javaClass.getPackage() + "." + javaClass.getName() + "$" + enumClassName;
-            return new GenericType(generateDummyClass(type));
-        }
-        if (!isCamelCoreType(type)) {
-            getLog().debug("Substituting java.lang.Object to " + type);
-            return new GenericType(Object.class);
-        }
-        return new GenericType(loadClass(type));
-    }
-
-    private String[] splitParams(String string) {
-        List<String> params = new ArrayList<>();
-        int cur = 0;
-        int start = 0;
-        int opened = 0;
-        while (true) {
-            int nextComma = string.indexOf(',', cur);
-            int nextOpen = string.indexOf('<', cur);
-            int nextClose = string.indexOf('>', cur);
-            if (nextComma < 0) {
-                params.add(string.substring(start));
-                return params.toArray(new String[0]);
-            } else if ((nextOpen < 0 || nextComma < nextOpen) && (nextClose < 0 || nextComma < nextClose) && opened == 0) {
-                params.add(string.substring(start, nextComma));
-                start = cur = nextComma + 1;
-            } else if (nextOpen < 0) {
-                if (--opened < 0) {
-                    throw new IllegalStateException();
-                }
-                cur = nextClose + 1;
-            } else if (nextClose < 0 || nextOpen < nextClose) {
-                ++opened;
-                cur = nextOpen + 1;
-            } else {
-                if (--opened < 0) {
-                    throw new IllegalStateException();
-                }
-                cur = nextClose + 1;
-            }
-        }
-    }
-
-    private boolean isCamelCoreType(String type) {
-        return type.startsWith("java.") || type.matches("org\\.apache\\.camel\\.(spi\\.)?([A-Za-z]+)");
     }
 
     private Class generateDummyClass(String clazzName) {

@@ -10,6 +10,21 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 
 Added `getScheme` method to `org.apache.camel.spi.Resource`.
 
+=== camel-endpointdsl
+
+The Endpoint DSL is now more type-safe, where previously an option would be declared as `Object` type,
+is now declared using its actual type, such as `javax.sql.DataSource`.
+
+Option that are enums is now using the real enum FQN class name, instead of a duplicate enum
+class that was embedded inside the Endpoint DSL. For example when using `aws2sq` the
+namingStrategy enum is changed from `org.apache.camel.builder.endpoint.dsl.AWS2S3EndpointBuilderFactory`
+to `org.apache.camel.component.aws2.s3.stream.AWSS3NamingStrategyEnum` class name.
+
+=== camel-management
+
+The route controller MBeans are moved from `routecontrollers` to the existing `services`
+node in the JMX MBean tree.
+
 === camel-yaml-dsl
 
 Removed `steps` from `route` because steps should only be configured on `from` making

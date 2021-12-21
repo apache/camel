@@ -34,6 +34,8 @@
     <packaging>pom</packaging>
 
     <modules>
+        <!-- sync so all components are built first -->
+        <module>camel-allcomponents</module>
         <!-- dummy used for testing catalog -->
         <module>dummy-component</module>
         <!-- catalog -->
@@ -45,15 +47,6 @@
         <module>camel-csimple-maven-plugin</module>
         <module>camel-report-maven-plugin</module>
     </modules>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-allcomponents</artifactId>
-            <type>pom</type>
-            <scope>provided</scope>
-        </dependency>
-    </dependencies>
 
     <build>
         <plugins>

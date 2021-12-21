@@ -4122,7 +4122,7 @@ public abstract class AbstractCamelContext extends BaseService
                 DebuggerFactory df
                         = getBootstrapFactoryFinder().newInstance(Debugger.FACTORY, DebuggerFactory.class).orElse(null);
                 if (df != null) {
-                    LOG.info("Detected: {} enabling Camel Debugging", df);
+                    LOG.info("Detected: {} JAR (enabling Camel Debugging)", df);
                     setDebugging(true);
                     Debugger debugger = df.createDebugger(this);
                     if (debugger != null) {

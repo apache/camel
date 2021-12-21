@@ -22,6 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.StaticService;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.ResourceLoader;
@@ -36,7 +37,7 @@ import org.apache.camel.util.StringHelper;
 /**
  * Default {@link ResourceLoader}.
  */
-public class DefaultResourceLoader extends ServiceSupport implements ResourceLoader {
+public class DefaultResourceLoader extends ServiceSupport implements ResourceLoader, StaticService {
     /**
      * Prefix to use for looking up existing {@link ResourceLoader} from the {@link org.apache.camel.spi.Registry}.
      */
