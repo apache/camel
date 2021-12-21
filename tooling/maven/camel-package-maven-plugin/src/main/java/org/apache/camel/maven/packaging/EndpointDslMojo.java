@@ -103,21 +103,6 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
     protected String componentsFactoriesPackageName;
 
     /**
-     * Generate or not the EndpointBuilderFactory interface.
-     */
-    @Parameter(defaultValue = "true")
-    protected boolean generateEndpointBuilderFactory;
-
-    /**
-     * Generate or not the EndpointBuilders interface.
-     */
-    @Parameter(defaultValue = "true")
-    protected boolean generateEndpointBuilders;
-
-    @Parameter(defaultValue = "true")
-    protected boolean generateEndpointDsl;
-
-    /**
      * The output directory
      */
     @Parameter
@@ -142,8 +127,6 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         baseDir = project.getBasedir();
         endpointFactoriesPackageName = "org.apache.camel.builder.endpoint";
         componentsFactoriesPackageName = "org.apache.camel.builder.endpoint.dsl";
-        generateEndpointBuilderFactory = true;
-        generateEndpointBuilders = true;
         super.execute(project, projectHelper, buildContext);
     }
 
