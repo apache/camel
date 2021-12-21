@@ -10,6 +10,11 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 
 Added `getScheme` method to `org.apache.camel.spi.Resource`.
 
+=== camel-management
+
+The route controller MBeans are moved from `routecontrollers` to the existing `services`
+node in the JMX MBean tree.
+
 === camel-yaml-dsl
 
 Removed `steps` from `route` because steps should only be configured on `from` making
