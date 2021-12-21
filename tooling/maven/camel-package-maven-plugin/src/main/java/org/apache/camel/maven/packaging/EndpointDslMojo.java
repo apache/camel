@@ -21,22 +21,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.LineNumberReader;
 import java.io.StringReader;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.annotation.Generated;
 
@@ -154,24 +150,28 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
             componentsMetadata = outputResourcesDir.toPath().resolve("metadata.json").toFile();
         }
 
-        Collection<Path> allJsonFiles = new TreeSet<>();
-        Stream.of(componentsDir.toPath())
-                .filter(dir -> !"target".equals(dir.getFileName().toString()))
-                .flatMap(p -> getComponentPath(p).stream())
-                .filter(dir -> Files.isDirectory(dir.resolve("src")))
-                .map(p -> p.resolve("target/classes"))
-                .flatMap(PackageHelper::walk).forEach(p -> {
+        List<ComponentModel> models = new ArrayList<>();
+
+        for (File dir : componentsDir.listFiles()) {
+            List<Path> subs = getComponentPath(dir.toPath());
+            for (Path sub : subs) {
+                sub = sub.resolve("src/generated/resources/");
+                PackageHelper.walk(sub).forEach(p -> {
                     String f = p.getFileName().toString();
                     if (f.endsWith(PackageHelper.JSON_SUFIX)) {
-                        allJsonFiles.add(p);
+                        try {
+                            BaseModel<?> model = JsonMapper.generateModel(p);
+                            if (model instanceof ComponentModel) {
+                                models.add((ComponentModel) model);
+                            }
+                        } catch (Exception e) {
+                            // ignore as its not a camel model
+                        }
                     }
                 });
-        final Map<Path, BaseModel<?>> allModels
-                = allJsonFiles.stream().collect(Collectors.toMap(p -> p, JsonMapper::generateModel));
-        Set<ComponentModel> models = allJsonFiles.stream()
-                .filter(p -> allModels.get(p) instanceof ComponentModel)
-                .map(p -> (ComponentModel) allModels.get(p))
-                .collect(Collectors.toCollection(TreeSet::new));
+            }
+        }
+        Collections.sort(models, (o1, o2) -> o1.getScheme().compareToIgnoreCase(o2.getScheme()));
 
         // generate component endpoint DSL files and write them
         Lock lock = LOCKS.computeIfAbsent(root, d -> new ReentrantLock());
@@ -254,7 +254,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         }
     }
 
-    private void executeComponent(Set<ComponentModel> allModels) throws MojoFailureException {
+    private void executeComponent(List<ComponentModel> allModels) throws MojoFailureException {
         if (!allModels.isEmpty()) {
             getLog().debug("Found " + allModels.size() + " components");
 
@@ -953,7 +953,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         desc += "\n";
         desc += "\nCategory: " + model.getLabel();
         desc += "\nSince: " + model.getFirstVersionShort();
-        desc += "\nMaven coordinates: " + project.getGroupId() + ":" + project.getArtifactId();
+        desc += "\nMaven coordinates: " + model.getGroupId() + ":" + model.getArtifactId();
 
         // include javadoc for all path parameters and mark which are required
         desc += "\n";
