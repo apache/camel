@@ -116,7 +116,6 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
         StringBuilder buffer = new StringBuilder();
         int count = 0;
 
-        // TODO
         File f = new File(project.getBasedir(), "target/classes");
         f = new File(f, "META-INF/services/org/apache/camel/language");
         if (f.exists() && f.isDirectory()) {
