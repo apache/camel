@@ -57,9 +57,8 @@
         <module>camel-cloud</module>
         <module>camel-health</module>
         <module>camel-main</module>
+        <!-- TODO: move allcomponents to DSL -->
         <module>camel-allcomponents</module>
-        <module>camel-endpointdsl</module>
-        <module>camel-componentdsl</module>
     </modules>
 
     <properties>

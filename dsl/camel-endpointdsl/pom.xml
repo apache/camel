@@ -22,22 +22,26 @@
 
     <parent>
         <groupId>org.apache.camel</groupId>
-        <artifactId>core</artifactId>
+        <artifactId>dsl</artifactId>
         <version>3.15.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>camel-componentdsl</artifactId>
+    <artifactId>camel-endpointdsl</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: Component DSL</name>
-    <description>The Camel Component DSL</description>
+    <name>Camel :: Endpoint DSL</name>
+    <description>The Camel Endpoint DSL</description>
+
+    <properties>
+        <camel-generate-endpoint-dsl>true</camel-generate-endpoint-dsl>
+        <camel.osgi.import>
+            javax.xml.bind*;version="[2.2,3.0)",
+            *
+        </camel.osgi.import>
+    </properties>
 
     <dependencies>
 
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-api</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core-engine</artifactId>
@@ -75,7 +79,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -93,11 +96,32 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-xml-jaxb</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j-impl</artifactId>
             <scope>test</scope>
         </dependency>
 
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <!-- The non generated code depends on the generated code,
+                     so skip the first compilation phase -->
+                <artifactId>maven-compiler-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>default-compile</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
