@@ -17,8 +17,6 @@
 package org.apache.camel.management.mbean;
 
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -33,7 +31,6 @@ import javax.management.ObjectName;
 import org.w3c.dom.Document;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.CatalogCamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ManagementStatisticsLevel;
@@ -55,13 +52,9 @@ import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.ManagementStrategy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @ManagedResource(description = "Managed CamelContext")
 public class ManagedCamelContext extends ManagedPerformanceCounter implements TimerListener, ManagedCamelContextMBean {
-
-    private static final Logger LOG = LoggerFactory.getLogger(ManagedCamelContext.class);
 
     private final CamelContext context;
     private final LoadTriplet load = new LoadTriplet();
@@ -461,33 +454,6 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
     }
 
     @Override
-    public void addOrUpdateRoutesFromXml(String xml) throws Exception {
-        // do not decode so we function as before
-        addOrUpdateRoutesFromXml(xml, false);
-    }
-
-    @Override
-    public void addOrUpdateRoutesFromXml(String xml, boolean urlDecode) throws Exception {
-        // decode String as it may have been encoded, from its xml source
-        if (urlDecode) {
-            xml = URLDecoder.decode(xml, "UTF-8");
-        }
-
-        InputStream is = context.getTypeConverter().mandatoryConvertTo(InputStream.class, xml);
-        try {
-            // add will remove existing route first
-            ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
-            RoutesDefinition routes = (RoutesDefinition) ecc.getXMLRoutesDefinitionLoader().loadRoutesDefinition(ecc, is);
-            context.getExtension(Model.class).addRouteDefinitions(routes.getRoutes());
-        } catch (Exception e) {
-            // log the error as warn as the management api may be invoked remotely over JMX which does not propagate such exception
-            String msg = "Error updating routes from xml: " + xml + " due: " + e.getMessage();
-            LOG.warn(msg, e);
-            throw e;
-        }
-    }
-
-    @Override
     public String dumpRoutesStatsAsXml(boolean fullStats, boolean includeProcessors) throws Exception {
         StringBuilder sb = new StringBuilder();
         sb.append("<camelContextStat").append(String.format(" id=\"%s\" state=\"%s\"", getCamelId(), getState()));
@@ -744,26 +710,6 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         // endpoints is always removed from JMX if removed from context
         Collection<Endpoint> removed = context.removeEndpoints(pattern);
         return removed.size();
-    }
-
-    @Override
-    public String componentParameterJsonSchema(String componentName) throws Exception {
-        return context.adapt(CatalogCamelContext.class).getComponentParameterJsonSchema(componentName);
-    }
-
-    @Override
-    public String dataFormatParameterJsonSchema(String dataFormatName) throws Exception {
-        return context.adapt(CatalogCamelContext.class).getDataFormatParameterJsonSchema(dataFormatName);
-    }
-
-    @Override
-    public String languageParameterJsonSchema(String languageName) throws Exception {
-        return context.adapt(CatalogCamelContext.class).getLanguageParameterJsonSchema(languageName);
-    }
-
-    @Override
-    public String eipParameterJsonSchema(String eipName) throws Exception {
-        return context.adapt(CatalogCamelContext.class).getEipParameterJsonSchema(eipName);
     }
 
     @Override

@@ -25,6 +25,8 @@ to `org.apache.camel.component.aws2.s3.stream.AWSS3NamingStrategyEnum` class nam
 The route controller MBeans are moved from `routecontrollers` to the existing `services`
 node in the JMX MBean tree.
 
+Removed deprecated operations on `CamelContextMBean` and `CamelRouteMBean`.
+
 === camel-yaml-dsl
 
 Removed `steps` from `route` because steps should only be configured on `from` making

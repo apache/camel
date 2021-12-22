@@ -16,7 +16,6 @@
  */
 package org.apache.camel.management.mbean;
 
-import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -55,7 +54,6 @@ import org.apache.camel.api.management.mbean.RouteError;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.RoutePolicy;
@@ -372,41 +370,6 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         }
 
         return null;
-    }
-
-    @Override
-    public void updateRouteFromXml(String xml) throws Exception {
-        // convert to model from xml
-        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
-        InputStream is = context.getTypeConverter().convertTo(InputStream.class, xml);
-        RoutesDefinition routes = (RoutesDefinition) ecc.getXMLRoutesDefinitionLoader().loadRoutesDefinition(context, is);
-        if (routes == null || routes.getRoutes().isEmpty()) {
-            return;
-        }
-        RouteDefinition def = routes.getRoutes().get(0);
-
-        // if the xml does not contain the route-id then we fix this by adding the actual route id
-        // this may be needed if the route-id was auto-generated, as the intend is to update this route
-        // and not add a new route, adding a new route, use the MBean operation on ManagedCamelContext instead.
-        if (ObjectHelper.isEmpty(def.getId())) {
-            def.setId(getRouteId());
-        } else if (!def.getId().equals(getRouteId())) {
-            throw new IllegalArgumentException(
-                    "Cannot update route from XML as routeIds does not match. routeId: "
-                                               + getRouteId() + ", routeId from XML: " + def.getId());
-        }
-
-        LOG.debug("Updating route: {} from xml: {}", def.getId(), xml);
-
-        try {
-            // add will remove existing route first
-            context.getExtension(Model.class).addRouteDefinition(def);
-        } catch (Exception e) {
-            // log the error as warn as the management api may be invoked remotely over JMX which does not propagate such exception
-            String msg = "Error updating route: " + def.getId() + " from xml: " + xml + " due: " + e.getMessage();
-            LOG.warn(msg, e);
-            throw e;
-        }
     }
 
     @Override
