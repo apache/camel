@@ -10,6 +10,10 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 
 Added `getScheme` method to `org.apache.camel.spi.Resource`.
 
+=== camel-core
+
+Removed the deprecated `Classic` value from `startupSummaryLevel` enums.
+
 === camel-endpointdsl
 
 The Endpoint DSL is now more type-safe, where previously an option would be declared as `Object` type,

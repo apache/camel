@@ -22,7 +22,6 @@ import java.util.Map;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.StaticService;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
-import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.spi.SendDynamicAware;
 
 /**

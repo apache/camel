@@ -24,8 +24,6 @@ import javax.xml.bind.annotation.XmlEnum;
 @XmlEnum
 public enum StartupSummaryLevel {
 
-    @Deprecated
-    Classic,
     Verbose,
     Default,
     Brief,
