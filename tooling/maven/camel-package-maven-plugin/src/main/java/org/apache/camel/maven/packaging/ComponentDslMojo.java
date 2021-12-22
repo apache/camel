@@ -25,9 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 import org.apache.camel.maven.packaging.dsl.component.ComponentDslBuilderFactoryGenerator;
@@ -36,7 +33,6 @@ import org.apache.camel.maven.packaging.dsl.component.ComponentsDslMetadataRegis
 import org.apache.camel.tooling.model.BaseModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.JsonMapper;
-import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -47,7 +43,6 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
-import static org.apache.camel.maven.packaging.MojoHelper.getComponentPath;
 import static org.apache.camel.tooling.util.PackageHelper.findCamelDirectory;
 import static org.apache.camel.tooling.util.PackageHelper.loadText;
 
@@ -57,8 +52,6 @@ import static org.apache.camel.tooling.util.PackageHelper.loadText;
 @Mojo(name = "generate-component-dsl", threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
       defaultPhase = LifecyclePhase.PROCESS_CLASSES)
 public class ComponentDslMojo extends AbstractGeneratorMojo {
-
-    private static final Map<Path, Lock> LOCKS = new ConcurrentHashMap<>();
 
     /**
      * The project build directory
@@ -103,10 +96,12 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
     protected String componentsDslFactoriesPackageName;
 
     /**
-     * The components directory where all the Apache Camel components are
+     * The catalog directory where the component json files are
      */
-    @Parameter(defaultValue = "${project.build.directory}/../../../components")
-    protected File componentsDir;
+    @Parameter(defaultValue = "${project.build.directory}/../../../catalog/camel-catalog/src/generated/resources/org/apache/camel/catalog/components")
+    protected File jsonDir;
+
+    private transient String licenseHeader;
 
     @Override
     public void execute(MavenProject project, MavenProjectHelper projectHelper, BuildContext buildContext)
@@ -138,34 +133,13 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
 
         List<ComponentModel> models = new ArrayList<>();
 
-        for (File dir : componentsDir.listFiles()) {
-            List<Path> subs = getComponentPath(dir.toPath());
-            for (Path sub : subs) {
-                sub = sub.resolve("src/generated/resources/");
-                PackageHelper.walk(sub).forEach(p -> {
-                    String f = p.getFileName().toString();
-                    if (f.endsWith(PackageHelper.JSON_SUFIX)) {
-                        try {
-                            BaseModel<?> model = JsonMapper.generateModel(p);
-                            if (model instanceof ComponentModel) {
-                                models.add((ComponentModel) model);
-                            }
-                        } catch (Exception e) {
-                            // ignore as its not a camel model
-                        }
-                    }
-                });
-            }
+        for (File file : jsonDir.listFiles()) {
+            BaseModel<?> model = JsonMapper.generateModel(file.toPath());
+            models.add((ComponentModel) model);
         }
         models.sort((o1, o2) -> o1.getScheme().compareToIgnoreCase(o2.getScheme()));
 
-        Lock lock = LOCKS.computeIfAbsent(root, d -> new ReentrantLock());
-        lock.lock();
-        try {
-            executeComponent(models);
-        } finally {
-            lock.unlock();
-        }
+        executeComponent(models);
     }
 
     private void executeComponent(List<ComponentModel> allModels) throws MojoExecutionException, MojoFailureException {
@@ -175,6 +149,14 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
             // Group the models by implementing classes
             Map<String, List<ComponentModel>> grModels
                     = allModels.stream().collect(Collectors.groupingBy(ComponentModel::getJavaType));
+
+            // load license header
+            try (InputStream is = getClass().getClassLoader().getResourceAsStream("license-header-java.txt")) {
+                this.licenseHeader = loadText(is);
+            } catch (Exception e) {
+                throw new MojoFailureException("Error loading license-header-java.txt file", e);
+            }
+
             for (List<ComponentModel> compModels : grModels.values()) {
                 for (ComponentModel model : compModels) {
                     // if more than one, we have a component class with multiple components aliases
@@ -184,7 +166,7 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
         }
     }
 
-    private void createComponentDsl(final ComponentModel model) throws MojoExecutionException, MojoFailureException {
+    private void createComponentDsl(final ComponentModel model) throws MojoFailureException {
         // Create components DSL factories
         final ComponentDslBuilderFactoryGenerator componentDslBuilderFactoryGenerator
                 = syncAndGenerateSpecificComponentsBuilderFactories(model);
@@ -249,11 +231,7 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
         Path target = outputDir.toPath().resolve(filePath).resolve(fileName);
 
         try {
-            String header;
-            try (InputStream is = getClass().getClassLoader().getResourceAsStream("license-header-java.txt")) {
-                header = loadText(is);
-            }
-            String code = header + source;
+            String code = licenseHeader + source;
             getLog().debug("Source code generated:\n" + code);
 
             return updateResource(buildContext, target, code);
