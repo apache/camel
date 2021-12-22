@@ -150,7 +150,6 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
             BaseModel<?> model = JsonMapper.generateModel(file.toPath());
             models.add((ComponentModel) model);
         }
-        models.sort((o1, o2) -> o1.getScheme().compareToIgnoreCase(o2.getScheme()));
 
         // generate component endpoint DSL files and write them
         executeComponent(models);
@@ -172,8 +171,20 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
             }
 
             for (List<ComponentModel> compModels : grModels.values()) {
-                ComponentModel model = compModels.get(0); // They should be equivalent
-                List<String> aliases = compModels.stream().map(ComponentModel::getScheme).sorted().collect(Collectors.toList());
+                // if there are alias then we need to sort scheme according to the alternative schemes position
+                if (compModels.size() > 1) {
+                    compModels.sort((o1, o2) -> {
+                        String s1 = o1.getScheme();
+                        String s2 = o2.getScheme();
+                        String as = o1.getAlternativeSchemes();
+                        int i1 = as.indexOf(s1);
+                        int i2 = as.indexOf(s2);
+                        return Integer.compare(i1, i2);
+                    });
+                }
+
+                ComponentModel model = compModels.get(0); // master component
+                List<String> aliases = compModels.stream().map(ComponentModel::getScheme).collect(Collectors.toList());
 
                 String overrideComponentName = null;
                 if (aliases.size() > 1) {

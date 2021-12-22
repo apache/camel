@@ -22,10 +22,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
 
 import org.apache.camel.maven.packaging.dsl.component.ComponentDslBuilderFactoryGenerator;
 import org.apache.camel.maven.packaging.dsl.component.ComponentsBuilderFactoryGenerator;
@@ -142,13 +140,9 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
         executeComponent(models);
     }
 
-    private void executeComponent(List<ComponentModel> allModels) throws MojoExecutionException, MojoFailureException {
+    private void executeComponent(List<ComponentModel> allModels) throws MojoFailureException {
         if (!allModels.isEmpty()) {
             getLog().debug("Found " + allModels.size() + " components");
-
-            // Group the models by implementing classes
-            Map<String, List<ComponentModel>> grModels
-                    = allModels.stream().collect(Collectors.groupingBy(ComponentModel::getJavaType));
 
             // load license header
             try (InputStream is = getClass().getClassLoader().getResourceAsStream("license-header-java.txt")) {
@@ -157,11 +151,8 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
                 throw new MojoFailureException("Error loading license-header-java.txt file", e);
             }
 
-            for (List<ComponentModel> compModels : grModels.values()) {
-                for (ComponentModel model : compModels) {
-                    // if more than one, we have a component class with multiple components aliases
-                    createComponentDsl(model);
-                }
+            for (ComponentModel model : allModels) {
+                createComponentDsl(model);
             }
         }
     }
