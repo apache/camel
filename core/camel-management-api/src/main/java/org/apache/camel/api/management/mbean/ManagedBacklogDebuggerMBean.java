@@ -163,4 +163,13 @@ public interface ManagedBacklogDebuggerMBean {
 
     @ManagedOperation(description = "Evaluates the expression at a given breakpoint node id and returns the result as String")
     String evaluateExpressionAtBreakpoint(String nodeId, String language, String expression);
+
+    @ManagedOperation(description = "Updates/adds the exchange property (uses same type as old exchange property  value) on the suspended breakpoint at the given node id")
+    void setExchangePropertyOnBreakpoint(String nodeId, String exchangePropertyName, Object value);
+
+    @ManagedOperation(description = "Removes the exchange property on the suspended breakpoint at the given node id")
+    void removeExchangePropertyOnBreakpoint(String nodeId, String exchangePropertyName);
+
+    @ManagedOperation(description = "Updates/adds the exchange property (with a new type) on the suspended breakpoint at the given node id")
+    void setExchangePropertyOnBreakpoint(String nodeId, String exchangePropertyName, Object value, String type);
 }
