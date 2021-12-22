@@ -27,11 +27,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import javax.annotation.Generated;
@@ -41,7 +36,6 @@ import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.ComponentModel.EndpointOptionModel;
 import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.util.JavadocHelper;
-import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.tooling.util.Strings;
 import org.apache.camel.tooling.util.srcgen.GenericType;
 import org.apache.camel.tooling.util.srcgen.JavaClass;
@@ -62,7 +56,6 @@ import org.jboss.forge.roaster.model.source.MethodSource;
 import org.jboss.forge.roaster.model.source.ParameterSource;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
-import static org.apache.camel.maven.packaging.MojoHelper.getComponentPath;
 import static org.apache.camel.tooling.util.PackageHelper.findCamelDirectory;
 import static org.apache.camel.tooling.util.PackageHelper.loadText;
 
@@ -72,8 +65,6 @@ import static org.apache.camel.tooling.util.PackageHelper.loadText;
 @Mojo(name = "generate-endpoint-dsl", threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
       defaultPhase = LifecyclePhase.PROCESS_CLASSES)
 public class EndpointDslMojo extends AbstractGeneratorMojo {
-
-    private static final Map<Path, Lock> LOCKS = new ConcurrentHashMap<>();
 
     /**
      * The project build directory
@@ -118,10 +109,12 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
     protected File outputResourcesDir;
 
     /**
-     * The components directory where all the Apache Camel components are
+     * The catalog directory where the component json files are
      */
-    @Parameter(defaultValue = "${project.build.directory}/../../../components")
-    protected File componentsDir;
+    @Parameter(defaultValue = "${project.build.directory}/../../../catalog/camel-catalog/src/generated/resources/org/apache/camel/catalog/components")
+    protected File jsonDir;
+
+    private transient String licenseHeader;
 
     @Override
     public void execute(MavenProject project, MavenProjectHelper projectHelper, BuildContext buildContext)
@@ -153,35 +146,14 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
 
         List<ComponentModel> models = new ArrayList<>();
 
-        for (File dir : componentsDir.listFiles()) {
-            List<Path> subs = getComponentPath(dir.toPath());
-            for (Path sub : subs) {
-                sub = sub.resolve("src/generated/resources/");
-                PackageHelper.walk(sub).forEach(p -> {
-                    String f = p.getFileName().toString();
-                    if (f.endsWith(PackageHelper.JSON_SUFIX)) {
-                        try {
-                            BaseModel<?> model = JsonMapper.generateModel(p);
-                            if (model instanceof ComponentModel) {
-                                models.add((ComponentModel) model);
-                            }
-                        } catch (Exception e) {
-                            // ignore as its not a camel model
-                        }
-                    }
-                });
-            }
+        for (File file : jsonDir.listFiles()) {
+            BaseModel<?> model = JsonMapper.generateModel(file.toPath());
+            models.add((ComponentModel) model);
         }
         models.sort((o1, o2) -> o1.getScheme().compareToIgnoreCase(o2.getScheme()));
 
         // generate component endpoint DSL files and write them
-        Lock lock = LOCKS.computeIfAbsent(root, d -> new ReentrantLock());
-        lock.lock();
-        try {
-            executeComponent(models);
-        } finally {
-            lock.unlock();
-        }
+        executeComponent(models);
     }
 
     private void executeComponent(List<ComponentModel> allModels) throws MojoFailureException {
@@ -191,6 +163,14 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
             // Group the models by implementing classes
             Map<String, List<ComponentModel>> grModels
                     = allModels.stream().collect(Collectors.groupingBy(ComponentModel::getJavaType));
+
+            // load license header
+            try (InputStream is = getClass().getClassLoader().getResourceAsStream("license-header-java.txt")) {
+                this.licenseHeader = loadText(is);
+            } catch (Exception e) {
+                throw new MojoFailureException("Error loading license-header-java.txt file", e);
+            }
+
             for (List<ComponentModel> compModels : grModels.values()) {
                 ComponentModel model = compModels.get(0); // They should be equivalent
                 List<String> aliases = compModels.stream().map(ComponentModel::getScheme).sorted().collect(Collectors.toList());
@@ -941,43 +921,6 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         return getProjectClassLoader().generateDummyClass(clazzName);
     }
 
-    private static String loadComponentJson(Map<File, Supplier<String>> jsonFiles, String componentName) {
-        return loadJsonOfType(jsonFiles, componentName, "component");
-    }
-
-    private static String loadJsonOfType(Map<File, Supplier<String>> jsonFiles, String modelName, String type) {
-        for (Map.Entry<File, Supplier<String>> entry : jsonFiles.entrySet()) {
-            if (entry.getKey().getName().equals(modelName + PackageHelper.JSON_SUFIX)) {
-                String json = entry.getValue().get();
-                if (type.equals(PackageHelper.getSchemaKind(json))) {
-                    return json;
-                }
-            }
-        }
-        return null;
-    }
-
-    private void findComponentNames(File dir, Set<String> componentNames) {
-        File f = new File(dir, "classes/META-INF/services/org/apache/camel/component");
-
-        if (f.exists() && f.isDirectory()) {
-            File[] files = f.listFiles();
-            if (files != null) {
-                for (File file : files) {
-                    // skip directories as there may be a sub .resolver
-                    // directory
-                    if (file.isDirectory()) {
-                        continue;
-                    }
-                    String name = file.getName();
-                    if (name.charAt(0) != '.') {
-                        componentNames.add(name);
-                    }
-                }
-            }
-        }
-    }
-
     private boolean writeSourceIfChanged(JavaClass source, String filePath, String fileName, boolean innerClassesLast)
             throws MojoFailureException {
         return writeSourceIfChanged(source.printClass(innerClassesLast), filePath, fileName);
@@ -985,11 +928,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
 
     private boolean writeSourceIfChanged(String source, String filePath, String fileName) throws MojoFailureException {
         try {
-            String header;
-            try (InputStream is = getClass().getClassLoader().getResourceAsStream("license-header-java.txt")) {
-                header = loadText(is);
-            }
-            String code = header + source;
+            String code = licenseHeader + source;
             getLog().debug("Source code generated:\n" + code);
 
             return updateResource(sourcesOutputDir.toPath(), filePath + "/" + fileName, code);
