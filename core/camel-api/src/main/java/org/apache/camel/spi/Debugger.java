@@ -30,6 +30,8 @@ import org.apache.camel.spi.CamelEvent.ExchangeEvent;
  */
 public interface Debugger extends Service, CamelContextAware {
 
+    String FACTORY = "debugger-factory";
+
     /**
      * Add the given breakpoint
      *

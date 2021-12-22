@@ -22,7 +22,6 @@ import java.util.Map;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.StaticService;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
-import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.spi.SendDynamicAware;
 
 /**
@@ -34,11 +33,6 @@ public interface RuntimeCamelCatalog extends StaticService, CamelContextAware {
      * Service factory key.
      */
     String FACTORY = "runtime-camelcatalog";
-
-    /**
-     * Factory key for {@link EndpointUriFactory}
-     */
-    String ENDPOINT_URI_ASSEMBLER_FACTORY = "runtime-camelcatalog-endpointuriassembler";
 
     /**
      * Returns the component information as JSON format.

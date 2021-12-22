@@ -26,6 +26,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RoutesBuilder;
+import org.apache.camel.StaticService;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RoutesBuilderLoader;
@@ -39,7 +40,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Default {@link RoutesLoader}.
  */
-public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader {
+public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader, StaticService {
 
     /**
      * Prefix to use for looking up existing {@link RoutesLoader} from the {@link org.apache.camel.spi.Registry}.

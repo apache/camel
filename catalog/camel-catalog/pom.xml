@@ -160,24 +160,6 @@
                 </executions>
             </plugin>
 
-            <!-- sync properties to camel-dependencies -->
-            <plugin>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>sync-properties-maven-plugin</artifactId>
-                <version>${project.version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>sync-properties</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <sourcePom>${basedir}/../../parent/pom.xml</sourcePom>
-                    <targetPom>${basedir}/../../camel-dependencies/pom.xml</targetPom>
-                    <licenseHeader>${basedir}/../../etc/apache-header.xml</licenseHeader>
-                </configuration>
-            </plugin>
         </plugins>
 
     </build>

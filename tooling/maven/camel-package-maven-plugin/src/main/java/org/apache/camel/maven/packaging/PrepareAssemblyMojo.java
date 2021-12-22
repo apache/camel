@@ -63,7 +63,7 @@ public class PrepareAssemblyMojo extends AbstractMojo {
     /**
      * The directory for components
      */
-    @Parameter(defaultValue = "${project.build.directory}/../../../core/camel-allcomponents/pom.xml")
+    @Parameter(defaultValue = "${project.build.directory}/../../../catalog/camel-allcomponents/pom.xml")
     protected File allComponentsPomFile;
 
     /**

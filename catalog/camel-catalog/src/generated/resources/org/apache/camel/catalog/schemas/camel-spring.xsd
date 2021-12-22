@@ -15330,10 +15330,10 @@ value: CompleteCurrentTaskOnly
         <xs:attribute name="loadTypeConverters" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Sets whether to load custom type converters by scanning classpath. This can be
-turned off if you are only using Camel components that does not provide type
-converters which is needed at runtime. In such situations setting this option to
-false, can speedup starting Camel. Default value: true
+Whether to load custom type converters by scanning classpath. This is used for
+backwards compatibility with Camel 2.x. Its recommended to migrate to use fast
+type converter loading by setting Converter(loader = true) on your custom type
+converter classes. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -15839,7 +15839,6 @@ multiple certificates.
 
   <xs:simpleType name="startupSummaryLevel">
     <xs:restriction base="xs:string">
-      <xs:enumeration value="Classic"/>
       <xs:enumeration value="Verbose"/>
       <xs:enumeration value="Default"/>
       <xs:enumeration value="Brief"/>

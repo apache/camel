@@ -101,6 +101,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Debugger;
+import org.apache.camel.spi.DebuggerFactory;
 import org.apache.camel.spi.DeferServiceFactory;
 import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.spi.EndpointStrategy;
@@ -1225,7 +1226,7 @@ public abstract class AbstractCamelContext extends BaseService
             }
         }
 
-        if (startupSummaryLevel != StartupSummaryLevel.Classic && startupSummaryLevel != StartupSummaryLevel.Oneline
+        if (startupSummaryLevel != StartupSummaryLevel.Oneline
                 && startupSummaryLevel != StartupSummaryLevel.Off) {
             logRouteStopSummary(LoggingLevel.INFO);
         }
@@ -2716,8 +2717,8 @@ public abstract class AbstractCamelContext extends BaseService
 
         // init the route controller
         this.routeController = getRouteController();
-        if (startupSummaryLevel == StartupSummaryLevel.Classic || startupSummaryLevel == StartupSummaryLevel.Verbose) {
-            // classic/verbose startup should let route controller do the route startup logging
+        if (startupSummaryLevel == StartupSummaryLevel.Verbose) {
+            // verbose startup should let route controller do the route startup logging
             if (routeController.getLoggingLevel().ordinal() < LoggingLevel.INFO.ordinal()) {
                 routeController.setLoggingLevel(LoggingLevel.INFO);
             }
@@ -2725,8 +2726,8 @@ public abstract class AbstractCamelContext extends BaseService
 
         // init the shutdown strategy
         this.shutdownStrategy = getShutdownStrategy();
-        if (startupSummaryLevel == StartupSummaryLevel.Classic || startupSummaryLevel == StartupSummaryLevel.Verbose) {
-            // classic/verbose startup should let route controller do the route shutdown logging
+        if (startupSummaryLevel == StartupSummaryLevel.Verbose) {
+            // verbose startup should let route controller do the route shutdown logging
             if (shutdownStrategy != null && shutdownStrategy.getLoggingLevel().ordinal() < LoggingLevel.INFO.ordinal()) {
                 shutdownStrategy.setLoggingLevel(LoggingLevel.INFO);
             }
@@ -2916,10 +2917,7 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     protected void doStartContext() throws Exception {
-        if (startupSummaryLevel == StartupSummaryLevel.Classic) {
-            // classic was logging this at INFO level
-            LOG.info("Apache Camel {} ({}) is starting", getVersion(), getName());
-        } else if (LOG.isDebugEnabled()) {
+        if (LOG.isDebugEnabled()) {
             LOG.debug("Apache Camel {} ({}) is starting", getVersion(), getName());
         }
         vetoed = null;
@@ -2965,11 +2963,7 @@ public abstract class AbstractCamelContext extends BaseService
         logDuplicateComponents();
 
         // log startup summary
-        if (startupSummaryLevel == StartupSummaryLevel.Classic) {
-            logClassicStartSummary();
-        } else {
-            logStartSummary();
-        }
+        logStartSummary();
 
         // now Camel has been started/bootstrap is complete, then run cleanup to help free up memory etc
         for (BootstrapCloseable bootstrap : bootstraps) {
@@ -3022,29 +3016,6 @@ public abstract class AbstractCamelContext extends BaseService
             }
         }
 
-    }
-
-    protected void logClassicStartSummary() {
-        if (LOG.isInfoEnabled()) {
-            // count how many routes are actually started
-            int started = 0;
-            for (Route route : getRoutes()) {
-                ServiceStatus status = getRouteStatus(route.getId());
-                if (status != null && status.isStarted()) {
-                    started++;
-                }
-            }
-
-            final Collection<Route> controlledRoutes = getRouteController().getControlledRoutes();
-            if (controlledRoutes.isEmpty()) {
-                LOG.info("Total {} routes, of which {} are started", getRoutes().size(), started);
-            } else {
-                LOG.info("Total {} routes, of which {} are started, and {} are managed by RouteController: {}",
-                        getRoutes().size(), started, controlledRoutes.size(),
-                        getRouteController().getClass().getName());
-            }
-            LOG.info("Apache Camel {} ({}) started in {}", getVersion(), getName(), TimeUtils.printDuration(stopWatch.taken()));
-        }
     }
 
     protected void logStartSummary() {
@@ -3365,7 +3336,7 @@ public abstract class AbstractCamelContext extends BaseService
         }
         shutdownServices(list, false);
 
-        if (startupSummaryLevel != StartupSummaryLevel.Classic && startupSummaryLevel != StartupSummaryLevel.Oneline
+        if (startupSummaryLevel != StartupSummaryLevel.Oneline
                 && startupSummaryLevel != StartupSummaryLevel.Off) {
             logRouteStopSummary(LoggingLevel.INFO);
         }
@@ -3451,13 +3422,7 @@ public abstract class AbstractCamelContext extends BaseService
         // stop the lazy created so they can be re-created on restart
         forceStopLazyInitialization();
 
-        if (startupSummaryLevel == StartupSummaryLevel.Classic) {
-            if (LOG.isInfoEnabled()) {
-                LOG.info("Apache Camel {} ({}) uptime {}", getVersion(), getName(), getUptime());
-                LOG.info("Apache Camel {} ({}) is shutdown in {}", getVersion(), getName(),
-                        TimeUtils.printDuration(stopWatch.taken()));
-            }
-        } else if (startupSummaryLevel != StartupSummaryLevel.Off) {
+        if (startupSummaryLevel != StartupSummaryLevel.Off) {
             if (LOG.isInfoEnabled()) {
                 String taken = TimeUtils.printDuration(stopWatch.taken());
                 LOG.info("Apache Camel {} ({}) shutdown in {} (uptime:{})", getVersion(), getName(), taken, getUptime());
@@ -4115,6 +4080,17 @@ public abstract class AbstractCamelContext extends BaseService
                     Object object = finder.newInstance("ManagementStrategyFactory").orElse(null);
                     if (object instanceof ManagementStrategyFactory) {
                         factory = (ManagementStrategyFactory) object;
+                    }
+                }
+                // detect if camel-debug is on classpath that enables debugging
+                DebuggerFactory df
+                        = getBootstrapFactoryFinder().newInstance(Debugger.FACTORY, DebuggerFactory.class).orElse(null);
+                if (df != null) {
+                    LOG.info("Detected: {} JAR (enabling Camel Debugging)", df);
+                    setDebugging(true);
+                    Debugger debugger = df.createDebugger(this);
+                    if (debugger != null) {
+                        setDebugger(debugger);
                     }
                 }
             } catch (Exception e) {

@@ -211,7 +211,7 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
     }
 
     private void syncAllComponentsPomFile() throws MojoExecutionException {
-        Path root = findCamelDirectory(project.getBasedir(), "core/camel-allcomponents").toPath();
+        Path root = findCamelDirectory(project.getBasedir(), "catalog/camel-allcomponents").toPath();
         Path pomFile = root.resolve("pom.xml");
 
         final String startDependenciesMarker = "<dependencies>";

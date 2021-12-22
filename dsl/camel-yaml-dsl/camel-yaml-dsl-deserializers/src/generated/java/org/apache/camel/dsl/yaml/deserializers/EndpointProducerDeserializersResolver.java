@@ -56,6 +56,7 @@ public final class EndpointProducerDeserializersResolver implements YamlDeserial
             case "aws2-translate":
             case "azure-cosmosdb":
             case "azure-eventhubs":
+            case "azure-servicebus":
             case "azure-storage-blob":
             case "azure-storage-datalake":
             case "azure-storage-queue":

@@ -156,7 +156,7 @@ It is possible to stop (will do a gracefully shut down) an individual route usin
 
 [source,java]
 ----
-camelContet.getRouteController().stopRoute(routeId);
+camelContext.getRouteController().stopRoute(routeId);
 ----
 
 Routes can also be stopped via JMX.
