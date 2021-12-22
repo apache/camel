@@ -15839,7 +15839,6 @@ multiple certificates.
 
   <xs:simpleType name="startupSummaryLevel">
     <xs:restriction base="xs:string">
-      <xs:enumeration value="Classic"/>
       <xs:enumeration value="Verbose"/>
       <xs:enumeration value="Default"/>
       <xs:enumeration value="Brief"/>
