@@ -622,27 +622,6 @@ public interface SolrEndpointBuilderFactory {
             return SolrEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
         /**
-         * Solr (camel-solr)
-         * Perform operations against Apache Lucene Solr.
-         * 
-         * Category: monitoring,search
-         * Since: 2.9
-         * Maven coordinates: org.apache.camel:camel-solr
-         * 
-         * Syntax: <code>solrCloud:url</code>
-         * 
-         * Path parameter: url (required)
-         * Hostname and port for the Solr server(s). Multiple hosts can be
-         * specified, separated with a comma. See the solrClient parameter for
-         * more information on the SolrClient used to connect to Solr.
-         * 
-         * @param path url
-         * @return the dsl builder
-         */
-        default SolrEndpointBuilder solrCloud(String path) {
-            return SolrEndpointBuilderFactory.endpointBuilder("solrCloud", path);
-        }
-        /**
          * Solr (Secure) (camel-solr)
          * Perform operations against Apache Lucene Solr.
          * 
@@ -662,6 +641,27 @@ public interface SolrEndpointBuilderFactory {
          */
         default SolrEndpointBuilder solrs(String path) {
             return SolrEndpointBuilderFactory.endpointBuilder("solrs", path);
+        }
+        /**
+         * Solr (camel-solr)
+         * Perform operations against Apache Lucene Solr.
+         * 
+         * Category: monitoring,search
+         * Since: 2.9
+         * Maven coordinates: org.apache.camel:camel-solr
+         * 
+         * Syntax: <code>solrCloud:url</code>
+         * 
+         * Path parameter: url (required)
+         * Hostname and port for the Solr server(s). Multiple hosts can be
+         * specified, separated with a comma. See the solrClient parameter for
+         * more information on the SolrClient used to connect to Solr.
+         * 
+         * @param path url
+         * @return the dsl builder
+         */
+        default SolrEndpointBuilder solrCloud(String path) {
+            return SolrEndpointBuilderFactory.endpointBuilder("solrCloud", path);
         }
     }
     static SolrEndpointBuilder endpointBuilder(String componentName, String path) {

@@ -169,49 +169,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.WsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Async HTTP Client (AHC) Secure Websocket (Secure) (camel-ahc-ws)
-     * Exchange data with external Websocket servers using Async Http Client.
-     * 
-     * Category: websocket
-     * Since: 2.14
-     * Maven coordinates: org.apache.camel:camel-ahc-ws
-     * 
-     * Syntax: <code>ahc-wss:httpUri</code>
-     * 
-     * Path parameter: httpUri (required)
-     * The URI to use such as http://hostname:port/path
-     * 
-     * @param path httpUri
-     * @return the dsl builder
-     */
-    public static org.apache.camel.builder.endpoint.dsl.WsEndpointBuilderFactory.WsEndpointBuilder ahcWss(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.WsEndpointBuilderFactory.endpointBuilder("ahc-wss", path);
-    }
-    /**
-     * Async HTTP Client (AHC) Secure Websocket (Secure) (camel-ahc-ws)
-     * Exchange data with external Websocket servers using Async Http Client.
-     * 
-     * Category: websocket
-     * Since: 2.14
-     * Maven coordinates: org.apache.camel:camel-ahc-ws
-     * 
-     * Syntax: <code>ahc-wss:httpUri</code>
-     * 
-     * Path parameter: httpUri (required)
-     * The URI to use such as http://hostname:port/path
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path httpUri
-     * @return the dsl builder
-     */
-    public static org.apache.camel.builder.endpoint.dsl.WsEndpointBuilderFactory.WsEndpointBuilder ahcWss(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.WsEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * AMQP (camel-amqp)
      * Messaging with AMQP protocol using Apache QPid Client.
      * 
@@ -2948,65 +2905,6 @@ public class StaticEndpointBuilders {
      * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.CometdEndpointBuilderFactory.CometdEndpointBuilder cometd(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.CometdEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
-     * CometD (Secure) (camel-cometd)
-     * Offers publish/subscribe, peer-to-peer (via a server), and RPC style
-     * messaging using the CometD/Bayeux protocol.
-     * 
-     * Category: websocket
-     * Since: 2.0
-     * Maven coordinates: org.apache.camel:camel-cometd
-     * 
-     * Syntax: <code>cometds:host:port/channelName</code>
-     * 
-     * Path parameter: host (required)
-     * Hostname
-     * 
-     * Path parameter: port (required)
-     * Host port number
-     * 
-     * Path parameter: channelName (required)
-     * The channelName represents a topic that can be subscribed to by the Camel
-     * endpoints.
-     * 
-     * @param path host:port/channelName
-     * @return the dsl builder
-     */
-    public static org.apache.camel.builder.endpoint.dsl.CometdEndpointBuilderFactory.CometdEndpointBuilder cometds(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.CometdEndpointBuilderFactory.endpointBuilder("cometds", path);
-    }
-    /**
-     * CometD (Secure) (camel-cometd)
-     * Offers publish/subscribe, peer-to-peer (via a server), and RPC style
-     * messaging using the CometD/Bayeux protocol.
-     * 
-     * Category: websocket
-     * Since: 2.0
-     * Maven coordinates: org.apache.camel:camel-cometd
-     * 
-     * Syntax: <code>cometds:host:port/channelName</code>
-     * 
-     * Path parameter: host (required)
-     * Hostname
-     * 
-     * Path parameter: port (required)
-     * Host port number
-     * 
-     * Path parameter: channelName (required)
-     * The channelName represents a topic that can be subscribed to by the Camel
-     * endpoints.
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path host:port/channelName
-     * @return the dsl builder
-     */
-    public static org.apache.camel.builder.endpoint.dsl.CometdEndpointBuilderFactory.CometdEndpointBuilder cometds(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.CometdEndpointBuilderFactory.endpointBuilder(componentName, path);
@@ -12138,55 +12036,6 @@ public class StaticEndpointBuilders {
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.PlatformHttpEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
-     * POP3 (camel-mail)
-     * Send and receive emails using imap, pop3 and smtp protocols.
-     * 
-     * Category: mail
-     * Since: 1.0
-     * Maven coordinates: org.apache.camel:camel-mail
-     * 
-     * Syntax: <code>pop3:host:port</code>
-     * 
-     * Path parameter: host (required)
-     * The mail server host name
-     * 
-     * Path parameter: port
-     * The port number of the mail server
-     * 
-     * @param path host:port
-     * @return the dsl builder
-     */
-    public static org.apache.camel.builder.endpoint.dsl.MailEndpointBuilderFactory.MailEndpointBuilder pop3(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.MailEndpointBuilderFactory.endpointBuilder("pop3", path);
-    }
-    /**
-     * POP3 (camel-mail)
-     * Send and receive emails using imap, pop3 and smtp protocols.
-     * 
-     * Category: mail
-     * Since: 1.0
-     * Maven coordinates: org.apache.camel:camel-mail
-     * 
-     * Syntax: <code>pop3:host:port</code>
-     * 
-     * Path parameter: host (required)
-     * The mail server host name
-     * 
-     * Path parameter: port
-     * The port number of the mail server
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path host:port
-     * @return the dsl builder
-     */
-    public static org.apache.camel.builder.endpoint.dsl.MailEndpointBuilderFactory.MailEndpointBuilder pop3(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.MailEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * PubNub (camel-pubnub)
