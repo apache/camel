@@ -51,7 +51,7 @@ public class TwoRouteSuspendResumeTest extends ContextTestSupport {
 
         // need to give seda consumer thread time to idle
         await().atMost(1, TimeUnit.SECONDS).until(() -> {
-            return context.getEndpoint("seda:bar", SedaEndpoint.class).getQueue().size() == 0;
+            return context.getEndpoint("seda:foo", SedaEndpoint.class).getQueue().size() == 0;
         });
 
         template.sendBody("seda:foo", "B");

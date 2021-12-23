@@ -22,10 +22,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@Isolated("Short timeouts cause problems with parallel text execution")
 public class SplitParallelTimeoutTest extends ContextTestSupport {
 
     private volatile Exchange receivedExchange;
