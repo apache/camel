@@ -73,23 +73,40 @@ Preview your work in the Intellij Asciidoc plugin preview or in a browser with a
 //=== Currently usable workflow
 . Commit and push your work and create a PR in the (sub)project repository.
 . Fork/clone the camel-website repository, and create an appropriate branch, e.g. `git switch -c camel-quarkus-main-456`.
-. Locate the project you are working with in the `antora-playbook.yml` under `sources`, and locate the branch you have altered under the appropriate `-url`.
-.. Comment out the original source URL and replace it with the URL of your fork.
-.. Leaving the original branch as a comment, alter the branch to e.g. `- main-doc-fix` using your branch name.
-.. Make sure that all other branches used for the documentation are up to date in your fork.
-To do this, for each such branch, execute
-[source,console]
+The following process will work for any number of doc PRs against any number of source repositories: usually you will have one subproject repo and one branch.
+. Locate the `- url` of the project(s) you are working with in the `antora-playbook.yml` under `sources`, and locate the branch(es) you have altered under that `- url`.
+. Add something like this to the end of the  `antora-playbook.yml`:
++
+--
+[source,yml]
 ----
-git switch <branch>
-git pull
-git push <fork>
+    - require: '@djencks/antora-source-map'
+#      log_level: trace #<1>
+      source-map: <2>
+        - url: 'https://github.com/apache/camel-kamelets.git' # <3>
+          mapped-url: 'https://github.com/djencks/camel-kamelets.git' # <4>
+          branches: # <5>
+            - branch: main # <6>
+              mapped-branch: main-collect # <7>
+            - branch: 0.6.x
+              mapped-branch: 0.6.x-collect
+            - branch: 0.5.x
+              mapped-branch: 0.5.x-collect
 ----
-. Commit the change to the playbook, push it to your `camel-website` fork, and open a PR against `camel-website`.
-CI will build your change and, if successful, will deploy a preview on Netlify.
-There will be an email with the preview URL.
+<1> Turning on trace logging will show you in great detail what's changed from the regular playbook, which can be useful if the build is not doing what you expect.
+<2> List of source urls to substitute, probably only one.
+<3> The GitHub URL of the subproject you are working on.
+<4> The GitHub URL of your fork of the subproject.
+<5> List of modified branches: probably only one.
+<6> Name of the branch your PR will merge into.
+<7> Name of your PR branch.
+--
+. At this point you can test your playbook changes locally by running `yarn build:antora` or `yarn build`.
+. Commit the playbook changes, push to your fork of the `camel-website` repository, and open a PR.
+. If all goes well you will get an email telling you where the Netlify preview is; this is also shown on the PR page.
 . Check for build problems and examine the preview.
 . Upon approval, your content PR will be merged.
-Unless you have made a considerably more extensive change than described above, the `camel-website` PR will not need to be merged and may be closed.
+A `camel-website` PR constructed as described here will not need to be merged and may be closed.
 
 [#_local_build_instructions]
 == How to build the website locally, with your changes
@@ -121,60 +138,36 @@ Run a build against the remote source repos to check that it works and to build 
 yarn build-all
 ----
 
-=== Adjusting the playbook to include local changes
+NOTE: The following procedure is not available in all subprojects yet.
+If there is no `docs/local-build.sh` in the one you are working on, please ping djencks on zulip and I'll try to get it in soon.
 
-The Antora build is specified in the `camel-website:antora-playbook.yml` playbook.
-The content repositories are specified under the `content/sources` key.
-Locate the subproject you are working on and change the `url` to point to the local checkout of the subproject, e.g.
+=== Initial full Antora build
 
-[source,yml]
+You only have to do this once, and again whenever there are significant changes to the website.
+
+In your project, run
+[source,sh]
 ----
-#    - url: https://github.com/apache/camel-quarkus.git <1>
-    - url: ./../camel-quarkus <2>
-      branches:
-        - main
-        - 2.5.x
-        - 2.4.x
-      start_path: docs
+./local-build.sh full
 ----
-<1> Leaving the original can help setting up the playbook for a PR build.
-<2> This relative path depends on the organization of all your camel projects in a `camel` directory.
+This will build the entire site, including your changes in your branch, and generate a 'site-manifest' listing all the contents of the website, that can be used to build only small parts of the site.
+This full build will also check that all xrefs into your subproject branch are valid.
 
-Your local changes will need to be on a branch, so change the branch name, e.g.
+=== Subsequent partial continuous builds
 
-[source,yml]
+After this full build completes, you can work on documentation with live updates in your browser by running
+[source,sh]
 ----
-#    - url: https://github.com/apache/camel-quarkus.git
-    - url: ./../camel-quarkus
-      branches:
-#        - main
-        - main-doc-fixes
-        - 2.5.x
-        - 2.4.x
-      start_path: docs
+./local-build.sh
 ----
+This will do an initial build of just the current branch in the current subproject, incorporating it into the full site built in the previous step, start a web server to serve the site, set up browser-sync on pages you are looking at in your browser, and rebuild the (partial) site as it detects changes.
+Depending on the amount of content generation Antora is doing, this may take up to a minute or so.
 
-Make sure that every branch used in the documentation is present locally and up to date.
-In the subproject directory, for each branch, run e.g.
+This partial build will detect broken xrefs within your branch and from your branch to the main site, but will not (yet) detect broken xrefs from the rest of the site into your branch.
+If you rename or remove a page please do a full build or check the PR build carefully for broken xrefs.
 
-[source, console]
-----
-git switch 2.5.x
-git pull
-----
-
-Now you are ready to build your work locally, in `camel-website`:
-
-[source, console]
-----
-yarn build:antora
-# or yarn build to include hugo content.
-----
-
-Note that Antora will use the file system state of your main checked-out branch, whether or not these changes are committed.
-If you have additional git worktrees checked out, you can have Antora use the file system state of these also, see https://docs.antora.org/antora/3.0/playbook/content-worktrees/[the Antora worktrees documentation].
-
-If you do a full build and have Docker available locally you can view your build served with httpd by running `local-httpd-in-docker.sh`.
+If you do a full build (`yarn build-all` or `yarn build` rather than `yarn build:antora` or use of the `local-build.sh` script in a subproject) and have Docker available locally you can view your build served with httpd by running `local-httpd-in-docker.sh`.
+This is especially valuable to check redirects set up with `page-aliases`.
 
 == New, renamed, or removed pages
 
