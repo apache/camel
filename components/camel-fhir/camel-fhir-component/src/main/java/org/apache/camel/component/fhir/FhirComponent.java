@@ -46,16 +46,28 @@ public class FhirComponent extends AbstractApiComponent<FhirApiName, FhirConfigu
     }
 
     @Override
+    protected void afterPropertiesSet(FhirConfiguration endpointConfiguration) {
+        // ensure a client is set on the config
+        if (endpointConfiguration.getClient() == null) {
+            if (configuration != null && configuration.getClient() != null) {
+                endpointConfiguration.setClient(configuration.getClient());
+
+                return;
+            } else if (configuration != null) {
+                endpointConfiguration.setServerUrl(configuration.getServerUrl());
+                endpointConfiguration.setFhirContext(configuration.getFhirContext());
+            }
+
+            endpointConfiguration.setClient(createClient(endpointConfiguration));
+        }
+    }
+
+    @Override
     protected Endpoint createEndpoint(
             String uri, String methodName, FhirApiName apiName,
             FhirConfiguration endpointConfiguration) {
         endpointConfiguration.setApiName(apiName);
         endpointConfiguration.setMethodName(methodName);
-
-        // ensure a client is set on the config
-        if (endpointConfiguration.getClient() == null) {
-            endpointConfiguration.setClient(createClient(endpointConfiguration));
-        }
 
         return new FhirEndpoint(uri, this, apiName, methodName, endpointConfiguration);
     }
