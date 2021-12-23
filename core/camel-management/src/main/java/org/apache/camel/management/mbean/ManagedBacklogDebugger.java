@@ -301,6 +301,41 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
     }
 
     @Override
+    public void setExchangePropertyOnBreakpoint(String nodeId, String exchangePropertyName, Object value) {
+        Exchange suspendedExchange = backlogDebugger.getSuspendedExchange(nodeId);
+        if (suspendedExchange != null) {
+            suspendedExchange.setProperty(exchangePropertyName, value);
+        }
+    }
+
+    @Override
+    public void removeExchangePropertyOnBreakpoint(String nodeId, String exchangePropertyName) {
+        Exchange suspendedExchange = backlogDebugger.getSuspendedExchange(nodeId);
+        if (suspendedExchange != null) {
+            suspendedExchange.removeProperty(exchangePropertyName);
+        }
+    }
+
+    @Override
+    public void setExchangePropertyOnBreakpoint(String nodeId, String exchangePropertyName, Object value, String type) {
+        try {
+            Class<?> classType = camelContext.getClassResolver().resolveMandatoryClass(type);
+            if (type != null) {
+                Exchange suspendedExchange = backlogDebugger.getSuspendedExchange(nodeId);
+                if (suspendedExchange != null) {
+                    value = suspendedExchange.getContext().getTypeConverter().mandatoryConvertTo(classType, suspendedExchange,
+                            value);
+                    suspendedExchange.setProperty(exchangePropertyName, value);
+                }
+            } else {
+                this.setExchangePropertyOnBreakpoint(nodeId, exchangePropertyName, value);
+            }
+        } catch (Exception e) {
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
+        }
+    }
+
+    @Override
     public Object evaluateExpressionAtBreakpoint(String nodeId, String language, String expression, String resultType) {
         Exchange suspendedExchange;
         try {

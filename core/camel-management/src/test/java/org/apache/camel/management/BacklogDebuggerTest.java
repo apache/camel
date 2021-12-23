@@ -100,7 +100,7 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testBacklogDebuggerUpdateBodyAndHeader() throws Exception {
+    public void testBacklogDebuggerUpdateBodyExchangePropertyAndHeader() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = new ObjectName(
                 "org.apache.camel:context=" + context.getManagementName() + ",type=tracer,name=BacklogDebugger");
@@ -139,6 +139,8 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
                 new String[] { "java.lang.String", "java.lang.Object" });
         mbeanServer.invoke(on, "setMessageHeaderOnBreakpoint", new Object[] { "foo", "beer", "Carlsberg" },
                 new String[] { "java.lang.String", "java.lang.String", "java.lang.Object" });
+        mbeanServer.invoke(on, "setExchangePropertyOnBreakpoint", new Object[] { "foo", "food", "Bratwurst" },
+                new String[] { "java.lang.String", "java.lang.String", "java.lang.Object" });
 
         // resume breakpoint
         mbeanServer.invoke(on, "resumeBreakpoint", new Object[] { "foo" }, new String[] { "java.lang.String" });
@@ -152,8 +154,8 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         });
 
         // the message should be ours
-        String xml = (String) mbeanServer.invoke(on, "dumpTracedMessagesAsXml", new Object[] { "bar" },
-                new String[] { "java.lang.String" });
+        String xml = (String) mbeanServer.invoke(on, "dumpTracedMessagesAsXml", new Object[] { "bar", true },
+                new String[] { "java.lang.String", "boolean" });
         assertNotNull(xml);
         log.info(xml);
 
@@ -161,6 +163,8 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         assertTrue(xml.contains("<toNode>bar</toNode>"), "Should contain bar node");
         assertTrue(xml.contains("<header key=\"beer\" type=\"java.lang.String\">Carlsberg</header>"),
                 "Should contain our added header");
+        assertTrue(xml.contains("<exchangeProperty name=\"food\" type=\"java.lang.String\">Bratwurst</exchangeProperty>"),
+                "Should contain our added exchange property");
 
         resetMocks();
         mock.expectedMessageCount(1);
@@ -178,7 +182,7 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testBacklogDebuggerUpdateBodyAndHeaderType() throws Exception {
+    public void testBacklogDebuggerUpdateBodyExchangePropertyAndHeaderType() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = new ObjectName(
                 "org.apache.camel:context=" + context.getManagementName() + ",type=tracer,name=BacklogDebugger");
@@ -217,6 +221,8 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
                 new String[] { "java.lang.String", "java.lang.Object", "java.lang.String" });
         mbeanServer.invoke(on, "setMessageHeaderOnBreakpoint", new Object[] { "foo", "beer", "123", "java.lang.Integer" },
                 new String[] { "java.lang.String", "java.lang.String", "java.lang.Object", "java.lang.String" });
+        mbeanServer.invoke(on, "setExchangePropertyOnBreakpoint", new Object[] { "foo", "food", "987", "java.lang.Integer" },
+                new String[] { "java.lang.String", "java.lang.String", "java.lang.Object", "java.lang.String" });
 
         // resume breakpoint
         mbeanServer.invoke(on, "resumeBreakpoint", new Object[] { "foo" }, new String[] { "java.lang.String" });
@@ -230,8 +236,8 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         });
 
         // the message should be ours
-        String xml = (String) mbeanServer.invoke(on, "dumpTracedMessagesAsXml", new Object[] { "bar" },
-                new String[] { "java.lang.String" });
+        String xml = (String) mbeanServer.invoke(on, "dumpTracedMessagesAsXml", new Object[] { "bar", true },
+                new String[] { "java.lang.String", "boolean" });
         assertNotNull(xml);
         log.info(xml);
 
@@ -239,7 +245,8 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         assertTrue(xml.contains("<toNode>bar</toNode>"), "Should contain bar node");
         assertTrue(xml.contains("<header key=\"beer\" type=\"java.lang.Integer\">123</header>"),
                 "Should contain our added header");
-
+        assertTrue(xml.contains("<exchangeProperty name=\"food\" type=\"java.lang.Integer\">987</exchangeProperty>"),
+                "Should contain our added exchange property");
         resetMocks();
         mock.expectedMessageCount(1);
 
@@ -294,6 +301,8 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         mbeanServer.invoke(on, "removeMessageBodyOnBreakpoint", new Object[] { "foo" }, new String[] { "java.lang.String" });
         mbeanServer.invoke(on, "removeMessageHeaderOnBreakpoint", new Object[] { "foo", "beer" },
                 new String[] { "java.lang.String", "java.lang.String" });
+        mbeanServer.invoke(on, "removeExchangePropertyOnBreakpoint", new Object[] { "foo", "food" },
+                new String[] { "java.lang.String", "java.lang.String" });
 
         // resume breakpoint
         mbeanServer.invoke(on, "resumeBreakpoint", new Object[] { "foo" }, new String[] { "java.lang.String" });
@@ -307,14 +316,15 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         });
 
         // the message should be ours
-        String xml = (String) mbeanServer.invoke(on, "dumpTracedMessagesAsXml", new Object[] { "bar" },
-                new String[] { "java.lang.String" });
+        String xml = (String) mbeanServer.invoke(on, "dumpTracedMessagesAsXml", new Object[] { "bar", true },
+                new String[] { "java.lang.String", "boolean" });
         assertNotNull(xml);
         log.info(xml);
 
         assertTrue(xml.contains("<body>[Body is null]</body>"), "Should not contain our body");
         assertTrue(xml.contains("<toNode>bar</toNode>"), "Should contain bar node");
         assertFalse(xml.contains("<header"), "Should not contain any headers");
+        assertFalse(xml.contains("<exchangeProperty name=\"food\""), "Should not contain exchange property 'food'");
 
         resetMocks();
         mock.expectedMessageCount(1);
