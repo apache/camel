@@ -1947,7 +1947,7 @@ public class StaticEndpointBuilders {
      * Since: 3.12
      * Maven coordinates: org.apache.camel:camel-azure-servicebus
      * 
-     * Syntax: <code>azure-servicebus:queueNameOrTopicName</code>
+     * Syntax: <code>azure-servicebus:topicOrQueueName</code>
      * 
      * Path parameter: topicOrQueueName
      * Selected topic name or the queue name, that is depending on
@@ -1955,7 +1955,7 @@ public class StaticEndpointBuilders {
      * will be the queue name and if serviceBusType=topic, this will be the
      * topic name.
      * 
-     * @param path queueNameOrTopicName
+     * @param path topicOrQueueName
      * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ServiceBusEndpointBuilderFactory.ServiceBusEndpointBuilder azureServicebus(
@@ -1970,7 +1970,7 @@ public class StaticEndpointBuilders {
      * Since: 3.12
      * Maven coordinates: org.apache.camel:camel-azure-servicebus
      * 
-     * Syntax: <code>azure-servicebus:queueNameOrTopicName</code>
+     * Syntax: <code>azure-servicebus:topicOrQueueName</code>
      * 
      * Path parameter: topicOrQueueName
      * Selected topic name or the queue name, that is depending on
@@ -1980,7 +1980,7 @@ public class StaticEndpointBuilders {
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
-     * @param path queueNameOrTopicName
+     * @param path topicOrQueueName
      * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ServiceBusEndpointBuilderFactory.ServiceBusEndpointBuilder azureServicebus(
