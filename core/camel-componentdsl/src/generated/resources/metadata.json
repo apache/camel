@@ -965,7 +965,7 @@
     "version": "3.14.1-SNAPSHOT",
     "scheme": "azure-servicebus",
     "extendsScheme": "",
-    "syntax": "azure-servicebus:queueNameOrTopicName",
+    "syntax": "azure-servicebus:topicOrQueueName",
     "async": false,
     "api": false,
     "consumerOnly": false,

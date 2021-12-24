@@ -1381,7 +1381,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * Since: 3.12
          * Maven coordinates: org.apache.camel:camel-azure-servicebus
          * 
-         * Syntax: <code>azure-servicebus:queueNameOrTopicName</code>
+         * Syntax: <code>azure-servicebus:topicOrQueueName</code>
          * 
          * Path parameter: topicOrQueueName
          * Selected topic name or the queue name, that is depending on
@@ -1389,7 +1389,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * will be the queue name and if serviceBusType=topic, this will be the
          * topic name.
          * 
-         * @param path queueNameOrTopicName
+         * @param path topicOrQueueName
          * @return the dsl builder
          */
         default ServiceBusEndpointBuilder azureServicebus(String path) {
@@ -1408,7 +1408,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * Since: 3.12
          * Maven coordinates: org.apache.camel:camel-azure-servicebus
          * 
-         * Syntax: <code>azure-servicebus:queueNameOrTopicName</code>
+         * Syntax: <code>azure-servicebus:topicOrQueueName</code>
          * 
          * Path parameter: topicOrQueueName
          * Selected topic name or the queue name, that is depending on
@@ -1418,7 +1418,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
-         * @param path queueNameOrTopicName
+         * @param path topicOrQueueName
          * @return the dsl builder
          */
         default ServiceBusEndpointBuilder azureServicebus(
