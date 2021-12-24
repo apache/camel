@@ -465,7 +465,7 @@
         <reactor-version>3.4.5</reactor-version>
         <reactor-netty-version>1.0.2</reactor-netty-version>
         <redisson-version>3.16.3</redisson-version>
-        <resilience4j-version>1.7.0</resilience4j-version>
+        <resilience4j-version>1.7.1</resilience4j-version>
         <rest-assured-version>4.4.0</rest-assured-version>
         <resteasy-version>4.5.6.Final</resteasy-version>
         <ribbon-version>2.3.0</ribbon-version>
