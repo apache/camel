@@ -109,8 +109,11 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <site-repo-url>scpexe://people.apache.org/www/camel.apache.org/maven/</site-repo-url>
-        <jdk.version>1.8</jdk.version>
+        <jdk.version>11</jdk.version> <!-- TODO: deprecate use maven.compiler.xxx instead -->
         <compiler.fork>false</compiler.fork>
+
+        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>11</maven.compiler.source>
 
         <!-- reproduceable builds: https://maven.apache.org/guides/mini/guide-reproducible-builds.html -->
         <project.build.outputTimestamp>1</project.build.outputTimestamp>
