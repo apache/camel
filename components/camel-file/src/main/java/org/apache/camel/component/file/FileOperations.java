@@ -381,6 +381,10 @@ public class FileOperations implements GenericFileOperations<File> {
                 // buffer the reader
                 in = IOHelper.buffered(in);
                 writeFileByReaderWithCharset(in, file, charset);
+            } else if (exchange.getIn().getBody() instanceof String) {
+                // If the body is a string, write it directly
+                String stringBody = (String) exchange.getIn().getBody();
+                writeFileByString(stringBody, file);
             } else {
                 // fallback and use stream based
                 InputStream in = exchange.getIn().getMandatoryBody(InputStream.class);
@@ -497,6 +501,16 @@ public class FileOperations implements GenericFileOperations<File> {
             }
         } finally {
             IOHelper.close(in, target.getName(), LOG);
+        }
+    }
+
+    private void writeFileByString(String body, File target) throws IOException {
+        boolean append = endpoint.getFileExist() == GenericFileExist.Append;
+        Files.writeString(target.toPath(), body, StandardOpenOption.WRITE,
+                append ? StandardOpenOption.APPEND : StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
+        if (append && endpoint.getAppendChars() != null) {
+            Files.writeString(target.toPath(), endpoint.getAppendChars(), StandardOpenOption.WRITE,
+                    StandardOpenOption.APPEND);
         }
     }
 
