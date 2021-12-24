@@ -158,17 +158,4 @@
         </plugins>
     </build>
 
-    <!-- skip testing on java 8 -->
-    <profiles>
-        <profile>
-            <id>jdk8</id>
-            <activation>
-                <jdk>[,8)</jdk>
-            </activation>
-            <properties>
-                <maven.test.skip.exec>true</maven.test.skip.exec>
-            </properties>
-        </profile>
-    </profiles>
-
 </project>
