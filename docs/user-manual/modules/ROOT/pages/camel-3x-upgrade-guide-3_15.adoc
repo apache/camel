@@ -8,6 +8,10 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 
 IMPORTANT: Java 8 is no longer supported. Camel 3.15 onwards requires Java 11 or 17.
 
+=== Removed components
+
+The `camel-kamelet-reify` has been removed.
+
 === API changes
 
 Added `getScheme` method to `org.apache.camel.spi.Resource`.
