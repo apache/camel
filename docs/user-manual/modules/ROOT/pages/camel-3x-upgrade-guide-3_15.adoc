@@ -61,3 +61,7 @@ This should correctly be done with `steps` as child of `from`:
       steps:
         - log: "message"
 ----
+
+=== camel-karaf
+
+The `camel-endpointdsl` and `camel-componentdsl` is no longer supported on Apache Karaf.
