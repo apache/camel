@@ -13,6 +13,7 @@
 *** xref:groovy-dsl.adoc[Groovy Dsl]
 *** xref:java-joor-dsl.adoc[Java Joor Dsl]
 *** xref:js-dsl.adoc[JavaScript Dsl]
+*** xref:jsh-dsl.adoc[JavaShell DSL]
 *** xref:java-xml-jaxb-dsl.adoc[Jaxb XML Dsl]
 *** xref:kamelet-main.adoc[Kamelet Main]
 *** xref:kotlin-dsl.adoc[Kotlin Dsl]
