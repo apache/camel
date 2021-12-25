@@ -29,7 +29,7 @@
 
     <artifactId>camel-sip</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: SIP</name>
+    <name>Camel :: SIP (deprecated)</name>
     <description>Camel SIP protocol based communication component</description>
 
     <properties>

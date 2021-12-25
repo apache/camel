@@ -28,7 +28,7 @@
 
     <artifactId>camel-nagios</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Nagios</name>
+    <name>Camel :: Nagios (deprecated)</name>
     <description>Camel Nagios support</description>
 
     <properties>

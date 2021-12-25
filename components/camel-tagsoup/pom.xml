@@ -28,7 +28,7 @@
 
     <artifactId>camel-tagsoup</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: TagSoup</name>
+    <name>Camel :: TagSoup (deprecated)</name>
     <description>Camel TagSoup support</description>
 
     <properties>

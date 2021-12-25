@@ -28,7 +28,7 @@
 
     <artifactId>camel-msv</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: MSV</name>
+    <name>Camel :: MSV (deprecated)</name>
     <description>Camel MSV support</description>
 
     <properties>

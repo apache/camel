@@ -29,7 +29,7 @@
     <artifactId>camel-ipfs</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: IPFS</name>
+    <name>Camel :: IPFS (deprecated)</name>
     <description>Camel IPFS support</description>
 
     <properties>

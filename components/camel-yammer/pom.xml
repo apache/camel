@@ -28,7 +28,7 @@
 
     <artifactId>camel-yammer</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Yammer</name>
+    <name>Camel :: Yammer (deprecated)</name>
     <description>Camel Yammer Component</description>
 
     <properties>

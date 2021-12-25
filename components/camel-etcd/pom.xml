@@ -29,7 +29,7 @@
 
     <artifactId>camel-etcd</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Etcd</name>
+    <name>Camel :: Etcd (deprecated)</name>
     <description>Camel Etcd support</description>
 
     <dependencies>

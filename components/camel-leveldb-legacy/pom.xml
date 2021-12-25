@@ -28,7 +28,7 @@
 
     <artifactId>camel-leveldb-legacy</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: LevelDB Legacy</name>
+    <name>Camel :: LevelDB Legacy (deprecated)</name>
     <description>Using LevelDB as persistent EIP store</description>
 
     <properties>

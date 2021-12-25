@@ -28,7 +28,7 @@
 
     <artifactId>camel-ganglia</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Ganglia</name>
+    <name>Camel :: Ganglia (deprecated)</name>
     <description>Camel Ganglia support</description>
 
     <properties>

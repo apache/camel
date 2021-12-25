@@ -28,7 +28,7 @@
 
     <artifactId>camel-elsql</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: ElSql</name>
+    <name>Camel :: ElSql (deprecated)</name>
     <description>Camel ElSql support</description>
 
     <properties>

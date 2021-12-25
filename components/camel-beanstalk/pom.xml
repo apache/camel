@@ -28,7 +28,7 @@
 
     <artifactId>camel-beanstalk</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Beanstalk</name>
+    <name>Camel :: Beanstalk (deprecated)</name>
     <description>Camel Beanstalk component</description>
 
     <properties>

@@ -27,7 +27,7 @@
 
     <artifactId>camel-nsq</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: NSQ</name>
+    <name>Camel :: NSQ (deprecated)</name>
 
     <dependencies>
 

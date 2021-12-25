@@ -28,7 +28,7 @@
 
     <artifactId>camel-jing</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Jing</name>
+    <name>Camel :: Jing (deprecated)</name>
     <description>Camel Jing support</description>
 
     <properties>
