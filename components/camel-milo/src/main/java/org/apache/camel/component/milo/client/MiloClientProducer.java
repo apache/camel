@@ -27,10 +27,9 @@ import org.apache.camel.support.DefaultAsyncProducer;
 import org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId;
 
 import static java.lang.Boolean.TRUE;
+import static org.apache.camel.component.milo.NodeIds.HEADER_NODE_IDS;
 
 public class MiloClientProducer extends DefaultAsyncProducer {
-
-    private static final String HEADER_NODE_IDS = "CamelMiloNodeIds";
 
     private MiloClientConnection connection;
 
@@ -94,6 +93,7 @@ public class MiloClientProducer extends DefaultAsyncProducer {
             future.whenComplete((v, ex) -> async.done(false));
             return false;
         } else {
+            async.done(true);
             return true;
         }
     }
