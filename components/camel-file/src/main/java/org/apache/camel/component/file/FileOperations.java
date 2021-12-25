@@ -80,7 +80,7 @@ public class FileOperations implements GenericFileOperations<File> {
 
     @Override
     public boolean renameFile(String from, String to) throws GenericFileOperationFailedException {
-        boolean renamed = false;
+        boolean renamed;
         File file = new File(from);
         File target = new File(to);
         try {
@@ -456,7 +456,6 @@ public class FileOperations implements GenericFileOperations<File> {
 
     private void writeFileByStream(InputStream in, File target) throws IOException {
         try (SeekableByteChannel out = prepareOutputFileChannel(target)) {
-
             LOG.debug("Using InputStream to write file: {}", target);
             int size = endpoint.getBufferSize();
             byte[] buffer = new byte[size];
@@ -464,12 +463,10 @@ public class FileOperations implements GenericFileOperations<File> {
             int bytesRead;
             while ((bytesRead = in.read(buffer)) != -1) {
                 if (bytesRead < size) {
-                    // to be compatible with java 8
                     Buffer buf = byteBuffer;
                     buf.limit(bytesRead);
                 }
                 out.write(byteBuffer);
-                // to be compatible with java 8
                 Buffer buf = byteBuffer;
                 buf.clear();
             }
@@ -478,11 +475,9 @@ public class FileOperations implements GenericFileOperations<File> {
             if (append && endpoint.getAppendChars() != null) {
                 byteBuffer = ByteBuffer.wrap(endpoint.getAppendChars().getBytes());
                 out.write(byteBuffer);
-                // to be compatible with java 8
                 Buffer buf = byteBuffer;
                 buf.clear();
             }
-
         } finally {
             IOHelper.close(in, target.getName(), LOG);
         }
