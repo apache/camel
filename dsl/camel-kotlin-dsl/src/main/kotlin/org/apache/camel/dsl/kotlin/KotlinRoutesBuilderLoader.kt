@@ -52,6 +52,7 @@ class KotlinRoutesBuilderLoader : org.apache.camel.endpointdsl.support.EndpointR
         // ensure evaluation errors propagation
         when(val rv = result.valueOrNull()?.returnValue) {
             is ResultValue.Error -> throw RuntimeCamelException(rv.error)
+            else -> {} // result is okay
         }
 
         if (result.reports.isNotEmpty()) {
