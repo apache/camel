@@ -2614,20 +2614,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.KameletComponentBuilderFactory.kamelet();
     }
     /**
-     * Kamelet Reify (camel-kamelet-reify)
-     * To call Kamelets (indirectly)
-     * 
-     * Category: core
-     * Since: 3.6
-     * Maven coordinates: org.apache.camel:camel-kamelet-reify
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.KameletReifyComponentBuilderFactory.KameletReifyComponentBuilder kameletReify() {
-        return org.apache.camel.builder.component.dsl.KameletReifyComponentBuilderFactory.kameletReify();
-    }
-    /**
      * Kubernetes ConfigMap (camel-kubernetes)
      * Perform operations on Kubernetes ConfigMaps and get notified on
      * ConfigMaps changes.

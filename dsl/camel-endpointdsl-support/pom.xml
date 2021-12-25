@@ -24,33 +24,23 @@
 
     <parent>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-groovy-dsl-parent</artifactId>
+        <artifactId>dsl</artifactId>
         <version>3.15.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>camel-groovy-dsl</artifactId>
+    <artifactId>camel-endpointdsl-support</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Groovy DSL</name>
-    <description>Camel DSL with Groovy</description>
-
-    <properties>
-        <firstVersion>3.9.0</firstVersion>
-        <sourcecheckExcludes>
-            **/resources/**/My*.java
-        </sourcecheckExcludes>
-        <sourcecheckExcludesComma>
-            ${sourcecheckExcludes},
-        </sourcecheckExcludesComma>
-    </properties>
+    <name>Camel :: Endpoint DSL :: Support</name>
+    <description>Camel Endpoint DSL Support</description>
 
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-endpointdsl-support</artifactId>
+            <artifactId>camel-dsl-support</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-groovy-dsl-common</artifactId>
+            <artifactId>camel-endpointdsl</artifactId>
         </dependency>
     </dependencies>
 
