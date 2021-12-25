@@ -218,6 +218,7 @@ public final class EndpointProducerDeserializersResolver implements YamlDeserial
             case "metrics":
             case "micrometer":
             case "microprofile-metrics":
+            case "milo-browse":
             case "milo-client":
             case "milo-server":
             case "mina":

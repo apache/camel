@@ -235,6 +235,7 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.MetricsEndpointBuilderFactory.MetricsBuilders,
             org.apache.camel.builder.endpoint.dsl.MicroProfileMetricsEndpointBuilderFactory.MicroProfileMetricsBuilders,
             org.apache.camel.builder.endpoint.dsl.MicrometerEndpointBuilderFactory.MicrometerBuilders,
+            org.apache.camel.builder.endpoint.dsl.MiloBrowseEndpointBuilderFactory.MiloBrowseBuilders,
             org.apache.camel.builder.endpoint.dsl.MiloClientEndpointBuilderFactory.MiloClientBuilders,
             org.apache.camel.builder.endpoint.dsl.MiloServerEndpointBuilderFactory.MiloServerBuilders,
             org.apache.camel.builder.endpoint.dsl.MinaEndpointBuilderFactory.MinaBuilders,

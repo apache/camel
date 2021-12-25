@@ -10218,6 +10218,51 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.MicroProfileMetricsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * OPC UA Browser (camel-milo)
+     * Connect to OPC UA servers using the binary protocol for browsing the node
+     * tree.
+     * 
+     * Category: iot
+     * Since: 3.15
+     * Maven coordinates: org.apache.camel:camel-milo
+     * 
+     * Syntax: <code>milo-browse:endpointUri</code>
+     * 
+     * Path parameter: endpointUri (required)
+     * The OPC UA server endpoint
+     * 
+     * @param path endpointUri
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.MiloBrowseEndpointBuilderFactory.MiloBrowseEndpointBuilder miloBrowse(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.MiloBrowseEndpointBuilderFactory.endpointBuilder("milo-browse", path);
+    }
+    /**
+     * OPC UA Browser (camel-milo)
+     * Connect to OPC UA servers using the binary protocol for browsing the node
+     * tree.
+     * 
+     * Category: iot
+     * Since: 3.15
+     * Maven coordinates: org.apache.camel:camel-milo
+     * 
+     * Syntax: <code>milo-browse:endpointUri</code>
+     * 
+     * Path parameter: endpointUri (required)
+     * The OPC UA server endpoint
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path endpointUri
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.MiloBrowseEndpointBuilderFactory.MiloBrowseEndpointBuilder miloBrowse(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.MiloBrowseEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * OPC UA Client (camel-milo)
      * Connect to OPC UA servers using the binary protocol for acquiring
      * telemetry data.
