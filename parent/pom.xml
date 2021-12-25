@@ -2809,6 +2809,11 @@
 				<artifactId>camel-js-dsl</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-jsh-dsl</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 			<dependency>
 				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-kotlin-dsl</artifactId>
