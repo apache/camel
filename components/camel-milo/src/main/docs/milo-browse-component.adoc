@@ -6,7 +6,6 @@
 :since: 3.15
 :supportlevel: Preview
 :component-header: Only producer is supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/milo-browse.adoc[opts=optional]
 
 *Since Camel {since}*
 
