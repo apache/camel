@@ -40,6 +40,7 @@ public interface EtcdWatchComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static EtcdWatchComponentBuilder etcdWatch() {
         return new EtcdWatchComponentBuilderImpl();
     }

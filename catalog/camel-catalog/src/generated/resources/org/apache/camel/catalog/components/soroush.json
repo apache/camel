@@ -4,7 +4,7 @@
     "name": "soroush",
     "title": "Soroush",
     "description": "Send and receive messages as a Soroush chat bot.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "3.0",
     "label": "chat",
     "javaType": "org.apache.camel.component.soroushbot.component.SoroushBotComponent",

@@ -4,7 +4,7 @@
     "name": "etcd-stats",
     "title": "Etcd Stats",
     "description": "Access etcd cluster statistcs.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.18.0",
     "label": "clustering,database",
     "javaType": "org.apache.camel.component.etcd.EtcdStatsComponent",

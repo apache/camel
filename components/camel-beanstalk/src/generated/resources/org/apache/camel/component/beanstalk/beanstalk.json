@@ -4,7 +4,7 @@
     "name": "beanstalk",
     "title": "Beanstalk",
     "description": "Retrieve and post-process Beanstalk jobs.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.15.0",
     "label": "messaging",
     "javaType": "org.apache.camel.component.beanstalk.BeanstalkComponent",

@@ -1,10 +1,11 @@
-= Etcd Keys Component
+= Etcd Keys Component (deprecated)
 :doctitle: Etcd Keys
 :shortname: etcd-keys
 :artifactid: camel-etcd
 :description: Get, set or delete keys in etcd key-value store.
 :since: 2.18
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: etcd

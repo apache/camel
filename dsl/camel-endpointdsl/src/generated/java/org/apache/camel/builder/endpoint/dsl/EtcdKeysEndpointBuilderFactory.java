@@ -285,6 +285,7 @@ public interface EtcdKeysEndpointBuilderFactory {
          * @param path path
          * @return the dsl builder
          */
+        @Deprecated
         default EtcdKeysEndpointBuilder etcdKeys(String path) {
             return EtcdKeysEndpointBuilderFactory.endpointBuilder("etcd-keys", path);
         }
@@ -306,12 +307,14 @@ public interface EtcdKeysEndpointBuilderFactory {
          * @param path path
          * @return the dsl builder
          */
+        @Deprecated
         default EtcdKeysEndpointBuilder etcdKeys(
                 String componentName,
                 String path) {
             return EtcdKeysEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
+    @Deprecated
     static EtcdKeysEndpointBuilder endpointBuilder(
             String componentName,
             String path) {

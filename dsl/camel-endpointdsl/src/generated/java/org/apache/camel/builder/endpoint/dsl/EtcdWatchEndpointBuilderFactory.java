@@ -399,6 +399,7 @@ public interface EtcdWatchEndpointBuilderFactory {
          * @param path path
          * @return the dsl builder
          */
+        @Deprecated
         default EtcdWatchEndpointBuilder etcdWatch(String path) {
             return EtcdWatchEndpointBuilderFactory.endpointBuilder("etcd-watch", path);
         }
@@ -420,12 +421,14 @@ public interface EtcdWatchEndpointBuilderFactory {
          * @param path path
          * @return the dsl builder
          */
+        @Deprecated
         default EtcdWatchEndpointBuilder etcdWatch(
                 String componentName,
                 String path) {
             return EtcdWatchEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
+    @Deprecated
     static EtcdWatchEndpointBuilder endpointBuilder(
             String componentName,
             String path) {

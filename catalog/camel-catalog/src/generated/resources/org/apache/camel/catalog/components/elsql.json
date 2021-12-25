@@ -4,7 +4,7 @@
     "name": "elsql",
     "title": "ElSQL",
     "description": "Use ElSql to define SQL queries. Extends the SQL Component.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.16.0",
     "label": "database,sql",
     "javaType": "org.apache.camel.component.elsql.ElsqlComponent",

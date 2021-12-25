@@ -143,6 +143,7 @@ public interface JingEndpointBuilderFactory {
          * @param path resourceUri
          * @return the dsl builder
          */
+        @Deprecated
         default JingEndpointBuilder jing(String path) {
             return JingEndpointBuilderFactory.endpointBuilder("jing", path);
         }
@@ -167,10 +168,12 @@ public interface JingEndpointBuilderFactory {
          * @param path resourceUri
          * @return the dsl builder
          */
+        @Deprecated
         default JingEndpointBuilder jing(String componentName, String path) {
             return JingEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
+    @Deprecated
     static JingEndpointBuilder endpointBuilder(String componentName, String path) {
         class JingEndpointBuilderImpl extends AbstractEndpointBuilder implements JingEndpointBuilder {
             public JingEndpointBuilderImpl(String path) {

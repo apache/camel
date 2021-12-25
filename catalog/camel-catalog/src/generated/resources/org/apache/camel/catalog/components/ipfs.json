@@ -4,7 +4,7 @@
     "name": "ipfs",
     "title": "IPFS",
     "description": "Access the Interplanetary File System (IPFS).",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.23.0",
     "label": "file,ipfs",
     "javaType": "org.apache.camel.component.ipfs.IPFSComponent",

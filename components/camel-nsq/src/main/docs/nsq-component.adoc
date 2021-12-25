@@ -1,10 +1,11 @@
-= NSQ Component
+= NSQ Component (deprecated)
 :doctitle: NSQ
 :shortname: nsq
 :artifactid: camel-nsq
 :description: Send and receive messages from NSQ realtime distributed messaging platform.
 :since: 2.23
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :camel-spring-boot-name: nsq

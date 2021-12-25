@@ -40,6 +40,7 @@ public interface SoroushComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static SoroushComponentBuilder soroush() {
         return new SoroushComponentBuilderImpl();
     }

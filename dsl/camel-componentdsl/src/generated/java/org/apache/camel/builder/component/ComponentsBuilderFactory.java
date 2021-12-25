@@ -699,6 +699,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.BeanstalkComponentBuilderFactory.BeanstalkComponentBuilder beanstalk() {
         return org.apache.camel.builder.component.dsl.BeanstalkComponentBuilderFactory.beanstalk();
     }
@@ -1340,6 +1341,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.ElsqlComponentBuilderFactory.ElsqlComponentBuilder elsql() {
         return org.apache.camel.builder.component.dsl.ElsqlComponentBuilderFactory.elsql();
     }
@@ -1353,6 +1355,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.EtcdKeysComponentBuilderFactory.EtcdKeysComponentBuilder etcdKeys() {
         return org.apache.camel.builder.component.dsl.EtcdKeysComponentBuilderFactory.etcdKeys();
     }
@@ -1366,6 +1369,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.EtcdStatsComponentBuilderFactory.EtcdStatsComponentBuilder etcdStats() {
         return org.apache.camel.builder.component.dsl.EtcdStatsComponentBuilderFactory.etcdStats();
     }
@@ -1379,6 +1383,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.EtcdWatchComponentBuilderFactory.EtcdWatchComponentBuilder etcdWatch() {
         return org.apache.camel.builder.component.dsl.EtcdWatchComponentBuilderFactory.etcdWatch();
     }
@@ -1539,6 +1544,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.GangliaComponentBuilderFactory.GangliaComponentBuilder ganglia() {
         return org.apache.camel.builder.component.dsl.GangliaComponentBuilderFactory.ganglia();
     }
@@ -2293,6 +2299,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.IpfsComponentBuilderFactory.IpfsComponentBuilder ipfs() {
         return org.apache.camel.builder.component.dsl.IpfsComponentBuilderFactory.ipfs();
     }
@@ -2438,6 +2445,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.JingComponentBuilderFactory.JingComponentBuilder jing() {
         return org.apache.camel.builder.component.dsl.JingComponentBuilderFactory.jing();
     }
@@ -3092,6 +3100,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.MsvComponentBuilderFactory.MsvComponentBuilder msv() {
         return org.apache.camel.builder.component.dsl.MsvComponentBuilderFactory.msv();
     }
@@ -3159,6 +3168,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.NagiosComponentBuilderFactory.NagiosComponentBuilder nagios() {
         return org.apache.camel.builder.component.dsl.NagiosComponentBuilderFactory.nagios();
     }
@@ -3225,6 +3235,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.NsqComponentBuilderFactory.NsqComponentBuilder nsq() {
         return org.apache.camel.builder.component.dsl.NsqComponentBuilderFactory.nsq();
     }
@@ -3838,6 +3849,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.SipComponentBuilderFactory.SipComponentBuilder sip() {
         return org.apache.camel.builder.component.dsl.SipComponentBuilderFactory.sip();
     }
@@ -3852,6 +3864,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.SipsComponentBuilderFactory.SipsComponentBuilder sips() {
         return org.apache.camel.builder.component.dsl.SipsComponentBuilderFactory.sips();
     }
@@ -4013,6 +4026,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.SoroushComponentBuilderFactory.SoroushComponentBuilder soroush() {
         return org.apache.camel.builder.component.dsl.SoroushComponentBuilderFactory.soroush();
     }
@@ -4711,6 +4725,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.YammerComponentBuilderFactory.YammerComponentBuilder yammer() {
         return org.apache.camel.builder.component.dsl.YammerComponentBuilderFactory.yammer();
     }

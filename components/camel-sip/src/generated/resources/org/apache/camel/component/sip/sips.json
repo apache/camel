@@ -4,7 +4,7 @@
     "name": "sips",
     "title": "SIP (Secure)",
     "description": "Send and receive messages using the SIP protocol (used in telecommunications).",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.5.0",
     "label": "mobile",
     "javaType": "org.apache.camel.component.sip.SipComponent",

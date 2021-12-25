@@ -1337,6 +1337,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * @param path connectionSettings
          * @return the dsl builder
          */
+        @Deprecated
         default BeanstalkEndpointBuilder beanstalk(String path) {
             return BeanstalkEndpointBuilderFactory.endpointBuilder("beanstalk", path);
         }
@@ -1358,12 +1359,14 @@ public interface BeanstalkEndpointBuilderFactory {
          * @param path connectionSettings
          * @return the dsl builder
          */
+        @Deprecated
         default BeanstalkEndpointBuilder beanstalk(
                 String componentName,
                 String path) {
             return BeanstalkEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
+    @Deprecated
     static BeanstalkEndpointBuilder endpointBuilder(
             String componentName,
             String path) {

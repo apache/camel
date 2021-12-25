@@ -40,6 +40,7 @@ public interface BeanstalkComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static BeanstalkComponentBuilder beanstalk() {
         return new BeanstalkComponentBuilderImpl();
     }

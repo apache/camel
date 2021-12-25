@@ -248,6 +248,7 @@ public interface NagiosEndpointBuilderFactory {
          * @param path host:port
          * @return the dsl builder
          */
+        @Deprecated
         default NagiosEndpointBuilder nagios(String path) {
             return NagiosEndpointBuilderFactory.endpointBuilder("nagios", path);
         }
@@ -272,10 +273,12 @@ public interface NagiosEndpointBuilderFactory {
          * @param path host:port
          * @return the dsl builder
          */
+        @Deprecated
         default NagiosEndpointBuilder nagios(String componentName, String path) {
             return NagiosEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
+    @Deprecated
     static NagiosEndpointBuilder endpointBuilder(
             String componentName,
             String path) {

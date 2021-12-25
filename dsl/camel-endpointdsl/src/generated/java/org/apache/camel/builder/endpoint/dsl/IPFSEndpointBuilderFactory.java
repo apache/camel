@@ -119,6 +119,7 @@ public interface IPFSEndpointBuilderFactory {
          * @param path ipfsCmd
          * @return the dsl builder
          */
+        @Deprecated
         default IPFSEndpointBuilder ipfs(String path) {
             return IPFSEndpointBuilderFactory.endpointBuilder("ipfs", path);
         }
@@ -141,10 +142,12 @@ public interface IPFSEndpointBuilderFactory {
          * @param path ipfsCmd
          * @return the dsl builder
          */
+        @Deprecated
         default IPFSEndpointBuilder ipfs(String componentName, String path) {
             return IPFSEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
+    @Deprecated
     static IPFSEndpointBuilder endpointBuilder(String componentName, String path) {
         class IPFSEndpointBuilderImpl extends AbstractEndpointBuilder implements IPFSEndpointBuilder {
             public IPFSEndpointBuilderImpl(String path) {

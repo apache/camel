@@ -42,6 +42,7 @@ public interface SipComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static SipComponentBuilder sip() {
         return new SipComponentBuilderImpl();
     }

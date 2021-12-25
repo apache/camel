@@ -40,6 +40,7 @@ public interface EtcdKeysComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static EtcdKeysComponentBuilder etcdKeys() {
         return new EtcdKeysComponentBuilderImpl();
     }

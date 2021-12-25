@@ -386,6 +386,7 @@ public interface MsvEndpointBuilderFactory {
          * @param path resourceUri
          * @return the dsl builder
          */
+        @Deprecated
         default MsvEndpointBuilder msv(String path) {
             return MsvEndpointBuilderFactory.endpointBuilder("msv", path);
         }
@@ -409,10 +410,12 @@ public interface MsvEndpointBuilderFactory {
          * @param path resourceUri
          * @return the dsl builder
          */
+        @Deprecated
         default MsvEndpointBuilder msv(String componentName, String path) {
             return MsvEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
+    @Deprecated
     static MsvEndpointBuilder endpointBuilder(String componentName, String path) {
         class MsvEndpointBuilderImpl extends AbstractEndpointBuilder implements MsvEndpointBuilder, AdvancedMsvEndpointBuilder {
             public MsvEndpointBuilderImpl(String path) {

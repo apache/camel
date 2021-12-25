@@ -4,7 +4,7 @@
     "name": "jing",
     "title": "Jing",
     "description": "Validate XML against a RelaxNG schema (XML Syntax or Compact Syntax) using Jing library.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "1.1.0",
     "label": "validation",
     "javaType": "org.apache.camel.component.validator.jing.JingComponent",

@@ -41,6 +41,7 @@ public interface NsqComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static NsqComponentBuilder nsq() {
         return new NsqComponentBuilderImpl();
     }

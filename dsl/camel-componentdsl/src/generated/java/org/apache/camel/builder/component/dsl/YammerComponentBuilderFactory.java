@@ -40,6 +40,7 @@ public interface YammerComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static YammerComponentBuilder yammer() {
         return new YammerComponentBuilderImpl();
     }

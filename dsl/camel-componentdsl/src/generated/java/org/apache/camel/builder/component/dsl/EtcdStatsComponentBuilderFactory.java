@@ -40,6 +40,7 @@ public interface EtcdStatsComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static EtcdStatsComponentBuilder etcdStats() {
         return new EtcdStatsComponentBuilderImpl();
     }

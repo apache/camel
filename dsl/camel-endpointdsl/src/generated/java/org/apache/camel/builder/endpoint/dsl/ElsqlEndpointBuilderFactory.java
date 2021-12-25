@@ -2618,6 +2618,7 @@ public interface ElsqlEndpointBuilderFactory {
          * @param path elsqlName:resourceUri
          * @return the dsl builder
          */
+        @Deprecated
         default ElsqlEndpointBuilder elsql(String path) {
             return ElsqlEndpointBuilderFactory.endpointBuilder("elsql", path);
         }
@@ -2646,10 +2647,12 @@ public interface ElsqlEndpointBuilderFactory {
          * @param path elsqlName:resourceUri
          * @return the dsl builder
          */
+        @Deprecated
         default ElsqlEndpointBuilder elsql(String componentName, String path) {
             return ElsqlEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
+    @Deprecated
     static ElsqlEndpointBuilder endpointBuilder(
             String componentName,
             String path) {

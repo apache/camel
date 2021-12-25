@@ -40,6 +40,7 @@ public interface IpfsComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static IpfsComponentBuilder ipfs() {
         return new IpfsComponentBuilderImpl();
     }

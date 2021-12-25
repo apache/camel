@@ -40,6 +40,7 @@ public interface GangliaComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static GangliaComponentBuilder ganglia() {
         return new GangliaComponentBuilderImpl();
     }

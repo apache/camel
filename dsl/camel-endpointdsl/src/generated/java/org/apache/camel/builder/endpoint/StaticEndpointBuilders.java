@@ -2196,6 +2196,7 @@ public class StaticEndpointBuilders {
      * @param path connectionSettings
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.BeanstalkEndpointBuilderFactory.BeanstalkEndpointBuilder beanstalk(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.BeanstalkEndpointBuilderFactory.endpointBuilder("beanstalk", path);
@@ -2218,6 +2219,7 @@ public class StaticEndpointBuilders {
      * @param path connectionSettings
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.BeanstalkEndpointBuilderFactory.BeanstalkEndpointBuilder beanstalk(
             String componentName,
             String path) {
@@ -4402,6 +4404,7 @@ public class StaticEndpointBuilders {
      * @param path elsqlName:resourceUri
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.ElsqlEndpointBuilderFactory.ElsqlEndpointBuilder elsql(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.ElsqlEndpointBuilderFactory.endpointBuilder("elsql", path);
@@ -4431,6 +4434,7 @@ public class StaticEndpointBuilders {
      * @param path elsqlName:resourceUri
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.ElsqlEndpointBuilderFactory.ElsqlEndpointBuilder elsql(
             String componentName,
             String path) {
@@ -4452,6 +4456,7 @@ public class StaticEndpointBuilders {
      * @param path path
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.EtcdKeysEndpointBuilderFactory.EtcdKeysEndpointBuilder etcdKeys(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.EtcdKeysEndpointBuilderFactory.endpointBuilder("etcd-keys", path);
@@ -4474,6 +4479,7 @@ public class StaticEndpointBuilders {
      * @param path path
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.EtcdKeysEndpointBuilderFactory.EtcdKeysEndpointBuilder etcdKeys(
             String componentName,
             String path) {
@@ -4495,6 +4501,7 @@ public class StaticEndpointBuilders {
      * @param path path
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.EtcdStatsEndpointBuilderFactory.EtcdStatsEndpointBuilder etcdStats(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.EtcdStatsEndpointBuilderFactory.endpointBuilder("etcd-stats", path);
@@ -4517,6 +4524,7 @@ public class StaticEndpointBuilders {
      * @param path path
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.EtcdStatsEndpointBuilderFactory.EtcdStatsEndpointBuilder etcdStats(
             String componentName,
             String path) {
@@ -4538,6 +4546,7 @@ public class StaticEndpointBuilders {
      * @param path path
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.EtcdWatchEndpointBuilderFactory.EtcdWatchEndpointBuilder etcdWatch(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.EtcdWatchEndpointBuilderFactory.endpointBuilder("etcd-watch", path);
@@ -4560,6 +4569,7 @@ public class StaticEndpointBuilders {
      * @param path path
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.EtcdWatchEndpointBuilderFactory.EtcdWatchEndpointBuilder etcdWatch(
             String componentName,
             String path) {
@@ -5131,6 +5141,7 @@ public class StaticEndpointBuilders {
      * @param path host:port
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.GangliaEndpointBuilderFactory.GangliaEndpointBuilder ganglia(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.GangliaEndpointBuilderFactory.endpointBuilder("ganglia", path);
@@ -5158,6 +5169,7 @@ public class StaticEndpointBuilders {
      * @param path host:port
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.GangliaEndpointBuilderFactory.GangliaEndpointBuilder ganglia(
             String componentName,
             String path) {
@@ -7684,6 +7696,7 @@ public class StaticEndpointBuilders {
      * @param path ipfsCmd
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.IPFSEndpointBuilderFactory.IPFSEndpointBuilder ipfs(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.IPFSEndpointBuilderFactory.endpointBuilder("ipfs", path);
@@ -7707,6 +7720,7 @@ public class StaticEndpointBuilders {
      * @param path ipfsCmd
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.IPFSEndpointBuilderFactory.IPFSEndpointBuilder ipfs(
             String componentName,
             String path) {
@@ -8201,6 +8215,7 @@ public class StaticEndpointBuilders {
      * @param path resourceUri
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.JingEndpointBuilderFactory.JingEndpointBuilder jing(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.JingEndpointBuilderFactory.endpointBuilder("jing", path);
@@ -8226,6 +8241,7 @@ public class StaticEndpointBuilders {
      * @param path resourceUri
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.JingEndpointBuilderFactory.JingEndpointBuilder jing(
             String componentName,
             String path) {
@@ -10589,6 +10605,7 @@ public class StaticEndpointBuilders {
      * @param path resourceUri
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.MsvEndpointBuilderFactory.MsvEndpointBuilder msv(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.MsvEndpointBuilderFactory.endpointBuilder("msv", path);
@@ -10613,6 +10630,7 @@ public class StaticEndpointBuilders {
      * @param path resourceUri
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.MsvEndpointBuilderFactory.MsvEndpointBuilder msv(
             String componentName,
             String path) {
@@ -10839,6 +10857,7 @@ public class StaticEndpointBuilders {
      * @param path host:port
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.NagiosEndpointBuilderFactory.NagiosEndpointBuilder nagios(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.NagiosEndpointBuilderFactory.endpointBuilder("nagios", path);
@@ -10864,6 +10883,7 @@ public class StaticEndpointBuilders {
      * @param path host:port
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.NagiosEndpointBuilderFactory.NagiosEndpointBuilder nagios(
             String componentName,
             String path) {
@@ -11098,6 +11118,7 @@ public class StaticEndpointBuilders {
      * @param path topic
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.NsqEndpointBuilderFactory.NsqEndpointBuilder nsq(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.NsqEndpointBuilderFactory.endpointBuilder("nsq", path);
@@ -11121,6 +11142,7 @@ public class StaticEndpointBuilders {
      * @param path topic
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.NsqEndpointBuilderFactory.NsqEndpointBuilder nsq(
             String componentName,
             String path) {
@@ -13315,6 +13337,7 @@ public class StaticEndpointBuilders {
      * @param path uri
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.SipEndpointBuilderFactory.SipEndpointBuilder sip(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.SipEndpointBuilderFactory.endpointBuilder("sip", path);
@@ -13339,6 +13362,7 @@ public class StaticEndpointBuilders {
      * @param path uri
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.SipEndpointBuilderFactory.SipEndpointBuilder sip(
             String componentName,
             String path) {
@@ -13674,6 +13698,7 @@ public class StaticEndpointBuilders {
      * @param path action
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.SoroushBotEndpointBuilderFactory.SoroushBotEndpointBuilder soroush(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.SoroushBotEndpointBuilderFactory.endpointBuilder("soroush", path);
@@ -13698,6 +13723,7 @@ public class StaticEndpointBuilders {
      * @param path action
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.SoroushBotEndpointBuilderFactory.SoroushBotEndpointBuilder soroush(
             String componentName,
             String path) {
@@ -16293,6 +16319,7 @@ public class StaticEndpointBuilders {
      * @param path function
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.YammerEndpointBuilderFactory.YammerEndpointBuilder yammer(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.YammerEndpointBuilderFactory.endpointBuilder("yammer", path);
@@ -16317,6 +16344,7 @@ public class StaticEndpointBuilders {
      * @param path function
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.YammerEndpointBuilderFactory.YammerEndpointBuilder yammer(
             String componentName,
             String path) {

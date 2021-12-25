@@ -4,7 +4,7 @@
     "name": "yammer",
     "title": "Yammer",
     "description": "Interact with the Yammer enterprise social network.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.12.0",
     "label": "social,cloud,api",
     "javaType": "org.apache.camel.component.yammer.YammerComponent",

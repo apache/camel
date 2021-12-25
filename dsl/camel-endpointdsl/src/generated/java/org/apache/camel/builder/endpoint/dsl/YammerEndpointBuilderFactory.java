@@ -1307,6 +1307,7 @@ public interface YammerEndpointBuilderFactory {
          * @param path function
          * @return the dsl builder
          */
+        @Deprecated
         default YammerEndpointBuilder yammer(String path) {
             return YammerEndpointBuilderFactory.endpointBuilder("yammer", path);
         }
@@ -1330,10 +1331,12 @@ public interface YammerEndpointBuilderFactory {
          * @param path function
          * @return the dsl builder
          */
+        @Deprecated
         default YammerEndpointBuilder yammer(String componentName, String path) {
             return YammerEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
+    @Deprecated
     static YammerEndpointBuilder endpointBuilder(
             String componentName,
             String path) {

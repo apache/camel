@@ -4,7 +4,7 @@
     "name": "etcd-watch",
     "title": "Etcd Watch",
     "description": "Watch specific etcd keys or directories for changes.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.18.0",
     "label": "clustering,database",
     "javaType": "org.apache.camel.component.etcd.EtcdWatchComponent",

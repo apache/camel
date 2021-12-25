@@ -4,7 +4,7 @@
     "name": "msv",
     "title": "MSV",
     "description": "Validate XML payloads using Multi-Schema Validator (MSV).",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "1.1.0",
     "label": "validation",
     "javaType": "org.apache.camel.component.validator.msv.MsvComponent",

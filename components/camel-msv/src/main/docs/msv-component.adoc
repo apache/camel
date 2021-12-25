@@ -1,10 +1,11 @@
-= MSV Component
+= MSV Component (deprecated)
 :doctitle: MSV
 :shortname: msv
 :artifactid: camel-msv
 :description: Validate XML payloads using Multi-Schema Validator (MSV).
 :since: 1.1
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: msv

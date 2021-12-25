@@ -3405,6 +3405,7 @@ public interface SipEndpointBuilderFactory {
          * @param path uri
          * @return the dsl builder
          */
+        @Deprecated
         default SipEndpointBuilder sip(String path) {
             return SipEndpointBuilderFactory.endpointBuilder("sip", path);
         }
@@ -3428,6 +3429,7 @@ public interface SipEndpointBuilderFactory {
          * @param path uri
          * @return the dsl builder
          */
+        @Deprecated
         default SipEndpointBuilder sip(String componentName, String path) {
             return SipEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
@@ -3449,10 +3451,12 @@ public interface SipEndpointBuilderFactory {
          * @param path uri
          * @return the dsl builder
          */
+        @Deprecated
         default SipEndpointBuilder sips(String path) {
             return SipEndpointBuilderFactory.endpointBuilder("sips", path);
         }
     }
+    @Deprecated
     static SipEndpointBuilder endpointBuilder(String componentName, String path) {
         class SipEndpointBuilderImpl extends AbstractEndpointBuilder implements SipEndpointBuilder, AdvancedSipEndpointBuilder {
             public SipEndpointBuilderImpl(String path) {

@@ -40,6 +40,7 @@ public interface ElsqlComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static ElsqlComponentBuilder elsql() {
         return new ElsqlComponentBuilderImpl();
     }

@@ -4,7 +4,7 @@
     "name": "nsq",
     "title": "NSQ",
     "description": "Send and receive messages from NSQ realtime distributed messaging platform.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.23.0",
     "label": "messaging",
     "javaType": "org.apache.camel.component.nsq.NsqComponent",

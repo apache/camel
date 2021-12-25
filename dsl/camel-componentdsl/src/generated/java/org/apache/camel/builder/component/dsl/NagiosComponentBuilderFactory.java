@@ -40,6 +40,7 @@ public interface NagiosComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static NagiosComponentBuilder nagios() {
         return new NagiosComponentBuilderImpl();
     }

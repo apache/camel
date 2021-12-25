@@ -4,7 +4,7 @@
     "name": "leveldb-legacy",
     "title": "LevelDB-legacy",
     "description": "Using LevelDB as persistent EIP store",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.10.0",
     "label": "database",
     "supportLevel": "Stable",

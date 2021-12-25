@@ -1398,6 +1398,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * @param path action
          * @return the dsl builder
          */
+        @Deprecated
         default SoroushBotEndpointBuilder soroush(String path) {
             return SoroushBotEndpointBuilderFactory.endpointBuilder("soroush", path);
         }
@@ -1421,12 +1422,14 @@ public interface SoroushBotEndpointBuilderFactory {
          * @param path action
          * @return the dsl builder
          */
+        @Deprecated
         default SoroushBotEndpointBuilder soroush(
                 String componentName,
                 String path) {
             return SoroushBotEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
+    @Deprecated
     static SoroushBotEndpointBuilder endpointBuilder(
             String componentName,
             String path) {

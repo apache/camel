@@ -4,7 +4,7 @@
     "name": "nagios",
     "title": "Nagios",
     "description": "Send passive checks to Nagios using JSendNSCA.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.3.0",
     "label": "monitoring",
     "javaType": "org.apache.camel.component.nagios.NagiosComponent",

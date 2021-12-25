@@ -40,6 +40,7 @@ public interface MsvComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static MsvComponentBuilder msv() {
         return new MsvComponentBuilderImpl();
     }

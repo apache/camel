@@ -42,6 +42,7 @@ public interface JingComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static JingComponentBuilder jing() {
         return new JingComponentBuilderImpl();
     }

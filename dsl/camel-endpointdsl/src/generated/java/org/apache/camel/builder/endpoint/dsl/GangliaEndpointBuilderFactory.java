@@ -417,6 +417,7 @@ public interface GangliaEndpointBuilderFactory {
          * @param path host:port
          * @return the dsl builder
          */
+        @Deprecated
         default GangliaEndpointBuilder ganglia(String path) {
             return GangliaEndpointBuilderFactory.endpointBuilder("ganglia", path);
         }
@@ -443,10 +444,12 @@ public interface GangliaEndpointBuilderFactory {
          * @param path host:port
          * @return the dsl builder
          */
+        @Deprecated
         default GangliaEndpointBuilder ganglia(String componentName, String path) {
             return GangliaEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
+    @Deprecated
     static GangliaEndpointBuilder endpointBuilder(
             String componentName,
             String path) {

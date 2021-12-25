@@ -827,6 +827,7 @@ public interface NsqEndpointBuilderFactory {
          * @param path topic
          * @return the dsl builder
          */
+        @Deprecated
         default NsqEndpointBuilder nsq(String path) {
             return NsqEndpointBuilderFactory.endpointBuilder("nsq", path);
         }
@@ -849,10 +850,12 @@ public interface NsqEndpointBuilderFactory {
          * @param path topic
          * @return the dsl builder
          */
+        @Deprecated
         default NsqEndpointBuilder nsq(String componentName, String path) {
             return NsqEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
+    @Deprecated
     static NsqEndpointBuilder endpointBuilder(String componentName, String path) {
         class NsqEndpointBuilderImpl extends AbstractEndpointBuilder implements NsqEndpointBuilder, AdvancedNsqEndpointBuilder {
             public NsqEndpointBuilderImpl(String path) {

@@ -4,7 +4,7 @@
     "name": "etcd-keys",
     "title": "Etcd Keys",
     "description": "Get, set or delete keys in etcd key-value store.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.18.0",
     "label": "clustering,database",
     "javaType": "org.apache.camel.component.etcd.EtcdKeysComponent",

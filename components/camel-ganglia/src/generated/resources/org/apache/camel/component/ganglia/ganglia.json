@@ -4,7 +4,7 @@
     "name": "ganglia",
     "title": "Ganglia",
     "description": "Send metrics to Ganglia monitoring system.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.15.0",
     "label": "monitoring",
     "javaType": "org.apache.camel.component.ganglia.GangliaComponent",

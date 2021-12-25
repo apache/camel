@@ -1379,6 +1379,7 @@ public interface EtcdStatsEndpointBuilderFactory {
          * @param path path
          * @return the dsl builder
          */
+        @Deprecated
         default EtcdStatsEndpointBuilder etcdStats(String path) {
             return EtcdStatsEndpointBuilderFactory.endpointBuilder("etcd-stats", path);
         }
@@ -1400,12 +1401,14 @@ public interface EtcdStatsEndpointBuilderFactory {
          * @param path path
          * @return the dsl builder
          */
+        @Deprecated
         default EtcdStatsEndpointBuilder etcdStats(
                 String componentName,
                 String path) {
             return EtcdStatsEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
+    @Deprecated
     static EtcdStatsEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
