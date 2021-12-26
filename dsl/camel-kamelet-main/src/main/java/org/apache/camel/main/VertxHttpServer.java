@@ -23,10 +23,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StartupListener;
 import org.apache.camel.spi.CamelEvent;
-import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.SimpleEventNotifierSupport;
 import org.apache.camel.util.ReflectionHelper;
@@ -64,7 +64,8 @@ public final class VertxHttpServer {
                     .resolveMandatoryClass(
                             "org.apache.camel.component.platform.http.vertx.VertxPlatformHttpServerConfiguration");
             Object config = clazz.getConstructors()[0].newInstance();
-            IntrospectionSupport.setProperty(camelContext, config, "port", port);
+            camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection()
+                    .setProperty(camelContext, config, "port", port);
 
             clazz = camelContext.getClassResolver()
                     .resolveMandatoryClass(
