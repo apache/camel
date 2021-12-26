@@ -52,7 +52,7 @@ public abstract class ManagedCounter implements ManagedCounterMBean {
     }
 
     @Override
-    public long getExchangesTotal() throws Exception {
+    public long getExchangesTotal() {
         return exchangesTotal.getValue();
     }
 

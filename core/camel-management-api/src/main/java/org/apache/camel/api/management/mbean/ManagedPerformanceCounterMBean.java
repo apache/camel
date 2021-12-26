@@ -24,40 +24,40 @@ import org.apache.camel.api.management.ManagedOperation;
 public interface ManagedPerformanceCounterMBean extends ManagedCounterMBean {
 
     @ManagedAttribute(description = "Number of completed exchanges")
-    long getExchangesCompleted() throws Exception;
+    long getExchangesCompleted();
 
     @ManagedAttribute(description = "Number of failed exchanges")
-    long getExchangesFailed() throws Exception;
+    long getExchangesFailed();
 
     @ManagedAttribute(description = "Number of inflight exchanges")
-    long getExchangesInflight() throws Exception;
+    long getExchangesInflight();
 
     @ManagedAttribute(description = "Number of failures handled")
-    long getFailuresHandled() throws Exception;
+    long getFailuresHandled();
 
     @ManagedAttribute(description = "Number of redeliveries (internal only)")
-    long getRedeliveries() throws Exception;
+    long getRedeliveries();
 
     @ManagedAttribute(description = "Number of external initiated redeliveries (such as from JMS broker)")
-    long getExternalRedeliveries() throws Exception;
+    long getExternalRedeliveries();
 
     @ManagedAttribute(description = "Min Processing Time [milliseconds]")
-    long getMinProcessingTime() throws Exception;
+    long getMinProcessingTime();
 
     @ManagedAttribute(description = "Mean Processing Time [milliseconds]")
-    long getMeanProcessingTime() throws Exception;
+    long getMeanProcessingTime();
 
     @ManagedAttribute(description = "Max Processing Time [milliseconds]")
-    long getMaxProcessingTime() throws Exception;
+    long getMaxProcessingTime();
 
     @ManagedAttribute(description = "Total Processing Time [milliseconds]")
-    long getTotalProcessingTime() throws Exception;
+    long getTotalProcessingTime();
 
     @ManagedAttribute(description = "Last Processing Time [milliseconds]")
-    long getLastProcessingTime() throws Exception;
+    long getLastProcessingTime();
 
     @ManagedAttribute(description = "Delta Processing Time [milliseconds]")
-    long getDeltaProcessingTime() throws Exception;
+    long getDeltaProcessingTime();
 
     @ManagedAttribute(description = "Last Exchange Completed Timestamp")
     Date getLastExchangeCompletedTimestamp();

@@ -104,12 +104,12 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
     }
 
     @Override
-    public long getExchangesCompleted() throws Exception {
+    public long getExchangesCompleted() {
         return exchangesCompleted.getValue();
     }
 
     @Override
-    public long getExchangesFailed() throws Exception {
+    public long getExchangesFailed() {
         return exchangesFailed.getValue();
     }
 
@@ -119,47 +119,47 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
     }
 
     @Override
-    public long getFailuresHandled() throws Exception {
+    public long getFailuresHandled() {
         return failuresHandled.getValue();
     }
 
     @Override
-    public long getRedeliveries() throws Exception {
+    public long getRedeliveries() {
         return redeliveries.getValue();
     }
 
     @Override
-    public long getExternalRedeliveries() throws Exception {
+    public long getExternalRedeliveries() {
         return externalRedeliveries.getValue();
     }
 
     @Override
-    public long getMinProcessingTime() throws Exception {
+    public long getMinProcessingTime() {
         return minProcessingTime.getValue();
     }
 
     @Override
-    public long getMeanProcessingTime() throws Exception {
+    public long getMeanProcessingTime() {
         return meanProcessingTime.getValue();
     }
 
     @Override
-    public long getMaxProcessingTime() throws Exception {
+    public long getMaxProcessingTime() {
         return maxProcessingTime.getValue();
     }
 
     @Override
-    public long getTotalProcessingTime() throws Exception {
+    public long getTotalProcessingTime() {
         return totalProcessingTime.getValue();
     }
 
     @Override
-    public long getLastProcessingTime() throws Exception {
+    public long getLastProcessingTime() {
         return lastProcessingTime.getValue();
     }
 
     @Override
-    public long getDeltaProcessingTime() throws Exception {
+    public long getDeltaProcessingTime() {
         return deltaProcessingTime.getValue();
     }
 
