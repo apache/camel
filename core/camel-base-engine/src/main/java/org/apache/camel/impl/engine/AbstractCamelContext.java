@@ -4345,6 +4345,11 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     @Override
+    public Set<String> getDataFormatNames() {
+        return Collections.unmodifiableSet(dataformats.keySet());
+    }
+
+    @Override
     public HealthCheckResolver getHealthCheckResolver() {
         if (healthCheckResolver == null) {
             synchronized (lock) {

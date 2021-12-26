@@ -28,7 +28,9 @@ import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.RefDataFormatTest;
 import org.apache.camel.impl.engine.ExplicitCamelContextNameStrategy;
+import org.apache.camel.spi.DataFormat;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
@@ -235,6 +237,20 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         Assertions.assertTrue(names.contains("direct"));
         Assertions.assertTrue(names.contains("mock"));
         Assertions.assertTrue(names.contains("seda"));
+    }
+
+    @Test
+    public void testDataFormatNames() throws Exception {
+        context.getRegistry().bind("reverse", new RefDataFormatTest.MyReverseDataFormat());
+        DataFormat df = context.resolveDataFormat("reverse");
+        assertNotNull(df);
+
+        MBeanServer mbeanServer = getMBeanServer();
+        ObjectName on = getContextObjectName();
+
+        Set<String> names = (Set<String>) mbeanServer.invoke(on, "dataFormatNames", null, null);
+        Assertions.assertEquals(1, names.size());
+        Assertions.assertTrue(names.contains("reverse"));
     }
 
     @Override

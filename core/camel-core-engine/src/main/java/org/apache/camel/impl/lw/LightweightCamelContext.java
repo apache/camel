@@ -710,6 +710,11 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     @Override
+    public Set<String> getDataFormatNames() {
+        return delegate.getDataFormatNames();
+    }
+
+    @Override
     public Transformer resolveTransformer(String model) {
         return delegate.resolveTransformer(model);
     }

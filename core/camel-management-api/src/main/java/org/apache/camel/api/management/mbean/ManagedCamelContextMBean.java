@@ -249,4 +249,10 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     @ManagedOperation(description = "The names of the languages currently registered")
     Set<String> languageNames() throws Exception;
 
+    /**
+     * The names of the data formats currently registered
+     */
+    @ManagedOperation(description = "The names of the data formats currently registered")
+    Set<String> dataFormatNames() throws Exception;
+
 }
