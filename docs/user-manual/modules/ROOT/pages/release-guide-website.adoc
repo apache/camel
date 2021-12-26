@@ -81,6 +81,9 @@ It will look something like this:
 --
 Change the `- branch: main` to specify the branch being released, e.g. `- branch: 0.6.x`.
 . Build each project (e.g. `mvn clean install -Pfastinstall`) and check for generated changes that need to be committed (or undone if there are tooling problems).
+. There will also be `local-build.sh`, `source-map.yml`, and `source-watch.yml` files in the docs directory of the subproject.
+These files support xref:improving-the-documentation.adoc#_local_build_instructions[local partial builds of the subproject].
+In `source-map.yml`, change the `branch` value from `main` to the new git branch name for the release.
 
 Since the branches with these changes have not yet been added to the Antora playbook, they may be kept on a PR fork/branch or merged into the release branch locally or in the repository.
 

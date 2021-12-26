@@ -46,6 +46,72 @@ camel-quarkus::: Editable pages are under `docs`.
 Pages under `docs/modules/ROOT/pages/reference/components` and `docs/modules/ROOT/pages/reference/extensions` are generated, including optional snippets from e.g. `extensions/activemq/src/main/doc`.
 camel-quarkus-examples::: Editable pages are under `docs`.
 
+[#_local_build_instructions]
+== How to build the website locally, with your changes
+
+First, make sure you have yarn, version >= 3.1.0, installed globally.
+
+All three builds rely on a 'site-manifest' that lists the contents of the site with enough detail so that Antora knows about all the pages.
+
+NOTE: The following procedure is not available in all subprojects yet.
+If there is no `docs/local-build.sh` in the one you are working on, please ping djencks on zulip and I'll try to get it in soon.
+
+=== Directory layout and initial setup
+
+You need a single directory, such as `camel`, that contains all the camel subprojects you are working with, and the `camel-website` project.
+
+[source,console]
+----
+cd camel
+git clone https://github.com/apache/camel-website.git
+----
+
+=== Quick partial build
+
+In your project, run
+[source,sh]
+----
+./local-build.sh quick
+----
+
+This will build your local subproject substituted into the main Camel website build.
+It will check syntax in your local subproject, and xrefs within it and from it to the rest of the site.
+It will not check xrefs into your subproject.
+
+Under `camel-website/documentation` you will find only the pages for your subproject.
+Looking at this in a browser, links within the subproject will stay in the local pages, and links to the rest of the site will go to the main camel site.
+There is no obvious way to get back to your local pages.
+
+=== Full local Antora build
+
+You only have to do this once, and again whenever there are significant changes to the website.
+
+In your project, run
+[source,sh]
+----
+./local-build.sh full
+----
+This will build the entire site, including your changes in your branch, and generate a 'site-manifest' listing all the contents of the website, that can be used to build only small parts of the site.
+This full build will also check that all xrefs into your subproject branch are valid.
+
+=== Subsequent partial continuous builds
+
+After this full build completes, you can work on documentation with live updates in your browser by running
+[source,sh]
+----
+./local-build.sh
+----
+This will do an initial build of just the current branch in the current subproject, incorporating it into the full site built in the full build, start a web server to serve the site, set up browser-sync on pages you are looking at in your browser, and rebuild the (partial) site as it detects changes.
+Depending on the amount of content generation Antora is doing, this may take up to a minute or so.
+
+This partial build will detect broken xrefs within your branch and from your branch to the main site, but will not (yet) detect broken xrefs from the rest of the site into your branch.
+If you rename or remove a page please do a full build or check the PR build carefully for broken xrefs.
+
+=== Viewing a full build in httpd
+
+If you do a full build (`yarn build-all` or `yarn build` rather than `yarn build:antora` or use of the `local-build.sh` script in a subproject) and have Docker available locally you can view your build served with httpd by running `local-httpd-in-docker.sh`.
+This is especially valuable to check redirects set up with `page-aliases`.
+
 == Creating a documentation pull request.
 
 NOTE: Simple changes such as typo fixes or rewording can usually be done directly at GitHub after pressing the `edit this page` button at the top left of each page.
@@ -107,67 +173,6 @@ The following process will work for any number of doc PRs against any number of 
 . Check for build problems and examine the preview.
 . Upon approval, your content PR will be merged.
 A `camel-website` PR constructed as described here will not need to be merged and may be closed.
-
-[#_local_build_instructions]
-== How to build the website locally, with your changes
-
-First, make sure you have yarn, version >= 3.1.0, installed globally.
-
-=== Directory layout and initial setup
-
-You need a single directory, such as `camel`, that contains all the camel subprojects you are working with, and the `camel-website` project.
-
-[source,console]
-----
-cd camel
-git clone https://github.com/apache/camel-website.git
-----
-
-Unless you are on a linux system you will need to adjust the yarn cache/unplugged to work with your OS:
-
-[source,console]
-----
-cd camel-website
-yarn update:cache
-----
-
-Run a build against the remote source repos to check that it works and to build a local copy of the UI:
-
-[source,console]
-----
-yarn build-all
-----
-
-NOTE: The following procedure is not available in all subprojects yet.
-If there is no `docs/local-build.sh` in the one you are working on, please ping djencks on zulip and I'll try to get it in soon.
-
-=== Initial full Antora build
-
-You only have to do this once, and again whenever there are significant changes to the website.
-
-In your project, run
-[source,sh]
-----
-./local-build.sh full
-----
-This will build the entire site, including your changes in your branch, and generate a 'site-manifest' listing all the contents of the website, that can be used to build only small parts of the site.
-This full build will also check that all xrefs into your subproject branch are valid.
-
-=== Subsequent partial continuous builds
-
-After this full build completes, you can work on documentation with live updates in your browser by running
-[source,sh]
-----
-./local-build.sh
-----
-This will do an initial build of just the current branch in the current subproject, incorporating it into the full site built in the previous step, start a web server to serve the site, set up browser-sync on pages you are looking at in your browser, and rebuild the (partial) site as it detects changes.
-Depending on the amount of content generation Antora is doing, this may take up to a minute or so.
-
-This partial build will detect broken xrefs within your branch and from your branch to the main site, but will not (yet) detect broken xrefs from the rest of the site into your branch.
-If you rename or remove a page please do a full build or check the PR build carefully for broken xrefs.
-
-If you do a full build (`yarn build-all` or `yarn build` rather than `yarn build:antora` or use of the `local-build.sh` script in a subproject) and have Docker available locally you can view your build served with httpd by running `local-httpd-in-docker.sh`.
-This is especially valuable to check redirects set up with `page-aliases`.
 
 == New, renamed, or removed pages
 
