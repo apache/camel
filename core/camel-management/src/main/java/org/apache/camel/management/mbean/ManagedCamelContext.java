@@ -731,6 +731,16 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         }
     }
 
+    @Override
+    public Set<String> componentNames() throws Exception {
+        return context.getComponentNames();
+    }
+
+    @Override
+    public Set<String> languageNames() throws Exception {
+        return context.getLanguageNames();
+    }
+
     /**
      * Used for sorting the processor mbeans accordingly to their index.
      */

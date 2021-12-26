@@ -788,10 +788,8 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     /**
      * Gets a readonly list with the names of the languages currently registered.
      *
-     * @return     a readonly list with the names of the languages
-     * @deprecated not in use
+     * @return a readonly list with the names of the languages
      */
-    @Deprecated
     Set<String> getLanguageNames();
 
     /**

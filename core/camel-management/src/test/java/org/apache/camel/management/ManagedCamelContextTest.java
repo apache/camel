@@ -18,6 +18,7 @@ package org.apache.camel.management;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -28,6 +29,7 @@ import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.engine.ExplicitCamelContextNameStrategy;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
@@ -210,6 +212,29 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         assertNull(context.hasEndpoint("seda:bar"));
         registered = mbeanServer.isRegistered(seda);
         assertFalse(registered, "Should not be registered " + seda);
+    }
+
+    @Test
+    public void testLanguageNames() throws Exception {
+        MBeanServer mbeanServer = getMBeanServer();
+        ObjectName on = getContextObjectName();
+
+        Set<String> names = (Set<String>) mbeanServer.invoke(on, "languageNames", null, null);
+        Assertions.assertEquals(2, names.size());
+        Assertions.assertTrue(names.contains("constant"));
+        Assertions.assertTrue(names.contains("simple"));
+    }
+
+    @Test
+    public void testComponentNames() throws Exception {
+        MBeanServer mbeanServer = getMBeanServer();
+        ObjectName on = getContextObjectName();
+
+        Set<String> names = (Set<String>) mbeanServer.invoke(on, "componentNames", null, null);
+        Assertions.assertEquals(3, names.size());
+        Assertions.assertTrue(names.contains("direct"));
+        Assertions.assertTrue(names.contains("mock"));
+        Assertions.assertTrue(names.contains("seda"));
     }
 
     @Override

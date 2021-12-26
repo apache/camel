@@ -17,6 +17,7 @@
 package org.apache.camel.api.management.mbean;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.api.management.ManagedAttribute;
@@ -235,5 +236,17 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
      */
     @ManagedOperation(description = "Reset counters")
     void reset(boolean includeRoutes) throws Exception;
+
+    /**
+     * The names of the components currently registered
+     */
+    @ManagedOperation(description = "The names of the components currently registered")
+    Set<String> componentNames() throws Exception;
+
+    /**
+     * The names of the languages currently registered
+     */
+    @ManagedOperation(description = "The names of the languages currently registered")
+    Set<String> languageNames() throws Exception;
 
 }
