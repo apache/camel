@@ -69,3 +69,5 @@ This should correctly be done with `steps` as child of `from`:
 === camel-karaf
 
 The `camel-endpointdsl` and `camel-componentdsl` is no longer supported on Apache Karaf.
+
+The `camel-osg-activator` has been removed.
