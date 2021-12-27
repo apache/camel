@@ -6,6 +6,8 @@
 :since: 3.15
 :supportlevel: Preview
 :component-header: Only producer is supported
+//Manually maintained attributes
+:camel-spring-boot-name: milo
 
 *Since Camel {since}*
 
@@ -38,7 +40,7 @@ The URI syntax of the endpoint is:
 milo-browse:opc.tcp://[user:password@]host:port/path/to/service?node=RAW(nsu=urn:foo:bar;s=item-1)
 ------------------------
 
-Please refer to the milo-client component for further details about the construction of the URI.
+Please refer to the xref:milo-client-component.adoc[Milo Client] component for further details about the construction of the URI.
 
 // component-configure options: START
 
@@ -56,7 +58,7 @@ include::partial$component-endpoint-options.adoc[]
 
 === Client
 
-The browse component shares the same base options like the Camel Milo Client component, e. g. concerning topics like discovery,
+The browse component shares the same base options like the Camel Milo Client component, e.g. concerning topics like discovery,
 security policies, the construction of node ids, etc.
 
 Please refer to the documentation of the Camel Milo Client component for further details.
@@ -64,7 +66,7 @@ Please refer to the documentation of the Camel Milo Client component for further
 === Browsing
 
 The main use of this component is to be able to determine the nodes values to be retrieved or to be written by first browsing
-the node tree of the OPC-UA server, e. g. to avoid hard-coding a significant number of node ids within the configuration of
+the node tree of the OPC-UA server, e.g. to avoid hard-coding a significant number of node ids within the configuration of
 Camel routes. The component is designed to work in conjunction with the Camel Milo Client component as illustrated in the
 following example:
 
@@ -89,4 +91,4 @@ from("direct:start")
 Dependent to the OPC-UA server there it might be required to browse a hierarchy of nodes.
 Be aware that this is potentially a very expensive operation.
 
-include::{page-component-version}@camel-spring-boot::page$milo-starter.adoc[]
+include::spring-boot:partial$starter.adoc[]
