@@ -16,22 +16,10 @@
 #
 
     - require: '@djencks/antora-source-watch'
-#      log_level: debug
+#      log_level: trace
       sources:
         - url: ./../camel
 
         - url: https://github.com/apache/camel-spring-boot.git
           branch_includes: camel-spring-boot-3.14.x
           start_path_includes: docs/components,components-starter
-      components:
-
-    - require: "@djencks/antora-site-manifest"
-      import_manifests:
-        - primary_site_manifest_url: ./documentation/site-manifest.json
-      partial_components: true
-      local-urls: true
-
-    - require: '@djencks/antora-timer'
-      log_level: info
-
-  generator: '@djencks/antora-source-watch'
