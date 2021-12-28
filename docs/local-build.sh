@@ -21,17 +21,4 @@ CW=./../../camel-website
 LOCAL=./../camel
 
 cd $CW || (echo 'camel-website not in expected location $CW' && exit)
-cp antora-playbook.yml local-antora-playbook-full.yml
-cat $LOCAL/docs/source-map.yml >> local-antora-playbook-full.yml
-cat playbook-patch-full.yml >> local-antora-playbook-full.yml
-
-cp antora-playbook.yml local-antora-playbook-partial.yml
-cat $LOCAL/docs/source-map.yml >> local-antora-playbook-partial.yml
-cat $LOCAL/docs/source-watch.yml >> local-antora-playbook-partial.yml
-
-if [ "$1" = "full" ] || [ "$1" = "1" ]
-then
-  yarn build:antora-local-full
-else
-  yarn build:antora-local-partial
-fi
+./antora-local-build.sh $LOCAL $*
