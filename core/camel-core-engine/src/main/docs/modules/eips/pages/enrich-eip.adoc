@@ -52,7 +52,7 @@ as a `String` with colon separator:
 ----
 public class ExampleAggregationStrategy implements AggregationStrategy {
 
-    public Exchange aggregate(Exchange original, Exchange resource) {
+    public Exchange aggregate(Exchange newExchange, Exchange oldExchange) {
         // this is just an example, for real-world use-cases the
         // aggregation strategy would be specific to the use-case
 
