@@ -87,6 +87,7 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
         String fileName = getConfiguration().getObjectName();
         String bucketName = getConfiguration().getBucketName();
         Queue<Exchange> exchanges;
+        String filter = getConfiguration().getFilter();
 
         if (fileName != null) {
             LOG.trace("Getting object in bucket [{}] with file name [{}]...", bucketName, fileName);
@@ -99,7 +100,15 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
 
             List<Blob> bloblist = new LinkedList<>();
             for (Blob blob : getStorageClient().list(bucketName).iterateAll()) {
-                bloblist.add(blob);
+
+                if (filter != null && !filter.isEmpty()) {
+                    if (blob.getBlobId().getName().matches(filter)) {
+                        bloblist.add(blob);
+                    }
+                } else {
+                    bloblist.add(blob);
+                }
+
             }
 
             if (LOG.isTraceEnabled()) {
