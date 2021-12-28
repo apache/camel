@@ -16,7 +16,7 @@
 #
 
     - require: '@djencks/antora-source-watch'
-#      log_level: debug
+#      log_level: trace
       sources:
         - url: ./../camel
         - url: https://github.com/apache/camel-spring-boot.git
@@ -28,14 +28,3 @@
 #          version: next
 # uncomment to work only on the user manual
 #        - name: manual
-
-    - require: "@djencks/antora-site-manifest"
-      import_manifests:
-        - primary_site_manifest_url: ./documentation/site-manifest.json
-      partial_components: true
-      local_urls: true
-
-    - require: '@djencks/antora-timer'
-      log_level: info
-
-  generator: '@djencks/antora-source-watch'
