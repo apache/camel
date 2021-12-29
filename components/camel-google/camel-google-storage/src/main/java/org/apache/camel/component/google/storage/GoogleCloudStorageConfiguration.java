@@ -76,6 +76,9 @@ public class GoogleCloudStorageConfiguration implements Cloneable {
     @Metadata(autowired = true)
     private Storage storageClient;
 
+    @UriParam(label = "consumer", description = "A regular expression to include only blobs with name matching it.")
+    private String filter;
+
     public String getBucketName() {
         return this.bucketName;
     }
@@ -258,6 +261,17 @@ public class GoogleCloudStorageConfiguration implements Cloneable {
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }
+    }
+
+    /**
+     * A regular expression to include only blobs with name matching it.
+     */
+    public void setFilter(String filter) {
+        this.filter = filter;
+    }
+
+    public String getFilter() {
+        return filter;
     }
 
 }
