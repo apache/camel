@@ -231,6 +231,20 @@ public interface GoogleStorageComponentBuilderFactory {
             return this;
         }
         /**
+         * A regular expression to include only blobs with name matching it.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param filter the value to set
+         * @return the dsl builder
+         */
+        default GoogleStorageComponentBuilder filter(java.lang.String filter) {
+            doSetProperty("filter", filter);
+            return this;
+        }
+        /**
          * If it is true, the Object exchange will be consumed and put into the
          * body. If false the Object stream will be put raw into the body and
          * the headers will be set with the object metadata.
@@ -395,6 +409,7 @@ public interface GoogleStorageComponentBuilderFactory {
             case "deleteAfterRead": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setDeleteAfterRead((boolean) value); return true;
             case "destinationBucket": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setDestinationBucket((java.lang.String) value); return true;
             case "downloadFileName": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setDownloadFileName((java.lang.String) value); return true;
+            case "filter": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setFilter((java.lang.String) value); return true;
             case "includeBody": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setIncludeBody((boolean) value); return true;
             case "includeFolders": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setIncludeFolders((boolean) value); return true;
             case "moveAfterRead": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setMoveAfterRead((boolean) value); return true;
