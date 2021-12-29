@@ -301,6 +301,20 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
             return this;
         }
         /**
+         * A regular expression to include only blobs with name matching it.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param filter the value to set
+         * @return the dsl builder
+         */
+        default GoogleCloudStorageEndpointConsumerBuilder filter(String filter) {
+            doSetProperty("filter", filter);
+            return this;
+        }
+        /**
          * If it is true, the Object exchange will be consumed and put into the
          * body. If false the Object stream will be put raw into the body and
          * the headers will be set with the object metadata.
