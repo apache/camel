@@ -3,7 +3,7 @@
 //Header attributes written by hand.
 :doctitle: XML Io Dsl
 :artifactid: camel-xml-io-dsl
-:description: Camel DSL with YAML
+:description: Camel DSL with XML
 :supportlevel: Stable
 //Manually maintained attributes
 :group: DSL
