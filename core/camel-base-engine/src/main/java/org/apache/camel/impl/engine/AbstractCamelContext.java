@@ -4578,7 +4578,8 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public void setTracer(Tracer tracer) {
-        if (isStartingOrStarted()) {
+        // if tracing is in standby mode, then we can use it after camel is started
+        if (!isTracingStandby() && isStartingOrStarted()) {
             throw new IllegalStateException("Cannot set tracer on a started CamelContext");
         }
         this.tracer = doAddService(tracer, true, false, true);
