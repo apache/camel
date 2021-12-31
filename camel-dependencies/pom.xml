@@ -373,8 +373,8 @@
     <libthrift-version>0.12.0</libthrift-version>
     <lifecycle-mapping-version>1.0.0</lifecycle-mapping-version>
     <lightcouch-version>0.2.0</lightcouch-version>
-    <log4j2-version>2.17.0</log4j2-version>
-    <logback-version>1.2.9</logback-version>
+    <log4j2-version>2.17.1</log4j2-version>
+    <logback-version>1.2.10</logback-version>
     <lucene-version>8.8.2</lucene-version>
     <lucene-version-range>[8,9)</lucene-version-range>
     <lucene3-version>3.6.0</lucene3-version>
