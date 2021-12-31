@@ -38,6 +38,11 @@ public abstract class GenericFileSendDynamicAware extends SendDynamicAwareSuppor
 
     @Override
     public String resolveStaticUri(Exchange exchange, DynamicAwareEntry entry) throws Exception {
+        String uri = entry.getUri();
+        // windows path problems such as C:\temp was by simple language evaluated \t as a tab character
+        // which should then be reversed
+        uri = uri.replaceAll("\t", "\\\\t");
+
         boolean fileName = entry.getProperties().containsKey("fileName");
         boolean tempFileName = entry.getProperties().containsKey("tempFileName");
         boolean idempotentKey = entry.getProperties().containsKey("idempotentKey");
@@ -94,9 +99,9 @@ public abstract class GenericFileSendDynamicAware extends SendDynamicAwareSuppor
                 }
             }
 
-            return asEndpointUri(exchange, entry.getUri(), params);
+            return asEndpointUri(exchange, uri, params);
         } else {
-            return entry.getUri();
+            return uri;
         }
     }
 
