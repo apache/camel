@@ -619,6 +619,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
     }
 
     @Override
+    @Deprecated
     public String dumpRoutesSourceLocationsAsXml() throws Exception {
         StringBuilder sb = new StringBuilder();
         sb.append("<routeLocations>");

@@ -41,7 +41,8 @@ public class DumpModelAsXmlSourceLocationTest extends ContextTestSupport {
         assertNotNull(xml);
         log.info(xml);
 
-        Assertions.assertTrue(xml.contains("sourceLineNumber=\"64\" sourceLocation=\"org.apache.camel.util.DumpModelAsXmlSourceLocationTest$1\""));
+        Assertions.assertTrue(xml.contains(
+                "sourceLineNumber=\"64\" sourceLocation=\"org.apache.camel.util.DumpModelAsXmlSourceLocationTest$1\""));
     }
 
     @Test
@@ -51,13 +52,14 @@ public class DumpModelAsXmlSourceLocationTest extends ContextTestSupport {
         assertNotNull(xml);
         log.info(xml);
 
-        Assertions.assertTrue(xml.contains("<from sourceLineNumber=\"25\" sourceLocation=\"org.apache.camel.util.MyCoolRoute\" uri=\"direct:cool\"/>"));
+        Assertions.assertTrue(xml.contains(
+                "<from sourceLineNumber=\"25\" sourceLocation=\"org.apache.camel.util.MyCoolRoute\" uri=\"direct:cool\"/>"));
         Assertions.assertTrue(xml.contains("sourceLineNumber=\"26\" sourceLocation=\"org.apache.camel.util.MyCoolRoute\""));
     }
 
     @Override
     protected RouteBuilder[] createRouteBuilders() throws Exception {
-        return new RouteBuilder[]{
+        return new RouteBuilder[] {
                 new RouteBuilder() {
                     @Override
                     public void configure() throws Exception {

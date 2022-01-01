@@ -205,6 +205,7 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     String dumpRouteTemplatesAsXml() throws Exception;
 
     @ManagedOperation(description = "Dumps all routes with mappings between node ids and their source location/line-number (currently only XML and YAML routes supported) as XML")
+    @Deprecated
     String dumpRoutesSourceLocationsAsXml() throws Exception;
 
     /**
