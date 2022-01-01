@@ -41,6 +41,7 @@ import org.apache.camel.TypeConversionException;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.model.ExpressionNode;
 import org.apache.camel.model.FromDefinition;
+import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RouteTemplatesDefinition;
@@ -51,6 +52,7 @@ import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.NamespaceAware;
+import org.apache.camel.util.KeyValueHolder;
 
 import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutputs;
 
@@ -79,6 +81,31 @@ public final class JaxbHelper {
                 if (map != null && !map.isEmpty()) {
                     namespaces.putAll(map);
                 }
+            }
+        }
+    }
+
+    /**
+     * Extract all source locations from the route
+     *
+     * @param route     the route
+     * @param locations the map of source locations for EIPs in the route
+     */
+    public static void extractSourceLocations(RouteDefinition route, Map<String, KeyValueHolder<Integer, String>> locations) {
+        // input
+        String id = route.getRouteId();
+        String loc = route.getInput().getLocation();
+        int line = route.getInput().getLineNumber();
+        if (id != null && line != -1) {
+            locations.put(id, new KeyValueHolder<>(line, loc));
+        }
+        // and then walk all nodes in the route graphs
+        for (var def : filterTypeInOutputs(route.getOutputs(), OptionalIdentifiedDefinition.class)) {
+            id = def.getId();
+            loc = def.getLocation();
+            line = def.getLineNumber();
+            if (id != null && line != -1) {
+                locations.put(id, new KeyValueHolder<>(line, loc));
             }
         }
     }
