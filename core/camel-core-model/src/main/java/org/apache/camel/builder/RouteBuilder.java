@@ -746,18 +746,18 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     }
 
     protected void configureRest(RestDefinition rest) {
-        // noop
+        CamelContextAware.trySetCamelContext(rest, getContext());
     }
 
     protected void configureRoute(RouteDefinition route) {
-        // noop
+        CamelContextAware.trySetCamelContext(route, getContext());
     }
 
     protected void configureRouteTemplate(RouteTemplateDefinition routeTemplate) {
-        // noop
+        CamelContextAware.trySetCamelContext(routeTemplate, getContext());
     }
 
     protected void configureRouteConfiguration(RouteConfigurationDefinition routesConfiguration) {
-        // noop
+        CamelContextAware.trySetCamelContext(routesConfiguration, getContext());
     }
 }

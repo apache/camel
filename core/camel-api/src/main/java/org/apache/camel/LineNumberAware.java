@@ -36,4 +36,14 @@ public interface LineNumberAware {
      */
     void setLineNumber(int lineNumber);
 
+    /**
+     * The location of the entity.
+     */
+    String getLocation();
+
+    /**
+     * Sets the location of the entity (such as classname, XML file name, etc.)
+     */
+    void setLocation(String location);
+
 }

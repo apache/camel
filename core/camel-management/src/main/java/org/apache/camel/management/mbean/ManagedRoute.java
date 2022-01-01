@@ -571,7 +571,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
                 // the step must belong to this route
                 if (route.getRouteId().equals(processor.getRouteId())) {
                     int line = processor.getSourceLineNumber() != null ? processor.getSourceLineNumber() : -1;
-                    String location = getSourceLocation() != null ? getSourceLocation() : "";
+                    String location = processor.getSourceLocation() != null ? processor.getSourceLocation() : "";
                     sb.append("\n    <routeLocation")
                             .append(String.format(
                                     " routeId=\"%s\" id=\"%s\" index=\"%s\" sourceLocation=\"%s\" sourceLineNumber=\"%s\"/>",

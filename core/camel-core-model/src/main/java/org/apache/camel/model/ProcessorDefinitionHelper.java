@@ -370,4 +370,31 @@ public final class ProcessorDefinitionHelper {
         }
     }
 
+    /**
+     * Prepares the output to gather source location:line-number if possible. This operation is slow as it uses
+     * StackTrace so this should only be used when Camel Debugger is enabled.
+     *
+     * @param node the node
+     */
+    public static void prepareSourceLocation(NamedNode node) {
+        // line number may already be set if parsed via XML, YAML etc.
+        int number = node.getLineNumber();
+        if (number < 0) {
+            StackTraceElement[] st = Thread.currentThread().getStackTrace();
+            // skip first stack as that is this method
+            for (int i = 1; i < st.length; i++) {
+                StackTraceElement e = st[i];
+                if (!e.getClassName().startsWith("org.apache.camel.model") &&
+                        !e.getClassName().startsWith("org.apache.camel.builder.RouteBuilder")) {
+                    // when we are no longer in model/RouteBuilder, we have found the location:line-number
+                    node.setLineNumber(e.getLineNumber());
+                    if (node.getLocation() == null) {
+                        node.setLocation(e.getClassName());
+                    }
+                    return;
+                }
+            }
+        }
+    }
+
 }

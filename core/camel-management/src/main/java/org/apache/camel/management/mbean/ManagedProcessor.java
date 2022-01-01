@@ -56,9 +56,10 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
             step = ProcessorDefinitionHelper.findFirstParentOfType(StepDefinition.class, definition, true);
         }
         this.stepId = step != null ? step.idOrCreate(context.adapt(ExtendedCamelContext.class).getNodeIdFactory()) : null;
-        RouteDefinition rd = ProcessorDefinitionHelper.getRoute(definition);
-        if (rd != null && rd.getResource() != null) {
-            this.sourceLocation = rd.getResource().getLocation();
+        this.sourceLocation = definition.getLocation();
+        if (sourceLocation == null) {
+            RouteDefinition rd = ProcessorDefinitionHelper.getRoute(definition);
+            sourceLocation = rd != null ? rd.getLocation() : null;
         }
     }
 

@@ -657,7 +657,11 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
                 if (rd != null) {
                     String id = rd.getRouteId();
                     int line = rd.getInput().getLineNumber();
-                    String location = route.getSourceLocation() != null ? route.getSourceLocation() : "";
+                    String location
+                            = rd.getInput().getLocation() != null ? rd.getInput().getLocation() : route.getSourceLocation();
+                    if (location == null) {
+                        location = "";
+                    }
                     sb.append("\n    <routeLocation")
                             .append(String.format(
                                     " routeId=\"%s\" id=\"%s\" index=\"%s\" sourceLocation=\"%s\" sourceLineNumber=\"%s\"/>",
@@ -667,7 +671,10 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
                     // the step must belong to this route
                     if (route.getRouteId().equals(processor.getRouteId())) {
                         int line = processor.getSourceLineNumber() != null ? processor.getSourceLineNumber() : -1;
-                        String location = route.getSourceLocation() != null ? route.getSourceLocation() : "";
+                        String location = processor.getSourceLocation();
+                        if (location == null) {
+                            location = "";
+                        }
                         sb.append("\n    <routeLocation")
                                 .append(String.format(
                                         " routeId=\"%s\" id=\"%s\" index=\"%s\" sourceLocation=\"%s\" sourceLineNumber=\"%s\"/>",

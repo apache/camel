@@ -52,6 +52,8 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         // to force a different management name than the camel id
         context.getManagementNameStrategy().setNamePattern("19-#name#");
         context.setNameStrategy(new ExplicitCamelContextNameStrategy("my-camel-context"));
+        // debugger needed for source locations
+        context.setDebugging(true);
         return context;
     }
 
@@ -253,14 +255,40 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         Assertions.assertTrue(names.contains("reverse"));
     }
 
+    @Test
+    public void testSourceLocations() throws Exception {
+        MBeanServer mbeanServer = getMBeanServer();
+        ObjectName on = getContextObjectName();
+
+        String xml = (String) mbeanServer.invoke(on, "dumpRoutesSourceLocationsAsXml", null, null);
+        Assertions.assertNotNull(xml);
+        Assertions.assertTrue(xml.contains(
+                "sourceLocation=\"org.apache.camel.management.ManagedCamelContextTest$1\" sourceLineNumber=\"285\"/>"));
+        Assertions.assertTrue(xml.contains(
+                "sourceLocation=\"org.apache.camel.management.ManagedCamelContextTest$1\" sourceLineNumber=\"286\"/>"));
+        Assertions.assertTrue(xml.contains(
+                "sourceLocation=\"org.apache.camel.management.ManagedCamelContextTest$1\" sourceLineNumber=\"287\"/>"));
+
+        Assertions.assertTrue(xml.contains(
+                "sourceLocation=\"org.apache.camel.management.ManagedCamelContextTest$1\" sourceLineNumber=\"289\"/>"));
+        Assertions.assertTrue(xml.contains(
+                "sourceLocation=\"org.apache.camel.management.ManagedCamelContextTest$1\" sourceLineNumber=\"290\"/>"));
+        Assertions.assertTrue(xml.contains(
+                "sourceLocation=\"org.apache.camel.management.ManagedCamelContextTest$1\" sourceLineNumber=\"291\"/>"));
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").delay(10).to("mock:result");
+                from("direct:start")
+                        .delay(10)
+                        .to("mock:result");
 
-                from("direct:foo").delay(10).transform(constant("Bye World")).id("myTransform");
+                from("direct:foo")
+                        .delay(10)
+                        .transform(constant("Bye World")).id("myTransform");
             }
         };
     }

@@ -1978,6 +1978,16 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
+     * Sets whether debugging is enabled or not.
+     *
+     * Default is false.
+     */
+    public T withDebugging(boolean debugging) {
+        this.debugging = debugging;
+        return (T) this;
+    }
+
+    /**
      * Sets the pattern used for determine which custom MDC keys to propagate during message routing when the routing
      * engine continues routing asynchronously for the given message. Setting this pattern to * will propagate all
      * custom keys. Or setting the pattern to foo*,bar* will propagate any keys starting with either foo or bar. Notice

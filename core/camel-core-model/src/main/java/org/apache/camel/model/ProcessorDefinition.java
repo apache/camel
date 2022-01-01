@@ -35,6 +35,8 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.BeanScope;
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -90,7 +92,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     private final int index;
 
     protected ProcessorDefinition() {
-        // every time we create a definition we should inc the COUNTER counter
+        // every time we create a definition we should inc the counter
         index = COUNTER.getAndIncrement();
     }
 
@@ -160,6 +162,23 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
     @Override
     public void addOutput(ProcessorDefinition<?> output) {
+        // inject context
+        CamelContextAware.trySetCamelContext(output, getCamelContext());
+
+        RouteDefinition route = ProcessorDefinitionHelper.getRoute(this);
+        if (route != null) {
+            CamelContext context = route.getCamelContext();
+            if (context != null && context.isDebugging()) {
+                // we want to capture source location:line for every output when debugging is enabled
+                // this is an expensive operation and therefore only used if debugging is enabled
+                ProcessorDefinitionHelper.prepareSourceLocation(output);
+                if (log.isDebugEnabled()) {
+                    log.debug("{} located in {}:{}", output.getShortName(), output.getLocation(),
+                            output.getLineNumber());
+                }
+            }
+        }
+
         if (!(this instanceof OutputNode)) {
             getParent().addOutput(output);
             return;
