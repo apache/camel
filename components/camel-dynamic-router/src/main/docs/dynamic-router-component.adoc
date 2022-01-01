@@ -13,6 +13,20 @@
 
 The Dynamic Router Component is an implementation of the Dynamic Router EIP.  Participants may send subscription messages over a special control channel, at runtime, to specify the conditions under which messages are routed to their endpoint (also provided in the control channel message).  In this way, the Dynamic Router is an extension of the content-based router EIP.  When a recipient wishes to remove itself, it can also send a message to unsubscribe.
 
+Note that, while Camel Core contains an implementation of the Dynamic Router EIP, this component is a completely separate implementation that aims to be a closer reflection of the EIP description.  The main differences between the Core implementation and this component implementation are as follows:
+
+ _Control Channel_:: A reserved communication channel by which routing participants can subscribe or unsubscribe to receiving messages that meet their criteria.
+ * *core*: does not have a communication channel for control messages.  Perhaps the "re-circulation" behavior, discussed below, is the core Dynamic Router's control channel interpretation.
+ * *component*: provides a control channel for participants to subscribe and unsubscribe with control messages that contain a `Predicate` to determine `Exchange` suitability, and the `Endpoint` URI that a matching `Exchange` will be sent to.
+ _Dynamic Rule Base_:: The Dynamic Router should have a list of routing recipients' criteria that define the terms under which an exchange is suitable for them to receive.
+ * *core*: implements a dynamic version of a `Routing Slip` for this purpose, but that is not inherently dynamic in terms of its content.  If the content of this slip will be dynamic, it will be up to the user to define and implement that capability.
+ * *component*: builds the rule base at runtime, and maintains it as participants subscribe or unsubscribe via the control channel.
+ _Message Re-Circulation_:: The Dynamic Router EIP description does not specify any message re-circulation behavior.
+ * *core*: provides a feature that continuously routes the exchange to a recipient, then back through the dynamic router, until a recipient returns `null` to signify routing termination.  This may be an interpretation of the control channel feature.
+ * *component*: does not provide a re-circulation feature.  If this is the desired behavior, the user will have to define and implement this behavior.  E.g., create a simple route to send a response back through the Dynamic Router under some condition(s).
+
+For some use cases, the core Dynamic Router will be more appropriate.  In other cases, the Dynamic Router Component will be a better fit.
+
 == URI format
 
 [source]
@@ -34,6 +48,26 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: END
 
 == Usage
+
+Maven users will need to add the following dependency to their `pom.xml` for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-dynamic-router</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+Gradle users will need to add the following dependency to their `build.gradle` for this component:
+
+[source,groovy]
+----
+implementation group: 'org.apache.camel', name: 'camel-dynamic-router', version: 'x.x.x'
+// use the same version as your Camel core version
+----
 
 The Dynamic Router component is used in the same way that other components are used.  Simply include the dynamic-router URI as a consumer in a route, along with the channel name.
 
@@ -78,11 +112,11 @@ template.sendBody("dynamic-router:control", billingSubMsg);
 
 The parameters, in order, are:
 
-1. _Subscription ID_:  When unsubscribing, this is the only way to identify the subscription to remove.
-2. _Channel Name_:  The dynamic router can have multiple channels, where the subscriptions (the registered rules and endpoints) are kept completely separate from the other channels.  This is equivalent to a VLAN in networking.
-3. _Priority_:  A new subscription will be inserted into the rule base in order of precedence; lower numbers have higher priority.
-4. _Endpoint URI_:  If an evaluation of the rules in the rule base determines that the exchange is appropriate for the recipient, it is sent to this URI.
-5. _Predicate_:  For evaluating the exchange to determine if a message should be routed to the supplied URI.
+. _Subscription ID_:  When unsubscribing, this is the only way to identify the subscription to remove.
+. _Channel Name_:  The dynamic router can have multiple channels, where the subscriptions (the registered rules and endpoints) are kept completely separate from the other channels.  This is equivalent to a VLAN in networking.
+. _Priority_:  A new subscription will be inserted into the rule base in order of precedence; lower numbers have higher priority.
+. _Endpoint URI_:  If an evaluation of the rules in the rule base determines that the exchange is appropriate for the recipient, it is sent to this URI.
+. _Predicate_:  For evaluating the exchange to determine if a message should be routed to the supplied URI.
 
 == Unsubscribing
 
