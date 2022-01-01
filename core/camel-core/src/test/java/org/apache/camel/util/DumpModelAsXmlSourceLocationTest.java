@@ -42,7 +42,7 @@ public class DumpModelAsXmlSourceLocationTest extends ContextTestSupport {
         log.info(xml);
 
         Assertions.assertTrue(xml.contains(
-                "sourceLineNumber=\"64\" sourceLocation=\"org.apache.camel.util.DumpModelAsXmlSourceLocationTest$1\""));
+                "sourceLineNumber=\"66\" sourceLocation=\"org.apache.camel.util.DumpModelAsXmlSourceLocationTest$1\""));
     }
 
     @Test
