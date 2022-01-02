@@ -16,8 +16,6 @@
  */
 package org.apache.camel.dsl.xml.io;
 
-import java.io.InputStream;
-
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.RouteBuilder;
@@ -48,45 +46,31 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
             @Override
             public void configure() throws Exception {
                 // we use configure to load the routes (with namespace and without namespace)
-                try (InputStream is = resource.getInputStream()) {
-                    new ModelParser(is, NAMESPACE)
-                            .parseRouteTemplatesDefinition()
-                            .ifPresent(this::setRouteTemplateCollection);
-                }
-                try (InputStream is = resource.getInputStream()) {
-                    new ModelParser(is, NAMESPACE)
-                            .parseRestsDefinition()
-                            .ifPresent(this::setRestCollection);
-                }
-                try (InputStream is = resource.getInputStream()) {
-                    new ModelParser(is, NAMESPACE)
-                            .parseRoutesDefinition()
-                            .ifPresent(this::addRoutes);
-                }
-                try (InputStream is = resource.getInputStream()) {
-                    new ModelParser(is)
-                            .parseRouteTemplatesDefinition()
-                            .ifPresent(this::setRouteTemplateCollection);
-                }
-                try (InputStream is = resource.getInputStream()) {
-                    new ModelParser(is)
-                            .parseRestsDefinition()
-                            .ifPresent(this::setRestCollection);
-                }
-                try (InputStream is = resource.getInputStream()) {
-                    new ModelParser(is)
-                            .parseRoutesDefinition()
-                            .ifPresent(this::addRoutes);
-                }
+                new ModelParser(resource, NAMESPACE)
+                        .parseRouteTemplatesDefinition()
+                        .ifPresent(this::setRouteTemplateCollection);
+                new ModelParser(resource, NAMESPACE)
+                        .parseRestsDefinition()
+                        .ifPresent(this::setRestCollection);
+                new ModelParser(resource, NAMESPACE)
+                        .parseRoutesDefinition()
+                        .ifPresent(this::addRoutes);
+                new ModelParser(resource)
+                        .parseRouteTemplatesDefinition()
+                        .ifPresent(this::setRouteTemplateCollection);
+                new ModelParser(resource)
+                        .parseRestsDefinition()
+                        .ifPresent(this::setRestCollection);
+                new ModelParser(resource)
+                        .parseRoutesDefinition()
+                        .ifPresent(this::addRoutes);
             }
 
             @Override
             public void configuration() throws Exception {
-                try (InputStream is = resource.getInputStream()) {
-                    new ModelParser(is)
-                            .parseRouteConfigurationsDefinition()
-                            .ifPresent(this::addConfigurations);
-                }
+                new ModelParser(resource)
+                        .parseRouteConfigurationsDefinition()
+                        .ifPresent(this::addConfigurations);
             }
 
             private void addRoutes(RoutesDefinition routes) {

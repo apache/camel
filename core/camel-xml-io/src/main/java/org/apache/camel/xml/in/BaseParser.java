@@ -34,6 +34,7 @@ import java.util.function.Consumer;
 import org.apache.camel.LineNumberAware;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.NamespaceAware;
+import org.apache.camel.spi.Resource;
 import org.apache.camel.xml.io.MXParser;
 import org.apache.camel.xml.io.XmlPullParser;
 import org.apache.camel.xml.io.XmlPullParserException;
@@ -42,6 +43,17 @@ public class BaseParser {
 
     protected final MXParser parser;
     protected String namespace;
+    protected Resource resource;
+
+    public BaseParser(Resource resource) throws IOException, XmlPullParserException {
+        this(resource.getInputStream(), null);
+        this.resource = resource;
+    }
+
+    public BaseParser(Resource resource, String namespace) throws IOException, XmlPullParserException {
+        this(resource.getInputStream(), namespace);
+        this.resource = resource;
+    }
 
     public BaseParser(InputStream input) throws IOException, XmlPullParserException {
         this(input, null);
@@ -70,6 +82,9 @@ public class BaseParser {
             throws IOException, XmlPullParserException {
         if (definition instanceof LineNumberAware) {
             ((LineNumberAware) definition).setLineNumber(parser.getLineNumber());
+            if (resource != null) {
+                ((LineNumberAware) definition).setLocation(resource.getLocation());
+            }
         }
         if (definition instanceof NamespaceAware) {
             final Map<String, String> namespaces = new LinkedHashMap<>();
