@@ -254,7 +254,7 @@ public class DefaultTracer extends ServiceSupport implements CamelContextAware, 
 
     protected String getLoggerName(Object node) {
         String name = null;
-        if (camelContext.isDebugging() && node instanceof LineNumberAware) {
+        if (node instanceof LineNumberAware) {
             if (node instanceof NamedRoute) {
                 // we want the input from a route as it has the source location / line number
                 node = ((NamedRoute) node).getInput();
@@ -266,8 +266,7 @@ public class DefaultTracer extends ServiceSupport implements CamelContextAware, 
                 name = loc;
                 if (loc.contains(":")) {
                     // file based such as xml and yaml
-                    name = FileUtil.onlyName(loc);
-                    name = FileUtil.stripExt(name);
+                    name = FileUtil.stripPath(loc);
                 } else {
                     // classname so let us only grab the name
                     int pos = name.lastIndexOf('.');
