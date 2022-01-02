@@ -21,6 +21,7 @@ import java.util.Objects;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.LineNumberAware;
 import org.apache.camel.NamedNode;
 import org.apache.camel.NamedRoute;
 import org.apache.camel.Route;
@@ -31,6 +32,7 @@ import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.support.processor.DefaultExchangeFormatter;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
@@ -77,7 +79,6 @@ public class DefaultTracer extends ServiceSupport implements CamelContextAware, 
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void traceBeforeNode(NamedNode node, Exchange exchange) {
         if (shouldTrace(node)) {
             traceCounter++;
@@ -95,7 +96,7 @@ public class DefaultTracer extends ServiceSupport implements CamelContextAware, 
             String data = exchangeFormatter.format(exchange);
             sb.append(data);
             String out = sb.toString();
-            dumpTrace(out);
+            dumpTrace(out, node);
         }
     }
 
@@ -121,17 +122,28 @@ public class DefaultTracer extends ServiceSupport implements CamelContextAware, 
         boolean original = route.getRouteId().equals(exchange.getFromRouteId());
         String arrow = original ? "*-->" : "--->";
 
+        // we need to capture original source:line-number
+        if (original && camelContext.isDebugging()) {
+            int line = route.getInput().getLineNumber();
+            String loc = route.getInput().getLocation();
+        }
+
         StringBuilder sb = new StringBuilder();
         sb.append(String.format(TRACING_OUTPUT, arrow, route.getRouteId(), label));
         sb.append(" ");
         String data = exchangeFormatter.format(exchange);
         sb.append(data);
         String out = sb.toString();
-        dumpTrace(out);
+        dumpTrace(out, route);
     }
 
     @Override
     public void traceAfterRoute(Route route, Exchange exchange) {
+        // noop
+    }
+
+    @Override
+    public void traceAfterRoute(NamedRoute route, Exchange exchange) {
         if (!traceBeforeAndAfterRoute) {
             return;
         }
@@ -140,20 +152,20 @@ public class DefaultTracer extends ServiceSupport implements CamelContextAware, 
         // the sanitizeUri takes a very long time for very long string and the format cuts this to
         // 33 characters, anyway. Cut this to 50 characters. This will give enough space for removing
         // characters in the sanitizeUri method and will be reasonably fast
-        String uri = route.getConsumer().getEndpoint().getEndpointUri();
+        String uri = route.getEndpointUrl();
         String label = "from[" + URISupport.sanitizeUri(StringHelper.limitLength(uri, 50) + "]");
 
         // the arrow has a * if its an exchange that is done
-        boolean original = route.getId().equals(exchange.getFromRouteId());
+        boolean original = route.getRouteId().equals(exchange.getFromRouteId());
         String arrow = original ? "*<--" : "<---";
 
         StringBuilder sb = new StringBuilder();
-        sb.append(String.format(TRACING_OUTPUT, arrow, route.getId(), label));
+        sb.append(String.format(TRACING_OUTPUT, arrow, route.getRouteId(), label));
         sb.append(" ");
         String data = exchangeFormatter.format(exchange);
         sb.append(data);
         String out = sb.toString();
-        dumpTrace(out);
+        dumpTrace(out, route);
     }
 
     @Override
@@ -240,8 +252,43 @@ public class DefaultTracer extends ServiceSupport implements CamelContextAware, 
         this.exchangeFormatter = exchangeFormatter;
     }
 
-    protected void dumpTrace(String out) {
-        LOG.info(out);
+    protected String getLoggerName(Object node) {
+        String name = null;
+        if (camelContext.isDebugging() && node instanceof LineNumberAware) {
+            if (node instanceof NamedRoute) {
+                // we want the input from a route as it has the source location / line number
+                node = ((NamedRoute) node).getInput();
+            }
+            String loc = ((LineNumberAware) node).getLocation();
+            int line = ((LineNumberAware) node).getLineNumber();
+            if (line != -1 && loc != null) {
+                // is it a class or file?
+                name = loc;
+                if (loc.contains(":")) {
+                    // file based such as xml and yaml
+                    name = FileUtil.onlyName(loc);
+                    name = FileUtil.stripExt(name);
+                } else {
+                    // classname so let us only grab the name
+                    int pos = name.lastIndexOf('.');
+                    if (pos > 0) {
+                        name = name.substring(pos + 1);
+                    }
+                }
+                name += ":" + line;
+            }
+        }
+        return name;
+    }
+
+    protected void dumpTrace(String out, Object node) {
+        String name = getLoggerName(node);
+        if (name != null) {
+            Logger log = LoggerFactory.getLogger(name);
+            log.info(out);
+        } else {
+            LOG.info(out);
+        }
     }
 
     protected boolean shouldTracePattern(NamedNode definition) {

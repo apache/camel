@@ -31,4 +31,9 @@ public interface NamedRoute {
      */
     String getEndpointUrl();
 
+    /**
+     * Gets the route input
+     */
+    NamedNode getInput();
+
 }

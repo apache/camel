@@ -1010,7 +1010,8 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
             this.processorDefinition = processorDefinition;
             this.routeDefinition = routeDefinition;
             this.tracingAfterRoute
-                    = routeDefinition != null ? new TracingAfterRoute(tracer, routeDefinition.getRouteId()) : null;
+                    = routeDefinition != null
+                            ? new TracingAfterRoute(tracer, routeDefinition.getRouteId(), routeDefinition) : null;
         }
 
         @Override
@@ -1045,16 +1046,18 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
 
             private final Tracer tracer;
             private final String routeId;
+            private final NamedRoute node;
 
-            private TracingAfterRoute(Tracer tracer, String routeId) {
+            private TracingAfterRoute(Tracer tracer, String routeId, NamedRoute node) {
                 this.tracer = tracer;
                 this.routeId = routeId;
+                this.node = node;
             }
 
             @Override
             public void onAfterRoute(Route route, Exchange exchange) {
                 if (routeId.equals(route.getId())) {
-                    tracer.traceAfterRoute(route, exchange);
+                    tracer.traceAfterRoute(node, exchange);
                 }
             }
 

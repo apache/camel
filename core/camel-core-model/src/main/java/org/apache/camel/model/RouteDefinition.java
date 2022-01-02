@@ -716,6 +716,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
     // Properties
     // -----------------------------------------------------------------------
 
+    @Override
     public FromDefinition getInput() {
         return input;
     }
