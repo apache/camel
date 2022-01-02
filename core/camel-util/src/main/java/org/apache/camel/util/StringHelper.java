@@ -129,8 +129,8 @@ public final class StringHelper {
             return s;
         }
 
-        s = replaceAll(s, "'", "");
-        s = replaceAll(s, "\"", "");
+        s = s.replace("'", "");
+        s = s.replace("\"", "");
         return s;
     }
 
@@ -192,10 +192,10 @@ public final class StringHelper {
             return "";
         }
         // must replace amp first, so we dont replace &lt; to amp later
-        text = replaceAll(text, "&", "&amp;");
-        text = replaceAll(text, "\"", "&quot;");
-        text = replaceAll(text, "<", "&lt;");
-        text = replaceAll(text, ">", "&gt;");
+        text = text.replace("&", "&amp;");
+        text = text.replace("\"", "&quot;");
+        text = text.replace("<", "&lt;");
+        text = text.replace(">", "&gt;");
         return text;
     }
 
@@ -259,58 +259,6 @@ public final class StringHelper {
         }
 
         return false;
-    }
-
-    /**
-     * Replaces all the from tokens in the given input string.
-     * <p/>
-     * This implementation is not recursive, not does it check for tokens in the replacement string.
-     *
-     * @param  input                    the input string
-     * @param  from                     the from string, must <b>not</b> be <tt>null</tt> or empty
-     * @param  to                       the replacement string, must <b>not</b> be empty
-     * @return                          the replaced string, or the input string if no replacement was needed
-     * @throws IllegalArgumentException if the input arguments is invalid
-     */
-    public static String replaceAll(String input, String from, String to) {
-        // TODO: Use String.replace instead of this method when using JDK11 as minimum (as its much faster in JDK 11 onwards)
-
-        if (ObjectHelper.isEmpty(input)) {
-            return input;
-        }
-        if (from == null) {
-            throw new IllegalArgumentException("from cannot be null");
-        }
-        if (to == null) {
-            // to can be empty, so only check for null
-            throw new IllegalArgumentException("to cannot be null");
-        }
-
-        // fast check if there is any from at all
-        if (!input.contains(from)) {
-            return input;
-        }
-
-        final int len = from.length();
-        final int max = input.length();
-        StringBuilder sb = new StringBuilder(max);
-        for (int i = 0; i < max;) {
-            if (i + len <= max) {
-                String token = input.substring(i, i + len);
-                if (from.equals(token)) {
-                    sb.append(to);
-                    // fast forward
-                    i = i + len;
-                    continue;
-                }
-            }
-
-            // append single char
-            sb.append(input.charAt(i));
-            // forward to next
-            i++;
-        }
-        return sb.toString();
     }
 
     /**

@@ -654,7 +654,7 @@ public final class IntrospectionSupport {
             if (obj instanceof Map) {
                 Map map = (Map) obj;
                 if (context != null && refName != null && value == null) {
-                    String s = StringHelper.replaceAll(refName, "#", "");
+                    String s = refName.replace("#", "");
                     value = CamelContextHelper.lookup(context, s);
                 }
                 map.put(lookupKey, value);
@@ -662,7 +662,7 @@ public final class IntrospectionSupport {
             } else if (obj instanceof List) {
                 List list = (List) obj;
                 if (context != null && refName != null && value == null) {
-                    String s = StringHelper.replaceAll(refName, "#", "");
+                    String s = refName.replace("#", "");
                     value = CamelContextHelper.lookup(context, s);
                 }
                 if (isNotEmpty(lookupKey)) {
@@ -692,7 +692,7 @@ public final class IntrospectionSupport {
                 return true;
             } else if (obj.getClass().isArray() && lookupKey != null) {
                 if (context != null && refName != null && value == null) {
-                    String s = StringHelper.replaceAll(refName, "#", "");
+                    String s = refName.replace("#", "");
                     value = CamelContextHelper.lookup(context, s);
                 }
                 int idx = Integer.parseInt(lookupKey);
@@ -748,7 +748,7 @@ public final class IntrospectionSupport {
             Object ref = value;
             // try and lookup the reference based on the method
             if (context != null && refName != null && ref == null) {
-                String s = StringHelper.replaceAll(refName, "#", "");
+                String s = refName.replace("#", "");
                 ref = CamelContextHelper.lookup(context, s);
                 if (ref == null) {
                     // try the next method if nothing was found

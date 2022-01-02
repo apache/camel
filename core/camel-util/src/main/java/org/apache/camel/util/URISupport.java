@@ -507,7 +507,7 @@ public final class URISupport {
         if (raw != null) {
             // do not encode RAW parameters unless it has %
             // need to replace % with %25 to avoid losing "%" when decoding
-            String s = StringHelper.replaceAll(value, "%", "%25");
+            String s = value.replace("%", "%25");
             rc.append(s);
         } else {
             if (encode) {
@@ -631,7 +631,7 @@ public final class URISupport {
             String after = path.substring(max);
 
             // replace the @ with %40
-            before = StringHelper.replaceAll(before, "@", "%40");
+            before = before.replace("@", "%40");
             path = before + after;
         }
 
