@@ -31,7 +31,6 @@ public class InterceptFromReifier extends InterceptReifier<InterceptFromDefiniti
     }
 
     @Override
-    @SuppressWarnings({ "unchecked", "rawtypes" })
     public Processor createProcessor() throws Exception {
         final Processor child = this.createChildProcessor(true);
 
