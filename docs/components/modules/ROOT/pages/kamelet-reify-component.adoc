@@ -1,1 +1,0 @@
-../../../../../components/camel-kamelet-reify/src/main/docs/kamelet-reify-component.adoc

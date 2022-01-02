@@ -25,7 +25,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.14.0-SNAPSHOT</version>
+        <version>3.15.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-csimple-joor</artifactId>
@@ -36,7 +36,7 @@
     <properties>
         <firstVersion>3.7.0</firstVersion>
         <title>CSimple jOOR</title>
-        <label>dlanguage,java</label>
+        <label>language,java</label>
     </properties>
 
     <dependencies>
@@ -45,7 +45,6 @@
             <artifactId>camel-core-languages</artifactId>
         </dependency>
 
-        <!-- requires Java 11 or 14 -->
         <dependency>
             <groupId>org.jooq</groupId>
             <artifactId>joor</artifactId>
@@ -64,19 +63,5 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <!-- skip testing on java 8 -->
-    <profiles>
-        <profile>
-            <id>jdk8</id>
-            <activation>
-                <jdk>[,8)</jdk>
-            </activation>
-            <properties>
-                <maven.test.skip.exec>true</maven.test.skip.exec>
-            </properties>
-        </profile>
-    </profiles>
-
 
 </project>

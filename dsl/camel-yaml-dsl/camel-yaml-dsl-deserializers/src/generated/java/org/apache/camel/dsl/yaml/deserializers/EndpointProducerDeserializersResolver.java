@@ -56,6 +56,7 @@ public final class EndpointProducerDeserializersResolver implements YamlDeserial
             case "aws2-translate":
             case "azure-cosmosdb":
             case "azure-eventhubs":
+            case "azure-servicebus":
             case "azure-storage-blob":
             case "azure-storage-datalake":
             case "azure-storage-queue":
@@ -192,7 +193,6 @@ public final class EndpointProducerDeserializersResolver implements YamlDeserial
             case "jt400":
             case "kafka":
             case "kamelet":
-            case "kamelet-reify":
             case "kubernetes-config-maps":
             case "kubernetes-custom-resources":
             case "kubernetes-deployments":
@@ -218,6 +218,7 @@ public final class EndpointProducerDeserializersResolver implements YamlDeserial
             case "metrics":
             case "micrometer":
             case "microprofile-metrics":
+            case "milo-browse":
             case "milo-client":
             case "milo-server":
             case "mina":

@@ -788,10 +788,8 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     /**
      * Gets a readonly list with the names of the languages currently registered.
      *
-     * @return     a readonly list with the names of the languages
-     * @deprecated not in use
+     * @return a readonly list with the names of the languages
      */
-    @Deprecated
     Set<String> getLanguageNames();
 
     /**
@@ -917,6 +915,13 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @return      the created data format, or <tt>null</tt> if not found
      */
     DataFormat createDataFormat(String name);
+
+    /**
+     * Gets a readonly list of names of the data formats currently registered
+     *
+     * @return a readonly list with the names of the data formats
+     */
+    Set<String> getDataFormatNames();
 
     /**
      * Resolve a transformer given a scheme

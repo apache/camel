@@ -23,9 +23,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.StartupListener;
 import org.apache.camel.spi.CamelEvent;
-import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.SimpleEventNotifierSupport;
 import org.apache.camel.util.ReflectionHelper;
@@ -63,7 +64,8 @@ public final class VertxHttpServer {
                     .resolveMandatoryClass(
                             "org.apache.camel.component.platform.http.vertx.VertxPlatformHttpServerConfiguration");
             Object config = clazz.getConstructors()[0].newInstance();
-            IntrospectionSupport.setProperty(camelContext, config, "port", port);
+            camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection()
+                    .setProperty(camelContext, config, "port", port);
 
             clazz = camelContext.getClassResolver()
                     .resolveMandatoryClass(
@@ -71,54 +73,62 @@ public final class VertxHttpServer {
             Object server = clazz.getConstructors()[0].newInstance(config);
 
             camelContext.addService(server);
+
+            // after camel is started then add event notifier
+            camelContext.addStartupListener(new StartupListener() {
+                @Override
+                public void onCamelContextStarted(CamelContext context, boolean alreadyStarted) throws Exception {
+                    camelContext.getManagementStrategy().addEventNotifier(new SimpleEventNotifierSupport() {
+
+                        private volatile Component phc;
+                        private volatile Method method;
+                        private Set<String> last;
+
+                        @Override
+                        public boolean isEnabled(CamelEvent event) {
+                            return event instanceof CamelEvent.CamelContextStartedEvent
+                                    || event instanceof CamelEvent.RouteReloadedEvent;
+                        }
+
+                        @Override
+                        public void notify(CamelEvent event) throws Exception {
+                            if (method == null) {
+                                phc = camelContext.getComponent("platform-http", Component.class);
+                                method = ReflectionHelper.findMethod(phc.getClass(), "getHttpEndpoints");
+                            }
+
+                            // when reloading then there may be more routes in the same batch, so we only want
+                            // to log the summary at the end
+                            if (event instanceof CamelEvent.RouteReloadedEvent) {
+                                CamelEvent.RouteReloadedEvent re = (CamelEvent.RouteReloadedEvent) event;
+                                if (re.getIndex() < re.getTotal()) {
+                                    return;
+                                }
+                            }
+
+                            Set<String> endpoints = (Set<String>) ObjectHelper.invokeMethodSafe(method, phc);
+                            if (endpoints.isEmpty()) {
+                                return;
+                            }
+
+                            // log only if changed
+                            if (last == null || last.size() != endpoints.size() || !last.containsAll(endpoints)) {
+                                LOG.info("HTTP endpoints summary");
+                                for (String u : endpoints) {
+                                    LOG.info("    http://0.0.0.0:" + port + u);
+                                }
+                            }
+
+                            // use a defensive copy of last known endpoints
+                            last = new HashSet<>(endpoints);
+                        }
+                    });
+                }
+            });
+
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeException(e);
         }
-
-        camelContext.getManagementStrategy().addEventNotifier(new SimpleEventNotifierSupport() {
-
-            private volatile Component phc;
-            private volatile Method method;
-            private Set<String> last;
-
-            @Override
-            public boolean isEnabled(CamelEvent event) {
-                return event instanceof CamelEvent.CamelContextStartedEvent || event instanceof CamelEvent.RouteReloadedEvent;
-            }
-
-            @Override
-            public void notify(CamelEvent event) throws Exception {
-                if (method == null) {
-                    phc = camelContext.getComponent("platform-http", Component.class);
-                    method = ReflectionHelper.findMethod(phc.getClass(), "getHttpEndpoints");
-                }
-
-                // when reloading then there may be more routes in the same batch, so we only want
-                // to log the summary at the end
-                if (event instanceof CamelEvent.RouteReloadedEvent) {
-                    CamelEvent.RouteReloadedEvent re = (CamelEvent.RouteReloadedEvent) event;
-                    if (re.getIndex() < re.getTotal()) {
-                        return;
-                    }
-                }
-
-                Set<String> endpoints = (Set<String>) ObjectHelper.invokeMethodSafe(method, phc);
-                if (endpoints.isEmpty()) {
-                    return;
-                }
-
-                // log only if changed
-                if (last == null || last.size() != endpoints.size() || !last.containsAll(endpoints)) {
-                    LOG.info("HTTP endpoints summary");
-                    for (String u : endpoints) {
-                        LOG.info("    http://0.0.0.0:" + port + u);
-                    }
-                }
-
-                // use a defensive copy of last known endpoints
-                last = new HashSet<>(endpoints);
-            }
-        });
     }
 
 }

@@ -1,12 +1,12 @@
-= Etcd Stats Component
+= Etcd Stats Component (deprecated)
 :doctitle: Etcd Stats
 :shortname: etcd-stats
 :artifactid: camel-etcd
 :description: Access etcd cluster statistcs.
 :since: 2.18
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :component-header: Both producer and consumer are supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/etcd-stats.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: etcd
 

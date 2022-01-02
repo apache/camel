@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "debug",
+    "title": "Debug",
+    "description": "Enables Camel Route Debugging",
+    "deprecated": false,
+    "firstVersion": "3.15.0",
+    "label": "tooling",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-debug",
+    "version": "3.15.0-SNAPSHOT"
+  }
+}

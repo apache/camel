@@ -176,7 +176,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     @Metadata(defaultValue = "CompleteCurrentTaskOnly")
     private ShutdownRunningTask shutdownRunningTask;
     @XmlAttribute
-    @Metadata(defaultValue = "true")
+    @Metadata(defaultValue = "false")
     private String loadTypeConverters;
     @XmlAttribute
     private String typeConverterStatisticsEnabled;
@@ -1152,11 +1152,9 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     }
 
     /**
-     * Sets whether to load custom type converters by scanning classpath. This can be turned off if you are only using
-     * Camel components that does not provide type converters which is needed at runtime. In such situations setting
-     * this option to false, can speedup starting Camel.
-     *
-     * @param loadTypeConverters whether to load custom type converters.
+     * Whether to load custom type converters by scanning classpath. This is used for backwards compatibility with Camel
+     * 2.x. Its recommended to migrate to use fast type converter loading by setting @Converter(loader = true) on your
+     * custom type converter classes.
      */
     public void setLoadTypeConverters(String loadTypeConverters) {
         this.loadTypeConverters = loadTypeConverters;

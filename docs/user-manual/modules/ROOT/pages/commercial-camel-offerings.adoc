@@ -55,6 +55,13 @@ https://www.redhat.com/en/services/consulting[consulting], and
 https://developers.redhat.com/products/fuse/overview/[a developer community].
 
 
+
+== https://riverlog.com/systemintegration/esb-model-and-camel-based-systems-integration[RiverLog]
+
+https://www.riverlog.com[RiverLog Software] engages with systems integrators and implementers to deploy Camel based, ESB model integration within enterprises.
+RiverLog's custom scripts and generic modules help in reducing Apache Camel integration efforts across the enterprise. 
+
+
 == https://www.routeblaze.io[RouteBLAZE]
 
 https://www.routeblaze.io[RouteBLAZE] allows you to design, develop and deploy business processes at Enterprise scale. 

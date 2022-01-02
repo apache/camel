@@ -21,7 +21,7 @@ import java.io.Reader;
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.endpoint.EndpointRouteBuilder;
-import org.apache.camel.dsl.support.EndpointRouteBuilderLoaderSupport;
+import org.apache.camel.endpointdsl.support.EndpointRouteBuilderLoaderSupport;
 import org.apache.camel.spi.annotations.RoutesLoader;
 import org.apache.camel.support.LifecycleStrategySupport;
 import org.graalvm.polyglot.Context;

@@ -69,7 +69,7 @@ public class CosmosDbEndpointConfigurer extends PropertyConfigurerSupport implem
         case "multipleWriteRegionsEnabled": target.getConfiguration().setMultipleWriteRegionsEnabled(property(camelContext, boolean.class, value)); return true;
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.azure.cosmosdb.CosmosDbOperationsDefinition.class, value)); return true;
         case "preferredregions":
-        case "preferredRegions": target.getConfiguration().setPreferredRegions(property(camelContext, java.util.List.class, value)); return true;
+        case "preferredRegions": target.getConfiguration().setPreferredRegions(property(camelContext, java.lang.String.class, value)); return true;
         case "query": target.getConfiguration().setQuery(property(camelContext, java.lang.String.class, value)); return true;
         case "queryrequestoptions":
         case "queryRequestOptions": target.getConfiguration().setQueryRequestOptions(property(camelContext, com.azure.cosmos.models.CosmosQueryRequestOptions.class, value)); return true;
@@ -137,7 +137,7 @@ public class CosmosDbEndpointConfigurer extends PropertyConfigurerSupport implem
         case "multipleWriteRegionsEnabled": return boolean.class;
         case "operation": return org.apache.camel.component.azure.cosmosdb.CosmosDbOperationsDefinition.class;
         case "preferredregions":
-        case "preferredRegions": return java.util.List.class;
+        case "preferredRegions": return java.lang.String.class;
         case "query": return java.lang.String.class;
         case "queryrequestoptions":
         case "queryRequestOptions": return com.azure.cosmos.models.CosmosQueryRequestOptions.class;
@@ -209,15 +209,6 @@ public class CosmosDbEndpointConfigurer extends PropertyConfigurerSupport implem
         case "readRequestsFallbackEnabled": return target.getConfiguration().isReadRequestsFallbackEnabled();
         case "throughputproperties":
         case "throughputProperties": return target.getConfiguration().getThroughputProperties();
-        default: return null;
-        }
-    }
-
-    @Override
-    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
-        case "preferredregions":
-        case "preferredRegions": return java.lang.String.class;
         default: return null;
         }
     }

@@ -28,7 +28,7 @@
 
     <groupId>org.apache.camel</groupId>
     <artifactId>camel</artifactId>
-    <version>3.14.0-SNAPSHOT</version>
+    <version>3.15.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Camel</name>
@@ -109,7 +109,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <site-repo-url>scpexe://people.apache.org/www/camel.apache.org/maven/</site-repo-url>
-        <jdk.version>1.8</jdk.version>
+        <jdk.version>11</jdk.version>
         <compiler.fork>false</compiler.fork>
 
         <!-- reproduceable builds: https://maven.apache.org/guides/mini/guide-reproducible-builds.html -->
@@ -123,7 +123,7 @@
         <!-- we need to override the version inherited from Apache POM for modules that use this POM as parent -->
         <surefire.version>${maven-surefire-plugin-version}</surefire.version>
         <java-diff-utils-version>4.7</java-diff-utils-version>
-        <maven-bundle-plugin-version>5.1.2</maven-bundle-plugin-version>
+        <maven-bundle-plugin-version>5.1.3</maven-bundle-plugin-version>
         <maven-enforcer-plugin-version>3.0.0</maven-enforcer-plugin-version>
 
         <!-- eclipse plugin need the jaxb in this pom.xml file -->

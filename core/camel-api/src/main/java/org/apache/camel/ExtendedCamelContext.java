@@ -77,7 +77,7 @@ import org.apache.camel.spi.XMLRoutesDefinitionLoader;
 public interface ExtendedCamelContext extends CamelContext {
 
     /**
-     * Sets the name (id) of the this context.
+     * Sets the name (id) of this context.
      * <p/>
      * This operation is mostly only used by different Camel runtimes such as camel-spring, camel-cdi, camel-spring-boot
      * etc. Important: Setting the name should only be set before CamelContext is started.
@@ -792,7 +792,7 @@ public interface ExtendedCamelContext extends CamelContext {
     void disposeModel();
 
     /**
-     * Used during unit-testing where its possible to specify a set of routes to exclude from discovery
+     * Used during unit-testing where it is possible to specify a set of routes to exclude from discovery
      */
     String getTestExcludeRoutes();
 

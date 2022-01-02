@@ -1,12 +1,12 @@
-= Etcd Watch Component
+= Etcd Watch Component (deprecated)
 :doctitle: Etcd Watch
 :shortname: etcd-watch
 :artifactid: camel-etcd
 :description: Watch specific etcd keys or directories for changes.
 :since: 2.18
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :component-header: Only consumer is supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/etcd-watch.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: etcd
 

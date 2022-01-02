@@ -26,10 +26,11 @@ import org.apache.camel.Service;
 import org.apache.camel.spi.CamelEvent.ExchangeEvent;
 
 /**
- * A debugger which allows tooling to attach breakpoints which is is being invoked when {@link Exchange}s is being
- * routed.
+ * A debugger which allows tooling to attach breakpoints which is being invoked when {@link Exchange}s is being routed.
  */
 public interface Debugger extends Service, CamelContextAware {
+
+    String FACTORY = "debugger-factory";
 
     /**
      * Add the given breakpoint

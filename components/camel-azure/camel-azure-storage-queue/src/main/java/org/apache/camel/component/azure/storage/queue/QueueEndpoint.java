@@ -29,8 +29,7 @@ import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * The azure-storage-queue component is used for storing and retrieving the messages to/from Azure Storage Queue using
- * Azure SDK v12.
+ * Stores and retrieves messages to/from Azure Storage Queue.
  */
 @UriEndpoint(firstVersion = "3.3.0", scheme = "azure-storage-queue", title = "Azure Storage Queue Service",
              syntax = "azure-storage-queue:accountName/queueName", category = { Category.CLOUD, Category.MESSAGING })

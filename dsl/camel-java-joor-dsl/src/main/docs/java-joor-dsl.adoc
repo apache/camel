@@ -6,7 +6,6 @@
 :description: Camel DSL with YAML
 :supportlevel: Stable/Preview
 :since: 3
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/java-joor-dsl.adoc[opts=optional]
 //Manually maintained attributes
 :group: DSL
 

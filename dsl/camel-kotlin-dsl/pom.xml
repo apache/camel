@@ -25,7 +25,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>dsl</artifactId>
-        <version>3.14.0-SNAPSHOT</version>
+        <version>3.15.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-kotlin-dsl</artifactId>
@@ -35,6 +35,7 @@
 
     <properties>
         <firstVersion>3.9.0</firstVersion>
+        <supportLevel>Experimental</supportLevel>
         <sourcecheckExcludes>
             **/resources/**/My*.java
         </sourcecheckExcludes>
@@ -46,15 +47,7 @@
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-support</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core-model</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-dsl-support</artifactId>
+            <artifactId>camel-endpointdsl-support</artifactId>
         </dependency>
 
         <dependency>
@@ -229,18 +222,5 @@
             </plugin>
         </plugins>
     </build>
-
-    <!-- skip tests on java 8 -->
-    <profiles>
-        <profile>
-            <id>java-8</id>
-            <activation>
-                <jdk>1.8</jdk>
-            </activation>
-            <properties>
-                <skipTests>true</skipTests>
-            </properties>
-        </profile>
-    </profiles>
 
 </project>

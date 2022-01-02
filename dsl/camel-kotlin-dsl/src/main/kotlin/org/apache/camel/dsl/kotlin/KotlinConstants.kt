@@ -17,4 +17,4 @@
 package org.apache.camel.dsl.kotlin
 
 const val EXTENSION = "kts"
-const val JVM_TARGET = "1.8"
+const val JVM_TARGET = "11"

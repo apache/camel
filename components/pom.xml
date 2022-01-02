@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>3.14.0-SNAPSHOT</version>
+        <version>3.15.0-SNAPSHOT</version>
         <relativePath>../parent</relativePath>
     </parent>
 
@@ -128,6 +128,7 @@
         <module>camel-csimple-joor</module>
         <module>camel-csv</module>
         <module>camel-datasonnet</module>
+        <module>camel-debug</module>
         <module>camel-debezium</module>
         <module>camel-digitalocean</module>
         <module>camel-disruptor</module>
@@ -214,7 +215,6 @@
         <module>camel-jta</module>
         <module>camel-kafka</module>
         <module>camel-kamelet</module>
-        <module>camel-kamelet-reify</module>
         <module>camel-kubernetes</module>
         <module>camel-kudu</module>
         <module>camel-ldap</module>

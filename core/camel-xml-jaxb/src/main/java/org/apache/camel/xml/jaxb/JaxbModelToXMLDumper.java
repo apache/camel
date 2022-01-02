@@ -20,6 +20,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,9 +50,11 @@ import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.annotations.JdkService;
+import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.util.xml.XmlLineNumberParser;
 
 import static org.apache.camel.xml.jaxb.JaxbHelper.extractNamespaces;
+import static org.apache.camel.xml.jaxb.JaxbHelper.extractSourceLocations;
 import static org.apache.camel.xml.jaxb.JaxbHelper.getJAXBContext;
 import static org.apache.camel.xml.jaxb.JaxbHelper.modelToXml;
 import static org.apache.camel.xml.jaxb.JaxbHelper.newXmlConverter;
@@ -67,6 +70,7 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
     public String dumpModelAsXml(CamelContext context, NamedNode definition) throws Exception {
         final JAXBContext jaxbContext = getJAXBContext(context);
         final Map<String, String> namespaces = new LinkedHashMap<>();
+        final Map<String, KeyValueHolder<Integer, String>> locations = new HashMap<>();
 
         // gather all namespaces from the routes or route which is stored on the
         // expression nodes
@@ -74,21 +78,33 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
             List<RouteTemplateDefinition> templates = ((RouteTemplatesDefinition) definition).getRouteTemplates();
             for (RouteTemplateDefinition route : templates) {
                 extractNamespaces(route.getRoute(), namespaces);
+                if (context.isDebugging()) {
+                    extractSourceLocations(route.getRoute(), locations);
+                }
                 resolveEndpointDslUris(route.getRoute());
             }
         } else if (definition instanceof RouteTemplateDefinition) {
             RouteTemplateDefinition template = (RouteTemplateDefinition) definition;
             extractNamespaces(template.getRoute(), namespaces);
+            if (context.isDebugging()) {
+                extractSourceLocations(template.getRoute(), locations);
+            }
             resolveEndpointDslUris(template.getRoute());
         } else if (definition instanceof RoutesDefinition) {
             List<RouteDefinition> routes = ((RoutesDefinition) definition).getRoutes();
             for (RouteDefinition route : routes) {
                 extractNamespaces(route, namespaces);
+                if (context.isDebugging()) {
+                    extractSourceLocations(route, locations);
+                }
                 resolveEndpointDslUris(route);
             }
         } else if (definition instanceof RouteDefinition) {
             RouteDefinition route = (RouteDefinition) definition;
             extractNamespaces(route, namespaces);
+            if (context.isDebugging()) {
+                extractSourceLocations(route, locations);
+            }
             resolveEndpointDslUris(route);
         }
 
@@ -108,6 +124,9 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
         }
 
         sanitizeXml(dom);
+        if (context.isDebugging()) {
+            enrichLocations(dom, locations);
+        }
 
         // Add additional namespaces to the document root element
         Element documentElement = dom.getDocumentElement();
@@ -220,6 +239,34 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
             for (int i = 0; i < node.getChildNodes().getLength(); i++) {
                 Node child = node.getChildNodes().item(i);
                 sanitizeXml(child);
+            }
+        }
+    }
+
+    private static void enrichLocations(Node node, Map<String, KeyValueHolder<Integer, String>> locations) {
+        if (node instanceof Element) {
+            Element el = (Element) node;
+
+            // from should grab it from parent (route)
+            String id = el.getAttribute("id");
+            if ("from".equals(el.getNodeName())) {
+                Node parent = el.getParentNode();
+                if (parent instanceof Element) {
+                    id = ((Element) parent).getAttribute("id");
+                }
+            }
+            if (id != null) {
+                var loc = locations.get(id);
+                if (loc != null) {
+                    el.setAttribute("sourceLineNumber", loc.getKey().toString());
+                    el.setAttribute("sourceLocation", loc.getValue());
+                }
+            }
+        }
+        if (node.hasChildNodes()) {
+            for (int i = 0; i < node.getChildNodes().getLength(); i++) {
+                Node child = node.getChildNodes().item(i);
+                enrichLocations(child, locations);
             }
         }
     }

@@ -19,7 +19,7 @@ package org.apache.camel;
 /**
  * Represents a node in the {@link org.apache.camel.model routes} which is identified by an id.
  */
-public interface NamedNode {
+public interface NamedNode extends LineNumberAware {
 
     /**
      * Gets the value of the id property.

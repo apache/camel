@@ -44,6 +44,17 @@ import org.apache.camel.xml.io.XmlPullParserException;
 public class ModelParser extends BaseParser {
 
     public ModelParser(
+            org.apache.camel.spi.Resource input)
+            throws IOException, XmlPullParserException {
+        super(input);
+    }
+    public ModelParser(
+            org.apache.camel.spi.Resource input,
+            String namespace)
+            throws IOException, XmlPullParserException {
+        super(input, namespace);
+    }
+    public ModelParser(
             InputStream input)
             throws IOException, XmlPullParserException {
         super(input);

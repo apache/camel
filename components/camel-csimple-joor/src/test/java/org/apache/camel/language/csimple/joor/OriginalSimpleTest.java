@@ -667,17 +667,6 @@ public class OriginalSimpleTest extends LanguageTestSupport {
     }
 
     @Test
-    public void testLanguagesInContext() throws Exception {
-        // evaluate so we know there is 1 language in the context
-        assertExpression("${id}", exchange.getIn().getMessageId());
-
-        assertEquals(2, context.getLanguageNames().size());
-        Iterator<String> it = context.getLanguageNames().iterator();
-        assertEquals("csimple", it.next());
-        assertEquals("simple", it.next());
-    }
-
-    @Test
     public void testComplexExpressions() throws Exception {
         assertExpression("hey ${in.header.foo}", "hey abc");
         assertExpression("hey ${in.header:foo}", "hey abc");

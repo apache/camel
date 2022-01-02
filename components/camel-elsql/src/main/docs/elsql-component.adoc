@@ -1,12 +1,12 @@
-= ElSQL Component
+= ElSQL Component (deprecated)
 :doctitle: ElSQL
 :shortname: elsql
 :artifactid: camel-elsql
 :description: Use ElSql to define SQL queries. Extends the SQL Component.
 :since: 2.16
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :component-header: Both producer and consumer are supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/elsql.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: elsql
 

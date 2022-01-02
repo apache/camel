@@ -117,13 +117,15 @@ public abstract class YamlRoutesBuilderLoaderSupport extends RouteBuilderLoaderS
             throw new FileNotFoundException("Resource not found: " + resource.getLocation());
         }
 
+        deserializationContext.setResource(resource);
+
         try (InputStream is = resource.getInputStream()) {
             final StreamReader reader = new StreamReader(settings, new YamlUnicodeReader(is));
             final Parser parser = new ParserImpl(settings, reader);
             final Composer composer = new Composer(settings, parser);
 
             return composer.getSingleNode()
-                    .map(this::builder)
+                    .map(node -> builder(node, resource))
                     .orElseThrow(() -> new YamlDeserializationException("Unable to deserialize resource"));
         }
     }
@@ -136,7 +138,7 @@ public abstract class YamlRoutesBuilderLoaderSupport extends RouteBuilderLoaderS
         return this.deserializationContext;
     }
 
-    protected abstract RouteBuilder builder(Node node);
+    protected abstract RouteBuilder builder(Node node, Resource resource);
 
     protected boolean anyTupleMatches(List<NodeTuple> list, String aKey, String aValue) {
         return anyTupleMatches(list, aKey, Predicate.isEqual(aValue));

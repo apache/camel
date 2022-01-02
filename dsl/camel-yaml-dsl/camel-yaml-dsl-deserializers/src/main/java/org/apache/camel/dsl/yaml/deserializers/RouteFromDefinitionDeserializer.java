@@ -30,6 +30,7 @@ import org.apache.camel.spi.annotations.YamlType;
                                 type = "object:org.apache.camel.dsl.yaml.deserializers.OutputAwareFromDefinition")
           })
 public class RouteFromDefinitionDeserializer extends OutputAwareFromDefinitionDeserializer {
+
     public RouteFromDefinitionDeserializer() {
     }
 }

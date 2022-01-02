@@ -1011,6 +1011,11 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
+    public Set<String> getDataFormatNames() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public Transformer resolveTransformer(String model) {
         throw new UnsupportedOperationException();
     }

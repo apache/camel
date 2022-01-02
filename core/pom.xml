@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>3.14.0-SNAPSHOT</version>
+        <version>3.15.0-SNAPSHOT</version>
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
 
@@ -57,9 +57,6 @@
         <module>camel-cloud</module>
         <module>camel-health</module>
         <module>camel-main</module>
-        <module>camel-allcomponents</module>
-        <module>camel-endpointdsl</module>
-        <module>camel-componentdsl</module>
     </modules>
 
     <properties>

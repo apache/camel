@@ -6,7 +6,6 @@
 :since: 3.1
 :supportlevel: Stable
 :component-header: Only consumer is supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/cron.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: cron
 

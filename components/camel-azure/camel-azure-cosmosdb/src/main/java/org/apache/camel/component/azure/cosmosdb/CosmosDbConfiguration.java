@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.azure.cosmosdb;
 
-import java.util.List;
-
 import com.azure.cosmos.ConsistencyLevel;
 import com.azure.cosmos.CosmosAsyncClient;
 import com.azure.cosmos.models.ChangeFeedProcessorOptions;
@@ -51,7 +49,7 @@ public class CosmosDbConfiguration implements Cloneable {
     @UriParam(label = "common", defaultValue = "SESSION")
     private ConsistencyLevel consistencyLevel = ConsistencyLevel.SESSION;
     @UriParam(label = "common")
-    private List<String> preferredRegions;
+    private String preferredRegions;
     @UriParam(label = "common", defaultValue = "false")
     private boolean clientTelemetryEnabled;
     @UriParam(label = "common", defaultValue = "false")
@@ -263,16 +261,17 @@ public class CosmosDbConfiguration implements Cloneable {
     }
 
     /**
-     * Sets the preferred regions for geo-replicated database accounts. For example, "East US" as the preferred region.
+     * Sets the comma separated preferred regions for geo-replicated database accounts. For example, "East US" as the
+     * preferred region.
      * <p>
      * When EnableEndpointDiscovery is true and PreferredRegions is non-empty, the SDK will prefer to use the regions in
      * the container in the order they are specified to perform operations.
      */
-    public List<String> getPreferredRegions() {
+    public String getPreferredRegions() {
         return preferredRegions;
     }
 
-    public void setPreferredRegions(List<String> preferredRegions) {
+    public void setPreferredRegions(String preferredRegions) {
         this.preferredRegions = preferredRegions;
     }
 

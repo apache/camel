@@ -42,6 +42,12 @@ public interface ManagedProcessorMBean extends ManagedPerformanceCounterMBean {
     @ManagedAttribute(description = "Processor Index")
     Integer getIndex();
 
+    @ManagedAttribute(description = "Source file Location")
+    String getSourceLocation();
+
+    @ManagedAttribute(description = "Line number of this node in the source file (when loaded from a line number aware parser)")
+    Integer getSourceLineNumber();
+
     @ManagedAttribute(description = "Whether this processor supports extended JMX information")
     Boolean getSupportExtendedInformation();
 

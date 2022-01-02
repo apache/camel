@@ -20,8 +20,11 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.NamedNode;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.Metadata;
@@ -33,11 +36,26 @@ import org.apache.camel.spi.NodeIdFactory;
 @XmlType(name = "optionalIdentifiedDefinition")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 // must use XmlAccessType.PROPERTY which is required by camel-spring / camel-blueprint for their namespace parsers
-public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedDefinition<T>> implements NamedNode, IdAware {
+public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedDefinition<T>>
+        implements NamedNode, IdAware, CamelContextAware {
 
+    private CamelContext camelContext;
     private String id;
     private Boolean customId;
     private DescriptionDefinition description;
+    private transient int lineNumber = -1;
+    private transient String location;
+
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    @XmlTransient
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
 
     @Override
     public String getId() {
@@ -78,6 +96,28 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
     @Override
     public NamedNode getParent() {
         return null;
+    }
+
+    @Override
+    public int getLineNumber() {
+        return lineNumber;
+    }
+
+    @Override
+    @XmlTransient
+    public void setLineNumber(int lineNumber) {
+        this.lineNumber = lineNumber;
+    }
+
+    @Override
+    public String getLocation() {
+        return location;
+    }
+
+    @Override
+    @XmlTransient
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     // Fluent API

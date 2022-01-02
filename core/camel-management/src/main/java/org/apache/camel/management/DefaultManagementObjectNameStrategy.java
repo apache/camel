@@ -69,7 +69,6 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
     public static final String KEY_TYPE = "type";
     public static final String KEY_CONTEXT = "context";
     public static final String TYPE_CONTEXT = "context";
-    public static final String TYPE_ROUTE_CONTROLLER = "routecontrollers";
     public static final String TYPE_HEALTH = "health";
     public static final String TYPE_ENDPOINT = "endpoints";
     public static final String TYPE_DATAFORMAT = "dataformats";
@@ -238,7 +237,7 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
         StringBuilder buffer = new StringBuilder();
         buffer.append(domainName).append(":");
         buffer.append(KEY_CONTEXT + "=").append(getContextId(managementName)).append(",");
-        buffer.append(KEY_TYPE + "=" + TYPE_ROUTE_CONTROLLER + ",");
+        buffer.append(KEY_TYPE + "=" + TYPE_SERVICE + ",");
         buffer.append(KEY_NAME + "=").append(routeController.getClass().getSimpleName());
 
         return createObjectName(buffer);

@@ -62,10 +62,6 @@ public class GenerateMojo extends AbstractGenerateMojo {
         invoke(PackageLegalMojo.class);
         // validate-components
         invoke(ValidateComponentMojo.class);
-        // generate-endpoint-dsl
-        invoke(EndpointDslMojo.class);
-        // generate-component-dsl
-        invoke(ComponentDslMojo.class);
         // update-readme
         invoke(UpdateReadmeMojo.class);
     }

@@ -63,7 +63,27 @@ These represent the other camel subprojects this one depends on.
 ** For subprojects in the same release set, such as `camel`, `camel-spring-boot`, and `camel-karaf`, these versions will need to be updated to refer to the new version of the other subproject.
 . Remove `prerelease` from `asciidoc/attributes`.
 . If the release is LTS, add an `lts` attribute specifying the date out of service.
+. Find the `source-map.yml` file next to the `antora.yml` component descriptor.
+It will look something like this:
++
+--
+[source,yml]
+----
+    - require: '@djencks/antora-source-map'
+#      log_level: trace
+      source-map:
+        - url: 'https://github.com/apache/camel-kamelets.git'
+          mapped-url: './../camel-kamelets'
+          branches:
+            - branch: main
+              mapped-branch: HEAD
+----
+--
+Change the `- branch: main` to specify the branch being released, e.g. `- branch: 0.6.x`.
 . Build each project (e.g. `mvn clean install -Pfastinstall`) and check for generated changes that need to be committed (or undone if there are tooling problems).
+. There will also be `local-build.sh`, `source-map.yml`, and `source-watch.yml` files in the docs directory of the subproject.
+These files support xref:improving-the-documentation.adoc#_local_build_instructions[local partial builds of the subproject].
+In `source-map.yml`, change the `branch` value from `main` to the new git branch name for the release.
 
 Since the branches with these changes have not yet been added to the Antora playbook, they may be kept on a PR fork/branch or merged into the release branch locally or in the repository.
 
@@ -76,7 +96,7 @@ These changes must go through a PR before being merged, and it is highly advisab
 Note that this is the git branch name, which is related to but usually not identical to the Antora component version.
 . Consult these xref:improving-the-documentation.adoc#_local_build_instructions[local build instructions].
 . Consult these xref:improving-the-documentation.adoc#_creating_a_documentation_pull_request[instructions for creating a documentation PR].
-Note that your `camel-website` will definitely need to be merged possibly after adjusting the appropriate source URLs back to the camel repositories rather than any fork repositories used for content PRs.
+Note that your `camel-website` PR will definitely need to be merged after removing the `source-map` extension configuration used to preview the website changes.
 
 === Notes for specific projects
 

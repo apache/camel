@@ -82,7 +82,14 @@ public class OutputAwareFromDefinitionDeserializer extends YamlDeserializerBase<
                         if (uri != null || properties != null) {
                             throw new IllegalArgumentException("uri and properties are not supported when using Endpoint DSL ");
                         }
-                        target.setDelegate(new FromDefinition(endpointUri));
+                        FromDefinition from = new FromDefinition(endpointUri);
+                        // enrich model with line number
+                        if (node.getStartMark().isPresent()) {
+                            int line = node.getStartMark().get().getLine();
+                            from.setLineNumber(line);
+                            from.setLocation(dc.getResource().getLocation());
+                        }
+                        target.setDelegate(from);
                     } else {
                         throw new IllegalArgumentException("Unsupported field: " + key);
                     }
@@ -91,9 +98,14 @@ public class OutputAwareFromDefinitionDeserializer extends YamlDeserializerBase<
 
         if (target.getDelegate() == null) {
             ObjectHelper.notNull("uri", "The uri must set");
-
-            target.setDelegate(
-                    new FromDefinition(YamlSupport.createEndpointUri(dc.getCamelContext(), uri, properties)));
+            FromDefinition from = new FromDefinition(YamlSupport.createEndpointUri(dc.getCamelContext(), uri, properties));
+            // enrich model with line number
+            if (node.getStartMark().isPresent()) {
+                int line = node.getStartMark().get().getLine();
+                from.setLineNumber(line);
+                from.setLocation(dc.getResource().getLocation());
+            }
+            target.setDelegate(from);
         }
     }
 }

@@ -1,12 +1,12 @@
-= SIP Component
+= SIP Component (deprecated)
 :doctitle: SIP
 :shortname: sip
 :artifactid: camel-sip
 :description: Send and receive messages using the SIP protocol (used in telecommunications).
 :since: 2.5
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :component-header: Both producer and consumer are supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/sip.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: sip
 

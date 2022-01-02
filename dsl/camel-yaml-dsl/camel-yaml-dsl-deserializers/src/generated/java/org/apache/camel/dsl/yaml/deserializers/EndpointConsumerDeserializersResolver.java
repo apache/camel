@@ -36,6 +36,7 @@ public final class EndpointConsumerDeserializersResolver implements YamlDeserial
             case "aws2-sqs":
             case "azure-cosmosdb":
             case "azure-eventhubs":
+            case "azure-servicebus":
             case "azure-storage-blob":
             case "azure-storage-datalake":
             case "azure-storage-queue":
@@ -131,7 +132,6 @@ public final class EndpointConsumerDeserializersResolver implements YamlDeserial
             case "jt400":
             case "kafka":
             case "kamelet":
-            case "kamelet-reify":
             case "kubernetes-custom-resources":
             case "kubernetes-deployments":
             case "kubernetes-hpa":

@@ -1,11 +1,11 @@
-= LevelDB-legacy Component
+= LevelDB-legacy Component (deprecated)
 :doctitle: LevelDB-legacy
 :shortname: leveldb-legacy
 :artifactid: camel-leveldb-legacy
 :description: Using LevelDB as persistent EIP store
 :since: 2.10
-:supportlevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/leveldb-legacy.adoc[opts=optional]
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 //Manually maintained attributes
 :camel-spring-boot-name: leveldb-legacy
 

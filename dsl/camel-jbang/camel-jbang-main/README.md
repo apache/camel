@@ -65,7 +65,7 @@ available for Kafka, such as the Confluent one and the Strimzi project one.
 If needed for development and debugging purposes, dependencies can be referenced by correctly resolving the parameterized variables on the command line. Such as: 
 
 ```
-jbang -Dcamel.jbang.version=3.14.0-SNAPSHOT CamelJBang.java
+jbang -Dcamel.jbang.version=3.15.0-SNAPSHOT CamelJBang.java
 ```
 
 ### Checkstyle

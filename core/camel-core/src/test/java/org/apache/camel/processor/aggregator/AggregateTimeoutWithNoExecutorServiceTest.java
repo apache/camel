@@ -28,7 +28,7 @@ public class AggregateTimeoutWithNoExecutorServiceTest extends ContextTestSuppor
 
     @Test
     public void testThreadUsedForEveryAggregatorWhenDefaultExecutorServiceUsed() throws Exception {
-        assertTrue(AggregateTimeoutWithExecutorServiceTest.aggregateThreadsCount()
+        assertTrue(AggregateTimeoutWithExecutorServiceTest.aggregateThreadsCount(context.getName())
                    >= AggregateTimeoutWithExecutorServiceTest.NUM_AGGREGATORS,
                 "There should be a thread for every aggregator when using defaults");
 

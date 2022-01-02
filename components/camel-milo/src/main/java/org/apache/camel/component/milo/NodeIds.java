@@ -33,6 +33,9 @@ import static org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.Unsigned.
  * Helper class to work with node IDs
  */
 public final class NodeIds {
+
+    public static final String HEADER_NODE_IDS = "CamelMiloNodeIds";
+
     private NodeIds() {
     }
 

@@ -180,7 +180,7 @@ camel.springboot.routeControllerExcludeRoutes = aws*
 
 == JMX management
 
-The route controllers are manageable in JMX, where you can find their MBean under the `routecontrollers` node.
+The route controllers are manageable in JMX, where you can find their MBean under the `services` node.
 
 NOTE: To use JMX with Camel then `camel-management` JAR must be included in the classpath.
 

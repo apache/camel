@@ -25,7 +25,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>dsl</artifactId>
-        <version>3.14.0-SNAPSHOT</version>
+        <version>3.15.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-js-dsl</artifactId>
@@ -35,6 +35,7 @@
 
     <properties>
         <firstVersion>3.9.0</firstVersion>
+        <supportLevel>Experimental</supportLevel>
         <sourcecheckExcludes>
             **/resources/**/My*.java
         </sourcecheckExcludes>
@@ -46,18 +47,8 @@
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-support</artifactId>
+            <artifactId>camel-endpointdsl-support</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core-model</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-dsl-support</artifactId>
-        </dependency>
-
-        <!-- requires Java 11 or higher -->
 
         <dependency>
             <groupId>org.graalvm.js</groupId>
@@ -156,18 +147,5 @@
             </plugin>
         </plugins>
     </build>
-
-    <!-- skip testing on java 8 -->
-    <profiles>
-        <profile>
-            <id>jdk8</id>
-            <activation>
-                <jdk>[,8)</jdk>
-            </activation>
-            <properties>
-                <maven.test.skip.exec>true</maven.test.skip.exec>
-            </properties>
-        </profile>
-    </profiles>
 
 </project>

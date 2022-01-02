@@ -1,12 +1,12 @@
-= Yammer Component
+= Yammer Component (deprecated)
 :doctitle: Yammer
 :shortname: yammer
 :artifactid: camel-yammer
 :description: Interact with the Yammer enterprise social network.
 :since: 2.12
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :component-header: Both producer and consumer are supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/yammer.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: yammer
 

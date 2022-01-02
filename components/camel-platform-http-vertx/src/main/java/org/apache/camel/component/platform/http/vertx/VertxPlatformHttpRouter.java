@@ -17,6 +17,7 @@
 package org.apache.camel.component.platform.http.vertx;
 
 import java.util.List;
+import java.util.Map;
 
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
@@ -257,6 +258,16 @@ public class VertxPlatformHttpRouter implements Router {
     @Override
     public void handle(HttpServerRequest request) {
         delegate.handle(request);
+    }
+
+    @Override
+    public Router putMetadata(String key, Object value) {
+        return delegate.putMetadata(key, value);
+    }
+
+    @Override
+    public Map<String, Object> metadata() {
+        return delegate.metadata();
     }
 
     public Handler<RoutingContext> bodyHandler() {

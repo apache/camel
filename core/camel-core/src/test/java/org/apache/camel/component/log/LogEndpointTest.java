@@ -112,6 +112,16 @@ public class LogEndpointTest extends ContextTestSupport {
                 logged.get());
     }
 
+    @Test
+    public void testPlain() {
+        String body = "Body as string";
+        final AtomicReference<String> logged = new AtomicReference<>();
+        context.adapt(ExtendedCamelContext.class).addLogListener(new TestLogListener(logged));
+        Exchange ex = createExchangeWithBody(body);
+        template.send("log:info?plain=true", ex);
+        assertEquals(body, logged.get());
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

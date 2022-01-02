@@ -149,6 +149,12 @@ class YamlTestSupport extends Specification implements HasCamelContext {
 
     static Resource asResource(String location, String content) {
         return new Resource() {
+
+            @Override
+            String getScheme() {
+                return "mem"
+            }
+
             @Override
             String getLocation() {
                 return location.endsWith('.yaml') ? location : location + '.yaml'

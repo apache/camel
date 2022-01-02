@@ -364,6 +364,7 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
     // -------------------------------------------------------------------------
     protected RouteDefinition createRoute() {
         RouteDefinition route = new RouteDefinition();
+        route.setCamelContext(getCamelContext());
         ErrorHandlerFactory handler = getErrorHandlerFactory();
         if (handler != null) {
             route.setErrorHandlerFactoryIfNull(handler);

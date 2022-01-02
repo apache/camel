@@ -25,7 +25,7 @@ import org.apache.camel.Experimental;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.endpoint.EndpointRouteBuilder;
 import org.apache.camel.dsl.groovy.common.GroovyDSL;
-import org.apache.camel.dsl.support.EndpointRouteBuilderLoaderSupport;
+import org.apache.camel.endpointdsl.support.EndpointRouteBuilderLoaderSupport;
 import org.apache.camel.spi.annotations.RoutesLoader;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.control.customizers.ImportCustomizer;

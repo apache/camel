@@ -1,12 +1,12 @@
-= Jing Component
+= Jing Component (deprecated)
 :doctitle: Jing
 :shortname: jing
 :artifactid: camel-jing
 :description: Validate XML against a RelaxNG schema (XML Syntax or Compact Syntax) using Jing library.
 :since: 1.1
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :component-header: Only producer is supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/jing.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: jing
 

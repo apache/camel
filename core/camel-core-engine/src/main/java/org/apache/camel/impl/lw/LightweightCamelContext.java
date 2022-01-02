@@ -665,7 +665,6 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     @Override
-    @Deprecated
     public Set<String> getLanguageNames() {
         return delegate.getLanguageNames();
     }
@@ -708,6 +707,11 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     @Override
     public DataFormat createDataFormat(String name) {
         return delegate.createDataFormat(name);
+    }
+
+    @Override
+    public Set<String> getDataFormatNames() {
+        return delegate.getDataFormatNames();
     }
 
     @Override

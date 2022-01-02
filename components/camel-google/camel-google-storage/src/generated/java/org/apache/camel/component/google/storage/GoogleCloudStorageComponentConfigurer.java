@@ -41,6 +41,7 @@ public class GoogleCloudStorageComponentConfigurer extends PropertyConfigurerSup
         case "destinationBucket": getOrCreateConfiguration(target).setDestinationBucket(property(camelContext, java.lang.String.class, value)); return true;
         case "downloadfilename":
         case "downloadFileName": getOrCreateConfiguration(target).setDownloadFileName(property(camelContext, java.lang.String.class, value)); return true;
+        case "filter": getOrCreateConfiguration(target).setFilter(property(camelContext, java.lang.String.class, value)); return true;
         case "includebody":
         case "includeBody": getOrCreateConfiguration(target).setIncludeBody(property(camelContext, boolean.class, value)); return true;
         case "includefolders":
@@ -85,6 +86,7 @@ public class GoogleCloudStorageComponentConfigurer extends PropertyConfigurerSup
         case "destinationBucket": return java.lang.String.class;
         case "downloadfilename":
         case "downloadFileName": return java.lang.String.class;
+        case "filter": return java.lang.String.class;
         case "includebody":
         case "includeBody": return boolean.class;
         case "includefolders":
@@ -125,6 +127,7 @@ public class GoogleCloudStorageComponentConfigurer extends PropertyConfigurerSup
         case "destinationBucket": return getOrCreateConfiguration(target).getDestinationBucket();
         case "downloadfilename":
         case "downloadFileName": return getOrCreateConfiguration(target).getDownloadFileName();
+        case "filter": return getOrCreateConfiguration(target).getFilter();
         case "includebody":
         case "includeBody": return getOrCreateConfiguration(target).isIncludeBody();
         case "includefolders":

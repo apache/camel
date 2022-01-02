@@ -27,6 +27,7 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.StepDefinition;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.RouteIdAware;
@@ -41,6 +42,7 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
     private final String id;
     private String stepId;
     private Route route;
+    private String sourceLocation;
 
     public ManagedProcessor(CamelContext context, Processor processor, ProcessorDefinition<?> definition) {
         this.context = context;
@@ -54,6 +56,11 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
             step = ProcessorDefinitionHelper.findFirstParentOfType(StepDefinition.class, definition, true);
         }
         this.stepId = step != null ? step.idOrCreate(context.adapt(ExtendedCamelContext.class).getNodeIdFactory()) : null;
+        this.sourceLocation = definition.getLocation();
+        if (sourceLocation == null) {
+            RouteDefinition rd = ProcessorDefinitionHelper.getRoute(definition);
+            sourceLocation = rd != null ? rd.getLocation() : null;
+        }
     }
 
     @Override
@@ -92,6 +99,17 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
     @Override
     public Integer getIndex() {
         return definition.getIndex();
+    }
+
+    @Override
+    public String getSourceLocation() {
+        return sourceLocation;
+    }
+
+    @Override
+    public Integer getSourceLineNumber() {
+        int line = definition.getLineNumber();
+        return line >= 0 ? line : null;
     }
 
     @Override

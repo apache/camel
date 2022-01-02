@@ -1,12 +1,12 @@
-= Ganglia Component
+= Ganglia Component (deprecated)
 :doctitle: Ganglia
 :shortname: ganglia
 :artifactid: camel-ganglia
 :description: Send metrics to Ganglia monitoring system.
 :since: 2.15
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :component-header: Only producer is supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/ganglia.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: ganglia
 

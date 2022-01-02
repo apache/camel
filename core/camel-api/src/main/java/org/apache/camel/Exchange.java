@@ -422,7 +422,7 @@ public interface Exchange {
     Map<String, Object> getAllProperties();
 
     /**
-     * Returns whether any properties has been set
+     * Returns whether any properties have been set
      *
      * @return <tt>true</tt> if any properties has been set
      */

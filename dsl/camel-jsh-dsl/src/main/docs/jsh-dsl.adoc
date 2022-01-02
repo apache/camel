@@ -1,0 +1,12 @@
+= JavaShell DSL Component
+//TODO there is no .json file for this doc page, so it is not updated automatically by UpdateReadmeMojo.
+//Header attributes written by hand.
+:doctitle: JavaShell DSL
+:artifactid: camel-jsh-dsl
+:description: Camel DSL with JavaShell
+:supportlevel: Experimental/Preview
+:since: 3.15
+//Manually maintained attributes
+:group: DSL
+
+See xref:manual:ROOT:dsl.adoc[DSL]

@@ -69,7 +69,7 @@ public class PrinterPrintTest extends CamelTestSupport {
     }
 
     @AfterEach
-    public void tearDown() {
+    public void tearDown() throws Exception {
         restoreJavaPrint();
     }
 
@@ -407,9 +407,13 @@ public class PrinterPrintTest extends CamelTestSupport {
 
     protected void setupJavaPrint() throws Exception {
         // save the current print services
-        printServiceLookup = sun.awt.AppContext.getAppContext().get(printServiceLookupServicesClass);
+        Class<?> clazz = context.getClassResolver().resolveClass("sun.awt.AppContext");
+        Object ac = clazz.getMethod("getAppContext").invoke(null);
+        printServiceLookup = clazz.getMethod("get", Object.class).invoke(ac, printServiceLookupServicesClass);
+
         // setup a new empty list of printer services
-        sun.awt.AppContext.getAppContext().put(printServiceLookupServicesClass, null);
+        clazz.getMethod("put", Object.class, Object.class).invoke(ac, printServiceLookupServicesClass, null);
+
         Method method = PrintServiceLookup.class.getDeclaredMethod("initListOfLookupServices");
         method.setAccessible(true);
         method.invoke(null);
@@ -432,9 +436,13 @@ public class PrinterPrintTest extends CamelTestSupport {
         PrintServiceLookup.registerServiceProvider(psLookup);
     }
 
-    protected void restoreJavaPrint() {
+    protected void restoreJavaPrint() throws Exception {
         // restore print services
-        sun.awt.AppContext.getAppContext().put(printServiceLookupServicesClass, printServiceLookup);
+        if (printServiceLookup != null) {
+            Class<?> clazz = context.getClassResolver().resolveClass("sun.awt.AppContext");
+            Object ac = clazz.getMethod("getAppContext").invoke(null);
+            clazz.getMethod("put", Object.class, Object.class).invoke(ac, printServiceLookupServicesClass, printServiceLookup);
+        }
     }
 
 }

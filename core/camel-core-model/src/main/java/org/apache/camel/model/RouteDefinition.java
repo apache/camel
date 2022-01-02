@@ -729,8 +729,18 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
             throw new IllegalArgumentException("Only one input is allowed per route. Cannot accept input: " + input);
         }
         // required = false: in rest-dsl you can embed an in-lined route which
-        // does not have a <from> as its implied to be the rest endpoint
+        // does not have a <from> as it is implied to be the rest endpoint
         this.input = input;
+
+        if (getCamelContext() != null && getCamelContext().isDebugging()) {
+            // we want to capture source location:line for every output when debugging is enabled
+            // this is an expensive operation and therefore only used if debugging is enabled
+            ProcessorDefinitionHelper.prepareSourceLocation(input);
+            if (log.isDebugEnabled()) {
+                log.debug("{} located in {}:{}", input.getShortName(), input.getLocation(),
+                        input.getLineNumber());
+            }
+        }
     }
 
     @Override

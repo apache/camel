@@ -17,6 +17,9 @@
 package org.apache.camel.support;
 
 import java.io.File;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -103,7 +106,7 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                     // strip starting directory, so we have a relative name to the starting folder
                     String path = f.getAbsolutePath();
                     if (path.startsWith(base)) {
-                        path = path.substring(base.length());
+                        path = path.substring(path.lastIndexOf("/"));
                     }
                     path = FileUtil.stripLeadingSeparator(path);
 
@@ -154,7 +157,7 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                 // remember all the sources of the current routes (except the updated)
                 getCamelContext().getRoutes().forEach(r -> {
                     Resource rs = r.getSourceResource();
-                    if (rs != null && (resource == null || !rs.getLocation().equals(resource.getLocation()))) {
+                    if (rs != null && !equalResourceLocation(resource, rs)) {
                         sources.add(rs);
                     }
                 });
@@ -165,7 +168,7 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                 getCamelContext().getEndpointRegistry().clear();
             }
 
-            if (resource != null) {
+            if (resource != null && Files.exists(Paths.get(resource.getURI()))) {
                 sources.add(resource);
             }
 
@@ -226,6 +229,29 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeException(e);
         }
+    }
+
+    /**
+     * Whether the two resources are loading the same resource
+     */
+    private static boolean equalResourceLocation(Resource source, Resource target) {
+        if (source == null || target == null) {
+            return false;
+        }
+
+        // use URI to match as file/classpath resources may refer to the same uri
+        URI u1 = source.getURI();
+        URI u2 = target.getURI();
+        boolean answer = u1.equals(u2);
+        if (!answer) {
+            // file and classpath may refer to the same when they have src/main/resources && target/classes
+            String s1 = u1.toString().replace("src/main/resources/", "").replace("src/test/resources/", "")
+                    .replace("target/classes/", "");
+            String s2 = u2.toString().replace("src/main/resources/", "").replace("src/test/resources/", "")
+                    .replace("target/classes/", "");
+            answer = s1.equals(s2);
+        }
+        return answer;
     }
 
 }

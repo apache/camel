@@ -1,12 +1,12 @@
-= NSQ Component
+= NSQ Component (deprecated)
 :doctitle: NSQ
 :shortname: nsq
 :artifactid: camel-nsq
 :description: Send and receive messages from NSQ realtime distributed messaging platform.
 :since: 2.23
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :component-header: Both producer and consumer are supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/nsq.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: nsq
 
@@ -57,7 +57,7 @@ To send a message to a NSQ server
 
 [source,java]
 ----
-from("direct:start").to("nsq:myTopic?servers=myserver:4161");
+from("direct:start").to("nsq:myTopic?servers=myserver:4150");
 ----
 
 And to receive messages from NSQ
@@ -74,7 +74,7 @@ The server can be configured on the component level, for example if using Spring
 
 [source,properties]
 ----
-camel.component.nsq.servers=myserver1:4161,my-second-server:4161
+camel.component.nsq.servers=myserver1:4150,my-second-server:4150
 ----
 
 Then you can omit the servers from the endpoint URI

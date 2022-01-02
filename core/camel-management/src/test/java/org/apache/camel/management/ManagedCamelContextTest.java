@@ -18,6 +18,7 @@ package org.apache.camel.management;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -27,7 +28,10 @@ import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.RefDataFormatTest;
 import org.apache.camel.impl.engine.ExplicitCamelContextNameStrategy;
+import org.apache.camel.spi.DataFormat;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
@@ -48,6 +52,8 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         // to force a different management name than the camel id
         context.getManagementNameStrategy().setNamePattern("19-#name#");
         context.setNameStrategy(new ExplicitCamelContextNameStrategy("my-camel-context"));
+        // debugger needed for source locations
+        context.setDebugging(true);
         return context;
     }
 
@@ -212,14 +218,77 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         assertFalse(registered, "Should not be registered " + seda);
     }
 
+    @Test
+    public void testLanguageNames() throws Exception {
+        MBeanServer mbeanServer = getMBeanServer();
+        ObjectName on = getContextObjectName();
+
+        Set<String> names = (Set<String>) mbeanServer.invoke(on, "languageNames", null, null);
+        Assertions.assertEquals(2, names.size());
+        Assertions.assertTrue(names.contains("constant"));
+        Assertions.assertTrue(names.contains("simple"));
+    }
+
+    @Test
+    public void testComponentNames() throws Exception {
+        MBeanServer mbeanServer = getMBeanServer();
+        ObjectName on = getContextObjectName();
+
+        Set<String> names = (Set<String>) mbeanServer.invoke(on, "componentNames", null, null);
+        Assertions.assertEquals(3, names.size());
+        Assertions.assertTrue(names.contains("direct"));
+        Assertions.assertTrue(names.contains("mock"));
+        Assertions.assertTrue(names.contains("seda"));
+    }
+
+    @Test
+    public void testDataFormatNames() throws Exception {
+        context.getRegistry().bind("reverse", new RefDataFormatTest.MyReverseDataFormat());
+        DataFormat df = context.resolveDataFormat("reverse");
+        assertNotNull(df);
+
+        MBeanServer mbeanServer = getMBeanServer();
+        ObjectName on = getContextObjectName();
+
+        Set<String> names = (Set<String>) mbeanServer.invoke(on, "dataFormatNames", null, null);
+        Assertions.assertEquals(1, names.size());
+        Assertions.assertTrue(names.contains("reverse"));
+    }
+
+    @Test
+    public void testSourceLocations() throws Exception {
+        MBeanServer mbeanServer = getMBeanServer();
+        ObjectName on = getContextObjectName();
+
+        String xml = (String) mbeanServer.invoke(on, "dumpRoutesSourceLocationsAsXml", null, null);
+        Assertions.assertNotNull(xml);
+        Assertions.assertTrue(xml.contains(
+                "sourceLocation=\"org.apache.camel.management.ManagedCamelContextTest$1\" sourceLineNumber=\"285\"/>"));
+        Assertions.assertTrue(xml.contains(
+                "sourceLocation=\"org.apache.camel.management.ManagedCamelContextTest$1\" sourceLineNumber=\"286\"/>"));
+        Assertions.assertTrue(xml.contains(
+                "sourceLocation=\"org.apache.camel.management.ManagedCamelContextTest$1\" sourceLineNumber=\"287\"/>"));
+
+        Assertions.assertTrue(xml.contains(
+                "sourceLocation=\"org.apache.camel.management.ManagedCamelContextTest$1\" sourceLineNumber=\"289\"/>"));
+        Assertions.assertTrue(xml.contains(
+                "sourceLocation=\"org.apache.camel.management.ManagedCamelContextTest$1\" sourceLineNumber=\"290\"/>"));
+        Assertions.assertTrue(xml.contains(
+                "sourceLocation=\"org.apache.camel.management.ManagedCamelContextTest$1\" sourceLineNumber=\"291\"/>"));
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").delay(10).to("mock:result");
+                from("direct:start")
+                        .delay(10)
+                        .to("mock:result");
 
-                from("direct:foo").delay(10).transform(constant("Bye World")).id("myTransform");
+                from("direct:foo")
+                        .delay(10)
+                        .transform(constant("Bye World")).id("myTransform");
             }
         };
     }

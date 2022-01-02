@@ -30,6 +30,8 @@ public class RestSwaggerEndpointConfigurer extends PropertyConfigurerSupport imp
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "produces": target.setProduces(property(camelContext, java.lang.String.class, value)); return true;
+        case "resolvereferences":
+        case "resolveReferences": target.setResolveReferences(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "sslcontextparameters":
         case "sslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
         default: return false;
@@ -48,6 +50,8 @@ public class RestSwaggerEndpointConfigurer extends PropertyConfigurerSupport imp
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "produces": return java.lang.String.class;
+        case "resolvereferences":
+        case "resolveReferences": return java.lang.Boolean.class;
         case "sslcontextparameters":
         case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
         default: return null;
@@ -67,6 +71,8 @@ public class RestSwaggerEndpointConfigurer extends PropertyConfigurerSupport imp
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "produces": return target.getProduces();
+        case "resolvereferences":
+        case "resolveReferences": return target.getResolveReferences();
         case "sslcontextparameters":
         case "sslContextParameters": return target.getSslContextParameters();
         default: return null;

@@ -37,7 +37,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE_CONTROLLER;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -63,7 +62,7 @@ public class ManagedSupervisingRouteControllerTest extends ManagementTestSupport
         MBeanServer mbeanServer = getMBeanServer();
 
         // get the object name for the delayer
-        ObjectName on = getCamelObjectName(TYPE_ROUTE_CONTROLLER, "DefaultSupervisingRouteController");
+        ObjectName on = getCamelObjectName("services", "DefaultSupervisingRouteController");
         assertTrue(mbeanServer.isRegistered(on));
 
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");

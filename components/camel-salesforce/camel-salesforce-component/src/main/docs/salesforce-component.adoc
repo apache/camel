@@ -6,7 +6,6 @@
 :since: 2.12
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/salesforce.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: salesforce
 
@@ -15,22 +14,8 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/salesforce
 *{component-header}*
 
 This component supports producer and consumer endpoints to communicate
-with Salesforce using Java DTOs.  +
- There is a companion maven plugin Camel Salesforce Plugin that
-generates these DTOs (see further below).
-
-Maven users will need to add the following dependency to their `pom.xml`
-for this component:
-
-[source,xml]
-----
-<dependency>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>camel-salesforce</artifactId>
-    <version>x.x.x</version>
-    <!-- use the same version as your Camel core version -->
-</dependency>
-----
+with Salesforce using Java DTOs. There is a companion <<MavenPlugin,maven plugin>> that
+generates these DTOs.
 
 [NOTE]
 ====
@@ -62,11 +47,12 @@ The component supports three OAuth authentication flows:
 * https://help.salesforce.com/articleView?id=remoteaccess_oauth_refresh_token_flow.htm[OAuth 2.0 Refresh Token Flow]
 * https://help.salesforce.com/articleView?id=remoteaccess_oauth_jwt_flow.htm[OAuth 2.0 JWT Bearer Token Flow]
 
-For each of the flow different set of properties needs to be set:
+For each of the flows, different sets of properties needs to be set:
 
 .Properties to set for each authentication flow
 |===
 | Property     | Where to find it on Salesforce     | Flow
+
 | clientId     | Connected App, Consumer Key        | All flows
 | clientSecret | Connected App, Consumer Secret     | Username-Password, Refresh Token
 | userName     | Salesforce user username           | Username-Password, JWT Bearer Token
@@ -75,8 +61,8 @@ For each of the flow different set of properties needs to be set:
 | keystore     | Connected App, Digital Certificate | JWT Bearer Token
 |===
 
-The component auto determines what flow you're trying to configure, to
-be remove ambiguity set the `authenticationType` property.
+The component auto determines what flow you're trying to configure. In order to be explicit, set the
+`authenticationType` property.
 
 [NOTE]
 ====
@@ -85,12 +71,14 @@ Using Username-Password Flow in production is not encouraged.
 
 [NOTE]
 ====
-The certificate used in JWT Bearer Token Flow can be a selfsigned 
+The certificate used in JWT Bearer Token Flow can be a self-signed
 certificate. The KeyStore holding the certificate and the private key
 must contain only single certificate-private key entry.
 ====
 
-== URI format
+== General Usage
+
+=== URI format
 
 When used as a consumer, receiving streaming events, the URI scheme is:
 
@@ -105,7 +93,16 @@ scheme is:
 salesforce:operationName?options
 ----
 
-== Passing in Salesforce headers and fetching Salesforce response headers
+As a general example on using the operations in this salesforce component, the following producer endpoint uses
+the upsertSObject API, with the sObjectIdName parameter specifying 'Name' as the external id field.
+The request message body should be an SObject DTO generated using the maven plugin.
+
+[source,java]
+----
+...to("salesforce:upsertSObject?sObjectIdName=Name")...
+----
+
+=== Passing in Salesforce headers and fetching Salesforce response headers
 
 There is support to pass https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/headers.htm[Salesforce headers]
 via inbound message headers, header names that start with `Sforce` or
@@ -136,293 +133,97 @@ class MyProcessor implements Processor {
 In addition, HTTP response status code and text are available as headers `Exchange.HTTP_RESPONSE_CODE` and
 `Exchange.HTTP_RESPONSE_TEXT`.
 
+===  Sending null values to salesforce
+
+By default, SObject fields with null values are not sent to salesforce. In order to
+send null values to salesforce, use the `fieldsToNull` property, as follows:
+
+[source,java]
+----
+accountSObject.getFieldsToNull().add("Site");
+----
+
 == Supported Salesforce APIs
 
-The component supports the following Salesforce APIs
+Camel supports the following Salesforce APIs:
 
-Producer endpoints can use the following APIs. Most of the APIs process
-one record at a time, the Query API can retrieve multiple Records.
+* <<RESTAPI,REST API>>
+* <<ApexRESTAPI,Apex REST API>>
+* <<Bulk2API,Bulk 2 API>>
+* <<BulkAPI,Bulk API>>
+* <<StreamingAPI,Streaming API>>
+* <<ReportsAPI,Reports API>>
 
-=== Rest API
+=== REST API [[RESTAPI]]
 
-You can use the following for `operationName`:
+The following operations are supported:
 
-* getVersions - Gets supported Salesforce REST API versions
-* getResources - Gets available Salesforce REST Resource endpoints
-* getGlobalObjects - Gets metadata for all available SObject types
-* getBasicInfo - Gets basic metadata for a specific SObject type
-* getDescription - Gets comprehensive metadata for a specific SObject
-type
-* getSObject - Gets an SObject using its Salesforce Id
-* createSObject - Creates an SObject
-* updateSObject - Updates an SObject using Id
-* deleteSObject - Deletes an SObject using Id
-* getSObjectWithId - Gets an SObject using an external (user defined) id
-field
-* upsertSObject - Updates or inserts an SObject using an external id
-* deleteSObjectWithId - Deletes an SObject using an external id
-* query - Runs a Salesforce SOQL query
-* queryMore - Retrieves more results (in case of large number of
-results) using result link returned from the 'query' API
-* search - Runs a Salesforce SOSL query
-* limits - fetching organization API usage limits
-* recent - fetching recent items
-* approval - submit a record or records (batch) for approval process
-* approvals - fetch a list of all approval processes
-* composite - submit up to 25 possibly related REST requests and receive individual responses. It's also possible to use "raw" composite without limitation.
-* composite-tree - create up to 200 records with parent-child relationships (up to 5 levels) in one go
-* composite-batch - submit a composition of requests in batch
-* compositeRetrieveSObjectCollections - Retrieve one or more records of the same object type.
-* compositeCreateSObjectCollections - Add up to 200 records, returning a list of SaveSObjectResult objects.
-* compositeUpdateSObjectCollections - Update up to 200 records, returning a list of SaveSObjectResult objects.
-* compositeUpsertSObjectCollections - Create or update (upsert) up to 200 records based on an external ID field.
-Returns a list of UpsertSObjectResult objects.
-* compositeDeleteSObjectCollections - Delete up to 200 records, returning a list of SaveSObjectResult objects.
-* queryAll - Runs a SOQL query. It returns the results that are deleted because of a merge (merges up to three records into one of the records, deletes the others, and reparents any related records) or delete.
-Also returns
-the  information about archived Task and Event records.
-* getBlobField - Retrieves the specified blob field from an individual record.
-* apexCall - Executes a user defined APEX REST API call.
-* raw - Send requests to salesforce and have full, raw control over endpoint, parameters, body, etc.
+* <<getVersions,getVersions>> - Gets supported Salesforce REST API versions.
+* <<getResources,getResources>> - Gets available Salesforce REST Resource endpoints.
+* <<limits,limits>> - Lists information about limits in your org.
+* <<recent,recent>> - Gets the most recently accessed items that were viewed or referenced by the current user.
+* <<getGlobalObjects,getGlobalObjects>> - Gets metadata for all available SObject types.
+* <<getBasicInfo,getBasicInfo>> - Gets basic metadata for a specific SObject type.
+* <<getDescription,getDescription>> - Gets comprehensive metadata for a specific SObject type.
+* <<getSObject,getSObject>> - Gets an SObject.
+* <<getSObjectWithId,getSObjectWithId>> - Gets an SObject using an External Id (user defined) field.
+* <<getSObjectWithId,getBlobField>> - Retrieves the specified blob field from an individual record.
+* <<getSObjectWithId,createSObject>> - Creates an SObject.
+* <<updateSObject,updateSObject>> - Updates an SObject.
+* <<deleteSObject,deleteSObject>> - Deletes an SObject.
+* <<upsertSObject,upsertSObject>> - Inserts or updates an SObject using an External Id.
+* <<deleteSObjectWithId,deleteSObjectWithId>> - Deletes an SObject using an External Id.
+* <<query,query>> - Runs a Salesforce SOQL query.
+* <<queryMore,queryMore>> - Retrieves more results (in case of large number of
+results) using result link returned from the 'query' API.
+* <<queryAll,queryAll>> - Runs a SOQL query. Unlike the query operation, queryAll returns records that are deleted because of a merge or delete. queryAll also returns information about archived task and event records.
+* <<search,search>> - Runs a Salesforce SOSL query.
+* <<apexCall,apexCall>> - Executes a user defined APEX REST API call.
+* <<approval,approval>> - Submits a record or records (batch) for approval process.
+* <<approvals,approvals>> - Fetches a list of all approval processes.
+* <<composite,composite>> - Executes up to 25 REST API requests in a single call. You can use the output of one
+request as the input to a subsequent request.
+* <<composite-tree,composite-tree>> - Creates up to 200 records with parent-child relationships (up to 5 levels) in one go.
+* <<composite-batch,composite-batch>> - Executes up to 25 sub-requests in a single request.
+* <<compositeRetrieveSObjectCollections,compositeRetrieveSObjectCollections>> - Retrieves one or more records of the same object type.
+* <<compositeCreateSObjectCollections,compositeCreateSObjectCollections>> - Creates up to 200 records.
+* <<compositeUpdateSObjectCollections,compositeUpdateSObjectCollections>> - Update up to 200 records.
+* <<compositeUpsertSObjectCollections,compositeUpsertSObjectCollections>> - Creates or updates up to 200 records based on an External Id field.
+* <<compositeDeleteSObjectCollections,compositeDeleteSObjectCollections>> - Deletes up to 200 records.
 
-For example, the following producer endpoint uses the upsertSObject API,
-with the sObjectIdName parameter specifying 'Name' as the external id
-field. 
-The request message body should be an SObject DTO generated using the
-maven plugin.  
-The response message will either be `null` if an existing record was
-updated, or `CreateSObjectResult` with an id of the new record, or a
-list of errors while creating the new object.
+Unless otherwise specified, DTO types for the following options are from  `org.apache.camel.component.salesforce.api.dto` or one if its sub-packages.
 
-[source,java]
-----
-...to("salesforce:upsertSObject?sObjectIdName=Name")...
-----
+==== Versions [[getVersions]]
 
-=== Bulk 2.0 API
+`getVersions`
 
-The Bulk 2.0 API has a simplified model over the original Bulk API. Use it to quickly load a large
-amount of data into salesforce, or query a large amount of data out of salesforce. Data must be
-provided in CSV format. The minimum API version for Bulk 2.0 is v41.0. The minimum API version for
-Bulk Queries is v47.0. DTO classes mentioned below are from the
-`org.apache.camel.component.salesforce.api.dto.bulkv2` package. The following operations are supported:
+Lists summary information about each Salesforce version currently available, including the version, label, and a link to each version's root.
 
-* *bulk2CreateJob* - Create a bulk job. Supply an instance of `Job` in the message body.
-* *bulk2GetJob* - Get an existing Job. `jobId` parameter is required.
-* *bulk2CreateBatch* - Add a Batch of CSV records to a job. Supply CSV data in the message body.
-The first row must contain headers. `jobId` parameter is required.
-* *bulk2CloseJob* - Close a job. You must close the job in order for it to be processed or
-aborted/deleted. `jobId` parameter is required.
-* *bulk2AbortJob* - Abort a job. `jobId` parameter is required.
-* *bulk2DeleteJob* - Delete a job. `jobId` parameter is required.
-* *bulk2GetSuccessfulResults* - Get successful results for a job. Returned message body will contain
-an InputStream of CSV data. `jobId` parameter is required.
-* *bulk2GetFailedResults* - Get failed results for a job. Returned message body will contain an
-InputStream of CSV data. `jobId` parameter is required.
-* *bulk2GetUnprocessedRecords* - Get unprocessed records for a job. Returned message body will
-contain an InputStream of CSV data. `jobId` parameter is required.
-* *bulk2GetAllJobs* - Get all jobs. Response body is an instance of `Jobs`. If the `done` property
-is false, there are additional pages to fetch, and the `nextRecordsUrl` property contains the value
-to be set in the `queryLocator` parameter on subsequent calls.
-* *bulk2CreateQueryJob* - Create a bulk query job. Supply an instance of `QueryJob` in the message
-body.
-* *bulk2GetQueryJob* - Get a bulk query job. `jobId` parameter is required.
-* *bulk2GetQueryJobResults* - Get bulk query job results. `jobId` parameter is required. Accepts
-`maxRecords` and `locator` parameters. Response message headers include `Sforce-NumberOfRecords` and
-`Sforce-Locator` headers. The value of `Sforce-Locator` can be passed into subsequent calls via the
-`locator` parameter.
-* *bulk2AbortQueryJob* - Abort a bulk query job. `jobId` parameter is required.
-* *bulk2DeleteQueryJob* - Delete a bulk query job. `jobId` parameter is required.
-* *bulk2GetAllQueryJobs* - Get all jobs. Response body is an instance of `QueryJobs`. If the `done`
-property is false, there are additional pages to fetch, and the `nextRecordsUrl` property contains
-the value to be set in the `queryLocator` parameter on subsequent calls.
+*Output*
 
-=== Rest Bulk (original) API
+Type:  `List<Version>`
 
-Producer endpoints can use the following APIs. All Job data formats,
-i.e. xml, csv, zip/xml, and zip/csv are supported.  +
- The request and response have to be marshalled/unmarshalled by the
-route. Usually the request will be some stream source like a CSV file,
- +
- and the response may also be saved to a file to be correlated with the
-request.
+==== Resources by Version [[getResources]]
 
-You can use the following for `operationName`:
+`getResources`
 
-* *createJob* - Creates a Salesforce Bulk Job. Must supply a `JobInfo` instance in body. PK Chunking
-is supported via the pkChunking* options. See an explanation https://developer.salesforce.com/docs/atlas.en-us.api_asynch.meta/api_asynch/async_api_headers_enable_pk_chunking.htm[here].
-* *getJob* - Gets a Job using its Salesforce Id
-* *closeJob* - Closes a Job
-* *abortJob* - Aborts a Job
-* *createBatch* - Submits a Batch within a Bulk Job
-* *getBatch* - Gets a Batch using Id
-* *getAllBatches* - Gets all Batches for a Bulk Job Id
-* *getRequest* - Gets Request data (XML/CSV) for a Batch
-* *getResults* - Gets the results of the Batch when its complete
-* *createBatchQuery* - Creates a Batch from an SOQL query
-* *getQueryResultIds* - Gets a list of Result Ids for a Batch Query
-* *getQueryResult* - Gets results for a Result Id
-* *getRecentReports* - Gets up to 200 of the reports you most recently viewed by sending a GET request to the Report List resource.
-* *getReportDescription* - Retrieves the report, report type, and related metadata for a report, either in a tabular or summary or matrix format.
-* *executeSyncReport* - Runs a report synchronously with or without changing filters and returns the latest summary data.
-* *executeAsyncReport* - Runs an instance of a report asynchronously with or without filters and returns the summary data with or without details.
-* *getReportInstances* - Returns a list of instances for a report that you requested to be run asynchronously. Each item in the list is treated as a separate instance of the report.
-* *getReportResults*: Contains the results of running a report.
+Lists available resources for the specified API version, including resource name and URI.
 
-For example, the following producer endpoint uses the createBatch API to
-create a Job Batch. The in message must contain a body that can be converted into an
-`InputStream` (usually UTF-8 CSV or XML content from a file, etc.) and
-header fields 'jobId' for the Job and 'contentType' for the Job content
-type, which can be XML, CSV, ZIP_XML or ZIP_CSV. The put message body
-will contain `BatchInfo` on success, or throw a `SalesforceException` on
-error.
+*Output*
 
-[source,java]
-----
-...to("salesforce:createBatch")..
-----
+Type: `RestResources`
 
-=== Rest Streaming API
+==== Limits [[limits]]
 
-Consumer endpoints can use the following syntax for streaming endpoints
-to receive Salesforce notifications on create/update.
+`limits`
 
-To create and subscribe to a topic
+Lists information about limits in your org. For each limit, this resource returns the maximum allocation and the remaining allocation based on usage.
 
-[source,java]
-----
-from("salesforce:CamelTestTopic?notifyForFields=ALL&notifyForOperations=ALL&sObjectName=Merchandise__c&updateTopic=true&sObjectQuery=SELECT Id, Name FROM Merchandise__c")...
-----
+*Output*
 
-To subscribe to an existing topic
+Type: `Limits`
 
-[source,java]
-----
-from("salesforce:CamelTestTopic&sObjectName=Merchandise__c")...
-----
-
-=== Platform events
-
-To emit a platform event use `createSObject` operation. And set the
-message body can be JSON string or InputStream with key-value data --
-in that case `sObjectName` needs to be set to the API name of the
-event, or a class that extends from AbstractDTOBase with the
-appropriate class name for the event.
-
-For example using a DTO:
-
-[source,java]
-----
-class Order_Event__e extends AbstractDTOBase {
-  @JsonProperty("OrderNumber")
-  private String orderNumber;
-  // ... other properties and getters/setters
-}
-
-from("timer:tick")
-    .process(exchange -> {
-        final Message in = exchange.getIn();
-        String orderNumber = "ORD" + exchange.getProperty(Exchange.TIMER_COUNTER);
-        Order_Event__e event = new Order_Event__e();
-        event.setOrderNumber(orderNumber);
-        in.setBody(event);
-    })
-    .to("salesforce:createSObject");
-----
-
-Or using JSON event data:
-
-[source,java]
-----
-from("timer:tick")
-    .process(exchange -> {
-        final Message in = exchange.getIn();
-        String orderNumber = "ORD" + exchange.getProperty(Exchange.TIMER_COUNTER);
-        in.setBody("{\"OrderNumber\":\"" + orderNumber + "\"}");
-    })
-    .to("salesforce:createSObject?sObjectName=Order_Event__e");
-----
-
-To receive platform events use the consumer endpoint with the API name of
-the platform event prefixed with `event/` (or `/event/`), e.g.:
-`salesforce:events/Order_Event__e`. Processor consuming from that
-endpoint will receive either `org.apache.camel.component.salesforce.api.dto.PlatformEvent`
-object or `org.cometd.bayeux.Message` in the body depending on the
-`rawPayload` being `false` or `true` respectively.
-
-For example, in the simplest form to consume one event:
-
-[source,java]
-----
-PlatformEvent event = consumer.receiveBody("salesforce:event/Order_Event__e", PlatformEvent.class);
-----
-
-=== Change data capture events
-
-On the one hand, Salesforce could be configured to emit notifications for record changes of select objects.
-On the other hand, the Camel Salesforce component could react to such notifications, allowing for instance to
-https://trailhead.salesforce.com/en/content/learn/modules/change-data-capture/understand-change-data-capture[synchronize those changes into an external system].
-
-The notifications of interest could be specified in the `from("salesforce:XXX")` clause of a Camel route via the subscription channel, e.g:
-
-[source,java]
-----
-from("salesforce:data/ChangeEvents?replayId=-1").log("being notified of all change events")
-from("salesforce:data/AccountChangeEvent?replayId=-1").log("being notified of change events for Account records")
-from("salesforce:data/Employee__ChangeEvent?replayId=-1").log("being notified of change events for Employee__c custom object")
-----
-
-The received message contains either `java.util.Map<String,Object>` or `org.cometd.bayeux.Message` in the body depending on the `rawPayload` being `false` or `true` respectively. The `CamelSalesforceChangeType` header could be valued to one of `CREATE`, `UPDATE`,  `DELETE` or `UNDELETE`.
-
-More details about how to use the Camel Salesforce component change data capture capabilities could be found in the https://github.com/apache/camel/tree/main/components/camel-salesforce/camel-salesforce-component/src/test/java/org/apache/camel/component/salesforce/ChangeEventsConsumerIntegrationTest.java[ChangeEventsConsumerIntegrationTest].
-
-The https://developer.salesforce.com/docs/atlas.en-us.change_data_capture.meta/change_data_capture/cdc_intro.htm[Salesforce developer guide]
-is a good fit to better know the subtleties of implementing a change data capture integration application.
-The dynamic nature of change event body fields, high level replication steps as well as security considerations could be of interest.
-
-== Examples
-
-=== Uploading a document to a ContentWorkspace
-
-Create the ContentVersion in Java, using a Processor instance:
-
-[source,java]
-----
-public class ContentProcessor implements Processor {
-    public void process(Exchange exchange) throws Exception {
-        Message message = exchange.getIn();
-
-        ContentVersion cv = new ContentVersion();
-        ContentWorkspace cw = getWorkspace(exchange);
-        cv.setFirstPublishLocationId(cw.getId());
-        cv.setTitle("test document");
-        cv.setPathOnClient("test_doc.html");
-        byte[] document = message.getBody(byte[].class);
-        ObjectMapper mapper = new ObjectMapper();
-        String enc = mapper.convertValue(document, String.class);
-        cv.setVersionDataUrl(enc);
-        message.setBody(cv);
-    }
-
-    protected ContentWorkspace getWorkSpace(Exchange exchange) {
-        // Look up the content workspace somehow, maybe use enrich() to add it to a
-        // header that can be extracted here
-        ....
-    }
-} 
-----
-
-Give the output from the processor to the Salesforce component:
-
-[source,java]
-----
-from("file:///home/camel/library")
-    .to(new ContentProcessor())     // convert bytes from the file into a ContentVersion SObject 
-                                    // for the salesforce component
-    .to("salesforce:createSObject"); 
-----
-
-== Using Salesforce Limits API
+*Additional Usage Information*
 
 With `salesforce:limits` operation you can fetch of API limits from Salesforce and then act upon that data received.
 The result of `salesforce:limits` operation is mapped to `org.apache.camel.component.salesforce.api.dto.Limits`
@@ -431,7 +232,7 @@ class and can be used in a custom processors or expressions.
 For instance, consider that you need to limit the API usage of Salesforce so that 10% of daily API requests is left for
 other routes. The body of output message contains an instance of
 `org.apache.camel.component.salesforce.api.dto.Limits` object that can be used in conjunction with
-Content Based Router and Content Based Router and 
+Content Based Router and Content Based Router and
 xref:languages:spel-language.adoc[Spring Expression Language (SpEL)] to choose when to perform queries.
 
 Notice how multiplying `1.0` with the integer value held in `body.dailyApiRequests.remaining` makes the expression
@@ -450,7 +251,309 @@ from("direct:querySalesforce")
     .endChoice()
 ----
 
-== Working with approvals
+==== Recently Viewed Items [[recent]]
+
+`recent`
+
+Gets the most recently accessed items that were viewed or referenced by the current user. Salesforce stores information
+about record views in the interface and uses it to generate a list of recently viewed and referenced records, such as in
+the sidebar and for the auto-complete options in search.
+
+|===
+| Parameter | Type | Description | Default | Required
+
+| `limit` | `int`  |  An optional limit that specifies the maximum number of records to be returned.
+If this parameter is not specified, the default maximum number of records returned is the maximum
+number of entries in RecentlyViewed, which is 200 records per object. | |
+|===
+
+*Output*
+
+Type: `List<RecentItem>`
+
+*Additional Usage Information*
+
+To fetch the recent items use `salesforce:recent` operation. This operation returns an `java.util.List` of
+`org.apache.camel.component.salesforce.api.dto.RecentItem` objects (`List<RecentItem>`) that in turn contain
+the `Id`, `Name` and `Attributes` (with `type` and `url` properties). You can limit the number of returned items
+by specifying `limit` parameter set to maximum number of records to return. For example:
+
+[source,java]
+----
+from("direct:fetchRecentItems")
+    to("salesforce:recent")
+        .split().body()
+            .log("${body.name} at ${body.attributes.url}");
+----
+
+==== Describe Global [[getGlobalObjects]]
+
+`getGlobalObjects`
+
+Lists the available objects and their metadata for your organization’s data. In addition, it provides the organization encoding,
+as well as the maximum batch size permitted in queries.
+
+*Output*
+
+Type: `GlobalObjects`
+
+==== sObject Basic Information [[getBasicInfo]]
+
+`getBasicInfo`
+
+Describes the individual metadata for the specified object.
+
+|===
+| Parameter | Type | Description | Default | Required
+
+| `sObjectName` | `String` | Name of SObject, e.g. `Account`. Alternatively, can be supplied in Body. | | x
+|===
+
+*Output*
+
+Type: `SObjectBasicInfo`
+
+==== sObject Describe [[getDescription]]
+
+`getDescription`
+
+Completely describes the individual metadata at all levels for the specified object. For example, this can be used to retrieve the fields, URLs, and child relationships for the Account object.
+
+|===
+| Parameter | Type | Description | Default | Required
+
+| `sObjectName` | `String` | Name of SObject, e.g. `Account`. Alternatively, can be supplied in Body. | | x
+|===
+
+*Output*
+
+Type: `SObjectDescription`
+
+==== Retrieve SObject [[getSObject]]
+
+`getSObject`
+
+Accesses record based on the specified object ID. This operation requires the `packages` option to be set.
+
+|===
+| Parameter | Type | Description | Default | Required
+
+| `sObjectName` | `String` | Name of SObject, e.g. `Account` | | x
+| `sObjectId` | `String` | Id of record to retrieve. | | x
+| `sObjectFields` | `String` | Comma-separated list of fields to retrieve||
+| Body | `AbstractSObjectBase` | Instance of SObject that is used to query salesforce. If supplied,
+overrides `sObjectName` and `sObjectId` parameters.  | |
+|===
+
+*Output*
+
+Type: Subclass of `AbstractSObjectBase`
+
+==== Retrieve SObject by External Id [[getSObjectWithId]]
+
+`getSObjectWithId`
+
+Accesses record based on an External ID value. This operation requires the `packages` option to be set.
+
+|===
+| Parameter | Type | Description | Default | Required
+
+| `sObjectIdName` | `String` | Name of External ID field | | x
+| `sObjectIdValue` | `String` | External ID value | | x
+| `sObjectName` | `String` | Name of SObject, e.g. `Account` | | x
+| Body | `AbstractSObjectBase` | Instance of SObject that is used to query salesforce. If supplied,
+overrides `sObjectName` and `sObjectIdValue` parameters.  | |
+|===
+
+*Output*
+
+Type: Subclass of `AbstractSObjectBase`
+
+==== sObject Blob Retrieve [[getBlobField]]
+
+`getBlobField`
+
+Retrieves the specified blob field from an individual record.
+
+|===
+| Parameter | Type | Description | Default | Required
+
+| `sObjectBlobFieldName` | `String`  | SOSL query | |x
+| `sObjectName` | `String`  | Name of SObject, e.g. Account | | Required if SObject not supplied in body
+| `sObjectId` | `String`  | Id of SObject | | Required if SObject not supplied in body
+| Body | `AbstractSObjectBase` | SObject to determine type and Id from. If not supplied, `sObjectId`
+and `sObjectName` parameters will be used. | | Required if `sObjectId`
+and `sObjectName` are not supplied
+|===
+
+*Output*
+
+Type: `InputStream`
+
+==== Create SObject [[createSObject]]
+
+`createSObject`
+
+Creates a record in salesforce.
+
+|===
+| Parameter | Type | Description | Default | Required
+
+| Body | `AbstractSObjectBase` or `String` | Instance of SObject to create.  | | x
+| `sObjectName` | `String` | Name of SObject, e.g. `Account`. Only used if Camel cannot determine from Body. | | If Body is a `String`
+|===
+
+*Output*
+
+Type: `CreateSObjectResult`
+
+==== Update SObject [[updateSObject]]
+
+`updateSObject`
+
+Updates a record in salesforce.
+
+|===
+| Parameter | Type | Description | Default | Required
+
+| Body | `AbstractSObjectBase` or `String` | Instance of SObject to update.  | | x
+| `sObjectName` | `String` | Name of SObject, e.g. `Account`. Only used if Camel cannot determine from Body. | | If Body is a `String`
+| `sObjectId` | `String` | Id of record to update. Only used if Camel cannot determine from Body. | | If Body is a `String`
+|===
+
+==== Upsert SObject [[upsertSObject]]
+
+`upsertSObject`
+
+Upserts a record by External ID.
+
+|===
+| Parameter | Type | Description | Default | Required
+
+| Body | `AbstractSObjectBase` or `String` | SObject to update.  | | x
+| `sObjectIdName` | `String` | External ID field name. ||x
+| `sObjectIdValue` | `String` | External ID value || If Body is a `String`
+| `sObjectName` | `String` | Name of SObject, e.g. `Account`. Only used if Camel cannot determine from Body. | | If Body is a `String`
+|===
+
+*Output*
+
+Type: `UpsertSObjectResult`
+
+==== Delete SObject [[deleteSObject]]
+
+`deleteSObject`
+
+Deletes a record in salesforce.
+
+|===
+| Parameter | Type | Description | Default | Required
+
+| Body | `AbstractSObjectBase` | Instance of SObject to delete.  | |
+| `sObjectName` | `String` | Name of SObject, e.g. `Account`. Only used if Camel cannot determine from Body. | | If Body is not an `AbstractSObjectBase` instance
+| `sObjectId` | `String` | Id of record to delete. | | If Body is not an `AbstractSObjectBase` instance
+|===
+
+==== Delete SObject by External Id [[deleteSObjectWithId]]
+
+`deleteSObjectWithId`
+
+Deletes a record in salesforce by External ID.
+
+|===
+| Parameter | Type | Description | Default | Required
+
+| Body | `AbstractSObjectBase` | Instance of SObject to delete.  | |
+| `sObjectIdName` | `String` | Name of External ID field | | If Body is not an `AbstractSObjectBase` instance
+| `sObjectIdValue` | `String` | External ID value | | If Body is not an `AbstractSObjectBase` instance
+| `sObjectName` | `String` | Name of SObject, e.g. `Account`. Only used if Camel cannot determine from Body. | | If Body is not an `AbstractSObjectBase` instance
+|===
+
+==== Query [[query]]
+
+`query`
+
+Runs a Salesforce SOQL query
+
+|===
+| Parameter | Type | Description | Default | Required
+
+| Body or `sObjectQuery` | `String`  | SOQL query | | x
+| `sObjectClass` | `String` | Fully qualified name of class to deserialize response to. Usually a subclass of `AbstractQueryRecordsBase`, e.g. `org.my.dto.QueryRecordsAccount`| |x
+|===
+
+*Output*
+
+Type: Instance of class supplied in `sObjectClass`
+
+==== Query More [[queryMore]]
+
+`queryMore`
+
+Retrieves more results (in case of large number of results) using result link returned from the `query` and `queryAll` operations.
+
+|===
+| Parameter | Type | Description | Default | Required
+
+| Body or `sObjectQuery` | `String`  | `nextRecords` value. Can be found in a prior query result in the `AbstractQueryRecordsBase.nextRecordsUrl` property | | X
+| `sObjectClass` | `String` | Fully qualified name of class to deserialize response to. Usually a subclass of `AbstractQueryRecordsBase`, e.g. `org.my.dto.QueryRecordsAccount`| |x
+|===
+
+*Output*
+
+Type: Instance of class supplied in `sObjectClass`
+
+==== Query All [[queryAll]]
+
+`queryAll`
+
+Executes the specified SOQL query. Unlike the `query` operation , `queryAll` returns records that are deleted because of a merge or delete. It also returns information about archived task and event records.
+
+|===
+| Parameter | Type | Description | Default | Required
+
+| Body or `sObjectQuery` | `String`  | SOQL query | | x
+| `sObjectClass` | `String` | Fully qualified name of class to deserialize response to. Usually a subclass of `AbstractQueryRecordsBase`, e.g. `org.my.dto.QueryRecordsAccount`| |x
+|===
+
+*Output*
+
+Type: Instance of class supplied in `sObjectClass`
+
+==== Search [[search]]
+
+`search`
+
+Runs a Salesforce SOSL search
+
+|===
+| Parameter | Type | Description | Default | Required
+
+| Body or `sObjectSearch` | `String` | Name of field to retrieve | |x
+|===
+
+*Output*
+
+Type: `SearchResult2`
+
+==== Submit Approval [[approval]]
+
+`approval`
+
+Submit a record or records (batch) for approval process.
+
+|===
+| Parameter | Type | Description | Default | Required
+
+| Body | `ApprovalRequest` or `List<ApprovalRequest>`  | `ApprovalRequest`(s) to process | |
+| `Approval.` | Prefixed headers or endpoint options in lieu of passing an `ApprovalRequest` in the body.  | | |
+|===
+
+*Output*
+
+Type: `ApprovalResult`
+
+*Additional usage information*
 
 All the properties are named exactly the same as in the Salesforce REST API prefixed with `approval.`. You can set
 approval properties by setting `approval.PropertyName` of the Endpoint these will be used as template -- meaning
@@ -495,122 +598,37 @@ body.put("nextApproverIds", userId);
 final ApprovalResult result = template.requestBody("direct:example1", body, ApprovalResult.class);
 ----
 
-== Using Salesforce Recent Items API
+==== Get Approvals [[approvals]]
 
-To fetch the recent items use `salesforce:recent` operation. This operation returns an `java.util.List` of
-`org.apache.camel.component.salesforce.api.dto.RecentItem` objects (`List<RecentItem>`) that in turn contain
-the `Id`, `Name` and `Attributes` (with `type` and `url` properties). You can limit the number of returned items
-by specifying `limit` parameter set to maximum number of records to return. For example:
+`approvals`
 
-[source,java]
-----
-from("direct:fetchRecentItems")
-    to("salesforce:recent")
-        .split().body()
-            .log("${body.name} at ${body.attributes.url}");
-----
+Returns a list of all approval processes.
 
-== Using Salesforce Composite API to submit SObject tree
+*Output*
 
-To create up to 200 records including parent-child relationships use `salesforce:composite-tree` operation. This
-requires an instance of `org.apache.camel.component.salesforce.api.dto.composite.SObjectTree` in the input 
-message and returns the same tree of objects in the output message. The 
-`org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase` instances within the tree get updated with
-the identifier values (`Id` property) or their corresponding
-`org.apache.camel.component.salesforce.api.dto.composite.SObjectNode` is populated with `errors` on failure.
+Type: `Approvals`
 
-Note that for some records operation can succeed and for some it can fail -- so you need to manually check for errors.
+==== Composite [[composite]]
 
-Easiest way to use this functionality is to use the DTOs generated by the `camel-salesforce-maven-plugin`, but you
-also have the option of customizing the references that identify the each object in the tree, for instance primary keys
-from your database.
+`composite`
 
-Lets look at an example:
+Executes up to 25 REST API requests in a single call. You can use the output of one request as the
+input to a subsequent request. The response bodies and HTTP statuses of the requests are returned in a
+single response body. The entire series of requests counts as a single call toward your API limits. Use
+Salesforce Composite API to submit multiple chained requests. Individual requests and responses are linked with the provided _reference_.
 
-[source,java]
-----
-Account account = ...
-Contact president = ...
-Contact marketing = ...
+|===
+| Parameter | Type | Description | Default | Required
 
-Account anotherAccount = ...
-Contact sales = ...
-Asset someAsset = ...
+| Body | `SObjectComposite`  | Contains REST API sub-requests to be executed. | | x
+| `rawPayload` | `Boolean`  | Any (un)marshaling of requests and responses are assumed to be handled
+by the route | false | x
+| `compositeMethod` | `String` | HTTP method to use for rawPayload requests. | `POST` |
+|===
 
-// build the tree
-SObjectTree request = new SObjectTree();
-request.addObject(account).addChildren(president, marketing);
-request.addObject(anotherAccount).addChild(sales).addChild(someAsset);
+*Output*
 
-final SObjectTree response = template.requestBody("salesforce:composite-tree", tree, SObjectTree.class);
-final Map<Boolean, List<SObjectNode>> result = response.allNodes()
-                                                   .collect(Collectors.groupingBy(SObjectNode::hasErrors));
-
-final List<SObjectNode> withErrors = result.get(true);
-final List<SObjectNode> succeeded = result.get(false);
-
-final String firstId = succeeded.get(0).getId();
-----
-
-== Using Salesforce Composite API to submit multiple requests in a batch
-The Composite API batch operation (`composite-batch`) allows you to accumulate multiple requests in a batch and then
-submit them in one go, saving the round trip cost of multiple individual requests. Each response is then received in a
-list of responses with the order preserved, so that the n-th requests response is in the n-th place of the response.
-
-[NOTE]
-====
-The results can vary from API to API so the result of the request is given as a `java.lang.Object`. In most cases
-the result will be a `java.util.Map` with string keys and values or other `java.util.Map` as value. Requests are made in JSON format and hold some type information (i.e. it is known what values are strings and what values are numbers).
-====
-
-Lets look at an example:
-
-[source,java]
-----
-final String acountId = ...
-final SObjectBatch batch = new SObjectBatch("38.0");
-
-final Account updates = new Account();
-updates.setName("NewName");
-batch.addUpdate("Account", accountId, updates);
-
-final Account newAccount = new Account();
-newAccount.setName("Account created from Composite batch API");
-batch.addCreate(newAccount);
-
-batch.addGet("Account", accountId, "Name", "BillingPostalCode");
-
-batch.addDelete("Account", accountId);
-
-final SObjectBatchResponse response = template.requestBody("salesforce:composite-batch", batch, SObjectBatchResponse.class);
-
-boolean hasErrors = response.hasErrors(); // if any of the requests has resulted in either 4xx or 5xx HTTP status
-final List<SObjectBatchResult> results = response.getResults(); // results of three operations sent in batch
-
-final SObjectBatchResult updateResult = results.get(0); // update result
-final int updateStatus = updateResult.getStatusCode(); // probably 204
-final Object updateResultData = updateResult.getResult(); // probably null
-
-final SObjectBatchResult createResult = results.get(1); // create result
-@SuppressWarnings("unchecked")
-final Map<String, Object> createData = (Map<String, Object>) createResult.getResult();
-final String newAccountId = createData.get("id"); // id of the new account, this is for JSON, for XML it would be createData.get("Result").get("id")
-
-final SObjectBatchResult retrieveResult = results.get(2); // retrieve result
-@SuppressWarnings("unchecked")
-final Map<String, Object> retrieveData = (Map<String, Object>) retrieveResult.getResult();
-final String accountName = retrieveData.get("Name"); // Name of the retrieved account, this is for JSON, for XML it would be createData.get("Account").get("Name")
-final String accountBillingPostalCode = retrieveData.get("BillingPostalCode"); // Name of the retrieved account, this is for JSON, for XML it would be createData.get("Account").get("BillingPostalCode")
-
-final SObjectBatchResult deleteResult = results.get(3); // delete result
-final int updateStatus = deleteResult.getStatusCode(); // probably 204
-final Object updateResultData = deleteResult.getResult(); // probably null
-----
-
-== Using Salesforce Composite API to submit multiple chained requests
-The `composite` operation allows submitting up to 25 requests that can be chained together, for instance identifier
-generated in previous request can be used in subsequent request. Individual requests and responses are linked with the
-provided _reference_.
+Type: `SObjectCompositeResponse`
 
 [NOTE]
 ====
@@ -619,7 +637,7 @@ Composite API supports only JSON payloads.
 
 [NOTE]
 ====
-As with the batch API the results can vary from API to API so the result of the request is given as a
+As with the batch API, the results can vary from API to API so the body of each `SObjectCompositeResult` instance is given as a
 `java.lang.Object`. In most cases the result will be a `java.util.Map` with string keys and values or other
 `java.util.Map` as value. Requests are made in JSON format hold some type information (i.e. it is known what values are
 strings and what values are numbers).
@@ -660,7 +678,7 @@ final Map<String, ?> accountUpdateBody = accountUpdateResult.getBody();
 final SObjectCompositeResult contactCreationResult = results.stream().filter(r -> "JunctionRecord".equals(r.getReferenceId())).findFirst().get()
 ----
 
-== Using "raw" Salesforce composite
+*Using the `rawPayload` option*
 
 It's possible to directly call Salesforce composite by preparing the Salesforce JSON request in the route thanks to the `rawPayload` option.
 
@@ -689,22 +707,1073 @@ With this approach, you have the complete control on the Salesforce request.
 `compositeMethod` option to override to the other supported value, `GET`, which returns a list of
 other available composite resources.
 
-== Using Raw Operation
+==== Composite Tree [[composite-tree]]
 
-Send HTTP requests to salesforce with full, raw control of all aspects of the call. Any serialization or deserialization of request and response bodies must be performed in the route. The `Content-Type` HTTP
+`composite-tree`
+
+Create up to 200 records with parent-child relationships (up to 5 levels) in one go.
+
+|===
+| Parameter | Type | Description | Default | Required
+
+| Body | `SObjectTree`  | Contains REST API sub-requests to be executed. | | x
+|===
+
+*Output*
+
+Type: `SObjectTree`
+
+To create up to 200 records including parent-child relationships use `salesforce:composite-tree` operation. This
+requires an instance of `org.apache.camel.component.salesforce.api.dto.composite.SObjectTree` in the input
+message and returns the same tree of objects in the output message. The
+`org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase` instances within the tree get updated with
+the identifier values (`Id` property) or their corresponding
+`org.apache.camel.component.salesforce.api.dto.composite.SObjectNode` is populated with `errors` on failure.
+
+Note that for some records operation can succeed and for some it can fail -- so you need to manually check for errors.
+
+Easiest way to use this functionality is to use the DTOs generated by the `camel-salesforce-maven-plugin`, but you
+also have the option of customizing the references that identify the each object in the tree, for instance primary keys
+from your database.
+
+Lets look at an example:
+
+[source,java]
+----
+Account account = ...
+Contact president = ...
+Contact marketing = ...
+
+Account anotherAccount = ...
+Contact sales = ...
+Asset someAsset = ...
+
+// build the tree
+SObjectTree request = new SObjectTree();
+request.addObject(account).addChildren(president, marketing);
+request.addObject(anotherAccount).addChild(sales).addChild(someAsset);
+
+final SObjectTree response = template.requestBody("salesforce:composite-tree", tree, SObjectTree.class);
+final Map<Boolean, List<SObjectNode>> result = response.allNodes()
+                                                   .collect(Collectors.groupingBy(SObjectNode::hasErrors));
+
+final List<SObjectNode> withErrors = result.get(true);
+final List<SObjectNode> succeeded = result.get(false);
+
+final String firstId = succeeded.get(0).getId();
+----
+
+==== Composite Batch [[composite-batch]]
+
+`composite-batch`
+
+Submit a composition of requests in batch. Executes up to 25 sub-requests in a single request.
+
+|===
+| Parameter | Type | Description | Default | Required
+
+| Body | `SObjectBatch`  | Contains sub-requests to be executed. | | x
+|===
+
+*Output*
+
+Type: `SObjectBatchResponse`
+
+The Composite API batch operation allows you to accumulate multiple requests in a batch and then
+submit them in one go, saving the round trip cost of multiple individual requests. Each response is then received in a
+list of responses with the order preserved, so that the n-th requests response is in the n-th place of the response.
+
+[NOTE]
+====
+The results can vary from API to API so the result of each sub-request (`SObjectBatchResult.result`) is given as a `java.lang.Object`. In most cases
+the result will be a `java.util.Map` with string keys and values or other `java.util.Map` as value. Requests are made in JSON format and hold some type information (i.e. it is known what values are strings and what values are numbers).
+====
+
+Lets look at an example:
+
+[source,java]
+----
+final String acountId = ...
+final SObjectBatch batch = new SObjectBatch("53.0");
+
+final Account updates = new Account();
+updates.setName("NewName");
+batch.addUpdate("Account", accountId, updates);
+
+final Account newAccount = new Account();
+newAccount.setName("Account created from Composite batch API");
+batch.addCreate(newAccount);
+
+batch.addGet("Account", accountId, "Name", "BillingPostalCode");
+
+batch.addDelete("Account", accountId);
+
+final SObjectBatchResponse response = template.requestBody("salesforce:composite-batch", batch, SObjectBatchResponse.class);
+
+boolean hasErrors = response.hasErrors(); // if any of the requests has resulted in either 4xx or 5xx HTTP status
+final List<SObjectBatchResult> results = response.getResults(); // results of three operations sent in batch
+
+final SObjectBatchResult updateResult = results.get(0); // update result
+final int updateStatus = updateResult.getStatusCode(); // probably 204
+final Object updateResultData = updateResult.getResult(); // probably null
+
+final SObjectBatchResult createResult = results.get(1); // create result
+@SuppressWarnings("unchecked")
+final Map<String, Object> createData = (Map<String, Object>) createResult.getResult();
+final String newAccountId = createData.get("id"); // id of the new account, this is for JSON, for XML it would be createData.get("Result").get("id")
+
+final SObjectBatchResult retrieveResult = results.get(2); // retrieve result
+@SuppressWarnings("unchecked")
+final Map<String, Object> retrieveData = (Map<String, Object>) retrieveResult.getResult();
+final String accountName = retrieveData.get("Name"); // Name of the retrieved account, this is for JSON, for XML it would be createData.get("Account").get("Name")
+final String accountBillingPostalCode = retrieveData.get("BillingPostalCode"); // Name of the retrieved account, this is for JSON, for XML it would be createData.get("Account").get("BillingPostalCode")
+
+final SObjectBatchResult deleteResult = results.get(3); // delete result
+final int updateStatus = deleteResult.getStatusCode(); // probably 204
+final Object updateResultData = deleteResult.getResult(); // probably null
+----
+
+==== Retrieve Multiple Records with Fewer Round-Trips [[compositeRetrieveSObjectCollections]]
+
+`compositeRetrieveSObjectCollections`
+
+Retrieve one or more records of the same object type.
+
+|===
+| Parameter | Type | Description | Default | Required
+
+| ids | List of String or comma-separated string | A list of one or more IDs of the objects to return. All IDs must belong to the same object type. | | x
+| fields | List of String or comma-separated string | A list of fields to include in the response. The field names you specify must be valid, and you must have read-level permissions to each field. | | x
+| sObjectName | String | Type of SObject, e.g. `Account` | | x
+| sObjectClass | String | Fully-qualified class name of DTO class to use for deserializing the response. | | Required if `sObjectName` parameter does not resolve to a class that exists in the package specified by the `package` option.
+|===
+
+*Output*
+
+Type: `List` of class determined by `sObjectName` or `sObjectClass` header
+
+
+==== Create SObject Collections [[compositeCreateSObjectCollections]]
+
+`compositeCreateSObjectCollections`
+
+Add up to 200 records. Mixed SObject types is supported.
+|===
+| Parameter | Type | Description| Default| Required
+
+| Body | List of `SObject` | A list of SObjects to create | | x
+| `allOrNone` | boolean | Indicates whether to roll back the entire request when the creation of any object fails (true) or to continue with the independent creation of other objects in the request. | false |
+|===
+
+*Output*
+
+Type: `List<SaveSObjectResult>`
+
+==== Update SObject Collections [[compositeUpdateSObjectCollections]]
+
+`compositeUpdateSObjectCollections`
+
+Update up to 200 records. Mixed SObject types is supported.
+|===
+| Parameter | Type | Description | Default | Required
+
+| Body | List of `SObject` | A list of SObjects to update | | x
+| `allOrNone` | `boolean` | Indicates whether to roll back the entire request when the update of any object fails (true) or to continue with the independent update of other objects in the request. | false |
+|===
+
+*Output*
+
+Type: `List<SaveSObjectResult>`
+
+==== Upsert SObject Collections [[compositeUpsertSObjectCollections]]
+
+`compositeUpsertSObjectCollections`
+
+Create or update (upsert) up to 200 records based on an external ID field. Mixed SObject types is not supported.
+|===
+| Parameter | Type | Description | Default | Required
+
+| Body | List of `SObject` | A list of SObjects to upsert | | x
+| `allOrNone` | `boolean` |  Indicates whether to roll back the entire request when the upsert of any object fails (true) or to continue with the independent upsert of other objects in the request. | false |
+| `sObjectName` | `String` | Type of SObject, e.g. `Account` | | x
+| `sObjectIdName` | `String` | Name of External ID field | | x
+|===
+
+*Output*
+
+Type: `List<UpsertSObjectResult>`
+
+==== Delete SObject Collections [[compositeDeleteSObjectCollections]]
+
+`compositeDeleteSObjectCollections`
+
+Delete up to 200 records. Mixed SObject types is supported.
+
+|===
+| Parameter | Type | Description | Default | Required
+
+| `sObjectIds` or request body | List of String or comma-separated string | A list of up to 200 IDs of objects to be deleted. | | x
+| `allOrNone` | boolean | Indicates whether to roll back the entire request when the deletion of any object fails (true) or to continue with the independent deletion of other objects in the request. | false |
+|===
+
+*Output*
+
+Type: `List<DeleteSObjectResult>`
+
+
+=== Apex REST API [[ApexRESTAPI]]
+
+==== Invoke an Apex REST Web Service method [[apexCall]]
+
+`apexCall`
+
+You can https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_rest_intro.htm[expose your Apex class and methods]
+so that external applications can access your code and your application through the REST architecture.
+
+The URI format for invoking Apex REST is:
+
+----
+salesforce:apexCall[/yourApexRestUrl][?options]
+----
+
+You can supply the apexUrl either in the endpoint (see above), or as the `apexUrl` option as listed in the table below.
+In either case the Apex URL can contain placeholders in the format of `\{headerName}`. E.g., for the Apex URL `MyApexClass/\{id}`,
+the value of the header named `id` will be used to replace the placeholder.
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| Body | `Map<String, Object>` if `GET`, otherwise `String` or `InputStream`| In the case of a `GET`, the body (`Map` instance)
+is transformed into query parameters. For other HTTP methods, the body is used for the HTTP body. | |
+| `apexUrl` | `String` | The portion of the endpoint URL after `https://instance.salesforce.com/services/apexrest/`, e.g., 'MyApexClass/' | | Yes, unless supplied in endpoint
+| `apexMethod` | `String` | The HTTP method (e.g. `GET`, `POST`) to use. | `GET` |
+| `rawPayload` | `Boolean` | If true, Camel will not serialize the request or response bodies. | false |
+| Header: `apexQueryParam.[paramName]` | Object | Headers that override apex parameters passed in the endpoint. |  |
+| `sObjectName` | `String` | Name of sObject (e.g. `Merchandise__c`) used to deserialize the response |  | If `rawPayload` is false and `sObjectClass` not supplied
+| `sObjectClass` | `String` | Fully qualified class name used to deserialize the response |  | If `rawPayload` is false and `sObjectName` not supplied
+|===
+
+*Output*
+
+Type: Instance of class supplied in `sObjectClass` input header.
+
+
+=== Bulk 2.0 API [[Bulk2API]]
+
+The Bulk 2.0 API has a simplified model over the original Bulk API. Use it to quickly load a large
+amount of data into salesforce, or query a large amount of data out of salesforce. Data must be
+provided in CSV format, usually via an `InputStream` instance. PK chunking is performed automatically. The minimum API version for Bulk 2.0
+is v41.0. The minimum API version for Bulk Queries is v47.0. DTO classes mentioned below are from the
+`org.apache.camel.component.salesforce.api.dto.bulkv2` package. The following operations are supported:
+
+* <<bulk2CreateJob,bulk2CreateJob>> - Creates a bulk ingest job.
+* <<bulk2CreateBatch,bulk2CreateBatch>> - Adds a batch of data to an ingest job.
+* <<bulk2CloseJob,bulk2CloseJob>> - Closes an ingest job.
+* <<bulk2AbortJob,bulk2AbortJob>> - Aborts an ingest job.
+* <<bulk2DeleteJob,bulk2DeleteJob>> - Deletes an ingest job.
+* <<bulk2GetSuccessfulResults,bulk2GetSuccessfulResults>> - Gets successful results for an ingest job.
+* <<bulk2GetFailedResults,bulk2GetFailedResults>> - Gets failed results for an ingest job.
+* <<bulk2GetUnprocessedRecords,bulk2GetUnprocessedRecords>> - Gets unprocessed records for an ingest job.
+* <<bulk2GetJob,bulk2GetJob>> - Gets an ingest Job.
+* <<bulk2GetAllJobs,bulk2GetAllJobs>> - Gets all ingest jobs.
+* <<bulk2CreateQueryJob,bulk2CreateQueryJob>> - Creates a query job.
+* <<bulk2GetQueryJobResults,bulk2GetQueryJobResults>> - Gets query job results.
+* <<bulk2AbortQueryJob,bulk2AbortQueryJob>> - Aborts a query job.
+* <<bulk2DeleteQueryJob,bulk2DeleteQueryJob>> - Deletes a query job.
+* <<bulk2GetQueryJob,bulk2GetQueryJob>> - Gets a query job.
+* <<bulk2GetAllQueryJobs,bulk2GetAllQueryJobs>> - Gets all query jobs.
+
+==== Create a Job [[bulk2CreateJob]]
+
+`bulk2CreateJob`
+Creates a bulk ingest job.
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| Body | `Job` | Job to create | | x
+|===
+
+*Output*
+
+Type: `Job`
+
+==== Upload a Batch of Job Data [[bulk2CreateBatch]]
+
+`bulk2CreateBatch`
+
+Adds a batch of data to an ingest job.
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| Body | `InputStream` or `String` | CSV data. The first row must contain headers. | | Required if `jobId` not supplied
+| `jobId` | `String` | Id of Job to create batch under | | x
+|===
+
+==== Close a Job [[bulk2CloseJob]]
+
+`bulk2CloseJob`
+
+Closes an ingest job. You must close the job in order for it to be processed or
+aborted/deleted.
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `jobId` | `String` | Id of Job to close | | x
+|===
+
+*Output*
+
+Type: `Job`
+
+==== Abort a Job [[bulk2AbortJob]]
+
+`bulk2AbortJob`
+
+Aborts an ingest job.
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `jobId` | `String` | Id of Job to abort | | x
+|===
+
+*Output*
+
+Type: `Job`
+
+==== Delete a Job [[bulk2DeleteJob]]
+
+`bulk2DeleteJob`
+
+Deletes an ingest job.
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `jobId` | `String` | Id of Job to delete | | x
+|===
+
+==== Get Job Successful Record Results [[bulk2GetSuccessfulResults]]
+
+`bulk2GetSuccessfulResults`
+
+Gets successful results for an ingest job.
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `jobId` | `String` | Id of Job to get results for | | x
+|===
+
+*Output*
+
+Type: `InputStream` +
+Contents: CSV data
+
+==== Get Job Failed Record Results [[bulk2GetFailedResults]]
+
+`bulk2GetFailedResults`
+
+Gets failed results for an ingest job.
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `jobId` | `String` | Id of Job to get results for | | x
+|===
+
+*Output*
+
+Type: `InputStream` +
+Contents: CSV data
+
+==== Get Job Unprocessed Record Results [[bulk2GetUnprocessedRecords]]
+
+`bulk2GetUnprocessedRecords`
+
+Gets unprocessed records for an ingest job.
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `jobId` | `String` | Id of Job to get records for | | x
+|===
+
+*Output*
+
+Type: `InputStream`
+Contents: CSV data
+
+==== Get Job Info [[bulk2GetJob]]
+
+`bulk2GetJob`
+
+Gets an ingest Job.
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| Body | `Job` | Will use Id of supplied Job to retrieve Job | | Required if `jobId` not supplied
+| `jobId` | `String` | Id of Job to retrieve | | Required if `Job` not supplied in body
+|===
+
+*Output*
+
+Type: `Job`
+
+==== Get All Jobs [[bulk2GetAllJobs]]
+
+`bulk2GetAllJobs`
+
+Gets all ingest jobs.
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `queryLocator` | `String` | Used in subsequent calls if results span multiple pages | |
+|===
+
+*Output*
+
+Type: `Jobs`
+
+If the `done` property of the `Jobs` instance
+is false, there are additional pages to fetch, and the `nextRecordsUrl` property contains the value
+to be set in the `queryLocator` parameter on subsequent calls.
+
+==== Create a Query Job [[bulk2CreateQueryJob]]
+
+`bulk2CreateQueryJob`
+
+Gets a query job.
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| Body | `QueryJob` | QueryJob to create | | x
+|===
+
+*Output*
+
+Type: `QueryJob`
+
+==== Get Results for a Query Job [[bulk2GetQueryJobResults]]
+
+`bulk2GetQueryJobResults`
+
+Get bulk query job results. `jobId` parameter is required. Accepts
+`maxRecords` and `locator` parameters.
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `jobId` | `String` | Id of Job to get results for | | x
+| `maxRecords` | `Integer` | Id of Job to get results for | |
+| `locator` | `locator` | Value to use for subsequent calls | |
+|===
+
+*Output*
+
+Type: `InputStream`
+Contents: CSV data
+
+Response message headers include `Sforce-NumberOfRecords` and
+`Sforce-Locator` headers. The value of `Sforce-Locator` can be passed into subsequent calls via the
+`locator` parameter.
+
+==== Abort a Query Job [[bulk2AbortQueryJob]]
+
+`bulk2AbortQueryJob`
+
+Aborts a query job.
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `jobId` | `String` | Id of Job to abort | | x
+|===
+
+*Output*
+
+Type: `QueryJob`
+
+==== Delete a Query Job [[bulk2DeleteQueryJob]]
+
+`bulk2DeleteQueryJob`
+
+Deletes a query job.
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `jobId` | `String` | Id of Job to delete | | x
+|===
+
+==== Get Information About a Query Job [[bulk2GetQueryJob]]
+
+`bulk2GetQueryJob`
+
+Gets a query job.
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `jobId` | `String` | Id of Job to retrieve | | x
+|===
+
+*Output*
+
+Type: `QueryJob`
+
+==== Get Information About All Query Jobs [[bulk2GetAllQueryJobs]]
+
+`bulk2GetAllQueryJobs`
+
+Gets all query jobs.
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `queryLocator` | `String` | Used in subsequent calls if results span multiple pages | |
+|===
+
+*Output*
+
+Type: `QueryJobs`
+
+If the `done` property of the `QueryJobs` instance
+is false, there are additional pages to fetch, and the `nextRecordsUrl` property contains the value
+to be set in the `queryLocator` parameter on subsequent calls.
+
+=== Bulk (original) API  [[BulkAPI]]
+
+Producer endpoints can use the following APIs. All Job data formats,
+i.e. xml, csv, zip/xml, and zip/csv are supported. +
+ The request and response have to be marshalled/unmarshalled by the
+route. Usually the request will be some stream source like a CSV file,
+ and the response may also be saved to a file to be correlated with the
+request.
+
+The following operations are supported:
+
+* <<createJob,createJob>> - Creates a Salesforce Bulk Job.
+* <<getJob,getJob>> - Gets a Job using its Salesforce Id
+* <<closeJob,closeJob>> - Closes a Job
+* <<abortJob,abortJob>> - Aborts a Job
+* <<createBatch,createBatch>> - Submits a Batch within a Bulk Job
+* <<getBatch,getBatch>> - Gets a Batch using Id
+* <<getAllBatches,getAllBatches>> - Gets all Batches for a Bulk Job Id
+* <<getRequest,getRequest>> - Gets Request data (XML/CSV) for a Batch
+* <<getResults,getResults>> - Gets the results of the Batch when its complete
+* <<createBatchQuery,createBatchQuery>> - Creates a Batch from an SOQL query
+* <<getQueryResultIds,getQueryResultIds>> - Gets a list of Result Ids for a Batch Query
+* <<getQueryResult,getQueryResult>> - Gets results for a Result Id
+
+==== Create a Job [[createJob]]
+
+`createJob`
+
+Creates a Salesforce Bulk Job. PK Chunking
+is supported via the pkChunking* options. See an explanation https://developer.salesforce.com/docs/atlas.en-us.api_asynch.meta/api_asynch/async_api_headers_enable_pk_chunking.htm[here].
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| Body | `JobInfo` | Job to create | | x
+| `pkChunking` | `Boolean` | Whether to use PK Chunking | false |
+| `pkChunkingChunkSize` | `Integer` | | |
+| `pkChunkingStartRow` | `Integer` | |  |
+| `pkChunkingParent` | `String` | | |
+
+|===
+
+*Output*
+
+Type: `JobInfo`
+
+==== Get Job Details [[getJob]]
+
+`getJob`
+
+Gets a Job
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `jobId` | `String` | Id of Job to get | | Required if body not supplied
+| Body | `JobInfo` | `JobInfo` instance from which Id will be used | | Required if `jobId` not supplied
+|===
+
+*Output*
+
+Type: `JobInfo`
+
+==== Close a Job [[closeJob]]
+
+`closeJob`
+
+Closes a Job
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `jobId` | `String` | Id of Job | | Required if body not supplied
+| Body | `JobInfo` | `JobInfo` instance from which Id will be used | | Required if `jobId` not supplied
+|===
+
+*Output*
+
+Type: `JobInfo`
+
+==== Abort a Job [[abortJob]]
+
+`abortJob`
+
+Aborts a Job
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `jobId` | `String` | Id of Job | | Required if body not supplied
+| Body | `JobInfo` | `JobInfo` instance from which Id will be used | | Required if `jobId` not supplied
+|===
+
+*Output*
+
+Type: `JobInfo`
+
+==== Add a Batch to a Job [[createBatch]]
+
+`createBatch`
+
+Submits a Batch within a Bulk Job
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `jobId` | `String` | Id of Job | | x
+| `contentType` | `String` | Content type of body. Can be XML, CSV, ZIP_XML or ZIP_CSV  | | x
+| `Body` | `InputStream` or `String` | Batch data | | x
+|===
+
+*Output*
+
+Type: `BatchInfo`
+
+==== Get Information for a Batch [[getBatch]]
+
+`getBatch`
+
+Get a Batch
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `jobId` | `String` | Id of Job | | Required if body not supplied
+| `batchId` | `String` | Id of Batch | | Required if body not supplied
+| Body | `BatchInfo` | `JobInfo` instance from which `jobId` and `batchId` will be used | | Required if `jobId` and `BatchId` not supplied
+|===
+
+*Output*
+
+Type: `BatchInfo`
+
+==== Get Information for All Batches in a Job [[getAllBatches]]
+
+`getAllBatches`
+
+Gets all Batches for a Bulk Job Id
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `jobId` | `String` | Id of Job | | Required if body not supplied
+| Body | `JobInfo` | `JobInfo` instance from which Id will be used | | Required if `jobId` not supplied
+|===
+
+*Output*
+
+Type: `List<JobInfo>`
+
+==== Get a Batch Request [[getRequest]]
+
+`getRequest`
+
+Gets Request data (XML/CSV) for a Batch
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `jobId` | `String` | Id of Job | | Required if body not supplied
+| `batchId` | `String` | Id of Batch | | Required if body not supplied
+| Body | `BatchInfo` | `JobInfo` instance from which `jobId` and `batchId` will be used | | Required if `jobId` and `BatchId` not supplied
+|===
+
+*Output*
+
+Type: `InputStream`
+
+
+==== Get Batch Results [[getResults]]
+
+`getResults`
+
+Gets the results of the Batch when it's complete
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `jobId` | `String` | Id of Job | | Required if body not supplied
+| `batchId` | `String` | Id of Batch | | Required if body not supplied
+| Body | `BatchInfo` | `JobInfo` instance from which `jobId` and `batchId` will be used | | Required if `jobId` and `BatchId` not supplied
+|===
+
+*Output*
+
+Type: `InputStream`
+
+==== Create Bulk Query Batch [[createBatchQuery]]
+
+`createBatchQuery`
+
+Creates a Batch from an SOQL query
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `jobId` | `String` | Id of Job | | Required if body not supplied
+| `contentType` | `String` | Content type of body. Can be XML, CSV, ZIP_XML or ZIP_CSV | | Required if `JobInfo` instance not supplied in body
+| `sObjectQuery` | `String` | SOQL query to be used for this batch | | Required if not supplied in body
+| Body | `JobInfo` or `String` | Either `JobInfo` instance from which `jobId` and `contentType` will be used, or `String` to be used as the Batch query | | Required `JobInfo` if `jobId` and `contentType` not supplied.
+|===
+
+*Output*
+
+Type: `BatchInfo`
+
+==== Get Batch Results [[getQueryResultIds]]
+
+`getQueryResultIds`
+
+Gets a list of Result Ids for a Batch Query
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `jobId` | `String` | Id of Job | | Required if body not supplied
+| `batchId` | `String` | Id of Batch | | Required if body not supplied
+| Body | `BatchInfo` | `JobInfo` instance from which `jobId` and `batchId` will be used | | Required if `jobId` and `BatchId` not supplied
+|===
+
+*Output*
+
+Type: `List<String>`
+
+
+==== Get Bulk Query Results [[getQueryResult]]
+
+`getQueryResult`
+
+Gets results for a Result Id
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `jobId` | `String` | Id of Job | | Required if body not supplied
+| `batchId` | `String` | Id of Batch | | Required if body not supplied
+| `resultId` | `String` | Id of Result | | If not passed in body
+| Body | `BatchInfo` or `String` | `JobInfo` instance from which `jobId` and `batchId` will be used.
+Otherwise can be a `String` containing the `resultId` | | `BatchInfo` Required if `jobId` and `BatchId` not supplied
+|===
+
+*Output*
+
+Type: `InputStream`
+
+For example, the following producer endpoint uses the createBatch API to
+create a Job Batch. The in message must contain a body that can be converted into an
+`InputStream` (usually UTF-8 CSV or XML content from a file, etc.) and
+header fields 'jobId' for the Job and 'contentType' for the Job content
+type, which can be XML, CSV, ZIP_XML or ZIP_CSV. The put message body
+will contain `BatchInfo` on success, or throw a `SalesforceException` on
+error.
+
+[source,java]
+----
+...to("salesforce:createBatch")..
+----
+
+=== Streaming API [[StreamingAPI]]
+
+The Streaming API enables streaming of events using push technology and provides a subscription
+mechanism for receiving events in near real time. The Streaming API subscription mechanism supports
+multiple types of events, including PushTopic events, generic events, platform events, and Change
+Data Capture events.
+
+==== Push Topics
+
+The URI format for consuming Push Topics is:
+----
+salesforce:<topic_name>[?options]
+----
+
+To create and subscribe to a topic
+
+[source,java]
+----
+from("salesforce:CamelTestTopic?notifyForFields=ALL&notifyForOperations=ALL&sObjectName=Merchandise__c&updateTopic=true&sObjectQuery=SELECT Id, Name FROM Merchandise__c")...
+----
+
+To subscribe to an existing topic
+
+[source,java]
+----
+from("salesforce:CamelTestTopic&sObjectName=Merchandise__c")...
+----
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `sObjectName` | `String` | SObject to monitor  | | x
+| `sObjectQuery` | `String` | SOQL query used to create Push Topic  | | Required for creating new topics
+| `updateTopic` | `Boolean` | Whether to update an existing Push Topic if exists | false |
+| `notifyForFields` | `NotifyForFieldsEnum` | Specifies how the record is evaluated against the PushTopic query. | Referenced |
+| `notifyForOperationCreate` | `Boolean` | Whether a create operation should generate a notification. | false |
+| `notifyForOperationDelete` | `Boolean` | Whether a delete operation should generate a notification. | false |
+| `notifyForOperationUndelete` | `Boolean` | Whether an undelete operation should generate a notification. | false |
+| `notifyForOperationUpdate` | `Boolean` | Whether an update operation should generate a notification. | false |
+| `notifyForOperations` | `NotifyForOperationsEnum` | Whether an update operation should generate a notification. Only for use in API version < 29.0 | All |
+| `replayId` | `int` | The replayId value to use when subscribing.|  |
+| `defaultReplayId` | `int` | Default replayId setting if no value is found in initialReplayIdMap. | -1 |
+| `fallBackReplayId` | `int` | ReplayId to fall back to after an Invalid Replay Id response. | -1 |
+
+|===
+
+*Output*
+
+Type: Class passed via `sObjectName` parameter
+
+==== Platform Events
+
+To emit a platform event use the <<createSObject,createSObject>> operation, passing an instance of a platform event, e.g. `Order_Event__e`.
+
+The URI format for consuming platform events is:
+----
+salesforce:event/<event_name>
+----
+
+For example, to receive platform events use for the event type `Order_Event__e`:
+
+[source,java]
+----
+from("salesforce:event/Order_Event__e")
+----
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `rawPayload` | `Boolean` | If false, operation returns a `PlatformEvent`, otherwise returns the raw Bayeux Message | false |
+| `replayId` | `int` | The replayId value to use when subscribing.|  |
+| `defaultReplayId` | `int` | Default replayId setting if no value is found in initialReplayIdMap. | -1 |
+| `fallBackReplayId` | `int` | ReplayId to fall back to after an Invalid Replay Id response. | -1 |
+|===
+
+*Output*
+
+Type: `PlatformEvent` or `org.cometd.bayeux.Message`
+
+==== Change Data Capture Events
+
+Change Data Capture (CDC) allows you to receive near-real-time changes of Salesforce records, and synchronize corresponding records in an external data store. Change Data Capture publishes change events, which represent changes to Salesforce records. Changes include creation of a new record, updates to an existing record, deletion of a record, and undeletion of a record.
+
+The URI format to consume CDC events is as follows:
+
+All Selected Entities
+----
+salesforce:data/ChangeEvents
+----
+
+Standard Objects
+----
+salesforce:data/<Standard_Object_Name>ChangeEvent
+----
+
+Custom Objects
+----
+salesforce:data/<Custom_Object_Name>__ChangeEvent
+----
+
+Here are a few examples
+[source,java]
+----
+from("salesforce:data/ChangeEvents?replayId=-1").log("being notified of all change events")
+from("salesforce:data/AccountChangeEvent?replayId=-1").log("being notified of change events for Account records")
+from("salesforce:data/Employee__ChangeEvent?replayId=-1").log("being notified of change events for Employee__c custom object")
+----
+
+More details about how to use the Camel Salesforce component change data capture capabilities could be found in the https://github.com/apache/camel/tree/main/components/camel-salesforce/camel-salesforce-component/src/test/java/org/apache/camel/component/salesforce/ChangeEventsConsumerIntegrationTest.java[ChangeEventsConsumerIntegrationTest].
+
+The https://developer.salesforce.com/docs/atlas.en-us.change_data_capture.meta/change_data_capture/cdc_intro.htm[Salesforce developer guide] is a good fit to better know the subtleties of implementing a change data capture integration application.
+The dynamic nature of change event body fields, high level replication steps as well as security considerations could be of interest.
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `rawPayload` | `Boolean` | If false, operation returns a `Map<String, Object>`, otherwise returns the raw Bayeux `Message` | false |
+| `replayId` | `int` | The replayId value to use when subscribing.|  |
+| `defaultReplayId` | `int` | Default replayId setting if no value is found in initialReplayIdMap. | -1 |
+| `fallBackReplayId` | `int` | ReplayId to fall back to after an Invalid Replay Id response. | -1 |
+|===
+
+*Output*
+
+Type: `PlatformEvent` or `org.cometd.bayeux.Message`
+
+Headers
+|===
+| Name | Description
+
+| `CamelSalesforceChangeType` | `CREATE`, `UPDATE`, `DELETE` or `UNDELETE`
+|===
+
+=== Reports API [[ReportsAPI]]
+
+* <<getRecentReports,getRecentReports>> - Gets up to 200 of the reports you most recently viewed.
+* <<getReportDescription,getReportDescription>> - Retrieves report description.
+* <<executeSyncReport,executeSyncReport>> - Runs a report synchronously.
+* <<executeAsyncReport,executeAsyncReport>> - Runs a report asynchronously.
+* <<getReportInstances,getReportInstances>> - Returns a list of instances for a report that you requested to be run asynchronously.
+* <<getReportResults,getReportResults>> - Retrieves results for an instance of a report run asynchronously.
+
+==== Report List [[getRecentReports]]
+
+`getRecentReports`
+
+Gets up to 200 of the reports you most recently viewed.
+
+*Output*
+
+Type: `List<RecentReport>`
+
+==== Describe Report [[getReportDescription]]
+
+`getReportDescription`
+
+Retrieves the report, report type, and related metadata for a report, either in a tabular or summary or matrix format.
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `reportId` | `String` | Id of Report | | Required if not supplied in body
+| Body | `String` | Id of Report | | Required if not supplied in `reportId` parameter
+|===
+
+*Output*
+
+Type: `ReportDescription`
+
+==== Execute Sync [[executeSyncReport]]
+
+`executeSyncReport`
+
+Runs a report synchronously with or without changing filters and returns the latest summary data.
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `reportId` | `String` | Id of Report | | Required if not supplied in body
+| `includeDetails` | `Boolean` | Whether to include details | false|
+| `reportMetadata` | `ReportMetadata` | Optionally, pass ReportMetadata here instead of body | |
+| Body | `ReportMetadata` | If supplied, will use instead of `reportId` | | Required if not supplied in `reportId` parameter
+|===
+
+*Output*
+
+Type: `AbstractReportResultsBase`
+
+==== Execute Async [[executeAsyncReport]]
+
+`executeAsyncReport`
+
+Runs an instance of a report asynchronously with or without filters and returns the summary data with or without details.
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `reportId` | `String` | Id of Report | | Required if not supplied in body
+| `includeDetails` | `Boolean` | Whether to include details | false|
+| `reportMetadata` | `ReportMetadata` | Optionally, pass ReportMetadata here instead of body | |
+| Body | `ReportMetadata` | If supplied, will use instead of `reportId` parameter  | | Required if not supplied in `reportId` parameter
+|===
+
+*Output*
+
+Type: `ReportInstance`
+
+==== Instances List [[getReportInstances]]
+
+`getReportInstances`
+
+Returns a list of instances for a report that you requested to be run asynchronously. Each item in the list is treated as a separate instance of the report.
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `reportId` | `String` | Id of Report | | Required if not supplied in body
+| Body | `String` | If supplied, will use instead of `reportId` parameter  | | Required if not supplied in `reportId` parameter
+|===
+
+*Output*
+
+Type: `List<ReportInstance>`
+
+==== Instance Results [[getReportResults]]
+
+`getReportResults`
+
+Contains the results of running a report.
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `reportId` | `String` | Id of Report | | Required if not supplied in body
+| `instanceId` | `String` | Id of Report instance | | x
+| Body | `String` | If supplied, will use instead of `reportId` parameter  | | Required if not supplied in `reportId` parameter
+|===
+
+*Output*
+
+Type: `AbstractReportResultsBase`
+
+== Miscellaneous Operations
+
+* <<raw,raw>> - Send requests to salesforce and have full, raw control over endpoint, parameters, body, etc.
+
+=== Raw [[raw]]
+
+`raw`
+
+Sends HTTP requests to salesforce with full, raw control of all aspects of the call. Any serialization or deserialization of request and response bodies must be performed in the route. The `Content-Type` HTTP
 header will be automatically set based on the `format` option, but this can be overridden with the `rawHttpHeaders` option.
 
 |===
 | Parameter | Type | Description| Default| Required
 
-| request body | `String` or `InputStream` | Body of the HTTP request | |
-| rawPath | `String` | The portion of the endpoint URL after the domain name, e.g., '/services/data/v51.0/sobjects/Account/' | | x
-| rawMethod | `String` | The HTTP method | | x
-| rawQueryParameters | `String` | Comma separated list of message headers to include as query parameters. Do not url-encode values as this will be done automatically. | |
-| rawHttpHeaders | `String` | Comma separated list of message headers to include as HTTP headers | |
+| Body | `String` or `InputStream` | Body of the HTTP request | |
+| `rawPath` | `String` | The portion of the endpoint URL after the domain name, e.g., '/services/data/v51.0/sobjects/Account/' | | x
+| `rawMethod` | `String` | The HTTP method | | x
+| `rawQueryParameters` | `String` | Comma separated list of message headers to include as query parameters. Do not url-encode values as this will be done automatically. | |
+| `rawHttpHeaders` | `String` | Comma separated list of message headers to include as HTTP headers | |
 |===
 
-=== Query example
+*Output*
+
+Type: `InputStream`
+
+==== Query example
 
 In this example we'll send a query to the REST API. The query must be passed in a URL parameter called "q", so we'll create a message header called q and tell the
 raw operation to include that message header as a URL parameter:
@@ -715,7 +1784,7 @@ from("direct:queryExample")
   // deserialize JSON results or handle in some other way
 ----
 
-=== SObject example
+==== SObject example
 
 In this example, we'll pass a Contact the REST API in a `create` operation. Since the `raw` operation does not perform any serialization,
 we make sure to pass XML in the message body
@@ -734,69 +1803,44 @@ The response is:
 </Result>
 ----
 
-== Using Composite SObject Collections
+== Uploading a document to a ContentWorkspace
 
-The SObject Collections API executes actions on multiple records in one request. Use sObject Collections to reduce the number of round-trips between the client and server. The entire request counts as a single call toward your API limits. This resource is available in API version 42.0 and later. `SObject` records (aka DTOs) supplied to these operations must be instances of subclasses of `AbstractDescribedSObjectBase`. See the Maven Plugin section for information on generating these DTO classes. These operations serialize supplied DTOs to JSON.
-
-=== compositeRetrieveSObjectCollections
-Retrieve one or more records of the same object type.
-|===
-| Parameter | Type | Description | Default | Required
-
-| ids | List of String or comma-separated string | A list of one or more IDs of the objects to return. All IDs must belong to the same object type. | | x
-| fields | List of String or comma-separated string | A list of fields to include in the response. The field names you specify must be valid, and you must have read-level permissions to each field. | | x
-| sObjectName | String | Type of SObject, e.g. `Account` | | x
-| sObjectClass | String | Fully-qualified class name of DTO class to use for deserializing the response. | | Required if `sObjectName` parameter does not resolve to a class that exists in the package specified by the `package` option.
-|===
-
-=== compositeCreateSObjectCollections
-Add up to 200 records, returning a list of SaveSObjectResult objects. Mixed SObject types is supported.
-|===
-| Parameter | Type | Description| Default| Required
-
-| request body | List of `SObject` | A list of SObjects to create | | x
-| allOrNone | boolean | Indicates whether to roll back the entire request when the creation of any object fails (true) or to continue with the independent creation of other objects in the request. | false |
-|===
-
-=== compositeUpdateSObjectCollections
-Update up to 200 records, returning a list of SaveSObjectResult objects. Mixed SObject types is supported.
-|===
-| Parameter | Type | Description | Default | Required
-
-| request body | List of `SObject` | A list of SObjects to update | | x
-| allOrNone | boolean | Indicates whether to roll back the entire request when the update of any object fails (true) or to continue with the independent update of other objects in the request. | false |
-|===
-
-=== compositeUpsertSObjectCollections
-Create or update (upsert) up to 200 records based on an external ID field, returning a list of UpsertSObjectResult
-objects. Mixed SObject types is not supported.
-|===
-| Parameter | Type | Description | Default | Required
-
-| request body | List of `SObject` | A list of SObjects to upsert | | x
-| allOrNone | boolean |  Indicates whether to roll back the entire request when the upsert of any object fails (true) or to continue with the independent upsert of other objects in the request. | false |
-| sObjectName | String | Type of SObject, e.g. `Account` | | x
-| sObjectIdName | String | Name of External ID field | | x
-|===
-
-=== compositeDeleteSObjectCollections
-Delete up to 200 records, returning a list of DeleteSObjectResult objects. Mixed SObject types is supported.
-|===
-| Parameter | Type | Description | Default | Required
-
-| `sObjectIds` or request body | List of String or comma-separated string | A list of up to 200 IDs of objects to be deleted. | | x
-| `allOrNone` | boolean | Indicates whether to roll back the entire request when the deletion of any object fails (true) or to continue with the independent deletion of other objects in the request. | false |
-|===
-
-
-==  Sending null values to salesforce
-
-By default, SObject fields with null values are not sent to salesforce. In order to
-send null values to salesforce, use the `fieldsToNull` property, as follows:
+Create the ContentVersion in Java, using a Processor instance:
 
 [source,java]
 ----
-accountSObject.getFieldsToNull().add("Site");
+public class ContentProcessor implements Processor {
+    public void process(Exchange exchange) throws Exception {
+        Message message = exchange.getIn();
+
+        ContentVersion cv = new ContentVersion();
+        ContentWorkspace cw = getWorkspace(exchange);
+        cv.setFirstPublishLocationId(cw.getId());
+        cv.setTitle("test document");
+        cv.setPathOnClient("test_doc.html");
+        byte[] document = message.getBody(byte[].class);
+        ObjectMapper mapper = new ObjectMapper();
+        String enc = mapper.convertValue(document, String.class);
+        cv.setVersionDataUrl(enc);
+        message.setBody(cv);
+    }
+
+    protected ContentWorkspace getWorkSpace(Exchange exchange) {
+        // Look up the content workspace somehow, maybe use enrich() to add it to a
+        // header that can be extracted here
+        ....
+    }
+}
+----
+
+Give the output from the processor to the Salesforce component:
+
+[source,java]
+----
+from("file:///home/camel/library")
+    .to(new ContentProcessor())     // convert bytes from the file into a ContentVersion SObject
+                                    // for the salesforce component
+    .to("salesforce:createSObject");
 ----
 
 == Generating SOQL query strings
@@ -810,9 +1854,22 @@ _Account_ SObject you can simply generate the SOQL SELECT by invoking:
 String allCustomFieldsQuery = QueryHelper.queryToFetchFilteredFieldsOf(new Account(), SObjectField::isCustom);
 ----
 
-== Camel Salesforce Maven Plugin
+== Camel Salesforce Maven Plugin [[MavenPlugin]]
 
-This Maven plugin generates DTOs for the Camel. 
+This Maven plugin generates DTOs for the Camel.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-salesforce</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 For obvious security reasons it is recommended that the clientId,
 clientSecret, userName and password fields be not set in the pom.xml.  

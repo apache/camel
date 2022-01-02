@@ -139,6 +139,10 @@ public class LogProcessor extends AsyncProcessorSupport implements Traceable, Id
         this.routeId = routeId;
     }
 
+    public String getMessage() {
+        return message;
+    }
+
     public Expression getExpression() {
         return expression;
     }

@@ -466,7 +466,6 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
                 cast(buffer).flip();
                 out.write(buffer.array(), buffer.arrayOffset() + cast(buffer).position(),
                         buffer.arrayOffset() + cast(buffer).limit());
-                // to be compatible with java 8
                 Buffer buf = buffer;
                 cast(buf).clear();
             }

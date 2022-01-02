@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>3.14.0-SNAPSHOT</version>
+        <version>3.15.0-SNAPSHOT</version>
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
 
@@ -34,7 +34,10 @@
     <description>Camel DSL Parent</description>
 
     <modules>
+        <module>camel-endpointdsl</module>
+        <module>camel-componentdsl</module>
         <module>camel-dsl-support</module>
+        <module>camel-endpointdsl-support</module>
         <module>camel-groovy-dsl</module>
         <module>camel-java-joor-dsl</module>
         <module>camel-xml-io-dsl</module>
@@ -42,6 +45,7 @@
         <module>camel-xml-jaxb-dsl-test</module>
         <module>camel-yaml-dsl</module>
         <module>camel-js-dsl</module>
+        <module>camel-jsh-dsl</module>
         <module>camel-kotlin-dsl</module>
         <module>camel-kamelet-main</module>
         <module>camel-jbang</module>

@@ -20,7 +20,7 @@ import org.apache.camel.Experimental
 import org.apache.camel.RuntimeCamelException
 import org.apache.camel.api.management.ManagedResource
 import org.apache.camel.builder.endpoint.EndpointRouteBuilder
-import org.apache.camel.dsl.support.EndpointRouteBuilderLoaderSupport
+import org.apache.camel.endpointdsl.support.EndpointRouteBuilderLoaderSupport
 import org.apache.camel.spi.annotations.RoutesLoader
 import org.slf4j.LoggerFactory
 import java.io.Reader
@@ -32,7 +32,7 @@ import kotlin.script.experimental.jvmhost.createJvmCompilationConfigurationFromT
 @Experimental
 @ManagedResource(description = "Managed KotlinRoutesBuilderLoader")
 @RoutesLoader(EXTENSION)
-class KotlinRoutesBuilderLoader : EndpointRouteBuilderLoaderSupport(EXTENSION) {
+class KotlinRoutesBuilderLoader : org.apache.camel.endpointdsl.support.EndpointRouteBuilderLoaderSupport(EXTENSION) {
     @Throws(Exception::class)
     override fun doLoadEndpointRouteBuilder(reader: Reader, builder: EndpointRouteBuilder) {
         val host = BasicJvmScriptingHost()
@@ -52,6 +52,7 @@ class KotlinRoutesBuilderLoader : EndpointRouteBuilderLoaderSupport(EXTENSION) {
         // ensure evaluation errors propagation
         when(val rv = result.valueOrNull()?.returnValue) {
             is ResultValue.Error -> throw RuntimeCamelException(rv.error)
+            else -> {} // result is okay
         }
 
         if (result.reports.isNotEmpty()) {

@@ -1,12 +1,12 @@
-= Soroush Component
+= Soroush Component (deprecated)
 :doctitle: Soroush
 :shortname: soroush
 :artifactid: camel-soroush
 :description: Send and receive messages as a Soroush chat bot.
 :since: 3.0
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :component-header: Both producer and consumer are supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/soroush.adoc[opts=optional]
 //Manually maintained attributes
 :camel-spring-boot-name: soroush
 

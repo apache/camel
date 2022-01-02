@@ -224,6 +224,10 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
         parser.addImport(ArrayList.class);
         parser.addAnnotation(SuppressWarnings.class).setLiteralValue("\"unused\"");
         parser.addAnnotation(Generated.class).setLiteralValue("\"" + getClass().getName() + "\"");
+        parser.addMethod().setConstructor(true).setPublic().setName("ModelParser").addParameter("org.apache.camel.spi.Resource", "input").addThrows(IOException.class)
+                .addThrows(XML_PULL_PARSER_EXCEPTION).setBody("super(input);");
+        parser.addMethod().setConstructor(true).setPublic().setName("ModelParser").addParameter("org.apache.camel.spi.Resource", "input").addParameter(String.class, "namespace")
+                .addThrows(IOException.class).addThrows(XML_PULL_PARSER_EXCEPTION).setBody("super(input, namespace);");
         parser.addMethod().setConstructor(true).setPublic().setName("ModelParser").addParameter(InputStream.class, "input").addThrows(IOException.class)
             .addThrows(XML_PULL_PARSER_EXCEPTION).setBody("super(input);");
         parser.addMethod().setConstructor(true).setPublic().setName("ModelParser").addParameter(Reader.class, "reader").addThrows(IOException.class)
