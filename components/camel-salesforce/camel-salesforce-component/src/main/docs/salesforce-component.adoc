@@ -154,7 +154,8 @@ Camel supports the following Salesforce APIs:
 * <<StreamingAPI,Streaming API>>
 * <<ReportsAPI,Reports API>>
 
-=== REST API [[RESTAPI]]
+[[RESTAPI]]
+=== REST API
 
 The following operations are supported:
 
@@ -177,7 +178,7 @@ The following operations are supported:
 * <<queryMore,queryMore>> - Retrieves more results (in case of large number of
 results) using result link returned from the 'query' API.
 * <<queryAll,queryAll>> - Runs a SOQL query. Unlike the query operation, queryAll returns records that are deleted because of a merge or delete. queryAll also returns information about archived task and event records.
-* <<search,search>> - Runs a Salesforce SOSL query.
+* <<sosl_search,search>> - Runs a Salesforce SOSL query.
 * <<apexCall,apexCall>> - Executes a user defined APEX REST API call.
 * <<approval,approval>> - Submits a record or records (batch) for approval process.
 * <<approvals,approvals>> - Fetches a list of all approval processes.
@@ -193,7 +194,8 @@ request as the input to a subsequent request.
 
 Unless otherwise specified, DTO types for the following options are from  `org.apache.camel.component.salesforce.api.dto` or one if its sub-packages.
 
-==== Versions [[getVersions]]
+[[getVersions]]
+==== Versions
 
 `getVersions`
 
@@ -203,7 +205,8 @@ Lists summary information about each Salesforce version currently available, inc
 
 Type:  `List<Version>`
 
-==== Resources by Version [[getResources]]
+[[getResources]]
+==== Resources by Version
 
 `getResources`
 
@@ -213,7 +216,8 @@ Lists available resources for the specified API version, including resource name
 
 Type: `RestResources`
 
-==== Limits [[limits]]
+[[limits]]
+==== Limits
 
 `limits`
 
@@ -251,7 +255,8 @@ from("direct:querySalesforce")
     .endChoice()
 ----
 
-==== Recently Viewed Items [[recent]]
+[[recent]]
+==== Recently Viewed Items
 
 `recent`
 
@@ -286,7 +291,8 @@ from("direct:fetchRecentItems")
             .log("${body.name} at ${body.attributes.url}");
 ----
 
-==== Describe Global [[getGlobalObjects]]
+[[getGlobalObjects]]
+==== Describe Global
 
 `getGlobalObjects`
 
@@ -297,7 +303,8 @@ as well as the maximum batch size permitted in queries.
 
 Type: `GlobalObjects`
 
-==== sObject Basic Information [[getBasicInfo]]
+[[getBasicInfo]]
+==== sObject Basic Information
 
 `getBasicInfo`
 
@@ -313,7 +320,8 @@ Describes the individual metadata for the specified object.
 
 Type: `SObjectBasicInfo`
 
-==== sObject Describe [[getDescription]]
+[[getDescription]]
+==== sObject Describe
 
 `getDescription`
 
@@ -329,7 +337,8 @@ Completely describes the individual metadata at all levels for the specified obj
 
 Type: `SObjectDescription`
 
-==== Retrieve SObject [[getSObject]]
+[[getSObject]]
+==== Retrieve SObject
 
 `getSObject`
 
@@ -349,7 +358,8 @@ overrides `sObjectName` and `sObjectId` parameters.  | |
 
 Type: Subclass of `AbstractSObjectBase`
 
-==== Retrieve SObject by External Id [[getSObjectWithId]]
+[[getSObjectWithId]]
+==== Retrieve SObject by External Id
 
 `getSObjectWithId`
 
@@ -369,7 +379,8 @@ overrides `sObjectName` and `sObjectIdValue` parameters.  | |
 
 Type: Subclass of `AbstractSObjectBase`
 
-==== sObject Blob Retrieve [[getBlobField]]
+[[getBlobField]]
+==== sObject Blob Retrieve
 
 `getBlobField`
 
@@ -390,7 +401,8 @@ and `sObjectName` are not supplied
 
 Type: `InputStream`
 
-==== Create SObject [[createSObject]]
+[[createSObject]]
+==== Create SObject
 
 `createSObject`
 
@@ -407,7 +419,8 @@ Creates a record in salesforce.
 
 Type: `CreateSObjectResult`
 
-==== Update SObject [[updateSObject]]
+[[updateSObject]]
+==== Update SObject
 
 `updateSObject`
 
@@ -421,7 +434,8 @@ Updates a record in salesforce.
 | `sObjectId` | `String` | Id of record to update. Only used if Camel cannot determine from Body. | | If Body is a `String`
 |===
 
-==== Upsert SObject [[upsertSObject]]
+[[upsertSObject]]
+==== Upsert SObject
 
 `upsertSObject`
 
@@ -440,7 +454,8 @@ Upserts a record by External ID.
 
 Type: `UpsertSObjectResult`
 
-==== Delete SObject [[deleteSObject]]
+[[deleteSObject]]
+==== Delete SObject
 
 `deleteSObject`
 
@@ -454,7 +469,8 @@ Deletes a record in salesforce.
 | `sObjectId` | `String` | Id of record to delete. | | If Body is not an `AbstractSObjectBase` instance
 |===
 
-==== Delete SObject by External Id [[deleteSObjectWithId]]
+[[deleteSObjectWithId]]
+==== Delete SObject by External Id
 
 `deleteSObjectWithId`
 
@@ -469,7 +485,8 @@ Deletes a record in salesforce by External ID.
 | `sObjectName` | `String` | Name of SObject, e.g. `Account`. Only used if Camel cannot determine from Body. | | If Body is not an `AbstractSObjectBase` instance
 |===
 
-==== Query [[query]]
+[[query]]
+==== Query
 
 `query`
 
@@ -486,7 +503,8 @@ Runs a Salesforce SOQL query
 
 Type: Instance of class supplied in `sObjectClass`
 
-==== Query More [[queryMore]]
+[[queryMore]]
+==== Query More
 
 `queryMore`
 
@@ -503,7 +521,8 @@ Retrieves more results (in case of large number of results) using result link re
 
 Type: Instance of class supplied in `sObjectClass`
 
-==== Query All [[queryAll]]
+[[queryAll]]
+==== Query All
 
 `queryAll`
 
@@ -520,7 +539,8 @@ Executes the specified SOQL query. Unlike the `query` operation , `queryAll` ret
 
 Type: Instance of class supplied in `sObjectClass`
 
-==== Search [[search]]
+[[sosl_search]]
+==== Search
 
 `search`
 
@@ -536,7 +556,8 @@ Runs a Salesforce SOSL search
 
 Type: `SearchResult2`
 
-==== Submit Approval [[approval]]
+[[approval]]
+==== Submit Approval
 
 `approval`
 
@@ -598,7 +619,8 @@ body.put("nextApproverIds", userId);
 final ApprovalResult result = template.requestBody("direct:example1", body, ApprovalResult.class);
 ----
 
-==== Get Approvals [[approvals]]
+[[approvals]]
+==== Get Approvals
 
 `approvals`
 
@@ -608,7 +630,8 @@ Returns a list of all approval processes.
 
 Type: `Approvals`
 
-==== Composite [[composite]]
+[[composite]]
+==== Composite
 
 `composite`
 
@@ -707,7 +730,8 @@ With this approach, you have the complete control on the Salesforce request.
 `compositeMethod` option to override to the other supported value, `GET`, which returns a list of
 other available composite resources.
 
-==== Composite Tree [[composite-tree]]
+[[composite-tree]]
+==== Composite Tree
 
 `composite-tree`
 
@@ -763,7 +787,8 @@ final List<SObjectNode> succeeded = result.get(false);
 final String firstId = succeeded.get(0).getId();
 ----
 
-==== Composite Batch [[composite-batch]]
+[[composite-batch]]
+==== Composite Batch
 
 `composite-batch`
 
@@ -833,7 +858,8 @@ final int updateStatus = deleteResult.getStatusCode(); // probably 204
 final Object updateResultData = deleteResult.getResult(); // probably null
 ----
 
-==== Retrieve Multiple Records with Fewer Round-Trips [[compositeRetrieveSObjectCollections]]
+[[compositeRetrieveSObjectCollections]]
+==== Retrieve Multiple Records with Fewer Round-Trips
 
 `compositeRetrieveSObjectCollections`
 
@@ -853,7 +879,8 @@ Retrieve one or more records of the same object type.
 Type: `List` of class determined by `sObjectName` or `sObjectClass` header
 
 
-==== Create SObject Collections [[compositeCreateSObjectCollections]]
+[[compositeCreateSObjectCollections]]
+==== Create SObject Collections
 
 `compositeCreateSObjectCollections`
 
@@ -869,7 +896,8 @@ Add up to 200 records. Mixed SObject types is supported.
 
 Type: `List<SaveSObjectResult>`
 
-==== Update SObject Collections [[compositeUpdateSObjectCollections]]
+[[compositeUpdateSObjectCollections]]
+==== Update SObject Collections
 
 `compositeUpdateSObjectCollections`
 
@@ -885,7 +913,8 @@ Update up to 200 records. Mixed SObject types is supported.
 
 Type: `List<SaveSObjectResult>`
 
-==== Upsert SObject Collections [[compositeUpsertSObjectCollections]]
+[[compositeUpsertSObjectCollections]]
+==== Upsert SObject Collections
 
 `compositeUpsertSObjectCollections`
 
@@ -903,7 +932,8 @@ Create or update (upsert) up to 200 records based on an external ID field. Mixed
 
 Type: `List<UpsertSObjectResult>`
 
-==== Delete SObject Collections [[compositeDeleteSObjectCollections]]
+[[compositeDeleteSObjectCollections]]
+==== Delete SObject Collections
 
 `compositeDeleteSObjectCollections`
 
@@ -921,9 +951,11 @@ Delete up to 200 records. Mixed SObject types is supported.
 Type: `List<DeleteSObjectResult>`
 
 
-=== Apex REST API [[ApexRESTAPI]]
+[[ApexRESTAPI]]
+=== Apex REST API
 
-==== Invoke an Apex REST Web Service method [[apexCall]]
+[[apexCall]]
+==== Invoke an Apex REST Web Service method
 
 `apexCall`
 
@@ -958,7 +990,8 @@ is transformed into query parameters. For other HTTP methods, the body is used f
 Type: Instance of class supplied in `sObjectClass` input header.
 
 
-=== Bulk 2.0 API [[Bulk2API]]
+[[Bulk2API]]
+=== Bulk 2.0 API
 
 The Bulk 2.0 API has a simplified model over the original Bulk API. Use it to quickly load a large
 amount of data into salesforce, or query a large amount of data out of salesforce. Data must be
@@ -983,7 +1016,8 @@ is v41.0. The minimum API version for Bulk Queries is v47.0. DTO classes mention
 * <<bulk2GetQueryJob,bulk2GetQueryJob>> - Gets a query job.
 * <<bulk2GetAllQueryJobs,bulk2GetAllQueryJobs>> - Gets all query jobs.
 
-==== Create a Job [[bulk2CreateJob]]
+[[bulk2CreateJob]]
+==== Create a Job
 
 `bulk2CreateJob`
 Creates a bulk ingest job.
@@ -998,7 +1032,8 @@ Creates a bulk ingest job.
 
 Type: `Job`
 
-==== Upload a Batch of Job Data [[bulk2CreateBatch]]
+[[bulk2CreateBatch]]
+==== Upload a Batch of Job Data
 
 `bulk2CreateBatch`
 
@@ -1011,7 +1046,8 @@ Adds a batch of data to an ingest job.
 | `jobId` | `String` | Id of Job to create batch under | | x
 |===
 
-==== Close a Job [[bulk2CloseJob]]
+[[bulk2CloseJob]]
+==== Close a Job
 
 `bulk2CloseJob`
 
@@ -1028,7 +1064,8 @@ aborted/deleted.
 
 Type: `Job`
 
-==== Abort a Job [[bulk2AbortJob]]
+[[bulk2AbortJob]]
+==== Abort a Job
 
 `bulk2AbortJob`
 
@@ -1044,7 +1081,8 @@ Aborts an ingest job.
 
 Type: `Job`
 
-==== Delete a Job [[bulk2DeleteJob]]
+[[bulk2DeleteJob]]
+==== Delete a Job
 
 `bulk2DeleteJob`
 
@@ -1056,7 +1094,8 @@ Deletes an ingest job.
 | `jobId` | `String` | Id of Job to delete | | x
 |===
 
-==== Get Job Successful Record Results [[bulk2GetSuccessfulResults]]
+[[bulk2GetSuccessfulResults]]
+==== Get Job Successful Record Results
 
 `bulk2GetSuccessfulResults`
 
@@ -1073,7 +1112,8 @@ Gets successful results for an ingest job.
 Type: `InputStream` +
 Contents: CSV data
 
-==== Get Job Failed Record Results [[bulk2GetFailedResults]]
+[[bulk2GetFailedResults]]
+==== Get Job Failed Record Results
 
 `bulk2GetFailedResults`
 
@@ -1090,7 +1130,8 @@ Gets failed results for an ingest job.
 Type: `InputStream` +
 Contents: CSV data
 
-==== Get Job Unprocessed Record Results [[bulk2GetUnprocessedRecords]]
+[[bulk2GetUnprocessedRecords]]
+==== Get Job Unprocessed Record Results
 
 `bulk2GetUnprocessedRecords`
 
@@ -1107,7 +1148,8 @@ Gets unprocessed records for an ingest job.
 Type: `InputStream`
 Contents: CSV data
 
-==== Get Job Info [[bulk2GetJob]]
+[[bulk2GetJob]]
+==== Get Job Info
 
 `bulk2GetJob`
 
@@ -1124,7 +1166,8 @@ Gets an ingest Job.
 
 Type: `Job`
 
-==== Get All Jobs [[bulk2GetAllJobs]]
+[[bulk2GetAllJobs]]
+==== Get All Jobs
 
 `bulk2GetAllJobs`
 
@@ -1144,7 +1187,8 @@ If the `done` property of the `Jobs` instance
 is false, there are additional pages to fetch, and the `nextRecordsUrl` property contains the value
 to be set in the `queryLocator` parameter on subsequent calls.
 
-==== Create a Query Job [[bulk2CreateQueryJob]]
+[[bulk2CreateQueryJob]]
+==== Create a Query Job
 
 `bulk2CreateQueryJob`
 
@@ -1160,7 +1204,8 @@ Gets a query job.
 
 Type: `QueryJob`
 
-==== Get Results for a Query Job [[bulk2GetQueryJobResults]]
+[[bulk2GetQueryJobResults]]
+==== Get Results for a Query Job
 
 `bulk2GetQueryJobResults`
 
@@ -1184,7 +1229,8 @@ Response message headers include `Sforce-NumberOfRecords` and
 `Sforce-Locator` headers. The value of `Sforce-Locator` can be passed into subsequent calls via the
 `locator` parameter.
 
-==== Abort a Query Job [[bulk2AbortQueryJob]]
+[[bulk2AbortQueryJob]]
+==== Abort a Query Job
 
 `bulk2AbortQueryJob`
 
@@ -1200,7 +1246,8 @@ Aborts a query job.
 
 Type: `QueryJob`
 
-==== Delete a Query Job [[bulk2DeleteQueryJob]]
+[[bulk2DeleteQueryJob]]
+==== Delete a Query Job
 
 `bulk2DeleteQueryJob`
 
@@ -1212,7 +1259,8 @@ Deletes a query job.
 | `jobId` | `String` | Id of Job to delete | | x
 |===
 
-==== Get Information About a Query Job [[bulk2GetQueryJob]]
+[[bulk2GetQueryJob]]
+==== Get Information About a Query Job
 
 `bulk2GetQueryJob`
 
@@ -1228,7 +1276,8 @@ Gets a query job.
 
 Type: `QueryJob`
 
-==== Get Information About All Query Jobs [[bulk2GetAllQueryJobs]]
+[[bulk2GetAllQueryJobs]]
+==== Get Information About All Query Jobs
 
 `bulk2GetAllQueryJobs`
 
@@ -1248,7 +1297,8 @@ If the `done` property of the `QueryJobs` instance
 is false, there are additional pages to fetch, and the `nextRecordsUrl` property contains the value
 to be set in the `queryLocator` parameter on subsequent calls.
 
-=== Bulk (original) API  [[BulkAPI]]
+[[BulkAPI]]
+=== Bulk (original) API 
 
 Producer endpoints can use the following APIs. All Job data formats,
 i.e. xml, csv, zip/xml, and zip/csv are supported. +
@@ -1272,7 +1322,8 @@ The following operations are supported:
 * <<getQueryResultIds,getQueryResultIds>> - Gets a list of Result Ids for a Batch Query
 * <<getQueryResult,getQueryResult>> - Gets results for a Result Id
 
-==== Create a Job [[createJob]]
+[[createJob]]
+==== Create a Job
 
 `createJob`
 
@@ -1294,7 +1345,8 @@ is supported via the pkChunking* options. See an explanation https://developer.s
 
 Type: `JobInfo`
 
-==== Get Job Details [[getJob]]
+[[getJob]]
+==== Get Job Details
 
 `getJob`
 
@@ -1311,7 +1363,8 @@ Gets a Job
 
 Type: `JobInfo`
 
-==== Close a Job [[closeJob]]
+[[closeJob]]
+==== Close a Job
 
 `closeJob`
 
@@ -1328,7 +1381,8 @@ Closes a Job
 
 Type: `JobInfo`
 
-==== Abort a Job [[abortJob]]
+[[abortJob]]
+==== Abort a Job
 
 `abortJob`
 
@@ -1345,7 +1399,8 @@ Aborts a Job
 
 Type: `JobInfo`
 
-==== Add a Batch to a Job [[createBatch]]
+[[createBatch]]
+==== Add a Batch to a Job
 
 `createBatch`
 
@@ -1363,7 +1418,8 @@ Submits a Batch within a Bulk Job
 
 Type: `BatchInfo`
 
-==== Get Information for a Batch [[getBatch]]
+[[getBatch]]
+==== Get Information for a Batch
 
 `getBatch`
 
@@ -1381,7 +1437,8 @@ Get a Batch
 
 Type: `BatchInfo`
 
-==== Get Information for All Batches in a Job [[getAllBatches]]
+[[getAllBatches]]
+==== Get Information for All Batches in a Job
 
 `getAllBatches`
 
@@ -1398,7 +1455,8 @@ Gets all Batches for a Bulk Job Id
 
 Type: `List<JobInfo>`
 
-==== Get a Batch Request [[getRequest]]
+[[getRequest]]
+==== Get a Batch Request
 
 `getRequest`
 
@@ -1417,7 +1475,8 @@ Gets Request data (XML/CSV) for a Batch
 Type: `InputStream`
 
 
-==== Get Batch Results [[getResults]]
+[[getResults]]
+==== Get Batch Results
 
 `getResults`
 
@@ -1435,7 +1494,8 @@ Gets the results of the Batch when it's complete
 
 Type: `InputStream`
 
-==== Create Bulk Query Batch [[createBatchQuery]]
+[[createBatchQuery]]
+==== Create Bulk Query Batch
 
 `createBatchQuery`
 
@@ -1454,7 +1514,8 @@ Creates a Batch from an SOQL query
 
 Type: `BatchInfo`
 
-==== Get Batch Results [[getQueryResultIds]]
+[[getQueryResultIds]]
+==== Get Batch Results
 
 `getQueryResultIds`
 
@@ -1473,7 +1534,8 @@ Gets a list of Result Ids for a Batch Query
 Type: `List<String>`
 
 
-==== Get Bulk Query Results [[getQueryResult]]
+[[getQueryResult]]
+==== Get Bulk Query Results
 
 `getQueryResult`
 
@@ -1506,7 +1568,8 @@ error.
 ...to("salesforce:createBatch")..
 ----
 
-=== Streaming API [[StreamingAPI]]
+[[StreamingAPI]]
+=== Streaming API
 
 The Streaming API enables streaming of events using push technology and provides a subscription
 mechanism for receiving events in near real time. The Streaming API subscription mechanism supports
@@ -1639,7 +1702,8 @@ Headers
 | `CamelSalesforceChangeType` | `CREATE`, `UPDATE`, `DELETE` or `UNDELETE`
 |===
 
-=== Reports API [[ReportsAPI]]
+[[ReportsAPI]]
+=== Reports API
 
 * <<getRecentReports,getRecentReports>> - Gets up to 200 of the reports you most recently viewed.
 * <<getReportDescription,getReportDescription>> - Retrieves report description.
@@ -1648,7 +1712,8 @@ Headers
 * <<getReportInstances,getReportInstances>> - Returns a list of instances for a report that you requested to be run asynchronously.
 * <<getReportResults,getReportResults>> - Retrieves results for an instance of a report run asynchronously.
 
-==== Report List [[getRecentReports]]
+[[getRecentReports]]
+==== Report List
 
 `getRecentReports`
 
@@ -1658,7 +1723,8 @@ Gets up to 200 of the reports you most recently viewed.
 
 Type: `List<RecentReport>`
 
-==== Describe Report [[getReportDescription]]
+[[getReportDescription]]
+==== Describe Report
 
 `getReportDescription`
 
@@ -1675,7 +1741,8 @@ Retrieves the report, report type, and related metadata for a report, either in 
 
 Type: `ReportDescription`
 
-==== Execute Sync [[executeSyncReport]]
+[[executeSyncReport]]
+==== Execute Sync
 
 `executeSyncReport`
 
@@ -1694,7 +1761,8 @@ Runs a report synchronously with or without changing filters and returns the lat
 
 Type: `AbstractReportResultsBase`
 
-==== Execute Async [[executeAsyncReport]]
+[[executeAsyncReport]]
+==== Execute Async
 
 `executeAsyncReport`
 
@@ -1713,7 +1781,8 @@ Runs an instance of a report asynchronously with or without filters and returns 
 
 Type: `ReportInstance`
 
-==== Instances List [[getReportInstances]]
+[[getReportInstances]]
+==== Instances List
 
 `getReportInstances`
 
@@ -1730,7 +1799,8 @@ Returns a list of instances for a report that you requested to be run asynchrono
 
 Type: `List<ReportInstance>`
 
-==== Instance Results [[getReportResults]]
+[[getReportResults]]
+==== Instance Results
 
 `getReportResults`
 
@@ -1752,7 +1822,8 @@ Type: `AbstractReportResultsBase`
 
 * <<raw,raw>> - Send requests to salesforce and have full, raw control over endpoint, parameters, body, etc.
 
-=== Raw [[raw]]
+[[raw]]
+=== Raw
 
 `raw`
 
@@ -1854,7 +1925,8 @@ _Account_ SObject you can simply generate the SOQL SELECT by invoking:
 String allCustomFieldsQuery = QueryHelper.queryToFetchFilteredFieldsOf(new Account(), SObjectField::isCustom);
 ----
 
-== Camel Salesforce Maven Plugin [[MavenPlugin]]
+[[MavenPlugin]]
+== Camel Salesforce Maven Plugin
 
 This Maven plugin generates DTOs for the Camel.
 
