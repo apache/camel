@@ -168,9 +168,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         RouteDefinition route = ProcessorDefinitionHelper.getRoute(this);
         if (route != null) {
             CamelContext context = route.getCamelContext();
-            if (context != null && context.isDebugging()) {
-                // we want to capture source location:line for every output when debugging is enabled
-                // this is an expensive operation and therefore only used if debugging is enabled
+            if (context != null && (context.isDebugging() || context.isTracing())) {
+                // we want to capture source location:line for every output
+                // (this is an expensive operation, so only do this if debugging or tracing is enabled)
                 ProcessorDefinitionHelper.prepareSourceLocation(output);
                 if (log.isDebugEnabled()) {
                     log.debug("{} located in {}:{}", output.getShortName(), output.getLocation(),
