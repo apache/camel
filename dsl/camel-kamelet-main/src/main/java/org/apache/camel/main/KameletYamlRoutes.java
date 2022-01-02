@@ -25,6 +25,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.dsl.yaml.YamlRoutesBuilderLoaderSupport;
+import org.apache.camel.spi.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snakeyaml.engine.v2.nodes.Node;
@@ -59,7 +60,7 @@ class KameletYamlRoutes extends YamlRoutesBuilderLoaderSupport implements CamelC
     }
 
     @Override
-    protected RouteBuilder builder(Node node) {
+    protected RouteBuilder builder(Node node, Resource resource) {
         final List<String> dependencies = new ArrayList<>();
 
         Node deps = nodeAt(node, "/spec/dependencies");
@@ -73,7 +74,6 @@ class KameletYamlRoutes extends YamlRoutesBuilderLoaderSupport implements CamelC
                         LOG.trace("Kamelet dependency: {}", dep);
                         dependencies.add(dep);
                     }
-
                 }
             }
         }
