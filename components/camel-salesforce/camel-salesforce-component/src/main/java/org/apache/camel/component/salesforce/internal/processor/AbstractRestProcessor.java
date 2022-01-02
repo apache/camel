@@ -222,7 +222,7 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
 
         final boolean requestGivenInParametersInHeader = processApprovalHeaderValues(approvalHeader, incomingHeaders);
 
-        final boolean nothingInheader = !requestGivenInHeader && !requestGivenInParametersInHeader;
+        final boolean nothingInHeader = !requestGivenInHeader && !requestGivenInParametersInHeader;
 
         final Object approvalBody = incomingMessage.getBody();
 
@@ -235,7 +235,7 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
         final boolean nothingInBody = !(approvalBody != null && !bodyIsIterableButEmpty);
 
         // we found nothing in the headers or the body
-        if (nothingInheader && nothingInBody) {
+        if (nothingInHeader && nothingInBody) {
             throw new SalesforceException(
                     "Missing " + SalesforceEndpointConfig.APPROVAL
                                           + " parameter in header or ApprovalRequest or List of ApprovalRequests body",
@@ -276,7 +276,7 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
 
     final boolean processApprovalHeaderValues(
             final ApprovalRequest approvalRequest, final Map<String, Object> incomingHeaderValues) {
-        // loop trough all header values, find those that start with `approval.`
+        // loop through all header values, find those that start with `approval.`
         // set the property value to the given approvalRequest and return if
         // any value was set
         return incomingHeaderValues.entrySet().stream().filter(kv -> kv.getKey().startsWith("approval.")).map(kv -> {
