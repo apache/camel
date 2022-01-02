@@ -188,6 +188,8 @@ public class JsonRestProcessor extends AbstractRestProcessor {
                 // if an exception is reported we should not loose it
                 if (shouldReport(ex)) {
                     exchange.setException(ex);
+                } else {
+                    out.setBody(null);
                 }
             } else if (responseEntity != null) {
                 // do we need to un-marshal a response

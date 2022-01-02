@@ -19,8 +19,7 @@ package org.apache.camel.component.salesforce;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.component.salesforce.api.NoSuchSObjectException;
 import org.apache.camel.component.salesforce.dto.generated.Account;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -28,22 +27,20 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class NotFoundIntegrationTest extends AbstractSalesforceTestBase {
 
-    @ParameterizedTest
-    @ValueSource(strings = { "XML", "JSON" })
-    public void shouldNotReportNotFoundExceptionFromRestApiIfConfiguredNotTo(String format) {
-        final Account got = template.requestBody("salesforce:getSObjectWithId?sObjectName=Account&sObjectIdName=Name&format="
-                                                 + format + "&notFoundBehaviour=NULL",
-                "NonExistant",
+    @Test
+    public void shouldNotReportNotFoundExceptionFromRestApiIfConfiguredNotTo() {
+        final Account got = template.requestBody("salesforce:getSObjectWithId?sObjectName=Account&sObjectIdName=Name"
+                                                 + "&notFoundBehaviour=NULL",
+                "NonExistent",
                 Account.class);
 
         assertNull(got, "Expecting null when `notFoundBehaviour` is set to NULL");
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = { "XML", "JSON" })
-    public void shouldReportNotFoundExceptionFromRestApi(String format) {
+    @Test
+    public void shouldReportNotFoundExceptionFromRestApi() {
         try {
-            template.requestBody("salesforce:getSObjectWithId?sObjectName=Account&sObjectIdName=Name&format=" + format,
+            template.requestBody("salesforce:getSObjectWithId?sObjectName=Account&sObjectIdName=Name",
                     "NonExistant", Account.class);
             fail("Expecting CamelExecutionException");
         } catch (final CamelExecutionException e) {
