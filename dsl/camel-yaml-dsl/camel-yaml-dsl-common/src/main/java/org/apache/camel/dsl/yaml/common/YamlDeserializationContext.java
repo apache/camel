@@ -33,6 +33,7 @@ import org.apache.camel.Ordered;
 import org.apache.camel.Service;
 import org.apache.camel.dsl.yaml.common.exception.UnknownNodeTypeException;
 import org.apache.camel.dsl.yaml.common.exception.YamlDeserializationException;
+import org.apache.camel.spi.Resource;
 import org.apache.camel.util.ObjectHelper;
 import org.snakeyaml.engine.v2.api.ConstructNode;
 import org.snakeyaml.engine.v2.api.LoadSettings;
@@ -48,6 +49,7 @@ public class YamlDeserializationContext extends StandardConstructor implements C
 
     private YamlDeserializationMode deserializationMode;
     private ExtendedCamelContext camelContext;
+    private Resource resource;
 
     public YamlDeserializationContext(LoadSettings settings) {
         super(settings);
@@ -75,6 +77,14 @@ public class YamlDeserializationContext extends StandardConstructor implements C
 
     public YamlDeserializationMode getDeserializationMode() {
         return deserializationMode;
+    }
+
+    public Resource getResource() {
+        return resource;
+    }
+
+    public void setResource(Resource resource) {
+        this.resource = resource;
     }
 
     @Override

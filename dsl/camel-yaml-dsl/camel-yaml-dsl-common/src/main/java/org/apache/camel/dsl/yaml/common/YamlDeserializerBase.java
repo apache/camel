@@ -53,11 +53,16 @@ public abstract class YamlDeserializerBase<T> extends YamlDeserializerSupport im
             throw new IllegalArgumentException("Unsupported node type: " + node);
         }
 
-        // enrich model with line number
+        // enrich model with source location:line number
         if (target instanceof LineNumberAware && node.getStartMark().isPresent()) {
             int line = node.getStartMark().get().getLine();
             LineNumberAware lna = (LineNumberAware) target;
             lna.setLineNumber(line);
+
+            YamlDeserializationContext ctx = getDeserializationContext(node);
+            if (ctx != null) {
+                lna.setLocation(ctx.getResource().getLocation());
+            }
         }
 
         return target;

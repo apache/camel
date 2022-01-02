@@ -87,6 +87,7 @@ public class OutputAwareFromDefinitionDeserializer extends YamlDeserializerBase<
                         if (node.getStartMark().isPresent()) {
                             int line = node.getStartMark().get().getLine();
                             from.setLineNumber(line);
+                            from.setLocation(dc.getResource().getLocation());
                         }
                         target.setDelegate(from);
                     } else {
@@ -102,6 +103,7 @@ public class OutputAwareFromDefinitionDeserializer extends YamlDeserializerBase<
             if (node.getStartMark().isPresent()) {
                 int line = node.getStartMark().get().getLine();
                 from.setLineNumber(line);
+                from.setLocation(dc.getResource().getLocation());
             }
             target.setDelegate(from);
         }

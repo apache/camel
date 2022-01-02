@@ -25,6 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RouteTemplateParameterDefinition;
+import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.RoutesLoader;
 import org.snakeyaml.engine.v2.nodes.Node;
 import org.snakeyaml.engine.v2.nodes.NodeTuple;
@@ -44,7 +45,7 @@ public class KameletRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
     }
 
     @Override
-    protected RouteBuilder builder(Node node) {
+    protected RouteBuilder builder(Node node, Resource resource) {
         Node template = nodeAt(node, "/spec/template");
         if (template == null) {
             // fallback till flows get removed

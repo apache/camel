@@ -38,6 +38,7 @@ import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
 import org.apache.camel.spi.CamelContextCustomizer;
+import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.RoutesLoader;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.URISupport;
@@ -69,7 +70,7 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
         super(EXTENSION);
     }
 
-    protected RouteBuilder builder(Node root) {
+    protected RouteBuilder builder(Node root, Resource resource) {
         return new RouteConfigurationBuilder() {
             @Override
             public void configure() throws Exception {

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.yaml.deserializers;
 
+import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerResolver;
 import org.apache.camel.dsl.yaml.common.YamlSupport;
 import org.apache.camel.model.FromDefinition;
@@ -24,6 +25,8 @@ import org.apache.camel.spi.annotations.YamlProperty;
 import org.apache.camel.spi.annotations.YamlType;
 import org.snakeyaml.engine.v2.api.ConstructNode;
 import org.snakeyaml.engine.v2.nodes.Node;
+
+import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.getDeserializationContext;
 
 @YamlType(
           inline = false,
@@ -57,6 +60,10 @@ public class FromDefinitionDeserializer implements ConstructNode {
         if (node.getStartMark().isPresent()) {
             int line = node.getStartMark().get().getLine();
             target.setLineNumber(line);
+            YamlDeserializationContext ctx = getDeserializationContext(node);
+            if (ctx != null) {
+                target.setLocation(ctx.getResource().getLocation());
+            }
         }
         return target;
     }
