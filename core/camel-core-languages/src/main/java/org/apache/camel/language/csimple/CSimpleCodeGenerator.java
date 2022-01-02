@@ -22,8 +22,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.camel.util.StringHelper;
-
 /**
  * Source code generate for csimple language.
  *
@@ -112,9 +110,9 @@ public class CSimpleCodeGenerator {
         sb.append("    @Override\n");
         sb.append("    public String getText() {\n");
         // \ should be escaped
-        String escaped = StringHelper.replaceAll(text, "\\", "\\\\");
+        String escaped = text.replace("\\", "\\\\");
         // we need to escape all " so its a single literal string
-        escaped = StringHelper.replaceAll(escaped, "\"", "\\\"");
+        escaped = escaped.replace("\"", "\\\"");
         sb.append("        return \"").append(escaped).append("\";\n");
         sb.append("    }\n");
         sb.append("\n");
@@ -170,7 +168,7 @@ public class CSimpleCodeGenerator {
         for (Map.Entry<String, String> entry : aliases.entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue();
-            script = StringHelper.replaceAll(script, key, value);
+            script = script.replace(key, value);
         }
         return script;
     }

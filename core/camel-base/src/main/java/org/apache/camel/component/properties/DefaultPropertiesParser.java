@@ -66,8 +66,8 @@ public class DefaultPropertiesParser implements PropertiesParser {
         String answer = context.parse(text);
         if (keepUnresolvedOptional && answer != null && answer.contains(UNRESOLVED_PREFIX_TOKEN)) {
             // replace temporary unresolved keys back to with placeholders so they are kept as-is
-            answer = StringHelper.replaceAll(answer, UNRESOLVED_PREFIX_TOKEN, PREFIX_TOKEN);
-            answer = StringHelper.replaceAll(answer, UNRESOLVED_SUFFIX_TOKEN, SUFFIX_TOKEN);
+            answer = answer.replace(UNRESOLVED_PREFIX_TOKEN, PREFIX_TOKEN);
+            answer = answer.replace(UNRESOLVED_SUFFIX_TOKEN, SUFFIX_TOKEN);
         }
         return answer;
     }

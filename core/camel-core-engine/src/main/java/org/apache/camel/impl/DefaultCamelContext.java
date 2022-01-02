@@ -153,7 +153,7 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
                 // lets separate routes with empty line
                 xml = StringHelper.replaceFirst(xml, "xmlns=\"http://camel.apache.org/schema/spring\">",
                         "xmlns=\"http://camel.apache.org/schema/spring\">\n");
-                xml = StringHelper.replaceAll(xml, "</route>", "</route>\n");
+                xml = xml.replace("</route>", "</route>\n");
                 LOG.info("\n\n{}\n", xml);
             } catch (Exception e) {
                 LOG.warn("Error dumping routes to XML due to {}. This exception is ignored.", e.getMessage(), e);
@@ -171,7 +171,7 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
                 // lets separate rests with empty line
                 xml = StringHelper.replaceFirst(xml, "xmlns=\"http://camel.apache.org/schema/spring\">",
                         "xmlns=\"http://camel.apache.org/schema/spring\">\n");
-                xml = StringHelper.replaceAll(xml, "</rest>", "</rest>\n");
+                xml = xml.replace("</rest>", "</rest>\n");
                 LOG.info("\n\n{}\n", xml);
             } catch (Exception e) {
                 LOG.warn("Error dumping rests to XML due to {}. This exception is ignored.", e.getMessage(), e);
@@ -189,7 +189,7 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
                 // lets separate rests with empty line
                 xml = StringHelper.replaceFirst(xml, "xmlns=\"http://camel.apache.org/schema/spring\">",
                         "xmlns=\"http://camel.apache.org/schema/spring\">\n");
-                xml = StringHelper.replaceAll(xml, "</routeTemplate>", "</routeTemplate>\n");
+                xml = xml.replace("</routeTemplate>", "</routeTemplate>\n");
                 LOG.info("\n\n{}\n", xml);
             } catch (Exception e) {
                 LOG.warn("Error dumping route-templates to XML due to {}. This exception is ignored.", e.getMessage(), e);

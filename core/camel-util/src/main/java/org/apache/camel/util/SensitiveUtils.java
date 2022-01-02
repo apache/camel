@@ -122,7 +122,7 @@ public final class SensitiveUtils {
             text = text.substring(lastPeriod + 1);
         }
         text = text.toLowerCase(Locale.ENGLISH);
-        text = StringHelper.replaceAll(text, "-", "");
+        text = text.replace("-", "");
         return SENSITIVE_KEYS.contains(text);
     }
 

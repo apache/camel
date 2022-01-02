@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.jms;
 
-import org.apache.camel.util.StringHelper;
-
 /**
  * Default strategy that handles dots and hyphens.
  * <p/>
@@ -32,15 +30,15 @@ public class DefaultJmsKeyFormatStrategy implements JmsKeyFormatStrategy {
 
     @Override
     public String encodeKey(String key) {
-        String answer = StringHelper.replaceAll(key, DOT, DOT_REPLACEMENT);
-        answer = StringHelper.replaceAll(answer, HYPHEN, HYPHEN_REPLACEMENT);
+        String answer = key.replace(DOT, DOT_REPLACEMENT);
+        answer = answer.replace(HYPHEN, HYPHEN_REPLACEMENT);
         return answer;
     }
 
     @Override
     public String decodeKey(String key) {
-        String answer = StringHelper.replaceAll(key, DOT_REPLACEMENT, DOT);
-        answer = StringHelper.replaceAll(answer, HYPHEN_REPLACEMENT, HYPHEN);
+        String answer = key.replace(DOT_REPLACEMENT, DOT);
+        answer = answer.replace(HYPHEN_REPLACEMENT, HYPHEN);
         return answer;
     }
 

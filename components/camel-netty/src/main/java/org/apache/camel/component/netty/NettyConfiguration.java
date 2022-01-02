@@ -42,7 +42,6 @@ import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.PropertiesHelper;
-import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -277,7 +276,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         if (value == null) {
             value = defaultValue;
         } else if (value instanceof String && EndpointHelper.isReferenceParameter((String) value)) {
-            String name = StringHelper.replaceAll((String) value, "#", "");
+            String name = ((String) value).replace("#", "");
             value = CamelContextHelper.mandatoryLookup(component.getCamelContext(), name);
         }
         if (value instanceof File) {

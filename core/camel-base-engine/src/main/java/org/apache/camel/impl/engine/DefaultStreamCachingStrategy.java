@@ -32,7 +32,6 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.FilePathResolver;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -247,8 +246,8 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
 
         // replace tokens
         String answer = path;
-        answer = StringHelper.replaceAll(answer, "#camelId#", name);
-        answer = StringHelper.replaceAll(answer, "#name#", name);
+        answer = answer.replace("#camelId#", name);
+        answer = answer.replace("#name#", name);
         // replace custom
         answer = customResolveManagementName(answer);
         return answer;
@@ -257,7 +256,7 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
     protected String customResolveManagementName(String pattern) {
         if (pattern.contains("#uuid#")) {
             String uuid = camelContext.getUuidGenerator().generateUuid();
-            pattern = StringHelper.replaceAll(pattern, "#uuid#", uuid);
+            pattern = pattern.replace("#uuid#", uuid);
         }
         return FilePathResolver.resolvePath(pattern);
     }

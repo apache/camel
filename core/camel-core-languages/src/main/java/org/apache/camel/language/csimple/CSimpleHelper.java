@@ -175,7 +175,7 @@ public final class CSimpleHelper {
         if (body == null) {
             return null;
         }
-        body = StringHelper.replaceAll(body, System.lineSeparator(), "");
+        body = body.replace(System.lineSeparator(), "");
         return body;
     }
 

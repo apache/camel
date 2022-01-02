@@ -137,7 +137,11 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
     @Override
     public void setThreadNamePattern(String threadNamePattern) {
         // must set camel id here in the pattern and let the other placeholders be resolved on demand
-        this.threadNamePattern = StringHelper.replaceAll(threadNamePattern, "#camelId#", this.camelContext.getName());
+        if (threadNamePattern != null) {
+            this.threadNamePattern = threadNamePattern.replace("#camelId#", this.camelContext.getName());
+        } else {
+            this.threadNamePattern = threadNamePattern;
+        }
     }
 
     @Override

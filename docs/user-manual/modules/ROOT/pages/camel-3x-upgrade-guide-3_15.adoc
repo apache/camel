@@ -37,6 +37,10 @@ node in the JMX MBean tree.
 
 Removed deprecated operations on `CamelContextMBean` and `CamelRouteMBean`.
 
+=== camel-util
+
+Deleted the `replaceAll` method of `org.apache.camel.util.StringHelper`. Please use the `replace` method of `java.lang.String` instead, as it is much faster from Java 11 onward.
+
 === camel-yaml-dsl
 
 Removed `steps` from `route` because steps should only be configured on `from` making
