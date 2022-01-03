@@ -10,8 +10,10 @@ It is not necessary to install Camel JBang. However, if you prefer to do so, JBa
 
 [source,bash]
 ----
-jbang app install CamelJBang@apache/camel
+jbang app install camel@apache/camel
 ----
+
+*Note*: up to Camel 3.14, the app was named `CamelJBang`. From 3.15 and newer, the app is named `camel`. It is still possible to use the older name by installing it using `CamelJBang@apache/camel` but this approach is deprecated and should not be used in the future.
 
 == Using Camel JBang
 
@@ -19,14 +21,14 @@ The CamelJBang supports multiple commands. Running the command below, will print
 
 [source,bash]
 ----
-jbang CamelJBang@apache/camel [command]
+jbang camel@apache/camel [command]
 ----
 
 *Note*: the first time you run this command, it may cause dependencies to be cached, therefore taking a few extra seconds to run.
 
 All the commands support the `--help` and will display the appropriate help if that flag is provided.
 
-However if you have installed CamelJBang with `jbang app install` then you can use `CamelJBang` instead of `jbang CamelJBang@apache/camel`
+However if you have installed CamelJBang with `jbang app install` then you can use `CamelJBang` instead of `jbang camel@apache/camel`
 
 === Troubleshooting
 
@@ -42,7 +44,7 @@ You can specify which Camel version to run as shown:
 
 [source,bash]
 ----
-jbang -Dcamel.jbang.version=3.14.0 CamelJBang@apache/camel [command]
+jbang -Dcamel.jbang.version=3.14.0 camel@apache/camel [command]
 ----
 
 == Running Routes
@@ -200,7 +202,7 @@ Can be run with
 
 [source,bash]
 ----
-CamelJBang run server.yaml
+camel run server.yaml
 ----
 
 And you can call the HTTP service with:
@@ -213,11 +215,11 @@ Hello World%
 
 === Debugging
 
-You can debug both CamelJBang@apache/camel and your integration scripts by making use of the `--debug` flag provided by JBang:
+You can debug both camel@apache/camel and your integration scripts by making use of the `--debug` flag provided by JBang:
 
 [source,bash]
 ----
-CamelJBang --debug run /path/to/integration.java
+camel --debug run /path/to/integration.java
 [jbang] Building jar...
 Listening for transport dt_socket at address: 4004
 ----
@@ -230,21 +232,21 @@ You can use the CLI to search for kamelets, components, languages and miscellane
 
 [source,bash]
 ----
-CamelJBang search --help
+camel search --help
 ----
 
 For example, to search for kamelets named `jms`, you can use:
 
 [source,bash]
 ----
-CamelJBang search kamelets --search-term=jms
+camel search kamelets --search-term=jms
 ----
 
 To list all the kamelets, just run the command without any search term:
 
 [source,bash]
 ----
-CamelJBang search kamelets
+camel search kamelets
 ----
 
 
@@ -276,7 +278,7 @@ To bootstrap the Kamelet run:
 
 [source,bash]
 ----
-CamelJBang init kamelet --bootstrap
+camel init kamelet --bootstrap
 ----
 
 This will create a sub-directory called `work` in the current directory with a properties file named `init-template.properties` inside it.
@@ -287,7 +289,7 @@ After you have filled the values, you can generate the Kamelet using:
 
 [source,bash]
 ----
-CamelJBang init kamelet --properties-path work/init-template.properties
+camel init kamelet --properties-path work/init-template.properties
 ----
 
 Running this command will create a new file in the `work` directory. The name of the generated file is determined by the `kameletMetadataName` property in the properties file. As such, parsing the default properties file would generate a file named `my-sample-sink.kamelet.yaml` in the directory.
@@ -303,7 +305,7 @@ To execute this feature run:
 
 [source,bash]
 ----
-CamelJBang init binding --destination /path/to/destination/directory/ --kamelet sftp-source
+camel init binding --destination /path/to/destination/directory/ --kamelet sftp-source
 ----
 
 This will create a new sample YAML binding file that can be modified and used in Camel K.
@@ -312,5 +314,5 @@ You can also generate bindings that can be run by CamelJBang or Camel Core, but 
 
 [source,bash]
 ----
-CamelJBang init binding --destination /path/to/destination/directory/ --kamelet sftp-source --project core
+camel init binding --destination /path/to/destination/directory/ --kamelet sftp-source --project core
 ----
