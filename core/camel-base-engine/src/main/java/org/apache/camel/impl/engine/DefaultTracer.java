@@ -21,7 +21,6 @@ import java.util.Objects;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
-import org.apache.camel.LineNumberAware;
 import org.apache.camel.NamedNode;
 import org.apache.camel.NamedRoute;
 import org.apache.camel.Route;
@@ -32,11 +31,12 @@ import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.support.processor.DefaultExchangeFormatter;
 import org.apache.camel.support.service.ServiceSupport;
-import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.support.LoggerHelper.getLineNumberLoggerName;
 
 /**
  * Default {@link Tracer} implementation that will log traced messages to the logger named
@@ -252,36 +252,8 @@ public class DefaultTracer extends ServiceSupport implements CamelContextAware, 
         this.exchangeFormatter = exchangeFormatter;
     }
 
-    protected String getLoggerName(Object node) {
-        String name = null;
-        if (node instanceof LineNumberAware) {
-            if (node instanceof NamedRoute) {
-                // we want the input from a route as it has the source location / line number
-                node = ((NamedRoute) node).getInput();
-            }
-            String loc = ((LineNumberAware) node).getLocation();
-            int line = ((LineNumberAware) node).getLineNumber();
-            if (line != -1 && loc != null) {
-                // is it a class or file?
-                name = loc;
-                if (loc.contains(":")) {
-                    // file based such as xml and yaml
-                    name = FileUtil.stripPath(loc);
-                } else {
-                    // classname so let us only grab the name
-                    int pos = name.lastIndexOf('.');
-                    if (pos > 0) {
-                        name = name.substring(pos + 1);
-                    }
-                }
-                name += ":" + line;
-            }
-        }
-        return name;
-    }
-
     protected void dumpTrace(String out, Object node) {
-        String name = getLoggerName(node);
+        String name = getLineNumberLoggerName(node);
         if (name != null) {
             Logger log = LoggerFactory.getLogger(name);
             log.info(out);
