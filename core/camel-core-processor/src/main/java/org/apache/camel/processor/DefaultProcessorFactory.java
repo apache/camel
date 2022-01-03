@@ -24,6 +24,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.LineNumberAware;
 import org.apache.camel.NamedNode;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.Processor;
@@ -71,7 +72,13 @@ public class DefaultProcessorFactory implements ProcessorFactory, BootstrapClose
             Object object = finder.newInstance(name).orElse(null);
             if (object instanceof ProcessorFactory) {
                 ProcessorFactory pc = (ProcessorFactory) object;
-                return pc.createChildProcessor(route, definition, mandatory);
+                Processor processor = pc.createChildProcessor(route, definition, mandatory);
+                if (processor instanceof LineNumberAware) {
+                    LineNumberAware lna = (LineNumberAware) processor;
+                    lna.setLineNumber(definition.getLineNumber());
+                    lna.setLocation(definition.getLocation());
+                }
+                return processor;
             }
         } catch (NoFactoryAvailableException e) {
             // ignore there is no custom factory
@@ -89,7 +96,13 @@ public class DefaultProcessorFactory implements ProcessorFactory, BootstrapClose
         }
         ProcessorFactory pc = finder.newInstance(name, ProcessorFactory.class).orElse(null);
         if (pc != null) {
-            return pc.createProcessor(route, definition);
+            Processor processor = pc.createProcessor(route, definition);
+            if (processor instanceof LineNumberAware) {
+                LineNumberAware lna = (LineNumberAware) processor;
+                lna.setLineNumber(definition.getLineNumber());
+                lna.setLocation(definition.getLocation());
+            }
+            return processor;
         }
 
         return null;
