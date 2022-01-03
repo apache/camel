@@ -18,7 +18,7 @@
  */
 
 def AGENT_LABEL = env.AGENT_LABEL ?: 'ubuntu'
-def JDK_NAME = env.JDK_NAME ?: 'adoptopenjdk_hotspot_8u282'
+def JDK_NAME = env.JDK_NAME ?: 'jdk_11_latest'
 
 def MAVEN_PARAMS = "-U -B -e -fae -V -Dnoassembly -Dmaven.compiler.fork=true -Dsurefire.rerunFailingTestsCount=2"
 
@@ -63,24 +63,12 @@ pipeline {
                 branch 'main'
             }
             steps {
-                sh "./mvnw $MAVEN_PARAMS -Pdeploy -Dmaven.test.skip.exec=true clean deploy"
-            }
-        }
-
-        stage('Website update') {
-            when {
-                branch 'main'
-                changeset 'docs/**/*'
-            }
-
-            steps {
-                build job: 'Camel/Camel.website/main', wait: false
+                sh "./mvnw $MAVEN_PARAMS -Dmaven.test.skip.exec=true clean deploy"
             }
         }
 
         stage('Checks') {
             steps {
-                sh "./mvnw $MAVEN_PARAMS -pl :camel-buildtools install"
                 sh "./mvnw $MAVEN_PARAMS -Psourcecheck -Dcheckstyle.failOnViolation=false checkstyle:check"
             }
         }
