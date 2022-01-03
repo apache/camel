@@ -292,6 +292,7 @@ public final class JsonMapper {
     public static JsonObject asJsonObject(EipModel model) {
         JsonObject obj = new JsonObject();
         baseToJson(model, obj);
+        obj.put("abstract", model.isAbstractModel());
         obj.put("input", model.isInput());
         obj.put("output", model.isOutput());
         obj.entrySet().removeIf(e -> e.getValue() == null);
