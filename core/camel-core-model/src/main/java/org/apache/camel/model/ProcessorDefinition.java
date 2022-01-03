@@ -87,6 +87,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     @XmlTransient
     private ProcessorDefinition<?> parent;
     @XmlTransient
+    private RouteConfigurationDefinition routeConfiguration;
+    @XmlTransient
     private final List<InterceptStrategy> interceptStrategies = new ArrayList<>();
     @XmlTransient
     private final int index;
@@ -162,22 +164,31 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
     @Override
     public void addOutput(ProcessorDefinition<?> output) {
-        // inject context
-        CamelContextAware.trySetCamelContext(output, getCamelContext());
-
-        RouteDefinition route = ProcessorDefinitionHelper.getRoute(this);
-        if (route != null) {
-            CamelContext context = route.getCamelContext();
-            if (context != null && (context.isDebugging() || context.isTracing())) {
-                // we want to capture source location:line for every output
-                // (this is an expensive operation, so only do this if debugging or tracing is enabled)
-                ProcessorDefinitionHelper.prepareSourceLocation(output);
-                if (log.isDebugEnabled()) {
-                    log.debug("{} located in {}:{}", output.getShortName(), output.getLocation(),
-                            output.getLineNumber());
+        // grab camel context depends on if this is a regular route or a route configuration
+        CamelContext context = this.getCamelContext();
+        if (context == null) {
+            RouteDefinition route = ProcessorDefinitionHelper.getRoute(this);
+            if (route != null) {
+                context = route.getCamelContext();
+            } else {
+                RouteConfigurationDefinition rc = this.getRouteConfiguration();
+                if (rc != null) {
+                    context = rc.getCamelContext();
                 }
             }
         }
+        if (context != null && (context.isDebugging() || context.isTracing())) {
+            // we want to capture source location:line for every output
+            // (this is an expensive operation, so only do this if debugging or tracing is enabled)
+            ProcessorDefinitionHelper.prepareSourceLocation(output);
+            if (log.isDebugEnabled()) {
+                log.debug("{} located in {}:{}", output.getShortName(), output.getLocation(),
+                        output.getLineNumber());
+            }
+        }
+
+        // inject context
+        CamelContextAware.trySetCamelContext(output, context);
 
         if (!(this instanceof OutputNode)) {
             getParent().addOutput(output);
@@ -3745,6 +3756,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
     // Properties
     // -------------------------------------------------------------------------
+
     @Override
     public ProcessorDefinition<?> getParent() {
         return parent;
@@ -3752,6 +3764,14 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
     public void setParent(ProcessorDefinition<?> parent) {
         this.parent = parent;
+    }
+
+    public RouteConfigurationDefinition getRouteConfiguration() {
+        return routeConfiguration;
+    }
+
+    public void setRouteConfiguration(RouteConfigurationDefinition routeConfiguration) {
+        this.routeConfiguration = routeConfiguration;
     }
 
     public List<InterceptStrategy> getInterceptStrategies() {
