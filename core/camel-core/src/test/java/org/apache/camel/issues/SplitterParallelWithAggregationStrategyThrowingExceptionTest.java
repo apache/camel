@@ -49,7 +49,7 @@ public class SplitterParallelWithAggregationStrategyThrowingExceptionTest extend
                 // exceptions
                 // from the aggregation strategy also.
                 from("direct:start").split(body().tokenize("@")).aggregationStrategy(new MyAggregateBean()).parallelProcessing()
-                        .stopOnAggregateException().shareUnitOfWork()
+                        .shareUnitOfWork()
                         .to("mock:a").end().to("mock:end");
             }
         };
@@ -59,7 +59,11 @@ public class SplitterParallelWithAggregationStrategyThrowingExceptionTest extend
 
         @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-            throw new RuntimeException("Simulating a runtime exception thrown from the aggregation strategy");
+            if (oldExchange != null) {
+                throw new RuntimeException("Simulating a runtime exception thrown from the aggregation strategy");
+            } else {
+                return newExchange;
+            }
         }
     }
 }

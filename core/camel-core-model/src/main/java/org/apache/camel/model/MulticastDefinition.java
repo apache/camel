@@ -77,7 +77,8 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition>
     @Metadata(javaType = "java.lang.Boolean")
     private String parallelAggregate;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean", deprecationNote = "Has no effect in Camel 3.x")
+    @Deprecated
     private String stopOnAggregateException;
 
     public MulticastDefinition() {
@@ -235,12 +236,13 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition>
 
     /**
      * If enabled, unwind exceptions occurring at aggregation time to the error handler when parallelProcessing is used.
-     * Currently, aggregation time exceptions do not stop the route processing when parallelProcessing is used. Enabling
-     * this option allows to work around this behavior. The default value is <code>false</code> for the sake of backward
-     * compatibility.
-     *
-     * @return the builder
+     * The default value is <code>false</code> for the sake of backward compatibility.
+     * 
+     * @deprecated Since Camel 3.0 exceptions from the aggregate strategy are always propagated to the error handler,
+     *             whether or not this option is enabled.
+     * @return     the builder
      */
+    @Deprecated
     public MulticastDefinition stopOnAggregateException() {
         setStopOnAggregateException(Boolean.toString(true));
         return this;
@@ -519,10 +521,12 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition>
         this.parallelAggregate = parallelAggregate;
     }
 
+    @Deprecated
     public String getStopOnAggregateException() {
         return stopOnAggregateException;
     }
 
+    @Deprecated
     public void setStopOnAggregateException(String stopOnAggregateException) {
         this.stopOnAggregateException = stopOnAggregateException;
     }

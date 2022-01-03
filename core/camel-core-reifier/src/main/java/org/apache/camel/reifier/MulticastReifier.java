@@ -62,7 +62,6 @@ public class MulticastReifier extends ProcessorReifier<MulticastDefinition> {
         boolean isStreaming = parseBoolean(definition.getStreaming(), false);
         boolean isStopOnException = parseBoolean(definition.getStopOnException(), false);
         boolean isParallelAggregate = parseBoolean(definition.getParallelAggregate(), false);
-        boolean isStopOnAggregateException = parseBoolean(definition.getStopOnAggregateException(), false);
 
         boolean shutdownThreadPool = willCreateNewThreadPool(definition, isParallelProcessing);
         ExecutorService threadPool = getConfiguredExecutorService("Multicast", definition, isParallelProcessing);
@@ -77,8 +76,7 @@ public class MulticastReifier extends ProcessorReifier<MulticastDefinition> {
 
         MulticastProcessor answer = new MulticastProcessor(
                 camelContext, route, list, strategy, isParallelProcessing, threadPool, shutdownThreadPool, isStreaming,
-                isStopOnException, timeout, definition.getOnPrepare(), isShareUnitOfWork, isParallelAggregate,
-                isStopOnAggregateException);
+                isStopOnException, timeout, definition.getOnPrepare(), isShareUnitOfWork, isParallelAggregate);
 
         return answer;
     }

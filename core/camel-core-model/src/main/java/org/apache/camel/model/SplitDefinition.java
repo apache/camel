@@ -77,7 +77,8 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
     @Metadata(javaType = "java.lang.Boolean")
     private String parallelAggregate;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean", deprecationNote = "Has no effect in Camel 3.x")
+    @Deprecated
     private String stopOnAggregateException;
 
     public SplitDefinition() {
@@ -285,24 +286,28 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
 
     /**
      * If enabled, unwind exceptions occurring at aggregation time to the error handler when parallelProcessing is used.
-     * Currently, aggregation time exceptions do not stop the route processing when parallelProcessing is used. Enabling
-     * this option allows to work around this behavior. The default value is <code>false</code> for the sake of backward
-     * compatibility.
+     * The default value is <code>false</code> for the sake of backward compatibility.
+     * 
+     * @deprecated Since Camel 3.0 exceptions from the aggregate strategy are always propagated to the error handler,
+     *             whether or not this option is enabled.
      *
-     * @return the builder
+     * @return     the builder
      */
+    @Deprecated
     public SplitDefinition stopOnAggregateException() {
         return stopOnAggregateException(true);
     }
 
     /**
      * If enabled, unwind exceptions occurring at aggregation time to the error handler when parallelProcessing is used.
-     * Currently, aggregation time exceptions do not stop the route processing when parallelProcessing is used. Enabling
-     * this option allows to work around this behavior. The default value is <code>false</code> for the sake of backward
-     * compatibility.
+     * The default value is <code>false</code> for the sake of backward compatibility.
+     * 
+     * @deprecated Since Camel 3.0 exceptions from the aggregate strategy are always propagated to the error handler,
+     *             whether or not this option is enabled.
      *
-     * @return the builder
+     * @return     the builder
      */
+    @Deprecated
     public SplitDefinition stopOnAggregateException(boolean stopOnAggregateException) {
         return stopOnAggregateException(Boolean.toString(stopOnAggregateException));
     }
@@ -593,10 +598,12 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
         this.parallelAggregate = parallelAggregate;
     }
 
+    @Deprecated
     public String getStopOnAggregateException() {
         return this.stopOnAggregateException;
     }
 
+    @Deprecated
     public void setStopOnAggregateException(String stopOnAggregateException) {
         this.stopOnAggregateException = stopOnAggregateException;
     }

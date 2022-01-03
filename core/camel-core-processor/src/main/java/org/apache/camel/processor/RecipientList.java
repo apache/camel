@@ -59,7 +59,6 @@ public class RecipientList extends AsyncProcessorSupport implements IdAware, Rou
     private final String delimiter;
     private boolean parallelProcessing;
     private boolean parallelAggregate;
-    private boolean stopOnAggregateException;
     private boolean stopOnException;
     private boolean ignoreInvalidEndpoints;
     private boolean streaming;
@@ -205,8 +204,7 @@ public class RecipientList extends AsyncProcessorSupport implements IdAware, Rou
         recipientListProcessor = new RecipientListProcessor(
                 camelContext, null, expression, delimiter, producerCache, getAggregationStrategy(),
                 isParallelProcessing(), getExecutorService(), isShutdownExecutorService(),
-                isStreaming(), isStopOnException(), getTimeout(), getOnPrepare(), isShareUnitOfWork(), isParallelAggregate(),
-                isStopOnAggregateException());
+                isStreaming(), isStopOnException(), getTimeout(), getOnPrepare(), isShareUnitOfWork(), isParallelAggregate());
         recipientListProcessor.setErrorHandler(errorHandler);
         recipientListProcessor.setAggregateExecutorService(aggregateExecutorService);
         recipientListProcessor.setIgnoreInvalidEndpoints(isIgnoreInvalidEndpoints());
@@ -272,14 +270,6 @@ public class RecipientList extends AsyncProcessorSupport implements IdAware, Rou
 
     public void setParallelAggregate(boolean parallelAggregate) {
         this.parallelAggregate = parallelAggregate;
-    }
-
-    public boolean isStopOnAggregateException() {
-        return stopOnAggregateException;
-    }
-
-    public void setStopOnAggregateException(boolean stopOnAggregateException) {
-        this.stopOnAggregateException = stopOnAggregateException;
     }
 
     public boolean isStopOnException() {

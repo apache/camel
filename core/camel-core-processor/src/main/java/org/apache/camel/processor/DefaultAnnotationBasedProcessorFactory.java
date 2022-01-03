@@ -47,7 +47,6 @@ public final class DefaultAnnotationBasedProcessorFactory implements AnnotationB
         org.apache.camel.processor.RecipientList recipientList
                 = new org.apache.camel.processor.RecipientList(camelContext, annotation.delimiter());
         recipientList.setStopOnException(annotation.stopOnException());
-        recipientList.setStopOnAggregateException(annotation.stopOnAggregateException());
         recipientList.setIgnoreInvalidEndpoints(annotation.ignoreInvalidEndpoints());
         recipientList.setParallelProcessing(annotation.parallelProcessing());
         recipientList.setParallelAggregate(annotation.parallelAggregate());

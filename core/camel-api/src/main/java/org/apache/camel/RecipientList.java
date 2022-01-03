@@ -77,11 +77,12 @@ public @interface RecipientList {
 
     /**
      * If enabled, unwind exceptions occurring at aggregation time to the error handler when parallelProcessing is used.
-     * Currently, aggregation time exceptions do not stop the route processing when parallelProcessing is used. Enabling
-     * this option allows to work around this behavior.
-     *
      * The default value is <code>false</code> for the sake of backward compatibility.
+     * 
+     * @deprecated Since Camel 3.0 exceptions from the aggregate strategy are always propagated to the error handler,
+     *             whether or not this option is enabled.
      */
+    @Deprecated
     boolean stopOnAggregateException() default false;
 
     /**

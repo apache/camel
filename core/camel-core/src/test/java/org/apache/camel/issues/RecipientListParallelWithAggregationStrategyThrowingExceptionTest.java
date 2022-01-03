@@ -50,7 +50,7 @@ public class RecipientListParallelWithAggregationStrategyThrowingExceptionTest e
                 // exceptions
                 // from the aggregation strategy also.
                 from("direct:start").recipientList(header("recipients")).aggregationStrategy(new MyAggregateBean())
-                        .parallelProcessing().stopOnAggregateException()
+                        .parallelProcessing()
                         .shareUnitOfWork().end().to("mock:end");
             }
         };
@@ -60,7 +60,11 @@ public class RecipientListParallelWithAggregationStrategyThrowingExceptionTest e
 
         @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-            throw new RuntimeException("Simulating a runtime exception thrown from the aggregation strategy");
+            if (oldExchange != null) {
+                throw new RuntimeException("Simulating a runtime exception thrown from the aggregation strategy");
+            } else {
+                return newExchange;
+            }
         }
     }
 }
