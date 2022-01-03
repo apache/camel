@@ -20,7 +20,7 @@ name: build
 on:
   push:
     branches:
-      - main
+      - camel-3.12.x
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -46,17 +46,17 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         with:
-          base: main
+          base: camel-3.12.x
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "Regen for commit ${{ github.sha }}"
           committer: GitHub <noreply@github.com>
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           signoff: true
-          branch: regen_bot
+          branch: regen_bot-3.12.x
           title: "Generated sources regen"
           body: |
-            Regen bot :robot: found some uncommited changes after running build on :camel: main.
-            Please do not delete `regen_bot` branch after merge/rebase.
+            Regen bot :robot: found some uncommited changes after running build on :camel: camel-3.12.x.
+            Please do not delete `regen_bot-3.12.x` branch after merge/rebase.
           labels: |
             regen
             automated pr
