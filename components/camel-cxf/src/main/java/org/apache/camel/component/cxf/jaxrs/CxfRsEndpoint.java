@@ -381,6 +381,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
 
     protected JAXRSServerFactoryBean newJAXRSServerFactoryBean() {
         return new JAXRSServerFactoryBean() {
+            @Override
             protected boolean isValidClassResourceInfo(ClassResourceInfo cri) {
                 // CXF will consider interfaces created for managing model resources
                 // invalid - however it is fine with Camel processors if no service invocation

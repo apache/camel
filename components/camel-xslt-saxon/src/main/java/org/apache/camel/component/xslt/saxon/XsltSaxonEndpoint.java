@@ -171,6 +171,7 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
         }
     }
 
+    @Override
     protected XsltSaxonBuilder createXsltBuilder() throws Exception {
         final CamelContext ctx = getCamelContext();
         final ClassResolver resolver = ctx.getClassResolver();
@@ -236,6 +237,7 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
      * @throws TransformerException is thrown if error loading resource
      * @throws IOException          is thrown if error loading resource
      */
+    @Override
     protected void loadResource(String resourceUri, XsltBuilder xslt) throws TransformerException, IOException {
         LOG.trace("{} loading schema resource: {}", this, resourceUri);
         Source source = xslt.getUriResolver().resolve(resourceUri, null);

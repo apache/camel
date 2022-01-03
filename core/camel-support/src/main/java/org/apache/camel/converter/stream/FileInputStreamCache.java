@@ -140,6 +140,7 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
             in = new CipherInputStream(in, ciphers.createDecryptor()) {
                 boolean closed;
 
+                @Override
                 public void close() throws IOException {
                     if (!closed) {
                         super.close();
@@ -280,6 +281,7 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
                 out = new CipherOutputStream(out, ciphers.getEncryptor()) {
                     boolean closed;
 
+                    @Override
                     public void close() throws IOException {
                         if (!closed) {
                             super.close();

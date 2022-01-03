@@ -1545,6 +1545,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     /**
      * Set up the exchange properties with the options of the file endpoint
      */
+    @Override
     public void configureExchange(Exchange exchange) {
         // Now we just set the charset property here
         if (getCharset() != null) {

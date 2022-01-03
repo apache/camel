@@ -70,6 +70,7 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> impl
                 throw new IndexOutOfBoundsException("Index " + index + " is out of bounds with size " + size());
             }
 
+            @Override
             public boolean add(ProcessorDefinition<?> def) {
                 if (def instanceof WhenDefinition) {
                     return whenClauses.add((WhenDefinition) def);
@@ -86,11 +87,13 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> impl
                 return whenClauses.size() + (otherwise == null ? 0 : 1);
             }
 
+            @Override
             public void clear() {
                 whenClauses.clear();
                 otherwise = null;
             }
 
+            @Override
             public ProcessorDefinition<?> set(int index, ProcessorDefinition<?> element) {
                 if (index < whenClauses.size()) {
                     if (element instanceof WhenDefinition) {
@@ -106,6 +109,7 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> impl
                 throw new IndexOutOfBoundsException("Index " + index + " is out of bounds with size " + size());
             }
 
+            @Override
             public ProcessorDefinition<?> remove(int index) {
                 if (index < whenClauses.size()) {
                     return whenClauses.remove(index);

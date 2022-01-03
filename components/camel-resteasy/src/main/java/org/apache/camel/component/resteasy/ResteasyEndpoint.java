@@ -167,6 +167,7 @@ public class ResteasyEndpoint extends HttpEndpoint {
         this.resteasyMethod = resteasyMethod;
     }
 
+    @Override
     public String getProtocol() {
         return protocol;
     }
@@ -189,6 +190,7 @@ public class ResteasyEndpoint extends HttpEndpoint {
         this.host = host;
     }
 
+    @Override
     public int getPort() {
         return port;
     }

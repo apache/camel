@@ -244,6 +244,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         this.bridgeErrorHandler = bridgeErrorHandler;
     }
 
+    @Override
     public boolean isAutowiredEnabled() {
         return autowiredEnabled;
     }

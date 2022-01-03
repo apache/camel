@@ -78,6 +78,7 @@ public class MockExpressionClause<T> implements Expression, Predicate {
      */
     public T exchange(final Function<Exchange, Object> function) {
         return delegate.expression(new ExpressionAdapter() {
+            @Override
             public Object evaluate(Exchange exchange) {
                 return function.apply(exchange);
             }
@@ -110,6 +111,7 @@ public class MockExpressionClause<T> implements Expression, Predicate {
      */
     public T inMessage(final Function<Message, Object> function) {
         return delegate.expression(new ExpressionAdapter() {
+            @Override
             public Object evaluate(Exchange exchange) {
                 return function.apply(exchange.getIn());
             }
@@ -121,6 +123,7 @@ public class MockExpressionClause<T> implements Expression, Predicate {
      */
     public T outMessage(final Function<Message, Object> function) {
         return delegate.expression(new ExpressionAdapter() {
+            @Override
             public Object evaluate(Exchange exchange) {
                 return function.apply(exchange.getOut());
             }
@@ -139,6 +142,7 @@ public class MockExpressionClause<T> implements Expression, Predicate {
      */
     public T body(final Function<Object, Object> function) {
         return delegate.expression(new ExpressionAdapter() {
+            @Override
             public Object evaluate(Exchange exchange) {
                 return function.apply(exchange.getIn().getBody());
             }
@@ -150,6 +154,7 @@ public class MockExpressionClause<T> implements Expression, Predicate {
      */
     public T body(final Supplier<Object> supplier) {
         return delegate.expression(new ExpressionAdapter() {
+            @Override
             public Object evaluate(Exchange exchange) {
                 return supplier.get();
             }
@@ -161,6 +166,7 @@ public class MockExpressionClause<T> implements Expression, Predicate {
      */
     public T body(final BiFunction<Object, Map<String, Object>, Object> function) {
         return delegate.expression(new ExpressionAdapter() {
+            @Override
             public Object evaluate(Exchange exchange) {
                 return function.apply(
                         exchange.getIn().getBody(),
@@ -181,6 +187,7 @@ public class MockExpressionClause<T> implements Expression, Predicate {
      */
     public <B> T body(Class<B> expectedType, final Function<B, Object> function) {
         return delegate.expression(new ExpressionAdapter() {
+            @Override
             public Object evaluate(Exchange exchange) {
                 return function.apply(exchange.getIn().getBody(expectedType));
             }
@@ -192,6 +199,7 @@ public class MockExpressionClause<T> implements Expression, Predicate {
      */
     public <B> T body(Class<B> expectedType, final BiFunction<B, Map<String, Object>, Object> function) {
         return delegate.expression(new ExpressionAdapter() {
+            @Override
             public Object evaluate(Exchange exchange) {
                 return function.apply(
                         exchange.getIn().getBody(expectedType),
@@ -205,6 +213,7 @@ public class MockExpressionClause<T> implements Expression, Predicate {
      */
     public T outBody(final Function<Object, Object> function) {
         return delegate.expression(new ExpressionAdapter() {
+            @Override
             public Object evaluate(Exchange exchange) {
                 return function.apply(exchange.getOut().getBody());
             }
@@ -216,6 +225,7 @@ public class MockExpressionClause<T> implements Expression, Predicate {
      */
     public T outBody(final BiFunction<Object, Map<String, Object>, Object> function) {
         return delegate.expression(new ExpressionAdapter() {
+            @Override
             public Object evaluate(Exchange exchange) {
                 return function.apply(
                         exchange.getOut().getBody(),
@@ -229,6 +239,7 @@ public class MockExpressionClause<T> implements Expression, Predicate {
      */
     public <B> T outBody(Class<B> expectedType, final Function<B, Object> function) {
         return delegate.expression(new ExpressionAdapter() {
+            @Override
             public Object evaluate(Exchange exchange) {
                 return function.apply(exchange.getOut().getBody(expectedType));
             }
@@ -240,6 +251,7 @@ public class MockExpressionClause<T> implements Expression, Predicate {
      */
     public <B> T outBody(Class<B> expectedType, final BiFunction<B, Map<String, Object>, Object> function) {
         return delegate.expression(new ExpressionAdapter() {
+            @Override
             public Object evaluate(Exchange exchange) {
                 return function.apply(
                         exchange.getOut().getBody(expectedType),

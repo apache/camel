@@ -78,6 +78,7 @@ public class DataSetList extends AbstractList<Map<String, Object>> implements Da
                 return result;
             }
 
+            @Override
             public void remove() {
                 throw new UnsupportedOperationException("remove() not supported");
             }
