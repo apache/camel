@@ -53,6 +53,7 @@ public enum DataFormat {
      */
     @Deprecated
     MESSAGE {
+        @Override
         public DataFormat dealias() {
             return RAW;
         }

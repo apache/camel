@@ -91,6 +91,7 @@ public final class SimpleExpressionBuilder {
                 }
             }
 
+            @Override
             public Object evaluate(Exchange exchange) {
                 return MessageHelper.dumpMessageHistoryStacktrace(exchange, formatter, false);
             }
@@ -145,6 +146,7 @@ public final class SimpleExpressionBuilder {
                 exp.init(context);
             }
 
+            @Override
             public Object evaluate(Exchange exchange) {
                 return exp.evaluate(exchange, Object.class);
             }
@@ -169,6 +171,7 @@ public final class SimpleExpressionBuilder {
                 exp.init(context);
             }
 
+            @Override
             public Object evaluate(Exchange exchange) {
                 return skipIteratorExpression(exp, number).evaluate(exchange, Object.class);
             }
@@ -188,6 +191,7 @@ public final class SimpleExpressionBuilder {
             private Expression exp1;
             private Expression exp2;
 
+            @Override
             public Object evaluate(Exchange exchange) {
                 int num1 = exp1.evaluate(exchange, Integer.class);
                 int num2 = exp2.evaluate(exchange, Integer.class);
@@ -223,6 +227,7 @@ public final class SimpleExpressionBuilder {
      */
     public static Expression randomExpression(final int min, final int max) {
         return new ExpressionAdapter() {
+            @Override
             public Object evaluate(Exchange exchange) {
                 Random random = new Random(); // NOSONAR
                 int randomNum = random.nextInt(max - min) + min;
@@ -238,6 +243,7 @@ public final class SimpleExpressionBuilder {
 
     public static Expression fileNameExpression() {
         return new ExpressionAdapter() {
+            @Override
             public Object evaluate(Exchange exchange) {
                 return exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
             }
@@ -251,6 +257,7 @@ public final class SimpleExpressionBuilder {
 
     public static Expression fileOnlyNameExpression() {
         return new ExpressionAdapter() {
+            @Override
             public Object evaluate(Exchange exchange) {
                 String answer = exchange.getIn().getHeader(Exchange.FILE_NAME_ONLY, String.class);
                 if (answer == null) {
@@ -269,6 +276,7 @@ public final class SimpleExpressionBuilder {
 
     public static Expression fileNameNoExtensionExpression() {
         return new ExpressionAdapter() {
+            @Override
             public Object evaluate(Exchange exchange) {
                 String name = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
                 return FileUtil.stripExt(name);
@@ -283,6 +291,7 @@ public final class SimpleExpressionBuilder {
 
     public static Expression fileNameNoExtensionSingleExpression() {
         return new ExpressionAdapter() {
+            @Override
             public Object evaluate(Exchange exchange) {
                 String name = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
                 return FileUtil.stripExt(name, true);
@@ -297,6 +306,7 @@ public final class SimpleExpressionBuilder {
 
     public static Expression fileOnlyNameNoExtensionExpression() {
         return new ExpressionAdapter() {
+            @Override
             public Object evaluate(Exchange exchange) {
                 String name = fileOnlyNameExpression().evaluate(exchange, String.class);
                 return FileUtil.stripExt(name);
@@ -311,6 +321,7 @@ public final class SimpleExpressionBuilder {
 
     public static Expression fileOnlyNameNoExtensionSingleExpression() {
         return new ExpressionAdapter() {
+            @Override
             public Object evaluate(Exchange exchange) {
                 String name = fileOnlyNameExpression().evaluate(exchange, String.class);
                 return FileUtil.stripExt(name, true);
@@ -325,6 +336,7 @@ public final class SimpleExpressionBuilder {
 
     public static Expression fileExtensionExpression() {
         return new ExpressionAdapter() {
+            @Override
             public Object evaluate(Exchange exchange) {
                 String name = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
                 return FileUtil.onlyExt(name);
@@ -339,6 +351,7 @@ public final class SimpleExpressionBuilder {
 
     public static Expression fileExtensionSingleExpression() {
         return new ExpressionAdapter() {
+            @Override
             public Object evaluate(Exchange exchange) {
                 String name = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
                 return FileUtil.onlyExt(name, true);
@@ -353,6 +366,7 @@ public final class SimpleExpressionBuilder {
 
     public static Expression fileParentExpression() {
         return new ExpressionAdapter() {
+            @Override
             public Object evaluate(Exchange exchange) {
                 return exchange.getIn().getHeader("CamelFileParent", String.class);
             }
@@ -366,6 +380,7 @@ public final class SimpleExpressionBuilder {
 
     public static Expression filePathExpression() {
         return new ExpressionAdapter() {
+            @Override
             public Object evaluate(Exchange exchange) {
                 return exchange.getIn().getHeader("CamelFilePath", String.class);
             }
@@ -379,6 +394,7 @@ public final class SimpleExpressionBuilder {
 
     public static Expression fileAbsolutePathExpression() {
         return new ExpressionAdapter() {
+            @Override
             public Object evaluate(Exchange exchange) {
                 return exchange.getIn().getHeader("CamelFileAbsolutePath", String.class);
             }
@@ -392,6 +408,7 @@ public final class SimpleExpressionBuilder {
 
     public static Expression fileAbsoluteExpression() {
         return new ExpressionAdapter() {
+            @Override
             public Object evaluate(Exchange exchange) {
                 return exchange.getIn().getHeader("CamelFileAbsolute", Boolean.class);
             }
@@ -405,6 +422,7 @@ public final class SimpleExpressionBuilder {
 
     public static Expression fileSizeExpression() {
         return new ExpressionAdapter() {
+            @Override
             public Object evaluate(Exchange exchange) {
                 return exchange.getIn().getHeader(Exchange.FILE_LENGTH, Long.class);
             }
@@ -418,6 +436,7 @@ public final class SimpleExpressionBuilder {
 
     public static Expression fileLastModifiedExpression() {
         return new ExpressionAdapter() {
+            @Override
             public Object evaluate(Exchange exchange) {
                 return exchange.getIn().getHeader(Exchange.FILE_LAST_MODIFIED, Long.class);
             }
@@ -449,6 +468,7 @@ public final class SimpleExpressionBuilder {
         }
 
         return new ExpressionAdapter() {
+            @Override
             public Object evaluate(Exchange exchange) {
                 Date date;
                 if ("now".equals(command)) {
@@ -524,6 +544,7 @@ public final class SimpleExpressionBuilder {
 
     public static Expression skipIteratorExpression(final Expression expression, final int skip) {
         return new ExpressionAdapter() {
+            @Override
             public Object evaluate(Exchange exchange) {
                 // evaluate expression as iterator
                 Iterator<?> it = expression.evaluate(exchange, Iterator.class);
@@ -544,6 +565,7 @@ public final class SimpleExpressionBuilder {
      */
     public static Expression nullExpression() {
         return new ExpressionAdapter() {
+            @Override
             public Object evaluate(Exchange exchange) {
                 return null;
             }
@@ -565,6 +587,7 @@ public final class SimpleExpressionBuilder {
             private Expression exp;
             private Language bean;
 
+            @Override
             public Object evaluate(Exchange exchange) {
                 String text = exp.evaluate(exchange, String.class);
                 Class<?> type;
@@ -607,6 +630,7 @@ public final class SimpleExpressionBuilder {
             private ClassResolver classResolver;
             private Expression exp;
 
+            @Override
             public Object evaluate(Exchange exchange) {
                 String text = exp.evaluate(exchange, String.class);
                 Class<?> type;
@@ -646,6 +670,7 @@ public final class SimpleExpressionBuilder {
             private Expression exp;
             private Language bean;
 
+            @Override
             public Object evaluate(Exchange exchange) {
                 String text = exp.evaluate(exchange, String.class);
                 Class<?> type;
@@ -690,6 +715,7 @@ public final class SimpleExpressionBuilder {
         return new ExpressionAdapter() {
             private Language bean;
 
+            @Override
             public Object evaluate(Exchange exchange) {
                 // ognl is able to evaluate method name if it contains nested functions
                 // so we should not eager evaluate ognl as a string
@@ -725,6 +751,7 @@ public final class SimpleExpressionBuilder {
                 exp.init(context);
             }
 
+            @Override
             public Object evaluate(Exchange exchange) {
                 // ognl is able to evaluate method name if it contains nested functions
                 // so we should not eager evaluate ognl as a string
@@ -747,6 +774,7 @@ public final class SimpleExpressionBuilder {
         return new ExpressionAdapter() {
             private Language bean;
 
+            @Override
             public Object evaluate(Exchange exchange) {
                 Object body = exchange.getIn().getBody();
                 if (body == null) {
@@ -780,6 +808,7 @@ public final class SimpleExpressionBuilder {
         return new ExpressionAdapter() {
             private final AtomicReference<Object> cache = new AtomicReference<>();
 
+            @Override
             public Object evaluate(Exchange exchange) {
                 Object answer = cache.get();
                 if (answer == null) {
@@ -814,6 +843,7 @@ public final class SimpleExpressionBuilder {
                 exp.init(context);
             }
 
+            @Override
             public Object evaluate(Exchange exchange) {
                 // it may refer to a class type
                 String text = exp.evaluate(exchange, String.class);
@@ -867,6 +897,7 @@ public final class SimpleExpressionBuilder {
         return new ExpressionAdapter() {
             private Language bean;
 
+            @Override
             public Object evaluate(Exchange exchange) {
                 Object exception = exchange.getException();
                 if (exception == null) {

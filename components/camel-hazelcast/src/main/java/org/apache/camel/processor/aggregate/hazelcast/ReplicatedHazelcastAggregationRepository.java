@@ -233,6 +233,7 @@ public class ReplicatedHazelcastAggregationRepository extends HazelcastAggregati
      * 
      * @param key Object - key in question
      */
+    @Override
     public boolean containsKey(Object key) {
         if (replicatedCache != null) {
             return replicatedCache.containsKey(key);

@@ -25,6 +25,7 @@ public class MailAuthenticator extends javax.mail.Authenticator {
 
     // makes the method public
     /** Override this method in your implementation. */
+    @Override
     public PasswordAuthentication getPasswordAuthentication() {
         return super.getPasswordAuthentication();
     }

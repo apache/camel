@@ -76,10 +76,12 @@ public class RestsDefinition extends OptionalIdentifiedDefinition<RestsDefinitio
         this.rests = rests;
     }
 
+    @Override
     public CamelContext getCamelContext() {
         return camelContext;
     }
 
+    @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }

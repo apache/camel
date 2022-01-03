@@ -38,6 +38,7 @@ public abstract class YamlDeserializerEndpointAwareBase<T> extends YamlDeseriali
      * @param node   the node
      * @param target the target object
      */
+    @Override
     protected void setProperties(T target, MappingNode node) {
         YamlDeserializationContext dc = getDeserializationContext(node);
 

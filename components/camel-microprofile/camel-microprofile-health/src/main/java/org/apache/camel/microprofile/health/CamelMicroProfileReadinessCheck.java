@@ -25,6 +25,7 @@ import org.eclipse.microprofile.health.Readiness;
 @Readiness
 public class CamelMicroProfileReadinessCheck extends AbstractCamelMicroProfileHealthCheck {
 
+    @Override
     public boolean isLiveness() {
         return false;
     }

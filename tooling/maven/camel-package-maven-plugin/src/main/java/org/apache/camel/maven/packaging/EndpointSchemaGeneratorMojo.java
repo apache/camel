@@ -305,6 +305,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         }
     }
 
+    @Override
     protected boolean updateResource(Path dir, String file, String data) {
         resources.put(file, data);
         return super.updateResource(dir, file, data);

@@ -251,6 +251,7 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
                     }
                 }
 
+                @Override
                 public void remove() {
                     throw new UnsupportedOperationException("Remove is not supported by this iterator");
                 }

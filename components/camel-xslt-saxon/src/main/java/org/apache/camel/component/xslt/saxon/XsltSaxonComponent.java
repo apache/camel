@@ -85,6 +85,7 @@ public class XsltSaxonComponent extends XsltComponent {
         this.saxonConfigurationProperties = configurationProperties;
     }
 
+    @Override
     protected XsltSaxonEndpoint createXsltEndpoint(String uri) {
         return new XsltSaxonEndpoint(uri, this);
     }

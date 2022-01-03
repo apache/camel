@@ -112,10 +112,12 @@ public class DefaultRuntimeCamelCatalog extends AbstractCamelCatalog implements 
         return cache("other-model-" + name, name, super::otherModel);
     }
 
+    @Override
     public String mainJSonSchema() {
         return cache("main", "main", k -> super.mainJSonSchema());
     }
 
+    @Override
     public MainModel mainModel() {
         return cache("main-model", "main-model", k -> super.mainModel());
     }

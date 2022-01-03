@@ -37,6 +37,7 @@ public abstract class EndpointRouteConfigurationBuilder extends EndpointRouteBui
         // noop
     }
 
+    @Override
     public abstract void configuration() throws Exception;
 
     public RouteConfigurationsDefinition getRouteConfigurationCollection() {
