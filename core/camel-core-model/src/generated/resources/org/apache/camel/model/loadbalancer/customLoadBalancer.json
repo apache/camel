@@ -7,6 +7,7 @@
     "deprecated": false,
     "label": "eip,routing",
     "javaType": "org.apache.camel.model.loadbalancer.CustomLoadBalancerDefinition",
+    "abstract": false,
     "input": false,
     "output": false
   },

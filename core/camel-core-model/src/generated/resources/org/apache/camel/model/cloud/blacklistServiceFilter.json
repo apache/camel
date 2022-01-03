@@ -6,6 +6,7 @@
     "deprecated": false,
     "label": "routing,cloud,service-filter",
     "javaType": "org.apache.camel.model.cloud.BlacklistServiceCallServiceFilterConfiguration",
+    "abstract": false,
     "input": false,
     "output": false
   },

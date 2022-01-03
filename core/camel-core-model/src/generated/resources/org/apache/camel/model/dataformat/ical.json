@@ -8,6 +8,7 @@
     "firstVersion": "2.12.0",
     "label": "dataformat,transformation",
     "javaType": "org.apache.camel.model.dataformat.IcalDataFormat",
+    "abstract": false,
     "input": false,
     "output": false
   },

@@ -8,6 +8,7 @@
     "firstVersion": "1.5.0",
     "label": "language,core",
     "javaType": "org.apache.camel.model.language.ConstantExpression",
+    "abstract": false,
     "input": false,
     "output": false
   },

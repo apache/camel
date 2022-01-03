@@ -7,6 +7,7 @@
     "deprecated": false,
     "label": "configuration",
     "javaType": "org.apache.camel.model.OptimisticLockRetryPolicyDefinition",
+    "abstract": false,
     "input": false,
     "output": false
   },

@@ -8,6 +8,7 @@
     "firstVersion": "2.11.0",
     "label": "dataformat,transformation",
     "javaType": "org.apache.camel.model.dataformat.Base64DataFormat",
+    "abstract": false,
     "input": false,
     "output": false
   },

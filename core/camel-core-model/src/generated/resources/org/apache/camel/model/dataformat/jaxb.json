@@ -8,6 +8,7 @@
     "firstVersion": "1.0.0",
     "label": "dataformat,transformation,xml",
     "javaType": "org.apache.camel.model.dataformat.JaxbDataFormat",
+    "abstract": false,
     "input": false,
     "output": false
   },

@@ -7,6 +7,7 @@
     "deprecated": false,
     "label": "dataformat,transformation,json",
     "javaType": "org.apache.camel.model.dataformat.JsonDataFormat",
+    "abstract": false,
     "input": false,
     "output": false
   },

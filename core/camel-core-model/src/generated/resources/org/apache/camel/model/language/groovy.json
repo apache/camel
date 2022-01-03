@@ -8,6 +8,7 @@
     "firstVersion": "1.3.0",
     "label": "language,script",
     "javaType": "org.apache.camel.model.language.GroovyExpression",
+    "abstract": false,
     "input": false,
     "output": false
   },

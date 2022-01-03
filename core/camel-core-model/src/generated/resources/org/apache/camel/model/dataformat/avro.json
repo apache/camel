@@ -8,6 +8,7 @@
     "firstVersion": "2.14.0",
     "label": "dataformat,transformation",
     "javaType": "org.apache.camel.model.dataformat.AvroDataFormat",
+    "abstract": false,
     "input": false,
     "output": false
   },

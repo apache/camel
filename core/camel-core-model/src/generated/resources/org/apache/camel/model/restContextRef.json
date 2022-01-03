@@ -7,6 +7,7 @@
     "deprecated": false,
     "label": "configuration,rest",
     "javaType": "org.apache.camel.model.RestContextRefDefinition",
+    "abstract": false,
     "input": false,
     "output": false
   },
