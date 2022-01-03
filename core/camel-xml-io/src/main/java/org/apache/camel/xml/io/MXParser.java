@@ -93,6 +93,7 @@ public class MXParser implements XmlPullParser {
 
     // global parser state
     protected String location;
+    protected int startLineNumber;
     protected int lineNumber;
     protected int columnNumber;
     protected boolean seenRoot;
@@ -399,6 +400,7 @@ public class MXParser implements XmlPullParser {
     protected void reset() {
         // System.out.println("reset() called");
         location = null;
+        startLineNumber = 1;
         lineNumber = 1;
         columnNumber = 0;
         seenRoot = false;
@@ -689,6 +691,10 @@ public class MXParser implements XmlPullParser {
         // +(fragment != null ? " seen "+printable(fragment)+"..." : "");
         return " " + TYPES[eventType] + (fragment != null ? " seen " + printable(fragment) + "..." : "") + " " + (location != null ? location : "") + "@" + getLineNumber() + ":"
                + getColumnNumber();
+    }
+
+    public int getStartLineNumber() {
+        return startLineNumber;
     }
 
     public int getLineNumber() {
@@ -1701,6 +1707,9 @@ public class MXParser implements XmlPullParser {
         } else {
             elName[depth] = newString(buf, nameStart - bufAbsoluteStart, elLen);
         }
+
+        // remember starting line number before continuing until the end tag >
+        startLineNumber = lineNumber;
 
         while (true) {
 

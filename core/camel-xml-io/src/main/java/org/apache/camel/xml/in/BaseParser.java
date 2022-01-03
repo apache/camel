@@ -81,7 +81,12 @@ public class BaseParser {
             T definition, AttributeHandler<T> attributeHandler, ElementHandler<T> elementHandler, ValueHandler<T> valueHandler)
             throws IOException, XmlPullParserException {
         if (definition instanceof LineNumberAware) {
-            ((LineNumberAware) definition).setLineNumber(parser.getLineNumber());
+            // we want to get the line number where the tag starts (in case its multi-line)
+            int line = parser.getStartLineNumber();
+            if (line == -1) {
+                line = parser.getLineNumber();
+            }
+            ((LineNumberAware) definition).setLineNumber(line);
             if (resource != null) {
                 ((LineNumberAware) definition).setLocation(resource.getLocation());
             }

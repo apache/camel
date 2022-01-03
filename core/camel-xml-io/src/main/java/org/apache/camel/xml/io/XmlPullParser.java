@@ -629,6 +629,15 @@ public interface XmlPullParser {
     String getPositionDescription();
 
     /**
+     * Returns the line number that a tag starts from (starting from 1). When the parser does
+     * not know the current line number or can not determine it, -1 is returned
+     * (e.g. for WBXML).
+     *
+     * @return starting line number or -1 if unknown.
+     */
+    int getStartLineNumber();
+
+    /**
      * Returns the current line number, starting from 1. When the parser does
      * not know the current line number or can not determine it, -1 is returned
      * (e.g. for WBXML).
