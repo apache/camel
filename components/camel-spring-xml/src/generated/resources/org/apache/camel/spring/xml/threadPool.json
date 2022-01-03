@@ -7,6 +7,7 @@
     "deprecated": false,
     "label": "spring,configuration",
     "javaType": "org.apache.camel.spring.xml.CamelThreadPoolFactoryBean",
+    "abstract": false,
     "input": false,
     "output": false
   },
