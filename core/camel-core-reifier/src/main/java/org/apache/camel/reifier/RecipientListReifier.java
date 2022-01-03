@@ -51,7 +51,6 @@ public class RecipientListReifier extends ProcessorReifier<RecipientListDefiniti
         boolean isShareUnitOfWork = parseBoolean(definition.getShareUnitOfWork(), false);
         boolean isStopOnException = parseBoolean(definition.getStopOnException(), false);
         boolean isIgnoreInvalidEndpoints = parseBoolean(definition.getIgnoreInvalidEndpoints(), false);
-        boolean isStopOnAggregateException = parseBoolean(definition.getStopOnAggregateException(), false);
 
         RecipientList answer;
         String delimiter = parseString(definition.getDelimiter());
@@ -67,7 +66,6 @@ public class RecipientListReifier extends ProcessorReifier<RecipientListDefiniti
         answer.setShareUnitOfWork(isShareUnitOfWork);
         answer.setStopOnException(isStopOnException);
         answer.setIgnoreInvalidEndpoints(isIgnoreInvalidEndpoints);
-        answer.setStopOnAggregateException(isStopOnAggregateException);
         Integer num = parseInt(definition.getCacheSize());
         if (num != null) {
             answer.setCacheSize(num);
