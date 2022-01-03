@@ -1653,6 +1653,9 @@ public class MXParser implements XmlPullParser {
     }
 
     public int parseStartTag() throws XmlPullParserException, IOException {
+        // remember starting line number
+        startLineNumber = lineNumber;
+
         // ASSUMPTION ch is past <T
         // [40] STag ::= '<' Name (S Attribute)* S? '>'
         // [44] EmptyElemTag ::= '<' Name (S Attribute)* S? '/>'
@@ -1707,9 +1710,6 @@ public class MXParser implements XmlPullParser {
         } else {
             elName[depth] = newString(buf, nameStart - bufAbsoluteStart, elLen);
         }
-
-        // remember starting line number before continuing until the end tag >
-        startLineNumber = lineNumber;
 
         while (true) {
 
