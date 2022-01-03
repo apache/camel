@@ -16,8 +16,10 @@
  */
 package org.apache.camel.dsl.yaml;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.api.management.ManagedResource;
@@ -71,6 +73,12 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
     }
 
     protected RouteBuilder builder(Node root, Resource resource) {
+
+        // we need to keep track of already configured items as the yaml-dsl returns a
+        // RouteConfigurationBuilder that is capable of both route and route configurations
+        // which can lead to the same items being processed twice
+        final Set<Integer> indexes = new HashSet<>();
+
         return new RouteConfigurationBuilder() {
             @Override
             public void configure() throws Exception {
@@ -82,15 +90,24 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                 if (target instanceof Node) {
                     SequenceNode seq = asSequenceNode((Node) target);
                     for (Node node : seq.getValue()) {
-                        Object item = getDeserializationContext().mandatoryResolve(node).construct(node);
-                        doConfigure(item);
+                        int idx = -1;
+                        if (node.getStartMark().isPresent()) {
+                            idx = node.getStartMark().get().getIndex();
+                        }
+                        if (idx == -1 || !indexes.contains(idx)) {
+                            Object item = getDeserializationContext().mandatoryResolve(node).construct(node);
+                            boolean accepted = doConfigure(item);
+                            if (accepted && idx != -1) {
+                                indexes.add(idx);
+                            }
+                        }
                     }
                 } else {
                     doConfigure(target);
                 }
             }
 
-            private void doConfigure(Object item) throws Exception {
+            private boolean doConfigure(Object item) throws Exception {
                 if (item instanceof OutputAwareFromDefinition) {
                     RouteDefinition route = new RouteDefinition();
                     route.setInput(((OutputAwareFromDefinition) item).getDelegate());
@@ -98,11 +115,14 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
 
                     CamelContextAware.trySetCamelContext(getRouteCollection(), getCamelContext());
                     getRouteCollection().route(route);
+                    return true;
                 } else if (item instanceof RouteDefinition) {
                     CamelContextAware.trySetCamelContext(getRouteCollection(), getCamelContext());
                     getRouteCollection().route((RouteDefinition) item);
+                    return true;
                 } else if (item instanceof CamelContextCustomizer) {
                     ((CamelContextCustomizer) item).configure(getCamelContext());
+                    return true;
                 } else if (item instanceof OnExceptionDefinition) {
                     if (!getRouteCollection().getRoutes().isEmpty()) {
                         throw new IllegalArgumentException(
@@ -110,15 +130,18 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                     }
                     CamelContextAware.trySetCamelContext(getRouteCollection(), getCamelContext());
                     getRouteCollection().getOnExceptions().add((OnExceptionDefinition) item);
+                    return true;
                 } else if (item instanceof ErrorHandlerBuilder) {
                     if (!getRouteCollection().getRoutes().isEmpty()) {
                         throw new IllegalArgumentException(
                                 "errorHandler must be defined before any routes in the RouteBuilder");
                     }
                     errorHandler((ErrorHandlerBuilder) item);
+                    return true;
                 } else if (item instanceof RouteTemplateDefinition) {
                     CamelContextAware.trySetCamelContext(getRouteTemplateCollection(), getCamelContext());
                     getRouteTemplateCollection().routeTemplate((RouteTemplateDefinition) item);
+                    return true;
                 } else if (item instanceof RestDefinition) {
                     RestDefinition definition = (RestDefinition) item;
                     for (VerbDefinition verb : definition.getVerbs()) {
@@ -126,11 +149,15 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                     }
                     CamelContextAware.trySetCamelContext(getRestCollection(), getCamelContext());
                     getRestCollection().rest(definition);
+                    return true;
                 } else if (item instanceof RestConfigurationDefinition) {
                     ((RestConfigurationDefinition) item).asRestConfiguration(
                             getCamelContext(),
                             getCamelContext().getRestConfiguration());
+                    return true;
                 }
+
+                return false;
             }
 
             @Override
@@ -143,19 +170,30 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                 if (target instanceof Node) {
                     SequenceNode seq = asSequenceNode((Node) target);
                     for (Node node : seq.getValue()) {
-                        Object item = getDeserializationContext().mandatoryResolve(node).construct(node);
-                        doConfiguration(item);
+                        int idx = -1;
+                        if (node.getStartMark().isPresent()) {
+                            idx = node.getStartMark().get().getIndex();
+                        }
+                        if (idx == -1 || !indexes.contains(idx)) {
+                            Object item = getDeserializationContext().mandatoryResolve(node).construct(node);
+                            boolean accepted = doConfiguration(item);
+                            if (accepted && idx != -1) {
+                                indexes.add(idx);
+                            }
+                        }
                     }
                 } else {
                     doConfiguration(target);
                 }
             }
 
-            private void doConfiguration(Object item) {
+            private boolean doConfiguration(Object item) {
                 if (item instanceof RouteConfigurationDefinition) {
                     CamelContextAware.trySetCamelContext(getRouteConfigurationCollection(), getCamelContext());
                     getRouteConfigurationCollection().routeConfiguration((RouteConfigurationDefinition) item);
+                    return true;
                 }
+                return false;
             }
         };
     }
