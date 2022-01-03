@@ -8,6 +8,7 @@
     "firstVersion": "3.7.0",
     "label": "language",
     "javaType": "org.apache.camel.model.language.JoorExpression",
+    "abstract": false,
     "input": false,
     "output": false
   },

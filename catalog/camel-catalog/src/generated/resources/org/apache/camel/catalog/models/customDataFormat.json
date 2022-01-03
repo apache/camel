@@ -7,6 +7,7 @@
     "deprecated": false,
     "label": "dataformat,transformation",
     "javaType": "org.apache.camel.model.dataformat.CustomDataFormat",
+    "abstract": false,
     "input": false,
     "output": false
   },

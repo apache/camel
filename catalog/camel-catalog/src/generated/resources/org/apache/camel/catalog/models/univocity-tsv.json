@@ -8,6 +8,7 @@
     "firstVersion": "2.15.0",
     "label": "dataformat,transformation,csv",
     "javaType": "org.apache.camel.model.dataformat.UniVocityTsvDataFormat",
+    "abstract": false,
     "input": false,
     "output": false
   },

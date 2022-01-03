@@ -8,6 +8,7 @@
     "firstVersion": "2.6.0",
     "label": "dataformat,transformation,monitoring",
     "javaType": "org.apache.camel.model.dataformat.SyslogDataFormat",
+    "abstract": false,
     "input": false,
     "output": false
   },

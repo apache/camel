@@ -8,6 +8,7 @@
     "firstVersion": "2.16.0",
     "label": "dataformat,transformation,file",
     "javaType": "org.apache.camel.model.dataformat.TarFileDataFormat",
+    "abstract": false,
     "input": false,
     "output": false
   },

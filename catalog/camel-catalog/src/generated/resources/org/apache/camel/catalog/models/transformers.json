@@ -7,6 +7,7 @@
     "deprecated": false,
     "label": "transformation",
     "javaType": "org.apache.camel.model.transformer.TransformersDefinition",
+    "abstract": false,
     "input": false,
     "output": false
   },

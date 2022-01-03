@@ -8,6 +8,7 @@
     "firstVersion": "2.13.0",
     "label": "language,json",
     "javaType": "org.apache.camel.model.language.JsonPathExpression",
+    "abstract": false,
     "input": false,
     "output": false
   },
