@@ -9040,11 +9040,9 @@ AggregationStrategy is implemented as thread-safe. Default value: false
         <xs:attribute name="stopOnAggregateException" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-If enabled, unwind exceptions occurring at aggregation time to the error handler
-when parallelProcessing is used. Currently, aggregation time exceptions do not
-stop the route processing when parallelProcessing is used. Enabling this option
-allows to work around this behavior. The default value is false for the sake of
-backward compatibility. Default value: false
+Deprecated: If enabled, unwind exceptions occurring at aggregation time to the
+error handler when parallelProcessing is used. The default value is false for
+the sake of backward compatibility. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -10210,11 +10208,9 @@ AggregationStrategy is implemented as thread-safe. Default value: false
         <xs:attribute name="stopOnAggregateException" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-If enabled, unwind exceptions occurring at aggregation time to the error handler
-when parallelProcessing is used. Currently, aggregation time exceptions do not
-stop the route processing when parallelProcessing is used. Enabling this option
-allows to work around this behavior. The default value is false for the sake of
-backward compatibility. Default value: false
+Deprecated: If enabled, unwind exceptions occurring at aggregation time to the
+error handler when parallelProcessing is used. The default value is false for
+the sake of backward compatibility. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -11616,11 +11612,9 @@ AggregationStrategy is implemented as thread-safe. Default value: false
         <xs:attribute name="stopOnAggregateException" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-If enabled, unwind exceptions occurring at aggregation time to the error handler
-when parallelProcessing is used. Currently, aggregation time exceptions do not
-stop the route processing when parallelProcessing is used. Enabling this option
-allows to work around this behavior. The default value is false for the sake of
-backward compatibility. Default value: false
+Deprecated: If enabled, unwind exceptions occurring at aggregation time to the
+error handler when parallelProcessing is used. The default value is false for
+the sake of backward compatibility. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
