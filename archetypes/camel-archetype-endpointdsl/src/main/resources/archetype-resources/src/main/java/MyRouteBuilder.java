@@ -17,7 +17,7 @@
 package ${package};
 
 import org.apache.camel.builder.endpoint.EndpointRouteBuilder;
-import org.apache.camel.builder.endpoint.dsl.FileEndpointBuilderFactory;
+import org.apache.camel.component.file.GenericFileExist;
 
 /**
  * A Camel Java DSL Router
@@ -38,7 +38,7 @@ public class MyRouteBuilder extends EndpointRouteBuilder {
                 .log("${body}")
                 .to(file("target")
                         .fileName("timer.log")
-                        .fileExist(FileEndpointBuilderFactory.GenericFileExist.Append) //If the file exists, append to it
+                        .fileExist(GenericFileExist.Append) //If the file exists, append to it
                         .appendChars("\n")
                 );
     }
