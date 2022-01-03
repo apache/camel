@@ -1693,7 +1693,7 @@ The dynamic nature of change event body fields, high level replication steps as 
 
 *Output*
 
-Type: `PlatformEvent` or `org.cometd.bayeux.Message`
+Type: `Map<String, Object>` or `org.cometd.bayeux.Message`
 
 Headers
 |===
