@@ -619,7 +619,7 @@ public class SalesforceEndpointConfig implements Cloneable {
     }
 
     /**
-     * Notify for operations, options are ALL, CREATE, EXTENDED, UPDATE (API version < 29.0)
+     * Notify for operations, options are ALL, CREATE, EXTENDED, UPDATE (API version &lt; 29.0)
      */
     public void setNotifyForOperations(NotifyForOperationsEnum notifyForOperations) {
         this.notifyForOperations = notifyForOperations;
@@ -630,7 +630,7 @@ public class SalesforceEndpointConfig implements Cloneable {
     }
 
     /**
-     * Notify for create operation, defaults to false (API version >= 29.0)
+     * Notify for create operation, defaults to false (API version &gt;= 29.0)
      */
     public void setNotifyForOperationCreate(Boolean notifyForOperationCreate) {
         this.notifyForOperationCreate = notifyForOperationCreate;
@@ -641,7 +641,7 @@ public class SalesforceEndpointConfig implements Cloneable {
     }
 
     /**
-     * Notify for update operation, defaults to false (API version >= 29.0)
+     * Notify for update operation, defaults to false (API version &gt;= 29.0)
      */
     public void setNotifyForOperationUpdate(Boolean notifyForOperationUpdate) {
         this.notifyForOperationUpdate = notifyForOperationUpdate;
@@ -652,7 +652,7 @@ public class SalesforceEndpointConfig implements Cloneable {
     }
 
     /**
-     * Notify for delete operation, defaults to false (API version >= 29.0)
+     * Notify for delete operation, defaults to false (API version &gt;= 29.0)
      */
     public void setNotifyForOperationDelete(Boolean notifyForOperationDelete) {
         this.notifyForOperationDelete = notifyForOperationDelete;
@@ -663,7 +663,7 @@ public class SalesforceEndpointConfig implements Cloneable {
     }
 
     /**
-     * Notify for un-delete operation, defaults to false (API version >= 29.0)
+     * Notify for un-delete operation, defaults to false (API version &gt;= 29.0)
      */
     public void setNotifyForOperationUndelete(Boolean notifyForOperationUndelete) {
         this.notifyForOperationUndelete = notifyForOperationUndelete;
