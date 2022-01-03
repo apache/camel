@@ -55,6 +55,7 @@ import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asMapping
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asSequenceNode;
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asText;
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.nodeAt;
+import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.setDeserializationContext;
 
 @ManagedResource(description = "Managed YAML RoutesBuilderLoader")
 @RoutesLoader(YamlRoutesBuilderLoader.EXTENSION)
@@ -72,7 +73,7 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
         super(EXTENSION);
     }
 
-    protected RouteBuilder builder(Node root, Resource resource) {
+    protected RouteBuilder builder(final Node root, final Resource resource) {
 
         // we need to keep track of already configured items as the yaml-dsl returns a
         // RouteConfigurationBuilder that is capable of both route and route configurations
@@ -82,6 +83,9 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
         return new RouteConfigurationBuilder() {
             @Override
             public void configure() throws Exception {
+                getDeserializationContext().setResource(resource);
+                setDeserializationContext(root, getDeserializationContext());
+
                 Object target = preConfigureNode(root);
                 if (target == null) {
                     return;
@@ -162,6 +166,9 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
 
             @Override
             public void configuration() throws Exception {
+                getDeserializationContext().setResource(resource);
+                setDeserializationContext(root, getDeserializationContext());
+
                 Object target = preConfigureNode(root);
                 if (target == null) {
                     return;
