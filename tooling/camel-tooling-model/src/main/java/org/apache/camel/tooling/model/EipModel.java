@@ -18,6 +18,7 @@ package org.apache.camel.tooling.model;
 
 public class EipModel extends BaseModel<EipModel.EipOptionModel> {
 
+    protected boolean abstractModel;  // used in models from camel-core-engine
     protected boolean input;          // used in models from camel-core-engine
     protected boolean output;         // used in models from camel-core-engine
 
@@ -27,6 +28,14 @@ public class EipModel extends BaseModel<EipModel.EipOptionModel> {
     @Override
     public String getKind() {
         return "model";
+    }
+
+    public boolean isAbstractModel() {
+        return abstractModel;
+    }
+
+    public void setAbstractModel(boolean abstractModel) {
+        this.abstractModel = abstractModel;
     }
 
     public boolean isInput() {

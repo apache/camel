@@ -271,6 +271,7 @@ public final class JsonMapper {
         JsonObject mobj = (JsonObject) obj.get("model");
         EipModel model = new EipModel();
         parseModel(mobj, model);
+        model.setAbstractModel(mobj.getBooleanOrDefault("abstract", false));
         model.setInput(mobj.getBooleanOrDefault("input", false));
         model.setOutput(mobj.getBooleanOrDefault("output", false));
         JsonObject mprp = (JsonObject) obj.get("properties");

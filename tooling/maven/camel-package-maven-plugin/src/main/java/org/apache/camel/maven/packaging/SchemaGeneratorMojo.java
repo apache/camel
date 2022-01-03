@@ -99,6 +99,15 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
             "org.apache.camel.model.ToDynamicDefinition" };
     // special for verbs (these classes have sub classes, so we use this to find all classes)
     private static final String[] ONE_OF_VERBS = new String[] { "org.apache.camel.model.rest.VerbDefinition" };
+    private static final String[] ONE_OF_ABSTRACTS = new String[] {
+            "org.apache.camel.model.InterceptDefinition",
+            "org.apache.camel.model.InterceptFromDefinition",
+            "org.apache.camel.model.InterceptSendToEndpointDefinition",
+            "org.apache.camel.model.OnCompletionDefinition",
+            "org.apache.camel.model.OnExceptionDefinition",
+            "org.apache.camel.model.PolicyDefinition",
+            "org.apache.camel.model.SagaDefinition",
+            "org.apache.camel.model.TransactedDefinition" };
 
     @Parameter(defaultValue = "${project.build.outputDirectory}")
     protected File classesDirectory;
@@ -211,6 +220,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
 
         // after we have found all the options then figure out if the model
         // accepts input/output
+        eipModel.setAbstractModel(hasAbstract(classElement));
         eipModel.setInput(hasInput(classElement));
         eipModel.setOutput(hasOutput(eipModel));
 
@@ -1024,6 +1034,15 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
             return metadata.required();
         }
         return defaultValue;
+    }
+
+    private boolean hasAbstract(Class<?> classElement) {
+        for (String name : ONE_OF_ABSTRACTS) {
+            if (hasSuperClass(classElement, name)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean hasInput(Class<?> classElement) {
