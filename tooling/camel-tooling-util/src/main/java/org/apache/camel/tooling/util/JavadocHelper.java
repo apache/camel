@@ -20,7 +20,7 @@ import static org.apache.camel.tooling.util.Strings.isNullOrEmpty;
 
 public final class JavadocHelper {
 
-    private static final String VALID_CHARS = ".,-='/\\!&%():;#${}";
+    private static final String VALID_CHARS = ".,-='/\\!&%():;#${}<>";
 
     private JavadocHelper() {
     }
@@ -87,8 +87,9 @@ public final class JavadocHelper {
         }
 
         String s = sb.toString();
-        // remove all XML tags
-        s = s.replaceAll("<.*?>", "");
+        // remove all XML tags. This isn't complete but likely to find anything actually used.
+        s = s.replaceAll("<(\\w|:|_)(\\w|:|_|-|\\.|\\d)*\\s.*/?>", "");
+        s = s.replaceAll("</(\\w|:|_)(\\w|:|_|-|\\.|\\d)*\\s*>", "");
         // remove {@link inlined javadoc links which is special handled
         s = s.replaceAll("\\{@link\\s\\w+\\s(\\w+)}", "$1");
         s = s.replaceAll("\\{@link\\s([\\w]+)}", "$1");
@@ -130,7 +131,7 @@ public final class JavadocHelper {
             return "";
         }
         // must replace amp first, so we dont replace &lt; to amp later
-        text = text.replace("&", "&amp;");
+        text = text.replaceAll("&(?!(amp;)|(lt;)|(gt;)|(quot;))", "&amp;");
         text = text.replace("\"", "&quot;");
         text = text.replace("<", "&lt;");
         text = text.replace(">", "&gt;");
