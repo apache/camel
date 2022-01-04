@@ -34,7 +34,7 @@
 
     <properties>
         <compiler.fork>true</compiler.fork>
-        <cxf.codegenplugin.forkmode>once</cxf.codegenplugin.forkmode>
+        <cxf.codegenplugin.forkmode>true</cxf.codegenplugin.forkmode>
         <cxf.codegen.jvmArgs/>
         <camel.surefire.fork.vmargs>-XX:+ExitOnOutOfMemoryError</camel.surefire.fork.vmargs>
         <camel.surefire.forkCount>1</camel.surefire.forkCount>
@@ -4040,6 +4040,68 @@
         </dependencies>
     </dependencyManagement>
 
+    <dependencies>
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
+            <version>${javax-annotation-api-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.xml.ws</groupId>
+            <artifactId>jaxws-api</artifactId>
+            <version>2.3.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.xml.bind</groupId>
+                    <artifactId>jaxb-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <version>${jakarta-jaxb-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-ws-metadata_2.0_spec</artifactId>
+            <version>${geronimo-ws-metadata-spec-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.messaging.saaj</groupId>
+            <artifactId>saaj-impl</artifactId>
+            <version>1.3.28</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.xml.soap</groupId>
+                    <artifactId>javax.xml.soap-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <!--Get dependency from jaxb-runtime-->
+                    <groupId>org.jvnet.staxex</groupId>
+                    <artifactId>stax-ex</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-jta_1.1_spec</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>${glassfish-jaxb-runtime-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.xml.soap</groupId>
+            <artifactId>javax.xml.soap-api</artifactId>
+            <version>1.4.0</version>
+        </dependency>
+    </dependencies>
+
     <build>
         <defaultGoal>install</defaultGoal>
         <pluginManagement>
@@ -4048,6 +4110,13 @@
                     <groupId>org.apache.camel</groupId>
                     <artifactId>camel-package-maven-plugin</artifactId>
                     <version>${project.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>jakarta.xml.bind</groupId>
+                            <artifactId>jakarta.xml.bind-api</artifactId>
+                            <version>${jakarta-jaxb-version}</version>
+                        </dependency>
+                    </dependencies>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.camel</groupId>
@@ -4063,6 +4132,13 @@
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>jaxb2-maven-plugin</artifactId>
                     <version>${jaxb2-maven-plugin-version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>jakarta.xml.bind</groupId>
+                            <artifactId>jakarta.xml.bind-api</artifactId>
+                            <version>${jakarta-jaxb-version}</version>
+                        </dependency>
+                    </dependencies>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -4884,115 +4960,6 @@
                     </plugin>
                 </plugins>
             </build>
-        </profile>
-
-        <profile>
-            <id>jdk9s-build</id>
-            <activation>
-                <jdk>[9,)</jdk>
-            </activation>
-            <properties>
-                <cxf.codegenplugin.forkmode>true</cxf.codegenplugin.forkmode>
-            </properties>
-            <build>
-                <pluginManagement>
-                    <plugins>
-                        <plugin>
-                            <groupId>org.codehaus.mojo</groupId>
-                            <artifactId>jaxb2-maven-plugin</artifactId>
-                            <dependencies>
-                                <dependency>
-                                    <groupId>jakarta.xml.bind</groupId>
-                                    <artifactId>jakarta.xml.bind-api</artifactId>
-                                    <version>${jakarta-jaxb-version}</version>
-                                </dependency>
-                            </dependencies>
-                        </plugin>
-                        <plugin>
-                            <groupId>org.apache.camel</groupId>
-                            <artifactId>camel-package-maven-plugin</artifactId>
-                            <dependencies>
-                                <dependency>
-                                    <groupId>jakarta.xml.bind</groupId>
-                                    <artifactId>jakarta.xml.bind-api</artifactId>
-                                    <version>${jakarta-jaxb-version}</version>
-                                </dependency>
-                            </dependencies>
-                        </plugin>
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-compiler-plugin</artifactId>
-                            <version>${maven-compiler-plugin-version}</version>
-                            <configuration>
-                                <source>${jdk.version}</source>
-                                <target>${jdk.version}</target>
-                                <maxmem>512M</maxmem>
-                                <fork>true</fork>
-                                <showDeprecation>true</showDeprecation>
-                                <showWarnings>true</showWarnings>
-                            </configuration>
-                        </plugin>
-                    </plugins>
-                </pluginManagement>
-            </build>
-            <dependencies>
-                <dependency>
-                    <groupId>javax.annotation</groupId>
-                    <artifactId>javax.annotation-api</artifactId>
-                    <version>${javax-annotation-api-version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>javax.xml.ws</groupId>
-                    <artifactId>jaxws-api</artifactId>
-                    <version>2.3.0</version>
-                    <exclusions>
-                        <exclusion>
-                            <groupId>javax.xml.bind</groupId>
-                            <artifactId>jaxb-api</artifactId>
-                        </exclusion>
-                    </exclusions>
-                </dependency>
-                <dependency>
-                    <groupId>jakarta.xml.bind</groupId>
-                    <artifactId>jakarta.xml.bind-api</artifactId>
-                    <version>${jakarta-jaxb-version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>org.apache.geronimo.specs</groupId>
-                    <artifactId>geronimo-ws-metadata_2.0_spec</artifactId>
-                    <version>${geronimo-ws-metadata-spec-version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>com.sun.xml.messaging.saaj</groupId>
-                    <artifactId>saaj-impl</artifactId>
-                    <version>1.3.28</version>
-                    <exclusions>
-                        <exclusion>
-                            <groupId>javax.xml.soap</groupId>
-                            <artifactId>javax.xml.soap-api</artifactId>
-                        </exclusion>
-                        <exclusion>
-                            <!--Get dependency from jaxb-runtime-->
-                            <groupId>org.jvnet.staxex</groupId>
-                            <artifactId>stax-ex</artifactId>
-                        </exclusion>
-                    </exclusions>
-                </dependency>
-                <dependency>
-                    <groupId>org.apache.geronimo.specs</groupId>
-                    <artifactId>geronimo-jta_1.1_spec</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>org.glassfish.jaxb</groupId>
-                    <artifactId>jaxb-runtime</artifactId>
-                    <version>${glassfish-jaxb-runtime-version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>javax.xml.soap</groupId>
-                    <artifactId>javax.xml.soap-api</artifactId>
-                    <version>1.4.0</version>
-                </dependency>
-            </dependencies>
         </profile>
         <profile>
             <id>tia</id>
