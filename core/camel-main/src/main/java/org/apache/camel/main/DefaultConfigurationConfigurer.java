@@ -266,6 +266,9 @@ public final class DefaultConfigurationConfigurer {
         if (config.isMessageHistory()) {
             camelContext.setMessageHistory(true);
         }
+        if (config.isSourceLocationEnabled()) {
+            camelContext.setSourceLocationEnabled(true);
+        }
 
         camelContext.setBacklogTracing(config.isBacklogTracing());
         camelContext.setTracing(config.isTracing());

@@ -17,41 +17,36 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.LineNumberAware;
 import org.apache.camel.Processor;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class LineNumberProcessorTest extends ContextTestSupport {
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = super.createCamelContext();
-        context.setSourceLocationEnabled(true);
-        return context;
-    }
+public class LineNumberProcessorDebuggingTest {
 
     @Test
     public void testLineNumber() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("org.apache.camel.processor.LineNumberProcessorTest$1:51");
+        CamelContext context = new DefaultCamelContext();
+        context.setDebugging(true);
 
-        template.sendBody("direct:start", "Hello World");
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
+        context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .process(new MyProcessor())
-                        .to("mock:result");
+                        .process(new MyProcessor());
             }
-        };
+        });
+
+        context.start();
+
+        ProducerTemplate template = context.createProducerTemplate();
+
+        Object out = template.requestBody("direct:start", "Hello World");
+        Assertions.assertEquals("org.apache.camel.processor.LineNumberProcessorDebuggingTest$1:40", out);
     }
 
     private static class MyProcessor implements Processor, LineNumberAware {

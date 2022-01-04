@@ -69,6 +69,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean tracing;
     private boolean tracingStandby;
     private String tracingPattern;
+    private boolean sourceLocationEnabled;
     private boolean messageHistory;
     private boolean logMask;
     private boolean logExhaustedMessageBody;
@@ -586,6 +587,21 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setMessageHistory(boolean messageHistory) {
         this.messageHistory = messageHistory;
+    }
+
+    public boolean isSourceLocationEnabled() {
+        return sourceLocationEnabled;
+    }
+
+    /**
+     * Whether to capture precise source location:line-number for all EIPs in Camel routes.
+     *
+     * Enabling this will impact parsing Java based routes (also Groovy, Kotlin, etc.) on startup as this uses JDK
+     * StackTraceElement to calculate the location from the Camel route, which comes with a performance cost. This only
+     * impact startup, not the performance of the routes at runtime.
+     */
+    public void setSourceLocationEnabled(boolean sourceLocationEnabled) {
+        this.sourceLocationEnabled = sourceLocationEnabled;
     }
 
     public boolean isLogMask() {
@@ -1725,6 +1741,18 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withMessageHistory(boolean messageHistory) {
         this.messageHistory = messageHistory;
+        return (T) this;
+    }
+
+    /**
+     * Whether to capture precise source location:line-number for all EIPs in Camel routes.
+     *
+     * Enabling this will impact parsing Java based routes (also Groovy, Kotlin, etc.) on startup as this uses JDK
+     * StackTraceElement to calculate the location from the Camel route, which comes with a performance cost. This only
+     * impact startup, not the performance of the routes at runtime.
+     */
+    public T withSourceLocationEnabled(boolean sourceLocationEnabled) {
+        this.sourceLocationEnabled = sourceLocationEnabled;
         return (T) this;
     }
 

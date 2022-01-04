@@ -733,10 +733,9 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
         // does not have a <from> as it is implied to be the rest endpoint
         this.input = input;
 
-        if (getCamelContext() != null
-                && (getCamelContext().isDebugging() || getCamelContext().isTracing())) {
+        if (getCamelContext() != null && (getCamelContext().isSourceLocationEnabled() || getCamelContext().isDebugging()
+                || getCamelContext().isTracing())) {
             // we want to capture source location:line for every output
-            // (this is an expensive operation, so only do this if debugging or tracing is enabled)
             ProcessorDefinitionHelper.prepareSourceLocation(input);
             if (log.isDebugEnabled()) {
                 log.debug("{} located in {}:{}", input.getShortName(), input.getLocation(),

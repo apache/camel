@@ -1193,6 +1193,16 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
+    public Boolean isSourceLocationEnabled() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setSourceLocationEnabled(Boolean sourceLocationEnabled) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public Boolean isTypeConverterStatisticsEnabled() {
         throw new UnsupportedOperationException();
     }

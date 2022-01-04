@@ -1187,6 +1187,24 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     void setLoadHealthChecks(Boolean loadHealthChecks);
 
     /**
+     * Whether to capture precise source location:line-number for all EIPs in Camel routes.
+     *
+     * Enabling this will impact parsing Java based routes (also Groovy, Kotlin, etc.) on startup as this uses
+     * {@link StackTraceElement} to calculate the location from the Camel route, which comes with a performance cost.
+     * This only impact startup, not the performance of the routes at runtime.
+     */
+    Boolean isSourceLocationEnabled();
+
+    /**
+     * Whether to capture precise source location:line-number for all EIPs in Camel routes.
+     *
+     * Enabling this will impact parsing Java based routes (also Groovy, Kotlin, etc.) on startup as this uses
+     * {@link StackTraceElement} to calculate the location from the Camel route, which comes with a performance cost.
+     * This only impact startup, not the performance of the routes at runtime.
+     */
+    void setSourceLocationEnabled(Boolean sourceLocationEnabled);
+
+    /**
      * Whether or not type converter statistics is enabled.
      * <p/>
      * By default the type converter utilization statistics is disabled. <b>Notice:</b> If enabled then there is a

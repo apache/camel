@@ -900,6 +900,16 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     @Override
+    public Boolean isSourceLocationEnabled() {
+        return delegate.isSourceLocationEnabled();
+    }
+
+    @Override
+    public void setSourceLocationEnabled(Boolean sourceLocationEnabled) {
+        delegate.setSourceLocationEnabled(sourceLocationEnabled);
+    }
+
+    @Override
     public Boolean isDumpRoutes() {
         return delegate.isDumpRoutes();
     }

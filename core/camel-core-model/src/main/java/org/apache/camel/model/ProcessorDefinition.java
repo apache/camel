@@ -177,9 +177,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
                 }
             }
         }
-        if (context != null && (context.isDebugging() || context.isTracing())) {
+        if (context != null && (context.isSourceLocationEnabled() || context.isDebugging() || context.isTracing())) {
             // we want to capture source location:line for every output
-            // (this is an expensive operation, so only do this if debugging or tracing is enabled)
             ProcessorDefinitionHelper.prepareSourceLocation(output);
             if (log.isDebugEnabled()) {
                 log.debug("{} located in {}:{}", output.getShortName(), output.getLocation(),

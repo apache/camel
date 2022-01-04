@@ -163,6 +163,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ShutdownRunningTask": target.setShutdownRunningTask(property(camelContext, org.apache.camel.ShutdownRunningTask.class, value)); return true;
         case "shutdownstrategy":
         case "ShutdownStrategy": target.setShutdownStrategy(property(camelContext, org.apache.camel.spi.ShutdownStrategy.class, value)); return true;
+        case "sourcelocationenabled":
+        case "SourceLocationEnabled": target.setSourceLocationEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "startupsteprecorder":
         case "StartupStepRecorder": target.setStartupStepRecorder(property(camelContext, org.apache.camel.spi.StartupStepRecorder.class, value)); return true;
         case "startupsummarylevel":
@@ -346,6 +348,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ShutdownRunningTask": return org.apache.camel.ShutdownRunningTask.class;
         case "shutdownstrategy":
         case "ShutdownStrategy": return org.apache.camel.spi.ShutdownStrategy.class;
+        case "sourcelocationenabled":
+        case "SourceLocationEnabled": return java.lang.Boolean.class;
         case "startupsteprecorder":
         case "StartupStepRecorder": return org.apache.camel.spi.StartupStepRecorder.class;
         case "startupsummarylevel":
@@ -530,6 +534,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ShutdownRunningTask": return target.getShutdownRunningTask();
         case "shutdownstrategy":
         case "ShutdownStrategy": return target.getShutdownStrategy();
+        case "sourcelocationenabled":
+        case "SourceLocationEnabled": return target.isSourceLocationEnabled();
         case "startupsteprecorder":
         case "StartupStepRecorder": return target.getStartupStepRecorder();
         case "startupsummarylevel":
