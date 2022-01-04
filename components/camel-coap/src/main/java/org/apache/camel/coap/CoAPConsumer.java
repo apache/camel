@@ -16,12 +16,8 @@
  */
 package org.apache.camel.coap;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
-import org.eclipse.californium.core.CoapResource;
 import org.eclipse.californium.core.server.resources.Resource;
 
 /**
@@ -29,7 +25,6 @@ import org.eclipse.californium.core.server.resources.Resource;
  */
 public class CoAPConsumer extends DefaultConsumer {
     private final CoAPEndpoint endpoint;
-    private List<CoapResource> resources = new LinkedList<>();
 
     public CoAPConsumer(final CoAPEndpoint endpoint, final Processor processor) {
         super(endpoint, processor);
@@ -69,14 +64,5 @@ public class CoAPConsumer extends DefaultConsumer {
                 cr = child;
             }
         }
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        for (CoapResource r : resources) {
-            r.getParent().delete(r);
-        }
-        resources.clear();
-        super.doStop();
     }
 }
