@@ -111,6 +111,9 @@
         <site-repo-url>scpexe://people.apache.org/www/camel.apache.org/maven/</site-repo-url>
         <jdk.version>11</jdk.version>
         <compiler.fork>false</compiler.fork>
+        <!-- These two are here only to prevent the versions for the Apache parent pom from leaking-->
+        <maven.compiler.source>${jdk.version}</maven.compiler.source>
+        <maven.compiler.target>${jdk.version}</maven.compiler.target>
 
         <!-- reproduceable builds: https://maven.apache.org/guides/mini/guide-reproducible-builds.html -->
         <project.build.outputTimestamp>1</project.build.outputTimestamp>
