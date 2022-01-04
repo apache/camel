@@ -99,4 +99,40 @@ public class JavadocHelperTest {
         Assertions.assertEquals("Provides methods to interact with Transactions. E.g. sales, credits, refunds, searches, etc.",
                 s3);
     }
+
+    @Test
+    public void testltgtInJavaDoc() throws Exception {
+        String s = " * valid for versions < 26.0.";
+        String s2 = JavadocHelper.sanitizeDescription(s, false);
+        Assertions.assertEquals(s.substring(3), s2);
+        String s3 = " * valid for versions >= 26.0.";
+        String s4 = JavadocHelper.sanitizeDescription(s3, false);
+        Assertions.assertEquals(s3.substring(3), s4);
+    }
+
+    @Test
+    public void testRemoveXmlTagsInJavaDoc() throws Exception {
+        String s = " * foo <xs:foo a=\"x\" b=\"y\"> bar";
+        String s2 = JavadocHelper.sanitizeDescription(s, false);
+        Assertions.assertEquals("foo bar", s2);
+        String s3 = " * foo </xs:foo> bar";
+        String s4 = JavadocHelper.sanitizeDescription(s3, false);
+        Assertions.assertEquals("foo bar", s4);
+        String s5 = " * foo </xs:foo > bar";
+        String s6 = JavadocHelper.sanitizeDescription(s5, false);
+        Assertions.assertEquals("foo bar", s6);
+        String s7 = " * this < is not an xml > tag";
+        String s8 = JavadocHelper.sanitizeDescription(s7, false);
+        Assertions.assertEquals(s7.substring(3), s8);
+    }
+
+    @Test
+    public void testXmlEncode() throws Exception {
+        String s = "foo &amp; bar &gt; baz &lt; foo &quot; bar";
+        String s2 = JavadocHelper.xmlEncode(s);
+        Assertions.assertEquals(s, s2);
+        String s3 = "foo & bar > baz < foo \" bar";
+        String s4 = JavadocHelper.xmlEncode(s3);
+        Assertions.assertEquals(s, s4);
+    }
 }
