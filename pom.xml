@@ -698,8 +698,8 @@
                                     <goal>jar</goal>
                                 </goals>
                                 <configuration>
-                                    <source>8</source>
-                                    <additionalOptions>${javadoc.opts}</additionalOptions>
+                                    <source>11</source>
+                                    <doclint>none</doclint>
                                 </configuration>
                             </execution>
                         </executions>
@@ -798,15 +798,6 @@
                     </plugin>
                 </plugins>
             </build>
-        </profile>
-        <profile>
-            <id>doclint-java8-disable</id>
-            <activation>
-                <jdk>[1.8,)</jdk>
-            </activation>
-            <properties>
-                <javadoc.opts>-Xdoclint:none</javadoc.opts>
-            </properties>
         </profile>
 
         <profile>
