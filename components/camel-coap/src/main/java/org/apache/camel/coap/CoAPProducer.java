@@ -20,19 +20,12 @@ import java.io.IOException;
 import java.net.URI;
 import java.security.GeneralSecurityException;
 
-import javax.net.ssl.SSLContext;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.coap.MediaTypeRegistry;
-import org.eclipse.californium.core.network.CoapEndpoint;
-import org.eclipse.californium.core.network.config.NetworkConfig;
-import org.eclipse.californium.elements.tcp.netty.TcpClientConnector;
-import org.eclipse.californium.elements.tcp.netty.TlsClientConnector;
-import org.eclipse.californium.scandium.DTLSConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,11 +84,7 @@ public class CoAPProducer extends DefaultProducer {
         }
 
         if (response != null) {
-            Message resp = exchange.getOut();
-            String mt = MediaTypeRegistry.toString(response.getOptions().getContentFormat());
-            resp.setHeader(CoAPConstants.CONTENT_TYPE, mt);
-            resp.setHeader(CoAPConstants.COAP_RESPONSE_CODE, response.getCode().toString());
-            resp.setBody(response.getPayload());
+            CoAPHelper.convertCoapResponseToMessage(response, exchange.getOut());
         }
 
         if (method.equalsIgnoreCase(CoAPConstants.METHOD_PING)) {

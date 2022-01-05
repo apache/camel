@@ -20,8 +20,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.util.ObjectHelper;
 import org.eclipse.californium.core.CoapClient;
+import org.eclipse.californium.core.CoapResponse;
+import org.eclipse.californium.core.coap.MediaTypeRegistry;
 
 /**
  * Various helper methods for CoAP
@@ -77,5 +80,12 @@ public final class CoAPHelper {
             path = path.substring(idx + 1);
         }
         return segments;
+    }
+
+    public static void convertCoapResponseToMessage(CoapResponse coapResponse, Message message) {
+        String mt = MediaTypeRegistry.toString(coapResponse.getOptions().getContentFormat());
+        message.setHeader(CoAPConstants.CONTENT_TYPE, mt);
+        message.setHeader(CoAPConstants.COAP_RESPONSE_CODE, coapResponse.getCode().toString());
+        message.setBody(coapResponse.getPayload());
     }
 }
