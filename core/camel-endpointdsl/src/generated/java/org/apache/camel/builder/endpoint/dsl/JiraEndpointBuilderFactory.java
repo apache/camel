@@ -134,10 +134,10 @@ public interface JiraEndpointBuilderFactory {
         }
         /**
          * JQL is the query language from JIRA which allows you to retrieve the
-         * data you want. For example jql=project=MyProject Where MyProject is
-         * the product key in Jira. It is important to use the RAW() and set the
-         * JQL inside it to prevent camel parsing it, example: RAW(project in
-         * (MYP, COM) AND resolution = Unresolved).
+         * data you want. For example &lt;tt&gt;jql=project=MyProject Where
+         * MyProject is the product key in Jira. It is important to use the
+         * RAW() and set the JQL inside it to prevent camel parsing it, example:
+         * RAW(project in (MYP, COM) AND resolution = Unresolved).
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

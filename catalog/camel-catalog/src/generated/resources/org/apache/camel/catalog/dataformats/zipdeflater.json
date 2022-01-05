@@ -3,7 +3,7 @@
     "kind": "dataformat",
     "name": "zipdeflater",
     "title": "Zip Deflate Compression",
-    "description": "Compress and decompress streams using java.util.zip.Deflater and java.util.zip.Inflater.",
+    "description": "Compress and decompress streams using <code>java.util.zip.Deflater and <code>java.util.zip.Inflater.",
     "deprecated": false,
     "firstVersion": "2.12.0",
     "label": "dataformat,transformation",
@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-zip-deflater",
-    "version": "3.7.0-SNAPSHOT",
+    "version": "3.7.8-SNAPSHOT",
     "modelName": "zipdeflater",
     "modelJavaType": "org.apache.camel.model.dataformat.ZipDeflaterDataFormat"
   },

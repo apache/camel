@@ -27,7 +27,7 @@ public final class BoxEventLogsManagerEndpointConfiguration extends BoxConfigura
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "getEnterpriseEvents", description="The upper bound on the timestamp of the events returned")})
     private java.util.Date before;
     @UriParam
-    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "getEnterpriseEvents", description="The starting position of the event stream. May be null in which case all events within bounds returned.")})
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "getEnterpriseEvents", description="The starting position of the event stream. May be <code>null in which case all events within bounds returned.")})
     private String position;
     @UriParam
     @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "getEnterpriseEvents", description="An optional list of event types to filter by")})

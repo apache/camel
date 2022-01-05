@@ -362,7 +362,7 @@ public interface ExecEndpointBuilderFactory {
          * 
          * Path parameter: executable (required)
          * Sets the executable to be executed. The executable must not be empty
-         * or null.
+         * or <code>null.
          * 
          * @param path executable
          * @return the dsl builder
@@ -382,7 +382,7 @@ public interface ExecEndpointBuilderFactory {
          * 
          * Path parameter: executable (required)
          * Sets the executable to be executed. The executable must not be empty
-         * or null.
+         * or <code>null.
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

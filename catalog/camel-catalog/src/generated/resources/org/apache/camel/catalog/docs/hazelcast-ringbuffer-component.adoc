@@ -3,7 +3,7 @@
 :docTitle: Hazelcast Ringbuffer
 :shortname: hazelcast-ringbuffer
 :artifactId: camel-hazelcast
-:description: Perform operations on Hazelcast distributed ringbuffer.
+:description: Perform operations on distributed ringbuffer.
 :since: 2.16
 :supportLevel: Stable
 :component-header: Only producer is supported

@@ -75,7 +75,7 @@ with the following path and query parameters:
 |===
 | Name | Description | Default | Type
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *consumes* (consumer) | The content type this endpoint accepts as an input, such as application/xml or application/json. null or &#42;/&#42; mean no restriction. |  | String
+| *consumes* (consumer) | The content type this endpoint accepts as an input, such as application/xml or application/json. <code>null or <code>&#42;/&#42; mean no restriction. |  | String
 | *httpMethodRestrict* (consumer) | A comma separated list of HTTP methods to serve, e.g. GET,POST . If no methods are specified, all methods will be served. |  | String
 | *matchOnUriPrefix* (consumer) | Whether or not the consumer should try to find a target consumer by matching the URI prefix if no exact match is found. | false | boolean
 | *produces* (consumer) | The content type this endpoint produces, such as application/xml or application/json. |  | String

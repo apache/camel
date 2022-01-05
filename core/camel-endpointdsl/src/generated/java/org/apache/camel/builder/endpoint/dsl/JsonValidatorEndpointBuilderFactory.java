@@ -252,8 +252,8 @@ public interface JsonValidatorEndpointBuilderFactory {
             return (JsonValidatorEndpointBuilder) this;
         }
         /**
-         * To use a custom ValidatorErrorHandler. The default error handler
-         * captures the errors and throws an exception.
+         * To use a custom ValidatorErrorHandler. &lt;p/&gt; The default error
+         * handler captures the errors and throws an exception.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.jsonvalidator.JsonValidatorErrorHandler&lt;/code&gt; type.
@@ -269,8 +269,8 @@ public interface JsonValidatorEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a custom ValidatorErrorHandler. The default error handler
-         * captures the errors and throws an exception.
+         * To use a custom ValidatorErrorHandler. &lt;p/&gt; The default error
+         * handler captures the errors and throws an exception.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.apache.camel.component.jsonvalidator.JsonValidatorErrorHandler&lt;/code&gt; type.

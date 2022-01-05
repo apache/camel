@@ -404,10 +404,11 @@ public interface GeoCoderEndpointBuilderFactory {
          * Syntax: <code>geocoder:address:latlng</code>
          * 
          * Path parameter: address
-         * The geo address which should be prefixed with address:
+         * The geo address which should be prefixed with <tt>address:
          * 
          * Path parameter: latlng
-         * The geo latitude and longitude which should be prefixed with latlng:
+         * The geo latitude and longitude which should be prefixed with
+         * <tt>latlng:
          * 
          * @param path address:latlng
          * @return the dsl builder
@@ -427,10 +428,11 @@ public interface GeoCoderEndpointBuilderFactory {
          * Syntax: <code>geocoder:address:latlng</code>
          * 
          * Path parameter: address
-         * The geo address which should be prefixed with address:
+         * The geo address which should be prefixed with <tt>address:
          * 
          * Path parameter: latlng
-         * The geo latitude and longitude which should be prefixed with latlng:
+         * The geo latitude and longitude which should be prefixed with
+         * <tt>latlng:
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

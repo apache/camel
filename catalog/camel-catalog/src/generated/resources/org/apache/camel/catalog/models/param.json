@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "param",
     "title": "Param",
-    "description": "To specify the rest operation parameters using Swagger. This maps to the Swagger Parameter Message Object.",
+    "description": "To specify the rest operation parameters using Swagger. <p\/> This maps to the Swagger Parameter Message Object.",
     "deprecated": false,
     "label": "rest",
     "javaType": "org.apache.camel.model.rest.RestOperationParamDefinition",

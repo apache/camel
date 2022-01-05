@@ -87,7 +87,7 @@ with the following path and query parameters:
 | *channels* (common) | Comma separated list of IRC channels. |  | String
 | *commandTimeout* (common) | Delay in milliseconds before sending commands after the connection is established. | 5000 | long
 | *keys* (common) | Comma separated list of keys for channels. |  | String
-| *namesOnJoin* (common) | Sends NAMES command to channel after joining it. onReply has to be true in order to process the result which will have the header value irc.num = '353'. | false | boolean
+| *namesOnJoin* (common) | Sends <code>NAMES command to channel after joining it.<br> onReply has to be <code>true in order to process the result which will have the header value <code>irc.num = '353'. | false | boolean
 | *nickname* (common) | The nickname used in chat. |  | String
 | *persistent* (common) | *Deprecated* Use persistent messages. | true | boolean
 | *realname* (common) | The IRC user's actual name. |  | String

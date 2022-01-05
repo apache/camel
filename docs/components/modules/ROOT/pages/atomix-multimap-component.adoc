@@ -5,7 +5,7 @@
 :docTitle: Atomix MultiMap
 :shortname: atomix-multimap
 :artifactId: camel-atomix
-:description: Access Atomix's distributed multi map.
+:description: Access Atomix's .
 :since: 2.20
 :supportLevel: Stable
 :component-header: Only producer is supported

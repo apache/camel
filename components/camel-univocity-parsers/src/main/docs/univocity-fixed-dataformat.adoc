@@ -57,22 +57,22 @@ The uniVocity Fixed Length dataformat supports 16 options, which are listed belo
 [width="100%",cols="2s,1m,1m,6",options="header"]
 |===
 | Name | Default | Java Type | Description
-| skipTrailingCharsUntilNewline | false | Boolean | Whether or not the trailing characters until new line must be ignored. The default value is false
-| recordEndsOnNewline | false | Boolean | Whether or not the record ends on new line. The default value is false
-| padding |  | String | The padding character. The default value is a space
-| nullValue |  | String | The string representation of a null value. The default value is null
-| skipEmptyLines | true | Boolean | Whether or not the empty lines must be ignored. The default value is true
-| ignoreTrailingWhitespaces | true | Boolean | Whether or not the trailing white spaces must ignored. The default value is true
-| ignoreLeadingWhitespaces | true | Boolean | Whether or not the leading white spaces must be ignored. The default value is true
-| headersDisabled | false | Boolean | Whether or not the headers are disabled. When defined, this option explicitly sets the headers as null which indicates that there is no header. The default value is false
-| headerExtractionEnabled | false | Boolean | Whether or not the header must be read in the first line of the test document The default value is false
+| skipTrailingCharsUntilNewline | false | Boolean | Whether or not the trailing characters until new line must be ignored. <p/> The default value is false
+| recordEndsOnNewline | false | Boolean | Whether or not the record ends on new line. <p/> The default value is false
+| padding |  | String | The padding character. <p/> The default value is a space
+| nullValue |  | String | The string representation of a null value. <p/> The default value is null
+| skipEmptyLines | true | Boolean | Whether or not the empty lines must be ignored. <p/> The default value is true
+| ignoreTrailingWhitespaces | true | Boolean | Whether or not the trailing white spaces must ignored. <p/> The default value is true
+| ignoreLeadingWhitespaces | true | Boolean | Whether or not the leading white spaces must be ignored. <p/> The default value is true
+| headersDisabled | false | Boolean | Whether or not the headers are disabled. When defined, this option explicitly sets the headers as null which indicates that there is no header. <p/> The default value is false
+| headerExtractionEnabled | false | Boolean | Whether or not the header must be read in the first line of the test document <p/> The default value is false
 | numberOfRecordsToRead |  | Integer | The maximum number of record to read.
 | emptyValue |  | String | The String representation of an empty value
-| lineSeparator |  | String | The line separator of the files The default value is to use the JVM platform line separator
-| normalizedLineSeparator | \n | String | The normalized line separator of the files The default value is a new line character.
-| comment | # | String | The comment symbol. The default value is #
-| lazyLoad | false | Boolean | Whether the unmarshalling should produce an iterator that reads the lines on the fly or if all the lines must be read at one. The default value is false
-| asMap | false | Boolean | Whether the unmarshalling should produce maps for the lines values instead of lists. It requires to have header (either defined or collected). The default value is false
+| lineSeparator |  | String | The line separator of the files <p/> The default value is to use the JVM platform line separator
+| normalizedLineSeparator | \n | String | The normalized line separator of the files <p/> The default value is a new line character.
+| comment | # | String | The comment symbol. <p/> The default value is #
+| lazyLoad | false | Boolean | Whether the unmarshalling should produce an iterator that reads the lines on the fly or if all the lines must be read at one. <p/> The default value is false
+| asMap | false | Boolean | Whether the unmarshalling should produce maps for the lines values instead of lists. It requires to have header (either defined or collected). <p/> The default value is false
 |===
 // dataformat options: END
 

@@ -3,7 +3,7 @@
 :docTitle: Timer
 :shortname: timer
 :artifactId: camel-timer
-:description: Generate messages in specified intervals using java.util.Timer.
+:description: Generate messages in specified intervals using <code>java.util.Timer.
 :since: 1.0
 :supportLevel: Stable
 :component-header: Only consumer is supported
@@ -93,7 +93,7 @@ with the following path and query parameters:
 | *repeatCount* (consumer) | Specifies a maximum limit of number of fires. So if you set it to 1, the timer will only fire once. If you set it to 5, it will only fire five times. A value of zero or negative means fire forever. | 0 | long
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
-| *daemon* (advanced) | Specifies whether or not the thread associated with the timer endpoint runs as a daemon. The default value is true. | true | boolean
+| *daemon* (advanced) | Specifies whether or not the thread associated with the timer endpoint runs as a daemon. <p/> The default value is true. | true | boolean
 | *pattern* (advanced) | Allows you to specify a custom Date pattern to use for setting the time option using URI syntax. |  | String
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *time* (advanced) | A java.util.Date the first event should be generated. If using the URI, the pattern expected is: yyyy-MM-dd HH:mm:ss or yyyy-MM-dd'T'HH:mm:ss. |  | Date

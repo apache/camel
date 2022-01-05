@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "atomix-queue",
     "title": "Atomix Queue",
-    "description": "Access Atomix's distributed queue.",
+    "description": "Access Atomix's .",
     "deprecated": false,
     "firstVersion": "2.20.0",
     "label": "clustering",

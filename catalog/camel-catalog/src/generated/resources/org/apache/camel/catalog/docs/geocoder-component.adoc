@@ -76,8 +76,8 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *address* | The geo address which should be prefixed with address: |  | String
-| *latlng* | The geo latitude and longitude which should be prefixed with latlng: |  | String
+| *address* | The geo address which should be prefixed with <tt>address: |  | String
+| *latlng* | The geo latitude and longitude which should be prefixed with <tt>latlng: |  | String
 |===
 
 

@@ -3,7 +3,7 @@
     "kind": "dataformat",
     "name": "gzipdeflater",
     "title": "GZip Deflater",
-    "description": "Compress and decompress messages using java.util.zip.GZIPStream.",
+    "description": "Compress and decompress messages using <code>java.util.zip.GZIPStream.",
     "deprecated": false,
     "firstVersion": "2.0.0",
     "label": "dataformat,transformation",
@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-zip-deflater",
-    "version": "3.7.0-SNAPSHOT",
+    "version": "3.7.8-SNAPSHOT",
     "modelName": "gzipdeflater",
     "modelJavaType": "org.apache.camel.model.dataformat.GzipDataFormat"
   },

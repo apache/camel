@@ -31,7 +31,7 @@ The CSV dataformat supports 28 options, which are listed below.
 | formatName |  | String | The name of the format to use, the default value is CSVFormat.DEFAULT. There are 6 enums and the value can be one of: DEFAULT, EXCEL, INFORMIX_UNLOAD, INFORMIX_UNLOAD_CSV, MYSQL, RFC4180
 | commentMarkerDisabled | false | Boolean | Disables the comment marker of the reference format.
 | commentMarker |  | String | Sets the comment marker of the reference format.
-| delimiter |  | String | Sets the delimiter to use. The default value is , (comma)
+| delimiter |  | String | Sets the delimiter to use. <p/> The default value is , (comma)
 | escapeDisabled | false | Boolean | Use for disabling using escape character
 | escape |  | String | Sets the escape character to use
 | headerDisabled | false | Boolean | Use for disabling headers
@@ -54,7 +54,7 @@ The CSV dataformat supports 28 options, which are listed below.
 | lazyLoad | false | Boolean | Whether the unmarshalling should produce an iterator that reads the lines on the fly or if all the lines must be read at one.
 | useMaps | false | Boolean | Whether the unmarshalling should produce maps (HashMap)for the lines values instead of lists. It requires to have header (either defined or collected).
 | useOrderedMaps | false | Boolean | Whether the unmarshalling should produce ordered maps (LinkedHashMap) for the lines values instead of lists. It requires to have header (either defined or collected).
-| recordConverterRef |  | String | Refers to a custom CsvRecordConverter to lookup from the registry to use.
+| recordConverterRef |  | String | Refers to a custom <tt>CsvRecordConverter to lookup from the registry to use.
 |===
 // dataformat options: END
 

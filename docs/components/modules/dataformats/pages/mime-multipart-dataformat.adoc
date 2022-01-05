@@ -61,11 +61,11 @@ The MIME Multipart dataformat supports 5 options, which are listed below.
 [width="100%",cols="2s,1m,1m,6",options="header"]
 |===
 | Name | Default | Java Type | Description
-| multipartSubType | mixed | String | Specify the subtype of the MIME Multipart. Default is mixed.
-| multipartWithoutAttachment | false | Boolean | Defines whether a message without attachment is also marshaled into a MIME Multipart (with only one body part). Default is false.
-| headersInline | false | Boolean | Defines whether the MIME-Multipart headers are part of the message body (true) or are set as Camel headers (false). Default is false.
-| includeHeaders |  | String | A regex that defines which Camel headers are also included as MIME headers into the MIME multipart. This will only work if headersInline is set to true. Default is to include no headers
-| binaryContent | false | Boolean | Defines whether the content of binary parts in the MIME multipart is binary (true) or Base-64 encoded (false) Default is false.
+| multipartSubType | mixed | String | Specify the subtype of the MIME Multipart. <p> Default is mixed.
+| multipartWithoutAttachment | false | Boolean | Defines whether a message without attachment is also marshaled into a MIME Multipart (with only one body part). <p> Default is false.
+| headersInline | false | Boolean | Defines whether the MIME-Multipart headers are part of the message body (true) or are set as Camel headers (false). <p> Default is false.
+| includeHeaders |  | String | A regex that defines which Camel headers are also included as MIME headers into the MIME multipart. This will only work if headersInline is set to true. <p> Default is to include no headers
+| binaryContent | false | Boolean | Defines whether the content of binary parts in the MIME multipart is binary (true) or Base-64 encoded (false) <p> Default is false.
 |===
 // dataformat options: END
 

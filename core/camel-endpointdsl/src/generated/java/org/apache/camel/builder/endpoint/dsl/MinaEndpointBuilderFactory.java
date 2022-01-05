@@ -445,7 +445,7 @@ public interface MinaEndpointBuilderFactory {
          * You can set a list of Mina IoFilters to use.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;org.apache.mina.core.filterchain.IoFilter&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;org.apache.mina.core.filterchain.IoFilter&gt;&lt;/code&gt; type.
          * 
          * Group: codec
          * 
@@ -460,7 +460,7 @@ public interface MinaEndpointBuilderFactory {
          * You can set a list of Mina IoFilters to use.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;org.apache.mina.core.filterchain.IoFilter&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;org.apache.mina.core.filterchain.IoFilter&gt;&lt;/code&gt; type.
          * 
          * Group: codec
          * 
@@ -1286,7 +1286,7 @@ public interface MinaEndpointBuilderFactory {
          * You can set a list of Mina IoFilters to use.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;org.apache.mina.core.filterchain.IoFilter&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;org.apache.mina.core.filterchain.IoFilter&gt;&lt;/code&gt; type.
          * 
          * Group: codec
          * 
@@ -1301,7 +1301,7 @@ public interface MinaEndpointBuilderFactory {
          * You can set a list of Mina IoFilters to use.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;org.apache.mina.core.filterchain.IoFilter&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;org.apache.mina.core.filterchain.IoFilter&gt;&lt;/code&gt; type.
          * 
          * Group: codec
          * 
@@ -2006,7 +2006,7 @@ public interface MinaEndpointBuilderFactory {
          * You can set a list of Mina IoFilters to use.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;org.apache.mina.core.filterchain.IoFilter&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;org.apache.mina.core.filterchain.IoFilter&gt;&lt;/code&gt; type.
          * 
          * Group: codec
          * 
@@ -2021,7 +2021,7 @@ public interface MinaEndpointBuilderFactory {
          * You can set a list of Mina IoFilters to use.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;org.apache.mina.core.filterchain.IoFilter&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;org.apache.mina.core.filterchain.IoFilter&gt;&lt;/code&gt; type.
          * 
          * Group: codec
          * 

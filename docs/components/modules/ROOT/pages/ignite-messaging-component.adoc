@@ -5,7 +5,7 @@
 :docTitle: Ignite Messaging
 :shortname: ignite-messaging
 :artifactId: camel-ignite
-:description: Send and receive messages from an Ignite topic.
+:description: Send and receive messages from an .
 :since: 2.17
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

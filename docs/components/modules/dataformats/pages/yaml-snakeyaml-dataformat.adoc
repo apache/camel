@@ -5,7 +5,7 @@
 :docTitle: YAML SnakeYAML
 :shortname: yaml-snakeyaml
 :artifactId: camel-snakeyaml
-:description: Marshal and unmarshal Java objects to and from YAML using SnakeYAML
+:description: Marshal and unmarshal Java objects to and from YAML using
 :since: 2.17
 :supportLevel: Stable
 //Manually maintained attributes
@@ -35,7 +35,7 @@ The YAML SnakeYAML dataformat supports 12 options, which are listed below.
 [width="100%",cols="2s,1m,1m,6",options="header"]
 |===
 | Name | Default | Java Type | Description
-| library | SnakeYAML | YAMLLibrary | Which yaml library to use. By default it is SnakeYAML. There are 1 enums and the value can be one of: snake-yaml
+| library | SnakeYAML | YAMLLibrary | Which yaml library to use. <p/> By default it is SnakeYAML. There are 1 enums and the value can be one of: snake-yaml
 | unmarshalTypeName |  | String | Class name of the java type to use when unmarshalling
 | constructor |  | String | BaseConstructor to construct incoming documents.
 | representer |  | String | Representer to emit outgoing objects.
