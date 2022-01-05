@@ -1006,6 +1006,9 @@ public abstract class BaseMainSupport extends BaseService {
         for (String id : health.getConfig().keySet()) {
             HealthCheckConfiguration hcc = health.getConfig().get(id);
             String parent = hcc.getParent();
+            if (parent == null) {
+                throw new IllegalArgumentException("HealthCheck with id: " + id + " must have parent configured");
+            }
             // lookup health check by id
             Object hc = hcr.getCheck(parent).orElse(null);
             if (hc == null) {
