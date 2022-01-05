@@ -21,6 +21,7 @@ import java.util.List;
 import ca.uhn.fhir.rest.api.EncodingEnum;
 import ca.uhn.fhir.rest.api.SummaryEnum;
 import ca.uhn.fhir.rest.client.api.IClientInterceptor;
+import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.impl.GenericClient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
@@ -71,7 +72,9 @@ public class FhirConfigurationIT extends AbstractFhirTestSupport {
         fhirConfiguration.setFhirVersion("DSTU3");
         component.setConfiguration(fhirConfiguration);
 
-        component.createClient(fhirConfiguration).registerInterceptor(this.mockClientInterceptor);
+        final IGenericClient client = component.createClient(fhirConfiguration);
+        fhirConfiguration.setClient(client);
+        client.registerInterceptor(this.mockClientInterceptor);
 
         this.componentConfiguration = fhirConfiguration;
         context.addComponent("fhir", component);
