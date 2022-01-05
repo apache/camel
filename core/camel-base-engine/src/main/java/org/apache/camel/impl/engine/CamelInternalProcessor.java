@@ -59,6 +59,7 @@ import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.annotations.EagerClassloaded;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.SynchronizationAdapter;
@@ -867,10 +868,12 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
 
         private final String id;
         private final String label;
+        private final String source;
 
         public NodeHistoryAdvice(NamedNode definition) {
             this.id = definition.getId();
             this.label = definition.getLabel();
+            this.source = LoggerHelper.getLineNumberLoggerName(definition);
         }
 
         @Override
@@ -878,6 +881,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
             ExtendedExchange ee = (ExtendedExchange) exchange;
             ee.setHistoryNodeId(id);
             ee.setHistoryNodeLabel(label);
+            ee.setHistoryNodeSource(source);
             return null;
         }
 
@@ -886,6 +890,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
             ExtendedExchange ee = (ExtendedExchange) exchange;
             ee.setHistoryNodeId(null);
             ee.setHistoryNodeLabel(null);
+            ee.setHistoryNodeSource(null);
         }
 
         @Override

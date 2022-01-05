@@ -105,6 +105,18 @@ public interface ExtendedExchange extends Exchange {
     String getHistoryNodeLabel();
 
     /**
+     * Gets the history node source:line-number where the node is located in the source code (the current processor that
+     * will process the exchange).
+     */
+    String getHistoryNodeSource();
+
+    /**
+     * Sets the history node source:line-number where the node is located in the source code (the current processor that
+     * will process the exchange).
+     */
+    void setHistoryNodeSource(String historyNodeSource);
+
+    /**
      * Sets whether the exchange is routed in a transaction.
      */
     void setTransacted(boolean transacted);

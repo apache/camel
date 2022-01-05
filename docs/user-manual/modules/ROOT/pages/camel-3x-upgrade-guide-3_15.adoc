@@ -20,6 +20,19 @@ Added `getScheme` method to `org.apache.camel.spi.Resource`.
 
 Removed the deprecated `Classic` value from `startupSummaryLevel` enums.
 
+==== Message History
+
+The message history output now includes a source column, which refers to the Java class/XML file
+from the DSL the message was at the given time. (line precise error reporting).
+
+This means there is now 5 columns and the defaults are:
+```
+MESSAGE_HISTORY_HEADER = "%-30s %-20s %-20s %-50s %-12s";
+MESSAGE_HISTORY_OUTPUT = "%-30.30s %-20.20s %-20.20s %-50.50s %12.12s";
+```
+
+If you are using custom sizes then you need to adjust from 4 to 5 columns.
+
 === camel-endpointdsl
 
 The Endpoint DSL is now more type-safe, where previously an option would be declared as `Object` type,

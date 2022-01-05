@@ -142,6 +142,11 @@ public interface Route extends RuntimeConfiguration {
     Resource getSourceResource();
 
     /**
+     * The source:line-number where the route input is located in the source code
+     */
+    String getSourceLocation();
+
+    /**
      * Gets the camel context
      *
      * @return the camel context
