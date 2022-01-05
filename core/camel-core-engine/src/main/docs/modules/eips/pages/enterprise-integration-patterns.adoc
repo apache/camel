@@ -7,7 +7,7 @@ from the excellent book by Gregor Hohpe and Bobby Woolf.
 == Messaging Systems
 
 [width="100%",cols="10%,10%,80%",]
-|=======================================================================
+|===
 a|image::eip/ChannelIcon.gif[image]
 |xref:message-channel.adoc[Message Channel] |How does one application
 communicate with another using messaging?
@@ -33,12 +33,12 @@ different data formats communicate with each other using messaging?
 a|image::eip/MessageEndpointIcon.gif[image]
 |xref:message-endpoint.adoc[Message Endpoint] |How does an application
 connect to a messaging channel to send and receive messages?
-|=======================================================================
+|===
 
 == Messaging Channels
 
 [width="100%",cols="10%,10%,80%",]
-|=======================================================================
+|===
 a|image::eip/PointToPointIcon.gif[image]
 |xref:point-to-point-channel.adoc[Point to Point Channel] |How can the
 caller be sure that exactly one receiver will receive the document or
@@ -74,12 +74,12 @@ affecting the others?
 a|image::eip/MessagingBridgeIcon.gif[image]
 |xref:change-data-capture.adoc[Change Data Capture] | Data synchronization by capturing
 changes made to a database, and apply those changes to another system.
-|=======================================================================
+|===
 
 == Message Construction
 
 [width="100%",cols="10%,10%,80%",]
-|=======================================================================
+|===
 a|image::eip/EventMessageIcon.gif[image]
 |xref:event-message.adoc[Event Message] |How can messaging be used to
 transmit events from one application to another?
@@ -101,12 +101,12 @@ a|image::eip/MessageExpirationIcon.gif[image]
 |xref:message-expiration.adoc[Message Expiration] |How can a sender indicate
 when a message should be considered stale and thus shouldn’t be processed?
 
-|=======================================================================
+|===
 
 == Message Routing
 
 [width="100%",cols="10%,10%,80%",]
-|=======================================================================
+|===
 a|image::eip/ContentBasedRouterIcon.gif[image]
 |xref:choice-eip.adoc[Content Based Router] |How do we handle
 a situation where the implementation of a single logical function (e.g.,
@@ -208,12 +208,12 @@ of endpoints at the same time?
 
 a|image::eip/PollingConsumerIcon.gif[image]
 |xref:loop-eip.adoc[Loop] |How can I repeat processing a message in a loop?
-|=======================================================================
+|===
 
 == Message Transformation
 
 [width="100%",cols="10%,10%,80%",]
-|=======================================================================
+|===
 a|image::eip/DataEnricherIcon.gif[image]
 |xref:content-enricher.adoc[Content Enricher] |How do we communicate
 with another system if the message originator does not have all the
@@ -240,12 +240,12 @@ a|image::eip/MessagingGatewayIcon.gif[image]
 
 a|image::eip/MessageSelectorIcon.gif[image]
 |xref:validate-eip.adoc[Validate] |How can I validate a message?
-|=======================================================================
+|===
 
 == Messaging Endpoints
 
 [width="100%",cols="10%,10%,80%",]
-|=======================================================================
+|===
 
 a|image::eip/MessageTranslatorIcon.gif[image]
 |xref:messaging-mapper.adoc[Messaging Mapper] |How do you move data
@@ -292,12 +292,12 @@ a|image::eip/MessagingAdapterIcon.gif[image]
 |xref:service-activator.adoc[Service Activator] |How can an application
 design a service to be invoked both via various messaging technologies
 and via non-messaging techniques?
-|=======================================================================
+|===
 
 == System Management
 
 [width="100%",cols="10%,10%,80%",]
-|=======================================================================
+|===
 a|image::eip/ControlBusIcon.gif[image]
 |xref:ROOT:controlbus-component.adoc[ControlBus] |How can we effectively administer a
 messaging system that is distributed across multiple platforms and a
@@ -322,16 +322,16 @@ a|image::eip/ControlBusIcon.gif[image]
 a|image::eip/RoutingTableIcon.gif[image]
 |xref:step-eip.adoc[Step] | Groups together a set of EIPs into a composite logical unit for metrics and monitoring. |
 
-|=======================================================================
+|===
 
-=== EIP Icons
+== EIP Icons
 
 The EIP icons library is available as a Visio stencil file adapted to
 render the icons with the Camel color. Download it
-link:{attachmentsdir}/Hohpe_EIP_camel_20150622.zip[here]
+xref:attachment$Hohpe_EIP_camel_20150622.zip[here]
 for your presentation, functional and technical analysis documents.
 
 The original EIP stencil is also available in
-link:{attachmentsdir}/Hohpe_EIP_camel_OpenOffice.zip[OpenOffice 3.x Draw],
+xref:attachment$Hohpe_EIP_camel_OpenOffice.zip[OpenOffice 3.x Draw],
 http://www.eaipatterns.com/download/EIP_Visio_stencil.zip[Microsoft Visio],
 or http://www.graffletopia.com/stencils/137[Omnigraffle].
