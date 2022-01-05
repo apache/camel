@@ -2,7 +2,7 @@
 :doctitle: Ignite Sets
 :shortname: ignite-set
 :artifactid: camel-ignite
-:description: Interact with Ignite Set data structures.
+:description: Interact with .
 :since: 2.17
 :supportlevel: Stable
 :component-header: Only producer is supported

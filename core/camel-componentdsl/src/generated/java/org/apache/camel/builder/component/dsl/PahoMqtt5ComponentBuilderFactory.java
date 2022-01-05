@@ -52,14 +52,14 @@ public interface PahoMqtt5ComponentBuilderFactory {
                 ComponentBuilder<PahoMqtt5Component> {
         /**
          * Sets whether the client will automatically attempt to reconnect to
-         * the server if the connection is lost. If set to false, the client
-         * will not attempt to automatically reconnect to the server in the
-         * event that the connection is lost. If set to true, in the event that
-         * the connection is lost, the client will attempt to reconnect to the
-         * server. It will initially wait 1 second before it attempts to
-         * reconnect, for every failed reconnect attempt, the delay will double
-         * until it is at 2 minutes at which point the delay will stay at 2
-         * minutes.
+         * the server if the connection is lost. &lt;ul&gt; &lt;li&gt;If set to
+         * false, the client will not attempt to automatically reconnect to the
+         * server in the event that the connection is lost. &lt;li&gt;If set to
+         * true, in the event that the connection is lost, the client will
+         * attempt to reconnect to the server. It will initially wait 1 second
+         * before it attempts to reconnect, for every failed reconnect attempt,
+         * the delay will double until it is at 2 minutes at which point the
+         * delay will stay at 2 minutes.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -91,16 +91,18 @@ public interface PahoMqtt5ComponentBuilderFactory {
         }
         /**
          * Sets whether the client and server should remember state across
-         * restarts and reconnects. If set to false both the client and server
-         * will maintain state across restarts of the client, the server and the
-         * connection. As state is maintained: Message delivery will be reliable
-         * meeting the specified QOS even if the client, server or connection
-         * are restarted. The server will treat a subscription as durable. If
-         * set to true the client and server will not maintain state across
-         * restarts of the client, the server or the connection. This means
-         * Message delivery to the specified QOS cannot be maintained if the
-         * client, server or connection are restarted The server will treat a
-         * subscription as non-durable.
+         * restarts and reconnects. &lt;ul&gt; &lt;li&gt;If set to false both
+         * the client and server will maintain state across restarts of the
+         * client, the server and the connection. As state is maintained:
+         * &lt;ul&gt; &lt;li&gt;Message delivery will be reliable meeting the
+         * specified QOS even if the client, server or connection are restarted.
+         * &lt;li&gt;The server will treat a subscription as durable.
+         * &lt;li&gt;If set to true the client and server will not maintain
+         * state across restarts of the client, the server or the connection.
+         * This means &lt;ul&gt; &lt;li&gt;Message delivery to the specified QOS
+         * cannot be maintained if the client, server or connection are
+         * restarted &lt;li&gt;The server will treat a subscription as
+         * non-durable.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -190,7 +192,7 @@ public interface PahoMqtt5ComponentBuilderFactory {
          * alive period. In the absence of a data-related message during the
          * time period, the client sends a very small ping message, which the
          * server will acknowledge. A value of 0 disables keepalive processing
-         * in the client. The default value is 60 seconds.
+         * in the client. &lt;p&gt; The default value is 60 seconds.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -257,8 +259,8 @@ public interface PahoMqtt5ComponentBuilderFactory {
          * Sets the Receive Maximum. This value represents the limit of QoS 1
          * and QoS 2 publications that the client is willing to process
          * concurrently. There is no mechanism to limit the number of QoS 0
-         * publications that the Server might try to send. The default value is
-         * 65535.
+         * publications that the Server might try to send. &lt;p&gt; The default
+         * value is 65535.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -289,30 +291,34 @@ public interface PahoMqtt5ComponentBuilderFactory {
         }
         /**
          * Set a list of one or more serverURIs the client may connect to.
-         * Multiple servers can be separated by comma. Each serverURI specifies
-         * the address of a server that the client may connect to. Two types of
-         * connection are supported tcp:// for a TCP connection and ssl:// for a
-         * TCP connection secured by SSL/TLS. For example: tcp://localhost:1883
-         * ssl://localhost:8883 If the port is not specified, it will default to
-         * 1883 for tcp:// URIs, and 8883 for ssl:// URIs. If serverURIs is set
-         * then it overrides the serverURI parameter passed in on the
-         * constructor of the MQTT client. When an attempt to connect is
-         * initiated the client will start with the first serverURI in the list
-         * and work through the list until a connection is established with a
-         * server. If a connection cannot be made to any of the servers then the
-         * connect attempt fails. Specifying a list of servers that a client may
-         * connect to has several uses: High Availability and reliable message
-         * delivery Some MQTT servers support a high availability feature where
-         * two or more equal MQTT servers share state. An MQTT client can
-         * connect to any of the equal servers and be assured that messages are
-         * reliably delivered and durable subscriptions are maintained no matter
-         * which server the client connects to. The cleansession flag must be
-         * set to false if durable subscriptions and/or reliable message
-         * delivery is required. Hunt List A set of servers may be specified
-         * that are not equal (as in the high availability option). As no state
-         * is shared across the servers reliable message delivery and durable
-         * subscriptions are not valid. The cleansession flag must be set to
-         * true if the hunt list mode is used.
+         * Multiple servers can be separated by comma. &lt;p&gt; Each
+         * &lt;code&gt;serverURI specifies the address of a server that the
+         * client may connect to. Two types of connection are supported
+         * &lt;code&gt;tcp:// for a TCP connection and &lt;code&gt;ssl:// for a
+         * TCP connection secured by SSL/TLS. For example: &lt;ul&gt;
+         * &lt;li&gt;&lt;code&gt;tcp://localhost:1883
+         * &lt;li&gt;&lt;code&gt;ssl://localhost:8883 If the port is not
+         * specified, it will default to 1883 for &lt;code&gt;tcp:// URIs, and
+         * 8883 for &lt;code&gt;ssl:// URIs. &lt;p&gt; If serverURIs is set then
+         * it overrides the serverURI parameter passed in on the constructor of
+         * the MQTT client. &lt;p&gt; When an attempt to connect is initiated
+         * the client will start with the first serverURI in the list and work
+         * through the list until a connection is established with a server. If
+         * a connection cannot be made to any of the servers then the connect
+         * attempt fails. &lt;p&gt; Specifying a list of servers that a client
+         * may connect to has several uses: &lt;ol&gt; &lt;li&gt;High
+         * Availability and reliable message delivery &lt;p&gt; Some MQTT
+         * servers support a high availability feature where two or more equal
+         * MQTT servers share state. An MQTT client can connect to any of the
+         * equal servers and be assured that messages are reliably delivered and
+         * durable subscriptions are maintained no matter which server the
+         * client connects to. &lt;p&gt; The cleansession flag must be set to
+         * false if durable subscriptions and/or reliable message delivery is
+         * required. &lt;li&gt;Hunt List &lt;p&gt; A set of servers may be
+         * specified that are not equal (as in the high availability option). As
+         * no state is shared across the servers reliable message delivery and
+         * durable subscriptions are not valid. The cleansession flag must be
+         * set to true if the hunt list mode is used.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -528,8 +534,8 @@ public interface PahoMqtt5ComponentBuilderFactory {
         /**
          * Sets the Custom WebSocket Headers for the WebSocket Connection.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -610,45 +616,51 @@ public interface PahoMqtt5ComponentBuilderFactory {
             return this;
         }
         /**
-         * Sets the SSL properties for the connection. Note that these
+         * Sets the SSL properties for the connection. &lt;p&gt; Note that these
          * properties are only valid if an implementation of the Java Secure
-         * Socket Extensions (JSSE) is available. These properties are not used
-         * if a custom SocketFactory has been set. The following properties can
-         * be used: com.ibm.ssl.protocol One of: SSL, SSLv3, TLS, TLSv1,
-         * SSL_TLS. com.ibm.ssl.contextProvider Underlying JSSE provider. For
-         * example IBMJSSE2 or SunJSSE com.ibm.ssl.keyStore The name of the file
-         * that contains the KeyStore object that you want the KeyManager to
-         * use. For example /mydir/etc/key.p12 com.ibm.ssl.keyStorePassword The
-         * password for the KeyStore object that you want the KeyManager to use.
-         * The password can either be in plain-text, or may be obfuscated using
-         * the static method: com.ibm.micro.security.Password.obfuscate(char
-         * password). This obfuscates the password using a simple and insecure
-         * XOR and Base64 encoding mechanism. Note that this is only a simple
-         * scrambler to obfuscate clear-text passwords. com.ibm.ssl.keyStoreType
-         * Type of key store, for example PKCS12, JKS, or JCEKS.
-         * com.ibm.ssl.keyStoreProvider Key store provider, for example IBMJCE
-         * or IBMJCEFIPS. com.ibm.ssl.trustStore The name of the file that
-         * contains the KeyStore object that you want the TrustManager to use.
-         * com.ibm.ssl.trustStorePassword The password for the TrustStore object
-         * that you want the TrustManager to use. The password can either be in
-         * plain-text, or may be obfuscated using the static method:
-         * com.ibm.micro.security.Password.obfuscate(char password). This
-         * obfuscates the password using a simple and insecure XOR and Base64
-         * encoding mechanism. Note that this is only a simple scrambler to
-         * obfuscate clear-text passwords. com.ibm.ssl.trustStoreType The type
-         * of KeyStore object that you want the default TrustManager to use.
-         * Same possible values as keyStoreType. com.ibm.ssl.trustStoreProvider
-         * Trust store provider, for example IBMJCE or IBMJCEFIPS.
-         * com.ibm.ssl.enabledCipherSuites A list of which ciphers are enabled.
-         * Values are dependent on the provider, for example:
-         * SSL_RSA_WITH_AES_128_CBC_SHA;SSL_RSA_WITH_3DES_EDE_CBC_SHA.
-         * com.ibm.ssl.keyManager Sets the algorithm that will be used to
-         * instantiate a KeyManagerFactory object instead of using the default
-         * algorithm available in the platform. Example values: IbmX509 or
-         * IBMJ9X509. com.ibm.ssl.trustManager Sets the algorithm that will be
-         * used to instantiate a TrustManagerFactory object instead of using the
-         * default algorithm available in the platform. Example values: PKIX or
-         * IBMJ9X509.
+         * Socket Extensions (JSSE) is available. These properties are
+         * &lt;em&gt;not used if a custom SocketFactory has been set. The
+         * following properties can be used: &lt;dl&gt;
+         * &lt;dt&gt;com.ibm.ssl.protocol &lt;dd&gt;One of: SSL, SSLv3, TLS,
+         * TLSv1, SSL_TLS. &lt;dt&gt;com.ibm.ssl.contextProvider
+         * &lt;dd&gt;Underlying JSSE provider. For example IBMJSSE2 or SunJSSE
+         * &lt;dt&gt;com.ibm.ssl.keyStore &lt;dd&gt;The name of the file that
+         * contains the KeyStore object that you want the KeyManager to use. For
+         * example /mydir/etc/key.p12 &lt;dt&gt;com.ibm.ssl.keyStorePassword
+         * &lt;dd&gt;The password for the KeyStore object that you want the
+         * KeyManager to use. The password can either be in plain-text, or may
+         * be obfuscated using the static method:
+         * &lt;code&gt;com.ibm.micro.security.Password.obfuscate(char password).
+         * This obfuscates the password using a simple and insecure XOR and
+         * Base64 encoding mechanism. Note that this is only a simple scrambler
+         * to obfuscate clear-text passwords. &lt;dt&gt;com.ibm.ssl.keyStoreType
+         * &lt;dd&gt;Type of key store, for example PKCS12, JKS, or JCEKS.
+         * &lt;dt&gt;com.ibm.ssl.keyStoreProvider &lt;dd&gt;Key store provider,
+         * for example IBMJCE or IBMJCEFIPS. &lt;dt&gt;com.ibm.ssl.trustStore
+         * &lt;dd&gt;The name of the file that contains the KeyStore object that
+         * you want the TrustManager to use.
+         * &lt;dt&gt;com.ibm.ssl.trustStorePassword &lt;dd&gt;The password for
+         * the TrustStore object that you want the TrustManager to use. The
+         * password can either be in plain-text, or may be obfuscated using the
+         * static method:
+         * &lt;code&gt;com.ibm.micro.security.Password.obfuscate(char password).
+         * This obfuscates the password using a simple and insecure XOR and
+         * Base64 encoding mechanism. Note that this is only a simple scrambler
+         * to obfuscate clear-text passwords.
+         * &lt;dt&gt;com.ibm.ssl.trustStoreType &lt;dd&gt;The type of KeyStore
+         * object that you want the default TrustManager to use. Same possible
+         * values as keyStoreType. &lt;dt&gt;com.ibm.ssl.trustStoreProvider
+         * &lt;dd&gt;Trust store provider, for example IBMJCE or IBMJCEFIPS.
+         * &lt;dt&gt;com.ibm.ssl.enabledCipherSuites &lt;dd&gt;A list of which
+         * ciphers are enabled. Values are dependent on the provider, for
+         * example: SSL_RSA_WITH_AES_128_CBC_SHA;SSL_RSA_WITH_3DES_EDE_CBC_SHA.
+         * &lt;dt&gt;com.ibm.ssl.keyManager &lt;dd&gt;Sets the algorithm that
+         * will be used to instantiate a KeyManagerFactory object instead of
+         * using the default algorithm available in the platform. Example
+         * values: IbmX509 or IBMJ9X509. &lt;dt&gt;com.ibm.ssl.trustManager
+         * &lt;dd&gt;Sets the algorithm that will be used to instantiate a
+         * TrustManagerFactory object instead of using the default algorithm
+         * available in the platform. Example values: PKIX or IBMJ9X509.
          * 
          * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
@@ -665,8 +677,8 @@ public interface PahoMqtt5ComponentBuilderFactory {
         /**
          * Sets the HostnameVerifier for the SSL connection. Note that it will
          * be used after handshake on a connection and you should do actions by
-         * yourself when hostname is verified error. There is no default
-         * HostnameVerifier.
+         * yourself when hostname is verified error. &lt;p&gt; There is no
+         * default HostnameVerifier.
          * 
          * The option is a:
          * &lt;code&gt;javax.net.ssl.HostnameVerifier&lt;/code&gt; type.

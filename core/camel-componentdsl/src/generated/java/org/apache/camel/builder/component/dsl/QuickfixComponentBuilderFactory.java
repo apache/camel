@@ -53,8 +53,8 @@ public interface QuickfixComponentBuilderFactory {
             extends
                 ComponentBuilder<QuickfixjComponent> {
         /**
-         * If set to true, the engines will be created and started when needed
-         * (when first message is send).
+         * If set to &lt;code&gt;true, the engines will be created and started
+         * when needed (when first message is send).
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
