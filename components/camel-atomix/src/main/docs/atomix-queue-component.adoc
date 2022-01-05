@@ -2,7 +2,7 @@
 :doctitle: Atomix Queue
 :shortname: atomix-queue
 :artifactid: camel-atomix
-:description: Access Atomix's distributed queue.
+:description: Access Atomix's .
 :since: 2.20
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported

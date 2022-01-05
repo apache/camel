@@ -2,7 +2,7 @@
 :doctitle: Scheduler
 :shortname: scheduler
 :artifactid: camel-scheduler
-:description: Generate messages in specified intervals using java.util.concurrent.ScheduledExecutorService.
+:description: Generate messages in specified intervals using <code>java.util.concurrent.ScheduledExecutorService.
 :since: 2.15
 :supportlevel: Stable
 :component-header: Only consumer is supported

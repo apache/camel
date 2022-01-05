@@ -208,7 +208,7 @@ public interface LogEndpointBuilderFactory {
             return this;
         }
         /**
-         * Logging level to use. The default value is INFO.
+         * Logging level to use. &lt;p/&gt; The default value is INFO.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

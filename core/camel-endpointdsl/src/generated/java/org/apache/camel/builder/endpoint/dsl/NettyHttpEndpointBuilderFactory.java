@@ -194,10 +194,10 @@ public interface NettyHttpEndpointBuilderFactory {
          * This is useful if you need to call a server multiple times in a Camel
          * route and want to use the same network connection. When using this,
          * the channel is not returned to the connection pool until the Exchange
-         * is done; or disconnected if the disconnect option is set to true. The
-         * reused Channel is stored on the Exchange as an exchange property with
-         * the key NettyConstants#NETTY_CHANNEL which allows you to obtain the
-         * channel during routing and use it as well.
+         * is done; or disconnected if the disconnect option is set to true.
+         * &lt;p/&gt; The reused Channel is stored on the Exchange as an
+         * exchange property with the key NettyConstants#NETTY_CHANNEL which
+         * allows you to obtain the channel during routing and use it as well.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -218,10 +218,10 @@ public interface NettyHttpEndpointBuilderFactory {
          * This is useful if you need to call a server multiple times in a Camel
          * route and want to use the same network connection. When using this,
          * the channel is not returned to the connection pool until the Exchange
-         * is done; or disconnected if the disconnect option is set to true. The
-         * reused Channel is stored on the Exchange as an exchange property with
-         * the key NettyConstants#NETTY_CHANNEL which allows you to obtain the
-         * channel during routing and use it as well.
+         * is done; or disconnected if the disconnect option is set to true.
+         * &lt;p/&gt; The reused Channel is stored on the Exchange as an
+         * exchange property with the key NettyConstants#NETTY_CHANNEL which
+         * allows you to obtain the channel during routing and use it as well.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -491,7 +491,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * lookup.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;io.netty.channel.ChannelHandler&gt;&lt;/code&gt; type.
          * 
          * Group: codec
          * 
@@ -509,7 +509,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * lookup.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;io.netty.channel.ChannelHandler&gt;&lt;/code&gt; type.
          * 
          * Group: codec
          * 
@@ -527,7 +527,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * lookup.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;io.netty.channel.ChannelHandler&gt;&lt;/code&gt; type.
          * 
          * Group: codec
          * 
@@ -545,7 +545,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * lookup.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;io.netty.channel.ChannelHandler&gt;&lt;/code&gt; type.
          * 
          * Group: codec
          * 
@@ -725,8 +725,8 @@ public interface NettyHttpEndpointBuilderFactory {
          * To configure NettyHttpSecurityConfiguration using key/value pairs
          * from the map.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * securityOptions(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -747,8 +747,8 @@ public interface NettyHttpEndpointBuilderFactory {
          * To configure NettyHttpSecurityConfiguration using key/value pairs
          * from the map.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * securityOptions(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -1996,8 +1996,8 @@ public interface NettyHttpEndpointBuilderFactory {
          * child.keepAlive=false. See the Netty documentation for possible
          * options that can be used.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the options(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -2020,8 +2020,8 @@ public interface NettyHttpEndpointBuilderFactory {
          * child.keepAlive=false. See the Netty documentation for possible
          * options that can be used.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the options(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -2174,10 +2174,10 @@ public interface NettyHttpEndpointBuilderFactory {
          * as a application/x-java-serialized-object content type. On the
          * producer side the exception will be deserialized and thrown as is,
          * instead of the HttpOperationFailedException. The caused exception is
-         * required to be serialized. This is by default turned off. If you
-         * enable this then be aware that Java will deserialize the incoming
-         * data from the request to Java and that can be a potential security
-         * risk.
+         * required to be serialized. &lt;p/&gt; This is by default turned off.
+         * If you enable this then be aware that Java will deserialize the
+         * incoming data from the request to Java and that can be a potential
+         * security risk.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -2198,10 +2198,10 @@ public interface NettyHttpEndpointBuilderFactory {
          * as a application/x-java-serialized-object content type. On the
          * producer side the exception will be deserialized and thrown as is,
          * instead of the HttpOperationFailedException. The caused exception is
-         * required to be serialized. This is by default turned off. If you
-         * enable this then be aware that Java will deserialize the incoming
-         * data from the request to Java and that can be a potential security
-         * risk.
+         * required to be serialized. &lt;p/&gt; This is by default turned off.
+         * If you enable this then be aware that Java will deserialize the
+         * incoming data from the request to Java and that can be a potential
+         * security risk.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -2491,10 +2491,10 @@ public interface NettyHttpEndpointBuilderFactory {
          * This is useful if you need to call a server multiple times in a Camel
          * route and want to use the same network connection. When using this,
          * the channel is not returned to the connection pool until the Exchange
-         * is done; or disconnected if the disconnect option is set to true. The
-         * reused Channel is stored on the Exchange as an exchange property with
-         * the key NettyConstants#NETTY_CHANNEL which allows you to obtain the
-         * channel during routing and use it as well.
+         * is done; or disconnected if the disconnect option is set to true.
+         * &lt;p/&gt; The reused Channel is stored on the Exchange as an
+         * exchange property with the key NettyConstants#NETTY_CHANNEL which
+         * allows you to obtain the channel during routing and use it as well.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -2515,10 +2515,10 @@ public interface NettyHttpEndpointBuilderFactory {
          * This is useful if you need to call a server multiple times in a Camel
          * route and want to use the same network connection. When using this,
          * the channel is not returned to the connection pool until the Exchange
-         * is done; or disconnected if the disconnect option is set to true. The
-         * reused Channel is stored on the Exchange as an exchange property with
-         * the key NettyConstants#NETTY_CHANNEL which allows you to obtain the
-         * channel during routing and use it as well.
+         * is done; or disconnected if the disconnect option is set to true.
+         * &lt;p/&gt; The reused Channel is stored on the Exchange as an
+         * exchange property with the key NettyConstants#NETTY_CHANNEL which
+         * allows you to obtain the channel during routing and use it as well.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -2824,7 +2824,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * lookup.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;io.netty.channel.ChannelHandler&gt;&lt;/code&gt; type.
          * 
          * Group: codec
          * 
@@ -2842,7 +2842,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * lookup.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;io.netty.channel.ChannelHandler&gt;&lt;/code&gt; type.
          * 
          * Group: codec
          * 
@@ -2860,7 +2860,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * lookup.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;io.netty.channel.ChannelHandler&gt;&lt;/code&gt; type.
          * 
          * Group: codec
          * 
@@ -2878,7 +2878,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * lookup.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;io.netty.channel.ChannelHandler&gt;&lt;/code&gt; type.
          * 
          * Group: codec
          * 
@@ -3262,8 +3262,9 @@ public interface NettyHttpEndpointBuilderFactory {
         /**
          * The status codes which are considered a success response. The values
          * are inclusive. Multiple ranges can be defined, separated by comma,
-         * e.g. 200-204,209,301-304. Each range must be a single number or
-         * from-to with the dash included. The default range is 200-299.
+         * e.g. &lt;tt&gt;200-204,209,301-304. Each range must be a single
+         * number or from-to with the dash included. &lt;p/&gt; The default
+         * range is &lt;tt&gt;200-299.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -3279,17 +3280,17 @@ public interface NettyHttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether producer pool is enabled or not. Important: If you turn this
-         * off then a single shared connection is used for the producer, also if
-         * you are doing request/reply. That means there is a potential issue
-         * with interleaved responses if replies comes back out-of-order.
-         * Therefore you need to have a correlation id in both the request and
-         * reply messages so you can properly correlate the replies to the Camel
-         * callback that is responsible for continue processing the message in
-         * Camel. To do this you need to implement
+         * Whether producer pool is enabled or not. &lt;p&gt; Important: If you
+         * turn this off then a single shared connection is used for the
+         * producer, also if you are doing request/reply. That means there is a
+         * potential issue with interleaved responses if replies comes back
+         * out-of-order. Therefore you need to have a correlation id in both the
+         * request and reply messages so you can properly correlate the replies
+         * to the Camel callback that is responsible for continue processing the
+         * message in Camel. To do this you need to implement
          * NettyCamelStateCorrelationManager as correlation manager and
-         * configure it via the correlationManager option. See also the
-         * correlationManager option for more details.
+         * configure it via the &lt;tt&gt;correlationManager option. &lt;p/&gt;
+         * See also the &lt;tt&gt;correlationManager option for more details.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -3305,17 +3306,17 @@ public interface NettyHttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether producer pool is enabled or not. Important: If you turn this
-         * off then a single shared connection is used for the producer, also if
-         * you are doing request/reply. That means there is a potential issue
-         * with interleaved responses if replies comes back out-of-order.
-         * Therefore you need to have a correlation id in both the request and
-         * reply messages so you can properly correlate the replies to the Camel
-         * callback that is responsible for continue processing the message in
-         * Camel. To do this you need to implement
+         * Whether producer pool is enabled or not. &lt;p&gt; Important: If you
+         * turn this off then a single shared connection is used for the
+         * producer, also if you are doing request/reply. That means there is a
+         * potential issue with interleaved responses if replies comes back
+         * out-of-order. Therefore you need to have a correlation id in both the
+         * request and reply messages so you can properly correlate the replies
+         * to the Camel callback that is responsible for continue processing the
+         * message in Camel. To do this you need to implement
          * NettyCamelStateCorrelationManager as correlation manager and
-         * configure it via the correlationManager option. See also the
-         * correlationManager option for more details.
+         * configure it via the &lt;tt&gt;correlationManager option. &lt;p/&gt;
+         * See also the &lt;tt&gt;correlationManager option for more details.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -3787,8 +3788,8 @@ public interface NettyHttpEndpointBuilderFactory {
          * child.keepAlive=false. See the Netty documentation for possible
          * options that can be used.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the options(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -3811,8 +3812,8 @@ public interface NettyHttpEndpointBuilderFactory {
          * child.keepAlive=false. See the Netty documentation for possible
          * options that can be used.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the options(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -3965,10 +3966,10 @@ public interface NettyHttpEndpointBuilderFactory {
          * as a application/x-java-serialized-object content type. On the
          * producer side the exception will be deserialized and thrown as is,
          * instead of the HttpOperationFailedException. The caused exception is
-         * required to be serialized. This is by default turned off. If you
-         * enable this then be aware that Java will deserialize the incoming
-         * data from the request to Java and that can be a potential security
-         * risk.
+         * required to be serialized. &lt;p/&gt; This is by default turned off.
+         * If you enable this then be aware that Java will deserialize the
+         * incoming data from the request to Java and that can be a potential
+         * security risk.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -3989,10 +3990,10 @@ public interface NettyHttpEndpointBuilderFactory {
          * as a application/x-java-serialized-object content type. On the
          * producer side the exception will be deserialized and thrown as is,
          * instead of the HttpOperationFailedException. The caused exception is
-         * required to be serialized. This is by default turned off. If you
-         * enable this then be aware that Java will deserialize the incoming
-         * data from the request to Java and that can be a potential security
-         * risk.
+         * required to be serialized. &lt;p/&gt; This is by default turned off.
+         * If you enable this then be aware that Java will deserialize the
+         * incoming data from the request to Java and that can be a potential
+         * security risk.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -4279,10 +4280,10 @@ public interface NettyHttpEndpointBuilderFactory {
          * This is useful if you need to call a server multiple times in a Camel
          * route and want to use the same network connection. When using this,
          * the channel is not returned to the connection pool until the Exchange
-         * is done; or disconnected if the disconnect option is set to true. The
-         * reused Channel is stored on the Exchange as an exchange property with
-         * the key NettyConstants#NETTY_CHANNEL which allows you to obtain the
-         * channel during routing and use it as well.
+         * is done; or disconnected if the disconnect option is set to true.
+         * &lt;p/&gt; The reused Channel is stored on the Exchange as an
+         * exchange property with the key NettyConstants#NETTY_CHANNEL which
+         * allows you to obtain the channel during routing and use it as well.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -4302,10 +4303,10 @@ public interface NettyHttpEndpointBuilderFactory {
          * This is useful if you need to call a server multiple times in a Camel
          * route and want to use the same network connection. When using this,
          * the channel is not returned to the connection pool until the Exchange
-         * is done; or disconnected if the disconnect option is set to true. The
-         * reused Channel is stored on the Exchange as an exchange property with
-         * the key NettyConstants#NETTY_CHANNEL which allows you to obtain the
-         * channel during routing and use it as well.
+         * is done; or disconnected if the disconnect option is set to true.
+         * &lt;p/&gt; The reused Channel is stored on the Exchange as an
+         * exchange property with the key NettyConstants#NETTY_CHANNEL which
+         * allows you to obtain the channel during routing and use it as well.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -4422,7 +4423,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * lookup.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;io.netty.channel.ChannelHandler&gt;&lt;/code&gt; type.
          * 
          * Group: codec
          * 
@@ -4440,7 +4441,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * lookup.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;io.netty.channel.ChannelHandler&gt;&lt;/code&gt; type.
          * 
          * Group: codec
          * 
@@ -4458,7 +4459,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * lookup.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;io.netty.channel.ChannelHandler&gt;&lt;/code&gt; type.
          * 
          * Group: codec
          * 
@@ -4476,7 +4477,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * lookup.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;io.netty.channel.ChannelHandler&gt;&lt;/code&gt; type.
          * 
          * Group: codec
          * 
@@ -5074,8 +5075,8 @@ public interface NettyHttpEndpointBuilderFactory {
          * child.keepAlive=false. See the Netty documentation for possible
          * options that can be used.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the options(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -5098,8 +5099,8 @@ public interface NettyHttpEndpointBuilderFactory {
          * child.keepAlive=false. See the Netty documentation for possible
          * options that can be used.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the options(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -5250,10 +5251,10 @@ public interface NettyHttpEndpointBuilderFactory {
          * as a application/x-java-serialized-object content type. On the
          * producer side the exception will be deserialized and thrown as is,
          * instead of the HttpOperationFailedException. The caused exception is
-         * required to be serialized. This is by default turned off. If you
-         * enable this then be aware that Java will deserialize the incoming
-         * data from the request to Java and that can be a potential security
-         * risk.
+         * required to be serialized. &lt;p/&gt; This is by default turned off.
+         * If you enable this then be aware that Java will deserialize the
+         * incoming data from the request to Java and that can be a potential
+         * security risk.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -5274,10 +5275,10 @@ public interface NettyHttpEndpointBuilderFactory {
          * as a application/x-java-serialized-object content type. On the
          * producer side the exception will be deserialized and thrown as is,
          * instead of the HttpOperationFailedException. The caused exception is
-         * required to be serialized. This is by default turned off. If you
-         * enable this then be aware that Java will deserialize the incoming
-         * data from the request to Java and that can be a potential security
-         * risk.
+         * required to be serialized. &lt;p/&gt; This is by default turned off.
+         * If you enable this then be aware that Java will deserialize the
+         * incoming data from the request to Java and that can be a potential
+         * security risk.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.

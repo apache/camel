@@ -36,7 +36,7 @@ public final class FhirDeleteEndpointConfiguration extends FhirConfiguration {
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "resourceById", description="The resource type e.g Patient")})
     private String type;
     @UriParam
-    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "resourceConditionalByUrl", description="The search URL to use. The format of this URL should be of the form ResourceTypeParameters, for example: Patientname=Smith&amp;identifier=13.2.4.11.4%7C847366")})
+    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "resourceConditionalByUrl", description="The search URL to use. The format of this URL should be of the form <code>ResourceTypeParameters, for example: <code>Patientname=Smith&amp;identifier=13.2.4.11.4%7C847366")})
     private String url;
 
     public java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> getExtraParameters() {

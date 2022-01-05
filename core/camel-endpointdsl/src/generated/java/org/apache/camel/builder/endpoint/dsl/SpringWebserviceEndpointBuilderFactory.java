@@ -513,8 +513,8 @@ public interface SpringWebserviceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Signifies the value for the faultAction response WS-Addressing Fault
-         * Action header that is provided by the method. See
+         * Signifies the value for the faultAction response WS-Addressing
+         * &lt;code&gt;Fault Action header that is provided by the method. See
          * org.springframework.ws.soap.addressing.server.annotation.Action
          * annotation for more details.
          * 
@@ -531,8 +531,8 @@ public interface SpringWebserviceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Signifies the value for the faultAction response WS-Addressing Fault
-         * Action header that is provided by the method. See
+         * Signifies the value for the faultAction response WS-Addressing
+         * &lt;code&gt;Fault Action header that is provided by the method. See
          * org.springframework.ws.soap.addressing.server.annotation.Action
          * annotation for more details.
          * 
@@ -551,7 +551,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
         }
         /**
          * Signifies the value for the faultAction response WS-Addressing
-         * FaultTo header that is provided by the method. See
+         * &lt;code&gt;FaultTo header that is provided by the method. See
          * org.springframework.ws.soap.addressing.server.annotation.Action
          * annotation for more details.
          * 
@@ -568,7 +568,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
         }
         /**
          * Signifies the value for the faultAction response WS-Addressing
-         * FaultTo header that is provided by the method. See
+         * &lt;code&gt;FaultTo header that is provided by the method. See
          * org.springframework.ws.soap.addressing.server.annotation.Action
          * annotation for more details.
          * 
@@ -702,8 +702,8 @@ public interface SpringWebserviceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Signifies the value for the response WS-Addressing Action header that
-         * is provided by the method. See
+         * Signifies the value for the response WS-Addressing &lt;code&gt;Action
+         * header that is provided by the method. See
          * org.springframework.ws.soap.addressing.server.annotation.Action
          * annotation for more details.
          * 
@@ -720,8 +720,8 @@ public interface SpringWebserviceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Signifies the value for the response WS-Addressing Action header that
-         * is provided by the method. See
+         * Signifies the value for the response WS-Addressing &lt;code&gt;Action
+         * header that is provided by the method. See
          * org.springframework.ws.soap.addressing.server.annotation.Action
          * annotation for more details.
          * 
@@ -739,8 +739,8 @@ public interface SpringWebserviceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Signifies the value for the replyTo response WS-Addressing ReplyTo
-         * header that is provided by the method. See
+         * Signifies the value for the replyTo response WS-Addressing
+         * &lt;code&gt;ReplyTo header that is provided by the method. See
          * org.springframework.ws.soap.addressing.server.annotation.Action
          * annotation for more details.
          * 
@@ -756,8 +756,8 @@ public interface SpringWebserviceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Signifies the value for the replyTo response WS-Addressing ReplyTo
-         * header that is provided by the method. See
+         * Signifies the value for the replyTo response WS-Addressing
+         * &lt;code&gt;ReplyTo header that is provided by the method. See
          * org.springframework.ws.soap.addressing.server.annotation.Action
          * annotation for more details.
          * 
@@ -1095,15 +1095,16 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * Syntax: <code>spring-ws:type:lookupKey:webServiceEndpointUri</code>
          * 
          * Path parameter: type
-         * Endpoint mapping type if endpoint mapping is used. rootqname - Offers
-         * the option to map web service requests based on the qualified name of
-         * the root element contained in the message. soapaction - Used to map
-         * web service requests based on the SOAP action specified in the header
-         * of the message. uri - In order to map web service requests that
-         * target a specific URI. xpathresult - Used to map web service requests
-         * based on the evaluation of an XPath expression against the incoming
-         * message. The result of the evaluation should match the XPath result
-         * specified in the endpoint URI. beanname - Allows you to reference an
+         * Endpoint mapping type if endpoint mapping is used. <ul> <li>rootqname
+         * - Offers the option to map web service requests based on the
+         * qualified name of the root element contained in the message.
+         * <li>soapaction - Used to map web service requests based on the SOAP
+         * action specified in the header of the message. <li>uri - In order to
+         * map web service requests that target a specific URI. <li>xpathresult
+         * - Used to map web service requests based on the evaluation of an
+         * XPath expression against the incoming message. The result of the
+         * evaluation should match the XPath result specified in the endpoint
+         * URI. <li>beanname - Allows you to reference an
          * org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher
          * object in order to integrate with existing (legacy) endpoint mappings
          * like PayloadRootQNameEndpointMapping, SoapActionEndpointMapping, etc
@@ -1138,15 +1139,16 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * Syntax: <code>spring-ws:type:lookupKey:webServiceEndpointUri</code>
          * 
          * Path parameter: type
-         * Endpoint mapping type if endpoint mapping is used. rootqname - Offers
-         * the option to map web service requests based on the qualified name of
-         * the root element contained in the message. soapaction - Used to map
-         * web service requests based on the SOAP action specified in the header
-         * of the message. uri - In order to map web service requests that
-         * target a specific URI. xpathresult - Used to map web service requests
-         * based on the evaluation of an XPath expression against the incoming
-         * message. The result of the evaluation should match the XPath result
-         * specified in the endpoint URI. beanname - Allows you to reference an
+         * Endpoint mapping type if endpoint mapping is used. <ul> <li>rootqname
+         * - Offers the option to map web service requests based on the
+         * qualified name of the root element contained in the message.
+         * <li>soapaction - Used to map web service requests based on the SOAP
+         * action specified in the header of the message. <li>uri - In order to
+         * map web service requests that target a specific URI. <li>xpathresult
+         * - Used to map web service requests based on the evaluation of an
+         * XPath expression against the incoming message. The result of the
+         * evaluation should match the XPath result specified in the endpoint
+         * URI. <li>beanname - Allows you to reference an
          * org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher
          * object in order to integrate with existing (legacy) endpoint mappings
          * like PayloadRootQNameEndpointMapping, SoapActionEndpointMapping, etc

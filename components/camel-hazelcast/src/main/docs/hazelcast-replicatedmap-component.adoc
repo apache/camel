@@ -2,7 +2,7 @@
 :doctitle: Hazelcast Replicated Map
 :shortname: hazelcast-replicatedmap
 :artifactid: camel-hazelcast
-:description: Perform operations on Hazelcast replicated map.
+:description: Perform operations on replicated map.
 :since: 2.16
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported

@@ -2,7 +2,7 @@
 :doctitle: JSON Jackson
 :shortname: json-jackson
 :artifactid: camel-jackson
-:description: Marshal POJOs to JSON and back using Jackson
+:description: Marshal POJOs to JSON and back using
 :since: 2.0
 :supportlevel: Stable
 //Manually maintained attributes
