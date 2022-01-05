@@ -171,7 +171,7 @@ public interface DirectVmEndpointBuilderFactory {
         }
         /**
          * Whether to propagate or not properties from the producer side to the
-         * consumer side, and vice versa. Default value: true.
+         * consumer side, and vice versa. &lt;p&gt; Default value: true.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -188,7 +188,7 @@ public interface DirectVmEndpointBuilderFactory {
         }
         /**
          * Whether to propagate or not properties from the producer side to the
-         * consumer side, and vice versa. Default value: true.
+         * consumer side, and vice versa. &lt;p&gt; Default value: true.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -377,8 +377,8 @@ public interface DirectVmEndpointBuilderFactory {
         }
         /**
          * Sets a HeaderFilterStrategy that will only be applied on producer
-         * endpoints (on both directions: request and response). Default value:
-         * none.
+         * endpoints (on both directions: request and response). &lt;p&gt;
+         * Default value: none.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
@@ -396,8 +396,8 @@ public interface DirectVmEndpointBuilderFactory {
         }
         /**
          * Sets a HeaderFilterStrategy that will only be applied on producer
-         * endpoints (on both directions: request and response). Default value:
-         * none.
+         * endpoints (on both directions: request and response). &lt;p&gt;
+         * Default value: none.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
@@ -415,7 +415,7 @@ public interface DirectVmEndpointBuilderFactory {
         }
         /**
          * Whether to propagate or not properties from the producer side to the
-         * consumer side, and vice versa. Default value: true.
+         * consumer side, and vice versa. &lt;p&gt; Default value: true.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -432,7 +432,7 @@ public interface DirectVmEndpointBuilderFactory {
         }
         /**
          * Whether to propagate or not properties from the producer side to the
-         * consumer side, and vice versa. Default value: true.
+         * consumer side, and vice versa. &lt;p&gt; Default value: true.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -474,7 +474,7 @@ public interface DirectVmEndpointBuilderFactory {
         }
         /**
          * Whether to propagate or not properties from the producer side to the
-         * consumer side, and vice versa. Default value: true.
+         * consumer side, and vice versa. &lt;p&gt; Default value: true.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -491,7 +491,7 @@ public interface DirectVmEndpointBuilderFactory {
         }
         /**
          * Whether to propagate or not properties from the producer side to the
-         * consumer side, and vice versa. Default value: true.
+         * consumer side, and vice versa. &lt;p&gt; Default value: true.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.

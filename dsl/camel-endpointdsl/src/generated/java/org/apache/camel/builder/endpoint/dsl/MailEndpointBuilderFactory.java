@@ -253,9 +253,10 @@ public interface MailEndpointBuilderFactory {
          * If the mail consumer cannot retrieve a given mail message, then this
          * option allows to handle the caused exception by the consumer's error
          * handler. By enable the bridge error handler on the consumer, then the
-         * Camel routing error handler can handle the exception instead. The
-         * default behavior would be the consumer throws an exception and no
-         * mails from the batch would be able to be routed by Camel.
+         * Camel routing error handler can handle the exception instead.
+         * &lt;p/&gt; The default behavior would be the consumer throws an
+         * exception and no mails from the batch would be able to be routed by
+         * Camel.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -274,9 +275,10 @@ public interface MailEndpointBuilderFactory {
          * If the mail consumer cannot retrieve a given mail message, then this
          * option allows to handle the caused exception by the consumer's error
          * handler. By enable the bridge error handler on the consumer, then the
-         * Camel routing error handler can handle the exception instead. The
-         * default behavior would be the consumer throws an exception and no
-         * mails from the batch would be able to be routed by Camel.
+         * Camel routing error handler can handle the exception instead.
+         * &lt;p/&gt; The default behavior would be the consumer throws an
+         * exception and no mails from the batch would be able to be routed by
+         * Camel.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -457,9 +459,9 @@ public interface MailEndpointBuilderFactory {
         /**
          * If the mail consumer cannot retrieve a given mail message, then this
          * option allows to skip the message and move on to retrieve the next
-         * mail message. The default behavior would be the consumer throws an
-         * exception and no mails from the batch would be able to be routed by
-         * Camel.
+         * mail message. &lt;p/&gt; The default behavior would be the consumer
+         * throws an exception and no mails from the batch would be able to be
+         * routed by Camel.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -477,9 +479,9 @@ public interface MailEndpointBuilderFactory {
         /**
          * If the mail consumer cannot retrieve a given mail message, then this
          * option allows to skip the message and move on to retrieve the next
-         * mail message. The default behavior would be the consumer throws an
-         * exception and no mails from the batch would be able to be routed by
-         * Camel.
+         * mail message. &lt;p/&gt; The default behavior would be the consumer
+         * throws an exception and no mails from the batch would be able to be
+         * routed by Camel.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -530,7 +532,7 @@ public interface MailEndpointBuilderFactory {
          * A pluggable repository org.apache.camel.spi.IdempotentRepository
          * which allows to cluster consuming from the same mailbox, and let the
          * repository coordinate whether a mail message is valid for the
-         * consumer to process. By default no repository is in use.
+         * consumer to process. &lt;p/&gt; By default no repository is in use.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.spi.IdempotentRepository&lt;/code&gt;
@@ -550,7 +552,7 @@ public interface MailEndpointBuilderFactory {
          * A pluggable repository org.apache.camel.spi.IdempotentRepository
          * which allows to cluster consuming from the same mailbox, and let the
          * repository coordinate whether a mail message is valid for the
-         * consumer to process. By default no repository is in use.
+         * consumer to process. &lt;p/&gt; By default no repository is in use.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.apache.camel.spi.IdempotentRepository&lt;/code&gt;
@@ -570,12 +572,12 @@ public interface MailEndpointBuilderFactory {
          * When using idempotent repository, then when the mail message has been
          * successfully processed and is committed, should the message id be
          * removed from the idempotent repository (default) or be kept in the
-         * repository. By default its assumed the message id is unique and has
-         * no value to be kept in the repository, because the mail message will
-         * be marked as seen/moved or deleted to prevent it from being consumed
-         * again. And therefore having the message id stored in the idempotent
-         * repository has little value. However this option allows to store the
-         * message id, for whatever reason you may have.
+         * repository. &lt;p/&gt; By default its assumed the message id is
+         * unique and has no value to be kept in the repository, because the
+         * mail message will be marked as seen/moved or deleted to prevent it
+         * from being consumed again. And therefore having the message id stored
+         * in the idempotent repository has little value. However this option
+         * allows to store the message id, for whatever reason you may have.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -594,12 +596,12 @@ public interface MailEndpointBuilderFactory {
          * When using idempotent repository, then when the mail message has been
          * successfully processed and is committed, should the message id be
          * removed from the idempotent repository (default) or be kept in the
-         * repository. By default its assumed the message id is unique and has
-         * no value to be kept in the repository, because the mail message will
-         * be marked as seen/moved or deleted to prevent it from being consumed
-         * again. And therefore having the message id stored in the idempotent
-         * repository has little value. However this option allows to store the
-         * message id, for whatever reason you may have.
+         * repository. &lt;p/&gt; By default its assumed the message id is
+         * unique and has no value to be kept in the repository, because the
+         * mail message will be marked as seen/moved or deleted to prevent it
+         * from being consumed again. And therefore having the message id stored
+         * in the idempotent repository has little value. However this option
+         * allows to store the message id, for whatever reason you may have.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -996,8 +998,8 @@ public interface MailEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -1018,8 +1020,8 @@ public interface MailEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -1613,9 +1615,9 @@ public interface MailEndpointBuilderFactory {
             return this;
         }
         /**
-         * The authenticator for login. If set then the password and username
-         * are ignored. Can be used for tokens which can expire and therefore
-         * must be read dynamically.
+         * The authenticator for login. If set then the &lt;code&gt;password and
+         * &lt;code&gt;username are ignored. Can be used for tokens which can
+         * expire and therefore must be read dynamically.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.mail.MailAuthenticator&lt;/code&gt; type.
@@ -1631,9 +1633,9 @@ public interface MailEndpointBuilderFactory {
             return this;
         }
         /**
-         * The authenticator for login. If set then the password and username
-         * are ignored. Can be used for tokens which can expire and therefore
-         * must be read dynamically.
+         * The authenticator for login. If set then the &lt;code&gt;password and
+         * &lt;code&gt;username are ignored. Can be used for tokens which can
+         * expire and therefore must be read dynamically.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.apache.camel.component.mail.MailAuthenticator&lt;/code&gt; type.
@@ -2368,9 +2370,9 @@ public interface MailEndpointBuilderFactory {
             return this;
         }
         /**
-         * The authenticator for login. If set then the password and username
-         * are ignored. Can be used for tokens which can expire and therefore
-         * must be read dynamically.
+         * The authenticator for login. If set then the &lt;code&gt;password and
+         * &lt;code&gt;username are ignored. Can be used for tokens which can
+         * expire and therefore must be read dynamically.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.mail.MailAuthenticator&lt;/code&gt; type.
@@ -2386,9 +2388,9 @@ public interface MailEndpointBuilderFactory {
             return this;
         }
         /**
-         * The authenticator for login. If set then the password and username
-         * are ignored. Can be used for tokens which can expire and therefore
-         * must be read dynamically.
+         * The authenticator for login. If set then the &lt;code&gt;password and
+         * &lt;code&gt;username are ignored. Can be used for tokens which can
+         * expire and therefore must be read dynamically.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.apache.camel.component.mail.MailAuthenticator&lt;/code&gt; type.
@@ -2952,9 +2954,9 @@ public interface MailEndpointBuilderFactory {
             return this;
         }
         /**
-         * The authenticator for login. If set then the password and username
-         * are ignored. Can be used for tokens which can expire and therefore
-         * must be read dynamically.
+         * The authenticator for login. If set then the &lt;code&gt;password and
+         * &lt;code&gt;username are ignored. Can be used for tokens which can
+         * expire and therefore must be read dynamically.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.mail.MailAuthenticator&lt;/code&gt; type.
@@ -2970,9 +2972,9 @@ public interface MailEndpointBuilderFactory {
             return this;
         }
         /**
-         * The authenticator for login. If set then the password and username
-         * are ignored. Can be used for tokens which can expire and therefore
-         * must be read dynamically.
+         * The authenticator for login. If set then the &lt;code&gt;password and
+         * &lt;code&gt;username are ignored. Can be used for tokens which can
+         * expire and therefore must be read dynamically.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.apache.camel.component.mail.MailAuthenticator&lt;/code&gt; type.

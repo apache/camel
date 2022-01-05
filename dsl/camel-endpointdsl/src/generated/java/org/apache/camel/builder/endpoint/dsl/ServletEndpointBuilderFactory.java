@@ -475,11 +475,12 @@ public interface ServletEndpointBuilderFactory {
         }
         /**
          * Whether to automatic bind multipart/form-data as attachments on the
-         * Camel Exchange. The options attachmentMultipartBinding=true and
-         * disableStreamCache=false cannot work together. Remove
-         * disableStreamCache to use AttachmentMultipartBinding. This is turn
-         * off by default as this may require servlet specific configuration to
-         * enable this when using Servlet's.
+         * Camel Exchange. &lt;p/&gt; The options
+         * attachmentMultipartBinding=true and disableStreamCache=false cannot
+         * work together. Remove disableStreamCache to use
+         * AttachmentMultipartBinding. &lt;p/&gt; This is turn off by default as
+         * this may require servlet specific configuration to enable this when
+         * using Servlet's.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -496,11 +497,12 @@ public interface ServletEndpointBuilderFactory {
         }
         /**
          * Whether to automatic bind multipart/form-data as attachments on the
-         * Camel Exchange. The options attachmentMultipartBinding=true and
-         * disableStreamCache=false cannot work together. Remove
-         * disableStreamCache to use AttachmentMultipartBinding. This is turn
-         * off by default as this may require servlet specific configuration to
-         * enable this when using Servlet's.
+         * Camel Exchange. &lt;p/&gt; The options
+         * attachmentMultipartBinding=true and disableStreamCache=false cannot
+         * work together. Remove disableStreamCache to use
+         * AttachmentMultipartBinding. &lt;p/&gt; This is turn off by default as
+         * this may require servlet specific configuration to enable this when
+         * using Servlet's.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -625,8 +627,8 @@ public interface ServletEndpointBuilderFactory {
         }
         /**
          * Whitelist of accepted filename extensions for accepting uploaded
-         * files. Multiple extensions can be separated by comma, such as
-         * txt,xml.
+         * files. &lt;p/&gt; Multiple extensions can be separated by comma, such
+         * as txt,xml.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

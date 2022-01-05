@@ -200,7 +200,7 @@ public interface AtlasMapEndpointBuilderFactory {
         }
         /**
          * The Exchange property name for a source message map which hold
-         * java.util.Map&amp;amp;lt;String, Message&amp;amp;gt; where the key is
+         * &lt;code&gt;java.util.Map&lt;String, Message&gt; where the key is
          * AtlasMap Document ID. AtlasMap consumes Message bodies as source
          * documents, as well as message headers as source properties where the
          * scope equals to Document ID.
@@ -218,11 +218,12 @@ public interface AtlasMapEndpointBuilderFactory {
         }
         /**
          * TargetMapMode enum value to specify how multiple target documents are
-         * delivered if exist. 'MAP': Stores them into a java.util.Map, and the
-         * java.util.Map is set to an exchange property if 'targetMapName' is
-         * specified, otherwise message body. 'MESSAGE_HEADER': Stores them into
-         * message headers. 'EXCHANGE_PROPERTY': Stores them into exchange
-         * properties. ).
+         * delivered if exist. &lt;ul&gt; &lt;li&gt;'MAP': Stores them into a
+         * java.util.Map, and the java.util.Map is set to an exchange property
+         * if 'targetMapName' is specified, otherwise message body.
+         * &lt;li&gt;'MESSAGE_HEADER': Stores them into message headers.
+         * &lt;li&gt;'EXCHANGE_PROPERTY': Stores them into exchange properties.
+         * ).
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.atlasmap.AtlasMapEndpoint.TargetMapMode&lt;/code&gt; type.
@@ -240,11 +241,12 @@ public interface AtlasMapEndpointBuilderFactory {
         }
         /**
          * TargetMapMode enum value to specify how multiple target documents are
-         * delivered if exist. 'MAP': Stores them into a java.util.Map, and the
-         * java.util.Map is set to an exchange property if 'targetMapName' is
-         * specified, otherwise message body. 'MESSAGE_HEADER': Stores them into
-         * message headers. 'EXCHANGE_PROPERTY': Stores them into exchange
-         * properties. ).
+         * delivered if exist. &lt;ul&gt; &lt;li&gt;'MAP': Stores them into a
+         * java.util.Map, and the java.util.Map is set to an exchange property
+         * if 'targetMapName' is specified, otherwise message body.
+         * &lt;li&gt;'MESSAGE_HEADER': Stores them into message headers.
+         * &lt;li&gt;'EXCHANGE_PROPERTY': Stores them into exchange properties.
+         * ).
          * 
          * The option will be converted to a
          * &lt;code&gt;org.apache.camel.component.atlasmap.AtlasMapEndpoint.TargetMapMode&lt;/code&gt; type.
@@ -261,7 +263,7 @@ public interface AtlasMapEndpointBuilderFactory {
         }
         /**
          * The Exchange property name for a target document map which hold
-         * java.util.Map&amp;amp;lt;String, Object&amp;amp;gt; where the key is
+         * &lt;code&gt;java.util.Map&lt;String, Object&gt; where the key is
          * AtlasMap Document ID. AtlasMap populates multiple target documents
          * into this map.
          * 

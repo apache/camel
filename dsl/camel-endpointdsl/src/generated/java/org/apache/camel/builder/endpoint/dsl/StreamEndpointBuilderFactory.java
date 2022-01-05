@@ -298,8 +298,8 @@ public interface StreamEndpointBuilderFactory {
         }
         /**
          * Will retry opening the stream if it's overwritten, somewhat like tail
-         * --retry If reading from files then you should also enable the
-         * fileWatcher option, to make it work reliable.
+         * --retry &lt;p/&gt; If reading from files then you should also enable
+         * the fileWatcher option, to make it work reliable.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -315,8 +315,8 @@ public interface StreamEndpointBuilderFactory {
         }
         /**
          * Will retry opening the stream if it's overwritten, somewhat like tail
-         * --retry If reading from files then you should also enable the
-         * fileWatcher option, to make it work reliable.
+         * --retry &lt;p/&gt; If reading from files then you should also enable
+         * the fileWatcher option, to make it work reliable.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.

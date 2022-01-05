@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "ignite-events",
     "title": "Ignite Events",
-    "description": "Receive events from an Ignite cluster by creating a local event listener.",
+    "description": "from an Ignite cluster by creating a local event listener.",
     "deprecated": false,
     "firstVersion": "2.17.0",
     "label": "messaging,eventbus",

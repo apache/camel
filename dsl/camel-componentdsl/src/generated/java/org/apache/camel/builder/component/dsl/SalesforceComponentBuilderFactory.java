@@ -68,8 +68,8 @@ public interface SalesforceComponentBuilderFactory {
         /**
          * Query params for APEX method.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -294,8 +294,8 @@ public interface SalesforceComponentBuilderFactory {
         /**
          * Replay IDs to start from per channel name.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Long&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Long&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -441,8 +441,8 @@ public interface SalesforceComponentBuilderFactory {
             return this;
         }
         /**
-         * Notify for create operation, defaults to false (API version
-         * &amp;amp;gt;= 29.0).
+         * Notify for create operation, defaults to false (API version &gt;=
+         * 29.0).
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
@@ -457,8 +457,8 @@ public interface SalesforceComponentBuilderFactory {
             return this;
         }
         /**
-         * Notify for delete operation, defaults to false (API version
-         * &amp;amp;gt;= 29.0).
+         * Notify for delete operation, defaults to false (API version &gt;=
+         * 29.0).
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
@@ -474,7 +474,7 @@ public interface SalesforceComponentBuilderFactory {
         }
         /**
          * Notify for operations, options are ALL, CREATE, EXTENDED, UPDATE (API
-         * version &amp;amp;lt; 29.0).
+         * version &lt; 29.0).
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum&lt;/code&gt; type.
@@ -490,8 +490,8 @@ public interface SalesforceComponentBuilderFactory {
             return this;
         }
         /**
-         * Notify for un-delete operation, defaults to false (API version
-         * &amp;amp;gt;= 29.0).
+         * Notify for un-delete operation, defaults to false (API version &gt;=
+         * 29.0).
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
@@ -506,8 +506,8 @@ public interface SalesforceComponentBuilderFactory {
             return this;
         }
         /**
-         * Notify for update operation, defaults to false (API version
-         * &amp;amp;gt;= 29.0).
+         * Notify for update operation, defaults to false (API version &gt;=
+         * 29.0).
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
@@ -876,8 +876,8 @@ public interface SalesforceComponentBuilderFactory {
          * HTTP client. Have a look at properties of SalesforceHttpClient and
          * the Jetty HttpClient for all available options.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * 
          * Group: common (advanced)
          * 
@@ -894,8 +894,8 @@ public interface SalesforceComponentBuilderFactory {
          * LongPollingTransport used by the BayeuxClient (CometD) used by the
          * streaming api.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * 
          * Group: common (advanced)
          * 
@@ -1116,7 +1116,7 @@ public interface SalesforceComponentBuilderFactory {
          * A list of addresses for which HTTP proxy server should not be used.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.Set&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.Set&lt;java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: proxy
          * 
@@ -1147,7 +1147,7 @@ public interface SalesforceComponentBuilderFactory {
          * A list of addresses for which HTTP proxy server should be used.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.Set&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.Set&lt;java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: proxy
          * 

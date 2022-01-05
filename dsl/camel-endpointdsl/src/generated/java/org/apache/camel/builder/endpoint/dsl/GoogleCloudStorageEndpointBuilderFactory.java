@@ -226,8 +226,9 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
         /**
          * Delete objects from the bucket after they have been retrieved. The
          * delete is only performed if the Exchange is committed. If a rollback
-         * occurs, the object is not deleted. If this option is false, then the
-         * same objects will be retrieve over and over again on the polls.
+         * occurs, the object is not deleted. &lt;p/&gt; If this option is
+         * false, then the same objects will be retrieve over and over again on
+         * the polls.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -245,8 +246,9 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
         /**
          * Delete objects from the bucket after they have been retrieved. The
          * delete is only performed if the Exchange is committed. If a rollback
-         * occurs, the object is not deleted. If this option is false, then the
-         * same objects will be retrieve over and over again on the polls.
+         * occurs, the object is not deleted. &lt;p/&gt; If this option is
+         * false, then the same objects will be retrieve over and over again on
+         * the polls.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -810,8 +812,8 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -832,8 +834,8 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).

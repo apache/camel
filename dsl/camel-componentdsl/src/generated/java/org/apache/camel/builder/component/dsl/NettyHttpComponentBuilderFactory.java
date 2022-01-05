@@ -119,10 +119,10 @@ public interface NettyHttpComponentBuilderFactory {
          * This is useful if you need to call a server multiple times in a Camel
          * route and want to use the same network connection. When using this,
          * the channel is not returned to the connection pool until the Exchange
-         * is done; or disconnected if the disconnect option is set to true. The
-         * reused Channel is stored on the Exchange as an exchange property with
-         * the key NettyConstants#NETTY_CHANNEL which allows you to obtain the
-         * channel during routing and use it as well.
+         * is done; or disconnected if the disconnect option is set to true.
+         * &lt;p/&gt; The reused Channel is stored on the Exchange as an
+         * exchange property with the key NettyConstants#NETTY_CHANNEL which
+         * allows you to obtain the channel during routing and use it as well.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -580,11 +580,12 @@ public interface NettyHttpComponentBuilderFactory {
          * concurrent messages on the same channel (aka connection) in netty.
          * When doing this you must have a way to correlate the request and
          * reply messages so you can store the right reply on the inflight Camel
-         * Exchange before its continued routed. We recommend extending the
-         * TimeoutCorrelationManagerSupport when you build custom correlation
-         * managers. This provides support for timeout and other complexities
-         * you otherwise would need to implement as well. See also the
-         * producerPoolEnabled option for more details.
+         * Exchange before its continued routed. &lt;p/&gt; We recommend
+         * extending the TimeoutCorrelationManagerSupport when you build custom
+         * correlation managers. This provides support for timeout and other
+         * complexities you otherwise would need to implement as well.
+         * &lt;p/&gt; See also the &lt;tt&gt;producerPoolEnabled option for more
+         * details.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.netty.NettyCamelStateCorrelationManager&lt;/code&gt; type.
@@ -617,17 +618,17 @@ public interface NettyHttpComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether producer pool is enabled or not. Important: If you turn this
-         * off then a single shared connection is used for the producer, also if
-         * you are doing request/reply. That means there is a potential issue
-         * with interleaved responses if replies comes back out-of-order.
-         * Therefore you need to have a correlation id in both the request and
-         * reply messages so you can properly correlate the replies to the Camel
-         * callback that is responsible for continue processing the message in
-         * Camel. To do this you need to implement
+         * Whether producer pool is enabled or not. &lt;p&gt; Important: If you
+         * turn this off then a single shared connection is used for the
+         * producer, also if you are doing request/reply. That means there is a
+         * potential issue with interleaved responses if replies comes back
+         * out-of-order. Therefore you need to have a correlation id in both the
+         * request and reply messages so you can properly correlate the replies
+         * to the Camel callback that is responsible for continue processing the
+         * message in Camel. To do this you need to implement
          * NettyCamelStateCorrelationManager as correlation manager and
-         * configure it via the correlationManager option. See also the
-         * correlationManager option for more details.
+         * configure it via the &lt;tt&gt;correlationManager option. &lt;p/&gt;
+         * See also the &lt;tt&gt;correlationManager option for more details.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -878,8 +879,8 @@ public interface NettyHttpComponentBuilderFactory {
          * child.keepAlive=false. See the Netty documentation for possible
          * options that can be used.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -1072,7 +1073,7 @@ public interface NettyHttpComponentBuilderFactory {
          * lookup.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;io.netty.channel.ChannelHandler&gt;&lt;/code&gt; type.
          * 
          * Group: codec
          * 
@@ -1109,7 +1110,7 @@ public interface NettyHttpComponentBuilderFactory {
          * lookup.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;io.netty.channel.ChannelHandler&gt;&lt;/code&gt; type.
          * 
          * Group: codec
          * 
