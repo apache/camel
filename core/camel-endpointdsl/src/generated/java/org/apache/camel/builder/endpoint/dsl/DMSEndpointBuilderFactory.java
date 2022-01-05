@@ -72,7 +72,7 @@ public interface DMSEndpointBuilderFactory {
          * an instance and it cannot be an empty array.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: producer
          * 
@@ -88,7 +88,7 @@ public interface DMSEndpointBuilderFactory {
          * an instance and it cannot be an empty array.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: producer
          * 

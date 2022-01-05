@@ -294,12 +294,12 @@ public interface MinioComponentBuilderFactory {
         /**
          * Delete objects from Minio after they have been retrieved. The delete
          * is only performed if the Exchange is committed. If a rollback occurs,
-         * the object is not deleted. If this option is false, then the same
-         * objects will be retrieve over and over again on the polls. Therefore
-         * you need to use the Idempotent Consumer EIP in the route to filter
-         * out duplicates. You can filter using the MinioConstants#BUCKET_NAME
-         * and MinioConstants#OBJECT_NAME headers, or only the
-         * MinioConstants#OBJECT_NAME header.
+         * the object is not deleted. &lt;p/&gt; If this option is false, then
+         * the same objects will be retrieve over and over again on the polls.
+         * Therefore you need to use the Idempotent Consumer EIP in the route to
+         * filter out duplicates. You can filter using the
+         * MinioConstants#BUCKET_NAME and MinioConstants#OBJECT_NAME headers, or
+         * only the MinioConstants#OBJECT_NAME header.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -473,9 +473,9 @@ public interface MinioComponentBuilderFactory {
         }
         /**
          * Gets the maximum number of messages as a limit to poll at each
-         * polling. Gets the maximum number of messages as a limit to poll at
-         * each polling. The default value is 10. Use 0 or a negative number to
-         * set it as unlimited.
+         * polling. &lt;p/&gt; Gets the maximum number of messages as a limit to
+         * poll at each polling. The default value is 10. Use 0 or a negative
+         * number to set it as unlimited.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 

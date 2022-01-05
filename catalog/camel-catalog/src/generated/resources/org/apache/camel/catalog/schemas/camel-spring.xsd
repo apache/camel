@@ -469,7 +469,7 @@ Filter out messages based using a predicate
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 Marshal and unmarshal Java lists and maps to/from flat files (such as CSV,
-delimited, or fixed length formats) using Flatpack library.
+delimited, or fixed length formats) using library.
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -535,7 +535,7 @@ Evaluates a Groovy script.
   <xs:element name="gzipdeflater" type="tns:gzipDataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-Compress and decompress messages using java.util.zip.GZIPStream.
+Compress and decompress messages using <code>java.util.zip.GZIPStream.
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -705,7 +705,7 @@ Marshal POJOs to JSON and back.
   <xs:element name="jsonApi" type="tns:jsonApiDataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-Marshal and unmarshal JSON:API resources using JSONAPI-Converter library.
+Marshal and unmarshal .
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -1875,7 +1875,7 @@ Evaluates an XQuery expressions against an XML payload.
   <xs:element name="xstream" type="tns:xStreamDataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-Marshal and unmarshal POJOs to/from XML using XStream library.
+Marshal and unmarshal POJOs to/from XML using library.
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -1899,8 +1899,8 @@ Marshal and unmarshal Java objects to and from YAML.
   <xs:element name="zipdeflater" type="tns:zipDeflaterDataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-Compress and decompress streams using java.util.zip.Deflater and
-java.util.zip.Inflater.
+Compress and decompress streams using <code>java.util.zip.Deflater and
+<code>java.util.zip.Inflater.
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -2445,7 +2445,7 @@ locations from this option.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Encoding to use when loading properties file from the file system or classpath.
-If no encoding has been set, then the properties files is loaded using
+<p/> If no encoding has been set, then the properties files is loaded using
 ISO-8859-1 encoding (latin-1) as documented by
 java.util.Properties#load(java.io.InputStream).
             ]]></xs:documentation>
@@ -2544,10 +2544,10 @@ settings to attempt to restart failing routes. Default value: false
             <xs:documentation xml:lang="en"><![CDATA[
 Pattern for filtering routes to be included as supervised. The pattern is
 matching on route id, and endpoint uri for the route. Multiple patterns can be
-separated by comma. For example to include all kafka routes, you can say kafka:.
-And to include routes with specific route ids myRoute,myOtherRoute. The pattern
-supports wildcards and uses the matcher from
-org.apache.camel.support.PatternHelper#matchPattern.
+separated by comma. For example to include all kafka routes, you can say
+<tt>kafka:. And to include routes with specific route ids
+<tt>myRoute,myOtherRoute. The pattern supports wildcards and uses the matcher
+from org.apache.camel.support.PatternHelper#matchPattern.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -2556,10 +2556,10 @@ org.apache.camel.support.PatternHelper#matchPattern.
             <xs:documentation xml:lang="en"><![CDATA[
 Pattern for filtering routes to be excluded as supervised. The pattern is
 matching on route id, and endpoint uri for the route. Multiple patterns can be
-separated by comma. For example to exclude all JMS routes, you can say jms:. And
-to exclude routes with specific route ids mySpecialRoute,myOtherSpecialRoute.
-The pattern supports wildcards and uses the matcher from
-org.apache.camel.support.PatternHelper#matchPattern.
+separated by comma. For example to exclude all JMS routes, you can say <tt>jms:.
+And to exclude routes with specific route ids
+<tt>mySpecialRoute,myOtherSpecialRoute. The pattern supports wildcards and uses
+the matcher from org.apache.camel.support.PatternHelper#matchPattern.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -2694,8 +2694,8 @@ JVM.
         <xs:attribute name="enabled" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Sets whether the stream caching is enabled. Notice: This cannot be changed at
-runtime. Default value: false
+Sets whether the stream caching is enabled. <p/> <b>Notice: This cannot be
+changed at runtime. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -2703,25 +2703,25 @@ runtime. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Sets the spool (temporary) directory to use for overflow and spooling to disk.
-If no spool directory has been explicit configured, then a temporary directory
-is created in the java.io.tmpdir directory.
+<p/> If no spool directory has been explicit configured, then a temporary
+directory is created in the <tt>java.io.tmpdir directory.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="spoolCipher" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Sets a cipher name to use when spooling to disk to write with encryption. By
-default the data is not encrypted.
+Sets a cipher name to use when spooling to disk to write with encryption. <p/>
+By default the data is not encrypted.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="spoolThreshold" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Threshold in bytes when overflow to disk is activated. The default threshold is
-org.apache.camel.StreamCache#DEFAULT_SPOOL_THRESHOLD bytes (eg 128kb). Use -1 to
-disable overflow to disk.
+Threshold in bytes when overflow to disk is activated. <p/> The default
+threshold is org.apache.camel.StreamCache#DEFAULT_SPOOL_THRESHOLD bytes (eg
+128kb). Use <tt>-1 to disable overflow to disk.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -2754,7 +2754,7 @@ be separated by comma.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Sets the buffer size to use when allocating in-memory buffers used for in-memory
-stream caches. The default size is
+stream caches. <p/> The default size is
 org.apache.camel.util.IOHelper#DEFAULT_BUFFER_SIZE.
             ]]></xs:documentation>
           </xs:annotation>
@@ -2762,8 +2762,8 @@ org.apache.camel.util.IOHelper#DEFAULT_BUFFER_SIZE.
         <xs:attribute name="removeSpoolDirectoryWhenStopping" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Whether to remove the temporary directory when stopping. This option is default
-true. Default value: true
+Whether to remove the temporary directory when stopping. <p/> This option is
+default <tt>true. Default value: true
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -2778,11 +2778,11 @@ Sets whether statistics is enabled.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Sets whether if just any of the
-org.apache.camel.spi.StreamCachingStrategy.SpoolRule rules returns true then
-shouldSpoolCache(long) returns true. If this option is false, then all the
-org.apache.camel.spi.StreamCachingStrategy.SpoolRule must return true. The
-default value is false which means that all the rules must return true. Default
-value: false
+org.apache.camel.spi.StreamCachingStrategy.SpoolRule rules returns <tt>true then
+shouldSpoolCache(long) returns <tt>true. If this option is <tt>false, then
+<b>all the org.apache.camel.spi.StreamCachingStrategy.SpoolRule must return
+<tt>true. <p/> The default value is <tt>false which means that all the rules
+must return <tt>true. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -2991,7 +2991,7 @@ complete (timeout). This option can be set as either a fixed value or using an
 Expression which allows you to evaluate a timeout dynamically - will use Long as
 result. If both are set Camel will fallback to use the fixed value if the
 Expression result was null or 0. You cannot use this option together with
-completionInterval, only one of the two can be used. By default the timeout
+completionInterval, only one of the two can be used. <p/> By default the timeout
 checker runs every second, you can use the completionTimeoutCheckerInterval
 option to configure how frequently to run the checker. The timeout is an
 approximation and there is no guarantee that the a timeout is triggered exactly
@@ -3121,7 +3121,7 @@ to be used rather than creating a new thread for every aggregator.
         <xs:attribute name="aggregationRepositoryRef" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Sets the custom aggregate repository to use. Will by default use
+Sets the custom aggregate repository to use. <p/> Will by default use
 org.apache.camel.processor.aggregate.MemoryAggregationRepository.
             ]]></xs:documentation>
           </xs:annotation>
@@ -3129,13 +3129,13 @@ org.apache.camel.processor.aggregate.MemoryAggregationRepository.
         <xs:attribute name="strategyRef" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-A reference to lookup the AggregationStrategy in the Registry. The value can
-either refer to a bean to lookup, or to lookup a singleton bean by its type, or
-to create a new bean: Lookup bean - This is the default behavior to lookup an
-existing bean by the bean id (value) reference by type - Values can refer to
-singleton beans by their type in the registry by prefixing with #type: syntax,
-eg #type:com.foo.MyClassType reference new class - Values can refer to creating
-new beans by their class name by prefixing with #class, eg
+A reference to lookup the AggregationStrategy in the Registry. <p/> The value
+can either refer to a bean to lookup, or to lookup a singleton bean by its type,
+or to create a new bean: <ul> <li>Lookup bean - This is the default behavior to
+lookup an existing bean by the bean id (value) <li>reference by type - Values
+can refer to singleton beans by their type in the registry by prefixing with
+#type: syntax, eg #type:com.foo.MyClassType <li>reference new class - Values can
+refer to creating new beans by their class name by prefixing with #class, eg
 #class:com.foo.MyClassType. The class is created using a default no-arg
 constructor, however if you need to create the instance via a factory method
 then you specify the method as shown:
@@ -3143,11 +3143,12 @@ then you specify the method as shown:
 parameters they can be specified as follows:
 #class:com.foo.MyClassType#myFactoryMethod('Hello World', 5, true). Or if you
 need to create the instance via constructor parameters then you can specify the
-parameters as shown: #class:com.foo.MyClass('Hello World', 5, true). Configuring
-an AggregationStrategy is required, and is used to merge the incoming Exchange
-with the existing already merged exchanges. At first call the oldExchange
-parameter is null. On subsequent invocations the oldExchange contains the merged
-exchanges and newExchange is of course the new incoming Exchange.
+parameters as shown: #class:com.foo.MyClass('Hello World', 5, true). <p/>
+Configuring an AggregationStrategy is required, and is used to merge the
+incoming Exchange with the existing already merged exchanges. At first call the
+oldExchange parameter is null. On subsequent invocations the oldExchange
+contains the merged exchanges and newExchange is of course the new incoming
+Exchange.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -3197,7 +3198,7 @@ complete (timeout). This option can be set as either a fixed value or using an
 Expression which allows you to evaluate a timeout dynamically - will use Long as
 result. If both are set Camel will fallback to use the fixed value if the
 Expression result was null or 0. You cannot use this option together with
-completionInterval, only one of the two can be used. By default the timeout
+completionInterval, only one of the two can be used. <p/> By default the timeout
 checker runs every second, you can use the completionTimeoutCheckerInterval
 option to configure how frequently to run the checker. The timeout is an
 approximation and there is no guarantee that the a timeout is triggered exactly
@@ -3210,7 +3211,7 @@ checker intervals.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Interval in millis that is used by the background task that checks for timeouts
-( org.apache.camel.TimeoutMap ). By default the timeout checker runs every
+( org.apache.camel.TimeoutMap ). <p/> By default the timeout checker runs every
 second. The timeout is an approximation and there is no guarantee that the a
 timeout is triggered exactly after the timeout value. It is not recommended to
 use very low timeout values or checker intervals. Default value: 1s
@@ -3223,8 +3224,9 @@ use very low timeout values or checker intervals. Default value: 1s
 Enables the batch completion mode where we aggregate from a
 org.apache.camel.BatchConsumer and aggregate the total number of exchanges the
 org.apache.camel.BatchConsumer has reported as total by checking the exchange
-property org.apache.camel.Exchange#BATCH_COMPLETE when its complete. This option
-cannot be used together with discardOnAggregationFailure. Default value: false
+property org.apache.camel.Exchange#BATCH_COMPLETE when its complete. <p/> This
+option cannot be used together with discardOnAggregationFailure. Default value:
+false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -3259,7 +3261,7 @@ logging a DEBUG and then just ignore the incoming Exchange. Default value: false
         <xs:attribute name="closeCorrelationKeyOnCompletion" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Closes a correlation key when its complete. Any late received exchanges which
+Closes a correlation key when its complete. Any <i>late received exchanges which
 has a correlation key that has been closed, it will be defined and a
 ClosedCorrelationKeyException is thrown.
             ]]></xs:documentation>
@@ -3268,9 +3270,9 @@ ClosedCorrelationKeyException is thrown.
         <xs:attribute name="discardOnCompletionTimeout" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Discards the aggregated message on completion timeout. This means on timeout the
-aggregated message is dropped and not sent out of the aggregator. Default value:
-false
+Discards the aggregated message on completion timeout. <p/> This means on
+timeout the aggregated message is dropped and not sent out of the aggregator.
+Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -3279,8 +3281,8 @@ false
             <xs:documentation xml:lang="en"><![CDATA[
 Discards the aggregated message when aggregation failed (an exception was thrown
 from AggregationStrategy . This means the partly aggregated message is dropped
-and not sent out of the aggregator. This option cannot be used together with
-completionFromBatchConsumer. Default value: false
+and not sent out of the aggregator. <p/> This option cannot be used together
+with completionFromBatchConsumer. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -3296,13 +3298,13 @@ stopped. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Indicates to wait to complete all current and partial (pending) aggregated
-exchanges when the context is stopped. This also means that we will wait for all
-pending exchanges which are stored in the aggregation repository to complete so
-the repository is empty before we can stop. You may want to enable this when
-using the memory based aggregation repository that is memory based only, and do
-not store data on disk. When this option is enabled, then the aggregator is
-waiting to complete all those exchanges before its stopped, when stopping
-CamelContext or the route using it. Default value: false
+exchanges when the context is stopped. <p/> This also means that we will wait
+for all pending exchanges which are stored in the aggregation repository to
+complete so the repository is empty before we can stop. <p/> You may want to
+enable this when using the memory based aggregation repository that is memory
+based only, and do not store data on disk. When this option is enabled, then the
+aggregator is waiting to complete all those exchanges before its stopped, when
+stopping CamelContext or the route using it. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -3485,8 +3487,8 @@ The exception(s) to catch.
             <xs:annotation>
               <xs:documentation xml:lang="en"><![CDATA[
 Sets an additional predicate that should be true before the onCatch is
-triggered. To be used for fine grained controlling whether a thrown exception
-should be intercepted by this exception type or not.
+triggered. <p/> To be used for fine grained controlling whether a thrown
+exception should be intercepted by this exception type or not.
               ]]></xs:documentation>
             </xs:annotation>
           </xs:element>
@@ -3867,7 +3869,7 @@ has been configured to use. Default value: CamelHystrix
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Whether to use a HystrixCircuitBreaker or not. If false no circuit-breaker logic
-will be used and all requests permitted. This is similar in effect to
+will be used and all requests permitted. <p> This is similar in effect to
 circuitBreakerForceClosed() except that continues tracking metrics and knowing
 whether it should be open/closed, this property results in not even
 instantiating a circuit-breaker. Default value: true
@@ -3878,8 +3880,8 @@ instantiating a circuit-breaker. Default value: true
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Error percentage threshold (as whole number such as 50) at which point the
-circuit breaker will trip open and reject requests. It will stay tripped for the
-duration defined in circuitBreakerSleepWindowInMilliseconds; The error
+circuit breaker will trip open and reject requests. <p> It will stay tripped for
+the duration defined in circuitBreakerSleepWindowInMilliseconds; <p> The error
 percentage this is compared against comes from
 HystrixCommandMetrics.getHealthCounts(). Default value: 50
             ]]></xs:documentation>
@@ -3890,9 +3892,9 @@ HystrixCommandMetrics.getHealthCounts(). Default value: 50
             <xs:documentation xml:lang="en"><![CDATA[
 If true the HystrixCircuitBreaker#allowRequest() will always return true to
 allow requests regardless of the error percentage from
-HystrixCommandMetrics.getHealthCounts(). The circuitBreakerForceOpen() property
-takes precedence so if it set to true this property does nothing. Default value:
-false
+HystrixCommandMetrics.getHealthCounts(). <p> The circuitBreakerForceOpen()
+property takes precedence so if it set to true this property does nothing.
+Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -3900,8 +3902,9 @@ false
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 If true the HystrixCircuitBreaker.allowRequest() will always return false,
-causing the circuit to be open (tripped) and reject all requests. This property
-takes precedence over circuitBreakerForceClosed();. Default value: false
+causing the circuit to be open (tripped) and reject all requests. <p> This
+property takes precedence over circuitBreakerForceClosed();. Default value:
+false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -3910,8 +3913,8 @@ takes precedence over circuitBreakerForceClosed();. Default value: false
             <xs:documentation xml:lang="en"><![CDATA[
 Minimum number of requests in the
 metricsRollingStatisticalWindowInMilliseconds() that must exist before the
-HystrixCircuitBreaker will trip. If below this number the circuit will not trip
-regardless of error percentage. Default value: 20
+HystrixCircuitBreaker will trip. <p> If below this number the circuit will not
+trip regardless of error percentage. Default value: 20
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -3927,7 +3930,7 @@ wait before trying requests again. Default value: 5000
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Number of concurrent requests permitted to HystrixCommand.run(). Requests beyond
-the concurrent limit will be rejected. Applicable only when
+the concurrent limit will be rejected. <p> Applicable only when
 executionIsolationStrategy == SEMAPHORE. Default value: 20
             ]]></xs:documentation>
           </xs:annotation>
@@ -3935,11 +3938,11 @@ executionIsolationStrategy == SEMAPHORE. Default value: 20
         <xs:attribute name="executionIsolationStrategy" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-What isolation strategy HystrixCommand.run() will be executed with. If THREAD
-then it will be executed on a separate thread and concurrent requests limited by
-the number of threads in the thread-pool. If SEMAPHORE then it will be executed
-on the calling thread and concurrent requests limited by the semaphore count.
-Default value: THREAD
+What isolation strategy HystrixCommand.run() will be executed with. <p> If
+THREAD then it will be executed on a separate thread and concurrent requests
+limited by the number of threads in the thread-pool. <p> If SEMAPHORE then it
+will be executed on the calling thread and concurrent requests limited by the
+semaphore count. Default value: THREAD
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -3947,8 +3950,8 @@ Default value: THREAD
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Whether the execution thread should attempt an interrupt (using Future#cancel )
-when a thread times out. Applicable only when executionIsolationStrategy() ==
-THREAD. Default value: true
+when a thread times out. <p> Applicable only when executionIsolationStrategy()
+== THREAD. Default value: true
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -3956,7 +3959,7 @@ THREAD. Default value: true
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Time in milliseconds at which point the command will timeout and halt execution.
-If executionIsolationThreadInterruptOnTimeout == true and the command is
+<p> If executionIsolationThreadInterruptOnTimeout == true and the command is
 thread-isolated, the executing thread will be interrupted. If the command is
 semaphore-isolated and a HystrixObservableCommand, that command will get
 unsubscribed. Default value: 1000
@@ -3992,7 +3995,7 @@ Default value: true
             <xs:documentation xml:lang="en"><![CDATA[
 Time in milliseconds to wait between allowing health snapshots to be taken that
 calculate success and error percentages and affect
-HystrixCircuitBreaker.isOpen() status. On high-volume circuits the continual
+HystrixCircuitBreaker.isOpen() status. <p> On high-volume circuits the continual
 calculation of error percentage can become CPU intensive thus this controls how
 often it is calculated. Default value: 500
             ]]></xs:documentation>
@@ -4099,7 +4102,7 @@ the fly. For that, use queueSizeRejectionThreshold(). Default value: -1
 Queue size rejection threshold is an artificial max size at which rejections
 will occur even if maxQueueSize has not been reached. This is done because the
 maxQueueSize of a BlockingQueue can not be dynamically changed and we want to
-support dynamically changing the queue size that affects rejections. This is
+support dynamically changing the queue size that affects rejections. <p> This is
 used by HystrixCommand when queuing a thread for execution. Default value: 5
             ]]></xs:documentation>
           </xs:annotation>
@@ -4176,7 +4179,7 @@ instance to lookup and use from the registry.
             <xs:documentation xml:lang="en"><![CDATA[
 Configures the failure rate threshold in percentage. If the failure rate is
 equal or greater than the threshold the CircuitBreaker transitions to open and
-starts short-circuiting calls. The threshold must be greater than 0 and not
+starts short-circuiting calls. <p> The threshold must be greater than 0 and not
 greater than 100. Default value is 50 percentage. Default value: 50
             ]]></xs:documentation>
           </xs:annotation>
@@ -4185,7 +4188,7 @@ greater than 100. Default value is 50 percentage. Default value: 50
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Configures the number of permitted calls when the CircuitBreaker is half open.
-The size must be greater than 0. Default size is 10. Default value: 10
+<p> The size must be greater than 0. Default size is 10. Default value: 10
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -4197,7 +4200,7 @@ calls when the CircuitBreaker is closed. slidingWindowSize configures the size
 of the sliding window. Sliding window can either be count-based or time-based.
 If slidingWindowType is COUNT_BASED, the last slidingWindowSize calls are
 recorded and aggregated. If slidingWindowType is TIME_BASED, the calls of the
-last slidingWindowSize seconds are recorded and aggregated. The
+last slidingWindowSize seconds are recorded and aggregated. <p> The
 slidingWindowSize must be greater than 0. The minimumNumberOfCalls must be
 greater than 0. If the slidingWindowType is COUNT_BASED, the
 minimumNumberOfCalls cannot be greater than slidingWindowSize . If the
@@ -4263,7 +4266,7 @@ waitDurationInOpenState has passed. Default value: false
 Configures a threshold in percentage. The CircuitBreaker considers a call as
 slow when the call duration is greater than slowCallDurationThreshold Duration.
 When the percentage of slow calls is equal or greater the threshold, the
-CircuitBreaker transitions to open and starts short-circuiting calls. The
+CircuitBreaker transitions to open and starts short-circuiting calls. <p> The
 threshold must be greater than 0 and not greater than 100. Default value is 100
 percentage which means that all recorded calls must be slower than
 slowCallDurationThreshold. Default value: 100
@@ -4334,7 +4337,7 @@ Default value: 20
             <xs:documentation xml:lang="en"><![CDATA[
 Configures the failure rate threshold in percentage. If the failure rate is
 equal or greater than the threshold the CircuitBreaker transitions to open and
-starts short-circuiting calls. The threshold must be greater than 0 and not
+starts short-circuiting calls. <p> The threshold must be greater than 0 and not
 greater than 100. Default value is 50 percentage. Default value: 50
             ]]></xs:documentation>
           </xs:annotation>
@@ -4412,12 +4415,12 @@ References to a custom thread pool to use when bulkhead is enabled.
         <xs:attribute name="operation" type="xs:string" use="required">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-The claim check operation to use. The following operations is supported: Get -
-Gets (does not remove) the claim check by the given key. GetAndRemove - Gets and
-remove the claim check by the given key. Set - Sets a new (will override if key
-already exists) claim check with the given key. Push - Sets a new claim check on
-the stack (does not use key). Pop - Gets the latest claim check from the stack
-(does not use key).
+The claim check operation to use. The following operations is supported: <ul>
+<li>Get - Gets (does not remove) the claim check by the given key.
+<li>GetAndRemove - Gets and remove the claim check by the given key. <li>Set -
+Sets a new (will override if key already exists) claim check with the given key.
+<li>Push - Sets a new claim check on the stack (does not use key). <li>Pop -
+Gets the latest claim check from the stack (does not use key).
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -4433,20 +4436,22 @@ syntax as the key).
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Specified a filter to control what data gets merging data back from the claim
-check repository. The following syntax is supported: body - to aggregate the
-message body attachments - to aggregate all the message attachments headers - to
-aggregate all the message headers header:pattern - to aggregate all the message
-headers that matches the pattern. The pattern uses the following rules are
-applied in this order: exact match, returns true wildcard match (pattern ends
-with a and the name starts with the pattern), returns true regular expression
-match, returns true otherwise returns false You can specify multiple rules
+check repository. The following syntax is supported: <ul> <li>body - to
+aggregate the message body <li>attachments - to aggregate all the message
+attachments <li>headers - to aggregate all the message headers
+<li>header:pattern - to aggregate all the message headers that matches the
+pattern. The pattern uses the following rules are applied in this order: <ul>
+<li>exact match, returns true <li>wildcard match (pattern ends with a and the
+name starts with the pattern), returns true <li>regular expression match,
+returns true <li>otherwise returns false <p> You can specify multiple rules
 separated by comma. For example to include the message body and all headers
-starting with foo body,header:foo. The syntax supports the following prefixes
-which can be used to specify include,exclude, or remove - to include (which is
-the default mode) - - to exclude (exclude takes precedence over include) -- - to
-remove (remove takes precedence) For example to exclude a header name foo, and
-remove all headers starting with bar -header:foo,--headers:bar Note you cannot
-have both include and exclude header:pattern at the same time.
+starting with foo <tt>body,header:foo. The syntax supports the following
+prefixes which can be used to specify include,exclude, or remove <ul> <li> - to
+include (which is the default mode) <li>- - to exclude (exclude takes precedence
+over include) <li>-- - to remove (remove takes precedence) For example to
+exclude a header name foo, and remove all headers starting with bar
+<tt>-header:foo,--headers:bar Note you cannot have both include and exclude
+<tt>header:pattern at the same time.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -4455,15 +4460,15 @@ have both include and exclude header:pattern at the same time.
             <xs:documentation xml:lang="en"><![CDATA[
 To use a custom AggregationStrategy instead of the default implementation.
 Notice you cannot use both custom aggregation strategy and configure data at the
-same time. The value can either refer to a bean to lookup, or to lookup a
-singleton bean by its type, or to create a new bean: Lookup bean - This is the
-default behavior to lookup an existing bean by the bean id (value) reference by
-type - Values can refer to singleton beans by their type in the registry by
-prefixing with #type: syntax, eg #type:com.foo.MyClassType reference new class -
-Values can refer to creating new beans by their class name by prefixing with
-#class, eg #class:com.foo.MyClassType. The class is created using a default
-no-arg constructor, however if you need to create the instance via a factory
-method then you specify the method as shown:
+same time. <p/> The value can either refer to a bean to lookup, or to lookup a
+singleton bean by its type, or to create a new bean: <ul> <li>Lookup bean - This
+is the default behavior to lookup an existing bean by the bean id (value)
+<li>reference by type - Values can refer to singleton beans by their type in the
+registry by prefixing with #type: syntax, eg #type:com.foo.MyClassType
+<li>reference new class - Values can refer to creating new beans by their class
+name by prefixing with #class, eg #class:com.foo.MyClassType. The class is
+created using a default no-arg constructor, however if you need to create the
+instance via a factory method then you specify the method as shown:
 #class:com.foo.MyClassType#myFactoryMethod. And if the factory method requires
 parameters they can be specified as follows:
 #class:com.foo.MyClassType#myFactoryMethod('Hello World', 5, true). Or if you
@@ -4508,8 +4513,8 @@ Include finding route builder from these java package names.
     <xs:attribute name="includeNonSingletons" type="xs:string">
       <xs:annotation>
         <xs:documentation xml:lang="en"><![CDATA[
-Whether to include non-singleton beans (prototypes) By default only singleton
-beans is included in the context scan. Default value: false
+Whether to include non-singleton beans (prototypes) <p/> By default only
+singleton beans is included in the context scan. Default value: false
         ]]></xs:documentation>
       </xs:annotation>
     </xs:attribute>
@@ -4591,8 +4596,8 @@ Refers to a custom Thread Pool if asyncDelay has been enabled.
         <xs:attribute name="asyncDelayed" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Enables asynchronous delay which means the thread will not block while delaying.
-Default value: true
+Enables asynchronous delay which means the thread will <b>not block while
+delaying. Default value: true
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -4600,7 +4605,7 @@ Default value: true
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Whether or not the caller should run the task when it was rejected by the thread
-pool. Is by default true. Default value: true
+pool. <p/> Is by default <tt>true. Default value: true
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -4704,13 +4709,13 @@ producers.
             <xs:documentation xml:lang="en"><![CDATA[
 Refers to an AggregationStrategy to be used to merge the reply from the external
 service, into a single outgoing message. By default Camel will use the reply
-from the external service as outgoing message. The value can either refer to a
-bean to lookup, or to lookup a singleton bean by its type, or to create a new
-bean: Lookup bean - This is the default behavior to lookup an existing bean by
-the bean id (value) reference by type - Values can refer to singleton beans by
-their type in the registry by prefixing with #type: syntax, eg
-#type:com.foo.MyClassType reference new class - Values can refer to creating new
-beans by their class name by prefixing with #class, eg
+from the external service as outgoing message. <p/> The value can either refer
+to a bean to lookup, or to lookup a singleton bean by its type, or to create a
+new bean: <ul> <li>Lookup bean - This is the default behavior to lookup an
+existing bean by the bean id (value) <li>reference by type - Values can refer to
+singleton beans by their type in the registry by prefixing with #type: syntax,
+eg #type:com.foo.MyClassType <li>reference new class - Values can refer to
+creating new beans by their class name by prefixing with #class, eg
 #class:com.foo.MyClassType. The class is created using a default no-arg
 constructor, however if you need to create the instance via a factory method
 then you specify the method as shown:
@@ -5128,23 +5133,23 @@ the exchange is complete. Eager is default enabled. Default value: true
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Sets whether to complete the idempotent consumer eager or when the exchange is
-done. If this option is true to complete eager, then the idempotent consumer
-will trigger its completion when the exchange reached the end of the block of
-the idempotent consumer pattern. So if the exchange is continued routed after
-the block ends, then whatever happens there does not affect the state. If this
-option is false (default) to not complete eager, then the idempotent consumer
-will complete when the exchange is done being routed. So if the exchange is
-continued routed after the block ends, then whatever happens there also affect
-the state. For example if the exchange failed due to an exception, then the
-state of the idempotent consumer will be a rollback.
+done. <p/> If this option is <tt>true to complete eager, then the idempotent
+consumer will trigger its completion when the exchange reached the end of the
+block of the idempotent consumer pattern. So if the exchange is continued routed
+after the block ends, then whatever happens there does not affect the state.
+<p/> If this option is <tt>false (default) to <b>not complete eager, then the
+idempotent consumer will complete when the exchange is done being routed. So if
+the exchange is continued routed after the block ends, then whatever happens
+there <b>also affect the state. For example if the exchange failed due to an
+exception, then the state of the idempotent consumer will be a rollback.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="skipDuplicate" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Sets whether to skip duplicates or not. The default behavior is to skip
-duplicates. A duplicate message would have the Exchange property
+Sets whether to skip duplicates or not. <p/> The default behavior is to skip
+duplicates. <p/> A duplicate message would have the Exchange property
 org.apache.camel.Exchange#DUPLICATE_MESSAGE set to a Boolean#TRUE value. A none
 duplicate message will not have this property set. Default value: true
             ]]></xs:documentation>
@@ -5153,8 +5158,8 @@ duplicate message will not have this property set. Default value: true
         <xs:attribute name="removeOnFailure" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Sets whether to remove or keep the key on failure. The default behavior is to
-remove the key on failure. Default value: true
+Sets whether to remove or keep the key on failure. <p/> The default behavior is
+to remove the key on failure. Default value: true
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -5595,7 +5600,7 @@ Whether or not the failover load balancer should operate in round robin mode or
 not. If not, then it will always start from the first endpoint when a new
 message is to be processed. In other words it restart from the top for every
 message. If round robin is enabled, then it keeps state and will continue with
-the next endpoint in a round robin fashion. You can also enable sticky mode
+the next endpoint in a round robin fashion. <p/> You can also enable sticky mode
 together with round robin, if so then it will pick the last known good endpoint
 to use when starting the load balancing (instead of using the next when
 starting).
@@ -5609,9 +5614,9 @@ Whether or not the failover load balancer should operate in sticky mode or not.
 If not, then it will always start from the first endpoint when a new message is
 to be processed. In other words it restart from the top for every message. If
 sticky is enabled, then it keeps state and will continue with the last known
-good endpoint. You can also enable sticky mode together with round robin, if so
-then it will pick the last known good endpoint to use when starting the load
-balancing (instead of using the next when starting).
+good endpoint. <p/> You can also enable sticky mode together with round robin,
+if so then it will pick the last known good endpoint to use when starting the
+load balancing (instead of using the next when starting).
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -5701,7 +5706,7 @@ The correlation expression to use to calculate the correlation key.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 To enable round robin mode. By default the weighted distribution mode is used.
-The default value is false.
+<p/> The default value is false.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -5717,7 +5722,7 @@ number of endpoints and/or processors specified in the load balancer list.
         <xs:attribute name="distributionRatioDelimiter" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Delimiter used to specify the distribution ratio. The default value is ,
+Delimiter used to specify the distribution ratio. <p/> The default value is ,
 (comma). Default value: ,
             ]]></xs:documentation>
           </xs:annotation>
@@ -5740,7 +5745,7 @@ Sets the log message (uses simple language).
         <xs:attribute name="loggingLevel" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Sets the logging level. The default value is INFO. Default value: INFO
+Sets the logging level. <p/> The default value is INFO. Default value: INFO
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -5869,8 +5874,8 @@ To refer to a custom logger instance to lookup from the registry.
             <xs:documentation xml:lang="en"><![CDATA[
 If the copy attribute is true, a copy of the input Exchange is used for each
 iteration. That means each iteration will start from a copy of the same message.
-By default loop will loop the same exchange all over, so each iteration may have
-different message content. Default value: false
+<p/> By default loop will loop the same exchange all over, so each iteration may
+have different message content. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -5954,7 +5959,7 @@ it reaches the end when Camel is shut down. Default value: false
             <xs:annotation>
               <xs:documentation xml:lang="en"><![CDATA[
 Configurations for Apache Any23 as key-value pairs in order to customize the
-extraction process. The list of supported parameters can be found here. If not
+extraction process. The list of supported parameters can be found . If not
 provided, a default configuration is used.
               ]]></xs:documentation>
             </xs:annotation>
@@ -5963,7 +5968,7 @@ provided, a default configuration is used.
             <xs:annotation>
               <xs:documentation xml:lang="en"><![CDATA[
 List of Any23 extractors to be used in the unmarshal operation. A list of the
-available extractors can be found here here. If not provided, all the available
+available extractors can be found here . If not provided, all the available
 extractors are used.
               ]]></xs:documentation>
             </xs:annotation>
@@ -6068,7 +6073,7 @@ option is to refer to the class which has JsonView annotations.
             <xs:documentation xml:lang="en"><![CDATA[
 If you want to marshal a pojo to JSON, and the pojo has some fields with null
 values. And you want to skip these null values, you can set this option to
-NON_NULL.
+<tt>NON_NULL.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -6116,11 +6121,12 @@ can be separated by comma.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Set of features to enable on the Jackson
-com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that
-matches a enum from com.fasterxml.jackson.databind.SerializationFeature,
-com.fasterxml.jackson.databind.DeserializationFeature, or
-com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated
-by comma.
+<tt>com.fasterxml.jackson.databind.ObjectMapper. <p/> The features should be a
+name that matches a enum from
+<tt>com.fasterxml.jackson.databind.SerializationFeature,
+<tt>com.fasterxml.jackson.databind.DeserializationFeature, or
+<tt>com.fasterxml.jackson.databind.MapperFeature <p/> Multiple features can be
+separated by comma.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -6128,11 +6134,12 @@ by comma.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Set of features to disable on the Jackson
-com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that
-matches a enum from com.fasterxml.jackson.databind.SerializationFeature,
-com.fasterxml.jackson.databind.DeserializationFeature, or
-com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated
-by comma.
+<tt>com.fasterxml.jackson.databind.ObjectMapper. <p/> The features should be a
+name that matches a enum from
+<tt>com.fasterxml.jackson.databind.SerializationFeature,
+<tt>com.fasterxml.jackson.databind.DeserializationFeature, or
+<tt>com.fasterxml.jackson.databind.MapperFeature <p/> Multiple features can be
+separated by comma.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -6140,8 +6147,8 @@ by comma.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 If enabled then Jackson is allowed to attempt to use the
-CamelJacksonUnmarshalType header during the unmarshalling. This should only be
-enabled when desired to be used. Default value: false
+CamelJacksonUnmarshalType header during the unmarshalling. <p/> This should only
+be enabled when desired to be used. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -6232,15 +6239,15 @@ Barcode format such as QR-Code.
         <xs:attribute name="lineLength" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-To specific a maximum line length for the encoded data. By default 76 is used.
-Default value: 76
+To specific a maximum line length for the encoded data. <p/> By default 76 is
+used. Default value: 76
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="lineSeparator" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-The line separators to use. Uses new line characters (CRLF) by default.
+The line separators to use. <p/> Uses new line characters (CRLF) by default.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -6300,7 +6307,7 @@ Whether to ignore invalid records. Default value: false
         <xs:attribute name="encoding" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-The charset to use. Is by default the JVM platform default charset.
+The charset to use. <p/> Is by default the JVM platform default charset.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -6349,8 +6356,8 @@ Name of model class to use.
         <xs:attribute name="locale" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-To configure a default locale to use, such as us for united states. To use the
-JVM platform default locale then use the name default.
+To configure a default locale to use, such as <tt>us for united states. <p/> To
+use the JVM platform default locale then use the name <tt>default.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -6358,7 +6365,7 @@ JVM platform default locale then use the name default.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 When unmarshalling should a single instance be unwrapped and returned instead of
-wrapped in a java.util.List. Default value: true
+wrapped in a <tt>java.util.List. Default value: true
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -6421,7 +6428,7 @@ To unmarshal to a List of Map or a List of Pojo. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 If enabled then Jackson CBOR is allowed to attempt to use the
-CamelCBORUnmarshalType header during the unmarshalling. This should only be
+CamelCBORUnmarshalType header during the unmarshalling. <p/> This should only be
 enabled when desired to be used. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
@@ -6429,8 +6436,8 @@ enabled when desired to be used. Default value: false
         <xs:attribute name="prettyPrint" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-To enable pretty printing output nicely formatted. Is by default false. Default
-value: false
+To enable pretty printing output nicely formatted. <p/> Is by default false.
+Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -6446,11 +6453,12 @@ FQN classname to use to unmarshal to. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Set of features to enable on the Jackson
-com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that
-matches a enum from com.fasterxml.jackson.databind.SerializationFeature,
-com.fasterxml.jackson.databind.DeserializationFeature, or
-com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated
-by comma.
+<tt>com.fasterxml.jackson.databind.ObjectMapper. <p/> The features should be a
+name that matches a enum from
+<tt>com.fasterxml.jackson.databind.SerializationFeature,
+<tt>com.fasterxml.jackson.databind.DeserializationFeature, or
+<tt>com.fasterxml.jackson.databind.MapperFeature <p/> Multiple features can be
+separated by comma.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -6458,11 +6466,12 @@ by comma.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Set of features to disable on the Jackson
-com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that
-matches a enum from com.fasterxml.jackson.databind.SerializationFeature,
-com.fasterxml.jackson.databind.DeserializationFeature, or
-com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated
-by comma.
+<tt>com.fasterxml.jackson.databind.ObjectMapper. <p/> The features should be a
+name that matches a enum from
+<tt>com.fasterxml.jackson.databind.SerializationFeature,
+<tt>com.fasterxml.jackson.databind.DeserializationFeature, or
+<tt>com.fasterxml.jackson.databind.MapperFeature <p/> Multiple features can be
+separated by comma.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -6478,6 +6487,7 @@ by comma.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 The JCE algorithm name indicating the cryptographic algorithm that will be used.
+<p/>.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -6506,8 +6516,8 @@ initialize the Cipher.
         <xs:attribute name="algorithmParameterRef" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-A JCE AlgorithmParameterSpec used to initialize the Cipher. Will lookup the type
-using the given name as a java.security.spec.AlgorithmParameterSpec type.
+A JCE AlgorithmParameterSpec used to initialize the Cipher. <p/> Will lookup the
+type using the given name as a java.security.spec.AlgorithmParameterSpec type.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -6538,7 +6548,7 @@ appended to the encrypted data. Default value: true
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Flag indicating that the configured IV should be inlined into the encrypted data
-stream. Is by default false. Default value: false
+stream. <p/> Is by default false. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -6590,7 +6600,7 @@ Sets the comment marker of the reference format.
         <xs:attribute name="delimiter" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Sets the delimiter to use. The default value is , (comma).
+Sets the delimiter to use. <p/> The default value is , (comma).
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -6753,7 +6763,7 @@ collected). Default value: false
         <xs:attribute name="recordConverterRef" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Refers to a custom CsvRecordConverter to lookup from the registry to use.
+Refers to a custom <tt>CsvRecordConverter to lookup from the registry to use.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -6826,21 +6836,21 @@ absolute URLs but have a base matching the given base.
         <xs:attribute name="omitResourceId" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-If set to true (default is false) the ID of any resources being encoded will not
-be included in the output. Note that this does not apply to contained resources,
-only to root resources. In other words, if this is set to true, contained
-resources will still have local IDs but the outer/containing ID will not have an
-ID. Default value: false
+If set to <code>true (default is <code>false) the ID of any resources being
+encoded will not be included in the output. Note that this does not apply to
+contained resources, only to root resources. In other words, if this is set to
+<code>true, contained resources will still have local IDs but the
+outer/containing ID will not have an ID. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="encodeElementsAppliesToChildResourcesOnly" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-If set to true (default is false), the values supplied to setEncodeElements(Set)
-will not be applied to the root resource (typically a Bundle), but will be
-applied to any sub-resources contained within it (i.e. search result resources
-in that bundle). Default value: false
+If set to <code>true (default is false), the values supplied to
+setEncodeElements(Set) will not be applied to the root resource (typically a
+Bundle), but will be applied to any sub-resources contained within it (i.e.
+search result resources in that bundle). Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -6848,12 +6858,12 @@ in that bundle). Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 If provided, specifies the elements which should be encoded, to the exclusion of
-all others. Valid values for this field would include: Patient - Encode patient
-and all its children Patient.name - Encode only the patient's name
-Patient.name.family - Encode only the patient's family name .text - Encode the
-text element on any resource (only the very first position may contain a
-wildcard) .(mandatory) - This is a special case which causes any mandatory
-fields (min 0) to be encoded.
+all others. Valid values for this field would include: <ul> <li><b>Patient -
+Encode patient and all its children <li><b>Patient.name - Encode only the
+patient's name <li><b>Patient.name.family - Encode only the patient's family
+name <li><b>.text - Encode the text element on any resource (only the very first
+position may contain a wildcard) <li><b>.(mandatory) - This is a special case
+which causes any mandatory fields (min > 0) to be encoded.
             ]]></xs:documentation>
           </xs:annotation>
           <xs:simpleType>
@@ -6864,13 +6874,13 @@ fields (min 0) to be encoded.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 If provided, specifies the elements which should NOT be encoded. Valid values
-for this field would include: Patient - Don't encode patient and all its
-children Patient.name - Don't encode the patient's name Patient.name.family -
-Don't encode the patient's family name .text - Don't encode the text element on
-any resource (only the very first position may contain a wildcard) DSTU2 note:
-Note that values including meta, such as Patient.meta will work for DSTU2
-parsers, but values with subelements on meta such as Patient.meta.lastUpdated
-will only work in DSTU3 mode.
+for this field would include: <ul> <li><b>Patient - Don't encode patient and all
+its children <li><b>Patient.name - Don't encode the patient's name
+<li><b>Patient.name.family - Don't encode the patient's family name <li><b>.text
+- Don't encode the text element on any resource (only the very first position
+may contain a wildcard) <p> DSTU2 note: Note that values including meta, such as
+<code>Patient.meta will work for DSTU2 parsers, but values with subelements on
+meta such as <code>Patient.meta.lastUpdated will only work in DSTU3 mode.
             ]]></xs:documentation>
           </xs:annotation>
           <xs:simpleType>
@@ -6880,42 +6890,43 @@ will only work in DSTU3 mode.
         <xs:attribute name="stripVersionsFromReferences" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-If set to true (which is the default), resource references containing a version
-will have the version removed when the resource is encoded. This is generally
-good behaviour because in most situations, references from one resource to
-another should be to the resource by ID, not by ID and version. In some cases
-though, it may be desirable to preserve the version in resource links. In that
-case, this value should be set to false. This method provides the ability to
-globally disable reference encoding. If finer-grained control is needed, use
-setDontStripVersionsFromReferencesAtPaths(List). Default value: false
+If set to <code>true<code> (which is the default), resource references
+containing a version will have the version removed when the resource is encoded.
+This is generally good behaviour because in most situations, references from one
+resource to another should be to the resource by ID, not by ID and version. In
+some cases though, it may be desirable to preserve the version in resource
+links. In that case, this value should be set to <code>false. <p> This method
+provides the ability to globally disable reference encoding. If finer-grained
+control is needed, use setDontStripVersionsFromReferencesAtPaths(List). Default
+value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="overrideResourceIdWithBundleEntryFullUrl" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-If set to true (which is the default), the Bundle.entry.fullUrl will override
-the Bundle.entry.resource's resource id if the fullUrl is defined. This behavior
-happens when parsing the source data into a Bundle object. Set this to false if
-this is not the desired behavior (e.g. the client code wishes to perform
-additional validation checks between the fullUrl and the resource id). Default
-value: false
+If set to <code>true (which is the default), the Bundle.entry.fullUrl will
+override the Bundle.entry.resource's resource id if the fullUrl is defined. This
+behavior happens when parsing the source data into a Bundle object. Set this to
+<code>false if this is not the desired behavior (e.g. the client code wishes to
+perform additional validation checks between the fullUrl and the resource id).
+Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="summaryMode" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-If set to true (default is false) only elements marked by the FHIR specification
-as being summary elements will be included. Default value: false
+If set to <code>true (default is <code>false) only elements marked by the FHIR
+specification as being summary elements will be included. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="suppressNarratives" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-If set to true (default is false), narratives will not be included in the
-encoded values. Default value: false
+If set to <code>true (default is <code>false), narratives will not be included
+in the encoded values. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -6924,11 +6935,11 @@ encoded values. Default value: false
             <xs:documentation xml:lang="en"><![CDATA[
 If supplied value(s), any resource references at the specified paths will have
 their resource versions encoded instead of being automatically stripped during
-the encoding process. This setting has no effect on the parsing process. This
-method provides a finer-grained level of control than
+the encoding process. This setting has no effect on the parsing process. <p>
+This method provides a finer-grained level of control than
 setStripVersionsFromReferences(String) and any paths specified by this method
 will be encoded even if setStripVersionsFromReferences(String) has been set to
-true (which is the default).
+<code>true (which is the default).
             ]]></xs:documentation>
           </xs:annotation>
           <xs:simpleType>
@@ -6980,14 +6991,14 @@ Delimited or fixed. Is by default false = delimited. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Whether the first line is ignored for delimited files (for the column headers).
-Is by default true. Default value: true
+<p/> Is by default true. Default value: true
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="textQualifier" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-If the text is qualified with a character. Uses quote character by default.
+If the text is qualified with a character. <p/> Uses quote character by default.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -7080,7 +7091,7 @@ Default value: false
         <xs:attribute name="validate" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Whether to validate the HL7 message Is by default true. Default value: true
+Whether to validate the HL7 message <p/> Is by default true. Default value: true
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -7117,8 +7128,8 @@ Lookup and use the existing XmlMapper with the given id.
         <xs:attribute name="prettyPrint" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-To enable pretty printing output nicely formatted. Is by default false. Default
-value: false
+To enable pretty printing output nicely formatted. <p/> Is by default false.
+Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -7143,7 +7154,7 @@ option is to refer to the class which has JsonView annotations.
             <xs:documentation xml:lang="en"><![CDATA[
 If you want to marshal a pojo to JSON, and the pojo has some fields with null
 values. And you want to skip these null values, you can set this option to
-NON_NULL.
+<tt>NON_NULL.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -7199,11 +7210,12 @@ can be separated by comma.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Set of features to enable on the Jackson
-com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that
-matches a enum from com.fasterxml.jackson.databind.SerializationFeature,
-com.fasterxml.jackson.databind.DeserializationFeature, or
-com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated
-by comma.
+<tt>com.fasterxml.jackson.databind.ObjectMapper. <p/> The features should be a
+name that matches a enum from
+<tt>com.fasterxml.jackson.databind.SerializationFeature,
+<tt>com.fasterxml.jackson.databind.DeserializationFeature, or
+<tt>com.fasterxml.jackson.databind.MapperFeature <p/> Multiple features can be
+separated by comma.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -7211,11 +7223,12 @@ by comma.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Set of features to disable on the Jackson
-com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that
-matches a enum from com.fasterxml.jackson.databind.SerializationFeature,
-com.fasterxml.jackson.databind.DeserializationFeature, or
-com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated
-by comma.
+<tt>com.fasterxml.jackson.databind.ObjectMapper. <p/> The features should be a
+name that matches a enum from
+<tt>com.fasterxml.jackson.databind.SerializationFeature,
+<tt>com.fasterxml.jackson.databind.DeserializationFeature, or
+<tt>com.fasterxml.jackson.databind.MapperFeature <p/> Multiple features can be
+separated by comma.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -7223,8 +7236,8 @@ by comma.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 If enabled then Jackson is allowed to attempt to use the
-CamelJacksonUnmarshalType header during the unmarshalling. This should only be
-enabled when desired to be used. Default value: false
+CamelJacksonUnmarshalType header during the unmarshalling. <p/> This should only
+be enabled when desired to be used. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -7284,8 +7297,8 @@ or fatal error) will trigger JAXB to stop. There are the following three levels:
         <xs:attribute name="prettyPrint" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-To enable pretty printing output nicely formatted. Is by default false. Default
-value: false
+To enable pretty printing output nicely formatted. <p/> Is by default false.
+Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -7346,7 +7359,7 @@ false
         <xs:attribute name="partClass" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Name of class used for fragment parsing. See more details at the fragment
+Name of class used for fragment parsing. <p/> See more details at the fragment
 option.
             ]]></xs:documentation>
           </xs:annotation>
@@ -7354,7 +7367,7 @@ option.
         <xs:attribute name="partNamespace" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-XML namespace to use for fragment parsing. See more details at the fragment
+XML namespace to use for fragment parsing. <p/> See more details at the fragment
 option.
             ]]></xs:documentation>
           </xs:annotation>
@@ -7433,8 +7446,8 @@ Default value: true
         <xs:attribute name="prettyPrint" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-To enable pretty printing output nicely formatted. Is by default false. Default
-value: false
+To enable pretty printing output nicely formatted. <p/> Is by default false.
+Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -7466,7 +7479,7 @@ option is to refer to the class which has JsonView annotations.
             <xs:documentation xml:lang="en"><![CDATA[
 If you want to marshal a pojo to JSON, and the pojo has some fields with null
 values. And you want to skip these null values, you can set this option to
-NON_NULL.
+<tt>NON_NULL.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -7514,11 +7527,12 @@ can be separated by comma.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Set of features to enable on the Jackson
-com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that
-matches a enum from com.fasterxml.jackson.databind.SerializationFeature,
-com.fasterxml.jackson.databind.DeserializationFeature, or
-com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated
-by comma.
+<tt>com.fasterxml.jackson.databind.ObjectMapper. <p/> The features should be a
+name that matches a enum from
+<tt>com.fasterxml.jackson.databind.SerializationFeature,
+<tt>com.fasterxml.jackson.databind.DeserializationFeature, or
+<tt>com.fasterxml.jackson.databind.MapperFeature <p/> Multiple features can be
+separated by comma.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -7526,11 +7540,12 @@ by comma.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Set of features to disable on the Jackson
-com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that
-matches a enum from com.fasterxml.jackson.databind.SerializationFeature,
-com.fasterxml.jackson.databind.DeserializationFeature, or
-com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated
-by comma.
+<tt>com.fasterxml.jackson.databind.ObjectMapper. <p/> The features should be a
+name that matches a enum from
+<tt>com.fasterxml.jackson.databind.SerializationFeature,
+<tt>com.fasterxml.jackson.databind.DeserializationFeature, or
+<tt>com.fasterxml.jackson.databind.MapperFeature <p/> Multiple features can be
+separated by comma.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -7538,15 +7553,16 @@ by comma.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Adds permissions that controls which Java packages and classes XStream is
-allowed to use during unmarshal from xml/json to Java beans. A permission must
-be configured either here or globally using a JVM system property. The
+allowed to use during unmarshal from xml/json to Java beans. <p/> A permission
+must be configured either here or globally using a JVM system property. The
 permission can be specified in a syntax where a plus sign is allow, and minus
-sign is deny. Wildcards is supported by using . as prefix. For example to allow
-com.foo and all subpackages then specfy com.foo.. Multiple permissions can be
-configured separated by comma, such as com.foo.,-com.foo.bar.MySecretBean. The
-following default permission is always included: -,java.lang.,java.util. unless
-its overridden by specifying a JVM system property with they key
-org.apache.camel.xstream.permissions.
+sign is deny. <br/> Wildcards is supported by using <tt>. as prefix. For example
+to allow <tt>com.foo and all subpackages then specfy <tt>com.foo.. Multiple
+permissions can be configured separated by comma, such as
+<tt>com.foo.,-com.foo.bar.MySecretBean. <br/> The following default permission
+is always included: <tt>-,java.lang.,java.util. unless its overridden by
+specifying a JVM system property with they key
+<tt>org.apache.camel.xstream.permissions.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -7554,8 +7570,8 @@ org.apache.camel.xstream.permissions.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 If enabled then Jackson is allowed to attempt to use the
-CamelJacksonUnmarshalType header during the unmarshalling. This should only be
-enabled when desired to be used. Default value: false
+CamelJacksonUnmarshalType header during the unmarshalling. <p/> This should only
+be enabled when desired to be used. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -7662,7 +7678,7 @@ Enable encoding (compress) using multiple processing cores. Default value: false
         <xs:attribute name="multipartSubType" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Specify the subtype of the MIME Multipart. Default is mixed. Default value:
+Specify the subtype of the MIME Multipart. <p> Default is mixed. Default value:
 mixed
             ]]></xs:documentation>
           </xs:annotation>
@@ -7671,7 +7687,7 @@ mixed
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Defines whether a message without attachment is also marshaled into a MIME
-Multipart (with only one body part). Default is false. Default value: false
+Multipart (with only one body part). <p> Default is false. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -7679,7 +7695,7 @@ Multipart (with only one body part). Default is false. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Defines whether the MIME-Multipart headers are part of the message body (true)
-or are set as Camel headers (false). Default is false. Default value: false
+or are set as Camel headers (false). <p> Default is false. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -7687,8 +7703,8 @@ or are set as Camel headers (false). Default is false. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 A regex that defines which Camel headers are also included as MIME headers into
-the MIME multipart. This will only work if headersInline is set to true. Default
-is to include no headers.
+the MIME multipart. This will only work if headersInline is set to true. <p>
+Default is to include no headers.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -7696,7 +7712,7 @@ is to include no headers.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Defines whether the content of binary parts in the MIME multipart is binary
-(true) or Base-64 encoded (false) Default is false. Default value: false
+(true) or Base-64 encoded (false) <p> Default is false. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -7778,7 +7794,7 @@ option is to refer to the class which has JsonView annotations.
             <xs:documentation xml:lang="en"><![CDATA[
 If you want to marshal a pojo to JSON, and the pojo has some fields with null
 values. And you want to skip these null values, you can set this option to
-NON_NULL.
+<tt>NON_NULL.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -7826,11 +7842,12 @@ can be separated by comma.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Set of features to enable on the Jackson
-com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that
-matches a enum from com.fasterxml.jackson.databind.SerializationFeature,
-com.fasterxml.jackson.databind.DeserializationFeature, or
-com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated
-by comma.
+<tt>com.fasterxml.jackson.databind.ObjectMapper. <p/> The features should be a
+name that matches a enum from
+<tt>com.fasterxml.jackson.databind.SerializationFeature,
+<tt>com.fasterxml.jackson.databind.DeserializationFeature, or
+<tt>com.fasterxml.jackson.databind.MapperFeature <p/> Multiple features can be
+separated by comma.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -7838,11 +7855,12 @@ by comma.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Set of features to disable on the Jackson
-com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that
-matches a enum from com.fasterxml.jackson.databind.SerializationFeature,
-com.fasterxml.jackson.databind.DeserializationFeature, or
-com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated
-by comma.
+<tt>com.fasterxml.jackson.databind.ObjectMapper. <p/> The features should be a
+name that matches a enum from
+<tt>com.fasterxml.jackson.databind.SerializationFeature,
+<tt>com.fasterxml.jackson.databind.DeserializationFeature, or
+<tt>com.fasterxml.jackson.databind.MapperFeature <p/> Multiple features can be
+separated by comma.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -7850,8 +7868,8 @@ by comma.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 If enabled then Jackson is allowed to attempt to use the
-CamelJacksonUnmarshalType header during the unmarshalling. This should only be
-enabled when desired to be used. Default value: false
+CamelJacksonUnmarshalType header during the unmarshalling. <p/> This should only
+be enabled when desired to be used. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -7905,11 +7923,12 @@ Default value: true
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 The cipher algorithm to be used for encryption/decryption of the XML message
-content. The available choices are: XMLCipher.TRIPLEDES XMLCipher.AES_128
-XMLCipher.AES_128_GCM XMLCipher.AES_192 XMLCipher.AES_192_GCM XMLCipher.AES_256
-XMLCipher.AES_256_GCM XMLCipher.SEED_128 XMLCipher.CAMELLIA_128
-XMLCipher.CAMELLIA_192 XMLCipher.CAMELLIA_256 The default value is
-XMLCipher.AES_256_GCM. Default value: AES-256-GCM
+content. The available choices are: <ul> <li>XMLCipher.TRIPLEDES
+<li>XMLCipher.AES_128 <li>XMLCipher.AES_128_GCM <li>XMLCipher.AES_192
+<li>XMLCipher.AES_192_GCM <li>XMLCipher.AES_256 <li>XMLCipher.AES_256_GCM
+<li>XMLCipher.SEED_128 <li>XMLCipher.CAMELLIA_128 <li>XMLCipher.CAMELLIA_192
+<li>XMLCipher.CAMELLIA_256 The default value is XMLCipher.AES_256_GCM. Default
+value: AES-256-GCM
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -7954,9 +7973,9 @@ Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 The cipher algorithm to be used for encryption/decryption of the asymmetric key.
-The available choices are: XMLCipher.RSA_v1dot5 XMLCipher.RSA_OAEP
-XMLCipher.RSA_OAEP_11 The default value is XMLCipher.RSA_OAEP. Default value:
-RSA_OAEP
+The available choices are: <ul> <li>XMLCipher.RSA_v1dot5 <li>XMLCipher.RSA_OAEP
+<li>XMLCipher.RSA_OAEP_11 The default value is XMLCipher.RSA_OAEP. Default
+value: RSA_OAEP
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -7989,8 +8008,8 @@ key is used for asymmetric decryption.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 The digest algorithm to use with the RSA OAEP algorithm. The available choices
-are: XMLCipher.SHA1 XMLCipher.SHA256 XMLCipher.SHA512 The default value is
-XMLCipher.SHA1. Default value: SHA1
+are: <ul> <li>XMLCipher.SHA1 <li>XMLCipher.SHA256 <li>XMLCipher.SHA512 The
+default value is XMLCipher.SHA1. Default value: SHA1
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -7998,8 +8017,8 @@ XMLCipher.SHA1. Default value: SHA1
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 The MGF Algorithm to use with the RSA OAEP algorithm. The available choices are:
-EncryptionConstants.MGF1_SHA1 EncryptionConstants.MGF1_SHA256
-EncryptionConstants.MGF1_SHA512 The default value is
+<ul> <li>EncryptionConstants.MGF1_SHA1 <li>EncryptionConstants.MGF1_SHA256
+<li>EncryptionConstants.MGF1_SHA512 The default value is
 EncryptionConstants.MGF1_SHA1. Default value: MGF1_SHA1
             ]]></xs:documentation>
           </xs:annotation>
@@ -8037,28 +8056,29 @@ To overrule and use a specific encoding.
         <xs:attribute name="elementNameStrategyRef" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Refers to an element strategy to lookup from the registry. An element name
+Refers to an element strategy to lookup from the registry. <p/> An element name
 strategy is used for two purposes. The first is to find a xml element name for a
 given object and soap action when marshaling the object into a SOAP message. The
-second is to find an Exception class for a given soap fault name. The following
-three element strategy class name is provided out of the box. QNameStrategy -
-Uses a fixed qName that is configured on instantiation. Exception lookup is not
-supported TypeNameStrategy - Uses the name and namespace from the XMLType
-annotation of the given type. If no namespace is set then package-info is used.
-Exception lookup is not supported ServiceInterfaceStrategy - Uses information
-from a webservice interface to determine the type name and to find the exception
-class for a SOAP fault All three classes is located in the package name
-org.apache.camel.dataformat.soap.name If you have generated the web service stub
-code with cxf-codegen or a similar tool then you probably will want to use the
-ServiceInterfaceStrategy. In the case you have no annotated service interface
-you should use QNameStrategy or TypeNameStrategy.
+second is to find an Exception class for a given soap fault name. <p/> The
+following three element strategy class name is provided out of the box.
+QNameStrategy - Uses a fixed qName that is configured on instantiation.
+Exception lookup is not supported TypeNameStrategy - Uses the name and namespace
+from the XMLType annotation of the given type. If no namespace is set then
+package-info is used. Exception lookup is not supported ServiceInterfaceStrategy
+- Uses information from a webservice interface to determine the type name and to
+find the exception class for a SOAP fault <p/> All three classes is located in
+the package name org.apache.camel.dataformat.soap.name <p/> If you have
+generated the web service stub code with cxf-codegen or a similar tool then you
+probably will want to use the ServiceInterfaceStrategy. In the case you have no
+annotated service interface you should use QNameStrategy or TypeNameStrategy.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="version" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-SOAP version should either be 1.1 or 1.2. Is by default 1.1. Default value: 1.1
+SOAP version should either be 1.1 or 1.2. <p/> Is by default 1.1. Default value:
+1.1
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -8178,7 +8198,7 @@ true
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 What data type to unmarshal as, can either be org.w3c.dom.Node or
-java.lang.String. Is by default org.w3c.dom.Node. Default value:
+java.lang.String. <p/> Is by default org.w3c.dom.Node. Default value:
 org.w3c.dom.Node
             ]]></xs:documentation>
           </xs:annotation>
@@ -8240,14 +8260,14 @@ The delimiter of values. Default value: ,
         <xs:attribute name="nullValue" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-The string representation of a null value. The default value is null.
+The string representation of a null value. <p/> The default value is null.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="skipEmptyLines" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Whether or not the empty lines must be ignored. The default value is true.
+Whether or not the empty lines must be ignored. <p/> The default value is true.
 Default value: true
             ]]></xs:documentation>
           </xs:annotation>
@@ -8255,7 +8275,7 @@ Default value: true
         <xs:attribute name="ignoreTrailingWhitespaces" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Whether or not the trailing white spaces must ignored. The default value is
+Whether or not the trailing white spaces must ignored. <p/> The default value is
 true. Default value: true
             ]]></xs:documentation>
           </xs:annotation>
@@ -8263,8 +8283,8 @@ true. Default value: true
         <xs:attribute name="ignoreLeadingWhitespaces" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Whether or not the leading white spaces must be ignored. The default value is
-true. Default value: true
+Whether or not the leading white spaces must be ignored. <p/> The default value
+is true. Default value: true
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -8272,8 +8292,8 @@ true. Default value: true
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Whether or not the headers are disabled. When defined, this option explicitly
-sets the headers as null which indicates that there is no header. The default
-value is false. Default value: false
+sets the headers as null which indicates that there is no header. <p/> The
+default value is false. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -8281,7 +8301,7 @@ value is false. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Whether or not the header must be read in the first line of the test document
-The default value is false. Default value: false
+<p/> The default value is false. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -8302,15 +8322,15 @@ The String representation of an empty value.
         <xs:attribute name="lineSeparator" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-The line separator of the files The default value is to use the JVM platform
-line separator.
+The line separator of the files <p/> The default value is to use the JVM
+platform line separator.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="normalizedLineSeparator" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-The normalized line separator of the files The default value is a new line
+The normalized line separator of the files <p/> The default value is a new line
 character. Default value: \n
             ]]></xs:documentation>
           </xs:annotation>
@@ -8318,7 +8338,7 @@ character. Default value: \n
         <xs:attribute name="comment" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-The comment symbol. The default value is #. Default value: #
+The comment symbol. <p/> The default value is #. Default value: #
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -8326,8 +8346,8 @@ The comment symbol. The default value is #. Default value: #
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Whether the unmarshalling should produce an iterator that reads the lines on the
-fly or if all the lines must be read at one. The default value is false. Default
-value: false
+fly or if all the lines must be read at one. <p/> The default value is false.
+Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -8335,8 +8355,8 @@ value: false
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Whether the unmarshalling should produce maps for the lines values instead of
-lists. It requires to have header (either defined or collected). The default
-value is false. Default value: false
+lists. It requires to have header (either defined or collected). <p/> The
+default value is false. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -8365,7 +8385,7 @@ Header length.
         <xs:attribute name="skipTrailingCharsUntilNewline" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Whether or not the trailing characters until new line must be ignored. The
+Whether or not the trailing characters until new line must be ignored. <p/> The
 default value is false. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
@@ -8373,15 +8393,15 @@ default value is false. Default value: false
         <xs:attribute name="recordEndsOnNewline" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Whether or not the record ends on new line. The default value is false. Default
-value: false
+Whether or not the record ends on new line. <p/> The default value is false.
+Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="padding" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-The padding character. The default value is a space.
+The padding character. <p/> The default value is a space.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -8411,8 +8431,8 @@ The escape character. Default value: \
         <xs:attribute name="request" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Whether to marshal/unmarshal request or response Is by default false. Default
-value: false
+Whether to marshal/unmarshal request or response <p/> Is by default false.
+Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -8461,15 +8481,16 @@ Multiple values can be separated by comma.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Adds permissions that controls which Java packages and classes XStream is
-allowed to use during unmarshal from xml/json to Java beans. A permission must
-be configured either here or globally using a JVM system property. The
+allowed to use during unmarshal from xml/json to Java beans. <p/> A permission
+must be configured either here or globally using a JVM system property. The
 permission can be specified in a syntax where a plus sign is allow, and minus
-sign is deny. Wildcards is supported by using . as prefix. For example to allow
-com.foo and all subpackages then specify com.foo.. Multiple permissions can be
-configured separated by comma, such as com.foo.,-com.foo.bar.MySecretBean. The
-following default permission is always included: -,java.lang.,java.util. unless
-its overridden by specifying a JVM system property with they key
-org.apache.camel.xstream.permissions.
+sign is deny. <br/> Wildcards is supported by using <tt>. as prefix. For example
+to allow <tt>com.foo and all subpackages then specify <tt>com.foo.. Multiple
+permissions can be configured separated by comma, such as
+<tt>com.foo.,-com.foo.bar.MySecretBean. <br/> The following default permission
+is always included: <tt>-,java.lang.,java.util. unless its overridden by
+specifying a JVM system property with they key
+<tt>org.apache.camel.xstream.permissions.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -8499,9 +8520,10 @@ be of type com.thoughtworks.xstream.io.HierarchicalStreamDriver.
         <xs:attribute name="mode" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Mode for dealing with duplicate references The possible values are:
-NO_REFERENCES ID_REFERENCES XPATH_RELATIVE_REFERENCES XPATH_ABSOLUTE_REFERENCES
-SINGLE_NODE_XPATH_RELATIVE_REFERENCES SINGLE_NODE_XPATH_ABSOLUTE_REFERENCES.
+Mode for dealing with duplicate references The possible values are: <ul>
+<li>NO_REFERENCES <li>ID_REFERENCES <li>XPATH_RELATIVE_REFERENCES
+<li>XPATH_ABSOLUTE_REFERENCES <li>SINGLE_NODE_XPATH_RELATIVE_REFERENCES
+<li>SINGLE_NODE_XPATH_ABSOLUTE_REFERENCES.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -8527,8 +8549,9 @@ true
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 The user ID of the key in the PGP keyring used during encryption. Can also be
-only a part of a user ID. For example, if the user ID is Test User then you can
-use the part Test User or to address the user ID.
+only a part of a user ID. For example, if the user ID is Test User
+<testcamel.com> then you can use the part Test User or <testcamel.com> to
+address the user ID.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -8541,7 +8564,8 @@ process the specified User ID restricts the public keys from the public keyring
 which can be used for the verification. If no User ID is specified for the
 signature verficiation then any public key in the public keyring can be used for
 the verification. Can also be only a part of a user ID. For example, if the user
-ID is Test User then you can use the part Test User or to address the User ID.
+ID is Test User <testcamel.com> then you can use the part Test User or
+<testcamel.com> to address the User ID.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -8595,7 +8619,7 @@ available for copy/paste, etc. Default value: false
         <xs:attribute name="integrity" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Adds an integrity check/sign into the encryption file. The default value is
+Adds an integrity check/sign into the encryption file. <p/> The default value is
 true. Default value: true
             ]]></xs:documentation>
           </xs:annotation>
@@ -8665,7 +8689,8 @@ not contain a signature; otherwise an exception (PGPException) is thrown.
         <xs:attribute name="library" type="tns:yamlLibrary">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Which yaml library to use. By default it is SnakeYAML. Default value: SnakeYAML
+Which yaml library to use. <p/> By default it is SnakeYAML. Default value:
+SnakeYAML
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -8958,12 +8983,12 @@ by the multicast. Default value: false
             <xs:documentation xml:lang="en"><![CDATA[
 Will now stop further processing if an exception or failure occurred during
 processing of an org.apache.camel.Exchange and the caused exception will be
-thrown. Will also stop if processing the exchange failed (has a fault message)
-or an exception was thrown and handled by the error handler (such as using
-onException). In all situations the multicast will stop further processing. This
-is the same behavior as in pipeline, which is used by the routing engine. The
-default behavior is to not stop but continue processing till the end. Default
-value: false
+thrown. <p/> Will also stop if processing the exchange failed (has a fault
+message) or an exception was thrown and handled by the error handler (such as
+using onException). In all situations the multicast will stop further
+processing. This is the same behavior as in pipeline, which is used by the
+routing engine. <p/> The default behavior is to <b>not stop but continue
+processing till the end. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -9018,8 +9043,8 @@ AggregationStrategy is implemented as thread-safe. Default value: false
 If enabled, unwind exceptions occurring at aggregation time to the error handler
 when parallelProcessing is used. Currently, aggregation time exceptions do not
 stop the route processing when parallelProcessing is used. Enabling this option
-allows to work around this behavior. The default value is false for the sake of
-backward compatibility. Default value: false
+allows to work around this behavior. The default value is <code>false for the
+sake of backward compatibility. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -9035,8 +9060,8 @@ backward compatibility. Default value: false
             <xs:annotation>
               <xs:documentation xml:lang="en"><![CDATA[
 Sets an additional predicate that should be true before the onCompletion is
-triggered. To be used for fine grained controlling whether a completion callback
-should be invoked or not.
+triggered. <p/> To be used for fine grained controlling whether a completion
+callback should be invoked or not.
               ]]></xs:documentation>
             </xs:annotation>
           </xs:element>
@@ -9111,8 +9136,8 @@ should be invoked or not.
         <xs:attribute name="mode" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Sets the on completion mode. The default value is AfterConsumer. Default value:
-AfterConsumer
+Sets the on completion mode. <p/> The default value is AfterConsumer. Default
+value: AfterConsumer
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -9155,7 +9180,7 @@ have to enable that option as well.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Will use the original input message body when an org.apache.camel.Exchange for
-this on completion. By default this feature is off. Default value: false
+this on completion. <p/> By default this feature is off. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -9178,16 +9203,16 @@ A set of exceptions to react upon.
             <xs:annotation>
               <xs:documentation xml:lang="en"><![CDATA[
 Sets an additional predicate that should be true before the onException is
-triggered. To be used for fine grained controlling whether a thrown exception
-should be intercepted by this exception type or not.
+triggered. <p/> To be used for fine grained controlling whether a thrown
+exception should be intercepted by this exception type or not.
               ]]></xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element minOccurs="0" name="retryWhile" type="tns:expressionSubElementDefinition">
             <xs:annotation>
               <xs:documentation xml:lang="en"><![CDATA[
-Sets the retry while predicate. Will continue retrying until predicate returns
-false.
+Sets the retry while predicate. <p/> Will continue retrying until predicate
+returns <tt>false.
               ]]></xs:documentation>
             </xs:annotation>
           </xs:element>
@@ -9203,7 +9228,7 @@ Sets whether the exchange should be marked as handled or not.
             <xs:annotation>
               <xs:documentation xml:lang="en"><![CDATA[
 Sets whether the exchange should handle and continue routing from the point of
-failure. If this option is enabled then its considered handled as well.
+failure. <p/> If this option is enabled then its considered handled as well.
               ]]></xs:documentation>
             </xs:annotation>
           </xs:element>
@@ -9286,19 +9311,19 @@ org.apache.camel.spi.Registry to be used.
         <xs:attribute name="onRedeliveryRef" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Sets a reference to a processor that should be processed before a redelivery
-attempt. Can be used to change the org.apache.camel.Exchange before its being
-redelivered.
+Sets a reference to a processor that should be processed <b>before a redelivery
+attempt. <p/> Can be used to change the org.apache.camel.Exchange <b>before its
+being redelivered.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="onExceptionOccurredRef" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Sets a reference to a processor that should be processed just after an exception
-occurred. Can be used to perform custom logging about the occurred exception at
-the exact time it happened. Important: Any exception thrown from this processor
-will be ignored.
+Sets a reference to a processor that should be processed <b>just after an
+exception occurred. Can be used to perform custom logging about the occurred
+exception at the exact time it happened. <p/> Important: Any exception thrown
+from this processor will be ignored.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -9306,33 +9331,33 @@ will be ignored.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Will use the original input org.apache.camel.Message (original body and headers)
-when an org.apache.camel.Exchange is moved to the dead letter queue. Notice:
-this only applies when all redeliveries attempt have failed and the
-org.apache.camel.Exchange is doomed for failure. Instead of using the current
-inprogress org.apache.camel.Exchange IN message we use the original IN message
-instead. This allows you to store the original input in the dead letter queue
-instead of the inprogress snapshot of the IN message. For instance if you route
-transform the IN body during routing and then failed. With the original exchange
-store in the dead letter queue it might be easier to manually re submit the
-org.apache.camel.Exchange again as the IN message is the same as when Camel
+when an org.apache.camel.Exchange is moved to the dead letter queue. <p/>
+<b>Notice: this only applies when all redeliveries attempt have failed and the
+org.apache.camel.Exchange is doomed for failure. <br/> Instead of using the
+current inprogress org.apache.camel.Exchange IN message we use the original IN
+message instead. This allows you to store the original input in the dead letter
+queue instead of the inprogress snapshot of the IN message. For instance if you
+route transform the IN body during routing and then failed. With the original
+exchange store in the dead letter queue it might be easier to manually re submit
+the org.apache.camel.Exchange again as the IN message is the same as when Camel
 received it. So you should be able to send the org.apache.camel.Exchange to the
-same input. The difference between useOriginalMessage and useOriginalBody is
-that the former includes both the original body and headers, where as the latter
-only includes the original body. You can use the latter to enrich the message
-with custom headers and include the original message body. The former wont let
-you do this, as its using the original message body and headers as they are. You
-cannot enable both useOriginalMessage and useOriginalBody. Important: The
-original input means the input message that are bounded by the current
-org.apache.camel.spi.UnitOfWork . An unit of work typically spans one route, or
-multiple routes if they are connected using internal endpoints such as direct or
-seda. When messages is passed via external endpoints such as JMS or HTTP then
-the consumer will create a new unit of work, with the message it received as
-input as the original input. Also some EIP patterns such as splitter, multicast,
-will create a new unit of work boundary for the messages in their sub-route (eg
-the splitted message); however these EIPs have an option named shareUnitOfWork
-which allows to combine with the parent unit of work in regard to error handling
-and therefore use the parent original message. By default this feature is off.
-Default value: false
+same input. <p/> The difference between useOriginalMessage and useOriginalBody
+is that the former includes both the original body and headers, where as the
+latter only includes the original body. You can use the latter to enrich the
+message with custom headers and include the original message body. The former
+wont let you do this, as its using the original message body and headers as they
+are. You cannot enable both useOriginalMessage and useOriginalBody. <p/>
+<b>Important: The original input means the input message that are bounded by the
+current org.apache.camel.spi.UnitOfWork . An unit of work typically spans one
+route, or multiple routes if they are connected using internal endpoints such as
+direct or seda. When messages is passed via external endpoints such as JMS or
+HTTP then the consumer will create a new unit of work, with the message it
+received as input as the original input. Also some EIP patterns such as
+splitter, multicast, will create a new unit of work boundary for the messages in
+their sub-route (eg the splitted message); however these EIPs have an option
+named <tt>shareUnitOfWork which allows to combine with the parent unit of work
+in regard to error handling and therefore use the parent original message. <p/>
+By default this feature is off. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -9340,33 +9365,33 @@ Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Will use the original input org.apache.camel.Message body (original body only)
-when an org.apache.camel.Exchange is moved to the dead letter queue. Notice:
-this only applies when all redeliveries attempt have failed and the
-org.apache.camel.Exchange is doomed for failure. Instead of using the current
-inprogress org.apache.camel.Exchange IN message we use the original IN message
-instead. This allows you to store the original input in the dead letter queue
-instead of the inprogress snapshot of the IN message. For instance if you route
-transform the IN body during routing and then failed. With the original exchange
-store in the dead letter queue it might be easier to manually re submit the
-org.apache.camel.Exchange again as the IN message is the same as when Camel
+when an org.apache.camel.Exchange is moved to the dead letter queue. <p/>
+<b>Notice: this only applies when all redeliveries attempt have failed and the
+org.apache.camel.Exchange is doomed for failure. <br/> Instead of using the
+current inprogress org.apache.camel.Exchange IN message we use the original IN
+message instead. This allows you to store the original input in the dead letter
+queue instead of the inprogress snapshot of the IN message. For instance if you
+route transform the IN body during routing and then failed. With the original
+exchange store in the dead letter queue it might be easier to manually re submit
+the org.apache.camel.Exchange again as the IN message is the same as when Camel
 received it. So you should be able to send the org.apache.camel.Exchange to the
-same input. The difference between useOriginalMessage and useOriginalBody is
-that the former includes both the original body and headers, where as the latter
-only includes the original body. You can use the latter to enrich the message
-with custom headers and include the original message body. The former wont let
-you do this, as its using the original message body and headers as they are. You
-cannot enable both useOriginalMessage and useOriginalBody. Important: The
-original input means the input message that are bounded by the current
-org.apache.camel.spi.UnitOfWork . An unit of work typically spans one route, or
-multiple routes if they are connected using internal endpoints such as direct or
-seda. When messages is passed via external endpoints such as JMS or HTTP then
-the consumer will create a new unit of work, with the message it received as
-input as the original input. Also some EIP patterns such as splitter, multicast,
-will create a new unit of work boundary for the messages in their sub-route (eg
-the splitted message); however these EIPs have an option named shareUnitOfWork
-which allows to combine with the parent unit of work in regard to error handling
-and therefore use the parent original message. By default this feature is off.
-Default value: false
+same input. <p/> The difference between useOriginalMessage and useOriginalBody
+is that the former includes both the original body and headers, where as the
+latter only includes the original body. You can use the latter to enrich the
+message with custom headers and include the original message body. The former
+wont let you do this, as its using the original message body and headers as they
+are. You cannot enable both useOriginalMessage and useOriginalBody. <p/>
+<b>Important: The original input means the input message that are bounded by the
+current org.apache.camel.spi.UnitOfWork . An unit of work typically spans one
+route, or multiple routes if they are connected using internal endpoints such as
+direct or seda. When messages is passed via external endpoints such as JMS or
+HTTP then the consumer will create a new unit of work, with the message it
+received as input as the original input. Also some EIP patterns such as
+splitter, multicast, will create a new unit of work boundary for the messages in
+their sub-route (eg the splitted message); however these EIPs have an option
+named <tt>shareUnitOfWork which allows to combine with the parent unit of work
+in regard to error handling and therefore use the parent original message. <p/>
+By default this feature is off. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -9379,8 +9404,8 @@ Default value: false
     <xs:attribute name="maximumRedeliveries" type="xs:string">
       <xs:annotation>
         <xs:documentation xml:lang="en"><![CDATA[
-Sets the maximum redeliveries x = redeliver at most x times 0 = no redeliveries
--1 = redeliver forever.
+Sets the maximum redeliveries <ul> <li>x = redeliver at most x times <li>0 = no
+redeliveries <li>-1 = redeliver forever.
         ]]></xs:documentation>
       </xs:annotation>
     </xs:attribute>
@@ -9492,8 +9517,8 @@ or reduce verbose. Default value: false
       <xs:annotation>
         <xs:documentation xml:lang="en"><![CDATA[
 Sets whether new exceptions should be logged or not. Can be used to include or
-reduce verbose. A new exception is an exception that was thrown while handling a
-previous exception. Default value: false
+reduce verbose. <p/> A new exception is an exception that was thrown while
+handling a previous exception. Default value: false
         ]]></xs:documentation>
       </xs:annotation>
     </xs:attribute>
@@ -9527,7 +9552,8 @@ Default value: false
         <xs:documentation xml:lang="en"><![CDATA[
 Sets whether exhausted message body should be logged including message history
 or not (supports property placeholders). Can be used to include or reduce
-verbose. Requires logExhaustedMessageHistory to be enabled. Default value: false
+verbose. Requires <tt>logExhaustedMessageHistory to be enabled. Default value:
+false
         ]]></xs:documentation>
       </xs:annotation>
     </xs:attribute>
@@ -9639,8 +9665,8 @@ generate the log message from exchange.
         <xs:attribute name="fallbackViaNetwork" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Whether the fallback goes over the network. If the fallback will go over the
-network it is another possible point of failure and so it also needs to be
+Whether the fallback goes over the network. <p/> If the fallback will go over
+the network it is another possible point of failure and so it also needs to be
 wrapped by a HystrixCommand. It is important to execute the fallback command on
 a separate thread-pool, otherwise if the main command were to become latent and
 fill the thread-pool this would prevent the fallback from running if the two
@@ -9888,16 +9914,17 @@ Sets a reference to use for lookup the policy in the registry.
         <xs:attribute name="timeout" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Timeout in millis when polling from the external service. The timeout has
+Timeout in millis when polling from the external service. <p/> The timeout has
 influence about the poll enrich behavior. It basically operations in three
-different modes: negative value - Waits until a message is available and then
-returns it. Warning that this method could block indefinitely if no messages are
-available. 0 - Attempts to receive a message exchange immediately without
-waiting and returning null if a message exchange is not available yet. positive
-value - Attempts to receive a message exchange, waiting up to the given timeout
-to expire if a message is not yet available. Returns null if timed out The
-default value is -1 and therefore the method could block indefinitely, and
-therefore its recommended to use a timeout value. Default value: -1
+different modes: <ul> <li>negative value - Waits until a message is available
+and then returns it. Warning that this method could block indefinitely if no
+messages are available. <li>0 - Attempts to receive a message exchange
+immediately without waiting and returning <tt>null if a message exchange is not
+available yet. <li>positive value - Attempts to receive a message exchange,
+waiting up to the given timeout to expire if a message is not yet available.
+Returns <tt>null if timed out The default value is -1 and therefore the method
+could block indefinitely, and therefore its recommended to use a timeout value.
+Default value: -1
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -9906,13 +9933,13 @@ therefore its recommended to use a timeout value. Default value: -1
             <xs:documentation xml:lang="en"><![CDATA[
 Refers to an AggregationStrategy to be used to merge the reply from the external
 service, into a single outgoing message. By default Camel will use the reply
-from the external service as outgoing message. The value can either refer to a
-bean to lookup, or to lookup a singleton bean by its type, or to create a new
-bean: Lookup bean - This is the default behavior to lookup an existing bean by
-the bean id (value) reference by type - Values can refer to singleton beans by
-their type in the registry by prefixing with #type: syntax, eg
-#type:com.foo.MyClassType reference new class - Values can refer to creating new
-beans by their class name by prefixing with #class, eg
+from the external service as outgoing message. <p/> The value can either refer
+to a bean to lookup, or to lookup a singleton bean by its type, or to create a
+new bean: <ul> <li>Lookup bean - This is the default behavior to lookup an
+existing bean by the bean id (value) <li>reference by type - Values can refer to
+singleton beans by their type in the registry by prefixing with #type: syntax,
+eg #type:com.foo.MyClassType <li>reference new class - Values can refer to
+creating new beans by their class name by prefixing with #class, eg
 #class:com.foo.MyClassType. The class is created using a default no-arg
 constructor, however if you need to create the instance via a factory method
 then you specify the method as shown:
@@ -10035,7 +10062,7 @@ Reference to the Processor to lookup in the registry to use.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Delimiter used if the Expression returned multiple endpoints. Can be turned off
-using the value false. The default value is ,. Default value: ,
+using the value <tt>false. <p/> The default value is ,. Default value: ,
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -10091,12 +10118,12 @@ have to enable that option as well.
             <xs:documentation xml:lang="en"><![CDATA[
 Will now stop further processing if an exception or failure occurred during
 processing of an org.apache.camel.Exchange and the caused exception will be
-thrown. Will also stop if processing the exchange failed (has a fault message)
-or an exception was thrown and handled by the error handler (such as using
-onException). In all situations the recipient list will stop further processing.
-This is the same behavior as in pipeline, which is used by the routing engine.
-The default behavior is to not stop but continue processing till the end.
-Default value: false
+thrown. <p/> Will also stop if processing the exchange failed (has a fault
+message) or an exception was thrown and handled by the error handler (such as
+using onException). In all situations the recipient list will stop further
+processing. This is the same behavior as in pipeline, which is used by the
+routing engine. <p/> The default behavior is to <b>not stop but continue
+processing till the end. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -10155,18 +10182,18 @@ its own individual unit of work. Default value: false
             <xs:documentation xml:lang="en"><![CDATA[
 Sets the maximum size used by the org.apache.camel.spi.ProducerCache which is
 used to cache and reuse producers when using this recipient list, when uris are
-reused. Beware that when using dynamic endpoints then it affects how well the
-cache can be utilized. If each dynamic endpoint is unique then its best to turn
-of caching by setting this to -1, which allows Camel to not cache both the
+reused. <p> Beware that when using dynamic endpoints then it affects how well
+the cache can be utilized. If each dynamic endpoint is unique then its best to
+turn of caching by setting this to -1, which allows Camel to not cache both the
 producers and endpoints; they are regarded as prototype scoped and will be
 stopped and discarded after use. This reduces memory usage as otherwise
-producers/endpoints are stored in memory in the caches. However if there are a
-high degree of dynamic endpoints that have been used before, then it can benefit
-to use the cache to reuse both producers and endpoints and therefore the cache
-size can be set accordingly or rely on the default size (1000). If there is a
-mix of unique and used before dynamic endpoints, then setting a reasonable cache
-size can help reduce memory usage to avoid storing too many non frequent used
-producers.
+producers/endpoints are stored in memory in the caches. <p> However if there are
+a high degree of dynamic endpoints that have been used before, then it can
+benefit to use the cache to reuse both producers and endpoints and therefore the
+cache size can be set accordingly or rely on the default size (1000). <p> If
+there is a mix of unique and used before dynamic endpoints, then setting a
+reasonable cache size can help reduce memory usage to avoid storing too many non
+frequent used producers.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -10188,8 +10215,8 @@ AggregationStrategy is implemented as thread-safe. Default value: false
 If enabled, unwind exceptions occurring at aggregation time to the error handler
 when parallelProcessing is used. Currently, aggregation time exceptions do not
 stop the route processing when parallelProcessing is used. Enabling this option
-allows to work around this behavior. The default value is false for the sake of
-backward compatibility. Default value: false
+allows to work around this behavior. The default value is <code>false for the
+sake of backward compatibility. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -10517,8 +10544,8 @@ value: false
         <xs:attribute name="markRollbackOnlyLast" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Mark only last sub transaction for rollback only. When using sub transactions
-(if the transaction manager support this). Default value: false
+Mark only last sub transaction for rollback only. <p/> When using sub
+transactions (if the transaction manager support this). Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -10680,7 +10707,7 @@ Sets the bean ref name of the error handler builder to use on this route.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 The group that this route belongs to; could be the name of the RouteBuilder
-class or be explicitly configured in the XML. May be null.
+class or be explicitly configured in the XML. <p/> May be null.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -10755,9 +10782,10 @@ Whether tracing is enabled on this route.
         <xs:annotation>
           <xs:documentation xml:lang="en"><![CDATA[
 The script to execute that creates the bean when using scripting languages. If
-the script use the prefix resource: such as
-resource:classpath:com/foo/myscript.groovy, resource:file:/var/myscript.groovy,
-then its loaded from the external resource.
+the script use the prefix <tt>resource: such as
+<tt>resource:classpath:com/foo/myscript.groovy,
+<tt>resource:file:/var/myscript.groovy, then its loaded from the external
+resource.
           ]]></xs:documentation>
         </xs:annotation>
       </xs:element>
@@ -11262,9 +11290,9 @@ forward.
         <xs:attribute name="name" type="xs:string" use="required">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Name of message header to set a new value The simple language can be used to
-define a dynamic evaluated header name to be used. Otherwise a constant name
-will be used.
+Name of message header to set a new value <p/> The <tt>simple language can be
+used to define a dynamic evaluated header name to be used. Otherwise a constant
+name will be used.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -11301,9 +11329,9 @@ will be used.
         <xs:attribute name="name" type="xs:string" use="required">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Name of exchange property to set a new value. The simple language can be used to
-define a dynamic evaluated exchange property name to be used. Otherwise a
-constant name will be used.
+Name of exchange property to set a new value. <p/> The <tt>simple language can
+be used to define a dynamic evaluated exchange property name to be used.
+Otherwise a constant name will be used.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -11446,8 +11474,8 @@ Sets a reference to lookup for the comparator to use for sorting.
         <xs:attribute name="delimiter" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Delimiter used in splitting messages. Can be turned off using the value false.
-The default value is ,. Default value: ,
+Delimiter used in splitting messages. Can be turned off using the value
+<tt>false. <p/> The default value is ,. Default value: ,
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -11504,15 +11532,15 @@ have to enable that option as well.
 When in streaming mode, then the splitter splits the original message on-demand,
 and each splitted message is processed one by one. This reduces memory usage as
 the splitter do not split all the messages first, but then we do not know the
-total size, and therefore the org.apache.camel.Exchange#SPLIT_SIZE is empty. In
-non-streaming mode (default) the splitter will split each message first, to know
-the total size, and then process each message one by one. This requires to keep
-all the splitted messages in memory and therefore requires more memory. The
-total size is provided in the org.apache.camel.Exchange#SPLIT_SIZE header. The
-streaming mode also affects the aggregation behavior. If enabled then Camel will
-process replies out-of-order, eg in the order they come back. If disabled, Camel
-will process replies in the same order as the messages was splitted. Default
-value: false
+total size, and therefore the org.apache.camel.Exchange#SPLIT_SIZE is empty.
+<p/> In non-streaming mode (default) the splitter will split each message first,
+to know the total size, and then process each message one by one. This requires
+to keep all the splitted messages in memory and therefore requires more memory.
+The total size is provided in the org.apache.camel.Exchange#SPLIT_SIZE header.
+<p/> The streaming mode also affects the aggregation behavior. If enabled then
+Camel will process replies out-of-order, eg in the order they come back. If
+disabled, Camel will process replies in the same order as the messages was
+splitted. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -11521,12 +11549,12 @@ value: false
             <xs:documentation xml:lang="en"><![CDATA[
 Will now stop further processing if an exception or failure occurred during
 processing of an org.apache.camel.Exchange and the caused exception will be
-thrown. Will also stop if processing the exchange failed (has a fault message)
-or an exception was thrown and handled by the error handler (such as using
-onException). In all situations the splitter will stop further processing. This
-is the same behavior as in pipeline, which is used by the routing engine. The
-default behavior is to not stop but continue processing till the end. Default
-value: false
+thrown. <p/> Will also stop if processing the exchange failed (has a fault
+message) or an exception was thrown and handled by the error handler (such as
+using onException). In all situations the splitter will stop further processing.
+This is the same behavior as in pipeline, which is used by the routing engine.
+<p/> The default behavior is to <b>not stop but continue processing till the
+end. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -11581,8 +11609,8 @@ AggregationStrategy is implemented as thread-safe. Default value: false
 If enabled, unwind exceptions occurring at aggregation time to the error handler
 when parallelProcessing is used. Currently, aggregation time exceptions do not
 stop the route processing when parallelProcessing is used. Enabling this option
-allows to work around this behavior. The default value is false for the sake of
-backward compatibility. Default value: false
+allows to work around this behavior. The default value is <code>false for the
+sake of backward compatibility. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -11716,8 +11744,8 @@ Sets the time unit to use for keep alive time By default SECONDS is used.
         <xs:attribute name="maxQueueSize" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Sets the maximum number of tasks in the work queue. Use -1 or Integer.MAX_VALUE
-for an unbounded queue.
+Sets the maximum number of tasks in the work queue. <p/> Use <tt>-1 or
+<tt>Integer.MAX_VALUE for an unbounded queue.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -11725,7 +11753,8 @@ for an unbounded queue.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Whether idle core threads is allowed to timeout and therefore can shrink the
-pool size below the core pool size Is by default true. Default value: false
+pool size below the core pool size <p/> Is by default <tt>true. Default value:
+false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -11782,8 +11811,8 @@ Sets the keep alive time unit. By default SECONDS is used.
         <xs:attribute name="maxQueueSize" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Sets the maximum number of tasks in the work queue. Use -1 or Integer.MAX_VALUE
-for an unbounded queue.
+Sets the maximum number of tasks in the work queue. <p/> Use <tt>-1 or
+<tt>Integer.MAX_VALUE for an unbounded queue.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -11791,7 +11820,8 @@ for an unbounded queue.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Whether idle core threads are allowed to timeout and therefore can shrink the
-pool size below the core pool size Is by default false. Default value: false
+pool size below the core pool size <p/> Is by default <tt>false. Default value:
+false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -11812,10 +11842,10 @@ Sets the handler for tasks which cannot be executed by the thread pool.
         <xs:attribute name="callerRunsWhenRejected" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Whether or not to use as caller runs as fallback when a task is rejected being
-added to the thread pool (when its full). This is only used as fallback if no
-rejectedPolicy has been configured, or the thread pool has no configured
-rejection handler. Is by default true. Default value: true
+Whether or not to use as caller runs as <b>fallback when a task is rejected
+being added to the thread pool (when its full). This is only used as fallback if
+no rejectedPolicy has been configured, or the thread pool has no configured
+rejection handler. <p/> Is by default <tt>true. Default value: true
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -11877,8 +11907,8 @@ Default value: 1000
         <xs:attribute name="asyncDelayed" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Enables asynchronous delay which means the thread will not block while delaying.
-Default value: false
+Enables asynchronous delay which means the thread will <b>not block while
+delaying. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -11886,7 +11916,7 @@ Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Whether or not the caller should run the task when it was rejected by the thread
-pool. Is by default true. Default value: true
+pool. <p/> Is by default <tt>true. Default value: true
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -11894,7 +11924,8 @@ pool. Is by default true. Default value: true
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Whether or not throttler throws the ThrottlerRejectedExecutionException when the
-exchange exceeds the request limit Is by default false. Default value: false
+exchange exceeds the request limit <p/> Is by default <tt>false. Default value:
+false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -12325,9 +12356,9 @@ Uses a copy of the original exchange. Default value: true
             <xs:documentation xml:lang="en"><![CDATA[
 Whether the uri is dynamic or static. If the uri is dynamic then the simple
 language is used to evaluate a dynamic uri to use as the wire-tap destination,
-for each incoming message. This works similar to how the toD EIP pattern works.
-If static then the uri is used as-is as the wire-tap destination. Default value:
-true
+for each incoming message. This works similar to how the <tt>toD EIP pattern
+works. If static then the uri is used as-is as the wire-tap destination. Default
+value: true
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -12376,8 +12407,8 @@ comma in the format: servicehost:port,servicehost2:port,servicehost3:port.
           <xs:element maxOccurs="unbounded" minOccurs="0" name="properties" type="tns:propertyDefinition">
             <xs:annotation>
               <xs:documentation xml:lang="en"><![CDATA[
-Set client properties to use. These properties are specific to what service call
-implementation are in use. For example if using ribbon, then the client
+Set client properties to use. <p/> These properties are specific to what service
+call implementation are in use. For example if using ribbon, then the client
 properties are define in com.netflix.client.config.CommonClientConfigKey.
               ]]></xs:documentation>
             </xs:annotation>
@@ -12577,14 +12608,15 @@ on-demand
         <xs:attribute name="lookup" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-How to perform service lookup. Possible values: client, dns, environment. When
-using client, then the client queries the kubernetes master to obtain a list of
-active pods that provides the service, and then random (or round robin) select a
-pod. When using dns the service name is resolved as
-name.namespace.svc.dnsDomain. When using dnssrv the service name is resolved
-with SRV query for _._...svc... When using environment then environment
-variables are used to lookup the service. By default environment is used.
-Default value: environment
+How to perform service lookup. Possible values: client, dns, environment. <p/>
+When using client, then the client queries the kubernetes master to obtain a
+list of active pods that provides the service, and then random (or round robin)
+select a pod. <p/> When using dns the service name is resolved as
+<tt>name.namespace.svc.dnsDomain. <p/> When using dnssrv the service name is
+resolved with SRV query for
+<tt>_<port_name>._<port_proto>.<serviceName>.<namespace>.svc.<zone>.. <p/> When
+using environment then environment variables are used to lookup the service.
+<p/> By default environment is used. Default value: environment
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -13280,8 +13312,8 @@ The String representation of the MediaType to output.
         <xs:attribute name="resultType" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Sets the class name of the result type (type from output) The default result
-type is com.datasonnet.document.Document.
+Sets the class name of the result type (type from output) <p/> The default
+result type is com.datasonnet.document.Document.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -13550,7 +13582,7 @@ Name of header to tokenize instead of using the message body.
         <xs:attribute name="regex" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-If the token is a regular expression pattern. The default value is false.
+If the token is a regular expression pattern. <p/> The default value is false.
 Default value: false
             ]]></xs:documentation>
           </xs:annotation>
@@ -13566,8 +13598,8 @@ with XML payloads. Default value: false
         <xs:attribute name="includeTokens" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Whether to include the tokens in the parts when using pairs The default value is
-false. Default value: false
+Whether to include the tokens in the parts when using pairs <p/> The default
+value is false. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -13611,10 +13643,11 @@ Name of header to tokenize instead of using the message body.
         <xs:attribute name="mode" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-The extraction mode. The available extraction modes are: i - injecting the
-contextual namespace bindings into the extracted token (default) w - wrapping
-the extracted token in its ancestor context u - unwrapping the extracted token
-to its child content t - extracting the text content of the specified element.
+The extraction mode. The available extraction modes are: <ul> <li>i - injecting
+the contextual namespace bindings into the extracted token (default) <li>w -
+wrapping the extracted token in its ancestor context <li>u - unwrapping the
+extracted token to its child content <li>t - extracting the text content of the
+specified element.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -13635,15 +13668,15 @@ To group N parts together.
         <xs:attribute name="documentType" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Name of class for document type The default value is org.w3c.dom.Document.
+Name of class for document type <p/> The default value is org.w3c.dom.Document.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="resultType" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Sets the class name of the result type (type from output) The default result
-type is NodeSet. Default value: NODESET
+Sets the class name of the result type (type from output) <p/> The default
+result type is NodeSet. Default value: NODESET
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -13691,9 +13724,9 @@ This applies to when using NODESET as the result type, and the returned set has
 multiple elements. In this situation there can be thread-safety issues if you
 process the NODESET concurrently such as from a Camel Splitter EIP in parallel
 processing mode. This option prevents concurrency issues by doing defensive
-copies of the nodes. It is recommended to turn this option on if you are using
-camel-saxon or Saxon in your application. Saxon has thread-safety issues which
-can be prevented by turning this option on. Default value: false
+copies of the nodes. <p/> It is recommended to turn this option on if you are
+using camel-saxon or Saxon in your application. Saxon has thread-safety issues
+which can be prevented by turning this option on. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -13719,8 +13752,8 @@ JVM runtime. Default value: true
         <xs:attribute name="type" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Sets the class name of the result type (type from output) The default result
-type is NodeSet.
+Sets the class name of the result type (type from output) <p/> The default
+result type is NodeSet.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -13801,7 +13834,7 @@ be configured on a parent level.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Sets the binding mode to use. This option will override what may be configured
-on a parent level The default value is auto. Default value: auto
+on a parent level <p/> The default value is auto. Default value: auto
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -13832,7 +13865,7 @@ Status 400 if validation error.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Whether to enable CORS headers in the HTTP response. This option will override
-what may be configured on a parent level The default value is false.
+what may be configured on a parent level <p/> The default value is false.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -13840,9 +13873,9 @@ what may be configured on a parent level The default value is false.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Sets the class name to use for binding from input to POJO for the incoming data
-This option will override what may be configured on a parent level. The name of
-the class of the input data. Append a to the end of the name if you want the
-input to be an array type.
+This option will override what may be configured on a parent level. <p/> The
+name of the class of the input data. Append a to the end of the name if you want
+the input to be an array type.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -13850,8 +13883,8 @@ input to be an array type.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Sets the class name to use for binding from POJO to output for the outgoing data
-This option will override what may be configured on a parent level The name of
-the class of the input data. Append a to the end of the name if you want the
+This option will override what may be configured on a parent level <p/> The name
+of the class of the input data. Append a to the end of the name if you want the
 input to be an array type.
             ]]></xs:documentation>
           </xs:annotation>
@@ -13866,7 +13899,7 @@ The route id this rest-dsl is using (read-only).
         <xs:attribute name="apiDocs" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Whether to include or exclude the VerbDefinition in API documentation. The
+Whether to include or exclude the VerbDefinition in API documentation. <p/> The
 default value is true.
             ]]></xs:documentation>
           </xs:annotation>
@@ -14048,7 +14081,7 @@ Sets the parameter list of allowable values.
     <xs:attribute name="name" type="xs:string" use="required">
       <xs:annotation>
         <xs:documentation xml:lang="en"><![CDATA[
-Name of the parameter. This option is mandatory.
+Name of the parameter. <p> This option is mandatory.
         ]]></xs:documentation>
       </xs:annotation>
     </xs:attribute>
@@ -14178,7 +14211,7 @@ such as application/xml or application/json.
         <xs:attribute name="bindingMode" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Sets the binding mode to use. The default value is off. Default value: off
+Sets the binding mode to use. <p/> The default value is off. Default value: off
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -14186,8 +14219,8 @@ Sets the binding mode to use. The default value is off. Default value: off
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Sets the class name to use for binding from input to POJO for the incoming data
-The name of the class of the input data. Append a to the end of the name if you
-want the input to be an array type.
+<p/> The name of the class of the input data. Append a to the end of the name if
+you want the input to be an array type.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -14195,8 +14228,8 @@ want the input to be an array type.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Sets the class name to use for binding from POJO to output for the outgoing data
-The name of the class of the input data. Append a to the end of the name if you
-want the input to be an array type.
+<p/> The name of the class of the input data. Append a to the end of the name if
+you want the input to be an array type.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -14225,7 +14258,8 @@ Status 400 if validation error.
         <xs:attribute name="enableCORS" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Whether to enable CORS headers in the HTTP response. The default value is false.
+Whether to enable CORS headers in the HTTP response. <p/> The default value is
+false.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -14269,8 +14303,8 @@ Allows to configure as many additional properties for the rest consumer in use.
 Allows to configure as many additional properties for the data formats in use.
 For example set property prettyPrint to true to have json outputted in pretty
 mode. The properties can be prefixed to denote the option is only for either
-JSON or XML and for either the IN or the OUT. The prefixes are: json.in.
-json.out. xml.in. xml.out. For example a key with value
+JSON or XML and for either the IN or the OUT. The prefixes are: <ul>
+<li>json.in. <li>json.out. <li>xml.in. <li>xml.out. For example a key with value
 xml.out.mustBeJAXBElement is only for the XML data format for the outgoing. A
 key without a prefix is a common key for all situations.
           ]]></xs:documentation>
@@ -14325,7 +14359,7 @@ Sets the name of the Camel component to use as the REST producer.
       <xs:annotation>
         <xs:documentation xml:lang="en"><![CDATA[
 The scheme to use for exposing the REST service. Usually http or https is
-supported. The default value is http.
+supported. <p/> The default value is http.
         ]]></xs:documentation>
       </xs:annotation>
     </xs:attribute>
@@ -14340,16 +14374,16 @@ The hostname to use for exposing the REST service.
       <xs:annotation>
         <xs:documentation xml:lang="en"><![CDATA[
 To use a specific hostname for the API documentation (such as swagger or
-openapi) This can be used to override the generated host with this configured
-hostname.
+openapi) <p/> This can be used to override the generated host with this
+configured hostname.
         ]]></xs:documentation>
       </xs:annotation>
     </xs:attribute>
     <xs:attribute name="useXForwardHeaders" type="xs:boolean">
       <xs:annotation>
         <xs:documentation xml:lang="en"><![CDATA[
-Whether to use X-Forward headers for Host and related setting. The default value
-is true. Default value: true
+Whether to use X-Forward headers for Host and related setting. <p/> The default
+value is true. Default value: true
         ]]></xs:documentation>
       </xs:annotation>
     </xs:attribute>
@@ -14371,36 +14405,37 @@ uses.
       <xs:annotation>
         <xs:documentation xml:lang="en"><![CDATA[
 Sets the location of the api document the REST producer will use to validate the
-REST uri and query parameters are valid accordingly to the api document. The
-location of the api document is loaded from classpath by default, but you can
-use file: or http: to refer to resources to load from file or http url.
+REST uri and query parameters are valid accordingly to the api document. <p/>
+The location of the api document is loaded from classpath by default, but you
+can use <tt>file: or <tt>http: to refer to resources to load from file or http
+url.
         ]]></xs:documentation>
       </xs:annotation>
     </xs:attribute>
     <xs:attribute name="contextPath" type="xs:string">
       <xs:annotation>
         <xs:documentation xml:lang="en"><![CDATA[
-Sets a leading context-path the REST services will be using. This can be used
-when using components such as camel-servlet where the deployed web application
-is deployed using a context-path. Or for components such as camel-jetty or
-camel-netty-http that includes a HTTP server.
+Sets a leading context-path the REST services will be using. <p/> This can be
+used when using components such as <tt>camel-servlet where the deployed web
+application is deployed using a context-path. Or for components such as
+<tt>camel-jetty or <tt>camel-netty-http that includes a HTTP server.
         ]]></xs:documentation>
       </xs:annotation>
     </xs:attribute>
     <xs:attribute name="apiContextPath" type="xs:string">
       <xs:annotation>
         <xs:documentation xml:lang="en"><![CDATA[
-Sets a leading API context-path the REST API services will be using. This can be
-used when using components such as camel-servlet where the deployed web
-application is deployed using a context-path.
+Sets a leading API context-path the REST API services will be using. <p/> This
+can be used when using components such as <tt>camel-servlet where the deployed
+web application is deployed using a context-path.
         ]]></xs:documentation>
       </xs:annotation>
     </xs:attribute>
     <xs:attribute name="apiContextRouteId" type="xs:string">
       <xs:annotation>
         <xs:documentation xml:lang="en"><![CDATA[
-Sets the route id to use for the route that services the REST API. The route
-will by default use an auto assigned route id.
+Sets the route id to use for the route that services the REST API. <p/> The
+route will by default use an auto assigned route id.
         ]]></xs:documentation>
       </xs:annotation>
     </xs:attribute>
@@ -14408,9 +14443,9 @@ will by default use an auto assigned route id.
       <xs:annotation>
         <xs:documentation xml:lang="en"><![CDATA[
 Sets an CamelContext id pattern to only allow Rest APIs from rest services
-within CamelContext's which name matches the pattern. The pattern #name# refers
-to the CamelContext name, to match on the current CamelContext only. For any
-other value, the pattern uses the rules from
+within CamelContext's which name matches the pattern. <p/> The pattern
+<tt>#name# refers to the CamelContext name, to match on the current CamelContext
+only. For any other value, the pattern uses the rules from
 PatternHelper#matchPattern(String,String).
         ]]></xs:documentation>
       </xs:annotation>
@@ -14419,8 +14454,8 @@ PatternHelper#matchPattern(String,String).
       <xs:annotation>
         <xs:documentation xml:lang="en"><![CDATA[
 Sets whether listing of all available CamelContext's with REST services in the
-JVM is enabled. If enabled it allows to discover these contexts, if false then
-only the current CamelContext is in use. Default value: false
+JVM is enabled. If enabled it allows to discover these contexts, if <tt>false
+then only the current CamelContext is in use. Default value: false
         ]]></xs:documentation>
       </xs:annotation>
     </xs:attribute>
@@ -14445,7 +14480,7 @@ compute the hostname the REST service will be using.
     <xs:attribute name="bindingMode" type="tns:restBindingMode">
       <xs:annotation>
         <xs:documentation xml:lang="en"><![CDATA[
-Sets the binding mode to use. The default value is off. Default value: off
+Sets the binding mode to use. <p/> The default value is off. Default value: off
         ]]></xs:documentation>
       </xs:annotation>
     </xs:attribute>
@@ -14474,8 +14509,8 @@ Status 400 if validation error. Default value: false
     <xs:attribute name="enableCORS" type="xs:boolean">
       <xs:annotation>
         <xs:documentation xml:lang="en"><![CDATA[
-Whether to enable CORS headers in the HTTP response. The default value is false.
-Default value: false
+Whether to enable CORS headers in the HTTP response. <p/> The default value is
+false. Default value: false
         ]]></xs:documentation>
       </xs:annotation>
     </xs:attribute>
@@ -14551,7 +14586,7 @@ be configured on a parent level.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Sets the binding mode to use. This option will override what may be configured
-on a parent level The default value is auto. Default value: auto
+on a parent level <p/> The default value is auto. Default value: auto
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -14582,7 +14617,7 @@ Status 400 if validation error.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Whether to enable CORS headers in the HTTP response. This option will override
-what may be configured on a parent level The default value is false.
+what may be configured on a parent level <p/> The default value is false.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -14590,8 +14625,8 @@ what may be configured on a parent level The default value is false.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Whether to include or exclude the VerbDefinition in API documentation. This
-option will override what may be configured on a parent level The default value
-is true.
+option will override what may be configured on a parent level <p/> The default
+value is true.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -14955,7 +14990,7 @@ OpenId Connect URL to discover OAuth2 configuration values.
 Sets the package names to be recursively searched for Java classes which extend
 org.apache.camel.builder.RouteBuilder to be auto-wired up to the CamelContext as
 a route. Note that classes are excluded if they are specifically configured in
-the spring.xml A more advanced configuration can be done using
+the spring.xml <p/> A more advanced configuration can be done using
 setPackageScan(org.apache.camel.model.PackageScanDefinition).
               ]]></xs:documentation>
             </xs:annotation>
@@ -15127,12 +15162,13 @@ strategy.
         <xs:attribute name="autoStartup" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Sets whether the object should automatically start when Camel starts. Important:
-Currently only routes can be disabled, as CamelContext s are always started.
-Note: When setting auto startup false on CamelContext then that takes precedence
-and no routes is started. You would need to start CamelContext explicit using
-the org.apache.camel.CamelContext#start() method, to start the context, and then
-you would need to start the routes manually using
+Sets whether the object should automatically start when Camel starts. <p/>
+<b>Important: Currently only routes can be disabled, as CamelContext s are
+always started. <br/> <b>Note: When setting auto startup <tt>false on
+CamelContext then that takes precedence and <i>no routes is started. You would
+need to start CamelContext explicit using the
+org.apache.camel.CamelContext#start() method, to start the context, and then you
+would need to start the routes manually using
 org.apache.camel.spi.RouteController#startRoute(String) . Default value: true
             ]]></xs:documentation>
           </xs:annotation>
@@ -15162,7 +15198,7 @@ able to dump the routes as XML. Default value: false
         <xs:attribute name="useMDCLogging" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Set whether MDC is enabled.
+Set whether is enabled.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -15184,10 +15220,10 @@ match, returns true 4. otherwise returns false.
         <xs:attribute name="useDataType" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Whether to enable using data type on Camel messages. Data type are automatic
-turned on if: one ore more routes has been explicit configured with input and
-output types when using rest-dsl with binding turned on Otherwise data type is
-default off.
+Whether to enable using data type on Camel messages. <p/> Data type are
+automatic turned on if: <ul> <li>one ore more routes has been explicit
+configured with input and output types <li>when using rest-dsl with binding
+turned on Otherwise data type is default off.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -15216,9 +15252,9 @@ Default value: true
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Sets whether to allow access to the original message from Camel's error handler,
-or from org.apache.camel.spi.UnitOfWork#getOriginalInMessage() . Turning this
-off can optimize performance, as defensive copy of the original message is not
-needed.
+or from org.apache.camel.spi.UnitOfWork#getOriginalInMessage() . <p/> Turning
+this off can optimize performance, as defensive copy of the original message is
+not needed.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -15264,12 +15300,13 @@ The naming pattern for creating the CamelContext management name. Default value:
         <xs:attribute name="threadNamePattern" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Sets the thread name pattern used for creating the full thread name. The default
-pattern is: Camel (#camelId#) thread ##counter# - #name# Where #camelId# is the
-name of the org.apache.camel.CamelContext and #counter# is a unique incrementing
-counter. and #name# is the regular thread name. You can also use #longName# is
-the long thread name which can includes endpoint parameters etc. Default value:
-Camel (#camelId#) thread ##counter# - #name#
+Sets the thread name pattern used for creating the full thread name. <p/> The
+default pattern is: <tt>Camel (#camelId#) thread ##counter# - #name# <p/> Where
+<tt>#camelId# is the name of the org.apache.camel.CamelContext <br/> and
+<tt>#counter# is a unique incrementing counter. <br/> and <tt>#name# is the
+regular thread name. <br/> You can also use <tt>#longName# is the long thread
+name which can includes endpoint parameters etc. Default value: Camel
+(#camelId#) thread ##counter# - #name#
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -15301,10 +15338,10 @@ false, can speedup starting Camel. Default value: true
         <xs:attribute name="typeConverterStatisticsEnabled" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Sets whether or not type converter statistics is enabled. By default the type
-converter utilization statistics is disabled. Notice: If enabled then there is a
-slight performance impact under very heavy load. You can enable/disable the
-statistics at runtime using the
+Sets whether or not type converter statistics is enabled. <p/> By default the
+type converter utilization statistics is disabled. <b>Notice: If enabled then
+there is a slight performance impact under very heavy load. <p/> You can
+enable/disable the statistics at runtime using the
 org.apache.camel.spi.TypeConverterRegistry#getStatistics()#setTypeConverterStatisticsEnabled(Boolean)
 method, or from JMX on the
 org.apache.camel.api.management.mbean.ManagedTypeConverterRegistryMBean mbean.
@@ -15323,7 +15360,7 @@ overhead when enabled.
         <xs:attribute name="typeConverterExists" type="tns:typeConverterExists">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-What should happen when attempting to add a duplicate type converter. The
+What should happen when attempting to add a duplicate type converter. <p/> The
 default behavior is to override the existing. Default value: Override
             ]]></xs:documentation>
           </xs:annotation>
@@ -15332,8 +15369,8 @@ default behavior is to override the existing. Default value: Override
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 The logging level to use when logging that a type converter already exists when
-attempting to add a duplicate type converter. The default logging level is WARN.
-Default value: WARN
+attempting to add a duplicate type converter. <p/> The default logging level is
+<tt>WARN. Default value: WARN
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -15387,13 +15424,13 @@ The dead letter endpoint uri for the Dead Letter error handler.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Whether the dead letter channel should handle (and ignore) any new exception
-that may been thrown during sending the message to the dead letter endpoint. The
-default value is true which means any such kind of exception is handled and
-ignored. Set this to false to let the exception be propagated back on the
-org.apache.camel.Exchange . This can be used in situations where you use
-transactions, and want to use Camel's dead letter channel to deal with
+that may been thrown during sending the message to the dead letter endpoint.
+<p/> The default value is <tt>true which means any such kind of exception is
+handled and ignored. Set this to <tt>false to let the exception be propagated
+back on the org.apache.camel.Exchange . This can be used in situations where you
+use transactions, and want to use Camel's dead letter channel to deal with
 exceptions during routing, but if the dead letter channel itself fails because
-of a new exception being thrown, then by setting this to false the new
+of a new exception being thrown, then by setting this to <tt>false the new
 exceptions is propagated back and set on the org.apache.camel.Exchange , which
 allows the transaction to detect the exception, and rollback.
             ]]></xs:documentation>
@@ -15410,8 +15447,8 @@ ERROR
         <xs:attribute name="rollbackLoggingLevel" type="tns:loggingLevel">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Sets the logging level to use for logging transactional rollback. This option is
-default WARN. Default value: WARN
+Sets the logging level to use for logging transactional rollback. <p/> This
+option is default WARN. Default value: WARN
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -15426,33 +15463,33 @@ Name of the logger to use for the logging error handler.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Will use the original input org.apache.camel.Message (original body and headers)
-when an org.apache.camel.Exchange is moved to the dead letter queue. Notice:
-this only applies when all redeliveries attempt have failed and the
-org.apache.camel.Exchange is doomed for failure. Instead of using the current
-inprogress org.apache.camel.Exchange IN message we use the original IN message
-instead. This allows you to store the original input in the dead letter queue
-instead of the inprogress snapshot of the IN message. For instance if you route
-transform the IN body during routing and then failed. With the original exchange
-store in the dead letter queue it might be easier to manually re submit the
-org.apache.camel.Exchange again as the IN message is the same as when Camel
+when an org.apache.camel.Exchange is moved to the dead letter queue. <p/>
+<b>Notice: this only applies when all redeliveries attempt have failed and the
+org.apache.camel.Exchange is doomed for failure. <br/> Instead of using the
+current inprogress org.apache.camel.Exchange IN message we use the original IN
+message instead. This allows you to store the original input in the dead letter
+queue instead of the inprogress snapshot of the IN message. For instance if you
+route transform the IN body during routing and then failed. With the original
+exchange store in the dead letter queue it might be easier to manually re submit
+the org.apache.camel.Exchange again as the IN message is the same as when Camel
 received it. So you should be able to send the org.apache.camel.Exchange to the
-same input. The difference between useOriginalMessage and useOriginalBody is
-that the former includes both the original body and headers, where as the latter
-only includes the original body. You can use the latter to enrich the message
-with custom headers and include the original message body. The former wont let
-you do this, as its using the original message body and headers as they are. You
-cannot enable both useOriginalMessage and useOriginalBody. Important: The
-original input means the input message that are bounded by the current
-org.apache.camel.spi.UnitOfWork . An unit of work typically spans one route, or
-multiple routes if they are connected using internal endpoints such as direct or
-seda. When messages is passed via external endpoints such as JMS or HTTP then
-the consumer will create a new unit of work, with the message it received as
-input as the original input. Also some EIP patterns such as splitter, multicast,
-will create a new unit of work boundary for the messages in their sub-route (eg
-the splitted message); however these EIPs have an option named shareUnitOfWork
-which allows to combine with the parent unit of work in regard to error handling
-and therefore use the parent original message. By default this feature is off.
-Default value: false
+same input. <p/> The difference between useOriginalMessage and useOriginalBody
+is that the former includes both the original body and headers, where as the
+latter only includes the original body. You can use the latter to enrich the
+message with custom headers and include the original message body. The former
+wont let you do this, as its using the original message body and headers as they
+are. You cannot enable both useOriginalMessage and useOriginalBody. <p/>
+<b>Important: The original input means the input message that are bounded by the
+current org.apache.camel.spi.UnitOfWork . An unit of work typically spans one
+route, or multiple routes if they are connected using internal endpoints such as
+direct or seda. When messages is passed via external endpoints such as JMS or
+HTTP then the consumer will create a new unit of work, with the message it
+received as input as the original input. Also some EIP patterns such as
+splitter, multicast, will create a new unit of work boundary for the messages in
+their sub-route (eg the splitted message); however these EIPs have an option
+named <tt>shareUnitOfWork which allows to combine with the parent unit of work
+in regard to error handling and therefore use the parent original message. <p/>
+By default this feature is off. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -15460,33 +15497,33 @@ Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Will use the original input org.apache.camel.Message body (original body only)
-when an org.apache.camel.Exchange is moved to the dead letter queue. Notice:
-this only applies when all redeliveries attempt have failed and the
-org.apache.camel.Exchange is doomed for failure. Instead of using the current
-inprogress org.apache.camel.Exchange IN message we use the original IN message
-instead. This allows you to store the original input in the dead letter queue
-instead of the inprogress snapshot of the IN message. For instance if you route
-transform the IN body during routing and then failed. With the original exchange
-store in the dead letter queue it might be easier to manually re submit the
-org.apache.camel.Exchange again as the IN message is the same as when Camel
+when an org.apache.camel.Exchange is moved to the dead letter queue. <p/>
+<b>Notice: this only applies when all redeliveries attempt have failed and the
+org.apache.camel.Exchange is doomed for failure. <br/> Instead of using the
+current inprogress org.apache.camel.Exchange IN message we use the original IN
+message instead. This allows you to store the original input in the dead letter
+queue instead of the inprogress snapshot of the IN message. For instance if you
+route transform the IN body during routing and then failed. With the original
+exchange store in the dead letter queue it might be easier to manually re submit
+the org.apache.camel.Exchange again as the IN message is the same as when Camel
 received it. So you should be able to send the org.apache.camel.Exchange to the
-same input. The difference between useOriginalMessage and useOriginalBody is
-that the former includes both the original body and headers, where as the latter
-only includes the original body. You can use the latter to enrich the message
-with custom headers and include the original message body. The former wont let
-you do this, as its using the original message body and headers as they are. You
-cannot enable both useOriginalMessage and useOriginalBody. Important: The
-original input means the input message that are bounded by the current
-org.apache.camel.spi.UnitOfWork . An unit of work typically spans one route, or
-multiple routes if they are connected using internal endpoints such as direct or
-seda. When messages is passed via external endpoints such as JMS or HTTP then
-the consumer will create a new unit of work, with the message it received as
-input as the original input. Also some EIP patterns such as splitter, multicast,
-will create a new unit of work boundary for the messages in their sub-route (eg
-the splitted message); however these EIPs have an option named shareUnitOfWork
-which allows to combine with the parent unit of work in regard to error handling
-and therefore use the parent original message. By default this feature is off.
-Default value: false
+same input. <p/> The difference between useOriginalMessage and useOriginalBody
+is that the former includes both the original body and headers, where as the
+latter only includes the original body. You can use the latter to enrich the
+message with custom headers and include the original message body. The former
+wont let you do this, as its using the original message body and headers as they
+are. You cannot enable both useOriginalMessage and useOriginalBody. <p/>
+<b>Important: The original input means the input message that are bounded by the
+current org.apache.camel.spi.UnitOfWork . An unit of work typically spans one
+route, or multiple routes if they are connected using internal endpoints such as
+direct or seda. When messages is passed via external endpoints such as JMS or
+HTTP then the consumer will create a new unit of work, with the message it
+received as input as the original input. Also some EIP patterns such as
+splitter, multicast, will create a new unit of work boundary for the messages in
+their sub-route (eg the splitted message); however these EIPs have an option
+named <tt>shareUnitOfWork which allows to combine with the parent unit of work
+in regard to error handling and therefore use the parent original message. <p/>
+By default this feature is off. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -15509,19 +15546,19 @@ use with the transaction error handler.
         <xs:attribute name="onRedeliveryRef" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Sets a reference to a processor that should be processed before a redelivery
-attempt. Can be used to change the org.apache.camel.Exchange before its being
-redelivered.
+Sets a reference to a processor that should be processed <b>before a redelivery
+attempt. <p/> Can be used to change the org.apache.camel.Exchange <b>before its
+being redelivered.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="onExceptionOccurredRef" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Sets a reference to a processor that should be processed just after an exception
-occurred. Can be used to perform custom logging about the occurred exception at
-the exact time it happened. Important: Any exception thrown from this processor
-will be ignored.
+Sets a reference to a processor that should be processed <b>just after an
+exception occurred. Can be used to perform custom logging about the occurred
+exception at the exact time it happened. <p/> Important: Any exception thrown
+from this processor will be ignored.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -15537,8 +15574,8 @@ to enrich the message before sending to a dead letter queue.
         <xs:attribute name="retryWhileRef" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Sets a reference to an retry while expression. Will continue retrying until
-expression evaluates to false.
+Sets a reference to an retry while expression. <p/> Will continue retrying until
+expression evaluates to <tt>false.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>

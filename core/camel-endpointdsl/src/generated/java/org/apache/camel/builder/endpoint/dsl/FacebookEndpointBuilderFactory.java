@@ -396,7 +396,7 @@ public interface FacebookEndpointBuilderFactory {
          * The domain names.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -412,7 +412,7 @@ public interface FacebookEndpointBuilderFactory {
          * The domain names.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -804,7 +804,7 @@ public interface FacebookEndpointBuilderFactory {
          * The ids of users.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -819,7 +819,7 @@ public interface FacebookEndpointBuilderFactory {
          * The ids of users.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -1422,8 +1422,8 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * FQL queries.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -1439,8 +1439,8 @@ public interface FacebookEndpointBuilderFactory {
          * FQL queries.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -1511,8 +1511,8 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * To configure Reading using key/value pairs from the Map.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the readingOptions(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -1532,8 +1532,8 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * To configure Reading using key/value pairs from the Map.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the readingOptions(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -1811,7 +1811,7 @@ public interface FacebookEndpointBuilderFactory {
          * The IDs of the users to tag.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -1826,7 +1826,7 @@ public interface FacebookEndpointBuilderFactory {
          * The IDs of the users to tag.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -1883,7 +1883,7 @@ public interface FacebookEndpointBuilderFactory {
          * The IDs of users to invite to event.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -1898,7 +1898,7 @@ public interface FacebookEndpointBuilderFactory {
          * The IDs of users to invite to event.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -2640,7 +2640,7 @@ public interface FacebookEndpointBuilderFactory {
          * The domain names.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -2656,7 +2656,7 @@ public interface FacebookEndpointBuilderFactory {
          * The domain names.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -3048,7 +3048,7 @@ public interface FacebookEndpointBuilderFactory {
          * The ids of users.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -3063,7 +3063,7 @@ public interface FacebookEndpointBuilderFactory {
          * The ids of users.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -3666,8 +3666,8 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * FQL queries.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -3683,8 +3683,8 @@ public interface FacebookEndpointBuilderFactory {
          * FQL queries.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -3755,8 +3755,8 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * To configure Reading using key/value pairs from the Map.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the readingOptions(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -3776,8 +3776,8 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * To configure Reading using key/value pairs from the Map.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the readingOptions(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -4055,7 +4055,7 @@ public interface FacebookEndpointBuilderFactory {
          * The IDs of the users to tag.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -4070,7 +4070,7 @@ public interface FacebookEndpointBuilderFactory {
          * The IDs of the users to tag.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -4127,7 +4127,7 @@ public interface FacebookEndpointBuilderFactory {
          * The IDs of users to invite to event.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -4142,7 +4142,7 @@ public interface FacebookEndpointBuilderFactory {
          * The IDs of users to invite to event.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -4811,7 +4811,7 @@ public interface FacebookEndpointBuilderFactory {
          * The domain names.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -4826,7 +4826,7 @@ public interface FacebookEndpointBuilderFactory {
          * The domain names.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -5213,7 +5213,7 @@ public interface FacebookEndpointBuilderFactory {
          * The ids of users.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -5228,7 +5228,7 @@ public interface FacebookEndpointBuilderFactory {
          * The ids of users.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -5826,8 +5826,8 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * FQL queries.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -5842,8 +5842,8 @@ public interface FacebookEndpointBuilderFactory {
          * FQL queries.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -5914,8 +5914,8 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * To configure Reading using key/value pairs from the Map.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the readingOptions(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -5933,8 +5933,8 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * To configure Reading using key/value pairs from the Map.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the readingOptions(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -6212,7 +6212,7 @@ public interface FacebookEndpointBuilderFactory {
          * The IDs of the users to tag.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -6227,7 +6227,7 @@ public interface FacebookEndpointBuilderFactory {
          * The IDs of the users to tag.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -6284,7 +6284,7 @@ public interface FacebookEndpointBuilderFactory {
          * The IDs of users to invite to event.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -6299,7 +6299,7 @@ public interface FacebookEndpointBuilderFactory {
          * The IDs of users to invite to event.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 

@@ -590,7 +590,7 @@ public interface ScpEndpointBuilderFactory {
         }
         /**
          * Sets the connect timeout for waiting for a connection to be
-         * established Used by both FTPClient and JSCH.
+         * established &lt;p/&gt; Used by both FTPClient and JSCH.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -606,7 +606,7 @@ public interface ScpEndpointBuilderFactory {
         }
         /**
          * Sets the connect timeout for waiting for a connection to be
-         * established Used by both FTPClient and JSCH.
+         * established &lt;p/&gt; Used by both FTPClient and JSCH.
          * 
          * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -621,11 +621,11 @@ public interface ScpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the so timeout FTP and FTPS Only for Camel 2.4. SFTP for Camel
-         * 2.14.3/2.15.3/2.16 onwards. Is the SocketOptions.SO_TIMEOUT value in
-         * millis. Recommended option is to set this to 300000 so as not have a
-         * hanged connection. On SFTP this option is set as timeout on the JSCH
-         * Session instance.
+         * Sets the so timeout &lt;p/&gt; FTP and FTPS Only for Camel 2.4. SFTP
+         * for Camel 2.14.3/2.15.3/2.16 onwards. Is the SocketOptions.SO_TIMEOUT
+         * value in millis. Recommended option is to set this to 300000 so as
+         * not have a hanged connection. On SFTP this option is set as timeout
+         * on the JSCH Session instance.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -640,11 +640,11 @@ public interface ScpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the so timeout FTP and FTPS Only for Camel 2.4. SFTP for Camel
-         * 2.14.3/2.15.3/2.16 onwards. Is the SocketOptions.SO_TIMEOUT value in
-         * millis. Recommended option is to set this to 300000 so as not have a
-         * hanged connection. On SFTP this option is set as timeout on the JSCH
-         * Session instance.
+         * Sets the so timeout &lt;p/&gt; FTP and FTPS Only for Camel 2.4. SFTP
+         * for Camel 2.14.3/2.15.3/2.16 onwards. Is the SocketOptions.SO_TIMEOUT
+         * value in millis. Recommended option is to set this to 300000 so as
+         * not have a hanged connection. On SFTP this option is set as timeout
+         * on the JSCH Session instance.
          * 
          * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -690,7 +690,8 @@ public interface ScpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the data timeout for waiting for reply Used only by FTPClient.
+         * Sets the data timeout for waiting for reply &lt;p/&gt; Used only by
+         * FTPClient.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -705,7 +706,8 @@ public interface ScpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the data timeout for waiting for reply Used only by FTPClient.
+         * Sets the data timeout for waiting for reply &lt;p/&gt; Used only by
+         * FTPClient.
          * 
          * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 

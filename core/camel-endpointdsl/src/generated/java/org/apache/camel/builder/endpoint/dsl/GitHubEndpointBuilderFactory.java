@@ -496,8 +496,8 @@ public interface GitHubEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -518,8 +518,8 @@ public interface GitHubEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -1052,8 +1052,8 @@ public interface GitHubEndpointBuilderFactory {
          * Path parameter: startingSha
          * The starting sha to use for polling commits with the commit consumer.
          * The value can either be a sha for the sha to start from, or use
-         * beginning to start from the beginning, or last to start from the last
-         * commit.
+         * <tt>beginning to start from the beginning, or <tt>last to start from
+         * the last commit.
          * Default value: last
          * 
          * @param path type/branchName
@@ -1084,8 +1084,8 @@ public interface GitHubEndpointBuilderFactory {
          * Path parameter: startingSha
          * The starting sha to use for polling commits with the commit consumer.
          * The value can either be a sha for the sha to start from, or use
-         * beginning to start from the beginning, or last to start from the last
-         * commit.
+         * <tt>beginning to start from the beginning, or <tt>last to start from
+         * the last commit.
          * Default value: last
          * 
          * @param componentName to use a custom component name for the endpoint

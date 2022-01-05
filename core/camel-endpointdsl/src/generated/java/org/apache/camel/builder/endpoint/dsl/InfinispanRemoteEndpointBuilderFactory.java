@@ -199,8 +199,8 @@ public interface InfinispanRemoteEndpointBuilderFactory {
         }
         /**
          * Specifies the set of event types to register by the consumer.Multiple
-         * event can be separated by comma. The possible event types are:
-         * CLIENT_CACHE_ENTRY_CREATED, CLIENT_CACHE_ENTRY_MODIFIED,
+         * event can be separated by comma. &lt;p/&gt; The possible event types
+         * are: CLIENT_CACHE_ENTRY_CREATED, CLIENT_CACHE_ENTRY_MODIFIED,
          * CLIENT_CACHE_ENTRY_REMOVED, CLIENT_CACHE_ENTRY_EXPIRED,
          * CLIENT_CACHE_FAILOVER.
          * 
@@ -439,8 +439,8 @@ public interface InfinispanRemoteEndpointBuilderFactory {
         /**
          * Implementation specific properties for the CacheManager.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -456,8 +456,8 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * Implementation specific properties for the CacheManager.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -1013,8 +1013,8 @@ public interface InfinispanRemoteEndpointBuilderFactory {
         /**
          * Implementation specific properties for the CacheManager.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -1030,8 +1030,8 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * Implementation specific properties for the CacheManager.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -1386,8 +1386,8 @@ public interface InfinispanRemoteEndpointBuilderFactory {
         /**
          * Implementation specific properties for the CacheManager.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -1403,8 +1403,8 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * Implementation specific properties for the CacheManager.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 

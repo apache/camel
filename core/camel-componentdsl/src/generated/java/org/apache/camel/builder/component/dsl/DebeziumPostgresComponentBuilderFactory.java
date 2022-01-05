@@ -56,10 +56,10 @@ public interface DebeziumPostgresComponentBuilderFactory {
          * properties needed by Debezium engine, for example setting
          * KafkaOffsetBackingStore), the properties have to be prefixed with
          * additionalProperties.. E.g:
-         * additionalProperties.transactional.id=12345&amp;amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * additionalProperties.transactional.id=12345&amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -402,8 +402,9 @@ public interface DebeziumPostgresComponentBuilderFactory {
         }
         /**
          * Optional list of custom converters that would be used instead of
-         * default ones. The converters are defined using '.type' config option
-         * and configured using options '.'.
+         * default ones. The converters are defined using
+         * '&lt;converter.prefix&gt;.type' config option and configured using
+         * options '&lt;converter.prefix&gt;.&lt;option&gt;'.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -906,7 +907,7 @@ public interface DebeziumPostgresComponentBuilderFactory {
         /**
          * A semicolon-separated list of expressions that match fully-qualified
          * tables and column(s) to be used as message key. Each expression must
-         * match the pattern ':',where the table names could be defined as
+         * match the pattern '',where the table names could be defined as
          * (DB_NAME.TABLE_NAME) or (SCHEMA_NAME.TABLE_NAME), depending on the
          * specific connector,and the key columns are a comma-separated list of
          * columns representing the custom key. For any table without an
@@ -988,11 +989,12 @@ public interface DebeziumPostgresComponentBuilderFactory {
          * If no publication exists, the connector will create a new publication
          * for all tables. Note this requires that the configured user has
          * access. If the publication already exists, it will be used. i.e
-         * CREATE PUBLICATION FOR ALL TABLES;FILTERED - If no publication
-         * exists, the connector will create a new publication for all those
-         * tables matchingthe current filter configuration (see table/database
-         * include/exclude list properties). If the publication already exists,
-         * it will be used. i.e CREATE PUBLICATION FOR TABLE.
+         * CREATE PUBLICATION &lt;publication_name&gt; FOR ALL TABLES;FILTERED -
+         * If no publication exists, the connector will create a new publication
+         * for all those tables matchingthe current filter configuration (see
+         * table/database include/exclude list properties). If the publication
+         * already exists, it will be used. i.e CREATE PUBLICATION
+         * &lt;publication_name&gt; FOR TABLE &lt;tbl1, tbl2, etc&gt;.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

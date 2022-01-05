@@ -57,9 +57,9 @@ public interface RedisEndpointBuilderFactory {
             return this;
         }
         /**
-         * Default command, which can be overridden by message header. Notice
-         * the consumer only supports the following commands: PSUBSCRIBE and
-         * SUBSCRIBE.
+         * Default command, which can be overridden by message header.
+         * &lt;p/&gt; Notice the consumer only supports the following commands:
+         * PSUBSCRIBE and SUBSCRIBE.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.redis.Command&lt;/code&gt;
@@ -76,9 +76,9 @@ public interface RedisEndpointBuilderFactory {
             return this;
         }
         /**
-         * Default command, which can be overridden by message header. Notice
-         * the consumer only supports the following commands: PSUBSCRIBE and
-         * SUBSCRIBE.
+         * Default command, which can be overridden by message header.
+         * &lt;p/&gt; Notice the consumer only supports the following commands:
+         * PSUBSCRIBE and SUBSCRIBE.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.apache.camel.component.redis.Command&lt;/code&gt;
@@ -373,9 +373,9 @@ public interface RedisEndpointBuilderFactory {
             return this;
         }
         /**
-         * Default command, which can be overridden by message header. Notice
-         * the consumer only supports the following commands: PSUBSCRIBE and
-         * SUBSCRIBE.
+         * Default command, which can be overridden by message header.
+         * &lt;p/&gt; Notice the consumer only supports the following commands:
+         * PSUBSCRIBE and SUBSCRIBE.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.redis.Command&lt;/code&gt;
@@ -392,9 +392,9 @@ public interface RedisEndpointBuilderFactory {
             return this;
         }
         /**
-         * Default command, which can be overridden by message header. Notice
-         * the consumer only supports the following commands: PSUBSCRIBE and
-         * SUBSCRIBE.
+         * Default command, which can be overridden by message header.
+         * &lt;p/&gt; Notice the consumer only supports the following commands:
+         * PSUBSCRIBE and SUBSCRIBE.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.apache.camel.component.redis.Command&lt;/code&gt;
@@ -590,9 +590,9 @@ public interface RedisEndpointBuilderFactory {
             return this;
         }
         /**
-         * Default command, which can be overridden by message header. Notice
-         * the consumer only supports the following commands: PSUBSCRIBE and
-         * SUBSCRIBE.
+         * Default command, which can be overridden by message header.
+         * &lt;p/&gt; Notice the consumer only supports the following commands:
+         * PSUBSCRIBE and SUBSCRIBE.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.redis.Command&lt;/code&gt;
@@ -609,9 +609,9 @@ public interface RedisEndpointBuilderFactory {
             return this;
         }
         /**
-         * Default command, which can be overridden by message header. Notice
-         * the consumer only supports the following commands: PSUBSCRIBE and
-         * SUBSCRIBE.
+         * Default command, which can be overridden by message header.
+         * &lt;p/&gt; Notice the consumer only supports the following commands:
+         * PSUBSCRIBE and SUBSCRIBE.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.apache.camel.component.redis.Command&lt;/code&gt;
