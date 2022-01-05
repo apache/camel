@@ -78,6 +78,10 @@ class Run implements Callable<Integer> {
             description = "Whether to create a temporary file lock, which upon deleting triggers this process to terminate")
     private boolean fileLock = true;
 
+    @Option(names = { "--jfr" },
+            description = "Whether to start the jfr recorder or not")
+    private boolean jfr;
+
     @Option(names = { "--local-kamelet-dir" },
             description = "Local directory to load Kamelets from (take precedence))")
     private String localKameletDir;
@@ -140,6 +144,11 @@ class Run implements Callable<Integer> {
         }
         if (port > 0) {
             main.addInitialProperty("camel.jbang.platform-http.port", String.valueOf(port));
+        }
+
+        if (jfr) {
+            main.addInitialProperty("camel.main.startup-recorder", "java-flight-recorder");
+            main.addInitialProperty("camel.main.startupRecorderRecording", "true");
         }
 
         if (fileLock) {
