@@ -57,6 +57,11 @@ public class OutputAwareFromDefinitionDeserializer extends YamlDeserializerBase<
     protected void setProperties(OutputAwareFromDefinition target, MappingNode node) {
         final YamlDeserializationContext dc = getDeserializationContext(node);
 
+        int line = -1;
+        if (node.getStartMark().isPresent()) {
+            line = node.getStartMark().get().getLine();
+        }
+
         String uri = null;
         Map<String, Object> properties = null;
 
@@ -84,8 +89,7 @@ public class OutputAwareFromDefinitionDeserializer extends YamlDeserializerBase<
                         }
                         FromDefinition from = new FromDefinition(endpointUri);
                         // enrich model with line number
-                        if (node.getStartMark().isPresent()) {
-                            int line = node.getStartMark().get().getLine();
+                        if (line != -1) {
                             from.setLineNumber(line);
                             from.setLocation(dc.getResource().getLocation());
                         }
@@ -100,8 +104,7 @@ public class OutputAwareFromDefinitionDeserializer extends YamlDeserializerBase<
             ObjectHelper.notNull("uri", "The uri must set");
             FromDefinition from = new FromDefinition(YamlSupport.createEndpointUri(dc.getCamelContext(), uri, properties));
             // enrich model with line number
-            if (node.getStartMark().isPresent()) {
-                int line = node.getStartMark().get().getLine();
+            if (line != -1) {
                 from.setLineNumber(line);
                 from.setLocation(dc.getResource().getLocation());
             }

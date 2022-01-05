@@ -41,6 +41,10 @@ public class FromDefinitionDeserializer implements ConstructNode {
 
     @Override
     public Object construct(Node node) {
+        int line = -1;
+        if (node.getStartMark().isPresent()) {
+            line = node.getStartMark().get().getLine();
+        }
 
         // from must be wrapped in a route, so use existing route or create a new route
         RouteDefinition route = (RouteDefinition) node.getProperty(RouteDefinition.class.getName());
@@ -57,8 +61,7 @@ public class FromDefinitionDeserializer implements ConstructNode {
         route.setInput(target);
 
         // enrich model with line number
-        if (node.getStartMark().isPresent()) {
-            int line = node.getStartMark().get().getLine();
+        if (line != -1) {
             target.setLineNumber(line);
             YamlDeserializationContext ctx = getDeserializationContext(node);
             if (ctx != null) {

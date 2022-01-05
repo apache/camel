@@ -42,9 +42,18 @@ public abstract class YamlDeserializerBase<T> extends YamlDeserializerSupport im
     public Object construct(Node node) {
         final T target;
 
+        int line = -1;
+        if (node.getStartMark().isPresent()) {
+            line = node.getStartMark().get().getLine();
+        }
+
         if (node.getNodeType() == NodeType.SCALAR) {
             ScalarNode mn = (ScalarNode) node;
             target = newInstance(mn.getValue());
+            // line number points to the scalar itself, so it should be +1
+            if (line != -1) {
+                line++;
+            }
         } else if (node.getNodeType() == NodeType.MAPPING) {
             MappingNode mn = (MappingNode) node;
             target = newInstance();
@@ -54,8 +63,7 @@ public abstract class YamlDeserializerBase<T> extends YamlDeserializerSupport im
         }
 
         // enrich model with source location:line number
-        if (target instanceof LineNumberAware && node.getStartMark().isPresent()) {
-            int line = node.getStartMark().get().getLine();
+        if (target instanceof LineNumberAware && line != -1) {
             LineNumberAware lna = (LineNumberAware) target;
             lna.setLineNumber(line);
 
