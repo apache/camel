@@ -4110,13 +4110,6 @@
                     <groupId>org.apache.camel</groupId>
                     <artifactId>camel-package-maven-plugin</artifactId>
                     <version>${project.version}</version>
-                    <dependencies>
-                        <dependency>
-                            <groupId>jakarta.xml.bind</groupId>
-                            <artifactId>jakarta.xml.bind-api</artifactId>
-                            <version>${jakarta-jaxb-version}</version>
-                        </dependency>
-                    </dependencies>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.camel</groupId>
