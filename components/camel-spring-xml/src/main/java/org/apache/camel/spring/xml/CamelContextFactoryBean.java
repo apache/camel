@@ -124,6 +124,9 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     private String messageHistory;
     @XmlAttribute
     @Metadata(defaultValue = "false")
+    private String sourceLocationEnabled;
+    @XmlAttribute
+    @Metadata(defaultValue = "false")
     private String logMask;
     @XmlAttribute
     private String logExhaustedMessageBody;
@@ -855,6 +858,22 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
      */
     public void setMessageHistory(String messageHistory) {
         this.messageHistory = messageHistory;
+    }
+
+    @Override
+    public String getSourceLocationEnabled() {
+        return sourceLocationEnabled;
+    }
+
+    /**
+     * Whether to capture precise source location:line-number for all EIPs in Camel routes.
+     *
+     * Enabling this will impact parsing Java based routes (also Groovy, Kotlin, etc.) on startup as this uses JDK
+     * StackTraceElement to calculate the location from the Camel route, which comes with a performance cost. This only
+     * impact startup, not the performance of the routes at runtime.
+     */
+    public void setSourceLocationEnabled(String sourceLocationEnabled) {
+        this.sourceLocationEnabled = sourceLocationEnabled;
     }
 
     @Override

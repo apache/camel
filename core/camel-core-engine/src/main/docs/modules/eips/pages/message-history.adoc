@@ -92,6 +92,41 @@ And in XML:
 </route>
 ----
 
+=== Enabling source location information
+
+Camel is capable of gathering precise source file:line-number for each EIPs in the routes.
+When enabled, then the message history will output this information in the route stack-trace.
+
+To enable source location:
+
+[source,java]
+----
+camelContext.setSourceLocationEnabled(true);
+----
+
+Or in XML
+
+[source,xml]
+----
+<camelContext sourceLocationEnabled="true">
+
+</camelContext>
+----
+
+Or when using Spring Boot or Quarkus, you can enable this in the configuration file:
+
+[source,properties]
+----
+camel.springboot.source-location-enabled = true
+----
+
+And in Quarkus:
+
+[source,properties]
+----
+camel.quarkus.source-location-enabled = true
+----
+
 == Route stack-trace in exceptions logged by error handler
 
 If Message History is enabled, then Camel will include this information,

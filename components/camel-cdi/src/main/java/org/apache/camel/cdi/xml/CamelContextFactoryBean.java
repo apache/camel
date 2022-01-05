@@ -101,6 +101,9 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
     private String messageHistory;
 
     @XmlAttribute
+    private String sourceLocationEnabled;
+
+    @XmlAttribute
     private String logMask;
 
     @XmlAttribute
@@ -728,6 +731,15 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
 
     public void setMessageHistory(String messageHistory) {
         this.messageHistory = messageHistory;
+    }
+
+    @Override
+    public String getSourceLocationEnabled() {
+        return sourceLocationEnabled;
+    }
+
+    public void setSourceLocationEnabled(String sourceLocationEnabled) {
+        this.sourceLocationEnabled = sourceLocationEnabled;
     }
 
     @Override

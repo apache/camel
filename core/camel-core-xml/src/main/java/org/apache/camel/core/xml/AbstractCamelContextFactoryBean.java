@@ -976,6 +976,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
     public abstract String getMessageHistory();
 
+    public abstract String getSourceLocationEnabled();
+
     public abstract String getLogMask();
 
     public abstract String getLogExhaustedMessageBody();
@@ -1119,6 +1121,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         }
         if (getMessageHistory() != null) {
             context.setMessageHistory(CamelContextHelper.parseBoolean(context, getMessageHistory()));
+        }
+        if (getSourceLocationEnabled() != null) {
+            context.setSourceLocationEnabled(CamelContextHelper.parseBoolean(context, getSourceLocationEnabled()));
         }
         if (getLogMask() != null) {
             context.setLogMask(CamelContextHelper.parseBoolean(context, getLogMask()));
