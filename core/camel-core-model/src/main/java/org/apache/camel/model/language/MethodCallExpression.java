@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 /**
  * Calls a Java bean method.
@@ -183,8 +184,20 @@ public class MethodCallExpression extends ExpressionDefinition {
 
     @Override
     public String toString() {
-        boolean isRef = ref != null;
-        return "bean[" + (isRef ? "ref:" : "") + beanName() + (method != null ? " method:" + method : "") + "]";
+        String name = null;
+        if (ref != null) {
+            name = "ref:" + ref;
+        } else if (beanTypeName != null) {
+            // we just want the simple name
+            name = StringHelper.afterLast(beanTypeName, ".", beanTypeName);
+        } else if (beanType != null) {
+            name = beanType.getSimpleName();
+        } else if (instance != null) {
+            name = instance.getClass().getSimpleName();
+        } else {
+            name = getExpression();
+        }
+        return "bean[" + name + (method != null ? " method:" + method : "") + "]";
     }
 
 }
