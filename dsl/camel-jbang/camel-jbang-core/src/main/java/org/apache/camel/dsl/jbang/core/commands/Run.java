@@ -138,6 +138,7 @@ class Run implements Callable<Integer> {
         main.addInitialProperty("camel.main.shutdownTimeout", "5");
         // turn off lightweight if we have routes reload enabled
         main.addInitialProperty("camel.main.routesReloadEnabled", reload ? "true" : "false");
+        main.addInitialProperty("camel.main.sourceLocationEnabled", "true");
         main.addInitialProperty("camel.main.tracing", trace ? "true" : "false");
 
         // durations
