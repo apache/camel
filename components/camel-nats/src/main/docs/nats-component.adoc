@@ -2,7 +2,7 @@
 :doctitle: Nats
 :shortname: nats
 :artifactid: camel-nats
-:description: Send and receive messages from NATS messaging system.
+:description: Send and receive messages from messaging system.
 :since: 2.17
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported

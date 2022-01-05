@@ -691,8 +691,8 @@ public interface FhirEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -713,8 +713,8 @@ public interface FhirEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -1267,7 +1267,8 @@ public interface FhirEndpointBuilderFactory {
             return this;
         }
         /**
-         * Request that the server modify the response using the _summary param.
+         * Request that the server modify the response using the
+         * &lt;code&gt;_summary param.
          * 
          * The option is a:
          * &lt;code&gt;ca.uhn.fhir.rest.api.SummaryEnum&lt;/code&gt; type.
@@ -1282,7 +1283,8 @@ public interface FhirEndpointBuilderFactory {
             return this;
         }
         /**
-         * Request that the server modify the response using the _summary param.
+         * Request that the server modify the response using the
+         * &lt;code&gt;_summary param.
          * 
          * The option will be converted to a
          * &lt;code&gt;ca.uhn.fhir.rest.api.SummaryEnum&lt;/code&gt; type.
@@ -1948,7 +1950,8 @@ public interface FhirEndpointBuilderFactory {
             return this;
         }
         /**
-         * Request that the server modify the response using the _summary param.
+         * Request that the server modify the response using the
+         * &lt;code&gt;_summary param.
          * 
          * The option is a:
          * &lt;code&gt;ca.uhn.fhir.rest.api.SummaryEnum&lt;/code&gt; type.
@@ -1963,7 +1966,8 @@ public interface FhirEndpointBuilderFactory {
             return this;
         }
         /**
-         * Request that the server modify the response using the _summary param.
+         * Request that the server modify the response using the
+         * &lt;code&gt;_summary param.
          * 
          * The option will be converted to a
          * &lt;code&gt;ca.uhn.fhir.rest.api.SummaryEnum&lt;/code&gt; type.
@@ -2574,7 +2578,8 @@ public interface FhirEndpointBuilderFactory {
             return this;
         }
         /**
-         * Request that the server modify the response using the _summary param.
+         * Request that the server modify the response using the
+         * &lt;code&gt;_summary param.
          * 
          * The option is a:
          * &lt;code&gt;ca.uhn.fhir.rest.api.SummaryEnum&lt;/code&gt; type.
@@ -2589,7 +2594,8 @@ public interface FhirEndpointBuilderFactory {
             return this;
         }
         /**
-         * Request that the server modify the response using the _summary param.
+         * Request that the server modify the response using the
+         * &lt;code&gt;_summary param.
          * 
          * The option will be converted to a
          * &lt;code&gt;ca.uhn.fhir.rest.api.SummaryEnum&lt;/code&gt; type.

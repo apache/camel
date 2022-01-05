@@ -21,7 +21,7 @@ import org.apache.camel.spi.UriParams;
 @Configurer(extended = true)
 public final class FhirHistoryEndpointConfiguration extends FhirConfiguration {
     @UriParam
-    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "onInstance", description="Request that the server return only up to theCount number of resources, may be NULL"), @ApiMethod(methodName = "onServer", description="Request that the server return only up to theCount number of resources, may be NULL"), @ApiMethod(methodName = "onType", description="Request that the server return only up to theCount number of resources, may be NULL")})
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "onInstance", description="Request that the server return only up to <code>theCount number of resources, may be NULL"), @ApiMethod(methodName = "onServer", description="Request that the server return only up to <code>theCount number of resources, may be NULL"), @ApiMethod(methodName = "onType", description="Request that the server return only up to <code>theCount number of resources, may be NULL")})
     private Integer count;
     @UriParam
     @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "onInstance", description="Request that the server return only resource versions that were created at or after the given time (inclusive), may be NULL"), @ApiMethod(methodName = "onServer", description="Request that the server return only resource versions that were created at or after the given time (inclusive), may be NULL"), @ApiMethod(methodName = "onType", description="Request that the server return only resource versions that were created at or after the given time (inclusive), may be NULL")})
@@ -39,7 +39,7 @@ public final class FhirHistoryEndpointConfiguration extends FhirConfiguration {
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "onType", description="The resource type to search for")})
     private Class<org.hl7.fhir.instance.model.api.IBaseResource> resourceType;
     @UriParam
-    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "onInstance", description="Request that the method return a Bundle resource (such as ca.uhn.fhir.model.dstu2.resource.Bundle). Use this method if you are accessing a DSTU2 server."), @ApiMethod(methodName = "onServer", description="Request that the method return a Bundle resource (such as ca.uhn.fhir.model.dstu2.resource.Bundle). Use this method if you are accessing a DSTU2 server."), @ApiMethod(methodName = "onType", description="Request that the method return a Bundle resource (such as ca.uhn.fhir.model.dstu2.resource.Bundle). Use this method if you are accessing a DSTU2 server.")})
+    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "onInstance", description="Request that the method return a Bundle resource (such as <code>ca.uhn.fhir.model.dstu2.resource.Bundle). Use this method if you are accessing a DSTU2 server."), @ApiMethod(methodName = "onServer", description="Request that the method return a Bundle resource (such as <code>ca.uhn.fhir.model.dstu2.resource.Bundle). Use this method if you are accessing a DSTU2 server."), @ApiMethod(methodName = "onType", description="Request that the method return a Bundle resource (such as <code>ca.uhn.fhir.model.dstu2.resource.Bundle). Use this method if you are accessing a DSTU2 server.")})
     private Class<org.hl7.fhir.instance.model.api.IBaseBundle> returnType;
 
     public Integer getCount() {

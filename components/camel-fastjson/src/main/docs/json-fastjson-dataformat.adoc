@@ -2,7 +2,7 @@
 :doctitle: JSON Fastjson
 :shortname: json-fastjson
 :artifactid: camel-fastjson
-:description: Marshal POJOs to JSON and back using Fastjson
+:description: Marshal POJOs to JSON and back using
 :since: 2.20
 :supportlevel: Stable
 //Manually maintained attributes

@@ -2,7 +2,7 @@
 :doctitle: Atomix Messaging
 :shortname: atomix-messaging
 :artifactid: camel-atomix
-:description: Access Atomix's group messaging.
+:description: Access Atomix's .
 :since: 2.20
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported

@@ -590,7 +590,7 @@ public interface ScpEndpointBuilderFactory {
         }
         /**
          * Sets the connect timeout for waiting for a connection to be
-         * established Used by both FTPClient and JSCH.
+         * established &lt;p/&gt; Used by both FTPClient and JSCH.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -606,7 +606,7 @@ public interface ScpEndpointBuilderFactory {
         }
         /**
          * Sets the connect timeout for waiting for a connection to be
-         * established Used by both FTPClient and JSCH.
+         * established &lt;p/&gt; Used by both FTPClient and JSCH.
          * 
          * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 

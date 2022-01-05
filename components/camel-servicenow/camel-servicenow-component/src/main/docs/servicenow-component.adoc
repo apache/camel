@@ -2,7 +2,7 @@
 :doctitle: ServiceNow
 :shortname: servicenow
 :artifactid: camel-servicenow
-:description: Interact with ServiceNow via its REST API.
+:description: Interact with via its REST API.
 :since: 2.18
 :supportlevel: Stable
 :component-header: Only producer is supported

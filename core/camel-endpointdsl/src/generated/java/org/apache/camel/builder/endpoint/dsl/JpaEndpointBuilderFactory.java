@@ -186,7 +186,8 @@ public interface JpaEndpointBuilderFactory {
          * conjunction with native query when consuming data.
          * 
          * The option is a:
-         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.lang.Class&lt;java.lang.Object&gt;&lt;/code&gt;
+         * type.
          * 
          * Group: common
          * 
@@ -205,7 +206,8 @@ public interface JpaEndpointBuilderFactory {
          * conjunction with native query when consuming data.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.lang.Class&lt;java.lang.Object&gt;&lt;/code&gt;
+         * type.
          * 
          * Group: common
          * 
@@ -334,7 +336,7 @@ public interface JpaEndpointBuilderFactory {
          * done processing the exchange.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.jpa.DeleteHandler&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.jpa.DeleteHandler&lt;java.lang.Object&gt;&lt;/code&gt; type.
          * 
          * Group: consumer
          * 
@@ -350,7 +352,7 @@ public interface JpaEndpointBuilderFactory {
          * done processing the exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.jpa.DeleteHandler&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.jpa.DeleteHandler&lt;java.lang.Object&gt;&lt;/code&gt; type.
          * 
          * Group: consumer
          * 
@@ -435,7 +437,7 @@ public interface JpaEndpointBuilderFactory {
          * consumer has read the entity.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.jpa.DeleteHandler&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.jpa.DeleteHandler&lt;java.lang.Object&gt;&lt;/code&gt; type.
          * 
          * Group: consumer
          * 
@@ -452,7 +454,7 @@ public interface JpaEndpointBuilderFactory {
          * consumer has read the entity.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.jpa.DeleteHandler&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.jpa.DeleteHandler&lt;java.lang.Object&gt;&lt;/code&gt; type.
          * 
          * Group: consumer
          * 
@@ -913,8 +915,8 @@ public interface JpaEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -935,8 +937,8 @@ public interface JpaEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -1128,16 +1130,17 @@ public interface JpaEndpointBuilderFactory {
             return this;
         }
         /**
-         * This key/value mapping is used for building the query parameters. It
-         * is expected to be of the generic type java.util.Map where the keys
-         * are the named parameters of a given JPA query and the values are
-         * their corresponding effective values you want to select for. When
+         * &lt;p&gt; This key/value mapping is used for building the query
+         * parameters. It is expected to be of the generic type
+         * java.util.Map&lt;String, Object&gt; where the keys are the named
+         * parameters of a given JPA query and the values are their
+         * corresponding effective values you want to select for. &lt;p&gt; When
          * it's used for producer, Simple expression can be used as a parameter
          * value. It allows you to retrieve parameter values from the message
          * body, header and etc.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the parameters(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -1155,16 +1158,17 @@ public interface JpaEndpointBuilderFactory {
             return this;
         }
         /**
-         * This key/value mapping is used for building the query parameters. It
-         * is expected to be of the generic type java.util.Map where the keys
-         * are the named parameters of a given JPA query and the values are
-         * their corresponding effective values you want to select for. When
+         * &lt;p&gt; This key/value mapping is used for building the query
+         * parameters. It is expected to be of the generic type
+         * java.util.Map&lt;String, Object&gt; where the keys are the named
+         * parameters of a given JPA query and the values are their
+         * corresponding effective values you want to select for. &lt;p&gt; When
          * it's used for producer, Simple expression can be used as a parameter
          * value. It allows you to retrieve parameter values from the message
          * body, header and etc.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the parameters(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -1219,8 +1223,8 @@ public interface JpaEndpointBuilderFactory {
         /**
          * Additional properties for the entity manager to use.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * entityManagerProperties(String, Object) method to add a value (call
          * the method multiple times to set more values).
@@ -1240,8 +1244,8 @@ public interface JpaEndpointBuilderFactory {
         /**
          * Additional properties for the entity manager to use.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * entityManagerProperties(String, Object) method to add a value (call
          * the method multiple times to set more values).
@@ -1443,7 +1447,8 @@ public interface JpaEndpointBuilderFactory {
          * conjunction with native query when consuming data.
          * 
          * The option is a:
-         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.lang.Class&lt;java.lang.Object&gt;&lt;/code&gt;
+         * type.
          * 
          * Group: common
          * 
@@ -1462,7 +1467,8 @@ public interface JpaEndpointBuilderFactory {
          * conjunction with native query when consuming data.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.lang.Class&lt;java.lang.Object&gt;&lt;/code&gt;
+         * type.
          * 
          * Group: common
          * 
@@ -1744,8 +1750,8 @@ public interface JpaEndpointBuilderFactory {
         /**
          * Additional properties for the entity manager to use.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * entityManagerProperties(String, Object) method to add a value (call
          * the method multiple times to set more values).
@@ -1765,8 +1771,8 @@ public interface JpaEndpointBuilderFactory {
         /**
          * Additional properties for the entity manager to use.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * entityManagerProperties(String, Object) method to add a value (call
          * the method multiple times to set more values).
@@ -1966,7 +1972,8 @@ public interface JpaEndpointBuilderFactory {
          * conjunction with native query when consuming data.
          * 
          * The option is a:
-         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.lang.Class&lt;java.lang.Object&gt;&lt;/code&gt;
+         * type.
          * 
          * Group: common
          * 
@@ -1985,7 +1992,8 @@ public interface JpaEndpointBuilderFactory {
          * conjunction with native query when consuming data.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.lang.Class&lt;java.lang.Object&gt;&lt;/code&gt;
+         * type.
          * 
          * Group: common
          * 
@@ -2011,8 +2019,8 @@ public interface JpaEndpointBuilderFactory {
         /**
          * Additional properties for the entity manager to use.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * entityManagerProperties(String, Object) method to add a value (call
          * the method multiple times to set more values).
@@ -2032,8 +2040,8 @@ public interface JpaEndpointBuilderFactory {
         /**
          * Additional properties for the entity manager to use.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * entityManagerProperties(String, Object) method to add a value (call
          * the method multiple times to set more values).
