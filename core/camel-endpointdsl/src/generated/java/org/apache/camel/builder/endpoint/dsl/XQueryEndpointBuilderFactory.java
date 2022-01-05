@@ -97,8 +97,8 @@ public interface XQueryEndpointBuilderFactory {
          * Allows to control which namespace prefixes to use for a set of
          * namespace mappings.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -115,8 +115,8 @@ public interface XQueryEndpointBuilderFactory {
          * namespace mappings.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -165,7 +165,8 @@ public interface XQueryEndpointBuilderFactory {
          * What output result to use defined as a class.
          * 
          * The option is a:
-         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.lang.Class&lt;java.lang.Object&gt;&lt;/code&gt;
+         * type.
          * 
          * Group: common
          * 
@@ -181,7 +182,8 @@ public interface XQueryEndpointBuilderFactory {
          * What output result to use defined as a class.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.lang.Class&lt;java.lang.Object&gt;&lt;/code&gt;
+         * type.
          * 
          * Group: common
          * 
@@ -645,8 +647,8 @@ public interface XQueryEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -667,8 +669,8 @@ public interface XQueryEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -935,8 +937,8 @@ public interface XQueryEndpointBuilderFactory {
         /**
          * To set custom Saxon configuration properties.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -952,8 +954,8 @@ public interface XQueryEndpointBuilderFactory {
          * To set custom Saxon configuration properties.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -1000,8 +1002,8 @@ public interface XQueryEndpointBuilderFactory {
         /**
          * Additional parameters.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -1017,8 +1019,8 @@ public interface XQueryEndpointBuilderFactory {
          * Additional parameters.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -1154,8 +1156,8 @@ public interface XQueryEndpointBuilderFactory {
          * Allows to control which namespace prefixes to use for a set of
          * namespace mappings.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -1172,8 +1174,8 @@ public interface XQueryEndpointBuilderFactory {
          * namespace mappings.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -1222,7 +1224,8 @@ public interface XQueryEndpointBuilderFactory {
          * What output result to use defined as a class.
          * 
          * The option is a:
-         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.lang.Class&lt;java.lang.Object&gt;&lt;/code&gt;
+         * type.
          * 
          * Group: common
          * 
@@ -1238,7 +1241,8 @@ public interface XQueryEndpointBuilderFactory {
          * What output result to use defined as a class.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.lang.Class&lt;java.lang.Object&gt;&lt;/code&gt;
+         * type.
          * 
          * Group: common
          * 
@@ -1377,8 +1381,8 @@ public interface XQueryEndpointBuilderFactory {
         /**
          * To set custom Saxon configuration properties.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -1394,8 +1398,8 @@ public interface XQueryEndpointBuilderFactory {
          * To set custom Saxon configuration properties.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -1442,8 +1446,8 @@ public interface XQueryEndpointBuilderFactory {
         /**
          * Additional parameters.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -1459,8 +1463,8 @@ public interface XQueryEndpointBuilderFactory {
          * Additional parameters.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -1597,8 +1601,8 @@ public interface XQueryEndpointBuilderFactory {
          * Allows to control which namespace prefixes to use for a set of
          * namespace mappings.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -1615,8 +1619,8 @@ public interface XQueryEndpointBuilderFactory {
          * namespace mappings.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -1663,7 +1667,8 @@ public interface XQueryEndpointBuilderFactory {
          * What output result to use defined as a class.
          * 
          * The option is a:
-         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.lang.Class&lt;java.lang.Object&gt;&lt;/code&gt;
+         * type.
          * 
          * Group: common
          * 
@@ -1678,7 +1683,8 @@ public interface XQueryEndpointBuilderFactory {
          * What output result to use defined as a class.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.lang.Class&lt;java.lang.Object&gt;&lt;/code&gt;
+         * type.
          * 
          * Group: common
          * 
@@ -1767,8 +1773,8 @@ public interface XQueryEndpointBuilderFactory {
         /**
          * To set custom Saxon configuration properties.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -1784,8 +1790,8 @@ public interface XQueryEndpointBuilderFactory {
          * To set custom Saxon configuration properties.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -1832,8 +1838,8 @@ public interface XQueryEndpointBuilderFactory {
         /**
          * Additional parameters.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -1849,8 +1855,8 @@ public interface XQueryEndpointBuilderFactory {
          * Additional parameters.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 

@@ -30,7 +30,7 @@ public final class FhirMetaEndpointConfiguration extends FhirConfiguration {
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "add", description="The IBaseMetaType class"), @ApiMethod(methodName = "delete", description="The IBaseMetaType class")})
     private org.hl7.fhir.instance.model.api.IBaseMetaType meta;
     @UriParam
-    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "getFromResource", description="The IBaseMetaType class"), @ApiMethod(methodName = "getFromServer", description="The type of the meta datatype for the given FHIR model version (should be MetaDt.class or MetaType.class)"), @ApiMethod(methodName = "getFromType", description="The IBaseMetaType class")})
+    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "getFromResource", description="The IBaseMetaType class"), @ApiMethod(methodName = "getFromServer", description="The type of the meta datatype for the given FHIR model version (should be <code>MetaDt.class or <code>MetaType.class)"), @ApiMethod(methodName = "getFromType", description="The IBaseMetaType class")})
     private Class<org.hl7.fhir.instance.model.api.IBaseMetaType> metaType;
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "getFromType", description="The resource type e.g Patient")})

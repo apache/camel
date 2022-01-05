@@ -473,7 +473,7 @@ public interface XsltSaxonEndpointBuilderFactory {
          * registry, where you can comma to separate multiple values to lookup.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;java.lang.Object&gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -492,7 +492,7 @@ public interface XsltSaxonEndpointBuilderFactory {
          * registry, where you can comma to separate multiple values to lookup.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;java.lang.Object&gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -641,7 +641,7 @@ public interface XsltSaxonEndpointBuilderFactory {
          * Syntax: <code>xslt-saxon:resourceUri</code>
          * 
          * Path parameter: resourceUri (required)
-         * Path to the template. The following is supported by the default
+         * Path to the template. <p/> The following is supported by the default
          * URIResolver. You can prefix with: classpath, file, http, ref, or
          * bean. classpath, file and http loads the resource using these
          * protocols (classpath is default). ref will lookup the resource in the
@@ -666,7 +666,7 @@ public interface XsltSaxonEndpointBuilderFactory {
          * Syntax: <code>xslt-saxon:resourceUri</code>
          * 
          * Path parameter: resourceUri (required)
-         * Path to the template. The following is supported by the default
+         * Path to the template. <p/> The following is supported by the default
          * URIResolver. You can prefix with: classpath, file, http, ref, or
          * bean. classpath, file and http loads the resource using these
          * protocols (classpath is default). ref will lookup the resource in the

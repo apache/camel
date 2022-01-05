@@ -248,10 +248,10 @@ public interface EventHubsEndpointBuilderFactory {
         }
         /**
          * Sets the CheckpointStore the EventProcessorClient will use for
-         * storing partition ownership and checkpoint information. Users can,
-         * optionally, provide their own implementation of CheckpointStore which
-         * will store ownership and checkpoint information. By default it set to
-         * use
+         * storing partition ownership and checkpoint information. &lt;p&gt;
+         * Users can, optionally, provide their own implementation of
+         * CheckpointStore which will store ownership and checkpoint
+         * information. By default it set to use
          * com.azure.messaging.eventhubs.checkpointstore.blob.BlobCheckpointStore which stores all checkpoint offsets into Azure Blob Storage.
          * 
          * The option is a:
@@ -270,10 +270,10 @@ public interface EventHubsEndpointBuilderFactory {
         }
         /**
          * Sets the CheckpointStore the EventProcessorClient will use for
-         * storing partition ownership and checkpoint information. Users can,
-         * optionally, provide their own implementation of CheckpointStore which
-         * will store ownership and checkpoint information. By default it set to
-         * use
+         * storing partition ownership and checkpoint information. &lt;p&gt;
+         * Users can, optionally, provide their own implementation of
+         * CheckpointStore which will store ownership and checkpoint
+         * information. By default it set to use
          * com.azure.messaging.eventhubs.checkpointstore.blob.BlobCheckpointStore which stores all checkpoint offsets into Azure Blob Storage.
          * 
          * The option will be converted to a
@@ -317,8 +317,9 @@ public interface EventHubsEndpointBuilderFactory {
          * of the partition will start from {link EventPosition#latest() latest}
          * position.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * com.azure.messaging.eventhubs.models.EventPosition&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * com.azure.messaging.eventhubs.models.EventPosition&gt;&lt;/code&gt;
+         * type.
          * 
          * Group: consumer
          * 
@@ -339,8 +340,9 @@ public interface EventHubsEndpointBuilderFactory {
          * position.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * com.azure.messaging.eventhubs.models.EventPosition&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * com.azure.messaging.eventhubs.models.EventPosition&gt;&lt;/code&gt;
+         * type.
          * 
          * Group: consumer
          * 

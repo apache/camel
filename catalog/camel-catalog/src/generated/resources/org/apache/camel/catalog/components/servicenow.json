@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "servicenow",
     "title": "ServiceNow",
-    "description": "Interact with ServiceNow via its REST API.",
+    "description": "Interact with via its REST API.",
     "deprecated": false,
     "firstVersion": "2.18.0",
     "label": "api,cloud,management",

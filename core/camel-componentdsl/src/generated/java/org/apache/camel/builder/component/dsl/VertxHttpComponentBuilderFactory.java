@@ -93,10 +93,10 @@ public interface VertxHttpComponentBuilderFactory {
         }
         /**
          * Whether to allow java serialization when a request has the
-         * Content-Type application/x-java-serialized-object This is disabled by
-         * default. If you enable this, be aware that Java will deserialize the
-         * incoming data from the request. This can be a potential security
-         * risk.
+         * Content-Type application/x-java-serialized-object &lt;p/&gt; This is
+         * disabled by default. If you enable this, be aware that Java will
+         * deserialize the incoming data from the request. This can be a
+         * potential security risk.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 

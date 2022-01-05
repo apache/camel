@@ -622,8 +622,8 @@ public interface MyBatisEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -644,8 +644,8 @@ public interface MyBatisEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -922,9 +922,10 @@ public interface MyBatisEndpointBuilderFactory {
             return (AdvancedMyBatisEndpointProducerBuilder) this;
         }
         /**
-         * The executor type to be used while executing statements. simple -
-         * executor does nothing special. reuse - executor reuses prepared
-         * statements. batch - executor reuses statements and batches updates.
+         * The executor type to be used while executing statements. &lt;ul&gt;
+         * &lt;li&gt;simple - executor does nothing special. &lt;li&gt;reuse -
+         * executor reuses prepared statements. &lt;li&gt;batch - executor
+         * reuses statements and batches updates.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.ibatis.session.ExecutorType&lt;/code&gt; type.
@@ -941,9 +942,10 @@ public interface MyBatisEndpointBuilderFactory {
             return this;
         }
         /**
-         * The executor type to be used while executing statements. simple -
-         * executor does nothing special. reuse - executor reuses prepared
-         * statements. batch - executor reuses statements and batches updates.
+         * The executor type to be used while executing statements. &lt;ul&gt;
+         * &lt;li&gt;simple - executor does nothing special. &lt;li&gt;reuse -
+         * executor reuses prepared statements. &lt;li&gt;batch - executor
+         * reuses statements and batches updates.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.apache.ibatis.session.ExecutorType&lt;/code&gt; type.
