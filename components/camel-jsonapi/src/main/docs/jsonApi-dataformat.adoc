@@ -3,7 +3,7 @@
 :docTitle: JSonApi
 :shortname: jsonApi
 :artifactId: camel-jsonapi
-:description: Marshal and unmarshal JSON:API resources using JSONAPI-Converter library.
+:description: Marshal and unmarshal .
 :since: 3.0
 :supportLevel: Stable
 //Manually maintained attributes

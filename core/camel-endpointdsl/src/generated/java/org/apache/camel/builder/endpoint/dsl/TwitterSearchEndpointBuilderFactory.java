@@ -741,8 +741,8 @@ public interface TwitterSearchEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -763,8 +763,8 @@ public interface TwitterSearchEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -987,9 +987,9 @@ public interface TwitterSearchEndpointBuilderFactory {
         }
         /**
          * Used by the geography search, to search by radius using the
-         * configured metrics. The unit can either be mi for miles, or km for
-         * kilometers. You need to configure all the following options:
-         * longitude, latitude, radius, and distanceMetric.
+         * configured metrics. &lt;p/&gt; The unit can either be mi for miles,
+         * or km for kilometers. &lt;p/&gt; You need to configure all the
+         * following options: longitude, latitude, radius, and distanceMetric.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1110,9 +1110,9 @@ public interface TwitterSearchEndpointBuilderFactory {
             return this;
         }
         /**
-         * Used by the geography search to search by latitude. You need to
-         * configure all the following options: longitude, latitude, radius, and
-         * distanceMetric.
+         * Used by the geography search to search by latitude. &lt;p/&gt; You
+         * need to configure all the following options: longitude, latitude,
+         * radius, and distanceMetric.
          * 
          * The option is a: &lt;code&gt;java.lang.Double&lt;/code&gt; type.
          * 
@@ -1127,9 +1127,9 @@ public interface TwitterSearchEndpointBuilderFactory {
             return this;
         }
         /**
-         * Used by the geography search to search by latitude. You need to
-         * configure all the following options: longitude, latitude, radius, and
-         * distanceMetric.
+         * Used by the geography search to search by latitude. &lt;p/&gt; You
+         * need to configure all the following options: longitude, latitude,
+         * radius, and distanceMetric.
          * 
          * The option will be converted to a
          * &lt;code&gt;java.lang.Double&lt;/code&gt; type.
@@ -1162,9 +1162,9 @@ public interface TwitterSearchEndpointBuilderFactory {
             return this;
         }
         /**
-         * Used by the geography search to search by longitude. You need to
-         * configure all the following options: longitude, latitude, radius, and
-         * distanceMetric.
+         * Used by the geography search to search by longitude. &lt;p/&gt; You
+         * need to configure all the following options: longitude, latitude,
+         * radius, and distanceMetric.
          * 
          * The option is a: &lt;code&gt;java.lang.Double&lt;/code&gt; type.
          * 
@@ -1179,9 +1179,9 @@ public interface TwitterSearchEndpointBuilderFactory {
             return this;
         }
         /**
-         * Used by the geography search to search by longitude. You need to
-         * configure all the following options: longitude, latitude, radius, and
-         * distanceMetric.
+         * Used by the geography search to search by longitude. &lt;p/&gt; You
+         * need to configure all the following options: longitude, latitude,
+         * radius, and distanceMetric.
          * 
          * The option will be converted to a
          * &lt;code&gt;java.lang.Double&lt;/code&gt; type.
@@ -1235,9 +1235,9 @@ public interface TwitterSearchEndpointBuilderFactory {
             return this;
         }
         /**
-         * Used by the geography search to search by radius. You need to
-         * configure all the following options: longitude, latitude, radius, and
-         * distanceMetric.
+         * Used by the geography search to search by radius. &lt;p/&gt; You need
+         * to configure all the following options: longitude, latitude, radius,
+         * and distanceMetric.
          * 
          * The option is a: &lt;code&gt;java.lang.Double&lt;/code&gt; type.
          * 
@@ -1252,9 +1252,9 @@ public interface TwitterSearchEndpointBuilderFactory {
             return this;
         }
         /**
-         * Used by the geography search to search by radius. You need to
-         * configure all the following options: longitude, latitude, radius, and
-         * distanceMetric.
+         * Used by the geography search to search by radius. &lt;p/&gt; You need
+         * to configure all the following options: longitude, latitude, radius,
+         * and distanceMetric.
          * 
          * The option will be converted to a
          * &lt;code&gt;java.lang.Double&lt;/code&gt; type.

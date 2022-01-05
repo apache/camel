@@ -563,7 +563,7 @@ public interface JBPMEndpointBuilderFactory {
          * The list of status to use when filtering tasks.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: filter
          * 
@@ -578,7 +578,7 @@ public interface JBPMEndpointBuilderFactory {
          * The list of status to use when filtering tasks.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: filter
          * 
@@ -702,7 +702,7 @@ public interface JBPMEndpointBuilderFactory {
          * The potentialOwners when nominateTask operation is performed.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -718,7 +718,7 @@ public interface JBPMEndpointBuilderFactory {
          * The potentialOwners when nominateTask operation is performed.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -763,8 +763,8 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * the variables that should be set for various operations.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -780,8 +780,8 @@ public interface JBPMEndpointBuilderFactory {
          * the variables that should be set for various operations.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -1377,7 +1377,7 @@ public interface JBPMEndpointBuilderFactory {
          * The list of status to use when filtering tasks.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: filter
          * 
@@ -1392,7 +1392,7 @@ public interface JBPMEndpointBuilderFactory {
          * The list of status to use when filtering tasks.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: filter
          * 
@@ -1446,7 +1446,7 @@ public interface JBPMEndpointBuilderFactory {
          * The potentialOwners when nominateTask operation is performed.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -1462,7 +1462,7 @@ public interface JBPMEndpointBuilderFactory {
          * The potentialOwners when nominateTask operation is performed.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -1507,8 +1507,8 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * the variables that should be set for various operations.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -1524,8 +1524,8 @@ public interface JBPMEndpointBuilderFactory {
          * the variables that should be set for various operations.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -2054,7 +2054,7 @@ public interface JBPMEndpointBuilderFactory {
          * The list of status to use when filtering tasks.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: filter
          * 
@@ -2069,7 +2069,7 @@ public interface JBPMEndpointBuilderFactory {
          * The list of status to use when filtering tasks.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: filter
          * 
@@ -2124,7 +2124,7 @@ public interface JBPMEndpointBuilderFactory {
          * The potentialOwners when nominateTask operation is performed.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -2139,7 +2139,7 @@ public interface JBPMEndpointBuilderFactory {
          * The potentialOwners when nominateTask operation is performed.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -2184,8 +2184,8 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * the variables that should be set for various operations.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -2201,8 +2201,8 @@ public interface JBPMEndpointBuilderFactory {
          * the variables that should be set for various operations.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 

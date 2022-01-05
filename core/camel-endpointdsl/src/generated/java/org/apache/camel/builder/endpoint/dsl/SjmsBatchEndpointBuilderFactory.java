@@ -162,8 +162,8 @@ public interface SjmsBatchEndpointBuilderFactory {
          * The completion interval in millis, which causes batches to be
          * completed in a scheduled fixed rate every interval. The batch may be
          * empty if the timeout triggered and there was no messages in the
-         * batch. Notice you cannot use both completion timeout and completion
-         * interval at the same time, only one can be configured.
+         * batch. &lt;br/&gt; Notice you cannot use both completion timeout and
+         * completion interval at the same time, only one can be configured.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -182,8 +182,8 @@ public interface SjmsBatchEndpointBuilderFactory {
          * The completion interval in millis, which causes batches to be
          * completed in a scheduled fixed rate every interval. The batch may be
          * empty if the timeout triggered and there was no messages in the
-         * batch. Notice you cannot use both completion timeout and completion
-         * interval at the same time, only one can be configured.
+         * batch. &lt;br/&gt; Notice you cannot use both completion timeout and
+         * completion interval at the same time, only one can be configured.
          * 
          * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -200,11 +200,11 @@ public interface SjmsBatchEndpointBuilderFactory {
         }
         /**
          * The completion predicate, which causes batches to be completed when
-         * the predicate evaluates as true. The predicate can also be configured
-         * using the simple language using the string syntax. You may want to
-         * set the option eagerCheckCompletion to true to let the predicate
-         * match the incoming message, as otherwise it matches the aggregated
-         * message.
+         * the predicate evaluates as true. &lt;p/&gt; The predicate can also be
+         * configured using the simple language using the string syntax. You may
+         * want to set the option eagerCheckCompletion to true to let the
+         * predicate match the incoming message, as otherwise it matches the
+         * aggregated message.
          * 
          * The option is a: &lt;code&gt;org.apache.camel.Predicate&lt;/code&gt;
          * type.
@@ -221,11 +221,11 @@ public interface SjmsBatchEndpointBuilderFactory {
         }
         /**
          * The completion predicate, which causes batches to be completed when
-         * the predicate evaluates as true. The predicate can also be configured
-         * using the simple language using the string syntax. You may want to
-         * set the option eagerCheckCompletion to true to let the predicate
-         * match the incoming message, as otherwise it matches the aggregated
-         * message.
+         * the predicate evaluates as true. &lt;p/&gt; The predicate can also be
+         * configured using the simple language using the string syntax. You may
+         * want to set the option eagerCheckCompletion to true to let the
+         * predicate match the incoming message, as otherwise it matches the
+         * aggregated message.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.apache.camel.Predicate&lt;/code&gt; type.
@@ -273,9 +273,9 @@ public interface SjmsBatchEndpointBuilderFactory {
         /**
          * The timeout in millis from receipt of the first first message when
          * the batch will be completed. The batch may be empty if the timeout
-         * triggered and there was no messages in the batch. Notice you cannot
-         * use both completion timeout and completion interval at the same time,
-         * only one can be configured.
+         * triggered and there was no messages in the batch. &lt;br/&gt; Notice
+         * you cannot use both completion timeout and completion interval at the
+         * same time, only one can be configured.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -292,9 +292,9 @@ public interface SjmsBatchEndpointBuilderFactory {
         /**
          * The timeout in millis from receipt of the first first message when
          * the batch will be completed. The batch may be empty if the timeout
-         * triggered and there was no messages in the batch. Notice you cannot
-         * use both completion timeout and completion interval at the same time,
-         * only one can be configured.
+         * triggered and there was no messages in the batch. &lt;br/&gt; Notice
+         * you cannot use both completion timeout and completion interval at the
+         * same time, only one can be configured.
          * 
          * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -489,8 +489,8 @@ public interface SjmsBatchEndpointBuilderFactory {
         /**
          * If using completion timeout or interval, then the batch may be empty
          * if the timeout triggered and there was no messages in the batch. If
-         * this option is true and the batch is empty then an empty message is
-         * added to the batch so an empty message is routed.
+         * this option is &lt;tt&gt;true and the batch is empty then an empty
+         * message is added to the batch so an empty message is routed.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -508,8 +508,8 @@ public interface SjmsBatchEndpointBuilderFactory {
         /**
          * If using completion timeout or interval, then the batch may be empty
          * if the timeout triggered and there was no messages in the batch. If
-         * this option is true and the batch is empty then an empty message is
-         * added to the batch so an empty message is routed.
+         * this option is &lt;tt&gt;true and the batch is empty then an empty
+         * message is added to the batch so an empty message is routed.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -787,8 +787,8 @@ public interface SjmsBatchEndpointBuilderFactory {
         }
         /**
          * To use the given MessageCreatedStrategy which are invoked when Camel
-         * creates new instances of javax.jms.Message objects when Camel is
-         * sending a JMS message.
+         * creates new instances of &lt;tt&gt;javax.jms.Message objects when
+         * Camel is sending a JMS message.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.sjms.jms.MessageCreatedStrategy&lt;/code&gt; type.
@@ -805,8 +805,8 @@ public interface SjmsBatchEndpointBuilderFactory {
         }
         /**
          * To use the given MessageCreatedStrategy which are invoked when Camel
-         * creates new instances of javax.jms.Message objects when Camel is
-         * sending a JMS message.
+         * creates new instances of &lt;tt&gt;javax.jms.Message objects when
+         * Camel is sending a JMS message.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.apache.camel.component.sjms.jms.MessageCreatedStrategy&lt;/code&gt; type.

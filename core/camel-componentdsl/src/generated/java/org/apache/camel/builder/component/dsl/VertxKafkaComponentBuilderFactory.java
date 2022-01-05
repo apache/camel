@@ -58,10 +58,10 @@ public interface VertxKafkaComponentBuilderFactory {
          * configurations (e.g: new Kafka properties that are not reflected yet
          * in Camel configurations), the properties have to be prefixed with
          * additionalProperties.. E.g:
-         * additionalProperties.transactional.id=12345&amp;amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * additionalProperties.transactional.id=12345&amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -77,13 +77,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * A list of host/port pairs to use for establishing the initial
          * connection to the Kafka cluster. The client will make use of all
          * servers irrespective of which servers are specified here for
-         * bootstrapping&amp;amp;mdash;this list only impacts the initial hosts
-         * used to discover the full set of servers. This list should be in the
-         * form host1:port1,host2:port2,.... Since these servers are just used
-         * for the initial connection to discover the full cluster membership
-         * (which may change dynamically), this list need not contain the full
-         * set of servers (you may want more than one, though, in case a server
-         * is down).
+         * bootstrapping&amp;mdash;this list only impacts the initial hosts used
+         * to discover the full set of servers. This list should be in the form
+         * &lt;code&gt;host1:port1,host2:port2,.... Since these servers are just
+         * used for the initial connection to discover the full cluster
+         * membership (which may change dynamically), this list need not contain
+         * the full set of servers (you may want more than one, though, in case
+         * a server is down).
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -98,17 +98,18 @@ public interface VertxKafkaComponentBuilderFactory {
             return this;
         }
         /**
-         * Controls how the client uses DNS lookups. If set to use_all_dns_ips,
-         * connect to each returned IP address in sequence until a successful
-         * connection is established. After a disconnection, the next IP is
-         * used. Once all IPs have been used once, the client resolves the IP(s)
-         * from the hostname again (both the JVM and the OS cache DNS name
-         * lookups, however). If set to
-         * resolve_canonical_bootstrap_servers_only, resolve each bootstrap
-         * address into a list of canonical names. After the bootstrap phase,
-         * this behaves the same as use_all_dns_ips. If set to default
-         * (deprecated), attempt to connect to the first IP address returned by
-         * the lookup, even if the lookup returns multiple IP addresses.
+         * Controls how the client uses DNS lookups. If set to
+         * &lt;code&gt;use_all_dns_ips, connect to each returned IP address in
+         * sequence until a successful connection is established. After a
+         * disconnection, the next IP is used. Once all IPs have been used once,
+         * the client resolves the IP(s) from the hostname again (both the JVM
+         * and the OS cache DNS name lookups, however). If set to
+         * &lt;code&gt;resolve_canonical_bootstrap_servers_only, resolve each
+         * bootstrap address into a list of canonical names. After the bootstrap
+         * phase, this behaves the same as &lt;code&gt;use_all_dns_ips. If set
+         * to &lt;code&gt;default (deprecated), attempt to connect to the first
+         * IP address returned by the lookup, even if the lookup returns
+         * multiple IP addresses.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -193,10 +194,10 @@ public interface VertxKafkaComponentBuilderFactory {
         }
         /**
          * A list of classes to use as interceptors. Implementing the
-         * org.apache.kafka.clients.producer.ProducerInterceptor interface
-         * allows you to intercept (and possibly mutate) the records received by
-         * the producer before they are published to the Kafka cluster. By
-         * default, there are no interceptors.
+         * &lt;code&gt;org.apache.kafka.clients.producer.ProducerInterceptor
+         * interface allows you to intercept (and possibly mutate) the records
+         * received by the producer before they are published to the Kafka
+         * cluster. By default, there are no interceptors.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -230,9 +231,10 @@ public interface VertxKafkaComponentBuilderFactory {
         }
         /**
          * A list of classes to use as metrics reporters. Implementing the
-         * org.apache.kafka.common.metrics.MetricsReporter interface allows
-         * plugging in classes that will be notified of new metric creation. The
-         * JmxReporter is always included to register JMX statistics.
+         * &lt;code&gt;org.apache.kafka.common.metrics.MetricsReporter interface
+         * allows plugging in classes that will be notified of new metric
+         * creation. The JmxReporter is always included to register JMX
+         * statistics.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -373,9 +375,9 @@ public interface VertxKafkaComponentBuilderFactory {
          * wait for the response of a request. If the response is not received
          * before the timeout elapses the client will resend the request if
          * necessary or fail the request if retries are exhausted. This should
-         * be larger than replica.lag.time.max.ms (a broker configuration) to
-         * reduce the possibility of message duplication due to unnecessary
-         * producer retries.
+         * be larger than &lt;code&gt;replica.lag.time.max.ms (a broker
+         * configuration) to reduce the possibility of message duplication due
+         * to unnecessary producer retries.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -444,7 +446,8 @@ public interface VertxKafkaComponentBuilderFactory {
         }
         /**
          * The frequency in milliseconds that the consumer offsets are
-         * auto-committed to Kafka if enable.auto.commit is set to true.
+         * auto-committed to Kafka if &lt;code&gt;enable.auto.commit is set to
+         * &lt;code&gt;true.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -462,11 +465,11 @@ public interface VertxKafkaComponentBuilderFactory {
         /**
          * What to do when there is no initial offset in Kafka or if the current
          * offset does not exist any more on the server (e.g. because that data
-         * has been deleted): earliest: automatically reset the offset to the
-         * earliest offsetlatest: automatically reset the offset to the latest
-         * offsetnone: throw exception to the consumer if no previous offset is
-         * found for the consumer's groupanything else: throw exception to the
-         * consumer.
+         * has been deleted): &lt;ul&gt;&lt;li&gt;earliest: automatically reset
+         * the offset to the earliest offset&lt;li&gt;latest: automatically
+         * reset the offset to the latest offset&lt;li&gt;none: throw exception
+         * to the consumer if no previous offset is found for the consumer's
+         * group&lt;li&gt;anything else: throw exception to the consumer.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -541,7 +544,7 @@ public interface VertxKafkaComponentBuilderFactory {
         /**
          * Specifies the timeout (in milliseconds) for client APIs. This
          * configuration is used as the default timeout for all client
-         * operations that do not specify a timeout parameter.
+         * operations that do not specify a &lt;code&gt;timeout parameter.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -598,9 +601,9 @@ public interface VertxKafkaComponentBuilderFactory {
          * larger than this value, the record batch will still be returned to
          * ensure that the consumer can make progress. As such, this is not a
          * absolute maximum. The maximum record batch size accepted by the
-         * broker is defined via message.max.bytes (broker config) or
-         * max.message.bytes (topic config). Note that the consumer performs
-         * multiple fetches in parallel.
+         * broker is defined via &lt;code&gt;message.max.bytes (broker config)
+         * or &lt;code&gt;max.message.bytes (topic config). Note that the
+         * consumer performs multiple fetches in parallel.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -657,8 +660,8 @@ public interface VertxKafkaComponentBuilderFactory {
         /**
          * A unique string that identifies the consumer group this consumer
          * belongs to. This property is required if the consumer uses either the
-         * group management functionality by using subscribe(topic) or the
-         * Kafka-based offset management strategy.
+         * group management functionality by using &lt;code&gt;subscribe(topic)
+         * or the Kafka-based offset management strategy.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -698,9 +701,9 @@ public interface VertxKafkaComponentBuilderFactory {
          * using Kafka's group management facilities. Heartbeats are used to
          * ensure that the consumer's session stays active and to facilitate
          * rebalancing when new consumers join or leave the group. The value
-         * must be set lower than session.timeout.ms, but typically should be
-         * set no higher than 1/3 of that value. It can be adjusted even lower
-         * to control the expected time for normal rebalances.
+         * must be set lower than &lt;code&gt;session.timeout.ms, but typically
+         * should be set no higher than 1/3 of that value. It can be adjusted
+         * even lower to control the expected time for normal rebalances.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -717,20 +720,21 @@ public interface VertxKafkaComponentBuilderFactory {
         }
         /**
          * Controls how to read messages written transactionally. If set to
-         * read_committed, consumer.poll() will only return transactional
-         * messages which have been committed. If set to read_uncommitted' (the
-         * default), consumer.poll() will return all messages, even
-         * transactional messages which have been aborted. Non-transactional
-         * messages will be returned unconditionally in either mode. Messages
-         * will always be returned in offset order. Hence, in read_committed
-         * mode, consumer.poll() will only return messages up to the last stable
-         * offset (LSO), which is the one less than the offset of the first open
-         * transaction. In particular any messages appearing after messages
-         * belonging to ongoing transactions will be withheld until the relevant
-         * transaction has been completed. As a result, read_committed consumers
-         * will not be able to read up to the high watermark when there are in
-         * flight transactions. Further, when in read_committed the seekToEnd
-         * method will return the LSO.
+         * &lt;code&gt;read_committed, consumer.poll() will only return
+         * transactional messages which have been committed. If set to
+         * &lt;code&gt;read_uncommitted' (the default), consumer.poll() will
+         * return all messages, even transactional messages which have been
+         * aborted. Non-transactional messages will be returned unconditionally
+         * in either mode. &lt;p&gt;Messages will always be returned in offset
+         * order. Hence, in &lt;code&gt;read_committed mode, consumer.poll()
+         * will only return messages up to the last stable offset (LSO), which
+         * is the one less than the offset of the first open transaction. In
+         * particular any messages appearing after messages belonging to ongoing
+         * transactions will be withheld until the relevant transaction has been
+         * completed. As a result, &lt;code&gt;read_committed consumers will not
+         * be able to read up to the high watermark when there are in flight
+         * transactions.&lt;p&gt; Further, when in &lt;code&gt;read_committed
+         * the seekToEnd method will return the LSO.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -747,7 +751,8 @@ public interface VertxKafkaComponentBuilderFactory {
         }
         /**
          * Deserializer class for key that implements the
-         * org.apache.kafka.common.serialization.Deserializer interface.
+         * &lt;code&gt;org.apache.kafka.common.serialization.Deserializer
+         * interface.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -768,9 +773,9 @@ public interface VertxKafkaComponentBuilderFactory {
          * batch in the first non-empty partition of the fetch is larger than
          * this limit, the batch will still be returned to ensure that the
          * consumer can make progress. The maximum record batch size accepted by
-         * the broker is defined via message.max.bytes (broker config) or
-         * max.message.bytes (topic config). See fetch.max.bytes for limiting
-         * the consumer request size.
+         * the broker is defined via &lt;code&gt;message.max.bytes (broker
+         * config) or &lt;code&gt;max.message.bytes (topic config). See
+         * fetch.max.bytes for limiting the consumer request size.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -792,11 +797,11 @@ public interface VertxKafkaComponentBuilderFactory {
          * is not called before expiration of this timeout, then the consumer is
          * considered failed and the group will rebalance in order to reassign
          * the partitions to another member. For consumers using a non-null
-         * group.instance.id which reach this timeout, partitions will not be
-         * immediately reassigned. Instead, the consumer will stop sending
-         * heartbeats and partitions will be reassigned after expiration of
-         * session.timeout.ms. This mirrors the behavior of a static consumer
-         * which has shutdown.
+         * &lt;code&gt;group.instance.id which reach this timeout, partitions
+         * will not be immediately reassigned. Instead, the consumer will stop
+         * sending heartbeats and partitions will be reassigned after expiration
+         * of &lt;code&gt;session.timeout.ms. This mirrors the behavior of a
+         * static consumer which has shutdown.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -830,12 +835,12 @@ public interface VertxKafkaComponentBuilderFactory {
          * A list of class names or class types, ordered by preference, of
          * supported partition assignment strategies that the client will use to
          * distribute partition ownership amongst consumer instances when group
-         * management is used.In addition to the default class specified below,
-         * you can use the
-         * org.apache.kafka.clients.consumer.RoundRobinAssignorclass for round
-         * robin assignments of partitions to consumers. Implementing the
-         * org.apache.kafka.clients.consumer.ConsumerPartitionAssignor interface
-         * allows you to plug in a custom assignmentstrategy.
+         * management is used.&lt;p&gt;In addition to the default class
+         * specified below, you can use the
+         * &lt;code&gt;org.apache.kafka.clients.consumer.RoundRobinAssignorclass
+         * for round robin assignments of partitions to consumers.
+         * &lt;p&gt;Implementing the
+         * &lt;code&gt;org.apache.kafka.clients.consumer.ConsumerPartitionAssignor interface allows you to plug in a custom assignmentstrategy.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -889,8 +894,8 @@ public interface VertxKafkaComponentBuilderFactory {
          * broker before the expiration of this session timeout, then the broker
          * will remove this client from the group and initiate a rebalance. Note
          * that the value must be in the allowable range as configured in the
-         * broker configuration by group.min.session.timeout.ms and
-         * group.max.session.timeout.ms.
+         * broker configuration by &lt;code&gt;group.min.session.timeout.ms and
+         * &lt;code&gt;group.max.session.timeout.ms.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -906,7 +911,8 @@ public interface VertxKafkaComponentBuilderFactory {
         }
         /**
          * Deserializer class for value that implements the
-         * org.apache.kafka.common.serialization.Deserializer interface.
+         * &lt;code&gt;org.apache.kafka.common.serialization.Deserializer
+         * interface.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -925,22 +931,23 @@ public interface VertxKafkaComponentBuilderFactory {
          * The number of acknowledgments the producer requires the leader to
          * have received before considering a request complete. This controls
          * the durability of records that are sent. The following settings are
-         * allowed: acks=0 If set to zero then the producer will not wait for
-         * any acknowledgment from the server at all. The record will be
-         * immediately added to the socket buffer and considered sent. No
-         * guarantee can be made that the server has received the record in this
-         * case, and the retries configuration will not take effect (as the
-         * client won't generally know of any failures). The offset given back
-         * for each record will always be set to -1. acks=1 This will mean the
-         * leader will write the record to its local log but will respond
-         * without awaiting full acknowledgement from all followers. In this
-         * case should the leader fail immediately after acknowledging the
+         * allowed: &lt;ul&gt; &lt;li&gt;&lt;code&gt;acks=0 If set to zero then
+         * the producer will not wait for any acknowledgment from the server at
+         * all. The record will be immediately added to the socket buffer and
+         * considered sent. No guarantee can be made that the server has
+         * received the record in this case, and the &lt;code&gt;retries
+         * configuration will not take effect (as the client won't generally
+         * know of any failures). The offset given back for each record will
+         * always be set to &lt;code&gt;-1. &lt;li&gt;&lt;code&gt;acks=1 This
+         * will mean the leader will write the record to its local log but will
+         * respond without awaiting full acknowledgement from all followers. In
+         * this case should the leader fail immediately after acknowledging the
          * record but before the followers have replicated it then the record
-         * will be lost. acks=all This means the leader will wait for the full
-         * set of in-sync replicas to acknowledge the record. This guarantees
-         * that the record will not be lost as long as at least one in-sync
-         * replica remains alive. This is the strongest available guarantee.
-         * This is equivalent to the acks=-1 setting.
+         * will be lost. &lt;li&gt;&lt;code&gt;acks=all This means the leader
+         * will wait for the full set of in-sync replicas to acknowledge the
+         * record. This guarantees that the record will not be lost as long as
+         * at least one in-sync replica remains alive. This is the strongest
+         * available guarantee. This is equivalent to the acks=-1 setting.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -958,14 +965,15 @@ public interface VertxKafkaComponentBuilderFactory {
          * The producer will attempt to batch records together into fewer
          * requests whenever multiple records are being sent to the same
          * partition. This helps performance on both the client and the server.
-         * This configuration controls the default batch size in bytes. No
-         * attempt will be made to batch records larger than this size. Requests
-         * sent to brokers will contain multiple batches, one for each partition
-         * with data available to be sent. A small batch size will make batching
-         * less common and may reduce throughput (a batch size of zero will
-         * disable batching entirely). A very large batch size may use memory a
-         * bit more wastefully as we will always allocate a buffer of the
-         * specified batch size in anticipation of additional records.
+         * This configuration controls the default batch size in bytes.
+         * &lt;p&gt;No attempt will be made to batch records larger than this
+         * size. &lt;p&gt;Requests sent to brokers will contain multiple
+         * batches, one for each partition with data available to be sent.
+         * &lt;p&gt;A small batch size will make batching less common and may
+         * reduce throughput (a batch size of zero will disable batching
+         * entirely). A very large batch size may use memory a bit more
+         * wastefully as we will always allocate a buffer of the specified batch
+         * size in anticipation of additional records.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -983,12 +991,12 @@ public interface VertxKafkaComponentBuilderFactory {
          * The total bytes of memory the producer can use to buffer records
          * waiting to be sent to the server. If records are sent faster than
          * they can be delivered to the server the producer will block for
-         * max.block.ms after which it will throw an exception.This setting
-         * should correspond roughly to the total memory the producer will use,
-         * but is not a hard bound since not all memory the producer uses is
-         * used for buffering. Some additional memory will be used for
-         * compression (if compression is enabled) as well as for maintaining
-         * in-flight requests.
+         * &lt;code&gt;max.block.ms after which it will throw an
+         * exception.&lt;p&gt;This setting should correspond roughly to the
+         * total memory the producer will use, but is not a hard bound since not
+         * all memory the producer uses is used for buffering. Some additional
+         * memory will be used for compression (if compression is enabled) as
+         * well as for maintaining in-flight requests.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
@@ -1004,10 +1012,11 @@ public interface VertxKafkaComponentBuilderFactory {
         }
         /**
          * The compression type for all data generated by the producer. The
-         * default is none (i.e. no compression). Valid values are none, gzip,
-         * snappy, lz4, or zstd. Compression is of full batches of data, so the
-         * efficacy of batching will also impact the compression ratio (more
-         * batching means better compression).
+         * default is none (i.e. no compression). Valid values are
+         * &lt;code&gt;none, &lt;code&gt;gzip, &lt;code&gt;snappy,
+         * &lt;code&gt;lz4, or &lt;code&gt;zstd. Compression is of full batches
+         * of data, so the efficacy of batching will also impact the compression
+         * ratio (more batching means better compression).
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1024,15 +1033,15 @@ public interface VertxKafkaComponentBuilderFactory {
         }
         /**
          * An upper bound on the time to report success or failure after a call
-         * to send() returns. This limits the total time that a record will be
-         * delayed prior to sending, the time to await acknowledgement from the
-         * broker (if expected), and the time allowed for retriable send
-         * failures. The producer may report failure to send a record earlier
-         * than this config if either an unrecoverable error is encountered, the
-         * retries have been exhausted, or the record is added to a batch which
-         * reached an earlier delivery expiration deadline. The value of this
-         * config should be greater than or equal to the sum of
-         * request.timeout.ms and linger.ms.
+         * to &lt;code&gt;send() returns. This limits the total time that a
+         * record will be delayed prior to sending, the time to await
+         * acknowledgement from the broker (if expected), and the time allowed
+         * for retriable send failures. The producer may report failure to send
+         * a record earlier than this config if either an unrecoverable error is
+         * encountered, the retries have been exhausted, or the record is added
+         * to a batch which reached an earlier delivery expiration deadline. The
+         * value of this config should be greater than or equal to the sum of
+         * &lt;code&gt;request.timeout.ms and &lt;code&gt;linger.ms.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -1052,10 +1061,11 @@ public interface VertxKafkaComponentBuilderFactory {
          * each message is written in the stream. If 'false', producer retries
          * due to broker failures, etc., may write duplicates of the retried
          * message in the stream. Note that enabling idempotence requires
-         * max.in.flight.requests.per.connection to be less than or equal to 5,
-         * retries to be greater than 0 and acks must be 'all'. If these values
-         * are not explicitly set by the user, suitable values will be chosen.
-         * If incompatible values are set, a ConfigException will be thrown.
+         * &lt;code&gt;max.in.flight.requests.per.connection to be less than or
+         * equal to 5, &lt;code&gt;retries to be greater than 0 and
+         * &lt;code&gt;acks must be 'all'. If these values are not explicitly
+         * set by the user, suitable values will be chosen. If incompatible
+         * values are set, a &lt;code&gt;ConfigException will be thrown.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -1072,7 +1082,8 @@ public interface VertxKafkaComponentBuilderFactory {
         }
         /**
          * Serializer class for key that implements the
-         * org.apache.kafka.common.serialization.Serializer interface.
+         * &lt;code&gt;org.apache.kafka.common.serialization.Serializer
+         * interface.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1118,19 +1129,19 @@ public interface VertxKafkaComponentBuilderFactory {
          * sent out. However in some circumstances the client may want to reduce
          * the number of requests even under moderate load. This setting
          * accomplishes this by adding a small amount of artificial
-         * delay&amp;amp;mdash;that is, rather than immediately sending out a
-         * record the producer will wait for up to the given delay to allow
-         * other records to be sent so that the sends can be batched together.
-         * This can be thought of as analogous to Nagle's algorithm in TCP. This
+         * delay&amp;mdash;that is, rather than immediately sending out a record
+         * the producer will wait for up to the given delay to allow other
+         * records to be sent so that the sends can be batched together. This
+         * can be thought of as analogous to Nagle's algorithm in TCP. This
          * setting gives the upper bound on the delay for batching: once we get
-         * batch.size worth of records for a partition it will be sent
-         * immediately regardless of this setting, however if we have fewer than
-         * this many bytes accumulated for this partition we will 'linger' for
-         * the specified time waiting for more records to show up. This setting
-         * defaults to 0 (i.e. no delay). Setting linger.ms=5, for example,
-         * would have the effect of reducing the number of requests sent but
-         * would add up to 5ms of latency to records sent in the absence of
-         * load.
+         * &lt;code&gt;batch.size worth of records for a partition it will be
+         * sent immediately regardless of this setting, however if we have fewer
+         * than this many bytes accumulated for this partition we will 'linger'
+         * for the specified time waiting for more records to show up. This
+         * setting defaults to 0 (i.e. no delay). Setting
+         * &lt;code&gt;linger.ms=5, for example, would have the effect of
+         * reducing the number of requests sent but would add up to 5ms of
+         * latency to records sent in the absence of load.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
@@ -1145,11 +1156,11 @@ public interface VertxKafkaComponentBuilderFactory {
             return this;
         }
         /**
-         * The configuration controls how long KafkaProducer.send() and
-         * KafkaProducer.partitionsFor() will block.These methods can be blocked
-         * either because the buffer is full or metadata unavailable.Blocking in
-         * the user-supplied serializers or partitioner will not be counted
-         * against this timeout.
+         * The configuration controls how long &lt;code&gt;KafkaProducer.send()
+         * and &lt;code&gt;KafkaProducer.partitionsFor() will block.These
+         * methods can be blocked either because the buffer is full or metadata
+         * unavailable.Blocking in the user-supplied serializers or partitioner
+         * will not be counted against this timeout.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
@@ -1223,7 +1234,7 @@ public interface VertxKafkaComponentBuilderFactory {
         }
         /**
          * Partitioner class that implements the
-         * org.apache.kafka.clients.producer.Partitioner interface.
+         * &lt;code&gt;org.apache.kafka.clients.producer.Partitioner interface.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1244,15 +1255,16 @@ public interface VertxKafkaComponentBuilderFactory {
          * record whose send fails with a potentially transient error. Note that
          * this retry is no different than if the client resent the record upon
          * receiving the error. Allowing retries without setting
-         * max.in.flight.requests.per.connection to 1 will potentially change
-         * the ordering of records because if two batches are sent to a single
-         * partition, and the first fails and is retried but the second
-         * succeeds, then the records in the second batch may appear first. Note
-         * additionally that produce requests will be failed before the number
-         * of retries has been exhausted if the timeout configured by
-         * delivery.timeout.ms expires first before successful acknowledgement.
-         * Users should generally prefer to leave this config unset and instead
-         * use delivery.timeout.ms to control retry behavior.
+         * &lt;code&gt;max.in.flight.requests.per.connection to 1 will
+         * potentially change the ordering of records because if two batches are
+         * sent to a single partition, and the first fails and is retried but
+         * the second succeeds, then the records in the second batch may appear
+         * first. Note additionally that produce requests will be failed before
+         * the number of retries has been exhausted if the timeout configured by
+         * &lt;code&gt;delivery.timeout.ms expires first before successful
+         * acknowledgement. Users should generally prefer to leave this config
+         * unset and instead use &lt;code&gt;delivery.timeout.ms to control
+         * retry behavior.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -1273,12 +1285,12 @@ public interface VertxKafkaComponentBuilderFactory {
          * TransactionalId have been completed prior to starting any new
          * transactions. If no TransactionalId is provided, then the producer is
          * limited to idempotent delivery. If a TransactionalId is configured,
-         * enable.idempotence is implied. By default the TransactionId is not
-         * configured, which means transactions cannot be used. Note that, by
-         * default, transactions require a cluster of at least three brokers
-         * which is the recommended setting for production; for development you
-         * can change this, by adjusting broker setting
-         * transaction.state.log.replication.factor.
+         * &lt;code&gt;enable.idempotence is implied. By default the
+         * TransactionId is not configured, which means transactions cannot be
+         * used. Note that, by default, transactions require a cluster of at
+         * least three brokers which is the recommended setting for production;
+         * for development you can change this, by adjusting broker setting
+         * &lt;code&gt;transaction.state.log.replication.factor.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1297,7 +1309,7 @@ public interface VertxKafkaComponentBuilderFactory {
          * will wait for a transaction status update from the producer before
          * proactively aborting the ongoing transaction.If this value is larger
          * than the transaction.max.timeout.ms setting in the broker, the
-         * request will fail with a InvalidTransactionTimeout error.
+         * request will fail with a &lt;code&gt;InvalidTransactionTimeout error.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -1314,7 +1326,8 @@ public interface VertxKafkaComponentBuilderFactory {
         }
         /**
          * Serializer class for value that implements the
-         * org.apache.kafka.common.serialization.Serializer interface.
+         * &lt;code&gt;org.apache.kafka.common.serialization.Serializer
+         * interface.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1399,10 +1412,8 @@ public interface VertxKafkaComponentBuilderFactory {
         /**
          * JAAS login context parameters for SASL connections in the format used
          * by JAAS configuration files. JAAS configuration file format is
-         * described here. The format for the value is: 'loginModuleClass
-         * controlFlag (optionName=optionValue);'. For brokers, the config must
-         * be prefixed with listener prefix and SASL mechanism name in
-         * lower-case. For example,
+         * described '. For brokers, the config must be prefixed with listener
+         * prefix and SASL mechanism name in lower-case. For example,
          * listener.name.sasl_ssl.scram-sha-256.sasl.jaas.config=com.example.ScramLoginModule required;.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -1659,8 +1670,7 @@ public interface VertxKafkaComponentBuilderFactory {
         /**
          * A list of configurable creator classes each returning a provider
          * implementing security algorithms. These classes should implement the
-         * org.apache.kafka.common.security.auth.SecurityProviderCreator
-         * interface.
+         * &lt;code&gt;org.apache.kafka.common.security.auth.SecurityProviderCreator interface.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

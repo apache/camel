@@ -92,14 +92,14 @@ public interface XmlVerifierEndpointBuilderFactory {
          * Sets the crypto context properties. See {link
          * XMLCryptoContext#setProperty(String, Object)}. Possible properties
          * are defined in XMLSignContext an XMLValidateContext (see Supported
-         * Properties). The following properties are set by default to the value
-         * Boolean#TRUE for the XML validation. If you want to switch these
-         * features off you must set the property value to Boolean#FALSE.
-         * org.jcp.xml.dsig.validateManifests
-         * javax.xml.crypto.dsig.cacheReference.
+         * Properties). &lt;p&gt; The following properties are set by default to
+         * the value Boolean#TRUE for the XML validation. If you want to switch
+         * these features off you must set the property value to Boolean#FALSE.
+         * &lt;ul&gt; &lt;li&gt;&lt;code&gt;org.jcp.xml.dsig.validateManifests
+         * &lt;li&gt;&lt;code&gt;javax.xml.crypto.dsig.cacheReference.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * 
          * Group: producer
          * 
@@ -115,15 +115,15 @@ public interface XmlVerifierEndpointBuilderFactory {
          * Sets the crypto context properties. See {link
          * XMLCryptoContext#setProperty(String, Object)}. Possible properties
          * are defined in XMLSignContext an XMLValidateContext (see Supported
-         * Properties). The following properties are set by default to the value
-         * Boolean#TRUE for the XML validation. If you want to switch these
-         * features off you must set the property value to Boolean#FALSE.
-         * org.jcp.xml.dsig.validateManifests
-         * javax.xml.crypto.dsig.cacheReference.
+         * Properties). &lt;p&gt; The following properties are set by default to
+         * the value Boolean#TRUE for the XML validation. If you want to switch
+         * these features off you must set the property value to Boolean#FALSE.
+         * &lt;ul&gt; &lt;li&gt;&lt;code&gt;org.jcp.xml.dsig.validateManifests
+         * &lt;li&gt;&lt;code&gt;javax.xml.crypto.dsig.cacheReference.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * 
          * Group: producer
          * 
@@ -251,8 +251,9 @@ public interface XmlVerifierEndpointBuilderFactory {
         }
         /**
          * Indicator whether the XML declaration in the outgoing message body
-         * should be omitted. Default value is false. Can be overwritten by the
-         * header XmlSignatureConstants#HEADER_OMIT_XML_DECLARATION.
+         * should be omitted. Default value is &lt;code&gt;false. Can be
+         * overwritten by the header
+         * XmlSignatureConstants#HEADER_OMIT_XML_DECLARATION.
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
@@ -269,8 +270,9 @@ public interface XmlVerifierEndpointBuilderFactory {
         }
         /**
          * Indicator whether the XML declaration in the outgoing message body
-         * should be omitted. Default value is false. Can be overwritten by the
-         * header XmlSignatureConstants#HEADER_OMIT_XML_DECLARATION.
+         * should be omitted. Default value is &lt;code&gt;false. Can be
+         * overwritten by the header
+         * XmlSignatureConstants#HEADER_OMIT_XML_DECLARATION.
          * 
          * The option will be converted to a
          * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
@@ -343,8 +345,9 @@ public interface XmlVerifierEndpointBuilderFactory {
             return this;
         }
         /**
-         * The character encoding of the resulting signed XML document. If null
-         * then the encoding of the original XML document is used.
+         * The character encoding of the resulting signed XML document. If
+         * &lt;code&gt;null then the encoding of the original XML document is
+         * used.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -364,8 +367,8 @@ public interface XmlVerifierEndpointBuilderFactory {
          * shall be removed from the document set to the output message.
          * Normally, this is only necessary, if the XML signature is enveloped.
          * The default value is Boolean#FALSE. This parameter is forwarded to
-         * XmlSignature2Message. This indicator has no effect if the output node
-         * search is of type
+         * XmlSignature2Message. &lt;p&gt; This indicator has no effect if the
+         * output node search is of type
          * DefaultXmlSignature2Message#OUTPUT_NODE_SEARCH_TYPE_DEFAULT.F.
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
@@ -387,8 +390,8 @@ public interface XmlVerifierEndpointBuilderFactory {
          * shall be removed from the document set to the output message.
          * Normally, this is only necessary, if the XML signature is enveloped.
          * The default value is Boolean#FALSE. This parameter is forwarded to
-         * XmlSignature2Message. This indicator has no effect if the output node
-         * search is of type
+         * XmlSignature2Message. &lt;p&gt; This indicator has no effect if the
+         * output node search is of type
          * DefaultXmlSignature2Message#OUTPUT_NODE_SEARCH_TYPE_DEFAULT.F.
          * 
          * The option will be converted to a
@@ -664,8 +667,8 @@ public interface XmlVerifierEndpointBuilderFactory {
          * If you want to restrict the remote access via reference URIs, you can
          * set an own dereferencer. Optional parameter. If not set the provider
          * default dereferencer is used which can resolve URI fragments, HTTP,
-         * file and XPpointer URIs. Attention: The implementation is provider
-         * dependent!.
+         * file and XPpointer URIs. &lt;p&gt; Attention: The implementation is
+         * provider dependent!.
          * 
          * The option is a:
          * &lt;code&gt;javax.xml.crypto.URIDereferencer&lt;/code&gt; type.
@@ -684,8 +687,8 @@ public interface XmlVerifierEndpointBuilderFactory {
          * If you want to restrict the remote access via reference URIs, you can
          * set an own dereferencer. Optional parameter. If not set the provider
          * default dereferencer is used which can resolve URI fragments, HTTP,
-         * file and XPpointer URIs. Attention: The implementation is provider
-         * dependent!.
+         * file and XPpointer URIs. &lt;p&gt; Attention: The implementation is
+         * provider dependent!.
          * 
          * The option will be converted to a
          * &lt;code&gt;javax.xml.crypto.URIDereferencer&lt;/code&gt; type.

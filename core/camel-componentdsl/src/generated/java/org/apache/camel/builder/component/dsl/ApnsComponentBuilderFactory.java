@@ -49,7 +49,7 @@ public interface ApnsComponentBuilderFactory {
      */
     interface ApnsComponentBuilder extends ComponentBuilder<ApnsComponent> {
         /**
-         * The ApnsService to use. The
+         * The ApnsService to use. &lt;p/&gt; The
          * org.apache.camel.component.apns.factory.ApnsServiceFactory can be
          * used to build a ApnsService.
          * 

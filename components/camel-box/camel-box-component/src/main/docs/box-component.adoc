@@ -74,10 +74,10 @@ The Box component supports 19 options, which are listed below.
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 | *httpParams* (advanced) | Custom HTTP params for settings like proxy host |  | Map
-| *authenticationType* (authentication) | The type of authentication for connection. Types of Authentication: STANDARD_AUTHENTICATION - OAuth 2.0 (3-legged) SERVER_AUTHENTICATION - OAuth 2.0 with JSON Web Tokens | APP_USER_AUTHENTICATION | String
+| *authenticationType* (authentication) | The type of authentication for connection. <p> Types of Authentication: <ul> <li>STANDARD_AUTHENTICATION - OAuth 2.0 (3-legged) <li>SERVER_AUTHENTICATION - OAuth 2.0 with JSON Web Tokens | APP_USER_AUTHENTICATION | String
 | *accessTokenCache* (security) | Custom Access Token Cache for storing and retrieving access tokens. |  | IAccessTokenCache
 | *clientSecret* (security) | Box application client secret |  | String
-| *encryptionAlgorithm* (security) | The type of encryption algorithm for JWT. Supported Algorithms: RSA_SHA_256 RSA_SHA_384 RSA_SHA_512. There are 3 enums and the value can be one of: RSA_SHA_256, RSA_SHA_384, RSA_SHA_512 | RSA_SHA_256 | EncryptionAlgorithm
+| *encryptionAlgorithm* (security) | The type of encryption algorithm for JWT. <p> Supported Algorithms: <ul> <li>RSA_SHA_256 <li>RSA_SHA_384 <li>RSA_SHA_512. There are 3 enums and the value can be one of: RSA_SHA_256, RSA_SHA_384, RSA_SHA_512 | RSA_SHA_256 | EncryptionAlgorithm
 | *maxCacheEntries* (security) | The maximum number of access tokens in cache. | 100 | int
 | *privateKeyFile* (security) | The private key for generating the JWT signature. |  | String
 | *privateKeyPassword* (security) | The password for the private key. |  | String
@@ -123,10 +123,10 @@ with the following path and query parameters:
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *httpParams* (advanced) | Custom HTTP params for settings like proxy host |  | Map
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
-| *authenticationType* (authentication) | The type of authentication for connection. Types of Authentication: STANDARD_AUTHENTICATION - OAuth 2.0 (3-legged) SERVER_AUTHENTICATION - OAuth 2.0 with JSON Web Tokens | APP_USER_AUTHENTICATION | String
+| *authenticationType* (authentication) | The type of authentication for connection. <p> Types of Authentication: <ul> <li>STANDARD_AUTHENTICATION - OAuth 2.0 (3-legged) <li>SERVER_AUTHENTICATION - OAuth 2.0 with JSON Web Tokens | APP_USER_AUTHENTICATION | String
 | *accessTokenCache* (security) | Custom Access Token Cache for storing and retrieving access tokens. |  | IAccessTokenCache
 | *clientSecret* (security) | Box application client secret |  | String
-| *encryptionAlgorithm* (security) | The type of encryption algorithm for JWT. Supported Algorithms: RSA_SHA_256 RSA_SHA_384 RSA_SHA_512. There are 3 enums and the value can be one of: RSA_SHA_256, RSA_SHA_384, RSA_SHA_512 | RSA_SHA_256 | EncryptionAlgorithm
+| *encryptionAlgorithm* (security) | The type of encryption algorithm for JWT. <p> Supported Algorithms: <ul> <li>RSA_SHA_256 <li>RSA_SHA_384 <li>RSA_SHA_512. There are 3 enums and the value can be one of: RSA_SHA_256, RSA_SHA_384, RSA_SHA_512 | RSA_SHA_256 | EncryptionAlgorithm
 | *maxCacheEntries* (security) | The maximum number of access tokens in cache. | 100 | int
 | *privateKeyFile* (security) | The private key for generating the JWT signature. |  | String
 | *privateKeyPassword* (security) | The password for the private key. |  | String
@@ -352,7 +352,7 @@ The event-logs API method(s) has the following set of parameters listed in the t
 | Method | Parameter | Description | Type
 | getEnterpriseEvents | *after* |  The lower bound on the timestamp of the events returned | Date
 | getEnterpriseEvents | *before* |  The upper bound on the timestamp of the events returned | Date
-| getEnterpriseEvents | *position* | *Optional*  The starting position of the event stream. May be null in which case all events within bounds returned. | String
+| getEnterpriseEvents | *position* | *Optional*  The starting position of the event stream. May be <code>null in which case all events within bounds returned. | String
 | getEnterpriseEvents | *types* | *Optional*  An optional list of event types to filter by | Type[]
 |===
 
@@ -503,7 +503,7 @@ The 22 method(s) is listed in the table below.
 | *getFileVersions* | versions | Get any previous versions of file
 | *moveFile* | move | Move file to destination folder while optionally giving it a new name
 | *promoteFileVersion* | promoteVersion | Promote a previous version of file
-| *renameFile* | rename | Rename file giving it the name newName
+| *renameFile* | rename | Rename file giving it the name <code>newName
 | *updateFileInfo* | updateInfo | Update file information
 | *updateFileMetadata* | updateMetadata | Update the file properties metadata
 | *uploadFile* | upload | Upload a new file to parent folder
@@ -519,32 +519,32 @@ The files API method(s) has the following set of parameters listed in the table 
 | checkUpload | *size* | *Optional*  The size of the file's content used for monitoring the upload's progress | Long
 | copyFile | *destinationFolderId* |  The id of the destination folder | String
 | copyFile | *fileId* |  The id of file to copy | String
-| copyFile | *newName* | *Optional*  The new name for copied file; if newName is null, the copied file has same name as the original. | String
+| copyFile | *newName* | *Optional*  The new name for copied file; if <code>newName is <code>null, the copied file has same name as the original. | String
 | createFileMetadata | *fileId* |  The id of the file to create metadata for | String
 | createFileMetadata | *metadata* |  The new metadata values | Metadata
-| createFileMetadata | *typeName* | *Optional*  The metadata template type name; if null the global properties template type is used. | String
+| createFileMetadata | *typeName* | *Optional*  The metadata template type name; if <code>null the global properties template type is used. | String
 | createFileSharedLink | *access* |  The access level of the shared link | Access
 | createFileSharedLink | *fileId* |  The id of the file to create shared link on | String
-| createFileSharedLink | *permissions* | *Optional*  The permissions of the created link; if permissions is null then the created shared link is create with default permissions. | Permissions
-| createFileSharedLink | *unshareDate* | *Optional*  The date and time at which time the created shared link will expire; if unsharedDate is null then a non-expiring link is created. | Date
+| createFileSharedLink | *permissions* | *Optional*  The permissions of the created link; if <code>permissions is <code>null then the created shared link is create with default permissions. | Permissions
+| createFileSharedLink | *unshareDate* | *Optional*  The date and time at which time the created shared link will expire; if <code>unsharedDate is <code>null then a non-expiring link is created. | Date
 | deleteFile | *fileId* |  The id of file to delete | String
 | deleteFileMetadata | *fileId* |  The id of file to delete | String
 | deleteFileVersion | *fileId* |  The id of file with version to delete | String
-| deleteFileVersion | *version* |  The version of file to delete; initial version of file has value of 0, second version of file is 1 and so on. | Integer
+| deleteFileVersion | *version* |  The version of file to delete; initial version of file has value of <code>0, second version of file is <code>1 and so on. | Integer
 | downloadFile | *fileId* |  The id of file | String
-| downloadFile | *listener* | *Optional*  A listener for monitoring the download's progress; if null the download's progress will not be monitored. | ProgressListener
+| downloadFile | *listener* | *Optional*  A listener for monitoring the download's progress; if <code>null the download's progress will not be monitored. | ProgressListener
 | downloadFile | *output* |  The stream to which the file contents will be written | OutputStream
-| downloadFile | *rangeEnd* | *Optional*  The byte offset in file at which to stop the download; if null the entire contents of file will be downloaded. | Long
-| downloadFile | *rangeStart* | *Optional*  The byte offset in file at which to start the download; if null the entire contents of file will be downloaded. | Long
+| downloadFile | *rangeEnd* | *Optional*  The byte offset in file at which to stop the download; if <code>null the entire contents of file will be downloaded. | Long
+| downloadFile | *rangeStart* | *Optional*  The byte offset in file at which to start the download; if <code>null the entire contents of file will be downloaded. | Long
 | downloadPreviousFileVersion | *fileId* |  The id of file | String
-| downloadPreviousFileVersion | *listener* | *Optional*  A listener for monitoring the download's progress; if null the download's progress will not be monitored. | ProgressListener
+| downloadPreviousFileVersion | *listener* | *Optional*  A listener for monitoring the download's progress; if <code>null the download's progress will not be monitored. | ProgressListener
 | downloadPreviousFileVersion | *output* |  The stream to which the version contents will be written | OutputStream
-| downloadPreviousFileVersion | *version* |  The version of file to download; initial version of file has value of 0, second version of file is 1 and so on. | Integer
+| downloadPreviousFileVersion | *version* |  The version of file to download; initial version of file has value of <code>0, second version of file is <code>1 and so on. | Integer
 | getDownloadURL | *fileId* |  The id of file | String
-| getFileInfo | *fields* | *Optional*  The information fields to retrieve; if null all information fields are retrieved. | String[]
+| getFileInfo | *fields* | *Optional*  The information fields to retrieve; if <code>null all information fields are retrieved. | String[]
 | getFileInfo | *fileId* |  The id of file | String
 | getFileMetadata | *fileId* |  The id of the file to retrieve metadata for | String
-| getFileMetadata | *typeName* | *Optional*  The metadata template type name; if null the global properties template type is used. | String
+| getFileMetadata | *typeName* | *Optional*  The metadata template type name; if <code>null the global properties template type is used. | String
 | getFilePreviewLink | *fileId* |  The id of the file to get preview link on | String
 | getFileThumbnail | *fileId* |  The id of the file to get thumbnail | String
 | getFileThumbnail | *fileType* |  Either PNG of JPG | ThumbnailFileType
@@ -555,9 +555,9 @@ The files API method(s) has the following set of parameters listed in the table 
 | getFileVersions | *fileId* |  The id of file | String
 | moveFile | *destinationFolderId* |  The id of the destination folder | String
 | moveFile | *fileId* |  The id of file to move | String
-| moveFile | *newName* | *Optional*  The new name of moved file; if newName is null, the moved file has same name as the original. | String
+| moveFile | *newName* | *Optional*  The new name of moved file; if <code>newName is <code>null, the moved file has same name as the original. | String
 | promoteFileVersion | *fileId* |  The id of file | String
-| promoteFileVersion | *version* |  The version of file to promote; initial version of file has value of 0, second version of file is 1 and so on. | Integer
+| promoteFileVersion | *version* |  The version of file to promote; initial version of file has value of <code>0, second version of file is <code>1 and so on. | Integer
 | renameFile | *fileId* |  The id of file to rename | String
 | renameFile | *newFileName* |  The new name of file | String
 | updateFileInfo | *fileId* |  The id of file to update | String
@@ -639,14 +639,14 @@ The 10 method(s) is listed in the table below.
 |===
 | Method | Alias | Description
 | *copyFolder* | copy | Copy folder to destination folder while optionally giving it a new name
-| *createFolder* | create | Create a folder specified by path from parent folder with given parentFolderId, creating intermediate directories as required
+| *createFolder* | create | Create a folder specified by path from parent folder with given <code>parentFolderId, creating intermediate directories as required
 | *createFolderSharedLink* | link | Create a shared link to folder
 | *deleteFolder* | delete | Delete folder
-| *getFolder* | folder | Return the Box folder referenced by path
+| *getFolder* | folder | Return the Box folder referenced by <code>path
 | *getFolderInfo* | info | Get folder information
 | *getFolderItems* | items | Returns a specific range of child items in folder and specifies which fields of each item to retrieve
 | *moveFolder* | move | Move folder to destination folder while optionally giving it a new name
-| *renameFolder* | rename | Rename folder giving it the name newName
+| *renameFolder* | rename | Rename folder giving it the name <code>newName
 | *updateFolderInfo* | updateInfo | Update folder information
 |===
 
@@ -656,25 +656,25 @@ The folders API method(s) has the following set of parameters listed in the tabl
 | Method | Parameter | Description | Type
 | copyFolder | *destinationFolderId* |  The id of the destination folder | String
 | copyFolder | *folderId* |  The id of folder to copy | String
-| copyFolder | *newName* | *Optional*  The new name for copied folder; if newName is null, the copied folder has same name as the original. | String
+| copyFolder | *newName* | *Optional*  The new name for copied folder; if <code>newName is <code>null, the copied folder has same name as the original. | String
 | createFolder | *folderName* |  The name of created folder | String
 | createFolder | *parentFolderId* |  The id of parent folder | String
 | createFolder | *path* |  Sequence of Box folder names from parent folder to returned folder | String[]
 | createFolderSharedLink | *access* |  The access level of the shared link | Access
 | createFolderSharedLink | *folderId* |  The id of folder to create shared link on | String
-| createFolderSharedLink | *permissions* |  The permissions of the created link; if permissions is null then the created shared link is create with default permissions. | Permissions
-| createFolderSharedLink | *unshareDate* |  The date and time at which time the created shared link will expire; if unsharedDate is null then a non-expiring link is created. | Date
+| createFolderSharedLink | *permissions* |  The permissions of the created link; if <code>permissions is <code>null then the created shared link is create with default permissions. | Permissions
+| createFolderSharedLink | *unshareDate* |  The date and time at which time the created shared link will expire; if <code>unsharedDate is <code>null then a non-expiring link is created. | Date
 | deleteFolder | *folderId* |  The id of folder to delete | String
 | getFolder | *path* |  Sequence of Box folder names from root folder to returned folder | String[]
-| getFolderInfo | *fields* | *Optional*  The information fields to retrieve; if null all information fields are retrieved. | String[]
+| getFolderInfo | *fields* | *Optional*  The information fields to retrieve; if <code>null all information fields are retrieved. | String[]
 | getFolderInfo | *folderId* |  The id of folder | String
-| getFolderItems | *fields* | *Optional*  The item fields to retrieve for each child item; if null all item fields are retrieved. | String[]
+| getFolderItems | *fields* | *Optional*  The item fields to retrieve for each child item; if <code>null all item fields are retrieved. | String[]
 | getFolderItems | *folderId* |  The id of folder | String
-| getFolderItems | *limit* | *Optional*  The maximum number of children to retrieve after the offset; if null all child items are retrieved. | Long
-| getFolderItems | *offset* | *Optional*  The index of first child item to retrieve; if null all child items are retrieved. | Long
+| getFolderItems | *limit* | *Optional*  The maximum number of children to retrieve after the offset; if <code>null all child items are retrieved. | Long
+| getFolderItems | *offset* | *Optional*  The index of first child item to retrieve; if <code>null all child items are retrieved. | Long
 | moveFolder | *destinationFolderId* |  The id of the destination folder | String
 | moveFolder | *folderId* |  The id of folder to move | String
-| moveFolder | *newName* | *Optional*  The new name of moved folder; if newName is null, the moved folder has same name as the original. | String
+| moveFolder | *newName* | *Optional*  The new name of moved folder; if <code>newName is <code>null, the moved folder has same name as the original. | String
 | renameFolder | *folderId* |  The id of folder to rename | String
 | renameFolder | *newFolderName* |  The new name of folder | String
 | updateFolderInfo | *folderId* |  The id of folder to update | String
@@ -752,7 +752,7 @@ The groups API method(s) has the following set of parameters listed in the table
 |===
 | Method | Parameter | Description | Type
 | addGroupMembership | *groupId* |  The id of group | String
-| addGroupMembership | *role* | *Optional*  The role of the user in this group. Can be null to assign the default role. | Role
+| addGroupMembership | *role* | *Optional*  The role of the user in this group. Can be <code>null to assign the default role. | Role
 | addGroupMembership | *userId* |  The id of user to be added to group | String
 | createGroup | *description* | *Optional*  The description of the new group | String
 | createGroup | *externalSyncIdentifier* | *Optional*  The external_sync_identifier of the new group | String
@@ -993,7 +993,7 @@ The users API method(s) has the following set of parameters listed in the table 
 | deleteUserEmailAlias | *emailAliasId* |  The id of the email alias to delete | String
 | deleteUserEmailAlias | *userId* |  The id of user | String
 | getAllEnterpriseOrExternalUsers | *fields* | *Optional*  The fields to retrieve. Leave this out for the standard fields. | String[]
-| getAllEnterpriseOrExternalUsers | *filterTerm* | *Optional*  The filter term to lookup users by (login for external, login or name for managed); if null all managed users are returned. | String
+| getAllEnterpriseOrExternalUsers | *filterTerm* | *Optional*  The filter term to lookup users by (login for external, login or name for managed); if <code>null all managed users are returned. | String
 | getUserEmailAlias | *userId* |  The id of user | String
 | getUserInfo | *userId* |  The id of user | String
 | moveFolderToUser | *sourceUserId* |  The user id of the user whose files will be the source for this operation | String

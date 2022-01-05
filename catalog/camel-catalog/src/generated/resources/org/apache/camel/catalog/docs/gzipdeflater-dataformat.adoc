@@ -3,7 +3,7 @@
 :docTitle: GZip Deflater
 :shortname: gzipdeflater
 :artifactId: camel-zip-deflater
-:description: Compress and decompress messages using java.util.zip.GZIPStream.
+:description: Compress and decompress messages using <code>java.util.zip.GZIPStream.
 :since: 2.0
 :supportLevel: Stable
 //Manually maintained attributes

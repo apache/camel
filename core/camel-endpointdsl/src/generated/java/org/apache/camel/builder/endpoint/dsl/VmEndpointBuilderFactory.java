@@ -537,8 +537,9 @@ public interface VmEndpointBuilderFactory {
         /**
          * Whether the producer should discard the message (do not add the
          * message to the queue), when sending to a queue with no active
-         * consumers. Only one of the options discardIfNoConsumers and
-         * failIfNoConsumers can be enabled at the same time.
+         * consumers. &lt;p/&gt; Only one of the options
+         * &lt;tt&gt;discardIfNoConsumers and &lt;tt&gt;failIfNoConsumers can be
+         * enabled at the same time.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -556,8 +557,9 @@ public interface VmEndpointBuilderFactory {
         /**
          * Whether the producer should discard the message (do not add the
          * message to the queue), when sending to a queue with no active
-         * consumers. Only one of the options discardIfNoConsumers and
-         * failIfNoConsumers can be enabled at the same time.
+         * consumers. &lt;p/&gt; Only one of the options
+         * &lt;tt&gt;discardIfNoConsumers and &lt;tt&gt;failIfNoConsumers can be
+         * enabled at the same time.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -615,9 +617,9 @@ public interface VmEndpointBuilderFactory {
         }
         /**
          * Whether the producer should fail by throwing an exception, when
-         * sending to a queue with no active consumers. Only one of the options
-         * discardIfNoConsumers and failIfNoConsumers can be enabled at the same
-         * time.
+         * sending to a queue with no active consumers. &lt;p/&gt; Only one of
+         * the options &lt;tt&gt;discardIfNoConsumers and
+         * &lt;tt&gt;failIfNoConsumers can be enabled at the same time.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -634,9 +636,9 @@ public interface VmEndpointBuilderFactory {
         }
         /**
          * Whether the producer should fail by throwing an exception, when
-         * sending to a queue with no active consumers. Only one of the options
-         * discardIfNoConsumers and failIfNoConsumers can be enabled at the same
-         * time.
+         * sending to a queue with no active consumers. &lt;p/&gt; Only one of
+         * the options &lt;tt&gt;discardIfNoConsumers and
+         * &lt;tt&gt;failIfNoConsumers can be enabled at the same time.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.

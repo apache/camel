@@ -75,10 +75,10 @@ public interface GridFsEndpointBuilderFactory {
         /**
          * Sets a MongoDB ReadPreference on the Mongo connection. Read
          * preferences set directly on the connection will be overridden by this
-         * setting. The com.mongodb.ReadPreference#valueOf(String) utility
-         * method is used to resolve the passed readPreference value. Some
-         * examples for the possible values are nearest, primary or secondary
-         * etc.
+         * setting. &lt;p/&gt; The com.mongodb.ReadPreference#valueOf(String)
+         * utility method is used to resolve the passed readPreference value.
+         * Some examples for the possible values are nearest, primary or
+         * secondary etc.
          * 
          * The option is a: &lt;code&gt;com.mongodb.ReadPreference&lt;/code&gt;
          * type.
@@ -96,10 +96,10 @@ public interface GridFsEndpointBuilderFactory {
         /**
          * Sets a MongoDB ReadPreference on the Mongo connection. Read
          * preferences set directly on the connection will be overridden by this
-         * setting. The com.mongodb.ReadPreference#valueOf(String) utility
-         * method is used to resolve the passed readPreference value. Some
-         * examples for the possible values are nearest, primary or secondary
-         * etc.
+         * setting. &lt;p/&gt; The com.mongodb.ReadPreference#valueOf(String)
+         * utility method is used to resolve the passed readPreference value.
+         * Some examples for the possible values are nearest, primary or
+         * secondary etc.
          * 
          * The option will be converted to a
          * &lt;code&gt;com.mongodb.ReadPreference&lt;/code&gt; type.
@@ -517,10 +517,10 @@ public interface GridFsEndpointBuilderFactory {
         /**
          * Sets a MongoDB ReadPreference on the Mongo connection. Read
          * preferences set directly on the connection will be overridden by this
-         * setting. The com.mongodb.ReadPreference#valueOf(String) utility
-         * method is used to resolve the passed readPreference value. Some
-         * examples for the possible values are nearest, primary or secondary
-         * etc.
+         * setting. &lt;p/&gt; The com.mongodb.ReadPreference#valueOf(String)
+         * utility method is used to resolve the passed readPreference value.
+         * Some examples for the possible values are nearest, primary or
+         * secondary etc.
          * 
          * The option is a: &lt;code&gt;com.mongodb.ReadPreference&lt;/code&gt;
          * type.
@@ -538,10 +538,10 @@ public interface GridFsEndpointBuilderFactory {
         /**
          * Sets a MongoDB ReadPreference on the Mongo connection. Read
          * preferences set directly on the connection will be overridden by this
-         * setting. The com.mongodb.ReadPreference#valueOf(String) utility
-         * method is used to resolve the passed readPreference value. Some
-         * examples for the possible values are nearest, primary or secondary
-         * etc.
+         * setting. &lt;p/&gt; The com.mongodb.ReadPreference#valueOf(String)
+         * utility method is used to resolve the passed readPreference value.
+         * Some examples for the possible values are nearest, primary or
+         * secondary etc.
          * 
          * The option will be converted to a
          * &lt;code&gt;com.mongodb.ReadPreference&lt;/code&gt; type.
@@ -745,10 +745,10 @@ public interface GridFsEndpointBuilderFactory {
         /**
          * Sets a MongoDB ReadPreference on the Mongo connection. Read
          * preferences set directly on the connection will be overridden by this
-         * setting. The com.mongodb.ReadPreference#valueOf(String) utility
-         * method is used to resolve the passed readPreference value. Some
-         * examples for the possible values are nearest, primary or secondary
-         * etc.
+         * setting. &lt;p/&gt; The com.mongodb.ReadPreference#valueOf(String)
+         * utility method is used to resolve the passed readPreference value.
+         * Some examples for the possible values are nearest, primary or
+         * secondary etc.
          * 
          * The option is a: &lt;code&gt;com.mongodb.ReadPreference&lt;/code&gt;
          * type.
@@ -765,10 +765,10 @@ public interface GridFsEndpointBuilderFactory {
         /**
          * Sets a MongoDB ReadPreference on the Mongo connection. Read
          * preferences set directly on the connection will be overridden by this
-         * setting. The com.mongodb.ReadPreference#valueOf(String) utility
-         * method is used to resolve the passed readPreference value. Some
-         * examples for the possible values are nearest, primary or secondary
-         * etc.
+         * setting. &lt;p/&gt; The com.mongodb.ReadPreference#valueOf(String)
+         * utility method is used to resolve the passed readPreference value.
+         * Some examples for the possible values are nearest, primary or
+         * secondary etc.
          * 
          * The option will be converted to a
          * &lt;code&gt;com.mongodb.ReadPreference&lt;/code&gt; type.

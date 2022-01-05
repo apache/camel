@@ -181,7 +181,7 @@ The 1 method(s) is listed in the table below.
 [width="100%",cols="2,2,6",options="header"]
 |===
 | Method | Alias | Description
-| *send* |  | Send ediMessage to trading partner
+| *send* |  | Send <code>ediMessage to trading partner
 |===
 
 The client API method(s) has the following set of parameters listed in the table below:
@@ -191,18 +191,18 @@ The client API method(s) has the following set of parameters listed in the table
 | send | *as2From* |  AS2 name of sender | String
 | send | *as2MessageStructure* |  The structure of AS2 to send; see AS2MessageStructure | AS2MessageStructure
 | send | *as2To* |  AS2 name of recipient | String
-| send | *compressionAlgorithm* | *Optional*  The algorithm used to compress the message or null if sending EDI message uncompressed | AS2CompressionAlgorithm
-| send | *dispositionNotificationTo* | *Optional*  An RFC2822 address to request a receipt or null if no receipt requested | String
+| send | *compressionAlgorithm* | *Optional*  The algorithm used to compress the message or <code>null if sending EDI message uncompressed | AS2CompressionAlgorithm
+| send | *dispositionNotificationTo* | *Optional*  An RFC2822 address to request a receipt or <code>null if no receipt requested | String
 | send | *ediMessage* |  EDI message to transport | String
 | send | *ediMessageContentType* |  The content typw of EDI message | ContentType
 | send | *ediMessageTransferEncoding* | *Optional*  The transfer encoding used to transport EDI message | String
-| send | *encryptingAlgorithm* | *Optional*  The algorithm used to encrypt the message or null if sending EDI message unencrypted | AS2EncryptionAlgorithm
-| send | *encryptingCertificateChain* | *Optional*  The chain of certificates used to encrypt the message or null if sending EDI message unencrypted | Certificate[]
+| send | *encryptingAlgorithm* | *Optional*  The algorithm used to encrypt the message or <code>null if sending EDI message unencrypted | AS2EncryptionAlgorithm
+| send | *encryptingCertificateChain* | *Optional*  The chain of certificates used to encrypt the message or <code>null if sending EDI message unencrypted | Certificate[]
 | send | *from* |  RFC2822 address of sender | String
 | send | *requestUri* |  Resource location to deliver message | String
-| send | *signedReceiptMicAlgorithms* | *Optional*  The senders list of signing algorithms for signing receipt, in preferred order, or null if requesting an unsigned receipt. | String[]
-| send | *signingAlgorithm* | *Optional*  The algorithm used to sign the message or null if sending EDI message unsigned | AS2SignatureAlgorithm
-| send | *signingCertificateChain* | *Optional*  The chain of certificates used to sign the message or null if sending EDI message unsigned | Certificate[]
+| send | *signedReceiptMicAlgorithms* | *Optional*  The senders list of signing algorithms for signing receipt, in preferred order, or <code>null if requesting an unsigned receipt. | String[]
+| send | *signingAlgorithm* | *Optional*  The algorithm used to sign the message or <code>null if sending EDI message unsigned | AS2SignatureAlgorithm
+| send | *signingCertificateChain* | *Optional*  The chain of certificates used to sign the message or <code>null if sending EDI message unsigned | Certificate[]
 | send | *signingPrivateKey* | *Optional*  The private key used to sign EDI message | PrivateKey
 | send | *subject* |  Message subject | String
 |===

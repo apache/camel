@@ -85,7 +85,7 @@ The FHIR component supports 27 options, which are listed below.
 | *forceConformanceCheck* (advanced) | Force conformance check | false | boolean
 | *sessionCookie* (advanced) | HTTP session cookie to add to every request |  | String
 | *socketTimeout* (advanced) | How long to block for individual read/write operations (in ms) | 10000 | Integer
-| *summary* (advanced) | Request that the server modify the response using the _summary param. There are 5 enums and the value can be one of: COUNT, TEXT, DATA, TRUE, FALSE |  | String
+| *summary* (advanced) | Request that the server modify the response using the <code>_summary param. There are 5 enums and the value can be one of: COUNT, TEXT, DATA, TRUE, FALSE |  | String
 | *validationMode* (advanced) | When should Camel validate the FHIR Server's conformance statement. There are 2 enums and the value can be one of: NEVER, ONCE | ONCE | String
 | *proxyHost* (proxy) | The proxy host |  | String
 | *proxyPassword* (proxy) | The proxy password |  | String
@@ -145,7 +145,7 @@ with the following path and query parameters:
 | *forceConformanceCheck* (advanced) | Force conformance check | false | boolean
 | *sessionCookie* (advanced) | HTTP session cookie to add to every request |  | String
 | *socketTimeout* (advanced) | How long to block for individual read/write operations (in ms) | 10000 | Integer
-| *summary* (advanced) | Request that the server modify the response using the _summary param. There are 5 enums and the value can be one of: COUNT, TEXT, DATA, TRUE, FALSE |  | String
+| *summary* (advanced) | Request that the server modify the response using the <code>_summary param. There are 5 enums and the value can be one of: COUNT, TEXT, DATA, TRUE, FALSE |  | String
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *validationMode* (advanced) | When should Camel validate the FHIR Server's conformance statement. There are 2 enums and the value can be one of: NEVER, ONCE | ONCE | String
 | *proxyHost* (proxy) | The proxy host |  | String
@@ -295,10 +295,10 @@ The create API method(s) has the following set of parameters listed in the table
 |===
 | Method | Parameter | Description | Type
 | resource | *extraParameters* | *Optional*  See ExtraParameters for a full list of parameters that can be passed, may be NULL | Map
-| resource | *preferReturn* | *Optional*  Add a Prefer header to the request, which requests that the server include or suppress the resource body as a part of the result. If a resource is returned by the server it will be parsed an accessible to the client via MethodOutcome#getResource() , may be null | PreferReturnEnum
+| resource | *preferReturn* | *Optional*  Add a <code>Prefer header to the request, which requests that the server include or suppress the resource body as a part of the result. If a resource is returned by the server it will be parsed an accessible to the client via MethodOutcome#getResource() , may be null | PreferReturnEnum
 | resource | *resource* |  The resource to create | IBaseResource
 | resource | *resourceAsString* |  The resource to create | String
-| resource | *url* | *Optional*  The search URL to use. The format of this URL should be of the form ResourceTypeParameters, for example: Patientname=Smith&amp;identifier=13.2.4.11.4%7C847366, may be null | String
+| resource | *url* | *Optional*  The search URL to use. The format of this URL should be of the form <code>ResourceTypeParameters, for example: <code>Patientname=Smith&amp;identifier=13.2.4.11.4%7C847366, may be null | String
 |===
 
 In addition to the parameters above, the create API can also use from the 45 endpoint query option
@@ -362,7 +362,7 @@ The delete API method(s) has the following set of parameters listed in the table
 | resourceById | *stringId* |  It's id | String
 | resourceById | *type* |  The resource type e.g Patient | String
 | resourceConditionalByUrl | *extraParameters* | *Optional*  See ExtraParameters for a full list of parameters that can be passed, may be NULL | Map
-| resourceConditionalByUrl | *url* |  The search URL to use. The format of this URL should be of the form ResourceTypeParameters, for example: Patientname=Smith&amp;identifier=13.2.4.11.4%7C847366 | String
+| resourceConditionalByUrl | *url* |  The search URL to use. The format of this URL should be of the form <code>ResourceTypeParameters, for example: <code>Patientname=Smith&amp;identifier=13.2.4.11.4%7C847366 | String
 |===
 
 In addition to the parameters above, the delete API can also use from the 45 endpoint query option
@@ -417,23 +417,23 @@ The history API method(s) has the following set of parameters listed in the tabl
 [width="100%",cols="2,2,4,2",options="header"]
 |===
 | Method | Parameter | Description | Type
-| onInstance | *count* | *Optional*  Request that the server return only up to theCount number of resources, may be NULL | Integer
+| onInstance | *count* | *Optional*  Request that the server return only up to <code>theCount number of resources, may be NULL | Integer
 | onInstance | *cutoff* | *Optional*  Request that the server return only resource versions that were created at or after the given time (inclusive), may be NULL | Date
 | onInstance | *extraParameters* | *Optional*  See ExtraParameters for a full list of parameters that can be passed, may be NULL | Map
 | onInstance | *iCutoff* | *Optional*  Request that the server return only resource versions that were created at or after the given time (inclusive), may be NULL | IPrimitiveType
 | onInstance | *id* |  The IIdType which must be populated with both a resource type and a resource ID at | IIdType
-| onInstance | *returnType* |  Request that the method return a Bundle resource (such as ca.uhn.fhir.model.dstu2.resource.Bundle). Use this method if you are accessing a DSTU2 server. | Class
-| onServer | *count* | *Optional*  Request that the server return only up to theCount number of resources, may be NULL | Integer
+| onInstance | *returnType* |  Request that the method return a Bundle resource (such as <code>ca.uhn.fhir.model.dstu2.resource.Bundle). Use this method if you are accessing a DSTU2 server. | Class
+| onServer | *count* | *Optional*  Request that the server return only up to <code>theCount number of resources, may be NULL | Integer
 | onServer | *cutoff* | *Optional*  Request that the server return only resource versions that were created at or after the given time (inclusive), may be NULL | Date
 | onServer | *extraParameters* | *Optional*  See ExtraParameters for a full list of parameters that can be passed, may be NULL | Map
 | onServer | *iCutoff* | *Optional*  Request that the server return only resource versions that were created at or after the given time (inclusive), may be NULL | IPrimitiveType
-| onServer | *returnType* |  Request that the method return a Bundle resource (such as ca.uhn.fhir.model.dstu2.resource.Bundle). Use this method if you are accessing a DSTU2 server. | Class
-| onType | *count* | *Optional*  Request that the server return only up to theCount number of resources, may be NULL | Integer
+| onServer | *returnType* |  Request that the method return a Bundle resource (such as <code>ca.uhn.fhir.model.dstu2.resource.Bundle). Use this method if you are accessing a DSTU2 server. | Class
+| onType | *count* | *Optional*  Request that the server return only up to <code>theCount number of resources, may be NULL | Integer
 | onType | *cutoff* | *Optional*  Request that the server return only resource versions that were created at or after the given time (inclusive), may be NULL | Date
 | onType | *extraParameters* | *Optional*  See ExtraParameters for a full list of parameters that can be passed, may be NULL | Map
 | onType | *iCutoff* | *Optional*  Request that the server return only resource versions that were created at or after the given time (inclusive), may be NULL | IPrimitiveType
 | onType | *resourceType* |  The resource type to search for | Class
-| onType | *returnType* |  Request that the method return a Bundle resource (such as ca.uhn.fhir.model.dstu2.resource.Bundle). Use this method if you are accessing a DSTU2 server. | Class
+| onType | *returnType* |  Request that the method return a Bundle resource (such as <code>ca.uhn.fhir.model.dstu2.resource.Bundle). Use this method if you are accessing a DSTU2 server. | Class
 |===
 
 In addition to the parameters above, the history API can also use from the 45 endpoint query option
@@ -565,7 +565,7 @@ The meta API method(s) has the following set of parameters listed in the table b
 | getFromResource | *id* |  The id | IIdType
 | getFromResource | *metaType* |  The IBaseMetaType class | Class
 | getFromServer | *extraParameters* | *Optional*  See ExtraParameters for a full list of parameters that can be passed, may be NULL | Map
-| getFromServer | *metaType* |  The type of the meta datatype for the given FHIR model version (should be MetaDt.class or MetaType.class) | Class
+| getFromServer | *metaType* |  The type of the meta datatype for the given FHIR model version (should be <code>MetaDt.class or <code>MetaType.class) | Class
 | getFromType | *extraParameters* | *Optional*  See ExtraParameters for a full list of parameters that can be passed, may be NULL | Map
 | getFromType | *metaType* |  The IBaseMetaType class | Class
 | getFromType | *resourceType* |  The resource type e.g Patient | String
@@ -622,7 +622,7 @@ The 5 method(s) is listed in the table below.
 | *onInstanceVersion* |  | This operation operates on a specific version of a resource
 | *onServer* |  | Perform the operation across all versions of all resources of all types on the server
 | *onType* |  | Perform the operation across all versions of all resources of the given type on the server
-| *processMessage* |  | This operation is called $process-message as defined by the FHIR specification
+| *processMessage* |  | This operation is called <b>
 |===
 
 The operation API method(s) has the following set of parameters listed in the table below:
@@ -632,29 +632,29 @@ The operation API method(s) has the following set of parameters listed in the ta
 | onInstance | *extraParameters* | *Optional*  See ExtraParameters for a full list of parameters that can be passed, may be NULL | Map
 | onInstance | *id* |  Resource (version will be stripped) | IIdType
 | onInstance | *name* |  Operation name | String
-| onInstance | *outputParameterType* | *Optional*  The type to use for the output parameters (this should be set to Parameters.class drawn from the version of the FHIR structures you are using), may be NULL | Class
-| onInstance | *parameters* | *Optional*  The parameters to use as input. May also be null if the operation does not require any input parameters. | IBaseParameters
-| onInstance | *returnType* | *Optional*  If this operation returns a single resource body as its return type instead of a Parameters resource, use this method to specify that resource type. This is useful for certain operations (e.g. Patient/NNN/$everything) which return a bundle instead of a Parameters resource, may be NULL | Class
+| onInstance | *outputParameterType* | *Optional*  The type to use for the output parameters (this should be set to <code>Parameters.class drawn from the version of the FHIR structures you are using), may be NULL | Class
+| onInstance | *parameters* | *Optional*  The parameters to use as input. May also be <code>null if the operation does not require any input parameters. | IBaseParameters
+| onInstance | *returnType* | *Optional*  If this operation returns a single resource body as its return type instead of a <code>Parameters resource, use this method to specify that resource type. This is useful for certain operations (e.g. <code>Patient/NNN/$everything) which return a bundle instead of a Parameters resource, may be NULL | Class
 | onInstance | *useHttpGet* |  Use HTTP GET verb | Boolean
 | onInstanceVersion | *extraParameters* | *Optional*  See ExtraParameters for a full list of parameters that can be passed, may be NULL | Map
 | onInstanceVersion | *id* |  Resource version | IIdType
 | onInstanceVersion | *name* |  Operation name | String
-| onInstanceVersion | *outputParameterType* | *Optional*  The type to use for the output parameters (this should be set to Parameters.class drawn from the version of the FHIR structures you are using), may be NULL | Class
-| onInstanceVersion | *parameters* | *Optional*  The parameters to use as input. May also be null if the operation does not require any input parameters. | IBaseParameters
-| onInstanceVersion | *returnType* | *Optional*  If this operation returns a single resource body as its return type instead of a Parameters resource, use this method to specify that resource type. This is useful for certain operations (e.g. Patient/NNN/$everything) which return a bundle instead of a Parameters resource, may be NULL | Class
+| onInstanceVersion | *outputParameterType* | *Optional*  The type to use for the output parameters (this should be set to <code>Parameters.class drawn from the version of the FHIR structures you are using), may be NULL | Class
+| onInstanceVersion | *parameters* | *Optional*  The parameters to use as input. May also be <code>null if the operation does not require any input parameters. | IBaseParameters
+| onInstanceVersion | *returnType* | *Optional*  If this operation returns a single resource body as its return type instead of a <code>Parameters resource, use this method to specify that resource type. This is useful for certain operations (e.g. <code>Patient/NNN/$everything) which return a bundle instead of a Parameters resource, may be NULL | Class
 | onInstanceVersion | *useHttpGet* |  Use HTTP GET verb | Boolean
 | onServer | *extraParameters* | *Optional*  See ExtraParameters for a full list of parameters that can be passed, may be NULL | Map
 | onServer | *name* |  Operation name | String
-| onServer | *outputParameterType* | *Optional*  The type to use for the output parameters (this should be set to Parameters.class drawn from the version of the FHIR structures you are using), may be NULL | Class
-| onServer | *parameters* | *Optional*  The parameters to use as input. May also be null if the operation does not require any input parameters. | IBaseParameters
-| onServer | *returnType* | *Optional*  If this operation returns a single resource body as its return type instead of a Parameters resource, use this method to specify that resource type. This is useful for certain operations (e.g. Patient/NNN/$everything) which return a bundle instead of a Parameters resource, may be NULL | Class
+| onServer | *outputParameterType* | *Optional*  The type to use for the output parameters (this should be set to <code>Parameters.class drawn from the version of the FHIR structures you are using), may be NULL | Class
+| onServer | *parameters* | *Optional*  The parameters to use as input. May also be <code>null if the operation does not require any input parameters. | IBaseParameters
+| onServer | *returnType* | *Optional*  If this operation returns a single resource body as its return type instead of a <code>Parameters resource, use this method to specify that resource type. This is useful for certain operations (e.g. <code>Patient/NNN/$everything) which return a bundle instead of a Parameters resource, may be NULL | Class
 | onServer | *useHttpGet* |  Use HTTP GET verb | Boolean
 | onType | *extraParameters* | *Optional*  See ExtraParameters for a full list of parameters that can be passed, may be NULL | Map
 | onType | *name* |  Operation name | String
-| onType | *outputParameterType* | *Optional*  The type to use for the output parameters (this should be set to Parameters.class drawn from the version of the FHIR structures you are using), may be NULL | Class
-| onType | *parameters* | *Optional*  The parameters to use as input. May also be null if the operation does not require any input parameters. | IBaseParameters
+| onType | *outputParameterType* | *Optional*  The type to use for the output parameters (this should be set to <code>Parameters.class drawn from the version of the FHIR structures you are using), may be NULL | Class
+| onType | *parameters* | *Optional*  The parameters to use as input. May also be <code>null if the operation does not require any input parameters. | IBaseParameters
 | onType | *resourceType* |  The resource type to operate on | Class
-| onType | *returnType* | *Optional*  If this operation returns a single resource body as its return type instead of a Parameters resource, use this method to specify that resource type. This is useful for certain operations (e.g. Patient/NNN/$everything) which return a bundle instead of a Parameters resource, may be NULL | Class
+| onType | *returnType* | *Optional*  If this operation returns a single resource body as its return type instead of a <code>Parameters resource, use this method to specify that resource type. This is useful for certain operations (e.g. <code>Patient/NNN/$everything) which return a bundle instead of a Parameters resource, may be NULL | Class
 | onType | *useHttpGet* |  Use HTTP GET verb | Boolean
 | processMessage | *asynchronous* |  Whether to process the message asynchronously or synchronously, defaults to synchronous. | Boolean
 | processMessage | *extraParameters* | *Optional*  See ExtraParameters for a full list of parameters that can be passed, may be NULL | Map
@@ -717,12 +717,12 @@ The patch API method(s) has the following set of parameters listed in the table 
 | patchById | *extraParameters* | *Optional*  See ExtraParameters for a full list of parameters that can be passed, may be NULL | Map
 | patchById | *id* |  The resource ID to patch | IIdType
 | patchById | *patchBody* |  The body of the patch document serialized in either XML or JSON which conforms to \http://jsonpatch.com/ or \http://tools.ietf.org/html/rfc5261 | String
-| patchById | *preferReturn* | *Optional*  Add a Prefer header to the request, which requests that the server include or suppress the resource body as a part of the result. If a resource is returned by the server it will be parsed an accessible to the client via MethodOutcome#getResource() | PreferReturnEnum
+| patchById | *preferReturn* | *Optional*  Add a <code>Prefer header to the request, which requests that the server include or suppress the resource body as a part of the result. If a resource is returned by the server it will be parsed an accessible to the client via MethodOutcome#getResource() | PreferReturnEnum
 | patchById | *stringId* |  The resource ID to patch | String
 | patchByUrl | *extraParameters* | *Optional*  See ExtraParameters for a full list of parameters that can be passed, may be NULL | Map
 | patchByUrl | *patchBody* |  The body of the patch document serialized in either XML or JSON which conforms to \http://jsonpatch.com/ or \http://tools.ietf.org/html/rfc5261 | String
-| patchByUrl | *preferReturn* | *Optional*  Add a Prefer header to the request, which requests that the server include or suppress the resource body as a part of the result. If a resource is returned by the server it will be parsed an accessible to the client via MethodOutcome#getResource() | PreferReturnEnum
-| patchByUrl | *url* |  The search URL to use. The format of this URL should be of the form ResourceTypeParameters, for example: Patientname=Smith&amp;identifier=13.2.4.11.4%7C847366 | String
+| patchByUrl | *preferReturn* | *Optional*  Add a <code>Prefer header to the request, which requests that the server include or suppress the resource body as a part of the result. If a resource is returned by the server it will be parsed an accessible to the client via MethodOutcome#getResource() | PreferReturnEnum
+| patchByUrl | *url* |  The search URL to use. The format of this URL should be of the form <code>ResourceTypeParameters, for example: <code>Patientname=Smith&amp;identifier=13.2.4.11.4%7C847366 | String
 |===
 
 In addition to the parameters above, the patch API can also use from the 45 endpoint query option

@@ -62,7 +62,7 @@ The Vert.x component supports 9 options, which are listed below.
 | Name | Description | Default | Type
 | *host* (common) | Hostname for creating an embedded clustered EventBus |  | String
 | *port* (common) | Port for creating an embedded clustered EventBus |  | int
-| *timeout* (common) | Timeout in seconds to wait for clustered Vertx EventBus to be ready. The default value is 60. | 60 | int
+| *timeout* (common) | Timeout in seconds to wait for clustered Vertx EventBus to be ready. <p/> The default value is 60. | 60 | int
 | *vertx* (common) | *Autowired* To use the given vertx EventBus instead of creating a new embedded EventBus |  | Vertx
 | *vertxOptions* (common) | Options to use for creating vertx |  | VertxOptions
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean

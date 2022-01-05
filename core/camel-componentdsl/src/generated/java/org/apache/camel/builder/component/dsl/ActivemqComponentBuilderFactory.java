@@ -201,8 +201,8 @@ public interface ActivemqComponentBuilderFactory {
          * that when messages are sent to ActiveMQ from outside of a message
          * consuming thread, pooling will be used rather than the default with
          * the Spring JmsTemplate which will create a new connection, session,
-         * producer for each message then close them all down again. The default
-         * value is true.
+         * producer for each message then close them all down again. &lt;p/&gt;
+         * The default value is true.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -223,8 +223,8 @@ public interface ActivemqComponentBuilderFactory {
          * message consuming thread, pooling will be used rather than the
          * default with the Spring JmsTemplate which will create a new
          * connection, session, producer for each message then close them all
-         * down again. The default value is false and a pooled connection is
-         * used by default.
+         * down again. &lt;p/&gt; The default value is false and a pooled
+         * connection is used by default.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -1451,8 +1451,8 @@ public interface ActivemqComponentBuilderFactory {
         }
         /**
          * The number of messages per task. -1 is unlimited. If you use a range
-         * for concurrent consumers (eg min max), then this option can be used
-         * to set a value to eg 100 to control how fast the consumers will
+         * for concurrent consumers (eg min &lt; max), then this option can be
+         * used to set a value to eg 100 to control how fast the consumers will
          * shrink when less work is required.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.

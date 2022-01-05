@@ -5,7 +5,7 @@
 :docTitle: JSON Johnzon
 :shortname: json-johnzon
 :artifactId: camel-johnzon
-:description: Marshal POJOs to JSON and back using Johnzon
+:description: Marshal POJOs to JSON and back using
 :since: 2.18
 :supportLevel: Stable
 //Manually maintained attributes
@@ -36,7 +36,7 @@ The JSON Johnzon dataformat supports 3 options, which are listed below.
 |===
 | Name | Default | Java Type | Description
 | objectMapper |  | String | Lookup and use the existing Mapper with the given id.
-| prettyPrint | false | Boolean | To enable pretty printing output nicely formatted. Is by default false.
+| prettyPrint | false | Boolean | To enable pretty printing output nicely formatted. <p/> Is by default false.
 | unmarshalTypeName |  | String | Class name of the java type to use when unmarshalling
 |===
 // dataformat options: END

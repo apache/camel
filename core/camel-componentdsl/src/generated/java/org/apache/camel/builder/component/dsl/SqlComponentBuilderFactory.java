@@ -129,7 +129,8 @@ public interface SqlComponentBuilderFactory {
         }
         /**
          * Sets whether to use placeholder and replace all placeholder
-         * characters with sign in the SQL queries. This option is default true.
+         * characters with sign in the SQL queries. &lt;p/&gt; This option is
+         * default &lt;tt&gt;true.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 

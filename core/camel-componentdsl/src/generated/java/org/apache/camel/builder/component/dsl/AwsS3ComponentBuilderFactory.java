@@ -295,11 +295,12 @@ public interface AwsS3ComponentBuilderFactory {
         /**
          * Delete objects from S3 after they have been retrieved. The delete is
          * only performed if the Exchange is committed. If a rollback occurs,
-         * the object is not deleted. If this option is false, then the same
-         * objects will be retrieve over and over again on the polls. Therefore
-         * you need to use the Idempotent Consumer EIP in the route to filter
-         * out duplicates. You can filter using the S3Constants#BUCKET_NAME and
-         * S3Constants#KEY headers, or only the S3Constants#KEY header.
+         * the object is not deleted. &lt;p/&gt; If this option is false, then
+         * the same objects will be retrieve over and over again on the polls.
+         * Therefore you need to use the Idempotent Consumer EIP in the route to
+         * filter out duplicates. You can filter using the
+         * S3Constants#BUCKET_NAME and S3Constants#KEY headers, or only the
+         * S3Constants#KEY header.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -504,7 +505,7 @@ public interface AwsS3ComponentBuilderFactory {
         }
         /**
          * Sets the server-side encryption algorithm when encrypting the object
-         * using AWS-managed keys. For example use AES256.
+         * using AWS-managed keys. For example use &lt;tt&gt;AES256.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
