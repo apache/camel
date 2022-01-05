@@ -316,3 +316,56 @@ You can also generate bindings that can be run by CamelJBang or Camel Core, but 
 ----
 camel init binding --destination /path/to/destination/directory/ --kamelet sftp-source --project core
 ----
+
+=== Create Project
+
+The create project command can be used to generate a maven project. After running the integration with the `run` command `create project` will generate a maven quarkus project with some required dependencies that can be used as a starting point for complex integrations. 
+
+To execute this feature run:
+
+[source,bash]
+----
+jbang camel@apache/camel create project integration.java integration.yaml integration.xml
+----
+
+this command generates a folder named CamelJBang that contains the quarkus project, in order to execute it the following command can be run:
+
+[source,bash]
+----
+cd CamelJBang
+mvn compile quarkus:dev
+----
+
+The table below lists all the command line options configurable on the `create project` command:
+
+|===
+|Option |Description
+
+|name
+|The name of the Camel application (artifactId and folder)
+
+|group-id
+|The group ID of the maven project
+
+|directory
+|Directory where the project will be created
+
+|quarkus-dependency
+|Comma separated list of camel-quarkus dependencies
+
+|quarkus-bom-version
+|Override quarkus bom version in pom.xml
+
+|===
+
+==== Examples
+
+[source,bash]
+----
+jbang camel@apache/camel create project TimerRoute.java --quarkusDependencies=camel-quarkus-timer,camel-quarkus-log,camel-quarkus-yaml-dsl,camel-quarkus-http --name=TimerRouteProject
+----
+
+[source,bash]
+----
+jbang camel@apache/camel create project KafkaRoute.java --quarkusDependencies=camel-quarkus-kafka,camel-quarkus-log --name=KafkaRouteProject
+----
