@@ -70,6 +70,9 @@ class Run implements Callable<Integer> {
     @Option(names = { "--reload" }, description = "Enables live reload when source file is changed (saved)")
     private boolean reload;
 
+    @Option(names = { "--trace" }, description = "Enables trace logging of the routed messages")
+    private boolean trace;
+
     @Option(names = { "--properties" },
             description = "Load properties file for route placeholders (ex. /path/to/file.properties")
     private String propertiesFiles;
@@ -135,6 +138,7 @@ class Run implements Callable<Integer> {
         main.addInitialProperty("camel.main.shutdownTimeout", "5");
         // turn off lightweight if we have routes reload enabled
         main.addInitialProperty("camel.main.routesReloadEnabled", reload ? "true" : "false");
+        main.addInitialProperty("camel.main.tracing", trace ? "true" : "false");
 
         // durations
         if (maxMessages > 0) {
