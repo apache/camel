@@ -136,6 +136,7 @@ You can also turn off individual consumers by prefixing the ID with `consumer:` 
 
 [source,properties]
 ----
+camel.health.config[consumer:kafka*].parent=consumers
 camel.health.config[consumer:kafka*].enabled=false
 ----
 
