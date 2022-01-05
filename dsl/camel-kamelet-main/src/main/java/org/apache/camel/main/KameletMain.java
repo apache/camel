@@ -25,6 +25,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.startup.jfr.FlightRecorderStartupStepRecorder;
 
 /**
  * A Main class for booting up Camel with Kamelet in standalone mode.
@@ -165,6 +166,18 @@ public class KameletMain extends MainCommandLineSupport {
         Object port = getInitialProperties().get("camel.jbang.platform-http.port");
         if (port != null) {
             VertxHttpServer.registerServer(answer, Integer.parseInt(port.toString()));
+        }
+
+        // need to setup jfr early
+        Object jfr = getInitialProperties().get("camel.jbang.jfr");
+        Object jfrProfile = getInitialProperties().get("camel.jbang.jfr-profile");
+        if ("jfr".equals(jfr) || jfrProfile != null) {
+            FlightRecorderStartupStepRecorder recorder = new FlightRecorderStartupStepRecorder();
+            recorder.setRecording(true);
+            if (jfrProfile != null) {
+                recorder.setRecordingProfile(jfrProfile.toString());
+            }
+            answer.setStartupStepRecorder(recorder);
         }
 
         if (download) {

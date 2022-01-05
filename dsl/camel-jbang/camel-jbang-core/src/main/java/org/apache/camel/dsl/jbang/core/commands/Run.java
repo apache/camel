@@ -79,8 +79,12 @@ class Run implements Callable<Integer> {
     private boolean fileLock = true;
 
     @Option(names = { "--jfr" },
-            description = "Whether to start the jfr recorder or not")
+            description = "Enables Java Flight Recorder saving recording to disk on exit")
     private boolean jfr;
+
+    @Option(names = { "--jfr-profile" },
+            description = "Java Flight Recorder profile to use (such as default or profile)")
+    private String jfrProfile;
 
     @Option(names = { "--local-kamelet-dir" },
             description = "Local directory to load Kamelets from (take precedence))")
@@ -147,8 +151,12 @@ class Run implements Callable<Integer> {
         }
 
         if (jfr) {
-            main.addInitialProperty("camel.main.startup-recorder", "java-flight-recorder");
-            main.addInitialProperty("camel.main.startupRecorderRecording", "true");
+            main.addInitialProperty("camel.jbang.jfr", "jfr");
+        }
+        if (jfrProfile != null) {
+            // turn on jfr if a profile was specified
+            main.addInitialProperty("camel.jbang.jfr", "jfr");
+            main.addInitialProperty("camel.jbang.jfr-profile", jfrProfile);
         }
 
         if (fileLock) {
