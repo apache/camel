@@ -124,6 +124,10 @@ public class CoAPEndpoint extends DefaultEndpoint {
         return uri;
     }
 
+    public List<String> getPathSegmentsFromURI() {
+        return CoAPHelper.getPathSegmentsFromPath(getUri().getPath());
+    }
+
     public CoapServer getCoapServer() throws IOException, GeneralSecurityException {
         return component.getServer(getUri().getPort(), this);
     }

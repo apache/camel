@@ -16,6 +16,9 @@
  */
 package org.apache.camel.coap;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.util.ObjectHelper;
 import org.eclipse.californium.core.CoapClient;
@@ -57,5 +60,22 @@ public final class CoAPHelper {
             return methodRestrict;
         }
         return CoAPConstants.METHOD_RESTRICT_ALL;
+    }
+
+    public static List<String> getPathSegmentsFromPath(String path) {
+        List<String> segments = new LinkedList<>();
+        if (path.startsWith("/")) {
+            path = path.substring(1);
+        }
+        while (!path.isEmpty()) {
+            int idx = path.indexOf('/');
+            if (idx == -1) {
+                segments.add(path);
+                break;
+            }
+            segments.add(path.substring(0, idx));
+            path = path.substring(idx + 1);
+        }
+        return segments;
     }
 }
