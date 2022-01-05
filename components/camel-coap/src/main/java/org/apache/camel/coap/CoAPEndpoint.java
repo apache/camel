@@ -30,6 +30,8 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.net.ssl.SSLContext;
+
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -41,8 +43,13 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.jsse.ClientAuthentication;
 import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
+import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapServer;
+import org.eclipse.californium.core.network.CoapEndpoint;
+import org.eclipse.californium.core.network.config.NetworkConfig;
 import org.eclipse.californium.core.server.resources.Resource;
+import org.eclipse.californium.elements.tcp.netty.TcpClientConnector;
+import org.eclipse.californium.elements.tcp.netty.TlsClientConnector;
 import org.eclipse.californium.scandium.DTLSConnector;
 import org.eclipse.californium.scandium.config.DtlsConnectorConfig;
 import org.eclipse.californium.scandium.dtls.CertificateType;
@@ -458,5 +465,38 @@ public class CoAPEndpoint extends DefaultEndpoint {
         }
 
         return new DTLSConnector(builder.build());
+    }
+
+    public CoapClient createCoapClient(URI uri) throws IOException, GeneralSecurityException {
+        CoapClient client = new CoapClient(uri);
+
+        // Configure TLS and / or TCP
+        if (CoAPEndpoint.enableDTLS(uri)) {
+            DTLSConnector connector = createDTLSConnector(null, true);
+            CoapEndpoint.Builder coapBuilder = new CoapEndpoint.Builder();
+            coapBuilder.setConnector(connector);
+
+            client.setEndpoint(coapBuilder.build());
+        } else if (CoAPEndpoint.enableTCP(getUri())) {
+            NetworkConfig config = NetworkConfig.createStandardWithoutFile();
+            int tcpThreads = config.getInt(NetworkConfig.Keys.TCP_WORKER_THREADS);
+            int tcpConnectTimeout = config.getInt(NetworkConfig.Keys.TCP_CONNECT_TIMEOUT);
+            int tcpIdleTimeout = config.getInt(NetworkConfig.Keys.TCP_CONNECTION_IDLE_TIMEOUT);
+            TcpClientConnector tcpConnector = null;
+
+            // TLS + TCP
+            if (getUri().getScheme().startsWith("coaps")) {
+                SSLContext sslContext = getSslContextParameters().createSSLContext(getCamelContext());
+                tcpConnector = new TlsClientConnector(sslContext, tcpThreads, tcpConnectTimeout, tcpIdleTimeout);
+            } else {
+                tcpConnector = new TcpClientConnector(tcpThreads, tcpConnectTimeout, tcpIdleTimeout);
+            }
+
+            CoapEndpoint.Builder tcpBuilder = new CoapEndpoint.Builder();
+            tcpBuilder.setConnector(tcpConnector);
+
+            client.setEndpoint(tcpBuilder.build());
+        }
+        return client;
     }
 }
