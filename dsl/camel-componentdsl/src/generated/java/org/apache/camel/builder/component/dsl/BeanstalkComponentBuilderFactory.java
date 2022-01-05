@@ -119,7 +119,7 @@ public interface BeanstalkComponentBuilderFactory {
             return this;
         }
         /**
-         * Custom ConnectionSettingsFactory. Specify which
+         * Custom ConnectionSettingsFactory. &lt;p/&gt; Specify which
          * ConnectionSettingsFactory to use to make connections to Beanstalkd.
          * Especially useful for unit testing without beanstalkd daemon (you can
          * mock ConnectionSettings).

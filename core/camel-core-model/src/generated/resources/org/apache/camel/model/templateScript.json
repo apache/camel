@@ -12,6 +12,6 @@
     "output": false
   },
   "properties": {
-    "script": { "kind": "value", "displayName": "Script", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The script to execute that creates the bean when using scripting languages. If the script use the prefix resource: such as resource:classpath:com\/foo\/myscript.groovy, resource:file:\/var\/myscript.groovy, then its loaded from the external resource." }
+    "script": { "kind": "value", "displayName": "Script", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The script to execute that creates the bean when using scripting languages. If the script use the prefix <tt>resource: such as <tt>resource:classpath:com\/foo\/myscript.groovy, <tt>resource:file:\/var\/myscript.groovy, then its loaded from the external resource." }
   }
 }

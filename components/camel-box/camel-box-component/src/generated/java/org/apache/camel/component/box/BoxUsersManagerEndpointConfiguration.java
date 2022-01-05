@@ -30,7 +30,7 @@ public final class BoxUsersManagerEndpointConfiguration extends BoxConfiguration
     @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "getAllEnterpriseOrExternalUsers", description="The fields to retrieve. Leave this out for the standard fields.")})
     private String[] fields;
     @UriParam
-    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "getAllEnterpriseOrExternalUsers", description="The filter term to lookup users by (login for external, login or name for managed); if null all managed users are returned.")})
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "getAllEnterpriseOrExternalUsers", description="The filter term to lookup users by (login for external, login or name for managed); if <code>null all managed users are returned.")})
     private String filterTerm;
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "deleteUser", description="Whether or not this user should be deleted even if they still own files")})

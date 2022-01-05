@@ -1114,8 +1114,8 @@ public interface ActiveMQEndpointBuilderFactory {
          * that the consumer is created on. See more details at
          * https://activemq.apache.org/destination-options.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * destinationOptions(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -1139,8 +1139,8 @@ public interface ActiveMQEndpointBuilderFactory {
          * that the consumer is created on. See more details at
          * https://activemq.apache.org/destination-options.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * destinationOptions(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -1907,8 +1907,8 @@ public interface ActiveMQEndpointBuilderFactory {
         }
         /**
          * The number of messages per task. -1 is unlimited. If you use a range
-         * for concurrent consumers (eg min max), then this option can be used
-         * to set a value to eg 100 to control how fast the consumers will
+         * for concurrent consumers (eg min &lt; max), then this option can be
+         * used to set a value to eg 100 to control how fast the consumers will
          * shrink when less work is required.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
@@ -1926,8 +1926,8 @@ public interface ActiveMQEndpointBuilderFactory {
         }
         /**
          * The number of messages per task. -1 is unlimited. If you use a range
-         * for concurrent consumers (eg min max), then this option can be used
-         * to set a value to eg 100 to control how fast the consumers will
+         * for concurrent consumers (eg min &lt; max), then this option can be
+         * used to set a value to eg 100 to control how fast the consumers will
          * shrink when less work is required.
          * 
          * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
@@ -4404,8 +4404,8 @@ public interface ActiveMQEndpointBuilderFactory {
         }
         /**
          * The number of messages per task. -1 is unlimited. If you use a range
-         * for concurrent consumers (eg min max), then this option can be used
-         * to set a value to eg 100 to control how fast the consumers will
+         * for concurrent consumers (eg min &lt; max), then this option can be
+         * used to set a value to eg 100 to control how fast the consumers will
          * shrink when less work is required.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
@@ -4423,8 +4423,8 @@ public interface ActiveMQEndpointBuilderFactory {
         }
         /**
          * The number of messages per task. -1 is unlimited. If you use a range
-         * for concurrent consumers (eg min max), then this option can be used
-         * to set a value to eg 100 to control how fast the consumers will
+         * for concurrent consumers (eg min &lt; max), then this option can be
+         * used to set a value to eg 100 to control how fast the consumers will
          * shrink when less work is required.
          * 
          * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
@@ -6014,8 +6014,8 @@ public interface ActiveMQEndpointBuilderFactory {
         }
         /**
          * The number of messages per task. -1 is unlimited. If you use a range
-         * for concurrent consumers (eg min max), then this option can be used
-         * to set a value to eg 100 to control how fast the consumers will
+         * for concurrent consumers (eg min &lt; max), then this option can be
+         * used to set a value to eg 100 to control how fast the consumers will
          * shrink when less work is required.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
@@ -6033,8 +6033,8 @@ public interface ActiveMQEndpointBuilderFactory {
         }
         /**
          * The number of messages per task. -1 is unlimited. If you use a range
-         * for concurrent consumers (eg min max), then this option can be used
-         * to set a value to eg 100 to control how fast the consumers will
+         * for concurrent consumers (eg min &lt; max), then this option can be
+         * used to set a value to eg 100 to control how fast the consumers will
          * shrink when less work is required.
          * 
          * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.

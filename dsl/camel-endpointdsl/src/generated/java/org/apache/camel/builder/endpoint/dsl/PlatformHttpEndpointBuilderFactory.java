@@ -91,8 +91,8 @@ public interface PlatformHttpEndpointBuilderFactory {
         }
         /**
          * The content type this endpoint accepts as an input, such as
-         * application/xml or application/json. null or
-         * &amp;amp;#42;/&amp;amp;#42; mean no restriction.
+         * application/xml or application/json. &lt;code&gt;null or
+         * &lt;code&gt;&amp;#42;/&amp;#42; mean no restriction.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

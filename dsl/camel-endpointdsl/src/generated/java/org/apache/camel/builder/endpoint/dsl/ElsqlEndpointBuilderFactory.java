@@ -936,8 +936,8 @@ public interface ElsqlEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -958,8 +958,8 @@ public interface ElsqlEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -1271,7 +1271,7 @@ public interface ElsqlEndpointBuilderFactory {
         }
         /**
          * To use a specific configured ElSqlConfig. It may be better to use the
-         * databaseVendor option instead.
+         * &lt;tt&gt;databaseVendor option instead.
          * 
          * The option is a:
          * &lt;code&gt;com.opengamma.elsql.ElSqlConfig&lt;/code&gt; type.
@@ -1288,7 +1288,7 @@ public interface ElsqlEndpointBuilderFactory {
         }
         /**
          * To use a specific configured ElSqlConfig. It may be better to use the
-         * databaseVendor option instead.
+         * &lt;tt&gt;databaseVendor option instead.
          * 
          * The option will be converted to a
          * &lt;code&gt;com.opengamma.elsql.ElSqlConfig&lt;/code&gt; type.
@@ -1396,8 +1396,8 @@ public interface ElsqlEndpointBuilderFactory {
         /**
          * Configures the Spring JdbcTemplate with the key/values from the Map.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * templateOptions(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -1417,8 +1417,8 @@ public interface ElsqlEndpointBuilderFactory {
         /**
          * Configures the Spring JdbcTemplate with the key/values from the Map.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * templateOptions(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -1820,7 +1820,7 @@ public interface ElsqlEndpointBuilderFactory {
          * Whether to use the message body as the SQL and then headers for
          * parameters. If this option is enabled then the SQL in the uri is not
          * used. Note that query parameters in the message body are represented
-         * by a question mark instead of a # symbol.
+         * by a question mark instead of a &lt;tt&gt;# symbol.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -1839,7 +1839,7 @@ public interface ElsqlEndpointBuilderFactory {
          * Whether to use the message body as the SQL and then headers for
          * parameters. If this option is enabled then the SQL in the uri is not
          * used. Note that query parameters in the message body are represented
-         * by a question mark instead of a # symbol.
+         * by a question mark instead of a &lt;tt&gt;# symbol.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -1911,7 +1911,7 @@ public interface ElsqlEndpointBuilderFactory {
         }
         /**
          * To use a specific configured ElSqlConfig. It may be better to use the
-         * databaseVendor option instead.
+         * &lt;tt&gt;databaseVendor option instead.
          * 
          * The option is a:
          * &lt;code&gt;com.opengamma.elsql.ElSqlConfig&lt;/code&gt; type.
@@ -1928,7 +1928,7 @@ public interface ElsqlEndpointBuilderFactory {
         }
         /**
          * To use a specific configured ElSqlConfig. It may be better to use the
-         * databaseVendor option instead.
+         * &lt;tt&gt;databaseVendor option instead.
          * 
          * The option will be converted to a
          * &lt;code&gt;com.opengamma.elsql.ElSqlConfig&lt;/code&gt; type.
@@ -2036,8 +2036,8 @@ public interface ElsqlEndpointBuilderFactory {
         /**
          * Configures the Spring JdbcTemplate with the key/values from the Map.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * templateOptions(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -2057,8 +2057,8 @@ public interface ElsqlEndpointBuilderFactory {
         /**
          * Configures the Spring JdbcTemplate with the key/values from the Map.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * templateOptions(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -2399,7 +2399,7 @@ public interface ElsqlEndpointBuilderFactory {
         }
         /**
          * To use a specific configured ElSqlConfig. It may be better to use the
-         * databaseVendor option instead.
+         * &lt;tt&gt;databaseVendor option instead.
          * 
          * The option is a:
          * &lt;code&gt;com.opengamma.elsql.ElSqlConfig&lt;/code&gt; type.
@@ -2416,7 +2416,7 @@ public interface ElsqlEndpointBuilderFactory {
         }
         /**
          * To use a specific configured ElSqlConfig. It may be better to use the
-         * databaseVendor option instead.
+         * &lt;tt&gt;databaseVendor option instead.
          * 
          * The option will be converted to a
          * &lt;code&gt;com.opengamma.elsql.ElSqlConfig&lt;/code&gt; type.
@@ -2521,8 +2521,8 @@ public interface ElsqlEndpointBuilderFactory {
         /**
          * Configures the Spring JdbcTemplate with the key/values from the Map.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * templateOptions(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -2542,8 +2542,8 @@ public interface ElsqlEndpointBuilderFactory {
         /**
          * Configures the Spring JdbcTemplate with the key/values from the Map.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * templateOptions(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -2611,9 +2611,9 @@ public interface ElsqlEndpointBuilderFactory {
          * Path parameter: resourceUri
          * The resource file which contains the elsql SQL statements to use. You
          * can specify multiple resources separated by comma. The resources are
-         * loaded on the classpath by default, you can prefix with file: to load
-         * from file system. Notice you can set this option on the component and
-         * then you do not have to configure this on the endpoint.
+         * loaded on the classpath by default, you can prefix with <tt>file: to
+         * load from file system. Notice you can set this option on the
+         * component and then you do not have to configure this on the endpoint.
          * 
          * @param path elsqlName:resourceUri
          * @return the dsl builder
@@ -2638,9 +2638,9 @@ public interface ElsqlEndpointBuilderFactory {
          * Path parameter: resourceUri
          * The resource file which contains the elsql SQL statements to use. You
          * can specify multiple resources separated by comma. The resources are
-         * loaded on the classpath by default, you can prefix with file: to load
-         * from file system. Notice you can set this option on the component and
-         * then you do not have to configure this on the endpoint.
+         * loaded on the classpath by default, you can prefix with <tt>file: to
+         * load from file system. Notice you can set this option on the
+         * component and then you do not have to configure this on the endpoint.
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "jsonApi",
     "title": "JSonApi",
-    "description": "Marshal and unmarshal JSON:API resources using JSONAPI-Converter library.",
+    "description": "Marshal and unmarshal .",
     "deprecated": false,
     "firstVersion": "3.0.0",
     "label": "dataformat,transformation",

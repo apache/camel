@@ -162,11 +162,12 @@ public interface WebsocketEndpointBuilderFactory {
         }
         /**
          * Set a resource path for static resources (such as .html files etc).
-         * The resources can be loaded from classpath, if you prefix with
-         * classpath:, otherwise the resources is loaded from file system or
-         * from JAR files. For example to load from root classpath use
-         * classpath:., or classpath:WEB-INF/static If not configured (eg null)
-         * then no static resource is in use.
+         * &lt;p/&gt; The resources can be loaded from classpath, if you prefix
+         * with &lt;tt&gt;classpath:, otherwise the resources is loaded from
+         * file system or from JAR files. &lt;p/&gt; For example to load from
+         * root classpath use &lt;tt&gt;classpath:., or
+         * &lt;tt&gt;classpath:WEB-INF/static &lt;p/&gt; If not configured (eg
+         * &lt;tt&gt;null) then no static resource is in use.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -181,15 +182,15 @@ public interface WebsocketEndpointBuilderFactory {
             return this;
         }
         /**
-         * This is a comma-separated list of subprotocols that are supported by
-         * the application. The list is in priority order. The first subprotocol
-         * on this list that is proposed by the client is the one that will be
-         * accepted. If no subprotocol on this list is proposed by the client,
-         * then the websocket connection is refused. The special value 'any'
-         * means that any subprotocol is acceptable. 'any' can be used on its
-         * own, or as a failsafe at the end of a list of more specific
-         * protocols. 'any' will also match the case where no subprotocol is
-         * proposed by the client.
+         * &lt;p&gt; This is a comma-separated list of subprotocols that are
+         * supported by the application. The list is in priority order. The
+         * first subprotocol on this list that is proposed by the client is the
+         * one that will be accepted. If no subprotocol on this list is proposed
+         * by the client, then the websocket connection is refused. The special
+         * value 'any' means that any subprotocol is acceptable. 'any' can be
+         * used on its own, or as a failsafe at the end of a list of more
+         * specific protocols. 'any' will also match the case where no
+         * subprotocol is proposed by the client.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1323,13 +1324,13 @@ public interface WebsocketEndpointBuilderFactory {
          * Syntax: <code>websocket:host:port/resourceUri</code>
          * 
          * Path parameter: host
-         * The hostname. The default value is 0.0.0.0. Setting this option on
-         * the component will use the component configured value as default.
+         * The hostname. The default value is <tt>0.0.0.0. Setting this option
+         * on the component will use the component configured value as default.
          * Default value: 0.0.0.0
          * 
          * Path parameter: port
-         * The port number. The default value is 9292. Setting this option on
-         * the component will use the component configured value as default.
+         * The port number. The default value is <tt>9292. Setting this option
+         * on the component will use the component configured value as default.
          * Default value: 9292
          * 
          * Path parameter: resourceUri (required)
@@ -1352,13 +1353,13 @@ public interface WebsocketEndpointBuilderFactory {
          * Syntax: <code>websocket:host:port/resourceUri</code>
          * 
          * Path parameter: host
-         * The hostname. The default value is 0.0.0.0. Setting this option on
-         * the component will use the component configured value as default.
+         * The hostname. The default value is <tt>0.0.0.0. Setting this option
+         * on the component will use the component configured value as default.
          * Default value: 0.0.0.0
          * 
          * Path parameter: port
-         * The port number. The default value is 9292. Setting this option on
-         * the component will use the component configured value as default.
+         * The port number. The default value is <tt>9292. Setting this option
+         * on the component will use the component configured value as default.
          * Default value: 9292
          * 
          * Path parameter: resourceUri (required)

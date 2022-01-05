@@ -424,7 +424,7 @@ public interface DataLakeEndpointBuilderFactory {
          * set open options for creating file.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.Set&amp;lt;java.nio.file.OpenOption&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.Set&lt;java.nio.file.OpenOption&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -440,7 +440,7 @@ public interface DataLakeEndpointBuilderFactory {
          * set open options for creating file.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Set&amp;lt;java.nio.file.OpenOption&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.Set&lt;java.nio.file.OpenOption&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -1159,8 +1159,8 @@ public interface DataLakeEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -1181,8 +1181,8 @@ public interface DataLakeEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -1807,7 +1807,7 @@ public interface DataLakeEndpointBuilderFactory {
          * set open options for creating file.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.Set&amp;lt;java.nio.file.OpenOption&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.Set&lt;java.nio.file.OpenOption&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -1823,7 +1823,7 @@ public interface DataLakeEndpointBuilderFactory {
          * set open options for creating file.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Set&amp;lt;java.nio.file.OpenOption&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.Set&lt;java.nio.file.OpenOption&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -2604,7 +2604,7 @@ public interface DataLakeEndpointBuilderFactory {
          * set open options for creating file.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.Set&amp;lt;java.nio.file.OpenOption&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.Set&lt;java.nio.file.OpenOption&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -2620,7 +2620,7 @@ public interface DataLakeEndpointBuilderFactory {
          * set open options for creating file.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Set&amp;lt;java.nio.file.OpenOption&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.Set&lt;java.nio.file.OpenOption&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 

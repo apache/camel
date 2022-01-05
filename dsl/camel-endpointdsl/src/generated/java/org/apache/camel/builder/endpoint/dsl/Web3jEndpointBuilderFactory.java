@@ -48,7 +48,7 @@ public interface Web3jEndpointBuilderFactory {
          * Contract address or a list of addresses.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -64,7 +64,7 @@ public interface Web3jEndpointBuilderFactory {
          * Contract address or a list of addresses.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -174,7 +174,7 @@ public interface Web3jEndpointBuilderFactory {
          * A transaction privateFor nodes with public keys in a Quorum network.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -190,7 +190,7 @@ public interface Web3jEndpointBuilderFactory {
          * A transaction privateFor nodes with public keys in a Quorum network.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -451,7 +451,7 @@ public interface Web3jEndpointBuilderFactory {
          * Contract address or a list of addresses.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -467,7 +467,7 @@ public interface Web3jEndpointBuilderFactory {
          * Contract address or a list of addresses.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -577,7 +577,7 @@ public interface Web3jEndpointBuilderFactory {
          * A transaction privateFor nodes with public keys in a Quorum network.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -593,7 +593,7 @@ public interface Web3jEndpointBuilderFactory {
          * A transaction privateFor nodes with public keys in a Quorum network.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -1230,7 +1230,7 @@ public interface Web3jEndpointBuilderFactory {
          * Contract address or a list of addresses.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -1245,7 +1245,7 @@ public interface Web3jEndpointBuilderFactory {
          * Contract address or a list of addresses.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -1354,7 +1354,7 @@ public interface Web3jEndpointBuilderFactory {
          * A transaction privateFor nodes with public keys in a Quorum network.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -1370,7 +1370,7 @@ public interface Web3jEndpointBuilderFactory {
          * A transaction privateFor nodes with public keys in a Quorum network.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 

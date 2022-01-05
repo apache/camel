@@ -344,8 +344,8 @@ public interface SplunkEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets streaming mode. Streaming mode sends exchanges as they are
-         * received, rather than in a batch.
+         * Sets streaming mode. &lt;p&gt; Streaming mode sends exchanges as they
+         * are received, rather than in a batch.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -360,8 +360,8 @@ public interface SplunkEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets streaming mode. Streaming mode sends exchanges as they are
-         * received, rather than in a batch.
+         * Sets streaming mode. &lt;p&gt; Streaming mode sends exchanges as they
+         * are received, rather than in a batch.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -716,8 +716,8 @@ public interface SplunkEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -738,8 +738,8 @@ public interface SplunkEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).

@@ -774,8 +774,8 @@ public interface HdfsEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -796,8 +796,8 @@ public interface HdfsEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -1339,17 +1339,19 @@ public interface HdfsEndpointBuilderFactory {
          * In the current version of Hadoop opening a file in append mode is
          * disabled since it's not very reliable. So, for the moment, it's only
          * possible to create new files. The Camel HDFS endpoint tries to solve
-         * this problem in this way: If the split strategy option has been
-         * defined, the hdfs path will be used as a directory and files will be
-         * created using the configured UuidGenerator. Every time a splitting
-         * condition is met, a new file is created. The splitStrategy option is
-         * defined as a string with the following syntax:
-         * splitStrategy=ST:value,ST:value,... where ST can be: BYTES a new file
-         * is created, and the old is closed when the number of written bytes is
-         * more than value MESSAGES a new file is created, and the old is closed
-         * when the number of written messages is more than value IDLE a new
-         * file is created, and the old is closed when no writing happened in
-         * the last value milliseconds.
+         * this problem in this way: &lt;ul&gt; &lt;li&gt;If the split strategy
+         * option has been defined, the hdfs path will be used as a directory
+         * and files will be created using the configured UuidGenerator.
+         * &lt;li&gt;Every time a splitting condition is met, a new file is
+         * created. The splitStrategy option is defined as a string with the
+         * following syntax: &lt;br/&gt;
+         * &lt;tt&gt;splitStrategy=ST:value,ST:value,... &lt;br/&gt; where ST
+         * can be: &lt;ul&gt; &lt;li&gt;BYTES a new file is created, and the old
+         * is closed when the number of written bytes is more than value
+         * &lt;li&gt;MESSAGES a new file is created, and the old is closed when
+         * the number of written messages is more than value &lt;li&gt;IDLE a
+         * new file is created, and the old is closed when no writing happened
+         * in the last value milliseconds.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -2023,17 +2025,19 @@ public interface HdfsEndpointBuilderFactory {
          * In the current version of Hadoop opening a file in append mode is
          * disabled since it's not very reliable. So, for the moment, it's only
          * possible to create new files. The Camel HDFS endpoint tries to solve
-         * this problem in this way: If the split strategy option has been
-         * defined, the hdfs path will be used as a directory and files will be
-         * created using the configured UuidGenerator. Every time a splitting
-         * condition is met, a new file is created. The splitStrategy option is
-         * defined as a string with the following syntax:
-         * splitStrategy=ST:value,ST:value,... where ST can be: BYTES a new file
-         * is created, and the old is closed when the number of written bytes is
-         * more than value MESSAGES a new file is created, and the old is closed
-         * when the number of written messages is more than value IDLE a new
-         * file is created, and the old is closed when no writing happened in
-         * the last value milliseconds.
+         * this problem in this way: &lt;ul&gt; &lt;li&gt;If the split strategy
+         * option has been defined, the hdfs path will be used as a directory
+         * and files will be created using the configured UuidGenerator.
+         * &lt;li&gt;Every time a splitting condition is met, a new file is
+         * created. The splitStrategy option is defined as a string with the
+         * following syntax: &lt;br/&gt;
+         * &lt;tt&gt;splitStrategy=ST:value,ST:value,... &lt;br/&gt; where ST
+         * can be: &lt;ul&gt; &lt;li&gt;BYTES a new file is created, and the old
+         * is closed when the number of written bytes is more than value
+         * &lt;li&gt;MESSAGES a new file is created, and the old is closed when
+         * the number of written messages is more than value &lt;li&gt;IDLE a
+         * new file is created, and the old is closed when no writing happened
+         * in the last value milliseconds.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -2590,17 +2594,19 @@ public interface HdfsEndpointBuilderFactory {
          * In the current version of Hadoop opening a file in append mode is
          * disabled since it's not very reliable. So, for the moment, it's only
          * possible to create new files. The Camel HDFS endpoint tries to solve
-         * this problem in this way: If the split strategy option has been
-         * defined, the hdfs path will be used as a directory and files will be
-         * created using the configured UuidGenerator. Every time a splitting
-         * condition is met, a new file is created. The splitStrategy option is
-         * defined as a string with the following syntax:
-         * splitStrategy=ST:value,ST:value,... where ST can be: BYTES a new file
-         * is created, and the old is closed when the number of written bytes is
-         * more than value MESSAGES a new file is created, and the old is closed
-         * when the number of written messages is more than value IDLE a new
-         * file is created, and the old is closed when no writing happened in
-         * the last value milliseconds.
+         * this problem in this way: &lt;ul&gt; &lt;li&gt;If the split strategy
+         * option has been defined, the hdfs path will be used as a directory
+         * and files will be created using the configured UuidGenerator.
+         * &lt;li&gt;Every time a splitting condition is met, a new file is
+         * created. The splitStrategy option is defined as a string with the
+         * following syntax: &lt;br/&gt;
+         * &lt;tt&gt;splitStrategy=ST:value,ST:value,... &lt;br/&gt; where ST
+         * can be: &lt;ul&gt; &lt;li&gt;BYTES a new file is created, and the old
+         * is closed when the number of written bytes is more than value
+         * &lt;li&gt;MESSAGES a new file is created, and the old is closed when
+         * the number of written messages is more than value &lt;li&gt;IDLE a
+         * new file is created, and the old is closed when no writing happened
+         * in the last value milliseconds.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
