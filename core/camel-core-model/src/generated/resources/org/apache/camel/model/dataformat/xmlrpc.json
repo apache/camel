@@ -12,7 +12,7 @@
     "output": false
   },
   "properties": {
-    "request": { "kind": "attribute", "displayName": "Request", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether to marshal\/unmarshal request or response Is by default false" },
+    "request": { "kind": "attribute", "displayName": "Request", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether to marshal\/unmarshal request or response <p\/> Is by default false" },
     "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" }
   }
 }

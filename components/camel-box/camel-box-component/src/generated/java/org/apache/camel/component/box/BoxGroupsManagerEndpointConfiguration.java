@@ -51,7 +51,7 @@ public final class BoxGroupsManagerEndpointConfiguration extends BoxConfiguratio
     @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "createGroup", description="The provenance of the new group")})
     private String provenance;
     @UriParam
-    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "addGroupMembership", description="The role of the user in this group. Can be null to assign the default role.")})
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "addGroupMembership", description="The role of the user in this group. Can be <code>null to assign the default role.")})
     private com.box.sdk.BoxGroupMembership.Role role;
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "addGroupMembership", description="The id of user to be added to group")})

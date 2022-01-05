@@ -186,12 +186,13 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
         }
         /**
          * Specifies the set of event types to register by the consumer.Multiple
-         * event can be separated by comma. The possible event types are:
-         * CACHE_ENTRY_ACTIVATED, CACHE_ENTRY_PASSIVATED, CACHE_ENTRY_VISITED,
-         * CACHE_ENTRY_LOADED, CACHE_ENTRY_EVICTED, CACHE_ENTRY_CREATED,
-         * CACHE_ENTRY_REMOVED, CACHE_ENTRY_MODIFIED, TRANSACTION_COMPLETED,
-         * TRANSACTION_REGISTERED, CACHE_ENTRY_INVALIDATED, CACHE_ENTRY_EXPIRED,
-         * DATA_REHASHED, TOPOLOGY_CHANGED, PARTITION_STATUS_CHANGED,
+         * event can be separated by comma. &lt;p/&gt; The possible event types
+         * are: CACHE_ENTRY_ACTIVATED, CACHE_ENTRY_PASSIVATED,
+         * CACHE_ENTRY_VISITED, CACHE_ENTRY_LOADED, CACHE_ENTRY_EVICTED,
+         * CACHE_ENTRY_CREATED, CACHE_ENTRY_REMOVED, CACHE_ENTRY_MODIFIED,
+         * TRANSACTION_COMPLETED, TRANSACTION_REGISTERED,
+         * CACHE_ENTRY_INVALIDATED, CACHE_ENTRY_EXPIRED, DATA_REHASHED,
+         * TOPOLOGY_CHANGED, PARTITION_STATUS_CHANGED,
          * PERSISTENCE_AVAILABILITY_CHANGED.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
