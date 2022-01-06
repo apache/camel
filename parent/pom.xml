@@ -4067,27 +4067,27 @@
                 <artifactId>geronimo-ws-metadata_2.0_spec</artifactId>
                 <version>${geronimo-ws-metadata-spec-version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>com.sun.xml.messaging.saaj</groupId>
+                <artifactId>saaj-impl</artifactId>
+                <version>1.3.28</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>javax.xml.soap</groupId>
+                        <artifactId>javax.xml.soap-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <!--Get dependency from jaxb-runtime-->
+                        <groupId>org.jvnet.staxex</groupId>
+                        <artifactId>stax-ex</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
     <dependencies>
-
-        <dependency>
-            <groupId>com.sun.xml.messaging.saaj</groupId>
-            <artifactId>saaj-impl</artifactId>
-            <version>1.3.28</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.xml.soap</groupId>
-                    <artifactId>javax.xml.soap-api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <!--Get dependency from jaxb-runtime-->
-                    <groupId>org.jvnet.staxex</groupId>
-                    <artifactId>stax-ex</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-jta_1.1_spec</artifactId>
