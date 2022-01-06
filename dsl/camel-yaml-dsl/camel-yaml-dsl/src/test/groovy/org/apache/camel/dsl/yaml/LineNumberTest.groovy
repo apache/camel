@@ -69,7 +69,7 @@ class LineNumberTest extends YamlTestSupport {
         context.routeDefinitions.size() == 1
 
         with(context.routeDefinitions[0], RouteDefinition) {
-            input.lineNumber == 3
+            input.lineNumber == 4
             input.endpointUri == 'direct:info'
 
             with (outputs[0], LogDefinition) {
@@ -90,7 +90,7 @@ class LineNumberTest extends YamlTestSupport {
 
         with(context.routeDefinitions[0].input, FromDefinition) {
             uri == "quartz:foo?cron={{myCron}}"
-            lineNumber == 19
+            lineNumber == 20
         }
         with(context.routeDefinitions[0].outputs[0], LogDefinition) {
             message == 'Start'
@@ -114,6 +114,44 @@ class LineNumberTest extends YamlTestSupport {
         with(context.routeDefinitions[0].outputs[6], LogDefinition) {
             message == '${header.textProp}'
             lineNumber == 39
+        }
+    }
+
+    def "line number file with comments"() {
+        setup:
+        def rloc = 'classpath:/stuff/my-route-comment.yaml'
+        def rdsl = context.resourceLoader.resolveResource(rloc)
+        when:
+        loadRoutes rdsl
+        then:
+        context.routeDefinitions.size() == 1
+
+        with(context.routeDefinitions[0].input, FromDefinition) {
+            uri == "quartz:foo?cron={{myCron}}"
+            lineNumber == 22
+        }
+        with(context.routeDefinitions[0].outputs[0], LogDefinition) {
+            message == 'Start'
+            lineNumber == 25
+        }
+        with(context.routeDefinitions[0].outputs[1], ToDefinition) {
+            uri == "bean:myBean?method=hello"
+            lineNumber == 26
+        }
+        with(context.routeDefinitions[0].outputs[3], ToDefinition) {
+            uri == "bean:myBean?method=bye"
+            lineNumber == 30
+        }
+        with(context.routeDefinitions[0].outputs[4], LogDefinition) {
+            message == '${body}'
+            lineNumber == 31
+        }
+        with(context.routeDefinitions[0].outputs[5], ChoiceDefinition) {
+            lineNumber == 33 // TODO: should be 32
+        }
+        with(context.routeDefinitions[0].outputs[6], LogDefinition) {
+            message == '${header.textProp}'
+            lineNumber == 49
         }
     }
 

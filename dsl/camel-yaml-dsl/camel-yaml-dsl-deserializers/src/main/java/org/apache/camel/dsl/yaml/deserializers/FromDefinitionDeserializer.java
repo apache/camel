@@ -24,8 +24,12 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.annotations.YamlProperty;
 import org.apache.camel.spi.annotations.YamlType;
 import org.snakeyaml.engine.v2.api.ConstructNode;
+import org.snakeyaml.engine.v2.nodes.MappingNode;
 import org.snakeyaml.engine.v2.nodes.Node;
+import org.snakeyaml.engine.v2.nodes.NodeTuple;
+import org.snakeyaml.engine.v2.nodes.NodeType;
 
+import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asText;
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.getDeserializationContext;
 
 @YamlType(
@@ -44,6 +48,20 @@ public class FromDefinitionDeserializer implements ConstructNode {
         int line = -1;
         if (node.getStartMark().isPresent()) {
             line = node.getStartMark().get().getLine();
+        }
+
+        // we want the line number of the "uri" when using from
+        if (node.getNodeType() == NodeType.MAPPING) {
+            final MappingNode mn = (MappingNode) node;
+            for (NodeTuple tuple : mn.getValue()) {
+                final String key = asText(tuple.getKeyNode());
+                if ("uri".equals(key)) {
+                    if (tuple.getKeyNode().getStartMark().isPresent()) {
+                        line = tuple.getKeyNode().getStartMark().get().getLine() + 1;
+                    }
+                    break;
+                }
+            }
         }
 
         // from must be wrapped in a route, so use existing route or create a new route
