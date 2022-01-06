@@ -4810,6 +4810,18 @@
         </profile>
 
         <profile>
+            <id>dependencyReview</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
             <id>errorprone</id>
             <build>
                 <plugins>
