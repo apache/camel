@@ -201,7 +201,7 @@ _max_ (excluded)
 |collate(group) |List |The collate function iterates the message body and groups
 the data into sub lists of specified size. This can be used with the
 Splitter EIP to split a message body and group/batch
-the splitted sub message into a group of N sub lists. This method works
+the split sub message into a group of N sub lists. This method works
 similar to the collate method in Groovy.
 
 |skip(number) |Iterator |The skip function iterates the message body and skips

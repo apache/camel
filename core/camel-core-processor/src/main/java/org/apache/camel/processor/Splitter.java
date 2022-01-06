@@ -322,7 +322,7 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
             answer.setExchangeId(exchange.getExchangeId());
         }
         if (exchange.getContext().isMessageHistory()) {
-            // we do not want to copy the message history for splitted sub-messages
+            // we do not want to copy the message history for split sub-messages
             answer.removeProperty(ExchangePropertyKey.MESSAGE_HISTORY);
         }
         return answer;

@@ -130,7 +130,7 @@ You only need to use `.endChoice()` when using certain
 xref:eips:enterprise-integration-patterns.adoc[EIP]s which often have additional
 methods to configure or as part of the EIP itself. For example the
 xref:split-eip.adoc[Split] EIP has a sub-route which denotes the
-routing of each _splitted_ message. You would also have to use
+routing of each _split_ message. You would also have to use
 `.endChoice()` to indicate the end of the sub-route and to return
 to the Choice EIP.
 

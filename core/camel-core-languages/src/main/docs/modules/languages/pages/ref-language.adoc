@@ -41,7 +41,7 @@ expression using `<ref>` like:
 ----
 
 in this case, the message coming from the seda:a
-endpoint will be splitted using a custom
+endpoint will be split using a custom
 `Expression` which has the id `myExpression` in the
 xref:manual:ROOT:registry.adoc[Registry].
 

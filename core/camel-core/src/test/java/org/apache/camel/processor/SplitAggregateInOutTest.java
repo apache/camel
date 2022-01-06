@@ -61,21 +61,21 @@ public class SplitAggregateInOutTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 // this routes starts from the direct:start endpoint
-                // the body is then splitted based on @ separator
+                // the body is then split based on @ separator
                 // the splitter in Camel supports InOut as well and for that we
                 // need
                 // to be able to aggregate what response we need to send back,
                 // so we provide our
                 // own strategy with the class MyOrderStrategy.
                 from("direct:start").split(body().tokenize("@"), new MyOrderStrategy())
-                        // each splitted message is then send to this bean where we
+                        // each split message is then send to this bean where we
                         // can process it
                         .to("bean:MyOrderService?method=handleOrder")
                         // this is important to end the splitter route as we do not
                         // want to do more routing
-                        // on each splitted message
+                        // on each split message
                         .end()
-                        // after we have splitted and handled each message we want
+                        // after we have split and handled each message we want
                         // to send a single combined
                         // response back to the original caller, so we let this bean
                         // build it for us
@@ -113,8 +113,8 @@ public class SplitAggregateInOutTest extends ContextTestSupport {
 
     // START SNIPPET: e3
     /**
-     * This is our own order aggregation strategy where we can control how each splitted message should be combined. As
-     * we do not want to loos any message we copy from the new to the old to preserve the order lines as long we process
+     * This is our own order aggregation strategy where we can control how each split message should be combined. As we
+     * do not want to loos any message we copy from the new to the old to preserve the order lines as long we process
      * them
      */
     public static class MyOrderStrategy implements AggregationStrategy {

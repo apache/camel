@@ -75,7 +75,7 @@ public class SplitSubUnitOfWorkTest extends ContextTestSupport {
                 from("direct:start").to("mock:a")
                         // share unit of work in the splitter, which tells Camel to
                         // propagate failures from
-                        // processing the splitted messages back to the result of
+                        // processing the split messages back to the result of
                         // the splitter, which allows
                         // it to act as a combined unit of work
                         .split(body().tokenize(",")).shareUnitOfWork().to("mock:b").to("direct:line").end().to("mock:result");

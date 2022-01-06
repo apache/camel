@@ -27,7 +27,7 @@ The following exchange properties are set on each `Exchange` that are split:
 |=======================================================================
 | Property | Type | Description
 | `CamelSplitIndex` | `int` | A split counter that increases for each Exchange being split. The counter starts from 0.
-| `CamelSplitSize` | `int` | The total number of Exchanges that was splitted.
+| `CamelSplitSize` | `int` | The total number of Exchanges that was split.
        This property is not applied for stream based splitting, except for the very last message because then Camel knows the total size.
 | `CamelSplitComplete` | `boolean` | Whether this Exchange is the last.
 |=======================================================================
@@ -152,7 +152,7 @@ In XML you use xref:components:languages:simple-language.adoc[Simple] to refer t
 
 === Splitting with parallel processing
 
-You can enable parallel processing with Split EIP so each splitted message
+You can enable parallel processing with Split EIP so each split message
 is processed by its own thread in parallel.
 
 The example below enabled parallel mode:
@@ -225,7 +225,7 @@ You can control this by using a custom `AggregationStrategy`.
 
 === Aggregating
 
-The `AggregationStrategy` is used for aggregating all the splitted exchanges together
+The `AggregationStrategy` is used for aggregating all the split exchanges together
 as a single response exchange, that becomes the outgoing exchange after the Split EIP block.
 
 The example now aggregates with the `MyAggregationStrategy` class:
@@ -416,7 +416,7 @@ In XML the route would be as follows:
 This will split the file using the tag name of the child nodes (more precisely speaking, the local name of the element without its namespace prefix if any),
 which mean it will grab the content between the `<order>` and `</order>` tags (incl. the tags).
 
-So for example a splitted message would be structuted as follows:
+So for example a split message would be structured as follows:
 
 [source,xml]
 ----
@@ -579,7 +579,7 @@ The output when using the group option is always a `java.lang.String` type.
 
 === Split and aggregate example
 
-This sample shows how you can split an Exchange, process each splitted message,
+This sample shows how you can split an Exchange, process each split message,
 aggregate and return a combined response to the original caller.
 
 The route below illustrates this and how the split supports a custom `AggregationStrategy`
@@ -588,18 +588,18 @@ to build up the combined response message.
 [source,java]
 ----
 // this routes starts from the direct:start endpoint
-// the body is then splitted based on @ separator
+// the body is then split based on @ separator
 // the splitter in Camel supports InOut as well and for that we need
 // to be able to aggregate what response we need to send back, so we provide our
 // own strategy with the class MyOrderStrategy.
 from("direct:start")
     .split(body().tokenize("@"), new MyOrderStrategy())
-        // each splitted message is then send to this bean where we can process it
+        // each split message is then send to this bean where we can process it
         .to("bean:MyOrderService?method=handleOrder")
         // this is important to end the splitter route as we do not want to do more routing
-        // on each splitted message
+        // on each split message
     .end()
-    // after we have splitted and handled each message we want to send a single combined
+    // after we have split and handled each message we want to send a single combined
     // response back to the original caller, so we let this bean build it for us
     // this bean will receive the result of the aggregate strategy: MyOrderStrategy
     .to("bean:MyOrderService?method=buildCombinedResponse")
@@ -640,7 +640,7 @@ response can be returned to the waiting caller.
 ----
 /**
  * This is our own order aggregation strategy where we can control
- * how each splitted message should be combined. As we do not want to
+ * how each split message should be combined. As we do not want to
  * loos any message we copy from the new to the old to preserve the
  * order lines as long we process them
  */
@@ -693,10 +693,10 @@ Response to caller: Response[(id=1,item=A);(id=2,item=B);(id=3,item=C)]
 
 The Splitter will by default continue to process
 the entire Exchange even in case of one of the
-splitted message will throw an exception during routing.
+split message will throw an exception during routing.
 
 For example if you have an Exchange with 1000 rows that you split.
-During processing of these splitted messages an exception is thrown at the 17th.
+During processing of these split messages an exception is thrown at the 17th.
 What Camel does by default is to process the remainder 983 messages.
 You have the chance to deal with the exception when aggregating using an `AggregationStrategy`.
 
@@ -754,7 +754,7 @@ errorHandler(deadLetterChannel("mock:dead").useOriginalMessage()
 from("direct:start")
     .to("mock:a")
     // share unit of work in the splitter, which tells Camel to propagate failures from
-    // processing the splitted messages back to the result of the splitter, which allows
+    // processing the split messages back to the result of the splitter, which allows
     // it to act as a combined unit of work
     .split(body().tokenize(",")).shareUnitOfWork()
         .to("mock:b")
@@ -772,10 +772,10 @@ What would happen is that in case there is an exception thrown during splitting 
 the error handler will kick in (yes error handling still applies for the sub messages).
 
 The error handler in this example is configured to retry up till 3 times.
-And when a splitted message fails all redelivery attempts (its exhausted),
+And when a split message fails all redelivery attempts (its exhausted),
 then this message is *not* moved into that dead letter queue.
 
-The reason is that we have shared the unit of work, so the splitted message will report the error on the shared unit of work.
+The reason is that we have shared the unit of work, so the split message will report the error on the shared unit of work.
 When the Splitter is done, it checks the state of the shared unit of work and checks if any errors occurred.
 If an error occurred it will set the exception on the `Exchange` and mark it for rollback.
 
@@ -798,7 +798,7 @@ Using this from XML DSL is just as easy as all you have to set is the `shareUnit
     <from uri="direct:start"/>
     <to uri="mock:a"/>
     <!-- share unit of work in the splitter, which tells Camel to propagate failures from
-         processing the splitted messages back to the result of the splitter, which allows
+         processing the split messages back to the result of the splitter, which allows
          it to act as a combined unit of work -->
     <split shareUnitOfWork="true">
       <tokenize token=","/>
@@ -808,7 +808,7 @@ Using this from XML DSL is just as easy as all you have to set is the `shareUnit
     <to uri="mock:result"/>
   </route>
 
-  <!-- route for processing each splitted line -->
+  <!-- route for processing each split line -->
   <route>
     <from uri="direct:line"/>
     <to uri="log:line"/>

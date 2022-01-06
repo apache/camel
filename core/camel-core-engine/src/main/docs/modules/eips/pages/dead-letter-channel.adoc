@@ -215,7 +215,7 @@ The original input means the input message that are bounded by the current unit 
 A unit of work typically spans one route, or multiple routes if they are connected using internal endpoints such as direct or seda.
 When messages are passed via external endpoints such as JMS or HTT then the consumer will create a new unit of work, with the message it received as input as the original input.
 Also, some EIP patterns such as splitter, multicast, will create a new unit of work boundary for the messages in
-their sub-route (i.e. the _splitted_ message); however these EIPs have an option named `shareUnitOfWork` which allows
+their sub-route (i.e. the _split_ message); however these EIPs have an option named `shareUnitOfWork` which allows
 combining with the parent unit of work and ends up usinguse the parent original message.
 
 
