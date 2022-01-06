@@ -20,6 +20,9 @@ import org.apache.camel.LineNumberAware;
 import org.apache.camel.NamedRoute;
 import org.apache.camel.util.FileUtil;
 
+/**
+ * Helper for logging purposes.
+ */
 public final class LoggerHelper {
 
     private LoggerHelper() {
