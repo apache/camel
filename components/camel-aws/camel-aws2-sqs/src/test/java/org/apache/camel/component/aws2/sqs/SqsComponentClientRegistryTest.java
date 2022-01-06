@@ -42,6 +42,7 @@ public class SqsComponentClientRegistryTest extends CamelTestSupport {
         Sqs2Component component = context.getComponent("aws2-sqs", Sqs2Component.class);
         assertThrows(IllegalArgumentException.class, () -> {
             Sqs2Endpoint endpoint = (Sqs2Endpoint) component.createEndpoint("aws2-sqs://MyQueue");
+            endpoint.start();
         });
     }
 
