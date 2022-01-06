@@ -4061,15 +4061,17 @@
                 <artifactId>jakarta.xml.bind-api</artifactId>
                 <version>${jakarta-jaxb-version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>org.apache.geronimo.specs</groupId>
+                <artifactId>geronimo-ws-metadata_2.0_spec</artifactId>
+                <version>${geronimo-ws-metadata-spec-version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
     <dependencies>
-        <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-ws-metadata_2.0_spec</artifactId>
-            <version>${geronimo-ws-metadata-spec-version}</version>
-        </dependency>
+
         <dependency>
             <groupId>com.sun.xml.messaging.saaj</groupId>
             <artifactId>saaj-impl</artifactId>
