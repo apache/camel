@@ -118,7 +118,11 @@ public class CoAPEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        return new CoAPProducer(this);
+        if (isNotify()) {
+            return new CoAPNotifier(this);
+        } else {
+            return new CoAPProducer(this);
+        }
     }
 
     @Override
