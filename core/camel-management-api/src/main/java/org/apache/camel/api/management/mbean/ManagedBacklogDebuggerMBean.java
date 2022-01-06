@@ -174,5 +174,5 @@ public interface ManagedBacklogDebuggerMBean {
     void setExchangePropertyOnBreakpoint(String nodeId, String exchangePropertyName, Object value, String type);
 
     @ManagedOperation(description = "Returns the message history at the given node id as XML")
-    String getMessageHistory(String nodeId);
+    String messageHistoryOnBreakpointAsXml(String nodeId);
 }

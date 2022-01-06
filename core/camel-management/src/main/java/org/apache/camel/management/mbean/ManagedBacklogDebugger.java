@@ -376,7 +376,7 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
     }
 
     @Override
-    public String getMessageHistory(String nodeId) {
+    public String messageHistoryOnBreakpointAsXml(String nodeId) {
         StringBuffer messageHistoryBuffer = new StringBuffer();
         messageHistoryBuffer.append("<messageHistory>\n");
 

@@ -861,7 +861,7 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
             assertEquals("bar", suspended.iterator().next());
         });
 
-        Object response = mbeanServer.invoke(on, "getMessageHistory",
+        Object response = mbeanServer.invoke(on, "messageHistoryOnBreakpointAsXml",
                 new Object[] { "bar" },
                 new String[] { "java.lang.String" });
 
