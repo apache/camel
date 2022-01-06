@@ -163,7 +163,7 @@
     <!-- skip tests on Windows due CAMEL-8445 -->
     <profiles>
         <profile>
-            <id>windows</id>
+            <id>Windows</id>
             <activation>
                 <os>
                     <family>Windows</family>
