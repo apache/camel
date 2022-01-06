@@ -4055,18 +4055,16 @@
                 <artifactId>javax.annotation-api</artifactId>
                 <version>${javax-annotation-api-version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>jakarta.xml.bind</groupId>
+                <artifactId>jakarta.xml.bind-api</artifactId>
+                <version>${jakarta-jaxb-version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
     <dependencies>
-
-
-        <dependency>
-            <groupId>jakarta.xml.bind</groupId>
-            <artifactId>jakarta.xml.bind-api</artifactId>
-            <version>${jakarta-jaxb-version}</version>
-        </dependency>
-
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-ws-metadata_2.0_spec</artifactId>
