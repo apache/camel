@@ -85,6 +85,14 @@ pipeline {
             }
         }
 
+        stage('Code Quality Review') {
+            steps {
+                withCredentials([string(credentialsId: 'apache-camel-core', variable: 'SONAR_TOKEN')]) {
+                        sh "./mvnw $MAVEN_PARAMS -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=apache -Dsonar.projectKey=apache_camel org.sonarsource.scanner.maven:sonar-maven-plugin:sonar"
+                }
+            }
+        }
+
         stage('Test') {
             steps {
                 sh "./mvnw $MAVEN_PARAMS -Dmaven.test.failure.ignore=true clean install"
