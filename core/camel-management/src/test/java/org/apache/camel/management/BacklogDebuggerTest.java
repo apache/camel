@@ -16,8 +16,6 @@
  */
 package org.apache.camel.management;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -868,19 +866,15 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
                 new String[] { "java.lang.String" });
 
         assertNotNull(response);
-        assertTrue(response instanceof ArrayList);
-        ArrayList responseList = (ArrayList) response;
-        assertEquals(4, responseList.size());
-        Object firstEntry = responseList.get(0);
-        assertNotNull(firstEntry);
-        assertTrue(firstEntry instanceof HashMap);
-        HashMap firstEntryMap = (HashMap) firstEntry;
-        assertEquals(5, firstEntryMap.entrySet().size());
-        assertEquals("route1", firstEntryMap.get("routeId"));
-        assertEquals("from[seda://start?concurrentConsumers=2]", firstEntryMap.get("processor"));
-        assertEquals("route1", firstEntryMap.get("processorId"));
-        assertNotNull(firstEntryMap.get("elapsed"));
-        assertNotNull(firstEntryMap.get("location"));
+        assertTrue(response.getClass().isAssignableFrom(String.class));
+        String history = (String) response;
+        int count = (history.split("messageHistoryEntry", -1).length) - 1;
+        assertEquals(4, count);
+        assertTrue(history.contains("processor=\"from[seda://start?concurrentConsumers=2]\""));
+        assertTrue(history.contains("routeId=\"route1\""));
+        assertTrue(history.contains("processorId=\"route1\""));
+        assertTrue(history.contains("location=\""));
+        assertTrue(history.contains("elapsed=\""));
 
         resetMocks();
         mock.expectedMessageCount(1);

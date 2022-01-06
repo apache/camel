@@ -18,8 +18,6 @@ package org.apache.camel.management.mbean;
 
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -378,70 +376,69 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
     }
 
     @Override
-    public List<HashMap<String, String>> getMessageHistory(String nodeId) {
+    public String getMessageHistory(String nodeId) {
+        StringBuffer messageHistoryBuffer = new StringBuffer();
+        messageHistoryBuffer.append("<messageHistory>\n");
+
         Exchange suspendedExchange = backlogDebugger.getSuspendedExchange(nodeId);
-        if (suspendedExchange == null) {
-            return null;
-        }
-        List<MessageHistory> list = suspendedExchange.getProperty(ExchangePropertyKey.MESSAGE_HISTORY, List.class);
-        if (list == null) {
-            return null;
-        }
+        if (suspendedExchange != null) {
+            List<MessageHistory> list = suspendedExchange.getProperty(ExchangePropertyKey.MESSAGE_HISTORY, List.class);
+            if (list != null) {
+                // add incoming origin of message on the top
+                String routeId = suspendedExchange.getFromRouteId();
+                Route route = suspendedExchange.getContext().getRoute(routeId);
+                String loc = route != null ? route.getSourceLocation() : "";
+                String id = routeId;
+                String label = "";
+                if (suspendedExchange.getFromEndpoint() != null) {
+                    label = "from["
+                            + URISupport
+                                    .sanitizeUri(
+                                            StringHelper.limitLength(suspendedExchange.getFromEndpoint().getEndpointUri(), 100))
+                            + "]";
+                }
+                long elapsed = new StopWatch(suspendedExchange.getCreated()).taken();
 
-        List<HashMap<String, String>> messageHistory = new ArrayList<>();
+                messageHistoryBuffer
+                        .append("    <messageHistoryEntry")
+                        .append(" location=\"").append(loc).append("\"")
+                        .append(" routeId=\"").append(routeId).append("\"")
+                        .append(" processorId=\"").append(id).append("\"")
+                        .append(" processor=\"").append(label).append("\"")
+                        .append(" elapsed=\"").append(elapsed).append("\"")
+                        .append("/>\n");
 
-        // add incoming origin of message on the top
-        String routeId = suspendedExchange.getFromRouteId();
-        Route route = suspendedExchange.getContext().getRoute(routeId);
-        String loc = route != null ? route.getSourceLocation() : "";
-        String id = routeId;
-        String label = "";
-        if (suspendedExchange.getFromEndpoint() != null) {
-            label = "from["
-                    + URISupport
-                            .sanitizeUri(StringHelper.limitLength(suspendedExchange.getFromEndpoint().getEndpointUri(), 100))
-                    + "]";
-        }
-        long elapsed = new StopWatch(suspendedExchange.getCreated()).taken();
+                for (MessageHistory history : list) {
+                    // and then each history
+                    loc = LoggerHelper.getLineNumberLoggerName(history.getNode());
+                    if (loc == null) {
+                        loc = "";
+                    }
+                    routeId = history.getRouteId() != null ? history.getRouteId() : "";
+                    id = history.getNode().getId();
+                    // we need to avoid leak the sensible information here
+                    // the sanitizeUri takes a very long time for very long string
+                    // and the format cuts this to
+                    // 78 characters, anyway. Cut this to 100 characters. This will
+                    // give enough space for removing
+                    // characters in the sanitizeUri method and will be reasonably
+                    // fast
+                    label = URISupport.sanitizeUri(StringHelper.limitLength(history.getNode().getLabel(), 100));
+                    elapsed = history.getElapsed();
 
-        HashMap<String, String> historyLine = new HashMap<>();
-        historyLine.put("location", loc);
-        historyLine.put("routeId", routeId);
-        historyLine.put("processorId", id);
-        historyLine.put("processor", label);
-        historyLine.put("elapsed", String.valueOf(elapsed));
-
-        messageHistory.add(historyLine);
-
-        for (MessageHistory history : list) {
-            // and then each history
-            loc = LoggerHelper.getLineNumberLoggerName(history.getNode());
-            if (loc == null) {
-                loc = "";
+                    messageHistoryBuffer
+                            .append("    <messageHistoryEntry")
+                            .append(" location=\"").append(loc).append("\"")
+                            .append(" routeId=\"").append(routeId).append("\"")
+                            .append(" processorId=\"").append(id).append("\"")
+                            .append(" processor=\"").append(label).append("\"")
+                            .append(" elapsed=\"").append(elapsed).append("\"")
+                            .append("/>\n");
+                }
             }
-            routeId = history.getRouteId() != null ? history.getRouteId() : "";
-            id = history.getNode().getId();
-            // we need to avoid leak the sensible information here
-            // the sanitizeUri takes a very long time for very long string
-            // and the format cuts this to
-            // 78 characters, anyway. Cut this to 100 characters. This will
-            // give enough space for removing
-            // characters in the sanitizeUri method and will be reasonably
-            // fast
-            label = URISupport.sanitizeUri(StringHelper.limitLength(history.getNode().getLabel(), 100));
-            elapsed = history.getElapsed();
-
-            historyLine = new HashMap<>();
-            historyLine.put("location", loc);
-            historyLine.put("routeId", routeId);
-            historyLine.put("processorId", id);
-            historyLine.put("processor", label);
-            historyLine.put("elapsed", String.valueOf(elapsed));
-
-            messageHistory.add(historyLine);
         }
-
-        return messageHistory;
+        messageHistoryBuffer.append("</messageHistory>\n");
+        return messageHistoryBuffer.toString();
     }
 
     private String dumpExchangePropertiesAsXml(String id) {
