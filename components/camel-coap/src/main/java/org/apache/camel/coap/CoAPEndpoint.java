@@ -123,7 +123,12 @@ public class CoAPEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        CoAPConsumer consumer = new CoAPConsumer(this, processor);
+        final Consumer consumer;
+        if (isObserve()) {
+            consumer = new CoAPObserver(this, processor);
+        } else {
+            consumer = new CoAPConsumer(this, processor);
+        }
         configureConsumer(consumer);
         return consumer;
     }
