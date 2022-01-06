@@ -9377,10 +9377,10 @@ direct or seda. When messages is passed via external endpoints such as JMS or
 HTTP then the consumer will create a new unit of work, with the message it
 received as input as the original input. Also some EIP patterns such as
 splitter, multicast, will create a new unit of work boundary for the messages in
-their sub-route (eg the splitted message); however these EIPs have an option
-named <tt>shareUnitOfWork which allows to combine with the parent unit of work
-in regard to error handling and therefore use the parent original message. <p/>
-By default this feature is off. Default value: false
+their sub-route (eg the split message); however these EIPs have an option named
+<tt>shareUnitOfWork which allows to combine with the parent unit of work in
+regard to error handling and therefore use the parent original message. <p/> By
+default this feature is off. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -9411,10 +9411,10 @@ direct or seda. When messages is passed via external endpoints such as JMS or
 HTTP then the consumer will create a new unit of work, with the message it
 received as input as the original input. Also some EIP patterns such as
 splitter, multicast, will create a new unit of work boundary for the messages in
-their sub-route (eg the splitted message); however these EIPs have an option
-named <tt>shareUnitOfWork which allows to combine with the parent unit of work
-in regard to error handling and therefore use the parent original message. <p/>
-By default this feature is off. Default value: false
+their sub-route (eg the split message); however these EIPs have an option named
+<tt>shareUnitOfWork which allows to combine with the parent unit of work in
+regard to error handling and therefore use the parent original message. <p/> By
+default this feature is off. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -11516,7 +11516,7 @@ Delimiter used in splitting messages. Can be turned off using the value
         <xs:attribute name="parallelProcessing" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-If enabled then processing each splitted messages occurs concurrently. Note the
+If enabled then processing each split messages occurs concurrently. Note the
 caller thread will still wait until all messages has been fully processed,
 before it continues. Its only processing the sub messages from the splitter
 which happens concurrently. Default value: false
@@ -11527,7 +11527,7 @@ which happens concurrently. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Sets a reference to the AggregationStrategy to be used to assemble the replies
-from the splitted messages, into a single outgoing message from the Splitter. By
+from the split messages, into a single outgoing message from the Splitter. By
 default Camel will use the original incoming message to the splitter (leave it
 unchanged). You can also use a POJO as the AggregationStrategy.
             ]]></xs:documentation>
@@ -11564,17 +11564,17 @@ have to enable that option as well.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 When in streaming mode, then the splitter splits the original message on-demand,
-and each splitted message is processed one by one. This reduces memory usage as
-the splitter do not split all the messages first, but then we do not know the
-total size, and therefore the org.apache.camel.Exchange#SPLIT_SIZE is empty.
-<p/> In non-streaming mode (default) the splitter will split each message first,
-to know the total size, and then process each message one by one. This requires
-to keep all the splitted messages in memory and therefore requires more memory.
-The total size is provided in the org.apache.camel.Exchange#SPLIT_SIZE header.
-<p/> The streaming mode also affects the aggregation behavior. If enabled then
-Camel will process replies out-of-order, eg in the order they come back. If
-disabled, Camel will process replies in the same order as the messages was
-splitted. Default value: false
+and each split message is processed one by one. This reduces memory usage as the
+splitter do not split all the messages first, but then we do not know the total
+size, and therefore the org.apache.camel.Exchange#SPLIT_SIZE is empty. <p/> In
+non-streaming mode (default) the splitter will split each message first, to know
+the total size, and then process each message one by one. This requires to keep
+all the split messages in memory and therefore requires more memory. The total
+size is provided in the org.apache.camel.Exchange#SPLIT_SIZE header. <p/> The
+streaming mode also affects the aggregation behavior. If enabled then Camel will
+process replies out-of-order, eg in the order they come back. If disabled, Camel
+will process replies in the same order as the messages was split. Default value:
+false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -11620,8 +11620,8 @@ needed before the exchange is send.
             <xs:documentation xml:lang="en"><![CDATA[
 Shares the org.apache.camel.spi.UnitOfWork with the parent and each of the sub
 messages. Splitter will by default not share unit of work between the parent
-exchange and each splitted exchange. This means each splitted exchange has its
-own individual unit of work. Default value: false
+exchange and each split exchange. This means each split exchange has its own
+individual unit of work. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
