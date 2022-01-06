@@ -49,8 +49,8 @@ import org.slf4j.Logger;
 @EagerClassloaded
 public final class MessageHelper {
 
-    private static final String MESSAGE_HISTORY_HEADER = "%-30s %-20s %-20s %-50s %-12s";
-    private static final String MESSAGE_HISTORY_OUTPUT = "%-30.30s %-20.20s %-20.20s %-50.50s %12.12s";
+    private static final String MESSAGE_HISTORY_HEADER = "%-40s %-30s %-50s %-12s";
+    private static final String MESSAGE_HISTORY_OUTPUT = "%-40.40s %-30.30s %-50.50s %12.12s";
 
     /**
      * Utility classes should not have a public constructor.
@@ -570,13 +570,16 @@ public final class MessageHelper {
                 "---------------------------------------------------------------------------------------------------------------------------------------\n");
         String goMessageHistoryHeader = exchange.getContext().getGlobalOption(Exchange.MESSAGE_HISTORY_HEADER_FORMAT);
         sb.append(String.format(goMessageHistoryHeader == null ? MESSAGE_HISTORY_HEADER : goMessageHistoryHeader,
-                "Location", "RouteId", "ProcessorId", "Processor", "Elapsed (ms)"));
+                "Source", "ID", "Processor", "Elapsed (ms)"));
         sb.append("\n");
 
         // add incoming origin of message on the top
         String routeId = exchange.getFromRouteId();
         Route route = exchange.getContext().getRoute(routeId);
-        String loc = route != null ? route.getSourceLocation() : "";
+        String loc = route != null ? route.getSourceLocation() : null;
+        if (loc == null) {
+            loc = "";
+        }
         String id = routeId;
         String label = "";
         if (exchange.getFromEndpoint() != null) {
@@ -587,7 +590,7 @@ public final class MessageHelper {
 
         String goMessageHistoryOutput = exchange.getContext().getGlobalOption(Exchange.MESSAGE_HISTORY_OUTPUT_FORMAT);
         goMessageHistoryOutput = goMessageHistoryOutput == null ? MESSAGE_HISTORY_OUTPUT : goMessageHistoryOutput;
-        sb.append(String.format(goMessageHistoryOutput, loc, routeId, id, label, elapsed));
+        sb.append(String.format(goMessageHistoryOutput, loc, routeId + "/" + id, label, elapsed));
         sb.append("\n");
 
         if (list == null || list.isEmpty()) {
@@ -613,7 +616,7 @@ public final class MessageHelper {
                 // we do not have elapsed time
                 elapsed = 0;
                 sb.append("\t...\n");
-                sb.append(String.format(goMessageHistoryOutput, loc, routeId, id, label, elapsed));
+                sb.append(String.format(goMessageHistoryOutput, loc, routeId + "/" + id, label, elapsed));
                 sb.append("\n");
             }
         } else {
@@ -635,7 +638,7 @@ public final class MessageHelper {
                 label = URISupport.sanitizeUri(StringHelper.limitLength(history.getNode().getLabel(), 100));
                 elapsed = history.getElapsed();
 
-                sb.append(String.format(goMessageHistoryOutput, loc, routeId, id, label, elapsed));
+                sb.append(String.format(goMessageHistoryOutput, loc, routeId + "/" + id, label, elapsed));
                 sb.append("\n");
             }
         }
@@ -651,7 +654,7 @@ public final class MessageHelper {
         if (logStackTrace) {
             sb.append("\nStacktrace\n");
             sb.append(
-                    "---------------------------------------------------------------------------------------------------------------------------------------\n");
+                    "---------------------------------------------------------------------------------------------------------------------------------------");
         }
         return sb.toString();
     }

@@ -22,16 +22,16 @@ Removed the deprecated `Classic` value from `startupSummaryLevel` enums.
 
 ==== Message History
 
-The message history output now includes a source column, which refers to the Java class/XML file
+The message history output has changed to include source column, which refers to the Java class/XML file
 from the DSL the message was at the given time. (line precise error reporting).
 
-This means there is now 5 columns and the defaults are:
+This default formatting are (Source, ID, Processor, Elapsed):
 ```
-MESSAGE_HISTORY_HEADER = "%-30s %-20s %-20s %-50s %-12s";
-MESSAGE_HISTORY_OUTPUT = "%-30.30s %-20.20s %-20.20s %-50.50s %12.12s";
+    MESSAGE_HISTORY_HEADER = "%-40s %-30s %-50s %-12s";
+    MESSAGE_HISTORY_OUTPUT = "%-40.40s %-30.30s %-50.50s %12.12s";
 ```
 
-If you are using custom sizes then you need to adjust from 4 to 5 columns.
+If you are using custom sizes then you need to adjust accordingly.
 
 === camel-endpointdsl
 
@@ -83,15 +83,15 @@ This should correctly be done with `steps` as child of `from`:
         - log: "message"
 ----
 
+=== camel-jbang
+
+The JBang app that was previously named `CamelJBang` is now named `camel`. It is still possible to use the older name by installing it using `CamelJBang@apache/camel` but this approach is deprecated and should not be used in the future.
+
 === camel-karaf
 
 The `camel-endpointdsl` and `camel-componentdsl` is no longer supported on Apache Karaf.
 
 The `camel-osg-activator` has been removed.
-
-=== camel-jbang
-
-The JBang app that was previously named `CamelJBang` is now named `camel`. It is still possible to use the older name by installing it using `CamelJBang@apache/camel` but this approach is deprecated and should not be used in the future.
 
 === camel-quartz
 
