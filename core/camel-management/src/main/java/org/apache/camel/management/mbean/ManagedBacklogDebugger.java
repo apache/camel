@@ -401,10 +401,10 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
 
                 messageHistoryBuffer
                         .append("    <messageHistoryEntry")
-                        .append(" location=\"").append(loc).append("\"")
-                        .append(" routeId=\"").append(routeId).append("\"")
-                        .append(" processorId=\"").append(id).append("\"")
-                        .append(" processor=\"").append(label).append("\"")
+                        .append(" location=\"").append(StringHelper.xmlEncode(loc)).append("\"")
+                        .append(" routeId=\"").append(StringHelper.xmlEncode(routeId)).append("\"")
+                        .append(" processorId=\"").append(StringHelper.xmlEncode(id)).append("\"")
+                        .append(" processor=\"").append(StringHelper.xmlEncode(label)).append("\"")
                         .append(" elapsed=\"").append(elapsed).append("\"")
                         .append("/>\n");
 
@@ -428,10 +428,10 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
 
                     messageHistoryBuffer
                             .append("    <messageHistoryEntry")
-                            .append(" location=\"").append(loc).append("\"")
-                            .append(" routeId=\"").append(routeId).append("\"")
-                            .append(" processorId=\"").append(id).append("\"")
-                            .append(" processor=\"").append(label).append("\"")
+                            .append(" location=\"").append(StringHelper.xmlEncode(loc)).append("\"")
+                            .append(" routeId=\"").append(StringHelper.xmlEncode(routeId)).append("\"")
+                            .append(" processorId=\"").append(StringHelper.xmlEncode(id)).append("\"")
+                            .append(" processor=\"").append(StringHelper.xmlEncode(label)).append("\"")
                             .append(" elapsed=\"").append(elapsed).append("\"")
                             .append("/>\n");
                 }
