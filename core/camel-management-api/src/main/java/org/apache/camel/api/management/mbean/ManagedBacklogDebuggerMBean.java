@@ -172,4 +172,7 @@ public interface ManagedBacklogDebuggerMBean {
 
     @ManagedOperation(description = "Updates/adds the exchange property (with a new type) on the suspended breakpoint at the given node id")
     void setExchangePropertyOnBreakpoint(String nodeId, String exchangePropertyName, Object value, String type);
+
+    @ManagedOperation(description = "Returns the message history at the given node id as XML")
+    String messageHistoryOnBreakpointAsXml(String nodeId);
 }
