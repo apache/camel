@@ -16,6 +16,8 @@
  */
 package org.apache.camel.api.management.mbean;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.camel.api.management.ManagedAttribute;
@@ -172,4 +174,7 @@ public interface ManagedBacklogDebuggerMBean {
 
     @ManagedOperation(description = "Updates/adds the exchange property (with a new type) on the suspended breakpoint at the given node id")
     void setExchangePropertyOnBreakpoint(String nodeId, String exchangePropertyName, Object value, String type);
+
+    @ManagedOperation(description = "Returns the message history at the given node id")
+    List<HashMap<String, String>> getMessageHistory(String nodeId);
 }
