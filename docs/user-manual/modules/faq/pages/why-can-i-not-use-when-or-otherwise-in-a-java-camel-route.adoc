@@ -81,7 +81,7 @@ xref:components:eips:enterprise-integration-patterns.adoc[EIP]s which often have
 methods to configure or as part of the
 xref:components:eips:enterprise-integration-patterns.adoc[EIP] itself. For example the
 xref:components:eips:split-eip.adoc[Splitter] EIP has a sub-route which denotes the
-routing of each splitted message. You would also have to use
+routing of each split message. You would also have to use
 `.endChoice()` to indicate the end of the sub-route and to return back
 to the xref:components:eips:choice-eip.adoc[Content Based Router].
 
