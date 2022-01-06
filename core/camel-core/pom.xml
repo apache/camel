@@ -211,6 +211,13 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Used for the exception tests -->
+        <dependency>
+            <groupId>javax.xml.soap</groupId>
+            <artifactId>javax.xml.soap-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+
         <!-- validator testing -->
         <dependency>
             <groupId>xml-resolver</groupId>

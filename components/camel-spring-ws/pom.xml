@@ -87,6 +87,14 @@
             <artifactId>spring-ws-support</artifactId>
             <version>${spring-ws-version}</version>
         </dependency>
+        <dependency>
+            <groupId>javax.xml.soap</groupId>
+            <artifactId>javax.xml.soap-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
+        </dependency>
 
         <!-- test dependencies -->
         <dependency>
@@ -183,6 +191,12 @@
                     <artifactId>xmlunit</artifactId>
                 </exclusion>
             </exclusions>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sun.xml.messaging.saaj</groupId>
+            <artifactId>saaj-impl</artifactId>
             <scope>test</scope>
         </dependency>
 

@@ -290,6 +290,7 @@
         <jakarta.el-version>3.0.3</jakarta.el-version>
         <jakarta-jaxb-version>2.3.3</jakarta-jaxb-version>
         <javax-soap-api-version>1.4.0</javax-soap-api-version>
+        <jaxws-api-version>2.3.0</jaxws-api-version>
         <glassfish-javax-json>1.0.4</glassfish-javax-json>
         <glassfish-jaxb-runtime-version>2.3.3</glassfish-jaxb-runtime-version>
         <jaxb2-maven-plugin-version>2.5.0</jaxb2-maven-plugin-version>
@@ -4042,7 +4043,7 @@
             <dependency>
                 <groupId>javax.xml.ws</groupId>
                 <artifactId>jaxws-api</artifactId>
-                <version>2.3.0</version>
+                <version>${jaxws-api-version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>javax.xml.bind</groupId>

@@ -54,6 +54,13 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <version>${jakarta-jaxb-version}</version>
+            <scope>compile</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
