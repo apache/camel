@@ -119,14 +119,6 @@ This should be similar to:
 <!-- test infra -->
 <dependency>
     <groupId>org.apache.camel</groupId>
-    <artifactId>camel-test-infra-common</artifactId>
-    <version>${project.version}</version>
-    <type>test-jar</type>
-    <scope>test</scope>
-</dependency>
-
-<dependency>
-    <groupId>org.apache.camel</groupId>
     <artifactId>camel-test-infra-myservice</artifactId>
     <version>${project.version}</version>
     <type>test-jar</type>
