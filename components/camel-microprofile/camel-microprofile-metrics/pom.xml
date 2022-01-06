@@ -47,6 +47,12 @@
             <version>${microprofile-metrics-version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
+            <version>${javax-annotation-api-version}</version>
+        </dependency>
+        
         <!-- testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>
