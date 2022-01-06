@@ -289,6 +289,7 @@
         <jakarta-api-version>2.1.5</jakarta-api-version>
         <jakarta.el-version>3.0.3</jakarta.el-version>
         <jakarta-jaxb-version>2.3.3</jakarta-jaxb-version>
+        <javax-soap-api-version>1.4.0</javax-soap-api-version>
         <glassfish-javax-json>1.0.4</glassfish-javax-json>
         <glassfish-jaxb-runtime-version>2.3.3</glassfish-jaxb-runtime-version>
         <jaxb2-maven-plugin-version>2.5.0</jaxb2-maven-plugin-version>
@@ -4095,17 +4096,14 @@
                 <artifactId>jaxb-runtime</artifactId>
                 <version>${glassfish-jaxb-runtime-version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>javax.xml.soap</groupId>
+                <artifactId>javax.xml.soap-api</artifactId>
+                <version>${javax-soap-api-version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
-
-    <dependencies>
-
-        <dependency>
-            <groupId>javax.xml.soap</groupId>
-            <artifactId>javax.xml.soap-api</artifactId>
-            <version>1.4.0</version>
-        </dependency>
-    </dependencies>
 
     <build>
         <defaultGoal>install</defaultGoal>
