@@ -68,10 +68,6 @@ public class Sqs2Component extends DefaultComponent {
         }
         Sqs2Endpoint sqsEndpoint = new Sqs2Endpoint(uri, this, configuration);
         setProperties(sqsEndpoint, parameters);
-        if (!configuration.isUseDefaultCredentialsProvider() && configuration.getAmazonSQSClient() == null
-                && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
-            throw new IllegalArgumentException("AmazonSQSClient or accessKey and secretKey must be specified.");
-        }
 
         // Verify that visibilityTimeout is set if extendMessageVisibility is
         // set to true.
