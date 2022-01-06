@@ -556,22 +556,6 @@ public final class MessageHelper {
     @SuppressWarnings("unchecked")
     private static String doDumpMessageHistoryStacktrace(
             Exchange exchange, ExchangeFormatter exchangeFormatter, boolean logStackTrace) {
-        List<MessageHistory> list = exchange.getProperty(ExchangePropertyKey.MESSAGE_HISTORY, List.class);
-        boolean enabled = list != null;
-
-        StringBuilder sb = new StringBuilder();
-        sb.append("\n");
-        sb.append("Message History");
-        if (!enabled) {
-            sb.append(" (complete message history is disabled)");
-        }
-        sb.append("\n");
-        sb.append(
-                "---------------------------------------------------------------------------------------------------------------------------------------\n");
-        String goMessageHistoryHeader = exchange.getContext().getGlobalOption(Exchange.MESSAGE_HISTORY_HEADER_FORMAT);
-        sb.append(String.format(goMessageHistoryHeader == null ? MESSAGE_HISTORY_HEADER : goMessageHistoryHeader,
-                "Source", "ID", "Processor", "Elapsed (ms)"));
-        sb.append("\n");
 
         // add incoming origin of message on the top
         String routeId = exchange.getFromRouteId();
@@ -588,6 +572,28 @@ public final class MessageHelper {
         }
         long elapsed = new StopWatch(exchange.getCreated()).taken();
 
+        List<MessageHistory> list = exchange.getProperty(ExchangePropertyKey.MESSAGE_HISTORY, List.class);
+        boolean enabled = list != null;
+        boolean source = !loc.isEmpty();
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("\n");
+        sb.append("Message History");
+        if (!source && !enabled) {
+            sb.append(" (source location and message history is disabled)");
+        } else if (!source) {
+            sb.append(" (source location is disabled)");
+        } else if (!enabled) {
+            sb.append(" (complete message history is disabled)");
+        }
+        sb.append("\n");
+        sb.append(
+                "---------------------------------------------------------------------------------------------------------------------------------------\n");
+        String goMessageHistoryHeader = exchange.getContext().getGlobalOption(Exchange.MESSAGE_HISTORY_HEADER_FORMAT);
+        sb.append(String.format(goMessageHistoryHeader == null ? MESSAGE_HISTORY_HEADER : goMessageHistoryHeader,
+                "Source", "ID", "Processor", "Elapsed (ms)"));
+        sb.append("\n");
+
         String goMessageHistoryOutput = exchange.getContext().getGlobalOption(Exchange.MESSAGE_HISTORY_OUTPUT_FORMAT);
         goMessageHistoryOutput = goMessageHistoryOutput == null ? MESSAGE_HISTORY_OUTPUT : goMessageHistoryOutput;
         sb.append(String.format(goMessageHistoryOutput, loc, routeId + "/" + id, label, elapsed));
@@ -598,8 +604,10 @@ public final class MessageHelper {
             // instead
             id = exchange.adapt(ExtendedExchange.class).getHistoryNodeId();
             if (id != null) {
-                // compute route id
                 loc = exchange.adapt(ExtendedExchange.class).getHistoryNodeSource();
+                if (loc == null) {
+                    loc = "";
+                }
                 String rid = ExchangeHelper.getAtRouteId(exchange);
                 if (rid != null) {
                     routeId = rid;
