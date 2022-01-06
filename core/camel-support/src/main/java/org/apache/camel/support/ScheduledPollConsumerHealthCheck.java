@@ -32,6 +32,7 @@ public class ScheduledPollConsumerHealthCheck implements HealthCheck {
     private final String id;
     private final String sanitizedBaseUri;
     private final String sanitizedUri;
+    private boolean downBeforeFirstPoll = true;
 
     public ScheduledPollConsumerHealthCheck(ScheduledPollConsumer consumer, String id) {
         this.consumer = consumer;
@@ -58,7 +59,8 @@ public class ScheduledPollConsumerHealthCheck implements HealthCheck {
         Throwable cause = consumer.getLastError();
 
         // can only be healthy if we have at least one poll done and there are no errors
-        boolean healthy = first && ec == 0;
+        boolean healthy = downBeforeFirstPoll && first && ec == 0 ||
+                !downBeforeFirstPoll && ec == 0;
         if (healthy) {
             builder.up();
         } else {
@@ -81,6 +83,19 @@ public class ScheduledPollConsumerHealthCheck implements HealthCheck {
         }
 
         return builder.build();
+    }
+
+    public boolean isDownBeforeFirstPoll() {
+        return downBeforeFirstPoll;
+    }
+
+    /**
+     * Whether the health check starts as DOWN before first poll (default true). This can be set to false for consumers
+     * that should be UP from the start. For example scheduled consumer which may run their first poll after a long
+     * time.
+     */
+    public void setDownBeforeFirstPoll(boolean downBeforeFirstPoll) {
+        this.downBeforeFirstPoll = downBeforeFirstPoll;
     }
 
     @Override
