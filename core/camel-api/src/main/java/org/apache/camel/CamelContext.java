@@ -60,8 +60,7 @@ import org.apache.camel.support.jsse.SSLContextParameters;
  * <p/>
  * The CamelContext offers the following methods {@link CamelContextLifecycle} to control the lifecycle:
  * <ul>
- * <li>{@link #start()} - to start (<b>important:</b> the start method is not blocked, see more details
- * <a href="http://camel.apache.org/running-camel-standalone-and-have-it-keep-running.html">here</a>)</li>
+ * <li>{@link #start()} - to start</li>
  * <li>{@link #stop()} - to shutdown (will stop all routes/components/endpoints etc and clear internal state/cache)</li>
  * <li>{@link #suspend()} - to pause routing messages</li>
  * <li>{@link #resume()} - to resume after a suspend</li>
