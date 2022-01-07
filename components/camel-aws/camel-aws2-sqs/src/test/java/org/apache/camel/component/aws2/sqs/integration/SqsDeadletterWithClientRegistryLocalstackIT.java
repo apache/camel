@@ -23,8 +23,8 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.aws2.sqs.Sqs2Component;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.aws2.clients.AWSSDKClientUtils;
 import org.junit.jupiter.api.Test;
 
 public class SqsDeadletterWithClientRegistryLocalstackIT extends Aws2SQSBaseTest {
@@ -37,12 +37,9 @@ public class SqsDeadletterWithClientRegistryLocalstackIT extends Aws2SQSBaseTest
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        CamelContext ctx = super.createCamelContext();
+        CamelContext ctx = super.createCamelContextWithoutClient();
 
-        Sqs2Component sqs = ctx.getComponent("aws2-sqs", Sqs2Component.class);
-
-        ctx.getRegistry().bind("awsSQSClient", sqs.getConfiguration().getAmazonSQSClient());
-        sqs.getConfiguration().setAmazonSQSClient(null);
+        ctx.getRegistry().bind("awsSQSClient", AWSSDKClientUtils.newSQSClient());
 
         return ctx;
     }
