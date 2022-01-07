@@ -2,7 +2,7 @@
 :doctitle: Hazelcast Map
 :shortname: hazelcast-map
 :artifactid: camel-hazelcast
-:description: Perform operations on distributed map.
+:description: Perform operations on Hazelcast distributed map.
 :since: 2.7
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported

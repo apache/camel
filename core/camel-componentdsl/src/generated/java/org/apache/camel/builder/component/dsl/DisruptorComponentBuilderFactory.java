@@ -120,8 +120,8 @@ public interface DisruptorComponentBuilderFactory {
             return this;
         }
         /**
-         * To configure the default value for DisruptorWaitStrategy &lt;p/&gt;
-         * The default value is Blocking.
+         * To configure the default value for DisruptorWaitStrategy The default
+         * value is Blocking.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.disruptor.DisruptorWaitStrategy&lt;/code&gt; type.
@@ -138,8 +138,8 @@ public interface DisruptorComponentBuilderFactory {
             return this;
         }
         /**
-         * To configure the default value for block when full &lt;p/&gt; The
-         * default value is true.
+         * To configure the default value for block when full The default value
+         * is true.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -155,8 +155,8 @@ public interface DisruptorComponentBuilderFactory {
             return this;
         }
         /**
-         * To configure the default value for DisruptorProducerType &lt;p/&gt;
-         * The default value is Multi.
+         * To configure the default value for DisruptorProducerType The default
+         * value is Multi.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.disruptor.DisruptorProducerType&lt;/code&gt; type.

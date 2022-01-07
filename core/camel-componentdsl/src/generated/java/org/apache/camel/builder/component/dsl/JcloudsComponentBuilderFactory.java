@@ -55,7 +55,7 @@ public interface JcloudsComponentBuilderFactory {
          * blobstore.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&lt;org.jclouds.blobstore.BlobStore&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&amp;lt;org.jclouds.blobstore.BlobStore&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -72,7 +72,7 @@ public interface JcloudsComponentBuilderFactory {
          * compute.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&lt;org.jclouds.compute.ComputeService&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&amp;lt;org.jclouds.compute.ComputeService&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 

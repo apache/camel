@@ -2,7 +2,7 @@
 :doctitle: Hazelcast Topic
 :shortname: hazelcast-topic
 :artifactid: camel-hazelcast
-:description: Send and receive messages to/from distributed topic.
+:description: Send and receive messages to/from Hazelcast distributed topic.
 :since: 2.15
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported

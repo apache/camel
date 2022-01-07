@@ -76,9 +76,8 @@ public interface LanguageEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the script is binary content or text content. &lt;p/&gt; By
-         * default the script is read as text content (eg
-         * &lt;tt&gt;java.lang.String).
+         * Whether the script is binary content or text content. By default the
+         * script is read as text content (eg java.lang.String).
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -93,9 +92,8 @@ public interface LanguageEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the script is binary content or text content. &lt;p/&gt; By
-         * default the script is read as text content (eg
-         * &lt;tt&gt;java.lang.String).
+         * Whether the script is binary content or text content. By default the
+         * script is read as text content (eg java.lang.String).
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -111,8 +109,8 @@ public interface LanguageEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether to cache the compiled script and reuse &lt;p/&gt; Notice
-         * reusing the script can cause side effects from processing one Camel
+         * Whether to cache the compiled script and reuse Notice reusing the
+         * script can cause side effects from processing one Camel
          * org.apache.camel.Exchange to the next org.apache.camel.Exchange.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -128,8 +126,8 @@ public interface LanguageEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether to cache the compiled script and reuse &lt;p/&gt; Notice
-         * reusing the script can cause side effects from processing one Camel
+         * Whether to cache the compiled script and reuse Notice reusing the
+         * script can cause side effects from processing one Camel
          * org.apache.camel.Exchange to the next org.apache.camel.Exchange.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
@@ -241,7 +239,7 @@ public interface LanguageEndpointBuilderFactory {
         }
         /**
          * Whether or not the result of the script should be used as message
-         * body. &lt;p/&gt; This options is default &lt;tt&gt;true.
+         * body. This options is default true.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -257,7 +255,7 @@ public interface LanguageEndpointBuilderFactory {
         }
         /**
          * Whether or not the result of the script should be used as message
-         * body. &lt;p/&gt; This options is default &lt;tt&gt;true.
+         * body. This options is default true.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
