@@ -20,7 +20,7 @@
 def AGENT_LABEL = env.AGENT_LABEL ?: 'ubuntu'
 def JDK_NAME = env.JDK_NAME ?: 'jdk_11_latest'
 
-def MAVEN_PARAMS = "-U -B -e -fae -V -Dnoassembly -Dmaven.compiler.fork=true -Dsurefire.rerunFailingTestsCount=2"
+def MAVEN_PARAMS = "-B -e -fae -V -Dnoassembly -Dmaven.compiler.fork=true -Dsurefire.rerunFailingTestsCount=2"
 
 pipeline {
 
@@ -63,7 +63,7 @@ pipeline {
                 branch 'main'
             }
             steps {
-                sh "./mvnw $MAVEN_PARAMS -Dmaven.test.skip.exec=true clean deploy"
+                sh "./mvnw -U $MAVEN_PARAMS -Dmaven.test.skip.exec=true clean deploy"
             }
         }
 
@@ -76,7 +76,7 @@ pipeline {
         stage('Code Quality Review') {
             steps {
                 withCredentials([string(credentialsId: 'apache-camel-core', variable: 'SONAR_TOKEN')]) {
-                        sh "./mvnw $MAVEN_PARAMS -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=apache -Dsonar.projectKey=apache_camel org.sonarsource.scanner.maven:sonar-maven-plugin:sonar"
+                    sh "./mvnw $MAVEN_PARAMS -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=apache -Dsonar.projectKey=apache_camel org.sonarsource.scanner.maven:sonar-maven-plugin:sonar"
                 }
             }
         }
