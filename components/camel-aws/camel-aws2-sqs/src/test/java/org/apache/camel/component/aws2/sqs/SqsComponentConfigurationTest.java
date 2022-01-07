@@ -213,7 +213,7 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
     public void createEndpointWithoutAccessKeyConfiguration() throws Exception {
         Sqs2Component component = context.getComponent("aws2-sqs", Sqs2Component.class);
         assertThrows(IllegalArgumentException.class, () -> {
-            component.createEndpoint("aws2-sqs://MyQueue?secretKey=yyy").start();
+            component.createEndpoint("aws2-sqs://MyQueue?secretKey=yyy");
         });
     }
 
@@ -221,7 +221,7 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
     public void createEndpointWithoutSecretKeyConfiguration() throws Exception {
         Sqs2Component component = context.getComponent("aws2-sqs", Sqs2Component.class);
         assertThrows(IllegalArgumentException.class, () -> {
-            component.createEndpoint("aws2-sqs://MyQueue?accessKey=xxx").start();
+            component.createEndpoint("aws2-sqs://MyQueue?accessKey=xxx");
         });
     }
 
