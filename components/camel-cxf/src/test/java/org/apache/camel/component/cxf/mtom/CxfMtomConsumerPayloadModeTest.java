@@ -77,8 +77,6 @@ public class CxfMtomConsumerPayloadModeTest {
 
             public void process(Exchange exchange) throws Exception {
                 exchange.setPattern(ExchangePattern.InOut);
-                assertEquals("application/xop+xml", exchange.getIn().getHeader("Content-Type"),
-                        "Get a wrong Content-Type header");
                 List<Source> elements = new ArrayList<>();
                 elements.add(new DOMSource(StaxUtils.read(new StringReader(getRequestMessage())).getDocumentElement()));
                 CxfPayload<SoapHeader> body = new CxfPayload<>(
