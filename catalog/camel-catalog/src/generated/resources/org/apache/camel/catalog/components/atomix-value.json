@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "atomix-value",
     "title": "Atomix Value",
-    "description": "Access Atomix's .",
+    "description": "Access Atomix's distributed value.",
     "deprecated": false,
     "firstVersion": "2.20.0",
     "label": "clustering",

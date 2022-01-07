@@ -12,7 +12,7 @@
   },
   "properties": {
     "message": { "kind": "attribute", "displayName": "Message", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the log message (uses simple language)" },
-    "loggingLevel": { "kind": "attribute", "displayName": "Logging Level", "required": false, "type": "enum", "javaType": "org.apache.camel.LoggingLevel", "enum": [ "DEBUG", "ERROR", "INFO", "OFF", "TRACE", "WARN" ], "deprecated": false, "autowired": false, "secret": false, "defaultValue": "INFO", "description": "Sets the logging level. <p\/> The default value is INFO" },
+    "loggingLevel": { "kind": "attribute", "displayName": "Logging Level", "required": false, "type": "enum", "javaType": "org.apache.camel.LoggingLevel", "enum": [ "DEBUG", "ERROR", "INFO", "OFF", "TRACE", "WARN" ], "deprecated": false, "autowired": false, "secret": false, "defaultValue": "INFO", "description": "Sets the logging level. The default value is INFO" },
     "logName": { "kind": "attribute", "displayName": "Log Name", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the name of the logger" },
     "marker": { "kind": "attribute", "displayName": "Marker", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "To use slf4j marker" },
     "loggerRef": { "kind": "attribute", "displayName": "Logger Ref", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "To refer to a custom logger instance to lookup from the registry." },

@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "otherwise",
     "title": "Otherwise",
-    "description": "Route to be executed when all other choices evaluate to <tt>false",
+    "description": "Route to be executed when all other choices evaluate to false",
     "deprecated": false,
     "label": "eip,routing",
     "javaType": "org.apache.camel.model.OtherwiseDefinition",

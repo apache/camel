@@ -41,10 +41,9 @@ public interface MyBatisBeanEndpointBuilderFactory {
             return (AdvancedMyBatisBeanEndpointBuilder) this;
         }
         /**
-         * The executor type to be used while executing statements. &lt;ul&gt;
-         * &lt;li&gt;simple - executor does nothing special. &lt;li&gt;reuse -
-         * executor reuses prepared statements. &lt;li&gt;batch - executor
-         * reuses statements and batches updates.
+         * The executor type to be used while executing statements. simple -
+         * executor does nothing special. reuse - executor reuses prepared
+         * statements. batch - executor reuses statements and batches updates.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.ibatis.session.ExecutorType&lt;/code&gt; type.
@@ -61,10 +60,9 @@ public interface MyBatisBeanEndpointBuilderFactory {
             return this;
         }
         /**
-         * The executor type to be used while executing statements. &lt;ul&gt;
-         * &lt;li&gt;simple - executor does nothing special. &lt;li&gt;reuse -
-         * executor reuses prepared statements. &lt;li&gt;batch - executor
-         * reuses statements and batches updates.
+         * The executor type to be used while executing statements. simple -
+         * executor does nothing special. reuse - executor reuses prepared
+         * statements. batch - executor reuses statements and batches updates.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.apache.ibatis.session.ExecutorType&lt;/code&gt; type.

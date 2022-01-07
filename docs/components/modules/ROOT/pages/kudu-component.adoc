@@ -5,7 +5,7 @@
 :docTitle: Kudu
 :shortname: kudu
 :artifactId: camel-kudu
-:description: Interact with , a free and open source column-oriented data store of the Apache Hadoop ecosystem.
+:description: Interact with Apache Kudu, a free and open source column-oriented data store of the Apache Hadoop ecosystem.
 :since: 3.0
 :supportLevel: Stable
 :component-header: Only producer is supported

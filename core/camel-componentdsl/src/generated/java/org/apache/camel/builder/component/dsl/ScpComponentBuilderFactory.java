@@ -73,8 +73,8 @@ public interface ScpComponentBuilderFactory {
         }
         /**
          * JSCH is verbose logging out of the box. Therefore we turn the logging
-         * down to DEBUG logging by default. But setting this option to
-         * &lt;tt&gt;true turns on the verbose logging again.
+         * down to DEBUG logging by default. But setting this option to true
+         * turns on the verbose logging again.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 

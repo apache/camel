@@ -300,7 +300,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The remote filter, only used by the Continuous Query Consumer.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.ignite.cache.CacheEntryEventSerializableFilter&lt;java.lang.Object, java.lang.Object&gt;&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.ignite.cache.CacheEntryEventSerializableFilter&amp;lt;java.lang.Object, java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: consumer
          * 
@@ -316,7 +316,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The remote filter, only used by the Continuous Query Consumer.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.ignite.cache.CacheEntryEventSerializableFilter&lt;java.lang.Object, java.lang.Object&gt;&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.ignite.cache.CacheEntryEventSerializableFilter&amp;lt;java.lang.Object, java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: consumer
          * 
@@ -564,7 +564,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * for the Continuous Query Consumer.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.ignite.cache.query.Query&lt;javax.cache.Cache$Entry&lt;java.lang.Object, java.lang.Object&gt;&gt;&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.ignite.cache.query.Query&amp;lt;javax.cache.Cache$Entry&amp;lt;java.lang.Object, java.lang.Object&amp;gt;&amp;gt;&lt;/code&gt; type.
          * 
          * Group: consumer
          * 
@@ -580,7 +580,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * for the Continuous Query Consumer.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.ignite.cache.query.Query&lt;javax.cache.Cache$Entry&lt;java.lang.Object, java.lang.Object&gt;&gt;&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.ignite.cache.query.Query&amp;lt;javax.cache.Cache$Entry&amp;lt;java.lang.Object, java.lang.Object&amp;gt;&amp;gt;&lt;/code&gt; type.
          * 
          * Group: consumer
          * 
@@ -710,8 +710,8 @@ public interface IgniteCacheEndpointBuilderFactory {
             return this;
         }
         /**
-         * The cache operation to invoke. &lt;p&gt; Possible values: GET, PUT,
-         * REMOVE, SIZE, REBALANCE, QUERY, CLEAR.
+         * The cache operation to invoke. Possible values: GET, PUT, REMOVE,
+         * SIZE, REBALANCE, QUERY, CLEAR.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.ignite.cache.IgniteCacheOperation&lt;/code&gt; type.
@@ -727,8 +727,8 @@ public interface IgniteCacheEndpointBuilderFactory {
             return this;
         }
         /**
-         * The cache operation to invoke. &lt;p&gt; Possible values: GET, PUT,
-         * REMOVE, SIZE, REBALANCE, QUERY, CLEAR.
+         * The cache operation to invoke. Possible values: GET, PUT, REMOVE,
+         * SIZE, REBALANCE, QUERY, CLEAR.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.apache.camel.component.ignite.cache.IgniteCacheOperation&lt;/code&gt; type.

@@ -50,8 +50,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * together with listenerInterface option.
          * 
          * The option is a:
-         * &lt;code&gt;java.lang.Class&lt;java.lang.Object&gt;&lt;/code&gt;
-         * type.
+         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -72,8 +71,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * together with listenerInterface option.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.lang.Class&lt;java.lang.Object&gt;&lt;/code&gt;
-         * type.
+         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -93,8 +91,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * This option cannot be used together with eventClass option.
          * 
          * The option is a:
-         * &lt;code&gt;java.lang.Class&lt;java.lang.Object&gt;&lt;/code&gt;
-         * type.
+         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -114,8 +111,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * This option cannot be used together with eventClass option.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.lang.Class&lt;java.lang.Object&gt;&lt;/code&gt;
-         * type.
+         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -308,8 +304,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * together with listenerInterface option.
          * 
          * The option is a:
-         * &lt;code&gt;java.lang.Class&lt;java.lang.Object&gt;&lt;/code&gt;
-         * type.
+         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -330,8 +325,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * together with listenerInterface option.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.lang.Class&lt;java.lang.Object&gt;&lt;/code&gt;
-         * type.
+         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -351,8 +345,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * This option cannot be used together with eventClass option.
          * 
          * The option is a:
-         * &lt;code&gt;java.lang.Class&lt;java.lang.Object&gt;&lt;/code&gt;
-         * type.
+         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -372,8 +365,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * This option cannot be used together with eventClass option.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.lang.Class&lt;java.lang.Object&gt;&lt;/code&gt;
-         * type.
+         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -501,8 +493,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * together with listenerInterface option.
          * 
          * The option is a:
-         * &lt;code&gt;java.lang.Class&lt;java.lang.Object&gt;&lt;/code&gt;
-         * type.
+         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -522,8 +513,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * together with listenerInterface option.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.lang.Class&lt;java.lang.Object&gt;&lt;/code&gt;
-         * type.
+         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -542,8 +532,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * This option cannot be used together with eventClass option.
          * 
          * The option is a:
-         * &lt;code&gt;java.lang.Class&lt;java.lang.Object&gt;&lt;/code&gt;
-         * type.
+         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -563,8 +552,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * This option cannot be used together with eventClass option.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.lang.Class&lt;java.lang.Object&gt;&lt;/code&gt;
-         * type.
+         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 

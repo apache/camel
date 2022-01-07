@@ -72,7 +72,7 @@ public interface SparkEndpointBuilderFactory {
          * DataFrame to compute against.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.spark.sql.Dataset&lt;org.apache.spark.sql.Row&gt;&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.spark.sql.Dataset&amp;lt;org.apache.spark.sql.Row&amp;gt;&lt;/code&gt; type.
          * 
          * Group: producer
          * 
@@ -87,7 +87,7 @@ public interface SparkEndpointBuilderFactory {
          * DataFrame to compute against.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.spark.sql.Dataset&lt;org.apache.spark.sql.Row&gt;&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.spark.sql.Dataset&amp;lt;org.apache.spark.sql.Row&amp;gt;&lt;/code&gt; type.
          * 
          * Group: producer
          * 

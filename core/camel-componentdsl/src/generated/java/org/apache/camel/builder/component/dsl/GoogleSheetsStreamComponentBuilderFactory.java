@@ -188,7 +188,7 @@ public interface GoogleSheetsStreamComponentBuilderFactory {
          * more info.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: consumer
          * 

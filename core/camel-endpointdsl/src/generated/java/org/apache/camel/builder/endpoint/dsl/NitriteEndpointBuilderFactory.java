@@ -61,8 +61,7 @@ public interface NitriteEndpointBuilderFactory {
          * collection option.
          * 
          * The option is a:
-         * &lt;code&gt;java.lang.Class&lt;java.lang.Object&gt;&lt;/code&gt;
-         * type.
+         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -79,8 +78,7 @@ public interface NitriteEndpointBuilderFactory {
          * collection option.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.lang.Class&lt;java.lang.Object&gt;&lt;/code&gt;
-         * type.
+         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -330,8 +328,7 @@ public interface NitriteEndpointBuilderFactory {
          * collection option.
          * 
          * The option is a:
-         * &lt;code&gt;java.lang.Class&lt;java.lang.Object&gt;&lt;/code&gt;
-         * type.
+         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -348,8 +345,7 @@ public interface NitriteEndpointBuilderFactory {
          * collection option.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.lang.Class&lt;java.lang.Object&gt;&lt;/code&gt;
-         * type.
+         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -534,8 +530,7 @@ public interface NitriteEndpointBuilderFactory {
          * collection option.
          * 
          * The option is a:
-         * &lt;code&gt;java.lang.Class&lt;java.lang.Object&gt;&lt;/code&gt;
-         * type.
+         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -552,8 +547,7 @@ public interface NitriteEndpointBuilderFactory {
          * collection option.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.lang.Class&lt;java.lang.Object&gt;&lt;/code&gt;
-         * type.
+         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 

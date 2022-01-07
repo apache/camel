@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "hazelcast-ringbuffer",
     "title": "Hazelcast Ringbuffer",
-    "description": "Perform operations on distributed ringbuffer.",
+    "description": "Perform operations on Hazelcast distributed ringbuffer.",
     "deprecated": false,
     "firstVersion": "2.16.0",
     "label": "cache,datagrid",

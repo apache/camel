@@ -143,10 +143,9 @@ public interface ImapsComponentBuilderFactory {
          * If the mail consumer cannot retrieve a given mail message, then this
          * option allows to handle the caused exception by the consumer's error
          * handler. By enable the bridge error handler on the consumer, then the
-         * Camel routing error handler can handle the exception instead.
-         * &lt;p/&gt; The default behavior would be the consumer throws an
-         * exception and no mails from the batch would be able to be routed by
-         * Camel.
+         * Camel routing error handler can handle the exception instead. The
+         * default behavior would be the consumer throws an exception and no
+         * mails from the batch would be able to be routed by Camel.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -217,9 +216,9 @@ public interface ImapsComponentBuilderFactory {
         /**
          * If the mail consumer cannot retrieve a given mail message, then this
          * option allows to skip the message and move on to retrieve the next
-         * mail message. &lt;p/&gt; The default behavior would be the consumer
-         * throws an exception and no mails from the batch would be able to be
-         * routed by Camel.
+         * mail message. The default behavior would be the consumer throws an
+         * exception and no mails from the batch would be able to be routed by
+         * Camel.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -493,9 +492,9 @@ public interface ImapsComponentBuilderFactory {
             return this;
         }
         /**
-         * The authenticator for login. If set then the &lt;code&gt;password and
-         * &lt;code&gt;username are ignored. Can be used for tokens which can
-         * expire and therefore must be read dynamically.
+         * The authenticator for login. If set then the password and username
+         * are ignored. Can be used for tokens which can expire and therefore
+         * must be read dynamically.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.mail.MailAuthenticator&lt;/code&gt; type.

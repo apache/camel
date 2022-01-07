@@ -96,8 +96,7 @@ public interface GuavaEventbusComponentBuilderFactory {
          * This option cannot be used together with eventClass option.
          * 
          * The option is a:
-         * &lt;code&gt;java.lang.Class&lt;java.lang.Object&gt;&lt;/code&gt;
-         * type.
+         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: consumer
          * 

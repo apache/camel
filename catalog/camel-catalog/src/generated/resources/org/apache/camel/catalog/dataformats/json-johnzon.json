@@ -3,7 +3,7 @@
     "kind": "dataformat",
     "name": "json-johnzon",
     "title": "JSON Johnzon",
-    "description": "Marshal POJOs to JSON and back using",
+    "description": "Marshal POJOs to JSON and back using Johnzon",
     "deprecated": false,
     "firstVersion": "2.18.0",
     "label": "dataformat,transformation,json",
@@ -17,7 +17,7 @@
   },
   "properties": {
     "objectMapper": { "kind": "attribute", "displayName": "Mapper", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Lookup and use the existing Mapper with the given id." },
-    "prettyPrint": { "kind": "attribute", "displayName": "Pretty Print", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "To enable pretty printing output nicely formatted. <p\/> Is by default false." },
+    "prettyPrint": { "kind": "attribute", "displayName": "Pretty Print", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "To enable pretty printing output nicely formatted. Is by default false." },
     "unmarshalTypeName": { "kind": "attribute", "displayName": "Unmarshal Type Name", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Class name of the java type to use when unmarshalling" }
   }
 }

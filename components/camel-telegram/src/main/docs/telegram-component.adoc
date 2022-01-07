@@ -3,7 +3,7 @@
 :docTitle: Telegram
 :shortname: telegram
 :artifactId: camel-telegram
-:description: Send and receive messages acting as a Telegram Bot .
+:description: Send and receive messages acting as a Telegram Bot Telegram Bot API.
 :since: 2.18
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

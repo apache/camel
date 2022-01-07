@@ -192,7 +192,7 @@ public interface StubComponentBuilderFactory {
          * Sets the default queue factory.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.seda.BlockingQueueFactory&lt;org.apache.camel.Exchange&gt;&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.seda.BlockingQueueFactory&amp;lt;org.apache.camel.Exchange&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 

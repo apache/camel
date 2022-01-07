@@ -232,7 +232,7 @@ public interface MiloClientEndpointBuilderFactory {
          * use the highest.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.Set&lt;java.lang.String&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.Set&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: client
          * 
@@ -249,7 +249,7 @@ public interface MiloClientEndpointBuilderFactory {
          * use the highest.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Set&lt;java.lang.String&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.Set&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: client
          * 
@@ -937,7 +937,7 @@ public interface MiloClientEndpointBuilderFactory {
          * use the highest.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.Set&lt;java.lang.String&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.Set&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: client
          * 
@@ -954,7 +954,7 @@ public interface MiloClientEndpointBuilderFactory {
          * use the highest.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Set&lt;java.lang.String&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.Set&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: client
          * 
@@ -1524,7 +1524,7 @@ public interface MiloClientEndpointBuilderFactory {
          * use the highest.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.Set&lt;java.lang.String&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.Set&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: client
          * 
@@ -1541,7 +1541,7 @@ public interface MiloClientEndpointBuilderFactory {
          * use the highest.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Set&lt;java.lang.String&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.Set&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: client
          * 

@@ -253,7 +253,7 @@ The DEFAULT API method(s) has the following set of parameters listed in the tabl
 | patch | *endpointHttpHeaders* | *Optional*  HTTP Headers to add/override the component versions | Map
 | patch | *resourcePath* |  Resource path to update | String
 | patch | *responseHandler* | *Optional*  Org.apache.olingo.odata2.api.ep.entry.ODataEntry callback handler | Olingo2ResponseHandler
-| read | *edm* | *Optional*  Service Edm, read from calling <code>read(null, $metdata, null, responseHandler) | Edm
+| read | *edm* | *Optional*  Service Edm, read from calling read(null, $metdata, null, responseHandler) | Edm
 | read | *endpointHttpHeaders* | *Optional*  HTTP Headers to add/override the component versions | Map
 | read | *queryParams* | *Optional*  OData query params from \http://www.odata.org/documentation/odata-version-2-0/uri-conventions#SystemQueryOptions | Map
 | read | *resourcePath* |  OData Resource path | String
@@ -263,7 +263,7 @@ The DEFAULT API method(s) has the following set of parameters listed in the tabl
 | update | *endpointHttpHeaders* | *Optional*  HTTP Headers to add/override the component versions | Map
 | update | *resourcePath* |  Resource path to update | String
 | update | *responseHandler* | *Optional*  Org.apache.olingo.odata2.api.ep.entry.ODataEntry callback handler | Olingo2ResponseHandler
-| uread | *edm* | *Optional*  Service Edm, read from calling <code>read(null, $metdata, null, responseHandler) | Edm
+| uread | *edm* | *Optional*  Service Edm, read from calling read(null, $metdata, null, responseHandler) | Edm
 | uread | *endpointHttpHeaders* | *Optional*  HTTP Headers to add/override the component versions | Map
 | uread | *queryParams* | *Optional*  OData query params from \http://www.odata.org/documentation/odata-version-2-0/uri-conventions#SystemQueryOptions | Map
 | uread | *resourcePath* |  OData Resource path | String
