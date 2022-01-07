@@ -386,6 +386,10 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     @Override
     protected void doInit() throws Exception {
         ObjectHelper.notNull(getCamelContext(), "camelContext");
+
+        if (autowiredEnabled) {
+            EndpointHelper.configureAutowired(getComponentPropertyConfigurer(), camelContext, this);
+        }
     }
 
     @Override

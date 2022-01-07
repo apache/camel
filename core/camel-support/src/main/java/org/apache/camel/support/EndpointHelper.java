@@ -38,6 +38,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.Route;
 import org.apache.camel.spi.PropertiesComponent;
+import org.apache.camel.spi.PropertyConfigurer;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
@@ -518,4 +520,35 @@ public final class EndpointHelper {
         return null;
     }
 
+    public static void configureAutowired(PropertyConfigurer configurer, CamelContext camelContext, Object target) {
+        if (configurer instanceof PropertyConfigurerGetter) {
+            PropertyConfigurerGetter getter = (PropertyConfigurerGetter) configurer;
+            String[] names = getter.getAutowiredNames();
+            if (names != null) {
+                for (String name : names) {
+                    // is there already a configured value?
+                    Object value = getter.getOptionValue(target, name, true);
+                    if (value == null) {
+                        Class<?> type = getter.getOptionType(name, true);
+                        if (type != null) {
+                            Set<?> set = camelContext.getRegistry().findByType(type);
+                            if (set.size() == 1) {
+                                value = set.iterator().next();
+                            }
+                        }
+                        if (value != null) {
+                            boolean hit = configurer.configure(camelContext, target, name, value, true);
+                            if (hit) {
+                                if (LOG.isDebugEnabled()) {
+                                    LOG.debug(
+                                            "Autowired property: {} on endpoint: {} as exactly one instance of type: {} ({}) found in the registry",
+                                            name, target.toString(), type.getName(), value.getClass().getName());
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
