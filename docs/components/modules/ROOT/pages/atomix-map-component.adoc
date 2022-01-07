@@ -5,7 +5,7 @@
 :docTitle: Atomix Map
 :shortname: atomix-map
 :artifactId: camel-atomix
-:description: Access Atomix's .
+:description: Access Atomix's distributed map.
 :since: 2.20
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

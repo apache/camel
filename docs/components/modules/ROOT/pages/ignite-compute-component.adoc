@@ -5,7 +5,7 @@
 :docTitle: Ignite Compute
 :shortname: ignite-compute
 :artifactId: camel-ignite
-:description: Run on an Ignite cluster.
+:description: Run compute operations on an Ignite cluster.
 :since: 2.17
 :supportLevel: Stable
 :component-header: Only producer is supported

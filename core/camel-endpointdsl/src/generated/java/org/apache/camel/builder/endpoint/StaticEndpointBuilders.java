@@ -84,7 +84,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Async HTTP Client (AHC) (camel-ahc)
-     * Call external HTTP services using .
+     * Call external HTTP services using Async Http Client.
      * 
      * Category: http
      * Since: 2.8
@@ -104,7 +104,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Async HTTP Client (AHC) (camel-ahc)
-     * Call external HTTP services using .
+     * Call external HTTP services using Async Http Client.
      * 
      * Category: http
      * Since: 2.8
@@ -127,7 +127,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Async HTTP Client (AHC) Websocket (camel-ahc-ws)
-     * Exchange data with external Websocket servers using .
+     * Exchange data with external Websocket servers using Async Http Client.
      * 
      * Category: websocket
      * Since: 2.14
@@ -147,7 +147,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Async HTTP Client (AHC) Websocket (camel-ahc-ws)
-     * Exchange data with external Websocket servers using .
+     * Exchange data with external Websocket servers using Async Http Client.
      * 
      * Category: websocket
      * Since: 2.14
@@ -597,7 +597,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Atomix Map (camel-atomix)
-     * Access Atomix's .
+     * Access Atomix's distributed map.
      * 
      * Category: clustering
      * Since: 2.20
@@ -617,7 +617,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Atomix Map (camel-atomix)
-     * Access Atomix's .
+     * Access Atomix's distributed map.
      * 
      * Category: clustering
      * Since: 2.20
@@ -640,7 +640,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Atomix Messaging (camel-atomix)
-     * Access Atomix's .
+     * Access Atomix's group messaging.
      * 
      * Category: clustering
      * Since: 2.20
@@ -660,7 +660,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Atomix Messaging (camel-atomix)
-     * Access Atomix's .
+     * Access Atomix's group messaging.
      * 
      * Category: clustering
      * Since: 2.20
@@ -683,7 +683,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Atomix MultiMap (camel-atomix)
-     * Access Atomix's .
+     * Access Atomix's distributed multi map.
      * 
      * Category: clustering
      * Since: 2.20
@@ -703,7 +703,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Atomix MultiMap (camel-atomix)
-     * Access Atomix's .
+     * Access Atomix's distributed multi map.
      * 
      * Category: clustering
      * Since: 2.20
@@ -726,7 +726,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Atomix Queue (camel-atomix)
-     * Access Atomix's .
+     * Access Atomix's distributed queue.
      * 
      * Category: clustering
      * Since: 2.20
@@ -746,7 +746,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Atomix Queue (camel-atomix)
-     * Access Atomix's .
+     * Access Atomix's distributed queue.
      * 
      * Category: clustering
      * Since: 2.20
@@ -769,7 +769,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Atomix Set (camel-atomix)
-     * Access Atomix's .
+     * Access Atomix's distributed set.
      * 
      * Category: clustering
      * Since: 2.20
@@ -789,7 +789,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Atomix Set (camel-atomix)
-     * Access Atomix's .
+     * Access Atomix's distributed set.
      * 
      * Category: clustering
      * Since: 2.20
@@ -812,7 +812,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Atomix Value (camel-atomix)
-     * Access Atomix's .
+     * Access Atomix's distributed value.
      * 
      * Category: clustering
      * Since: 2.20
@@ -832,7 +832,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Atomix Value (camel-atomix)
-     * Access Atomix's .
+     * Access Atomix's distributed value.
      * 
      * Category: clustering
      * Since: 2.20
@@ -3569,7 +3569,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * CM SMS Gateway (camel-cm-sms)
-     * Send SMS messages via .
+     * Send SMS messages via CM SMS Gateway.
      * 
      * Category: mobile
      * Since: 2.18
@@ -3589,7 +3589,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * CM SMS Gateway (camel-cm-sms)
-     * Send SMS messages via .
+     * Send SMS messages via CM SMS Gateway.
      * 
      * Category: mobile
      * Since: 2.18
@@ -3714,7 +3714,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Consul (camel-consul)
-     * Integrate with service discovery and configuration store.
+     * Integrate with Consul service discovery and configuration store.
      * 
      * Category: cloud,api
      * Since: 2.18
@@ -3734,7 +3734,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Consul (camel-consul)
-     * Integrate with service discovery and configuration store.
+     * Integrate with Consul service discovery and configuration store.
      * 
      * Category: cloud,api
      * Since: 2.18
@@ -5161,7 +5161,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Ehcache (camel-ehcache)
-     * Perform caching operations using .
+     * Perform caching operations using Ehcache.
      * 
      * Category: cache,datagrid,clustering
      * Since: 2.18
@@ -5181,7 +5181,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Ehcache (camel-ehcache)
-     * Perform caching operations using .
+     * Perform caching operations using Ehcache.
      * 
      * Category: cache,datagrid,clustering
      * Since: 2.18
@@ -5261,9 +5261,9 @@ public class StaticEndpointBuilders {
      * Path parameter: resourceUri
      * The resource file which contains the elsql SQL statements to use. You can
      * specify multiple resources separated by comma. The resources are loaded
-     * on the classpath by default, you can prefix with <tt>file: to load from
-     * file system. Notice you can set this option on the component and then you
-     * do not have to configure this on the endpoint.
+     * on the classpath by default, you can prefix with file: to load from file
+     * system. Notice you can set this option on the component and then you do
+     * not have to configure this on the endpoint.
      * 
      * @param path elsqlName:resourceUri
      * @return the dsl builder
@@ -5288,9 +5288,9 @@ public class StaticEndpointBuilders {
      * Path parameter: resourceUri
      * The resource file which contains the elsql SQL statements to use. You can
      * specify multiple resources separated by comma. The resources are loaded
-     * on the classpath by default, you can prefix with <tt>file: to load from
-     * file system. Notice you can set this option on the component and then you
-     * do not have to configure this on the endpoint.
+     * on the classpath by default, you can prefix with file: to load from file
+     * system. Notice you can set this option on the component and then you do
+     * not have to configure this on the endpoint.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -5443,7 +5443,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: executable (required)
      * Sets the executable to be executed. The executable must not be empty or
-     * <code>null.
+     * null.
      * 
      * @param path executable
      * @return the dsl builder
@@ -5464,7 +5464,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: executable (required)
      * Sets the executable to be executed. The executable must not be empty or
-     * <code>null.
+     * null.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -6041,10 +6041,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>geocoder:address:latlng</code>
      * 
      * Path parameter: address
-     * The geo address which should be prefixed with <tt>address:
+     * The geo address which should be prefixed with address:
      * 
      * Path parameter: latlng
-     * The geo latitude and longitude which should be prefixed with <tt>latlng:
+     * The geo latitude and longitude which should be prefixed with latlng:
      * 
      * @param path address:latlng
      * @return the dsl builder
@@ -6065,10 +6065,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>geocoder:address:latlng</code>
      * 
      * Path parameter: address
-     * The geo address which should be prefixed with <tt>address:
+     * The geo address which should be prefixed with address:
      * 
      * Path parameter: latlng
-     * The geo latitude and longitude which should be prefixed with <tt>latlng:
+     * The geo latitude and longitude which should be prefixed with latlng:
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -7019,7 +7019,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Hazelcast List (camel-hazelcast)
-     * Perform operations on distributed list.
+     * Perform operations on Hazelcast distributed list.
      * 
      * Category: cache,datagrid
      * Since: 2.7
@@ -7039,7 +7039,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Hazelcast List (camel-hazelcast)
-     * Perform operations on distributed list.
+     * Perform operations on Hazelcast distributed list.
      * 
      * Category: cache,datagrid
      * Since: 2.7
@@ -7062,7 +7062,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Hazelcast Map (camel-hazelcast)
-     * Perform operations on distributed map.
+     * Perform operations on Hazelcast distributed map.
      * 
      * Category: cache,datagrid
      * Since: 2.7
@@ -7082,7 +7082,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Hazelcast Map (camel-hazelcast)
-     * Perform operations on distributed map.
+     * Perform operations on Hazelcast distributed map.
      * 
      * Category: cache,datagrid
      * Since: 2.7
@@ -7105,7 +7105,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Hazelcast Multimap (camel-hazelcast)
-     * Perform operations on distributed multimap.
+     * Perform operations on Hazelcast distributed multimap.
      * 
      * Category: cache,datagrid
      * Since: 2.7
@@ -7125,7 +7125,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Hazelcast Multimap (camel-hazelcast)
-     * Perform operations on distributed multimap.
+     * Perform operations on Hazelcast distributed multimap.
      * 
      * Category: cache,datagrid
      * Since: 2.7
@@ -7148,7 +7148,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Hazelcast Queue (camel-hazelcast)
-     * Perform operations on distributed queue.
+     * Perform operations on Hazelcast distributed queue.
      * 
      * Category: cache,datagrid,messaging
      * Since: 2.7
@@ -7168,7 +7168,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Hazelcast Queue (camel-hazelcast)
-     * Perform operations on distributed queue.
+     * Perform operations on Hazelcast distributed queue.
      * 
      * Category: cache,datagrid,messaging
      * Since: 2.7
@@ -7191,7 +7191,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Hazelcast Replicated Map (camel-hazelcast)
-     * Perform operations on replicated map.
+     * Perform operations on Hazelcast replicated map.
      * 
      * Category: cache,datagrid
      * Since: 2.16
@@ -7211,7 +7211,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Hazelcast Replicated Map (camel-hazelcast)
-     * Perform operations on replicated map.
+     * Perform operations on Hazelcast replicated map.
      * 
      * Category: cache,datagrid
      * Since: 2.16
@@ -7234,7 +7234,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Hazelcast Ringbuffer (camel-hazelcast)
-     * Perform operations on distributed ringbuffer.
+     * Perform operations on Hazelcast distributed ringbuffer.
      * 
      * Category: cache,datagrid
      * Since: 2.16
@@ -7254,7 +7254,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Hazelcast Ringbuffer (camel-hazelcast)
-     * Perform operations on distributed ringbuffer.
+     * Perform operations on Hazelcast distributed ringbuffer.
      * 
      * Category: cache,datagrid
      * Since: 2.16
@@ -7322,7 +7322,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Hazelcast Set (camel-hazelcast)
-     * Perform operations on distributed set.
+     * Perform operations on Hazelcast distributed set.
      * 
      * Category: cache,datagrid
      * Since: 2.7
@@ -7342,7 +7342,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Hazelcast Set (camel-hazelcast)
-     * Perform operations on distributed set.
+     * Perform operations on Hazelcast distributed set.
      * 
      * Category: cache,datagrid
      * Since: 2.7
@@ -7365,7 +7365,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Hazelcast Topic (camel-hazelcast)
-     * Send and receive messages to/from distributed topic.
+     * Send and receive messages to/from Hazelcast distributed topic.
      * 
      * Category: cache,datagrid
      * Since: 2.15
@@ -7385,7 +7385,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Hazelcast Topic (camel-hazelcast)
-     * Send and receive messages to/from distributed topic.
+     * Send and receive messages to/from Hazelcast distributed topic.
      * 
      * Category: cache,datagrid
      * Since: 2.15
@@ -7686,7 +7686,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Ignite Compute (camel-ignite)
-     * Run on an Ignite cluster.
+     * Run compute operations on an Ignite cluster.
      * 
      * Category: compute
      * Since: 2.17
@@ -7706,7 +7706,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Ignite Compute (camel-ignite)
-     * Run on an Ignite cluster.
+     * Run compute operations on an Ignite cluster.
      * 
      * Category: compute
      * Since: 2.17
@@ -7729,7 +7729,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Ignite Events (camel-ignite)
-     * from an Ignite cluster by creating a local event listener.
+     * Receive events from an Ignite cluster by creating a local event listener.
      * 
      * Category: messaging,eventbus
      * Since: 2.17
@@ -7749,7 +7749,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Ignite Events (camel-ignite)
-     * from an Ignite cluster by creating a local event listener.
+     * Receive events from an Ignite cluster by creating a local event listener.
      * 
      * Category: messaging,eventbus
      * Since: 2.17
@@ -7772,7 +7772,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Ignite ID Generator (camel-ignite)
-     * Interact with .
+     * Interact with Ignite Atomic Sequences and ID Generators .
      * 
      * Category: compute
      * Since: 2.17
@@ -7792,7 +7792,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Ignite ID Generator (camel-ignite)
-     * Interact with .
+     * Interact with Ignite Atomic Sequences and ID Generators .
      * 
      * Category: compute
      * Since: 2.17
@@ -7815,7 +7815,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Ignite Messaging (camel-ignite)
-     * Send and receive messages from an .
+     * Send and receive messages from an Ignite topic.
      * 
      * Category: messaging
      * Since: 2.17
@@ -7835,7 +7835,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Ignite Messaging (camel-ignite)
-     * Send and receive messages from an .
+     * Send and receive messages from an Ignite topic.
      * 
      * Category: messaging
      * Since: 2.17
@@ -7858,7 +7858,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Ignite Queues (camel-ignite)
-     * Interact with .
+     * Interact with Ignite Queue data structures.
      * 
      * Category: messaging,queue
      * Since: 2.17
@@ -7878,7 +7878,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Ignite Queues (camel-ignite)
-     * Interact with .
+     * Interact with Ignite Queue data structures.
      * 
      * Category: messaging,queue
      * Since: 2.17
@@ -7901,7 +7901,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Ignite Sets (camel-ignite)
-     * Interact with .
+     * Interact with Ignite Set data structures.
      * 
      * Category: cache,compute
      * Since: 2.17
@@ -7921,7 +7921,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Ignite Sets (camel-ignite)
-     * Interact with .
+     * Interact with Ignite Set data structures.
      * 
      * Category: cache,compute
      * Since: 2.17
@@ -8042,7 +8042,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * InfluxDB (camel-influxdb)
-     * Interact with , a time series database.
+     * Interact with InfluxDB, a time series database.
      * 
      * Category: database
      * Since: 2.18
@@ -8062,7 +8062,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * InfluxDB (camel-influxdb)
-     * Interact with , a time series database.
+     * Interact with InfluxDB, a time series database.
      * 
      * Category: database
      * Since: 2.18
@@ -8224,8 +8224,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * IronMQ (camel-ironmq)
-     * Send and receive messages to/from an elastic and durable hosted message
-     * queue as a service.
+     * Send and receive messages to/from IronMQ an elastic and durable hosted
+     * message queue as a service.
      * 
      * Category: cloud,messaging
      * Since: 2.17
@@ -8245,8 +8245,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * IronMQ (camel-ironmq)
-     * Send and receive messages to/from an elastic and durable hosted message
-     * queue as a service.
+     * Send and receive messages to/from IronMQ an elastic and durable hosted
+     * message queue as a service.
      * 
      * Category: cloud,messaging
      * Since: 2.17
@@ -9922,8 +9922,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Kudu (camel-kudu)
-     * Interact with , a free and open source column-oriented data store of the
-     * Apache Hadoop ecosystem.
+     * Interact with Apache Kudu, a free and open source column-oriented data
+     * store of the Apache Hadoop ecosystem.
      * 
      * Category: database,iot,cloud
      * Since: 3.0
@@ -9949,8 +9949,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Kudu (camel-kudu)
-     * Interact with , a free and open source column-oriented data store of the
-     * Apache Hadoop ecosystem.
+     * Interact with Apache Kudu, a free and open source column-oriented data
+     * store of the Apache Hadoop ecosystem.
      * 
      * Category: database,iot,cloud
      * Since: 3.0
@@ -11228,7 +11228,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Nats (camel-nats)
-     * Send and receive messages from messaging system.
+     * Send and receive messages from NATS messaging system.
      * 
      * Category: messaging
      * Since: 2.17
@@ -11248,7 +11248,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Nats (camel-nats)
-     * Send and receive messages from messaging system.
+     * Send and receive messages from NATS messaging system.
      * 
      * Category: messaging
      * Since: 2.17
@@ -11284,8 +11284,8 @@ public class StaticEndpointBuilders {
      * There are 2 enums and the value can be one of: tcp, udp
      * 
      * Path parameter: host (required)
-     * The hostname. <p/> For the consumer the hostname is localhost or 0.0.0.0.
-     * For the producer the hostname is the remote host to connect to
+     * The hostname. For the consumer the hostname is localhost or 0.0.0.0. For
+     * the producer the hostname is the remote host to connect to
      * 
      * Path parameter: port (required)
      * The host port number
@@ -11312,8 +11312,8 @@ public class StaticEndpointBuilders {
      * There are 2 enums and the value can be one of: tcp, udp
      * 
      * Path parameter: host (required)
-     * The hostname. <p/> For the consumer the hostname is localhost or 0.0.0.0.
-     * For the producer the hostname is the remote host to connect to
+     * The hostname. For the consumer the hostname is localhost or 0.0.0.0. For
+     * the producer the hostname is the remote host to connect to
      * 
      * Path parameter: port (required)
      * The host port number
@@ -12481,8 +12481,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>quickfix:configurationName</code>
      * 
      * Path parameter: configurationName (required)
-     * Path to the quickfix configuration file. <p/> You can prefix with:
-     * classpath, file, http, ref, or bean. classpath, file and http loads the
+     * Path to the quickfix configuration file. You can prefix with: classpath,
+     * file, http, ref, or bean. classpath, file and http loads the
      * configuration file using these protocols (classpath is default). ref will
      * lookup the configuration file in the registry. bean will call a method on
      * a bean to be used as the configuration. For bean you can specify the
@@ -12507,8 +12507,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>quickfix:configurationName</code>
      * 
      * Path parameter: configurationName (required)
-     * Path to the quickfix configuration file. <p/> You can prefix with:
-     * classpath, file, http, ref, or bean. classpath, file and http loads the
+     * Path to the quickfix configuration file. You can prefix with: classpath,
+     * file, http, ref, or bean. classpath, file and http loads the
      * configuration file using these protocols (classpath is default). ref will
      * lookup the configuration file in the registry. bean will call a method on
      * a bean to be used as the configuration. For bean you can specify the
@@ -12526,7 +12526,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * RabbitMQ (camel-rabbitmq)
-     * Send and receive messages from instances.
+     * Send and receive messages from RabbitMQ instances.
      * 
      * Category: messaging
      * Since: 2.12
@@ -12548,7 +12548,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * RabbitMQ (camel-rabbitmq)
-     * Send and receive messages from instances.
+     * Send and receive messages from RabbitMQ instances.
      * 
      * Category: messaging
      * Since: 2.12
@@ -13230,7 +13230,7 @@ public class StaticEndpointBuilders {
     /**
      * Scheduler (camel-scheduler)
      * Generate messages in specified intervals using
-     * <code>java.util.concurrent.ScheduledExecutorService.
+     * java.util.concurrent.ScheduledExecutorService.
      * 
      * Category: core,scheduling
      * Since: 2.15
@@ -13251,7 +13251,7 @@ public class StaticEndpointBuilders {
     /**
      * Scheduler (camel-scheduler)
      * Generate messages in specified intervals using
-     * <code>java.util.concurrent.ScheduledExecutorService.
+     * java.util.concurrent.ScheduledExecutorService.
      * 
      * Category: core,scheduling
      * Since: 2.15
@@ -13464,7 +13464,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * ServiceNow (camel-servicenow)
-     * Interact with via its REST API.
+     * Interact with ServiceNow via its REST API.
      * 
      * Category: api,cloud,management
      * Since: 2.18
@@ -13484,7 +13484,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * ServiceNow (camel-servicenow)
-     * Interact with via its REST API.
+     * Interact with ServiceNow via its REST API.
      * 
      * Category: api,cloud,management
      * Since: 2.18
@@ -14429,15 +14429,15 @@ public class StaticEndpointBuilders {
      * Syntax: <code>spring-ws:type:lookupKey:webServiceEndpointUri</code>
      * 
      * Path parameter: type
-     * Endpoint mapping type if endpoint mapping is used. <ul> <li>rootqname -
-     * Offers the option to map web service requests based on the qualified name
-     * of the root element contained in the message. <li>soapaction - Used to
-     * map web service requests based on the SOAP action specified in the header
-     * of the message. <li>uri - In order to map web service requests that
-     * target a specific URI. <li>xpathresult - Used to map web service requests
-     * based on the evaluation of an XPath expression against the incoming
-     * message. The result of the evaluation should match the XPath result
-     * specified in the endpoint URI. <li>beanname - Allows you to reference an
+     * Endpoint mapping type if endpoint mapping is used. rootqname - Offers the
+     * option to map web service requests based on the qualified name of the
+     * root element contained in the message. soapaction - Used to map web
+     * service requests based on the SOAP action specified in the header of the
+     * message. uri - In order to map web service requests that target a
+     * specific URI. xpathresult - Used to map web service requests based on the
+     * evaluation of an XPath expression against the incoming message. The
+     * result of the evaluation should match the XPath result specified in the
+     * endpoint URI. beanname - Allows you to reference an
      * org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher object
      * in order to integrate with existing (legacy) endpoint mappings like
      * PayloadRootQNameEndpointMapping, SoapActionEndpointMapping, etc
@@ -14472,15 +14472,15 @@ public class StaticEndpointBuilders {
      * Syntax: <code>spring-ws:type:lookupKey:webServiceEndpointUri</code>
      * 
      * Path parameter: type
-     * Endpoint mapping type if endpoint mapping is used. <ul> <li>rootqname -
-     * Offers the option to map web service requests based on the qualified name
-     * of the root element contained in the message. <li>soapaction - Used to
-     * map web service requests based on the SOAP action specified in the header
-     * of the message. <li>uri - In order to map web service requests that
-     * target a specific URI. <li>xpathresult - Used to map web service requests
-     * based on the evaluation of an XPath expression against the incoming
-     * message. The result of the evaluation should match the XPath result
-     * specified in the endpoint URI. <li>beanname - Allows you to reference an
+     * Endpoint mapping type if endpoint mapping is used. rootqname - Offers the
+     * option to map web service requests based on the qualified name of the
+     * root element contained in the message. soapaction - Used to map web
+     * service requests based on the SOAP action specified in the header of the
+     * message. uri - In order to map web service requests that target a
+     * specific URI. xpathresult - Used to map web service requests based on the
+     * evaluation of an XPath expression against the incoming message. The
+     * result of the evaluation should match the XPath result specified in the
+     * endpoint URI. beanname - Allows you to reference an
      * org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher object
      * in order to integrate with existing (legacy) endpoint mappings like
      * PayloadRootQNameEndpointMapping, SoapActionEndpointMapping, etc
@@ -14875,7 +14875,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Telegram (camel-telegram)
-     * Send and receive messages acting as a Telegram Bot .
+     * Send and receive messages acting as a Telegram Bot Telegram Bot API.
      * 
      * Category: cloud,api,chat
      * Since: 2.18
@@ -14896,7 +14896,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Telegram (camel-telegram)
-     * Send and receive messages acting as a Telegram Bot .
+     * Send and receive messages acting as a Telegram Bot Telegram Bot API.
      * 
      * Category: cloud,api,chat
      * Since: 2.18
@@ -15028,7 +15028,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Timer (camel-timer)
-     * Generate messages in specified intervals using <code>java.util.Timer.
+     * Generate messages in specified intervals using java.util.Timer.
      * 
      * Category: core,scheduling
      * Since: 1.0
@@ -15048,7 +15048,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Timer (camel-timer)
-     * Generate messages in specified intervals using <code>java.util.Timer.
+     * Generate messages in specified intervals using java.util.Timer.
      * 
      * Category: core,scheduling
      * Since: 1.0
@@ -15829,13 +15829,13 @@ public class StaticEndpointBuilders {
      * Syntax: <code>websocket:host:port/resourceUri</code>
      * 
      * Path parameter: host
-     * The hostname. The default value is <tt>0.0.0.0. Setting this option on
-     * the component will use the component configured value as default.
+     * The hostname. The default value is 0.0.0.0. Setting this option on the
+     * component will use the component configured value as default.
      * Default value: 0.0.0.0
      * 
      * Path parameter: port
-     * The port number. The default value is <tt>9292. Setting this option on
-     * the component will use the component configured value as default.
+     * The port number. The default value is 9292. Setting this option on the
+     * component will use the component configured value as default.
      * Default value: 9292
      * 
      * Path parameter: resourceUri (required)
@@ -15859,13 +15859,13 @@ public class StaticEndpointBuilders {
      * Syntax: <code>websocket:host:port/resourceUri</code>
      * 
      * Path parameter: host
-     * The hostname. The default value is <tt>0.0.0.0. Setting this option on
-     * the component will use the component configured value as default.
+     * The hostname. The default value is 0.0.0.0. Setting this option on the
+     * component will use the component configured value as default.
      * Default value: 0.0.0.0
      * 
      * Path parameter: port
-     * The port number. The default value is <tt>9292. Setting this option on
-     * the component will use the component configured value as default.
+     * The port number. The default value is 9292. Setting this option on the
+     * component will use the component configured value as default.
      * Default value: 9292
      * 
      * Path parameter: resourceUri (required)
@@ -16135,7 +16135,7 @@ public class StaticEndpointBuilders {
      * Syntax: <code>xj:resourceUri</code>
      * 
      * Path parameter: resourceUri (required)
-     * Path to the template. <p/> The following is supported by the default
+     * Path to the template. The following is supported by the default
      * URIResolver. You can prefix with: classpath, file, http, ref, or bean.
      * classpath, file and http loads the resource using these protocols
      * (classpath is default). ref will lookup the resource in the registry.
@@ -16160,7 +16160,7 @@ public class StaticEndpointBuilders {
      * Syntax: <code>xj:resourceUri</code>
      * 
      * Path parameter: resourceUri (required)
-     * Path to the template. <p/> The following is supported by the default
+     * Path to the template. The following is supported by the default
      * URIResolver. You can prefix with: classpath, file, http, ref, or bean.
      * classpath, file and http loads the resource using these protocols
      * (classpath is default). ref will lookup the resource in the registry.
@@ -16378,7 +16378,7 @@ public class StaticEndpointBuilders {
      * Syntax: <code>xslt:resourceUri</code>
      * 
      * Path parameter: resourceUri (required)
-     * Path to the template. <p/> The following is supported by the default
+     * Path to the template. The following is supported by the default
      * URIResolver. You can prefix with: classpath, file, http, ref, or bean.
      * classpath, file and http loads the resource using these protocols
      * (classpath is default). ref will lookup the resource in the registry.
@@ -16403,7 +16403,7 @@ public class StaticEndpointBuilders {
      * Syntax: <code>xslt:resourceUri</code>
      * 
      * Path parameter: resourceUri (required)
-     * Path to the template. <p/> The following is supported by the default
+     * Path to the template. The following is supported by the default
      * URIResolver. You can prefix with: classpath, file, http, ref, or bean.
      * classpath, file and http loads the resource using these protocols
      * (classpath is default). ref will lookup the resource in the registry.
@@ -16431,7 +16431,7 @@ public class StaticEndpointBuilders {
      * Syntax: <code>xslt-saxon:resourceUri</code>
      * 
      * Path parameter: resourceUri (required)
-     * Path to the template. <p/> The following is supported by the default
+     * Path to the template. The following is supported by the default
      * URIResolver. You can prefix with: classpath, file, http, ref, or bean.
      * classpath, file and http loads the resource using these protocols
      * (classpath is default). ref will lookup the resource in the registry.
@@ -16456,7 +16456,7 @@ public class StaticEndpointBuilders {
      * Syntax: <code>xslt-saxon:resourceUri</code>
      * 
      * Path parameter: resourceUri (required)
-     * Path to the template. <p/> The following is supported by the default
+     * Path to the template. The following is supported by the default
      * URIResolver. You can prefix with: classpath, file, http, ref, or bean.
      * classpath, file and http loads the resource using these protocols
      * (classpath is default). ref will lookup the resource in the registry.

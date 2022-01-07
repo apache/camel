@@ -176,8 +176,8 @@ public interface BoxComponentBuilderFactory {
         /**
          * Custom HTTP params for settings like proxy host.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -190,10 +190,9 @@ public interface BoxComponentBuilderFactory {
             return this;
         }
         /**
-         * The type of authentication for connection. &lt;p&gt; Types of
-         * Authentication: &lt;ul&gt; &lt;li&gt;STANDARD_AUTHENTICATION - OAuth
-         * 2.0 (3-legged) &lt;li&gt;SERVER_AUTHENTICATION - OAuth 2.0 with JSON
-         * Web Tokens.
+         * The type of authentication for connection. Types of Authentication:
+         * STANDARD_AUTHENTICATION - OAuth 2.0 (3-legged) SERVER_AUTHENTICATION
+         * - OAuth 2.0 with JSON Web Tokens.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -239,9 +238,8 @@ public interface BoxComponentBuilderFactory {
             return this;
         }
         /**
-         * The type of encryption algorithm for JWT. &lt;p&gt; Supported
-         * Algorithms: &lt;ul&gt; &lt;li&gt;RSA_SHA_256 &lt;li&gt;RSA_SHA_384
-         * &lt;li&gt;RSA_SHA_512.
+         * The type of encryption algorithm for JWT. Supported Algorithms:
+         * RSA_SHA_256 RSA_SHA_384 RSA_SHA_512.
          * 
          * The option is a:
          * &lt;code&gt;com.box.sdk.EncryptionAlgorithm&lt;/code&gt; type.

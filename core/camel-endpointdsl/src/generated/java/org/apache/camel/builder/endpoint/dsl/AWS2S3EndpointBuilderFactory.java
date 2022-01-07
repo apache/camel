@@ -463,12 +463,12 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * Delete objects from S3 after they have been retrieved. The delete is
          * only performed if the Exchange is committed. If a rollback occurs,
-         * the object is not deleted. &lt;p/&gt; If this option is false, then
-         * the same objects will be retrieve over and over again on the polls.
-         * Therefore you need to use the Idempotent Consumer EIP in the route to
-         * filter out duplicates. You can filter using the
-         * AWS2S3Constants#BUCKET_NAME and AWS2S3Constants#KEY headers, or only
-         * the AWS2S3Constants#KEY header.
+         * the object is not deleted. If this option is false, then the same
+         * objects will be retrieve over and over again on the polls. Therefore
+         * you need to use the Idempotent Consumer EIP in the route to filter
+         * out duplicates. You can filter using the AWS2S3Constants#BUCKET_NAME
+         * and AWS2S3Constants#KEY headers, or only the AWS2S3Constants#KEY
+         * header.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -486,12 +486,12 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * Delete objects from S3 after they have been retrieved. The delete is
          * only performed if the Exchange is committed. If a rollback occurs,
-         * the object is not deleted. &lt;p/&gt; If this option is false, then
-         * the same objects will be retrieve over and over again on the polls.
-         * Therefore you need to use the Idempotent Consumer EIP in the route to
-         * filter out duplicates. You can filter using the
-         * AWS2S3Constants#BUCKET_NAME and AWS2S3Constants#KEY headers, or only
-         * the AWS2S3Constants#KEY header.
+         * the object is not deleted. If this option is false, then the same
+         * objects will be retrieve over and over again on the polls. Therefore
+         * you need to use the Idempotent Consumer EIP in the route to filter
+         * out duplicates. You can filter using the AWS2S3Constants#BUCKET_NAME
+         * and AWS2S3Constants#KEY headers, or only the AWS2S3Constants#KEY
+         * header.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -704,9 +704,9 @@ public interface AWS2S3EndpointBuilderFactory {
         }
         /**
          * Gets the maximum number of messages as a limit to poll at each
-         * polling. &lt;p/&gt; Gets the maximum number of messages as a limit to
-         * poll at each polling. The default value is 10. Use 0 or a negative
-         * number to set it as unlimited.
+         * polling. Gets the maximum number of messages as a limit to poll at
+         * each polling. The default value is 10. Use 0 or a negative number to
+         * set it as unlimited.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -723,9 +723,9 @@ public interface AWS2S3EndpointBuilderFactory {
         }
         /**
          * Gets the maximum number of messages as a limit to poll at each
-         * polling. &lt;p/&gt; Gets the maximum number of messages as a limit to
-         * poll at each polling. The default value is 10. Use 0 or a negative
-         * number to set it as unlimited.
+         * polling. Gets the maximum number of messages as a limit to poll at
+         * each polling. The default value is 10. Use 0 or a negative number to
+         * set it as unlimited.
          * 
          * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -1171,8 +1171,8 @@ public interface AWS2S3EndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -1193,8 +1193,8 @@ public interface AWS2S3EndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).

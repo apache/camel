@@ -107,7 +107,7 @@ public interface RobotframeworkComponentBuilderFactory {
         }
         /**
          * Creates combined statistics based on tags. Use the format tags:title
-         * List&lt;String&gt;.
+         * List.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -122,8 +122,7 @@ public interface RobotframeworkComponentBuilderFactory {
             return this;
         }
         /**
-         * Tests that have the given tags are considered critical.
-         * List&lt;String&gt;.
+         * Tests that have the given tags are considered critical. List.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -184,7 +183,7 @@ public interface RobotframeworkComponentBuilderFactory {
             return this;
         }
         /**
-         * Selects the tests cases by tags. List&lt;String&gt;.
+         * Selects the tests cases by tags. List.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -215,7 +214,7 @@ public interface RobotframeworkComponentBuilderFactory {
             return this;
         }
         /**
-         * Selects the tests cases by tags. List&lt;String&gt;.
+         * Selects the tests cases by tags. List.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -246,8 +245,7 @@ public interface RobotframeworkComponentBuilderFactory {
         }
         /**
          * Sets multiple listeners for monitoring tests execution. Use the
-         * format ListenerWithArgs:arg1:arg2 or simply ListenerWithoutArgs
-         * List&lt;String&gt;.
+         * format ListenerWithArgs:arg1:arg2 or simply ListenerWithoutArgs List.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -307,7 +305,7 @@ public interface RobotframeworkComponentBuilderFactory {
         }
         /**
          * Sets free metadata for the top level tests suites. comma seperated
-         * list of string resulting as List&lt;String&gt;.
+         * list of string resulting as List.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -323,9 +321,9 @@ public interface RobotframeworkComponentBuilderFactory {
         }
         /**
          * Using ANSI colors in console. Normally colors work in unixes but not
-         * in Windows. Default is 'on'. &lt;ul&gt; &lt;li&gt;'on' - use colors
-         * in unixes but not in Windows &lt;li&gt;'off' - never use colors
-         * &lt;li&gt;'force' - always use colors (also in Windows).
+         * in Windows. Default is 'on'. 'on' - use colors in unixes but not in
+         * Windows 'off' - never use colors 'force' - always use colors (also in
+         * Windows).
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -370,7 +368,7 @@ public interface RobotframeworkComponentBuilderFactory {
             return this;
         }
         /**
-         * Tests that have the given tags are not critical. List&lt;String&gt;.
+         * Tests that have the given tags are not critical. List.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -571,7 +569,7 @@ public interface RobotframeworkComponentBuilderFactory {
             return this;
         }
         /**
-         * Selects the tests suites by name. List&lt;String&gt;.
+         * Selects the tests suites by name. List.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -616,7 +614,7 @@ public interface RobotframeworkComponentBuilderFactory {
             return this;
         }
         /**
-         * Adds documentation to the specified tags. List&lt;String&gt;.
+         * Adds documentation to the specified tags. List.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -630,7 +628,7 @@ public interface RobotframeworkComponentBuilderFactory {
             return this;
         }
         /**
-         * Sets the tags(s) to all executed tests cases. List&lt;String&gt;.
+         * Sets the tags(s) to all executed tests cases. List.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -645,7 +643,7 @@ public interface RobotframeworkComponentBuilderFactory {
         }
         /**
          * Excludes these tags from the Statistics by Tag and Test Details by
-         * Tag tables in outputs. List&lt;String&gt;.
+         * Tag tables in outputs. List.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -661,7 +659,7 @@ public interface RobotframeworkComponentBuilderFactory {
         }
         /**
          * Includes only these tags in the Statistics by Tag and Test Details by
-         * Tag tables in outputs. List&lt;String&gt;.
+         * Tag tables in outputs. List.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -677,7 +675,7 @@ public interface RobotframeworkComponentBuilderFactory {
         }
         /**
          * Adds external links to the Statistics by Tag table in outputs. Use
-         * the format pattern:link:title List&lt;String&gt;.
+         * the format pattern:link:title List.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -692,7 +690,7 @@ public interface RobotframeworkComponentBuilderFactory {
             return this;
         }
         /**
-         * Selects the tests cases by name. List&lt;String&gt;.
+         * Selects the tests cases by name. List.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -722,8 +720,7 @@ public interface RobotframeworkComponentBuilderFactory {
             return this;
         }
         /**
-         * Sets variables using variables files. Use the format path:args
-         * List&lt;String&gt;.
+         * Sets variables using variables files. Use the format path:args List.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -738,8 +735,7 @@ public interface RobotframeworkComponentBuilderFactory {
             return this;
         }
         /**
-         * Sets individual variables. Use the format name:value
-         * List&lt;String&gt;.
+         * Sets individual variables. Use the format name:value List.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

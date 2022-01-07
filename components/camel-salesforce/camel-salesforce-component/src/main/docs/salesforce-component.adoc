@@ -713,11 +713,11 @@ The Salesforce component supports 76 options, which are listed below.
 | *maxBackoff* (common) | Maximum backoff interval for Streaming connection restart attempts for failures beyond CometD auto-reconnect. | 30000 | long
 | *notFoundBehaviour* (common) | Sets the behaviour of 404 not found status received from Salesforce API. Should the body be set to NULL NotFoundBehaviour#NULL or should a exception be signaled on the exchange NotFoundBehaviour#EXCEPTION - the default. There are 2 enums and the value can be one of: EXCEPTION, NULL | EXCEPTION | NotFoundBehaviour
 | *notifyForFields* (common) | Notify for fields, options are ALL, REFERENCED, SELECT, WHERE. There are 4 enums and the value can be one of: ALL, REFERENCED, SELECT, WHERE |  | NotifyForFieldsEnum
-| *notifyForOperationCreate* (common) | Notify for create operation, defaults to false (API version >= 29.0) |  | Boolean
-| *notifyForOperationDelete* (common) | Notify for delete operation, defaults to false (API version >= 29.0) |  | Boolean
-| *notifyForOperations* (common) | Notify for operations, options are ALL, CREATE, EXTENDED, UPDATE (API version < 29.0). There are 4 enums and the value can be one of: ALL, CREATE, EXTENDED, UPDATE |  | NotifyForOperationsEnum
-| *notifyForOperationUndelete* (common) | Notify for un-delete operation, defaults to false (API version >= 29.0) |  | Boolean
-| *notifyForOperationUpdate* (common) | Notify for update operation, defaults to false (API version >= 29.0) |  | Boolean
+| *notifyForOperationCreate* (common) | Notify for create operation, defaults to false (API version = 29.0) |  | Boolean
+| *notifyForOperationDelete* (common) | Notify for delete operation, defaults to false (API version = 29.0) |  | Boolean
+| *notifyForOperations* (common) | Notify for operations, options are ALL, CREATE, EXTENDED, UPDATE (API version 29.0). There are 4 enums and the value can be one of: ALL, CREATE, EXTENDED, UPDATE |  | NotifyForOperationsEnum
+| *notifyForOperationUndelete* (common) | Notify for un-delete operation, defaults to false (API version = 29.0) |  | Boolean
+| *notifyForOperationUpdate* (common) | Notify for update operation, defaults to false (API version = 29.0) |  | Boolean
 | *objectMapper* (common) | Custom Jackson ObjectMapper to use when serializing/deserializing Salesforce objects. |  | ObjectMapper
 | *packages* (common) | In what packages are the generated DTO classes. Typically the classes would be generated using camel-salesforce-maven-plugin. This must be set if using the XML format. Also, set it if using the generated DTOs to gain the benefit of using short SObject names in parameters/header values. Multiple packages can be separated by comma. |  | String
 | *rawPayload* (common) | Use raw payload String for request and response (either JSON or XML depending on format), instead of DTOs, false by default | false | boolean
@@ -823,11 +823,11 @@ with the following path and query parameters:
 | *maxBackoff* (common) | Maximum backoff interval for Streaming connection restart attempts for failures beyond CometD auto-reconnect. | 30000 | long
 | *notFoundBehaviour* (common) | Sets the behaviour of 404 not found status received from Salesforce API. Should the body be set to NULL NotFoundBehaviour#NULL or should a exception be signaled on the exchange NotFoundBehaviour#EXCEPTION - the default. There are 2 enums and the value can be one of: EXCEPTION, NULL | EXCEPTION | NotFoundBehaviour
 | *notifyForFields* (common) | Notify for fields, options are ALL, REFERENCED, SELECT, WHERE. There are 4 enums and the value can be one of: ALL, REFERENCED, SELECT, WHERE |  | NotifyForFieldsEnum
-| *notifyForOperationCreate* (common) | Notify for create operation, defaults to false (API version >= 29.0) |  | Boolean
-| *notifyForOperationDelete* (common) | Notify for delete operation, defaults to false (API version >= 29.0) |  | Boolean
-| *notifyForOperations* (common) | Notify for operations, options are ALL, CREATE, EXTENDED, UPDATE (API version < 29.0). There are 4 enums and the value can be one of: ALL, CREATE, EXTENDED, UPDATE |  | NotifyForOperationsEnum
-| *notifyForOperationUndelete* (common) | Notify for un-delete operation, defaults to false (API version >= 29.0) |  | Boolean
-| *notifyForOperationUpdate* (common) | Notify for update operation, defaults to false (API version >= 29.0) |  | Boolean
+| *notifyForOperationCreate* (common) | Notify for create operation, defaults to false (API version = 29.0) |  | Boolean
+| *notifyForOperationDelete* (common) | Notify for delete operation, defaults to false (API version = 29.0) |  | Boolean
+| *notifyForOperations* (common) | Notify for operations, options are ALL, CREATE, EXTENDED, UPDATE (API version 29.0). There are 4 enums and the value can be one of: ALL, CREATE, EXTENDED, UPDATE |  | NotifyForOperationsEnum
+| *notifyForOperationUndelete* (common) | Notify for un-delete operation, defaults to false (API version = 29.0) |  | Boolean
+| *notifyForOperationUpdate* (common) | Notify for update operation, defaults to false (API version = 29.0) |  | Boolean
 | *objectMapper* (common) | Custom Jackson ObjectMapper to use when serializing/deserializing Salesforce objects. |  | ObjectMapper
 | *rawPayload* (common) | Use raw payload String for request and response (either JSON or XML depending on format), instead of DTOs, false by default | false | boolean
 | *reportId* (common) | Salesforce1 Analytics report Id |  | String

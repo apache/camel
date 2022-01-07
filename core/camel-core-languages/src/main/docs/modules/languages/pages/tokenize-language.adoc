@@ -37,9 +37,9 @@ The Tokenize language supports 11 options, which are listed below.
 | endToken |  | String | The end token to use as tokenizer if using start/end token pairs. You can use simple language as the token to support dynamic tokens.
 | inheritNamespaceTagName |  | String | To inherit namespaces from a root/parent tag name when using XML You can use simple language as the tag name to support dynamic names.
 | headerName |  | String | Name of header to tokenize instead of using the message body.
-| regex | false | Boolean | If the token is a regular expression pattern. <p/> The default value is false
+| regex | false | Boolean | If the token is a regular expression pattern. The default value is false
 | xml | false | Boolean | Whether the input is XML messages. This option must be set to true if working with XML payloads.
-| includeTokens | false | Boolean | Whether to include the tokens in the parts when using pairs <p/> The default value is false
+| includeTokens | false | Boolean | Whether to include the tokens in the parts when using pairs The default value is false
 | group |  | String | To group N parts together, for example to split big files into chunks of 1000 lines. You can use simple language as the group to support dynamic group sizes.
 | groupDelimiter |  | String | Sets the delimiter to use when grouping. If this has not been set then token will be used as the delimiter.
 | skipFirst | false | Boolean | To skip the very first element

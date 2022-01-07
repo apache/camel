@@ -110,9 +110,9 @@ public interface PulsarEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether to allow manual message acknowledgements. &lt;p/&gt; If this
-         * option is enabled, then messages are not acknowledged automatically
-         * after successful route completion. Instead, an instance of
+         * Whether to allow manual message acknowledgements. If this option is
+         * enabled, then messages are not acknowledged automatically after
+         * successful route completion. Instead, an instance of
          * PulsarMessageReceipt is stored as a header on the
          * org.apache.camel.Exchange. Messages can then be acknowledged using
          * PulsarMessageReceipt at any time before the ackTimeout occurs.
@@ -131,9 +131,9 @@ public interface PulsarEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether to allow manual message acknowledgements. &lt;p/&gt; If this
-         * option is enabled, then messages are not acknowledged automatically
-         * after successful route completion. Instead, an instance of
+         * Whether to allow manual message acknowledgements. If this option is
+         * enabled, then messages are not acknowledged automatically after
+         * successful route completion. Instead, an instance of
          * PulsarMessageReceipt is stored as a header on the
          * org.apache.camel.Exchange. Messages can then be acknowledged using
          * PulsarMessageReceipt at any time before the ackTimeout occurs.

@@ -442,7 +442,7 @@ public interface JCacheEndpointBuilderFactory {
          * filteredEvents one will be ignored.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&lt;javax.cache.event.CacheEntryEventFilter&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&amp;lt;javax.cache.event.CacheEntryEventFilter&amp;gt;&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
          * 
@@ -459,7 +459,7 @@ public interface JCacheEndpointBuilderFactory {
          * filteredEvents one will be ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&lt;javax.cache.event.CacheEntryEventFilter&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&amp;lt;javax.cache.event.CacheEntryEventFilter&amp;gt;&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
          * 
@@ -545,7 +545,7 @@ public interface JCacheEndpointBuilderFactory {
          * The CacheLoader factory.
          * 
          * The option is a:
-         * &lt;code&gt;javax.cache.configuration.Factory&lt;javax.cache.integration.CacheLoader&gt;&lt;/code&gt; type.
+         * &lt;code&gt;javax.cache.configuration.Factory&amp;lt;javax.cache.integration.CacheLoader&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -561,7 +561,7 @@ public interface JCacheEndpointBuilderFactory {
          * The CacheLoader factory.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.cache.configuration.Factory&lt;javax.cache.integration.CacheLoader&gt;&lt;/code&gt; type.
+         * &lt;code&gt;javax.cache.configuration.Factory&amp;lt;javax.cache.integration.CacheLoader&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -577,7 +577,7 @@ public interface JCacheEndpointBuilderFactory {
          * The CacheWriter factory.
          * 
          * The option is a:
-         * &lt;code&gt;javax.cache.configuration.Factory&lt;javax.cache.integration.CacheWriter&gt;&lt;/code&gt; type.
+         * &lt;code&gt;javax.cache.configuration.Factory&amp;lt;javax.cache.integration.CacheWriter&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -593,7 +593,7 @@ public interface JCacheEndpointBuilderFactory {
          * The CacheWriter factory.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.cache.configuration.Factory&lt;javax.cache.integration.CacheWriter&gt;&lt;/code&gt; type.
+         * &lt;code&gt;javax.cache.configuration.Factory&amp;lt;javax.cache.integration.CacheWriter&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -644,7 +644,7 @@ public interface JCacheEndpointBuilderFactory {
          * The ExpiryPolicy factory.
          * 
          * The option is a:
-         * &lt;code&gt;javax.cache.configuration.Factory&lt;javax.cache.expiry.ExpiryPolicy&gt;&lt;/code&gt; type.
+         * &lt;code&gt;javax.cache.configuration.Factory&amp;lt;javax.cache.expiry.ExpiryPolicy&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -660,7 +660,7 @@ public interface JCacheEndpointBuilderFactory {
          * The ExpiryPolicy factory.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.cache.configuration.Factory&lt;javax.cache.expiry.ExpiryPolicy&gt;&lt;/code&gt; type.
+         * &lt;code&gt;javax.cache.configuration.Factory&amp;lt;javax.cache.expiry.ExpiryPolicy&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -1055,7 +1055,7 @@ public interface JCacheEndpointBuilderFactory {
          * The CacheLoader factory.
          * 
          * The option is a:
-         * &lt;code&gt;javax.cache.configuration.Factory&lt;javax.cache.integration.CacheLoader&gt;&lt;/code&gt; type.
+         * &lt;code&gt;javax.cache.configuration.Factory&amp;lt;javax.cache.integration.CacheLoader&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -1071,7 +1071,7 @@ public interface JCacheEndpointBuilderFactory {
          * The CacheLoader factory.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.cache.configuration.Factory&lt;javax.cache.integration.CacheLoader&gt;&lt;/code&gt; type.
+         * &lt;code&gt;javax.cache.configuration.Factory&amp;lt;javax.cache.integration.CacheLoader&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -1087,7 +1087,7 @@ public interface JCacheEndpointBuilderFactory {
          * The CacheWriter factory.
          * 
          * The option is a:
-         * &lt;code&gt;javax.cache.configuration.Factory&lt;javax.cache.integration.CacheWriter&gt;&lt;/code&gt; type.
+         * &lt;code&gt;javax.cache.configuration.Factory&amp;lt;javax.cache.integration.CacheWriter&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -1103,7 +1103,7 @@ public interface JCacheEndpointBuilderFactory {
          * The CacheWriter factory.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.cache.configuration.Factory&lt;javax.cache.integration.CacheWriter&gt;&lt;/code&gt; type.
+         * &lt;code&gt;javax.cache.configuration.Factory&amp;lt;javax.cache.integration.CacheWriter&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -1154,7 +1154,7 @@ public interface JCacheEndpointBuilderFactory {
          * The ExpiryPolicy factory.
          * 
          * The option is a:
-         * &lt;code&gt;javax.cache.configuration.Factory&lt;javax.cache.expiry.ExpiryPolicy&gt;&lt;/code&gt; type.
+         * &lt;code&gt;javax.cache.configuration.Factory&amp;lt;javax.cache.expiry.ExpiryPolicy&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -1170,7 +1170,7 @@ public interface JCacheEndpointBuilderFactory {
          * The ExpiryPolicy factory.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.cache.configuration.Factory&lt;javax.cache.expiry.ExpiryPolicy&gt;&lt;/code&gt; type.
+         * &lt;code&gt;javax.cache.configuration.Factory&amp;lt;javax.cache.expiry.ExpiryPolicy&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -1498,7 +1498,7 @@ public interface JCacheEndpointBuilderFactory {
          * The CacheLoader factory.
          * 
          * The option is a:
-         * &lt;code&gt;javax.cache.configuration.Factory&lt;javax.cache.integration.CacheLoader&gt;&lt;/code&gt; type.
+         * &lt;code&gt;javax.cache.configuration.Factory&amp;lt;javax.cache.integration.CacheLoader&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -1514,7 +1514,7 @@ public interface JCacheEndpointBuilderFactory {
          * The CacheLoader factory.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.cache.configuration.Factory&lt;javax.cache.integration.CacheLoader&gt;&lt;/code&gt; type.
+         * &lt;code&gt;javax.cache.configuration.Factory&amp;lt;javax.cache.integration.CacheLoader&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -1530,7 +1530,7 @@ public interface JCacheEndpointBuilderFactory {
          * The CacheWriter factory.
          * 
          * The option is a:
-         * &lt;code&gt;javax.cache.configuration.Factory&lt;javax.cache.integration.CacheWriter&gt;&lt;/code&gt; type.
+         * &lt;code&gt;javax.cache.configuration.Factory&amp;lt;javax.cache.integration.CacheWriter&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -1546,7 +1546,7 @@ public interface JCacheEndpointBuilderFactory {
          * The CacheWriter factory.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.cache.configuration.Factory&lt;javax.cache.integration.CacheWriter&gt;&lt;/code&gt; type.
+         * &lt;code&gt;javax.cache.configuration.Factory&amp;lt;javax.cache.integration.CacheWriter&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -1597,7 +1597,7 @@ public interface JCacheEndpointBuilderFactory {
          * The ExpiryPolicy factory.
          * 
          * The option is a:
-         * &lt;code&gt;javax.cache.configuration.Factory&lt;javax.cache.expiry.ExpiryPolicy&gt;&lt;/code&gt; type.
+         * &lt;code&gt;javax.cache.configuration.Factory&amp;lt;javax.cache.expiry.ExpiryPolicy&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -1613,7 +1613,7 @@ public interface JCacheEndpointBuilderFactory {
          * The ExpiryPolicy factory.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.cache.configuration.Factory&lt;javax.cache.expiry.ExpiryPolicy&gt;&lt;/code&gt; type.
+         * &lt;code&gt;javax.cache.configuration.Factory&amp;lt;javax.cache.expiry.ExpiryPolicy&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 

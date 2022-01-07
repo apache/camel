@@ -5,7 +5,7 @@
 :docTitle: InfluxDB
 :shortname: influxdb
 :artifactId: camel-influxdb
-:description: Interact with , a time series database.
+:description: Interact with InfluxDB, a time series database.
 :since: 2.18
 :supportLevel: Stable
 :component-header: Only producer is supported

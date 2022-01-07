@@ -196,8 +196,8 @@ public interface CryptoCmsEndpointBuilderFactory {
             return this;
         }
         /**
-         * If &lt;tt&gt;true then the CMS message is base 64 encoded and must be
-         * decoded during the processing. Default value is &lt;code&gt;false.
+         * If true then the CMS message is base 64 encoded and must be decoded
+         * during the processing. Default value is false.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -212,8 +212,8 @@ public interface CryptoCmsEndpointBuilderFactory {
             return this;
         }
         /**
-         * If &lt;tt&gt;true then the CMS message is base 64 encoded and must be
-         * decoded during the processing. Default value is &lt;code&gt;false.
+         * If true then the CMS message is base 64 encoded and must be decoded
+         * during the processing. Default value is false.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -248,7 +248,7 @@ public interface CryptoCmsEndpointBuilderFactory {
         /**
          * Provider for the originator info. See
          * https://tools.ietf.org/html/rfc5652#section-6.1. The default value is
-         * &lt;code&gt;null.
+         * null.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.crypto.cms.common.OriginatorInformationProvider&lt;/code&gt; type.
@@ -266,7 +266,7 @@ public interface CryptoCmsEndpointBuilderFactory {
         /**
          * Provider for the originator info. See
          * https://tools.ietf.org/html/rfc5652#section-6.1. The default value is
-         * &lt;code&gt;null.
+         * null.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.apache.camel.component.crypto.cms.common.OriginatorInformationProvider&lt;/code&gt; type.
@@ -286,7 +286,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * org.apache.camel.component.crypto.cms.api.TransRecipientInfo.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&lt;org.apache.camel.component.crypto.cms.crypt.RecipientInfo&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&amp;lt;org.apache.camel.component.crypto.cms.crypt.RecipientInfo&amp;gt;&lt;/code&gt; type.
          * 
          * Group: encrypt
          * 
@@ -302,7 +302,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * org.apache.camel.component.crypto.cms.api.TransRecipientInfo.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&lt;org.apache.camel.component.crypto.cms.crypt.RecipientInfo&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&amp;lt;org.apache.camel.component.crypto.cms.crypt.RecipientInfo&amp;gt;&lt;/code&gt; type.
          * 
          * Group: encrypt
          * 
@@ -359,8 +359,8 @@ public interface CryptoCmsEndpointBuilderFactory {
         }
         /**
          * Provider of the generator for the unprotected attributes. The default
-         * value is &lt;code&gt;null which means no unprotected attribute is
-         * added to the Enveloped Data object. See
+         * value is null which means no unprotected attribute is added to the
+         * Enveloped Data object. See
          * https://tools.ietf.org/html/rfc5652#section-6.1.
          * 
          * The option is a:
@@ -378,8 +378,8 @@ public interface CryptoCmsEndpointBuilderFactory {
         }
         /**
          * Provider of the generator for the unprotected attributes. The default
-         * value is &lt;code&gt;null which means no unprotected attribute is
-         * added to the Enveloped Data object. See
+         * value is null which means no unprotected attribute is added to the
+         * Enveloped Data object. See
          * https://tools.ietf.org/html/rfc5652#section-6.1.
          * 
          * The option will be converted to a
@@ -397,7 +397,7 @@ public interface CryptoCmsEndpointBuilderFactory {
         }
         /**
          * Indicates whether the Signed Data or Enveloped Data instance shall be
-         * base 64 encoded. Default value is &lt;code&gt;false.
+         * base 64 encoded. Default value is false.
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
@@ -413,7 +413,7 @@ public interface CryptoCmsEndpointBuilderFactory {
         }
         /**
          * Indicates whether the Signed Data or Enveloped Data instance shall be
-         * base 64 encoded. Default value is &lt;code&gt;false.
+         * base 64 encoded. Default value is false.
          * 
          * The option will be converted to a
          * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
@@ -481,9 +481,9 @@ public interface CryptoCmsEndpointBuilderFactory {
         }
         /**
          * Indicates whether the value in the header CamelCryptoCmsSignedData is
-         * base64 encoded. Default value is &lt;code&gt;false. &lt;p&gt; Only
-         * relevant for detached signatures. In the detached signature case, the
-         * header contains the Signed Data object.
+         * base64 encoded. Default value is false. Only relevant for detached
+         * signatures. In the detached signature case, the header contains the
+         * Signed Data object.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -500,9 +500,9 @@ public interface CryptoCmsEndpointBuilderFactory {
         }
         /**
          * Indicates whether the value in the header CamelCryptoCmsSignedData is
-         * base64 encoded. Default value is &lt;code&gt;false. &lt;p&gt; Only
-         * relevant for detached signatures. In the detached signature case, the
-         * header contains the Signed Data object.
+         * base64 encoded. Default value is false. Only relevant for detached
+         * signatures. In the detached signature case, the header contains the
+         * Signed Data object.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -519,10 +519,10 @@ public interface CryptoCmsEndpointBuilderFactory {
             return this;
         }
         /**
-         * If &lt;code&gt;true then the signatures of all signers contained in
-         * the Signed Data object are verified. If &lt;code&gt;false then only
-         * one signature whose signer info matches with one of the specified
-         * certificates is verified. Default value is &lt;code&gt;true.
+         * If true then the signatures of all signers contained in the Signed
+         * Data object are verified. If false then only one signature whose
+         * signer info matches with one of the specified certificates is
+         * verified. Default value is true.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -538,10 +538,10 @@ public interface CryptoCmsEndpointBuilderFactory {
             return this;
         }
         /**
-         * If &lt;code&gt;true then the signatures of all signers contained in
-         * the Signed Data object are verified. If &lt;code&gt;false then only
-         * one signature whose signer info matches with one of the specified
-         * certificates is verified. Default value is &lt;code&gt;true.
+         * If true then the signatures of all signers contained in the Signed
+         * Data object are verified. If false then only one signature whose
+         * signer info matches with one of the specified certificates is
+         * verified. Default value is true.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.

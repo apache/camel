@@ -51,7 +51,7 @@ public interface WebsocketComponentBuilderFactory {
             extends
                 ComponentBuilder<WebsocketComponent> {
         /**
-         * The hostname. The default value is &lt;tt&gt;0.0.0.0.
+         * The hostname. The default value is 0.0.0.0.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -66,7 +66,7 @@ public interface WebsocketComponentBuilderFactory {
             return this;
         }
         /**
-         * The port number. The default value is &lt;tt&gt;9292.
+         * The port number. The default value is 9292.
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
@@ -104,12 +104,11 @@ public interface WebsocketComponentBuilderFactory {
         }
         /**
          * Set a resource path for static resources (such as .html files etc).
-         * &lt;p/&gt; The resources can be loaded from classpath, if you prefix
-         * with &lt;tt&gt;classpath:, otherwise the resources is loaded from
-         * file system or from JAR files. &lt;p/&gt; For example to load from
-         * root classpath use &lt;tt&gt;classpath:., or
-         * &lt;tt&gt;classpath:WEB-INF/static &lt;p/&gt; If not configured (eg
-         * &lt;tt&gt;null) then no static resource is in use.
+         * The resources can be loaded from classpath, if you prefix with
+         * classpath:, otherwise the resources is loaded from file system or
+         * from JAR files. For example to load from root classpath use
+         * classpath:., or classpath:WEB-INF/static If not configured (eg null)
+         * then no static resource is in use.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "atomix-messaging",
     "title": "Atomix Messaging",
-    "description": "Access Atomix's .",
+    "description": "Access Atomix's group messaging.",
     "deprecated": false,
     "firstVersion": "2.20.0",
     "label": "clustering",

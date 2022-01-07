@@ -3,7 +3,7 @@
 :docTitle: Consul
 :shortname: consul
 :artifactId: camel-consul
-:description: Integrate with service discovery and configuration store.
+:description: Integrate with Consul service discovery and configuration store.
 :since: 2.18
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

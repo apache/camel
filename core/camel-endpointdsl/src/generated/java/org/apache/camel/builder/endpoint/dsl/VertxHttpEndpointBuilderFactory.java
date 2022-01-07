@@ -319,8 +319,8 @@ public interface VertxHttpEndpointBuilderFactory {
         /**
          * The amount of time in milliseconds after which if the request does
          * not return any data within the timeout period a TimeoutException
-         * fails the request. &lt;p/&gt; Setting zero or a negative value
-         * disables the timeout.
+         * fails the request. Setting zero or a negative value disables the
+         * timeout.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
@@ -337,8 +337,8 @@ public interface VertxHttpEndpointBuilderFactory {
         /**
          * The amount of time in milliseconds after which if the request does
          * not return any data within the timeout period a TimeoutException
-         * fails the request. &lt;p/&gt; Setting zero or a negative value
-         * disables the timeout.
+         * fails the request. Setting zero or a negative value disables the
+         * timeout.
          * 
          * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
@@ -358,10 +358,10 @@ public interface VertxHttpEndpointBuilderFactory {
          * as a application/x-java-serialized-object content type. On the
          * producer side the exception will be deserialized and thrown as is,
          * instead of HttpOperationFailedException. The caused exception is
-         * required to be serialized. &lt;p/&gt; This is by default turned off.
-         * If you enable this then be aware that Camel will deserialize the
-         * incoming data from the request to a Java object, which can be a
-         * potential security risk.
+         * required to be serialized. This is by default turned off. If you
+         * enable this then be aware that Camel will deserialize the incoming
+         * data from the request to a Java object, which can be a potential
+         * security risk.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -382,10 +382,10 @@ public interface VertxHttpEndpointBuilderFactory {
          * as a application/x-java-serialized-object content type. On the
          * producer side the exception will be deserialized and thrown as is,
          * instead of HttpOperationFailedException. The caused exception is
-         * required to be serialized. &lt;p/&gt; This is by default turned off.
-         * If you enable this then be aware that Camel will deserialize the
-         * incoming data from the request to a Java object, which can be a
-         * potential security risk.
+         * required to be serialized. This is by default turned off. If you
+         * enable this then be aware that Camel will deserialize the incoming
+         * data from the request to a Java object, which can be a potential
+         * security risk.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.

@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "toD",
     "title": "To D",
-    "description": "Sends the message to a dynamic endpoint <p\/> You can specify multiple languages in the uri separated by the plus sign, such as <tt>mock:language:xpath:\/order\/uri where <tt>mock: would be a prefix to a xpath expression. <p\/> For more dynamic behavior use EIP instead.",
+    "description": "Sends the message to a dynamic endpoint You can specify multiple languages in the uri separated by the plus sign, such as mock:language:xpath:\/order\/uri where mock: would be a prefix to a xpath expression. For more dynamic behavior use Recipient List or Dynamic Router EIP instead.",
     "deprecated": false,
     "label": "eip,endpoint,routing",
     "javaType": "org.apache.camel.model.ToDynamicDefinition",

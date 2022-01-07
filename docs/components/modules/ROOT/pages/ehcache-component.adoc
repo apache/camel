@@ -5,7 +5,7 @@
 :docTitle: Ehcache
 :shortname: ehcache
 :artifactId: camel-ehcache
-:description: Perform caching operations using .
+:description: Perform caching operations using Ehcache.
 :since: 2.18
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

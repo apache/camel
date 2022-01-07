@@ -177,8 +177,8 @@ public interface SnmpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the snmp version for the request. &lt;p/&gt; The value 0 means
-         * SNMPv1, 1 means SNMPv2c, and the value 3 means SNMPv3.
+         * Sets the snmp version for the request. The value 0 means SNMPv1, 1
+         * means SNMPv2c, and the value 3 means SNMPv3.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -193,8 +193,8 @@ public interface SnmpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the snmp version for the request. &lt;p/&gt; The value 0 means
-         * SNMPv1, 1 means SNMPv2c, and the value 3 means SNMPv3.
+         * Sets the snmp version for the request. The value 0 means SNMPv1, 1
+         * means SNMPv2c, and the value 3 means SNMPv3.
          * 
          * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -721,8 +721,8 @@ public interface SnmpEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -743,8 +743,8 @@ public interface SnmpEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -856,11 +856,10 @@ public interface SnmpEndpointBuilderFactory {
             return this;
         }
         /**
-         * The authentication passphrase. If not &lt;code&gt;null,
-         * &lt;code&gt;authenticationProtocol must also be not &lt;code&gt;null.
-         * RFC3414 11.2 requires passphrases to have a minimum length of 8
-         * bytes. If the length of &lt;code&gt;authenticationPassphrase is less
-         * than 8 bytes an &lt;code&gt;IllegalArgumentException is thrown.
+         * The authentication passphrase. If not null, authenticationProtocol
+         * must also be not null. RFC3414 11.2 requires passphrases to have a
+         * minimum length of 8 bytes. If the length of authenticationPassphrase
+         * is less than 8 bytes an IllegalArgumentException is thrown.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -891,11 +890,10 @@ public interface SnmpEndpointBuilderFactory {
             return this;
         }
         /**
-         * The privacy passphrase. If not &lt;code&gt;null,
-         * &lt;code&gt;privacyProtocol must also be not &lt;code&gt;null.
-         * RFC3414 11.2 requires passphrases to have a minimum length of 8
-         * bytes. If the length of &lt;code&gt;authenticationPassphrase is less
-         * than 8 bytes an &lt;code&gt;IllegalArgumentException is thrown.
+         * The privacy passphrase. If not null, privacyProtocol must also be not
+         * null. RFC3414 11.2 requires passphrases to have a minimum length of 8
+         * bytes. If the length of authenticationPassphrase is less than 8 bytes
+         * an IllegalArgumentException is thrown.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -911,7 +909,7 @@ public interface SnmpEndpointBuilderFactory {
         }
         /**
          * The privacy protocol ID to be associated with this user. If set to
-         * &lt;code&gt;null, this user only supports unencrypted messages.
+         * null, this user only supports unencrypted messages.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -928,9 +926,9 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Sets the security level for this target. The supplied security level
          * must be supported by the security model dependent information
-         * associated with the security name set for this target. &lt;p/&gt; The
-         * value 1 means: No authentication and no encryption. Anyone can create
-         * and read messages with this security level The value 2 means:
+         * associated with the security name set for this target. The value 1
+         * means: No authentication and no encryption. Anyone can create and
+         * read messages with this security level The value 2 means:
          * Authentication and no encryption. Only the one with the right
          * authentication key can create messages with this security level, but
          * anyone can read the contents of the message. The value 3 means:
@@ -954,9 +952,9 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Sets the security level for this target. The supplied security level
          * must be supported by the security model dependent information
-         * associated with the security name set for this target. &lt;p/&gt; The
-         * value 1 means: No authentication and no encryption. Anyone can create
-         * and read messages with this security level The value 2 means:
+         * associated with the security name set for this target. The value 1
+         * means: No authentication and no encryption. Anyone can create and
+         * read messages with this security level The value 2 means:
          * Authentication and no encryption. Only the one with the right
          * authentication key can create messages with this security level, but
          * anyone can read the contents of the message. The value 3 means:
@@ -1286,8 +1284,8 @@ public interface SnmpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the snmp version for the request. &lt;p/&gt; The value 0 means
-         * SNMPv1, 1 means SNMPv2c, and the value 3 means SNMPv3.
+         * Sets the snmp version for the request. The value 0 means SNMPv1, 1
+         * means SNMPv2c, and the value 3 means SNMPv3.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -1302,8 +1300,8 @@ public interface SnmpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the snmp version for the request. &lt;p/&gt; The value 0 means
-         * SNMPv1, 1 means SNMPv2c, and the value 3 means SNMPv3.
+         * Sets the snmp version for the request. The value 0 means SNMPv1, 1
+         * means SNMPv2c, and the value 3 means SNMPv3.
          * 
          * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -1427,11 +1425,10 @@ public interface SnmpEndpointBuilderFactory {
             return this;
         }
         /**
-         * The authentication passphrase. If not &lt;code&gt;null,
-         * &lt;code&gt;authenticationProtocol must also be not &lt;code&gt;null.
-         * RFC3414 11.2 requires passphrases to have a minimum length of 8
-         * bytes. If the length of &lt;code&gt;authenticationPassphrase is less
-         * than 8 bytes an &lt;code&gt;IllegalArgumentException is thrown.
+         * The authentication passphrase. If not null, authenticationProtocol
+         * must also be not null. RFC3414 11.2 requires passphrases to have a
+         * minimum length of 8 bytes. If the length of authenticationPassphrase
+         * is less than 8 bytes an IllegalArgumentException is thrown.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1462,11 +1459,10 @@ public interface SnmpEndpointBuilderFactory {
             return this;
         }
         /**
-         * The privacy passphrase. If not &lt;code&gt;null,
-         * &lt;code&gt;privacyProtocol must also be not &lt;code&gt;null.
-         * RFC3414 11.2 requires passphrases to have a minimum length of 8
-         * bytes. If the length of &lt;code&gt;authenticationPassphrase is less
-         * than 8 bytes an &lt;code&gt;IllegalArgumentException is thrown.
+         * The privacy passphrase. If not null, privacyProtocol must also be not
+         * null. RFC3414 11.2 requires passphrases to have a minimum length of 8
+         * bytes. If the length of authenticationPassphrase is less than 8 bytes
+         * an IllegalArgumentException is thrown.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1482,7 +1478,7 @@ public interface SnmpEndpointBuilderFactory {
         }
         /**
          * The privacy protocol ID to be associated with this user. If set to
-         * &lt;code&gt;null, this user only supports unencrypted messages.
+         * null, this user only supports unencrypted messages.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1499,9 +1495,9 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Sets the security level for this target. The supplied security level
          * must be supported by the security model dependent information
-         * associated with the security name set for this target. &lt;p/&gt; The
-         * value 1 means: No authentication and no encryption. Anyone can create
-         * and read messages with this security level The value 2 means:
+         * associated with the security name set for this target. The value 1
+         * means: No authentication and no encryption. Anyone can create and
+         * read messages with this security level The value 2 means:
          * Authentication and no encryption. Only the one with the right
          * authentication key can create messages with this security level, but
          * anyone can read the contents of the message. The value 3 means:
@@ -1525,9 +1521,9 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Sets the security level for this target. The supplied security level
          * must be supported by the security model dependent information
-         * associated with the security name set for this target. &lt;p/&gt; The
-         * value 1 means: No authentication and no encryption. Anyone can create
-         * and read messages with this security level The value 2 means:
+         * associated with the security name set for this target. The value 1
+         * means: No authentication and no encryption. Anyone can create and
+         * read messages with this security level The value 2 means:
          * Authentication and no encryption. Only the one with the right
          * authentication key can create messages with this security level, but
          * anyone can read the contents of the message. The value 3 means:
@@ -1749,8 +1745,8 @@ public interface SnmpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the snmp version for the request. &lt;p/&gt; The value 0 means
-         * SNMPv1, 1 means SNMPv2c, and the value 3 means SNMPv3.
+         * Sets the snmp version for the request. The value 0 means SNMPv1, 1
+         * means SNMPv2c, and the value 3 means SNMPv3.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -1765,8 +1761,8 @@ public interface SnmpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the snmp version for the request. &lt;p/&gt; The value 0 means
-         * SNMPv1, 1 means SNMPv2c, and the value 3 means SNMPv3.
+         * Sets the snmp version for the request. The value 0 means SNMPv1, 1
+         * means SNMPv2c, and the value 3 means SNMPv3.
          * 
          * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -1841,11 +1837,10 @@ public interface SnmpEndpointBuilderFactory {
             return this;
         }
         /**
-         * The authentication passphrase. If not &lt;code&gt;null,
-         * &lt;code&gt;authenticationProtocol must also be not &lt;code&gt;null.
-         * RFC3414 11.2 requires passphrases to have a minimum length of 8
-         * bytes. If the length of &lt;code&gt;authenticationPassphrase is less
-         * than 8 bytes an &lt;code&gt;IllegalArgumentException is thrown.
+         * The authentication passphrase. If not null, authenticationProtocol
+         * must also be not null. RFC3414 11.2 requires passphrases to have a
+         * minimum length of 8 bytes. If the length of authenticationPassphrase
+         * is less than 8 bytes an IllegalArgumentException is thrown.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1876,11 +1871,10 @@ public interface SnmpEndpointBuilderFactory {
             return this;
         }
         /**
-         * The privacy passphrase. If not &lt;code&gt;null,
-         * &lt;code&gt;privacyProtocol must also be not &lt;code&gt;null.
-         * RFC3414 11.2 requires passphrases to have a minimum length of 8
-         * bytes. If the length of &lt;code&gt;authenticationPassphrase is less
-         * than 8 bytes an &lt;code&gt;IllegalArgumentException is thrown.
+         * The privacy passphrase. If not null, privacyProtocol must also be not
+         * null. RFC3414 11.2 requires passphrases to have a minimum length of 8
+         * bytes. If the length of authenticationPassphrase is less than 8 bytes
+         * an IllegalArgumentException is thrown.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1895,7 +1889,7 @@ public interface SnmpEndpointBuilderFactory {
         }
         /**
          * The privacy protocol ID to be associated with this user. If set to
-         * &lt;code&gt;null, this user only supports unencrypted messages.
+         * null, this user only supports unencrypted messages.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1911,9 +1905,9 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Sets the security level for this target. The supplied security level
          * must be supported by the security model dependent information
-         * associated with the security name set for this target. &lt;p/&gt; The
-         * value 1 means: No authentication and no encryption. Anyone can create
-         * and read messages with this security level The value 2 means:
+         * associated with the security name set for this target. The value 1
+         * means: No authentication and no encryption. Anyone can create and
+         * read messages with this security level The value 2 means:
          * Authentication and no encryption. Only the one with the right
          * authentication key can create messages with this security level, but
          * anyone can read the contents of the message. The value 3 means:
@@ -1937,9 +1931,9 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Sets the security level for this target. The supplied security level
          * must be supported by the security model dependent information
-         * associated with the security name set for this target. &lt;p/&gt; The
-         * value 1 means: No authentication and no encryption. Anyone can create
-         * and read messages with this security level The value 2 means:
+         * associated with the security name set for this target. The value 1
+         * means: No authentication and no encryption. Anyone can create and
+         * read messages with this security level The value 2 means:
          * Authentication and no encryption. Only the one with the right
          * authentication key can create messages with this security level, but
          * anyone can read the contents of the message. The value 3 means:

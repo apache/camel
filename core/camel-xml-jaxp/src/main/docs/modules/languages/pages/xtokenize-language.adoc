@@ -32,7 +32,7 @@ The XML Tokenize language supports 4 options, which are listed below.
 |===
 | Name | Default | Java Type | Description
 | headerName |  | String | Name of header to tokenize instead of using the message body.
-| mode |  | String | The extraction mode. The available extraction modes are: <ul> <li>i - injecting the contextual namespace bindings into the extracted token (default) <li>w - wrapping the extracted token in its ancestor context <li>u - unwrapping the extracted token to its child content <li>t - extracting the text content of the specified element
+| mode |  | String | The extraction mode. The available extraction modes are: i - injecting the contextual namespace bindings into the extracted token (default) w - wrapping the extracted token in its ancestor context u - unwrapping the extracted token to its child content t - extracting the text content of the specified element
 | group |  | Integer | To group N parts together
 | trim | true | Boolean | Whether to trim the value to remove leading and trailing whitespaces and line breaks
 |===

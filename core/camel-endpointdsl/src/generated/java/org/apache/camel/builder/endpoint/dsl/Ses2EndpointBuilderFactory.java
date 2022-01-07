@@ -212,7 +212,7 @@ public interface Ses2EndpointBuilderFactory {
          * 'CamelAwsSesReplyToAddresses' header.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: producer
          * 
@@ -229,7 +229,7 @@ public interface Ses2EndpointBuilderFactory {
          * 'CamelAwsSesReplyToAddresses' header.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: producer
          * 
@@ -275,7 +275,7 @@ public interface Ses2EndpointBuilderFactory {
          * 'CamelAwsSesTo' header.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: producer
          * 
@@ -291,7 +291,7 @@ public interface Ses2EndpointBuilderFactory {
          * 'CamelAwsSesTo' header.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: producer
          * 

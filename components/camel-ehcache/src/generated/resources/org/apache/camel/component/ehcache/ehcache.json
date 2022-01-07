@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "ehcache",
     "title": "Ehcache",
-    "description": "Perform caching operations using .",
+    "description": "Perform caching operations using Ehcache.",
     "deprecated": false,
     "firstVersion": "2.18.0",
     "label": "cache,datagrid,clustering",

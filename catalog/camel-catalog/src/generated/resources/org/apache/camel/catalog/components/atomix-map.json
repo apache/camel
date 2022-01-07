@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "atomix-map",
     "title": "Atomix Map",
-    "description": "Access Atomix's .",
+    "description": "Access Atomix's distributed map.",
     "deprecated": false,
     "firstVersion": "2.20.0",
     "label": "clustering",

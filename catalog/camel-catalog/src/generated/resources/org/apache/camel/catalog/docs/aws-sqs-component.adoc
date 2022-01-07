@@ -138,7 +138,7 @@ with the following path and query parameters:
 | *extendMessageVisibility* (consumer) | If enabled then a scheduled background task will keep extending the message visibility on SQS. This is needed if it takes a long time to process the message. If set to true defaultVisibilityTimeout must be set. See details at Amazon docs. | false | boolean
 | *kmsDataKeyReusePeriodSeconds* (consumer) | The length of time, in seconds, for which Amazon SQS can reuse a data key to encrypt or decrypt messages before calling AWS KMS again. An integer representing seconds, between 60 seconds (1 minute) and 86,400 seconds (24 hours). Default: 300 (5 minutes). |  | Integer
 | *kmsMasterKeyId* (consumer) | The ID of an AWS-managed customer master key (CMK) for Amazon SQS or a custom CMK. |  | String
-| *maxMessagesPerPoll* (consumer) | Gets the maximum number of messages as a limit to poll at each polling. <p/> Is default unlimited, but use 0 or negative number to disable it as unlimited. |  | int
+| *maxMessagesPerPoll* (consumer) | Gets the maximum number of messages as a limit to poll at each polling. Is default unlimited, but use 0 or negative number to disable it as unlimited. |  | int
 | *messageAttributeNames* (consumer) | A list of message attribute names to receive when consuming. Multiple names can be separated by comma. |  | String
 | *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
 | *serverSideEncryptionEnabled* (consumer) | Define if Server Side Encryption is enabled or not on the queue | false | boolean
