@@ -59,9 +59,11 @@ class KameletBindingLoaderTest extends YamlTestSupport {
             with (context.routeDefinitions[0]) {
                 routeId == 'timer-event-source'
                 input.endpointUri == 'kamelet:timer-source?message=Hello+world%21'
+                input.lineNumber == 7
                 outputs.size() == 1
                 with (outputs[0], ToDefinition) {
                     endpointUri == 'kamelet:log-sink'
+                    lineNumber == 14
                 }
             }
     }
