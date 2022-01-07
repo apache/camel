@@ -34,18 +34,23 @@ import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.cxf.mtom_feature.Hello;
 import org.apache.camel.cxf.mtom_feature.HelloService;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.cxf.endpoint.Client;
+import org.apache.cxf.ext.logging.LoggingInInterceptor;
+import org.apache.cxf.ext.logging.LoggingOutInterceptor;
+import org.apache.cxf.frontend.ClientProxy;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class CxfMtomConsumerTest extends CamelTestSupport {
     protected static final String MTOM_ENDPOINT_ADDRESS = "http://localhost:"
                                                           + CXFTestSupport.getPort1() + "/CxfMtomConsumerTest/jaxws-mtom/hello";
     protected static final String MTOM_ENDPOINT_URI = "cxf://" + MTOM_ENDPOINT_ADDRESS
-                                                      + "?serviceClass=org.apache.camel.cxf.mtom_feature.Hello";
+                                                      + "?serviceClass=org.apache.camel.cxf.mtom_feature.Hello&properties.mtom-enabled=true";
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfMtomConsumerTest.class);
 
@@ -60,15 +65,15 @@ public class CxfMtomConsumerTest extends CamelTestSupport {
                     @SuppressWarnings("unchecked")
                     public void process(final Exchange exchange) throws Exception {
                         AttachmentMessage in = exchange.getIn(AttachmentMessage.class);
-                        assertEquals(0, in.getAttachments().size(), "We should not get any attachements here.");
+                        assertNull(in.getAttachments(), "We should not get any attachements here.");
                         assertEquals("application/xop+xml", in.getHeader("Content-Type"), "Get a wrong Content-Type header");
                         // Get the parameter list
                         List<?> parameter = in.getBody(List.class);
                         // Get the operation name
                         Holder<byte[]> photo = (Holder<byte[]>) parameter.get(0);
                         assertNotNull(photo.value, "The photo should not be null");
-                        assertEquals("Should get the right request", new String(photo.value, "UTF-8"),
-                                "RequestFromCXF");
+                        assertEquals(new String(photo.value, "UTF-8"),
+                                "RequestFromCXF", "Should get the right request");
                         photo.value = "ResponseFromCamel".getBytes("UTF-8");
                         Holder<Image> image = (Holder<Image>) parameter.get(1);
                         assertNotNull(image.value, "We should get the image here");
@@ -92,6 +97,9 @@ public class CxfMtomConsumerTest extends CamelTestSupport {
         ((BindingProvider) port).getRequestContext()
                 .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
                         MTOM_ENDPOINT_ADDRESS);
+        Client c = ClientProxy.getClient(port);
+        c.getInInterceptors().add(new LoggingInInterceptor());
+        c.getOutInterceptors().add(new LoggingOutInterceptor());
         return port;
     }
 
