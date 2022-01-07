@@ -171,11 +171,11 @@ public interface JdbcEndpointBuilderFactory {
             return this;
         }
         /**
-         * Optional parameters to the java.sql.Statement. &lt;p/&gt; For example
-         * to set maxRows, fetchSize etc.
+         * Optional parameters to the java.sql.Statement. For example to set
+         * maxRows, fetchSize etc.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the parameters(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -191,11 +191,11 @@ public interface JdbcEndpointBuilderFactory {
             return this;
         }
         /**
-         * Optional parameters to the java.sql.Statement. &lt;p/&gt; For example
-         * to set maxRows, fetchSize etc.
+         * Optional parameters to the java.sql.Statement. For example to set
+         * maxRows, fetchSize etc.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the parameters(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -316,9 +316,9 @@ public interface JdbcEndpointBuilderFactory {
             return this;
         }
         /**
-         * To read BLOB columns as bytes instead of string data. &lt;p/&gt; This
-         * may be needed for certain databases such as Oracle where you must
-         * read BLOB columns as bytes.
+         * To read BLOB columns as bytes instead of string data. This may be
+         * needed for certain databases such as Oracle where you must read BLOB
+         * columns as bytes.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -334,9 +334,9 @@ public interface JdbcEndpointBuilderFactory {
             return this;
         }
         /**
-         * To read BLOB columns as bytes instead of string data. &lt;p/&gt; This
-         * may be needed for certain databases such as Oracle where you must
-         * read BLOB columns as bytes.
+         * To read BLOB columns as bytes instead of string data. This may be
+         * needed for certain databases such as Oracle where you must read BLOB
+         * columns as bytes.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -392,12 +392,11 @@ public interface JdbcEndpointBuilderFactory {
         }
         /**
          * Sets whether to use JDBC 4 or JDBC 3.0 or older semantic when
-         * retrieving column name. &lt;p/&gt; JDBC 4.0 uses columnLabel to get
-         * the column name where as JDBC 3.0 uses both columnName or
-         * columnLabel. Unfortunately JDBC drivers behave differently so you can
-         * use this option to work out issues around your JDBC driver if you get
-         * problem using this component &lt;p/&gt; This option is default
-         * &lt;tt&gt;true.
+         * retrieving column name. JDBC 4.0 uses columnLabel to get the column
+         * name where as JDBC 3.0 uses both columnName or columnLabel.
+         * Unfortunately JDBC drivers behave differently so you can use this
+         * option to work out issues around your JDBC driver if you get problem
+         * using this component This option is default true.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -414,12 +413,11 @@ public interface JdbcEndpointBuilderFactory {
         }
         /**
          * Sets whether to use JDBC 4 or JDBC 3.0 or older semantic when
-         * retrieving column name. &lt;p/&gt; JDBC 4.0 uses columnLabel to get
-         * the column name where as JDBC 3.0 uses both columnName or
-         * columnLabel. Unfortunately JDBC drivers behave differently so you can
-         * use this option to work out issues around your JDBC driver if you get
-         * problem using this component &lt;p/&gt; This option is default
-         * &lt;tt&gt;true.
+         * retrieving column name. JDBC 4.0 uses columnLabel to get the column
+         * name where as JDBC 3.0 uses both columnName or columnLabel.
+         * Unfortunately JDBC drivers behave differently so you can use this
+         * option to work out issues around your JDBC driver if you get problem
+         * using this component This option is default true.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.

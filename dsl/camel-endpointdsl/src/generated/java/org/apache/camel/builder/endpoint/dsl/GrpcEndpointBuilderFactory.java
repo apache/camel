@@ -338,7 +338,7 @@ public interface GrpcEndpointBuilderFactory {
          * Lets the route to take control over stream observer. If this value is
          * set to true, then the response observer of gRPC call will be set with
          * the name GrpcConstants.GRPC_RESPONSE_OBSERVER in the Exchange object.
-         * &lt;p&gt; Please note that the stream observer's onNext(), onError(),
+         * Please note that the stream observer's onNext(), onError(),
          * onCompleted() methods should be called in the route.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -358,7 +358,7 @@ public interface GrpcEndpointBuilderFactory {
          * Lets the route to take control over stream observer. If this value is
          * set to true, then the response observer of gRPC call will be set with
          * the name GrpcConstants.GRPC_RESPONSE_OBSERVER in the Exchange object.
-         * &lt;p&gt; Please note that the stream observer's onNext(), onError(),
+         * Please note that the stream observer's onNext(), onError(),
          * onCompleted() methods should be called in the route.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;

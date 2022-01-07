@@ -90,7 +90,7 @@ public interface QuickfixjEndpointBuilderFactory {
         /**
          * The optional sessionID identifies a specific FIX session. The format
          * of the sessionID is:
-         * (BeginString):(SenderCompID)/(SenderSubID)/(SenderLocationID)-&gt;(TargetCompID)/(TargetSubID)/(TargetLocationID).
+         * (BeginString):(SenderCompID)/(SenderSubID)/(SenderLocationID)-(TargetCompID)/(TargetSubID)/(TargetLocationID).
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -286,7 +286,7 @@ public interface QuickfixjEndpointBuilderFactory {
         /**
          * The optional sessionID identifies a specific FIX session. The format
          * of the sessionID is:
-         * (BeginString):(SenderCompID)/(SenderSubID)/(SenderLocationID)-&gt;(TargetCompID)/(TargetSubID)/(TargetLocationID).
+         * (BeginString):(SenderCompID)/(SenderSubID)/(SenderLocationID)-(TargetCompID)/(TargetSubID)/(TargetLocationID).
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -417,7 +417,7 @@ public interface QuickfixjEndpointBuilderFactory {
         /**
          * The optional sessionID identifies a specific FIX session. The format
          * of the sessionID is:
-         * (BeginString):(SenderCompID)/(SenderSubID)/(SenderLocationID)-&gt;(TargetCompID)/(TargetSubID)/(TargetLocationID).
+         * (BeginString):(SenderCompID)/(SenderSubID)/(SenderLocationID)-(TargetCompID)/(TargetSubID)/(TargetLocationID).
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -457,7 +457,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * Syntax: <code>quickfix:configurationName</code>
          * 
          * Path parameter: configurationName (required)
-         * Path to the quickfix configuration file. <p/> You can prefix with:
+         * Path to the quickfix configuration file. You can prefix with:
          * classpath, file, http, ref, or bean. classpath, file and http loads
          * the configuration file using these protocols (classpath is default).
          * ref will lookup the configuration file in the registry. bean will
@@ -482,7 +482,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * Syntax: <code>quickfix:configurationName</code>
          * 
          * Path parameter: configurationName (required)
-         * Path to the quickfix configuration file. <p/> You can prefix with:
+         * Path to the quickfix configuration file. You can prefix with:
          * classpath, file, http, ref, or bean. classpath, file and http loads
          * the configuration file using these protocols (classpath is default).
          * ref will lookup the configuration file in the registry. bean will

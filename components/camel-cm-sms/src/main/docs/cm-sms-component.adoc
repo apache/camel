@@ -2,7 +2,7 @@
 :doctitle: CM SMS Gateway
 :shortname: cm-sms
 :artifactid: camel-cm-sms
-:description: Send SMS messages via .
+:description: Send SMS messages via CM SMS Gateway.
 :since: 2.18
 :supportlevel: Stable
 :component-header: Only producer is supported

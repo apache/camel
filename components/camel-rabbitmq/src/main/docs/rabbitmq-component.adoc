@@ -2,7 +2,7 @@
 :doctitle: RabbitMQ
 :shortname: rabbitmq
 :artifactid: camel-rabbitmq
-:description: Send and receive messages from instances.
+:description: Send and receive messages from RabbitMQ instances.
 :since: 2.12
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported

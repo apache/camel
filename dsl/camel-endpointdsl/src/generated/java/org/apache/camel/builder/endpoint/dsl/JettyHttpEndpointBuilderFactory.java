@@ -252,8 +252,8 @@ public interface JettyHttpEndpointBuilderFactory {
         }
         /**
          * Allows to set a timeout in millis when using Jetty as consumer
-         * (server). By default Jetty uses 30000. You can use a value of &lt;= 0
-         * to never expire. If a timeout occurs then the request will be expired
+         * (server). By default Jetty uses 30000. You can use a value of = 0 to
+         * never expire. If a timeout occurs then the request will be expired
          * and Jetty will return back a http error 503 to the client. This
          * option is only in use when using Jetty with the Asynchronous Routing
          * Engine.
@@ -273,8 +273,8 @@ public interface JettyHttpEndpointBuilderFactory {
         }
         /**
          * Allows to set a timeout in millis when using Jetty as consumer
-         * (server). By default Jetty uses 30000. You can use a value of &lt;= 0
-         * to never expire. If a timeout occurs then the request will be expired
+         * (server). By default Jetty uses 30000. You can use a value of = 0 to
+         * never expire. If a timeout occurs then the request will be expired
          * and Jetty will return back a http error 503 to the client. This
          * option is only in use when using Jetty with the Asynchronous Routing
          * Engine.
@@ -888,8 +888,8 @@ public interface JettyHttpEndpointBuilderFactory {
          * Configuration of the filter init parameters. These parameters will be
          * applied to the filter list before starting the jetty server.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
-         * java.lang.String&gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * filterInitParameters(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -910,8 +910,8 @@ public interface JettyHttpEndpointBuilderFactory {
          * Configuration of the filter init parameters. These parameters will be
          * applied to the filter list before starting the jetty server.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
-         * java.lang.String&gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * filterInitParameters(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -930,8 +930,7 @@ public interface JettyHttpEndpointBuilderFactory {
          * find in the Registry. Multiple values can be separated by comma.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&lt;javax.servlet.Filter&gt;&lt;/code&gt;
-         * type.
+         * &lt;code&gt;java.util.List&amp;lt;javax.servlet.Filter&amp;gt;&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
          * 
@@ -948,8 +947,7 @@ public interface JettyHttpEndpointBuilderFactory {
          * find in the Registry. Multiple values can be separated by comma.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&lt;javax.servlet.Filter&gt;&lt;/code&gt;
-         * type.
+         * &lt;code&gt;java.util.List&amp;lt;javax.servlet.Filter&amp;gt;&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
          * 
@@ -969,7 +967,7 @@ public interface JettyHttpEndpointBuilderFactory {
          * handlers, then use different port numbers.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&lt;org.eclipse.jetty.server.Handler&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&amp;lt;org.eclipse.jetty.server.Handler&amp;gt;&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
          * 
@@ -990,7 +988,7 @@ public interface JettyHttpEndpointBuilderFactory {
          * handlers, then use different port numbers.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&lt;org.eclipse.jetty.server.Handler&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&amp;lt;org.eclipse.jetty.server.Handler&amp;gt;&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
          * 

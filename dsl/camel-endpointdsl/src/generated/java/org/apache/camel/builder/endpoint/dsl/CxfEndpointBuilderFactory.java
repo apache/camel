@@ -344,8 +344,7 @@ public interface CxfEndpointBuilderFactory {
          * could have JSR181 annotation or not.
          * 
          * The option is a:
-         * &lt;code&gt;java.lang.Class&lt;java.lang.Object&gt;&lt;/code&gt;
-         * type.
+         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: service
          * 
@@ -362,8 +361,7 @@ public interface CxfEndpointBuilderFactory {
          * could have JSR181 annotation or not.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.lang.Class&lt;java.lang.Object&gt;&lt;/code&gt;
-         * type.
+         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: service
          * 
@@ -806,10 +804,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * To set additional CXF options using the key/value pairs from the Map.
          * For example to turn on stacktraces in SOAP faults,
-         * &lt;tt&gt;properties.faultStackTraceEnabled=true.
+         * properties.faultStackTraceEnabled=true.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the properties(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -829,10 +827,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * To set additional CXF options using the key/value pairs from the Map.
          * For example to turn on stacktraces in SOAP faults,
-         * &lt;tt&gt;properties.faultStackTraceEnabled=true.
+         * properties.faultStackTraceEnabled=true.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the properties(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -1355,8 +1353,7 @@ public interface CxfEndpointBuilderFactory {
          * could have JSR181 annotation or not.
          * 
          * The option is a:
-         * &lt;code&gt;java.lang.Class&lt;java.lang.Object&gt;&lt;/code&gt;
-         * type.
+         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: service
          * 
@@ -1373,8 +1370,7 @@ public interface CxfEndpointBuilderFactory {
          * could have JSR181 annotation or not.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.lang.Class&lt;java.lang.Object&gt;&lt;/code&gt;
-         * type.
+         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: service
          * 
@@ -1780,10 +1776,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * To set additional CXF options using the key/value pairs from the Map.
          * For example to turn on stacktraces in SOAP faults,
-         * &lt;tt&gt;properties.faultStackTraceEnabled=true.
+         * properties.faultStackTraceEnabled=true.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the properties(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -1803,10 +1799,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * To set additional CXF options using the key/value pairs from the Map.
          * For example to turn on stacktraces in SOAP faults,
-         * &lt;tt&gt;properties.faultStackTraceEnabled=true.
+         * properties.faultStackTraceEnabled=true.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the properties(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -2116,8 +2112,7 @@ public interface CxfEndpointBuilderFactory {
          * could have JSR181 annotation or not.
          * 
          * The option is a:
-         * &lt;code&gt;java.lang.Class&lt;java.lang.Object&gt;&lt;/code&gt;
-         * type.
+         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: service
          * 
@@ -2134,8 +2129,7 @@ public interface CxfEndpointBuilderFactory {
          * could have JSR181 annotation or not.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.lang.Class&lt;java.lang.Object&gt;&lt;/code&gt;
-         * type.
+         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: service
          * 
@@ -2504,10 +2498,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * To set additional CXF options using the key/value pairs from the Map.
          * For example to turn on stacktraces in SOAP faults,
-         * &lt;tt&gt;properties.faultStackTraceEnabled=true.
+         * properties.faultStackTraceEnabled=true.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the properties(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -2525,10 +2519,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * To set additional CXF options using the key/value pairs from the Map.
          * For example to turn on stacktraces in SOAP faults,
-         * &lt;tt&gt;properties.faultStackTraceEnabled=true.
+         * properties.faultStackTraceEnabled=true.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the properties(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).

@@ -744,8 +744,8 @@ public interface JMXEndpointBuilderFactory {
          * Properties for the object name. These values will be used if the
          * objectName param is not set.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
-         * java.lang.String&gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * objectProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -766,8 +766,8 @@ public interface JMXEndpointBuilderFactory {
          * Properties for the object name. These values will be used if the
          * objectName param is not set.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
-         * java.lang.String&gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * objectProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).

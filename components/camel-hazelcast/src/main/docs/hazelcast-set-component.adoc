@@ -2,7 +2,7 @@
 :doctitle: Hazelcast Set
 :shortname: hazelcast-set
 :artifactid: camel-hazelcast
-:description: Perform operations on distributed set.
+:description: Perform operations on Hazelcast distributed set.
 :since: 2.7
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
