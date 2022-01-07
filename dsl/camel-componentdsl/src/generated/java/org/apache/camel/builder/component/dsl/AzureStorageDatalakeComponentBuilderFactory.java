@@ -298,7 +298,7 @@ public interface AzureStorageDatalakeComponentBuilderFactory {
          * set open options for creating file.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.Set&lt;java.nio.file.OpenOption&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.Set&amp;lt;java.nio.file.OpenOption&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 

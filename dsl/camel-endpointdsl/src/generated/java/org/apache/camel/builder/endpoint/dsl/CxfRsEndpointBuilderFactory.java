@@ -48,7 +48,7 @@ public interface CxfRsEndpointBuilderFactory {
          * Set the feature list to the CxfRs endpoint.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&lt;org.apache.cxf.feature.Feature&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&amp;lt;org.apache.cxf.feature.Feature&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -64,7 +64,7 @@ public interface CxfRsEndpointBuilderFactory {
          * Set the feature list to the CxfRs endpoint.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&lt;org.apache.cxf.feature.Feature&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&amp;lt;org.apache.cxf.feature.Feature&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -179,7 +179,7 @@ public interface CxfRsEndpointBuilderFactory {
          * Multiple classes can be separated by comma.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&lt;java.lang.Class&lt;java.lang.Object&gt;&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -196,7 +196,7 @@ public interface CxfRsEndpointBuilderFactory {
          * Multiple classes can be separated by comma.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&lt;java.lang.Class&lt;java.lang.Object&gt;&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -213,7 +213,7 @@ public interface CxfRsEndpointBuilderFactory {
          * incoming XML or JAXB-driven JSON.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -230,7 +230,7 @@ public interface CxfRsEndpointBuilderFactory {
          * incoming XML or JAXB-driven JSON.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -279,21 +279,20 @@ public interface CxfRsEndpointBuilderFactory {
         }
         /**
          * Sets how requests and responses will be mapped to/from Camel. Two
-         * values are possible: &lt;ul&gt; &lt;li&gt;SimpleConsumer: This
-         * binding style processes request parameters, multiparts, etc. and maps
-         * them to IN headers, IN attachments and to the message body. It aims
-         * to eliminate low-level processing of
-         * org.apache.cxf.message.MessageContentsList. It also also adds more
-         * flexibility and simplicity to the response mapping. Only available
-         * for consumers. &lt;li&gt;Default: The default style. For consumers
-         * this passes on a MessageContentsList to the route, requiring
-         * low-level processing in the route. This is the traditional binding
-         * style, which simply dumps the
+         * values are possible: SimpleConsumer: This binding style processes
+         * request parameters, multiparts, etc. and maps them to IN headers, IN
+         * attachments and to the message body. It aims to eliminate low-level
+         * processing of org.apache.cxf.message.MessageContentsList. It also
+         * also adds more flexibility and simplicity to the response mapping.
+         * Only available for consumers. Default: The default style. For
+         * consumers this passes on a MessageContentsList to the route,
+         * requiring low-level processing in the route. This is the traditional
+         * binding style, which simply dumps the
          * org.apache.cxf.message.MessageContentsList coming in from the CXF
          * stack onto the IN message body. The user is then responsible for
          * processing it according to the contract defined by the JAX-RS method
-         * signature. &lt;li&gt;Custom: allows you to specify a custom binding
-         * through the binding option.
+         * signature. Custom: allows you to specify a custom binding through the
+         * binding option.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.cxf.jaxrs.BindingStyle&lt;/code&gt; type.
@@ -311,21 +310,20 @@ public interface CxfRsEndpointBuilderFactory {
         }
         /**
          * Sets how requests and responses will be mapped to/from Camel. Two
-         * values are possible: &lt;ul&gt; &lt;li&gt;SimpleConsumer: This
-         * binding style processes request parameters, multiparts, etc. and maps
-         * them to IN headers, IN attachments and to the message body. It aims
-         * to eliminate low-level processing of
-         * org.apache.cxf.message.MessageContentsList. It also also adds more
-         * flexibility and simplicity to the response mapping. Only available
-         * for consumers. &lt;li&gt;Default: The default style. For consumers
-         * this passes on a MessageContentsList to the route, requiring
-         * low-level processing in the route. This is the traditional binding
-         * style, which simply dumps the
+         * values are possible: SimpleConsumer: This binding style processes
+         * request parameters, multiparts, etc. and maps them to IN headers, IN
+         * attachments and to the message body. It aims to eliminate low-level
+         * processing of org.apache.cxf.message.MessageContentsList. It also
+         * also adds more flexibility and simplicity to the response mapping.
+         * Only available for consumers. Default: The default style. For
+         * consumers this passes on a MessageContentsList to the route,
+         * requiring low-level processing in the route. This is the traditional
+         * binding style, which simply dumps the
          * org.apache.cxf.message.MessageContentsList coming in from the CXF
          * stack onto the IN message body. The user is then responsible for
          * processing it according to the contract defined by the JAX-RS method
-         * signature. &lt;li&gt;Custom: allows you to specify a custom binding
-         * through the binding option.
+         * signature. Custom: allows you to specify a custom binding through the
+         * binding option.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.apache.camel.component.cxf.jaxrs.BindingStyle&lt;/code&gt; type.
@@ -797,7 +795,7 @@ public interface CxfRsEndpointBuilderFactory {
          * Set the feature list to the CxfRs endpoint.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&lt;org.apache.cxf.feature.Feature&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&amp;lt;org.apache.cxf.feature.Feature&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -813,7 +811,7 @@ public interface CxfRsEndpointBuilderFactory {
          * Set the feature list to the CxfRs endpoint.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&lt;org.apache.cxf.feature.Feature&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&amp;lt;org.apache.cxf.feature.Feature&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -928,7 +926,7 @@ public interface CxfRsEndpointBuilderFactory {
          * Multiple classes can be separated by comma.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&lt;java.lang.Class&lt;java.lang.Object&gt;&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -945,7 +943,7 @@ public interface CxfRsEndpointBuilderFactory {
          * Multiple classes can be separated by comma.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&lt;java.lang.Class&lt;java.lang.Object&gt;&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -962,7 +960,7 @@ public interface CxfRsEndpointBuilderFactory {
          * incoming XML or JAXB-driven JSON.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -979,7 +977,7 @@ public interface CxfRsEndpointBuilderFactory {
          * incoming XML or JAXB-driven JSON.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -1660,7 +1658,7 @@ public interface CxfRsEndpointBuilderFactory {
          * Set the feature list to the CxfRs endpoint.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&lt;org.apache.cxf.feature.Feature&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&amp;lt;org.apache.cxf.feature.Feature&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -1676,7 +1674,7 @@ public interface CxfRsEndpointBuilderFactory {
          * Set the feature list to the CxfRs endpoint.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&lt;org.apache.cxf.feature.Feature&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&amp;lt;org.apache.cxf.feature.Feature&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -1789,7 +1787,7 @@ public interface CxfRsEndpointBuilderFactory {
          * Multiple classes can be separated by comma.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&lt;java.lang.Class&lt;java.lang.Object&gt;&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -1806,7 +1804,7 @@ public interface CxfRsEndpointBuilderFactory {
          * Multiple classes can be separated by comma.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&lt;java.lang.Class&lt;java.lang.Object&gt;&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -1822,7 +1820,7 @@ public interface CxfRsEndpointBuilderFactory {
          * incoming XML or JAXB-driven JSON.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -1839,7 +1837,7 @@ public interface CxfRsEndpointBuilderFactory {
          * incoming XML or JAXB-driven JSON.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 

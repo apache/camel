@@ -2,7 +2,7 @@
 :doctitle: JSON Johnzon
 :shortname: json-johnzon
 :artifactid: camel-johnzon
-:description: Marshal POJOs to JSON and back using
+:description: Marshal POJOs to JSON and back using Johnzon
 :since: 2.18
 :supportlevel: Stable
 //Manually maintained attributes

@@ -254,7 +254,7 @@ public interface CordaEndpointBuilderFactory {
          * free.
          * 
          * The option is a:
-         * &lt;code&gt;java.lang.Class&lt;net.corda.core.contracts.ContractState&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.lang.Class&amp;lt;net.corda.core.contracts.ContractState&amp;gt;&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
          * 
@@ -277,7 +277,7 @@ public interface CordaEndpointBuilderFactory {
          * free.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.lang.Class&lt;net.corda.core.contracts.ContractState&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.lang.Class&amp;lt;net.corda.core.contracts.ContractState&amp;gt;&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
          * 
@@ -403,7 +403,7 @@ public interface CordaEndpointBuilderFactory {
          * net.corda.core.flows.StartableByRPC.
          * 
          * The option is a:
-         * &lt;code&gt;java.lang.Class&lt;net.corda.core.flows.FlowLogic&lt;java.lang.Object&gt;&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.lang.Class&amp;lt;net.corda.core.flows.FlowLogic&amp;lt;java.lang.Object&amp;gt;&amp;gt;&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
          * 
@@ -422,7 +422,7 @@ public interface CordaEndpointBuilderFactory {
          * net.corda.core.flows.StartableByRPC.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.lang.Class&lt;net.corda.core.flows.FlowLogic&lt;java.lang.Object&gt;&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.lang.Class&amp;lt;net.corda.core.flows.FlowLogic&amp;lt;java.lang.Object&amp;gt;&amp;gt;&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
          * 

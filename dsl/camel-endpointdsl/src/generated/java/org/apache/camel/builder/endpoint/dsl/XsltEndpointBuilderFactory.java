@@ -522,7 +522,7 @@ public interface XsltEndpointBuilderFactory {
          * Syntax: <code>xslt:resourceUri</code>
          * 
          * Path parameter: resourceUri (required)
-         * Path to the template. <p/> The following is supported by the default
+         * Path to the template. The following is supported by the default
          * URIResolver. You can prefix with: classpath, file, http, ref, or
          * bean. classpath, file and http loads the resource using these
          * protocols (classpath is default). ref will lookup the resource in the
@@ -547,7 +547,7 @@ public interface XsltEndpointBuilderFactory {
          * Syntax: <code>xslt:resourceUri</code>
          * 
          * Path parameter: resourceUri (required)
-         * Path to the template. <p/> The following is supported by the default
+         * Path to the template. The following is supported by the default
          * URIResolver. You can prefix with: classpath, file, http, ref, or
          * bean. classpath, file and http loads the resource using these
          * protocols (classpath is default). ref will lookup the resource in the

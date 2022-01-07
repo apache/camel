@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "ignite-compute",
     "title": "Ignite Compute",
-    "description": "Run on an Ignite cluster.",
+    "description": "Run compute operations on an Ignite cluster.",
     "deprecated": false,
     "firstVersion": "2.17.0",
     "label": "compute",

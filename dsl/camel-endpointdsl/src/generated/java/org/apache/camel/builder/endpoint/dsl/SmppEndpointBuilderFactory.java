@@ -144,15 +144,14 @@ public interface SmppEndpointBuilderFactory {
             return this;
         }
         /**
-         * You can specify a policy for handling long messages: &lt;ul&gt;
-         * &lt;li&gt;ALLOW - the default, long messages are split to 140 bytes
-         * per message &lt;li&gt;TRUNCATE - long messages are split and only the
-         * first fragment will be sent to the SMSC. Some carriers drop
-         * subsequent fragments so this reduces load on the SMPP connection
-         * sending parts of a message that will never be delivered.
-         * &lt;li&gt;REJECT - if a message would need to be split, it is
-         * rejected with an SMPP NegativeResponseException and the reason code
-         * signifying the message is too long.
+         * You can specify a policy for handling long messages: ALLOW - the
+         * default, long messages are split to 140 bytes per message TRUNCATE -
+         * long messages are split and only the first fragment will be sent to
+         * the SMSC. Some carriers drop subsequent fragments so this reduces
+         * load on the SMPP connection sending parts of a message that will
+         * never be delivered. REJECT - if a message would need to be split, it
+         * is rejected with an SMPP NegativeResponseException and the reason
+         * code signifying the message is too long.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.smpp.SmppSplittingPolicy&lt;/code&gt; type.
@@ -169,15 +168,14 @@ public interface SmppEndpointBuilderFactory {
             return this;
         }
         /**
-         * You can specify a policy for handling long messages: &lt;ul&gt;
-         * &lt;li&gt;ALLOW - the default, long messages are split to 140 bytes
-         * per message &lt;li&gt;TRUNCATE - long messages are split and only the
-         * first fragment will be sent to the SMSC. Some carriers drop
-         * subsequent fragments so this reduces load on the SMPP connection
-         * sending parts of a message that will never be delivered.
-         * &lt;li&gt;REJECT - if a message would need to be split, it is
-         * rejected with an SMPP NegativeResponseException and the reason code
-         * signifying the message is too long.
+         * You can specify a policy for handling long messages: ALLOW - the
+         * default, long messages are split to 140 bytes per message TRUNCATE -
+         * long messages are split and only the first fragment will be sent to
+         * the SMSC. Some carriers drop subsequent fragments so this reduces
+         * load on the SMPP connection sending parts of a message that will
+         * never be delivered. REJECT - if a message would need to be split, it
+         * is rejected with an SMPP NegativeResponseException and the reason
+         * code signifying the message is too long.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.apache.camel.component.smpp.SmppSplittingPolicy&lt;/code&gt; type.
@@ -272,8 +270,8 @@ public interface SmppEndpointBuilderFactory {
         }
         /**
          * Defines encoding of data according the SMPP 3.4 specification,
-         * section 5.2.19. &lt;ul&gt; &lt;li&gt;0: SMSC Default Alphabet
-         * &lt;li&gt;4: 8 bit Alphabet &lt;li&gt;8: UCS2 Alphabet.
+         * section 5.2.19. 0: SMSC Default Alphabet 4: 8 bit Alphabet 8: UCS2
+         * Alphabet.
          * 
          * The option is a: &lt;code&gt;byte&lt;/code&gt; type.
          * 
@@ -288,8 +286,8 @@ public interface SmppEndpointBuilderFactory {
         }
         /**
          * Defines encoding of data according the SMPP 3.4 specification,
-         * section 5.2.19. &lt;ul&gt; &lt;li&gt;0: SMSC Default Alphabet
-         * &lt;li&gt;4: 8 bit Alphabet &lt;li&gt;8: UCS2 Alphabet.
+         * section 5.2.19. 0: SMSC Default Alphabet 4: 8 bit Alphabet 8: UCS2
+         * Alphabet.
          * 
          * The option will be converted to a &lt;code&gt;byte&lt;/code&gt; type.
          * 
@@ -304,10 +302,9 @@ public interface SmppEndpointBuilderFactory {
         }
         /**
          * Defines the data coding according the SMPP 3.4 specification, section
-         * 5.2.19. Example data encodings are: &lt;ul&gt; &lt;li&gt;0: SMSC
-         * Default Alphabet &lt;li&gt;3: Latin 1 (ISO-8859-1) &lt;li&gt;4: Octet
-         * unspecified (8-bit binary) &lt;li&gt;8: UCS2 (ISO/IEC-10646)
-         * &lt;li&gt;13: Extended Kanji JIS(X 0212-1990).
+         * 5.2.19. Example data encodings are: 0: SMSC Default Alphabet 3: Latin
+         * 1 (ISO-8859-1) 4: Octet unspecified (8-bit binary) 8: UCS2
+         * (ISO/IEC-10646) 13: Extended Kanji JIS(X 0212-1990).
          * 
          * The option is a: &lt;code&gt;byte&lt;/code&gt; type.
          * 
@@ -322,10 +319,9 @@ public interface SmppEndpointBuilderFactory {
         }
         /**
          * Defines the data coding according the SMPP 3.4 specification, section
-         * 5.2.19. Example data encodings are: &lt;ul&gt; &lt;li&gt;0: SMSC
-         * Default Alphabet &lt;li&gt;3: Latin 1 (ISO-8859-1) &lt;li&gt;4: Octet
-         * unspecified (8-bit binary) &lt;li&gt;8: UCS2 (ISO/IEC-10646)
-         * &lt;li&gt;13: Extended Kanji JIS(X 0212-1990).
+         * 5.2.19. Example data encodings are: 0: SMSC Default Alphabet 3: Latin
+         * 1 (ISO-8859-1) 4: Octet unspecified (8-bit binary) 8: UCS2
+         * (ISO/IEC-10646) 13: Extended Kanji JIS(X 0212-1990).
          * 
          * The option will be converted to a &lt;code&gt;byte&lt;/code&gt; type.
          * 
@@ -438,8 +434,8 @@ public interface SmppEndpointBuilderFactory {
          * These headers will be passed to the proxy server while establishing
          * the connection.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
-         * java.lang.String&gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: proxy
          * 
@@ -456,8 +452,8 @@ public interface SmppEndpointBuilderFactory {
          * the connection.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&lt;java.lang.String,
-         * java.lang.String&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: proxy
          * 
@@ -934,15 +930,14 @@ public interface SmppEndpointBuilderFactory {
             return this;
         }
         /**
-         * You can specify a policy for handling long messages: &lt;ul&gt;
-         * &lt;li&gt;ALLOW - the default, long messages are split to 140 bytes
-         * per message &lt;li&gt;TRUNCATE - long messages are split and only the
-         * first fragment will be sent to the SMSC. Some carriers drop
-         * subsequent fragments so this reduces load on the SMPP connection
-         * sending parts of a message that will never be delivered.
-         * &lt;li&gt;REJECT - if a message would need to be split, it is
-         * rejected with an SMPP NegativeResponseException and the reason code
-         * signifying the message is too long.
+         * You can specify a policy for handling long messages: ALLOW - the
+         * default, long messages are split to 140 bytes per message TRUNCATE -
+         * long messages are split and only the first fragment will be sent to
+         * the SMSC. Some carriers drop subsequent fragments so this reduces
+         * load on the SMPP connection sending parts of a message that will
+         * never be delivered. REJECT - if a message would need to be split, it
+         * is rejected with an SMPP NegativeResponseException and the reason
+         * code signifying the message is too long.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.smpp.SmppSplittingPolicy&lt;/code&gt; type.
@@ -959,15 +954,14 @@ public interface SmppEndpointBuilderFactory {
             return this;
         }
         /**
-         * You can specify a policy for handling long messages: &lt;ul&gt;
-         * &lt;li&gt;ALLOW - the default, long messages are split to 140 bytes
-         * per message &lt;li&gt;TRUNCATE - long messages are split and only the
-         * first fragment will be sent to the SMSC. Some carriers drop
-         * subsequent fragments so this reduces load on the SMPP connection
-         * sending parts of a message that will never be delivered.
-         * &lt;li&gt;REJECT - if a message would need to be split, it is
-         * rejected with an SMPP NegativeResponseException and the reason code
-         * signifying the message is too long.
+         * You can specify a policy for handling long messages: ALLOW - the
+         * default, long messages are split to 140 bytes per message TRUNCATE -
+         * long messages are split and only the first fragment will be sent to
+         * the SMSC. Some carriers drop subsequent fragments so this reduces
+         * load on the SMPP connection sending parts of a message that will
+         * never be delivered. REJECT - if a message would need to be split, it
+         * is rejected with an SMPP NegativeResponseException and the reason
+         * code signifying the message is too long.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.apache.camel.component.smpp.SmppSplittingPolicy&lt;/code&gt; type.
@@ -1018,12 +1012,10 @@ public interface SmppEndpointBuilderFactory {
         /**
          * Defines the type of number (TON) to be used in the SME destination
          * address parameters. Only for SubmitSm, SubmitMulti, CancelSm and
-         * DataSm. The following NPI values are defined: &lt;ul&gt; &lt;li&gt;0:
-         * Unknown &lt;li&gt;1: ISDN (E163/E164) &lt;li&gt;2: Data (X.121)
-         * &lt;li&gt;3: Telex (F.69) &lt;li&gt;6: Land Mobile (E.212)
-         * &lt;li&gt;8: National &lt;li&gt;9: Private &lt;li&gt;10: ERMES
-         * &lt;li&gt;13: Internet (IP) &lt;li&gt;18: WAP Client Id (to be
-         * defined by WAP Forum).
+         * DataSm. The following NPI values are defined: 0: Unknown 1: ISDN
+         * (E163/E164) 2: Data (X.121) 3: Telex (F.69) 6: Land Mobile (E.212) 8:
+         * National 9: Private 10: ERMES 13: Internet (IP) 18: WAP Client Id (to
+         * be defined by WAP Forum).
          * 
          * The option is a: &lt;code&gt;byte&lt;/code&gt; type.
          * 
@@ -1039,12 +1031,10 @@ public interface SmppEndpointBuilderFactory {
         /**
          * Defines the type of number (TON) to be used in the SME destination
          * address parameters. Only for SubmitSm, SubmitMulti, CancelSm and
-         * DataSm. The following NPI values are defined: &lt;ul&gt; &lt;li&gt;0:
-         * Unknown &lt;li&gt;1: ISDN (E163/E164) &lt;li&gt;2: Data (X.121)
-         * &lt;li&gt;3: Telex (F.69) &lt;li&gt;6: Land Mobile (E.212)
-         * &lt;li&gt;8: National &lt;li&gt;9: Private &lt;li&gt;10: ERMES
-         * &lt;li&gt;13: Internet (IP) &lt;li&gt;18: WAP Client Id (to be
-         * defined by WAP Forum).
+         * DataSm. The following NPI values are defined: 0: Unknown 1: ISDN
+         * (E163/E164) 2: Data (X.121) 3: Telex (F.69) 6: Land Mobile (E.212) 8:
+         * National 9: Private 10: ERMES 13: Internet (IP) 18: WAP Client Id (to
+         * be defined by WAP Forum).
          * 
          * The option will be converted to a &lt;code&gt;byte&lt;/code&gt; type.
          * 
@@ -1060,10 +1050,9 @@ public interface SmppEndpointBuilderFactory {
         /**
          * Defines the type of number (TON) to be used in the SME destination
          * address parameters. Only for SubmitSm, SubmitMulti, CancelSm and
-         * DataSm. The following TON values are defined: &lt;ul&gt; &lt;li&gt;0:
-         * Unknown &lt;li&gt;1: International &lt;li&gt;2: National &lt;li&gt;3:
-         * Network Specific &lt;li&gt;4: Subscriber Number &lt;li&gt;5:
-         * Alphanumeric &lt;li&gt;6: Abbreviated.
+         * DataSm. The following TON values are defined: 0: Unknown 1:
+         * International 2: National 3: Network Specific 4: Subscriber Number 5:
+         * Alphanumeric 6: Abbreviated.
          * 
          * The option is a: &lt;code&gt;byte&lt;/code&gt; type.
          * 
@@ -1079,10 +1068,9 @@ public interface SmppEndpointBuilderFactory {
         /**
          * Defines the type of number (TON) to be used in the SME destination
          * address parameters. Only for SubmitSm, SubmitMulti, CancelSm and
-         * DataSm. The following TON values are defined: &lt;ul&gt; &lt;li&gt;0:
-         * Unknown &lt;li&gt;1: International &lt;li&gt;2: National &lt;li&gt;3:
-         * Network Specific &lt;li&gt;4: Subscriber Number &lt;li&gt;5:
-         * Alphanumeric &lt;li&gt;6: Abbreviated.
+         * DataSm. The following TON values are defined: 0: Unknown 1:
+         * International 2: National 3: Network Specific 4: Subscriber Number 5:
+         * Alphanumeric 6: Abbreviated.
          * 
          * The option will be converted to a &lt;code&gt;byte&lt;/code&gt; type.
          * 
@@ -1187,11 +1175,10 @@ public interface SmppEndpointBuilderFactory {
         }
         /**
          * Defines the numeric plan indicator (NPI) to be used in the SME. The
-         * following NPI values are defined: &lt;ul&gt; &lt;li&gt;0: Unknown
-         * &lt;li&gt;1: ISDN (E163/E164) &lt;li&gt;2: Data (X.121) &lt;li&gt;3:
-         * Telex (F.69) &lt;li&gt;6: Land Mobile (E.212) &lt;li&gt;8: National
-         * &lt;li&gt;9: Private &lt;li&gt;10: ERMES &lt;li&gt;13: Internet (IP)
-         * &lt;li&gt;18: WAP Client Id (to be defined by WAP Forum).
+         * following NPI values are defined: 0: Unknown 1: ISDN (E163/E164) 2:
+         * Data (X.121) 3: Telex (F.69) 6: Land Mobile (E.212) 8: National 9:
+         * Private 10: ERMES 13: Internet (IP) 18: WAP Client Id (to be defined
+         * by WAP Forum).
          * 
          * The option is a: &lt;code&gt;byte&lt;/code&gt; type.
          * 
@@ -1207,11 +1194,10 @@ public interface SmppEndpointBuilderFactory {
         }
         /**
          * Defines the numeric plan indicator (NPI) to be used in the SME. The
-         * following NPI values are defined: &lt;ul&gt; &lt;li&gt;0: Unknown
-         * &lt;li&gt;1: ISDN (E163/E164) &lt;li&gt;2: Data (X.121) &lt;li&gt;3:
-         * Telex (F.69) &lt;li&gt;6: Land Mobile (E.212) &lt;li&gt;8: National
-         * &lt;li&gt;9: Private &lt;li&gt;10: ERMES &lt;li&gt;13: Internet (IP)
-         * &lt;li&gt;18: WAP Client Id (to be defined by WAP Forum).
+         * following NPI values are defined: 0: Unknown 1: ISDN (E163/E164) 2:
+         * Data (X.121) 3: Telex (F.69) 6: Land Mobile (E.212) 8: National 9:
+         * Private 10: ERMES 13: Internet (IP) 18: WAP Client Id (to be defined
+         * by WAP Forum).
          * 
          * The option will be converted to a &lt;code&gt;byte&lt;/code&gt; type.
          * 
@@ -1228,9 +1214,8 @@ public interface SmppEndpointBuilderFactory {
         /**
          * Allows the originating SME to assign a priority level to the short
          * message. Only for SubmitSm and SubmitMulti. Four Priority Levels are
-         * supported: &lt;ul&gt; &lt;li&gt;0: Level 0 (lowest) priority
-         * &lt;li&gt;1: Level 1 priority &lt;li&gt;2: Level 2 priority
-         * &lt;li&gt;3: Level 3 (highest) priority.
+         * supported: 0: Level 0 (lowest) priority 1: Level 1 priority 2: Level
+         * 2 priority 3: Level 3 (highest) priority.
          * 
          * The option is a: &lt;code&gt;byte&lt;/code&gt; type.
          * 
@@ -1246,9 +1231,8 @@ public interface SmppEndpointBuilderFactory {
         /**
          * Allows the originating SME to assign a priority level to the short
          * message. Only for SubmitSm and SubmitMulti. Four Priority Levels are
-         * supported: &lt;ul&gt; &lt;li&gt;0: Level 0 (lowest) priority
-         * &lt;li&gt;1: Level 1 priority &lt;li&gt;2: Level 2 priority
-         * &lt;li&gt;3: Level 3 (highest) priority.
+         * supported: 0: Level 0 (lowest) priority 1: Level 1 priority 2: Level
+         * 2 priority 3: Level 3 (highest) priority.
          * 
          * The option will be converted to a &lt;code&gt;byte&lt;/code&gt; type.
          * 
@@ -1291,11 +1275,11 @@ public interface SmppEndpointBuilderFactory {
         }
         /**
          * Is used to request an SMSC delivery receipt and/or SME originated
-         * acknowledgements. The following values are defined: &lt;ul&gt;
-         * &lt;li&gt;0: No SMSC delivery receipt requested. &lt;li&gt;1: SMSC
-         * delivery receipt requested where final delivery outcome is success or
-         * failure. &lt;li&gt;2: SMSC delivery receipt requested where the final
-         * delivery outcome is delivery failure.
+         * acknowledgements. The following values are defined: 0: No SMSC
+         * delivery receipt requested. 1: SMSC delivery receipt requested where
+         * final delivery outcome is success or failure. 2: SMSC delivery
+         * receipt requested where the final delivery outcome is delivery
+         * failure.
          * 
          * The option is a: &lt;code&gt;byte&lt;/code&gt; type.
          * 
@@ -1311,11 +1295,11 @@ public interface SmppEndpointBuilderFactory {
         }
         /**
          * Is used to request an SMSC delivery receipt and/or SME originated
-         * acknowledgements. The following values are defined: &lt;ul&gt;
-         * &lt;li&gt;0: No SMSC delivery receipt requested. &lt;li&gt;1: SMSC
-         * delivery receipt requested where final delivery outcome is success or
-         * failure. &lt;li&gt;2: SMSC delivery receipt requested where the final
-         * delivery outcome is delivery failure.
+         * acknowledgements. The following values are defined: 0: No SMSC
+         * delivery receipt requested. 1: SMSC delivery receipt requested where
+         * final delivery outcome is success or failure. 2: SMSC delivery
+         * receipt requested where the final delivery outcome is delivery
+         * failure.
          * 
          * The option will be converted to a &lt;code&gt;byte&lt;/code&gt; type.
          * 
@@ -1334,8 +1318,8 @@ public interface SmppEndpointBuilderFactory {
          * that is still pending delivery. The SMSC will replace an existing
          * message provided that the source address, destination address and
          * service type match the same fields in the new message. The following
-         * replace if present flag values are defined: &lt;ul&gt; &lt;li&gt;0:
-         * Don't replace &lt;li&gt;1: Replace.
+         * replace if present flag values are defined: 0: Don't replace 1:
+         * Replace.
          * 
          * The option is a: &lt;code&gt;byte&lt;/code&gt; type.
          * 
@@ -1354,8 +1338,8 @@ public interface SmppEndpointBuilderFactory {
          * that is still pending delivery. The SMSC will replace an existing
          * message provided that the source address, destination address and
          * service type match the same fields in the new message. The following
-         * replace if present flag values are defined: &lt;ul&gt; &lt;li&gt;0:
-         * Don't replace &lt;li&gt;1: Replace.
+         * replace if present flag values are defined: 0: Don't replace 1:
+         * Replace.
          * 
          * The option will be converted to a &lt;code&gt;byte&lt;/code&gt; type.
          * 
@@ -1372,11 +1356,10 @@ public interface SmppEndpointBuilderFactory {
         /**
          * The service type parameter can be used to indicate the SMS
          * Application service associated with the message. The following
-         * generic service_types are defined: &lt;ul&gt; &lt;li&gt;CMT: Cellular
-         * Messaging &lt;li&gt;CPT: Cellular Paging &lt;li&gt;VMN: Voice Mail
-         * Notification &lt;li&gt;VMA: Voice Mail Alerting &lt;li&gt;WAP:
-         * Wireless Application Protocol &lt;li&gt;USSD: Unstructured
-         * Supplementary Services Data.
+         * generic service_types are defined: CMT: Cellular Messaging CPT:
+         * Cellular Paging VMN: Voice Mail Notification VMA: Voice Mail Alerting
+         * WAP: Wireless Application Protocol USSD: Unstructured Supplementary
+         * Services Data.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1408,11 +1391,9 @@ public interface SmppEndpointBuilderFactory {
         /**
          * Defines the numeric plan indicator (NPI) to be used in the SME
          * originator address parameters. The following NPI values are defined:
-         * &lt;ul&gt; &lt;li&gt;0: Unknown &lt;li&gt;1: ISDN (E163/E164)
-         * &lt;li&gt;2: Data (X.121) &lt;li&gt;3: Telex (F.69) &lt;li&gt;6: Land
-         * Mobile (E.212) &lt;li&gt;8: National &lt;li&gt;9: Private
-         * &lt;li&gt;10: ERMES &lt;li&gt;13: Internet (IP) &lt;li&gt;18: WAP
-         * Client Id (to be defined by WAP Forum).
+         * 0: Unknown 1: ISDN (E163/E164) 2: Data (X.121) 3: Telex (F.69) 6:
+         * Land Mobile (E.212) 8: National 9: Private 10: ERMES 13: Internet
+         * (IP) 18: WAP Client Id (to be defined by WAP Forum).
          * 
          * The option is a: &lt;code&gt;byte&lt;/code&gt; type.
          * 
@@ -1428,11 +1409,9 @@ public interface SmppEndpointBuilderFactory {
         /**
          * Defines the numeric plan indicator (NPI) to be used in the SME
          * originator address parameters. The following NPI values are defined:
-         * &lt;ul&gt; &lt;li&gt;0: Unknown &lt;li&gt;1: ISDN (E163/E164)
-         * &lt;li&gt;2: Data (X.121) &lt;li&gt;3: Telex (F.69) &lt;li&gt;6: Land
-         * Mobile (E.212) &lt;li&gt;8: National &lt;li&gt;9: Private
-         * &lt;li&gt;10: ERMES &lt;li&gt;13: Internet (IP) &lt;li&gt;18: WAP
-         * Client Id (to be defined by WAP Forum).
+         * 0: Unknown 1: ISDN (E163/E164) 2: Data (X.121) 3: Telex (F.69) 6:
+         * Land Mobile (E.212) 8: National 9: Private 10: ERMES 13: Internet
+         * (IP) 18: WAP Client Id (to be defined by WAP Forum).
          * 
          * The option will be converted to a &lt;code&gt;byte&lt;/code&gt; type.
          * 
@@ -1447,10 +1426,9 @@ public interface SmppEndpointBuilderFactory {
         }
         /**
          * Defines the type of number (TON) to be used in the SME originator
-         * address parameters. The following TON values are defined: &lt;ul&gt;
-         * &lt;li&gt;0: Unknown &lt;li&gt;1: International &lt;li&gt;2: National
-         * &lt;li&gt;3: Network Specific &lt;li&gt;4: Subscriber Number
-         * &lt;li&gt;5: Alphanumeric &lt;li&gt;6: Abbreviated.
+         * address parameters. The following TON values are defined: 0: Unknown
+         * 1: International 2: National 3: Network Specific 4: Subscriber Number
+         * 5: Alphanumeric 6: Abbreviated.
          * 
          * The option is a: &lt;code&gt;byte&lt;/code&gt; type.
          * 
@@ -1465,10 +1443,9 @@ public interface SmppEndpointBuilderFactory {
         }
         /**
          * Defines the type of number (TON) to be used in the SME originator
-         * address parameters. The following TON values are defined: &lt;ul&gt;
-         * &lt;li&gt;0: Unknown &lt;li&gt;1: International &lt;li&gt;2: National
-         * &lt;li&gt;3: Network Specific &lt;li&gt;4: Subscriber Number
-         * &lt;li&gt;5: Alphanumeric &lt;li&gt;6: Abbreviated.
+         * address parameters. The following TON values are defined: 0: Unknown
+         * 1: International 2: National 3: Network Specific 4: Subscriber Number
+         * 5: Alphanumeric 6: Abbreviated.
          * 
          * The option will be converted to a &lt;code&gt;byte&lt;/code&gt; type.
          * 
@@ -1483,10 +1460,8 @@ public interface SmppEndpointBuilderFactory {
         }
         /**
          * Defines the type of number (TON) to be used in the SME. The following
-         * TON values are defined: &lt;ul&gt; &lt;li&gt;0: Unknown &lt;li&gt;1:
-         * International &lt;li&gt;2: National &lt;li&gt;3: Network Specific
-         * &lt;li&gt;4: Subscriber Number &lt;li&gt;5: Alphanumeric &lt;li&gt;6:
-         * Abbreviated.
+         * TON values are defined: 0: Unknown 1: International 2: National 3:
+         * Network Specific 4: Subscriber Number 5: Alphanumeric 6: Abbreviated.
          * 
          * The option is a: &lt;code&gt;byte&lt;/code&gt; type.
          * 
@@ -1501,10 +1476,8 @@ public interface SmppEndpointBuilderFactory {
         }
         /**
          * Defines the type of number (TON) to be used in the SME. The following
-         * TON values are defined: &lt;ul&gt; &lt;li&gt;0: Unknown &lt;li&gt;1:
-         * International &lt;li&gt;2: National &lt;li&gt;3: Network Specific
-         * &lt;li&gt;4: Subscriber Number &lt;li&gt;5: Alphanumeric &lt;li&gt;6:
-         * Abbreviated.
+         * TON values are defined: 0: Unknown 1: International 2: National 3:
+         * Network Specific 4: Subscriber Number 5: Alphanumeric 6: Abbreviated.
          * 
          * The option will be converted to a &lt;code&gt;byte&lt;/code&gt; type.
          * 
@@ -1519,8 +1492,8 @@ public interface SmppEndpointBuilderFactory {
         }
         /**
          * Defines encoding of data according the SMPP 3.4 specification,
-         * section 5.2.19. &lt;ul&gt; &lt;li&gt;0: SMSC Default Alphabet
-         * &lt;li&gt;4: 8 bit Alphabet &lt;li&gt;8: UCS2 Alphabet.
+         * section 5.2.19. 0: SMSC Default Alphabet 4: 8 bit Alphabet 8: UCS2
+         * Alphabet.
          * 
          * The option is a: &lt;code&gt;byte&lt;/code&gt; type.
          * 
@@ -1535,8 +1508,8 @@ public interface SmppEndpointBuilderFactory {
         }
         /**
          * Defines encoding of data according the SMPP 3.4 specification,
-         * section 5.2.19. &lt;ul&gt; &lt;li&gt;0: SMSC Default Alphabet
-         * &lt;li&gt;4: 8 bit Alphabet &lt;li&gt;8: UCS2 Alphabet.
+         * section 5.2.19. 0: SMSC Default Alphabet 4: 8 bit Alphabet 8: UCS2
+         * Alphabet.
          * 
          * The option will be converted to a &lt;code&gt;byte&lt;/code&gt; type.
          * 
@@ -1551,10 +1524,9 @@ public interface SmppEndpointBuilderFactory {
         }
         /**
          * Defines the data coding according the SMPP 3.4 specification, section
-         * 5.2.19. Example data encodings are: &lt;ul&gt; &lt;li&gt;0: SMSC
-         * Default Alphabet &lt;li&gt;3: Latin 1 (ISO-8859-1) &lt;li&gt;4: Octet
-         * unspecified (8-bit binary) &lt;li&gt;8: UCS2 (ISO/IEC-10646)
-         * &lt;li&gt;13: Extended Kanji JIS(X 0212-1990).
+         * 5.2.19. Example data encodings are: 0: SMSC Default Alphabet 3: Latin
+         * 1 (ISO-8859-1) 4: Octet unspecified (8-bit binary) 8: UCS2
+         * (ISO/IEC-10646) 13: Extended Kanji JIS(X 0212-1990).
          * 
          * The option is a: &lt;code&gt;byte&lt;/code&gt; type.
          * 
@@ -1569,10 +1541,9 @@ public interface SmppEndpointBuilderFactory {
         }
         /**
          * Defines the data coding according the SMPP 3.4 specification, section
-         * 5.2.19. Example data encodings are: &lt;ul&gt; &lt;li&gt;0: SMSC
-         * Default Alphabet &lt;li&gt;3: Latin 1 (ISO-8859-1) &lt;li&gt;4: Octet
-         * unspecified (8-bit binary) &lt;li&gt;8: UCS2 (ISO/IEC-10646)
-         * &lt;li&gt;13: Extended Kanji JIS(X 0212-1990).
+         * 5.2.19. Example data encodings are: 0: SMSC Default Alphabet 3: Latin
+         * 1 (ISO-8859-1) 4: Octet unspecified (8-bit binary) 8: UCS2
+         * (ISO/IEC-10646) 13: Extended Kanji JIS(X 0212-1990).
          * 
          * The option will be converted to a &lt;code&gt;byte&lt;/code&gt; type.
          * 
@@ -1685,8 +1656,8 @@ public interface SmppEndpointBuilderFactory {
          * These headers will be passed to the proxy server while establishing
          * the connection.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
-         * java.lang.String&gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: proxy
          * 
@@ -1703,8 +1674,8 @@ public interface SmppEndpointBuilderFactory {
          * the connection.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&lt;java.lang.String,
-         * java.lang.String&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: proxy
          * 
@@ -2112,15 +2083,14 @@ public interface SmppEndpointBuilderFactory {
             return this;
         }
         /**
-         * You can specify a policy for handling long messages: &lt;ul&gt;
-         * &lt;li&gt;ALLOW - the default, long messages are split to 140 bytes
-         * per message &lt;li&gt;TRUNCATE - long messages are split and only the
-         * first fragment will be sent to the SMSC. Some carriers drop
-         * subsequent fragments so this reduces load on the SMPP connection
-         * sending parts of a message that will never be delivered.
-         * &lt;li&gt;REJECT - if a message would need to be split, it is
-         * rejected with an SMPP NegativeResponseException and the reason code
-         * signifying the message is too long.
+         * You can specify a policy for handling long messages: ALLOW - the
+         * default, long messages are split to 140 bytes per message TRUNCATE -
+         * long messages are split and only the first fragment will be sent to
+         * the SMSC. Some carriers drop subsequent fragments so this reduces
+         * load on the SMPP connection sending parts of a message that will
+         * never be delivered. REJECT - if a message would need to be split, it
+         * is rejected with an SMPP NegativeResponseException and the reason
+         * code signifying the message is too long.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.smpp.SmppSplittingPolicy&lt;/code&gt; type.
@@ -2137,15 +2107,14 @@ public interface SmppEndpointBuilderFactory {
             return this;
         }
         /**
-         * You can specify a policy for handling long messages: &lt;ul&gt;
-         * &lt;li&gt;ALLOW - the default, long messages are split to 140 bytes
-         * per message &lt;li&gt;TRUNCATE - long messages are split and only the
-         * first fragment will be sent to the SMSC. Some carriers drop
-         * subsequent fragments so this reduces load on the SMPP connection
-         * sending parts of a message that will never be delivered.
-         * &lt;li&gt;REJECT - if a message would need to be split, it is
-         * rejected with an SMPP NegativeResponseException and the reason code
-         * signifying the message is too long.
+         * You can specify a policy for handling long messages: ALLOW - the
+         * default, long messages are split to 140 bytes per message TRUNCATE -
+         * long messages are split and only the first fragment will be sent to
+         * the SMSC. Some carriers drop subsequent fragments so this reduces
+         * load on the SMPP connection sending parts of a message that will
+         * never be delivered. REJECT - if a message would need to be split, it
+         * is rejected with an SMPP NegativeResponseException and the reason
+         * code signifying the message is too long.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.apache.camel.component.smpp.SmppSplittingPolicy&lt;/code&gt; type.
@@ -2177,8 +2146,8 @@ public interface SmppEndpointBuilderFactory {
         }
         /**
          * Defines encoding of data according the SMPP 3.4 specification,
-         * section 5.2.19. &lt;ul&gt; &lt;li&gt;0: SMSC Default Alphabet
-         * &lt;li&gt;4: 8 bit Alphabet &lt;li&gt;8: UCS2 Alphabet.
+         * section 5.2.19. 0: SMSC Default Alphabet 4: 8 bit Alphabet 8: UCS2
+         * Alphabet.
          * 
          * The option is a: &lt;code&gt;byte&lt;/code&gt; type.
          * 
@@ -2193,8 +2162,8 @@ public interface SmppEndpointBuilderFactory {
         }
         /**
          * Defines encoding of data according the SMPP 3.4 specification,
-         * section 5.2.19. &lt;ul&gt; &lt;li&gt;0: SMSC Default Alphabet
-         * &lt;li&gt;4: 8 bit Alphabet &lt;li&gt;8: UCS2 Alphabet.
+         * section 5.2.19. 0: SMSC Default Alphabet 4: 8 bit Alphabet 8: UCS2
+         * Alphabet.
          * 
          * The option will be converted to a &lt;code&gt;byte&lt;/code&gt; type.
          * 
@@ -2209,10 +2178,9 @@ public interface SmppEndpointBuilderFactory {
         }
         /**
          * Defines the data coding according the SMPP 3.4 specification, section
-         * 5.2.19. Example data encodings are: &lt;ul&gt; &lt;li&gt;0: SMSC
-         * Default Alphabet &lt;li&gt;3: Latin 1 (ISO-8859-1) &lt;li&gt;4: Octet
-         * unspecified (8-bit binary) &lt;li&gt;8: UCS2 (ISO/IEC-10646)
-         * &lt;li&gt;13: Extended Kanji JIS(X 0212-1990).
+         * 5.2.19. Example data encodings are: 0: SMSC Default Alphabet 3: Latin
+         * 1 (ISO-8859-1) 4: Octet unspecified (8-bit binary) 8: UCS2
+         * (ISO/IEC-10646) 13: Extended Kanji JIS(X 0212-1990).
          * 
          * The option is a: &lt;code&gt;byte&lt;/code&gt; type.
          * 
@@ -2227,10 +2195,9 @@ public interface SmppEndpointBuilderFactory {
         }
         /**
          * Defines the data coding according the SMPP 3.4 specification, section
-         * 5.2.19. Example data encodings are: &lt;ul&gt; &lt;li&gt;0: SMSC
-         * Default Alphabet &lt;li&gt;3: Latin 1 (ISO-8859-1) &lt;li&gt;4: Octet
-         * unspecified (8-bit binary) &lt;li&gt;8: UCS2 (ISO/IEC-10646)
-         * &lt;li&gt;13: Extended Kanji JIS(X 0212-1990).
+         * 5.2.19. Example data encodings are: 0: SMSC Default Alphabet 3: Latin
+         * 1 (ISO-8859-1) 4: Octet unspecified (8-bit binary) 8: UCS2
+         * (ISO/IEC-10646) 13: Extended Kanji JIS(X 0212-1990).
          * 
          * The option will be converted to a &lt;code&gt;byte&lt;/code&gt; type.
          * 
@@ -2341,8 +2308,8 @@ public interface SmppEndpointBuilderFactory {
          * These headers will be passed to the proxy server while establishing
          * the connection.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
-         * java.lang.String&gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: proxy
          * 
@@ -2359,8 +2326,8 @@ public interface SmppEndpointBuilderFactory {
          * the connection.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&lt;java.lang.String,
-         * java.lang.String&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: proxy
          * 

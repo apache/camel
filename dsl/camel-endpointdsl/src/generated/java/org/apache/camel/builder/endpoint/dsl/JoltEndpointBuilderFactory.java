@@ -265,7 +265,7 @@ public interface JoltEndpointBuilderFactory {
         }
         /**
          * Specifies the Transform DSL of the endpoint resource. If none is
-         * specified &lt;code&gt;Chainr will be used.
+         * specified Chainr will be used.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.jolt.JoltTransformType&lt;/code&gt; type.
@@ -283,7 +283,7 @@ public interface JoltEndpointBuilderFactory {
         }
         /**
          * Specifies the Transform DSL of the endpoint resource. If none is
-         * specified &lt;code&gt;Chainr will be used.
+         * specified Chainr will be used.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.apache.camel.component.jolt.JoltTransformType&lt;/code&gt; type.

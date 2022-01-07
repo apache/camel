@@ -74,8 +74,8 @@ public interface JettyComponentBuilderFactory {
         }
         /**
          * Allows to set a timeout in millis when using Jetty as consumer
-         * (server). By default Jetty uses 30000. You can use a value of &lt;= 0
-         * to never expire. If a timeout occurs then the request will be expired
+         * (server). By default Jetty uses 30000. You can use a value of = 0 to
+         * never expire. If a timeout occurs then the request will be expired
          * and Jetty will return back a http error 503 to the client. This
          * option is only in use when using Jetty with the Asynchronous Routing
          * Engine.
@@ -477,8 +477,8 @@ public interface JettyComponentBuilderFactory {
          * A map which contains general HTTP connector properties. Uses the same
          * principle as sslSocketConnectorProperties.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: security
          * 
@@ -494,8 +494,8 @@ public interface JettyComponentBuilderFactory {
          * A map which contains per port number specific HTTP connectors. Uses
          * the same principle as sslSocketConnectors.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.Integer,
-         * org.eclipse.jetty.server.Connector&gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.Integer,
+         * org.eclipse.jetty.server.Connector&amp;gt;&lt;/code&gt; type.
          * 
          * Group: security
          * 
@@ -559,8 +559,8 @@ public interface JettyComponentBuilderFactory {
         /**
          * A map which contains general SSL connector properties.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: security
          * 
@@ -575,8 +575,8 @@ public interface JettyComponentBuilderFactory {
         /**
          * A map which contains per port number specific SSL connectors.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.Integer,
-         * org.eclipse.jetty.server.Connector&gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.Integer,
+         * org.eclipse.jetty.server.Connector&amp;gt;&lt;/code&gt; type.
          * 
          * Group: security
          * 

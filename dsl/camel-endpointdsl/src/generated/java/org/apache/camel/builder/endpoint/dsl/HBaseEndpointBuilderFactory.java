@@ -82,7 +82,7 @@ public interface HBaseEndpointBuilderFactory {
          * A list of filters to use.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&lt;org.apache.hadoop.hbase.filter.Filter&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&amp;lt;org.apache.hadoop.hbase.filter.Filter&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -98,7 +98,7 @@ public interface HBaseEndpointBuilderFactory {
          * A list of filters to use.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&lt;org.apache.hadoop.hbase.filter.Filter&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&amp;lt;org.apache.hadoop.hbase.filter.Filter&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -141,21 +141,19 @@ public interface HBaseEndpointBuilderFactory {
             return this;
         }
         /**
-         * To map the key/values from the Map to a HBaseRow. &lt;p/&gt; The
-         * following keys is supported: &lt;ul&gt; &lt;li&gt;rowId - The id of
-         * the row. This has limited use as the row usually changes per
-         * Exchange. &lt;li&gt;rowType - The type to covert row id to. Supported
-         * operations: CamelHBaseScan. &lt;li&gt;family - The column family.
+         * To map the key/values from the Map to a HBaseRow. The following keys
+         * is supported: rowId - The id of the row. This has limited use as the
+         * row usually changes per Exchange. rowType - The type to covert row id
+         * to. Supported operations: CamelHBaseScan. family - The column family.
          * Supports a number suffix for referring to more than one columns.
-         * &lt;li&gt;qualifier - The column qualifier. Supports a number suffix
-         * for referring to more than one columns. &lt;li&gt;value - The value.
-         * Supports a number suffix for referring to more than one columns
-         * &lt;li&gt;valueType - The value type. Supports a number suffix for
-         * referring to more than one columns. Supported operations:
-         * CamelHBaseGet, and CamelHBaseScan.
+         * qualifier - The column qualifier. Supports a number suffix for
+         * referring to more than one columns. value - The value. Supports a
+         * number suffix for referring to more than one columns valueType - The
+         * value type. Supports a number suffix for referring to more than one
+         * columns. Supported operations: CamelHBaseGet, and CamelHBaseScan.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the rowMapping(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -171,21 +169,19 @@ public interface HBaseEndpointBuilderFactory {
             return this;
         }
         /**
-         * To map the key/values from the Map to a HBaseRow. &lt;p/&gt; The
-         * following keys is supported: &lt;ul&gt; &lt;li&gt;rowId - The id of
-         * the row. This has limited use as the row usually changes per
-         * Exchange. &lt;li&gt;rowType - The type to covert row id to. Supported
-         * operations: CamelHBaseScan. &lt;li&gt;family - The column family.
+         * To map the key/values from the Map to a HBaseRow. The following keys
+         * is supported: rowId - The id of the row. This has limited use as the
+         * row usually changes per Exchange. rowType - The type to covert row id
+         * to. Supported operations: CamelHBaseScan. family - The column family.
          * Supports a number suffix for referring to more than one columns.
-         * &lt;li&gt;qualifier - The column qualifier. Supports a number suffix
-         * for referring to more than one columns. &lt;li&gt;value - The value.
-         * Supports a number suffix for referring to more than one columns
-         * &lt;li&gt;valueType - The value type. Supports a number suffix for
-         * referring to more than one columns. Supported operations:
-         * CamelHBaseGet, and CamelHBaseScan.
+         * qualifier - The column qualifier. Supports a number suffix for
+         * referring to more than one columns. value - The value. Supports a
+         * number suffix for referring to more than one columns valueType - The
+         * value type. Supports a number suffix for referring to more than one
+         * columns. Supported operations: CamelHBaseGet, and CamelHBaseScan.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the rowMapping(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -311,8 +307,8 @@ public interface HBaseEndpointBuilderFactory {
         }
         /**
          * Gets the maximum number of messages as a limit to poll at each
-         * polling. &lt;p/&gt; Is default unlimited, but use 0 or negative
-         * number to disable it as unlimited.
+         * polling. Is default unlimited, but use 0 or negative number to
+         * disable it as unlimited.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -328,8 +324,8 @@ public interface HBaseEndpointBuilderFactory {
         }
         /**
          * Gets the maximum number of messages as a limit to poll at each
-         * polling. &lt;p/&gt; Is default unlimited, but use 0 or negative
-         * number to disable it as unlimited.
+         * polling. Is default unlimited, but use 0 or negative number to
+         * disable it as unlimited.
          * 
          * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -553,7 +549,7 @@ public interface HBaseEndpointBuilderFactory {
          * A list of filters to use.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&lt;org.apache.hadoop.hbase.filter.Filter&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&amp;lt;org.apache.hadoop.hbase.filter.Filter&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -569,7 +565,7 @@ public interface HBaseEndpointBuilderFactory {
          * A list of filters to use.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&lt;org.apache.hadoop.hbase.filter.Filter&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&amp;lt;org.apache.hadoop.hbase.filter.Filter&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -612,21 +608,19 @@ public interface HBaseEndpointBuilderFactory {
             return this;
         }
         /**
-         * To map the key/values from the Map to a HBaseRow. &lt;p/&gt; The
-         * following keys is supported: &lt;ul&gt; &lt;li&gt;rowId - The id of
-         * the row. This has limited use as the row usually changes per
-         * Exchange. &lt;li&gt;rowType - The type to covert row id to. Supported
-         * operations: CamelHBaseScan. &lt;li&gt;family - The column family.
+         * To map the key/values from the Map to a HBaseRow. The following keys
+         * is supported: rowId - The id of the row. This has limited use as the
+         * row usually changes per Exchange. rowType - The type to covert row id
+         * to. Supported operations: CamelHBaseScan. family - The column family.
          * Supports a number suffix for referring to more than one columns.
-         * &lt;li&gt;qualifier - The column qualifier. Supports a number suffix
-         * for referring to more than one columns. &lt;li&gt;value - The value.
-         * Supports a number suffix for referring to more than one columns
-         * &lt;li&gt;valueType - The value type. Supports a number suffix for
-         * referring to more than one columns. Supported operations:
-         * CamelHBaseGet, and CamelHBaseScan.
+         * qualifier - The column qualifier. Supports a number suffix for
+         * referring to more than one columns. value - The value. Supports a
+         * number suffix for referring to more than one columns valueType - The
+         * value type. Supports a number suffix for referring to more than one
+         * columns. Supported operations: CamelHBaseGet, and CamelHBaseScan.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the rowMapping(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -642,21 +636,19 @@ public interface HBaseEndpointBuilderFactory {
             return this;
         }
         /**
-         * To map the key/values from the Map to a HBaseRow. &lt;p/&gt; The
-         * following keys is supported: &lt;ul&gt; &lt;li&gt;rowId - The id of
-         * the row. This has limited use as the row usually changes per
-         * Exchange. &lt;li&gt;rowType - The type to covert row id to. Supported
-         * operations: CamelHBaseScan. &lt;li&gt;family - The column family.
+         * To map the key/values from the Map to a HBaseRow. The following keys
+         * is supported: rowId - The id of the row. This has limited use as the
+         * row usually changes per Exchange. rowType - The type to covert row id
+         * to. Supported operations: CamelHBaseScan. family - The column family.
          * Supports a number suffix for referring to more than one columns.
-         * &lt;li&gt;qualifier - The column qualifier. Supports a number suffix
-         * for referring to more than one columns. &lt;li&gt;value - The value.
-         * Supports a number suffix for referring to more than one columns
-         * &lt;li&gt;valueType - The value type. Supports a number suffix for
-         * referring to more than one columns. Supported operations:
-         * CamelHBaseGet, and CamelHBaseScan.
+         * qualifier - The column qualifier. Supports a number suffix for
+         * referring to more than one columns. value - The value. Supports a
+         * number suffix for referring to more than one columns valueType - The
+         * value type. Supports a number suffix for referring to more than one
+         * columns. Supported operations: CamelHBaseGet, and CamelHBaseScan.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the rowMapping(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -875,7 +867,7 @@ public interface HBaseEndpointBuilderFactory {
          * A list of filters to use.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&lt;org.apache.hadoop.hbase.filter.Filter&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&amp;lt;org.apache.hadoop.hbase.filter.Filter&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -891,7 +883,7 @@ public interface HBaseEndpointBuilderFactory {
          * A list of filters to use.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&lt;org.apache.hadoop.hbase.filter.Filter&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&amp;lt;org.apache.hadoop.hbase.filter.Filter&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -934,21 +926,19 @@ public interface HBaseEndpointBuilderFactory {
             return this;
         }
         /**
-         * To map the key/values from the Map to a HBaseRow. &lt;p/&gt; The
-         * following keys is supported: &lt;ul&gt; &lt;li&gt;rowId - The id of
-         * the row. This has limited use as the row usually changes per
-         * Exchange. &lt;li&gt;rowType - The type to covert row id to. Supported
-         * operations: CamelHBaseScan. &lt;li&gt;family - The column family.
+         * To map the key/values from the Map to a HBaseRow. The following keys
+         * is supported: rowId - The id of the row. This has limited use as the
+         * row usually changes per Exchange. rowType - The type to covert row id
+         * to. Supported operations: CamelHBaseScan. family - The column family.
          * Supports a number suffix for referring to more than one columns.
-         * &lt;li&gt;qualifier - The column qualifier. Supports a number suffix
-         * for referring to more than one columns. &lt;li&gt;value - The value.
-         * Supports a number suffix for referring to more than one columns
-         * &lt;li&gt;valueType - The value type. Supports a number suffix for
-         * referring to more than one columns. Supported operations:
-         * CamelHBaseGet, and CamelHBaseScan.
+         * qualifier - The column qualifier. Supports a number suffix for
+         * referring to more than one columns. value - The value. Supports a
+         * number suffix for referring to more than one columns valueType - The
+         * value type. Supports a number suffix for referring to more than one
+         * columns. Supported operations: CamelHBaseGet, and CamelHBaseScan.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the rowMapping(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -964,21 +954,19 @@ public interface HBaseEndpointBuilderFactory {
             return this;
         }
         /**
-         * To map the key/values from the Map to a HBaseRow. &lt;p/&gt; The
-         * following keys is supported: &lt;ul&gt; &lt;li&gt;rowId - The id of
-         * the row. This has limited use as the row usually changes per
-         * Exchange. &lt;li&gt;rowType - The type to covert row id to. Supported
-         * operations: CamelHBaseScan. &lt;li&gt;family - The column family.
+         * To map the key/values from the Map to a HBaseRow. The following keys
+         * is supported: rowId - The id of the row. This has limited use as the
+         * row usually changes per Exchange. rowType - The type to covert row id
+         * to. Supported operations: CamelHBaseScan. family - The column family.
          * Supports a number suffix for referring to more than one columns.
-         * &lt;li&gt;qualifier - The column qualifier. Supports a number suffix
-         * for referring to more than one columns. &lt;li&gt;value - The value.
-         * Supports a number suffix for referring to more than one columns
-         * &lt;li&gt;valueType - The value type. Supports a number suffix for
-         * referring to more than one columns. Supported operations:
-         * CamelHBaseGet, and CamelHBaseScan.
+         * qualifier - The column qualifier. Supports a number suffix for
+         * referring to more than one columns. value - The value. Supports a
+         * number suffix for referring to more than one columns valueType - The
+         * value type. Supports a number suffix for referring to more than one
+         * columns. Supported operations: CamelHBaseGet, and CamelHBaseScan.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the rowMapping(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).

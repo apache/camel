@@ -78,7 +78,7 @@ public interface VertxComponentBuilderFactory {
         }
         /**
          * Timeout in seconds to wait for clustered Vertx EventBus to be ready.
-         * &lt;p/&gt; The default value is 60.
+         * The default value is 60.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
