@@ -54,8 +54,9 @@ public interface JpaComponentBuilderFactory {
          * Maps an alias to a JPA entity class. The alias can then be used in
          * the endpoint URI (instead of the fully qualified class name).
          * 
-         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
-         * java.lang.Class&lt;java.lang.Object&gt;&gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Class&amp;lt;java.lang.Object&amp;gt;&amp;gt;&lt;/code&gt;
+         * type.
          * 
          * Group: common
          * 

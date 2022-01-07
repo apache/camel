@@ -889,8 +889,8 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * arg.dlq.queue. arg.dlq.binding. For example to declare a queue with
          * message ttl argument: args=arg.queue.x-message-ttl=60000.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the args(String, Object)
          * method to add a value (call the method multiple times to set more
          * values).
@@ -914,8 +914,8 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * arg.dlq.queue. arg.dlq.binding. For example to declare a queue with
          * message ttl argument: args=arg.queue.x-message-ttl=60000.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the args(String, Object)
          * method to add a value (call the method multiple times to set more
          * values).
@@ -1317,8 +1317,8 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * arg.dlq.queue. arg.dlq.binding. For example to declare a queue with
          * message ttl argument: args=arg.queue.x-message-ttl=60000.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the args(String, Object)
          * method to add a value (call the method multiple times to set more
          * values).
@@ -1342,8 +1342,8 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * arg.dlq.queue. arg.dlq.binding. For example to declare a queue with
          * message ttl argument: args=arg.queue.x-message-ttl=60000.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the args(String, Object)
          * method to add a value (call the method multiple times to set more
          * values).
@@ -1627,8 +1627,8 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * arg.dlq.queue. arg.dlq.binding. For example to declare a queue with
          * message ttl argument: args=arg.queue.x-message-ttl=60000.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the args(String, Object)
          * method to add a value (call the method multiple times to set more
          * values).
@@ -1652,8 +1652,8 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * arg.dlq.queue. arg.dlq.binding. For example to declare a queue with
          * message ttl argument: args=arg.queue.x-message-ttl=60000.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the args(String, Object)
          * method to add a value (call the method multiple times to set more
          * values).

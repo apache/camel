@@ -112,8 +112,7 @@ public interface MiloServerComponentBuilderFactory {
             return this;
         }
         /**
-         * The URI of the namespace, defaults to
-         * &lt;code&gt;urn:org:apache:camel.
+         * The URI of the namespace, defaults to urn:org:apache:camel.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -322,7 +321,7 @@ public interface MiloServerComponentBuilderFactory {
          * Security policies.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.Set&lt;org.eclipse.milo.opcua.stack.core.security.SecurityPolicy&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.Set&amp;lt;org.eclipse.milo.opcua.stack.core.security.SecurityPolicy&amp;gt;&lt;/code&gt; type.
          * 
          * Group: security
          * 

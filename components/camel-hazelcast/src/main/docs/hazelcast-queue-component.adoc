@@ -2,7 +2,7 @@
 :doctitle: Hazelcast Queue
 :shortname: hazelcast-queue
 :artifactid: camel-hazelcast
-:description: Perform operations on distributed queue.
+:description: Perform operations on Hazelcast distributed queue.
 :since: 2.7
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported

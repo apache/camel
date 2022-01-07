@@ -154,7 +154,7 @@ public interface StringTemplateEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;char&lt;/code&gt; type.
          * 
-         * Default: &lt;
+         * Default: &amp;lt;
          * Group: producer
          * 
          * @param delimiterStart the value to set
@@ -169,7 +169,7 @@ public interface StringTemplateEndpointBuilderFactory {
          * 
          * The option will be converted to a &lt;code&gt;char&lt;/code&gt; type.
          * 
-         * Default: &lt;
+         * Default: &amp;lt;
          * Group: producer
          * 
          * @param delimiterStart the value to set
@@ -185,7 +185,7 @@ public interface StringTemplateEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;char&lt;/code&gt; type.
          * 
-         * Default: &gt;
+         * Default: &amp;gt;
          * Group: producer
          * 
          * @param delimiterStop the value to set
@@ -200,7 +200,7 @@ public interface StringTemplateEndpointBuilderFactory {
          * 
          * The option will be converted to a &lt;code&gt;char&lt;/code&gt; type.
          * 
-         * Default: &gt;
+         * Default: &amp;gt;
          * Group: producer
          * 
          * @param delimiterStop the value to set

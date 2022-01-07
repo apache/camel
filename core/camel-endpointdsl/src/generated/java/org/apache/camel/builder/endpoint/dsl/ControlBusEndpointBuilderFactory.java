@@ -38,15 +38,15 @@ public interface ControlBusEndpointBuilderFactory {
             extends
                 EndpointProducerBuilder {
         /**
-         * To denote an action that can be either: start, stop, or status.
-         * &lt;p/&gt; To either start or stop a route, or to get the status of
-         * the route as output in the message body. You can use suspend and
-         * resume from Camel 2.11.1 onwards to either suspend or resume a route.
-         * And from Camel 2.11.1 onwards you can use stats to get performance
-         * statics returned in XML format; the routeId option can be used to
-         * define which route to get the performance stats for, if routeId is
-         * not defined, then you get statistics for the entire CamelContext. The
-         * restart action will restart the route.
+         * To denote an action that can be either: start, stop, or status. To
+         * either start or stop a route, or to get the status of the route as
+         * output in the message body. You can use suspend and resume from Camel
+         * 2.11.1 onwards to either suspend or resume a route. And from Camel
+         * 2.11.1 onwards you can use stats to get performance statics returned
+         * in XML format; the routeId option can be used to define which route
+         * to get the performance stats for, if routeId is not defined, then you
+         * get statistics for the entire CamelContext. The restart action will
+         * restart the route.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -60,10 +60,9 @@ public interface ControlBusEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether to execute the control bus task asynchronously. &lt;p/&gt;
-         * Important: If this option is enabled, then any result from the task
-         * is not set on the Exchange. This is only possible if executing tasks
-         * synchronously.
+         * Whether to execute the control bus task asynchronously. Important: If
+         * this option is enabled, then any result from the task is not set on
+         * the Exchange. This is only possible if executing tasks synchronously.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -78,10 +77,9 @@ public interface ControlBusEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether to execute the control bus task asynchronously. &lt;p/&gt;
-         * Important: If this option is enabled, then any result from the task
-         * is not set on the Exchange. This is only possible if executing tasks
-         * synchronously.
+         * Whether to execute the control bus task asynchronously. Important: If
+         * this option is enabled, then any result from the task is not set on
+         * the Exchange. This is only possible if executing tasks synchronously.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.

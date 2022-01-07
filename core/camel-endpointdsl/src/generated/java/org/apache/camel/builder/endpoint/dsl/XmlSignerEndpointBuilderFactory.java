@@ -42,9 +42,8 @@ public interface XmlSignerEndpointBuilderFactory {
         /**
          * In order to protect the KeyInfo element from tampering you can add a
          * reference to the signed info element so that it is protected via the
-         * signature value. The default value is &lt;tt&gt;true. &lt;p&gt; Only
-         * relevant when a KeyInfo is returned by KeyAccessor. and
-         * KeyInfo#getId() is not &lt;code&gt;null.
+         * signature value. The default value is true. Only relevant when a
+         * KeyInfo is returned by KeyAccessor. and KeyInfo#getId() is not null.
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
@@ -62,9 +61,8 @@ public interface XmlSignerEndpointBuilderFactory {
         /**
          * In order to protect the KeyInfo element from tampering you can add a
          * reference to the signed info element so that it is protected via the
-         * signature value. The default value is &lt;tt&gt;true. &lt;p&gt; Only
-         * relevant when a KeyInfo is returned by KeyAccessor. and
-         * KeyInfo#getId() is not &lt;code&gt;null.
+         * signature value. The default value is true. Only relevant when a
+         * KeyInfo is returned by KeyAccessor. and KeyInfo#getId() is not null.
          * 
          * The option will be converted to a
          * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
@@ -99,7 +97,7 @@ public interface XmlSignerEndpointBuilderFactory {
          * Canonicalization method used to canonicalize the SignedInfo element
          * before the digest is calculated. You can use the helper methods
          * XmlSignatureHelper.getCanonicalizationMethod(String algorithm) or
-         * getCanonicalizationMethod(String algorithm, List&lt;String&gt;
+         * getCanonicalizationMethod(String algorithm, List
          * inclusiveNamespacePrefixes) to create a canonicalization method.
          * 
          * The option is a:
@@ -120,7 +118,7 @@ public interface XmlSignerEndpointBuilderFactory {
          * Canonicalization method used to canonicalize the SignedInfo element
          * before the digest is calculated. You can use the helper methods
          * XmlSignatureHelper.getCanonicalizationMethod(String algorithm) or
-         * getCanonicalizationMethod(String algorithm, List&lt;String&gt;
+         * getCanonicalizationMethod(String algorithm, List
          * inclusiveNamespacePrefixes) to create a canonicalization method.
          * 
          * The option will be converted to a
@@ -172,8 +170,8 @@ public interface XmlSignerEndpointBuilderFactory {
         }
         /**
          * Sets the content object Id attribute value. By default a UUID is
-         * generated. If you set the &lt;code&gt;null value, then a new UUID
-         * will be generated. Only used in the enveloping case.
+         * generated. If you set the null value, then a new UUID will be
+         * generated. Only used in the enveloping case.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -187,8 +185,8 @@ public interface XmlSignerEndpointBuilderFactory {
             return this;
         }
         /**
-         * Type of the content reference. The default value is &lt;code&gt;null.
-         * This value can be overwritten by the header
+         * Type of the content reference. The default value is null. This value
+         * can be overwritten by the header
          * XmlSignatureConstants#HEADER_CONTENT_REFERENCE_TYPE.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -227,14 +225,14 @@ public interface XmlSignerEndpointBuilderFactory {
          * Sets the crypto context properties. See {link
          * XMLCryptoContext#setProperty(String, Object)}. Possible properties
          * are defined in XMLSignContext an XMLValidateContext (see Supported
-         * Properties). &lt;p&gt; The following properties are set by default to
-         * the value Boolean#TRUE for the XML validation. If you want to switch
-         * these features off you must set the property value to Boolean#FALSE.
-         * &lt;ul&gt; &lt;li&gt;&lt;code&gt;org.jcp.xml.dsig.validateManifests
-         * &lt;li&gt;&lt;code&gt;javax.xml.crypto.dsig.cacheReference.
+         * Properties). The following properties are set by default to the value
+         * Boolean#TRUE for the XML validation. If you want to switch these
+         * features off you must set the property value to Boolean#FALSE.
+         * org.jcp.xml.dsig.validateManifests
+         * javax.xml.crypto.dsig.cacheReference.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: producer
          * 
@@ -250,15 +248,15 @@ public interface XmlSignerEndpointBuilderFactory {
          * Sets the crypto context properties. See {link
          * XMLCryptoContext#setProperty(String, Object)}. Possible properties
          * are defined in XMLSignContext an XMLValidateContext (see Supported
-         * Properties). &lt;p&gt; The following properties are set by default to
-         * the value Boolean#TRUE for the XML validation. If you want to switch
-         * these features off you must set the property value to Boolean#FALSE.
-         * &lt;ul&gt; &lt;li&gt;&lt;code&gt;org.jcp.xml.dsig.validateManifests
-         * &lt;li&gt;&lt;code&gt;javax.xml.crypto.dsig.cacheReference.
+         * Properties). The following properties are set by default to the value
+         * Boolean#TRUE for the XML validation. If you want to switch these
+         * features off you must set the property value to Boolean#FALSE.
+         * org.jcp.xml.dsig.validateManifests
+         * javax.xml.crypto.dsig.cacheReference.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: producer
          * 
@@ -414,9 +412,8 @@ public interface XmlSignerEndpointBuilderFactory {
         }
         /**
          * Indicator whether the XML declaration in the outgoing message body
-         * should be omitted. Default value is &lt;code&gt;false. Can be
-         * overwritten by the header
-         * XmlSignatureConstants#HEADER_OMIT_XML_DECLARATION.
+         * should be omitted. Default value is false. Can be overwritten by the
+         * header XmlSignatureConstants#HEADER_OMIT_XML_DECLARATION.
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
@@ -433,9 +430,8 @@ public interface XmlSignerEndpointBuilderFactory {
         }
         /**
          * Indicator whether the XML declaration in the outgoing message body
-         * should be omitted. Default value is &lt;code&gt;false. Can be
-         * overwritten by the header
-         * XmlSignatureConstants#HEADER_OMIT_XML_DECLARATION.
+         * should be omitted. Default value is false. Can be overwritten by the
+         * header XmlSignatureConstants#HEADER_OMIT_XML_DECLARATION.
          * 
          * The option will be converted to a
          * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
@@ -452,9 +448,8 @@ public interface XmlSignerEndpointBuilderFactory {
             return this;
         }
         /**
-         * The character encoding of the resulting signed XML document. If
-         * &lt;code&gt;null then the encoding of the original XML document is
-         * used.
+         * The character encoding of the resulting signed XML document. If null
+         * then the encoding of the original XML document is used.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -472,14 +467,14 @@ public interface XmlSignerEndpointBuilderFactory {
          * Local name of the parent element to which the XML signature element
          * will be added. Only relevant for enveloped XML signature.
          * Alternatively you can also use
-         * setParentXpath(XPathFilterParameterSpec). &lt;p&gt; Default value is
-         * &lt;code&gt;null. The value must be &lt;code&gt;null for enveloping
-         * and detached XML signature. &lt;p&gt; This parameter or the parameter
-         * setParentXpath(XPathFilterParameterSpec) for enveloped signature and
-         * the parameter setXpathsToIdAttributes(List) for detached signature
-         * must not be set in the same configuration. &lt;p&gt; If the
-         * parameters &lt;tt&gt;parentXpath and &lt;tt&gt;parentLocalName are
-         * specified in the same configuration then an exception is thrown.
+         * setParentXpath(XPathFilterParameterSpec). Default value is null. The
+         * value must be null for enveloping and detached XML signature. This
+         * parameter or the parameter setParentXpath(XPathFilterParameterSpec)
+         * for enveloped signature and the parameter
+         * setXpathsToIdAttributes(List) for detached signature must not be set
+         * in the same configuration. If the parameters parentXpath and
+         * parentLocalName are specified in the same configuration then an
+         * exception is thrown.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -511,11 +506,10 @@ public interface XmlSignerEndpointBuilderFactory {
          * Sets the XPath to find the parent node in the enveloped case. Either
          * you specify the parent node via this method or the local name and
          * namespace of the parent with the methods setParentLocalName(String)
-         * and setParentNamespace(String). &lt;p&gt; Default value is
-         * &lt;code&gt;null. The value must be &lt;code&gt;null for enveloping
-         * and detached XML signature. &lt;p&gt; If the parameters
-         * &lt;tt&gt;parentXpath and &lt;tt&gt;parentLocalName are specified in
-         * the same configuration then an exception is thrown.
+         * and setParentNamespace(String). Default value is null. The value must
+         * be null for enveloping and detached XML signature. If the parameters
+         * parentXpath and parentLocalName are specified in the same
+         * configuration then an exception is thrown.
          * 
          * The option is a:
          * &lt;code&gt;javax.xml.crypto.dsig.spec.XPathFilterParameterSpec&lt;/code&gt; type.
@@ -533,11 +527,10 @@ public interface XmlSignerEndpointBuilderFactory {
          * Sets the XPath to find the parent node in the enveloped case. Either
          * you specify the parent node via this method or the local name and
          * namespace of the parent with the methods setParentLocalName(String)
-         * and setParentNamespace(String). &lt;p&gt; Default value is
-         * &lt;code&gt;null. The value must be &lt;code&gt;null for enveloping
-         * and detached XML signature. &lt;p&gt; If the parameters
-         * &lt;tt&gt;parentXpath and &lt;tt&gt;parentLocalName are specified in
-         * the same configuration then an exception is thrown.
+         * and setParentNamespace(String). Default value is null. The value must
+         * be null for enveloping and detached XML signature. If the parameters
+         * parentXpath and parentLocalName are specified in the same
+         * configuration then an exception is thrown.
          * 
          * The option will be converted to a
          * &lt;code&gt;javax.xml.crypto.dsig.spec.XPathFilterParameterSpec&lt;/code&gt; type.
@@ -553,8 +546,8 @@ public interface XmlSignerEndpointBuilderFactory {
         }
         /**
          * Indicator whether the message body contains plain text. The default
-         * value is &lt;code&gt;false, indicating that the message body contains
-         * XML. The value can be overwritten by the header
+         * value is false, indicating that the message body contains XML. The
+         * value can be overwritten by the header
          * XmlSignatureConstants#HEADER_MESSAGE_IS_PLAIN_TEXT.
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
@@ -571,8 +564,8 @@ public interface XmlSignerEndpointBuilderFactory {
         }
         /**
          * Indicator whether the message body contains plain text. The default
-         * value is &lt;code&gt;false, indicating that the message body contains
-         * XML. The value can be overwritten by the header
+         * value is false, indicating that the message body contains XML. The
+         * value can be overwritten by the header
          * XmlSignatureConstants#HEADER_MESSAGE_IS_PLAIN_TEXT.
          * 
          * The option will be converted to a
@@ -607,9 +600,9 @@ public interface XmlSignerEndpointBuilderFactory {
         }
         /**
          * Namespace prefix for the XML signature namespace
-         * http://www.w3.org/2000/09/xmldsig#. Default value is ds. If
-         * &lt;code&gt;null or an empty value is set then no prefix is used for
-         * the XML signature namespace. &lt;p&gt; See best practice
+         * http://www.w3.org/2000/09/xmldsig#. Default value is ds. If null or
+         * an empty value is set then no prefix is used for the XML signature
+         * namespace. See best practice
          * http://www.w3.org/TR/xmldsig-bestpractices/#signing-xml-
          * without-namespaces.
          * 
@@ -723,7 +716,7 @@ public interface XmlSignerEndpointBuilderFactory {
          * the transform methods.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&lt;javax.xml.crypto.AlgorithmMethod&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&amp;lt;javax.xml.crypto.AlgorithmMethod&amp;gt;&lt;/code&gt; type.
          * 
          * Group: producer
          * 
@@ -744,7 +737,7 @@ public interface XmlSignerEndpointBuilderFactory {
          * the transform methods.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&lt;javax.xml.crypto.AlgorithmMethod&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&amp;lt;javax.xml.crypto.AlgorithmMethod&amp;gt;&lt;/code&gt; type.
          * 
          * Group: producer
          * 
@@ -763,15 +756,15 @@ public interface XmlSignerEndpointBuilderFactory {
          * created whose reference URI contains the corresponding attribute
          * value (preceded by '#'). The signature becomes the last sibling of
          * the signed element. Elements with deeper hierarchy level are signed
-         * first. &lt;p&gt; You can also set the XPATH list dynamically via the
-         * header XmlSignatureConstants#HEADER_XPATHS_TO_ID_ATTRIBUTES.
-         * &lt;p&gt; The parameter setParentLocalName(String) or
+         * first. You can also set the XPATH list dynamically via the header
+         * XmlSignatureConstants#HEADER_XPATHS_TO_ID_ATTRIBUTES. The parameter
+         * setParentLocalName(String) or
          * setParentXpath(XPathFilterParameterSpec) for enveloped signature and
          * this parameter for detached signature must not be set in the same
          * configuration.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&lt;javax.xml.crypto.dsig.spec.XPathFilterParameterSpec&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&amp;lt;javax.xml.crypto.dsig.spec.XPathFilterParameterSpec&amp;gt;&lt;/code&gt; type.
          * 
          * Group: producer
          * 
@@ -790,15 +783,15 @@ public interface XmlSignerEndpointBuilderFactory {
          * created whose reference URI contains the corresponding attribute
          * value (preceded by '#'). The signature becomes the last sibling of
          * the signed element. Elements with deeper hierarchy level are signed
-         * first. &lt;p&gt; You can also set the XPATH list dynamically via the
-         * header XmlSignatureConstants#HEADER_XPATHS_TO_ID_ATTRIBUTES.
-         * &lt;p&gt; The parameter setParentLocalName(String) or
+         * first. You can also set the XPATH list dynamically via the header
+         * XmlSignatureConstants#HEADER_XPATHS_TO_ID_ATTRIBUTES. The parameter
+         * setParentLocalName(String) or
          * setParentXpath(XPathFilterParameterSpec) for enveloped signature and
          * this parameter for detached signature must not be set in the same
          * configuration.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&lt;javax.xml.crypto.dsig.spec.XPathFilterParameterSpec&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&amp;lt;javax.xml.crypto.dsig.spec.XPathFilterParameterSpec&amp;gt;&lt;/code&gt; type.
          * 
          * Group: producer
          * 
@@ -825,8 +818,8 @@ public interface XmlSignerEndpointBuilderFactory {
          * If you want to restrict the remote access via reference URIs, you can
          * set an own dereferencer. Optional parameter. If not set the provider
          * default dereferencer is used which can resolve URI fragments, HTTP,
-         * file and XPpointer URIs. &lt;p&gt; Attention: The implementation is
-         * provider dependent!.
+         * file and XPpointer URIs. Attention: The implementation is provider
+         * dependent!.
          * 
          * The option is a:
          * &lt;code&gt;javax.xml.crypto.URIDereferencer&lt;/code&gt; type.
@@ -845,8 +838,8 @@ public interface XmlSignerEndpointBuilderFactory {
          * If you want to restrict the remote access via reference URIs, you can
          * set an own dereferencer. Optional parameter. If not set the provider
          * default dereferencer is used which can resolve URI fragments, HTTP,
-         * file and XPpointer URIs. &lt;p&gt; Attention: The implementation is
-         * provider dependent!.
+         * file and XPpointer URIs. Attention: The implementation is provider
+         * dependent!.
          * 
          * The option will be converted to a
          * &lt;code&gt;javax.xml.crypto.URIDereferencer&lt;/code&gt; type.

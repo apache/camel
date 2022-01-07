@@ -46,8 +46,8 @@ public interface CosmosDbEndpointBuilderFactory {
          * Sets the flag to enable client telemetry which will periodically
          * collect database operations aggregation statistics, system
          * information like cpu/memory and send it to cosmos monitoring service,
-         * which will be helpful during debugging. &lt;p&gt; DEFAULT value is
-         * false indicating this is opt in feature, by default no telemetry
+         * which will be helpful during debugging. DEFAULT value is false
+         * indicating this is opt in feature, by default no telemetry
          * collection.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -67,8 +67,8 @@ public interface CosmosDbEndpointBuilderFactory {
          * Sets the flag to enable client telemetry which will periodically
          * collect database operations aggregation statistics, system
          * information like cpu/memory and send it to cosmos monitoring service,
-         * which will be helpful during debugging. &lt;p&gt; DEFAULT value is
-         * false indicating this is opt in feature, by default no telemetry
+         * which will be helpful during debugging. DEFAULT value is false
+         * indicating this is opt in feature, by default no telemetry
          * collection.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
@@ -134,7 +134,7 @@ public interface CosmosDbEndpointBuilderFactory {
         }
         /**
          * Sets the consistency levels supported for Azure Cosmos DB client
-         * operations in the Azure Cosmos DB service. &lt;p&gt; The requested
+         * operations in the Azure Cosmos DB service. The requested
          * ConsistencyLevel must match or be weaker than that provisioned for
          * the database account. Consistency levels by order of strength are
          * STRONG, BOUNDED_STALENESS, SESSION and EVENTUAL. Refer to consistency
@@ -157,7 +157,7 @@ public interface CosmosDbEndpointBuilderFactory {
         }
         /**
          * Sets the consistency levels supported for Azure Cosmos DB client
-         * operations in the Azure Cosmos DB service. &lt;p&gt; The requested
+         * operations in the Azure Cosmos DB service. The requested
          * ConsistencyLevel must match or be weaker than that provisioned for
          * the database account. Consistency levels by order of strength are
          * STRONG, BOUNDED_STALENESS, SESSION and EVENTUAL. Refer to consistency
@@ -363,14 +363,14 @@ public interface CosmosDbEndpointBuilderFactory {
         }
         /**
          * Sets the flag to enable writes on any regions for geo-replicated
-         * database accounts in the Azure Cosmos DB service. &lt;p&gt; When the
-         * value of this property is true, the SDK will direct write operations
-         * to available writable regions of geo-replicated database account.
+         * database accounts in the Azure Cosmos DB service. When the value of
+         * this property is true, the SDK will direct write operations to
+         * available writable regions of geo-replicated database account.
          * Writable regions are ordered by PreferredRegions property. Setting
          * the property value to true has no effect until
          * EnableMultipleWriteRegions in DatabaseAccount is also set to true.
-         * &lt;p&gt; DEFAULT value is true indicating that writes are directed
-         * to available writable regions of geo-replicated database account.
+         * DEFAULT value is true indicating that writes are directed to
+         * available writable regions of geo-replicated database account.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -387,14 +387,14 @@ public interface CosmosDbEndpointBuilderFactory {
         }
         /**
          * Sets the flag to enable writes on any regions for geo-replicated
-         * database accounts in the Azure Cosmos DB service. &lt;p&gt; When the
-         * value of this property is true, the SDK will direct write operations
-         * to available writable regions of geo-replicated database account.
+         * database accounts in the Azure Cosmos DB service. When the value of
+         * this property is true, the SDK will direct write operations to
+         * available writable regions of geo-replicated database account.
          * Writable regions are ordered by PreferredRegions property. Setting
          * the property value to true has no effect until
          * EnableMultipleWriteRegions in DatabaseAccount is also set to true.
-         * &lt;p&gt; DEFAULT value is true indicating that writes are directed
-         * to available writable regions of geo-replicated database account.
+         * DEFAULT value is true indicating that writes are directed to
+         * available writable regions of geo-replicated database account.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -412,13 +412,13 @@ public interface CosmosDbEndpointBuilderFactory {
         }
         /**
          * Sets the preferred regions for geo-replicated database accounts. For
-         * example, East US as the preferred region. &lt;p&gt; When
+         * example, East US as the preferred region. When
          * EnableEndpointDiscovery is true and PreferredRegions is non-empty,
          * the SDK will prefer to use the regions in the container in the order
          * they are specified to perform operations.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -432,13 +432,13 @@ public interface CosmosDbEndpointBuilderFactory {
         }
         /**
          * Sets the preferred regions for geo-replicated database accounts. For
-         * example, East US as the preferred region. &lt;p&gt; When
+         * example, East US as the preferred region. When
          * EnableEndpointDiscovery is true and PreferredRegions is non-empty,
          * the SDK will prefer to use the regions in the container in the order
          * they are specified to perform operations.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -452,11 +452,11 @@ public interface CosmosDbEndpointBuilderFactory {
         }
         /**
          * Sets whether to allow for reads to go to multiple regions configured
-         * on an account of Azure Cosmos DB service. &lt;p&gt; DEFAULT value is
-         * true. &lt;p&gt; If this property is not set, the default is true for
-         * all Consistency Levels other than Bounded Staleness, The default is
-         * false for Bounded Staleness. 1. endpointDiscoveryEnabled is true 2.
-         * the Azure Cosmos DB account has more than one region.
+         * on an account of Azure Cosmos DB service. DEFAULT value is true. If
+         * this property is not set, the default is true for all Consistency
+         * Levels other than Bounded Staleness, The default is false for Bounded
+         * Staleness. 1. endpointDiscoveryEnabled is true 2. the Azure Cosmos DB
+         * account has more than one region.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -473,11 +473,11 @@ public interface CosmosDbEndpointBuilderFactory {
         }
         /**
          * Sets whether to allow for reads to go to multiple regions configured
-         * on an account of Azure Cosmos DB service. &lt;p&gt; DEFAULT value is
-         * true. &lt;p&gt; If this property is not set, the default is true for
-         * all Consistency Levels other than Bounded Staleness, The default is
-         * false for Bounded Staleness. 1. endpointDiscoveryEnabled is true 2.
-         * the Azure Cosmos DB account has more than one region.
+         * on an account of Azure Cosmos DB service. DEFAULT value is true. If
+         * this property is not set, the default is true for all Consistency
+         * Levels other than Bounded Staleness, The default is false for Bounded
+         * Staleness. 1. endpointDiscoveryEnabled is true 2. the Azure Cosmos DB
+         * account has more than one region.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -574,12 +574,10 @@ public interface CosmosDbEndpointBuilderFactory {
         }
         /**
          * Sets the ChangeFeedProcessorOptions to be used. Unless specifically
-         * set the default values that will be used are: &lt;ul&gt;
-         * &lt;li&gt;maximum items per page or FeedResponse: 100 &lt;li&gt;lease
-         * renew interval: 17 seconds &lt;li&gt;lease acquire interval: 13
-         * seconds &lt;li&gt;lease expiration interval: 60 seconds
-         * &lt;li&gt;feed poll delay: 5 seconds &lt;li&gt;maximum scale count:
-         * unlimited.
+         * set the default values that will be used are: maximum items per page
+         * or FeedResponse: 100 lease renew interval: 17 seconds lease acquire
+         * interval: 13 seconds lease expiration interval: 60 seconds feed poll
+         * delay: 5 seconds maximum scale count: unlimited.
          * 
          * The option is a:
          * &lt;code&gt;com.azure.cosmos.models.ChangeFeedProcessorOptions&lt;/code&gt; type.
@@ -596,12 +594,10 @@ public interface CosmosDbEndpointBuilderFactory {
         }
         /**
          * Sets the ChangeFeedProcessorOptions to be used. Unless specifically
-         * set the default values that will be used are: &lt;ul&gt;
-         * &lt;li&gt;maximum items per page or FeedResponse: 100 &lt;li&gt;lease
-         * renew interval: 17 seconds &lt;li&gt;lease acquire interval: 13
-         * seconds &lt;li&gt;lease expiration interval: 60 seconds
-         * &lt;li&gt;feed poll delay: 5 seconds &lt;li&gt;maximum scale count:
-         * unlimited.
+         * set the default values that will be used are: maximum items per page
+         * or FeedResponse: 100 lease renew interval: 17 seconds lease acquire
+         * interval: 13 seconds lease expiration interval: 60 seconds feed poll
+         * delay: 5 seconds maximum scale count: unlimited.
          * 
          * The option will be converted to a
          * &lt;code&gt;com.azure.cosmos.models.ChangeFeedProcessorOptions&lt;/code&gt; type.
@@ -854,8 +850,8 @@ public interface CosmosDbEndpointBuilderFactory {
          * Sets the flag to enable client telemetry which will periodically
          * collect database operations aggregation statistics, system
          * information like cpu/memory and send it to cosmos monitoring service,
-         * which will be helpful during debugging. &lt;p&gt; DEFAULT value is
-         * false indicating this is opt in feature, by default no telemetry
+         * which will be helpful during debugging. DEFAULT value is false
+         * indicating this is opt in feature, by default no telemetry
          * collection.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -875,8 +871,8 @@ public interface CosmosDbEndpointBuilderFactory {
          * Sets the flag to enable client telemetry which will periodically
          * collect database operations aggregation statistics, system
          * information like cpu/memory and send it to cosmos monitoring service,
-         * which will be helpful during debugging. &lt;p&gt; DEFAULT value is
-         * false indicating this is opt in feature, by default no telemetry
+         * which will be helpful during debugging. DEFAULT value is false
+         * indicating this is opt in feature, by default no telemetry
          * collection.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
@@ -942,7 +938,7 @@ public interface CosmosDbEndpointBuilderFactory {
         }
         /**
          * Sets the consistency levels supported for Azure Cosmos DB client
-         * operations in the Azure Cosmos DB service. &lt;p&gt; The requested
+         * operations in the Azure Cosmos DB service. The requested
          * ConsistencyLevel must match or be weaker than that provisioned for
          * the database account. Consistency levels by order of strength are
          * STRONG, BOUNDED_STALENESS, SESSION and EVENTUAL. Refer to consistency
@@ -965,7 +961,7 @@ public interface CosmosDbEndpointBuilderFactory {
         }
         /**
          * Sets the consistency levels supported for Azure Cosmos DB client
-         * operations in the Azure Cosmos DB service. &lt;p&gt; The requested
+         * operations in the Azure Cosmos DB service. The requested
          * ConsistencyLevel must match or be weaker than that provisioned for
          * the database account. Consistency levels by order of strength are
          * STRONG, BOUNDED_STALENESS, SESSION and EVENTUAL. Refer to consistency
@@ -1171,14 +1167,14 @@ public interface CosmosDbEndpointBuilderFactory {
         }
         /**
          * Sets the flag to enable writes on any regions for geo-replicated
-         * database accounts in the Azure Cosmos DB service. &lt;p&gt; When the
-         * value of this property is true, the SDK will direct write operations
-         * to available writable regions of geo-replicated database account.
+         * database accounts in the Azure Cosmos DB service. When the value of
+         * this property is true, the SDK will direct write operations to
+         * available writable regions of geo-replicated database account.
          * Writable regions are ordered by PreferredRegions property. Setting
          * the property value to true has no effect until
          * EnableMultipleWriteRegions in DatabaseAccount is also set to true.
-         * &lt;p&gt; DEFAULT value is true indicating that writes are directed
-         * to available writable regions of geo-replicated database account.
+         * DEFAULT value is true indicating that writes are directed to
+         * available writable regions of geo-replicated database account.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -1195,14 +1191,14 @@ public interface CosmosDbEndpointBuilderFactory {
         }
         /**
          * Sets the flag to enable writes on any regions for geo-replicated
-         * database accounts in the Azure Cosmos DB service. &lt;p&gt; When the
-         * value of this property is true, the SDK will direct write operations
-         * to available writable regions of geo-replicated database account.
+         * database accounts in the Azure Cosmos DB service. When the value of
+         * this property is true, the SDK will direct write operations to
+         * available writable regions of geo-replicated database account.
          * Writable regions are ordered by PreferredRegions property. Setting
          * the property value to true has no effect until
          * EnableMultipleWriteRegions in DatabaseAccount is also set to true.
-         * &lt;p&gt; DEFAULT value is true indicating that writes are directed
-         * to available writable regions of geo-replicated database account.
+         * DEFAULT value is true indicating that writes are directed to
+         * available writable regions of geo-replicated database account.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -1220,13 +1216,13 @@ public interface CosmosDbEndpointBuilderFactory {
         }
         /**
          * Sets the preferred regions for geo-replicated database accounts. For
-         * example, East US as the preferred region. &lt;p&gt; When
+         * example, East US as the preferred region. When
          * EnableEndpointDiscovery is true and PreferredRegions is non-empty,
          * the SDK will prefer to use the regions in the container in the order
          * they are specified to perform operations.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -1240,13 +1236,13 @@ public interface CosmosDbEndpointBuilderFactory {
         }
         /**
          * Sets the preferred regions for geo-replicated database accounts. For
-         * example, East US as the preferred region. &lt;p&gt; When
+         * example, East US as the preferred region. When
          * EnableEndpointDiscovery is true and PreferredRegions is non-empty,
          * the SDK will prefer to use the regions in the container in the order
          * they are specified to perform operations.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -1260,11 +1256,11 @@ public interface CosmosDbEndpointBuilderFactory {
         }
         /**
          * Sets whether to allow for reads to go to multiple regions configured
-         * on an account of Azure Cosmos DB service. &lt;p&gt; DEFAULT value is
-         * true. &lt;p&gt; If this property is not set, the default is true for
-         * all Consistency Levels other than Bounded Staleness, The default is
-         * false for Bounded Staleness. 1. endpointDiscoveryEnabled is true 2.
-         * the Azure Cosmos DB account has more than one region.
+         * on an account of Azure Cosmos DB service. DEFAULT value is true. If
+         * this property is not set, the default is true for all Consistency
+         * Levels other than Bounded Staleness, The default is false for Bounded
+         * Staleness. 1. endpointDiscoveryEnabled is true 2. the Azure Cosmos DB
+         * account has more than one region.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -1281,11 +1277,11 @@ public interface CosmosDbEndpointBuilderFactory {
         }
         /**
          * Sets whether to allow for reads to go to multiple regions configured
-         * on an account of Azure Cosmos DB service. &lt;p&gt; DEFAULT value is
-         * true. &lt;p&gt; If this property is not set, the default is true for
-         * all Consistency Levels other than Bounded Staleness, The default is
-         * false for Bounded Staleness. 1. endpointDiscoveryEnabled is true 2.
-         * the Azure Cosmos DB account has more than one region.
+         * on an account of Azure Cosmos DB service. DEFAULT value is true. If
+         * this property is not set, the default is true for all Consistency
+         * Levels other than Bounded Staleness, The default is false for Bounded
+         * Staleness. 1. endpointDiscoveryEnabled is true 2. the Azure Cosmos DB
+         * account has more than one region.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -1565,8 +1561,8 @@ public interface CosmosDbEndpointBuilderFactory {
          * Sets the flag to enable client telemetry which will periodically
          * collect database operations aggregation statistics, system
          * information like cpu/memory and send it to cosmos monitoring service,
-         * which will be helpful during debugging. &lt;p&gt; DEFAULT value is
-         * false indicating this is opt in feature, by default no telemetry
+         * which will be helpful during debugging. DEFAULT value is false
+         * indicating this is opt in feature, by default no telemetry
          * collection.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -1586,8 +1582,8 @@ public interface CosmosDbEndpointBuilderFactory {
          * Sets the flag to enable client telemetry which will periodically
          * collect database operations aggregation statistics, system
          * information like cpu/memory and send it to cosmos monitoring service,
-         * which will be helpful during debugging. &lt;p&gt; DEFAULT value is
-         * false indicating this is opt in feature, by default no telemetry
+         * which will be helpful during debugging. DEFAULT value is false
+         * indicating this is opt in feature, by default no telemetry
          * collection.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
@@ -1653,7 +1649,7 @@ public interface CosmosDbEndpointBuilderFactory {
         }
         /**
          * Sets the consistency levels supported for Azure Cosmos DB client
-         * operations in the Azure Cosmos DB service. &lt;p&gt; The requested
+         * operations in the Azure Cosmos DB service. The requested
          * ConsistencyLevel must match or be weaker than that provisioned for
          * the database account. Consistency levels by order of strength are
          * STRONG, BOUNDED_STALENESS, SESSION and EVENTUAL. Refer to consistency
@@ -1676,7 +1672,7 @@ public interface CosmosDbEndpointBuilderFactory {
         }
         /**
          * Sets the consistency levels supported for Azure Cosmos DB client
-         * operations in the Azure Cosmos DB service. &lt;p&gt; The requested
+         * operations in the Azure Cosmos DB service. The requested
          * ConsistencyLevel must match or be weaker than that provisioned for
          * the database account. Consistency levels by order of strength are
          * STRONG, BOUNDED_STALENESS, SESSION and EVENTUAL. Refer to consistency
@@ -1880,14 +1876,14 @@ public interface CosmosDbEndpointBuilderFactory {
         }
         /**
          * Sets the flag to enable writes on any regions for geo-replicated
-         * database accounts in the Azure Cosmos DB service. &lt;p&gt; When the
-         * value of this property is true, the SDK will direct write operations
-         * to available writable regions of geo-replicated database account.
+         * database accounts in the Azure Cosmos DB service. When the value of
+         * this property is true, the SDK will direct write operations to
+         * available writable regions of geo-replicated database account.
          * Writable regions are ordered by PreferredRegions property. Setting
          * the property value to true has no effect until
          * EnableMultipleWriteRegions in DatabaseAccount is also set to true.
-         * &lt;p&gt; DEFAULT value is true indicating that writes are directed
-         * to available writable regions of geo-replicated database account.
+         * DEFAULT value is true indicating that writes are directed to
+         * available writable regions of geo-replicated database account.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -1904,14 +1900,14 @@ public interface CosmosDbEndpointBuilderFactory {
         }
         /**
          * Sets the flag to enable writes on any regions for geo-replicated
-         * database accounts in the Azure Cosmos DB service. &lt;p&gt; When the
-         * value of this property is true, the SDK will direct write operations
-         * to available writable regions of geo-replicated database account.
+         * database accounts in the Azure Cosmos DB service. When the value of
+         * this property is true, the SDK will direct write operations to
+         * available writable regions of geo-replicated database account.
          * Writable regions are ordered by PreferredRegions property. Setting
          * the property value to true has no effect until
          * EnableMultipleWriteRegions in DatabaseAccount is also set to true.
-         * &lt;p&gt; DEFAULT value is true indicating that writes are directed
-         * to available writable regions of geo-replicated database account.
+         * DEFAULT value is true indicating that writes are directed to
+         * available writable regions of geo-replicated database account.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -1929,13 +1925,13 @@ public interface CosmosDbEndpointBuilderFactory {
         }
         /**
          * Sets the preferred regions for geo-replicated database accounts. For
-         * example, East US as the preferred region. &lt;p&gt; When
+         * example, East US as the preferred region. When
          * EnableEndpointDiscovery is true and PreferredRegions is non-empty,
          * the SDK will prefer to use the regions in the container in the order
          * they are specified to perform operations.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -1949,13 +1945,13 @@ public interface CosmosDbEndpointBuilderFactory {
         }
         /**
          * Sets the preferred regions for geo-replicated database accounts. For
-         * example, East US as the preferred region. &lt;p&gt; When
+         * example, East US as the preferred region. When
          * EnableEndpointDiscovery is true and PreferredRegions is non-empty,
          * the SDK will prefer to use the regions in the container in the order
          * they are specified to perform operations.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&lt;java.lang.String&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -1968,11 +1964,11 @@ public interface CosmosDbEndpointBuilderFactory {
         }
         /**
          * Sets whether to allow for reads to go to multiple regions configured
-         * on an account of Azure Cosmos DB service. &lt;p&gt; DEFAULT value is
-         * true. &lt;p&gt; If this property is not set, the default is true for
-         * all Consistency Levels other than Bounded Staleness, The default is
-         * false for Bounded Staleness. 1. endpointDiscoveryEnabled is true 2.
-         * the Azure Cosmos DB account has more than one region.
+         * on an account of Azure Cosmos DB service. DEFAULT value is true. If
+         * this property is not set, the default is true for all Consistency
+         * Levels other than Bounded Staleness, The default is false for Bounded
+         * Staleness. 1. endpointDiscoveryEnabled is true 2. the Azure Cosmos DB
+         * account has more than one region.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -1989,11 +1985,11 @@ public interface CosmosDbEndpointBuilderFactory {
         }
         /**
          * Sets whether to allow for reads to go to multiple regions configured
-         * on an account of Azure Cosmos DB service. &lt;p&gt; DEFAULT value is
-         * true. &lt;p&gt; If this property is not set, the default is true for
-         * all Consistency Levels other than Bounded Staleness, The default is
-         * false for Bounded Staleness. 1. endpointDiscoveryEnabled is true 2.
-         * the Azure Cosmos DB account has more than one region.
+         * on an account of Azure Cosmos DB service. DEFAULT value is true. If
+         * this property is not set, the default is true for all Consistency
+         * Levels other than Bounded Staleness, The default is false for Bounded
+         * Staleness. 1. endpointDiscoveryEnabled is true 2. the Azure Cosmos DB
+         * account has more than one region.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.

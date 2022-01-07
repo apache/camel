@@ -651,8 +651,8 @@ public interface Sqs2EndpointBuilderFactory {
         }
         /**
          * Gets the maximum number of messages as a limit to poll at each
-         * polling. &lt;p/&gt; Is default unlimited, but use 0 or negative
-         * number to disable it as unlimited.
+         * polling. Is default unlimited, but use 0 or negative number to
+         * disable it as unlimited.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -668,8 +668,8 @@ public interface Sqs2EndpointBuilderFactory {
         }
         /**
          * Gets the maximum number of messages as a limit to poll at each
-         * polling. &lt;p/&gt; Is default unlimited, but use 0 or negative
-         * number to disable it as unlimited.
+         * polling. Is default unlimited, but use 0 or negative number to
+         * disable it as unlimited.
          * 
          * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -1356,8 +1356,8 @@ public interface Sqs2EndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -1378,8 +1378,8 @@ public interface Sqs2EndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
