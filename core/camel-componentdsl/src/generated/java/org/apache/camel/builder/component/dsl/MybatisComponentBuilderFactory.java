@@ -53,8 +53,8 @@ public interface MybatisComponentBuilderFactory {
             extends
                 ComponentBuilder<MyBatisComponent> {
         /**
-         * Location of MyBatis xml configuration file. &lt;p/&gt; The default
-         * value is: SqlMapConfig.xml loaded from the classpath.
+         * Location of MyBatis xml configuration file. The default value is:
+         * SqlMapConfig.xml loaded from the classpath.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

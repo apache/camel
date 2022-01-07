@@ -263,13 +263,13 @@ public interface PdfEndpointBuilderFactory {
             return this;
         }
         /**
-         * Text processing to use. &lt;ul&gt; &lt;li&gt;autoFormatting: Text is
-         * getting sliced by words, then max amount of words that fits in the
-         * line will be written into pdf document. With this strategy all words
-         * that doesn't fit in the line will be moved to the new line.
-         * &lt;li&gt;lineTermination: Builds set of classes for line-termination
-         * writing strategy. Text getting sliced by line termination symbol and
-         * then it will be written regardless it fits in the line or not.
+         * Text processing to use. autoFormatting: Text is getting sliced by
+         * words, then max amount of words that fits in the line will be written
+         * into pdf document. With this strategy all words that doesn't fit in
+         * the line will be moved to the new line. lineTermination: Builds set
+         * of classes for line-termination writing strategy. Text getting sliced
+         * by line termination symbol and then it will be written regardless it
+         * fits in the line or not.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.pdf.TextProcessingFactory&lt;/code&gt; type.
@@ -286,13 +286,13 @@ public interface PdfEndpointBuilderFactory {
             return this;
         }
         /**
-         * Text processing to use. &lt;ul&gt; &lt;li&gt;autoFormatting: Text is
-         * getting sliced by words, then max amount of words that fits in the
-         * line will be written into pdf document. With this strategy all words
-         * that doesn't fit in the line will be moved to the new line.
-         * &lt;li&gt;lineTermination: Builds set of classes for line-termination
-         * writing strategy. Text getting sliced by line termination symbol and
-         * then it will be written regardless it fits in the line or not.
+         * Text processing to use. autoFormatting: Text is getting sliced by
+         * words, then max amount of words that fits in the line will be written
+         * into pdf document. With this strategy all words that doesn't fit in
+         * the line will be moved to the new line. lineTermination: Builds set
+         * of classes for line-termination writing strategy. Text getting sliced
+         * by line termination symbol and then it will be written regardless it
+         * fits in the line or not.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.apache.camel.component.pdf.TextProcessingFactory&lt;/code&gt; type.

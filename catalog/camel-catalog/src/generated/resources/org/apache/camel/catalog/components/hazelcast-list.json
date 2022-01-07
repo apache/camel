@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "hazelcast-list",
     "title": "Hazelcast List",
-    "description": "Perform operations on distributed list.",
+    "description": "Perform operations on Hazelcast distributed list.",
     "deprecated": false,
     "firstVersion": "2.7.0",
     "label": "cache,datagrid",

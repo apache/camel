@@ -303,8 +303,8 @@ public interface MllpEndpointBuilderFactory {
             return (MllpEndpointConsumerBuilder) this;
         }
         /**
-         * Timeout (in milliseconds) while waiting for a TCP connection
-         * &lt;p/&gt; TCP Server Only.
+         * Timeout (in milliseconds) while waiting for a TCP connection TCP
+         * Server Only.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -320,8 +320,8 @@ public interface MllpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Timeout (in milliseconds) while waiting for a TCP connection
-         * &lt;p/&gt; TCP Server Only.
+         * Timeout (in milliseconds) while waiting for a TCP connection TCP
+         * Server Only.
          * 
          * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -1065,8 +1065,8 @@ public interface MllpEndpointBuilderFactory {
             return (MllpEndpointProducerBuilder) this;
         }
         /**
-         * Timeout (in milliseconds) for establishing for a TCP connection
-         * &lt;p/&gt; TCP Client only.
+         * Timeout (in milliseconds) for establishing for a TCP connection TCP
+         * Client only.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -1082,8 +1082,8 @@ public interface MllpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Timeout (in milliseconds) for establishing for a TCP connection
-         * &lt;p/&gt; TCP Client only.
+         * Timeout (in milliseconds) for establishing for a TCP connection TCP
+         * Client only.
          * 
          * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 

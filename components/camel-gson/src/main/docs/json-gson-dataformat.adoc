@@ -2,7 +2,7 @@
 :doctitle: JSON Gson
 :shortname: json-gson
 :artifactid: camel-gson
-:description: Marshal POJOs to JSON and back using
+:description: Marshal POJOs to JSON and back using Gson
 :since: 2.10
 :supportlevel: Stable
 //Manually maintained attributes

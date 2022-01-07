@@ -1070,8 +1070,8 @@ public interface Sjms2EndpointBuilderFactory {
         }
         /**
          * To use the given MessageCreatedStrategy which are invoked when Camel
-         * creates new instances of &lt;tt&gt;javax.jms.Message objects when
-         * Camel is sending a JMS message.
+         * creates new instances of javax.jms.Message objects when Camel is
+         * sending a JMS message.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.sjms.jms.MessageCreatedStrategy&lt;/code&gt; type.
@@ -1088,8 +1088,8 @@ public interface Sjms2EndpointBuilderFactory {
         }
         /**
          * To use the given MessageCreatedStrategy which are invoked when Camel
-         * creates new instances of &lt;tt&gt;javax.jms.Message objects when
-         * Camel is sending a JMS message.
+         * creates new instances of javax.jms.Message objects when Camel is
+         * sending a JMS message.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.apache.camel.component.sjms.jms.MessageCreatedStrategy&lt;/code&gt; type.
@@ -2264,8 +2264,8 @@ public interface Sjms2EndpointBuilderFactory {
         }
         /**
          * To use the given MessageCreatedStrategy which are invoked when Camel
-         * creates new instances of &lt;tt&gt;javax.jms.Message objects when
-         * Camel is sending a JMS message.
+         * creates new instances of javax.jms.Message objects when Camel is
+         * sending a JMS message.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.sjms.jms.MessageCreatedStrategy&lt;/code&gt; type.
@@ -2282,8 +2282,8 @@ public interface Sjms2EndpointBuilderFactory {
         }
         /**
          * To use the given MessageCreatedStrategy which are invoked when Camel
-         * creates new instances of &lt;tt&gt;javax.jms.Message objects when
-         * Camel is sending a JMS message.
+         * creates new instances of javax.jms.Message objects when Camel is
+         * sending a JMS message.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.apache.camel.component.sjms.jms.MessageCreatedStrategy&lt;/code&gt; type.
@@ -2962,8 +2962,8 @@ public interface Sjms2EndpointBuilderFactory {
         }
         /**
          * To use the given MessageCreatedStrategy which are invoked when Camel
-         * creates new instances of &lt;tt&gt;javax.jms.Message objects when
-         * Camel is sending a JMS message.
+         * creates new instances of javax.jms.Message objects when Camel is
+         * sending a JMS message.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.sjms.jms.MessageCreatedStrategy&lt;/code&gt; type.
@@ -2980,8 +2980,8 @@ public interface Sjms2EndpointBuilderFactory {
         }
         /**
          * To use the given MessageCreatedStrategy which are invoked when Camel
-         * creates new instances of &lt;tt&gt;javax.jms.Message objects when
-         * Camel is sending a JMS message.
+         * creates new instances of javax.jms.Message objects when Camel is
+         * sending a JMS message.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.apache.camel.component.sjms.jms.MessageCreatedStrategy&lt;/code&gt; type.

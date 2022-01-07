@@ -2,7 +2,7 @@
 :doctitle: Timer
 :shortname: timer
 :artifactid: camel-timer
-:description: Generate messages in specified intervals using <code>java.util.Timer.
+:description: Generate messages in specified intervals using java.util.Timer.
 :since: 1.0
 :supportlevel: Stable
 :component-header: Only consumer is supported

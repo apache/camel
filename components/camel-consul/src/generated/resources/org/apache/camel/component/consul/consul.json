@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "consul",
     "title": "Consul",
-    "description": "Integrate with service discovery and configuration store.",
+    "description": "Integrate with Consul service discovery and configuration store.",
     "deprecated": false,
     "firstVersion": "2.18.0",
     "label": "cloud,api",
