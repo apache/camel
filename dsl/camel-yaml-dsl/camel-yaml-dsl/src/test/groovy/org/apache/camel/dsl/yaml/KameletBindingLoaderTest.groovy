@@ -160,15 +160,19 @@ class KameletBindingLoaderTest extends YamlTestSupport {
         with (context.routeDefinitions[0]) {
             routeId == 'steps-binding'
             input.endpointUri == 'kamelet:timer-source?message=Camel'
+            input.lineNumber == 7
             outputs.size() == 3
             with (outputs[0], KameletDefinition) {
                 name == 'prefix-action?prefix=Apache'
+                lineNumber == 14
             }
             with (outputs[1], KameletDefinition) {
                 name == 'prefix-action?prefix=Hello'
+                lineNumber == 20
             }
             with (outputs[2], ToDefinition) {
                 endpointUri == 'log:info'
+                lineNumber == 27
             }
         }
     }

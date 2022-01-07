@@ -32,7 +32,9 @@ import org.apache.camel.builder.RouteConfigurationBuilder;
 import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerSupport;
 import org.apache.camel.dsl.yaml.deserializers.OutputAwareFromDefinition;
+import org.apache.camel.model.KameletDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
+import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
@@ -286,13 +288,27 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                     MappingNode step = asMappingNode(node);
                     uri = extractCamelEndpointUri(step);
                     if (uri != null) {
+                        line = -1;
+                        if (node.getStartMark().isPresent()) {
+                            line = node.getStartMark().get().getLine();
+                        }
+
+                        ProcessorDefinition out;
                         // if kamelet then use kamelet eip instead of to
                         boolean kamelet = uri.startsWith("kamelet:");
                         if (kamelet) {
                             uri = uri.substring(8);
-                            route.kamelet(uri);
+                            out = new KameletDefinition(uri);
                         } else {
-                            route.to(uri);
+                            out = new ToDefinition(uri);
+                        }
+                        route.addOutput(out);
+                        // enrich model with line number
+                        if (line != -1) {
+                            out.setLineNumber(line);
+                            if (ctx != null) {
+                                out.setLocation(ctx.getResource().getLocation());
+                            }
                         }
                     }
                 }
