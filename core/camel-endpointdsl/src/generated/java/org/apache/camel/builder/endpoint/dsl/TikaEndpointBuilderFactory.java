@@ -141,10 +141,10 @@ public interface TikaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Tika Output Format. Supported output formats. &lt;ul&gt;
-         * &lt;li&gt;xml: Returns Parsed Content as XML. &lt;li&gt;html: Returns
-         * Parsed Content as HTML. &lt;li&gt;text: Returns Parsed Content as
-         * Text. &lt;li&gt;textMain: Uses the.
+         * Tika Output Format. Supported output formats. xml: Returns Parsed
+         * Content as XML. html: Returns Parsed Content as HTML. text: Returns
+         * Parsed Content as Text. textMain: Uses the boilerpipe library to
+         * automatically extract the main content from a web page.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.tika.TikaParseOutputFormat&lt;/code&gt; type.
@@ -161,10 +161,10 @@ public interface TikaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Tika Output Format. Supported output formats. &lt;ul&gt;
-         * &lt;li&gt;xml: Returns Parsed Content as XML. &lt;li&gt;html: Returns
-         * Parsed Content as HTML. &lt;li&gt;text: Returns Parsed Content as
-         * Text. &lt;li&gt;textMain: Uses the.
+         * Tika Output Format. Supported output formats. xml: Returns Parsed
+         * Content as XML. html: Returns Parsed Content as HTML. text: Returns
+         * Parsed Content as Text. textMain: Uses the boilerpipe library to
+         * automatically extract the main content from a web page.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.apache.camel.component.tika.TikaParseOutputFormat&lt;/code&gt; type.

@@ -2,7 +2,7 @@
 :doctitle: Atomix Set
 :shortname: atomix-set
 :artifactid: camel-atomix
-:description: Access Atomix's .
+:description: Access Atomix's distributed set.
 :since: 2.20
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported

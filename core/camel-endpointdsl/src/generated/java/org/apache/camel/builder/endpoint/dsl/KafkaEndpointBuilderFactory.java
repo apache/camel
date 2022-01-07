@@ -51,10 +51,10 @@ public interface KafkaEndpointBuilderFactory {
          * configurations (e.g: new Kafka properties that are not reflected yet
          * in Camel configurations), the properties have to be prefixed with
          * additionalProperties.. E.g:
-         * additionalProperties.transactional.id=12345&amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * additionalProperties.transactional.id=12345&amp;amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * additionalProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -77,10 +77,10 @@ public interface KafkaEndpointBuilderFactory {
          * configurations (e.g: new Kafka properties that are not reflected yet
          * in Camel configurations), the properties have to be prefixed with
          * additionalProperties.. E.g:
-         * additionalProperties.transactional.id=12345&amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * additionalProperties.transactional.id=12345&amp;amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * additionalProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -97,8 +97,8 @@ public interface KafkaEndpointBuilderFactory {
         /**
          * URL of the Kafka brokers to use. The format is
          * host1:port1,host2:port2, and the list can be a subset of brokers or a
-         * VIP pointing to a subset of brokers. &lt;p/&gt; This option is known
-         * as &lt;tt&gt;bootstrap.servers in the Kafka documentation.
+         * VIP pointing to a subset of brokers. This option is known as
+         * bootstrap.servers in the Kafka documentation.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -238,11 +238,10 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether to allow doing manual commits via KafkaManualCommit.
-         * &lt;p/&gt; If this option is enabled then an instance of
-         * KafkaManualCommit is stored on the Exchange message header, which
-         * allows end users to access this API and perform manual offset commits
-         * via the Kafka consumer.
+         * Whether to allow doing manual commits via KafkaManualCommit. If this
+         * option is enabled then an instance of KafkaManualCommit is stored on
+         * the Exchange message header, which allows end users to access this
+         * API and perform manual offset commits via the Kafka consumer.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -258,11 +257,10 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether to allow doing manual commits via KafkaManualCommit.
-         * &lt;p/&gt; If this option is enabled then an instance of
-         * KafkaManualCommit is stored on the Exchange message header, which
-         * allows end users to access this API and perform manual offset commits
-         * via the Kafka consumer.
+         * Whether to allow doing manual commits via KafkaManualCommit. If this
+         * option is enabled then an instance of KafkaManualCommit is stored on
+         * the Exchange message header, which allows end users to access this
+         * API and perform manual offset commits via the Kafka consumer.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -392,14 +390,14 @@ public interface KafkaEndpointBuilderFactory {
         }
         /**
          * This options controls what happens when a consumer is processing an
-         * exchange and it fails. If the option is &lt;tt&gt;false then the
-         * consumer continues to the next message and processes it. If the
-         * option is &lt;tt&gt;true then the consumer breaks out, and will seek
-         * back to offset of the message that caused a failure, and then
-         * re-attempt to process this message. However this can lead to endless
-         * processing of the same message if its bound to fail every time, eg a
-         * poison message. Therefore its recommended to deal with that for
-         * example by using Camel's error handler.
+         * exchange and it fails. If the option is false then the consumer
+         * continues to the next message and processes it. If the option is true
+         * then the consumer breaks out, and will seek back to offset of the
+         * message that caused a failure, and then re-attempt to process this
+         * message. However this can lead to endless processing of the same
+         * message if its bound to fail every time, eg a poison message.
+         * Therefore its recommended to deal with that for example by using
+         * Camel's error handler.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -416,14 +414,14 @@ public interface KafkaEndpointBuilderFactory {
         }
         /**
          * This options controls what happens when a consumer is processing an
-         * exchange and it fails. If the option is &lt;tt&gt;false then the
-         * consumer continues to the next message and processes it. If the
-         * option is &lt;tt&gt;true then the consumer breaks out, and will seek
-         * back to offset of the message that caused a failure, and then
-         * re-attempt to process this message. However this can lead to endless
-         * processing of the same message if its bound to fail every time, eg a
-         * poison message. Therefore its recommended to deal with that for
-         * example by using Camel's error handler.
+         * exchange and it fails. If the option is false then the consumer
+         * continues to the next message and processes it. If the option is true
+         * then the consumer breaks out, and will seek back to offset of the
+         * message that caused a failure, and then re-attempt to process this
+         * message. However this can lead to endless processing of the same
+         * message if its bound to fail every time, eg a poison message.
+         * Therefore its recommended to deal with that for example by using
+         * Camel's error handler.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -1007,8 +1005,7 @@ public interface KafkaEndpointBuilderFactory {
          * autocommit.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.StateRepository&lt;java.lang.String,
-         * java.lang.String&gt;&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.spi.StateRepository&amp;lt;java.lang.String, java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: consumer
          * 
@@ -1026,8 +1023,7 @@ public interface KafkaEndpointBuilderFactory {
          * autocommit.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.StateRepository&lt;java.lang.String,
-         * java.lang.String&gt;&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.spi.StateRepository&amp;lt;java.lang.String, java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: consumer
          * 
@@ -1426,8 +1422,8 @@ public interface KafkaEndpointBuilderFactory {
          * it to a short name. Any later rules in the list are ignored. By
          * default, principal names of the form {username}/{hostname}{REALM} are
          * mapped to {username}. For more details on the format please see the
-         * security authorization and acls documentation.. &lt;p/&gt; Multiple
-         * values can be separated by comma.
+         * security authorization and acls documentation.. Multiple values can
+         * be separated by comma.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1547,7 +1543,8 @@ public interface KafkaEndpointBuilderFactory {
         }
         /**
          * The Simple Authentication and Security Layer (SASL) Mechanism used.
-         * For the valid values see.
+         * For the valid values see
+         * http://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtml.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1903,10 +1900,10 @@ public interface KafkaEndpointBuilderFactory {
          * configurations (e.g: new Kafka properties that are not reflected yet
          * in Camel configurations), the properties have to be prefixed with
          * additionalProperties.. E.g:
-         * additionalProperties.transactional.id=12345&amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * additionalProperties.transactional.id=12345&amp;amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * additionalProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -1929,10 +1926,10 @@ public interface KafkaEndpointBuilderFactory {
          * configurations (e.g: new Kafka properties that are not reflected yet
          * in Camel configurations), the properties have to be prefixed with
          * additionalProperties.. E.g:
-         * additionalProperties.transactional.id=12345&amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * additionalProperties.transactional.id=12345&amp;amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * additionalProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -1949,8 +1946,8 @@ public interface KafkaEndpointBuilderFactory {
         /**
          * URL of the Kafka brokers to use. The format is
          * host1:port1,host2:port2, and the list can be a subset of brokers or a
-         * VIP pointing to a subset of brokers. &lt;p/&gt; This option is known
-         * as &lt;tt&gt;bootstrap.servers in the Kafka documentation.
+         * VIP pointing to a subset of brokers. This option is known as
+         * bootstrap.servers in the Kafka documentation.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -3362,8 +3359,8 @@ public interface KafkaEndpointBuilderFactory {
          * it to a short name. Any later rules in the list are ignored. By
          * default, principal names of the form {username}/{hostname}{REALM} are
          * mapped to {username}. For more details on the format please see the
-         * security authorization and acls documentation.. &lt;p/&gt; Multiple
-         * values can be separated by comma.
+         * security authorization and acls documentation.. Multiple values can
+         * be separated by comma.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -3483,7 +3480,8 @@ public interface KafkaEndpointBuilderFactory {
         }
         /**
          * The Simple Authentication and Security Layer (SASL) Mechanism used.
-         * For the valid values see.
+         * For the valid values see
+         * http://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtml.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -3848,10 +3846,10 @@ public interface KafkaEndpointBuilderFactory {
          * configurations (e.g: new Kafka properties that are not reflected yet
          * in Camel configurations), the properties have to be prefixed with
          * additionalProperties.. E.g:
-         * additionalProperties.transactional.id=12345&amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * additionalProperties.transactional.id=12345&amp;amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * additionalProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -3874,10 +3872,10 @@ public interface KafkaEndpointBuilderFactory {
          * configurations (e.g: new Kafka properties that are not reflected yet
          * in Camel configurations), the properties have to be prefixed with
          * additionalProperties.. E.g:
-         * additionalProperties.transactional.id=12345&amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * additionalProperties.transactional.id=12345&amp;amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * additionalProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -3894,8 +3892,8 @@ public interface KafkaEndpointBuilderFactory {
         /**
          * URL of the Kafka brokers to use. The format is
          * host1:port1,host2:port2, and the list can be a subset of brokers or a
-         * VIP pointing to a subset of brokers. &lt;p/&gt; This option is known
-         * as &lt;tt&gt;bootstrap.servers in the Kafka documentation.
+         * VIP pointing to a subset of brokers. This option is known as
+         * bootstrap.servers in the Kafka documentation.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -4127,8 +4125,8 @@ public interface KafkaEndpointBuilderFactory {
          * it to a short name. Any later rules in the list are ignored. By
          * default, principal names of the form {username}/{hostname}{REALM} are
          * mapped to {username}. For more details on the format please see the
-         * security authorization and acls documentation.. &lt;p/&gt; Multiple
-         * values can be separated by comma.
+         * security authorization and acls documentation.. Multiple values can
+         * be separated by comma.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -4247,7 +4245,8 @@ public interface KafkaEndpointBuilderFactory {
         }
         /**
          * The Simple Authentication and Security Layer (SASL) Mechanism used.
-         * For the valid values see.
+         * For the valid values see
+         * http://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtml.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

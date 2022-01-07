@@ -219,8 +219,7 @@ public interface ServerEndpointBuilderFactory {
             return this;
         }
         /**
-         * The common ASDU address size. &lt;p&gt; May be either SIZE_1 or
-         * SIZE_2.
+         * The common ASDU address size. May be either SIZE_1 or SIZE_2.
          * 
          * The option is a:
          * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.ASDUAddressType&lt;/code&gt; type.
@@ -236,8 +235,7 @@ public interface ServerEndpointBuilderFactory {
             return this;
         }
         /**
-         * The common ASDU address size. &lt;p&gt; May be either SIZE_1 or
-         * SIZE_2.
+         * The common ASDU address size. May be either SIZE_1 or SIZE_2.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.ASDUAddressType&lt;/code&gt; type.
@@ -253,8 +251,7 @@ public interface ServerEndpointBuilderFactory {
             return this;
         }
         /**
-         * The cause of transmission type. &lt;p&gt; May be either SIZE_1 or
-         * SIZE_2.
+         * The cause of transmission type. May be either SIZE_1 or SIZE_2.
          * 
          * The option is a:
          * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType&lt;/code&gt; type.
@@ -270,8 +267,7 @@ public interface ServerEndpointBuilderFactory {
             return this;
         }
         /**
-         * The cause of transmission type. &lt;p&gt; May be either SIZE_1 or
-         * SIZE_2.
+         * The cause of transmission type. May be either SIZE_1 or SIZE_2.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType&lt;/code&gt; type.
@@ -287,8 +283,7 @@ public interface ServerEndpointBuilderFactory {
             return this;
         }
         /**
-         * The information address size. &lt;p&gt; May be either SIZE_1, SIZE_2
-         * or SIZE_3.
+         * The information address size. May be either SIZE_1, SIZE_2 or SIZE_3.
          * 
          * The option is a:
          * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType&lt;/code&gt; type.
@@ -304,8 +299,7 @@ public interface ServerEndpointBuilderFactory {
             return this;
         }
         /**
-         * The information address size. &lt;p&gt; May be either SIZE_1, SIZE_2
-         * or SIZE_3.
+         * The information address size. May be either SIZE_1, SIZE_2 or SIZE_3.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType&lt;/code&gt; type.
@@ -574,7 +568,7 @@ public interface ServerEndpointBuilderFactory {
             return this;
         }
         /**
-         * The timezone to use. &lt;p&gt; May be any Java time zone string.
+         * The timezone to use. May be any Java time zone string.
          * 
          * The option is a: &lt;code&gt;java.util.TimeZone&lt;/code&gt; type.
          * 
@@ -589,7 +583,7 @@ public interface ServerEndpointBuilderFactory {
             return this;
         }
         /**
-         * The timezone to use. &lt;p&gt; May be any Java time zone string.
+         * The timezone to use. May be any Java time zone string.
          * 
          * The option will be converted to a
          * &lt;code&gt;java.util.TimeZone&lt;/code&gt; type.
@@ -891,8 +885,7 @@ public interface ServerEndpointBuilderFactory {
             return this;
         }
         /**
-         * The common ASDU address size. &lt;p&gt; May be either SIZE_1 or
-         * SIZE_2.
+         * The common ASDU address size. May be either SIZE_1 or SIZE_2.
          * 
          * The option is a:
          * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.ASDUAddressType&lt;/code&gt; type.
@@ -908,8 +901,7 @@ public interface ServerEndpointBuilderFactory {
             return this;
         }
         /**
-         * The common ASDU address size. &lt;p&gt; May be either SIZE_1 or
-         * SIZE_2.
+         * The common ASDU address size. May be either SIZE_1 or SIZE_2.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.ASDUAddressType&lt;/code&gt; type.
@@ -925,8 +917,7 @@ public interface ServerEndpointBuilderFactory {
             return this;
         }
         /**
-         * The cause of transmission type. &lt;p&gt; May be either SIZE_1 or
-         * SIZE_2.
+         * The cause of transmission type. May be either SIZE_1 or SIZE_2.
          * 
          * The option is a:
          * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType&lt;/code&gt; type.
@@ -942,8 +933,7 @@ public interface ServerEndpointBuilderFactory {
             return this;
         }
         /**
-         * The cause of transmission type. &lt;p&gt; May be either SIZE_1 or
-         * SIZE_2.
+         * The cause of transmission type. May be either SIZE_1 or SIZE_2.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType&lt;/code&gt; type.
@@ -959,8 +949,7 @@ public interface ServerEndpointBuilderFactory {
             return this;
         }
         /**
-         * The information address size. &lt;p&gt; May be either SIZE_1, SIZE_2
-         * or SIZE_3.
+         * The information address size. May be either SIZE_1, SIZE_2 or SIZE_3.
          * 
          * The option is a:
          * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType&lt;/code&gt; type.
@@ -976,8 +965,7 @@ public interface ServerEndpointBuilderFactory {
             return this;
         }
         /**
-         * The information address size. &lt;p&gt; May be either SIZE_1, SIZE_2
-         * or SIZE_3.
+         * The information address size. May be either SIZE_1, SIZE_2 or SIZE_3.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType&lt;/code&gt; type.
@@ -1246,7 +1234,7 @@ public interface ServerEndpointBuilderFactory {
             return this;
         }
         /**
-         * The timezone to use. &lt;p&gt; May be any Java time zone string.
+         * The timezone to use. May be any Java time zone string.
          * 
          * The option is a: &lt;code&gt;java.util.TimeZone&lt;/code&gt; type.
          * 
@@ -1261,7 +1249,7 @@ public interface ServerEndpointBuilderFactory {
             return this;
         }
         /**
-         * The timezone to use. &lt;p&gt; May be any Java time zone string.
+         * The timezone to use. May be any Java time zone string.
          * 
          * The option will be converted to a
          * &lt;code&gt;java.util.TimeZone&lt;/code&gt; type.
@@ -1437,8 +1425,7 @@ public interface ServerEndpointBuilderFactory {
             return this;
         }
         /**
-         * The common ASDU address size. &lt;p&gt; May be either SIZE_1 or
-         * SIZE_2.
+         * The common ASDU address size. May be either SIZE_1 or SIZE_2.
          * 
          * The option is a:
          * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.ASDUAddressType&lt;/code&gt; type.
@@ -1454,8 +1441,7 @@ public interface ServerEndpointBuilderFactory {
             return this;
         }
         /**
-         * The common ASDU address size. &lt;p&gt; May be either SIZE_1 or
-         * SIZE_2.
+         * The common ASDU address size. May be either SIZE_1 or SIZE_2.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.ASDUAddressType&lt;/code&gt; type.
@@ -1470,8 +1456,7 @@ public interface ServerEndpointBuilderFactory {
             return this;
         }
         /**
-         * The cause of transmission type. &lt;p&gt; May be either SIZE_1 or
-         * SIZE_2.
+         * The cause of transmission type. May be either SIZE_1 or SIZE_2.
          * 
          * The option is a:
          * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType&lt;/code&gt; type.
@@ -1487,8 +1472,7 @@ public interface ServerEndpointBuilderFactory {
             return this;
         }
         /**
-         * The cause of transmission type. &lt;p&gt; May be either SIZE_1 or
-         * SIZE_2.
+         * The cause of transmission type. May be either SIZE_1 or SIZE_2.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType&lt;/code&gt; type.
@@ -1504,8 +1488,7 @@ public interface ServerEndpointBuilderFactory {
             return this;
         }
         /**
-         * The information address size. &lt;p&gt; May be either SIZE_1, SIZE_2
-         * or SIZE_3.
+         * The information address size. May be either SIZE_1, SIZE_2 or SIZE_3.
          * 
          * The option is a:
          * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType&lt;/code&gt; type.
@@ -1521,8 +1504,7 @@ public interface ServerEndpointBuilderFactory {
             return this;
         }
         /**
-         * The information address size. &lt;p&gt; May be either SIZE_1, SIZE_2
-         * or SIZE_3.
+         * The information address size. May be either SIZE_1, SIZE_2 or SIZE_3.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType&lt;/code&gt; type.
@@ -1786,7 +1768,7 @@ public interface ServerEndpointBuilderFactory {
             return this;
         }
         /**
-         * The timezone to use. &lt;p&gt; May be any Java time zone string.
+         * The timezone to use. May be any Java time zone string.
          * 
          * The option is a: &lt;code&gt;java.util.TimeZone&lt;/code&gt; type.
          * 
@@ -1801,7 +1783,7 @@ public interface ServerEndpointBuilderFactory {
             return this;
         }
         /**
-         * The timezone to use. &lt;p&gt; May be any Java time zone string.
+         * The timezone to use. May be any Java time zone string.
          * 
          * The option will be converted to a
          * &lt;code&gt;java.util.TimeZone&lt;/code&gt; type.

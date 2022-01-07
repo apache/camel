@@ -2,7 +2,7 @@
 :doctitle: Ignite Events
 :shortname: ignite-events
 :artifactid: camel-ignite
-:description: from an Ignite cluster by creating a local event listener.
+:description: Receive events from an Ignite cluster by creating a local event listener.
 :since: 2.17
 :supportlevel: Stable
 :component-header: Only consumer is supported

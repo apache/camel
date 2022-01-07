@@ -2,7 +2,7 @@
 :doctitle: Hazelcast List
 :shortname: hazelcast-list
 :artifactid: camel-hazelcast
-:description: Perform operations on distributed list.
+:description: Perform operations on Hazelcast distributed list.
 :since: 2.7
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported

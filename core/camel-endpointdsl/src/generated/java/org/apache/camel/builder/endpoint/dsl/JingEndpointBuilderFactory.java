@@ -36,9 +36,9 @@ public interface JingEndpointBuilderFactory {
      */
     public interface JingEndpointBuilder extends EndpointProducerBuilder {
         /**
-         * Whether to validate using RelaxNG compact syntax or not. &lt;p/&gt;
-         * By default this is &lt;tt&gt;false for using RelaxNG XML Syntax (rng)
-         * And &lt;tt&gt;true is for using RelaxNG Compact Syntax (rnc).
+         * Whether to validate using RelaxNG compact syntax or not. By default
+         * this is false for using RelaxNG XML Syntax (rng) And true is for
+         * using RelaxNG Compact Syntax (rnc).
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -53,9 +53,9 @@ public interface JingEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether to validate using RelaxNG compact syntax or not. &lt;p/&gt;
-         * By default this is &lt;tt&gt;false for using RelaxNG XML Syntax (rng)
-         * And &lt;tt&gt;true is for using RelaxNG Compact Syntax (rnc).
+         * Whether to validate using RelaxNG compact syntax or not. By default
+         * this is false for using RelaxNG XML Syntax (rng) And true is for
+         * using RelaxNG Compact Syntax (rnc).
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.

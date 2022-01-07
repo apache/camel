@@ -115,7 +115,7 @@ public interface JsltComponentBuilderFactory {
          * JSLT can be extended by plugging in functions written in Java.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.Collection&lt;com.schibsted.spt.data.jslt.Function&gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.Collection&amp;lt;com.schibsted.spt.data.jslt.Function&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
