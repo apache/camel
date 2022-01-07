@@ -42,6 +42,8 @@ public class ActiveMQConfigureTest extends ActiveMQTestSupport {
 
     @Test
     public void testJmsTemplateUsesPoolingConnectionFactory() throws Exception {
+        Thread.sleep(500);
+
         JmsEndpoint endpoint = resolveMandatoryEndpoint("activemq:test.foo");
         JmsProducer producer = (JmsProducer) endpoint.createProducer();
 
