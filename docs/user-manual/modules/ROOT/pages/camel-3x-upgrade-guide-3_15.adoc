@@ -16,6 +16,23 @@ The `camel-kamelet-reify` has been removed.
 
 Added `getScheme` method to `org.apache.camel.spi.Resource`.
 
+
+=== Core Dependency changes
+
+As part of CAMEL-17429 and CAMEL-17435, the following dependencies are no longer included by default on all of the Camel modules:
+
+ * com.sun.xml.messaging.saaj:saaj-impl
+ * jakarta.xml.bind:jakarta.xml.bind-api
+ * javax.annotation:javax.annotation-api
+ * javax.xml.soap:javax.xml.soap-api
+ * javax.xml.ws:jaxws-api
+ * org.apache.geronimo.specs:geronimo-jta_1.1_spec
+ * org.apache.geronimo.specs:geronimo-ws-metadata_2.0_spec
+ * org.glassfish.jaxb:jaxb-runtime
+
+These dependencies were included on the specific modules and components that required them on a per case basis.
+ Applications with dependency on any of those, but using them transitively, should be modified to include them.
+
 === camel-core
 
 Removed the deprecated `Classic` value from `startupSummaryLevel` enums.
