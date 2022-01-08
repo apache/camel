@@ -431,7 +431,7 @@ public abstract class BuilderSupport implements CamelContextAware {
      * @return               the builder
      */
     public DeadLetterChannelBuilder deadLetterChannel(String deadLetterUri) {
-        return deadLetterChannel(endpoint(deadLetterUri));
+        return new DeadLetterChannelBuilder(deadLetterUri);
     }
 
     /**
