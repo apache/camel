@@ -19,7 +19,6 @@ package org.apache.camel.maven.packaging;
 import java.io.File;
 import java.io.IOError;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedList;
@@ -162,14 +161,10 @@ public class GenerateEndpointUriFactoryMojo extends AbstractGeneratorMojo {
         String cn = targetFqn.substring(pos + 1) + "EndpointUriFactory";
         // remove component from name
         cn = cn.replace("Component", "");
-        String en = fqn;
-        String pfqn = fqn;
+
         String psn = "org.apache.camel.support.component.EndpointUriFactorySupport";
 
-        StringWriter sw = new StringWriter();
-        EndpointUriFactoryGenerator.generateEndpointUriFactory(pn, cn, en, pfqn, psn, model, sw);
-
-        String source = sw.toString();
+        String source = EndpointUriFactoryGenerator.generateEndpointUriFactory(pn, cn, psn, model);
 
         String fileName = pn.replace('.', '/') + "/" + cn + ".java";
         outputDir.mkdirs();

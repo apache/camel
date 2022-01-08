@@ -30,94 +30,95 @@ public final class EndpointUriFactoryGenerator {
     private EndpointUriFactoryGenerator() {
     }
 
-    public static void generateEndpointUriFactory(
-            String pn, String cn, String en,
-            String pfqn, String psn, ComponentModel model, Writer w)
-            throws IOException {
+    public static String generateEndpointUriFactory(String pn, String cn, String psn, ComponentModel model) {
+        StringBuilder w = new StringBuilder();
 
-        w.write("/* " + AbstractGeneratorMojo.GENERATED_MSG + " */\n");
-        w.write("package " + pn + ";\n");
-        w.write("\n");
-        w.write("import java.net.URISyntaxException;\n");
-        w.write("import java.util.Collections;\n");
-        w.write("import java.util.HashMap;\n");
-        w.write("import java.util.HashSet;\n");
-        w.write("import java.util.Map;\n");
-        w.write("import java.util.Set;\n");
-        w.write("\n");
-        w.write("import org.apache.camel.spi.EndpointUriFactory;\n");
-        w.write("\n");
-        w.write("/**\n");
-        w.write(" * " + AbstractGeneratorMojo.GENERATED_MSG + "\n");
-        w.write(" */\n");
-        w.write("public class " + cn + " extends " + psn + " implements EndpointUriFactory {\n");
-        w.write("\n");
-        w.write("    private static final String BASE = \"" + baseSyntax(model) + "\";\n");
+        w.append("/* ").append(AbstractGeneratorMojo.GENERATED_MSG).append(" */\n");
+        w.append("package ").append(pn).append(";\n");
+        w.append('\n');
+        w.append("import java.net.URISyntaxException;\n");
+        w.append("import java.util.Collections;\n");
+        w.append("import java.util.HashMap;\n");
+        w.append("import java.util.HashSet;\n");
+        w.append("import java.util.Map;\n");
+        w.append("import java.util.Set;\n");
+        w.append('\n');
+        w.append("import org.apache.camel.spi.EndpointUriFactory;\n");
+        w.append('\n');
+        w.append("/**\n");
+        w.append(" * ").append(AbstractGeneratorMojo.GENERATED_MSG).append('\n');
+        w.append(" */\n");
+        w.append("public class ").append(cn).append(" extends ").append(psn).append(" implements EndpointUriFactory {\n");
+        w.append('\n');
+        w.append("    private static final String BASE = \"").append(baseSyntax(model)).append("\";\n");
 
         String alternative = alternativeSchemes(model);
         if (alternative != null) {
-            w.write("    private static final String[] SCHEMES = " + alternative + ";\n");
+            w.append("    private static final String[] SCHEMES = ").append(alternative).append(";\n");
         }
-        w.write("\n");
-        w.write("    private static final Set<String> PROPERTY_NAMES;\n");
-        w.write("    private static final Set<String> SECRET_PROPERTY_NAMES;\n");
-        w.write("    private static final Set<String> MULTI_VALUE_PREFIXES;\n");
-        w.write("    static {\n");
-        w.write(generatePropertyNames(model));
-        w.write(generateSecretPropertyNames(model));
-        w.write(generateMultiValuePrefixes(model));
-        w.write("    }\n");
-        w.write("\n");
-        w.write("    @Override\n");
-        w.write("    public boolean isEnabled(String scheme) {\n");
+        w.append("\n");
+        w.append("    private static final Set<String> PROPERTY_NAMES;\n");
+        w.append("    private static final Set<String> SECRET_PROPERTY_NAMES;\n");
+        w.append("    private static final Set<String> MULTI_VALUE_PREFIXES;\n");
+        w.append("    static {\n");
+        w.append(generatePropertyNames(model));
+        w.append(generateSecretPropertyNames(model));
+        w.append(generateMultiValuePrefixes(model));
+        w.append("    }\n");
+        w.append("\n");
+        w.append("    @Override\n");
+        w.append("    public boolean isEnabled(String scheme) {\n");
         if (alternative == null) {
-            w.write("        return \"" + model.getScheme() + "\".equals(scheme);\n");
+            w.append("        return \"").append(model.getScheme()).append("\".equals(scheme);\n");
         } else {
-            w.write("        for (String s : SCHEMES) {\n");
-            w.write("            if (s.equals(scheme)) {\n");
-            w.write("                return true;\n");
-            w.write("            }\n");
-            w.write("        }\n");
-            w.write("        return false;\n");
+            w.append("        for (String s : SCHEMES) {\n");
+            w.append("            if (s.equals(scheme)) {\n");
+            w.append("                return true;\n");
+            w.append("            }\n");
+            w.append("        }\n");
+            w.append("        return false;\n");
         }
-        w.write("    }\n");
-        w.write("\n");
-        w.write("    @Override\n");
-        w.write("    public String buildUri(String scheme, Map<String, Object> properties, boolean encode) throws URISyntaxException {\n");
-        w.write("        String syntax = scheme + BASE;\n");
-        w.write("        String uri = syntax;\n");
-        w.write("\n");
-        w.write("        Map<String, Object> copy = new HashMap<>(properties);\n");
-        w.write("\n");
+        w.append("    }\n");
+        w.append('\n');
+        w.append("    @Override\n");
+        w.append(
+                "    public String buildUri(String scheme, Map<String, Object> properties, boolean encode) throws URISyntaxException {\n");
+        w.append("        String syntax = scheme + BASE;\n");
+        w.append("        String uri = syntax;\n");
+        w.append('\n');
+        w.append("        Map<String, Object> copy = new HashMap<>(properties);\n");
+        w.append('\n');
         for (BaseOptionModel option : model.getEndpointPathOptions()) {
-            w.write("        uri = buildPathParameter(syntax, uri, \"" + option.getName() + "\", "
-                    + defaultValue(option) + ", " + option.isRequired() + ", copy);\n");
+            w.append("        uri = buildPathParameter(syntax, uri, \"").append(option.getName())
+                    .append("\", ").append(defaultValue(option)).append(", ").append(option.isRequired()).append(", copy);\n");
         }
-        w.write("        uri = buildQueryParameters(uri, copy, encode);\n");
-        w.write("        return uri;\n");
-        w.write("    }\n");
-        w.write("\n");
-        w.write("    @Override\n");
-        w.write("    public Set<String> propertyNames() {\n");
-        w.write("        return PROPERTY_NAMES;\n");
-        w.write("    }\n");
-        w.write("\n");
-        w.write("    @Override\n");
-        w.write("    public Set<String> secretPropertyNames() {\n");
-        w.write("        return SECRET_PROPERTY_NAMES;\n");
-        w.write("    }\n");
-        w.write("\n");
-        w.write("    @Override\n");
-        w.write("    public Set<String> multiValuePrefixes() {\n");
-        w.write("        return MULTI_VALUE_PREFIXES;\n");
-        w.write("    }\n");
-        w.write("\n");
-        w.write("    @Override\n");
-        w.write("    public boolean isLenientProperties() {\n");
-        w.write("        return " + model.isLenientProperties() + ";\n");
-        w.write("    }\n");
-        w.write("}\n");
-        w.write("\n");
+        w.append("        uri = buildQueryParameters(uri, copy, encode);\n");
+        w.append("        return uri;\n");
+        w.append("    }\n");
+        w.append("\n");
+        w.append("    @Override\n");
+        w.append("    public Set<String> propertyNames() {\n");
+        w.append("        return PROPERTY_NAMES;\n");
+        w.append("    }\n");
+        w.append("\n");
+        w.append("    @Override\n");
+        w.append("    public Set<String> secretPropertyNames() {\n");
+        w.append("        return SECRET_PROPERTY_NAMES;\n");
+        w.append("    }\n");
+        w.append("\n");
+        w.append("    @Override\n");
+        w.append("    public Set<String> multiValuePrefixes() {\n");
+        w.append("        return MULTI_VALUE_PREFIXES;\n");
+        w.append("    }\n");
+        w.append("\n");
+        w.append("    @Override\n");
+        w.append("    public boolean isLenientProperties() {\n");
+        w.append("        return " + model.isLenientProperties() + ";\n");
+        w.append("    }\n");
+        w.append("}\n");
+        w.append("\n");
+
+        return w.toString();
     }
 
     private static String generatePropertyNames(ComponentModel model) {
