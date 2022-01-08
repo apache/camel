@@ -37,12 +37,11 @@ public class DeadLetterChannelBuilderWithInvalidDeadLetterUriTest extends Contex
                     from("direct:start").to("mock:foo");
                 }
             });
+            context.start();
 
             fail("Should have thrown an exception");
-        } catch (NoSuchEndpointException e) {
-            assertEquals(
-                    "No endpoint could be found for: xxx, please check your classpath contains the needed Camel component jar.",
-                    e.getMessage());
+        } catch (Exception e) {
+            assertIsInstanceOf(NoSuchEndpointException.class, e.getCause());
         }
     }
 
@@ -57,10 +56,11 @@ public class DeadLetterChannelBuilderWithInvalidDeadLetterUriTest extends Contex
                     from("direct:start").to("mock:foo");
                 }
             });
+            context.start();
 
             fail("Should have thrown an exception");
-        } catch (ResolveEndpointFailedException e) {
-            assertTrue(e.getMessage().endsWith("Unknown parameters=[{foo=bar}]"));
+        } catch (Exception e) {
+            assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
         }
     }
 
