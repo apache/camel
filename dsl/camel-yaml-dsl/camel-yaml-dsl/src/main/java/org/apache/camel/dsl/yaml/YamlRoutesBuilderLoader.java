@@ -293,7 +293,7 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                             line = node.getStartMark().get().getLine();
                         }
 
-                        ProcessorDefinition out;
+                        ProcessorDefinition<?> out;
                         // if kamelet then use kamelet eip instead of to
                         boolean kamelet = uri.startsWith("kamelet:");
                         if (kamelet) {
