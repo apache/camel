@@ -32,6 +32,8 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -179,7 +181,9 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         }
     }
 
-    private void processSchemas(Map<Class, ComponentModel> models, Class<?> classElement, UriEndpoint uriEndpoint, String label, String[] schemes, String[] titles, String[] extendsSchemes) {
+    private void processSchemas(
+            Map<Class, ComponentModel> models, Class<?> classElement, UriEndpoint uriEndpoint, String label, String[] schemes,
+            String[] titles, String[] extendsSchemes) {
         for (int i = 0; i < schemes.length; i++) {
             final String alias = schemes[i];
             final String extendsAlias = i < extendsSchemes.length ? extendsSchemes[i] : extendsSchemes[0];
@@ -1327,11 +1331,20 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             String pfqn, String psn, String scheme, boolean hasSuper, boolean component,
             Collection<? extends BaseOptionModel> options, ComponentModel model) {
 
-        try (Writer w = new StringWriter()) {
+        Instant start = Instant.now();
+        try {
             boolean extended = model.isApi(); // if the component is api then the generated configurer should be an extended configurer
-            PropertyConfigurerGenerator.generatePropertyConfigurer(pn, cn, en, pfqn, psn, hasSuper, component, extended, false,
-                    options, model, w);
-            updateResource(sourcesOutputDir.toPath(), fqn.replace('.', '/') + ".java", w.toString());
+            String source = PropertyConfigurerGenerator.generatePropertyConfigurer(pn, cn, en, pfqn, psn, hasSuper, component,
+                    extended, false,
+                    options, model);
+
+            Instant end = Instant.now();
+
+            Duration duration = Duration.between(start, end);
+
+            getLog().info("Generated code 1 in: " + duration.toMillis());
+
+            updateResource(sourcesOutputDir.toPath(), fqn.replace('.', '/') + ".java", source);
         } catch (Exception e) {
             throw new RuntimeException("Unable to generate source code file: " + fqn + ": " + e.getMessage(), e);
         }

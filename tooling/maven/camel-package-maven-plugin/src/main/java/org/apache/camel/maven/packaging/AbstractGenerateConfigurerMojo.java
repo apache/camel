@@ -432,11 +432,8 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
         String pfqn = fqn;
         String psn = "org.apache.camel.support.component.PropertyConfigurerSupport";
 
-        StringWriter sw = new StringWriter();
-        PropertyConfigurerGenerator.generatePropertyConfigurer(pn, cn, en, pfqn, psn,
-                false, false, extended, bootstrap, options, null, sw);
-
-        String source = sw.toString();
+        String source = PropertyConfigurerGenerator.generatePropertyConfigurer(pn, cn, en, pfqn, psn,
+                false, false, extended, bootstrap, options, null);
 
         String fileName = pn.replace('.', '/') + "/" + cn + ".java";
         outputDir.mkdirs();
