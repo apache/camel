@@ -110,7 +110,7 @@ public final class SensitiveUtils {
     }
 
     /**
-     * Whether the given configuration property contains a sensitive a sensitive key (such as password, accesstoken,
+     * Whether the given configuration property contains a sensitive key (such as password, accesstoken,
      * etc.)
      *
      * @param  text the configuration property
