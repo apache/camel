@@ -83,7 +83,7 @@ pipeline {
 
         stage('Test') {
             steps {
-                sh "./mvnw $MAVEN_PARAMS -Dmaven.test.failure.ignore=true verify"
+                sh "./mvnw $MAVEN_PARAMS -Dmaven.test.failure.ignore=true -Dcheckstyle.skip=true verify"
             }
             post {
                 always {

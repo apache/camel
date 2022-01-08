@@ -60,4 +60,4 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
       - name: maven build
-        run: ./mvnw -V -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 --no-transfer-progress -Psourcecheck -DskipTests install
+        run: ./mvnw -V -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 --no-transfer-progress -Psourcecheck -DskipTests -Dcheckstyle.skip=true install

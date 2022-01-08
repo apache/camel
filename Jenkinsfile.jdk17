@@ -75,7 +75,7 @@ pipeline {
 
         stage('Test') {
             steps {
-                sh "./mvnw $MAVEN_PARAMS -Darchetype.test.skip -Dmaven.test.failure.ignore=true verify"
+                sh "./mvnw $MAVEN_PARAMS -Darchetype.test.skip -Dmaven.test.failure.ignore=true -Dcheckstyle.skip=true verify"
             }
             post {
                 always {
