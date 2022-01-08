@@ -24,6 +24,36 @@ to look at the https://github.com/apache/camel/tree/main/components/camel-salesf
 setup your environment for running integration tests.
 ====
 
+== Getting Started
+
+Follow these steps to get started with the Salesforce component.
+
+. *Create a salesforce org*. If you don't already have access to a salesforce org, you can create a https://developer.salesforce.com/signup[free developer org].
+. *Create a Connected App*. In salesforce, go to Setup > Apps > App Manager, then click on *New Connected App*. Make sure to check *Enable OAuth Settings* and include relevant OAuth Scopes, including the scope called *Perform requests at any time*. Click *Save*.
+. *Get the Consumer Key and Consumer Secret*. You'll need these to configure salesforce authentication. View your new connected app, then copy the key and secret and save in a safe place.
+. *Add Maven depdendency*.
++
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-salesforce</artifactId>
+</dependency>
+----
+Spring Boot users should use the starter instead.
++
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel.springboot</groupId>
+    <artifactId>camel-salesforce-starter</artifactId>
+</dependency>
+----
+
+. *Generate DTOs*. Optionally, generate Java DTOs to represent your salesforce objects. This step isn't a hard requirement per se, but most use cases will benefit from the type safety and auto-completion. Use the <<MavenPlugin,maven plugin>> to generate DTOs for the salesforce objects you'll be working with.
+. *Configure authentication*. Using the OAuth key and secret you generated previously, configure salesforce <<AuthenticatingToSalesforce,authentication>>. 
+. *Create routes*. Starting creating routes that interact with salesforce!
+
 
 // component-configure options: START
 
@@ -39,7 +69,7 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: END
 
 
-== Authenticating to Salesforce
+== Authenticating to Salesforce [[AuthenticatingToSalesforce]]
 
 The component supports three OAuth authentication flows:
 
@@ -1928,39 +1958,10 @@ String allCustomFieldsQuery = QueryHelper.queryToFetchFilteredFieldsOf(new Accou
 [[MavenPlugin]]
 == Camel Salesforce Maven Plugin
 
-This Maven plugin generates DTOs for the Camel.
-
-Maven users will need to add the following dependency to their `pom.xml`
-for this component:
-
-[source,xml]
-----
-<dependency>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>camel-salesforce</artifactId>
-    <version>x.x.x</version>
-    <!-- use the same version as your Camel core version -->
-</dependency>
-----
-
-For obvious security reasons it is recommended that the clientId,
-clientSecret, userName and password fields be not set in the pom.xml.  
-The plugin should be configured for the rest of the properties, and can
-be executed using the following command:
-
-[source,java]
-----
-mvn camel-salesforce:generate -DcamelSalesforce.clientId=<clientid> -DcamelSalesforce.clientSecret=<clientsecret> \
-    -DcamelSalesforce.userName=<username> -DcamelSalesforce.password=<password>
-----
-
-The generated DTOs use Jackson annotations. All Salesforce
-field types are supported. Date and time fields are mapped to
-`java.time.ZonedDateTime` by default, and picklist fields are mapped to
-generated Java Enumerations.
+The Maven plugin generates Java DTOs to represent salesforce objects.
 
 Please refer to
 https://github.com/apache/camel/tree/main/components/camel-salesforce/camel-salesforce-maven-plugin[README.md]
-for details on how to generate the DTO.
+for details on how to use the plugin.
 
 include::spring-boot:partial$starter.adoc[]
