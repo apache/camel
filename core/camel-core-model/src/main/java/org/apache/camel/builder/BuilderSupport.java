@@ -347,10 +347,10 @@ public abstract class BuilderSupport implements CamelContextAware {
     /**
      * Resolves the given URI to an endpoint
      *
-     * @param  uri                     the uri to resolve
-     * @throws NoSuchEndpointException if the endpoint URI could not be resolved
-     * @return                         the endpoint
-     * @deprecated use {@link CamelContext#getEndpoint(String)} instead
+     * @param      uri                     the uri to resolve
+     * @throws     NoSuchEndpointException if the endpoint URI could not be resolved
+     * @return                             the endpoint
+     * @deprecated                         use {@link CamelContext#getEndpoint(String)} instead
      */
     @Deprecated
     public Endpoint endpoint(String uri) throws NoSuchEndpointException {
@@ -365,11 +365,11 @@ public abstract class BuilderSupport implements CamelContextAware {
     /**
      * Resolves the given URI to an endpoint of the specified type
      *
-     * @param  uri                     the uri to resolve
-     * @param  type                    the excepted type of the endpoint
-     * @throws NoSuchEndpointException if the endpoint URI could not be resolved
-     * @return                         the endpoint
-     * @deprecated use {@link CamelContext#getEndpoint(String, Class)} instead
+     * @param      uri                     the uri to resolve
+     * @param      type                    the excepted type of the endpoint
+     * @throws     NoSuchEndpointException if the endpoint URI could not be resolved
+     * @return                             the endpoint
+     * @deprecated                         use {@link CamelContext#getEndpoint(String, Class)} instead
      */
     @Deprecated
     public <T extends Endpoint> T endpoint(String uri, Class<T> type) throws NoSuchEndpointException {
@@ -384,10 +384,10 @@ public abstract class BuilderSupport implements CamelContextAware {
     /**
      * Resolves the list of URIs into a list of {@link Endpoint} instances
      *
-     * @param  uris                    list of endpoints to resolve
-     * @throws NoSuchEndpointException if an endpoint URI could not be resolved
-     * @return                         list of endpoints
-     * @deprecated use {@link CamelContext#getEndpoint(String)} instead
+     * @param      uris                    list of endpoints to resolve
+     * @throws     NoSuchEndpointException if an endpoint URI could not be resolved
+     * @return                             list of endpoints
+     * @deprecated                         use {@link CamelContext#getEndpoint(String)} instead
      */
     @Deprecated
     public List<Endpoint> endpoints(String... uris) throws NoSuchEndpointException {
