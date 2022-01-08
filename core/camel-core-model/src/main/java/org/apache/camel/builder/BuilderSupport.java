@@ -350,7 +350,9 @@ public abstract class BuilderSupport implements CamelContextAware {
      * @param  uri                     the uri to resolve
      * @throws NoSuchEndpointException if the endpoint URI could not be resolved
      * @return                         the endpoint
+     * @deprecated use {@link CamelContext#getEndpoint(String)} instead
      */
+    @Deprecated
     public Endpoint endpoint(String uri) throws NoSuchEndpointException {
         ObjectHelper.notNull(uri, "uri");
         Endpoint endpoint = getContext().getEndpoint(uri);
@@ -367,7 +369,9 @@ public abstract class BuilderSupport implements CamelContextAware {
      * @param  type                    the excepted type of the endpoint
      * @throws NoSuchEndpointException if the endpoint URI could not be resolved
      * @return                         the endpoint
+     * @deprecated use {@link CamelContext#getEndpoint(String, Class)} instead
      */
+    @Deprecated
     public <T extends Endpoint> T endpoint(String uri, Class<T> type) throws NoSuchEndpointException {
         ObjectHelper.notNull(uri, "uri");
         T endpoint = getContext().getEndpoint(uri, type);
@@ -383,7 +387,9 @@ public abstract class BuilderSupport implements CamelContextAware {
      * @param  uris                    list of endpoints to resolve
      * @throws NoSuchEndpointException if an endpoint URI could not be resolved
      * @return                         list of endpoints
+     * @deprecated use {@link CamelContext#getEndpoint(String)} instead
      */
+    @Deprecated
     public List<Endpoint> endpoints(String... uris) throws NoSuchEndpointException {
         List<Endpoint> endpoints = new ArrayList<>();
         for (String uri : uris) {
@@ -398,6 +404,7 @@ public abstract class BuilderSupport implements CamelContextAware {
      * @param  endpoints endpoints
      * @return           list of the given endpoints
      */
+    @Deprecated
     public List<Endpoint> endpoints(Endpoint... endpoints) {
         List<Endpoint> answer = new ArrayList<>();
         answer.addAll(Arrays.asList(endpoints));
