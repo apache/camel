@@ -4,7 +4,7 @@
     "name": "beanio",
     "title": "BeanIO",
     "description": "Marshal and unmarshal Java beans to and from flat files (such as CSV, delimited, or fixed length formats).",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.10.0",
     "label": "dataformat,transformation,csv",
     "javaType": "org.apache.camel.dataformat.beanio.BeanIODataFormat",
