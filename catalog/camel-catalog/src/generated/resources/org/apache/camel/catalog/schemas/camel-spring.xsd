@@ -92,8 +92,8 @@ BeanPostProcessor to post process beans.
   <xs:element name="beanio" type="tns:beanioDataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-Marshal and unmarshal Java beans to and from flat files (such as CSV, delimited,
-or fixed length formats).
+Deprecated: Marshal and unmarshal Java beans to and from flat files (such as
+CSV, delimited, or fixed length formats).
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
