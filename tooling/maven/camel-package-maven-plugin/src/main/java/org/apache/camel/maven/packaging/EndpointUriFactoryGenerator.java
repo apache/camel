@@ -16,8 +16,6 @@
  */
 package org.apache.camel.maven.packaging;
 
-import java.io.IOException;
-import java.io.Writer;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.StringJoiner;
