@@ -37,6 +37,8 @@ These dependencies were included on the specific modules and components that req
 
 Removed the deprecated `Classic` value from `startupSummaryLevel` enums.
 
+The deprecated `propertyName` on `removeProperty` EIP has been removed, use `name` instead.
+
 ==== Message History
 
 The message history output has changed to include source column, which refers to the Java class/XML file
