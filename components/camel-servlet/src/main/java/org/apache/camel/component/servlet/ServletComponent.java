@@ -321,6 +321,8 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
             binding.setTransferException(endpoint.isTransferException());
             binding.setMuteException(endpoint.isMuteException());
             binding.setEagerCheckContentAvailable(endpoint.isEagerCheckContentAvailable());
+            binding.setMapHttpMessageHeaders(endpoint.isMapHttpMessageHeaders());
+            binding.setMapHttpMessageFormUrlEncodedBody(endpoint.isMapHttpMessageFormUrlEncodedBody());
             endpoint.setHttpBinding(binding);
         }
 
