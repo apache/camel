@@ -2009,9 +2009,6 @@
             },
             "name" : {
               "type" : "string"
-            },
-            "property-name" : {
-              "type" : "string"
             }
           }
         } ]

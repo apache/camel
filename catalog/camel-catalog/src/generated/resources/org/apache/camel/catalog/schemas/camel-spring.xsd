@@ -15105,6 +15105,14 @@ can be separated by comma.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="traceLoggingFormat" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+To use a custom tracing logging format. The default format (arrow, routeId,
+label) is: %-4.4s %-12.12s %-33.33s.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="debug" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
