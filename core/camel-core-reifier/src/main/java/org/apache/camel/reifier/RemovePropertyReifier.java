@@ -31,9 +31,6 @@ public class RemovePropertyReifier extends ProcessorReifier<RemovePropertyDefini
     @Override
     public Processor createProcessor() throws Exception {
         String name = definition.getName();
-        if (name == null) {
-            name = definition.getPropertyName();
-        }
         return new RemovePropertyProcessor(parseString(name));
     }
 }
