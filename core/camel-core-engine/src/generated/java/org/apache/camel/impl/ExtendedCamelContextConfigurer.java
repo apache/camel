@@ -177,6 +177,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "Tracer": target.setTracer(property(camelContext, org.apache.camel.spi.Tracer.class, value)); return true;
         case "tracing":
         case "Tracing": target.setTracing(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "tracingloggingformat":
+        case "TracingLoggingFormat": target.setTracingLoggingFormat(property(camelContext, java.lang.String.class, value)); return true;
         case "tracingpattern":
         case "TracingPattern": target.setTracingPattern(property(camelContext, java.lang.String.class, value)); return true;
         case "tracingstandby":
@@ -362,6 +364,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "Tracer": return org.apache.camel.spi.Tracer.class;
         case "tracing":
         case "Tracing": return java.lang.Boolean.class;
+        case "tracingloggingformat":
+        case "TracingLoggingFormat": return java.lang.String.class;
         case "tracingpattern":
         case "TracingPattern": return java.lang.String.class;
         case "tracingstandby":
@@ -548,6 +552,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "Tracer": return target.getTracer();
         case "tracing":
         case "Tracing": return target.isTracing();
+        case "tracingloggingformat":
+        case "TracingLoggingFormat": return target.getTracingLoggingFormat();
         case "tracingpattern":
         case "TracingPattern": return target.getTracingPattern();
         case "tracingstandby":

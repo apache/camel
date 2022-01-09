@@ -69,6 +69,8 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean tracing;
     private boolean tracingStandby;
     private String tracingPattern;
+    @Metadata(defaultValue = "%-4.4s [%-12.12s] [%-33.33s]")
+    private String tracingLoggingFormat;
     private boolean sourceLocationEnabled;
     private boolean messageHistory;
     private boolean logMask;
@@ -548,6 +550,19 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setTracingPattern(String tracingPattern) {
         this.tracingPattern = tracingPattern;
+    }
+
+    public String getTracingLoggingFormat() {
+        return tracingLoggingFormat;
+    }
+
+    /**
+     * To use a custom tracing logging format.
+     *
+     * The default format (arrow, routeId, label) is: %-4.4s [%-12.12s] [%-33.33s]
+     */
+    public void setTracingLoggingFormat(String format) {
+        tracingLoggingFormat = format;
     }
 
     public boolean isDebugging() {
@@ -2002,6 +2017,16 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withTracingPattern(String tracingPattern) {
         this.tracingPattern = tracingPattern;
+        return (T) this;
+    }
+
+    /**
+     * To use a custom tracing logging format.
+     *
+     * The default format (arrow, routeId, label) is: %-4.4s [%-12.12s] [%-33.33s]
+     */
+    public T withTracingLoggingFormat(String format) {
+        this.tracingLoggingFormat = format;
         return (T) this;
     }
 

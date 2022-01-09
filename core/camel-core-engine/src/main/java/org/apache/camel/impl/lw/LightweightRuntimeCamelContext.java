@@ -397,6 +397,16 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
+    public String getTracingLoggingFormat() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setTracingLoggingFormat(String format) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public Boolean isBacklogTracing() {
         throw new UnsupportedOperationException();
     }

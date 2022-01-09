@@ -1278,6 +1278,22 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     void setMDCLoggingKeysPattern(String pattern);
 
     /**
+     * To use a custom tracing logging format.
+     *
+     * The default format (arrow, routeId, label) is: %-4.4s [%-12.12s] [%-33.33s]
+     */
+    String getTracingLoggingFormat();
+
+    /**
+     * To use a custom tracing logging format.
+     *
+     * The default format (arrow, routeId, label) is: %-4.4s [%-12.12s] [%-33.33s]
+     *
+     * @param format the logging format
+     */
+    void setTracingLoggingFormat(String format);
+
+    /**
      * If dumping is enabled then Camel will during startup dump all loaded routes (incl rests and route templates)
      * represented as XML DSL into the log. This is intended for trouble shooting or to assist during development.
      *

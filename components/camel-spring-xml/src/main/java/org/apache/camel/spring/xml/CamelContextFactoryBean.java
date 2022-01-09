@@ -118,6 +118,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     @XmlAttribute
     private String tracePattern;
     @XmlAttribute
+    private String traceLoggingFormat;
+    @XmlAttribute
     private String debug;
     @XmlAttribute
     @Metadata(defaultValue = "false")
@@ -846,6 +848,20 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
      */
     public void setTracePattern(String tracePattern) {
         this.tracePattern = tracePattern;
+    }
+
+    @Override
+    public String getTraceLoggingFormat() {
+        return traceLoggingFormat;
+    }
+
+    /**
+     * To use a custom tracing logging format.
+     *
+     * The default format (arrow, routeId, label) is: %-4.4s [%-12.12s] [%-33.33s]
+     */
+    public void setTraceLoggingFormat(String traceLoggingFormat) {
+        this.traceLoggingFormat = traceLoggingFormat;
     }
 
     @Override

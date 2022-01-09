@@ -219,6 +219,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "ThreadNamePattern": target.setThreadNamePattern(property(camelContext, java.lang.String.class, value)); return true;
         case "tracing":
         case "Tracing": target.setTracing(property(camelContext, boolean.class, value)); return true;
+        case "tracingloggingformat":
+        case "TracingLoggingFormat": target.setTracingLoggingFormat(property(camelContext, java.lang.String.class, value)); return true;
         case "tracingpattern":
         case "TracingPattern": target.setTracingPattern(property(camelContext, java.lang.String.class, value)); return true;
         case "tracingstandby":
@@ -436,6 +438,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "ThreadNamePattern": return java.lang.String.class;
         case "tracing":
         case "Tracing": return boolean.class;
+        case "tracingloggingformat":
+        case "TracingLoggingFormat": return java.lang.String.class;
         case "tracingpattern":
         case "TracingPattern": return java.lang.String.class;
         case "tracingstandby":
@@ -654,6 +658,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "ThreadNamePattern": return target.getThreadNamePattern();
         case "tracing":
         case "Tracing": return target.isTracing();
+        case "tracingloggingformat":
+        case "TracingLoggingFormat": return target.getTracingLoggingFormat();
         case "tracingpattern":
         case "TracingPattern": return target.getTracingPattern();
         case "tracingstandby":

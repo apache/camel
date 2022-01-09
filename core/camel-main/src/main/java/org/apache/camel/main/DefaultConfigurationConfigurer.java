@@ -274,6 +274,7 @@ public final class DefaultConfigurationConfigurer {
         camelContext.setTracing(config.isTracing());
         camelContext.setTracingStandby(config.isTracingStandby());
         camelContext.setTracingPattern(config.getTracingPattern());
+        camelContext.setTracingLoggingFormat(config.getTracingLoggingFormat());
 
         if (config.getThreadNamePattern() != null) {
             camelContext.getExecutorServiceManager().setThreadNamePattern(config.getThreadNamePattern());

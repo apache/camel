@@ -1030,6 +1030,16 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     @Override
+    public String getTracingLoggingFormat() {
+        return delegate.getTracingLoggingFormat();
+    }
+
+    @Override
+    public void setTracingLoggingFormat(String format) {
+        delegate.setTracingLoggingFormat(format);
+    }
+
+    @Override
     public void setBacklogTracing(Boolean backlogTrace) {
         delegate.setBacklogTracing(backlogTrace);
     }

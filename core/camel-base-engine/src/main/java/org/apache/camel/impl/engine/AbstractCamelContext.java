@@ -253,6 +253,7 @@ public abstract class AbstractCamelContext extends BaseService
     private Boolean trace = Boolean.FALSE;
     private Boolean traceStandby = Boolean.FALSE;
     private String tracePattern;
+    private String tracingLoggingFormat;
     private Boolean debug = Boolean.FALSE;
     private Boolean messageHistory = Boolean.FALSE;
     private Boolean logMask = Boolean.FALSE;
@@ -2204,6 +2205,16 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     public void setTracingPattern(String tracePattern) {
         this.tracePattern = tracePattern;
+    }
+
+    @Override
+    public String getTracingLoggingFormat() {
+        return tracingLoggingFormat;
+    }
+
+    @Override
+    public void setTracingLoggingFormat(String format) {
+        this.tracingLoggingFormat = format;
     }
 
     @Override
