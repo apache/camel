@@ -39,7 +39,7 @@ public class KafkaToDIT extends BaseEmbeddedKafkaTestSupport {
             @Override
             public void configure() throws Exception {
                 // route message dynamic using toD
-                from("direct:start").toD("kafka:${header.where}");
+                from("direct:start").toD("kafka://${header.where}");
             }
         };
     }
