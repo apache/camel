@@ -240,11 +240,11 @@ Type:  `List<Version>`
 
 `getResources`
 
-Lists available resources for the specified API version, including resource name and URI.
+Lists available resources for the current API version, including resource name and URI.
 
 *Output*
 
-Type: `RestResources`
+Type: `Map<String, String>`
 
 [[limits]]
 ==== Limits
