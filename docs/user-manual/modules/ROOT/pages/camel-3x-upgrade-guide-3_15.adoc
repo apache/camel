@@ -69,6 +69,10 @@ node in the JMX MBean tree.
 
 Removed deprecated operations on `CamelContextMBean` and `CamelRouteMBean`.
 
+=== camel-salesforce
+
+The `getResources` operation now returns a `Map<String, String>` instead of `RestResources`.
+
 === camel-util
 
 Deleted the `replaceAll` method of `org.apache.camel.util.StringHelper`. Please use the `replace` method of `java.lang.String` instead, as it is much faster from Java 11 onward.
