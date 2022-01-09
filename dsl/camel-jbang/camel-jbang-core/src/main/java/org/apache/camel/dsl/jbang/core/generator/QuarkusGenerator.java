@@ -18,14 +18,13 @@ package org.apache.camel.dsl.jbang.core.generator;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class QuarkusGenerator implements CamelJbangGenerator {
 
-    private List<String> dependencies;
-    private String bomVersion;
+    private final List<String> dependencies;
+    private final String bomVersion;
 
     public QuarkusGenerator(List<String> dependencies, String bomVersion) {
         this.dependencies = dependencies;
@@ -43,15 +42,13 @@ public class QuarkusGenerator implements CamelJbangGenerator {
         sb.append("quarkus.banner.enabled = false\n");
         sb.append("quarkus.log.file.enable = true\n");
         sb.append("camel.context.name = ").append(name).append("\n");
-        sb.append("camel.main.routes-include-pattern= classpath:routes/*");
-
+        sb.append("camel.main.routes-include-pattern = classpath:routes/*");
         return sb.toString();
     }
 
     @Override
     public List<PomProperty> getPomProperties() {
-        return Arrays.asList(
-                new PomProperty("quarkus.platform.version", bomVersion));
+        return List.of(new PomProperty("quarkus.platform.version", bomVersion));
     }
 
     public String getTemplate() {
