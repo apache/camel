@@ -451,8 +451,7 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
     @Test
     public void testGetResources() throws Exception {
         @SuppressWarnings("unchecked")
-        final Map<String, String> resources =
-                (Map<String, String>) template().requestBody("direct:getResources", "");
+        final Map<String, String> resources = (Map<String, String>) template().requestBody("direct:getResources", "");
         assertNotNull(resources);
         assertTrue(resources.containsKey("metadata"));
     }
