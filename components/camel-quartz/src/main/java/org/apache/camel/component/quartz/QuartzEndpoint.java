@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.quartz;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -385,9 +386,13 @@ public class QuartzEndpoint extends DefaultEndpoint {
         }
 
         if (LOG.isInfoEnabled()) {
+            Object nextFireTime = trigger.getNextFireTime();
+            if (nextFireTime != null) {
+                nextFireTime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(nextFireTime);
+            }
             LOG.info("Job {} (triggerType={}, jobClass={}) is scheduled. Next fire date is {}",
                     trigger.getKey(), trigger.getClass().getSimpleName(),
-                    jobDetail.getJobClass().getSimpleName(), trigger.getNextFireTime());
+                    jobDetail.getJobClass().getSimpleName(), nextFireTime);
         }
 
         // Increase camel job count for this endpoint
