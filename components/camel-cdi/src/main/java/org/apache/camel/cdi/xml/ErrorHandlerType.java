@@ -30,6 +30,7 @@ import org.apache.camel.jta.JtaTransactionErrorHandlerBuilder;
  */
 @XmlType
 @XmlEnum(String.class)
+@Deprecated
 public enum ErrorHandlerType {
 
     DefaultErrorHandler,

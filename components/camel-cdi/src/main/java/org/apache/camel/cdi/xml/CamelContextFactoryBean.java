@@ -75,6 +75,7 @@ import org.apache.camel.spi.PackageScanFilter;
 
 @XmlRootElement(name = "camelContext")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Deprecated
 public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<DefaultCamelContext> implements BeanManagerAware {
 
     @XmlAttribute(name = "depends-on")

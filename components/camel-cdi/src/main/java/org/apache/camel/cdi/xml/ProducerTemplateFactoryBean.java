@@ -31,6 +31,7 @@ import org.apache.camel.core.xml.AbstractCamelProducerTemplateFactoryBean;
  */
 @XmlRootElement(name = "template")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Deprecated
 public class ProducerTemplateFactoryBean extends AbstractCamelProducerTemplateFactoryBean implements BeanManagerAware {
 
     @XmlTransient

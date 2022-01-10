@@ -29,6 +29,7 @@ import org.apache.camel.model.RouteTemplateDefinition;
 
 @XmlRootElement(name = "routeTemplateContext")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Deprecated
 public class RouteTemplateContextDefinition extends IdentifiedType {
 
     @XmlElement(name = "routeTemplate", required = true)

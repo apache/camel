@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A helper class which will find all {@link org.apache.camel.builder.RouteBuilder} beans in the {@link BeanManager}.
  */
+@Deprecated
 final class ContextScanRouteBuilderFinder {
 
     private static final AnnotationLiteral<Any> ANY = new AnnotationLiteral<Any>() {

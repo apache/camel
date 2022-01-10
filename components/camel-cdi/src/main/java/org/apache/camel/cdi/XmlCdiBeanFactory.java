@@ -66,6 +66,7 @@ import static org.apache.camel.cdi.ResourceHelper.getResource;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 @Vetoed
+@Deprecated
 final class XmlCdiBeanFactory {
 
     private final Logger logger = LoggerFactory.getLogger(XmlCdiBeanFactory.class);

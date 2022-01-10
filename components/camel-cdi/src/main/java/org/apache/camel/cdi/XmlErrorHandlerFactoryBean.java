@@ -39,6 +39,7 @@ import static org.apache.camel.cdi.BeanManagerHelper.getReferenceByName;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 @Vetoed
+@Deprecated
 final class XmlErrorHandlerFactoryBean extends SyntheticBean<ErrorHandlerBuilder> {
 
     private final BeanManager manager;

@@ -29,6 +29,7 @@ import static org.apache.camel.cdi.BeanManagerHelper.getReference;
 import static org.apache.camel.util.ObjectHelper.isEmpty;
 
 @Vetoed
+@Deprecated
 final class XmlFactoryBeanInjectionTarget<T> extends SyntheticInjectionTarget<T> {
 
     XmlFactoryBeanInjectionTarget(BeanManager manager, AbstractCamelFactoryBean<T> factory, Bean<?> context) {

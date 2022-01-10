@@ -29,6 +29,7 @@ import org.apache.camel.core.xml.AbstractCamelFactoryBean;
 
 @XmlRootElement(name = "beans", namespace = "http://www.springframework.org/schema/beans")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Deprecated
 public class ApplicationContextFactoryBean {
 
     @XmlElement(name = "camelContext")

@@ -18,6 +18,7 @@ package org.apache.camel.cdi.xml;
 
 import javax.enterprise.inject.spi.BeanManager;
 
+@Deprecated
 public interface BeanManagerAware {
 
     void setBeanManager(BeanManager manager);

@@ -622,7 +622,9 @@ endpoint instances and the observer methods as the CDI container doesn't
 have any ways of discovering the Camel context model during the
 deployment phase.
 
-== Camel XML configuration import
+== Camel XML configuration import (deprecated)
+
+WARNING: Using Camel XML in camel-cdi is deprecated and will be removed in the future.
 
 While CDI favors a typesafe dependency injection mechanism, it may be
 useful to reuse existing Camel XML configuration files into a Camel CDI

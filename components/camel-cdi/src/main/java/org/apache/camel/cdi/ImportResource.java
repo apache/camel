@@ -21,6 +21,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import javax.enterprise.inject.Default;
+
 /**
  * Indicates one or more resources representing
  * <a href="http://camel.apache.org/http://camel.apache.org/xml-configuration.html">Camel XML configuration</a> to
@@ -94,6 +96,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE })
+@Default
 public @interface ImportResource {
 
     /**

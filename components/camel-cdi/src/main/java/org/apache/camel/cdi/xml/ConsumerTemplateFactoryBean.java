@@ -30,6 +30,7 @@ import org.apache.camel.core.xml.AbstractCamelConsumerTemplateFactoryBean;
  */
 @XmlRootElement(name = "consumerTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Deprecated
 public class ConsumerTemplateFactoryBean extends AbstractCamelConsumerTemplateFactoryBean implements BeanManagerAware {
 
     @XmlTransient

@@ -31,6 +31,7 @@ import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
  */
 @XmlRootElement(name = "redeliveryPolicyProfile")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Deprecated
 public class RedeliveryPolicyFactoryBean extends AbstractCamelRedeliveryPolicyFactoryBean implements BeanManagerAware {
 
     @XmlTransient

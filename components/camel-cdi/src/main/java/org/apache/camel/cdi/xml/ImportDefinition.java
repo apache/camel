@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "import")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Deprecated
 public class ImportDefinition {
 
     @XmlAttribute(required = true)

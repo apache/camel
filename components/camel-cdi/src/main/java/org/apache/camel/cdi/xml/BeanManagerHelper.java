@@ -21,6 +21,7 @@ import javax.enterprise.inject.spi.BeanManager;
 
 import org.apache.camel.CamelContext;
 
+@Deprecated
 final class BeanManagerHelper {
 
     private BeanManagerHelper() {

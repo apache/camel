@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A helper class which will find all {@link org.apache.camel.builder.RouteBuilder} instances on the classpath.
  */
+@Deprecated
 final class PackageScanRouteBuilderFinder {
 
     private final Logger logger = LoggerFactory.getLogger(PackageScanRouteBuilderFinder.class);

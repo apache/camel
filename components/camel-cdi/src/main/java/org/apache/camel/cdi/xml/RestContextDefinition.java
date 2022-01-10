@@ -29,6 +29,7 @@ import org.apache.camel.model.rest.RestDefinition;
 
 @XmlRootElement(name = "restContext")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Deprecated
 public class RestContextDefinition extends IdentifiedType {
 
     @XmlElement(name = "rest", required = true)
