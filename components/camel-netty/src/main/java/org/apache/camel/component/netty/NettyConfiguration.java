@@ -93,7 +93,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     @UriParam(label = "consumer,advanced", defaultValue = "true")
     private boolean usingExecutorService = true;
     @UriParam(label = "producer,advanced", defaultValue = "-1")
-    private int producerPoolMaxActive = -1;
+    private int producerPoolMaxTotal = -1;
     @UriParam(label = "producer,advanced")
     private int producerPoolMinIdle;
     @UriParam(label = "producer,advanced", defaultValue = "100")
@@ -573,16 +573,16 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         this.usingExecutorService = usingExecutorService;
     }
 
-    public int getProducerPoolMaxActive() {
-        return producerPoolMaxActive;
+    public int getProducerPoolMaxTotal() {
+        return producerPoolMaxTotal;
     }
 
     /**
      * Sets the cap on the number of objects that can be allocated by the pool (checked out to clients, or idle awaiting
      * checkout) at a given time. Use a negative value for no limit.
      */
-    public void setProducerPoolMaxActive(int producerPoolMaxActive) {
-        this.producerPoolMaxActive = producerPoolMaxActive;
+    public void setProducerPoolMaxTotal(int producerPoolMaxTotal) {
+        this.producerPoolMaxTotal = producerPoolMaxTotal;
     }
 
     public int getProducerPoolMinIdle() {

@@ -59,6 +59,7 @@ public class NettyHttpEndpointUriFactory extends org.apache.camel.support.compon
         props.add("backlog");
         props.add("disableStreamCache");
         props.add("port");
+        props.add("producerPoolMaxTotal");
         props.add("passphrase");
         props.add("compression");
         props.add("nettyServerBootstrapFactory");
@@ -88,7 +89,6 @@ public class NettyHttpEndpointUriFactory extends org.apache.camel.support.compon
         props.add("muteException");
         props.add("receiveBufferSizePredictor");
         props.add("keepAlive");
-        props.add("producerPoolMaxActive");
         props.add("nettyHttpBinding");
         props.add("httpMethodRestrict");
         props.add("matchOnUriPrefix");

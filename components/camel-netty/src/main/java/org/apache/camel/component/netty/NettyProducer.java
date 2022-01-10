@@ -18,6 +18,7 @@ package org.apache.camel.component.netty;
 
 import java.net.ConnectException;
 import java.net.InetSocketAddress;
+import java.time.Duration;
 import java.util.Optional;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -53,9 +54,12 @@ import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.IOHelper;
-import org.apache.commons.pool.ObjectPool;
-import org.apache.commons.pool.PoolableObjectFactory;
-import org.apache.commons.pool.impl.GenericObjectPool;
+import org.apache.commons.pool2.ObjectPool;
+import org.apache.commons.pool2.PooledObject;
+import org.apache.commons.pool2.PooledObjectFactory;
+import org.apache.commons.pool2.impl.DefaultPooledObject;
+import org.apache.commons.pool2.impl.GenericObjectPool;
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,24 +107,24 @@ public class NettyProducer extends DefaultAsyncProducer {
     protected void doStart() throws Exception {
         if (configuration.isProducerPoolEnabled()) {
             // setup pool where we want an unbounded pool, which allows the pool to shrink on no demand
-            GenericObjectPool.Config config = new GenericObjectPool.Config();
-            config.maxActive = configuration.getProducerPoolMaxActive();
-            config.minIdle = configuration.getProducerPoolMinIdle();
-            config.maxIdle = configuration.getProducerPoolMaxIdle();
+            GenericObjectPoolConfig config = new GenericObjectPoolConfig();
+            config.setMaxTotal(configuration.getProducerPoolMaxTotal());
+            config.setMinIdle(configuration.getProducerPoolMinIdle());
+            config.setMaxIdle(configuration.getProducerPoolMaxIdle());
             // we should test on borrow to ensure the channel is still valid
-            config.testOnBorrow = true;
+            config.setTestOnBorrow(true);
             // only evict channels which are no longer valid
-            config.testWhileIdle = true;
+            config.setTestWhileIdle(true);
             // run eviction every 30th second
-            config.timeBetweenEvictionRunsMillis = 30 * 1000L;
-            config.minEvictableIdleTimeMillis = configuration.getProducerPoolMinEvictableIdle();
-            config.whenExhaustedAction = GenericObjectPool.WHEN_EXHAUSTED_FAIL;
-            pool = new GenericObjectPool<>(new NettyProducerPoolableObjectFactory(this), config);
+            config.setTimeBetweenEvictionRuns(Duration.ofSeconds(30));
+            config.setMinEvictableIdleTime(Duration.ofMillis(configuration.getProducerPoolMinEvictableIdle()));
+            pool = new GenericObjectPool(new NettyProducerPoolableObjectFactory(this), config);
 
             if (LOG.isDebugEnabled()) {
                 LOG.debug(
-                        "Created NettyProducer pool[maxActive={}, minIdle={}, maxIdle={}, minEvictableIdleTimeMillis={}] -> {}",
-                        config.maxActive, config.minIdle, config.maxIdle, config.minEvictableIdleTimeMillis, pool);
+                        "Created NettyProducer pool[maxTotal={}, minIdle={}, maxIdle={}, minEvictableIdleDuration={}] -> {}",
+                        config.getMaxTotal(), config.getMaxIdle(), config.getMaxIdle(), config.getMinEvictableIdleDuration(),
+                        pool);
             }
         } else {
             pool = new SharedSingletonObjectPool<>(new NettyProducerPoolableObjectFactory(this));
@@ -594,7 +598,7 @@ public class NettyProducer extends DefaultAsyncProducer {
     /**
      * Object factory to create {@link Channel} used by the pool.
      */
-    private final class NettyProducerPoolableObjectFactory implements PoolableObjectFactory<ChannelFuture> {
+    private final class NettyProducerPoolableObjectFactory implements PooledObjectFactory<ChannelFuture> {
         private NettyProducer producer;
 
         public NettyProducerPoolableObjectFactory(NettyProducer producer) {
@@ -602,52 +606,8 @@ public class NettyProducer extends DefaultAsyncProducer {
         }
 
         @Override
-        public ChannelFuture makeObject() throws Exception {
-            ChannelFuture channelFuture = openConnection().addListener(new ChannelFutureListener() {
-                @Override
-                public void operationComplete(ChannelFuture future) throws Exception {
-                    notifyChannelOpen(future);
-                }
-            });
-            LOG.trace("Requested channel: {}", channelFuture);
-            return channelFuture;
-        }
-
-        @Override
-        public void destroyObject(ChannelFuture channelFuture) throws Exception {
-            LOG.trace("Destroying channel request: {}", channelFuture);
-            channelFuture.addListener(new ChannelFutureListener() {
-                @Override
-                public void operationComplete(ChannelFuture future) throws Exception {
-                    Channel channel = future.channel();
-                    if (channel.isOpen()) {
-                        NettyHelper.close(channel);
-                    }
-                    allChannels.remove(channel);
-                }
-            });
-            channelFuture.cancel(false);
-        }
-
-        @Override
-        public boolean validateObject(ChannelFuture channelFuture) {
-            // we need a connecting or connected channel to be valid
-            if (!channelFuture.isDone()) {
-                LOG.trace("Validating connecting channel request: {} -> {}", channelFuture, true);
-                return true;
-            }
-            if (!channelFuture.isSuccess()) {
-                LOG.trace("Validating unsuccessful channel request: {} -> {}", channelFuture, false);
-                return false;
-            }
-            Channel channel = channelFuture.channel();
-            boolean answer = channel.isActive();
-            LOG.trace("Validating channel: {} -> {}", channel, answer);
-            return answer;
-        }
-
-        @Override
-        public void activateObject(ChannelFuture channelFuture) {
+        public void activateObject(PooledObject<ChannelFuture> p) throws Exception {
+            ChannelFuture channelFuture = p.getObject();
             LOG.trace("activateObject channel request: {}", channelFuture);
 
             if (channelFuture.isSuccess() && producer.getConfiguration().getRequestTimeout() > 0) {
@@ -664,10 +624,59 @@ public class NettyProducer extends DefaultAsyncProducer {
         }
 
         @Override
-        public void passivateObject(ChannelFuture channelFuture) {
+        public void destroyObject(PooledObject<ChannelFuture> p) throws Exception {
+            ChannelFuture channelFuture = p.getObject();
+            LOG.trace("Destroying channel request: {}", channelFuture);
+            channelFuture.addListener(new ChannelFutureListener() {
+                @Override
+                public void operationComplete(ChannelFuture future) throws Exception {
+                    Channel channel = future.channel();
+                    if (channel.isOpen()) {
+                        NettyHelper.close(channel);
+                    }
+                    allChannels.remove(channel);
+                }
+            });
+            channelFuture.cancel(false);
+        }
+
+        @Override
+        public void passivateObject(PooledObject<ChannelFuture> p) throws Exception {
             // noop
+            ChannelFuture channelFuture = p.getObject();
             LOG.trace("passivateObject channel request: {}", channelFuture);
         }
+
+        @Override
+        public boolean validateObject(PooledObject<ChannelFuture> p) {
+            ChannelFuture channelFuture = p.getObject();
+            // we need a connecting or connected channel to be valid
+            if (!channelFuture.isDone()) {
+                LOG.trace("Validating connecting channel request: {} -> {}", channelFuture, true);
+                return true;
+            }
+            if (!channelFuture.isSuccess()) {
+                LOG.trace("Validating unsuccessful channel request: {} -> {}", channelFuture, false);
+                return false;
+            }
+            Channel channel = channelFuture.channel();
+            boolean answer = channel.isActive();
+            LOG.trace("Validating channel: {} -> {}", channel, answer);
+            return answer;
+        }
+
+        @Override
+        public PooledObject<ChannelFuture> makeObject() throws Exception {
+            ChannelFuture channelFuture = openConnection().addListener(new ChannelFutureListener() {
+                @Override
+                public void operationComplete(ChannelFuture future) throws Exception {
+                    notifyChannelOpen(future);
+                }
+            });
+            LOG.trace("Requested channel: {}", channelFuture);
+            return new DefaultPooledObject<>(channelFuture);
+        }
+
     }
 
     /**
