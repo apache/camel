@@ -731,9 +731,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
         if (!missing.isEmpty()) {
             getLog().info("");
             getLog().warn("\tMissing .adoc component documentation: " + missing.size());
-            for (String name : missing) {
-                getLog().warn("\t\t" + name);
-            }
+            printMissingWarning(missing);
         }
         missing.clear();
 
@@ -750,9 +748,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
         if (!missing.isEmpty()) {
             getLog().info("");
             getLog().warn("\tMissing .adoc dataformat documentation: " + missing.size());
-            for (String name : missing) {
-                getLog().warn("\t\t" + name);
-            }
+            printMissingWarning(missing);
         }
         missing.clear();
 
@@ -765,14 +761,13 @@ public class PrepareCatalogMojo extends AbstractMojo {
         if (!missing.isEmpty()) {
             getLog().info("");
             getLog().warn("\tMissing .adoc language documentation: " + missing.size());
-            for (String name : missing) {
-                getLog().warn("\t\t" + name);
-            }
+            printMissingWarning(missing);
         }
         missing.clear();
 
         for (String other : others) {
             String name = other;
+
             if (!docs.contains(name)) {
                 missing.add(name);
             }
@@ -780,14 +775,18 @@ public class PrepareCatalogMojo extends AbstractMojo {
         if (!missing.isEmpty()) {
             getLog().info("");
             getLog().warn("\tMissing .adoc other documentation: " + missing.size());
-            for (String name : missing) {
-                getLog().warn("\t\t" + name);
-            }
+            printMissingWarning(missing);
         }
         missing.clear();
 
         getLog().info("");
         getLog().info("================================================================================");
+    }
+
+    private void printMissingWarning(List<String> missing) {
+        for (String name : missing) {
+            getLog().warn("\t\t" + name);
+        }
     }
 
     private void printModelsReport(Set<Path> json, Set<Path> duplicate, Set<Path> missingLabels, Map<String, Set<String>> usedLabels, Set<Path> missingJavaDoc) {
@@ -797,25 +796,42 @@ public class PrepareCatalogMojo extends AbstractMojo {
         getLog().info("Camel model catalog report");
         getLog().info("");
         getLog().info("\tModels found: " + json.size());
+        printComponentDebug(json);
+        if (!duplicate.isEmpty()) {
+            getLog().info("");
+            getLog().warn("\tDuplicate models detected: " + duplicate.size());
+            printComponentWarning(duplicate);
+        }
+        if (!missingLabels.isEmpty()) {
+            getLog().info("");
+            getLog().warn("\tMissing labels detected: " + missingLabels.size());
+            printComponentWarning(missingLabels);
+        }
+        printUsedLabels(usedLabels);
+        if (!missingJavaDoc.isEmpty()) {
+            getLog().info("");
+            getLog().warn("\tMissing javadoc on models: " + missingJavaDoc.size());
+            printComponentWarning(missingJavaDoc);
+        }
+        getLog().info("");
+        getLog().info("================================================================================");
+    }
+
+    private void printComponentWarning(Set<Path> duplicate) {
+        for (Path file : duplicate) {
+            getLog().warn("\t\t" + asComponentName(file));
+        }
+    }
+
+    private void printComponentDebug(Set<Path> json) {
         if (getLog().isDebugEnabled()) {
             for (Path file : json) {
                 getLog().debug("\t\t" + asComponentName(file));
             }
         }
-        if (!duplicate.isEmpty()) {
-            getLog().info("");
-            getLog().warn("\tDuplicate models detected: " + duplicate.size());
-            for (Path file : duplicate) {
-                getLog().warn("\t\t" + asComponentName(file));
-            }
-        }
-        if (!missingLabels.isEmpty()) {
-            getLog().info("");
-            getLog().warn("\tMissing labels detected: " + missingLabels.size());
-            for (Path file : missingLabels) {
-                getLog().warn("\t\t" + asComponentName(file));
-            }
-        }
+    }
+
+    private void printUsedLabels(Map<String, Set<String>> usedLabels) {
         if (getLog().isDebugEnabled()) {
             if (!usedLabels.isEmpty()) {
                 getLog().info("");
@@ -828,15 +844,6 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 }
             }
         }
-        if (!missingJavaDoc.isEmpty()) {
-            getLog().info("");
-            getLog().warn("\tMissing javadoc on models: " + missingJavaDoc.size());
-            for (Path file : missingJavaDoc) {
-                getLog().warn("\t\t" + asComponentName(file));
-            }
-        }
-        getLog().info("");
-        getLog().info("================================================================================");
     }
 
     private void printComponentsReport(Set<Path> json, Set<Path> duplicate, Set<Path> missing, Map<String, Set<String>> usedComponentLabels, Set<String> usedOptionsLabels,
@@ -846,17 +853,11 @@ public class PrepareCatalogMojo extends AbstractMojo {
         getLog().info("Camel component catalog report");
         getLog().info("");
         getLog().info("\tComponents found: " + json.size());
-        if (getLog().isDebugEnabled()) {
-            for (Path file : json) {
-                getLog().debug("\t\t" + asComponentName(file));
-            }
-        }
+        printComponentDebug(json);
         if (!duplicate.isEmpty()) {
             getLog().info("");
             getLog().warn("\tDuplicate components detected: " + duplicate.size());
-            for (Path file : duplicate) {
-                getLog().warn("\t\t" + asComponentName(file));
-            }
+            printComponentWarning(duplicate);
         }
         if (getLog().isDebugEnabled()) {
             if (!usedComponentLabels.isEmpty()) {
@@ -887,19 +888,21 @@ public class PrepareCatalogMojo extends AbstractMojo {
         if (!missing.isEmpty()) {
             getLog().info("");
             getLog().warn("\tMissing components detected: " + missing.size());
-            for (Path name : missing) {
-                getLog().warn("\t\t" + name.getFileName().toString());
-            }
+            printWarnings(missing);
         }
         if (!missingFirstVersions.isEmpty()) {
             getLog().info("");
             getLog().warn("\tComponents without firstVersion defined: " + missingFirstVersions.size());
-            for (Path name : missingFirstVersions) {
-                getLog().warn("\t\t" + name.getFileName().toString());
-            }
+            printWarnings(missingFirstVersions);
         }
         getLog().info("");
         getLog().info("================================================================================");
+    }
+
+    private void printWarnings(Set<Path> missing) {
+        for (Path name : missing) {
+            getLog().warn("\t\t" + name.getFileName().toString());
+        }
     }
 
     private void printDataFormatsReport(Set<Path> json, Set<Path> duplicate, Map<String, Set<String>> usedLabels, Set<Path> missingFirstVersions) {
@@ -908,36 +911,17 @@ public class PrepareCatalogMojo extends AbstractMojo {
         getLog().info("Camel data format catalog report");
         getLog().info("");
         getLog().info("\tDataFormats found: " + json.size());
-        if (getLog().isDebugEnabled()) {
-            for (Path file : json) {
-                getLog().debug("\t\t" + asComponentName(file));
-            }
-        }
+        printComponentDebug(json);
         if (!duplicate.isEmpty()) {
             getLog().info("");
             getLog().warn("\tDuplicate dataformat detected: " + duplicate.size());
-            for (Path file : duplicate) {
-                getLog().warn("\t\t" + asComponentName(file));
-            }
+            printComponentWarning(duplicate);
         }
-        if (getLog().isDebugEnabled()) {
-            if (!usedLabels.isEmpty()) {
-                getLog().info("");
-                getLog().info("\tUsed labels: " + usedLabels.size());
-                for (Map.Entry<String, Set<String>> entry : usedLabels.entrySet()) {
-                    getLog().info("\t\t" + entry.getKey() + ":");
-                    for (String name : entry.getValue()) {
-                        getLog().info("\t\t\t" + name);
-                    }
-                }
-            }
-        }
+        printUsedLabels(usedLabels);
         if (!missingFirstVersions.isEmpty()) {
             getLog().info("");
             getLog().warn("\tDataFormats without firstVersion defined: " + missingFirstVersions.size());
-            for (Path name : missingFirstVersions) {
-                getLog().warn("\t\t" + name.getFileName().toString());
-            }
+            printWarnings(missingFirstVersions);
         }
         getLog().info("");
         getLog().info("================================================================================");
@@ -949,36 +933,17 @@ public class PrepareCatalogMojo extends AbstractMojo {
         getLog().info("Camel language catalog report");
         getLog().info("");
         getLog().info("\tLanguages found: " + json.size());
-        if (getLog().isDebugEnabled()) {
-            for (Path file : json) {
-                getLog().debug("\t\t" + asComponentName(file));
-            }
-        }
+        printComponentDebug(json);
         if (!duplicate.isEmpty()) {
             getLog().info("");
             getLog().warn("\tDuplicate language detected: " + duplicate.size());
-            for (Path file : duplicate) {
-                getLog().warn("\t\t" + asComponentName(file));
-            }
+            printComponentWarning(duplicate);
         }
-        if (getLog().isDebugEnabled()) {
-            if (!usedLabels.isEmpty()) {
-                getLog().info("");
-                getLog().info("\tUsed labels: " + usedLabels.size());
-                for (Map.Entry<String, Set<String>> entry : usedLabels.entrySet()) {
-                    getLog().info("\t\t" + entry.getKey() + ":");
-                    for (String name : entry.getValue()) {
-                        getLog().info("\t\t\t" + name);
-                    }
-                }
-            }
-        }
+        printUsedLabels(usedLabels);
         if (!missingFirstVersions.isEmpty()) {
             getLog().info("");
             getLog().warn("\tLanguages without firstVersion defined: " + missingFirstVersions.size());
-            for (Path name : missingFirstVersions) {
-                getLog().warn("\t\t" + name.getFileName().toString());
-            }
+            printWarnings(missingFirstVersions);
         }
         getLog().info("");
         getLog().info("================================================================================");
@@ -990,36 +955,17 @@ public class PrepareCatalogMojo extends AbstractMojo {
         getLog().info("Camel other catalog report");
         getLog().info("");
         getLog().info("\tOthers found: " + json.size());
-        if (getLog().isDebugEnabled()) {
-            for (Path file : json) {
-                getLog().debug("\t\t" + asComponentName(file));
-            }
-        }
+        printComponentDebug(json);
         if (!duplicate.isEmpty()) {
             getLog().info("");
             getLog().warn("\tDuplicate other detected: " + duplicate.size());
-            for (Path file : duplicate) {
-                getLog().warn("\t\t" + asComponentName(file));
-            }
+            printComponentWarning(duplicate);
         }
-        if (getLog().isDebugEnabled()) {
-            if (!usedLabels.isEmpty()) {
-                getLog().info("");
-                getLog().info("\tUsed labels: " + usedLabels.size());
-                for (Map.Entry<String, Set<String>> entry : usedLabels.entrySet()) {
-                    getLog().info("\t\t" + entry.getKey() + ":");
-                    for (String name : entry.getValue()) {
-                        getLog().info("\t\t\t" + name);
-                    }
-                }
-            }
-        }
+        printUsedLabels(usedLabels);
         if (!missingFirstVersions.isEmpty()) {
             getLog().info("");
             getLog().warn("\tOthers without firstVersion defined: " + missingFirstVersions.size());
-            for (Path name : missingFirstVersions) {
-                getLog().warn("\t\t" + name.getFileName().toString());
-            }
+            printWarnings(missingFirstVersions);
         }
         getLog().info("");
         getLog().info("================================================================================");
@@ -1031,25 +977,17 @@ public class PrepareCatalogMojo extends AbstractMojo {
         getLog().info("Camel document catalog report");
         getLog().info("");
         getLog().info("\tDocuments found: " + docs.size());
-        if (getLog().isDebugEnabled()) {
-            for (Path file : docs) {
-                getLog().debug("\t\t" + asComponentName(file));
-            }
-        }
+        printComponentDebug(docs);
         if (!duplicate.isEmpty()) {
             getLog().info("");
             getLog().warn("\tDuplicate document detected: " + duplicate.size());
-            for (Path file : duplicate) {
-                getLog().warn("\t\t" + asComponentName(file));
-            }
+            printComponentWarning(duplicate);
         }
         getLog().info("");
         if (!missing.isEmpty()) {
             getLog().info("");
             getLog().warn("\tMissing document detected: " + missing.size());
-            for (Path name : missing) {
-                getLog().warn("\t\t" + name.getFileName().toString());
-            }
+            printWarnings(missing);
         }
         getLog().info("");
         getLog().info("================================================================================");
