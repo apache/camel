@@ -82,10 +82,6 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-spring-main</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-spring-javaconfig</artifactId>
-        </dependency>
         <!-- camel-cdi-main has Main class for running CDI -->
         <dependency>
             <groupId>org.apache.camel</groupId>
