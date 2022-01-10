@@ -17,6 +17,7 @@
 package org.apache.camel.component.ahc.ws;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -105,8 +106,9 @@ public class WsProducerConsumerTest extends CamelTestSupport {
         resetMocks();
 
         LOG.info("Restarting bar route");
-        context.getRouteController().stopRoute("bar");
-        Thread.sleep(500);
+
+        boolean stopped = context.getRouteController().stopRoute("bar", 500, TimeUnit.MILLISECONDS, true);
+        assertTrue(stopped, "The route should have stopped within the specified time");
         context.getRouteController().startRoute("bar");
 
         mock.expectedBodiesReceived(TEST_MESSAGE);
@@ -128,8 +130,10 @@ public class WsProducerConsumerTest extends CamelTestSupport {
         resetMocks();
 
         LOG.info("Restarting foo route");
-        context.getRouteController().stopRoute("foo");
-        Thread.sleep(500);
+
+        boolean stopped = context.getRouteController().stopRoute("foo", 500, TimeUnit.MILLISECONDS, true);
+        assertTrue(stopped, "The route should have stopped within the specified time");
+
         context.getRouteController().startRoute("foo");
 
         mock.expectedBodiesReceived(TEST_MESSAGE);
