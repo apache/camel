@@ -25,7 +25,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import javax.enterprise.inject.Any;
 import javax.enterprise.inject.CreationException;
+import javax.enterprise.inject.Default;
 import javax.enterprise.inject.Vetoed;
 import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.Bean;
@@ -59,10 +61,8 @@ import static java.lang.String.format;
 import static java.util.Collections.*;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toSet;
-import static org.apache.camel.cdi.AnyLiteral.ANY;
 import static org.apache.camel.cdi.ApplicationScopedLiteral.APPLICATION_SCOPED;
 import static org.apache.camel.cdi.CdiSpiHelper.createCamelContextWithTCCL;
-import static org.apache.camel.cdi.DefaultLiteral.DEFAULT;
 import static org.apache.camel.cdi.ResourceHelper.getResource;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
@@ -163,11 +163,11 @@ final class XmlCdiBeanFactory {
 
     private SyntheticBean<?> camelContextBean(CamelContextFactoryBean factory, URL url, AnnotatedType annotatedType) {
         Set<Annotation> annotations = new HashSet<>();
-        annotations.add(ANY);
+        annotations.add(Any.Literal.INSTANCE);
         if (hasId(factory)) {
             addAll(annotations, NamedLiteral.of(factory.getId()));
         } else {
-            annotations.add(DEFAULT);
+            annotations.add(Default.Literal.INSTANCE);
             factory.setImplicitId(true);
             factory.setId(new CdiCamelContextNameStrategy().getNextName());
         }
@@ -245,8 +245,8 @@ final class XmlCdiBeanFactory {
         }
 
         Set<Annotation> annotations = new HashSet<>();
-        annotations.add(ANY);
-        annotations.add(hasId(factory) ? NamedLiteral.of(factory.getId()) : DEFAULT);
+        annotations.add(Any.Literal.INSTANCE);
+        annotations.add(hasId(factory) ? NamedLiteral.of(factory.getId()) : Default.Literal.INSTANCE);
 
         // TODO: should that be @Singleton to enable injection points with bean instance type?
         if (factory.isSingleton()) {
@@ -277,7 +277,7 @@ final class XmlCdiBeanFactory {
                         List.class,
                         Stream.of(List.class, new ListParameterizedType(RestDefinition.class))
                                 .collect(toSet()),
-                        ANY, NamedLiteral.of(definition.getId())),
+                        Any.Literal.INSTANCE, NamedLiteral.of(definition.getId())),
                 List.class,
                 new SyntheticInjectionTarget<>(definition::getRests), bean -> "imported rest context with "
                                                                               + "id [" + definition.getId() + "] "
@@ -296,7 +296,7 @@ final class XmlCdiBeanFactory {
                         List.class,
                         Stream.of(List.class, new ListParameterizedType(RouteTemplateDefinition.class))
                                 .collect(toSet()),
-                        ANY, NamedLiteral.of(definition.getId())),
+                        Any.Literal.INSTANCE, NamedLiteral.of(definition.getId())),
                 List.class,
                 new SyntheticInjectionTarget<>(definition::getRouteTemplates), bean -> "imported route template context with "
                                                                                        + "id [" + definition.getId() + "] "
@@ -316,7 +316,7 @@ final class XmlCdiBeanFactory {
                         List.class,
                         Stream.of(List.class, new ListParameterizedType(RouteConfigurationDefinition.class))
                                 .collect(toSet()),
-                        ANY, NamedLiteral.of(definition.getId())),
+                        Any.Literal.INSTANCE, NamedLiteral.of(definition.getId())),
                 List.class,
                 new SyntheticInjectionTarget<>(definition::getRouteConfigurations),
                 bean -> "imported route configuration context with "
@@ -337,7 +337,7 @@ final class XmlCdiBeanFactory {
                         List.class,
                         Stream.of(List.class, new ListParameterizedType(RouteDefinition.class))
                                 .collect(toSet()),
-                        ANY, NamedLiteral.of(definition.getId())),
+                        Any.Literal.INSTANCE, NamedLiteral.of(definition.getId())),
                 List.class,
                 new SyntheticInjectionTarget<>(definition::getRoutes), bean -> "imported route context with "
                                                                                + "id [" + definition.getId() + "] "
@@ -352,7 +352,7 @@ final class XmlCdiBeanFactory {
                 new SyntheticAnnotated(
                         RoutesDefinition.class,
                         manager.createAnnotatedType(RoutesDefinition.class).getTypeClosure(),
-                        ANY, DEFAULT),
+                        Any.Literal.INSTANCE, Default.Literal.INSTANCE),
                 RoutesDefinition.class,
                 new SyntheticInjectionTarget<>(() -> definition), bean -> "imported routes definition "
                                                                           + (hasId(definition)
@@ -438,7 +438,7 @@ final class XmlCdiBeanFactory {
                 new SyntheticAnnotated(
                         clazz,
                         manager.createAnnotatedType(clazz).getTypeClosure(),
-                        ANY, NamedLiteral.of(definition.getId())),
+                        Any.Literal.INSTANCE, NamedLiteral.of(definition.getId())),
                 clazz, bean -> "imported error handler with "
                                + "id [" + definition.getId() + "] "
                                + "from resource [" + url + "] "

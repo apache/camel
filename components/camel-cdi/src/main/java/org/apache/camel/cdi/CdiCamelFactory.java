@@ -29,7 +29,6 @@ import javax.enterprise.inject.Default;
 import javax.enterprise.inject.InjectionException;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
-import javax.enterprise.inject.Typed;
 import javax.enterprise.inject.spi.InjectionPoint;
 
 import org.apache.camel.CamelContext;
@@ -38,11 +37,9 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.component.mock.MockEndpoint;
 
 import static org.apache.camel.cdi.CdiEventEndpoint.eventEndpointUri;
 import static org.apache.camel.cdi.CdiSpiHelper.isAnnotationType;
-import static org.apache.camel.cdi.DefaultLiteral.DEFAULT;
 
 final class CdiCamelFactory {
 
@@ -128,37 +125,6 @@ final class CdiCamelFactory {
         }
     }
 
-    @Produces
-    @Typed(MockEndpoint.class)
-    // Qualifiers are dynamically added in CdiCamelExtension
-    private static MockEndpoint mockEndpointFromMember(
-            InjectionPoint ip, @Any Instance<CamelContext> instance, CdiCamelExtension extension) {
-        String uri = "mock:" + ip.getMember().getName();
-        try {
-            return selectContext(ip, instance, extension).getEndpoint(uri, MockEndpoint.class);
-        } catch (Exception cause) {
-            throw new InjectionException("Error injecting mock endpoint into " + ip, cause);
-        }
-    }
-
-    @Uri("")
-    @Produces
-    @Typed(MockEndpoint.class)
-    // Qualifiers are dynamically added in CdiCamelExtension
-    private static MockEndpoint mockEndpointFromUri(
-            InjectionPoint ip, @Any Instance<CamelContext> instance, CdiCamelExtension extension) {
-        Uri uri = getQualifierByType(ip, Uri.class).get();
-        try {
-            CamelContext context = selectContext(ip, instance, extension);
-            return context.getEndpoint(uri.value(), MockEndpoint.class);
-        } catch (Exception cause) {
-            throw new InjectionException(
-                    "Error injecting mock endpoint annotated with " + uri
-                                         + " into " + ip,
-                    cause);
-        }
-    }
-
     @Uri("")
     @Produces
     // Qualifiers are dynamically added in CdiCamelExtension
@@ -190,17 +156,16 @@ final class CdiCamelFactory {
         return context.getEndpoint(uri, CdiEventEndpoint.class);
     }
 
-    private static <
-            T extends CamelContext> T selectContext(InjectionPoint ip, Instance<T> instance, CdiCamelExtension extension) {
+    static CamelContext selectContext(InjectionPoint ip, Instance<CamelContext> instance, CdiCamelExtension extension) {
         Collection<Annotation> qualifiers = new HashSet<>(ip.getQualifiers());
         qualifiers.retainAll(extension.getContextQualifiers());
-        if (qualifiers.isEmpty() && !instance.select(DEFAULT).isUnsatisfied()) {
-            return instance.select(DEFAULT).get();
+        if (qualifiers.isEmpty() && !instance.select(Default.Literal.INSTANCE).isUnsatisfied()) {
+            return instance.select(Default.Literal.INSTANCE).get();
         }
         return instance.select(qualifiers.toArray(new Annotation[0])).get();
     }
 
-    private static <T extends Annotation> Optional<T> getQualifierByType(InjectionPoint ip, Class<T> type) {
+    static <T extends Annotation> Optional<T> getQualifierByType(InjectionPoint ip, Class<T> type) {
         return ip.getQualifiers().stream()
                 .filter(isAnnotationType(type))
                 .findAny()

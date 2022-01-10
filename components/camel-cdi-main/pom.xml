@@ -49,16 +49,9 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache.deltaspike.cdictrl</groupId>
-            <artifactId>deltaspike-cdictrl-api</artifactId>
-            <version>${deltaspike-version}</version>
-        </dependency>
-        <dependency>
             <groupId>javax.enterprise</groupId>
             <artifactId>cdi-api</artifactId>
             <version>${cdi-api-2.0-version}</version>
         </dependency>
-
     </dependencies>
-
 </project>

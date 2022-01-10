@@ -20,6 +20,8 @@ import java.lang.annotation.Annotation;
 import java.util.Set;
 
 import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Default;
 import javax.enterprise.inject.InjectionException;
 import javax.enterprise.inject.Vetoed;
 import javax.enterprise.inject.spi.Annotated;
@@ -41,11 +43,9 @@ import org.slf4j.LoggerFactory;
 import static java.beans.Introspector.decapitalize;
 import static java.util.stream.Collectors.toSet;
 import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
-import static org.apache.camel.cdi.AnyLiteral.ANY;
 import static org.apache.camel.cdi.CdiSpiHelper.createCamelContextWithTCCL;
 import static org.apache.camel.cdi.CdiSpiHelper.getRawType;
 import static org.apache.camel.cdi.CdiSpiHelper.isAnnotationType;
-import static org.apache.camel.cdi.DefaultLiteral.DEFAULT;
 
 @Vetoed
 final class CamelContextProducer<T extends CamelContext> extends DelegateProducer<T> {
@@ -90,9 +90,9 @@ final class CamelContextProducer<T extends CamelContext> extends DelegateProduce
                 .filter(isAnnotationType(Named.class).negate()
                         .and(q -> manager.isQualifier(q.annotationType())))
                 .collect(toSet());
-        qualifiers.add(ANY);
+        qualifiers.add(Any.Literal.INSTANCE);
         if (qualifiers.size() == 1) {
-            qualifiers.add(DEFAULT);
+            qualifiers.add(Default.Literal.INSTANCE);
         }
         qualifiers.retainAll(extension.getObserverEvents());
         if (!qualifiers.isEmpty()) {
