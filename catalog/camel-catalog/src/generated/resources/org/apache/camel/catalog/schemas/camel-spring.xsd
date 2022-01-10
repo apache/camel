@@ -406,15 +406,6 @@ Gets a property from the Exchange.
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="export" type="tns:camelServiceExporterDefinition">
-    <xs:annotation>
-      <xs:documentation xml:lang="en"><![CDATA[
-Used for export a service using Spring Remoting to hide the network call using
-an interface.
-      ]]></xs:documentation>
-    </xs:annotation>
-  </xs:element>
-
   <xs:element name="expression" type="tns:expressionSubElementDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
@@ -2652,50 +2643,6 @@ this and can report the Camel application as DOWN. Default value: false
             <xs:documentation xml:lang="en"><![CDATA[
 Sets the logging level used for logging route activity (such as starting and
 stopping routes). The default logging level is DEBUG. Default value: DEBUG
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:complexType name="camelServiceExporterDefinition">
-    <xs:complexContent>
-      <xs:extension base="tns:identifiedType">
-        <xs:sequence/>
-        <xs:attribute name="uri" type="xs:string" use="required">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Camel endpoint uri to use a remote transport when calling the service.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="serviceRef" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Reference to the service name to lookup in the registry.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="method" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Name of method to invoke on service.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="serviceInterface" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Java interfaces to use as facade for the service to be exported.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="camelContextId" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-The id of the CamelContext to use, if there is multiple CamelContext in the same
-JVM.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
