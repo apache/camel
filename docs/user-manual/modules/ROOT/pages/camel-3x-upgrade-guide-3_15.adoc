@@ -128,3 +128,7 @@ The option `producerPoolMaxActive` is renamed to `producerPoolMaxTotal`.
 === camel-quartz
 
 Removed the option `startDelaySeconds` as this does not work correctly and causes problems if in use.
+
+=== camel-rabbitmq
+
+The rabbitmq producer has migrated from commons-poll v1 to v2.
