@@ -17,6 +17,7 @@
 package org.apache.camel.component.rabbitmq;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
@@ -35,8 +36,9 @@ import org.apache.camel.component.rabbitmq.reply.TemporaryQueueReplyManager;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.pool.ObjectPool;
-import org.apache.commons.pool.impl.GenericObjectPool;
+import org.apache.commons.pool2.ObjectPool;
+import org.apache.commons.pool2.impl.GenericObjectPool;
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,8 +102,6 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
 
     /**
      * Open connection and initialize channel pool
-     * 
-     * @throws Exception
      */
     private synchronized void openConnectionAndChannelPool() throws Exception {
         LOG.trace("Creating connection...");
@@ -110,19 +110,13 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
 
         LOG.trace("Creating channel pool...");
         int channelPoolMaxSize = getEndpoint().getChannelPoolMaxSize();
-        channelPool = new GenericObjectPool<>(
-                new PoolableChannelFactory(this.conn),
-                channelPoolMaxSize,
-                GenericObjectPool.WHEN_EXHAUSTED_BLOCK,
-                getEndpoint().getChannelPoolMaxWait(),
-                channelPoolMaxSize,
-                GenericObjectPool.DEFAULT_MIN_IDLE,
-                GenericObjectPool.DEFAULT_TEST_ON_BORROW,
-                GenericObjectPool.DEFAULT_TEST_ON_RETURN,
-                GenericObjectPool.DEFAULT_TIME_BETWEEN_EVICTION_RUNS_MILLIS,
-                GenericObjectPool.DEFAULT_NUM_TESTS_PER_EVICTION_RUN,
-                GenericObjectPool.DEFAULT_MIN_EVICTABLE_IDLE_TIME_MILLIS,
-                GenericObjectPool.DEFAULT_TEST_WHILE_IDLE);
+        long maxWait = getEndpoint().getChannelPoolMaxWait();
+
+        GenericObjectPoolConfig config = new GenericObjectPoolConfig();
+        config.setMaxWait(Duration.ofMillis(maxWait));
+        config.setMaxTotal(channelPoolMaxSize);
+
+        channelPool = new GenericObjectPool(new PoolableChannelFactory(this.conn), config);
         attemptDeclaration();
     }
 

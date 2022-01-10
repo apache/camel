@@ -18,12 +18,14 @@ package org.apache.camel.component.rabbitmq.pool;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
-import org.apache.commons.pool.PoolableObjectFactory;
+import org.apache.commons.pool2.PooledObject;
+import org.apache.commons.pool2.PooledObjectFactory;
+import org.apache.commons.pool2.impl.DefaultPooledObject;
 
 /**
  * Channel lifecycle manager: create, check and close channel
  */
-public class PoolableChannelFactory implements PoolableObjectFactory<Channel> {
+public class PoolableChannelFactory implements PooledObjectFactory<Channel> {
 
     /**
      * Parent connection
@@ -35,12 +37,13 @@ public class PoolableChannelFactory implements PoolableObjectFactory<Channel> {
     }
 
     @Override
-    public Channel makeObject() throws Exception {
-        return connection.createChannel();
+    public void activateObject(PooledObject<Channel> p) throws Exception {
+        // noop
     }
 
     @Override
-    public void destroyObject(Channel t) throws Exception {
+    public void destroyObject(PooledObject<Channel> p) throws Exception {
+        Channel t = p.getObject();
         try {
             t.close();
         } catch (Exception e) {
@@ -49,16 +52,20 @@ public class PoolableChannelFactory implements PoolableObjectFactory<Channel> {
     }
 
     @Override
-    public boolean validateObject(Channel t) {
+    public void passivateObject(PooledObject<Channel> p) throws Exception {
+        // noop
+    }
+
+    @Override
+    public boolean validateObject(PooledObject<Channel> p) {
+        Channel t = p.getObject();
         return t.isOpen();
     }
 
     @Override
-    public void activateObject(Channel t) throws Exception {
-    }
-
-    @Override
-    public void passivateObject(Channel t) throws Exception {
+    public PooledObject<Channel> makeObject() throws Exception {
+        Channel t = connection.createChannel();
+        return new DefaultPooledObject<>(t);
     }
 
 }
