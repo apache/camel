@@ -216,7 +216,12 @@ public class QuartzEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * To configure additional options on the trigger.
+     * To configure additional options on the trigger. The parameter timeZone is supported if the cron option is
+     * present. Otherwise the parameters repeatInterval and repeatCount are supported.
+     * <p>
+     * <b>Note:</b> When using repeatInterval values of 1000 or less, the first few events after starting the camel
+     * context may be fired more rapidly than expected.
+     * </p>
      */
     public void setTriggerParameters(Map<String, Object> triggerParameters) {
         this.triggerParameters = triggerParameters;
