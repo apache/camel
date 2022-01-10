@@ -54,7 +54,7 @@ public abstract class TransactionalJtaTransactionPolicy extends JtaTransactionPo
     };
     private static final String[] METHODS = new String[] {
             "org.openejb.OpenEJB.getTransactionManager",
-            "com.arjuna.jta.JTA_TransactionManager.transactionManager",
+            "com.arjuna.jta.TransactionManager.transactionManager",
             "com.bluestone.jta.SaTransactionManagerFactory.SaGetTransactionManager",
             "com.sun.jts.jta.TransactionManagerImpl.getTransactionManagerImpl",
             "com.inprise.visitransact.jta.TransactionManagerImpl.getTransactionManagerImpl",
@@ -112,7 +112,10 @@ public abstract class TransactionalJtaTransactionPolicy extends JtaTransactionPo
                 if (clazz != null) {
                     final var getter = clazz.getDeclaredMethod(method.substring(sep + 1));
                     getter.setAccessible(true);
-                    return (TransactionManager) getter.invoke(null);
+                    final var txMgr = (TransactionManager) getter.invoke(null);
+                    if (txMgr != null) {
+                        return txMgr;
+                    }
                 }
             } catch (final Throwable t) {
                 // no-op
