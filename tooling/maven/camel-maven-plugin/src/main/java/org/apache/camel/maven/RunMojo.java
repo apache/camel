@@ -649,8 +649,8 @@ public class RunMojo extends AbstractExecMojo {
     private boolean detectCDIOnClassPath() {
         List<Dependency> deps = project.getCompileDependencies();
         for (Dependency dep : deps) {
-            if ("org.apache.camel".equals(dep.getGroupId()) && "camel-cdi".equals(dep.getArtifactId())) {
-                getLog().info("camel-cdi detected on classpath");
+            if ("org.apache.camel".equals(dep.getGroupId()) && "camel-cdi-main".equals(dep.getArtifactId())) {
+                getLog().info("camel-cdi-main detected on classpath");
                 return true;
             }
         }

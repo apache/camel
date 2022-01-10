@@ -6,6 +6,7 @@
 ** xref:aws-xray.adoc[AWS XRay]
 ** xref:caffeine-lrucache.adoc[Caffeine Lrucache]
 ** xref:cdi.adoc[CDI]
+** xref:cdi-main.adoc[CDI Main]
 ** xref:csimple-joor.adoc[CSimple jOOR]
 ** xref:cxf-transport.adoc[CXF Transport]
 ** xref:debug.adoc[Debug]
