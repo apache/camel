@@ -425,9 +425,6 @@
         <networknt-json-schema-validator-version>1.0.64</networknt-json-schema-validator-version>
         <nimbus-jose-jwt>8.9</nimbus-jose-jwt>
         <nitrite-version>3.4.3</nitrite-version>
-        <!-- should be in-sync with deltaspike -->
-        <openwebbeans1-version>1.2.7</openwebbeans1-version>
-        <openwebbeans-version>1.7.3</openwebbeans-version>
         <okclient-version>3.14.9</okclient-version>
         <olingo2-version>2.0.11</olingo2-version>
         <olingo4-version>4.8.0</olingo4-version>

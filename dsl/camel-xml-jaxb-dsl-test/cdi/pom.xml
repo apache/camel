@@ -241,9 +241,6 @@
             </build>
 
             <dependencies>
-
-                <!-- provided dependencies -->
-
                 <dependency>
                     <groupId>javax.enterprise</groupId>
                     <artifactId>cdi-api</artifactId>
@@ -251,15 +248,12 @@
                     <scope>provided</scope>
                 </dependency>
 
-                <!-- test dependencies -->
-
                 <dependency>
                     <groupId>org.jboss.weld</groupId>
                     <artifactId>weld-core-impl</artifactId>
                     <version>${weld3-version}</version>
                     <scope>test</scope>
                 </dependency>
-
                 <dependency>
                     <groupId>org.jboss.arquillian.container</groupId>
                     <artifactId>arquillian-weld-embedded</artifactId>
@@ -270,74 +264,6 @@
             </dependencies>
         </profile>
 
-
-        <profile>
-            <id>owb-1.0</id>
-
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <excludes>
-                                <exclude>**/*Cdi12Test.java</exclude>
-                                <exclude>**/*Cdi20Test.java</exclude>
-                                <!-- OWB does not call the InjectionTarget#preDestroy method -->
-                                <exclude>**/UnstoppedCamelContext*Test.java</exclude>
-                                <!-- Reactivate when OWB-1155 is fixed -->
-                                <exclude>**/ProgrammaticLookupTest.java</exclude>
-                                <!-- Reactivate when OWB-1126 is fixed -->
-                                <exclude>**/Xml*Test.java</exclude>
-                            </excludes>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-
-            <dependencies>
-
-                <!-- provided dependencies -->
-
-                <dependency>
-                    <groupId>org.apache.geronimo.specs</groupId>
-                    <artifactId>geronimo-jcdi_1.0_spec</artifactId>
-                    <version>${geronimo-jcdi-1.0-spec-version}</version>
-                    <scope>provided</scope>
-                </dependency>
-
-                <dependency>
-                    <groupId>org.apache.geronimo.specs</groupId>
-                    <artifactId>geronimo-atinject_1.0_spec</artifactId>
-                    <version>${geronimo-atinject-1.0-spec-version}</version>
-                    <scope>provided</scope>
-                </dependency>
-
-                <dependency>
-                    <groupId>org.apache.geronimo.specs</groupId>
-                    <artifactId>geronimo-interceptor_1.1_spec</artifactId>
-                    <version>${geronimo-interceptor-1.1-spec-version}</version>
-                    <scope>provided</scope>
-                </dependency>
-
-                <!-- test dependencies -->
-
-                <dependency>
-                    <groupId>org.apache.openwebbeans.arquillian</groupId>
-                    <artifactId>owb-arquillian-standalone</artifactId>
-                    <version>${openwebbeans1-version}</version>
-                    <scope>test</scope>
-                </dependency>
-
-                <dependency>
-                    <groupId>org.apache.openwebbeans</groupId>
-                    <artifactId>openwebbeans-impl</artifactId>
-                    <version>${openwebbeans1-version}</version>
-                    <scope>test</scope>
-                </dependency>
-
-            </dependencies>
-        </profile>
     </profiles>
 
 </project>
