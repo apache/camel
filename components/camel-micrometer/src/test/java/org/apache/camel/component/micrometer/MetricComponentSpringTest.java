@@ -18,31 +18,29 @@ package org.apache.camel.component.micrometer;
 
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.spring.javaconfig.SingleRouteCamelConfiguration;
 import org.apache.camel.test.spring.junit5.CamelSpringTest;
-import org.apache.camel.test.spring.junit5.MockEndpoints;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.support.AbstractApplicationContext;
 
+import static org.apache.camel.component.micrometer.MicrometerConstants.METRICS_REGISTRY_NAME;
 import static org.mockito.ArgumentMatchers.anyIterable;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
 @CamelSpringTest
-@ContextConfiguration(
-                      classes = { MetricComponentSpringTest.TestConfig.class })
-@MockEndpoints
-public class MetricComponentSpringTest {
+public class MetricComponentSpringTest extends CamelSpringTestSupport {
 
     @EndpointInject("mock:out")
     private MockEndpoint endpoint;
@@ -50,27 +48,24 @@ public class MetricComponentSpringTest {
     @Produce("direct:in")
     private ProducerTemplate producer;
 
-    @Configuration
-    public static class TestConfig extends SingleRouteCamelConfiguration {
+    @BindToRegistry(METRICS_REGISTRY_NAME)
+    private MeterRegistry registry = Mockito.mock(MeterRegistry.class);
 
-        @Bean
-        @Override
-        public RouteBuilder route() {
-            return new RouteBuilder() {
+    @Override
+    protected AbstractApplicationContext createApplicationContext() {
+        return new AnnotationConfigApplicationContext();
+    }
 
-                @Override
-                public void configure() {
-                    from("direct:in")
-                            .to("micrometer:counter:A?increment=512")
-                            .to("mock:out");
-                }
-            };
-        }
-
-        @Bean(name = MicrometerConstants.METRICS_REGISTRY_NAME)
-        public MeterRegistry getMetricRegistry() {
-            return Mockito.mock(MeterRegistry.class);
-        }
+    @Override
+    protected RoutesBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:in")
+                        .to("micrometer:counter:A?increment=512")
+                        .to("mock:out");
+            }
+        };
     }
 
     @Test
