@@ -41,7 +41,10 @@ import org.apache.camel.TypeConverter;
 import static org.apache.camel.cdi.CdiEventEndpoint.eventEndpointUri;
 import static org.apache.camel.cdi.CdiSpiHelper.isAnnotationType;
 
-final class CdiCamelFactory {
+class CdiCamelFactory {
+    protected CdiCamelFactory() {
+        // no-op
+    }
 
     @Produces
     private static TypeConverter typeConverter(
