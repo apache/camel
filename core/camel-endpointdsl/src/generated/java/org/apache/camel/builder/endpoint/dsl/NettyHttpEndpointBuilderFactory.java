@@ -3332,42 +3332,6 @@ public interface NettyHttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the cap on the number of objects that can be allocated by the
-         * pool (checked out to clients, or idle awaiting checkout) at a given
-         * time. Use a negative value for no limit.
-         * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Default: -1
-         * Group: producer (advanced)
-         * 
-         * @param producerPoolMaxActive the value to set
-         * @return the dsl builder
-         */
-        default AdvancedNettyHttpEndpointProducerBuilder producerPoolMaxActive(
-                int producerPoolMaxActive) {
-            doSetProperty("producerPoolMaxActive", producerPoolMaxActive);
-            return this;
-        }
-        /**
-         * Sets the cap on the number of objects that can be allocated by the
-         * pool (checked out to clients, or idle awaiting checkout) at a given
-         * time. Use a negative value for no limit.
-         * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Default: -1
-         * Group: producer (advanced)
-         * 
-         * @param producerPoolMaxActive the value to set
-         * @return the dsl builder
-         */
-        default AdvancedNettyHttpEndpointProducerBuilder producerPoolMaxActive(
-                String producerPoolMaxActive) {
-            doSetProperty("producerPoolMaxActive", producerPoolMaxActive);
-            return this;
-        }
-        /**
          * Sets the cap on the number of idle instances in the pool.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
@@ -3397,6 +3361,42 @@ public interface NettyHttpEndpointBuilderFactory {
         default AdvancedNettyHttpEndpointProducerBuilder producerPoolMaxIdle(
                 String producerPoolMaxIdle) {
             doSetProperty("producerPoolMaxIdle", producerPoolMaxIdle);
+            return this;
+        }
+        /**
+         * Sets the cap on the number of objects that can be allocated by the
+         * pool (checked out to clients, or idle awaiting checkout) at a given
+         * time. Use a negative value for no limit.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: -1
+         * Group: producer (advanced)
+         * 
+         * @param producerPoolMaxTotal the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNettyHttpEndpointProducerBuilder producerPoolMaxTotal(
+                int producerPoolMaxTotal) {
+            doSetProperty("producerPoolMaxTotal", producerPoolMaxTotal);
+            return this;
+        }
+        /**
+         * Sets the cap on the number of objects that can be allocated by the
+         * pool (checked out to clients, or idle awaiting checkout) at a given
+         * time. Use a negative value for no limit.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: -1
+         * Group: producer (advanced)
+         * 
+         * @param producerPoolMaxTotal the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNettyHttpEndpointProducerBuilder producerPoolMaxTotal(
+                String producerPoolMaxTotal) {
+            doSetProperty("producerPoolMaxTotal", producerPoolMaxTotal);
             return this;
         }
         /**
