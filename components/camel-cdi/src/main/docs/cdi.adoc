@@ -689,6 +689,8 @@ configuration, e.g.:
 
 == Transaction support
 
+NOTE: You must add camel-cdi-jta JAR as dependency for Camel CDI transaction support.
+
 Camel CDI provides support for Camel transactional client using JTA.
 
 That support is optional hence you need to have JTA in your application classpath, e.g., by explicitly add JTA as a dependency when using Maven:
@@ -771,7 +773,7 @@ The list of supported transaction policy names is:
 
 Camel CDI provides a transactional error handler that extends the redelivery error handler, forces a rollback whenever an exception occurs and creates a new transaction for each redelivery.
 
-Camel CDI provides the `CdiRouteBuilder` class that exposes the `transactionErrorHandler` helper method to enable quick access to the configuration, e.g.:
+The `camel-cdi-jta` provides the `CdiRouteBuilder` class that exposes the `transactionErrorHandler` helper method to enable quick access to the configuration, e.g.:
 
 [source,java]
 ----

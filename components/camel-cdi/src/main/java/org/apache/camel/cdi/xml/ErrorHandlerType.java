@@ -21,9 +21,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.apache.camel.builder.DefaultErrorHandlerBuilder;
-import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.NoErrorHandlerBuilder;
-import org.apache.camel.jta.JtaTransactionErrorHandlerBuilder;
 
 /**
  * Used to configure the errorHandler type
@@ -39,20 +37,20 @@ public enum ErrorHandlerType {
     TransactionErrorHandler;
 
     /**
-     * Get the type as class.
+     * Get the type as class FQN name.
      *
      * @return the class which represents the selected type.
      */
-    public Class<? extends ErrorHandlerBuilder> getTypeAsClass() {
+    public String getTypeAsClass() {
         switch (this) {
             case DefaultErrorHandler:
-                return DefaultErrorHandlerBuilder.class;
+                return DefaultErrorHandlerBuilder.class.getName();
             case DeadLetterChannel:
-                return DeadLetterChannelBuilder.class;
+                return DeadLetterChannelBuilder.class.getName();
             case NoErrorHandler:
-                return NoErrorHandlerBuilder.class;
+                return NoErrorHandlerBuilder.class.getName();
             case TransactionErrorHandler:
-                return JtaTransactionErrorHandlerBuilder.class;
+                return "org.apache.camel.jta.JtaTransactionErrorHandlerBuilder";
             default:
                 throw new IllegalArgumentException("Unknown error handler: " + this);
         }

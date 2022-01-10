@@ -51,6 +51,7 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -429,16 +430,19 @@ final class XmlCdiBeanFactory {
             throw attributeNotSupported("executorServiceRef", type, definition.getId());
         }
 
+        String fqn = type.getTypeAsClass();
+        final Class<?> clazz = ObjectHelper.loadClass(fqn);
+
         return new XmlErrorHandlerFactoryBean(
                 manager,
                 new SyntheticAnnotated(
-                        type.getTypeAsClass(),
-                        manager.createAnnotatedType(type.getTypeAsClass()).getTypeClosure(),
+                        clazz,
+                        manager.createAnnotatedType(clazz).getTypeClosure(),
                         ANY, NamedLiteral.of(definition.getId())),
-                type.getTypeAsClass(), bean -> "imported error handler with "
-                                               + "id [" + definition.getId() + "] "
-                                               + "from resource [" + url + "] "
-                                               + "with qualifiers " + bean.getQualifiers(),
+                clazz, bean -> "imported error handler with "
+                               + "id [" + definition.getId() + "] "
+                               + "from resource [" + url + "] "
+                               + "with qualifiers " + bean.getQualifiers(),
                 definition);
     }
 

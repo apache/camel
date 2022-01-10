@@ -31,6 +31,7 @@ import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.cdi.xml.ErrorHandlerDefinition;
 import org.apache.camel.cdi.xml.RedeliveryPolicyFactoryBean;
 import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
+import org.apache.camel.util.ObjectHelper;
 
 import static java.lang.Boolean.parseBoolean;
 import static java.lang.String.format;
@@ -56,7 +57,9 @@ final class XmlErrorHandlerFactoryBean extends SyntheticBean<ErrorHandlerBuilder
     @Override
     public ErrorHandlerBuilder create(CreationalContext<ErrorHandlerBuilder> creationalContext) {
         try {
-            ErrorHandlerBuilder builder = handler.getType().getTypeAsClass().newInstance();
+            String fqn = handler.getType().getTypeAsClass();
+            Class<?> clazz = ObjectHelper.loadClass(fqn);
+            ErrorHandlerBuilder builder = (ErrorHandlerBuilder) clazz.newInstance();
 
             switch (handler.getType()) {
                 case DefaultErrorHandler:
