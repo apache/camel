@@ -1746,6 +1746,29 @@ public class ExpressionBuilder {
         };
     }
 
+    public static Expression beanExpression(final Expression expression, final String method) {
+        return new ExpressionAdapter() {
+            private Language language;
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                Object bean = expression.evaluate(exchange, Object.class);
+                Expression exp = language.createExpression(null, new Object[]{bean, method});
+                exp.init(exchange.getContext());
+                return exp.evaluate(exchange, Object.class);
+            }
+
+            @Override
+            public void init(CamelContext context) {
+                this.language = context.resolveLanguage("bean");
+            }
+
+            public String toString() {
+                return "bean(" + expression + ", " + method + ")";
+            }
+        };
+    }
+
     public static Expression propertiesComponentExpression(final String key, final String defaultValue) {
         return new ExpressionAdapter() {
             private Expression exp;

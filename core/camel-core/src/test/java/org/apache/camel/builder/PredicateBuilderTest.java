@@ -23,6 +23,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Predicate;
 import org.apache.camel.TestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.support.Animal;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -171,6 +172,14 @@ public class PredicateBuilderTest extends TestSupport {
         assertMatches(header("name").not().isEqualTo("Claus"));
         assertMatches(header("size").not().isLessThan(7));
         assertDoesNotMatch(header("name").not().isEqualTo("James"));
+    }
+
+    @Test
+    public void testMethod() throws Exception {
+        Animal tiger = new Animal("Tony", true);
+        exchange.getMessage().setBody(tiger);
+
+        assertMatches(PredicateBuilder.isEqualTo(bodyAs(Animal.class).method("getName"), constant("Tony")));
     }
 
     @Override
