@@ -117,7 +117,7 @@ public abstract class TransactionalJtaTransactionPolicy extends JtaTransactionPo
                         return txMgr;
                     }
                 }
-            } catch (final Throwable t) {
+            } catch (final RuntimeException | ReflectiveOperationException | NoClassDefFoundError t) {
                 // no-op
             }
         }
