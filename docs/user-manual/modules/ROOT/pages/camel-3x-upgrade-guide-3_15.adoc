@@ -10,7 +10,7 @@ IMPORTANT: Java 8 is no longer supported. Camel 3.15 onwards requires Java 11 or
 
 === Removed components
 
-The `camel-kamelet-reify` has been removed.
+The `camel-kamelet-reify` and `camel-spring-javaconfig` has been removed.
 
 === API changes
 
