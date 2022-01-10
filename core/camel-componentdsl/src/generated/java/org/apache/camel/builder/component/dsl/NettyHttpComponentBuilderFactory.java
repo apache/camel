@@ -643,24 +643,6 @@ public interface NettyHttpComponentBuilderFactory {
             return this;
         }
         /**
-         * Sets the cap on the number of objects that can be allocated by the
-         * pool (checked out to clients, or idle awaiting checkout) at a given
-         * time. Use a negative value for no limit.
-         * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Default: -1
-         * Group: producer (advanced)
-         * 
-         * @param producerPoolMaxActive the value to set
-         * @return the dsl builder
-         */
-        default NettyHttpComponentBuilder producerPoolMaxActive(
-                int producerPoolMaxActive) {
-            doSetProperty("producerPoolMaxActive", producerPoolMaxActive);
-            return this;
-        }
-        /**
          * Sets the cap on the number of idle instances in the pool.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
@@ -674,6 +656,24 @@ public interface NettyHttpComponentBuilderFactory {
         default NettyHttpComponentBuilder producerPoolMaxIdle(
                 int producerPoolMaxIdle) {
             doSetProperty("producerPoolMaxIdle", producerPoolMaxIdle);
+            return this;
+        }
+        /**
+         * Sets the cap on the number of objects that can be allocated by the
+         * pool (checked out to clients, or idle awaiting checkout) at a given
+         * time. Use a negative value for no limit.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: -1
+         * Group: producer (advanced)
+         * 
+         * @param producerPoolMaxTotal the value to set
+         * @return the dsl builder
+         */
+        default NettyHttpComponentBuilder producerPoolMaxTotal(
+                int producerPoolMaxTotal) {
+            doSetProperty("producerPoolMaxTotal", producerPoolMaxTotal);
             return this;
         }
         /**
@@ -1454,8 +1454,8 @@ public interface NettyHttpComponentBuilderFactory {
             case "correlationManager": getOrCreateConfiguration((NettyHttpComponent) component).setCorrelationManager((org.apache.camel.component.netty.NettyCamelStateCorrelationManager) value); return true;
             case "lazyChannelCreation": getOrCreateConfiguration((NettyHttpComponent) component).setLazyChannelCreation((boolean) value); return true;
             case "producerPoolEnabled": getOrCreateConfiguration((NettyHttpComponent) component).setProducerPoolEnabled((boolean) value); return true;
-            case "producerPoolMaxActive": getOrCreateConfiguration((NettyHttpComponent) component).setProducerPoolMaxActive((int) value); return true;
             case "producerPoolMaxIdle": getOrCreateConfiguration((NettyHttpComponent) component).setProducerPoolMaxIdle((int) value); return true;
+            case "producerPoolMaxTotal": getOrCreateConfiguration((NettyHttpComponent) component).setProducerPoolMaxTotal((int) value); return true;
             case "producerPoolMinEvictableIdle": getOrCreateConfiguration((NettyHttpComponent) component).setProducerPoolMinEvictableIdle((long) value); return true;
             case "producerPoolMinIdle": getOrCreateConfiguration((NettyHttpComponent) component).setProducerPoolMinIdle((int) value); return true;
             case "udpConnectionlessSending": getOrCreateConfiguration((NettyHttpComponent) component).setUdpConnectionlessSending((boolean) value); return true;

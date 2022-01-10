@@ -624,24 +624,6 @@ public interface NettyComponentBuilderFactory {
             return this;
         }
         /**
-         * Sets the cap on the number of objects that can be allocated by the
-         * pool (checked out to clients, or idle awaiting checkout) at a given
-         * time. Use a negative value for no limit.
-         * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Default: -1
-         * Group: producer (advanced)
-         * 
-         * @param producerPoolMaxActive the value to set
-         * @return the dsl builder
-         */
-        default NettyComponentBuilder producerPoolMaxActive(
-                int producerPoolMaxActive) {
-            doSetProperty("producerPoolMaxActive", producerPoolMaxActive);
-            return this;
-        }
-        /**
          * Sets the cap on the number of idle instances in the pool.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
@@ -655,6 +637,24 @@ public interface NettyComponentBuilderFactory {
         default NettyComponentBuilder producerPoolMaxIdle(
                 int producerPoolMaxIdle) {
             doSetProperty("producerPoolMaxIdle", producerPoolMaxIdle);
+            return this;
+        }
+        /**
+         * Sets the cap on the number of objects that can be allocated by the
+         * pool (checked out to clients, or idle awaiting checkout) at a given
+         * time. Use a negative value for no limit.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: -1
+         * Group: producer (advanced)
+         * 
+         * @param producerPoolMaxTotal the value to set
+         * @return the dsl builder
+         */
+        default NettyComponentBuilder producerPoolMaxTotal(
+                int producerPoolMaxTotal) {
+            doSetProperty("producerPoolMaxTotal", producerPoolMaxTotal);
             return this;
         }
         /**
@@ -1375,8 +1375,8 @@ public interface NettyComponentBuilderFactory {
             case "correlationManager": getOrCreateConfiguration((NettyComponent) component).setCorrelationManager((org.apache.camel.component.netty.NettyCamelStateCorrelationManager) value); return true;
             case "lazyChannelCreation": getOrCreateConfiguration((NettyComponent) component).setLazyChannelCreation((boolean) value); return true;
             case "producerPoolEnabled": getOrCreateConfiguration((NettyComponent) component).setProducerPoolEnabled((boolean) value); return true;
-            case "producerPoolMaxActive": getOrCreateConfiguration((NettyComponent) component).setProducerPoolMaxActive((int) value); return true;
             case "producerPoolMaxIdle": getOrCreateConfiguration((NettyComponent) component).setProducerPoolMaxIdle((int) value); return true;
+            case "producerPoolMaxTotal": getOrCreateConfiguration((NettyComponent) component).setProducerPoolMaxTotal((int) value); return true;
             case "producerPoolMinEvictableIdle": getOrCreateConfiguration((NettyComponent) component).setProducerPoolMinEvictableIdle((long) value); return true;
             case "producerPoolMinIdle": getOrCreateConfiguration((NettyComponent) component).setProducerPoolMinIdle((int) value); return true;
             case "udpConnectionlessSending": getOrCreateConfiguration((NettyComponent) component).setUdpConnectionlessSending((boolean) value); return true;
