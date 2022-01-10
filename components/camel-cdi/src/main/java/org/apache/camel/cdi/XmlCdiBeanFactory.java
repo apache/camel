@@ -19,11 +19,9 @@ package org.apache.camel.cdi;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -45,7 +43,6 @@ import org.apache.camel.cdi.xml.RouteConfigurationContextDefinition;
 import org.apache.camel.cdi.xml.RouteContextDefinition;
 import org.apache.camel.cdi.xml.RouteTemplateContextDefinition;
 import org.apache.camel.core.xml.AbstractCamelFactoryBean;
-import org.apache.camel.core.xml.CamelServiceExporterDefinition;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
@@ -66,7 +63,6 @@ import static org.apache.camel.cdi.ApplicationScopedLiteral.APPLICATION_SCOPED;
 import static org.apache.camel.cdi.CdiSpiHelper.createCamelContextWithTCCL;
 import static org.apache.camel.cdi.DefaultLiteral.DEFAULT;
 import static org.apache.camel.cdi.ResourceHelper.getResource;
-import static org.apache.camel.cdi.Startup.Literal.STARTUP;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 @Vetoed
@@ -230,12 +226,6 @@ final class XmlCdiBeanFactory {
                     .forEach(beans::add);
         }
 
-        if (factory.getExports() != null) {
-            factory.getExports().stream()
-                    .map(export -> serviceExporterBean(context, export, url))
-                    .forEach(beans::add);
-        }
-
         // TODO: define in beans
         if (factory.getRedeliveryPolicies() != null) {
             factory.getRedeliveryPolicies().stream()
@@ -272,44 +262,6 @@ final class XmlCdiBeanFactory {
                 bean -> "imported bean [" + factory.getId() + "] "
                         + "from resource [" + url + "] "
                         + "with qualifiers " + bean.getQualifiers());
-    }
-
-    private SyntheticBean<?> serviceExporterBean(Bean<?> context, CamelServiceExporterDefinition exporter, URL url) {
-        // TODO: replace with CreationException
-        requireNonNull(exporter.getServiceRef(),
-                () -> format("Missing [%s] attribute for imported bean [%s] from resource [%s]",
-                        "serviceRef", Objects.toString(exporter.getId(), "export"), url));
-
-        Class<?> type;
-        if (exporter.getServiceInterface() != null) {
-            type = exporter.getServiceInterface();
-        } else {
-            Bean<?> bean = manager.resolve(manager.getBeans(exporter.getServiceRef()));
-            if (bean != null) {
-                type = bean.getBeanClass();
-            } else {
-                requireNonNull(exporter.getServiceInterface(),
-                        () -> format("Missing [%s] attribute for imported bean [%s] from resource [%s]",
-                                "serviceInterface", Objects.toString(exporter.getId(), "export"), url));
-                type = exporter.getServiceInterface();
-            }
-        }
-
-        Set<Type> types = new HashSet<>(manager.createAnnotatedType(type).getTypeClosure());
-        // Weld does not add Object.class for interfaces as they do not extend Object.class.
-        // Though let's add it so that it's possible to lookup by bean type Object.class
-        // beans whose bean class is an interface (for startup beans).
-        types.add(Object.class);
-
-        return new XmlServiceExporterBean<>(
-                manager,
-                new SyntheticAnnotated(
-                        type, types, APPLICATION_SCOPED, ANY, STARTUP,
-                        hasId(exporter) ? NamedLiteral.of(exporter.getId()) : DEFAULT),
-                type, bean -> "imported bean [" + Objects.toString(exporter.getId(), "export") + "] "
-                              + "from resource [" + url + "] "
-                              + "with qualifiers " + bean.getQualifiers(),
-                context, exporter);
     }
 
     private SyntheticBean<?> restContextBean(RestContextDefinition definition, URL url) {

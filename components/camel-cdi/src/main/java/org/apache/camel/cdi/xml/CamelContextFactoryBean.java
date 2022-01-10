@@ -42,7 +42,6 @@ import org.apache.camel.core.xml.AbstractCamelFactoryBean;
 import org.apache.camel.core.xml.CamelJMXAgentDefinition;
 import org.apache.camel.core.xml.CamelPropertyPlaceholderDefinition;
 import org.apache.camel.core.xml.CamelRouteControllerDefinition;
-import org.apache.camel.core.xml.CamelServiceExporterDefinition;
 import org.apache.camel.core.xml.CamelStreamCachingStrategyDefinition;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.ContextScanDefinition;
@@ -248,9 +247,6 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
 
     @XmlElement(name = "errorHandler", type = ErrorHandlerDefinition.class)
     private List<ErrorHandlerDefinition> errorHandlers;
-
-    @XmlElement(name = "export", type = CamelServiceExporterDefinition.class)
-    private List<CamelServiceExporterDefinition> exports;
 
     @XmlElement(name = "routeConfigurationContextRef")
     private List<RouteConfigurationContextRefDefinition> routeConfigurationRefs = new ArrayList<>();
@@ -1102,14 +1098,6 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
 
     public void setDependsOn(String dependsOn) {
         this.dependsOn = dependsOn;
-    }
-
-    public List<CamelServiceExporterDefinition> getExports() {
-        return exports;
-    }
-
-    public void setExports(List<CamelServiceExporterDefinition> exports) {
-        this.exports = exports;
     }
 
     public boolean isImplicitId() {
