@@ -80,6 +80,23 @@ public class JiraComponentConfigurationTest extends CamelTestSupport {
     }
 
     @Test
+    public void createEndpointWithPersonalAccessTokenAuthentication() throws Exception {
+        JiraComponent component = new JiraComponent(context);
+        component.start();
+        String query = Joiner.on("&").join(
+                concat(JIRA_URL, JIRA_URL_VALUE),
+                concat(ACCESS_TOKEN, ACCESS_TOKEN_VALUE));
+        JiraEndpoint endpoint = (JiraEndpoint) component.createEndpoint("jira://updateIssue?" + query);
+
+        assertEquals("updateissue", endpoint.getType().name().toLowerCase());
+        assertEquals(JIRA_URL_VALUE, endpoint.getConfiguration().getJiraUrl());
+        assertEquals(null, endpoint.getConfiguration().getVerificationCode());
+        assertEquals(ACCESS_TOKEN_VALUE, endpoint.getConfiguration().getAccessToken());
+        assertEquals(null, endpoint.getConfiguration().getConsumerKey());
+        assertEquals(null, endpoint.getConfiguration().getPrivateKey());
+    }
+
+    @Test
     public void createWatchChangesEndpoint() throws Exception {
         JiraComponent component = new JiraComponent(context);
         component.start();
