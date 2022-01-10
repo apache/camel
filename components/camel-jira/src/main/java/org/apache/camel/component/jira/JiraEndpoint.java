@@ -133,6 +133,13 @@ public class JiraEndpoint extends DefaultEndpoint {
                         LOG.debug("Connecting to JIRA with Basic authentication with username/password");
                         client = factory.createWithBasicHttpAuthentication(jiraServerUri, configuration.getUsername(),
                                 configuration.getPassword());
+                    } else if (configuration.getAccessToken() != null
+                            && configuration.getVerificationCode() == null
+                            && configuration.getPrivateKey() == null
+                            && configuration.getConsumerKey() == null) {
+                        client = factory.create(jiraServerUri, builder -> {
+                            builder.setHeader("Authorization", "Bearer " + configuration.getAccessToken());
+                        });
                     } else {
                         LOG.debug("Connecting to JIRA with OAuth authentication");
                         JiraOAuthAuthenticationHandler oAuthHandler = new JiraOAuthAuthenticationHandler(
