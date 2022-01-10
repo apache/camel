@@ -43,12 +43,6 @@
             <artifactId>spring-rabbit</artifactId>
             <version>${spring-rabbitmq-version}</version>
         </dependency>
-        <!-- TODO: avoid custom pool -->
-        <dependency>
-            <groupId>commons-pool</groupId>
-            <artifactId>commons-pool</artifactId>
-            <version>${commons-pool-version}</version>
-        </dependency>
 
         <!-- test infra -->
         <dependency>
