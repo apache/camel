@@ -110,6 +110,8 @@ The JBang app that was previously named `CamelJBang` is now named `camel`. It is
 
 The legacy XML in `camel-cdi` with `<camelContext>` is deprecated, instead the XML DSL route loader should be used.
 
+JTA support is moved out of `camel-cdi` to its own `camel-cdi-jta` module.
+
 The `org.apache.camel.cdi.Main` class has moved from `camel-cdi` to `camel-cdi-main` JAR.
 
 === camel-karaf
