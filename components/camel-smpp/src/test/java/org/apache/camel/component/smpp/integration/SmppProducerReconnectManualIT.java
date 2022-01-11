@@ -24,7 +24,11 @@ import org.junit.jupiter.api.Test;
 /**
  * Spring based integration test for the smpp component. To run this test, ensure that the SMSC is running on: host:
  * localhost port: 2775 user: smppclient password: password <br/>
- * A SMSC for test is available here: http://www.seleniumsoftware.com/downloads.html
+ * In the past, a SMSC for test was available here: http://www.seleniumsoftware.com/downloads.html.
+ *
+ * Since it is not available anymore, it's possible to test the reconnect logic manually using the nc CLI tool:
+ *
+ * nc -lv 2775
  */
 @Disabled("Must be manually tested")
 public class SmppProducerReconnectManualIT extends CamelTestSupport {
