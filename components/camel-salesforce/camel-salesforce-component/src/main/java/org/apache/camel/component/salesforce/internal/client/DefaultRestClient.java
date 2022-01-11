@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +39,7 @@ import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
+import org.apache.commons.io.IOUtils;
 import org.eclipse.jetty.client.api.Request;
 import org.eclipse.jetty.client.api.Response;
 import org.eclipse.jetty.client.util.InputStreamContentProvider;
@@ -90,12 +92,15 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
                     return new SalesforceMultipleChoicesException(reason, statusCode, choices);
                 } else {
                     List<RestError> restErrors = null;
+                    String body = null;
                     try {
                         restErrors = readErrorsFrom(responseContent, objectMapper);
                     } catch (IOException ignored) {
                         // ok. could be a custom response
                     }
                     try {
+                        responseContent.reset();
+                        body = IOUtils.toString(responseContent, StandardCharsets.UTF_8);
                         responseContent.reset();
                     } catch (Throwable t) {
                         log.warn("Unable to reset HTTP response content input stream.");
@@ -106,7 +111,7 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
 
                     return new SalesforceException(
                             restErrors, statusCode,
-                            "Unexpected error: " + reason + ". See exception `errors` property for detail.",
+                            "Unexpected error: " + reason + ". See exception `errors` property for detail. " + body,
                             responseContent);
                 }
             }
