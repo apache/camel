@@ -21,10 +21,7 @@ on:
   pull_request:
     branches:
       - main
-env:
-  GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
-  SONAR_TOKEN: '${{ secrets.SONAR_TOKEN }}'
-  SONARCLOUD_TOKEN: '${{ secrets.SONARCLOUD_TOKEN }}'
+
 jobs:
   checkstyle:
     runs-on: ubuntu-latest
@@ -63,10 +60,5 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
-      - name: Cache SonarCloud packages
-        uses: actions/cache@v2
-        with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
       - name: maven build
-        run: ./mvnw -V -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 --no-transfer-progress -Pfastinstall -Dcheckstyle.skip=true -DskipTests -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=apache -Dsonar.projectKey=apache_camel install org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
+        run: ./mvnw -V -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 --no-transfer-progress -Pfastinstall -Dcheckstyle.skip=true -DskipTests install
