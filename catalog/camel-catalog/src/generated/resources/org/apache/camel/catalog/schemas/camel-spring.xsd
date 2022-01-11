@@ -4858,6 +4858,14 @@ org.apache.camel.spi.SendDynamicAware . Default value: true
             <xs:element ref="tns:serviceCall"/>
           </xs:choice>
         </xs:sequence>
+        <xs:attribute name="statusPropertyName" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Name of exchange property to use for storing the status of the filtering.
+Setting this allows to know if the filter predicate evaluated as true or false.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
