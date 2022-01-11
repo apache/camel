@@ -21,6 +21,10 @@ on:
   pull_request:
     branches:
       - main
+env:
+  GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+  SONAR_TOKEN: '${{ secrets.SONAR_TOKEN }}'
+  SONARCLOUD_TOKEN: '${{ secrets.SONARCLOUD_TOKEN }}'
 jobs:
   checkstyle:
     runs-on: ubuntu-latest
