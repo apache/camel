@@ -56,6 +56,7 @@ In order to do so, write a YAML-based file with the `route`, the `steps` and the
 
 [source,yaml]
 ----
+#!/usr/bin/env jbang camel@apache/camel run
 - route:
     id: "hello"
     from:
@@ -156,6 +157,7 @@ For example a kamelet binding file named `joke.yaml`:
 
 [source,yaml]
 ----
+#!/usr/bin/env jbang camel@apache/camel run
 apiVersion: camel.apache.org/v1alpha1
 kind: KameletBinding
 metadata:
@@ -191,6 +193,7 @@ running on port 8080. For example the following route in a file named `server.ya
 
 [source,yaml]
 ----
+#!/usr/bin/env jbang camel@apache/camel run
 - from:
     uri: "platform-http:/hello"
     steps:
