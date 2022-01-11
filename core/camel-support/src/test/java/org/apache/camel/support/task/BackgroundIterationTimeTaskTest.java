@@ -145,4 +145,22 @@ public class BackgroundIterationTimeTaskTest extends TaskTestSupport {
         assertTrue(taskCount < maxIterations);
         assertFalse(completed, "The task did not complete because of timeout, the return should be false");
     }
+
+    @DisplayName("Test that the task runs until the boolean supplier succeeds")
+    @Test
+    @Timeout(10)
+    void testRunNoMoreBooleanSupplierWithForever() {
+        BackgroundTask task = Tasks.backgroundTask()
+                .withScheduledExecutor(Executors.newSingleThreadScheduledExecutor())
+                .withBudget(Budgets.iterationTimeBudget()
+                        .withMaxIterations(Integer.MAX_VALUE)
+                        .withInitialDelay(Duration.ofSeconds(1))
+                        .withUnlimitedDuration()
+                        .build())
+                .build();
+
+        boolean completed = task.run(this::taskPredicateWithDeterministicStop, 4);
+        assertTrue(maxIterations > taskCount, "The task execution should not exceed the max iterations");
+        assertTrue(completed, "The task did not complete, the return should be false");
+    }
 }

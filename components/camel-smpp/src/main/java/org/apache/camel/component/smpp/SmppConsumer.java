@@ -143,21 +143,30 @@ public class SmppConsumer extends DefaultConsumer {
     }
 
     private boolean doReconnect() {
-        if (isServiceStopping(this)) {
-            return true;
-        }
-
-        if (isSessionClosed(session)) {
-            try {
-                LOG.info("Trying to reconnect to {}", getEndpoint().getConnectionString());
-                session = createSession();
+        try {
+            LOG.info("Trying to reconnect to {}", getEndpoint().getConnectionString());
+            if (isServiceStopping(this)) {
                 return true;
-            } catch (IOException e) {
-                LOG.warn("Failed to reconnect to {}", getEndpoint().getConnectionString());
-                closeSession();
-
-                return false;
             }
+
+            if (isSessionClosed(session)) {
+                try {
+                    LOG.info("Creating a new session to {}", getEndpoint().getConnectionString());
+                    session = createSession();
+                    LOG.info("Reconnected to {}", getEndpoint().getConnectionString());
+                    return true;
+                } catch (IOException e) {
+                    LOG.warn("Failed to reconnect to {}", getEndpoint().getConnectionString());
+                    closeSession();
+
+                    return false;
+                }
+            }
+
+            LOG.info("Nothing to do: the session is not closed");
+        } catch (Exception e) {
+            LOG.error("Unable to reconnect to {}: {}", getEndpoint().getConnectionString(), e.getMessage(), e);
+            return false;
         }
 
         return true;
