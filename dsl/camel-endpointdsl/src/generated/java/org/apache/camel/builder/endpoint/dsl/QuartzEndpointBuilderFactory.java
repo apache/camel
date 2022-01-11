@@ -562,7 +562,12 @@ public interface QuartzEndpointBuilderFactory {
             return this;
         }
         /**
-         * To configure additional options on the trigger.
+         * To configure additional options on the trigger. The parameter
+         * timeZone is supported if the cron option is present. Otherwise the
+         * parameters repeatInterval and repeatCount are supported. Note: When
+         * using repeatInterval values of 1000 or less, the first few events
+         * after starting the camel context may be fired more rapidly than
+         * expected.
          * 
          * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
          * java.lang.Object&amp;gt;&lt;/code&gt; type.
@@ -583,7 +588,12 @@ public interface QuartzEndpointBuilderFactory {
             return this;
         }
         /**
-         * To configure additional options on the trigger.
+         * To configure additional options on the trigger. The parameter
+         * timeZone is supported if the cron option is present. Otherwise the
+         * parameters repeatInterval and repeatCount are supported. Note: When
+         * using repeatInterval values of 1000 or less, the first few events
+         * after starting the camel context may be fired more rapidly than
+         * expected.
          * 
          * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
          * java.lang.Object&amp;gt;&lt;/code&gt; type.
