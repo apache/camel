@@ -54,7 +54,7 @@ public abstract class TransactionalJtaTransactionPolicy extends JtaTransactionPo
     };
     private static final String[] METHODS = new String[] {
             "org.openejb.OpenEJB.getTransactionManager",
-            "com.arjuna.jta.TransactionManager.transactionManager",
+            "com.arjuna.ats.jta.TransactionManager.transactionManager",
             "com.bluestone.jta.SaTransactionManagerFactory.SaGetTransactionManager",
             "com.sun.jts.jta.TransactionManagerImpl.getTransactionManagerImpl",
             "com.inprise.visitransact.jta.TransactionManagerImpl.getTransactionManagerImpl",
