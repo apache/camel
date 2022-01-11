@@ -339,9 +339,9 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                 String ehName = asText(nt.getKeyNode());
 
                 DefaultErrorHandlerProperties ehb = null;
-                if ("dead-letter-channel".equals(ehName)) {
+                if ("sink".equals(ehName)) {
+                    // a sink is a dead letter queue
                     DeadLetterChannelBuilder dlch = new DeadLetterChannelBuilder();
-                    // endpoint
                     MappingNode endpoint = asMappingNode(nodeAt(nt.getValueNode(), "/endpoint"));
                     String dlq = extractCamelEndpointUri(endpoint);
                     dlch.setDeadLetterUri(dlq);
@@ -351,10 +351,6 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                     ehb = new DefaultErrorHandlerBuilder();
                 } else if ("none".equals(ehName)) {
                     route.errorHandler(new NoErrorHandlerBuilder());
-                } else if ("bean".equals(ehName)) {
-                    throw new IllegalArgumentException("Bean error handler is not supported");
-                } else if ("ref".equals(ehName)) {
-                    throw new IllegalArgumentException("Ref error handler is not supported");
                 }
 
                 // some error handlers support additional parameters

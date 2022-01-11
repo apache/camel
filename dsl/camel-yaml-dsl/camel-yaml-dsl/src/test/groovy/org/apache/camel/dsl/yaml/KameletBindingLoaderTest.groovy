@@ -330,7 +330,7 @@ class KameletBindingLoaderTest extends YamlTestSupport {
                       apiVersion: camel.apache.org/v1alpha1
                       name: log-sink
                   errorHandler:
-                    dead-letter-channel:
+                    sink:
                       endpoint:
                         ref:
                           kind: Kamelet
@@ -396,7 +396,7 @@ class KameletBindingLoaderTest extends YamlTestSupport {
                       apiVersion: camel.apache.org/v1alpha1
                       name: log-sink
                   errorHandler:
-                    dead-letter-channel:
+                    sink:
                       endpoint:
                         uri: mock:dead
                       parameters:
