@@ -55,7 +55,12 @@ public class TimeBoundedBudget implements TimeBudget {
 
     @Override
     public boolean canContinue() {
-        // ... if time budget is NOT exhausted
+        // ... unless running forever
+        if (maxDuration == UNLIMITED_DURATION) {
+            return true;
+        }
+
+        // ... or if time budget is NOT exhausted
         if (elapsed().toMillis() >= maxDuration) {
             return false;
         }
