@@ -18,7 +18,7 @@
 name: main pr build
 
 on:
-  pull_request_target:
+  pull_request:
     branches:
       - main
 env:
