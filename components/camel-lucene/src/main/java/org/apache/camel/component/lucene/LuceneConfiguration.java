@@ -87,7 +87,7 @@ public class LuceneConfiguration {
         setMaxHits(component.getAndRemoveParameter(parameters, "maxHits", Integer.class, 10));
     }
 
-    private boolean isValidAuthority() throws URISyntaxException {
+    private boolean isValidAuthority() {
         if (!authority.contains(":") || authority.split(":")[0] == null || insertOrQueryCheck()) {
             return false;
         }
@@ -100,7 +100,7 @@ public class LuceneConfiguration {
                 && !authority.split(":")[1].equalsIgnoreCase("query");
     }
 
-    private String retrieveTokenFromAuthority(String token) throws URISyntaxException {
+    private String retrieveTokenFromAuthority(String token) {
         String retval;
 
         if (token.equalsIgnoreCase("hostname")) {

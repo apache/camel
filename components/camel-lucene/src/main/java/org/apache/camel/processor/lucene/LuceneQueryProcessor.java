@@ -34,8 +34,7 @@ public class LuceneQueryProcessor implements Processor {
     private int maxNumberOfHits;
     private int totalHitsThreshold;
 
-    public LuceneQueryProcessor(String indexDirectoryPath, Analyzer analyzer, String defaultSearchPhrase, int maxNumberOfHits,
-                                int totalHitsThreshold) {
+    public LuceneQueryProcessor(String indexDirectoryPath, Analyzer analyzer, String defaultSearchPhrase, int maxNumberOfHits) {
         this.setAnalyzer(analyzer);
         this.setIndexDirectory(new File(indexDirectoryPath));
         this.setSearchPhrase(defaultSearchPhrase);
