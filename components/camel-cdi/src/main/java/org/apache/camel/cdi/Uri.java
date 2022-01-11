@@ -71,6 +71,5 @@ public @interface Uri {
         public String value() {
             return uri;
         }
-
     }
 }

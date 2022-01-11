@@ -14,18 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.cdi;
+package org.apache.camel.cdi.transaction;
 
-import javax.enterprise.inject.Any;
-import javax.enterprise.util.AnnotationLiteral;
+import org.apache.camel.LoggingLevel;
+import org.apache.camel.jta.JtaTransactionErrorHandlerBuilder;
+import org.apache.camel.jta.JtaTransactionPolicy;
 
-@Vetoed
-final class AnyLiteral extends AnnotationLiteral<Any> implements Any {
+public interface CdiTransactionalErrorHandlerBuilder {
+    String getPolicyRef();
 
-    static final Any ANY = new AnyLiteral();
+    JtaTransactionErrorHandlerBuilder setTransactionPolicy(String ref);
 
-    private static final long serialVersionUID = 1L;
+    JtaTransactionPolicy getTransactionPolicy();
 
-    private AnyLiteral() {
-    }
+    JtaTransactionErrorHandlerBuilder setTransactionPolicy(JtaTransactionPolicy transactionPolicy);
+
+    LoggingLevel getRollbackLoggingLevel();
+
+    JtaTransactionErrorHandlerBuilder setRollbackLoggingLevel(LoggingLevel rollbackLoggingLevel);
 }

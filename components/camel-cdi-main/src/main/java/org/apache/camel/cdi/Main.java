@@ -19,21 +19,23 @@ package org.apache.camel.cdi;
 import java.util.Map;
 import java.util.Set;
 
+import javax.enterprise.context.control.RequestContextController;
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.UnsatisfiedResolutionException;
+import javax.enterprise.inject.se.SeContainer;
+import javax.enterprise.inject.se.SeContainerInitializer;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.main.MainCommandLineSupport;
-import org.apache.deltaspike.cdise.api.CdiContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
-import static org.apache.camel.cdi.AnyLiteral.ANY;
 import static org.apache.camel.cdi.BeanManagerHelper.getReference;
-import static org.apache.deltaspike.cdise.api.CdiContainerLoader.getCdiContainer;
 
 /**
  * Camel CDI boot integration. Allows Camel and CDI to be booted up on the command line as a JVM process.
@@ -45,19 +47,27 @@ public class Main extends MainCommandLineSupport {
         // Since version 2.3.0.Final and WELD-1915, Weld SE registers a shutdown hook that conflicts
         // with Camel main support. See WELD-2051. The system property above is available starting
         // Weld 2.3.1.Final to deactivate the registration of the shutdown hook.
-        System.setProperty("org.jboss.weld.se.shutdownHook", String.valueOf(Boolean.FALSE));
+        System.setProperty(
+                "org.jboss.weld.se.shutdownHook",
+                System.getProperty("org.jboss.weld.se.shutdownHook", String.valueOf(Boolean.FALSE)));
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(Main.class);
 
     private static Main instance;
 
-    private CdiContainer cdiContainer;
+    private boolean startContexts = true;
+    private SeContainer cdiContainer;
+    private Runnable stopHook;
 
     public static void main(String... args) throws Exception {
         Main main = new Main();
         instance = main;
-        main.run(args);
+        try {
+            main.run(args);
+        } finally {
+            instance = null; // ensure main can be reused even if unlikely
+        }
     }
 
     /**
@@ -67,6 +77,11 @@ public class Main extends MainCommandLineSupport {
      */
     public static Main getInstance() {
         return instance;
+    }
+
+    public Main setStartContexts(final boolean startContexts) {
+        this.startContexts = startContexts;
+        return this;
     }
 
     @Override
@@ -80,7 +95,7 @@ public class Main extends MainCommandLineSupport {
     @Override
     protected CamelContext createCamelContext() {
         BeanManager manager = cdiContainer.getBeanManager();
-        Map<String, CamelContext> camels = manager.getBeans(CamelContext.class, ANY).stream()
+        Map<String, CamelContext> camels = manager.getBeans(CamelContext.class, Any.Literal.INSTANCE).stream()
                 .map(bean -> getReference(manager, CamelContext.class, bean))
                 .collect(toMap(CamelContext::getName, identity()));
         if (camels.size() > 1) {
@@ -94,11 +109,9 @@ public class Main extends MainCommandLineSupport {
 
     @Override
     protected void doStart() throws Exception {
-        // TODO: Use standard CDI Java SE support when CDI 2.0 becomes a prerequisite
-        CdiContainer container = getCdiContainer();
-        container.boot();
-        container.getContextControl().startContexts();
-        cdiContainer = container;
+        final var container = SeContainerInitializer.newInstance();
+        cdiContainer = container.initialize();
+        startContexts();
         super.doStart();
         initCamelContext();
         warnIfNoCamelFound();
@@ -109,9 +122,28 @@ public class Main extends MainCommandLineSupport {
         // camel-cdi has already initialized and start CamelContext so we should not do this again
     }
 
+    protected void startContexts() {
+        if (!startContexts) {
+            LOG.debug("Context are not automatically started");
+            return;
+        }
+        try {
+            final var requestContextController = cdiContainer.select(RequestContextController.class).get();
+            if (requestContextController.activate()) {
+                LOG.debug("Request context started");
+                stopHook = requestContextController::deactivate;
+            } else {
+                LOG.debug("Request context already started");
+            }
+        } catch (final UnsatisfiedResolutionException e) {
+            // ignore, start without starting the contexts, will not impact much camel normally
+            LOG.debug("Didn't start request scope", e);
+        }
+    }
+
     private void warnIfNoCamelFound() {
         BeanManager manager = cdiContainer.getBeanManager();
-        Set<Bean<?>> contexts = manager.getBeans(CamelContext.class, ANY);
+        Set<Bean<?>> contexts = manager.getBeans(CamelContext.class, Any.Literal.INSTANCE);
         // Warn if there is no CDI Camel contexts
         if (contexts.isEmpty()) {
             LOG.warn("Camel CDI main has started with no Camel context!");
@@ -121,8 +153,11 @@ public class Main extends MainCommandLineSupport {
     @Override
     protected void doStop() throws Exception {
         super.doStop();
+        if (stopHook != null) {
+            stopHook.run();
+        }
         if (cdiContainer != null) {
-            cdiContainer.shutdown();
+            cdiContainer.close();
         }
     }
 }

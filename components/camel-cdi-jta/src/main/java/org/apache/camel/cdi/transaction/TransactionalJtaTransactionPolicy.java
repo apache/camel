@@ -16,6 +16,9 @@
  */
 package org.apache.camel.cdi.transaction;
 
+import java.util.Objects;
+import java.util.stream.Stream;
+
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.transaction.HeuristicMixedException;
@@ -30,6 +33,8 @@ import org.apache.camel.CamelException;
 import org.apache.camel.jta.JtaTransactionPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * Helper methods for transaction handling
@@ -46,6 +51,13 @@ public abstract class TransactionalJtaTransactionPolicy extends JtaTransactionPo
             "java:appserver/TransactionManager",
             "java:pm/TransactionManager",
             "java:/TransactionManager"
+    };
+    private static final String[] METHODS = new String[] {
+            "org.openejb.OpenEJB.getTransactionManager",
+            "com.arjuna.ats.jta.TransactionManager.transactionManager",
+            "com.bluestone.jta.SaTransactionManagerFactory.SaGetTransactionManager",
+            "com.sun.jts.jta.TransactionManagerImpl.getTransactionManagerImpl",
+            "com.inprise.visitransact.jta.TransactionManagerImpl.getTransactionManagerImpl",
     };
 
     protected TransactionManager transactionManager;
@@ -69,6 +81,7 @@ public abstract class TransactionalJtaTransactionPolicy extends JtaTransactionPo
         }
     }
 
+    // todo: see @openjpa:openjpa-kernel/src/main/java/org/apache/openjpa/ee/AutomaticManagedRuntime.java
     private TransactionManager lookupTransactionManager() {
         TransactionManager tm;
         for (String jndiName : TRANSACTION_MANAGER_JNDI_NAMES) {
@@ -79,6 +92,33 @@ public abstract class TransactionalJtaTransactionPolicy extends JtaTransactionPo
                 return tm;
             } catch (NamingException ex) {
                 LOG.debug("No JTA TransactionManager found at JNDI location [{}]", jndiName, ex);
+            }
+        }
+        var loaders = Stream.of(Thread.currentThread().getContextClassLoader(), getClass().getClassLoader())
+                .filter(Objects::nonNull)
+                .distinct()
+                .collect(toList());
+        for (String method : METHODS) {
+            final int sep = method.lastIndexOf('.');
+            try {
+                Class<?> clazz = null;
+                for (final var loader : loaders) {
+                    try {
+                        clazz = loader.loadClass(method.substring(0, sep));
+                    } catch (final NoClassDefFoundError | ClassNotFoundException cnfe) {
+                        // continue
+                    }
+                }
+                if (clazz != null) {
+                    final var getter = clazz.getDeclaredMethod(method.substring(sep + 1));
+                    getter.setAccessible(true);
+                    final var txMgr = (TransactionManager) getter.invoke(null);
+                    if (txMgr != null) {
+                        return txMgr;
+                    }
+                }
+            } catch (final RuntimeException | ReflectiveOperationException | NoClassDefFoundError t) {
+                // no-op
             }
         }
         LOG.warn("Could not find the transaction manager through any of following locations: {}",

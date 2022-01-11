@@ -16,11 +16,15 @@
  */
 package org.apache.camel.cdi;
 
+import org.apache.camel.builder.DefaultErrorHandlerBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.jta.JtaTransactionErrorHandlerBuilder;
+import org.apache.camel.cdi.transaction.CdiTransactionalErrorHandlerBuilder;
 
 /**
- * An extension of the {@link RouteBuilder} to provide some additional helper methods.
+ * An extension of the {@link RouteBuilder} to provide some additional JTA helper methods.
+ *
+ * You never really need it since {@code transactionErrorHandler()} can be replaced by
+ * {@code new JtaTransactionErrorHandlerBuilder()}.
  */
 public abstract class CdiRouteBuilder extends RouteBuilder {
 
@@ -29,7 +33,13 @@ public abstract class CdiRouteBuilder extends RouteBuilder {
      *
      * @return the created error handler
      */
-    public JtaTransactionErrorHandlerBuilder transactionErrorHandler() {
-        return new JtaTransactionErrorHandlerBuilder();
+    // IMPORTANT: don't leak CdiJtaTransactionErrorHandlerBuilder in the signature,
+    //            only things not depending on camel-jta
+    public <T extends DefaultErrorHandlerBuilder & CdiTransactionalErrorHandlerBuilder> T transactionErrorHandler() {
+        try {
+            return (T) new org.apache.camel.cdi.transaction.CdiJtaTransactionErrorHandlerBuilder();
+        } catch (final NoClassDefFoundError e) {
+            throw new IllegalStateException("JTA not available");
+        }
     }
 }
