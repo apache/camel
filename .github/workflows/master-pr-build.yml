@@ -18,7 +18,7 @@
 name: main pr build
 
 on:
-  pull_request:
+  pull_request_target:
     branches:
       - main
 env:
@@ -63,5 +63,10 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
       - name: maven build
-        run: ./mvnw -V -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 --no-transfer-progress -Psourcecheck -DskipTests -Dcheckstyle.skip=true install
+        run: ./mvnw -V -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 --no-transfer-progress -Pfastinstall -Dcheckstyle.skip=true -DskipTests -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=apache -Dsonar.projectKey=apache_camel org.sonarsource.scanner.maven:sonar-maven-plugin:sonar install
