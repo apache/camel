@@ -57,6 +57,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.twdata.maven.mojoexecutor.MojoExecutor;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.SafeConstructor;
 
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.twdata.maven.mojoexecutor.MojoExecutor.artifactId;
@@ -339,7 +340,7 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
 
         String suffix = ".yaml";
         if (specificationUri.regionMatches(true, specificationUri.length() - suffix.length(), suffix, 0, suffix.length())) {
-            Yaml loader = new Yaml();
+            Yaml loader = new Yaml(new SafeConstructor());
             Map map = loader.load(is);
             JsonNode node = mapper.convertValue(map, JsonNode.class);
             return (OasDocument) Library.readDocument(node);
