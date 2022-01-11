@@ -103,6 +103,7 @@ public final class EndpointProducerDeserializersResolver implements YamlDeserial
             case "dozer":
             case "drill":
             case "dropbox":
+            case "dynamic-router":
             case "ehcache":
             case "elasticsearch-rest":
             case "elsql":

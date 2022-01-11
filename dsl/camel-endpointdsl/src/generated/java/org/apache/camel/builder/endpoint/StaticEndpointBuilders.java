@@ -4296,6 +4296,51 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.DropboxEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Dynamic Router (camel-dynamic-router)
+     * The Dynamic Router component routes exchanges to recipients, and the
+     * recipients (and their rules) may change at runtime.
+     * 
+     * Category: endpoint,java
+     * Since: 3.15
+     * Maven coordinates: org.apache.camel:camel-dynamic-router
+     * 
+     * Syntax: <code>dynamic-router:channel</code>
+     * 
+     * Path parameter: channel (required)
+     * Channel of the Dynamic Router
+     * 
+     * @param path channel
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.DynamicRouterEndpointBuilderFactory.DynamicRouterEndpointBuilder dynamicRouter(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.DynamicRouterEndpointBuilderFactory.endpointBuilder("dynamic-router", path);
+    }
+    /**
+     * Dynamic Router (camel-dynamic-router)
+     * The Dynamic Router component routes exchanges to recipients, and the
+     * recipients (and their rules) may change at runtime.
+     * 
+     * Category: endpoint,java
+     * Since: 3.15
+     * Maven coordinates: org.apache.camel:camel-dynamic-router
+     * 
+     * Syntax: <code>dynamic-router:channel</code>
+     * 
+     * Path parameter: channel (required)
+     * Channel of the Dynamic Router
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path channel
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.DynamicRouterEndpointBuilderFactory.DynamicRouterEndpointBuilder dynamicRouter(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.DynamicRouterEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Ehcache (camel-ehcache)
      * Perform caching operations using Ehcache.
      * 
