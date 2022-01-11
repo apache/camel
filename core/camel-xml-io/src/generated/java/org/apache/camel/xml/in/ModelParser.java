@@ -403,8 +403,13 @@ public class ModelParser extends BaseParser {
         return doParse(new FaultToleranceConfigurationCommon(), faultToleranceConfigurationCommonAttributeHandler(),  noElementHandler(), noValueHandler());
     }
     protected FilterDefinition doParseFilterDefinition() throws IOException, XmlPullParserException {
-        return doParse(new FilterDefinition(),
-            processorDefinitionAttributeHandler(), outputExpressionNodeElementHandler(), noValueHandler());
+        return doParse(new FilterDefinition(), (def, key, val) -> {
+            if ("statusPropertyName".equals(key)) {
+                def.setStatusPropertyName(val);
+                return true;
+            }
+            return processorDefinitionAttributeHandler().accept(def, key, val);
+        }, outputExpressionNodeElementHandler(), noValueHandler());
     }
     protected <T extends OutputExpressionNode> ElementHandler<T> outputExpressionNodeElementHandler() {
         return (def, key) -> {

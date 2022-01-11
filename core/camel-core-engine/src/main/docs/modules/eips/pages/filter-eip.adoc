@@ -116,6 +116,38 @@ of the bean as shown:
 </route>
 ----
 
+=== Filtering with status property
+
+To know whether an `Exchange` was filtered or not, then you can choose to specify a name of a property
+to store on the exchange with the result (boolean), using `statusPropertyName` as shown below:
+
+[source,java]
+----
+from("direct:start")
+    .filter().method(MyBean.class, "isGoldCustomer").statusPropertyName("gold")
+      .to("mock:gold")
+    .end()
+    .to("mock:all");
+}
+----
+
+And in XML:
+
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <filter statusPropertyName="gold">
+        <method type="com.foo.MyBean" method="isGoldCustomer"/>
+        <to uri="mock:gold"/>
+    </filter>
+    <to uri="mock:all"/>
+</route>
+----
+
+In the example above then Camel will store an exchange property with key `gold` with the result of the filtering,
+whether it was `true` or `false`.
+
 === Filtering and stopping
 
 When using the Message Filter EIP, then it only applies to its children.

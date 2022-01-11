@@ -913,6 +913,9 @@
           "inherit-error-handler" : {
             "type" : "boolean"
           },
+          "status-property-name" : {
+            "type" : "string"
+          },
           "steps" : {
             "type" : "array",
             "items" : {
