@@ -14,7 +14,7 @@ TIP: The alternative consumer mode is xref:pollEnrich-eip.adoc[Polling Consumer]
 image::eip/EventDrivenConsumerSolution.gif[image]
 
 The Event Driven Consumer is implemented by consumers implementing the
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Processor.html[Processor]
+http://javadoc.io/doc/org.apache.camel/camel-api/latest/org/apache/camel/Processor.html[Processor]
 interface which is invoked by the xref:message-endpoint.adoc[Message Endpoint]
 when a xref:message.adoc[Message] is available for processing.
 
