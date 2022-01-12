@@ -22,6 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.hello_world_soap_http.GreeterImpl;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CxfGreeterMessageCamelHttpRouterTest extends CxfGreeterMessageRouterTest {
@@ -57,7 +58,7 @@ public class CxfGreeterMessageCamelHttpRouterTest extends CxfGreeterMessageRoute
     }
 
     @Override
-    protected ClassPathXmlApplicationContext createApplicationContext() {
+    protected AbstractApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/GreeterEndpointWithCamelHttpBeans.xml");
     }
 

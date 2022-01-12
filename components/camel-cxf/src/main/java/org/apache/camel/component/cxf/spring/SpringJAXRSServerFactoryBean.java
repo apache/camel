@@ -22,7 +22,7 @@ import java.util.List;
 import org.apache.camel.component.cxf.NullFaultListener;
 import org.apache.camel.component.cxf.jaxrs.BeanIdAware;
 import org.apache.cxf.bus.spring.BusWiringBeanFactoryPostProcessor;
-import org.apache.cxf.feature.LoggingFeature;
+import org.apache.cxf.ext.logging.LoggingFeature;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.JAXRSServiceFactoryBean;
 import org.apache.cxf.logging.FaultListener;
@@ -77,7 +77,8 @@ public class SpringJAXRSServerFactoryBean extends JAXRSServerFactoryBean
         }
         if (loggingFeatureEnabled) {
             if (getLoggingSizeLimit() > 0) {
-                loggingFeature = new LoggingFeature(getLoggingSizeLimit());
+                loggingFeature = new LoggingFeature();
+                loggingFeature.setLimit(getLoggingSizeLimit());
             } else {
                 loggingFeature = new LoggingFeature();
             }
@@ -95,7 +96,8 @@ public class SpringJAXRSServerFactoryBean extends JAXRSServerFactoryBean
         if (loggingFeature != null) {
             getFeatures().remove(loggingFeature);
             if (loggingSizeLimit > 0) {
-                loggingFeature = new LoggingFeature(loggingSizeLimit);
+                loggingFeature = new LoggingFeature();
+                loggingFeature.setLimit(getLoggingSizeLimit());
             } else {
                 loggingFeature = new LoggingFeature();
             }

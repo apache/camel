@@ -100,7 +100,7 @@ public class FailOverFeatureTest {
         startRoute(context2, proxy, real);
     }
 
-    private void startRoute(DefaultCamelContext ctx, final String proxy, final String real) throws Exception {
+    private void startRoute(final DefaultCamelContext ctx, final String proxy, final String real) throws Exception {
 
         ctx.addRoutes(new RouteBuilder() {
             public void configure() {
@@ -115,7 +115,7 @@ public class FailOverFeatureTest {
                 FailoverFeature ff = new FailoverFeature();
                 ff.setStrategy(strategy);
 
-                CxfEndpoint endpoint = (CxfEndpoint) (endpoint(real));
+                CxfEndpoint endpoint = (CxfEndpoint) (ctx.getEndpoint(real));
                 endpoint.getFeatures().add(ff);
 
                 from(proxy).to(endpoint);

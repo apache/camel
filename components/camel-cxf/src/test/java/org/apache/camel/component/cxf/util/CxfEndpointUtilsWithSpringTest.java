@@ -18,52 +18,49 @@ package org.apache.camel.component.cxf.util;
 
 import javax.xml.namespace.QName;
 
-import org.apache.camel.CamelContext;
+import org.apache.camel.Consumer;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.component.cxf.CxfComponent;
 import org.apache.camel.component.cxf.CxfEndpoint;
 import org.apache.camel.component.cxf.CxfEndpointUtils;
 import org.apache.camel.component.cxf.CxfSpringEndpoint;
 import org.apache.camel.component.cxf.DataFormat;
-import org.apache.camel.spring.SpringCamelContext;
-import org.apache.camel.util.IOHelper;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.AbstractXmlApplicationContext;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class CxfEndpointUtilsWithSpringTest extends CxfEndpointUtilsTest {
-    protected AbstractXmlApplicationContext applicationContext;
+public class CxfEndpointUtilsWithSpringTest extends CamelSpringTestSupport {
+    // set up the port name and service name
+    protected static final QName SERVICE_NAME = new QName("http://www.example.com/test", "ServiceName");
+    protected static final QName PORT_NAME = new QName("http://www.example.com/test", "PortName");
 
-    @BeforeEach
-    public void setUp() throws Exception {
-        applicationContext = createApplicationContext();
-        assertNotNull(applicationContext, "Should have created a valid spring context");
+    private static final String CXF_BASE_URI = "cxf://http://www.example.com/testaddress"
+                                               + "?serviceClass=org.apache.camel.component.cxf.HelloService"
+                                               + "&portName={http://www.example.com/test}PortName"
+                                               + "&serviceName={http://www.example.com/test}ServiceName"
+                                               + "&defaultBus=true";
 
-    }
-
-    @AfterEach
-    public void tearDown() throws Exception {
-        IOHelper.close(applicationContext);
-    }
+    private static final String NO_SERVICE_CLASS_URI = "cxf://http://www.example.com/testaddress"
+                                                       + "?portName={http://www.example.com/test}PortName"
+                                                       + "&serviceName={http://www.example.com/test}ServiceName";
 
     @Override
-    protected CamelContext getCamelContext() throws Exception {
-        return SpringCamelContext.springCamelContext(applicationContext, true);
-    }
-
-    protected ClassPathXmlApplicationContext createApplicationContext() {
+    protected AbstractApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/util/CxfEndpointBeans.xml");
     }
 
-    @Override
     protected String getEndpointURI() {
         return "cxf:bean:testEndpoint";
     }
 
-    @Override
     protected String getNoServiceClassURI() {
         return "cxf:bean:noServiceClassEndpoint";
     }
@@ -75,12 +72,10 @@ public class CxfEndpointUtilsWithSpringTest extends CxfEndpointUtilsTest {
                 endpoint.getServiceClass().getName());
     }
 
-    @Override
     public char sepChar() {
         return '?';
     }
 
-    @Override
     @Test
     public void testGetProperties() throws Exception {
         CxfSpringEndpoint endpoint = (CxfSpringEndpoint) createEndpoint(getEndpointURI());
@@ -101,4 +96,47 @@ public class CxfEndpointUtilsWithSpringTest extends CxfEndpointUtilsTest {
         assertEquals(DataFormat.PAYLOAD, endpoint.getDataFormat(), "We should get the PAYLOAD DataFormat");
     }
 
+    @Test
+    public void testGetDataFormatCXF() throws Exception {
+        CxfEndpoint endpoint = createEndpoint(getEndpointURI() + sepChar() + "dataFormat=CXF_MESSAGE");
+        assertEquals(DataFormat.CXF_MESSAGE, endpoint.getDataFormat(), "We should get the Message DataFormat");
+    }
+
+    @Test
+    public void testGetDataFormatRAW() throws Exception {
+        CxfEndpoint endpoint = createEndpoint(getEndpointURI() + sepChar() + "dataFormat=RAW");
+        assertEquals(DataFormat.RAW, endpoint.getDataFormat(), "We should get the Message DataFormat");
+    }
+
+    @Test
+    public void testCheckServiceClassWithTheEndpoint() throws Exception {
+        CxfEndpoint endpoint = createEndpoint(getNoServiceClassURI());
+        assertNull(endpoint.getServiceClass());
+    }
+
+    @Test
+    public void testCheckServiceClassProcedure() throws Exception {
+        CxfEndpoint endpoint = createEndpoint(getNoServiceClassURI());
+        assertNotNull(endpoint.createProducer());
+    }
+
+    @Test
+    public void testCheckServiceClassConsumer() throws Exception {
+        CxfEndpoint endpoint = createEndpoint(getNoServiceClassURI());
+
+        Consumer cxfConsumer = endpoint.createConsumer(new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                // noop
+            }
+        });
+
+        Exception ex = assertThrows(IllegalArgumentException.class, () -> cxfConsumer.start());
+        assertNotNull(ex, "Should get a CamelException here");
+        assertTrue(ex.getMessage().startsWith("serviceClass must be specified"));
+    }
+
+    protected CxfEndpoint createEndpoint(String uri) throws Exception {
+        return (CxfEndpoint) new CxfComponent(context).createEndpoint(uri);
+    }
 }

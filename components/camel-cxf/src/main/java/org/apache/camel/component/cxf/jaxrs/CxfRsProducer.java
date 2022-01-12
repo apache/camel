@@ -379,9 +379,9 @@ public class CxfRsProducer extends DefaultAsyncProducer {
         if (exchange.getPattern().isOutCapable()) {
             LOG.trace("Response body = {}", response);
             exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
-            exchange.getOut().setBody(binding.bindResponseToCamelBody(response, exchange));
-            exchange.getOut().getHeaders().putAll(binding.bindResponseHeadersToCamelHeaders(response, exchange));
-            exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, statesCode);
+            exchange.getMessage().setBody(binding.bindResponseToCamelBody(response, exchange));
+            exchange.getMessage().getHeaders().putAll(binding.bindResponseHeadersToCamelHeaders(response, exchange));
+            exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, statesCode);
         } else {
             // just close the input stream of the response object
             if (response instanceof Response) {
@@ -476,9 +476,9 @@ public class CxfRsProducer extends DefaultAsyncProducer {
         if (exchange.getPattern().isOutCapable()) {
             LOG.trace("Response body = {}", response);
             exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
-            exchange.getOut().setBody(binding.bindResponseToCamelBody(response, exchange));
-            exchange.getOut().getHeaders().putAll(binding.bindResponseHeadersToCamelHeaders(response, exchange));
-            exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, statesCode);
+            exchange.getMessage().setBody(binding.bindResponseToCamelBody(response, exchange));
+            exchange.getMessage().getHeaders().putAll(binding.bindResponseHeadersToCamelHeaders(response, exchange));
+            exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, statesCode);
         } else {
             // just close the input stream of the response object
             if (response instanceof Response) {
@@ -697,19 +697,20 @@ public class CxfRsProducer extends DefaultAsyncProducer {
                 }
 
                 LOG.trace("Response body = {}", response);
-                exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
+                exchange.getMessage().getHeaders().putAll(exchange.getIn().getHeaders());
                 final CxfRsBinding binding = cxfRsEndpoint.getBinding();
-                exchange.getOut().getHeaders().putAll(binding.bindResponseHeadersToCamelHeaders(response, exchange));
+                exchange.getMessage().getHeaders().putAll(binding.bindResponseHeadersToCamelHeaders(response, exchange));
 
                 if (genericType != null && !genericType.equals(Void.TYPE)) {
                     GenericType genericType = new GenericType(this.genericType);
-                    exchange.getOut().setBody(binding.bindResponseToCamelBody(response.readEntity(genericType), exchange));
+                    exchange.getMessage().setBody(binding.bindResponseToCamelBody(response.readEntity(genericType), exchange));
                 } else if (responseClass != null && !responseClass.equals(Void.TYPE)) {
-                    exchange.getOut().setBody(binding.bindResponseToCamelBody(response.readEntity(responseClass), exchange));
+                    exchange.getMessage()
+                            .setBody(binding.bindResponseToCamelBody(response.readEntity(responseClass), exchange));
                 } else {
-                    exchange.getOut().setBody(binding.bindResponseToCamelBody(response, exchange));
+                    exchange.getMessage().setBody(binding.bindResponseToCamelBody(response, exchange));
                 }
-                exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, response.getStatus());
+                exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, response.getStatus());
             } catch (Exception exception) {
                 LOG.error("Error while processing response", exception);
                 fail(exception);
@@ -798,11 +799,11 @@ public class CxfRsProducer extends DefaultAsyncProducer {
                 }
 
                 LOG.trace("Response body = {}", response);
-                exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
+                exchange.getMessage().getHeaders().putAll(exchange.getIn().getHeaders());
                 final CxfRsBinding binding = cxfRsEndpoint.getBinding();
-                exchange.getOut().getHeaders().putAll(binding.bindResponseHeadersToCamelHeaders(response, exchange));
-                exchange.getOut().setBody(binding.bindResponseToCamelBody(body, exchange));
-                exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, response.getStatus());
+                exchange.getMessage().getHeaders().putAll(binding.bindResponseHeadersToCamelHeaders(response, exchange));
+                exchange.getMessage().setBody(binding.bindResponseToCamelBody(body, exchange));
+                exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, response.getStatus());
             } catch (Exception exception) {
                 LOG.error("Error while processing response", exception);
                 fail(exception);

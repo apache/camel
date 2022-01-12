@@ -20,13 +20,11 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
-import org.apache.camel.spring.SpringCamelContext;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.cxf.binding.soap.SoapFault;
 import org.apache.cxf.interceptor.Fault;
@@ -34,20 +32,18 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.springframework.context.support.AbstractXmlApplicationContext;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class CxfSpringCustomizedExceptionTest extends CamelTestSupport {
+public class CxfSpringCustomizedExceptionTest extends CamelSpringTestSupport {
     private static final String EXCEPTION_MESSAGE = "This is an exception test message";
     private static final String DETAIL_TEXT = "This is a detail text node";
     private static final SoapFault SOAP_FAULT;
-    private AbstractXmlApplicationContext applicationContext;
 
     static {
         // START SNIPPET: FaultDefine
@@ -63,9 +59,8 @@ public class CxfSpringCustomizedExceptionTest extends CamelTestSupport {
     @BeforeEach
     public void setUp() throws Exception {
         CXFTestSupport.getPort1();
-        applicationContext = createApplicationContext();
         super.setUp();
-        assertNotNull(applicationContext, "Should have created a valid spring context");
+
     }
 
     @Override
@@ -91,12 +86,7 @@ public class CxfSpringCustomizedExceptionTest extends CamelTestSupport {
 
     }
 
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        return SpringCamelContext.springCamelContext(applicationContext, true);
-    }
-
-    protected ClassPathXmlApplicationContext createApplicationContext() {
+    protected AbstractApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/CxfCustomizedExceptionContext.xml");
     }
 

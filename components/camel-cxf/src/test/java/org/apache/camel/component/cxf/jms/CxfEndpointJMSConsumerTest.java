@@ -16,49 +16,22 @@
  */
 package org.apache.camel.component.cxf.jms;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.spring.SpringCamelContext;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.apache.camel.util.IOHelper;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.hello_world_soap_http.Greeter;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.AbstractXmlApplicationContext;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class CxfEndpointJMSConsumerTest extends CamelTestSupport {
-    protected AbstractXmlApplicationContext applicationContext;
+public class CxfEndpointJMSConsumerTest extends CamelSpringTestSupport {
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        applicationContext = createApplicationContext();
-        super.setUp();
-        assertNotNull(applicationContext, "Should have created a valid spring context");
-    }
-
-    @Override
-    @AfterEach
-    public void tearDown() throws Exception {
-
-        IOHelper.close(applicationContext);
-        super.tearDown();
-    }
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        return SpringCamelContext.springCamelContext(applicationContext, true);
-    }
-
-    protected ClassPathXmlApplicationContext createApplicationContext() {
+    protected AbstractApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/jms/camel-context.xml");
     }
 

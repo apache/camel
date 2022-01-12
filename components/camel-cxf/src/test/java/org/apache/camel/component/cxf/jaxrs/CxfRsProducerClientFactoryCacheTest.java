@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.cxf.jaxrs;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
@@ -25,9 +24,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.jaxrs.testbean.Customer;
-import org.apache.camel.spring.SpringCamelContext;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -38,38 +35,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /**
  *
  */
-public class CxfRsProducerClientFactoryCacheTest {
+public class CxfRsProducerClientFactoryCacheTest extends CamelSpringTestSupport {
     private static int port1 = CXFTestSupport.getPort1();
-
-    private CamelContext context1;
-    private ProducerTemplate template1;
-    private AbstractApplicationContext applicationContext;
-
-    @BeforeEach
-    public void setUp() throws Exception {
-        applicationContext = new ClassPathXmlApplicationContext(
-                "org/apache/camel/component/cxf/jaxrs/CxfRsProducerClientFactoryCacheTest1.xml");
-        context1 = SpringCamelContext.springCamelContext(applicationContext, false);
-        context1.start();
-        template1 = context1.createProducerTemplate();
-        template1.start();
-    }
-
-    @AfterEach
-    public void tearDown() throws Exception {
-        if (context1 != null) {
-            context1.stop();
-            template1.stop();
-        }
-        // need to shutdown the application context to shutdown the bus
-        if (applicationContext != null) {
-            applicationContext.close();
-        }
-    }
 
     @Test
     public void testGetCostumerWithHttpCentralClientAPI() throws Exception {
-        doRunTest(template1, getPort1());
+        doRunTest(template, getPort1());
     }
 
     private void doRunTest(ProducerTemplate template, final int clientPort) {
@@ -97,6 +68,12 @@ public class CxfRsProducerClientFactoryCacheTest {
 
     public int getPort1() {
         return port1;
+    }
+
+    @Override
+    protected AbstractApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/cxf/jaxrs/CxfRsProducerClientFactoryCacheTest1.xml");
     }
 
 }

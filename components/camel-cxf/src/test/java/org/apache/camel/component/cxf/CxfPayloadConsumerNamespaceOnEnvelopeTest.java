@@ -18,21 +18,18 @@ package org.apache.camel.component.cxf;
 
 import org.w3c.dom.Document;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.spring.SpringCamelContext;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.AbstractXmlApplicationContext;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class CxfPayloadConsumerNamespaceOnEnvelopeTest extends CamelTestSupport {
+public class CxfPayloadConsumerNamespaceOnEnvelopeTest extends CamelSpringTestSupport {
     /*
      * The request message is generated directly. The issue here is that the xsi
      * and xs namespaces are defined on the SOAP envelope but are used within
@@ -50,26 +47,11 @@ public class CxfPayloadConsumerNamespaceOnEnvelopeTest extends CamelTestSupport 
             = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">"
               + "<soap:Body><ns2:getToken xmlns:ns2=\"http://camel.apache.org/cxf/namespace\"><arg0 xsi:type=\"xs:string\">Send</arg0></ns2:getToken></soap:Body></soap:Envelope>";
 
-    private AbstractXmlApplicationContext applicationContext;
-
     // Don't remove this, it initializes the CXFTestSupport class
     static {
         CXFTestSupport.getPort1();
         // Works without streaming...
         // System.setProperty("org.apache.camel.component.cxf.streaming", "false");
-    }
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        return SpringCamelContext.springCamelContext(applicationContext, true);
-    }
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/GetTokenBeans.xml");
-        super.setUp();
-        assertNotNull(applicationContext, "Should have created a valid spring context");
     }
 
     @Override
@@ -105,5 +87,10 @@ public class CxfPayloadConsumerNamespaceOnEnvelopeTest extends CamelTestSupport 
         assertTrue(returnValue instanceof String);
         assertTrue(((String) returnValue).contains("Return Value"));
         assertTrue(((String) returnValue).contains("http://www.w3.org/2001/XMLSchema-instance"));
+    }
+
+    @Override
+    protected AbstractApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/GetTokenBeans.xml");
     }
 }

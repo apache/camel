@@ -90,8 +90,6 @@ public class CxfRsAsyncProducerTest extends CamelSpringTestSupport {
                 inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_USING_HTTP_API, Boolean.FALSE);
                 // set a customer header
                 inMessage.setHeader("key", "value");
-                // setup the accept content type
-                inMessage.setHeader(Exchange.ACCEPT_CONTENT_TYPE, "application/json");
                 // set the parameters , if you just have one parameter 
                 // camel will put this object into an Object[] itself
                 inMessage.setBody("123");

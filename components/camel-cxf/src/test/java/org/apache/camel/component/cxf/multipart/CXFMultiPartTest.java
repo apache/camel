@@ -20,26 +20,21 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.Endpoint;
 import javax.xml.ws.Service;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.cxf.multipart.MultiPartInvoke;
 import org.apache.camel.cxf.multipart.types.InE;
 import org.apache.camel.cxf.multipart.types.ObjectFactory;
-import org.apache.camel.spring.SpringCamelContext;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.apache.camel.util.IOHelper;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.AbstractXmlApplicationContext;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class CXFMultiPartTest extends CamelTestSupport {
+public class CXFMultiPartTest extends CamelSpringTestSupport {
     public static final QName SERVICE_NAME = new QName(
             "http://camel.apache.org/cxf/multipart",
             "MultiPartInvokeService");
@@ -48,22 +43,6 @@ public class CXFMultiPartTest extends CamelTestSupport {
             "http://camel.apache.org/cxf/multipart",
             "MultiPartInvokePort");
     protected static Endpoint endpoint;
-    protected AbstractXmlApplicationContext applicationContext;
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        applicationContext = createApplicationContext();
-        super.setUp();
-    }
-
-    @Override
-    @AfterEach
-    public void tearDown() throws Exception {
-
-        IOHelper.close(applicationContext);
-        super.tearDown();
-    }
 
     @BeforeAll
     public static void startService() {
@@ -111,11 +90,7 @@ public class CXFMultiPartTest extends CamelTestSupport {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        return SpringCamelContext.springCamelContext(applicationContext, true);
-    }
-
-    protected ClassPathXmlApplicationContext createApplicationContext() {
+    protected AbstractApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/multipart/MultiPartTest.xml");
     }
 

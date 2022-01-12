@@ -106,7 +106,6 @@ public class CxfRsProducerSessionTest extends CamelSpringTestSupport {
                 inMessage.setHeader(Exchange.HTTP_PATH, "/echoservice/echo");
                 inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_USING_HTTP_API, httpApi);
                 inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, String.class);
-                inMessage.setHeader(Exchange.ACCEPT_CONTENT_TYPE, "application/json");
                 inMessage.setBody(body);
             }
         });

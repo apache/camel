@@ -93,8 +93,6 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
                 inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_USING_HTTP_API, Boolean.FALSE);
                 // set a customer header
                 inMessage.setHeader("key", "value");
-                // setup the accept content type
-                inMessage.setHeader(Exchange.ACCEPT_CONTENT_TYPE, "application/json");
                 // set the parameters , if you just have one parameter 
                 // camel will put this object into an Object[] itself
                 inMessage.setBody("123");
@@ -422,7 +420,7 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
                 });
 
         // get the response message 
-        String response = exchange.getOut().getBody(String.class);
+        String response = exchange.getMessage().getBody(String.class);
         assertNotNull(response, "The response should not be null");
         assertEquals("q1=new&q2=world", response, "The response value is wrong");
     }
@@ -445,7 +443,7 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
                 });
 
         // get the response message 
-        String response = exchange.getOut().getBody(String.class);
+        String response = exchange.getMessage().getBody(String.class);
         assertNotNull(response, "The response should not be null");
         assertEquals("id=1&id=2", response, "The response value is wrong");
     }
@@ -468,7 +466,7 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
                 });
 
         // get the response message 
-        String response = exchange.getOut().getBody(String.class);
+        String response = exchange.getMessage().getBody(String.class);
         assertNotNull(response, "The response should not be null");
         assertEquals("id=1%262", response, "The response value is wrong");
     }

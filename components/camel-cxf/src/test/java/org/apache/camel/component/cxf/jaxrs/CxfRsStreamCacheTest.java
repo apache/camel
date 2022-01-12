@@ -63,7 +63,7 @@ public class CxfRsStreamCacheTest extends CamelTestSupport {
                             CachedOutputStream cos = new CachedOutputStream(exchange);
                             cos.write(RESPONSE.getBytes("UTF-8"));
                             cos.close();
-                            exchange.getOut().setBody(cos.newStreamCache());
+                            exchange.getMessage().setBody(cos.newStreamCache());
 
                             exchange.adapt(ExtendedExchange.class).addOnCompletion(new Synchronization() {
                                 @Override

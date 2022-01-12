@@ -110,11 +110,11 @@ public class CxfMtomDisabledProducerPayloadModeTest extends CxfMtomProducerPaylo
         CxfPayload<?> out = exchange.getMessage().getBody(CxfPayload.class);
         assertEquals(1, out.getBody().size());
 
-        DataHandler dr = exchange.getOut(AttachmentMessage.class).getAttachment(MtomTestHelper.RESP_PHOTO_CID);
+        DataHandler dr = exchange.getMessage(AttachmentMessage.class).getAttachment(MtomTestHelper.RESP_PHOTO_CID);
         assertEquals("application/octet-stream", dr.getContentType());
         assertArrayEquals(MtomTestHelper.RESP_PHOTO_DATA, IOUtils.readBytesFromStream(dr.getInputStream()));
 
-        dr = exchange.getOut(AttachmentMessage.class).getAttachment(MtomTestHelper.RESP_IMAGE_CID);
+        dr = exchange.getMessage(AttachmentMessage.class).getAttachment(MtomTestHelper.RESP_IMAGE_CID);
         assertEquals("image/jpeg", dr.getContentType());
 
         BufferedImage image = ImageIO.read(dr.getInputStream());

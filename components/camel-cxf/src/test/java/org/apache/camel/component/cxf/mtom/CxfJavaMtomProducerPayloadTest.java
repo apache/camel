@@ -57,7 +57,7 @@ public class CxfJavaMtomProducerPayloadTest extends CxfMtomConsumerTest {
 
         });
 
-        AttachmentMessage out = exchange.getOut(AttachmentMessage.class);
+        AttachmentMessage out = exchange.getMessage(AttachmentMessage.class);
         assertEquals(2, out.getAttachments().size(), "We should get 2 attachements here.");
         assertEquals("application/xop+xml", out.getHeader("Content-Type"), "Get a wrong Content-Type header");
         // Get the parameter list
