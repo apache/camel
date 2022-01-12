@@ -1325,6 +1325,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * @param path resourceName
          * @return the dsl builder
          */
+        @Deprecated
         default AtomixValueEndpointBuilder atomixValue(String path) {
             return AtomixValueEndpointBuilderFactory.endpointBuilder("atomix-value", path);
         }
@@ -1346,12 +1347,14 @@ public interface AtomixValueEndpointBuilderFactory {
          * @param path resourceName
          * @return the dsl builder
          */
+        @Deprecated
         default AtomixValueEndpointBuilder atomixValue(
                 String componentName,
                 String path) {
             return AtomixValueEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
+    @Deprecated
     static AtomixValueEndpointBuilder endpointBuilder(
             String componentName,
             String path) {

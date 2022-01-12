@@ -4,7 +4,7 @@
     "name": "atomix-set",
     "title": "Atomix Set",
     "description": "Access Atomix's distributed set.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.20.0",
     "label": "clustering",
     "javaType": "org.apache.camel.component.atomix.client.set.AtomixSetComponent",

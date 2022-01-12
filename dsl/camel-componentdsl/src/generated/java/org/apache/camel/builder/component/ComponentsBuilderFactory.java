@@ -211,6 +211,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.AtomixMapComponentBuilderFactory.AtomixMapComponentBuilder atomixMap() {
         return org.apache.camel.builder.component.dsl.AtomixMapComponentBuilderFactory.atomixMap();
     }
@@ -224,6 +225,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.AtomixMessagingComponentBuilderFactory.AtomixMessagingComponentBuilder atomixMessaging() {
         return org.apache.camel.builder.component.dsl.AtomixMessagingComponentBuilderFactory.atomixMessaging();
     }
@@ -237,6 +239,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.AtomixMultimapComponentBuilderFactory.AtomixMultimapComponentBuilder atomixMultimap() {
         return org.apache.camel.builder.component.dsl.AtomixMultimapComponentBuilderFactory.atomixMultimap();
     }
@@ -250,6 +253,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.AtomixQueueComponentBuilderFactory.AtomixQueueComponentBuilder atomixQueue() {
         return org.apache.camel.builder.component.dsl.AtomixQueueComponentBuilderFactory.atomixQueue();
     }
@@ -263,6 +267,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.AtomixSetComponentBuilderFactory.AtomixSetComponentBuilder atomixSet() {
         return org.apache.camel.builder.component.dsl.AtomixSetComponentBuilderFactory.atomixSet();
     }
@@ -276,6 +281,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.AtomixValueComponentBuilderFactory.AtomixValueComponentBuilder atomixValue() {
         return org.apache.camel.builder.component.dsl.AtomixValueComponentBuilderFactory.atomixValue();
     }

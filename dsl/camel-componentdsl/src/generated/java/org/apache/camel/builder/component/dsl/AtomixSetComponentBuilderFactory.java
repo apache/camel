@@ -40,6 +40,7 @@ public interface AtomixSetComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static AtomixSetComponentBuilder atomixSet() {
         return new AtomixSetComponentBuilderImpl();
     }

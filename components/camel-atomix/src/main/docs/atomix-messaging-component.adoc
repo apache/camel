@@ -1,10 +1,11 @@
-= Atomix Messaging Component
+= Atomix Messaging Component (deprecated)
 :doctitle: Atomix Messaging
 :shortname: atomix-messaging
 :artifactid: camel-atomix
 :description: Access Atomix's group messaging.
 :since: 2.20
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :camel-spring-boot-name: atomix

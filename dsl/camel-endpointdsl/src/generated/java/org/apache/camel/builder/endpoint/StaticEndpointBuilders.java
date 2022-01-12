@@ -568,6 +568,7 @@ public class StaticEndpointBuilders {
      * @param path resourceName
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.AtomixMapEndpointBuilderFactory.AtomixMapEndpointBuilder atomixMap(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.AtomixMapEndpointBuilderFactory.endpointBuilder("atomix-map", path);
@@ -590,6 +591,7 @@ public class StaticEndpointBuilders {
      * @param path resourceName
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.AtomixMapEndpointBuilderFactory.AtomixMapEndpointBuilder atomixMap(
             String componentName,
             String path) {
@@ -611,6 +613,7 @@ public class StaticEndpointBuilders {
      * @param path resourceName
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.AtomixMessagingEndpointBuilderFactory.AtomixMessagingEndpointBuilder atomixMessaging(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.AtomixMessagingEndpointBuilderFactory.endpointBuilder("atomix-messaging", path);
@@ -633,6 +636,7 @@ public class StaticEndpointBuilders {
      * @param path resourceName
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.AtomixMessagingEndpointBuilderFactory.AtomixMessagingEndpointBuilder atomixMessaging(
             String componentName,
             String path) {
@@ -654,6 +658,7 @@ public class StaticEndpointBuilders {
      * @param path resourceName
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.AtomixMultiMapEndpointBuilderFactory.AtomixMultiMapEndpointBuilder atomixMultimap(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.AtomixMultiMapEndpointBuilderFactory.endpointBuilder("atomix-multimap", path);
@@ -676,6 +681,7 @@ public class StaticEndpointBuilders {
      * @param path resourceName
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.AtomixMultiMapEndpointBuilderFactory.AtomixMultiMapEndpointBuilder atomixMultimap(
             String componentName,
             String path) {
@@ -697,6 +703,7 @@ public class StaticEndpointBuilders {
      * @param path resourceName
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.AtomixQueueEndpointBuilderFactory.AtomixQueueEndpointBuilder atomixQueue(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.AtomixQueueEndpointBuilderFactory.endpointBuilder("atomix-queue", path);
@@ -719,6 +726,7 @@ public class StaticEndpointBuilders {
      * @param path resourceName
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.AtomixQueueEndpointBuilderFactory.AtomixQueueEndpointBuilder atomixQueue(
             String componentName,
             String path) {
@@ -740,6 +748,7 @@ public class StaticEndpointBuilders {
      * @param path resourceName
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.AtomixSetEndpointBuilderFactory.AtomixSetEndpointBuilder atomixSet(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.AtomixSetEndpointBuilderFactory.endpointBuilder("atomix-set", path);
@@ -762,6 +771,7 @@ public class StaticEndpointBuilders {
      * @param path resourceName
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.AtomixSetEndpointBuilderFactory.AtomixSetEndpointBuilder atomixSet(
             String componentName,
             String path) {
@@ -783,6 +793,7 @@ public class StaticEndpointBuilders {
      * @param path resourceName
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.AtomixValueEndpointBuilderFactory.AtomixValueEndpointBuilder atomixValue(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.AtomixValueEndpointBuilderFactory.endpointBuilder("atomix-value", path);
@@ -805,6 +816,7 @@ public class StaticEndpointBuilders {
      * @param path resourceName
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.AtomixValueEndpointBuilderFactory.AtomixValueEndpointBuilder atomixValue(
             String componentName,
             String path) {

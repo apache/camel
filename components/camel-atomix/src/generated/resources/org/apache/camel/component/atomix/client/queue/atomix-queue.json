@@ -4,7 +4,7 @@
     "name": "atomix-queue",
     "title": "Atomix Queue",
     "description": "Access Atomix's distributed queue.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.20.0",
     "label": "clustering",
     "javaType": "org.apache.camel.component.atomix.client.queue.AtomixQueueComponent",

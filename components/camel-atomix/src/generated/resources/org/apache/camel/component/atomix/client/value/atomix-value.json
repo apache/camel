@@ -4,7 +4,7 @@
     "name": "atomix-value",
     "title": "Atomix Value",
     "description": "Access Atomix's distributed value.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.20.0",
     "label": "clustering",
     "javaType": "org.apache.camel.component.atomix.client.value.AtomixValueComponent",

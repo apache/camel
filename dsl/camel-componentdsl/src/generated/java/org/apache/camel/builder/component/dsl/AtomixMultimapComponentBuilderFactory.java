@@ -40,6 +40,7 @@ public interface AtomixMultimapComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static AtomixMultimapComponentBuilder atomixMultimap() {
         return new AtomixMultimapComponentBuilderImpl();
     }
