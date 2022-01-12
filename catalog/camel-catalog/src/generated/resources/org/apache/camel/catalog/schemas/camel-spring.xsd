@@ -4375,9 +4375,9 @@ References to a custom thread pool to use when bulkhead is enabled.
         <xs:attribute name="operation" type="xs:string" use="required">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-The claim check operation to use. The following operations is supported: Get -
+The claim check operation to use. The following operations are supported: Get -
 Gets (does not remove) the claim check by the given key. GetAndRemove - Gets and
-remove the claim check by the given key. Set - Sets a new (will override if key
+removes the claim check by the given key. Set - Sets a new (will override if key
 already exists) claim check with the given key. Push - Sets a new claim check on
 the stack (does not use key). Pop - Gets the latest claim check from the stack
 (does not use key).
@@ -4395,20 +4395,20 @@ syntax as the key).
         <xs:attribute name="filter" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Specified a filter to control what data gets merging data back from the claim
-check repository. The following syntax is supported: body - to aggregate the
-message body attachments - to aggregate all the message attachments headers - to
+Specify a filter to control what data gets merged data back from the claim check
+repository. The following syntax is supported: body - to aggregate the message
+body attachments - to aggregate all the message attachments headers - to
 aggregate all the message headers header:pattern - to aggregate all the message
-headers that matches the pattern. The pattern uses the following rules are
-applied in this order: exact match, returns true wildcard match (pattern ends
-with a and the name starts with the pattern), returns true regular expression
-match, returns true otherwise returns false You can specify multiple rules
-separated by comma. For example to include the message body and all headers
-starting with foo body,header:foo. The syntax supports the following prefixes
+headers that matches the pattern. The following pattern rules are applied in
+this order: exact match, returns true wildcard match (pattern ends with a and
+the name starts with the pattern), returns true regular expression match,
+returns true otherwise returns false You can specify multiple rules separated by
+comma. For example, the following includes the message body and all headers
+starting with foo: body,header:foo. The syntax supports the following prefixes
 which can be used to specify include,exclude, or remove - to include (which is
 the default mode) - - to exclude (exclude takes precedence over include) -- - to
 remove (remove takes precedence) For example to exclude a header name foo, and
-remove all headers starting with bar -header:foo,--headers:bar Note you cannot
+remove all headers starting with bar, -header:foo,--headers:bar Note you cannot
 have both include and exclude header:pattern at the same time.
             ]]></xs:documentation>
           </xs:annotation>
