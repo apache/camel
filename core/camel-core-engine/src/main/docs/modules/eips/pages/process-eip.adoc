@@ -5,7 +5,7 @@
 :since: 
 :supportlevel: Stable
 
-The http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Processor.html[Processor]
+The http://javadoc.io/doc/org.apache.camel/camel-api/latest/org/apache/camel/Processor.html[Processor]
 is used for processing message xref:manual::exchange.adoc[Exchanges].
 
 The processor is a core Camel concept that represents a node capable of using, creating,
