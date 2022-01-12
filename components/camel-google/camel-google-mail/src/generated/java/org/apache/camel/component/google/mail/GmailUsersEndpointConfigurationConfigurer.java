@@ -26,8 +26,11 @@ public class GmailUsersEndpointConfigurationConfigurer extends org.apache.camel.
         map.put("ClientId", java.lang.String.class);
         map.put("ClientSecret", java.lang.String.class);
         map.put("Content", com.google.api.services.gmail.model.WatchRequest.class);
+        map.put("Delegate", java.lang.String.class);
+        map.put("Filename", java.lang.String.class);
         map.put("MethodName", java.lang.String.class);
         map.put("RefreshToken", java.lang.String.class);
+        map.put("Scopes", java.util.List.class);
         map.put("UserId", java.lang.String.class);
         ALL_OPTIONS = map;
     }
@@ -48,10 +51,16 @@ public class GmailUsersEndpointConfigurationConfigurer extends org.apache.camel.
         case "ClientSecret": target.setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
         case "content":
         case "Content": target.setContent(property(camelContext, com.google.api.services.gmail.model.WatchRequest.class, value)); return true;
+        case "delegate":
+        case "Delegate": target.setDelegate(property(camelContext, java.lang.String.class, value)); return true;
+        case "filename":
+        case "Filename": target.setFilename(property(camelContext, java.lang.String.class, value)); return true;
         case "methodname":
         case "MethodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
         case "refreshtoken":
         case "RefreshToken": target.setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "scopes":
+        case "Scopes": target.setScopes(property(camelContext, java.util.List.class, value)); return true;
         case "userid":
         case "UserId": target.setUserId(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -78,10 +87,16 @@ public class GmailUsersEndpointConfigurationConfigurer extends org.apache.camel.
         case "ClientSecret": return java.lang.String.class;
         case "content":
         case "Content": return com.google.api.services.gmail.model.WatchRequest.class;
+        case "delegate":
+        case "Delegate": return java.lang.String.class;
+        case "filename":
+        case "Filename": return java.lang.String.class;
         case "methodname":
         case "MethodName": return java.lang.String.class;
         case "refreshtoken":
         case "RefreshToken": return java.lang.String.class;
+        case "scopes":
+        case "Scopes": return java.util.List.class;
         case "userid":
         case "UserId": return java.lang.String.class;
         default: return null;
@@ -104,12 +119,27 @@ public class GmailUsersEndpointConfigurationConfigurer extends org.apache.camel.
         case "ClientSecret": return target.getClientSecret();
         case "content":
         case "Content": return target.getContent();
+        case "delegate":
+        case "Delegate": return target.getDelegate();
+        case "filename":
+        case "Filename": return target.getFilename();
         case "methodname":
         case "MethodName": return target.getMethodName();
         case "refreshtoken":
         case "RefreshToken": return target.getRefreshToken();
+        case "scopes":
+        case "Scopes": return target.getScopes();
         case "userid":
         case "UserId": return target.getUserId();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "scopes":
+        case "Scopes": return java.lang.String.class;
         default: return null;
         }
     }
