@@ -144,7 +144,7 @@ To determine if an exchange is suitable for any of the participants, all predica
 
 Rules are registered in a channel, and they are logically separate from rules in another channel.  Subscription IDs must be unique within a channel, although multiple subscriptions of the same name may coexist in a dynamic router instance if they are in separate channels.
 
-The Dynamic Router employs the use of https://camel.apache.org/manual/predicate.html[Predicates] as rules.  Any valid predicate may be used to determine the suitability of exchanges for a participating recipient, whether they are simple or compound predicates.  Although it is advised to view the complete documentation, an example simple predicate might look like the following:
+The Dynamic Router employs the use of xref:manual::predicate.adoc[Predicate] as rules.  Any valid predicate may be used to determine the suitability of exchanges for a participating recipient, whether they are simple or compound predicates.  Although it is advised to view the complete documentation, an example simple predicate might look like the following:
 
 .Example simple predicate
 [source,java]
