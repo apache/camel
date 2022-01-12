@@ -175,6 +175,7 @@ public class SmppConsumer extends DefaultConsumer {
     private void reconnect(final long initialReconnectDelay) {
         if (reconnectLock.tryLock()) {
             BlockingTask task = newReconnectTask(this, getEndpoint(), initialReconnectDelay,
+                    configuration.getReconnectDelay(),
                     configuration.getMaxReconnect());
 
             try {

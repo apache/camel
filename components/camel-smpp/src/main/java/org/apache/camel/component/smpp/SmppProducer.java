@@ -184,7 +184,7 @@ public class SmppProducer extends DefaultProducer {
     private void reconnect(final long initialReconnectDelay) {
         if (connectLock.tryLock()) {
             BlockingTask task = newReconnectTask(this, getEndpoint(), initialReconnectDelay,
-                    configuration.getMaxReconnect());
+                    configuration.getReconnectDelay(), configuration.getMaxReconnect());
 
             try {
                 task.run(this::doReconnect);
