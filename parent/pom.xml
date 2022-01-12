@@ -142,8 +142,8 @@
         <couchbase-client-version>3.2.0</couchbase-client-version>
         <curator-version>4.3.0</curator-version>
         <cxf-version>3.5.0</cxf-version>
-        <cxf-version-range>[3.4,4.0)</cxf-version-range>
-        <cxf-codegen-plugin-version>3.4.5</cxf-codegen-plugin-version>
+        <cxf-version-range>[3.5,3.7)</cxf-version-range>
+        <cxf-codegen-plugin-version>3.5.0</cxf-codegen-plugin-version>
         <!-- cxf-xjc is not released as often -->
         <cxf-xjc-plugin-version>3.3.1</cxf-xjc-plugin-version>
         <cxf-xjc-utils-version>3.3.1</cxf-xjc-utils-version>
