@@ -167,7 +167,7 @@ public class CxfMtomDisabledProducerPayloadModeTest extends CxfMtomProducerPaylo
                 DataSource ds = new AttachmentDataSource("image/jpeg", getClass().getResourceAsStream("/Splash.jpg"));
                 map.put(MtomTestHelper.RESP_IMAGE_CID, new DataHandler(ds));
 
-            } catch (IOException e) {
+            } catch (Exception e) {
                 LOG.warn("I/O error: {}", e.getMessage(), e);
             }
 
@@ -177,7 +177,7 @@ public class CxfMtomDisabledProducerPayloadModeTest extends CxfMtomProducerPaylo
                         new ByteArrayInputStream(MtomTestHelper.RESP_PHOTO_DATA));
                 map.put(MtomTestHelper.RESP_PHOTO_CID, new DataHandler(ds));
 
-            } catch (IOException e) {
+            } catch (Exception e) {
                 LOG.warn("I/O error: {}", e.getMessage(), e);
             }
 
