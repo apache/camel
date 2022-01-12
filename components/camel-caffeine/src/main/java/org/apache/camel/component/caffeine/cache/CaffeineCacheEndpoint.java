@@ -64,27 +64,37 @@ public class CaffeineCacheEndpoint extends DefaultEndpoint {
 
     @Override
     protected void doStart() throws Exception {
-        cache = CamelContextHelper.lookup(getCamelContext(), cacheName, Cache.class);
-        if (cache == null) {
-            Caffeine<?, ?> builder = Caffeine.newBuilder();
-            if (configuration.getEvictionType() == EvictionType.SIZE_BASED) {
-                builder.initialCapacity(configuration.getInitialCapacity());
-                builder.maximumSize(configuration.getMaximumSize());
-            } else if (configuration.getEvictionType() == EvictionType.TIME_BASED) {
-                builder.expireAfterAccess(configuration.getExpireAfterAccessTime(), TimeUnit.SECONDS);
-                builder.expireAfterWrite(configuration.getExpireAfterWriteTime(), TimeUnit.SECONDS);
-            }
-            if (configuration.isStatsEnabled()) {
-                if (ObjectHelper.isEmpty(configuration.getStatsCounter())) {
-                    builder.recordStats();
+
+        synchronized (this) {
+            cache = CamelContextHelper.lookup(getCamelContext(), cacheName, Cache.class);
+            if (cache == null) {
+                if (configuration.isCreateCacheIfNotExist()) {
+                    Caffeine<?, ?> builder = Caffeine.newBuilder();
+                    if (configuration.getEvictionType() == EvictionType.SIZE_BASED) {
+                        builder.initialCapacity(configuration.getInitialCapacity());
+                        builder.maximumSize(configuration.getMaximumSize());
+                    } else if (configuration.getEvictionType() == EvictionType.TIME_BASED) {
+                        builder.expireAfterAccess(configuration.getExpireAfterAccessTime(), TimeUnit.SECONDS);
+                        builder.expireAfterWrite(configuration.getExpireAfterWriteTime(), TimeUnit.SECONDS);
+                    }
+                    if (configuration.isStatsEnabled()) {
+                        if (ObjectHelper.isEmpty(configuration.getStatsCounter())) {
+                            builder.recordStats();
+                        } else {
+                            builder.recordStats(configuration::getStatsCounter);
+                        }
+                    }
+                    if (ObjectHelper.isNotEmpty(configuration.getRemovalListener())) {
+                        builder.removalListener(configuration.getRemovalListener());
+                    }
+                    cache = builder.build();
+                    getCamelContext().getRegistry().bind(cacheName, Cache.class, cache);
                 } else {
-                    builder.recordStats(configuration::getStatsCounter);
+                    throw new IllegalArgumentException(
+                            "Cache instance '" + cacheName + "' not found and createCacheIfNotExist is set to false");
                 }
             }
-            if (ObjectHelper.isNotEmpty(configuration.getRemovalListener())) {
-                builder.removalListener(configuration.getRemovalListener());
-            }
-            cache = builder.build();
+
         }
         super.doStart();
     }

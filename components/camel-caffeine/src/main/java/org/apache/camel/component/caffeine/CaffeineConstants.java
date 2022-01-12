@@ -32,4 +32,5 @@ public interface CaffeineConstants {
     String ACTION_GET_ALL = "GET_ALL";
     String ACTION_INVALIDATE = "INVALIDATE";
     String ACTION_INVALIDATE_ALL = "INVALIDATE_ALL";
+    String ACTION_AS_MAP = "AS_MAP";
 }

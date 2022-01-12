@@ -56,6 +56,22 @@ public class CaffeineCacheFromScratchProducerTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    void testTo() throws Exception {
+
+        final String val = "ABC";
+
+        final MockEndpoint mock = getMockEndpoint("mock:result-to");
+        mock.expectedMessageCount(1);
+        mock.expectedBodiesReceived(val);
+        mock.expectedHeaderReceived(CaffeineConstants.ACTION_HAS_RESULT, true);
+        mock.expectedHeaderReceived(CaffeineConstants.ACTION_SUCCEEDED, true);
+
+        fluentTemplate().withBody(val).to("direct://start-to").send();
+
+        assertMockEndpointsSatisfied();
+    }
+
     // ****************************
     // Route
     // ****************************
@@ -76,6 +92,11 @@ public class CaffeineCacheFromScratchProducerTest extends CamelTestSupport {
                 from("direct://get-1").toF("caffeine-cache://%s?statsEnabled=true", "test")
                         .to("log:org.apache.camel.component.caffeine?level=INFO&showAll=true&multiline=true")
                         .to("mock:result-get-1");
+                from("direct://start-to")
+                        .to("caffeine-cache://cache?action=PUT&key=1")
+                        .setBody(constant(""))
+                        .to("caffeine-cache://cache?key=1&action=GET")
+                        .to("mock:result-to");
             }
         };
     }
