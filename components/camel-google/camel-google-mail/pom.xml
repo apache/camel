@@ -88,7 +88,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>20.0</version>
+            <version>${google-mail-guava-version}</version>
         </dependency>
 
         <dependency>
