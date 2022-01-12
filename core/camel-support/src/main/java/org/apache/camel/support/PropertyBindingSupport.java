@@ -38,6 +38,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.PropertyBindingException;
 import org.apache.camel.spi.BeanIntrospection;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.StringHelper;
@@ -84,6 +85,17 @@ import static org.apache.camel.util.StringHelper.startsWithIgnoreCase;
  * </pre>
  * <p>
  * Where foo is mandatory, and bar is optional.
+ *
+ * <p>
+ * Values can be marked as optional property placeholder if the values name starts with a question mark, such as:
+ *
+ * <pre>
+ * username={{?clientUserName}}
+ * </pre>
+ * <p>
+ * Where the username property will only be set if the property placeholder <tt>clientUserName</tt> exists, otherwise
+ * the username is not affected.
+ * </p>
  */
 public final class PropertyBindingSupport {
 
@@ -420,7 +432,12 @@ public final class PropertyBindingSupport {
             key = camelContext.resolvePropertyPlaceholders(key);
             if (text instanceof String) {
                 // resolve property placeholders
-                text = camelContext.resolvePropertyPlaceholders(text.toString());
+                String s = text.toString();
+                text = camelContext.resolvePropertyPlaceholders(s);
+                if (text == null && s.startsWith(PropertiesComponent.PREFIX_TOKEN + "?")) {
+                    // it was an optional value, so we should not try to set the property but regard it as a "hit"
+                    return true;
+                }
             }
         }
 
