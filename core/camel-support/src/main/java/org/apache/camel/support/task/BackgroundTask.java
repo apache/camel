@@ -20,6 +20,7 @@ package org.apache.camel.support.task;
 import java.time.Duration;
 import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BooleanSupplier;
@@ -127,29 +128,27 @@ public class BackgroundTask implements BlockingTask {
     public <T> boolean run(Predicate<T> predicate, T payload) {
         CountDownLatch latch = new CountDownLatch(1);
 
-        // We need it to be cancellable/non-runnable after reaching a certain point, and it needs to be deterministic.
-        // This is why we ignore the ScheduledFuture returned and implement the go/no-go using a latch.
-        service.scheduleAtFixedRate(() -> runTaskWrapper(latch, predicate, payload),
+        Future<?> task = service.scheduleAtFixedRate(() -> runTaskWrapper(latch, predicate, payload),
                 budget.initialDelay(), budget.interval(), TimeUnit.MILLISECONDS);
 
-        return waitForTaskCompletion(latch, service);
+        return waitForTaskCompletion(latch, task);
     }
 
     @Override
     public boolean run(BooleanSupplier supplier) {
         CountDownLatch latch = new CountDownLatch(1);
 
-        // We need it to be cancellable/non-runnable after reaching a certain point, and it needs to be deterministic.
-        // This is why we ignore the ScheduledFuture returned and implement the go/no-go using a latch.
-        service.scheduleAtFixedRate(() -> runTaskWrapper(latch, supplier), budget.initialDelay(),
+        Future<?> task = service.scheduleAtFixedRate(() -> runTaskWrapper(latch, supplier), budget.initialDelay(),
                 budget.interval(), TimeUnit.MILLISECONDS);
 
-        return waitForTaskCompletion(latch, service);
+        return waitForTaskCompletion(latch, task);
     }
 
-    private boolean waitForTaskCompletion(CountDownLatch latch, ScheduledExecutorService service) {
+    private boolean waitForTaskCompletion(CountDownLatch latch, Future<?> task) {
         boolean completed = false;
         try {
+            // We need it to be cancellable/non-runnable after reaching a certain point, and it needs to be deterministic.
+            // This is why we ignore the ScheduledFuture returned and implement the go/no-go using a latch.
             if (budget.maxDuration() == TimeBoundedBudget.UNLIMITED_DURATION) {
                 latch.await();
                 completed = true;
@@ -163,16 +162,12 @@ public class BackgroundTask implements BlockingTask {
                 }
             }
 
-            service.shutdown();
-            if (!service.awaitTermination(1, TimeUnit.SECONDS)) {
-                LOG.warn("The tasks did not finish with the specified time");
-            }
+            task.cancel(true);
         } catch (InterruptedException e) {
             LOG.warn("Interrupted while waiting for the repeatable task to execute: {}", e.getMessage(), e);
             Thread.currentThread().interrupt();
         } finally {
             elapsed = budget.elapsed();
-            service.shutdownNow();
         }
 
         return completed;
