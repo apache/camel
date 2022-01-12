@@ -282,7 +282,7 @@ public final class SmppUtils {
     }
 
     public static BlockingTask newReconnectTask(
-            BaseService source, Endpoint endpoint, long initialReconnectDelay,
+            BaseService source, Endpoint endpoint, long initialReconnectDelay, long reconnectDelay,
             int maxReconnect) {
         final String taskName = "smpp-reconnect";
         ScheduledExecutorService service = endpoint.getCamelContext().getExecutorServiceManager()
@@ -293,6 +293,7 @@ public final class SmppUtils {
                         .withInitialDelay(Duration.ofMillis(initialReconnectDelay))
                         .withMaxIterations(maxReconnect)
                         .withUnlimitedDuration()
+                        .withInterval(Duration.ofMillis(reconnectDelay))
                         .build())
                 .withScheduledExecutor(service)
                 .withName(taskName)
