@@ -6,6 +6,8 @@
 :since: 3.15
 :supportlevel: Preview
 :component-header: Both producer and consumer are supported
+//Manually maintained attributes
+:camel-spring-boot-name: dynamic-router
 
 *Since Camel {since}*
 
