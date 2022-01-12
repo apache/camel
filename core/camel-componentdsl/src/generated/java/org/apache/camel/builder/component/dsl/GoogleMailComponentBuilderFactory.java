@@ -96,6 +96,50 @@ public interface GoogleMailComponentBuilderFactory {
             return this;
         }
         /**
+         * Delegate for wide-domain service account.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param delegate the value to set
+         * @return the dsl builder
+         */
+        default GoogleMailComponentBuilder delegate(java.lang.String delegate) {
+            doSetProperty("delegate", delegate);
+            return this;
+        }
+        /**
+         * Filename .json with credentials for Service account.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param filename the value to set
+         * @return the dsl builder
+         */
+        default GoogleMailComponentBuilder filename(java.lang.String filename) {
+            doSetProperty("filename", filename);
+            return this;
+        }
+        /**
+         * GMail scopes.
+         * 
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param scopes the value to set
+         * @return the dsl builder
+         */
+        default GoogleMailComponentBuilder scopes(
+                java.util.List<java.lang.String> scopes) {
+            doSetProperty("scopes", scopes);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -254,6 +298,9 @@ public interface GoogleMailComponentBuilderFactory {
             case "applicationName": getOrCreateConfiguration((GoogleMailComponent) component).setApplicationName((java.lang.String) value); return true;
             case "clientId": getOrCreateConfiguration((GoogleMailComponent) component).setClientId((java.lang.String) value); return true;
             case "configuration": ((GoogleMailComponent) component).setConfiguration((org.apache.camel.component.google.mail.GoogleMailConfiguration) value); return true;
+            case "delegate": getOrCreateConfiguration((GoogleMailComponent) component).setDelegate((java.lang.String) value); return true;
+            case "filename": getOrCreateConfiguration((GoogleMailComponent) component).setFilename((java.lang.String) value); return true;
+            case "scopes": getOrCreateConfiguration((GoogleMailComponent) component).setScopes((java.util.List) value); return true;
             case "bridgeErrorHandler": ((GoogleMailComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((GoogleMailComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((GoogleMailComponent) component).setAutowiredEnabled((boolean) value); return true;

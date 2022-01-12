@@ -16,6 +16,7 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -76,6 +77,34 @@ public interface GoogleMailEndpointBuilderFactory {
             return this;
         }
         /**
+         * Delegate for wide-domain service account.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param delegate the value to set
+         * @return the dsl builder
+         */
+        default GoogleMailEndpointConsumerBuilder delegate(String delegate) {
+            doSetProperty("delegate", delegate);
+            return this;
+        }
+        /**
+         * Filename .json with credentials for Service account.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param filename the value to set
+         * @return the dsl builder
+         */
+        default GoogleMailEndpointConsumerBuilder filename(String filename) {
+            doSetProperty("filename", filename);
+            return this;
+        }
+        /**
          * Sets the name of a parameter to be passed in the exchange In Body.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -87,6 +116,36 @@ public interface GoogleMailEndpointBuilderFactory {
          */
         default GoogleMailEndpointConsumerBuilder inBody(String inBody) {
             doSetProperty("inBody", inBody);
+            return this;
+        }
+        /**
+         * GMail scopes.
+         * 
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param scopes the value to set
+         * @return the dsl builder
+         */
+        default GoogleMailEndpointConsumerBuilder scopes(List<String> scopes) {
+            doSetProperty("scopes", scopes);
+            return this;
+        }
+        /**
+         * GMail scopes.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param scopes the value to set
+         * @return the dsl builder
+         */
+        default GoogleMailEndpointConsumerBuilder scopes(String scopes) {
+            doSetProperty("scopes", scopes);
             return this;
         }
         /**
@@ -854,6 +913,34 @@ public interface GoogleMailEndpointBuilderFactory {
             return this;
         }
         /**
+         * Delegate for wide-domain service account.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param delegate the value to set
+         * @return the dsl builder
+         */
+        default GoogleMailEndpointProducerBuilder delegate(String delegate) {
+            doSetProperty("delegate", delegate);
+            return this;
+        }
+        /**
+         * Filename .json with credentials for Service account.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param filename the value to set
+         * @return the dsl builder
+         */
+        default GoogleMailEndpointProducerBuilder filename(String filename) {
+            doSetProperty("filename", filename);
+            return this;
+        }
+        /**
          * Sets the name of a parameter to be passed in the exchange In Body.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -865,6 +952,36 @@ public interface GoogleMailEndpointBuilderFactory {
          */
         default GoogleMailEndpointProducerBuilder inBody(String inBody) {
             doSetProperty("inBody", inBody);
+            return this;
+        }
+        /**
+         * GMail scopes.
+         * 
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param scopes the value to set
+         * @return the dsl builder
+         */
+        default GoogleMailEndpointProducerBuilder scopes(List<String> scopes) {
+            doSetProperty("scopes", scopes);
+            return this;
+        }
+        /**
+         * GMail scopes.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param scopes the value to set
+         * @return the dsl builder
+         */
+        default GoogleMailEndpointProducerBuilder scopes(String scopes) {
+            doSetProperty("scopes", scopes);
             return this;
         }
         /**
@@ -1015,6 +1132,34 @@ public interface GoogleMailEndpointBuilderFactory {
             return this;
         }
         /**
+         * Delegate for wide-domain service account.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param delegate the value to set
+         * @return the dsl builder
+         */
+        default GoogleMailEndpointBuilder delegate(String delegate) {
+            doSetProperty("delegate", delegate);
+            return this;
+        }
+        /**
+         * Filename .json with credentials for Service account.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param filename the value to set
+         * @return the dsl builder
+         */
+        default GoogleMailEndpointBuilder filename(String filename) {
+            doSetProperty("filename", filename);
+            return this;
+        }
+        /**
          * Sets the name of a parameter to be passed in the exchange In Body.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -1026,6 +1171,36 @@ public interface GoogleMailEndpointBuilderFactory {
          */
         default GoogleMailEndpointBuilder inBody(String inBody) {
             doSetProperty("inBody", inBody);
+            return this;
+        }
+        /**
+         * GMail scopes.
+         * 
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param scopes the value to set
+         * @return the dsl builder
+         */
+        default GoogleMailEndpointBuilder scopes(List<String> scopes) {
+            doSetProperty("scopes", scopes);
+            return this;
+        }
+        /**
+         * GMail scopes.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param scopes the value to set
+         * @return the dsl builder
+         */
+        default GoogleMailEndpointBuilder scopes(String scopes) {
+            doSetProperty("scopes", scopes);
             return this;
         }
         /**

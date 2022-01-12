@@ -61,9 +61,16 @@ public class GoogleMailComponentVerifierExtension extends DefaultComponentVerifi
         try {
             GoogleMailConfiguration configuration = setProperties(new GoogleMailConfiguration(), parameters);
             GoogleMailClientFactory clientFactory = new BatchGoogleMailClientFactory();
-            Gmail client = clientFactory.makeClient(configuration.getClientId(), configuration.getClientSecret(),
-                    configuration.getApplicationName(),
-                    configuration.getRefreshToken(), configuration.getAccessToken());
+            Gmail client = null;
+            if (configuration.getClientSecret() != null) {
+                client = clientFactory.makeClient(configuration.getClientId(), configuration.getClientSecret(),
+                        configuration.getApplicationName(),
+                        configuration.getRefreshToken(), configuration.getAccessToken());
+            } else if (configuration.getFilename() != null) {
+                client = clientFactory.makeClient(configuration.getFilename(),
+                        configuration.getApplicationName(), configuration.getDelegate(),
+                        configuration.getScopes());
+            }
             client.users().getProfile((String) parameters.get("userId")).execute();
         } catch (Exception e) {
             ResultErrorBuilder errorBuilder

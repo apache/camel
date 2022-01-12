@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.google.mail;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.List;
+
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -61,5 +65,31 @@ public class BatchGoogleMailClientFactory implements GoogleMailClientFactory {
         // authorize
         return new GoogleCredential.Builder().setJsonFactory(jsonFactory).setTransport(transport)
                 .setClientSecrets(clientId, clientSecret).build();
+    }
+
+    @Override
+    public Gmail makeClient(String filename, String applicationName, String delegate, List<String> gmailScopes) {
+        if (filename == null) {
+            throw new IllegalArgumentException("filename is required to create Gmail client.");
+        }
+        try {
+            Credential credential = authorizeServiceAccount(filename, delegate, gmailScopes);
+            return new Gmail.Builder(transport, jsonFactory, credential).setApplicationName(applicationName).build();
+        } catch (Exception e) {
+            throw new RuntimeCamelException("Could not create Gmail client.", e);
+        }
+    }
+
+    private Credential authorizeServiceAccount(String filename, String delegate, List<String> gmailScopes) {
+        // authorize
+        try {
+            GoogleCredential cred = GoogleCredential.fromStream(new FileInputStream(filename))
+                    .createScoped(gmailScopes != null && gmailScopes.size() != 0 ? gmailScopes : null)
+                    .createDelegated(delegate);
+            cred.refreshToken();
+            return cred;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
