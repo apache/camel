@@ -176,6 +176,11 @@ public class AWS2S3Producer extends DefaultProducer {
             createMultipartUploadRequest.acl(acl.toString());
         }
 
+        String contentType = exchange.getIn().getHeader(AWS2S3Constants.CONTENT_TYPE, String.class);
+        if (contentType != null) {
+            createMultipartUploadRequest.contentType(contentType);
+        }
+
         if (getConfiguration().isUseAwsKMS()) {
             createMultipartUploadRequest.ssekmsKeyId(getConfiguration().getAwsKMSKeyId());
             createMultipartUploadRequest.serverSideEncryption(ServerSideEncryption.AWS_KMS);
