@@ -10,7 +10,7 @@
 
 *Since Camel {since}*
 
-Camel supports https://code.google.com/p/json-path/[JSONPath] to allow
+Camel supports https://github.com/json-path/JsonPath/[JSONPath] to allow
 using xref:manual::expression.adoc[Expression] or xref:manual::predicate.adoc[Predicate] on JSON messages.
 
 
@@ -230,7 +230,7 @@ to extract a value from the message and bind it to a method parameter, as shown 
 [source,java]
 ----
 public class Foo {
-    
+
     @Consume("activemq:queue:books.new")
     public void doSomething(@JsonPath("$.store.book[*].author") String author, @Body String json) {
       // process the inbound message here
