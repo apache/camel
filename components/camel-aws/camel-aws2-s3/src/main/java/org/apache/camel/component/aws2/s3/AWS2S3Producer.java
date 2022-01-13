@@ -317,6 +317,11 @@ public class AWS2S3Producer extends DefaultProducer {
             putObjectRequest.acl(objectAcl);
         }
 
+        String contentType = exchange.getIn().getHeader(AWS2S3Constants.CONTENT_TYPE, String.class);
+        if (contentType != null) {
+            putObjectRequest.contentType(contentType);
+        }
+
         BucketCannedACL acl = exchange.getIn().getHeader(AWS2S3Constants.ACL, BucketCannedACL.class);
         if (acl != null) {
             // note: if cannedacl and acl are both specified the last one will
