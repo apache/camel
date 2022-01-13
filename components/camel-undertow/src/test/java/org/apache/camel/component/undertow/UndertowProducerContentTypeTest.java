@@ -16,106 +16,23 @@
  */
 package org.apache.camel.component.undertow;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.http.common.HttpRestHeaderFilterStrategy;
+import org.apache.camel.model.rest.RestBindingMode;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class UndertowProducerTest extends BaseUndertowTest {
+public class UndertowProducerContentTypeTest extends BaseUndertowTest {
 
     @Test
-    public void testHttpSimple() throws Exception {
-        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
-
-        String out = template.requestBody("undertow:http://localhost:{{port}}/foo", null, String.class);
-        assertEquals("Bye World", out);
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
-    public void testHttpSimpleWithQuery() throws Exception {
-        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
-        getMockEndpoint("mock:input").expectedHeaderReceived("name", "me");
-
-        String out = template.requestBody("undertow:http://localhost:{{port}}/foo?name=me", null, String.class);
-        assertEquals("Bye World", out);
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
-    public void testHttpSimpleWithExchangeHttpQuery() throws Exception {
-        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
-        getMockEndpoint("mock:input").expectedHeaderReceived("name", "me");
-
-        String out = template.requestBodyAndHeader("undertow:http://localhost:{{port}}/foo", null, Exchange.HTTP_QUERY,
-                "name=me", String.class);
-        assertEquals("Bye World", out);
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
-    public void testHttpSimpleHeader() throws Exception {
+    public void testHttpContentTypeNotDuplicated() throws Exception {
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_METHOD, "POST");
-
-        String out = template.requestBodyAndHeader("undertow:http://localhost:{{port}}/foo", null, Exchange.HTTP_METHOD, "POST",
-                String.class);
-        assertEquals("Bye World", out);
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
-    public void testHttpSimpleHeaderAndBody() throws Exception {
-        getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_METHOD, "POST");
-
-        String out = template.requestBodyAndHeader("undertow:http://localhost:{{port}}/foo", "Hello World",
-                Exchange.HTTP_METHOD, "POST", String.class);
-        assertEquals("Bye World", out);
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
-    public void testHttpInputStream() throws Exception {
-        getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_METHOD, "POST");
-
-        String out = template.requestBodyAndHeader("undertow:http://localhost:{{port2}}/bar", "Hello World",
-                Exchange.HTTP_METHOD, "POST", String.class);
-        assertEquals("This is the InputStream", out);
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
-    public void testHttpContentType() throws Exception {
-        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.CONTENT_TYPE, "application/json");
 
-        String out = template.requestBodyAndHeader("undertow:http://localhost:{{port}}/foo", null, Exchange.CONTENT_TYPE, "application/json", String.class);
-        assertEquals("Bye World", out);
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
-    public void testHttpContentTypeRest() throws Exception {
-        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
-        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.CONTENT_TYPE, "application/json");
-
-        context.getRegistry().bind("myRest", new HttpRestHeaderFilterStrategy("/foo", null));
-
-        String out = template.requestBodyAndHeader("undertow:http://localhost:{{port}}/foo&headerFilterStrategy=#myRest", null, Exchange.CONTENT_TYPE, "application/json", String.class);
-        assertEquals("Bye World", out);
+        String out = template.requestBodyAndHeader("direct:start", "{ name: \"Donald\" }", Exchange.CONTENT_TYPE,
+                "application/json", String.class);
+        assertEquals("{ status: \"ok\" }", out);
 
         assertMockEndpointsSatisfied();
     }
@@ -123,17 +40,21 @@ public class UndertowProducerTest extends BaseUndertowTest {
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
-            private InputStream is = new ByteArrayInputStream("This is the InputStream".getBytes());
-
             @Override
             public void configure() throws Exception {
-                from("undertow:http://localhost:{{port}}/foo")
-                        .to("mock:input")
-                        .transform().constant("Bye World");
+                restConfiguration()
+                        .producerComponent("undertow").component("undertow")
+                        .host("localhost").port("{{port}}")
+                        .bindingMode(RestBindingMode.json);
 
-                from("undertow:http://localhost:{{port2}}/bar")
+                from("direct:start")
+                        .to("rest:post:foo")
+                        .to("mock:result");
+
+                from("undertow:http://localhost:{{port}}/foo")
+                        .to("log:input")
                         .to("mock:input")
-                        .transform().constant(is);
+                        .transform().constant("{ status: \"ok\" }");
             }
         };
     }
