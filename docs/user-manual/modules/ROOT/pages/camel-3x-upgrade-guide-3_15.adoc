@@ -118,7 +118,7 @@ The `org.apache.camel.cdi.Main` class has moved from `camel-cdi` to `camel-cdi-m
 
 The `camel-endpointdsl` and `camel-componentdsl` is no longer supported on Apache Karaf.
 
-The `camel-osg-activator` has been removed.
+The `camel-osg-activator` and `camel-google-mail` has been removed.
 
 === camel-netty / camel-netty-http
 
