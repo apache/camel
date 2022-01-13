@@ -66,8 +66,8 @@ public class GoogleMailComponentVerifierExtension extends DefaultComponentVerifi
                 client = clientFactory.makeClient(configuration.getClientId(), configuration.getClientSecret(),
                         configuration.getApplicationName(),
                         configuration.getRefreshToken(), configuration.getAccessToken());
-            } else if (configuration.getFilename() != null) {
-                client = clientFactory.makeClient(configuration.getFilename(),
+            } else if (configuration.getKeyResource() != null) {
+                client = clientFactory.makeClient(getCamelContext(), configuration.getKeyResource(),
                         configuration.getApplicationName(), configuration.getDelegate(),
                         configuration.getScopes());
             }

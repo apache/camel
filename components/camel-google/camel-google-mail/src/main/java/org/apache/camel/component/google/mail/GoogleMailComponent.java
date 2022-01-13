@@ -58,8 +58,8 @@ public class GoogleMailComponent
                         googleMailConfiguration.getClientSecret(),
                         googleMailConfiguration.getApplicationName(),
                         googleMailConfiguration.getRefreshToken(), googleMailConfiguration.getAccessToken());
-            } else if (googleMailConfiguration.getFilename() != null) {
-                client = getClientFactory().makeClient(googleMailConfiguration.getFilename(),
+            } else if (googleMailConfiguration.getKeyResource() != null) {
+                client = getClientFactory().makeClient(getCamelContext(), googleMailConfiguration.getKeyResource(),
                         googleMailConfiguration.getApplicationName(), googleMailConfiguration.getDelegate(),
                         googleMailConfiguration.getScopes());
             }

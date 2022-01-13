@@ -27,8 +27,8 @@ public class GmailUsersDraftsEndpointConfigurationConfigurer extends org.apache.
         map.put("ClientSecret", java.lang.String.class);
         map.put("Content", com.google.api.services.gmail.model.Draft.class);
         map.put("Delegate", java.lang.String.class);
-        map.put("Filename", java.lang.String.class);
         map.put("Id", java.lang.String.class);
+        map.put("KeyResource", java.lang.String.class);
         map.put("MediaContent", com.google.api.client.http.AbstractInputStreamContent.class);
         map.put("MethodName", java.lang.String.class);
         map.put("RefreshToken", java.lang.String.class);
@@ -55,10 +55,10 @@ public class GmailUsersDraftsEndpointConfigurationConfigurer extends org.apache.
         case "Content": target.setContent(property(camelContext, com.google.api.services.gmail.model.Draft.class, value)); return true;
         case "delegate":
         case "Delegate": target.setDelegate(property(camelContext, java.lang.String.class, value)); return true;
-        case "filename":
-        case "Filename": target.setFilename(property(camelContext, java.lang.String.class, value)); return true;
         case "id":
         case "Id": target.setId(property(camelContext, java.lang.String.class, value)); return true;
+        case "keyresource":
+        case "KeyResource": target.setKeyResource(property(camelContext, java.lang.String.class, value)); return true;
         case "mediacontent":
         case "MediaContent": target.setMediaContent(property(camelContext, com.google.api.client.http.AbstractInputStreamContent.class, value)); return true;
         case "methodname":
@@ -95,10 +95,10 @@ public class GmailUsersDraftsEndpointConfigurationConfigurer extends org.apache.
         case "Content": return com.google.api.services.gmail.model.Draft.class;
         case "delegate":
         case "Delegate": return java.lang.String.class;
-        case "filename":
-        case "Filename": return java.lang.String.class;
         case "id":
         case "Id": return java.lang.String.class;
+        case "keyresource":
+        case "KeyResource": return java.lang.String.class;
         case "mediacontent":
         case "MediaContent": return com.google.api.client.http.AbstractInputStreamContent.class;
         case "methodname":
@@ -131,10 +131,10 @@ public class GmailUsersDraftsEndpointConfigurationConfigurer extends org.apache.
         case "Content": return target.getContent();
         case "delegate":
         case "Delegate": return target.getDelegate();
-        case "filename":
-        case "Filename": return target.getFilename();
         case "id":
         case "Id": return target.getId();
+        case "keyresource":
+        case "KeyResource": return target.getKeyResource();
         case "mediacontent":
         case "MediaContent": return target.getMediaContent();
         case "methodname":

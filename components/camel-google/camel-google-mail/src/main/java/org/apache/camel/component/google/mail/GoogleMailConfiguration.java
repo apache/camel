@@ -48,8 +48,8 @@ public class GoogleMailConfiguration {
     @UriParam
     private String applicationName;
     /* Service account */
-    @UriParam
-    private String filename;
+    @UriParam(label = "security")
+    private String keyResource;
     @UriParam
     private String delegate;
     @UriParam
@@ -133,15 +133,17 @@ public class GoogleMailConfiguration {
         this.applicationName = applicationName;
     }
 
-    public String getFilename() {
-        return filename;
+    public String getKeyResource() {
+        return keyResource;
     }
 
     /**
-     * Filename "*.json" with credentials for Service account
+     * Sets "*.json" file with credentials for Service account
+     * 
+     * @param keyResource String file, classpath, or http url
      */
-    public void setFilename(String filename) {
-        this.filename = filename;
+    public void setKeyResource(String keyResource) {
+        this.keyResource = keyResource;
     }
 
     public String getDelegate() {

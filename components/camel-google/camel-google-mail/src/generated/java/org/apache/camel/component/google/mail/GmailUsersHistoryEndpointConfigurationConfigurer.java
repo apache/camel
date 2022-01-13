@@ -26,7 +26,7 @@ public class GmailUsersHistoryEndpointConfigurationConfigurer extends org.apache
         map.put("ClientId", java.lang.String.class);
         map.put("ClientSecret", java.lang.String.class);
         map.put("Delegate", java.lang.String.class);
-        map.put("Filename", java.lang.String.class);
+        map.put("KeyResource", java.lang.String.class);
         map.put("MethodName", java.lang.String.class);
         map.put("RefreshToken", java.lang.String.class);
         map.put("Scopes", java.util.List.class);
@@ -50,8 +50,8 @@ public class GmailUsersHistoryEndpointConfigurationConfigurer extends org.apache
         case "ClientSecret": target.setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
         case "delegate":
         case "Delegate": target.setDelegate(property(camelContext, java.lang.String.class, value)); return true;
-        case "filename":
-        case "Filename": target.setFilename(property(camelContext, java.lang.String.class, value)); return true;
+        case "keyresource":
+        case "KeyResource": target.setKeyResource(property(camelContext, java.lang.String.class, value)); return true;
         case "methodname":
         case "MethodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
         case "refreshtoken":
@@ -84,8 +84,8 @@ public class GmailUsersHistoryEndpointConfigurationConfigurer extends org.apache
         case "ClientSecret": return java.lang.String.class;
         case "delegate":
         case "Delegate": return java.lang.String.class;
-        case "filename":
-        case "Filename": return java.lang.String.class;
+        case "keyresource":
+        case "KeyResource": return java.lang.String.class;
         case "methodname":
         case "MethodName": return java.lang.String.class;
         case "refreshtoken":
@@ -114,8 +114,8 @@ public class GmailUsersHistoryEndpointConfigurationConfigurer extends org.apache
         case "ClientSecret": return target.getClientSecret();
         case "delegate":
         case "Delegate": return target.getDelegate();
-        case "filename":
-        case "Filename": return target.getFilename();
+        case "keyresource":
+        case "KeyResource": return target.getKeyResource();
         case "methodname":
         case "MethodName": return target.getMethodName();
         case "refreshtoken":

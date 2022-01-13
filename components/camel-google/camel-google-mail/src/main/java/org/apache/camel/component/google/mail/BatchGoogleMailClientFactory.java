@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.google.mail;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 
@@ -25,7 +24,9 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.gmail.Gmail;
+import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.support.ResourceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,22 +69,25 @@ public class BatchGoogleMailClientFactory implements GoogleMailClientFactory {
     }
 
     @Override
-    public Gmail makeClient(String filename, String applicationName, String delegate, List<String> gmailScopes) {
-        if (filename == null) {
-            throw new IllegalArgumentException("filename is required to create Gmail client.");
+    public Gmail makeClient(
+            CamelContext camelContext, String keyResource, String applicationName, String delegate, List<String> gmailScopes) {
+        if (keyResource == null) {
+            throw new IllegalArgumentException("keyResource is required to create Gmail client.");
         }
         try {
-            Credential credential = authorizeServiceAccount(filename, delegate, gmailScopes);
+            Credential credential = authorizeServiceAccount(camelContext, keyResource, delegate, gmailScopes);
             return new Gmail.Builder(transport, jsonFactory, credential).setApplicationName(applicationName).build();
         } catch (Exception e) {
             throw new RuntimeCamelException("Could not create Gmail client.", e);
         }
     }
 
-    private Credential authorizeServiceAccount(String filename, String delegate, List<String> gmailScopes) {
+    private Credential authorizeServiceAccount(
+            CamelContext camelContext, String keyResource, String delegate, List<String> gmailScopes) {
         // authorize
         try {
-            GoogleCredential cred = GoogleCredential.fromStream(new FileInputStream(filename))
+            GoogleCredential cred = GoogleCredential
+                    .fromStream(ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, keyResource))
                     .createScoped(gmailScopes != null && gmailScopes.size() != 0 ? gmailScopes : null)
                     .createDelegated(delegate);
             cred.refreshToken();

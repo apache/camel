@@ -25,7 +25,6 @@ public class GoogleMailEndpointConfigurer extends PropertyConfigurerSupport impl
         map.put("applicationName", java.lang.String.class);
         map.put("clientId", java.lang.String.class);
         map.put("delegate", java.lang.String.class);
-        map.put("filename", java.lang.String.class);
         map.put("inBody", java.lang.String.class);
         map.put("scopes", java.util.List.class);
         map.put("bridgeErrorHandler", boolean.class);
@@ -50,6 +49,7 @@ public class GoogleMailEndpointConfigurer extends PropertyConfigurerSupport impl
         map.put("useFixedDelay", boolean.class);
         map.put("accessToken", java.lang.String.class);
         map.put("clientSecret", java.lang.String.class);
+        map.put("keyResource", java.lang.String.class);
         map.put("refreshToken", java.lang.String.class);
         ALL_OPTIONS = map;
     }
@@ -80,12 +80,13 @@ public class GoogleMailEndpointConfigurer extends PropertyConfigurerSupport impl
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "filename": target.getConfiguration().setFilename(property(camelContext, java.lang.String.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
         case "inbody":
         case "inBody": target.setInBody(property(camelContext, java.lang.String.class, value)); return true;
         case "initialdelay":
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
+        case "keyresource":
+        case "keyResource": target.getConfiguration().setKeyResource(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "pollstrategy":
@@ -144,12 +145,13 @@ public class GoogleMailEndpointConfigurer extends PropertyConfigurerSupport impl
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
-        case "filename": return java.lang.String.class;
         case "greedy": return boolean.class;
         case "inbody":
         case "inBody": return java.lang.String.class;
         case "initialdelay":
         case "initialDelay": return long.class;
+        case "keyresource":
+        case "keyResource": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "pollstrategy":
@@ -204,12 +206,13 @@ public class GoogleMailEndpointConfigurer extends PropertyConfigurerSupport impl
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
-        case "filename": return target.getConfiguration().getFilename();
         case "greedy": return target.isGreedy();
         case "inbody":
         case "inBody": return target.getInBody();
         case "initialdelay":
         case "initialDelay": return target.getInitialDelay();
+        case "keyresource":
+        case "keyResource": return target.getConfiguration().getKeyResource();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "pollstrategy":
