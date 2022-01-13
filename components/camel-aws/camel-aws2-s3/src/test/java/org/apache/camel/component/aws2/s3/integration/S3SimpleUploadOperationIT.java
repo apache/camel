@@ -88,7 +88,8 @@ public class S3SimpleUploadOperationIT extends Aws2S3Base {
         });
 
         S3Client s = AWSSDKClientUtils.newS3Client();
-        ResponseInputStream<GetObjectResponse> response = s.getObject(GetObjectRequest.builder().bucket("mycamel").key("camel-content-type.txt").build());
+        ResponseInputStream<GetObjectResponse> response
+                = s.getObject(GetObjectRequest.builder().bucket("mycamel").key("camel-content-type.txt").build());
         assertEquals("application/text", response.response().contentType());
     }
 
