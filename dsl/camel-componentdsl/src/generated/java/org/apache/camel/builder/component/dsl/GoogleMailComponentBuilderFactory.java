@@ -110,20 +110,6 @@ public interface GoogleMailComponentBuilderFactory {
             return this;
         }
         /**
-         * Filename .json with credentials for Service account.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param filename the value to set
-         * @return the dsl builder
-         */
-        default GoogleMailComponentBuilder filename(java.lang.String filename) {
-            doSetProperty("filename", filename);
-            return this;
-        }
-        /**
          * GMail scopes.
          * 
          * The option is a:
@@ -255,6 +241,21 @@ public interface GoogleMailComponentBuilderFactory {
             return this;
         }
         /**
+         * Sets .json file with credentials for Service account.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param keyResource the value to set
+         * @return the dsl builder
+         */
+        default GoogleMailComponentBuilder keyResource(
+                java.lang.String keyResource) {
+            doSetProperty("keyResource", keyResource);
+            return this;
+        }
+        /**
          * OAuth 2 refresh token. Using this, the Google Calendar component can
          * obtain a new accessToken whenever the current one expires - a
          * necessity if the application is long-lived.
@@ -299,7 +300,6 @@ public interface GoogleMailComponentBuilderFactory {
             case "clientId": getOrCreateConfiguration((GoogleMailComponent) component).setClientId((java.lang.String) value); return true;
             case "configuration": ((GoogleMailComponent) component).setConfiguration((org.apache.camel.component.google.mail.GoogleMailConfiguration) value); return true;
             case "delegate": getOrCreateConfiguration((GoogleMailComponent) component).setDelegate((java.lang.String) value); return true;
-            case "filename": getOrCreateConfiguration((GoogleMailComponent) component).setFilename((java.lang.String) value); return true;
             case "scopes": getOrCreateConfiguration((GoogleMailComponent) component).setScopes((java.util.List) value); return true;
             case "bridgeErrorHandler": ((GoogleMailComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((GoogleMailComponent) component).setLazyStartProducer((boolean) value); return true;
@@ -307,6 +307,7 @@ public interface GoogleMailComponentBuilderFactory {
             case "clientFactory": ((GoogleMailComponent) component).setClientFactory((org.apache.camel.component.google.mail.GoogleMailClientFactory) value); return true;
             case "accessToken": getOrCreateConfiguration((GoogleMailComponent) component).setAccessToken((java.lang.String) value); return true;
             case "clientSecret": getOrCreateConfiguration((GoogleMailComponent) component).setClientSecret((java.lang.String) value); return true;
+            case "keyResource": getOrCreateConfiguration((GoogleMailComponent) component).setKeyResource((java.lang.String) value); return true;
             case "refreshToken": getOrCreateConfiguration((GoogleMailComponent) component).setRefreshToken((java.lang.String) value); return true;
             default: return false;
             }
