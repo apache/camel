@@ -408,6 +408,31 @@ camel.beans.foo.?company = Acme
 Then the company parameter is only set if `MyBean` has this option (silent ignore if no option present).
 Otherwise, if a parameter is set, and the bean does not have such a parameter, then an exception is thrown by Camel.
 
+=== Optional parameter values on beans
+
+If a parameter value on a bean is configured using xref:manual:ROOT:using-propertyplaceholder.adoc[Property Placeholder]
+and the placeholder is optional, then the placeholder can be marked as optional using `?` syntax, as shown:
+
+[source,properties]
+----
+camel.beans.foo = #class:com.foo.MyBean("Hello World", true, 123)
+camel.beans.foo.company = {{?companyName}}
+----
+
+Then the company parameter is only set if there is a property placeholder with the key _companyName_ (silent ignore if no option present).
+
+==== Default parameter values on beans
+
+It is possible to supply a default value (using `:defaultValue`) if the placeholder does not exist as shown:
+
+[source,properties]
+----
+camel.beans.foo = #class:com.foo.MyBean("Hello World", true, 123)
+camel.beans.foo.company = {{?companyName:Acme}}
+----
+
+Here the default value is _Acme_ that will be used if there is no property placeholder with the key _companyName_.
+
 === Nested parameters on beans
 
 You can configure nested parameters separating them via `.` (dot).

@@ -147,6 +147,7 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
     @Override
     protected void doInit() throws Exception {
         super.doInit();
+
         client = configuration.getAmazonSQSClient() != null
                 ? configuration.getAmazonSQSClient() : Sqs2ClientFactory.getSqsClient(configuration).getSQSClient();
 

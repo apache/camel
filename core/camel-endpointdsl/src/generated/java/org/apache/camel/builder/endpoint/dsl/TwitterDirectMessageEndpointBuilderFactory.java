@@ -1159,8 +1159,8 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         }
         /**
          * Bounding boxes, created by pairs of lat/lons. Can be used for filter.
-         * A pair is defined as lat,lon. And multiple paris can be separated by
-         * semi colon.
+         * A pair is defined as lat,lon. And multiple pairs can be separated by
+         * semicolon.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

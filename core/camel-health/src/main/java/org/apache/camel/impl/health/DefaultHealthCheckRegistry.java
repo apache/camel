@@ -233,11 +233,10 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
 
         if (!loadHealthChecksDone) {
             loadHealthChecksDone = true;
-
             DefaultHealthChecksLoader loader = new DefaultHealthChecksLoader(camelContext);
             Collection<HealthCheck> col = loader.loadHealthChecks();
-
-            // report how many health checks we have loaded
+            // register loaded health-checks
+            col.forEach(this::register);
             if (col.size() > 0) {
                 String time = TimeUtils.printDuration(watch.taken());
                 LOG.info("Health checks (scanned: {}) loaded in {}", col.size(), time);

@@ -530,16 +530,20 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         }
 
         // Add rest endpoint parameters
-        if (this.parameters != null && operation.getParameters() != null) {
-            for (Map.Entry<String, Object> entry : this.parameters.entrySet()) {
-                for (OasParameter param : operation.getParameters()) {
-                    // skip parameters that are part of the operation as path as otherwise
-                    // it will be duplicated as query parameter as well
-                    boolean clash = "path".equals(param.in) && entry.getKey().equals(param.getName());
-                    if (!clash) {
-                        nestedParameters.put(entry.getKey(), entry.getValue());
+        if (this.parameters != null) {
+            if (operation.getParameters() != null) {
+                for (Map.Entry<String, Object> entry : this.parameters.entrySet()) {
+                    for (OasParameter param : operation.getParameters()) {
+                        // skip parameters that are part of the operation as path as otherwise
+                        // it will be duplicated as query parameter as well
+                        boolean clash = "path".equals(param.in) && entry.getKey().equals(param.getName());
+                        if (!clash) {
+                            nestedParameters.put(entry.getKey(), entry.getValue());
+                        }
                     }
                 }
+            } else {
+                nestedParameters.putAll(this.parameters);
             }
         }
 

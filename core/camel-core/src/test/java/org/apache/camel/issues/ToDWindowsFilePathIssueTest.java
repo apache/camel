@@ -14,23 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.kafka.integration;
+package org.apache.camel.issues;
 
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-public class KafkaToDIT extends BaseEmbeddedKafkaTestSupport {
+@Disabled("CAMEL-17389: Manual test")
+public class ToDWindowsFilePathIssueTest extends ContextTestSupport {
 
     @Test
-    public void testToD() throws Exception {
-        template.sendBodyAndHeader("direct:start", "Hello bar", "where", "bar");
-        template.sendBodyAndHeader("direct:start", "Hello beer", "where", "beer");
-
-        // there should only be one kafka endpoint
-        long count = context.getEndpoints().stream().filter(e -> e.getEndpointUri().startsWith("kafka:")).count();
-        assertEquals(1, count, "There should only be 1 kafka endpoint");
+    public void testWindows() throws Exception {
+        template.sendBody("direct:start", "Hello Windows");
     }
 
     @Override
@@ -38,10 +34,9 @@ public class KafkaToDIT extends BaseEmbeddedKafkaTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // route message dynamic using toD
-                from("direct:start").toD("kafka://${header.where}");
+                from("direct:start")
+                        .toD("file:C:\\temp");
             }
         };
     }
-
 }

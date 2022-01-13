@@ -76,8 +76,11 @@ public class CommitConsumer extends AbstractGitHubConsumer {
             LOG.info("GitHub CommitConsumer: Indexing current commits...");
             List<RepositoryCommit> commits = commitService.getCommits(getRepository(), branchName, null);
             for (RepositoryCommit commit : commits) {
-                commitHashes.add(commit.getSha());
-                lastSha = commit.getSha();
+                String sha = commit.getSha();
+                commitHashes.add(sha);
+                if (lastSha == null) {
+                    lastSha = sha;
+                }
             }
             LOG.info("GitHub CommitConsumer: Starting from last sha: {}", lastSha);
         } else if (!startingSha.equals("beginning")) {

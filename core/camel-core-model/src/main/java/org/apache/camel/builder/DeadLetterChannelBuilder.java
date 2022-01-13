@@ -44,6 +44,8 @@ public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder impleme
 
     public DeadLetterChannelBuilder(String uri) {
         setDeadLetterUri(uri);
+        // DLC do not log exhausted by default
+        getRedeliveryPolicy().setLogExhausted(false);
     }
 
     @Override
