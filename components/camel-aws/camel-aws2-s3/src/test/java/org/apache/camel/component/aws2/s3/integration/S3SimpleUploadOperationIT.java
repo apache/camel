@@ -26,7 +26,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.s3.AWS2S3Constants;
 import org.apache.camel.component.aws2.s3.AWS2S3Operations;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.aws2.clients.AWSSDKClientUtils;
 import org.junit.jupiter.api.Test;
+import software.amazon.awssdk.core.ResponseInputStream;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.S3Object;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -66,6 +71,25 @@ public class S3SimpleUploadOperationIT extends Aws2S3Base {
         assertEquals("camel.txt", resp.get(0).key());
 
         assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void sendInWithContentType() throws Exception {
+        result.expectedMessageCount(1);
+
+        template.send("direct:putObject", new Processor() {
+
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(AWS2S3Constants.KEY, "camel-content-type.txt");
+                exchange.getIn().setHeader(AWS2S3Constants.CONTENT_TYPE, "application/text");
+                exchange.getIn().setBody("Camel rocks!");
+            }
+        });
+
+        S3Client s = AWSSDKClientUtils.newS3Client();
+        ResponseInputStream<GetObjectResponse> response = s.getObject(GetObjectRequest.builder().bucket("mycamel").key("camel-content-type.txt").build());
+        assertEquals("application/text", response.response().contentType());
     }
 
     @Override
