@@ -10,7 +10,7 @@
 
 *Since Camel {since}*
 
-Camel supports https://code.google.com/p/json-path/[JSONPath] to allow
+Camel supports https://github.com/json-path/JsonPath/[JSONPath] to allow
 using xref:manual::expression.adoc[Expression] or xref:manual::predicate.adoc[Predicate] on JSON messages.
 
 
