@@ -20,11 +20,12 @@ public class GoogleMailEndpointUriFactory extends org.apache.camel.support.compo
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(36);
+        Set<String> props = new HashSet<>(39);
         props.add("backoffMultiplier");
         props.add("apiName");
         props.add("initialDelay");
         props.add("content");
+        props.add("delegate");
         props.add("scheduler");
         props.add("modifyMessageRequest");
         props.add("bridgeErrorHandler");
@@ -41,6 +42,7 @@ public class GoogleMailEndpointUriFactory extends org.apache.camel.support.compo
         props.add("repeatCount");
         props.add("timeUnit");
         props.add("clientId");
+        props.add("keyResource");
         props.add("sendEmptyMessageWhenIdle");
         props.add("schedulerProperties");
         props.add("exchangePattern");
@@ -54,6 +56,7 @@ public class GoogleMailEndpointUriFactory extends org.apache.camel.support.compo
         props.add("delay");
         props.add("pollStrategy");
         props.add("startScheduler");
+        props.add("scopes");
         props.add("inBody");
         props.add("exceptionHandler");
         props.add("refreshToken");

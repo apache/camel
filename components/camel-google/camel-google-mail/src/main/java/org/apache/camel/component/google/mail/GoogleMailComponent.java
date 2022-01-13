@@ -53,10 +53,16 @@ public class GoogleMailComponent
 
     public Gmail getClient(GoogleMailConfiguration googleMailConfiguration) {
         if (client == null) {
-            client = getClientFactory().makeClient(googleMailConfiguration.getClientId(),
-                    googleMailConfiguration.getClientSecret(),
-                    googleMailConfiguration.getApplicationName(),
-                    googleMailConfiguration.getRefreshToken(), googleMailConfiguration.getAccessToken());
+            if (googleMailConfiguration.getClientSecret() != null) {
+                client = getClientFactory().makeClient(googleMailConfiguration.getClientId(),
+                        googleMailConfiguration.getClientSecret(),
+                        googleMailConfiguration.getApplicationName(),
+                        googleMailConfiguration.getRefreshToken(), googleMailConfiguration.getAccessToken());
+            } else if (googleMailConfiguration.getKeyResource() != null) {
+                client = getClientFactory().makeClient(getCamelContext(), googleMailConfiguration.getKeyResource(),
+                        googleMailConfiguration.getApplicationName(), googleMailConfiguration.getDelegate(),
+                        googleMailConfiguration.getScopes());
+            }
         }
         return client;
     }

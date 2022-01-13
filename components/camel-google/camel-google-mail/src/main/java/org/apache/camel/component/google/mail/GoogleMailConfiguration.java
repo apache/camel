@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.google.mail;
 
+import java.util.List;
+
 import org.apache.camel.component.google.mail.internal.GoogleMailApiName;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
@@ -45,6 +47,13 @@ public class GoogleMailConfiguration {
     private String refreshToken;
     @UriParam
     private String applicationName;
+    /* Service account */
+    @UriParam(label = "security")
+    private String keyResource;
+    @UriParam
+    private String delegate;
+    @UriParam
+    private List<String> scopes;
 
     public GoogleMailApiName getApiName() {
         return apiName;
@@ -124,4 +133,40 @@ public class GoogleMailConfiguration {
         this.applicationName = applicationName;
     }
 
+    public String getKeyResource() {
+        return keyResource;
+    }
+
+    /**
+     * Sets "*.json" file with credentials for Service account
+     * 
+     * @param keyResource String file, classpath, or http url
+     */
+    public void setKeyResource(String keyResource) {
+        this.keyResource = keyResource;
+    }
+
+    public String getDelegate() {
+        return delegate;
+    }
+
+    /**
+     * Delegate for wide-domain service account
+     */
+    public void setDelegate(String delegate) {
+        this.delegate = delegate;
+    }
+
+    public List<String> getScopes() {
+        return scopes;
+    }
+
+    /**
+     * GMail scopes
+     * 
+     * @see com.google.api.services.gmail.GmailScopes
+     */
+    public void setScopes(List<String> scopes) {
+        this.scopes = scopes;
+    }
 }
