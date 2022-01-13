@@ -28,6 +28,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 public class S3CreateDownloadLinkOperationIT extends Aws2S3Base {
 
@@ -66,7 +67,16 @@ public class S3CreateDownloadLinkOperationIT extends Aws2S3Base {
             }
         });
 
+        Exchange ex2 = template.request("direct:createDownloadLinkWithoutCredentials", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(AWS2S3Constants.KEY, "CamelUnitTest2");
+                exchange.getIn().setHeader(AWS2S3Constants.BUCKET_NAME, "mycamel2");
+                exchange.getIn().setHeader(AWS2S3Constants.S3_OPERATION, AWS2S3Operations.createDownloadLink);
+            }
+        });
+
         assertNotNull(ex1.getMessage().getBody());
+        assertNull(ex2.getMessage().getBody());
         assertMockEndpointsSatisfied();
     }
 
@@ -80,6 +90,8 @@ public class S3CreateDownloadLinkOperationIT extends Aws2S3Base {
                 from("direct:listBucket").to(awsEndpoint);
 
                 from("direct:addObject").to(awsEndpoint);
+
+                from("direct:createDownloadLinkWithoutCredentials").to(awsEndpoint).to("mock:result");
 
                 from("direct:createDownloadLink").to(awsEndpoint + "&accessKey=xxx&secretKey=yyy&region=eu-west-1")
                         .to("mock:result");

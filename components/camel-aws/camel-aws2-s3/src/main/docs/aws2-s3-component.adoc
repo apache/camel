@@ -395,7 +395,7 @@ This operation will return an S3Object instance related to the camelKey object i
 --------------------------------------------------------------------------------
 
 This operation will return a download link url for the file camel-key in the bucket mycamelbucket and region region.
-Parameters (`accessKey`, `secretKey` and `region`)  are mandatory for this operation.
+Parameters (`accessKey`, `secretKey` and `region`) are mandatory for this operation, if S3 client is autowired from the registry.
 
 == Streaming Upload mode
 
