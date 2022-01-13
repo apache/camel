@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class CaffeineCacheRemovaListenerProducerTest extends CaffeineCacheTestSupport {
+public class CaffeineCacheRemovalListenerProducerTest extends CaffeineCacheTestSupport {
 
     // ****************************
     // Clear

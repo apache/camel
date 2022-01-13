@@ -66,34 +66,32 @@ public class CaffeineLoadCacheEndpoint extends DefaultEndpoint {
     @Override
     protected void doStart() throws Exception {
 
-        synchronized (this) {
-            cache = CamelContextHelper.lookup(getCamelContext(), cacheName, LoadingCache.class);
-            if (cache == null) {
-                if (configuration.isCreateCacheIfNotExist()) {
-                    Caffeine<Object, Object> builder = Caffeine.newBuilder();
-                    if (configuration.getEvictionType() == EvictionType.SIZE_BASED) {
-                        builder.initialCapacity(configuration.getInitialCapacity());
-                        builder.maximumSize(configuration.getMaximumSize());
-                    } else if (configuration.getEvictionType() == EvictionType.TIME_BASED) {
-                        builder.expireAfterAccess(configuration.getExpireAfterAccessTime(), TimeUnit.SECONDS);
-                        builder.expireAfterWrite(configuration.getExpireAfterWriteTime(), TimeUnit.SECONDS);
-                    }
-                    if (configuration.isStatsEnabled()) {
-                        if (ObjectHelper.isEmpty(configuration.getStatsCounter())) {
-                            builder.recordStats();
-                        } else {
-                            builder.recordStats(configuration::getStatsCounter);
-                        }
-                    }
-                    if (ObjectHelper.isNotEmpty(configuration.getRemovalListener())) {
-                        builder.removalListener(configuration.getRemovalListener());
-                    }
-                    cache = builder.build(configuration.getCacheLoader());
-                    getCamelContext().getRegistry().bind(cacheName, LoadingCache.class, cache);
-                } else {
-                    throw new IllegalArgumentException(
-                            "Loading cache instance '" + cacheName + "' not found and createCacheIfNotExist is set to false");
+        cache = CamelContextHelper.lookup(getCamelContext(), cacheName, LoadingCache.class);
+        if (cache == null) {
+            if (configuration.isCreateCacheIfNotExist()) {
+                Caffeine<Object, Object> builder = Caffeine.newBuilder();
+                if (configuration.getEvictionType() == EvictionType.SIZE_BASED) {
+                    builder.initialCapacity(configuration.getInitialCapacity());
+                    builder.maximumSize(configuration.getMaximumSize());
+                } else if (configuration.getEvictionType() == EvictionType.TIME_BASED) {
+                    builder.expireAfterAccess(configuration.getExpireAfterAccessTime(), TimeUnit.SECONDS);
+                    builder.expireAfterWrite(configuration.getExpireAfterWriteTime(), TimeUnit.SECONDS);
                 }
+                if (configuration.isStatsEnabled()) {
+                    if (ObjectHelper.isEmpty(configuration.getStatsCounter())) {
+                        builder.recordStats();
+                    } else {
+                        builder.recordStats(configuration::getStatsCounter);
+                    }
+                }
+                if (ObjectHelper.isNotEmpty(configuration.getRemovalListener())) {
+                    builder.removalListener(configuration.getRemovalListener());
+                }
+                cache = builder.build(configuration.getCacheLoader());
+            } else {
+                throw new IllegalArgumentException(
+                        "Loading cache instance '" + cacheName
+                                                   + "' not found and createCacheIfNotExist is set to false");
             }
         }
         super.doStart();

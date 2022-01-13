@@ -54,13 +54,5 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: END
 
 
-== Cache invalidation
-
-Please note that before Camel 3.15 the invalidate all action (CaffeineConstants.ACTION_INVALIDATE_ALL) does not
-delete anything in case that CaffeineConstants.KEYS header is either missing or contains an empty set.
-
-Starting vom Camel 3.15 the invalidate all action does not delete anything in case the CaffeineConstants.KEYS header
-contains an empty set, but clears the cache completely if the  CaffeineConstants.KEYS header is not set.
-
 
 include::spring-boot:partial$starter.adoc[]
