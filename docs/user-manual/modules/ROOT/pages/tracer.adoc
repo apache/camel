@@ -89,7 +89,7 @@ The default format can be customized using, for exameple to use wider columns:
 
 [source,java]
 ----
-context.setTracingLoggingFormat("%-4.4s [%-30.30s] [%-50.50s]);
+context.setTracingLoggingFormat("%-4.4s [%-30.30s] [%-50.50s]");
 ----
 
 And in XML DSL:
@@ -103,9 +103,14 @@ And in XML DSL:
 
 And in Spring Boot
 
-[source,text]
+[source,properties]
 ----
 camel.springboot.tracing-logging-format = %-4.4s [%-30.30s] [%-50.50s]
 ----
 
+And in Camel Main / Quarkus
 
+[source,properties]
+----
+camel.main.tracing-logging-format = %-4.4s [%-30.30s] [%-50.50s]
+----
