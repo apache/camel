@@ -38,8 +38,6 @@
         <componentPackage>org.apache.camel.component.google.mail</componentPackage>
         <outPackage>org.apache.camel.component.google.mail.internal</outPackage>
         <camel.osgi.private.pkg>org.apache.camel.component.google.mail.internal</camel.osgi.private.pkg>
-        <google-api-client-version>1.32.1</google-api-client-version>
-        <google-api-services-mail-version>v1-rev20211108-1.32.1</google-api-services-mail-version>
     </properties>
 
     <dependencies>
@@ -50,7 +48,7 @@
         <dependency>
             <groupId>com.google.api-client</groupId>
             <artifactId>google-api-client</artifactId>
-            <version>${google-api-client-version}</version>
+            <version>${google-mail-api-client-version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.google.code.findbugs</groupId>
@@ -61,7 +59,7 @@
         <dependency>
             <groupId>com.google.oauth-client</groupId>
             <artifactId>google-oauth-client-jetty</artifactId>
-            <version>${google-api-client-version}</version>
+            <version>${google-mail-api-client-version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.mortbay.jetty</groupId>
@@ -72,7 +70,7 @@
         <dependency>
             <groupId>com.google.http-client</groupId>
             <artifactId>google-http-client-jackson2</artifactId>
-            <version>${google-api-client-version}</version>
+            <version>${google-mail-api-client-version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.google.code.findbugs</groupId>
