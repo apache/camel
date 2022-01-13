@@ -10,7 +10,7 @@
 
 *Since Camel {since}*
 
-https://code.google.com/p/leveldb/[Leveldb] is a very lightweight and
+https://github.com/google/leveldb[Leveldb] is a very lightweight and
 embedable key value database. It allows together with Camel to provide
 persistent support for various Camel features such as
 Aggregator.
