@@ -30,15 +30,11 @@ jobs:
       with:
         persist-credentials: false
     - name: Set up JDK
-      uses: actions/setup-java@v1
+      uses: actions/setup-java@v2
       with:
+        distribution: 'temurin'
         java-version: 11
-    - name: Cache Maven Repository
-      uses: actions/cache@v1
-      with:
-        path: ~/.m2
-        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-        restore-keys: ${{ runner.os }}-m2
+        cache: 'maven'
     - name: mvn checkstyle
       run: ./mvnw -V -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 --no-transfer-progress  -Dcheckstyle.failOnViolation=true checkstyle:checkstyle
   build:
@@ -51,14 +47,10 @@ jobs:
         with:
           persist-credentials: false
       - name: Set up JDK ${{ matrix.java }}
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v2
         with:
+          distribution: 'temurin'
           java-version: ${{ matrix.java }}
-      - name: Cache Maven Repository
-        uses: actions/cache@v1
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
+          cache: 'maven'
       - name: maven build
         run: ./mvnw -V -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 --no-transfer-progress -Pfastinstall -Dcheckstyle.skip=true -DskipTests install
