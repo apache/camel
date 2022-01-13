@@ -15,7 +15,7 @@
 
 This component allows interaction with cloud provider key-value engines
 (blobstores) and compute services. The component uses
-http://code.google.com/p/jclouds[jclouds] which is +
+https://jclouds.apache.org/[jclouds] which is +
  a library that provides abstractions for blobstores and compute
 services.
 
