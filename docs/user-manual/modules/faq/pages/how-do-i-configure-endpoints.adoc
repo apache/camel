@@ -117,15 +117,14 @@ pop3://host:port?password=foo
 [[HowdoIconfigureendpoints-ReferringbeansfromEndpointURIs]]
 === Referring beans from Endpoint URIs
 
-When configuring endpoints using URI syntax you can now refer to beans
+When configuring endpoints using the URI syntax you can refer to beans
 in the Registry using the `#bean:id` notation.
 
 NOTE: The older syntax with just `#id` has been deprecated due to ambiguity
 as Camel supports a number of additional functions that start with the # notation.
 
-If the parameter value starts with a `#bean:` sign then Camel will lookup in
-the Registry for a bean of the given type. For
-instance:
+If the URI parameter value starts with `#bean:` then Camel will lookup in
+the Registry for a bean of the given type by id. For instance:
 
 [source]
 ----
