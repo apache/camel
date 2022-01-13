@@ -197,8 +197,7 @@ public class RestOpenApiReader {
         verbs.sort(new VerbOrdering(camelContext));
 
         // we need to group the operations within the same tag, so use the path as default if not configured
-        String opPath = OpenApiHelper.buildUrl(buildBasePath(camelContext, rest), getValue(camelContext, rest.getPath()));
-        String pathAsTag = getValue(camelContext, rest.getTag() != null ? rest.getTag() : opPath);
+        String pathAsTag = getValue(camelContext, rest.getTag() != null ? rest.getTag() : rest.getPath());
         if (openApi instanceof Oas20Document) {
             parseOas20(camelContext, (Oas20Document) openApi, rest, pathAsTag);
         } else if (openApi instanceof Oas30Document) {
