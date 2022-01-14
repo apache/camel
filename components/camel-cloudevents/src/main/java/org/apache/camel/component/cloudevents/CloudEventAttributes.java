@@ -22,7 +22,7 @@ import java.util.Collection;
 /**
  * Attributes for cloud even specs
  */
-class CloudEventAttributes {
+final class CloudEventAttributes {
 
     // attributes for all 1.0.x specs
     public static final Collection<CloudEvent.Attribute> V1_0_ATTRIBUTES = Arrays.asList(
@@ -35,5 +35,8 @@ class CloudEventAttributes {
             CloudEvent.Attribute.simple(CloudEvent.CAMEL_CLOUD_EVENT_SCHEMA_URL, "ce-dataschema", "dataschema"),
             CloudEvent.Attribute.simple(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT, "ce-subject", "subject"),
             CloudEvent.Attribute.simple(CloudEvent.CAMEL_CLOUD_EVENT_TIME, "ce-time", "time"));
+
+    private CloudEventAttributes() {
+    }
 
 }
