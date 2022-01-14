@@ -43,8 +43,8 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody("Hello");
 
-        Future<Exchange> future = template.asyncSend("direct:start", exchange);
         long start = System.currentTimeMillis();
+        Future<Exchange> future = template.asyncSend("direct:start", exchange);
 
         // you can do other stuff
         String echo = template.requestBody("direct:echo", "Hi", String.class);
@@ -81,8 +81,8 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
 
     @Test
     public void testRequestAsyncBody() throws Exception {
-        Future<Object> future = template.asyncRequestBody("direct:start", "Hello");
         long start = System.currentTimeMillis();
+        Future<Object> future = template.asyncRequestBody("direct:start", "Hello");
 
         // you can do other stuff
         String echo = template.requestBody("direct:echo", "Hi", String.class);
@@ -98,8 +98,8 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
 
     @Test
     public void testRequestAsyncBodyType() throws Exception {
-        Future<String> future = template.asyncRequestBody("direct:start", "Hello", String.class);
         long start = System.currentTimeMillis();
+        Future<String> future = template.asyncRequestBody("direct:start", "Hello", String.class);
 
         // you can do other stuff
         String echo = template.requestBody("direct:echo", "Hi", String.class);
@@ -120,8 +120,8 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         mock.expectedBodiesReceived("Hello World");
         mock.expectedHeaderReceived("foo", 123);
 
-        Future<Object> future = template.asyncRequestBodyAndHeader("direct:start", "Hello", "foo", 123);
         long start = System.currentTimeMillis();
+        Future<Object> future = template.asyncRequestBodyAndHeader("direct:start", "Hello", "foo", 123);
 
         // you can do other stuff
         String echo = template.requestBody("direct:echo", "Hi", String.class);
@@ -143,8 +143,8 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         mock.expectedBodiesReceived("Hello World");
         mock.expectedHeaderReceived("foo", 123);
 
-        Future<String> future = template.asyncRequestBodyAndHeader("direct:start", "Hello", "foo", 123, String.class);
         long start = System.currentTimeMillis();
+        Future<String> future = template.asyncRequestBodyAndHeader("direct:start", "Hello", "foo", 123, String.class);
 
         // you can do other stuff
         String echo = template.requestBody("direct:echo", "Hi", String.class);
@@ -171,8 +171,8 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         Map<String, Object> headers = new HashMap<>();
         headers.put("foo", 123);
         headers.put("bar", "cheese");
-        Future<Object> future = template.asyncRequestBodyAndHeaders("direct:start", "Hello", headers);
         long start = System.currentTimeMillis();
+        Future<Object> future = template.asyncRequestBodyAndHeaders("direct:start", "Hello", headers);
 
         // you can do other stuff
         String echo = template.requestBody("direct:echo", "Hi", String.class);
@@ -198,8 +198,8 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         Map<String, Object> headers = new HashMap<>();
         headers.put("foo", 123);
         headers.put("bar", "cheese");
-        Future<String> future = template.asyncRequestBodyAndHeaders("direct:start", "Hello", headers, String.class);
         long start = System.currentTimeMillis();
+        Future<String> future = template.asyncRequestBodyAndHeaders("direct:start", "Hello", headers, String.class);
 
         // you can do other stuff
         String echo = template.requestBody("direct:echo", "Hi", String.class);
@@ -221,8 +221,8 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody("Hello");
 
-        Future<Object> future = template.asyncRequestBody("direct:error", exchange);
         long start = System.currentTimeMillis();
+        Future<Object> future = template.asyncRequestBody("direct:error", exchange);
 
         // you can do other stuff
         String echo = template.requestBody("direct:echo", "Hi", String.class);
@@ -241,8 +241,8 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
 
     @Test
     public void testRequestAsyncBodyErrorWhenProcessing() throws Exception {
-        Future<Object> future = template.asyncRequestBody("direct:error", "Hello");
         long start = System.currentTimeMillis();
+        Future<Object> future = template.asyncRequestBody("direct:error", "Hello");
 
         // you can do other stuff
         String echo = template.requestBody("direct:echo", "Hi", String.class);
