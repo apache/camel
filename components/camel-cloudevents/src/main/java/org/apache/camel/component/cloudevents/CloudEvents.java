@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.cloudevents;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -27,30 +26,14 @@ public enum CloudEvents implements CloudEvent {
     //
     v1_0(new CloudEventImpl(
             "1.0",
-            Arrays.asList(
-                    Attribute.simple(CloudEvent.CAMEL_CLOUD_EVENT_ID, "ce-id", "id"),
-                    Attribute.simple(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE, "ce-source", "source"),
-                    Attribute.simple(CloudEvent.CAMEL_CLOUD_EVENT_VERSION, "ce-specversion", "specversion"),
-                    Attribute.simple(CloudEvent.CAMEL_CLOUD_EVENT_TYPE, "ce-type", "type"),
-                    Attribute.simple(CloudEvent.CAMEL_CLOUD_EVENT_DATA_CONTENT_TYPE, "ce-datacontenttype", "datacontenttype"),
-                    Attribute.simple(CloudEvent.CAMEL_CLOUD_EVENT_SCHEMA_URL, "ce-dataschema", "dataschema"),
-                    Attribute.simple(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT, "ce-subject", "subject"),
-                    Attribute.simple(CloudEvent.CAMEL_CLOUD_EVENT_TIME, "ce-time", "time")))),
+            CloudEventAttributes.V1_0_ATTRIBUTES)),
 
     //
     // V1.0.1 - https://github.com/cloudevents/spec/blob/v1.0.1/spec.md
     //
     v1_0_1(new CloudEventImpl(
             "1.0.1",
-            Arrays.asList(
-                    Attribute.simple(CloudEvent.CAMEL_CLOUD_EVENT_ID, "ce-id", "id"),
-                    Attribute.simple(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE, "ce-source", "source"),
-                    Attribute.simple(CloudEvent.CAMEL_CLOUD_EVENT_VERSION, "ce-specversion", "specversion"),
-                    Attribute.simple(CloudEvent.CAMEL_CLOUD_EVENT_TYPE, "ce-type", "type"),
-                    Attribute.simple(CloudEvent.CAMEL_CLOUD_EVENT_DATA_CONTENT_TYPE, "ce-datacontenttype", "datacontenttype"),
-                    Attribute.simple(CloudEvent.CAMEL_CLOUD_EVENT_SCHEMA_URL, "ce-dataschema", "dataschema"),
-                    Attribute.simple(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT, "ce-subject", "subject"),
-                    Attribute.simple(CloudEvent.CAMEL_CLOUD_EVENT_TIME, "ce-time", "time"))));
+            CloudEventAttributes.V1_0_ATTRIBUTES));
 
     private final CloudEvent instance;
 
