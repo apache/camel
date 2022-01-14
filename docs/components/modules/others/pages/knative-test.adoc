@@ -1,0 +1,1 @@
+../../../../../components/camel-knative/camel-knative-test/src/main/docs/knative-test.adoc
