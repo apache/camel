@@ -87,9 +87,24 @@ public class CaffeineLoadCacheProducer extends HeaderSelectorProducer {
 
     @InvokeOnHeader(CaffeineConstants.ACTION_INVALIDATE_ALL)
     public void onInvalidateAll(Message message) {
-        cache.invalidateAll(message.getHeader(CaffeineConstants.KEYS, Collections::emptySet, Set.class));
+        Set<?> keys = message.getHeader(CaffeineConstants.KEYS, Set.class);
+        /* Empty cache if no key set is provided
+           - implies no deletions at all if an empty key set is provided */
+        if (keys == null) {
+            cache.invalidateAll();
+        } else {
+            cache.invalidateAll(keys);
+        }
 
         setResult(message, true, null, null);
+    }
+
+    @InvokeOnHeader(CaffeineConstants.ACTION_AS_MAP)
+    public void onAsMap(Message message) {
+        Map<?, ?> result = cache.asMap();
+
+        message.setHeader(CaffeineConstants.KEYS, result.keySet());
+        setResult(message, true, result, null);
     }
 
     // ****************************

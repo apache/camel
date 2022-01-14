@@ -56,6 +56,10 @@ You can use your cache with the following code:
 
 [source,java]
 ------------------------------------------------------------
+
+@BindToRegistry("cache")
+Cache cache = Caffeine.newBuilder().recordStats().build();
+
 @Override
 protected RouteBuilder createRouteBuilder() throws Exception {
     return new RouteBuilder() {
