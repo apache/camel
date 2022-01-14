@@ -37,7 +37,7 @@ function deleteComponentSymlinks () {
 }
 
 function deleteComponentImageSymlinks () {
-  return del(['components/modules/ROOT/assets/images/*'])
+  return del(['components/modules/ROOT/images/*'])
 }
 
 function createComponentSymlinks () {
@@ -180,7 +180,7 @@ function createComponentImageSymlinks () {
       // }));
       // uncomment above .pipe() and remove the .pipe() below
       // when antora#188 is resolved
-      .pipe(dest('components/modules/ROOT/assets/images/'))
+      .pipe(dest('components/modules/ROOT/images/'))
   )
 }
 
