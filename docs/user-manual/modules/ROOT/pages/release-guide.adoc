@@ -390,7 +390,7 @@ This will release the artifacts.
 [[Publish-xsd-schemas]]
 == Publish xsd schemas
 
-* On https://github.com/apache/camel-website/tree/master/static/schema the xsd related to blueprint,cxf,spring-security and spring
+* On https://github.com/apache/camel-website/tree/main/static/schema the xsd related to blueprint,cxf,spring-security and spring
 must be pushed to make them available to end users.
 * The blueprint one is under the camel-karaf release
 

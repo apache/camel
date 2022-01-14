@@ -45,7 +45,7 @@ the Spring `ApplicationContext`:
 [source,java]
 ----
 ApplicationContext ac = ...
-CamelContext camel = (CamelContext) ac.getBean("myCamel");
+CamelContext camel = ac.getBean("myCamel", CamelContext.class);
 
 // now start all the routes
 camel.getRouteController().startAllRoutes();
@@ -82,7 +82,7 @@ And in Java DSL you can configure auto startup on `CamelContext` as follows:
 
 [source,java]
 ----
-camelCopntext.setAutoStartup(false);
+camelContext.setAutoStartup(false);
 ----
 
 And on route level you can disable it via `noAutoStartup`:
