@@ -1,0 +1,11 @@
+= Knative Test Component
+:doctitle: Knative Test
+:shortname: knative-test
+:artifactid: camel-knative-test
+:description: Camel Knative Test
+:since: 3.15
+:supportlevel: Preview
+
+*Since Camel {since}*
+
+Test support for camel-knative component.

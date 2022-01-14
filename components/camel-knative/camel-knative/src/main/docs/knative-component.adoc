@@ -28,14 +28,14 @@ for this component.
 
 == URI format
 
-[source]
+[source,text]
 ----
 knative:type/name[?options]
 ----
 
 You can append query options to the URI in the following format:
 
-[source]
+[source,text]
 ------------------------------------------------------------
 ?option=value&option=value&...
 ------------------------------------------------------------
@@ -46,9 +46,9 @@ You can append query options to the URI in the following format:
 include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
 // component options: END
-
+// component-configure options: START
+// component-configure options: END
 // endpoint options: START
-
 // endpoint options: END
 
 
@@ -115,43 +115,7 @@ The `metadata` fields has some additional advanced fields:
 
 |===
 
-== Knative Transport
-
-As today the component only support `http` as transport as it is the only supported protocol on Knative side but the transport is pluggable by implementing the following interface:
-
-[source,java]
-----
-
-public interface KnativeTransport extends Service {
-    /**
-     * Create a camel {@link org.apache.camel.Producer} in place of the original endpoint for a specific protocol.
-     *
-     * @param endpoint the endpoint for which the producer should be created
-     * @param configuration the general transport configuration
-     * @param service the service definition containing information about how make reach the target service.
-     * @return
-     */
-    Producer createProducer(
-        Endpoint endpoint,
-        KnativeTransportConfiguration configuration,
-        KnativeEnvironment.KnativeServiceDefinition service);
-
-    /**
-     * Create a camel {@link org.apache.camel.Producer} in place of the original endpoint for a specific protocol.
-     *
-     * @param endpoint the endpoint for which the consumer should be created.
-     * @param configuration the general transport configuration
-     * @param service the service definition containing information about how make the route reachable from knative.
-     * @return
-     */
-    Consumer createConsumer(
-        Endpoint endpoint,
-        KnativeTransportConfiguration configuration,
-        KnativeEnvironment.KnativeServiceDefinition service, Processor processor);
-}
-----
-
-== Examples
+== Example
 
 [source,java]
 ----
@@ -167,3 +131,37 @@ RouteBuilder.addRoutes(context, b -> {
 ----
 <1> set the location of the `Knative Environment` file
 <2> expose knative service
+
+== Using custom Knative Transport
+
+As today the component only support `http` as transport as it is the only supported protocol on Knative side but the transport is pluggable by implementing the following interface:
+
+[source,java]
+----
+
+public interface KnativeTransport extends Service {
+    /**
+     * Create a camel {@link org.apache.camel.Producer} in place of the original endpoint for a specific protocol.
+     *
+     * @param endpoint the endpoint for which the producer should be created
+     * @param configuration the general transport configuration
+     * @param service the service definition containing information about how make reach the target service.
+     */
+    Producer createProducer(
+        Endpoint endpoint,
+        KnativeTransportConfiguration configuration,
+        KnativeEnvironment.KnativeServiceDefinition service);
+
+    /**
+     * Create a camel {@link org.apache.camel.Producer} in place of the original endpoint for a specific protocol.
+     *
+     * @param endpoint the endpoint for which the consumer should be created.
+     * @param configuration the general transport configuration
+     * @param service the service definition containing information about how make the route reachable from knative.
+     */
+    Consumer createConsumer(
+        Endpoint endpoint,
+        KnativeTransportConfiguration configuration,
+        KnativeEnvironment.KnativeServiceDefinition service, Processor processor);
+}
+----
