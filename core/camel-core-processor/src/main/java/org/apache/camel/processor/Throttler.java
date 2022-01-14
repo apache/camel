@@ -393,7 +393,7 @@ public class Throttler extends AsyncProcessorSupport implements Traceable, IdAwa
 
         @Override
         public int compareTo(final Delayed o) {
-            return (int) (getDelay(TimeUnit.MILLISECONDS) - o.getDelay(TimeUnit.MILLISECONDS));
+            return Long.compare(getDelay(TimeUnit.MILLISECONDS), o.getDelay(TimeUnit.MILLISECONDS));
         }
     }
 
