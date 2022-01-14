@@ -16,6 +16,8 @@ public class CaffeineCacheProducerInvokeOnHeaderFactory implements InvokeOnHeade
     public Object invoke(Object obj, String key, Exchange exchange, AsyncCallback callback) throws Exception {
         org.apache.camel.component.caffeine.cache.CaffeineCacheProducer target = (org.apache.camel.component.caffeine.cache.CaffeineCacheProducer) obj;
         switch (key) {
+        case "as_map":
+        case "AS_MAP": target.onAsMap(exchange.getMessage()); return null;
         case "cleanup":
         case "CLEANUP": target.onCleanUp(exchange.getMessage()); return null;
         case "get":
