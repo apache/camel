@@ -16,17 +16,16 @@
  */
 package org.apache.camel.processor;
 
-import org.junit.jupiter.api.Test;
-
 import java.util.concurrent.Delayed;
 import java.util.concurrent.TimeUnit;
+
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * When a Throttler has not been used for longer than {@link java.lang.Integer#MAX_VALUE},
- * casting the result of the {@link ThrottlePermit} comparison to an int causes an overflow.
- * Using a value comparison prevents this issue.
+ * When a Throttler has not been used for longer than {@link java.lang.Integer#MAX_VALUE}, casting the result of the
+ * {@link ThrottlePermit} comparison to an int causes an overflow. Using a value comparison prevents this issue.
  */
 public class ThrottlerPermitTest {
 
