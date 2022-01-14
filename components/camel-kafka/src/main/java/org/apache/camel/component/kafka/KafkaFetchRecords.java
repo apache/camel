@@ -240,12 +240,27 @@ class KafkaFetchRecords implements Runnable {
     }
 
     private void safeUnsubscribe() {
+        final String printableTopic = getPrintableTopic();
+
         try {
             consumer.unsubscribe();
+        } catch (IllegalStateException e) {
+            LOG.warn("The consumer is likely already closed. Skipping the unsubscription from {}", printableTopic);
         } catch (Exception e) {
             kafkaConsumer.getExceptionHandler().handleException(
-                    "Error unsubscribing " + threadId + " from kafka topic " + topicName,
-                    e);
+                    "Error unsubscribing thread " + threadId + " from kafka " + printableTopic, e);
+        }
+    }
+
+    /*
+     * This is only used for presenting log messages that take into consideration that it might be subscribed to a topic
+     * or a topic pattern.
+     */
+    private String getPrintableTopic() {
+        if (topicPattern != null) {
+            return "topic pattern" + topicPattern;
+        } else {
+            return "topic" + topicName;
         }
     }
 
