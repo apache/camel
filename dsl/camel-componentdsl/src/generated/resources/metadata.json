@@ -4324,6 +4324,28 @@
     "producerOnly": false,
     "lenientProperties": true
   },
+  "KnativeComponentBuilderFactory": {
+    "kind": "component",
+    "name": "knative",
+    "title": "Knative",
+    "description": "Send and receive events from Knative.",
+    "deprecated": false,
+    "firstVersion": "3.15.0",
+    "label": "cloud",
+    "javaType": "org.apache.camel.component.knative.KnativeComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-knative",
+    "version": "3.15.0-SNAPSHOT",
+    "scheme": "knative",
+    "extendsScheme": "",
+    "syntax": "knative:type\/typeId",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": false,
+    "lenientProperties": false
+  },
   "KubernetesConfigMapsComponentBuilderFactory": {
     "kind": "component",
     "name": "kubernetes-config-maps",

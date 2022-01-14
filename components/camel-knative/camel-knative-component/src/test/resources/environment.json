@@ -1,0 +1,34 @@
+{
+  "resources": [
+    {
+      "type": "channel",
+      "name": "c1",
+      "url": "http://localhost:8081",
+      "metadata": {
+        "service.path": "",
+        "knative.event.type": "",
+        "camel.endpoint.kind": "source"
+      }
+    },
+    {
+      "type": "endpoint",
+      "name": "e1",
+      "url": "http://localhost:9001",
+      "metadata": {
+        "service.path": "",
+        "knative.event.type": "",
+        "camel.endpoint.kind": "source"
+      }
+    },
+    {
+      "type": "endpoint",
+      "name": "default",
+      "url": "http://0.0.0.0:8080",
+      "metadata": {
+        "service.path": "",
+        "knative.event.type": "",
+        "camel.endpoint.kind": "source"
+      }
+    }
+  ]
+}
