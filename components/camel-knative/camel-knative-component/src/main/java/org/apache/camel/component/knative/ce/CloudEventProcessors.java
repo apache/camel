@@ -31,65 +31,8 @@ import org.apache.camel.component.knative.spi.KnativeResource;
 import static org.apache.camel.util.ObjectHelper.ifNotEmpty;
 
 public enum CloudEventProcessors implements CloudEventProcessor {
-    v0_1(new AbstractCloudEventProcessor(CloudEvents.v0_1) {
-        @SuppressWarnings("unchecked")
-        @Override
-        protected void decodeStructuredContent(Exchange exchange, Map<String, Object> content) {
-            final CloudEvent ce = cloudEvent();
-            final Message message = exchange.getIn();
 
-            // body
-            ifNotEmpty(content.remove("data"), message::setBody);
-
-            ifNotEmpty(content.remove(ce.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_CONTENT_TYPE).json()), val -> {
-                message.setHeader(Exchange.CONTENT_TYPE, val);
-            });
-
-            //
-            // Map extensions to standard camel headers
-            //
-            ifNotEmpty(content.remove(CloudEvent.CAMEL_CLOUD_EVENT_EXTENSIONS), val -> {
-                if (val instanceof Map) {
-                    ((Map<String, Object>) val).forEach(message::setHeader);
-                }
-            });
-
-            for (CloudEvent.Attribute attribute : ce.attributes()) {
-                ifNotEmpty(content.remove(attribute.json()), val -> {
-                    message.setHeader(attribute.id(), val);
-                });
-            }
-        }
-    }),
-    v0_2(new AbstractCloudEventProcessor(CloudEvents.v0_2) {
-        @Override
-        protected void decodeStructuredContent(Exchange exchange, Map<String, Object> content) {
-            final CloudEvent ce = cloudEvent();
-            final Message message = exchange.getIn();
-
-            // body
-            ifNotEmpty(content.remove("data"), message::setBody);
-
-            ifNotEmpty(content.remove(ce.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_CONTENT_TYPE).json()), val -> {
-                message.setHeader(Exchange.CONTENT_TYPE, val);
-            });
-
-            for (CloudEvent.Attribute attribute : ce.attributes()) {
-                ifNotEmpty(content.remove(attribute.json()), val -> {
-                    message.setHeader(attribute.id(), val);
-                });
-            }
-
-            //
-            // Map every remaining field as it is (extensions).
-            //
-            content.forEach((key, val) -> {
-                message.setHeader(key.toLowerCase(Locale.US), val);
-            });
-
-        }
-    }),
-    v0_3(new AbstractCloudEventProcessor(CloudEvents.v0_3) {
+    v1_0(new AbstractCloudEventProcessor(CloudEvents.v1_0) {
         @Override
         protected void decodeStructuredContent(Exchange exchange, Map<String, Object> content) {
             final CloudEvent ce = cloudEvent();
@@ -101,10 +44,6 @@ public enum CloudEventProcessors implements CloudEventProcessor {
             ifNotEmpty(content.remove(ce.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_DATA_CONTENT_TYPE).json()), val -> {
                 message.setHeader(Exchange.CONTENT_TYPE, val);
             });
-            ifNotEmpty(content.remove(ce.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_DATA_CONTENT_ENCODING).json()),
-                    val -> {
-                        message.setHeader(Exchange.CONTENT_ENCODING, val);
-                    });
 
             for (CloudEvent.Attribute attribute : ce.attributes()) {
                 ifNotEmpty(content.remove(attribute.json()), val -> {
@@ -120,7 +59,7 @@ public enum CloudEventProcessors implements CloudEventProcessor {
             });
         }
     }),
-    v1_0(new AbstractCloudEventProcessor(CloudEvents.v1_0) {
+    v1_0_1(new AbstractCloudEventProcessor(CloudEvents.v1_0_1) {
         @Override
         protected void decodeStructuredContent(Exchange exchange, Map<String, Object> content) {
             final CloudEvent ce = cloudEvent();

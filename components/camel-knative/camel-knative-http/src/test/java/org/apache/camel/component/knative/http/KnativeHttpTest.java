@@ -354,58 +354,8 @@ public class KnativeHttpTest {
         mock.expectedBodiesReceived("test");
         mock.expectedMessageCount(1);
 
-        if (Objects.equals(CloudEvents.v0_1.version(), ce.version())) {
-            given()
-                    .contentType(Knative.MIME_STRUCTURED_CONTENT_MODE)
-                    .body(
-                            Map.of(
-                                    "cloudEventsVersion", ce.version(),
-                                    "eventType", "org.apache.camel.event",
-                                    "eventID", "myEventID",
-                                    "eventTime", DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(ZonedDateTime.now()),
-                                    "source", "/somewhere",
-                                    "contentType", "text/plain",
-                                    "data", "test"),
-                            ObjectMapperType.JACKSON_2)
-                    .when()
-                    .post()
-                    .then()
-                    .statusCode(200);
-        } else if (Objects.equals(CloudEvents.v0_2.version(), ce.version())) {
-            given()
-                    .contentType(Knative.MIME_STRUCTURED_CONTENT_MODE)
-                    .body(
-                            Map.of(
-                                    "specversion", ce.version(),
-                                    "type", "org.apache.camel.event",
-                                    "id", "myEventID",
-                                    "time", DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(ZonedDateTime.now()),
-                                    "source", "/somewhere",
-                                    "contenttype", "text/plain",
-                                    "data", "test"),
-                            ObjectMapperType.JACKSON_2)
-                    .when()
-                    .post()
-                    .then()
-                    .statusCode(200);
-        } else if (Objects.equals(CloudEvents.v0_3.version(), ce.version())) {
-            given()
-                    .contentType(Knative.MIME_STRUCTURED_CONTENT_MODE)
-                    .body(
-                            Map.of(
-                                    "specversion", ce.version(),
-                                    "type", "org.apache.camel.event",
-                                    "id", "myEventID",
-                                    "time", DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(ZonedDateTime.now()),
-                                    "source", "/somewhere",
-                                    "datacontenttype", "text/plain",
-                                    "data", "test"),
-                            ObjectMapperType.JACKSON_2)
-                    .when()
-                    .post()
-                    .then()
-                    .statusCode(200);
-        } else if (Objects.equals(CloudEvents.v1_0.version(), ce.version())) {
+        if (Objects.equals(CloudEvents.v1_0.version(), ce.version())
+                || Objects.equals(CloudEvents.v1_0_1.version(), ce.version())) {
             given()
                     .contentType(Knative.MIME_STRUCTURED_CONTENT_MODE)
                     .body(
