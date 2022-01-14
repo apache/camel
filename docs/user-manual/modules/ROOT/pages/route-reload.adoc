@@ -78,5 +78,5 @@ And adding new routes is therefore possible as they would have a new unique rout
 
 See the following examples that comes with live reloading enabled:
 
-- https://github.com/apache/camel-examples/tree/master/examples/main-xml[camel-example-main-xml]
-- https://github.com/apache/camel-examples/tree/master/examples/main-yaml[camel-example-main-yaml]
+- https://github.com/apache/camel-examples/tree/main/examples/main-xml[camel-example-main-xml]
+- https://github.com/apache/camel-examples/tree/main/examples/main-yaml[camel-example-main-yaml]

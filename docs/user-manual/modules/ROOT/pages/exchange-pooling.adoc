@@ -73,6 +73,6 @@ via JMX. This requires to add `camel-management` JAR to the classpath.
 == Examples
 
 We have provided a few examples which we are using for performance profiling.
-For example the basic https://github.com/apache/camel-performance-tests/tree/master/profiling/timer-log[timer-log] example.
+For example the basic https://github.com/apache/camel-performance-tests/tree/main/profiling/timer-log[timer-log] example.
 
 
