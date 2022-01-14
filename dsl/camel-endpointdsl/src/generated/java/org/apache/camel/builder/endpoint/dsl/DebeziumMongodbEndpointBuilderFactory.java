@@ -377,6 +377,26 @@ public interface DebeziumMongodbEndpointBuilderFactory {
             return this;
         }
         /**
+         * The method used to capture changes from MongoDB server. Options
+         * include: 'oplog' to capture changes from the oplog; 'change_streams'
+         * to capture changes via MongoDB Change Streams, update events do not
+         * contain full documents; 'change_streams_update_full' (the default) to
+         * capture changes via MongoDB Change Streams, update events contain
+         * full documents.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: change_streams_update_full
+         * Group: mongodb
+         * 
+         * @param captureMode the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbEndpointBuilder captureMode(String captureMode) {
+            doSetProperty("captureMode", captureMode);
+            return this;
+        }
+        /**
          * A comma-separated list of regular expressions that match the
          * collection names for which changes are to be excluded.
          * 
@@ -1551,6 +1571,24 @@ public interface DebeziumMongodbEndpointBuilderFactory {
         default DebeziumMongodbEndpointBuilder tombstonesOnDelete(
                 String tombstonesOnDelete) {
             doSetProperty("tombstonesOnDelete", tombstonesOnDelete);
+            return this;
+        }
+        /**
+         * The name of the transaction metadata topic. The placeholder
+         * ${database.server.name} can be used for referring to the connector's
+         * logical name; defaults to ${database.server.name}.transaction.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: ${database.server.name}.transaction
+         * Group: mongodb
+         * 
+         * @param transactionTopic the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbEndpointBuilder transactionTopic(
+                String transactionTopic) {
+            doSetProperty("transactionTopic", transactionTopic);
             return this;
         }
     }

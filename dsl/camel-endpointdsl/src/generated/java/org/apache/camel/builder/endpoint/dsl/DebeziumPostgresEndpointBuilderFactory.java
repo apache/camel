@@ -927,6 +927,49 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether the connector parse table and column's comment to metadata
+         * object.Note: Enable this option will bring the implications on memory
+         * usage. The number and size of ColumnImpl objects is what largely
+         * impacts how much memory is consumed by the Debezium connectors, and
+         * adding a String to each of them can potentially be quite heavy. The
+         * default is 'false'.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: postgres
+         * 
+         * @param includeSchemaComments the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder includeSchemaComments(
+                boolean includeSchemaComments) {
+            doSetProperty("includeSchemaComments", includeSchemaComments);
+            return this;
+        }
+        /**
+         * Whether the connector parse table and column's comment to metadata
+         * object.Note: Enable this option will bring the implications on memory
+         * usage. The number and size of ColumnImpl objects is what largely
+         * impacts how much memory is consumed by the Debezium connectors, and
+         * adding a String to each of them can potentially be quite heavy. The
+         * default is 'false'.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: postgres
+         * 
+         * @param includeSchemaComments the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder includeSchemaComments(
+                String includeSchemaComments) {
+            doSetProperty("includeSchemaComments", includeSchemaComments);
+            return this;
+        }
+        /**
          * Specify whether the fields of data type not supported by Debezium
          * should be processed:'false' (the default) omits the fields; 'true'
          * converts the field into an implementation dependent binary
@@ -1137,6 +1180,39 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         default DebeziumPostgresEndpointBuilder messageKeyColumns(
                 String messageKeyColumns) {
             doSetProperty("messageKeyColumns", messageKeyColumns);
+            return this;
+        }
+        /**
+         * A comma-separated list of regular expressions that match the logical
+         * decoding message prefixes to be excluded from monitoring.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: postgres
+         * 
+         * @param messagePrefixExcludeList the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder messagePrefixExcludeList(
+                String messagePrefixExcludeList) {
+            doSetProperty("messagePrefixExcludeList", messagePrefixExcludeList);
+            return this;
+        }
+        /**
+         * A comma-separated list of regular expressions that match the logical
+         * decoding message prefixes to be monitored. All prefixes are monitored
+         * by default.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: postgres
+         * 
+         * @param messagePrefixIncludeList the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder messagePrefixIncludeList(
+                String messagePrefixIncludeList) {
+            doSetProperty("messagePrefixIncludeList", messagePrefixIncludeList);
             return this;
         }
         /**
@@ -2028,25 +2104,6 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
-         * Specify the constant that will be provided by Debezium to indicate
-         * that the original value is a toasted value not provided by the
-         * database. If starts with 'hex:' prefix it is expected that the rest
-         * of the string repesents hexadecimally encoded octets.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Default: __debezium_unavailable_value
-         * Group: postgres
-         * 
-         * @param toastedValuePlaceholder the value to set
-         * @return the dsl builder
-         */
-        default DebeziumPostgresEndpointBuilder toastedValuePlaceholder(
-                String toastedValuePlaceholder) {
-            doSetProperty("toastedValuePlaceholder", toastedValuePlaceholder);
-            return this;
-        }
-        /**
          * Whether delete operations should be represented by a delete event and
          * a subsquenttombstone event (true) or only by a delete event (false).
          * Emitting the tombstone event (the default behavior) allows Kafka to
@@ -2088,6 +2145,24 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
+         * The name of the transaction metadata topic. The placeholder
+         * ${database.server.name} can be used for referring to the connector's
+         * logical name; defaults to ${database.server.name}.transaction.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: ${database.server.name}.transaction
+         * Group: postgres
+         * 
+         * @param transactionTopic the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder transactionTopic(
+                String transactionTopic) {
+            doSetProperty("transactionTopic", transactionTopic);
+            return this;
+        }
+        /**
          * Specify how TRUNCATE operations are handled for change events
          * (supported only on pg11 pgoutput plugin), including: 'skip' to skip /
          * ignore TRUNCATE events (default), 'include' to handle and include
@@ -2104,6 +2179,25 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         default DebeziumPostgresEndpointBuilder truncateHandlingMode(
                 String truncateHandlingMode) {
             doSetProperty("truncateHandlingMode", truncateHandlingMode);
+            return this;
+        }
+        /**
+         * Specify the constant that will be provided by Debezium to indicate
+         * that the original value is a toasted value not provided by the
+         * database. If starts with 'hex:' prefix it is expected that the rest
+         * of the string represents hexadecimal encoded octets.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: __debezium_unavailable_value
+         * Group: postgres
+         * 
+         * @param unavailableValuePlaceholder the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder unavailableValuePlaceholder(
+                String unavailableValuePlaceholder) {
+            doSetProperty("unavailableValuePlaceholder", unavailableValuePlaceholder);
             return this;
         }
         /**

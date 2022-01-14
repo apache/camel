@@ -1106,6 +1106,21 @@ public interface DebeziumMysqlComponentBuilderFactory {
             return this;
         }
         /**
+         * The query executed with every heartbeat.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: mysql
+         * 
+         * @param heartbeatActionQuery the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMysqlComponentBuilder heartbeatActionQuery(
+                java.lang.String heartbeatActionQuery) {
+            doSetProperty("heartbeatActionQuery", heartbeatActionQuery);
+            return this;
+        }
+        /**
          * Length of an interval in milli-seconds in in which the connector
          * periodically sends heartbeat messages to a heartbeat topic. Use 0 to
          * disable heartbeat messages. Disabled by default.
@@ -1183,6 +1198,27 @@ public interface DebeziumMysqlComponentBuilderFactory {
             return this;
         }
         /**
+         * Whether the connector parse table and column's comment to metadata
+         * object.Note: Enable this option will bring the implications on memory
+         * usage. The number and size of ColumnImpl objects is what largely
+         * impacts how much memory is consumed by the Debezium connectors, and
+         * adding a String to each of them can potentially be quite heavy. The
+         * default is 'false'.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: mysql
+         * 
+         * @param includeSchemaComments the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMysqlComponentBuilder includeSchemaComments(
+                boolean includeSchemaComments) {
+            doSetProperty("includeSchemaComments", includeSchemaComments);
+            return this;
+        }
+        /**
          * Specify how binlog events that belong to a table missing from
          * internal schema representation (i.e. internal representation is not
          * consistent with database) should be handled, including:'fail' (the
@@ -1202,6 +1238,29 @@ public interface DebeziumMysqlComponentBuilderFactory {
         default DebeziumMysqlComponentBuilder inconsistentSchemaHandlingMode(
                 java.lang.String inconsistentSchemaHandlingMode) {
             doSetProperty("inconsistentSchemaHandlingMode", inconsistentSchemaHandlingMode);
+            return this;
+        }
+        /**
+         * Detect schema change during an incremental snapshot and re-select a
+         * current chunk to avoid locking DDLs. Note that changes to a primary
+         * key are not supported and can cause incorrect results if performed
+         * during an incremental snapshot. Another limitation is that if a
+         * schema change affects only columns' default values, then the change
+         * won't be detected until the DDL is processed from the binlog stream.
+         * This doesn't affect the snapshot events' values, but the schema of
+         * snapshot events may have outdated defaults.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: mysql
+         * 
+         * @param incrementalSnapshotAllowSchemaChanges the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMysqlComponentBuilder incrementalSnapshotAllowSchemaChanges(
+                boolean incrementalSnapshotAllowSchemaChanges) {
+            doSetProperty("incrementalSnapshotAllowSchemaChanges", incrementalSnapshotAllowSchemaChanges);
             return this;
         }
         /**
@@ -1760,6 +1819,24 @@ public interface DebeziumMysqlComponentBuilderFactory {
             doSetProperty("tombstonesOnDelete", tombstonesOnDelete);
             return this;
         }
+        /**
+         * The name of the transaction metadata topic. The placeholder
+         * ${database.server.name} can be used for referring to the connector's
+         * logical name; defaults to ${database.server.name}.transaction.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: ${database.server.name}.transaction
+         * Group: mysql
+         * 
+         * @param transactionTopic the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMysqlComponentBuilder transactionTopic(
+                java.lang.String transactionTopic) {
+            doSetProperty("transactionTopic", transactionTopic);
+            return this;
+        }
     }
 
     class DebeziumMysqlComponentBuilderImpl
@@ -1843,11 +1920,14 @@ public interface DebeziumMysqlComponentBuilderFactory {
             case "gtidSourceExcludes": getOrCreateConfiguration((DebeziumMySqlComponent) component).setGtidSourceExcludes((java.lang.String) value); return true;
             case "gtidSourceFilterDmlEvents": getOrCreateConfiguration((DebeziumMySqlComponent) component).setGtidSourceFilterDmlEvents((boolean) value); return true;
             case "gtidSourceIncludes": getOrCreateConfiguration((DebeziumMySqlComponent) component).setGtidSourceIncludes((java.lang.String) value); return true;
+            case "heartbeatActionQuery": getOrCreateConfiguration((DebeziumMySqlComponent) component).setHeartbeatActionQuery((java.lang.String) value); return true;
             case "heartbeatIntervalMs": getOrCreateConfiguration((DebeziumMySqlComponent) component).setHeartbeatIntervalMs((int) value); return true;
             case "heartbeatTopicsPrefix": getOrCreateConfiguration((DebeziumMySqlComponent) component).setHeartbeatTopicsPrefix((java.lang.String) value); return true;
             case "includeQuery": getOrCreateConfiguration((DebeziumMySqlComponent) component).setIncludeQuery((boolean) value); return true;
             case "includeSchemaChanges": getOrCreateConfiguration((DebeziumMySqlComponent) component).setIncludeSchemaChanges((boolean) value); return true;
+            case "includeSchemaComments": getOrCreateConfiguration((DebeziumMySqlComponent) component).setIncludeSchemaComments((boolean) value); return true;
             case "inconsistentSchemaHandlingMode": getOrCreateConfiguration((DebeziumMySqlComponent) component).setInconsistentSchemaHandlingMode((java.lang.String) value); return true;
+            case "incrementalSnapshotAllowSchemaChanges": getOrCreateConfiguration((DebeziumMySqlComponent) component).setIncrementalSnapshotAllowSchemaChanges((boolean) value); return true;
             case "incrementalSnapshotChunkSize": getOrCreateConfiguration((DebeziumMySqlComponent) component).setIncrementalSnapshotChunkSize((int) value); return true;
             case "maxBatchSize": getOrCreateConfiguration((DebeziumMySqlComponent) component).setMaxBatchSize((int) value); return true;
             case "maxQueueSize": getOrCreateConfiguration((DebeziumMySqlComponent) component).setMaxQueueSize((int) value); return true;
@@ -1878,6 +1958,7 @@ public interface DebeziumMysqlComponentBuilderFactory {
             case "tableWhitelist": getOrCreateConfiguration((DebeziumMySqlComponent) component).setTableWhitelist((java.lang.String) value); return true;
             case "timePrecisionMode": getOrCreateConfiguration((DebeziumMySqlComponent) component).setTimePrecisionMode((java.lang.String) value); return true;
             case "tombstonesOnDelete": getOrCreateConfiguration((DebeziumMySqlComponent) component).setTombstonesOnDelete((boolean) value); return true;
+            case "transactionTopic": getOrCreateConfiguration((DebeziumMySqlComponent) component).setTransactionTopic((java.lang.String) value); return true;
             default: return false;
             }
         }

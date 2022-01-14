@@ -801,6 +801,27 @@ public interface DebeziumPostgresComponentBuilderFactory {
             return this;
         }
         /**
+         * Whether the connector parse table and column's comment to metadata
+         * object.Note: Enable this option will bring the implications on memory
+         * usage. The number and size of ColumnImpl objects is what largely
+         * impacts how much memory is consumed by the Debezium connectors, and
+         * adding a String to each of them can potentially be quite heavy. The
+         * default is 'false'.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: postgres
+         * 
+         * @param includeSchemaComments the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresComponentBuilder includeSchemaComments(
+                boolean includeSchemaComments) {
+            doSetProperty("includeSchemaComments", includeSchemaComments);
+            return this;
+        }
+        /**
          * Specify whether the fields of data type not supported by Debezium
          * should be processed:'false' (the default) omits the fields; 'true'
          * converts the field into an implementation dependent binary
@@ -925,6 +946,39 @@ public interface DebeziumPostgresComponentBuilderFactory {
         default DebeziumPostgresComponentBuilder messageKeyColumns(
                 java.lang.String messageKeyColumns) {
             doSetProperty("messageKeyColumns", messageKeyColumns);
+            return this;
+        }
+        /**
+         * A comma-separated list of regular expressions that match the logical
+         * decoding message prefixes to be excluded from monitoring.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: postgres
+         * 
+         * @param messagePrefixExcludeList the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresComponentBuilder messagePrefixExcludeList(
+                java.lang.String messagePrefixExcludeList) {
+            doSetProperty("messagePrefixExcludeList", messagePrefixExcludeList);
+            return this;
+        }
+        /**
+         * A comma-separated list of regular expressions that match the logical
+         * decoding message prefixes to be monitored. All prefixes are monitored
+         * by default.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: postgres
+         * 
+         * @param messagePrefixIncludeList the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresComponentBuilder messagePrefixIncludeList(
+                java.lang.String messagePrefixIncludeList) {
+            doSetProperty("messagePrefixIncludeList", messagePrefixIncludeList);
             return this;
         }
         /**
@@ -1578,25 +1632,6 @@ public interface DebeziumPostgresComponentBuilderFactory {
             return this;
         }
         /**
-         * Specify the constant that will be provided by Debezium to indicate
-         * that the original value is a toasted value not provided by the
-         * database. If starts with 'hex:' prefix it is expected that the rest
-         * of the string repesents hexadecimally encoded octets.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Default: __debezium_unavailable_value
-         * Group: postgres
-         * 
-         * @param toastedValuePlaceholder the value to set
-         * @return the dsl builder
-         */
-        default DebeziumPostgresComponentBuilder toastedValuePlaceholder(
-                java.lang.String toastedValuePlaceholder) {
-            doSetProperty("toastedValuePlaceholder", toastedValuePlaceholder);
-            return this;
-        }
-        /**
          * Whether delete operations should be represented by a delete event and
          * a subsquenttombstone event (true) or only by a delete event (false).
          * Emitting the tombstone event (the default behavior) allows Kafka to
@@ -1617,6 +1652,24 @@ public interface DebeziumPostgresComponentBuilderFactory {
             return this;
         }
         /**
+         * The name of the transaction metadata topic. The placeholder
+         * ${database.server.name} can be used for referring to the connector's
+         * logical name; defaults to ${database.server.name}.transaction.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: ${database.server.name}.transaction
+         * Group: postgres
+         * 
+         * @param transactionTopic the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresComponentBuilder transactionTopic(
+                java.lang.String transactionTopic) {
+            doSetProperty("transactionTopic", transactionTopic);
+            return this;
+        }
+        /**
          * Specify how TRUNCATE operations are handled for change events
          * (supported only on pg11 pgoutput plugin), including: 'skip' to skip /
          * ignore TRUNCATE events (default), 'include' to handle and include
@@ -1633,6 +1686,25 @@ public interface DebeziumPostgresComponentBuilderFactory {
         default DebeziumPostgresComponentBuilder truncateHandlingMode(
                 java.lang.String truncateHandlingMode) {
             doSetProperty("truncateHandlingMode", truncateHandlingMode);
+            return this;
+        }
+        /**
+         * Specify the constant that will be provided by Debezium to indicate
+         * that the original value is a toasted value not provided by the
+         * database. If starts with 'hex:' prefix it is expected that the rest
+         * of the string represents hexadecimal encoded octets.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: __debezium_unavailable_value
+         * Group: postgres
+         * 
+         * @param unavailableValuePlaceholder the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresComponentBuilder unavailableValuePlaceholder(
+                java.lang.String unavailableValuePlaceholder) {
+            doSetProperty("unavailableValuePlaceholder", unavailableValuePlaceholder);
             return this;
         }
         /**
@@ -1725,6 +1797,7 @@ public interface DebeziumPostgresComponentBuilderFactory {
             case "heartbeatIntervalMs": getOrCreateConfiguration((DebeziumPostgresComponent) component).setHeartbeatIntervalMs((int) value); return true;
             case "heartbeatTopicsPrefix": getOrCreateConfiguration((DebeziumPostgresComponent) component).setHeartbeatTopicsPrefix((java.lang.String) value); return true;
             case "hstoreHandlingMode": getOrCreateConfiguration((DebeziumPostgresComponent) component).setHstoreHandlingMode((java.lang.String) value); return true;
+            case "includeSchemaComments": getOrCreateConfiguration((DebeziumPostgresComponent) component).setIncludeSchemaComments((boolean) value); return true;
             case "includeUnknownDatatypes": getOrCreateConfiguration((DebeziumPostgresComponent) component).setIncludeUnknownDatatypes((boolean) value); return true;
             case "incrementalSnapshotChunkSize": getOrCreateConfiguration((DebeziumPostgresComponent) component).setIncrementalSnapshotChunkSize((int) value); return true;
             case "intervalHandlingMode": getOrCreateConfiguration((DebeziumPostgresComponent) component).setIntervalHandlingMode((java.lang.String) value); return true;
@@ -1732,6 +1805,8 @@ public interface DebeziumPostgresComponentBuilderFactory {
             case "maxQueueSize": getOrCreateConfiguration((DebeziumPostgresComponent) component).setMaxQueueSize((int) value); return true;
             case "maxQueueSizeInBytes": getOrCreateConfiguration((DebeziumPostgresComponent) component).setMaxQueueSizeInBytes((long) value); return true;
             case "messageKeyColumns": getOrCreateConfiguration((DebeziumPostgresComponent) component).setMessageKeyColumns((java.lang.String) value); return true;
+            case "messagePrefixExcludeList": getOrCreateConfiguration((DebeziumPostgresComponent) component).setMessagePrefixExcludeList((java.lang.String) value); return true;
+            case "messagePrefixIncludeList": getOrCreateConfiguration((DebeziumPostgresComponent) component).setMessagePrefixIncludeList((java.lang.String) value); return true;
             case "pluginName": getOrCreateConfiguration((DebeziumPostgresComponent) component).setPluginName((java.lang.String) value); return true;
             case "pollIntervalMs": getOrCreateConfiguration((DebeziumPostgresComponent) component).setPollIntervalMs((long) value); return true;
             case "provideTransactionMetadata": getOrCreateConfiguration((DebeziumPostgresComponent) component).setProvideTransactionMetadata((boolean) value); return true;
@@ -1768,9 +1843,10 @@ public interface DebeziumPostgresComponentBuilderFactory {
             case "tableIncludeList": getOrCreateConfiguration((DebeziumPostgresComponent) component).setTableIncludeList((java.lang.String) value); return true;
             case "tableWhitelist": getOrCreateConfiguration((DebeziumPostgresComponent) component).setTableWhitelist((java.lang.String) value); return true;
             case "timePrecisionMode": getOrCreateConfiguration((DebeziumPostgresComponent) component).setTimePrecisionMode((java.lang.String) value); return true;
-            case "toastedValuePlaceholder": getOrCreateConfiguration((DebeziumPostgresComponent) component).setToastedValuePlaceholder((java.lang.String) value); return true;
             case "tombstonesOnDelete": getOrCreateConfiguration((DebeziumPostgresComponent) component).setTombstonesOnDelete((boolean) value); return true;
+            case "transactionTopic": getOrCreateConfiguration((DebeziumPostgresComponent) component).setTransactionTopic((java.lang.String) value); return true;
             case "truncateHandlingMode": getOrCreateConfiguration((DebeziumPostgresComponent) component).setTruncateHandlingMode((java.lang.String) value); return true;
+            case "unavailableValuePlaceholder": getOrCreateConfiguration((DebeziumPostgresComponent) component).setUnavailableValuePlaceholder((java.lang.String) value); return true;
             case "xminFetchIntervalMs": getOrCreateConfiguration((DebeziumPostgresComponent) component).setXminFetchIntervalMs((long) value); return true;
             default: return false;
             }
