@@ -1,0 +1,43 @@
+name: "Quick Test Runner"
+description: "Runs a tests only for the changed components"
+inputs:
+  start-commit:  # id of input
+    description: 'Starting commit'
+    required: true
+  end-commit: # id of input
+    description: 'End commit'
+    required: true
+  github-token: # id of input
+    description: 'Github hub token'
+    required: true
+outputs:
+  result:
+    description: "Quick test result"
+    value: ${{ steps.quick-test.outputs.result }}
+  component-count:
+    description: "Number of modified components"
+    value: ${{ steps.quick-test.outputs.component-count }}
+  failures-count:
+    description: "Number of errors"
+    value: ${{ steps.quick-test.outputs.failures-count }}
+runs:
+  using: "composite"
+  steps:
+    - id: quick-test
+      run: ${{ github.action_path }}/quick-test.sh ${{ inputs.start-commit }} ${{ inputs.end-commit }}
+      shell: bash
+    - uses: actions/github-script@v5
+      env:
+        RESULT: ${{ steps.quick-test.outputs.result }}
+        COUNT: ${{ steps.quick-test.outputs.count }}
+      with:
+        github-token: ${{inputs.github-token}}
+        script: |
+          const { RESULT, COUNT } = process.env
+          
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: `${RESULT}`
+          })
