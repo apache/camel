@@ -42,15 +42,15 @@ import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * This component allows to interact with Knative.
+ * Send and receive events from Knative.
  */
-@UriEndpoint(
-             firstVersion = "3.0.0",
+@UriEndpoint(firstVersion = "3.15.0",
              scheme = "knative",
              syntax = "knative:type/typeId",
              title = "Knative",
              category = Category.CLOUD)
 public class KnativeEndpoint extends DefaultEndpoint {
+
     private final CloudEvent cloudEvent;
     private final CloudEventProcessor cloudEventProcessor;
 
@@ -64,7 +64,6 @@ public class KnativeEndpoint extends DefaultEndpoint {
     public KnativeEndpoint(String uri, KnativeComponent component, Knative.Type type, String name,
                            KnativeConfiguration configuration) {
         super(uri, component);
-
         this.type = type;
         this.typeId = name;
         this.configuration = configuration;
@@ -198,7 +197,7 @@ public class KnativeEndpoint extends DefaultEndpoint {
         }
 
         //
-        // For event type endpoints se need to add an additional filter to filter out events received
+        // For event type endpoints se need to add a filter to filter out events received
         // based on the given type.
         //
         if (resource.getType() == Knative.Type.event && ObjectHelper.isNotEmpty(configuration.getTypeId())) {

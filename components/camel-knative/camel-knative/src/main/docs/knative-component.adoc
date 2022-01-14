@@ -2,9 +2,9 @@
 :doctitle: Knative
 :shortname: knative
 :artifactid: camel-knative
-:description: This component allows to interact with Knative.
-:since: 3.0
-:supportlevel: Stable
+:description: Send and receive events from Knative.
+:since: 3.15
+:supportlevel: Preview
 :component-header: Both producer and consumer are supported
 
 *Since Camel {since}*

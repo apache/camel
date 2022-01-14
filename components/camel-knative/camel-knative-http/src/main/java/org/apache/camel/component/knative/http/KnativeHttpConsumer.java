@@ -64,15 +64,12 @@ public class KnativeHttpConsumer extends DefaultConsumer {
     private BigInteger maxBodySize;
     private boolean preallocateBodyBuffer;
 
-    public KnativeHttpConsumer(
-                               KnativeTransportConfiguration configuration,
+    public KnativeHttpConsumer(KnativeTransportConfiguration configuration,
                                Endpoint endpoint,
                                KnativeResource resource,
                                Router router,
                                Processor processor) {
-
         super(endpoint, processor);
-
         this.configuration = configuration;
         this.resource = resource;
         this.router = router;

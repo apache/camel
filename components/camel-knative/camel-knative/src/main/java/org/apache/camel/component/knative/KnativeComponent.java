@@ -198,7 +198,7 @@ public class KnativeComponent extends DefaultComponent {
         }
 
         if (this.producerFactory == null && this.consumerFactory == null) {
-            throw new IllegalStateException("No prodcuer or consumer factroy have been configured");
+            throw new IllegalStateException("No producer or consumer factory has been configured");
         }
     }
 
@@ -288,7 +288,7 @@ public class KnativeComponent extends DefaultComponent {
             if (this.producerFactory == null) {
                 this.producerFactory = getCamelContext()
                         .adapt(ExtendedCamelContext.class)
-                        .getFactoryFinder(Knative.KNATIVE_TRANSPORT_RESOURCE_PATH)
+                        .getBootstrapFactoryFinder(Knative.KNATIVE_TRANSPORT_RESOURCE_PATH)
                         .newInstance(protocol.name() + "-producer", KnativeProducerFactory.class)
                         .orElse(null);
 
@@ -305,7 +305,7 @@ public class KnativeComponent extends DefaultComponent {
                 CamelContextAware.trySetCamelContext(this.producerFactory, getCamelContext());
             }
 
-            LOGGER.info("found knative producer factory: {} for protocol: {}", producerFactory, protocol.name());
+            LOGGER.info("Using Knative producer factory: {} for protocol: {}", producerFactory, protocol.name());
         }
     }
 
@@ -316,7 +316,7 @@ public class KnativeComponent extends DefaultComponent {
             if (this.consumerFactory == null) {
                 this.consumerFactory = getCamelContext()
                         .adapt(ExtendedCamelContext.class)
-                        .getFactoryFinder(Knative.KNATIVE_TRANSPORT_RESOURCE_PATH)
+                        .getBootstrapFactoryFinder(Knative.KNATIVE_TRANSPORT_RESOURCE_PATH)
                         .newInstance(protocol.name() + "-consumer", KnativeConsumerFactory.class)
                         .orElse(null);
 
@@ -332,7 +332,7 @@ public class KnativeComponent extends DefaultComponent {
                 CamelContextAware.trySetCamelContext(this.consumerFactory, getCamelContext());
             }
 
-            LOGGER.info("found knative consumer factory: {} for protocol: {}", consumerFactory, protocol.name());
+            LOGGER.info("Using Knative consumer factory: {} for protocol: {}", consumerFactory, protocol.name());
         }
     }
 }

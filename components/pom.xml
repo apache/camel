@@ -118,6 +118,7 @@
         <module>camel-cdi-jta</module>
         <module>camel-chatscript</module>
         <module>camel-chunk</module>
+        <module>camel-cloudevents</module>
         <module>camel-cm-sms</module>
         <module>camel-cmis</module>
         <module>camel-coap</module>
@@ -139,8 +140,8 @@
         <module>camel-docker</module>
         <module>camel-dozer</module>
         <module>camel-drill</module>
-	<module>camel-dropbox</module>
-	<module>camel-dynamic-router</module>
+	    <module>camel-dropbox</module>
+	    <module>camel-dynamic-router</module>
         <module>camel-ehcache</module>
         <module>camel-elasticsearch-rest</module>
         <module>camel-elsql</module>
@@ -218,6 +219,7 @@
         <module>camel-jta</module>
         <module>camel-kafka</module>
         <module>camel-kamelet</module>
+        <module>camel-knative</module>
         <module>camel-kubernetes</module>
         <module>camel-kudu</module>
         <module>camel-ldap</module>
