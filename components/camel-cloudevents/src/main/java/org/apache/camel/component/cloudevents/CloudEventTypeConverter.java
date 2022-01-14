@@ -20,6 +20,7 @@ import org.apache.camel.Converter;
 
 @Converter(generateLoader = true)
 public final class CloudEventTypeConverter {
+
     private CloudEventTypeConverter() {
     }
 

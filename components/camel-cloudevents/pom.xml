@@ -39,57 +39,9 @@
 
     <dependencies>
 
-        <!-- ****************************** -->
-        <!--                                -->
-        <!-- RUNTIME                        -->
-        <!--                                -->
-        <!-- ****************************** -->
-
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core-engine</artifactId>
-        </dependency>
-
-        <!-- ****************************** -->
-        <!--                                -->
-        <!-- TESTS                          -->
-        <!--                                -->
-        <!-- ****************************** -->
-
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-junit5</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core-languages</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-timer</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-log</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-mock</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-direct</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-http</artifactId>
-            <scope>test</scope>
+            <artifactId>camel-support</artifactId>
         </dependency>
 
     </dependencies>
