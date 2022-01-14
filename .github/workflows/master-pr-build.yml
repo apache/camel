@@ -40,6 +40,8 @@ jobs:
     - name: mvn checkstyle
       run: ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd -Dmvnd.threads=2 -V -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 --no-transfer-progress  -Dcheckstyle.failOnViolation=true checkstyle:checkstyle
   build:
+    permissions:
+      issues: write
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -59,3 +61,9 @@ jobs:
           cache: 'maven'
       - name: maven build
         run: ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd -Dmvnd.threads=2 -V -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 --no-transfer-progress -Pfastinstall -Dcheckstyle.skip=true -DskipTests install
+      - id: test
+        uses: ./.github/actions/quick-test
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          start-commit: ${{ github.event.pull_request.base.sha }}
+          end-commit: ${{ github.event.after }}
