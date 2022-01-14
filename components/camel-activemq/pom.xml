@@ -30,7 +30,7 @@
     <packaging>jar</packaging>
 
     <name>Camel :: ActiveMQ</name>
-    <description>ActiveMQ component for Camel</description>
+    <description>ActiveMQ component for Camel (fake change)</description>
 
     <properties>
         <camel.surefire.parallel>true</camel.surefire.parallel>
