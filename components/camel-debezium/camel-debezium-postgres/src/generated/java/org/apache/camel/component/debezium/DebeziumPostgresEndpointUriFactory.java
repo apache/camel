@@ -20,7 +20,7 @@ public class DebeziumPostgresEndpointUriFactory extends org.apache.camel.support
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(91);
+        Set<String> props = new HashSet<>(95);
         props.add("slotDropOnStop");
         props.add("includeUnknownDatatypes");
         props.add("maxBatchSize");
@@ -29,10 +29,10 @@ public class DebeziumPostgresEndpointUriFactory extends org.apache.camel.support
         props.add("offsetStorageTopic");
         props.add("databaseSslkey");
         props.add("slotName");
-        props.add("toastedValuePlaceholder");
         props.add("bridgeErrorHandler");
         props.add("databaseTcpkeepalive");
         props.add("datatypePropagateSourceType");
+        props.add("messagePrefixIncludeList");
         props.add("schemaRefreshMode");
         props.add("publicationAutocreateMode");
         props.add("provideTransactionMetadata");
@@ -74,6 +74,8 @@ public class DebeziumPostgresEndpointUriFactory extends org.apache.camel.support
         props.add("databaseHistoryFileFilename");
         props.add("schemaIncludeList");
         props.add("columnPropagateSourceType");
+        props.add("unavailableValuePlaceholder");
+        props.add("transactionTopic");
         props.add("offsetStorage");
         props.add("slotRetryDelayMs");
         props.add("internalValueConverter");
@@ -86,6 +88,7 @@ public class DebeziumPostgresEndpointUriFactory extends org.apache.camel.support
         props.add("timePrecisionMode");
         props.add("truncateHandlingMode");
         props.add("columnWhitelist");
+        props.add("messagePrefixExcludeList");
         props.add("pollIntervalMs");
         props.add("sanitizeFieldNames");
         props.add("databaseSslmode");
@@ -112,6 +115,7 @@ public class DebeziumPostgresEndpointUriFactory extends org.apache.camel.support
         props.add("databasePassword");
         props.add("databaseDbname");
         props.add("publicationName");
+        props.add("includeSchemaComments");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
     }

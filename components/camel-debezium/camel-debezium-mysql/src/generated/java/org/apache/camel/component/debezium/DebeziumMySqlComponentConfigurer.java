@@ -124,6 +124,8 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "gtidSourceFilterDmlEvents": getOrCreateConfiguration(target).setGtidSourceFilterDmlEvents(property(camelContext, boolean.class, value)); return true;
         case "gtidsourceincludes":
         case "gtidSourceIncludes": getOrCreateConfiguration(target).setGtidSourceIncludes(property(camelContext, java.lang.String.class, value)); return true;
+        case "heartbeatactionquery":
+        case "heartbeatActionQuery": getOrCreateConfiguration(target).setHeartbeatActionQuery(property(camelContext, java.lang.String.class, value)); return true;
         case "heartbeatintervalms":
         case "heartbeatIntervalMs": getOrCreateConfiguration(target).setHeartbeatIntervalMs(property(camelContext, int.class, value)); return true;
         case "heartbeattopicsprefix":
@@ -132,8 +134,12 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "includeQuery": getOrCreateConfiguration(target).setIncludeQuery(property(camelContext, boolean.class, value)); return true;
         case "includeschemachanges":
         case "includeSchemaChanges": getOrCreateConfiguration(target).setIncludeSchemaChanges(property(camelContext, boolean.class, value)); return true;
+        case "includeschemacomments":
+        case "includeSchemaComments": getOrCreateConfiguration(target).setIncludeSchemaComments(property(camelContext, boolean.class, value)); return true;
         case "inconsistentschemahandlingmode":
         case "inconsistentSchemaHandlingMode": getOrCreateConfiguration(target).setInconsistentSchemaHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "incrementalsnapshotallowschemachanges":
+        case "incrementalSnapshotAllowSchemaChanges": getOrCreateConfiguration(target).setIncrementalSnapshotAllowSchemaChanges(property(camelContext, boolean.class, value)); return true;
         case "incrementalsnapshotchunksize":
         case "incrementalSnapshotChunkSize": getOrCreateConfiguration(target).setIncrementalSnapshotChunkSize(property(camelContext, int.class, value)); return true;
         case "internalkeyconverter":
@@ -214,6 +220,8 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "timePrecisionMode": getOrCreateConfiguration(target).setTimePrecisionMode(property(camelContext, java.lang.String.class, value)); return true;
         case "tombstonesondelete":
         case "tombstonesOnDelete": getOrCreateConfiguration(target).setTombstonesOnDelete(property(camelContext, boolean.class, value)); return true;
+        case "transactiontopic":
+        case "transactionTopic": getOrCreateConfiguration(target).setTransactionTopic(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -317,6 +325,8 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "gtidSourceFilterDmlEvents": return boolean.class;
         case "gtidsourceincludes":
         case "gtidSourceIncludes": return java.lang.String.class;
+        case "heartbeatactionquery":
+        case "heartbeatActionQuery": return java.lang.String.class;
         case "heartbeatintervalms":
         case "heartbeatIntervalMs": return int.class;
         case "heartbeattopicsprefix":
@@ -325,8 +335,12 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "includeQuery": return boolean.class;
         case "includeschemachanges":
         case "includeSchemaChanges": return boolean.class;
+        case "includeschemacomments":
+        case "includeSchemaComments": return boolean.class;
         case "inconsistentschemahandlingmode":
         case "inconsistentSchemaHandlingMode": return java.lang.String.class;
+        case "incrementalsnapshotallowschemachanges":
+        case "incrementalSnapshotAllowSchemaChanges": return boolean.class;
         case "incrementalsnapshotchunksize":
         case "incrementalSnapshotChunkSize": return int.class;
         case "internalkeyconverter":
@@ -407,6 +421,8 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "timePrecisionMode": return java.lang.String.class;
         case "tombstonesondelete":
         case "tombstonesOnDelete": return boolean.class;
+        case "transactiontopic":
+        case "transactionTopic": return java.lang.String.class;
         default: return null;
         }
     }
@@ -511,6 +527,8 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "gtidSourceFilterDmlEvents": return getOrCreateConfiguration(target).isGtidSourceFilterDmlEvents();
         case "gtidsourceincludes":
         case "gtidSourceIncludes": return getOrCreateConfiguration(target).getGtidSourceIncludes();
+        case "heartbeatactionquery":
+        case "heartbeatActionQuery": return getOrCreateConfiguration(target).getHeartbeatActionQuery();
         case "heartbeatintervalms":
         case "heartbeatIntervalMs": return getOrCreateConfiguration(target).getHeartbeatIntervalMs();
         case "heartbeattopicsprefix":
@@ -519,8 +537,12 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "includeQuery": return getOrCreateConfiguration(target).isIncludeQuery();
         case "includeschemachanges":
         case "includeSchemaChanges": return getOrCreateConfiguration(target).isIncludeSchemaChanges();
+        case "includeschemacomments":
+        case "includeSchemaComments": return getOrCreateConfiguration(target).isIncludeSchemaComments();
         case "inconsistentschemahandlingmode":
         case "inconsistentSchemaHandlingMode": return getOrCreateConfiguration(target).getInconsistentSchemaHandlingMode();
+        case "incrementalsnapshotallowschemachanges":
+        case "incrementalSnapshotAllowSchemaChanges": return getOrCreateConfiguration(target).isIncrementalSnapshotAllowSchemaChanges();
         case "incrementalsnapshotchunksize":
         case "incrementalSnapshotChunkSize": return getOrCreateConfiguration(target).getIncrementalSnapshotChunkSize();
         case "internalkeyconverter":
@@ -601,6 +623,8 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "timePrecisionMode": return getOrCreateConfiguration(target).getTimePrecisionMode();
         case "tombstonesondelete":
         case "tombstonesOnDelete": return getOrCreateConfiguration(target).isTombstonesOnDelete();
+        case "transactiontopic":
+        case "transactionTopic": return getOrCreateConfiguration(target).getTransactionTopic();
         default: return null;
         }
     }

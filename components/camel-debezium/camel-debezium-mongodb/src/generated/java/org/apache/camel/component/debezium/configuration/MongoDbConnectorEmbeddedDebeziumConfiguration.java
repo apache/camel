@@ -69,6 +69,8 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     private String collectionIncludeList;
     @UriParam(label = LABEL_NAME, defaultValue = "10s", javaType = "java.time.Duration")
     private long retriableRestartConnectorWaitMs = 10000;
+    @UriParam(label = LABEL_NAME, defaultValue = "change_streams_update_full")
+    private String captureMode = "change_streams_update_full";
     @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
     private long snapshotDelayMs = 0;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
@@ -89,6 +91,8 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     private int connectMaxAttempts = 16;
     @UriParam(label = LABEL_NAME, defaultValue = "0")
     private long maxQueueSizeInBytes = 0;
+    @UriParam(label = LABEL_NAME, defaultValue = "${database.server.name}.transaction")
+    private String transactionTopic = "${database.server.name}.transaction";
     @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
     private int mongodbSocketTimeoutMs = 0;
     @UriParam(label = LABEL_NAME, defaultValue = "fail")
@@ -456,6 +460,21 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * The method used to capture changes from MongoDB server. Options include:
+     * 'oplog' to capture changes from the oplog; 'change_streams' to capture
+     * changes via MongoDB Change Streams, update events do not contain full
+     * documents; 'change_streams_update_full' (the default) to capture changes
+     * via MongoDB Change Streams, update events contain full documents
+     */
+    public void setCaptureMode(String captureMode) {
+        this.captureMode = captureMode;
+    }
+
+    public String getCaptureMode() {
+        return captureMode;
+    }
+
+    /**
      * A delay period before a snapshot will begin, given in milliseconds.
      * Defaults to 0 ms.
      */
@@ -584,6 +603,19 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * The name of the transaction metadata topic. The placeholder
+     * ${database.server.name} can be used for referring to the connector's
+     * logical name; defaults to ${database.server.name}.transaction.
+     */
+    public void setTransactionTopic(String transactionTopic) {
+        this.transactionTopic = transactionTopic;
+    }
+
+    public String getTransactionTopic() {
+        return transactionTopic;
+    }
+
+    /**
      * The socket timeout, given in milliseconds. Defaults to 0 ms.
      */
     public void setMongodbSocketTimeoutMs(int mongodbSocketTimeoutMs) {
@@ -707,6 +739,7 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "max.queue.size", maxQueueSize);
         addPropertyIfNotNull(configBuilder, "collection.include.list", collectionIncludeList);
         addPropertyIfNotNull(configBuilder, "retriable.restart.connector.wait.ms", retriableRestartConnectorWaitMs);
+        addPropertyIfNotNull(configBuilder, "capture.mode", captureMode);
         addPropertyIfNotNull(configBuilder, "snapshot.delay.ms", snapshotDelayMs);
         addPropertyIfNotNull(configBuilder, "provide.transaction.metadata", provideTransactionMetadata);
         addPropertyIfNotNull(configBuilder, "tombstones.on.delete", tombstonesOnDelete);
@@ -717,6 +750,7 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "database.history.file.filename", databaseHistoryFileFilename);
         addPropertyIfNotNull(configBuilder, "connect.max.attempts", connectMaxAttempts);
         addPropertyIfNotNull(configBuilder, "max.queue.size.in.bytes", maxQueueSizeInBytes);
+        addPropertyIfNotNull(configBuilder, "transaction.topic", transactionTopic);
         addPropertyIfNotNull(configBuilder, "mongodb.socket.timeout.ms", mongodbSocketTimeoutMs);
         addPropertyIfNotNull(configBuilder, "event.processing.failure.handling.mode", eventProcessingFailureHandlingMode);
         addPropertyIfNotNull(configBuilder, "mongodb.name", mongodbName);

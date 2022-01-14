@@ -88,12 +88,22 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "decimalHandlingMode": getOrCreateConfiguration(target).setDecimalHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "eventprocessingfailurehandlingmode":
         case "eventProcessingFailureHandlingMode": getOrCreateConfiguration(target).setEventProcessingFailureHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "heartbeatactionquery":
+        case "heartbeatActionQuery": getOrCreateConfiguration(target).setHeartbeatActionQuery(property(camelContext, java.lang.String.class, value)); return true;
         case "heartbeatintervalms":
         case "heartbeatIntervalMs": getOrCreateConfiguration(target).setHeartbeatIntervalMs(property(camelContext, int.class, value)); return true;
         case "heartbeattopicsprefix":
         case "heartbeatTopicsPrefix": getOrCreateConfiguration(target).setHeartbeatTopicsPrefix(property(camelContext, java.lang.String.class, value)); return true;
         case "includeschemachanges":
         case "includeSchemaChanges": getOrCreateConfiguration(target).setIncludeSchemaChanges(property(camelContext, boolean.class, value)); return true;
+        case "includeschemacomments":
+        case "includeSchemaComments": getOrCreateConfiguration(target).setIncludeSchemaComments(property(camelContext, boolean.class, value)); return true;
+        case "incrementalsnapshotallowschemachanges":
+        case "incrementalSnapshotAllowSchemaChanges": getOrCreateConfiguration(target).setIncrementalSnapshotAllowSchemaChanges(property(camelContext, boolean.class, value)); return true;
+        case "incrementalsnapshotchunksize":
+        case "incrementalSnapshotChunkSize": getOrCreateConfiguration(target).setIncrementalSnapshotChunkSize(property(camelContext, int.class, value)); return true;
+        case "incrementalsnapshotoptionrecompile":
+        case "incrementalSnapshotOptionRecompile": getOrCreateConfiguration(target).setIncrementalSnapshotOptionRecompile(property(camelContext, boolean.class, value)); return true;
         case "internalkeyconverter":
         case "internalKeyConverter": getOrCreateConfiguration(target).setInternalKeyConverter(property(camelContext, java.lang.String.class, value)); return true;
         case "internalvalueconverter":
@@ -172,6 +182,8 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "timePrecisionMode": getOrCreateConfiguration(target).setTimePrecisionMode(property(camelContext, java.lang.String.class, value)); return true;
         case "tombstonesondelete":
         case "tombstonesOnDelete": getOrCreateConfiguration(target).setTombstonesOnDelete(property(camelContext, boolean.class, value)); return true;
+        case "transactiontopic":
+        case "transactionTopic": getOrCreateConfiguration(target).setTransactionTopic(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -239,12 +251,22 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "decimalHandlingMode": return java.lang.String.class;
         case "eventprocessingfailurehandlingmode":
         case "eventProcessingFailureHandlingMode": return java.lang.String.class;
+        case "heartbeatactionquery":
+        case "heartbeatActionQuery": return java.lang.String.class;
         case "heartbeatintervalms":
         case "heartbeatIntervalMs": return int.class;
         case "heartbeattopicsprefix":
         case "heartbeatTopicsPrefix": return java.lang.String.class;
         case "includeschemachanges":
         case "includeSchemaChanges": return boolean.class;
+        case "includeschemacomments":
+        case "includeSchemaComments": return boolean.class;
+        case "incrementalsnapshotallowschemachanges":
+        case "incrementalSnapshotAllowSchemaChanges": return boolean.class;
+        case "incrementalsnapshotchunksize":
+        case "incrementalSnapshotChunkSize": return int.class;
+        case "incrementalsnapshotoptionrecompile":
+        case "incrementalSnapshotOptionRecompile": return boolean.class;
         case "internalkeyconverter":
         case "internalKeyConverter": return java.lang.String.class;
         case "internalvalueconverter":
@@ -323,6 +345,8 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "timePrecisionMode": return java.lang.String.class;
         case "tombstonesondelete":
         case "tombstonesOnDelete": return boolean.class;
+        case "transactiontopic":
+        case "transactionTopic": return java.lang.String.class;
         default: return null;
         }
     }
@@ -391,12 +415,22 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "decimalHandlingMode": return getOrCreateConfiguration(target).getDecimalHandlingMode();
         case "eventprocessingfailurehandlingmode":
         case "eventProcessingFailureHandlingMode": return getOrCreateConfiguration(target).getEventProcessingFailureHandlingMode();
+        case "heartbeatactionquery":
+        case "heartbeatActionQuery": return getOrCreateConfiguration(target).getHeartbeatActionQuery();
         case "heartbeatintervalms":
         case "heartbeatIntervalMs": return getOrCreateConfiguration(target).getHeartbeatIntervalMs();
         case "heartbeattopicsprefix":
         case "heartbeatTopicsPrefix": return getOrCreateConfiguration(target).getHeartbeatTopicsPrefix();
         case "includeschemachanges":
         case "includeSchemaChanges": return getOrCreateConfiguration(target).isIncludeSchemaChanges();
+        case "includeschemacomments":
+        case "includeSchemaComments": return getOrCreateConfiguration(target).isIncludeSchemaComments();
+        case "incrementalsnapshotallowschemachanges":
+        case "incrementalSnapshotAllowSchemaChanges": return getOrCreateConfiguration(target).isIncrementalSnapshotAllowSchemaChanges();
+        case "incrementalsnapshotchunksize":
+        case "incrementalSnapshotChunkSize": return getOrCreateConfiguration(target).getIncrementalSnapshotChunkSize();
+        case "incrementalsnapshotoptionrecompile":
+        case "incrementalSnapshotOptionRecompile": return getOrCreateConfiguration(target).isIncrementalSnapshotOptionRecompile();
         case "internalkeyconverter":
         case "internalKeyConverter": return getOrCreateConfiguration(target).getInternalKeyConverter();
         case "internalvalueconverter":
@@ -475,6 +509,8 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "timePrecisionMode": return getOrCreateConfiguration(target).getTimePrecisionMode();
         case "tombstonesondelete":
         case "tombstonesOnDelete": return getOrCreateConfiguration(target).isTombstonesOnDelete();
+        case "transactiontopic":
+        case "transactionTopic": return getOrCreateConfiguration(target).getTransactionTopic();
         default: return null;
         }
     }

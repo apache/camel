@@ -92,6 +92,8 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "heartbeatTopicsPrefix": getOrCreateConfiguration(target).setHeartbeatTopicsPrefix(property(camelContext, java.lang.String.class, value)); return true;
         case "hstorehandlingmode":
         case "hstoreHandlingMode": getOrCreateConfiguration(target).setHstoreHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "includeschemacomments":
+        case "includeSchemaComments": getOrCreateConfiguration(target).setIncludeSchemaComments(property(camelContext, boolean.class, value)); return true;
         case "includeunknowndatatypes":
         case "includeUnknownDatatypes": getOrCreateConfiguration(target).setIncludeUnknownDatatypes(property(camelContext, boolean.class, value)); return true;
         case "incrementalsnapshotchunksize":
@@ -110,6 +112,10 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "maxQueueSizeInBytes": getOrCreateConfiguration(target).setMaxQueueSizeInBytes(property(camelContext, long.class, value)); return true;
         case "messagekeycolumns":
         case "messageKeyColumns": getOrCreateConfiguration(target).setMessageKeyColumns(property(camelContext, java.lang.String.class, value)); return true;
+        case "messageprefixexcludelist":
+        case "messagePrefixExcludeList": getOrCreateConfiguration(target).setMessagePrefixExcludeList(property(camelContext, java.lang.String.class, value)); return true;
+        case "messageprefixincludelist":
+        case "messagePrefixIncludeList": getOrCreateConfiguration(target).setMessagePrefixIncludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "offsetcommitpolicy":
         case "offsetCommitPolicy": getOrCreateConfiguration(target).setOffsetCommitPolicy(property(camelContext, java.lang.String.class, value)); return true;
         case "offsetcommittimeoutms":
@@ -198,12 +204,14 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "tableWhitelist": getOrCreateConfiguration(target).setTableWhitelist(property(camelContext, java.lang.String.class, value)); return true;
         case "timeprecisionmode":
         case "timePrecisionMode": getOrCreateConfiguration(target).setTimePrecisionMode(property(camelContext, java.lang.String.class, value)); return true;
-        case "toastedvalueplaceholder":
-        case "toastedValuePlaceholder": getOrCreateConfiguration(target).setToastedValuePlaceholder(property(camelContext, java.lang.String.class, value)); return true;
         case "tombstonesondelete":
         case "tombstonesOnDelete": getOrCreateConfiguration(target).setTombstonesOnDelete(property(camelContext, boolean.class, value)); return true;
+        case "transactiontopic":
+        case "transactionTopic": getOrCreateConfiguration(target).setTransactionTopic(property(camelContext, java.lang.String.class, value)); return true;
         case "truncatehandlingmode":
         case "truncateHandlingMode": getOrCreateConfiguration(target).setTruncateHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "unavailablevalueplaceholder":
+        case "unavailableValuePlaceholder": getOrCreateConfiguration(target).setUnavailableValuePlaceholder(property(camelContext, java.lang.String.class, value)); return true;
         case "xminfetchintervalms":
         case "xminFetchIntervalMs": getOrCreateConfiguration(target).setXminFetchIntervalMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         default: return false;
@@ -277,6 +285,8 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "heartbeatTopicsPrefix": return java.lang.String.class;
         case "hstorehandlingmode":
         case "hstoreHandlingMode": return java.lang.String.class;
+        case "includeschemacomments":
+        case "includeSchemaComments": return boolean.class;
         case "includeunknowndatatypes":
         case "includeUnknownDatatypes": return boolean.class;
         case "incrementalsnapshotchunksize":
@@ -295,6 +305,10 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "maxQueueSizeInBytes": return long.class;
         case "messagekeycolumns":
         case "messageKeyColumns": return java.lang.String.class;
+        case "messageprefixexcludelist":
+        case "messagePrefixExcludeList": return java.lang.String.class;
+        case "messageprefixincludelist":
+        case "messagePrefixIncludeList": return java.lang.String.class;
         case "offsetcommitpolicy":
         case "offsetCommitPolicy": return java.lang.String.class;
         case "offsetcommittimeoutms":
@@ -383,12 +397,14 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "tableWhitelist": return java.lang.String.class;
         case "timeprecisionmode":
         case "timePrecisionMode": return java.lang.String.class;
-        case "toastedvalueplaceholder":
-        case "toastedValuePlaceholder": return java.lang.String.class;
         case "tombstonesondelete":
         case "tombstonesOnDelete": return boolean.class;
+        case "transactiontopic":
+        case "transactionTopic": return java.lang.String.class;
         case "truncatehandlingmode":
         case "truncateHandlingMode": return java.lang.String.class;
+        case "unavailablevalueplaceholder":
+        case "unavailableValuePlaceholder": return java.lang.String.class;
         case "xminfetchintervalms":
         case "xminFetchIntervalMs": return long.class;
         default: return null;
@@ -463,6 +479,8 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "heartbeatTopicsPrefix": return getOrCreateConfiguration(target).getHeartbeatTopicsPrefix();
         case "hstorehandlingmode":
         case "hstoreHandlingMode": return getOrCreateConfiguration(target).getHstoreHandlingMode();
+        case "includeschemacomments":
+        case "includeSchemaComments": return getOrCreateConfiguration(target).isIncludeSchemaComments();
         case "includeunknowndatatypes":
         case "includeUnknownDatatypes": return getOrCreateConfiguration(target).isIncludeUnknownDatatypes();
         case "incrementalsnapshotchunksize":
@@ -481,6 +499,10 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "maxQueueSizeInBytes": return getOrCreateConfiguration(target).getMaxQueueSizeInBytes();
         case "messagekeycolumns":
         case "messageKeyColumns": return getOrCreateConfiguration(target).getMessageKeyColumns();
+        case "messageprefixexcludelist":
+        case "messagePrefixExcludeList": return getOrCreateConfiguration(target).getMessagePrefixExcludeList();
+        case "messageprefixincludelist":
+        case "messagePrefixIncludeList": return getOrCreateConfiguration(target).getMessagePrefixIncludeList();
         case "offsetcommitpolicy":
         case "offsetCommitPolicy": return getOrCreateConfiguration(target).getOffsetCommitPolicy();
         case "offsetcommittimeoutms":
@@ -569,12 +591,14 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "tableWhitelist": return getOrCreateConfiguration(target).getTableWhitelist();
         case "timeprecisionmode":
         case "timePrecisionMode": return getOrCreateConfiguration(target).getTimePrecisionMode();
-        case "toastedvalueplaceholder":
-        case "toastedValuePlaceholder": return getOrCreateConfiguration(target).getToastedValuePlaceholder();
         case "tombstonesondelete":
         case "tombstonesOnDelete": return getOrCreateConfiguration(target).isTombstonesOnDelete();
+        case "transactiontopic":
+        case "transactionTopic": return getOrCreateConfiguration(target).getTransactionTopic();
         case "truncatehandlingmode":
         case "truncateHandlingMode": return getOrCreateConfiguration(target).getTruncateHandlingMode();
+        case "unavailablevalueplaceholder":
+        case "unavailableValuePlaceholder": return getOrCreateConfiguration(target).getUnavailableValuePlaceholder();
         case "xminfetchintervalms":
         case "xminFetchIntervalMs": return getOrCreateConfiguration(target).getXminFetchIntervalMs();
         default: return null;

@@ -24,6 +24,8 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     private String tableBlacklist;
     @UriParam(label = LABEL_NAME, defaultValue = "true")
     private boolean includeSchemaChanges = true;
+    @UriParam(label = LABEL_NAME)
+    private String heartbeatActionQuery;
     @UriParam(label = LABEL_NAME, defaultValue = "500ms", javaType = "java.time.Duration")
     private long pollIntervalMs = 500;
     @UriParam(label = LABEL_NAME, defaultValue = "100ms", javaType = "java.time.Duration")
@@ -62,6 +64,8 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     private int heartbeatIntervalMs = 0;
     @UriParam(label = LABEL_NAME)
     private String columnWhitelist;
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean incrementalSnapshotAllowSchemaChanges = false;
     @UriParam(label = LABEL_NAME)
     private String columnIncludeList;
     @UriParam(label = LABEL_NAME)
@@ -83,6 +87,8 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     private String databaseHistory = "io.debezium.relational.history.FileDatabaseHistory";
     @UriParam(label = LABEL_NAME, defaultValue = "8192")
     private int maxQueueSize = 8192;
+    @UriParam(label = LABEL_NAME, defaultValue = "1024")
+    private int incrementalSnapshotChunkSize = 1024;
     @UriParam(label = LABEL_NAME)
     private String databaseHistoryKafkaTopic;
     @UriParam(label = LABEL_NAME, defaultValue = "10s", javaType = "java.time.Duration")
@@ -102,15 +108,21 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     @UriParam(label = LABEL_NAME, defaultValue = "bytes")
     private String binaryHandlingMode = "bytes";
     @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean includeSchemaComments = false;
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean databaseHistorySkipUnparseableDdl = false;
     @UriParam(label = LABEL_NAME, defaultValue = "true")
     private boolean tableIgnoreBuiltin = true;
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean incrementalSnapshotOptionRecompile = false;
     @UriParam(label = LABEL_NAME)
     private String snapshotIncludeCollectionList;
     @UriParam(label = LABEL_NAME)
     private String databaseHistoryFileFilename;
     @UriParam(label = LABEL_NAME, defaultValue = "0")
     private long maxQueueSizeInBytes = 0;
+    @UriParam(label = LABEL_NAME, defaultValue = "${database.server.name}.transaction")
+    private String transactionTopic = "${database.server.name}.transaction";
     @UriParam(label = LABEL_NAME, defaultValue = "adaptive")
     private String timePrecisionMode = "adaptive";
     @UriParam(label = LABEL_NAME)
@@ -214,6 +226,17 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
 
     public boolean isIncludeSchemaChanges() {
         return includeSchemaChanges;
+    }
+
+    /**
+     * The query executed with every heartbeat.
+     */
+    public void setHeartbeatActionQuery(String heartbeatActionQuery) {
+        this.heartbeatActionQuery = heartbeatActionQuery;
+    }
+
+    public String getHeartbeatActionQuery() {
+        return heartbeatActionQuery;
     }
 
     /**
@@ -468,6 +491,25 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Detect schema change during an incremental snapshot and re-select a
+     * current chunk to avoid locking DDLs. Note that changes to a primary key
+     * are not supported and can cause incorrect results if performed during an
+     * incremental snapshot. Another limitation is that if a schema change
+     * affects only columns' default values, then the change won't be detected
+     * until the DDL is processed from the binlog stream. This doesn't affect
+     * the snapshot events' values, but the schema of snapshot events may have
+     * outdated defaults.
+     */
+    public void setIncrementalSnapshotAllowSchemaChanges(
+            boolean incrementalSnapshotAllowSchemaChanges) {
+        this.incrementalSnapshotAllowSchemaChanges = incrementalSnapshotAllowSchemaChanges;
+    }
+
+    public boolean isIncrementalSnapshotAllowSchemaChanges() {
+        return incrementalSnapshotAllowSchemaChanges;
+    }
+
+    /**
      * Regular expressions matching columns to include in change events
      */
     public void setColumnIncludeList(String columnIncludeList) {
@@ -597,6 +639,17 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * The maximum size of chunk for incremental snapshotting
+     */
+    public void setIncrementalSnapshotChunkSize(int incrementalSnapshotChunkSize) {
+        this.incrementalSnapshotChunkSize = incrementalSnapshotChunkSize;
+    }
+
+    public int getIncrementalSnapshotChunkSize() {
+        return incrementalSnapshotChunkSize;
+    }
+
+    /**
      * The name of the topic for the database schema history
      */
     public void setDatabaseHistoryKafkaTopic(String databaseHistoryKafkaTopic) {
@@ -716,6 +769,22 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Whether the connector parse table and column's comment to metadata
+     * object.Note: Enable this option will bring the implications on memory
+     * usage. The number and size of ColumnImpl objects is what largely impacts
+     * how much memory is consumed by the Debezium connectors, and adding a
+     * String to each of them can potentially be quite heavy. The default is
+     * 'false'.
+     */
+    public void setIncludeSchemaComments(boolean includeSchemaComments) {
+        this.includeSchemaComments = includeSchemaComments;
+    }
+
+    public boolean isIncludeSchemaComments() {
+        return includeSchemaComments;
+    }
+
+    /**
      * Controls the action Debezium will take when it meets a DDL statement in
      * binlog, that it cannot parse.By default the connector will stop operating
      * but by changing the setting it can ignore the statements which it cannot
@@ -739,6 +808,20 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
 
     public boolean isTableIgnoreBuiltin() {
         return tableIgnoreBuiltin;
+    }
+
+    /**
+     * Add OPTION(RECOMPILE) on each SELECT statement during the incremental
+     * snapshot process. This prevents parameter sniffing but can cause CPU
+     * pressure on the source database.
+     */
+    public void setIncrementalSnapshotOptionRecompile(
+            boolean incrementalSnapshotOptionRecompile) {
+        this.incrementalSnapshotOptionRecompile = incrementalSnapshotOptionRecompile;
+    }
+
+    public boolean isIncrementalSnapshotOptionRecompile() {
+        return incrementalSnapshotOptionRecompile;
     }
 
     /**
@@ -777,6 +860,19 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
 
     public long getMaxQueueSizeInBytes() {
         return maxQueueSizeInBytes;
+    }
+
+    /**
+     * The name of the transaction metadata topic. The placeholder
+     * ${database.server.name} can be used for referring to the connector's
+     * logical name; defaults to ${database.server.name}.transaction.
+     */
+    public void setTransactionTopic(String transactionTopic) {
+        this.transactionTopic = transactionTopic;
+    }
+
+    public String getTransactionTopic() {
+        return transactionTopic;
     }
 
     /**
@@ -931,6 +1027,7 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "database.instance", databaseInstance);
         addPropertyIfNotNull(configBuilder, "table.blacklist", tableBlacklist);
         addPropertyIfNotNull(configBuilder, "include.schema.changes", includeSchemaChanges);
+        addPropertyIfNotNull(configBuilder, "heartbeat.action.query", heartbeatActionQuery);
         addPropertyIfNotNull(configBuilder, "poll.interval.ms", pollIntervalMs);
         addPropertyIfNotNull(configBuilder, "database.history.kafka.recovery.poll.interval.ms", databaseHistoryKafkaRecoveryPollIntervalMs);
         addPropertyIfNotNull(configBuilder, "signal.data.collection", signalDataCollection);
@@ -950,6 +1047,7 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "source.struct.version", sourceStructVersion);
         addPropertyIfNotNull(configBuilder, "heartbeat.interval.ms", heartbeatIntervalMs);
         addPropertyIfNotNull(configBuilder, "column.whitelist", columnWhitelist);
+        addPropertyIfNotNull(configBuilder, "incremental.snapshot.allow.schema.changes", incrementalSnapshotAllowSchemaChanges);
         addPropertyIfNotNull(configBuilder, "column.include.list", columnIncludeList);
         addPropertyIfNotNull(configBuilder, "column.propagate.source.type", columnPropagateSourceType);
         addPropertyIfNotNull(configBuilder, "table.exclude.list", tableExcludeList);
@@ -960,6 +1058,7 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "snapshot.mode", snapshotMode);
         addPropertyIfNotNull(configBuilder, "database.history", databaseHistory);
         addPropertyIfNotNull(configBuilder, "max.queue.size", maxQueueSize);
+        addPropertyIfNotNull(configBuilder, "incremental.snapshot.chunk.size", incrementalSnapshotChunkSize);
         addPropertyIfNotNull(configBuilder, "database.history.kafka.topic", databaseHistoryKafkaTopic);
         addPropertyIfNotNull(configBuilder, "retriable.restart.connector.wait.ms", retriableRestartConnectorWaitMs);
         addPropertyIfNotNull(configBuilder, "snapshot.delay.ms", snapshotDelayMs);
@@ -969,11 +1068,14 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "tombstones.on.delete", tombstonesOnDelete);
         addPropertyIfNotNull(configBuilder, "decimal.handling.mode", decimalHandlingMode);
         addPropertyIfNotNull(configBuilder, "binary.handling.mode", binaryHandlingMode);
+        addPropertyIfNotNull(configBuilder, "include.schema.comments", includeSchemaComments);
         addPropertyIfNotNull(configBuilder, "database.history.skip.unparseable.ddl", databaseHistorySkipUnparseableDdl);
         addPropertyIfNotNull(configBuilder, "table.ignore.builtin", tableIgnoreBuiltin);
+        addPropertyIfNotNull(configBuilder, "incremental.snapshot.option.recompile", incrementalSnapshotOptionRecompile);
         addPropertyIfNotNull(configBuilder, "snapshot.include.collection.list", snapshotIncludeCollectionList);
         addPropertyIfNotNull(configBuilder, "database.history.file.filename", databaseHistoryFileFilename);
         addPropertyIfNotNull(configBuilder, "max.queue.size.in.bytes", maxQueueSizeInBytes);
+        addPropertyIfNotNull(configBuilder, "transaction.topic", transactionTopic);
         addPropertyIfNotNull(configBuilder, "time.precision.mode", timePrecisionMode);
         addPropertyIfNotNull(configBuilder, "database.server.name", databaseServerName);
         addPropertyIfNotNull(configBuilder, "event.processing.failure.handling.mode", eventProcessingFailureHandlingMode);

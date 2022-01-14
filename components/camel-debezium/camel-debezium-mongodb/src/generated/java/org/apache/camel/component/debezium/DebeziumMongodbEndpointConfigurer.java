@@ -25,6 +25,8 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "additionalProperties": target.getConfiguration().setAdditionalProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "capturemode":
+        case "captureMode": target.getConfiguration().setCaptureMode(property(camelContext, java.lang.String.class, value)); return true;
         case "collectionexcludelist":
         case "collectionExcludeList": target.getConfiguration().setCollectionExcludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "collectionincludelist":
@@ -138,6 +140,8 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "sourceStructVersion": target.getConfiguration().setSourceStructVersion(property(camelContext, java.lang.String.class, value)); return true;
         case "tombstonesondelete":
         case "tombstonesOnDelete": target.getConfiguration().setTombstonesOnDelete(property(camelContext, boolean.class, value)); return true;
+        case "transactiontopic":
+        case "transactionTopic": target.getConfiguration().setTransactionTopic(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -149,6 +153,8 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "additionalProperties": return java.util.Map.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
+        case "capturemode":
+        case "captureMode": return java.lang.String.class;
         case "collectionexcludelist":
         case "collectionExcludeList": return java.lang.String.class;
         case "collectionincludelist":
@@ -262,6 +268,8 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "sourceStructVersion": return java.lang.String.class;
         case "tombstonesondelete":
         case "tombstonesOnDelete": return boolean.class;
+        case "transactiontopic":
+        case "transactionTopic": return java.lang.String.class;
         default: return null;
         }
     }
@@ -274,6 +282,8 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "additionalProperties": return target.getConfiguration().getAdditionalProperties();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "capturemode":
+        case "captureMode": return target.getConfiguration().getCaptureMode();
         case "collectionexcludelist":
         case "collectionExcludeList": return target.getConfiguration().getCollectionExcludeList();
         case "collectionincludelist":
@@ -387,6 +397,8 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "sourceStructVersion": return target.getConfiguration().getSourceStructVersion();
         case "tombstonesondelete":
         case "tombstonesOnDelete": return target.getConfiguration().isTombstonesOnDelete();
+        case "transactiontopic":
+        case "transactionTopic": return target.getConfiguration().getTransactionTopic();
         default: return null;
         }
     }
