@@ -212,6 +212,7 @@ class KafkaFetchRecords implements Runnable {
             // only close if not retry
             if (!isRetrying()) {
                 LOG.debug("Closing consumer {}", threadId);
+                safeUnsubscribe();
                 IOHelper.close(consumer);
             }
         }
