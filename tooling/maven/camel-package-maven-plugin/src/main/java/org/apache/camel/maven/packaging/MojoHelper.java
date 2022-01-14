@@ -92,6 +92,8 @@ public final class MojoHelper {
                         dir.resolve("camel-huaweicloud-dms"),
                         dir.resolve("camel-huaweicloud-imagerecognition"),
                         dir.resolve("camel-huaweicloud-obs"));
+            case "camel-knative":
+                return Collections.singletonList(dir.resolve("camel-knative-component"));
             default:
                 return Collections.singletonList(dir);
         }

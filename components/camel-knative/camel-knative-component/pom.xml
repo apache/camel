@@ -29,7 +29,7 @@
 
     <artifactId>camel-knative</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Knative</name>
+    <name>Camel :: Knative Component</name>
     <description>Camel Knative</description>
 
     <dependencies>

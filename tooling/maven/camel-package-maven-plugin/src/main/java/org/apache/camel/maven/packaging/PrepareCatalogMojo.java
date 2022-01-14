@@ -583,6 +583,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 case "camel-test":
                 case "camel-aws":
                 case "camel-huawei":
+                case "camel-kantive":
                     return false;
                 default:
                     return true;

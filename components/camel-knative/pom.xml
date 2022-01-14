@@ -35,7 +35,7 @@
     <modules>
         <module>camel-knative-api</module>
         <module>camel-knative-test</module>
-        <module>camel-knative</module>
+        <module>camel-knative-component</module>
         <module>camel-knative-http</module>
     </modules>
 
