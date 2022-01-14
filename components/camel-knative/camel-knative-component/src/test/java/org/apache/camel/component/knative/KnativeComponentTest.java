@@ -19,7 +19,6 @@ package org.apache.camel.component.knative;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.knative.spi.Knative;
 import org.apache.camel.component.knative.spi.KnativeEnvironment;
-import org.apache.camel.component.knative.test.KnativeEnvironmentSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

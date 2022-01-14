@@ -31,7 +31,6 @@
 ** xref:jta.adoc[JTA]
 ** xref:knative-api.adoc[Knative Api]
 ** xref:knative-http.adoc[Knative Http]
-** xref:knative-test.adoc[Knative Test]
 ** xref:leveldb.adoc[LevelDB]
 ** xref:leveldb-legacy.adoc[LevelDB-legacy]
 ** xref:lra.adoc[LRA]

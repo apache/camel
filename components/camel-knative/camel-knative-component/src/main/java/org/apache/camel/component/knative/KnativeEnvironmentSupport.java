@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.knative.test;
+package org.apache.camel.component.knative;
 
 import java.util.Map;
 
@@ -22,6 +22,9 @@ import org.apache.camel.component.knative.spi.Knative;
 import org.apache.camel.component.knative.spi.KnativeEnvironment;
 import org.apache.camel.component.knative.spi.KnativeResource;
 
+/**
+ * Support for knative environments.
+ */
 public final class KnativeEnvironmentSupport {
 
     private KnativeEnvironmentSupport() {
