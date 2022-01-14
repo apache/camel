@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.knative;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -24,6 +26,7 @@ import java.util.stream.Stream;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.cloudevents.CloudEvent;
@@ -33,7 +36,6 @@ import org.apache.camel.component.knative.ce.CloudEventProcessors;
 import org.apache.camel.component.knative.spi.Knative;
 import org.apache.camel.component.knative.spi.KnativeResource;
 import org.apache.camel.component.knative.spi.KnativeTransportConfiguration;
-import org.apache.camel.processor.Pipeline;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -77,7 +79,7 @@ public class KnativeEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    public Producer createProducer() {
+    public Producer createProducer() throws Exception {
         final KnativeResource service = lookupServiceDefinition(Knative.EndpointKind.sink);
         final Processor ceProcessor = cloudEventProcessor.producer(this, service);
         final Producer producer
@@ -96,12 +98,21 @@ public class KnativeEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        final KnativeResource service = lookupServiceDefinition(Knative.EndpointKind.source);
-        final Processor ceProcessor = cloudEventProcessor.consumer(this, service);
-        final Processor replyProcessor
+        KnativeResource service = lookupServiceDefinition(Knative.EndpointKind.source);
+        Processor ceProcessor = cloudEventProcessor.consumer(this, service);
+        Processor replyProcessor
                 = configuration.isReplyWithCloudEvent() ? cloudEventProcessor.producer(this, service) : null;
-        final Processor pipeline = Pipeline.newInstance(getCamelContext(), ceProcessor, processor, replyProcessor);
-        final Consumer consumer = getComponent().getConsumerFactory().createConsumer(this,
+
+        List<Processor> list = new ArrayList<>();
+        list.add(ceProcessor);
+        list.add(processor);
+        if (replyProcessor != null) {
+            list.add(replyProcessor);
+        }
+        ExtendedCamelContext ecc = getCamelContext().adapt(ExtendedCamelContext.class);
+        Processor pipeline = ecc.getProcessorFactory().createProcessor(ecc, "Pipeline", new Object[] { list });
+
+        Consumer consumer = getComponent().getConsumerFactory().createConsumer(this,
                 createTransportConfiguration(service), service, pipeline);
 
         PropertyBindingSupport.build()

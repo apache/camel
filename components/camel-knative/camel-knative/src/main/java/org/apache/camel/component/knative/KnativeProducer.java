@@ -17,14 +17,15 @@
 package org.apache.camel.component.knative;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
-import org.apache.camel.processor.Pipeline;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.service.ServiceHelper;
@@ -32,17 +33,15 @@ import org.apache.camel.support.service.ServiceHelper;
 public class KnativeProducer extends DefaultAsyncProducer {
     final AsyncProcessor processor;
 
-    public KnativeProducer(Endpoint endpoint, Processor processor, Processor... processors) {
+    public KnativeProducer(Endpoint endpoint, Processor processor, Processor... processors) throws Exception {
         super(endpoint);
 
         List<Processor> elements = new ArrayList<>(1 + processors.length);
         elements.add(processor);
+        Collections.addAll(elements, processors);
 
-        for (Processor p : processors) {
-            elements.add(p);
-        }
-
-        Processor pipeline = Pipeline.newInstance(endpoint.getCamelContext(), elements);
+        ExtendedCamelContext ecc = getEndpoint().getCamelContext().adapt(ExtendedCamelContext.class);
+        Processor pipeline = ecc.getProcessorFactory().createProcessor(ecc, "Pipeline", new Object[] { elements });
 
         this.processor = AsyncProcessorConverterHelper.convert(pipeline);
     }

@@ -18,6 +18,7 @@ package org.apache.camel.processor;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.CamelContext;
@@ -129,6 +130,9 @@ public class DefaultProcessorFactory implements ProcessorFactory, BootstrapClose
             return new MulticastProcessor(
                     camelContext, null, processors, null, true, executor, shutdownExecutorService, false, false, 0,
                     null, false, false);
+        } else if ("Pipeline".equals(definitionName)) {
+            List<Processor> processors = (List<Processor>) args[0];
+            return Pipeline.newInstance(camelContext, processors);
         }
 
         return null;
