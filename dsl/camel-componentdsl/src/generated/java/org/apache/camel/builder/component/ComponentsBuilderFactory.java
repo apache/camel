@@ -2642,6 +2642,19 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.KameletComponentBuilderFactory.kamelet();
     }
     /**
+     * Knative (camel-knative)
+     * Send and receive events from Knative.
+     * 
+     * Category: cloud
+     * Since: 3.15
+     * Maven coordinates: org.apache.camel:camel-knative
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.KnativeComponentBuilderFactory.KnativeComponentBuilder knative() {
+        return org.apache.camel.builder.component.dsl.KnativeComponentBuilderFactory.knative();
+    }
+    /**
      * Kubernetes ConfigMap (camel-kubernetes)
      * Perform operations on Kubernetes ConfigMaps and get notified on
      * ConfigMaps changes.

@@ -8974,6 +8974,57 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.KameletEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Knative (camel-knative)
+     * Send and receive events from Knative.
+     * 
+     * Category: cloud
+     * Since: 3.15
+     * Maven coordinates: org.apache.camel:camel-knative
+     * 
+     * Syntax: <code>knative:type/typeId</code>
+     * 
+     * Path parameter: type
+     * The Knative resource type
+     * There are 3 enums and the value can be one of: endpoint, channel, event
+     * 
+     * Path parameter: typeId
+     * The identifier of the Knative resource
+     * 
+     * @param path type/typeId
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.KnativeEndpointBuilderFactory.KnativeEndpointBuilder knative(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.KnativeEndpointBuilderFactory.endpointBuilder("knative", path);
+    }
+    /**
+     * Knative (camel-knative)
+     * Send and receive events from Knative.
+     * 
+     * Category: cloud
+     * Since: 3.15
+     * Maven coordinates: org.apache.camel:camel-knative
+     * 
+     * Syntax: <code>knative:type/typeId</code>
+     * 
+     * Path parameter: type
+     * The Knative resource type
+     * There are 3 enums and the value can be one of: endpoint, channel, event
+     * 
+     * Path parameter: typeId
+     * The identifier of the Knative resource
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path type/typeId
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.KnativeEndpointBuilderFactory.KnativeEndpointBuilder knative(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.KnativeEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Kubernetes ConfigMap (camel-kubernetes)
      * Perform operations on Kubernetes ConfigMaps and get notified on
      * ConfigMaps changes.

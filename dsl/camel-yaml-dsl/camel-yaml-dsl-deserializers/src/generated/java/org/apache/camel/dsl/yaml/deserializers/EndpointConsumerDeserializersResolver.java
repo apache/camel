@@ -133,6 +133,7 @@ public final class EndpointConsumerDeserializersResolver implements YamlDeserial
             case "jt400":
             case "kafka":
             case "kamelet":
+            case "knative":
             case "kubernetes-custom-resources":
             case "kubernetes-deployments":
             case "kubernetes-hpa":
