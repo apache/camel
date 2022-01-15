@@ -37,7 +37,7 @@ public class JmsNotIncludeAllJMSXPropertiesTest extends CamelTestSupport {
         getMockEndpoint("mock:result").expectedHeaderReceived("JMSXUserID", null);
         getMockEndpoint("mock:result").expectedHeaderReceived("JMSXAppID", null);
 
-        Map headers = new HashMap();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("foo", "bar");
         headers.put("JMSXUserID", "Donald");
         headers.put("JMSXAppID", "MyApp");

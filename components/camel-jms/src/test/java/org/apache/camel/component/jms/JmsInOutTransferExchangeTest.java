@@ -78,7 +78,7 @@ public class JmsInOutTransferExchangeTest extends CamelTestSupport {
         Exchange exchange = createExchangeWithBody(null);
         assertTrue(transferExchange.getIn() instanceof JmsMessage);
 
-        JmsMessage transferMessage = (JmsMessage) transferExchange.getIn();
+        JmsMessage transferMessage = transferExchange.getIn(JmsMessage.class);
         ActiveMQObjectMessage transferActiveMQMessage = (ActiveMQObjectMessage) transferMessage.getJmsMessage();
 
         assertTrue(transferActiveMQMessage.getObject() instanceof DefaultExchangeHolder);
@@ -95,7 +95,7 @@ public class JmsInOutTransferExchangeTest extends CamelTestSupport {
         Exchange resultExchange = result.getExchanges().get(0);
         assertTrue(resultExchange.getIn() instanceof JmsMessage);
 
-        JmsMessage resultMessage = (JmsMessage) resultExchange.getIn();
+        JmsMessage resultMessage = resultExchange.getIn(JmsMessage.class);
         ActiveMQObjectMessage resultActiveMQMessage = (ActiveMQObjectMessage) resultMessage.getJmsMessage();
         exchangeHolder = (DefaultExchangeHolder) resultActiveMQMessage.getObject();
         exchange = createExchangeWithBody(null);

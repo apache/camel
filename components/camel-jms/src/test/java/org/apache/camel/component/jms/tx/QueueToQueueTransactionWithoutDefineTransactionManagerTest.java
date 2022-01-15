@@ -17,7 +17,7 @@
 package org.apache.camel.component.jms.tx;
 
 import org.apache.camel.builder.NotifyBuilder;
-import org.apache.camel.spring.SpringRouteBuilder;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -35,7 +35,7 @@ public class QueueToQueueTransactionWithoutDefineTransactionManagerTest extends 
     public void testNoTransactionRollbackUsingXmlQueueToQueue() throws Exception {
 
         // configure routes and add to camel context
-        context.addRoutes(new SpringRouteBuilder() {
+        context.addRoutes(new RouteBuilder() {
 
             @Override
             public void configure() throws Exception {
