@@ -326,8 +326,7 @@ public final class DefaultConfigurationConfigurer {
      * Performs additional configuration to lookup beans of Camel types to configure additional configurations on the
      * Camel context.
      * <p/>
-     * Similar code in camel-core-xml module in class org.apache.camel.core.xml.AbstractCamelContextFactoryBean or in
-     * camel-spring-boot module in class org.apache.camel.spring.boot.CamelAutoConfiguration.
+     * Similar code in camel-core-xml module in class org.apache.camel.core.xml.AbstractCamelContextFactoryBean.
      */
     public static void afterConfigure(final CamelContext camelContext) throws Exception {
         final Registry registry = camelContext.getRegistry();

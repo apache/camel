@@ -173,6 +173,7 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     private final Map<String, Language> languages;
     private final PropertiesComponent propertiesComponent;
     private final BeanIntrospection beanIntrospection;
+    private final CamelBeanPostProcessor beanPostProcessor;
     private final HeadersMapFactory headersMapFactory;
     private final ExchangeFactory exchangeFactory;
     private final ExchangeFactoryManager exchangeFactoryManager;
@@ -222,6 +223,7 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
         languages = context.getLanguageNames().stream().collect(Collectors.toMap(s -> s, context::resolveLanguage));
         propertiesComponent = context.getPropertiesComponent();
         beanIntrospection = context.adapt(ExtendedCamelContext.class).getBeanIntrospection();
+        beanPostProcessor = context.adapt(ExtendedCamelContext.class).getBeanPostProcessor();
         headersMapFactory = context.adapt(ExtendedCamelContext.class).getHeadersMapFactory();
         exchangeFactory = context.adapt(ExtendedCamelContext.class).getExchangeFactory();
         exchangeFactoryManager = context.adapt(ExtendedCamelContext.class).getExchangeFactoryManager();
@@ -1405,10 +1407,6 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
         }
     }
 
-    //
-    // CatalogCamelContext
-    //
-
     @Override
     public List<RouteStartupOrder> getRouteStartupOrder() {
         throw new UnsupportedOperationException();
@@ -1416,6 +1414,11 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
 
     @Override
     public CamelBeanPostProcessor getBeanPostProcessor() {
+        return beanPostProcessor;
+    }
+
+    @Override
+    public void setBeanPostProcessor(CamelBeanPostProcessor beanPostProcessor) {
         throw new UnsupportedOperationException();
     }
 

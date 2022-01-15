@@ -257,6 +257,11 @@ public interface ExtendedCamelContext extends CamelContext {
     CamelBeanPostProcessor getBeanPostProcessor();
 
     /**
+     * Sets a custom bean post processor to use.
+     */
+    void setBeanPostProcessor(CamelBeanPostProcessor beanPostProcessor);
+
+    /**
      * Returns the management mbean assembler
      *
      * @return the mbean assembler
