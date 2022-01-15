@@ -28,6 +28,6 @@ public class ExchangeCompletedEvent extends AbstractExchangeEvent implements Cam
 
     @Override
     public String toString() {
-        return getExchange().getExchangeId() + " exchange completed: " + getExchange();
+        return getExchange().getExchangeId() + " exchange completed";
     }
 }
