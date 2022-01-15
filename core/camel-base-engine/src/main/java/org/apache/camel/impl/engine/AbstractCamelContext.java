@@ -1963,6 +1963,7 @@ public abstract class AbstractCamelContext extends BaseService
         return beanPostProcessor;
     }
 
+    @Override
     public void setBeanPostProcessor(CamelBeanPostProcessor beanPostProcessor) {
         this.beanPostProcessor = doAddService(beanPostProcessor);
     }

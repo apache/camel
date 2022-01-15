@@ -1214,6 +1214,11 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     @Override
+    public void setBeanPostProcessor(CamelBeanPostProcessor beanPostProcessor) {
+        getExtendedCamelContext().setBeanPostProcessor(beanPostProcessor);
+    }
+
+    @Override
     public ManagementMBeanAssembler getManagementMBeanAssembler() {
         return getExtendedCamelContext().getManagementMBeanAssembler();
     }

@@ -63,7 +63,7 @@ import static org.apache.camel.util.ObjectHelper.isEmpty;
  * Components such as camel-spring or camel-blueprint can leverage this post processor to hook in Camel bean post
  * processing into their bean processing framework.
  */
-public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
+public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, CamelContextAware {
 
     protected static final Logger LOG = LoggerFactory.getLogger(DefaultCamelBeanPostProcessor.class);
     protected CamelPostProcessorHelper camelPostProcessorHelper;
@@ -74,6 +74,16 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
     }
 
     public DefaultCamelBeanPostProcessor(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }
 
