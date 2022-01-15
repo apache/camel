@@ -61,7 +61,7 @@ data from proto `Message` to `Map`, you will just need to set the `contentTypeFo
 == Protobuf overview
 
 This quick overview of how to use Protobuf. For more detail see the
-http://code.google.com/apis/protocolbuffers/docs/javatutorial.html[complete tutorial]
+https://developers.google.com/protocol-buffers/docs/javatutorial[complete tutorial]
 
 == Defining the proto format
 
