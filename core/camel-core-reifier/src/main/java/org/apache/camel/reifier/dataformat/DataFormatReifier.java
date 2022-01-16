@@ -60,7 +60,7 @@ import org.apache.camel.model.dataformat.TarFileDataFormat;
 import org.apache.camel.model.dataformat.ThriftDataFormat;
 import org.apache.camel.model.dataformat.TidyMarkupDataFormat;
 import org.apache.camel.model.dataformat.UniVocityCsvDataFormat;
-import org.apache.camel.model.dataformat.UniVocityFixedWidthDataFormat;
+import org.apache.camel.model.dataformat.UniVocityFixedDataFormat;
 import org.apache.camel.model.dataformat.UniVocityTsvDataFormat;
 import org.apache.camel.model.dataformat.XMLSecurityDataFormat;
 import org.apache.camel.model.dataformat.XStreamDataFormat;
@@ -245,7 +245,7 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
             return new TidyMarkupDataFormatReifier(camelContext, definition);
         } else if (definition instanceof UniVocityCsvDataFormat) {
             return new UniVocityCsvDataFormatReifier(camelContext, definition);
-        } else if (definition instanceof UniVocityFixedWidthDataFormat) {
+        } else if (definition instanceof UniVocityFixedDataFormat) {
             return new UniVocityFixedWidthDataFormatReifier(camelContext, definition);
         } else if (definition instanceof UniVocityTsvDataFormat) {
             return new UniVocityTsvDataFormatReifier(camelContext, definition);

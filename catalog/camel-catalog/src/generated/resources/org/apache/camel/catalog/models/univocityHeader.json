@@ -1,7 +1,7 @@
 {
   "model": {
     "kind": "model",
-    "name": "univocity-header",
+    "name": "univocityHeader",
     "title": "uniVocity Header",
     "description": "To configure headers for UniVocity data formats.",
     "deprecated": false,

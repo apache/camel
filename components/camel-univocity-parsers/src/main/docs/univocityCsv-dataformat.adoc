@@ -1,8 +1,8 @@
-= uniVocity Fixed Length DataFormat
-:doctitle: uniVocity Fixed Length
-:shortname: univocity-fixed
+= uniVocity CSV DataFormat
+:doctitle: uniVocity CSV
+:shortname: univocityCsv
 :artifactid: camel-univocity-parsers
-:description: Marshal and unmarshal Java objects from and to fixed length records using UniVocity Parsers.
+:description: Marshal and unmarshal Java objects from and to CSV (Comma Separated Values) using UniVocity Parsers.
 :since: 2.15
 :supportlevel: Stable
 //Manually maintained attributes

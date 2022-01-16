@@ -38,7 +38,7 @@ TarFileDataFormat
 ThriftDataFormat
 TidyMarkupDataFormat
 UniVocityCsvDataFormat
-UniVocityFixedWidthDataFormat
+UniVocityFixedDataFormat
 UniVocityHeader
 UniVocityTsvDataFormat
 XMLSecurityDataFormat

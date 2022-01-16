@@ -72,7 +72,7 @@ public class DataFormatsDefinition {
             @XmlElement(required = false, name = "thrift", type = ThriftDataFormat.class),
             @XmlElement(required = false, name = "tidyMarkup", type = TidyMarkupDataFormat.class),
             @XmlElement(required = false, name = "univocity-csv", type = UniVocityCsvDataFormat.class),
-            @XmlElement(required = false, name = "univocity-fixed", type = UniVocityFixedWidthDataFormat.class),
+            @XmlElement(required = false, name = "univocity-fixed", type = UniVocityFixedDataFormat.class),
             @XmlElement(required = false, name = "univocity-tsv", type = UniVocityTsvDataFormat.class),
             @XmlElement(required = false, name = "xmlrpc", type = XmlRpcDataFormat.class),
             @XmlElement(required = false, name = "xstream", type = XStreamDataFormat.class),

@@ -28,11 +28,11 @@
         <route>
             <from uri="direct:default"/>
             <unmarshal>
-                <univocity-fixed>
-                    <univocity-header length="3"/>
-                    <univocity-header length="3"/>
-                    <univocity-header length="5"/>
-                </univocity-fixed>
+                <univocityFixed>
+                    <univocityHeader length="3"/>
+                    <univocityHeader length="3"/>
+                    <univocityHeader length="5"/>
+                </univocityFixed>
             </unmarshal>
             <to uri="mock:result"/>
         </route>
@@ -41,11 +41,11 @@
         <route>
             <from uri="direct:map"/>
             <unmarshal>
-                <univocity-fixed headerExtractionEnabled="true" asMap="true">
-                    <univocity-header length="3"/>
-                    <univocity-header length="3"/>
-                    <univocity-header length="5"/>
-                </univocity-fixed>
+                <univocityFixed headerExtractionEnabled="true" asMap="true">
+                    <univocityHeader length="3"/>
+                    <univocityHeader length="3"/>
+                    <univocityHeader length="5"/>
+                </univocityFixed>
             </unmarshal>
             <to uri="mock:result"/>
         </route>
@@ -54,11 +54,11 @@
         <route>
             <from uri="direct:mapWithHeaders"/>
             <unmarshal>
-                <univocity-fixed asMap="true">
-                    <univocity-header length="3">A</univocity-header>
-                    <univocity-header length="3">B</univocity-header>
-                    <univocity-header length="5">C</univocity-header>
-                </univocity-fixed>
+                <univocityFixed asMap="true">
+                    <univocityHeader length="3">A</univocityHeader>
+                    <univocityHeader length="3">B</univocityHeader>
+                    <univocityHeader length="5">C</univocityHeader>
+                </univocityFixed>
             </unmarshal>
             <to uri="mock:result"/>
         </route>
@@ -67,11 +67,11 @@
         <route>
             <from uri="direct:lazy"/>
             <unmarshal>
-                <univocity-fixed lazyLoad="true">
-                    <univocity-header length="3"/>
-                    <univocity-header length="3"/>
-                    <univocity-header length="5"/>
-                </univocity-fixed>
+                <univocityFixed lazyLoad="true">
+                    <univocityHeader length="3"/>
+                    <univocityHeader length="3"/>
+                    <univocityHeader length="5"/>
+                </univocityFixed>
             </unmarshal>
             <to uri="mock:result"/>
         </route>
@@ -80,10 +80,10 @@
         <route>
             <from uri="direct:advanced"/>
             <unmarshal>
-                <univocity-fixed nullValue="N/A" padding="_" comment="!" skipEmptyLines="true">
-                    <univocity-header length="3"/>
-                    <univocity-header length="3"/>
-                </univocity-fixed>
+                <univocityFixed nullValue="N/A" padding="_" comment="!" skipEmptyLines="true">
+                    <univocityHeader length="3"/>
+                    <univocityHeader length="3"/>
+                </univocityFixed>
             </unmarshal>
             <to uri="mock:result"/>
         </route>

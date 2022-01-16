@@ -39,9 +39,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
- * This class tests the unmarshalling of {@link org.apache.camel.dataformat.univocity.UniVocityFixedWidthDataFormat}.
+ * This class tests the unmarshalling of {@link UniVocityFixedDataFormat}.
  */
-public final class UniVocityFixedWidthDataFormatUnmarshalTest extends CamelTestSupport {
+public final class UniVocityFixedDataFormatUnmarshalTest extends CamelTestSupport {
     @EndpointInject("mock:result")
     MockEndpoint result;
 
@@ -155,28 +155,28 @@ public final class UniVocityFixedWidthDataFormatUnmarshalTest extends CamelTestS
         final Map<String, DataFormat> tests = new HashMap<>();
 
         // Default reading of fixed-width
-        tests.put("default", new UniVocityFixedWidthDataFormat()
+        tests.put("default", new UniVocityFixedDataFormat()
                 .setFieldLengths(new int[] { 3, 3, 5 }));
 
         // Reading fixed-width as Map
-        tests.put("map", new UniVocityFixedWidthDataFormat()
+        tests.put("map", new UniVocityFixedDataFormat()
                 .setFieldLengths(new int[] { 3, 3, 5 })
                 .setAsMap(true)
                 .setHeaderExtractionEnabled(true));
 
         // Reading fixed-width as Map with specific headers
-        tests.put("mapWithHeaders", new UniVocityFixedWidthDataFormat()
+        tests.put("mapWithHeaders", new UniVocityFixedDataFormat()
                 .setFieldLengths(new int[] { 3, 3, 5 })
                 .setAsMap(true)
                 .setHeaders(new String[] { "A", "B", "C" }));
 
         // Reading fixed-width using an iterator
-        tests.put("lazy", new UniVocityFixedWidthDataFormat()
+        tests.put("lazy", new UniVocityFixedDataFormat()
                 .setFieldLengths(new int[] { 3, 3, 5 })
                 .setLazyLoad(true));
 
         // Reading fixed-width using advanced configuration
-        tests.put("advanced", new UniVocityFixedWidthDataFormat()
+        tests.put("advanced", new UniVocityFixedDataFormat()
                 .setFieldLengths(new int[] { 3, 3 })
                 .setNullValue("N/A")
                 .setPadding('_')

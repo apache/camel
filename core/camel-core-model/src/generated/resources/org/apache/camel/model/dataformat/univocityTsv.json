@@ -1,7 +1,7 @@
 {
   "model": {
     "kind": "model",
-    "name": "univocity-tsv",
+    "name": "univocityTsv",
     "title": "uniVocity TSV",
     "description": "Marshal and unmarshal Java objects from and to TSV (Tab-Separated Values) records using UniVocity Parsers.",
     "deprecated": false,

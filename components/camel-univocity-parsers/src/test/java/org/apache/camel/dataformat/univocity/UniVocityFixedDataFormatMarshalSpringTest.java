@@ -17,15 +17,13 @@
 package org.apache.camel.dataformat.univocity;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.camel.EndpointInject;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.spi.DataFormat;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.apache.camel.dataformat.univocity.UniVocityTestHelper.asMap;
 import static org.apache.camel.dataformat.univocity.UniVocityTestHelper.join;
@@ -33,9 +31,9 @@ import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * This class tests the marshalling of {@link org.apache.camel.dataformat.univocity.UniVocityFixedWidthDataFormat}.
+ * This class tests the marshalling of {@link UniVocityFixedDataFormat} using the Spring DSL.
  */
-public final class UniVocityFixedWidthDataFormatMarshalTest extends CamelTestSupport {
+public final class UniVocityFixedDataFormatMarshalSpringTest extends CamelSpringTestSupport {
     @EndpointInject("mock:result")
     MockEndpoint result;
 
@@ -118,32 +116,8 @@ public final class UniVocityFixedWidthDataFormatMarshalTest extends CamelTestSup
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        final Map<String, DataFormat> tests = new HashMap<>();
-
-        // Default writing of fixed-width
-        tests.put("default", new UniVocityFixedWidthDataFormat()
-                .setFieldLengths(new int[] { 3, 3, 5 }));
-
-        // Write a fixed-width with specific headers
-        tests.put("header", new UniVocityFixedWidthDataFormat()
-                .setFieldLengths(new int[] { 3, 5 })
-                .setHeaders(new String[] { "A", "C" }));
-
-        // Write a fixed-width with an advanced configuration
-        tests.put("advanced", new UniVocityFixedWidthDataFormat()
-                .setFieldLengths(new int[] { 5, 5 })
-                .setNullValue("N/A")
-                .setEmptyValue("empty")
-                .setPadding('_'));
-
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                for (Map.Entry<String, DataFormat> test : tests.entrySet()) {
-                    from("direct:" + test.getKey()).marshal(test.getValue()).convertBodyTo(String.class).to("mock:result");
-                }
-            }
-        };
+    protected AbstractApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/dataformat/univocity/UniVocityFixedWidthDataFormatMarshalSpringTest.xml");
     }
 }

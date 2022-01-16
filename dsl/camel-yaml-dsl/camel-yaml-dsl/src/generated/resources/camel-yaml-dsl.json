@@ -1463,7 +1463,7 @@
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityCsvDataFormat"
           },
           "univocity-fixed" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityFixedWidthDataFormat"
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityFixedDataFormat"
           },
           "univocity-tsv" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityTsvDataFormat"
@@ -2928,7 +2928,7 @@
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityCsvDataFormat"
           },
           "univocity-fixed" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityFixedWidthDataFormat"
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityFixedDataFormat"
           },
           "univocity-tsv" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityTsvDataFormat"
@@ -4287,7 +4287,7 @@
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityCsvDataFormat"
           },
           "univocity-fixed" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityFixedWidthDataFormat"
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityFixedDataFormat"
           },
           "univocity-tsv" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityTsvDataFormat"
@@ -5039,7 +5039,7 @@
           }
         }
       },
-      "org.apache.camel.model.dataformat.UniVocityFixedWidthDataFormat" : {
+      "org.apache.camel.model.dataformat.UniVocityFixedDataFormat" : {
         "type" : "object",
         "properties" : {
           "as-map" : {
@@ -7221,7 +7221,7 @@
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityCsvDataFormat"
           },
           "univocity-fixed" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityFixedWidthDataFormat"
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityFixedDataFormat"
           },
           "univocity-tsv" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityTsvDataFormat"

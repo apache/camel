@@ -160,7 +160,7 @@ import org.apache.camel.model.dataformat.TarFileDataFormat;
 import org.apache.camel.model.dataformat.ThriftDataFormat;
 import org.apache.camel.model.dataformat.TidyMarkupDataFormat;
 import org.apache.camel.model.dataformat.UniVocityCsvDataFormat;
-import org.apache.camel.model.dataformat.UniVocityFixedWidthDataFormat;
+import org.apache.camel.model.dataformat.UniVocityFixedDataFormat;
 import org.apache.camel.model.dataformat.UniVocityHeader;
 import org.apache.camel.model.dataformat.UniVocityTsvDataFormat;
 import org.apache.camel.model.dataformat.XMLSecurityDataFormat;
@@ -2853,7 +2853,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "tidy-markup", type = "object:org.apache.camel.model.dataformat.TidyMarkupDataFormat"),
                     @YamlProperty(name = "to-type", type = "string"),
                     @YamlProperty(name = "univocity-csv", type = "object:org.apache.camel.model.dataformat.UniVocityCsvDataFormat"),
-                    @YamlProperty(name = "univocity-fixed", type = "object:org.apache.camel.model.dataformat.UniVocityFixedWidthDataFormat"),
+                    @YamlProperty(name = "univocity-fixed", type = "object:org.apache.camel.model.dataformat.UniVocityFixedDataFormat"),
                     @YamlProperty(name = "univocity-tsv", type = "object:org.apache.camel.model.dataformat.UniVocityTsvDataFormat"),
                     @YamlProperty(name = "xmlrpc", type = "object:org.apache.camel.model.dataformat.XmlRpcDataFormat"),
                     @YamlProperty(name = "xstream", type = "object:org.apache.camel.model.dataformat.XStreamDataFormat"),
@@ -3047,7 +3047,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "univocity-fixed": {
-                    org.apache.camel.model.dataformat.UniVocityFixedWidthDataFormat val = asType(node, org.apache.camel.model.dataformat.UniVocityFixedWidthDataFormat.class);
+                    org.apache.camel.model.dataformat.UniVocityFixedDataFormat val = asType(node, org.apache.camel.model.dataformat.UniVocityFixedDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }
@@ -3156,7 +3156,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "thrift", type = "object:org.apache.camel.model.dataformat.ThriftDataFormat"),
                     @YamlProperty(name = "tidy-markup", type = "object:org.apache.camel.model.dataformat.TidyMarkupDataFormat"),
                     @YamlProperty(name = "univocity-csv", type = "object:org.apache.camel.model.dataformat.UniVocityCsvDataFormat"),
-                    @YamlProperty(name = "univocity-fixed", type = "object:org.apache.camel.model.dataformat.UniVocityFixedWidthDataFormat"),
+                    @YamlProperty(name = "univocity-fixed", type = "object:org.apache.camel.model.dataformat.UniVocityFixedDataFormat"),
                     @YamlProperty(name = "univocity-tsv", type = "object:org.apache.camel.model.dataformat.UniVocityTsvDataFormat"),
                     @YamlProperty(name = "xmlrpc", type = "object:org.apache.camel.model.dataformat.XmlRpcDataFormat"),
                     @YamlProperty(name = "xstream", type = "object:org.apache.camel.model.dataformat.XStreamDataFormat"),
@@ -3515,7 +3515,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "univocity-fixed": {
-                    org.apache.camel.model.dataformat.UniVocityFixedWidthDataFormat val = asType(node, org.apache.camel.model.dataformat.UniVocityFixedWidthDataFormat.class);
+                    org.apache.camel.model.dataformat.UniVocityFixedDataFormat val = asType(node, org.apache.camel.model.dataformat.UniVocityFixedDataFormat.class);
                     java.util.List<org.apache.camel.model.DataFormatDefinition> existing = target.getDataFormats();
                     if (existing == null) {
                         existing = new java.util.ArrayList<>();
@@ -8146,7 +8146,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "thrift", type = "object:org.apache.camel.model.dataformat.ThriftDataFormat"),
                     @YamlProperty(name = "tidy-markup", type = "object:org.apache.camel.model.dataformat.TidyMarkupDataFormat"),
                     @YamlProperty(name = "univocity-csv", type = "object:org.apache.camel.model.dataformat.UniVocityCsvDataFormat"),
-                    @YamlProperty(name = "univocity-fixed", type = "object:org.apache.camel.model.dataformat.UniVocityFixedWidthDataFormat"),
+                    @YamlProperty(name = "univocity-fixed", type = "object:org.apache.camel.model.dataformat.UniVocityFixedDataFormat"),
                     @YamlProperty(name = "univocity-tsv", type = "object:org.apache.camel.model.dataformat.UniVocityTsvDataFormat"),
                     @YamlProperty(name = "xmlrpc", type = "object:org.apache.camel.model.dataformat.XmlRpcDataFormat"),
                     @YamlProperty(name = "xstream", type = "object:org.apache.camel.model.dataformat.XStreamDataFormat"),
@@ -8340,7 +8340,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "univocity-fixed": {
-                    org.apache.camel.model.dataformat.UniVocityFixedWidthDataFormat val = asType(node, org.apache.camel.model.dataformat.UniVocityFixedWidthDataFormat.class);
+                    org.apache.camel.model.dataformat.UniVocityFixedDataFormat val = asType(node, org.apache.camel.model.dataformat.UniVocityFixedDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }
@@ -16390,7 +16390,10 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     @YamlType(
             types = org.apache.camel.model.dataformat.UniVocityCsvDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            nodes = "univocity-csv",
+            nodes = {
+                    "univocity-csv",
+                    "univocityCsv"
+            },
             properties = {
                     @YamlProperty(name = "as-map", type = "boolean"),
                     @YamlProperty(name = "comment", type = "string"),
@@ -16531,9 +16534,12 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            types = org.apache.camel.model.dataformat.UniVocityFixedWidthDataFormat.class,
+            types = org.apache.camel.model.dataformat.UniVocityFixedDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            nodes = "univocity-fixed",
+            nodes = {
+                    "univocity-fixed",
+                    "univocityFixed"
+            },
             properties = {
                     @YamlProperty(name = "as-map", type = "boolean"),
                     @YamlProperty(name = "comment", type = "string"),
@@ -16555,18 +16561,18 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "univocity-header", type = "array:org.apache.camel.model.dataformat.UniVocityHeader")
             }
     )
-    public static class UniVocityFixedWidthDataFormatDeserializer extends YamlDeserializerBase<UniVocityFixedWidthDataFormat> {
-        public UniVocityFixedWidthDataFormatDeserializer() {
-            super(UniVocityFixedWidthDataFormat.class);
+    public static class UniVocityFixedDataFormatDeserializer extends YamlDeserializerBase<UniVocityFixedDataFormat> {
+        public UniVocityFixedDataFormatDeserializer() {
+            super(UniVocityFixedDataFormat.class);
         }
 
         @Override
-        protected UniVocityFixedWidthDataFormat newInstance() {
-            return new UniVocityFixedWidthDataFormat();
+        protected UniVocityFixedDataFormat newInstance() {
+            return new UniVocityFixedDataFormat();
         }
 
         @Override
-        protected boolean setProperty(UniVocityFixedWidthDataFormat target, String propertyKey,
+        protected boolean setProperty(UniVocityFixedDataFormat target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
                 case "as-map": {
@@ -16670,7 +16676,10 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     @YamlType(
             types = org.apache.camel.model.dataformat.UniVocityHeader.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            nodes = "univocity-header",
+            nodes = {
+                    "univocity-header",
+                    "univocityHeader"
+            },
             properties = {
                     @YamlProperty(name = "length", type = "string"),
                     @YamlProperty(name = "name", type = "string")
@@ -16711,7 +16720,10 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     @YamlType(
             types = org.apache.camel.model.dataformat.UniVocityTsvDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            nodes = "univocity-tsv",
+            nodes = {
+                    "univocity-tsv",
+                    "univocityTsv"
+            },
             properties = {
                     @YamlProperty(name = "as-map", type = "boolean"),
                     @YamlProperty(name = "comment", type = "string"),
@@ -16873,7 +16885,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "thrift", type = "object:org.apache.camel.model.dataformat.ThriftDataFormat"),
                     @YamlProperty(name = "tidy-markup", type = "object:org.apache.camel.model.dataformat.TidyMarkupDataFormat"),
                     @YamlProperty(name = "univocity-csv", type = "object:org.apache.camel.model.dataformat.UniVocityCsvDataFormat"),
-                    @YamlProperty(name = "univocity-fixed", type = "object:org.apache.camel.model.dataformat.UniVocityFixedWidthDataFormat"),
+                    @YamlProperty(name = "univocity-fixed", type = "object:org.apache.camel.model.dataformat.UniVocityFixedDataFormat"),
                     @YamlProperty(name = "univocity-tsv", type = "object:org.apache.camel.model.dataformat.UniVocityTsvDataFormat"),
                     @YamlProperty(name = "xmlrpc", type = "object:org.apache.camel.model.dataformat.XmlRpcDataFormat"),
                     @YamlProperty(name = "xstream", type = "object:org.apache.camel.model.dataformat.XStreamDataFormat"),
@@ -17067,7 +17079,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "univocity-fixed": {
-                    org.apache.camel.model.dataformat.UniVocityFixedWidthDataFormat val = asType(node, org.apache.camel.model.dataformat.UniVocityFixedWidthDataFormat.class);
+                    org.apache.camel.model.dataformat.UniVocityFixedDataFormat val = asType(node, org.apache.camel.model.dataformat.UniVocityFixedDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }

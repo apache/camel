@@ -28,7 +28,7 @@
         <route>
             <from uri="direct:default"/>
             <unmarshal>
-                <univocity-tsv/>
+                <univocityTsv/>
             </unmarshal>
             <to uri="mock:result"/>
         </route>
@@ -37,7 +37,7 @@
         <route>
             <from uri="direct:map"/>
             <unmarshal>
-                <univocity-tsv headerExtractionEnabled="true" asMap="true"/>
+                <univocityTsv headerExtractionEnabled="true" asMap="true"/>
             </unmarshal>
             <to uri="mock:result"/>
         </route>
@@ -46,11 +46,11 @@
         <route>
             <from uri="direct:mapWithHeaders"/>
             <unmarshal>
-                <univocity-tsv asMap="true">
-                    <univocity-header>A</univocity-header>
-                    <univocity-header>B</univocity-header>
-                    <univocity-header>C</univocity-header>
-                </univocity-tsv>
+                <univocityTsv asMap="true">
+                    <univocityHeader>A</univocityHeader>
+                    <univocityHeader>B</univocityHeader>
+                    <univocityHeader>C</univocityHeader>
+                </univocityTsv>
             </unmarshal>
             <to uri="mock:result"/>
         </route>
@@ -59,7 +59,7 @@
         <route>
             <from uri="direct:lazy"/>
             <unmarshal>
-                <univocity-tsv lazyLoad="true"/>
+                <univocityTsv lazyLoad="true"/>
             </unmarshal>
             <to uri="mock:result"/>
         </route>
@@ -68,7 +68,7 @@
         <route>
             <from uri="direct:advanced"/>
             <unmarshal>
-                <univocity-tsv nullValue="N/A" ignoreLeadingWhitespaces="true"
+                <univocityTsv nullValue="N/A" ignoreLeadingWhitespaces="true"
                                ignoreTrailingWhitespaces="false" comment="!" skipEmptyLines="true"/>
             </unmarshal>
             <to uri="mock:result"/>

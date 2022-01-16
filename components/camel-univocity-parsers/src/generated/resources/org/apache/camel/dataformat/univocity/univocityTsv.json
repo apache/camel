@@ -1,25 +1,22 @@
 {
   "dataformat": {
     "kind": "dataformat",
-    "name": "univocity-csv",
-    "title": "uniVocity CSV",
-    "description": "Marshal and unmarshal Java objects from and to CSV (Comma Separated Values) using UniVocity Parsers.",
+    "name": "univocityTsv",
+    "title": "uniVocity TSV",
+    "description": "Marshal and unmarshal Java objects from and to TSV (Tab-Separated Values) records using UniVocity Parsers.",
     "deprecated": false,
     "firstVersion": "2.15.0",
     "label": "dataformat,transformation,csv",
-    "javaType": "org.apache.camel.dataformat.univocity.UniVocityCsvDataFormat",
+    "javaType": "org.apache.camel.dataformat.univocity.UniVocityTsvDataFormat",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-univocity-parsers",
     "version": "3.15.0-SNAPSHOT",
-    "modelName": "univocity-csv",
-    "modelJavaType": "org.apache.camel.model.dataformat.UniVocityCsvDataFormat"
+    "modelName": "univocityTsv",
+    "modelJavaType": "org.apache.camel.model.dataformat.UniVocityTsvDataFormat"
   },
   "properties": {
-    "quoteAllFields": { "kind": "attribute", "displayName": "Quote All Fields", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether or not all values must be quoted when writing them." },
-    "quote": { "kind": "attribute", "displayName": "Quote", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "\"", "description": "The quote symbol." },
-    "quoteEscape": { "kind": "attribute", "displayName": "Quote Escape", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "\"", "description": "The quote escape symbol" },
-    "delimiter": { "kind": "attribute", "displayName": "Delimiter", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": ",", "description": "The delimiter of values" },
+    "escapeChar": { "kind": "attribute", "displayName": "Escape Char", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "\\", "description": "The escape character." },
     "nullValue": { "kind": "attribute", "displayName": "Null Value", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The string representation of a null value. The default value is null" },
     "skipEmptyLines": { "kind": "attribute", "displayName": "Skip Empty Lines", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether or not the empty lines must be ignored. The default value is true" },
     "ignoreTrailingWhitespaces": { "kind": "attribute", "displayName": "Ignore Trailing Whitespaces", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether or not the trailing white spaces must ignored. The default value is true" },

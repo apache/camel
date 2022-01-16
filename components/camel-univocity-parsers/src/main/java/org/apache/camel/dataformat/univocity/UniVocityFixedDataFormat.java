@@ -30,10 +30,10 @@ import org.apache.camel.spi.annotations.Dataformat;
 /**
  * This class is the data format that uses the fixed-width uniVocity parser.
  */
-@Dataformat("univocity-fixed")
-public class UniVocityFixedWidthDataFormat
+@Dataformat("univocityFixed")
+public class UniVocityFixedDataFormat
         extends
-        AbstractUniVocityDataFormat<FixedWidthFormat, FixedWidthWriterSettings, FixedWidthWriter, FixedWidthParserSettings, FixedWidthParser, UniVocityFixedWidthDataFormat> {
+        AbstractUniVocityDataFormat<FixedWidthFormat, FixedWidthWriterSettings, FixedWidthWriter, FixedWidthParserSettings, FixedWidthParser, UniVocityFixedDataFormat> {
     protected int[] fieldLengths;
     protected Boolean skipTrailingCharsUntilNewline;
     protected Boolean recordEndsOnNewline;
@@ -56,7 +56,7 @@ public class UniVocityFixedWidthDataFormat
      * @param  fieldLengths the field length
      * @return              current data format instance, fluent API
      */
-    public UniVocityFixedWidthDataFormat setFieldLengths(int[] fieldLengths) {
+    public UniVocityFixedDataFormat setFieldLengths(int[] fieldLengths) {
         this.fieldLengths = fieldLengths;
         return this;
     }
@@ -78,7 +78,7 @@ public class UniVocityFixedWidthDataFormat
      * @return                               current data format instance, fluent API
      * @see                                  com.univocity.parsers.fixed.FixedWidthParserSettings#setSkipTrailingCharsUntilNewline(boolean)
      */
-    public UniVocityFixedWidthDataFormat setSkipTrailingCharsUntilNewline(Boolean skipTrailingCharsUntilNewline) {
+    public UniVocityFixedDataFormat setSkipTrailingCharsUntilNewline(Boolean skipTrailingCharsUntilNewline) {
         this.skipTrailingCharsUntilNewline = skipTrailingCharsUntilNewline;
         return this;
     }
@@ -100,7 +100,7 @@ public class UniVocityFixedWidthDataFormat
      * @return                     current data format instance, fluent API
      * @see                        com.univocity.parsers.fixed.FixedWidthParserSettings#setRecordEndsOnNewline(boolean)
      */
-    public UniVocityFixedWidthDataFormat setRecordEndsOnNewline(Boolean recordEndsOnNewline) {
+    public UniVocityFixedDataFormat setRecordEndsOnNewline(Boolean recordEndsOnNewline) {
         this.recordEndsOnNewline = recordEndsOnNewline;
         return this;
     }
@@ -122,7 +122,7 @@ public class UniVocityFixedWidthDataFormat
      * @return         current data format instance, fluent API
      * @see            com.univocity.parsers.fixed.FixedWidthFormat#setPadding(char)
      */
-    public UniVocityFixedWidthDataFormat setPadding(Character padding) {
+    public UniVocityFixedDataFormat setPadding(Character padding) {
         this.padding = padding;
         return this;
     }
@@ -217,6 +217,6 @@ public class UniVocityFixedWidthDataFormat
 
     @Override
     public String getDataFormatName() {
-        return "univocity-fixed";
+        return "univocityFixed";
     }
 }

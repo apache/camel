@@ -486,12 +486,16 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "doTry": return new ModelDeserializers.TryDefinitionDeserializer();
             case "org.apache.camel.model.TryDefinition": return new ModelDeserializers.TryDefinitionDeserializer();
             case "univocity-csv": return new ModelDeserializers.UniVocityCsvDataFormatDeserializer();
+            case "univocityCsv": return new ModelDeserializers.UniVocityCsvDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.UniVocityCsvDataFormat": return new ModelDeserializers.UniVocityCsvDataFormatDeserializer();
-            case "univocity-fixed": return new ModelDeserializers.UniVocityFixedWidthDataFormatDeserializer();
-            case "org.apache.camel.model.dataformat.UniVocityFixedWidthDataFormat": return new ModelDeserializers.UniVocityFixedWidthDataFormatDeserializer();
+            case "univocity-fixed": return new ModelDeserializers.UniVocityFixedDataFormatDeserializer();
+            case "univocityFixed": return new ModelDeserializers.UniVocityFixedDataFormatDeserializer();
+            case "org.apache.camel.model.dataformat.UniVocityFixedDataFormat": return new ModelDeserializers.UniVocityFixedDataFormatDeserializer();
             case "univocity-header": return new ModelDeserializers.UniVocityHeaderDeserializer();
+            case "univocityHeader": return new ModelDeserializers.UniVocityHeaderDeserializer();
             case "org.apache.camel.model.dataformat.UniVocityHeader": return new ModelDeserializers.UniVocityHeaderDeserializer();
             case "univocity-tsv": return new ModelDeserializers.UniVocityTsvDataFormatDeserializer();
+            case "univocityTsv": return new ModelDeserializers.UniVocityTsvDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.UniVocityTsvDataFormat": return new ModelDeserializers.UniVocityTsvDataFormatDeserializer();
             case "unmarshal": return new ModelDeserializers.UnmarshalDefinitionDeserializer();
             case "org.apache.camel.model.UnmarshalDefinition": return new ModelDeserializers.UnmarshalDefinitionDeserializer();

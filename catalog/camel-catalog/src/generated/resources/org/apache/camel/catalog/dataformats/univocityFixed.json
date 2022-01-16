@@ -1,22 +1,24 @@
 {
   "dataformat": {
     "kind": "dataformat",
-    "name": "univocity-tsv",
-    "title": "uniVocity TSV",
-    "description": "Marshal and unmarshal Java objects from and to TSV (Tab-Separated Values) records using UniVocity Parsers.",
+    "name": "univocityFixed",
+    "title": "uniVocity Fixed Length",
+    "description": "Marshal and unmarshal Java objects from and to fixed length records using UniVocity Parsers.",
     "deprecated": false,
     "firstVersion": "2.15.0",
     "label": "dataformat,transformation,csv",
-    "javaType": "org.apache.camel.dataformat.univocity.UniVocityTsvDataFormat",
+    "javaType": "org.apache.camel.dataformat.univocity.UniVocityFixedDataFormat",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-univocity-parsers",
     "version": "3.15.0-SNAPSHOT",
-    "modelName": "univocity-tsv",
-    "modelJavaType": "org.apache.camel.model.dataformat.UniVocityTsvDataFormat"
+    "modelName": "univocityFixed",
+    "modelJavaType": "org.apache.camel.model.dataformat.UniVocityFixedDataFormat"
   },
   "properties": {
-    "escapeChar": { "kind": "attribute", "displayName": "Escape Char", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "\\", "description": "The escape character." },
+    "skipTrailingCharsUntilNewline": { "kind": "attribute", "displayName": "Skip Trailing Chars Until Newline", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether or not the trailing characters until new line must be ignored. The default value is false" },
+    "recordEndsOnNewline": { "kind": "attribute", "displayName": "Record Ends On Newline", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether or not the record ends on new line. The default value is false" },
+    "padding": { "kind": "attribute", "displayName": "Padding", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The padding character. The default value is a space" },
     "nullValue": { "kind": "attribute", "displayName": "Null Value", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The string representation of a null value. The default value is null" },
     "skipEmptyLines": { "kind": "attribute", "displayName": "Skip Empty Lines", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether or not the empty lines must be ignored. The default value is true" },
     "ignoreTrailingWhitespaces": { "kind": "attribute", "displayName": "Ignore Trailing Whitespaces", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether or not the trailing white spaces must ignored. The default value is true" },

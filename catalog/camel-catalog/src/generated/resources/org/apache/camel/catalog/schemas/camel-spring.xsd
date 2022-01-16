@@ -798,7 +798,7 @@ Calls a Java bean method.
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="mime-multipart" type="tns:mimeMultipartDataFormat">
+  <xs:element name="mimeMultipart" type="tns:mimeMultipartDataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 Marshal Camel messages with attachments into MIME-Multipart messages and back.
@@ -1762,7 +1762,7 @@ null
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="univocity-csv" type="tns:uniVocityCsvDataFormat">
+  <xs:element name="univocityCsv" type="tns:uniVocityCsvDataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 Marshal and unmarshal Java objects from and to CSV (Comma Separated Values)
@@ -1771,7 +1771,7 @@ using UniVocity Parsers.
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="univocity-fixed" type="tns:uniVocityFixedWidthDataFormat">
+  <xs:element name="univocityFixed" type="tns:uniVocityFixedDataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 Marshal and unmarshal Java objects from and to fixed length records using
@@ -1780,7 +1780,7 @@ UniVocity Parsers.
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="univocity-header" type="tns:uniVocityHeader">
+  <xs:element name="univocityHeader" type="tns:uniVocityHeader">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 To configure headers for UniVocity data formats.
@@ -1788,7 +1788,7 @@ To configure headers for UniVocity data formats.
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="univocity-tsv" type="tns:uniVocityTsvDataFormat">
+  <xs:element name="univocityTsv" type="tns:uniVocityTsvDataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 Marshal and unmarshal Java objects from and to TSV (Tab-Separated Values)
@@ -5893,7 +5893,7 @@ it reaches the end when Camel is shut down. Default value: false
             <xs:element ref="tns:json"/>
             <xs:element ref="tns:jsonApi"/>
             <xs:element ref="tns:lzf"/>
-            <xs:element name="mimeMultipart" type="tns:mimeMultipartDataFormat"/>
+            <xs:element ref="tns:mimeMultipart"/>
             <xs:element ref="tns:protobuf"/>
             <xs:element ref="tns:rss"/>
             <xs:element ref="tns:secureXML"/>
@@ -5902,9 +5902,9 @@ it reaches the end when Camel is shut down. Default value: false
             <xs:element ref="tns:tarfile"/>
             <xs:element ref="tns:thrift"/>
             <xs:element ref="tns:tidyMarkup"/>
-            <xs:element ref="tns:univocity-csv"/>
-            <xs:element ref="tns:univocity-fixed"/>
-            <xs:element ref="tns:univocity-tsv"/>
+            <xs:element ref="tns:univocityCsv"/>
+            <xs:element ref="tns:univocityFixed"/>
+            <xs:element ref="tns:univocityTsv"/>
             <xs:element ref="tns:xmlrpc"/>
             <xs:element ref="tns:xstream"/>
             <xs:element ref="tns:pgp"/>
@@ -8215,7 +8215,7 @@ The delimiter of values. Default value: ,
     <xs:complexContent>
       <xs:extension base="tns:dataFormat">
         <xs:sequence>
-          <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:univocity-header"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:univocityHeader"/>
         </xs:sequence>
         <xs:attribute name="nullValue" type="xs:string">
           <xs:annotation>
@@ -8338,7 +8338,7 @@ Header length.
     </xs:simpleContent>
   </xs:complexType>
 
-  <xs:complexType name="uniVocityFixedWidthDataFormat">
+  <xs:complexType name="uniVocityFixedDataFormat">
     <xs:complexContent>
       <xs:extension base="tns:uniVocityAbstractDataFormat">
         <xs:sequence/>
@@ -12210,7 +12210,7 @@ Sets a reference to use for lookup the policy in the registry.
             <xs:element ref="tns:json"/>
             <xs:element ref="tns:jsonApi"/>
             <xs:element ref="tns:lzf"/>
-            <xs:element name="mimeMultipart" type="tns:mimeMultipartDataFormat"/>
+            <xs:element ref="tns:mimeMultipart"/>
             <xs:element ref="tns:protobuf"/>
             <xs:element ref="tns:rss"/>
             <xs:element ref="tns:secureXML"/>
@@ -12219,9 +12219,9 @@ Sets a reference to use for lookup the policy in the registry.
             <xs:element ref="tns:tarfile"/>
             <xs:element ref="tns:thrift"/>
             <xs:element ref="tns:tidyMarkup"/>
-            <xs:element ref="tns:univocity-csv"/>
-            <xs:element ref="tns:univocity-fixed"/>
-            <xs:element ref="tns:univocity-tsv"/>
+            <xs:element ref="tns:univocityCsv"/>
+            <xs:element ref="tns:univocityFixed"/>
+            <xs:element ref="tns:univocityTsv"/>
             <xs:element ref="tns:xmlrpc"/>
             <xs:element ref="tns:xstream"/>
             <xs:element ref="tns:pgp"/>
@@ -13190,7 +13190,7 @@ Set a reference to a custom Expression to use.
         <xs:element ref="tns:json"/>
         <xs:element ref="tns:jsonApi"/>
         <xs:element ref="tns:lzf"/>
-        <xs:element name="mimeMultipart" type="tns:mimeMultipartDataFormat"/>
+        <xs:element ref="tns:mimeMultipart"/>
         <xs:element ref="tns:protobuf"/>
         <xs:element ref="tns:rss"/>
         <xs:element ref="tns:secureXML"/>
@@ -13199,9 +13199,9 @@ Set a reference to a custom Expression to use.
         <xs:element ref="tns:tarfile"/>
         <xs:element ref="tns:thrift"/>
         <xs:element ref="tns:tidyMarkup"/>
-        <xs:element ref="tns:univocity-csv"/>
-        <xs:element ref="tns:univocity-fixed"/>
-        <xs:element ref="tns:univocity-tsv"/>
+        <xs:element name="univocity-csv" type="tns:uniVocityCsvDataFormat"/>
+        <xs:element name="univocity-fixed" type="tns:uniVocityFixedDataFormat"/>
+        <xs:element name="univocity-tsv" type="tns:uniVocityTsvDataFormat"/>
         <xs:element ref="tns:xmlrpc"/>
         <xs:element ref="tns:xstream"/>
         <xs:element ref="tns:pgp"/>
@@ -14801,7 +14801,7 @@ OpenId Connect URL to discover OAuth2 configuration values.
             <xs:element ref="tns:json"/>
             <xs:element ref="tns:jsonApi"/>
             <xs:element ref="tns:lzf"/>
-            <xs:element name="mimeMultipart" type="tns:mimeMultipartDataFormat"/>
+            <xs:element ref="tns:mimeMultipart"/>
             <xs:element ref="tns:protobuf"/>
             <xs:element ref="tns:rss"/>
             <xs:element ref="tns:secureXML"/>
@@ -14810,9 +14810,9 @@ OpenId Connect URL to discover OAuth2 configuration values.
             <xs:element ref="tns:tarfile"/>
             <xs:element ref="tns:thrift"/>
             <xs:element ref="tns:tidyMarkup"/>
-            <xs:element ref="tns:univocity-csv"/>
-            <xs:element ref="tns:univocity-fixed"/>
-            <xs:element ref="tns:univocity-tsv"/>
+            <xs:element name="univocity-csv" type="tns:uniVocityCsvDataFormat"/>
+            <xs:element name="univocity-fixed" type="tns:uniVocityFixedDataFormat"/>
+            <xs:element name="univocity-tsv" type="tns:uniVocityTsvDataFormat"/>
             <xs:element ref="tns:xmlrpc"/>
             <xs:element ref="tns:xstream"/>
             <xs:element ref="tns:pgp"/>

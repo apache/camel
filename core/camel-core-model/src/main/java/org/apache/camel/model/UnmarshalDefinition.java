@@ -55,7 +55,7 @@ import org.apache.camel.model.dataformat.TarFileDataFormat;
 import org.apache.camel.model.dataformat.ThriftDataFormat;
 import org.apache.camel.model.dataformat.TidyMarkupDataFormat;
 import org.apache.camel.model.dataformat.UniVocityCsvDataFormat;
-import org.apache.camel.model.dataformat.UniVocityFixedWidthDataFormat;
+import org.apache.camel.model.dataformat.UniVocityFixedDataFormat;
 import org.apache.camel.model.dataformat.UniVocityTsvDataFormat;
 import org.apache.camel.model.dataformat.XMLSecurityDataFormat;
 import org.apache.camel.model.dataformat.XStreamDataFormat;
@@ -106,9 +106,9 @@ public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition>
             @XmlElement(required = false, name = "tarfile", type = TarFileDataFormat.class),
             @XmlElement(required = false, name = "thrift", type = ThriftDataFormat.class),
             @XmlElement(required = false, name = "tidyMarkup", type = TidyMarkupDataFormat.class),
-            @XmlElement(required = false, name = "univocity-csv", type = UniVocityCsvDataFormat.class),
-            @XmlElement(required = false, name = "univocity-fixed", type = UniVocityFixedWidthDataFormat.class),
-            @XmlElement(required = false, name = "univocity-tsv", type = UniVocityTsvDataFormat.class),
+            @XmlElement(required = false, name = "univocityCsv", type = UniVocityCsvDataFormat.class),
+            @XmlElement(required = false, name = "univocityFixed", type = UniVocityFixedDataFormat.class),
+            @XmlElement(required = false, name = "univocityTsv", type = UniVocityTsvDataFormat.class),
             @XmlElement(required = false, name = "xmlrpc", type = XmlRpcDataFormat.class),
             @XmlElement(required = false, name = "xstream", type = XStreamDataFormat.class),
             @XmlElement(required = false, name = "pgp", type = PGPDataFormat.class),

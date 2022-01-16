@@ -37,10 +37,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
- * This class tests the unmarshalling of {@link org.apache.camel.dataformat.univocity.UniVocityFixedWidthDataFormat}
- * using the Spring DSL.
+ * This class tests the unmarshalling of {@link UniVocityFixedDataFormat} using the Spring DSL.
  */
-public final class UniVocityFixedWidthDataFormatUnmarshalSpringTest extends CamelSpringTestSupport {
+public final class UniVocityFixedDataFormatUnmarshalSpringTest extends CamelSpringTestSupport {
     @EndpointInject("mock:result")
     MockEndpoint result;
 

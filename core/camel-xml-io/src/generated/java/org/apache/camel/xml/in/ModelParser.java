@@ -2365,7 +2365,7 @@ public class ModelParser extends BaseParser {
     }
     protected <T extends UniVocityAbstractDataFormat> ElementHandler<T> uniVocityAbstractDataFormatElementHandler() {
         return (def, key) -> {
-            if ("univocity-header".equals(key)) {
+            if ("univocityHeader".equals(key)) {
                 doAdd(doParseUniVocityHeader(), def.getHeaders(), def::setHeaders);
                 return true;
             }
@@ -2381,8 +2381,8 @@ public class ModelParser extends BaseParser {
             return false;
         }, noElementHandler(), (def, val) -> def.setName(val));
     }
-    protected UniVocityFixedWidthDataFormat doParseUniVocityFixedWidthDataFormat() throws IOException, XmlPullParserException {
-        return doParse(new UniVocityFixedWidthDataFormat(), (def, key, val) -> {
+    protected UniVocityFixedDataFormat doParseUniVocityFixedDataFormat() throws IOException, XmlPullParserException {
+        return doParse(new UniVocityFixedDataFormat(), (def, key, val) -> {
             switch (key) {
                 case "padding": def.setPadding(val); break;
                 case "recordEndsOnNewline": def.setRecordEndsOnNewline(val); break;
@@ -3293,9 +3293,9 @@ public class ModelParser extends BaseParser {
             case "tarfile": return doParseTarFileDataFormat();
             case "thrift": return doParseThriftDataFormat();
             case "tidyMarkup": return doParseTidyMarkupDataFormat();
-            case "univocity-csv": return doParseUniVocityCsvDataFormat();
-            case "univocity-fixed": return doParseUniVocityFixedWidthDataFormat();
-            case "univocity-tsv": return doParseUniVocityTsvDataFormat();
+            case "univocityCsv": return doParseUniVocityCsvDataFormat();
+            case "univocityFixed": return doParseUniVocityFixedDataFormat();
+            case "univocityTsv": return doParseUniVocityTsvDataFormat();
             case "secureXML": return doParseXMLSecurityDataFormat();
             case "xstream": return doParseXStreamDataFormat();
             case "xmlrpc": return doParseXmlRpcDataFormat();
