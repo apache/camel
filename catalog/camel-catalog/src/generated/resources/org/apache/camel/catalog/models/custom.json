@@ -1,7 +1,7 @@
 {
   "model": {
     "kind": "model",
-    "name": "customDataFormat",
+    "name": "custom",
     "title": "Custom",
     "description": "Delegate to a custom org.apache.camel.spi.DataFormat implementation via Camel registry.",
     "deprecated": false,

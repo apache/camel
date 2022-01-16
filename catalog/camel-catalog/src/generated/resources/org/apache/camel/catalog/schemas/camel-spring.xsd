@@ -253,7 +253,7 @@ Handle CSV (Comma Separated Values) payloads.
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="customDataFormat" type="tns:customDataFormat">
+  <xs:element name="custom" type="tns:customDataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 Delegate to a custom org.apache.camel.spi.DataFormat implementation via Camel
@@ -5880,12 +5880,12 @@ it reaches the end when Camel is shut down. Default value: false
             <xs:element ref="tns:cbor"/>
             <xs:element ref="tns:crypto"/>
             <xs:element ref="tns:csv"/>
-            <xs:element name="custom" type="tns:customDataFormat"/>
+            <xs:element ref="tns:custom"/>
             <xs:element ref="tns:fhirJson"/>
             <xs:element ref="tns:fhirXml"/>
             <xs:element ref="tns:flatpack"/>
             <xs:element ref="tns:grok"/>
-            <xs:element name="gzipDeflator" type="tns:gzipDeflaterDataFormat"/>
+            <xs:element ref="tns:gzipDeflater"/>
             <xs:element ref="tns:hl7"/>
             <xs:element ref="tns:ical"/>
             <xs:element ref="tns:jacksonxml"/>
@@ -5909,7 +5909,7 @@ it reaches the end when Camel is shut down. Default value: false
             <xs:element ref="tns:xstream"/>
             <xs:element ref="tns:pgp"/>
             <xs:element ref="tns:yaml"/>
-            <xs:element name="zip" type="tns:zipDeflaterDataFormat"/>
+            <xs:element ref="tns:zipDeflater"/>
             <xs:element ref="tns:zipfile"/>
           </xs:choice>
         </xs:sequence>
@@ -12197,12 +12197,12 @@ Sets a reference to use for lookup the policy in the registry.
             <xs:element ref="tns:cbor"/>
             <xs:element ref="tns:crypto"/>
             <xs:element ref="tns:csv"/>
-            <xs:element name="custom" type="tns:customDataFormat"/>
+            <xs:element ref="tns:custom"/>
             <xs:element ref="tns:fhirJson"/>
             <xs:element ref="tns:fhirXml"/>
             <xs:element ref="tns:flatpack"/>
             <xs:element ref="tns:grok"/>
-            <xs:element name="gzipDeflator" type="tns:gzipDeflaterDataFormat"/>
+            <xs:element ref="tns:gzipDeflater"/>
             <xs:element ref="tns:hl7"/>
             <xs:element ref="tns:ical"/>
             <xs:element ref="tns:jacksonxml"/>
@@ -12226,7 +12226,7 @@ Sets a reference to use for lookup the policy in the registry.
             <xs:element ref="tns:xstream"/>
             <xs:element ref="tns:pgp"/>
             <xs:element ref="tns:yaml"/>
-            <xs:element name="zip" type="tns:zipDeflaterDataFormat"/>
+            <xs:element ref="tns:zipDeflater"/>
             <xs:element ref="tns:zipfile"/>
           </xs:choice>
         </xs:sequence>
@@ -13177,7 +13177,7 @@ Set a reference to a custom Expression to use.
         <xs:element ref="tns:cbor"/>
         <xs:element ref="tns:crypto"/>
         <xs:element ref="tns:csv"/>
-        <xs:element name="custom" type="tns:customDataFormat"/>
+        <xs:element ref="tns:custom"/>
         <xs:element ref="tns:fhirJson"/>
         <xs:element ref="tns:fhirXml"/>
         <xs:element ref="tns:flatpack"/>
@@ -14788,7 +14788,7 @@ OpenId Connect URL to discover OAuth2 configuration values.
             <xs:element ref="tns:cbor"/>
             <xs:element ref="tns:crypto"/>
             <xs:element ref="tns:csv"/>
-            <xs:element name="custom" type="tns:customDataFormat"/>
+            <xs:element ref="tns:custom"/>
             <xs:element ref="tns:fhirJson"/>
             <xs:element ref="tns:fhirXml"/>
             <xs:element ref="tns:flatpack"/>
