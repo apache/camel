@@ -3290,7 +3290,7 @@ public class ModelParser extends BaseParser {
             case "rss": return doParseRssDataFormat();
             case "soap": return doParseSoapDataFormat();
             case "syslog": return doParseSyslogDataFormat();
-            case "tarfile": return doParseTarFileDataFormat();
+            case "tarFile": return doParseTarFileDataFormat();
             case "thrift": return doParseThriftDataFormat();
             case "tidyMarkup": return doParseTidyMarkupDataFormat();
             case "univocityCsv": return doParseUniVocityCsvDataFormat();

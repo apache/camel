@@ -32,7 +32,7 @@
         <route>
             <from uri="direct:tar"/>
             <marshal>
-                <tarfile/>
+                <tarFile/>
             </marshal>
             <to uri="mock:tar"/>
         </route>
@@ -40,7 +40,7 @@
         <route>
             <from uri="direct:untar"/>
             <unmarshal>
-                <tarfile />
+                <tarFile />
             </unmarshal>
             <to uri="mock:untar" />
         </route>
@@ -48,10 +48,10 @@
         <route>
             <from uri="direct:tarAndUntar" />
             <marshal>
-                <tarfile/>
+                <tarFile/>
             </marshal>
             <unmarshal>
-                <tarfile/>
+                <tarFile/>
             </unmarshal>
             <to uri="mock:tarAndUntar"/>
         </route>
@@ -59,7 +59,7 @@
         <route>
             <from uri="direct:tarToFile"/>
             <marshal>
-                <tarfile />
+                <tarFile />
             </marshal>
             <to uri="file:target/springtar"/>
             <to uri="mock:tarToFile" />
@@ -68,7 +68,7 @@
         <route>
             <from uri="direct:dslTar"/>
             <marshal>
-                <tarfile/>
+                <tarFile/>
             </marshal>
             <to uri="mock:dslTar"/>
         </route>
@@ -76,7 +76,7 @@
         <route>
             <from uri="direct:dslUntar"/>
             <unmarshal>
-                <tarfile/>
+                <tarFile/>
             </unmarshal>
             <to uri="mock:dslUntar"/>
         </route>
