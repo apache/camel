@@ -43,7 +43,6 @@ UniVocityHeader
 UniVocityTsvDataFormat
 XMLSecurityDataFormat
 XStreamDataFormat
-XmlRpcDataFormat
 YAMLDataFormat
 YAMLLibrary
 YAMLTypeFilterDefinition

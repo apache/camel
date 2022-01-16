@@ -1855,7 +1855,7 @@ while continue routing the original message.
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="xmlrpc" type="tns:xmlRpcDataFormat">
+  <xs:element name="xmlRpc" type="tns:xmlRpcDataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 Marshal and unmarshal XML RPC protocol requests or responses.
@@ -5905,7 +5905,7 @@ it reaches the end when Camel is shut down. Default value: false
             <xs:element ref="tns:univocityCsv"/>
             <xs:element ref="tns:univocityFixed"/>
             <xs:element ref="tns:univocityTsv"/>
-            <xs:element ref="tns:xmlrpc"/>
+            <xs:element ref="tns:xmlRpc"/>
             <xs:element ref="tns:xstream"/>
             <xs:element ref="tns:pgp"/>
             <xs:element ref="tns:yaml"/>
@@ -12222,7 +12222,7 @@ Sets a reference to use for lookup the policy in the registry.
             <xs:element ref="tns:univocityCsv"/>
             <xs:element ref="tns:univocityFixed"/>
             <xs:element ref="tns:univocityTsv"/>
-            <xs:element ref="tns:xmlrpc"/>
+            <xs:element ref="tns:xmlRpc"/>
             <xs:element ref="tns:xstream"/>
             <xs:element ref="tns:pgp"/>
             <xs:element ref="tns:yaml"/>
@@ -13202,11 +13202,11 @@ Set a reference to a custom Expression to use.
         <xs:element ref="tns:univocityCsv"/>
         <xs:element ref="tns:univocityFixed"/>
         <xs:element ref="tns:univocityTsv"/>
-        <xs:element ref="tns:xmlrpc"/>
+        <xs:element ref="tns:xmlRpc"/>
         <xs:element ref="tns:xstream"/>
         <xs:element ref="tns:pgp"/>
         <xs:element ref="tns:yaml"/>
-        <xs:element name="zip" type="tns:zipDeflaterDataFormat"/>
+        <xs:element ref="tns:zipDeflater"/>
         <xs:element ref="tns:zipfile"/>
       </xs:choice>
     </xs:sequence>
@@ -14813,7 +14813,7 @@ OpenId Connect URL to discover OAuth2 configuration values.
             <xs:element ref="tns:univocityCsv"/>
             <xs:element ref="tns:univocityFixed"/>
             <xs:element ref="tns:univocityTsv"/>
-            <xs:element ref="tns:xmlrpc"/>
+            <xs:element ref="tns:xmlRpc"/>
             <xs:element ref="tns:xstream"/>
             <xs:element ref="tns:pgp"/>
             <xs:element ref="tns:yaml"/>

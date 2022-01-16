@@ -2444,15 +2444,6 @@ public class ModelParser extends BaseParser {
             return true;
         }, noValueHandler());
     }
-    protected XmlRpcDataFormat doParseXmlRpcDataFormat() throws IOException, XmlPullParserException {
-        return doParse(new XmlRpcDataFormat(), (def, key, val) -> {
-            if ("request".equals(key)) {
-                def.setRequest(val);
-                return true;
-            }
-            return identifiedTypeAttributeHandler().accept(def, key, val);
-        }, noElementHandler(), noValueHandler());
-    }
     protected YAMLDataFormat doParseYAMLDataFormat() throws IOException, XmlPullParserException {
         return doParse(new YAMLDataFormat(), (def, key, val) -> {
             switch (key) {
@@ -3298,7 +3289,6 @@ public class ModelParser extends BaseParser {
             case "univocityTsv": return doParseUniVocityTsvDataFormat();
             case "secureXML": return doParseXMLSecurityDataFormat();
             case "xstream": return doParseXStreamDataFormat();
-            case "xmlrpc": return doParseXmlRpcDataFormat();
             case "yaml": return doParseYAMLDataFormat();
             case "zipDeflater": return doParseZipDeflaterDataFormat();
             case "zipfile": return doParseZipFileDataFormat();

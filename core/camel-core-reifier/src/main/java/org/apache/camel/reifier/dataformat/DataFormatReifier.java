@@ -64,7 +64,6 @@ import org.apache.camel.model.dataformat.UniVocityFixedDataFormat;
 import org.apache.camel.model.dataformat.UniVocityTsvDataFormat;
 import org.apache.camel.model.dataformat.XMLSecurityDataFormat;
 import org.apache.camel.model.dataformat.XStreamDataFormat;
-import org.apache.camel.model.dataformat.XmlRpcDataFormat;
 import org.apache.camel.model.dataformat.YAMLDataFormat;
 import org.apache.camel.model.dataformat.ZipDeflaterDataFormat;
 import org.apache.camel.model.dataformat.ZipFileDataFormat;
@@ -249,8 +248,6 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
             return new UniVocityFixedWidthDataFormatReifier(camelContext, definition);
         } else if (definition instanceof UniVocityTsvDataFormat) {
             return new UniVocityTsvDataFormatReifier(camelContext, definition);
-        } else if (definition instanceof XmlRpcDataFormat) {
-            return new XmlRpcDataFormatReifier(camelContext, definition);
         } else if (definition instanceof XMLSecurityDataFormat) {
             return new XMLSecurityDataFormatReifier(camelContext, definition);
         } else if (definition instanceof XStreamDataFormat) {

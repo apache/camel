@@ -450,7 +450,8 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.config.StreamResequencerConfig": return new ModelDeserializers.StreamResequencerConfigDeserializer();
             case "syslog": return new ModelDeserializers.SyslogDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.SyslogDataFormat": return new ModelDeserializers.SyslogDataFormatDeserializer();
-            case "tarfile": return new ModelDeserializers.TarFileDataFormatDeserializer();
+            case "tar-file": return new ModelDeserializers.TarFileDataFormatDeserializer();
+            case "tarFile": return new ModelDeserializers.TarFileDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.TarFileDataFormat": return new ModelDeserializers.TarFileDataFormatDeserializer();
             case "thread-pool-profile": return new ModelDeserializers.ThreadPoolProfileDefinitionDeserializer();
             case "threadPoolProfile": return new ModelDeserializers.ThreadPoolProfileDefinitionDeserializer();
@@ -527,8 +528,6 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.language.XQueryExpression": return new ModelDeserializers.XQueryExpressionDeserializer();
             case "xstream": return new ModelDeserializers.XStreamDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.XStreamDataFormat": return new ModelDeserializers.XStreamDataFormatDeserializer();
-            case "xmlrpc": return new ModelDeserializers.XmlRpcDataFormatDeserializer();
-            case "org.apache.camel.model.dataformat.XmlRpcDataFormat": return new ModelDeserializers.XmlRpcDataFormatDeserializer();
             case "yaml": return new ModelDeserializers.YAMLDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.YAMLDataFormat": return new ModelDeserializers.YAMLDataFormatDeserializer();
             case "type-filter": return new ModelDeserializers.YAMLTypeFilterDefinitionDeserializer();
