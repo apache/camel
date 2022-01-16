@@ -20,7 +20,7 @@
 ** xref:gzipDeflater-dataformat.adoc[GZip Deflater]
 ** xref:hl7-dataformat.adoc[HL7]
 ** xref:ical-dataformat.adoc[iCal]
-** xref:jacksonxml-dataformat.adoc[JacksonXML]
+** xref:jacksonXml-dataformat.adoc[Jackson XML]
 ** xref:jaxb-dataformat.adoc[JAXB]
 ** xref:json-fastjson-dataformat.adoc[JSON Fastjson]
 ** xref:json-gson-dataformat.adoc[JSON Gson]
