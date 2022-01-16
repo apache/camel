@@ -54,7 +54,7 @@ import org.apache.camel.model.dataformat.PGPDataFormat;
 import org.apache.camel.model.dataformat.ProtobufDataFormat;
 import org.apache.camel.model.dataformat.ProtobufLibrary;
 import org.apache.camel.model.dataformat.RssDataFormat;
-import org.apache.camel.model.dataformat.SoapJaxbDataFormat;
+import org.apache.camel.model.dataformat.SoapDataFormat;
 import org.apache.camel.model.dataformat.SyslogDataFormat;
 import org.apache.camel.model.dataformat.TarFileDataFormat;
 import org.apache.camel.model.dataformat.ThriftDataFormat;
@@ -803,65 +803,65 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     }
 
     /**
-     * Uses the Soap 1.1 JAXB data format
+     * Uses the Soap v1.1 data format
      */
-    public T soapjaxb() {
-        return dataFormat(new SoapJaxbDataFormat());
+    public T soap() {
+        return dataFormat(new SoapDataFormat());
     }
 
     /**
-     * Uses the Soap 1.1 JAXB data format
+     * Uses the Soap v1.1 data format
      */
-    public T soapjaxb(String contextPath) {
-        return dataFormat(new SoapJaxbDataFormat(contextPath));
+    public T soap(String contextPath) {
+        return dataFormat(new SoapDataFormat(contextPath));
     }
 
     /**
-     * Uses the Soap 1.1 JAXB data format
+     * Uses the Soap v1.1 data format
      */
-    public T soapjaxb(String contextPath, String elementNameStrategyRef) {
-        return dataFormat(new SoapJaxbDataFormat(contextPath, elementNameStrategyRef));
+    public T soap(String contextPath, String elementNameStrategyRef) {
+        return dataFormat(new SoapDataFormat(contextPath, elementNameStrategyRef));
     }
 
     /**
-     * Uses the Soap 1.1 JAXB data format
+     * Uses the Soap v1.1 data format
      */
-    public T soapjaxb(String contextPath, Object elementNameStrategy) {
-        return dataFormat(new SoapJaxbDataFormat(contextPath, elementNameStrategy));
+    public T soap(String contextPath, Object elementNameStrategy) {
+        return dataFormat(new SoapDataFormat(contextPath, elementNameStrategy));
     }
 
     /**
-     * Uses the Soap 1.2 JAXB data format
+     * Uses the Soap v1.2 data format
      */
-    public T soapjaxb12() {
-        SoapJaxbDataFormat soap = new SoapJaxbDataFormat();
+    public T soap12() {
+        SoapDataFormat soap = new SoapDataFormat();
         soap.setVersion("1.2");
         return dataFormat(soap);
     }
 
     /**
-     * Uses the Soap 1.2 JAXB data format
+     * Uses the Soap v1.2 data format
      */
-    public T soapjaxb12(String contextPath) {
-        SoapJaxbDataFormat soap = new SoapJaxbDataFormat(contextPath);
+    public T soap12(String contextPath) {
+        SoapDataFormat soap = new SoapDataFormat(contextPath);
         soap.setVersion("1.2");
         return dataFormat(soap);
     }
 
     /**
-     * Uses the Soap 1.2 JAXB data format
+     * Uses the Soap v1.2 data format
      */
-    public T soapjaxb12(String contextPath, String elementNameStrategyRef) {
-        SoapJaxbDataFormat soap = new SoapJaxbDataFormat(contextPath, elementNameStrategyRef);
+    public T soap12(String contextPath, String elementNameStrategyRef) {
+        SoapDataFormat soap = new SoapDataFormat(contextPath, elementNameStrategyRef);
         soap.setVersion("1.2");
         return dataFormat(soap);
     }
 
     /**
-     * Uses the Soap JAXB data format
+     * Uses the Soap v1.2 data format
      */
-    public T soapjaxb12(String contextPath, Object elementNameStrategy) {
-        SoapJaxbDataFormat soap = new SoapJaxbDataFormat(contextPath, elementNameStrategy);
+    public T soap12(String contextPath, Object elementNameStrategy) {
+        SoapDataFormat soap = new SoapDataFormat(contextPath, elementNameStrategy);
         soap.setVersion("1.2");
         return dataFormat(soap);
     }

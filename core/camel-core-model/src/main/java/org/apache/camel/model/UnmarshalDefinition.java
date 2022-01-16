@@ -49,7 +49,7 @@ import org.apache.camel.model.dataformat.MimeMultipartDataFormat;
 import org.apache.camel.model.dataformat.PGPDataFormat;
 import org.apache.camel.model.dataformat.ProtobufDataFormat;
 import org.apache.camel.model.dataformat.RssDataFormat;
-import org.apache.camel.model.dataformat.SoapJaxbDataFormat;
+import org.apache.camel.model.dataformat.SoapDataFormat;
 import org.apache.camel.model.dataformat.SyslogDataFormat;
 import org.apache.camel.model.dataformat.TarFileDataFormat;
 import org.apache.camel.model.dataformat.ThriftDataFormat;
@@ -101,7 +101,7 @@ public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition>
             @XmlElement(required = false, name = "protobuf", type = ProtobufDataFormat.class),
             @XmlElement(required = false, name = "rss", type = RssDataFormat.class),
             @XmlElement(required = false, name = "secureXML", type = XMLSecurityDataFormat.class),
-            @XmlElement(required = false, name = "soapjaxb", type = SoapJaxbDataFormat.class),
+            @XmlElement(required = false, name = "soap", type = SoapDataFormat.class),
             @XmlElement(required = false, name = "syslog", type = SyslogDataFormat.class),
             @XmlElement(required = false, name = "tarfile", type = TarFileDataFormat.class),
             @XmlElement(required = false, name = "thrift", type = ThriftDataFormat.class),

@@ -29,9 +29,9 @@ import org.apache.camel.spi.Metadata;
  * Marshal Java objects to SOAP messages and back.
  */
 @Metadata(firstVersion = "2.3.0", label = "dataformat,transformation,xml", title = "SOAP")
-@XmlRootElement(name = "soapjaxb")
+@XmlRootElement(name = "soap")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SoapJaxbDataFormat extends DataFormatDefinition {
+public class SoapDataFormat extends DataFormatDefinition {
     @XmlAttribute(required = true)
     private String contextPath;
     @XmlAttribute
@@ -41,29 +41,29 @@ public class SoapJaxbDataFormat extends DataFormatDefinition {
     @XmlTransient
     private Object elementNameStrategy;
     @XmlAttribute
-    @Metadata(defaultValue = "1.1")
+    @Metadata(defaultValue = "1.1", enums = "1.1,1.2")
     private String version;
     @XmlAttribute
     private String namespacePrefixRef;
     @XmlAttribute
     private String schema;
 
-    public SoapJaxbDataFormat() {
-        super("soapjaxb");
+    public SoapDataFormat() {
+        super("soap");
     }
 
-    public SoapJaxbDataFormat(String contextPath) {
+    public SoapDataFormat(String contextPath) {
         this();
         setContextPath(contextPath);
     }
 
-    public SoapJaxbDataFormat(String contextPath, String elementNameStrategyRef) {
+    public SoapDataFormat(String contextPath, String elementNameStrategyRef) {
         this();
         setContextPath(contextPath);
         setElementNameStrategyRef(elementNameStrategyRef);
     }
 
-    public SoapJaxbDataFormat(String contextPath, Object elementNameStrategy) {
+    public SoapDataFormat(String contextPath, Object elementNameStrategy) {
         this();
         setContextPath(contextPath);
         setElementNameStrategy(elementNameStrategy);

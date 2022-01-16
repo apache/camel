@@ -32,7 +32,7 @@ PGPDataFormat
 ProtobufDataFormat
 ProtobufLibrary
 RssDataFormat
-SoapJaxbDataFormat
+SoapDataFormat
 SyslogDataFormat
 TarFileDataFormat
 ThriftDataFormat

@@ -66,7 +66,7 @@ public class DataFormatsDefinition {
             @XmlElement(required = false, name = "protobuf", type = ProtobufDataFormat.class),
             @XmlElement(required = false, name = "rss", type = RssDataFormat.class),
             @XmlElement(required = false, name = "secureXML", type = XMLSecurityDataFormat.class),
-            @XmlElement(required = false, name = "soapjaxb", type = SoapJaxbDataFormat.class),
+            @XmlElement(required = false, name = "soap", type = SoapDataFormat.class),
             @XmlElement(required = false, name = "syslog", type = SyslogDataFormat.class),
             @XmlElement(required = false, name = "tarfile", type = TarFileDataFormat.class),
             @XmlElement(required = false, name = "thrift", type = ThriftDataFormat.class),

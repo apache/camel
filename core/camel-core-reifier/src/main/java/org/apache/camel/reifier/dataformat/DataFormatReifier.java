@@ -54,7 +54,7 @@ import org.apache.camel.model.dataformat.MimeMultipartDataFormat;
 import org.apache.camel.model.dataformat.PGPDataFormat;
 import org.apache.camel.model.dataformat.ProtobufDataFormat;
 import org.apache.camel.model.dataformat.RssDataFormat;
-import org.apache.camel.model.dataformat.SoapJaxbDataFormat;
+import org.apache.camel.model.dataformat.SoapDataFormat;
 import org.apache.camel.model.dataformat.SyslogDataFormat;
 import org.apache.camel.model.dataformat.TarFileDataFormat;
 import org.apache.camel.model.dataformat.ThriftDataFormat;
@@ -233,7 +233,7 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
             return new ProtobufDataFormatReifier(camelContext, definition);
         } else if (definition instanceof RssDataFormat) {
             return new RssDataFormatReifier(camelContext, definition);
-        } else if (definition instanceof SoapJaxbDataFormat) {
+        } else if (definition instanceof SoapDataFormat) {
             return new SoapJaxbDataFormatReifier(camelContext, definition);
         } else if (definition instanceof SyslogDataFormat) {
             return new SyslogDataFormatReifier(camelContext, definition);

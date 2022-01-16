@@ -20,12 +20,12 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.model.dataformat.SoapJaxbDataFormat;
+import org.apache.camel.model.dataformat.SoapDataFormat;
 
-public class SoapJaxbDataFormatReifier extends DataFormatReifier<SoapJaxbDataFormat> {
+public class SoapJaxbDataFormatReifier extends DataFormatReifier<SoapDataFormat> {
 
     public SoapJaxbDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
-        super(camelContext, (SoapJaxbDataFormat) definition);
+        super(camelContext, (SoapDataFormat) definition);
     }
 
     @Override
