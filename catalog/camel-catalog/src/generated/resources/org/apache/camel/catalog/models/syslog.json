@@ -1,0 +1,18 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "syslog",
+    "title": "Syslog",
+    "description": "Marshall SyslogMessages to RFC3164 and RFC5424 messages and back.",
+    "deprecated": false,
+    "firstVersion": "2.6.0",
+    "label": "dataformat,transformation,monitoring",
+    "javaType": "org.apache.camel.model.dataformat.SyslogDataFormat",
+    "abstract": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" }
+  }
+}
