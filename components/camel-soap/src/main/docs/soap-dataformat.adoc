@@ -1,6 +1,6 @@
 = SOAP DataFormat
 :doctitle: SOAP
-:shortname: soapjaxb
+:shortname: soap
 :artifactid: camel-soap
 :description: Marshal Java objects to SOAP messages and back.
 :since: 2.3
@@ -70,7 +70,7 @@ you should look at the next example.)
 
 [source,java]
 -------------------------------------------------------------------------------------------------------------------------------------
-SoapJaxbDataFormat soap = new SoapJaxbDataFormat("com.example.customerservice", new ServiceInterfaceStrategy(CustomerService.class));
+SoapDataFormat soap = new SoapDataFormat("com.example.customerservice", new ServiceInterfaceStrategy(CustomerService.class));
 from("direct:start")
   .marshal(soap)
   .to("jms:myQueue");
@@ -91,7 +91,7 @@ most settings apply here as well
 
 [source,java]
 -------------------------------------------------------------------------------------------------------------------------------------
-SoapJaxbDataFormat soap = new SoapJaxbDataFormat("com.example.customerservice", new ServiceInterfaceStrategy(CustomerService.class));
+SoapDataFormat soap = new SoapDataFormat("com.example.customerservice", new ServiceInterfaceStrategy(CustomerService.class));
 soap.setVersion("1.2");
 from("direct:start")
   .marshal(soap)
@@ -99,7 +99,7 @@ from("direct:start")
 -------------------------------------------------------------------------------------------------------------------------------------
 
 When using XML DSL there is a version attribute you can set on the
-<soapjaxb> element.
+<soap> element.
 
 [source,xml]
 -----------------------------------------------------------------------------------------------------
@@ -117,7 +117,7 @@ And in the Camel route
 <route>
   <from uri="direct:start"/>
   <marshal>
-    <soapjaxb contentPath="com.example.customerservice" version="1.2" elementNameStrategyRef="myNameStrategy"/>
+    <soap contentPath="com.example.customerservice" version="1.2" elementNameStrategyRef="myNameStrategy"/>
   </marshal>
   <to uri="jms:myQueue"/>
 </route>
@@ -144,7 +144,7 @@ request parameters or response parameters.
 [source,java]
 -------------------------------------------------------------------------------------------------------------------------------------------
 ServiceInterfaceStrategy strat =  new ServiceInterfaceStrategy(com.example.customerservice.multipart.MultiPartCustomerService.class, true);
-SoapJaxbDataFormat soapDataFormat = new SoapJaxbDataFormat("com.example.customerservice.multipart", strat);
+SoapDataFormat soapDataFormat = new SoapDataFormat("com.example.customerservice.multipart", strat);
 -------------------------------------------------------------------------------------------------------------------------------------------
 
 === Holder Object mapping
@@ -166,7 +166,7 @@ response or fault.
 [source,java]
 ---------------------------------------------------------------------------------------------------------------------------------------
 String WS_URI = "cxf://http://myserver/customerservice?serviceClass=com.example.customerservice&dataFormat=RAW";
-SoapJaxbDataFormat soapDF = new SoapJaxbDataFormat("com.example.customerservice", new ServiceInterfaceStrategy(CustomerService.class));
+SoapDataFormat soapDF = new SoapDataFormat("com.example.customerservice", new ServiceInterfaceStrategy(CustomerService.class));
 from("direct:customerServiceClient")
   .onException(Exception.class)
     .handled(true)
@@ -203,7 +203,7 @@ server class it could be defined in a spring context as a regular bean.
 
 [source,java]
 ---------------------------------------------------------------------------------------------------------------------------------------
-SoapJaxbDataFormat soapDF = new SoapJaxbDataFormat("com.example.customerservice", new ServiceInterfaceStrategy(CustomerService.class));
+SoapDataFormat soapDF = new SoapDataFormat("com.example.customerservice", new ServiceInterfaceStrategy(CustomerService.class));
 CustomerService serverBean = new CustomerServiceImpl();
 from("jms://queue:customerServiceQueue")
   .onException(Exception.class)

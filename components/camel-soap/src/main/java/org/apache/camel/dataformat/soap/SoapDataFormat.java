@@ -41,12 +41,12 @@ import org.slf4j.LoggerFactory;
 /**
  * Data format supporting SOAP 1.1 and 1.2.
  */
-@Dataformat("soapjaxb")
-public class SoapJaxbDataFormat extends JaxbDataFormat {
+@Dataformat("soap")
+public class SoapDataFormat extends JaxbDataFormat {
 
     public static final String SOAP_UNMARSHALLED_HEADER_LIST = "org.apache.camel.dataformat.soap.UNMARSHALLED_HEADER_LIST";
 
-    private static final Logger LOG = LoggerFactory.getLogger(SoapJaxbDataFormat.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SoapDataFormat.class);
 
     private SoapDataFormatAdapter adapter;
     private ElementNameStrategy elementNameStrategy = new TypeNameStrategy();
@@ -56,13 +56,13 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
     /**
      * Remember to set the context path when using this constructor
      */
-    public SoapJaxbDataFormat() {
+    public SoapDataFormat() {
     }
 
     /**
      * Initialize with JAXB context path
      */
-    public SoapJaxbDataFormat(String contextPath) {
+    public SoapDataFormat(String contextPath) {
         super(contextPath);
     }
 
@@ -70,14 +70,14 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
      * Initialize the data format. The serviceInterface is necessary to determine the element name and namespace of the
      * element inside the soap body when marshalling
      */
-    public SoapJaxbDataFormat(String contextPath, ElementNameStrategy elementNameStrategy) {
+    public SoapDataFormat(String contextPath, ElementNameStrategy elementNameStrategy) {
         this(contextPath);
         this.elementNameStrategy = elementNameStrategy;
     }
 
     @Override
     public String getDataFormatName() {
-        return "soapjaxb";
+        return "soap";
     }
 
     @Override

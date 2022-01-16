@@ -64,8 +64,8 @@ public class SoapRoundtripTest extends CamelTestSupport {
             public void configure() throws Exception {
                 ElementNameStrategy elNameStrat = new TypeNameStrategy();
                 from("direct:start")
-                        .marshal().soapjaxb(jaxbPackage, elNameStrat)
-                        .unmarshal().soapjaxb(jaxbPackage, elNameStrat)
+                        .marshal().soap(jaxbPackage, elNameStrat)
+                        .unmarshal().soap(jaxbPackage, elNameStrat)
                         .to("mock:result");
             }
         };

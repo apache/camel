@@ -35,7 +35,7 @@
         
         <!-- we define the soap 1.2 jaxb data formats -->
         <dataFormats>
-            <soapjaxb id="soap" version="1.2" contextPath="com.example.customerservice" elementNameStrategyRef="myNameStrategy"/>
+            <soap id="soap" version="1.2" contextPath="com.example.customerservice" elementNameStrategyRef="myNameStrategy"/>
         </dataFormats>
 
         <route>

@@ -28,7 +28,7 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.dataformat.soap.SoapJaxbDataFormat;
+import org.apache.camel.dataformat.soap.SoapDataFormat;
 import org.apache.camel.dataformat.soap.TestUtil;
 import org.apache.camel.dataformat.soap.name.ElementNameStrategy;
 import org.apache.camel.dataformat.soap.name.TypeNameStrategy;
@@ -86,10 +86,10 @@ public class Soap12MarshalTest extends CamelTestSupport {
     /**
      * Create data format by using the constructor
      */
-    protected SoapJaxbDataFormat createDataFormat() {
+    protected SoapDataFormat createDataFormat() {
         String jaxbPackage = GetCustomersByName.class.getPackage().getName();
         ElementNameStrategy elStrat = new TypeNameStrategy();
-        SoapJaxbDataFormat answer = new SoapJaxbDataFormat(jaxbPackage, elStrat);
+        SoapDataFormat answer = new SoapDataFormat(jaxbPackage, elStrat);
         answer.setVersion("1.2");
         return answer;
     }
@@ -100,7 +100,7 @@ public class Soap12MarshalTest extends CamelTestSupport {
 
             @Override
             public void configure() throws Exception {
-                SoapJaxbDataFormat df = createDataFormat();
+                SoapDataFormat df = createDataFormat();
                 from("direct:start") //
                         .marshal(df) //
                         .to("mock:result");
