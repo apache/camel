@@ -3279,7 +3279,7 @@ public class ModelParser extends BaseParser {
             case "gzipDeflater": return doParseGzipDeflaterDataFormat();
             case "hl7": return doParseHL7DataFormat();
             case "ical": return doParseIcalDataFormat();
-            case "jacksonxml": return doParseJacksonXMLDataFormat();
+            case "jacksonXml": return doParseJacksonXMLDataFormat();
             case "jaxb": return doParseJaxbDataFormat();
             case "jsonApi": return doParseJsonApiDataFormat();
             case "json": return doParseJsonDataFormat();

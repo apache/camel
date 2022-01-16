@@ -1,8 +1,8 @@
 {
   "dataformat": {
     "kind": "dataformat",
-    "name": "jacksonxml",
-    "title": "JacksonXML",
+    "name": "jacksonXml",
+    "title": "Jackson XML",
     "description": "Unmarshal a XML payloads to POJOs and back using XMLMapper extension of Jackson.",
     "deprecated": false,
     "firstVersion": "2.16.0",
@@ -12,7 +12,7 @@
     "groupId": "org.apache.camel",
     "artifactId": "camel-jacksonxml",
     "version": "3.15.0-SNAPSHOT",
-    "modelName": "jacksonxml",
+    "modelName": "jacksonXml",
     "modelJavaType": "org.apache.camel.model.dataformat.JacksonXMLDataFormat"
   },
   "properties": {

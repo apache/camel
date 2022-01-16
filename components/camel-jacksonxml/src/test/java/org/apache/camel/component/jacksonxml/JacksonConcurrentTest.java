@@ -64,9 +64,9 @@ public class JacksonConcurrentTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").marshal().jacksonxml().to("log:marshalled").to("direct:marshalled");
+                from("direct:start").marshal().jacksonXml().to("log:marshalled").to("direct:marshalled");
 
-                from("direct:marshalled").unmarshal().jacksonxml(TestPojo.class).to("mock:result");
+                from("direct:marshalled").unmarshal().jacksonXml(TestPojo.class).to("mock:result");
             }
         };
     }
