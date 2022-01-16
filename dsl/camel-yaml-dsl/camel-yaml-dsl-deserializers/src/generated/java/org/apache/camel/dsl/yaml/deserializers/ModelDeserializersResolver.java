@@ -224,6 +224,7 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "method": return new ModelDeserializers.MethodCallExpressionDeserializer();
             case "org.apache.camel.model.language.MethodCallExpression": return new ModelDeserializers.MethodCallExpressionDeserializer();
             case "mime-multipart": return new ModelDeserializers.MimeMultipartDataFormatDeserializer();
+            case "mimeMultipart": return new ModelDeserializers.MimeMultipartDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.MimeMultipartDataFormat": return new ModelDeserializers.MimeMultipartDataFormatDeserializer();
             case "multicast": return new ModelDeserializers.MulticastDefinitionDeserializer();
             case "org.apache.camel.model.MulticastDefinition": return new ModelDeserializers.MulticastDefinitionDeserializer();

@@ -3284,7 +3284,7 @@ public class ModelParser extends BaseParser {
             case "jsonApi": return doParseJsonApiDataFormat();
             case "json": return doParseJsonDataFormat();
             case "lzf": return doParseLZFDataFormat();
-            case "mime-multipart": return doParseMimeMultipartDataFormat();
+            case "mimeMultipart": return doParseMimeMultipartDataFormat();
             case "pgp": return doParsePGPDataFormat();
             case "protobuf": return doParseProtobufDataFormat();
             case "rss": return doParseRssDataFormat();

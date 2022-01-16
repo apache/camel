@@ -8491,7 +8491,10 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     @YamlType(
             types = org.apache.camel.model.dataformat.MimeMultipartDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            nodes = "mime-multipart",
+            nodes = {
+                    "mime-multipart",
+                    "mimeMultipart"
+            },
             properties = {
                     @YamlProperty(name = "binary-content", type = "boolean"),
                     @YamlProperty(name = "headers-inline", type = "boolean"),
