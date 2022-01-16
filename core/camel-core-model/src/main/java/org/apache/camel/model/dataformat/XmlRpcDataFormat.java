@@ -28,7 +28,7 @@ import org.apache.camel.spi.Metadata;
  * Marshal and unmarshal XML RPC protocol requests or responses.
  */
 @Metadata(firstVersion = "2.11.0", label = "dataformat,transformation,xml", title = "XML RPC")
-@XmlRootElement(name = "xmlrpc")
+@XmlRootElement(name = "xmlRpc")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XmlRpcDataFormat extends DataFormatDefinition {
     @XmlAttribute
@@ -36,7 +36,7 @@ public class XmlRpcDataFormat extends DataFormatDefinition {
     private String request;
 
     public XmlRpcDataFormat() {
-        super("xmlrpc");
+        super("xmlRpc");
     }
 
     public String getRequest() {

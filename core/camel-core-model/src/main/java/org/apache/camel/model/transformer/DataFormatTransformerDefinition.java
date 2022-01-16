@@ -113,7 +113,7 @@ public class DataFormatTransformerDefinition extends TransformerDefinition {
             @XmlElement(required = false, name = "univocityCsv", type = UniVocityCsvDataFormat.class),
             @XmlElement(required = false, name = "univocityFixed", type = UniVocityFixedDataFormat.class),
             @XmlElement(required = false, name = "univocityTsv", type = UniVocityTsvDataFormat.class),
-            @XmlElement(required = false, name = "xmlrpc", type = XmlRpcDataFormat.class),
+            @XmlElement(required = false, name = "xmlRpc", type = XmlRpcDataFormat.class),
             @XmlElement(required = false, name = "xstream", type = XStreamDataFormat.class),
             @XmlElement(required = false, name = "pgp", type = PGPDataFormat.class),
             @XmlElement(required = false, name = "yaml", type = YAMLDataFormat.class),
