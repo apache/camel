@@ -1,6 +1,6 @@
 = GZip Deflater DataFormat
 :doctitle: GZip Deflater
-:shortname: gzipdeflater
+:shortname: gzipDeflater
 :artifactid: camel-zip-deflater
 :description: Compress and decompress messages using java.util.zip.GZIPStream.
 :since: 2.0

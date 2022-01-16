@@ -40,7 +40,7 @@ import org.apache.camel.model.dataformat.CustomDataFormat;
 import org.apache.camel.model.dataformat.FhirJsonDataFormat;
 import org.apache.camel.model.dataformat.FhirXmlDataFormat;
 import org.apache.camel.model.dataformat.GrokDataFormat;
-import org.apache.camel.model.dataformat.GzipDataFormat;
+import org.apache.camel.model.dataformat.GzipDeflaterDataFormat;
 import org.apache.camel.model.dataformat.HL7DataFormat;
 import org.apache.camel.model.dataformat.IcalDataFormat;
 import org.apache.camel.model.dataformat.JacksonXMLDataFormat;
@@ -308,7 +308,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      * Uses the GZIP deflater data format
      */
     public T gzipDeflater() {
-        GzipDataFormat gzdf = new GzipDataFormat();
+        GzipDeflaterDataFormat gzdf = new GzipDeflaterDataFormat();
         return dataFormat(gzdf);
     }
 

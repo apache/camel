@@ -2089,8 +2089,8 @@ public class ModelParser extends BaseParser {
             return true;
         }, noElementHandler(), noValueHandler());
     }
-    protected GzipDataFormat doParseGzipDataFormat() throws IOException, XmlPullParserException {
-        return doParse(new GzipDataFormat(),
+    protected GzipDeflaterDataFormat doParseGzipDeflaterDataFormat() throws IOException, XmlPullParserException {
+        return doParse(new GzipDeflaterDataFormat(),
             identifiedTypeAttributeHandler(), noElementHandler(), noValueHandler());
     }
     protected HL7DataFormat doParseHL7DataFormat() throws IOException, XmlPullParserException {
@@ -3276,7 +3276,7 @@ public class ModelParser extends BaseParser {
             case "fhirXml": return doParseFhirXmlDataFormat();
             case "flatpack": return doParseFlatpackDataFormat();
             case "grok": return doParseGrokDataFormat();
-            case "gzipdeflater": return doParseGzipDataFormat();
+            case "gzipDeflater": return doParseGzipDeflaterDataFormat();
             case "hl7": return doParseHL7DataFormat();
             case "ical": return doParseIcalDataFormat();
             case "jacksonxml": return doParseJacksonXMLDataFormat();

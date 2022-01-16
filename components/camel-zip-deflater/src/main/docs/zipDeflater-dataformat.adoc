@@ -1,6 +1,6 @@
-= Zip Deflate Compression DataFormat
-:doctitle: Zip Deflate Compression
-:shortname: zipdeflater
+= Zip Deflater DataFormat
+:doctitle: Zip Deflater
+:shortname: zipDeflater
 :artifactid: camel-zip-deflater
 :description: Compress and decompress streams using java.util.zip.Deflater and java.util.zip.Inflater.
 :since: 2.12

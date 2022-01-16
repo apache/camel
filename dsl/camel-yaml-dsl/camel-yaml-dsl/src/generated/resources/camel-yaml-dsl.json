@@ -1402,8 +1402,8 @@
           "grok" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GrokDataFormat"
           },
-          "gzip" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GzipDataFormat"
+          "gzip-deflator" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GzipDeflaterDataFormat"
           },
           "hl7" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.HL7DataFormat"
@@ -2867,8 +2867,8 @@
           "grok" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GrokDataFormat"
           },
-          "gzip" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GzipDataFormat"
+          "gzip-deflator" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GzipDeflaterDataFormat"
           },
           "hl7" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.HL7DataFormat"
@@ -4229,8 +4229,8 @@
           "grok" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GrokDataFormat"
           },
-          "gzip" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GzipDataFormat"
+          "gzip-deflator" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GzipDeflaterDataFormat"
           },
           "hl7" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.HL7DataFormat"
@@ -4474,7 +4474,7 @@
         },
         "required" : [ "pattern" ]
       },
-      "org.apache.camel.model.dataformat.GzipDataFormat" : {
+      "org.apache.camel.model.dataformat.GzipDeflaterDataFormat" : {
         "type" : "object",
         "properties" : {
           "id" : {
@@ -7154,8 +7154,8 @@
           "grok" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GrokDataFormat"
           },
-          "gzip" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GzipDataFormat"
+          "gzip-deflator" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GzipDeflaterDataFormat"
           },
           "hl7" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.HL7DataFormat"

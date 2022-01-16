@@ -523,7 +523,7 @@ Evaluates a Groovy script.
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="gzipdeflater" type="tns:gzipDataFormat">
+  <xs:element name="gzipdeflater" type="tns:gzipDeflaterDataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 Compress and decompress messages using java.util.zip.GZIPStream.
@@ -5885,7 +5885,7 @@ it reaches the end when Camel is shut down. Default value: false
             <xs:element ref="tns:fhirXml"/>
             <xs:element ref="tns:flatpack"/>
             <xs:element ref="tns:grok"/>
-            <xs:element name="gzip" type="tns:gzipDataFormat"/>
+            <xs:element name="gzipDeflator" type="tns:gzipDeflaterDataFormat"/>
             <xs:element ref="tns:hl7"/>
             <xs:element ref="tns:ical"/>
             <xs:element ref="tns:jacksonxml"/>
@@ -7036,7 +7036,7 @@ Default value: false
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:complexType name="gzipDataFormat">
+  <xs:complexType name="gzipDeflaterDataFormat">
     <xs:complexContent>
       <xs:extension base="tns:dataFormat">
         <xs:sequence/>
@@ -12202,7 +12202,7 @@ Sets a reference to use for lookup the policy in the registry.
             <xs:element ref="tns:fhirXml"/>
             <xs:element ref="tns:flatpack"/>
             <xs:element ref="tns:grok"/>
-            <xs:element name="gzip" type="tns:gzipDataFormat"/>
+            <xs:element name="gzipDeflator" type="tns:gzipDeflaterDataFormat"/>
             <xs:element ref="tns:hl7"/>
             <xs:element ref="tns:ical"/>
             <xs:element ref="tns:jacksonxml"/>
@@ -13182,7 +13182,7 @@ Set a reference to a custom Expression to use.
         <xs:element ref="tns:fhirXml"/>
         <xs:element ref="tns:flatpack"/>
         <xs:element ref="tns:grok"/>
-        <xs:element name="gzip" type="tns:gzipDataFormat"/>
+        <xs:element name="gzipDeflator" type="tns:gzipDeflaterDataFormat"/>
         <xs:element ref="tns:hl7"/>
         <xs:element ref="tns:ical"/>
         <xs:element ref="tns:jacksonxml"/>
@@ -14793,7 +14793,7 @@ OpenId Connect URL to discover OAuth2 configuration values.
             <xs:element ref="tns:fhirXml"/>
             <xs:element ref="tns:flatpack"/>
             <xs:element ref="tns:grok"/>
-            <xs:element name="gzip" type="tns:gzipDataFormat"/>
+            <xs:element name="gzipDeflator" type="tns:gzipDeflaterDataFormat"/>
             <xs:element ref="tns:hl7"/>
             <xs:element ref="tns:ical"/>
             <xs:element ref="tns:jacksonxml"/>
