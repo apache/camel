@@ -234,7 +234,7 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
         } else if (definition instanceof RssDataFormat) {
             return new RssDataFormatReifier(camelContext, definition);
         } else if (definition instanceof SoapDataFormat) {
-            return new SoapJaxbDataFormatReifier(camelContext, definition);
+            return new SoapDataFormatReifier(camelContext, definition);
         } else if (definition instanceof SyslogDataFormat) {
             return new SyslogDataFormatReifier(camelContext, definition);
         } else if (definition instanceof TarFileDataFormat) {

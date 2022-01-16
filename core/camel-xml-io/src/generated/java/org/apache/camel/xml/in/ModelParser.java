@@ -32,6 +32,7 @@ import java.util.Optional;
 import org.apache.camel.model.*;
 import org.apache.camel.model.cloud.*;
 import org.apache.camel.model.config.BatchResequencerConfig;
+import org.apache.camel.model.config.ResequencerConfig;
 import org.apache.camel.model.config.StreamResequencerConfig;
 import org.apache.camel.model.dataformat.*;
 import org.apache.camel.model.language.*;
@@ -2278,7 +2279,7 @@ public class ModelParser extends BaseParser {
         return doParse(new RssDataFormat(),
             identifiedTypeAttributeHandler(), noElementHandler(), noValueHandler());
     }
-    protected SoapDataFormat doParseSoapJaxbDataFormat() throws IOException, XmlPullParserException {
+    protected SoapDataFormat doParseSoapDataFormat() throws IOException, XmlPullParserException {
         return doParse(new SoapDataFormat(), (def, key, val) -> {
             switch (key) {
                 case "contextPath": def.setContextPath(val); break;
@@ -3287,7 +3288,7 @@ public class ModelParser extends BaseParser {
             case "pgp": return doParsePGPDataFormat();
             case "protobuf": return doParseProtobufDataFormat();
             case "rss": return doParseRssDataFormat();
-            case "soapjaxb": return doParseSoapJaxbDataFormat();
+            case "soap": return doParseSoapDataFormat();
             case "syslog": return doParseSyslogDataFormat();
             case "tarfile": return doParseTarFileDataFormat();
             case "thrift": return doParseThriftDataFormat();

@@ -22,9 +22,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.SoapDataFormat;
 
-public class SoapJaxbDataFormatReifier extends DataFormatReifier<SoapDataFormat> {
+public class SoapDataFormatReifier extends DataFormatReifier<SoapDataFormat> {
 
-    public SoapJaxbDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
+    public SoapDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
         super(camelContext, (SoapDataFormat) definition);
     }
 
