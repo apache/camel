@@ -43,7 +43,7 @@
 ** xref:univocityCsv-dataformat.adoc[uniVocity CSV]
 ** xref:univocityFixed-dataformat.adoc[uniVocity Fixed Length]
 ** xref:univocityTsv-dataformat.adoc[uniVocity TSV]
-** xref:secureXML-dataformat.adoc[XML Security]
+** xref:xmlSecurity-dataformat.adoc[XML Security]
 ** xref:xstream-dataformat.adoc[XStream]
 ** xref:yaml-snakeyaml-dataformat.adoc[YAML SnakeYAML]
 ** xref:zipDeflater-dataformat.adoc[Zip Deflater]

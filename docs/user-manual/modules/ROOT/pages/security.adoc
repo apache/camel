@@ -41,7 +41,7 @@ portions/sections of a payload.
 
 These capabilities are offered by the following components:
 
-* xref:components:dataformats:secureXML-dataformat.adoc[XMLSecurity DataFormat] (XML
+* xref:components:dataformats:xmlSecurity-dataformat.adoc[XML Security DataFormat] (XML
 Encryption support)
 * xref:components:dataformats:crypto-dataformat.adoc[Crypto DataFormat] (Encryption + PGP support)
 * xref:components::crypto-component.adoc[Crypto component] (Signature
