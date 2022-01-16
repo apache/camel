@@ -1,8 +1,8 @@
 {
   "model": {
     "kind": "model",
-    "name": "jacksonxml",
-    "title": "JacksonXML",
+    "name": "jacksonXml",
+    "title": "Jackson XML",
     "description": "Unmarshal a XML payloads to POJOs and back using XMLMapper extension of Jackson.",
     "deprecated": false,
     "firstVersion": "2.16.0",

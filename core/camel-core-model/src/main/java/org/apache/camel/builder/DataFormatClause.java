@@ -474,7 +474,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     /**
      * Uses the Jackson XML data format
      */
-    public T jacksonxml() {
+    public T jacksonXml() {
         return dataFormat(new JacksonXMLDataFormat());
     }
 
@@ -483,7 +483,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      *
      * @param unmarshalType unmarshal type for xml jackson type
      */
-    public T jacksonxml(Class<?> unmarshalType) {
+    public T jacksonXml(Class<?> unmarshalType) {
         JacksonXMLDataFormat jacksonXMLDataFormat = new JacksonXMLDataFormat();
         jacksonXMLDataFormat.setUnmarshalType(unmarshalType);
         return dataFormat(jacksonXMLDataFormat);
@@ -495,7 +495,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      * @param unmarshalType unmarshal type for xml jackson type
      * @param jsonView      the view type for xml jackson type
      */
-    public T jacksonxml(Class<?> unmarshalType, Class<?> jsonView) {
+    public T jacksonXml(Class<?> unmarshalType, Class<?> jsonView) {
         JacksonXMLDataFormat jacksonXMLDataFormat = new JacksonXMLDataFormat();
         jacksonXMLDataFormat.setUnmarshalType(unmarshalType);
         jacksonXMLDataFormat.setJsonView(jsonView);
@@ -507,7 +507,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      *
      * @param prettyPrint turn pretty printing on or off
      */
-    public T jacksonxml(boolean prettyPrint) {
+    public T jacksonXml(boolean prettyPrint) {
         JacksonXMLDataFormat jacksonXMLDataFormat = new JacksonXMLDataFormat();
         jacksonXMLDataFormat.setPrettyPrint(Boolean.toString(prettyPrint));
         return dataFormat(jacksonXMLDataFormat);
@@ -519,7 +519,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      * @param unmarshalType unmarshal type for xml jackson type
      * @param prettyPrint   turn pretty printing on or off
      */
-    public T jacksonxml(Class<?> unmarshalType, boolean prettyPrint) {
+    public T jacksonXml(Class<?> unmarshalType, boolean prettyPrint) {
         JacksonXMLDataFormat jacksonXMLDataFormat = new JacksonXMLDataFormat();
         jacksonXMLDataFormat.setUnmarshalType(unmarshalType);
         jacksonXMLDataFormat.setPrettyPrint(Boolean.toString(prettyPrint));
@@ -533,7 +533,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      * @param jsonView      the view type for xml jackson type
      * @param prettyPrint   turn pretty printing on or off
      */
-    public T jacksonxml(Class<?> unmarshalType, Class<?> jsonView, boolean prettyPrint) {
+    public T jacksonXml(Class<?> unmarshalType, Class<?> jsonView, boolean prettyPrint) {
         JacksonXMLDataFormat jacksonXMLDataFormat = new JacksonXMLDataFormat();
         jacksonXMLDataFormat.setUnmarshalType(unmarshalType);
         jacksonXMLDataFormat.setJsonView(jsonView);
@@ -548,7 +548,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      * @param jsonView      the view type for xml jackson type
      * @param include       include such as <tt>ALWAYS</tt>, <tt>NON_NULL</tt>, etc.
      */
-    public T jacksonxml(Class<?> unmarshalType, Class<?> jsonView, String include) {
+    public T jacksonXml(Class<?> unmarshalType, Class<?> jsonView, String include) {
         JacksonXMLDataFormat jacksonXMLDataFormat = new JacksonXMLDataFormat();
         jacksonXMLDataFormat.setUnmarshalType(unmarshalType);
         jacksonXMLDataFormat.setJsonView(jsonView);
@@ -564,7 +564,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      * @param include       include such as <tt>ALWAYS</tt>, <tt>NON_NULL</tt>, etc.
      * @param prettyPrint   turn pretty printing on or off
      */
-    public T jacksonxml(Class<?> unmarshalType, Class<?> jsonView, String include, boolean prettyPrint) {
+    public T jacksonXml(Class<?> unmarshalType, Class<?> jsonView, String include, boolean prettyPrint) {
         JacksonXMLDataFormat jacksonXMLDataFormat = new JacksonXMLDataFormat();
         jacksonXMLDataFormat.setUnmarshalType(unmarshalType);
         jacksonXMLDataFormat.setJsonView(jsonView);

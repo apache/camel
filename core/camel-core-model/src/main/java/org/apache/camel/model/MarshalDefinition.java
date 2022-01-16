@@ -92,7 +92,7 @@ public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> imp
             @XmlElement(required = false, name = "gzipDeflater", type = GzipDeflaterDataFormat.class),
             @XmlElement(required = false, name = "hl7", type = HL7DataFormat.class),
             @XmlElement(required = false, name = "ical", type = IcalDataFormat.class),
-            @XmlElement(required = false, name = "jacksonxml", type = JacksonXMLDataFormat.class),
+            @XmlElement(required = false, name = "jacksonXml", type = JacksonXMLDataFormat.class),
             @XmlElement(required = false, name = "jaxb", type = JaxbDataFormat.class),
             @XmlElement(required = false, name = "json", type = JsonDataFormat.class),
             @XmlElement(required = false, name = "jsonApi", type = JsonApiDataFormat.class),
