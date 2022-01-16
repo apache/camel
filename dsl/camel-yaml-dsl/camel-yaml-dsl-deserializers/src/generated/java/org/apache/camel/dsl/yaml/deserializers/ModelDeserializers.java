@@ -18429,7 +18429,10 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     @YamlType(
             types = org.apache.camel.model.dataformat.ZipDeflaterDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            nodes = "zipdeflater",
+            nodes = {
+                    "zip-deflater",
+                    "zipDeflater"
+            },
             properties = {
                     @YamlProperty(name = "compression-level", type = "number"),
                     @YamlProperty(name = "id", type = "string")

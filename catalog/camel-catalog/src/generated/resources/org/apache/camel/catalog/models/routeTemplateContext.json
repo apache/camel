@@ -1,0 +1,18 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "routeTemplateContext",
+    "title": "Route Template Context",
+    "description": "Configuration of route templates using XML",
+    "deprecated": false,
+    "label": "spring,configuration,routing",
+    "javaType": "org.apache.camel.spring.xml.CamelRouteTemplateContextFactoryBean",
+    "abstract": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "routeTemplate": { "kind": "element", "displayName": "Route Template", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.RouteTemplateDefinition>", "deprecated": false, "autowired": false, "secret": false, "description": "Route Templates" },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" }
+  }
+}

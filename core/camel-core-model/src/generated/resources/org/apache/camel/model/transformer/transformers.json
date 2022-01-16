@@ -1,0 +1,17 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "transformers",
+    "title": "Transformations",
+    "description": "To configure transformers.",
+    "deprecated": false,
+    "label": "transformation",
+    "javaType": "org.apache.camel.model.transformer.TransformersDefinition",
+    "abstract": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "transformers": { "kind": "element", "displayName": "Transformers", "required": true, "type": "array", "javaType": "java.util.List<org.apache.camel.model.transformer.TransformerDefinition>", "oneOf": [ "customTransformer", "dataFormatTransformer", "endpointTransformer" ], "deprecated": false, "autowired": false, "secret": false, "description": "The configured transformers" }
+  }
+}

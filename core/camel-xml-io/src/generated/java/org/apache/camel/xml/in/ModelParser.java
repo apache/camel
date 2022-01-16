@@ -3300,7 +3300,7 @@ public class ModelParser extends BaseParser {
             case "xstream": return doParseXStreamDataFormat();
             case "xmlrpc": return doParseXmlRpcDataFormat();
             case "yaml": return doParseYAMLDataFormat();
-            case "zipdeflater": return doParseZipDeflaterDataFormat();
+            case "zipDeflater": return doParseZipDeflaterDataFormat();
             case "zipfile": return doParseZipFileDataFormat();
             default: return null;
         }
