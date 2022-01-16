@@ -41,10 +41,18 @@ The deprecated `propertyName` on `removeProperty` EIP has been removed, use `nam
 
 === Data Formats
 
-The data formats naming has been made consistent to use Camel Case.
+The data formats naming has been made consistent to use Camel Case:
 
-The `gzip-deflater` and `zip-deflater` has been renamed to `gzipDeflater` and `zipDeflater`.
-The `mime-multipart` has been renamed to `mimeMultipart`.
+[width="100%",cols="1m,1m",options="header"]
+|====
+| Old Name | New Name
+| gzip-deflater | gzipDeflater
+| zip-deflater | zipDeflater
+| mime-multipart | mimeMultipart
+| univociy-csv | univociyCsv
+| univociy-fixed | univociyFixed
+| univociy-tsv | univociyTsv
+|====
 
 ==== Message History
 
