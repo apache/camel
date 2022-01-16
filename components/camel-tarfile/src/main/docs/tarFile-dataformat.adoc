@@ -1,6 +1,6 @@
 = Tar File DataFormat
 :doctitle: Tar File
-:shortname: tarfile
+:shortname: tarFile
 :artifactid: camel-tarfile
 :description: Archive files into tarballs or extract files from tarballs.
 :since: 2.16
