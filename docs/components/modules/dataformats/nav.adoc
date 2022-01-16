@@ -37,7 +37,7 @@
 ** xref:rss-dataformat.adoc[RSS]
 ** xref:soap-dataformat.adoc[SOAP]
 ** xref:syslog-dataformat.adoc[Syslog]
-** xref:tarfile-dataformat.adoc[Tar File]
+** xref:tarFile-dataformat.adoc[Tar File]
 ** xref:thrift-dataformat.adoc[Thrift]
 ** xref:tidyMarkup-dataformat.adoc[TidyMarkup]
 ** xref:univocityCsv-dataformat.adoc[uniVocity CSV]
