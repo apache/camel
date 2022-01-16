@@ -48,6 +48,7 @@ The data formats naming has been made consistent to use Camel Case:
 | Old Name | New Name
 | gzip-deflater | gzipDeflater
 | zip-deflater | zipDeflater
+| jacksonxml | jacksonXml
 | mime-multipart | mimeMultipart
 | univociy-csv | univociyCsv
 | univociy-fixed | univociyFixed
