@@ -1,12 +1,12 @@
 {
   "model": {
     "kind": "model",
-    "name": "secureXML",
+    "name": "xmlSecurity",
     "title": "XML Security",
     "description": "Encrypt and decrypt XML payloads using Apache Santuario.",
     "deprecated": false,
     "firstVersion": "2.0.0",
-    "label": "dataformat,transformation,xml,security",
+    "label": "dataformat,transformation,xml",
     "javaType": "org.apache.camel.model.dataformat.XMLSecurityDataFormat",
     "abstract": false,
     "input": false,

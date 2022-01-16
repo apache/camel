@@ -3287,7 +3287,7 @@ public class ModelParser extends BaseParser {
             case "univocityCsv": return doParseUniVocityCsvDataFormat();
             case "univocityFixed": return doParseUniVocityFixedDataFormat();
             case "univocityTsv": return doParseUniVocityTsvDataFormat();
-            case "secureXML": return doParseXMLSecurityDataFormat();
+            case "xmlSecurity": return doParseXMLSecurityDataFormat();
             case "xstream": return doParseXStreamDataFormat();
             case "yaml": return doParseYAMLDataFormat();
             case "zipDeflater": return doParseZipDeflaterDataFormat();

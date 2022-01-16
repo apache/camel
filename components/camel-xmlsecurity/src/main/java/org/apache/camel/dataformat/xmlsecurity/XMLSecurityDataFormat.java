@@ -67,7 +67,7 @@ import org.apache.xml.security.utils.XMLUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Dataformat("secureXML")
+@Dataformat("xmlSecurity")
 public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(XMLSecurityDataFormat.class);
@@ -256,7 +256,7 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
 
     @Override
     public String getDataFormatName() {
-        return "secureXML";
+        return "xmlSecurity";
     }
 
     @Override

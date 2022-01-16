@@ -1,6 +1,6 @@
 = XML Security DataFormat
 :doctitle: XML Security
-:shortname: secureXML
+:shortname: xmlSecurity
 :artifactid: camel-xmlsecurity
 :description: Encrypt and decrypt XML payloads using Apache Santuario.
 :since: 2.0
@@ -61,12 +61,12 @@ has been explicitly configured as the key cipher algorithm.
 == Marshal
 
 In order to encrypt the payload, the `marshal` processor needs to be
-applied on the route followed by the *`secureXML()`* tag.
+applied on the route followed by the *`xmlSecurity()`* tag.
 
 == Unmarshal
 
 In order to decrypt the payload, the `unmarshal` processor needs to be
-applied on the route followed by the *`secureXML()`* tag.
+applied on the route followed by the *`xmlSecurity()`* tag.
 
 == Examples
 
@@ -82,8 +82,8 @@ keyGenerator.init(256);
 Key key = keyGenerator.generateKey();
 
 from("direct:start")
-    .marshal().secureXML(key.getEncoded())
-    .unmarshal().secureXML(key.getEncoded()
+    .marshal().xmlSecurity(key.getEncoded())
+    .unmarshal().xmlSecurity(key.getEncoded()
     .to("direct:end");
 ----------------------------
 
@@ -96,8 +96,8 @@ boolean secureTagContent = true;
 ...
 String passPhrase = "Just another 24 Byte key";
 from("direct:start")
-    .marshal().secureXML(tagXPATH, secureTagContent, passPhrase)
-    .unmarshal().secureXML(tagXPATH, secureTagContent, passPhrase)
+    .marshal().xmlSecurity(tagXPATH, secureTagContent, passPhrase)
+    .unmarshal().xmlSecurity(tagXPATH, secureTagContent, passPhrase)
     .to("direct:end");
 ------------------------------------------------------------------
 
@@ -112,8 +112,8 @@ boolean secureTagContent = true;
 String passPhrase = "Just another 24 Byte key";
 String algorithm= XMLCipher.TRIPLEDES;
 from("direct:start")
-    .marshal().secureXML(tagXPATH, secureTagContent, passPhrase, algorithm)
-    .unmarshal().secureXML(tagXPATH, secureTagContent, passPhrase, algorithm)
+    .marshal().xmlSecurity(tagXPATH, secureTagContent, passPhrase, algorithm)
+    .unmarshal().xmlSecurity(tagXPATH, secureTagContent, passPhrase, algorithm)
     .to("direct:end");
 -----------------------------------------------------------------------------
 
@@ -134,7 +134,7 @@ tsParameters.setResource("sender.ts");
 context.addRoutes(new RouteBuilder() {
     public void configure() {
         from("direct:start")
-           .marshal().secureXML("//cust:cheesesites/italy", namespaces, true, "recipient",
+           .marshal().xmlSecurity("//cust:cheesesites/italy", namespaces, true, "recipient",
                                 testCypherAlgorithm, XMLCipher.RSA_v1dot5, tsParameters)
            .to("mock:encrypted");
     }
@@ -146,7 +146,7 @@ Spring XML
 
 A namespace prefix that is defined as part of the `camelContext`
 definition can be re-used in context within the data format `secureTag`
-attribute of the `secureXML` element.
+attribute of the `xmlSecurity` element.
 
 [source,xml]
 ---------------------------------------------------------------------------------
@@ -156,7 +156,7 @@ attribute of the `secureXML` element.
     <route>
         <from uri="direct://start"/>
             <marshal>
-                <secureXML secureTag="//cheese:cheesesites/italy"
+                <xmlSecurity secureTag="//cheese:cheesesites/italy"
                            secureTagContents="true"/>
             </marshal> 
             ...
@@ -178,7 +178,7 @@ Spring XML Sender
     <route>
         <from uri="direct://start"/>
             <marshal>
-                <secureXML secureTag="//cheese:cheesesites/italy"
+                <xmlSecurity secureTag="//cheese:cheesesites/italy"
                            secureTagContents="true"
                            xmlCipherAlgorithm="http://www.w3.org/2001/04/xmlenc#aes128-cbc"       
                            keyCipherAlgorithm="http://www.w3.org/2001/04/xmlenc#rsa-1_5"
@@ -193,7 +193,7 @@ Spring XML Recipient
 
 [source,xml]
 ----------------------------------------------------------------------------------------------
- 
+
 <!--  key store configuration -->
 <camel:keyStoreParameters id="keyStoreParams" resource="./recipient.ks" password="password" />
 
@@ -203,7 +203,7 @@ Spring XML Recipient
     <route>    
         <from uri="direct://encrypted"/>
             <unmarshal>
-                <secureXML secureTag="//cheese:cheesesites/italy"
+                <xmlSecurity secureTag="//cheese:cheesesites/italy"
                            secureTagContents="true"
                            xmlCipherAlgorithm="http://www.w3.org/2001/04/xmlenc#aes128-cbc"
                            keyCipherAlgorithm="http://www.w3.org/2001/04/xmlenc#rsa-1_5"
