@@ -1,0 +1,17 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "validators",
+    "title": "Validations",
+    "description": "To configure validators.",
+    "deprecated": false,
+    "label": "validation",
+    "javaType": "org.apache.camel.model.validator.ValidatorsDefinition",
+    "abstract": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "validators": { "kind": "element", "displayName": "Validators", "required": true, "type": "array", "javaType": "java.util.List<org.apache.camel.model.validator.ValidatorDefinition>", "oneOf": [ "customValidator", "endpointValidator", "predicateValidator" ], "deprecated": false, "autowired": false, "secret": false, "description": "The configured transformers" }
+  }
+}
