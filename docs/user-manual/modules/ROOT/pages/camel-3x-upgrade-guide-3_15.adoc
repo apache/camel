@@ -55,6 +55,7 @@ The data formats naming has been made consistent to use Camel Case:
 | univociy-fixed | univociyFixed
 | univociy-tsv | univociyTsv
 | tarfile | tarFile
+| zipfile | zipFile
 |====
 
 ==== Message History
