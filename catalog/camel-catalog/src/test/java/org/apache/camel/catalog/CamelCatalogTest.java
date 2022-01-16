@@ -105,7 +105,7 @@ public class CamelCatalogTest {
         assertTrue(names.contains("jaxb"));
         assertTrue(names.contains("syslog"));
         assertTrue(names.contains("asn1"));
-        assertTrue(names.contains("zipfile"));
+        assertTrue(names.contains("zipFile"));
     }
 
     @Test

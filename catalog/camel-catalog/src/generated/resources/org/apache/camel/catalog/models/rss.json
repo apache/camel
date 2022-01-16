@@ -1,0 +1,18 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "rss",
+    "title": "RSS",
+    "description": "Transform from ROME SyndFeed Java Objects to XML and vice-versa.",
+    "deprecated": false,
+    "firstVersion": "2.1.0",
+    "label": "dataformat,transformation",
+    "javaType": "org.apache.camel.model.dataformat.RssDataFormat",
+    "abstract": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" }
+  }
+}

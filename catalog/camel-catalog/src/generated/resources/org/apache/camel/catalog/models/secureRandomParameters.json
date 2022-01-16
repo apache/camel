@@ -1,0 +1,20 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "secureRandomParameters",
+    "title": "Secure Random Parameters",
+    "description": "Cryptographically strong random number generator",
+    "deprecated": false,
+    "label": "security,configuration",
+    "javaType": "org.apache.camel.spring.xml.SecureRandomParametersFactoryBean",
+    "abstract": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "algorithm": { "kind": "attribute", "displayName": "Algorithm", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The Random Number Generator algorithm identifier for the SecureRandom factory method used to create the SecureRandom represented by this object's configuration. See Appendix A in the Java Cryptography Architecture API Specification and Reference guide for information about standard RNG algorithm names." },
+    "provider": { "kind": "attribute", "displayName": "Provider", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The optional provider identifier for the SecureRandom factory method used to create the SecureRandom represented by this object's configuration." },
+    "camelContextId": { "kind": "attribute", "displayName": "Camel Context Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Id of CamelContext to use if there are multiple CamelContexts in the same JVM" },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" }
+  }
+}

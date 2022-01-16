@@ -1,1 +1,1 @@
-../../../../../components/camel-zipfile/src/main/docs/zipfile-dataformat.adoc
+../../../../../components/camel-zipfile/src/main/docs/zipFile-dataformat.adoc

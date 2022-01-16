@@ -47,4 +47,4 @@
 ** xref:xstream-dataformat.adoc[XStream]
 ** xref:yaml-snakeyaml-dataformat.adoc[YAML SnakeYAML]
 ** xref:zipDeflater-dataformat.adoc[Zip Deflater]
-** xref:zipfile-dataformat.adoc[Zip File]
+** xref:zipFile-dataformat.adoc[Zip File]
