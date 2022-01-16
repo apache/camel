@@ -1,0 +1,19 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "lzf",
+    "title": "LZF Deflate Compression",
+    "description": "Compress and decompress streams using LZF deflate algorithm.",
+    "deprecated": false,
+    "firstVersion": "2.17.0",
+    "label": "dataformat,transformation",
+    "javaType": "org.apache.camel.model.dataformat.LZFDataFormat",
+    "abstract": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "usingParallelCompression": { "kind": "attribute", "displayName": "Using Parallel Compression", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Enable encoding (compress) using multiple processing cores." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" }
+  }
+}

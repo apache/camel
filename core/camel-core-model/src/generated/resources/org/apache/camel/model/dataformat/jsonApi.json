@@ -1,0 +1,20 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "jsonApi",
+    "title": "JSonApi",
+    "description": "Marshal and unmarshal JSON:API resources using JSONAPI-Converter library.",
+    "deprecated": false,
+    "firstVersion": "3.0.0",
+    "label": "dataformat,transformation",
+    "javaType": "org.apache.camel.model.dataformat.JsonApiDataFormat",
+    "abstract": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "dataFormatTypes": { "kind": "attribute", "displayName": "Data Format Types", "required": false, "type": "string", "javaType": "java.lang.Class<java.lang.Object>[]", "deprecated": false, "autowired": false, "secret": false, "description": "The classes to take into account for the marshalling" },
+    "mainFormatType": { "kind": "attribute", "displayName": "Main Format Type", "required": false, "type": "string", "javaType": "java.lang.Class<java.lang.Object>", "deprecated": false, "autowired": false, "secret": false, "description": "The classes to take into account while unmarshalling" },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" }
+  }
+}
