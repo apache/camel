@@ -74,7 +74,7 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
     private Map<String, String> namespaces;
 
     public XMLSecurityDataFormat() {
-        super("secureXML");
+        super("xmlSecurity");
     }
 
     public String getXmlCipherAlgorithm() {
