@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.dynamicrouter.processor;
+package org.apache.camel.component.dynamicrouter;
 
 import java.util.Comparator;
 
@@ -88,7 +88,8 @@ public class PrioritizedFilterProcessor extends FilterProcessor implements Compa
 
     @Override
     public String toString() {
-        return String.format("PrioritizedFilterProcessor [id: %s, priority: %s]", this.getId(), this.getPriority());
+        return String.format("PrioritizedFilterProcessor [id: %s, priority: %s, predicate: %s]",
+                this.getId(), this.getPriority(), this.getPredicate());
     }
 
     /**

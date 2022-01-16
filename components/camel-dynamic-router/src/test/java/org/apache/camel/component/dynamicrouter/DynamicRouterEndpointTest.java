@@ -16,49 +16,42 @@
  */
 package org.apache.camel.component.dynamicrouter;
 
-import org.apache.camel.Processor;
-import org.apache.camel.component.dynamicrouter.DynamicRouterConsumer.DynamicRouterConsumerFactory;
-import org.apache.camel.component.dynamicrouter.support.CamelDynamicRouterTestSupport;
-import org.junit.jupiter.api.Assertions;
+import org.apache.camel.Producer;
+import org.apache.camel.component.dynamicrouter.support.DynamicRouterTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 
-class DynamicRouterEndpointTest extends CamelDynamicRouterTestSupport {
+class DynamicRouterEndpointTest extends DynamicRouterTestSupport {
 
     @BeforeEach
     void localSetup() throws Exception {
         super.setup();
         endpoint = new DynamicRouterEndpoint(
-                BASE_URI, DYNAMIC_ROUTER_CHANNEL, component, () -> processorFactory, () -> producerFactory,
-                () -> consumerFactory,
+                BASE_URI, component, configuration, () -> processorFactory, () -> producerFactory,
                 () -> filterProcessorFactory);
     }
 
     @Test
-    void testCreateEndpointConsumerCreationFailure() {
-        Assertions.assertThrows(IllegalStateException.class, () -> new DynamicRouterEndpoint(
-                BASE_URI, DYNAMIC_ROUTER_CHANNEL, component, () -> processorFactory, () -> producerFactory,
-                () -> new DynamicRouterConsumerFactory() {
-                    @Override
-                    public DynamicRouterConsumer getInstance(
-                            DynamicRouterEndpoint endpoint, Processor processor, String channel) {
-                        throw new IllegalArgumentException("test");
-                    }
-                },
-                () -> filterProcessorFactory));
-    }
-
-    @Test
-    void createProducer() {
-        DynamicRouterProducer actualProducer = endpoint.createProducer();
+    void testCreateProducer() {
+        Producer actualProducer = endpoint.createProducer();
         assertEquals(producer, actualProducer);
     }
 
     @Test
-    void createConsumer() throws Exception {
-        DynamicRouterConsumer actualConsumer = endpoint.createConsumer(processor);
-        assertEquals(consumer, actualConsumer);
+    void testCreateConsumerException() {
+        assertThrows(IllegalStateException.class, () -> endpoint.createConsumer(processor));
+    }
+
+    @Test
+    void testCreateControlChannelEndpointWithError() {
+        doThrow(new RuntimeException()).when(component)
+                .setControlChannelProcessor(any(DynamicRouterControlChannelProcessor.class));
+        assertThrows(IllegalStateException.class, () -> new DynamicRouterEndpoint(
+                BASE_URI, component, configuration, () -> controlChannelProcessorFactory, () -> controlProducerFactory));
     }
 }

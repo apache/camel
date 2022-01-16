@@ -26,13 +26,21 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.component.dynamicrouter.DynamicRouterComponent;
-import org.apache.camel.component.dynamicrouter.DynamicRouterConsumer;
+import org.apache.camel.component.dynamicrouter.DynamicRouterConfiguration;
 import org.apache.camel.component.dynamicrouter.DynamicRouterControlChannelProcessor;
+import org.apache.camel.component.dynamicrouter.DynamicRouterControlChannelProcessor.DynamicRouterControlChannelProcessorFactory;
+import org.apache.camel.component.dynamicrouter.DynamicRouterControlMessage;
+import org.apache.camel.component.dynamicrouter.DynamicRouterControlProducer;
+import org.apache.camel.component.dynamicrouter.DynamicRouterControlProducer.DynamicRouterControlProducerFactory;
 import org.apache.camel.component.dynamicrouter.DynamicRouterEndpoint;
+import org.apache.camel.component.dynamicrouter.DynamicRouterEndpoint.DynamicRouterEndpointFactory;
+import org.apache.camel.component.dynamicrouter.DynamicRouterProcessor;
+import org.apache.camel.component.dynamicrouter.DynamicRouterProcessor.DynamicRouterProcessorFactory;
 import org.apache.camel.component.dynamicrouter.DynamicRouterProducer;
-import org.apache.camel.component.dynamicrouter.message.DynamicRouterControlMessage;
-import org.apache.camel.component.dynamicrouter.processor.DynamicRouterProcessor;
-import org.apache.camel.component.dynamicrouter.processor.PrioritizedFilterProcessor;
+import org.apache.camel.component.dynamicrouter.DynamicRouterProducer.DynamicRouterProducerFactory;
+import org.apache.camel.component.dynamicrouter.PrioritizedFilterProcessor;
+import org.apache.camel.component.dynamicrouter.PrioritizedFilterProcessor.PrioritizedFilterProcessorFactory;
+import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.spi.ExchangeFactory;
 import org.apache.camel.support.builder.PredicateBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -52,19 +60,23 @@ import static org.mockito.Mockito.lenient;
  * make the tests cleaner and easier to follow.
  */
 @ExtendWith(MockitoExtension.class)
-public class CamelDynamicRouterTestSupport extends CamelTestSupport {
+public class DynamicRouterTestSupport extends CamelTestSupport {
 
     public static final String DYNAMIC_ROUTER_CHANNEL = "test";
     public static final String BASE_URI = String.format("%s:%s", COMPONENT_SCHEME, DYNAMIC_ROUTER_CHANNEL);
     public static final String PROCESSOR_ID = "testProcessorId";
-    public static final String MESSAGE_ID = "testId";
-    public static final long TIMEOUT = 30000L;
+    public static final String TEST_ID = "testId";
+    public static final int TEST_PRIORITY = 10;
+    public static final String TEST_PREDICATE = "testPredicate";
 
     @Mock
     protected ExtendedCamelContext context;
 
     @Mock
     protected ExchangeFactory exchangeFactory;
+
+    @Mock
+    protected DynamicRouterConfiguration configuration;
 
     @Mock
     protected DynamicRouterComponent component;
@@ -79,10 +91,13 @@ public class CamelDynamicRouterTestSupport extends CamelTestSupport {
     protected DynamicRouterControlChannelProcessor controlChannelProcessor;
 
     @Mock
+    protected PrioritizedFilterProcessor prioritizedFilterProcessor;
+
+    @Mock
     protected DynamicRouterProducer producer;
 
     @Mock
-    protected DynamicRouterConsumer consumer;
+    protected DynamicRouterControlProducer controlProducer;
 
     @Mock
     protected PrioritizedFilterProcessor filterProcessor;
@@ -96,15 +111,22 @@ public class CamelDynamicRouterTestSupport extends CamelTestSupport {
     @Mock
     protected Exchange exchange;
 
+    @Mock
+    protected SimpleLanguage simpleLanguage;
+
+    @Mock
+    protected Predicate predicate;
+
     // Since most pieces of the Dynamic Router are instantiated by calling factories,
     // this provides greatly simplified testing of all components without extensive
     // mocking or entangling of external units
-    protected DynamicRouterEndpoint.DynamicRouterEndpointFactory endpointFactory;
-    protected DynamicRouterProcessor.DynamicRouterProcessorFactory processorFactory;
-    protected DynamicRouterControlChannelProcessor.DynamicRouterControlChannelProcessorFactory controlChannelProcessorFactory;
-    protected DynamicRouterProducer.DynamicRouterProducerFactory producerFactory;
-    protected DynamicRouterConsumer.DynamicRouterConsumerFactory consumerFactory;
-    protected PrioritizedFilterProcessor.PrioritizedFilterProcessorFactory filterProcessorFactory;
+    protected DynamicRouterEndpointFactory endpointFactory;
+    protected DynamicRouterProcessorFactory processorFactory;
+    protected DynamicRouterControlChannelProcessorFactory controlChannelProcessorFactory;
+    protected PrioritizedFilterProcessorFactory prioritizedFilterProcessorFactory;
+    protected DynamicRouterProducerFactory producerFactory;
+    protected DynamicRouterControlProducerFactory controlProducerFactory;
+    protected PrioritizedFilterProcessorFactory filterProcessorFactory;
 
     /**
      * Sets up lenient mocking so that regular behavior "just happens" in tests, but each test can customize behavior
@@ -117,82 +139,94 @@ public class CamelDynamicRouterTestSupport extends CamelTestSupport {
     protected void setup() throws Exception {
         super.setUp();
 
+        lenient().when(configuration.getChannel()).thenReturn(DYNAMIC_ROUTER_CHANNEL);
+
         lenient().when(exchangeFactory.newExchangeFactory(any(Consumer.class))).thenReturn(exchangeFactory);
 
-        lenient().when(consumer.getProcessor()).thenReturn(processor);
+        lenient().when(prioritizedFilterProcessor.getId()).thenReturn("testId");
+        lenient().when(prioritizedFilterProcessor.getPriority()).thenReturn(TEST_PRIORITY);
 
         lenient().doNothing().when(processor).process(any(Exchange.class));
 
         lenient().when(component.getCamelContext()).thenReturn(context);
-        lenient().when(component.getConsumer(anyString())).thenReturn(consumer);
+        lenient().when(component.getRoutingProcessor(anyString())).thenReturn(processor);
 
         lenient().when(endpoint.getCamelContext()).thenReturn(context);
         lenient().when(endpoint.getComponent()).thenReturn(component);
         lenient().when(endpoint.getDynamicRouterComponent()).thenReturn(component);
-        lenient().when(endpoint.getChannel()).thenReturn(DYNAMIC_ROUTER_CHANNEL);
-        lenient().when(endpoint.getTimeout()).thenReturn(TIMEOUT);
-        lenient().when(endpoint.isFailIfNoConsumers()).thenReturn(false);
-        lenient().when(endpoint.isBlock()).thenReturn(true);
+        lenient().when(endpoint.getConfiguration()).thenReturn(configuration);
 
         lenient().when(context.adapt(ExtendedCamelContext.class)).thenReturn(context);
         lenient().when(context.getExchangeFactory()).thenReturn(exchangeFactory);
+        lenient().when(context.resolveLanguage("simple")).thenReturn(simpleLanguage);
 
-        lenient().when(filterProcessor.getId()).thenReturn(MESSAGE_ID);
+        lenient().when(predicate.toString()).thenReturn(TEST_PREDICATE);
+
+        lenient().when(simpleLanguage.createPredicate(anyString())).thenReturn(predicate);
+
+        lenient().when(filterProcessor.getId()).thenReturn(TEST_ID);
         lenient().when(filterProcessor.getPriority()).thenReturn(Integer.MAX_VALUE);
 
         lenient().doNothing().when(asyncCallback).done(anyBoolean());
 
-        lenient().when(controlMessage.getId()).thenReturn(MESSAGE_ID);
+        lenient().when(controlMessage.getId()).thenReturn(TEST_ID);
         lenient().when(controlMessage.getChannel()).thenReturn(DYNAMIC_ROUTER_CHANNEL);
         lenient().when(controlMessage.getPriority()).thenReturn(1);
         lenient().when(controlMessage.getPredicate()).thenReturn(PredicateBuilder.constant(true));
         lenient().when(controlMessage.getEndpoint()).thenReturn("test");
 
-        endpointFactory = new DynamicRouterEndpoint.DynamicRouterEndpointFactory() {
+        endpointFactory = new DynamicRouterEndpointFactory() {
             @Override
             public DynamicRouterEndpoint getInstance(
-                    String uri, String channel, DynamicRouterComponent component,
-                    Supplier<DynamicRouterProcessor.DynamicRouterProcessorFactory> processorFactorySupplier,
-                    Supplier<DynamicRouterProducer.DynamicRouterProducerFactory> producerFactorySupplier,
-                    Supplier<DynamicRouterConsumer.DynamicRouterConsumerFactory> consumerFactorySupplier,
-                    Supplier<PrioritizedFilterProcessor.PrioritizedFilterProcessorFactory> filterProcessorFactorySupplier) {
+                    String uri, DynamicRouterComponent component, DynamicRouterConfiguration configuration,
+                    Supplier<DynamicRouterProcessorFactory> processorFactorySupplier,
+                    Supplier<DynamicRouterProducerFactory> producerFactorySupplier,
+                    Supplier<PrioritizedFilterProcessorFactory> filterProcessorFactorySupplier) {
                 return endpoint;
             }
         };
 
-        processorFactory = new DynamicRouterProcessor.DynamicRouterProcessorFactory() {
+        processorFactory = new DynamicRouterProcessorFactory() {
             @Override
             public DynamicRouterProcessor getInstance(
                     String id, CamelContext camelContext, boolean warnDroppedMessage,
-                    Supplier<PrioritizedFilterProcessor.PrioritizedFilterProcessorFactory> filterProcessorFactorySupplier) {
+                    Supplier<PrioritizedFilterProcessorFactory> filterProcessorFactorySupplier) {
                 return processor;
             }
         };
 
         controlChannelProcessorFactory
-                = new DynamicRouterControlChannelProcessor.DynamicRouterControlChannelProcessorFactory() {
+                = new DynamicRouterControlChannelProcessorFactory() {
                     @Override
                     public DynamicRouterControlChannelProcessor getInstance(DynamicRouterComponent component) {
                         return controlChannelProcessor;
                     }
                 };
 
-        producerFactory = new DynamicRouterProducer.DynamicRouterProducerFactory() {
+        prioritizedFilterProcessorFactory = new PrioritizedFilterProcessorFactory() {
+            @Override
+            public PrioritizedFilterProcessor getInstance(
+                    String id, int priority, CamelContext context, Predicate predicate,
+                    Processor processor) {
+                return prioritizedFilterProcessor;
+            }
+        };
+
+        producerFactory = new DynamicRouterProducerFactory() {
             @Override
             public DynamicRouterProducer getInstance(DynamicRouterEndpoint endpoint) {
                 return producer;
             }
         };
 
-        consumerFactory = new DynamicRouterConsumer.DynamicRouterConsumerFactory() {
+        controlProducerFactory = new DynamicRouterControlProducerFactory() {
             @Override
-            public DynamicRouterConsumer getInstance(
-                    DynamicRouterEndpoint endpoint, Processor processor, String channel) {
-                return consumer;
+            public DynamicRouterControlProducer getInstance(DynamicRouterEndpoint endpoint) {
+                return controlProducer;
             }
         };
 
-        filterProcessorFactory = new PrioritizedFilterProcessor.PrioritizedFilterProcessorFactory() {
+        filterProcessorFactory = new PrioritizedFilterProcessorFactory() {
             @Override
             public PrioritizedFilterProcessor getInstance(
                     String id, int priority, CamelContext context, Predicate predicate, Processor processor) {

@@ -5,7 +5,7 @@
 :description: The Dynamic Router component routes exchanges to recipients, and the recipients (and their rules) may change at runtime.
 :since: 3.15
 :supportlevel: Preview
-:component-header: Both producer and consumer are supported
+:component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: dynamic-router
 
@@ -36,7 +36,18 @@ For some use cases, the core Dynamic Router will be more appropriate.  In other 
 dynamic-router:channel[?options]
 ----
 
+== Control URI format
+
+[source]
+----
+dynamic-router:control/controlAction/subscribeChannel[?options]
+----
+
 The `channel` is the routing channel that allows messaging to be logically separate from other channels.  Any string that can be included in a URI is a valid channel name.  Each channel can have a set of participant subscriptions, and can consume messages to be routed to appropriate recipients.  The only reserved channel is the `control` channel.  This is a single channel that handles control messages for participants to subscribe or unsubscribe for messaging over a desired channel.
+
+For control channel messages, the chanel must have a literal value of `control`.  The value of `controlAction` must be `subscribe` or `unsubscribe`.  The channel to which the action applies is specified as the `subscribeChannel` param.
+
+These messages will be described in greater detail below, with examples.
 
 // component-configure options: START
 // component-configure options: END
@@ -95,9 +106,11 @@ And the same route using XML DSL:
 
 == Subscribing
 
+=== Method 1: Subscribe Message POJO
+
 Participating recipients may subscribe by sending a `DynamicRouterControlMessage` to the `control` channel.  An example subscribe message might look like the following:
 
-.Example Subscribe Message
+.Example Subscribe Message as POJO
 [source,java]
 ----
 // Send a message to the Dynamic Router "billing" channel
@@ -120,11 +133,61 @@ The parameters, in order, are:
 . _Endpoint URI_:  If an evaluation of the rules in the rule base determines that the exchange is appropriate for the recipient, it is sent to this URI.
 . _Predicate_:  For evaluating the exchange to determine if a message should be routed to the supplied URI.
 
+=== Method 2: URI Only
+
+You can also use a simplified method for subscribing using URL parameters, if you wish.  The subscribe message, detailed above, can be sent via the control URI like this (with an empty body, since it will be ignored):
+
+.Example Subscribe Message Using URI
+[source,java]
+----
+template.sendBody("dynamic-router:control/subscribe/billing?subscriptionId=billingSubscription&priority=10&destinationUri=<URI here>&predicate=<text predicate>", "");
+----
+
+=== Method 3: URI and Predicate as Bean
+
+The predicate can also be supplied as a bean in the Camel context registry.  The URI example is modified slightly:
+
+.Example Subscribe Message Using URI and Predicate Bean
+[source,java]
+----
+// Register a bean, somehow, in the registry:
+camelContext.getRegistry().bind("predicateBean", Predicate.class, PredicateBuilder.constant(true));
+template.sendBody("dynamic-router:control/subscribe/billing?subscriptionId=billingSubscription&priority=10&destinationUri=<URI here>&predicate=#bean:predicateBean", "");
+----
+
+=== Method 4: URI and Predicate as Message Body
+
+As a final example, the URI subscription method can be modified, once again, to eliminate the `predicate` parameter altogether, and supply the `Predicate` as the message body:
+
+.Example Subscribe Message Using URI and Predicate as Message Body
+[source,java]
+----
+// Register a bean, somehow, in the registry:
+Predicate predicate = PredicateBuilder.constant(true));
+template.sendBody("dynamic-router:control/subscribe/billing?subscriptionId=billingSubscription&priority=10&destinationUri=<URI here>", predicate);
+----
+
+=== Note: Subscription ID is Generated if Not Supplied
+
+For any of the URI subscription examples, the `subscriptionId` URI parameter may be omitted, and a subscription ID will be generated and returned as the message body.  It will have the form of a UUID string.  As an example:
+
+.Example Subscribe Message Using URI and Omitting Subscription ID
+[source,java]
+----
+Predicate predicate = PredicateBuilder.constant(true));
+// Capture the generated subscription ID from the returned message body:
+String generatedId = (String) template.sendBody("dynamic-router:control/subscribe/billing?priority=10&destinationUri=<URI here>", ExchangePattern.InOut, predicate);
+----
+
+The `generatedId` variable will contain the generated UUID string.  If you are going to unsubscribe, you will need this ID.
+
 == Unsubscribing
+
+=== Method 1: Unsubscribe Message POJO
 
 Participating recipients may unsubscribe by sending a `DynamicRouterControlMessage` to the `control` channel.  An example unsubscribe message might look like the following:
 
-.Example Unsubscribe Message
+.Example Unsubscribe Message Using POJO
 [source,java]
 ----
 // Send message to the Dynamic Router "billing" channel
@@ -137,6 +200,16 @@ template.sendBody("dynamic-router:control", unsubscribeMsg);
 ----
 
 The builder for an unsubscribe message only requires the id and channel name.
+
+=== Method 2: URI Only
+
+You can also use a simplified method for unsubscribing using URL parameters, if you wish.  The unsubscribe message, detailed above, can be sent via the control URI like this (with an empty body, since it will be ignored):
+
+.Example Unsubscribe Message Using URI
+[source,java]
+----
+template.sendBody("dynamic-router:control/unsubscribe/billing?subscriptionId=billingSubscription", "");
+----
 
 == The Dynamic Rule Base
 

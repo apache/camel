@@ -21,17 +21,14 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.component.dynamicrouter.DynamicRouterConsumer.DynamicRouterConsumerFactory;
 import org.apache.camel.component.dynamicrouter.DynamicRouterControlChannelProcessor.DynamicRouterControlChannelProcessorFactory;
+import org.apache.camel.component.dynamicrouter.DynamicRouterControlProducer.DynamicRouterControlProducerFactory;
+import org.apache.camel.component.dynamicrouter.DynamicRouterProcessor.DynamicRouterProcessorFactory;
 import org.apache.camel.component.dynamicrouter.DynamicRouterProducer.DynamicRouterProducerFactory;
-import org.apache.camel.component.dynamicrouter.processor.DynamicRouterProcessor;
-import org.apache.camel.component.dynamicrouter.processor.DynamicRouterProcessor.DynamicRouterProcessorFactory;
-import org.apache.camel.component.dynamicrouter.processor.PrioritizedFilterProcessor;
-import org.apache.camel.component.dynamicrouter.processor.PrioritizedFilterProcessor.PrioritizedFilterProcessorFactory;
+import org.apache.camel.component.dynamicrouter.PrioritizedFilterProcessor.PrioritizedFilterProcessorFactory;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.service.ServiceHelper;
-import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,9 +49,11 @@ public class DynamicRouterComponent extends DefaultComponent {
     private static final Logger LOG = LoggerFactory.getLogger(DynamicRouterComponent.class);
 
     /**
-     * The {@link DynamicRouterConsumer}s, mapped by their channel, for the Dynamic Router.
+     * The {@link DynamicRouterProcessor}s, mapped by their channel, for the Dynamic Router.
      */
-    private final Map<String, DynamicRouterConsumer> consumers = new HashMap<>();
+    private final transient Map<String, DynamicRouterProcessor> processors = new HashMap<>();
+
+    private DynamicRouterControlChannelProcessor controlChannelProcessor;
 
     /**
      * Creates a {@link DynamicRouterEndpoint} instance.
@@ -78,9 +77,10 @@ public class DynamicRouterComponent extends DefaultComponent {
     private Supplier<DynamicRouterProducerFactory> producerFactorySupplier = DynamicRouterProducerFactory::new;
 
     /**
-     * Creates a {@link DynamicRouterConsumer} instance.
+     * Creates a {@link DynamicRouterControlProducerFactory} instance.
      */
-    private Supplier<DynamicRouterConsumerFactory> consumerFactorySupplier = DynamicRouterConsumerFactory::new;
+    private Supplier<DynamicRouterControlProducerFactory> controlProducerFactorySupplier
+            = DynamicRouterControlProducerFactory::new;
 
     /**
      * Creates a {@link PrioritizedFilterProcessor} instance.
@@ -101,7 +101,7 @@ public class DynamicRouterComponent extends DefaultComponent {
      * @param processorFactorySupplier               creates the {@link DynamicRouterProcessor}
      * @param controlChannelProcessorFactorySupplier creates the {@link DynamicRouterControlChannelProcessor}
      * @param producerFactorySupplier                creates the {@link DynamicRouterProducer}
-     * @param consumerFactorySupplier                creates the {@link DynamicRouterConsumer}
+     * @param controlProducerFactorySupplier         creates the {@link DynamicRouterControlProducer}
      * @param filterProcessorFactorySupplier         creates the {@link PrioritizedFilterProcessor}
      */
     public DynamicRouterComponent(
@@ -109,13 +109,13 @@ public class DynamicRouterComponent extends DefaultComponent {
                                   final Supplier<DynamicRouterProcessorFactory> processorFactorySupplier,
                                   final Supplier<DynamicRouterControlChannelProcessorFactory> controlChannelProcessorFactorySupplier,
                                   final Supplier<DynamicRouterProducerFactory> producerFactorySupplier,
-                                  final Supplier<DynamicRouterConsumerFactory> consumerFactorySupplier,
+                                  final Supplier<DynamicRouterControlProducerFactory> controlProducerFactorySupplier,
                                   final Supplier<PrioritizedFilterProcessorFactory> filterProcessorFactorySupplier) {
         this.endpointFactorySupplier = endpointFactorySupplier;
         this.processorFactorySupplier = processorFactorySupplier;
         this.controlChannelProcessorFactorySupplier = controlChannelProcessorFactorySupplier;
         this.producerFactorySupplier = producerFactorySupplier;
-        this.consumerFactorySupplier = consumerFactorySupplier;
+        this.controlProducerFactorySupplier = controlProducerFactorySupplier;
         this.filterProcessorFactorySupplier = filterProcessorFactorySupplier;
         LOG.debug("Created Dynamic Router component");
     }
@@ -131,18 +131,20 @@ public class DynamicRouterComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters)
             throws Exception {
+        DynamicRouterConfiguration configuration = new DynamicRouterConfiguration();
+        configuration.parsePath(remaining);
         DynamicRouterEndpoint endpoint;
-        if (remaining == null) {
+        if (remaining == null || remaining.isBlank()) {
             throw new IllegalArgumentException("You must provide a channel for the Dynamic Router");
         }
-        if (remaining.equals(CONTROL_CHANNEL_NAME)) {
+        if (remaining.startsWith(CONTROL_CHANNEL_NAME)) {
             endpoint = endpointFactorySupplier.get()
-                    .getInstance(uri, remaining, this, controlChannelProcessorFactorySupplier,
-                            producerFactorySupplier, consumerFactorySupplier);
+                    .getInstance(uri, this, configuration, controlChannelProcessorFactorySupplier,
+                            controlProducerFactorySupplier);
         } else {
             endpoint = endpointFactorySupplier.get()
-                    .getInstance(uri, remaining, this, processorFactorySupplier, producerFactorySupplier,
-                            consumerFactorySupplier, filterProcessorFactorySupplier);
+                    .getInstance(uri, this, configuration, processorFactorySupplier, producerFactorySupplier,
+                            filterProcessorFactorySupplier);
             setProperties(endpoint, parameters);
         }
         return endpoint;
@@ -155,71 +157,50 @@ public class DynamicRouterComponent extends DefaultComponent {
      */
     @Override
     protected void doShutdown() throws Exception {
-        ServiceHelper.stopAndShutdownService(consumers);
-        consumers.clear();
+        ServiceHelper.stopAndShutdownService(processors);
+        processors.clear();
         super.doShutdown();
     }
 
     /**
-     * Adds a consumer to the map. Only one consumer can be registered for a given channel.
+     * If no processor has been added for the supplied channel, then add the supplied processor.
      *
-     * @param channel  the channel of the consumer to register
-     * @param consumer the consumer to register
+     * @param channel   the channel to add the processor to
+     * @param processor the processor to add for the channel
      */
-    public void addConsumer(final String channel, final DynamicRouterConsumer consumer) {
-        synchronized (consumers) {
-            if (consumers.putIfAbsent(channel, consumer) != null) {
-                throw new IllegalArgumentException(
-                        String.format(
-                                "Cannot add a 2nd consumer to the same endpoint: %s. Dynamic Router only allows one consumer per channel.",
-                                channel));
-            }
-            consumers.notifyAll();
+    void addRoutingProcessor(final String channel, final DynamicRouterProcessor processor) {
+        if (processors.putIfAbsent(channel, processor) != null) {
+            throw new IllegalArgumentException(
+                    "Dynamic Router can have only one processor per channel; channel '" + channel
+                                               + "' already has a processor");
         }
     }
 
     /**
-     * Remove the supplied consumer registered for the supplied channel.
+     * Get the processor for the given channel.
      *
-     * @param channel  channel of the consumer to remove
-     * @param consumer consumer to remove
+     * @param  channel the channel to get the processor for
+     * @return         the processor for the given channel
      */
-    public void removeConsumer(final String channel, final DynamicRouterConsumer consumer) {
-        synchronized (consumers) {
-            consumers.remove(channel, consumer);
-            consumers.notifyAll();
-        }
+    public DynamicRouterProcessor getRoutingProcessor(final String channel) {
+        return processors.get(channel);
     }
 
     /**
-     * Get the consumer indicated by the supplied channel.
+     * Sets the control channel processor.
      *
-     * @param  channel channel of the consumer to get
-     * @return         the consumer indicated by the supplied channel
+     * @param controlChannelProcessor the control channel processor
      */
-    public DynamicRouterConsumer getConsumer(final String channel) {
-        return consumers.get(channel);
+    void setControlChannelProcessor(final DynamicRouterControlChannelProcessor controlChannelProcessor) {
+        this.controlChannelProcessor = controlChannelProcessor;
     }
 
     /**
-     * Get the consumer indicated by the supplied channel.
+     * Gets the control channel processor.
      *
-     * @param  channel channel of the consumer to get
-     * @param  block   if the call to get the consumer should block if not found
-     * @return         the consumer indicated by the supplied channel
+     * @return the control channel processor
      */
-    public DynamicRouterConsumer getConsumer(final String channel, final boolean block, final long timeout)
-            throws InterruptedException {
-        synchronized (consumers) {
-            long remaining = timeout;
-            StopWatch watch = new StopWatch();
-            DynamicRouterConsumer consumer = getConsumer(channel);
-            while (consumer == null && remaining > 0 && block) {
-                consumers.wait(remaining);
-                remaining -= watch.taken();
-                consumer = getConsumer(channel);
-            }
-            return consumer;
-        }
+    DynamicRouterControlChannelProcessor getControlChannelProcessor() {
+        return this.controlChannelProcessor;
     }
 }

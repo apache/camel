@@ -21,17 +21,19 @@ public class DynamicRouterEndpointUriFactory extends org.apache.camel.support.co
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(10);
+        Set<String> props = new HashSet<>(12);
+        props.add("subscribeChannel");
+        props.add("predicate");
         props.add("lazyStartProducer");
-        props.add("bridgeErrorHandler");
-        props.add("warnDroppedMessage");
+        props.add("destinationUri");
         props.add("synchronous");
+        props.add("warnDroppedMessage");
         props.add("channel");
-        props.add("exchangePattern");
-        props.add("failIfNoConsumers");
-        props.add("block");
-        props.add("exceptionHandler");
-        props.add("timeout");
+        props.add("expressionLanguage");
+        props.add("predicateBean");
+        props.add("controlAction");
+        props.add("priority");
+        props.add("subscriptionId");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         MULTI_VALUE_PREFIXES = Collections.emptySet();
@@ -50,6 +52,8 @@ public class DynamicRouterEndpointUriFactory extends org.apache.camel.support.co
         Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "channel", null, true, copy);
+        uri = buildPathParameter(syntax, uri, "controlAction", null, false, copy);
+        uri = buildPathParameter(syntax, uri, "subscribeChannel", null, false, copy);
         uri = buildQueryParameters(uri, copy, encode);
         return uri;
     }

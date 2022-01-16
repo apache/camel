@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.dynamicrouter.processor;
+package org.apache.camel.component.dynamicrouter;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -28,8 +28,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.Traceable;
 import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.component.dynamicrouter.message.DynamicRouterControlMessage;
-import org.apache.camel.component.dynamicrouter.processor.PrioritizedFilterProcessor.PrioritizedFilterProcessorFactory;
+import org.apache.camel.component.dynamicrouter.PrioritizedFilterProcessor.PrioritizedFilterProcessorFactory;
 import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
@@ -51,10 +50,9 @@ public class DynamicRouterProcessor extends AsyncProcessorSupport implements Tra
     private static final Logger LOG = LoggerFactory.getLogger(DynamicRouterProcessor.class);
 
     /**
-     * Template for a logging endpoint at the TRACE level, showing all, and multiline. There are placeholders for the
-     * logger name, with one segment, a dot, and the trailing segment.
+     * Template for a logging endpoint, showing all, and multiline.
      */
-    private static final String LOG_ENDPOINT = "log:%s.%s?level=DEBUG&showAll=true&multiline=true";
+    private static final String LOG_ENDPOINT = "log:%s.%s?level=%s&showAll=true&multiline=true";
 
     /**
      * {@link FilterProcessor}s to determine if the incoming exchange should be routed, based on the content.
@@ -100,7 +98,8 @@ public class DynamicRouterProcessor extends AsyncProcessorSupport implements Tra
         this.camelContext = camelContext;
         this.producerTemplate = camelContext.createProducerTemplate();
         this.filterProcessorFactorySupplier = filterProcessorFactorySupplier;
-        final String message = String.format(LOG_ENDPOINT, this.getClass().getCanonicalName(), getId());
+        final String message = String.format(LOG_ENDPOINT, this.getClass().getCanonicalName(), getId(),
+                warnDroppedMessage ? "WARN" : "DEBUG");
         this.defaultProcessor = filterProcessorFactorySupplier.get().getInstance(
                 "defaultProcessor",
                 Integer.MAX_VALUE, camelContext, PredicateBuilder.constant(true),

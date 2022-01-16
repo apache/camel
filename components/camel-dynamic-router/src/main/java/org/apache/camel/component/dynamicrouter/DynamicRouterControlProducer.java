@@ -23,11 +23,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A {@link org.apache.camel.Producer} implementation to process exchanges for the Dynamic Router.
+ * A {@link org.apache.camel.Producer} implementation to process control channel messages for the Dynamic Router.
  */
-public class DynamicRouterProducer extends DefaultAsyncProducer {
+public class DynamicRouterControlProducer extends DefaultAsyncProducer {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DynamicRouterProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DynamicRouterControlProducer.class);
 
     /**
      * The {@link org.apache.camel.Endpoint} for the Dynamic Router instance.
@@ -45,7 +45,7 @@ public class DynamicRouterProducer extends DefaultAsyncProducer {
      *
      * @param endpoint the {@link DynamicRouterEndpoint}
      */
-    public DynamicRouterProducer(final DynamicRouterEndpoint endpoint) {
+    public DynamicRouterControlProducer(final DynamicRouterEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
         this.configuration = endpoint.getConfiguration();
@@ -69,9 +69,7 @@ public class DynamicRouterProducer extends DefaultAsyncProducer {
      */
     @Override
     public void process(final Exchange exchange) throws Exception {
-        getComponent()
-                .getRoutingProcessor(configuration.getChannel())
-                .process(exchange);
+        getComponent().getControlChannelProcessor().process(exchange);
     }
 
     /**
@@ -88,9 +86,7 @@ public class DynamicRouterProducer extends DefaultAsyncProducer {
             if (configuration.isSynchronous()) {
                 process(exchange);
             } else {
-                return getComponent()
-                        .getRoutingProcessor(configuration.getChannel())
-                        .process(exchange, callback);
+                return getComponent().getControlChannelProcessor().process(exchange, callback);
             }
         } catch (Exception e) {
             exchange.setException(e);
@@ -101,9 +97,9 @@ public class DynamicRouterProducer extends DefaultAsyncProducer {
     }
 
     /**
-     * Create a {@link DynamicRouterProducer} instance.
+     * Create a {@link DynamicRouterControlProducer} instance.
      */
-    public static class DynamicRouterProducerFactory {
+    public static class DynamicRouterControlProducerFactory {
 
         /**
          * Create the {@link org.apache.camel.Producer} for the Dynamic Router with the supplied
@@ -111,8 +107,8 @@ public class DynamicRouterProducer extends DefaultAsyncProducer {
          *
          * @param endpoint the {@link DynamicRouterEndpoint}
          */
-        public DynamicRouterProducer getInstance(final DynamicRouterEndpoint endpoint) {
-            return new DynamicRouterProducer(endpoint);
+        public DynamicRouterControlProducer getInstance(final DynamicRouterEndpoint endpoint) {
+            return new DynamicRouterControlProducer(endpoint);
         }
     }
 }

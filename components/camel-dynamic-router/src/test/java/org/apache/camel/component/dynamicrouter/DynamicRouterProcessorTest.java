@@ -14,11 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.dynamicrouter.processor;
+package org.apache.camel.component.dynamicrouter;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.dynamicrouter.support.CamelDynamicRouterTestSupport;
+import org.apache.camel.component.dynamicrouter.support.DynamicRouterTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,7 +27,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
-class DynamicRouterProcessorTest extends CamelDynamicRouterTestSupport {
+class DynamicRouterProcessorTest extends DynamicRouterTestSupport {
 
     @BeforeEach
     void localSetup() throws Exception {
@@ -46,21 +46,21 @@ class DynamicRouterProcessorTest extends CamelDynamicRouterTestSupport {
     @Test
     void addFilterAsControlMessage() {
         processor.addFilter(controlMessage);
-        Assertions.assertNotNull(processor.getFilter(MESSAGE_ID));
+        Assertions.assertNotNull(processor.getFilter(TEST_ID));
     }
 
     @Test
     void addFilterAsFilterProcessor() {
         processor.addFilter(filterProcessor);
-        PrioritizedFilterProcessor result = processor.getFilter(MESSAGE_ID);
+        PrioritizedFilterProcessor result = processor.getFilter(TEST_ID);
         Assertions.assertEquals(filterProcessor, result);
     }
 
     @Test
     void removeFilter() {
         addFilterAsFilterProcessor();
-        processor.removeFilter(MESSAGE_ID);
-        PrioritizedFilterProcessor result = processor.getFilter(MESSAGE_ID);
+        processor.removeFilter(TEST_ID);
+        PrioritizedFilterProcessor result = processor.getFilter(TEST_ID);
         Assertions.assertNull(result);
     }
 
@@ -68,7 +68,7 @@ class DynamicRouterProcessorTest extends CamelDynamicRouterTestSupport {
     void matchFiltersMatches() {
         addFilterAsFilterProcessor();
         PrioritizedFilterProcessor result = processor.matchFilters(exchange);
-        Assertions.assertEquals(MESSAGE_ID, result.getId());
+        Assertions.assertEquals(TEST_ID, result.getId());
     }
 
     @Test

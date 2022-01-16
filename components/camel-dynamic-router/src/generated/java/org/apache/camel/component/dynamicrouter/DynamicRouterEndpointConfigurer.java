@@ -21,21 +21,21 @@ public class DynamicRouterEndpointConfigurer extends PropertyConfigurerSupport i
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DynamicRouterEndpoint target = (DynamicRouterEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "block": target.setBlock(property(camelContext, boolean.class, value)); return true;
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "exceptionhandler":
-        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern":
-        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "failifnoconsumers":
-        case "failIfNoConsumers": target.setFailIfNoConsumers(property(camelContext, boolean.class, value)); return true;
+        case "destinationuri":
+        case "destinationUri": target.getConfiguration().setDestinationUri(property(camelContext, java.lang.String.class, value)); return true;
+        case "expressionlanguage":
+        case "expressionLanguage": target.getConfiguration().setExpressionLanguage(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "timeout": target.setTimeout(property(camelContext, long.class, value)); return true;
+        case "predicate": target.getConfiguration().setPredicate(property(camelContext, java.lang.String.class, value)); return true;
+        case "predicatebean":
+        case "predicateBean": target.getConfiguration().setPredicateBean(property(camelContext, org.apache.camel.Predicate.class, value)); return true;
+        case "priority": target.getConfiguration().setPriority(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "subscriptionid":
+        case "subscriptionId": target.getConfiguration().setSubscriptionId(property(camelContext, java.lang.String.class, value)); return true;
+        case "synchronous": target.getConfiguration().setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "warndroppedmessage":
-        case "warnDroppedMessage": target.setWarnDroppedMessage(property(camelContext, boolean.class, value)); return true;
+        case "warnDroppedMessage": target.getConfiguration().setWarnDroppedMessage(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -43,19 +43,19 @@ public class DynamicRouterEndpointConfigurer extends PropertyConfigurerSupport i
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "block": return boolean.class;
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": return boolean.class;
-        case "exceptionhandler":
-        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
-        case "exchangepattern":
-        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
-        case "failifnoconsumers":
-        case "failIfNoConsumers": return boolean.class;
+        case "destinationuri":
+        case "destinationUri": return java.lang.String.class;
+        case "expressionlanguage":
+        case "expressionLanguage": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "predicate": return java.lang.String.class;
+        case "predicatebean":
+        case "predicateBean": return org.apache.camel.Predicate.class;
+        case "priority": return java.lang.Integer.class;
+        case "subscriptionid":
+        case "subscriptionId": return java.lang.String.class;
         case "synchronous": return boolean.class;
-        case "timeout": return long.class;
         case "warndroppedmessage":
         case "warnDroppedMessage": return boolean.class;
         default: return null;
@@ -66,21 +66,21 @@ public class DynamicRouterEndpointConfigurer extends PropertyConfigurerSupport i
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         DynamicRouterEndpoint target = (DynamicRouterEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "block": return target.isBlock();
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
-        case "exceptionhandler":
-        case "exceptionHandler": return target.getExceptionHandler();
-        case "exchangepattern":
-        case "exchangePattern": return target.getExchangePattern();
-        case "failifnoconsumers":
-        case "failIfNoConsumers": return target.isFailIfNoConsumers();
+        case "destinationuri":
+        case "destinationUri": return target.getConfiguration().getDestinationUri();
+        case "expressionlanguage":
+        case "expressionLanguage": return target.getConfiguration().getExpressionLanguage();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
-        case "synchronous": return target.isSynchronous();
-        case "timeout": return target.getTimeout();
+        case "predicate": return target.getConfiguration().getPredicate();
+        case "predicatebean":
+        case "predicateBean": return target.getConfiguration().getPredicateBean();
+        case "priority": return target.getConfiguration().getPriority();
+        case "subscriptionid":
+        case "subscriptionId": return target.getConfiguration().getSubscriptionId();
+        case "synchronous": return target.getConfiguration().isSynchronous();
         case "warndroppedmessage":
-        case "warnDroppedMessage": return target.isWarnDroppedMessage();
+        case "warnDroppedMessage": return target.getConfiguration().isWarnDroppedMessage();
         default: return null;
         }
     }
