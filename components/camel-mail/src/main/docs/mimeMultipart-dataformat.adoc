@@ -1,6 +1,6 @@
 = MIME Multipart DataFormat
 :doctitle: MIME Multipart
-:shortname: mime-multipart
+:shortname: mimeMultipart
 :artifactid: camel-mail
 :description: Marshal Camel messages with attachments into MIME-Multipart messages and back.
 :since: 2.17
@@ -23,7 +23,7 @@ attachments into a MIME-Multipart, sending that to a JMS queue,
 receiving the message from the JMS queue and unmarshalling it again
 (into a message body with attachments).
 
-The marshal option of the mime-multipart data format will convert a
+The marshal option of the mimeMultipart data format will convert a
 message with attachments into a MIME-Multipart message. If the parameter
 "multipartWithoutAttachment" is set to true it will also marshal
 messages without attachments into a multipart message with a single
@@ -35,7 +35,7 @@ set to true it will also create a MIME multipart message in any case.  +
 Furthermore the MIME headers of the multipart are written as part of the
 message body, not as camel headers.
 
-The unmarshal option of the mime-multipart data format will convert a
+The unmarshal option of the mimeMultipart data format will convert a
 MIME-Multipart message into a camel message with attachments and leaves
 other messages alone. MIME-Headers of the MIME-Multipart message have to
 be set as Camel headers. The unmarshalling will only take place if the

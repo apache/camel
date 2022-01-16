@@ -1,16 +1,19 @@
 {
-  "model": {
-    "kind": "model",
-    "name": "mime-multipart",
+  "dataformat": {
+    "kind": "dataformat",
+    "name": "mimeMultipart",
     "title": "MIME Multipart",
     "description": "Marshal Camel messages with attachments into MIME-Multipart messages and back.",
     "deprecated": false,
     "firstVersion": "2.17.0",
     "label": "dataformat,transformation",
-    "javaType": "org.apache.camel.model.dataformat.MimeMultipartDataFormat",
-    "abstract": false,
-    "input": false,
-    "output": false
+    "javaType": "org.apache.camel.dataformat.mime.multipart.MimeMultipartDataFormat",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-mail",
+    "version": "3.15.0-SNAPSHOT",
+    "modelName": "mimeMultipart",
+    "modelJavaType": "org.apache.camel.model.dataformat.MimeMultipartDataFormat"
   },
   "properties": {
     "multipartSubType": { "kind": "attribute", "displayName": "Multipart Sub Type", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "mixed", "description": "Specify the subtype of the MIME Multipart. Default is mixed." },
