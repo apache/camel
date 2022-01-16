@@ -1477,7 +1477,7 @@
           "zip-deflater" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ZipDeflaterDataFormat"
           },
-          "zipfile" : {
+          "zip-file" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ZipFileDataFormat"
           }
         }
@@ -2939,7 +2939,7 @@
           "zip-deflater" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ZipDeflaterDataFormat"
           },
-          "zipfile" : {
+          "zip-file" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ZipFileDataFormat"
           }
         }
@@ -4295,7 +4295,7 @@
           "zip-deflater" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ZipDeflaterDataFormat"
           },
-          "zipfile" : {
+          "zip-file" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ZipFileDataFormat"
           }
         }
@@ -7215,7 +7215,7 @@
           "zip-deflater" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ZipDeflaterDataFormat"
           },
-          "zipfile" : {
+          "zip-file" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ZipFileDataFormat"
           }
         }

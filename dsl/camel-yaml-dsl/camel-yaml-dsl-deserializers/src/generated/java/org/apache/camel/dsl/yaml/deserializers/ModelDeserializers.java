@@ -2857,7 +2857,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "xstream", type = "object:org.apache.camel.model.dataformat.XStreamDataFormat"),
                     @YamlProperty(name = "yaml", type = "object:org.apache.camel.model.dataformat.YAMLDataFormat"),
                     @YamlProperty(name = "zip-deflater", type = "object:org.apache.camel.model.dataformat.ZipDeflaterDataFormat"),
-                    @YamlProperty(name = "zipfile", type = "object:org.apache.camel.model.dataformat.ZipFileDataFormat")
+                    @YamlProperty(name = "zip-file", type = "object:org.apache.camel.model.dataformat.ZipFileDataFormat")
             }
     )
     public static class DataFormatTransformerDefinitionDeserializer extends YamlDeserializerBase<DataFormatTransformerDefinition> {
@@ -3074,7 +3074,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDataFormatType(val);
                     break;
                 }
-                case "zipfile": {
+                case "zip-file": {
                     org.apache.camel.model.dataformat.ZipFileDataFormat val = asType(node, org.apache.camel.model.dataformat.ZipFileDataFormat.class);
                     target.setDataFormatType(val);
                     break;
@@ -3154,7 +3154,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "xstream", type = "object:org.apache.camel.model.dataformat.XStreamDataFormat"),
                     @YamlProperty(name = "yaml", type = "object:org.apache.camel.model.dataformat.YAMLDataFormat"),
                     @YamlProperty(name = "zip-deflater", type = "object:org.apache.camel.model.dataformat.ZipDeflaterDataFormat"),
-                    @YamlProperty(name = "zipfile", type = "object:org.apache.camel.model.dataformat.ZipFileDataFormat")
+                    @YamlProperty(name = "zip-file", type = "object:org.apache.camel.model.dataformat.ZipFileDataFormat")
             }
     )
     public static class DataFormatsDefinitionDeserializer extends YamlDeserializerBase<DataFormatsDefinition> {
@@ -3566,7 +3566,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDataFormats(existing);
                     break;
                 }
-                case "zipfile": {
+                case "zip-file": {
                     org.apache.camel.model.dataformat.ZipFileDataFormat val = asType(node, org.apache.camel.model.dataformat.ZipFileDataFormat.class);
                     java.util.List<org.apache.camel.model.DataFormatDefinition> existing = target.getDataFormats();
                     if (existing == null) {
@@ -8136,7 +8136,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "xstream", type = "object:org.apache.camel.model.dataformat.XStreamDataFormat"),
                     @YamlProperty(name = "yaml", type = "object:org.apache.camel.model.dataformat.YAMLDataFormat"),
                     @YamlProperty(name = "zip-deflater", type = "object:org.apache.camel.model.dataformat.ZipDeflaterDataFormat"),
-                    @YamlProperty(name = "zipfile", type = "object:org.apache.camel.model.dataformat.ZipFileDataFormat")
+                    @YamlProperty(name = "zip-file", type = "object:org.apache.camel.model.dataformat.ZipFileDataFormat")
             }
     )
     public static class MarshalDefinitionDeserializer extends YamlDeserializerBase<MarshalDefinition> {
@@ -8353,7 +8353,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDataFormatType(val);
                     break;
                 }
-                case "zipfile": {
+                case "zip-file": {
                     org.apache.camel.model.dataformat.ZipFileDataFormat val = asType(node, org.apache.camel.model.dataformat.ZipFileDataFormat.class);
                     target.setDataFormatType(val);
                     break;
@@ -16872,7 +16872,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "xstream", type = "object:org.apache.camel.model.dataformat.XStreamDataFormat"),
                     @YamlProperty(name = "yaml", type = "object:org.apache.camel.model.dataformat.YAMLDataFormat"),
                     @YamlProperty(name = "zip-deflater", type = "object:org.apache.camel.model.dataformat.ZipDeflaterDataFormat"),
-                    @YamlProperty(name = "zipfile", type = "object:org.apache.camel.model.dataformat.ZipFileDataFormat")
+                    @YamlProperty(name = "zip-file", type = "object:org.apache.camel.model.dataformat.ZipFileDataFormat")
             }
     )
     public static class UnmarshalDefinitionDeserializer extends YamlDeserializerBase<UnmarshalDefinition> {
@@ -17089,7 +17089,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDataFormatType(val);
                     break;
                 }
-                case "zipfile": {
+                case "zip-file": {
                     org.apache.camel.model.dataformat.ZipFileDataFormat val = asType(node, org.apache.camel.model.dataformat.ZipFileDataFormat.class);
                     target.setDataFormatType(val);
                     break;
@@ -18420,7 +18420,10 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     @YamlType(
             types = org.apache.camel.model.dataformat.ZipFileDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            nodes = "zipfile",
+            nodes = {
+                    "zip-file",
+                    "zipFile"
+            },
             properties = {
                     @YamlProperty(name = "allow-empty-directory", type = "boolean"),
                     @YamlProperty(name = "id", type = "string"),

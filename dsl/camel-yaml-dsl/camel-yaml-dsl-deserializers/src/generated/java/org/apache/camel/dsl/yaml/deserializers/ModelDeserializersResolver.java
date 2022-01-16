@@ -536,7 +536,8 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "zip-deflater": return new ModelDeserializers.ZipDeflaterDataFormatDeserializer();
             case "zipDeflater": return new ModelDeserializers.ZipDeflaterDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.ZipDeflaterDataFormat": return new ModelDeserializers.ZipDeflaterDataFormatDeserializer();
-            case "zipfile": return new ModelDeserializers.ZipFileDataFormatDeserializer();
+            case "zip-file": return new ModelDeserializers.ZipFileDataFormatDeserializer();
+            case "zipFile": return new ModelDeserializers.ZipFileDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.ZipFileDataFormat": return new ModelDeserializers.ZipFileDataFormatDeserializer();
             case "zookeeper-service-discovery": return new ModelDeserializers.ZooKeeperServiceCallServiceDiscoveryConfigurationDeserializer();
             case "zookeeperServiceDiscovery": return new ModelDeserializers.ZooKeeperServiceCallServiceDiscoveryConfigurationDeserializer();
