@@ -81,7 +81,7 @@ public class ActiveMQPropagateSerializableHeadersTest extends CamelTestSupport {
             assertEquals(calValue, headerValue, "myCal");
         }
         {
-            Map<String, Object> headerValue = exchange.getIn().getHeader("myMap", Map.class);
+            Map<?, ?> headerValue = exchange.getIn().getHeader("myMap", Map.class);
             assertEquals(mapValue, headerValue, "myMap");
         }
     }
