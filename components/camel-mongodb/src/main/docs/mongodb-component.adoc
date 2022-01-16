@@ -56,10 +56,11 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-== URI format
+== URI formats
 
 ---------------------------------------------------------------------------------------------------------------
 mongodb:connectionBean?database=databaseName&collection=collectionName&operation=operationName[&moreOptions...]
+mongodb:?hosts=hostnames&database=databaseName&collection=collectionName&operation=operationName[&moreOptions...]
 ---------------------------------------------------------------------------------------------------------------
 
 // component-configure options: START
