@@ -68,7 +68,7 @@ public class DataFormatsDefinition {
             @XmlElement(required = false, name = "secureXML", type = XMLSecurityDataFormat.class),
             @XmlElement(required = false, name = "soap", type = SoapDataFormat.class),
             @XmlElement(required = false, name = "syslog", type = SyslogDataFormat.class),
-            @XmlElement(required = false, name = "tarfile", type = TarFileDataFormat.class),
+            @XmlElement(required = false, name = "tarFile", type = TarFileDataFormat.class),
             @XmlElement(required = false, name = "thrift", type = ThriftDataFormat.class),
             @XmlElement(required = false, name = "tidyMarkup", type = TidyMarkupDataFormat.class),
             @XmlElement(required = false, name = "univocityCsv", type = UniVocityCsvDataFormat.class),
