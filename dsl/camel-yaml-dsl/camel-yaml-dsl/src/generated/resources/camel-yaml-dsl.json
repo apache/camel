@@ -1441,9 +1441,6 @@
           "rss" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.RssDataFormat"
           },
-          "secure-xml" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XMLSecurityDataFormat"
-          },
           "soap" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SoapDataFormat"
           },
@@ -1467,6 +1464,9 @@
           },
           "univocity-tsv" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityTsvDataFormat"
+          },
+          "xml-security" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XMLSecurityDataFormat"
           },
           "xstream" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XStreamDataFormat"
@@ -2903,9 +2903,6 @@
           "rss" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.RssDataFormat"
           },
-          "secure-xml" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XMLSecurityDataFormat"
-          },
           "soap" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SoapDataFormat"
           },
@@ -2929,6 +2926,9 @@
           },
           "univocity-tsv" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityTsvDataFormat"
+          },
+          "xml-security" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XMLSecurityDataFormat"
           },
           "xstream" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XStreamDataFormat"
@@ -4259,9 +4259,6 @@
           "rss" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.RssDataFormat"
           },
-          "secure-xml" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XMLSecurityDataFormat"
-          },
           "soap" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SoapDataFormat"
           },
@@ -4285,6 +4282,9 @@
           },
           "univocity-tsv" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityTsvDataFormat"
+          },
+          "xml-security" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XMLSecurityDataFormat"
           },
           "xstream" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XStreamDataFormat"
@@ -7176,9 +7176,6 @@
           "scheme" : {
             "type" : "string"
           },
-          "secure-xml" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XMLSecurityDataFormat"
-          },
           "soap" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SoapDataFormat"
           },
@@ -7205,6 +7202,9 @@
           },
           "univocity-tsv" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityTsvDataFormat"
+          },
+          "xml-security" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XMLSecurityDataFormat"
           },
           "xstream" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XStreamDataFormat"

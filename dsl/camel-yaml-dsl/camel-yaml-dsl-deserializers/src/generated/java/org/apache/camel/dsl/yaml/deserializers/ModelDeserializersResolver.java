@@ -517,8 +517,8 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "wire-tap": return new ModelDeserializers.WireTapDefinitionDeserializer();
             case "wireTap": return new ModelDeserializers.WireTapDefinitionDeserializer();
             case "org.apache.camel.model.WireTapDefinition": return new ModelDeserializers.WireTapDefinitionDeserializer();
-            case "secure-xml": return new ModelDeserializers.XMLSecurityDataFormatDeserializer();
-            case "secureXML": return new ModelDeserializers.XMLSecurityDataFormatDeserializer();
+            case "xml-security": return new ModelDeserializers.XMLSecurityDataFormatDeserializer();
+            case "xmlSecurity": return new ModelDeserializers.XMLSecurityDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.XMLSecurityDataFormat": return new ModelDeserializers.XMLSecurityDataFormatDeserializer();
             case "xtokenize": return new ModelDeserializers.XMLTokenizerExpressionDeserializer();
             case "org.apache.camel.model.language.XMLTokenizerExpression": return new ModelDeserializers.XMLTokenizerExpressionDeserializer();
