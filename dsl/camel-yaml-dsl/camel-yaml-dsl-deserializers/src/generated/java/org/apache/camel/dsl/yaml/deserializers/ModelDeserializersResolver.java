@@ -77,8 +77,7 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.dataformat.CryptoDataFormat": return new ModelDeserializers.CryptoDataFormatDeserializer();
             case "csv": return new ModelDeserializers.CsvDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.CsvDataFormat": return new ModelDeserializers.CsvDataFormatDeserializer();
-            case "custom-data-format": return new ModelDeserializers.CustomDataFormatDeserializer();
-            case "customDataFormat": return new ModelDeserializers.CustomDataFormatDeserializer();
+            case "custom": return new ModelDeserializers.CustomDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.CustomDataFormat": return new ModelDeserializers.CustomDataFormatDeserializer();
             case "custom-load-balancer": return new ModelDeserializers.CustomLoadBalancerDefinitionDeserializer();
             case "customLoadBalancer": return new ModelDeserializers.CustomLoadBalancerDefinitionDeserializer();

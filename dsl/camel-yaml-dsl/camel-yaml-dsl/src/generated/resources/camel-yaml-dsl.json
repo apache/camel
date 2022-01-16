@@ -1402,7 +1402,7 @@
           "grok" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GrokDataFormat"
           },
-          "gzip-deflator" : {
+          "gzip-deflater" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GzipDeflaterDataFormat"
           },
           "hl7" : {
@@ -1477,7 +1477,7 @@
           "yaml" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.YAMLDataFormat"
           },
-          "zip" : {
+          "zip-deflater" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ZipDeflaterDataFormat"
           },
           "zipfile" : {
@@ -2867,7 +2867,7 @@
           "grok" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GrokDataFormat"
           },
-          "gzip-deflator" : {
+          "gzip-deflater" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GzipDeflaterDataFormat"
           },
           "hl7" : {
@@ -2942,7 +2942,7 @@
           "yaml" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.YAMLDataFormat"
           },
-          "zip" : {
+          "zip-deflater" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ZipDeflaterDataFormat"
           },
           "zipfile" : {

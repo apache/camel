@@ -2532,10 +2532,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             inline = true,
             types = org.apache.camel.model.dataformat.CustomDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            nodes = {
-                    "custom-data-format",
-                    "customDataFormat"
-            },
+            nodes = "custom",
             properties = {
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "ref", type = "string", required = true)
@@ -8129,7 +8126,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "fhir-xml", type = "object:org.apache.camel.model.dataformat.FhirXmlDataFormat"),
                     @YamlProperty(name = "flatpack", type = "object:org.apache.camel.model.dataformat.FlatpackDataFormat"),
                     @YamlProperty(name = "grok", type = "object:org.apache.camel.model.dataformat.GrokDataFormat"),
-                    @YamlProperty(name = "gzip-deflator", type = "object:org.apache.camel.model.dataformat.GzipDeflaterDataFormat"),
+                    @YamlProperty(name = "gzip-deflater", type = "object:org.apache.camel.model.dataformat.GzipDeflaterDataFormat"),
                     @YamlProperty(name = "hl7", type = "object:org.apache.camel.model.dataformat.HL7DataFormat"),
                     @YamlProperty(name = "ical", type = "object:org.apache.camel.model.dataformat.IcalDataFormat"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
@@ -8154,7 +8151,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "xmlrpc", type = "object:org.apache.camel.model.dataformat.XmlRpcDataFormat"),
                     @YamlProperty(name = "xstream", type = "object:org.apache.camel.model.dataformat.XStreamDataFormat"),
                     @YamlProperty(name = "yaml", type = "object:org.apache.camel.model.dataformat.YAMLDataFormat"),
-                    @YamlProperty(name = "zip", type = "object:org.apache.camel.model.dataformat.ZipDeflaterDataFormat"),
+                    @YamlProperty(name = "zip-deflater", type = "object:org.apache.camel.model.dataformat.ZipDeflaterDataFormat"),
                     @YamlProperty(name = "zipfile", type = "object:org.apache.camel.model.dataformat.ZipFileDataFormat")
             }
     )
@@ -8252,7 +8249,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDataFormatType(val);
                     break;
                 }
-                case "gzip-deflator": {
+                case "gzip-deflater": {
                     org.apache.camel.model.dataformat.GzipDeflaterDataFormat val = asType(node, org.apache.camel.model.dataformat.GzipDeflaterDataFormat.class);
                     target.setDataFormatType(val);
                     break;
@@ -8372,7 +8369,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDataFormatType(val);
                     break;
                 }
-                case "zip": {
+                case "zip-deflater": {
                     org.apache.camel.model.dataformat.ZipDeflaterDataFormat val = asType(node, org.apache.camel.model.dataformat.ZipDeflaterDataFormat.class);
                     target.setDataFormatType(val);
                     break;
@@ -16853,7 +16850,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "fhir-xml", type = "object:org.apache.camel.model.dataformat.FhirXmlDataFormat"),
                     @YamlProperty(name = "flatpack", type = "object:org.apache.camel.model.dataformat.FlatpackDataFormat"),
                     @YamlProperty(name = "grok", type = "object:org.apache.camel.model.dataformat.GrokDataFormat"),
-                    @YamlProperty(name = "gzip-deflator", type = "object:org.apache.camel.model.dataformat.GzipDeflaterDataFormat"),
+                    @YamlProperty(name = "gzip-deflater", type = "object:org.apache.camel.model.dataformat.GzipDeflaterDataFormat"),
                     @YamlProperty(name = "hl7", type = "object:org.apache.camel.model.dataformat.HL7DataFormat"),
                     @YamlProperty(name = "ical", type = "object:org.apache.camel.model.dataformat.IcalDataFormat"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
@@ -16878,7 +16875,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "xmlrpc", type = "object:org.apache.camel.model.dataformat.XmlRpcDataFormat"),
                     @YamlProperty(name = "xstream", type = "object:org.apache.camel.model.dataformat.XStreamDataFormat"),
                     @YamlProperty(name = "yaml", type = "object:org.apache.camel.model.dataformat.YAMLDataFormat"),
-                    @YamlProperty(name = "zip", type = "object:org.apache.camel.model.dataformat.ZipDeflaterDataFormat"),
+                    @YamlProperty(name = "zip-deflater", type = "object:org.apache.camel.model.dataformat.ZipDeflaterDataFormat"),
                     @YamlProperty(name = "zipfile", type = "object:org.apache.camel.model.dataformat.ZipFileDataFormat")
             }
     )
@@ -16976,7 +16973,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDataFormatType(val);
                     break;
                 }
-                case "gzip-deflator": {
+                case "gzip-deflater": {
                     org.apache.camel.model.dataformat.GzipDeflaterDataFormat val = asType(node, org.apache.camel.model.dataformat.GzipDeflaterDataFormat.class);
                     target.setDataFormatType(val);
                     break;
@@ -17096,7 +17093,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDataFormatType(val);
                     break;
                 }
-                case "zip": {
+                case "zip-deflater": {
                     org.apache.camel.model.dataformat.ZipDeflaterDataFormat val = asType(node, org.apache.camel.model.dataformat.ZipDeflaterDataFormat.class);
                     target.setDataFormatType(val);
                     break;

@@ -89,7 +89,7 @@ public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> imp
             @XmlElement(required = false, name = "fhirXml", type = FhirXmlDataFormat.class),
             @XmlElement(required = false, name = "flatpack", type = FlatpackDataFormat.class),
             @XmlElement(required = false, name = "grok", type = GrokDataFormat.class),
-            @XmlElement(required = false, name = "gzipDeflator", type = GzipDeflaterDataFormat.class),
+            @XmlElement(required = false, name = "gzipDeflater", type = GzipDeflaterDataFormat.class),
             @XmlElement(required = false, name = "hl7", type = HL7DataFormat.class),
             @XmlElement(required = false, name = "ical", type = IcalDataFormat.class),
             @XmlElement(required = false, name = "jacksonxml", type = JacksonXMLDataFormat.class),
@@ -113,7 +113,7 @@ public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> imp
             @XmlElement(required = false, name = "xstream", type = XStreamDataFormat.class),
             @XmlElement(required = false, name = "pgp", type = PGPDataFormat.class),
             @XmlElement(required = false, name = "yaml", type = YAMLDataFormat.class),
-            @XmlElement(required = false, name = "zip", type = ZipDeflaterDataFormat.class),
+            @XmlElement(required = false, name = "zipDeflater", type = ZipDeflaterDataFormat.class),
             @XmlElement(required = false, name = "zipfile", type = ZipFileDataFormat.class) })
     private DataFormatDefinition dataFormatType;
 

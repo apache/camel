@@ -3271,7 +3271,7 @@ public class ModelParser extends BaseParser {
             case "cbor": return doParseCBORDataFormat();
             case "crypto": return doParseCryptoDataFormat();
             case "csv": return doParseCsvDataFormat();
-            case "customDataFormat": return doParseCustomDataFormat();
+            case "custom": return doParseCustomDataFormat();
             case "fhirJson": return doParseFhirJsonDataFormat();
             case "fhirXml": return doParseFhirXmlDataFormat();
             case "flatpack": return doParseFlatpackDataFormat();
