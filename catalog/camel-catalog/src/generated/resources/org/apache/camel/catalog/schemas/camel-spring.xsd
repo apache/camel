@@ -1503,7 +1503,7 @@ Evaluates a Camel simple expression.
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="soapjaxb" type="tns:soapJaxbDataFormat">
+  <xs:element name="soap" type="tns:soapDataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 Marshal Java objects to SOAP messages and back.
@@ -5897,7 +5897,7 @@ it reaches the end when Camel is shut down. Default value: false
             <xs:element ref="tns:protobuf"/>
             <xs:element ref="tns:rss"/>
             <xs:element ref="tns:secureXML"/>
-            <xs:element ref="tns:soapjaxb"/>
+            <xs:element ref="tns:soap"/>
             <xs:element ref="tns:syslog"/>
             <xs:element ref="tns:tarfile"/>
             <xs:element ref="tns:thrift"/>
@@ -7996,7 +7996,7 @@ the EncryptedKey structure or not. Default value: true
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:complexType name="soapJaxbDataFormat">
+  <xs:complexType name="soapDataFormat">
     <xs:complexContent>
       <xs:extension base="tns:dataFormat">
         <xs:sequence/>
@@ -12214,7 +12214,7 @@ Sets a reference to use for lookup the policy in the registry.
             <xs:element ref="tns:protobuf"/>
             <xs:element ref="tns:rss"/>
             <xs:element ref="tns:secureXML"/>
-            <xs:element ref="tns:soapjaxb"/>
+            <xs:element ref="tns:soap"/>
             <xs:element ref="tns:syslog"/>
             <xs:element ref="tns:tarfile"/>
             <xs:element ref="tns:thrift"/>
@@ -13194,7 +13194,7 @@ Set a reference to a custom Expression to use.
         <xs:element ref="tns:protobuf"/>
         <xs:element ref="tns:rss"/>
         <xs:element ref="tns:secureXML"/>
-        <xs:element ref="tns:soapjaxb"/>
+        <xs:element ref="tns:soap"/>
         <xs:element ref="tns:syslog"/>
         <xs:element ref="tns:tarfile"/>
         <xs:element ref="tns:thrift"/>
@@ -14805,7 +14805,7 @@ OpenId Connect URL to discover OAuth2 configuration values.
             <xs:element ref="tns:protobuf"/>
             <xs:element ref="tns:rss"/>
             <xs:element ref="tns:secureXML"/>
-            <xs:element ref="tns:soapjaxb"/>
+            <xs:element ref="tns:soap"/>
             <xs:element ref="tns:syslog"/>
             <xs:element ref="tns:tarfile"/>
             <xs:element ref="tns:thrift"/>

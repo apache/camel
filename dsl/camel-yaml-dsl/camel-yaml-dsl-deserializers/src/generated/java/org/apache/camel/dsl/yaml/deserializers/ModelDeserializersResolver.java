@@ -191,7 +191,8 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "intercept-send-to-endpoint": return new ModelDeserializers.InterceptSendToEndpointDefinitionDeserializer();
             case "interceptSendToEndpoint": return new ModelDeserializers.InterceptSendToEndpointDefinitionDeserializer();
             case "org.apache.camel.model.InterceptSendToEndpointDefinition": return new ModelDeserializers.InterceptSendToEndpointDefinitionDeserializer();
-            case "jacksonxml": return new ModelDeserializers.JacksonXMLDataFormatDeserializer();
+            case "jackson-xml": return new ModelDeserializers.JacksonXMLDataFormatDeserializer();
+            case "jacksonXml": return new ModelDeserializers.JacksonXMLDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.JacksonXMLDataFormat": return new ModelDeserializers.JacksonXMLDataFormatDeserializer();
             case "jaxb": return new ModelDeserializers.JaxbDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.JaxbDataFormat": return new ModelDeserializers.JaxbDataFormatDeserializer();
@@ -428,8 +429,8 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.SetPropertyDefinition": return new ModelDeserializers.SetPropertyDefinitionDeserializer();
             case "simple": return new ModelDeserializers.SimpleExpressionDeserializer();
             case "org.apache.camel.model.language.SimpleExpression": return new ModelDeserializers.SimpleExpressionDeserializer();
-            case "soapjaxb": return new ModelDeserializers.SoapJaxbDataFormatDeserializer();
-            case "org.apache.camel.model.dataformat.SoapJaxbDataFormat": return new ModelDeserializers.SoapJaxbDataFormatDeserializer();
+            case "soap": return new ModelDeserializers.SoapDataFormatDeserializer();
+            case "org.apache.camel.model.dataformat.SoapDataFormat": return new ModelDeserializers.SoapDataFormatDeserializer();
             case "sort": return new ModelDeserializers.SortDefinitionDeserializer();
             case "org.apache.camel.model.SortDefinition": return new ModelDeserializers.SortDefinitionDeserializer();
             case "spel": return new ModelDeserializers.SpELExpressionDeserializer();

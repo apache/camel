@@ -35,7 +35,7 @@
 ** xref:protobuf-dataformat.adoc[Protobuf]
 ** xref:protobuf-jackson-dataformat.adoc[Protobuf Jackson]
 ** xref:rss-dataformat.adoc[RSS]
-** xref:soapjaxb-dataformat.adoc[SOAP]
+** xref:soap-dataformat.adoc[SOAP]
 ** xref:syslog-dataformat.adoc[Syslog]
 ** xref:tarfile-dataformat.adoc[Tar File]
 ** xref:thrift-dataformat.adoc[Thrift]

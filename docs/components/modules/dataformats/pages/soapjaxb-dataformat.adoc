@@ -1,1 +1,0 @@
-../../../../../components/camel-soap/src/main/docs/soapjaxb-dataformat.adoc

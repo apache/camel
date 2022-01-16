@@ -1414,7 +1414,7 @@
           "inherit-error-handler" : {
             "type" : "boolean"
           },
-          "jacksonxml" : {
+          "jackson-xml" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.JacksonXMLDataFormat"
           },
           "jaxb" : {
@@ -1444,8 +1444,8 @@
           "secure-xml" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XMLSecurityDataFormat"
           },
-          "soapjaxb" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SoapJaxbDataFormat"
+          "soap" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SoapDataFormat"
           },
           "syslog" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SyslogDataFormat"
@@ -2879,7 +2879,7 @@
           "inherit-error-handler" : {
             "type" : "boolean"
           },
-          "jacksonxml" : {
+          "jackson-xml" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.JacksonXMLDataFormat"
           },
           "jaxb" : {
@@ -2909,8 +2909,8 @@
           "secure-xml" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XMLSecurityDataFormat"
           },
-          "soapjaxb" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SoapJaxbDataFormat"
+          "soap" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SoapDataFormat"
           },
           "syslog" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SyslogDataFormat"
@@ -4238,7 +4238,7 @@
           "ical" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.IcalDataFormat"
           },
-          "jacksonxml" : {
+          "jackson-xml" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.JacksonXMLDataFormat"
           },
           "jaxb" : {
@@ -4268,8 +4268,8 @@
           "secure-xml" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XMLSecurityDataFormat"
           },
-          "soapjaxb" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SoapJaxbDataFormat"
+          "soap" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SoapDataFormat"
           },
           "syslog" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SyslogDataFormat"
@@ -4880,7 +4880,7 @@
           }
         }
       },
-      "org.apache.camel.model.dataformat.SoapJaxbDataFormat" : {
+      "org.apache.camel.model.dataformat.SoapDataFormat" : {
         "oneOf" : [ {
           "type" : "string"
         }, {
@@ -7154,7 +7154,7 @@
           "grok" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GrokDataFormat"
           },
-          "gzip-deflator" : {
+          "gzip-deflater" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GzipDeflaterDataFormat"
           },
           "hl7" : {
@@ -7163,7 +7163,7 @@
           "ical" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.IcalDataFormat"
           },
-          "jacksonxml" : {
+          "jackson-xml" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.JacksonXMLDataFormat"
           },
           "jaxb" : {
@@ -7199,8 +7199,8 @@
           "secure-xml" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XMLSecurityDataFormat"
           },
-          "soapjaxb" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SoapJaxbDataFormat"
+          "soap" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SoapDataFormat"
           },
           "syslog" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SyslogDataFormat"
@@ -7235,7 +7235,7 @@
           "yaml" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.YAMLDataFormat"
           },
-          "zip" : {
+          "zip-deflater" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ZipDeflaterDataFormat"
           },
           "zipfile" : {

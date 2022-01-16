@@ -50,6 +50,7 @@ The data formats naming has been made consistent to use Camel Case:
 | zip-deflater | zipDeflater
 | jacksonxml | jacksonXml
 | mime-multipart | mimeMultipart
+| soapjaxb | soap
 | univociy-csv | univociyCsv
 | univociy-fixed | univociyFixed
 | univociy-tsv | univociyTsv
