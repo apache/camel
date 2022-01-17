@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.ahc;
 
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
@@ -29,6 +32,31 @@ public class AhcProducePostTest extends BaseAhcTest {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 
         template.sendBody("direct:start", "World");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testAhcProduceByteArray() throws Exception {
+        getMockEndpoint("mock:input").expectedBodiesReceived("World");
+        // should not use chunked when its byte array
+        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.CONTENT_LENGTH, 5);
+        getMockEndpoint("mock:input").message(0).header(Exchange.TRANSFER_ENCODING).isNull();
+        getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
+
+        template.sendBody("direct:start", "World".getBytes(StandardCharsets.UTF_8));
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testAhcProduceStream() throws Exception {
+        getMockEndpoint("mock:input").expectedBodiesReceived("World");
+        // should use chunked for stream
+        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.TRANSFER_ENCODING, "chunked");
+        getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
+
+        template.sendBody("direct:start", new ByteArrayInputStream("World".getBytes(StandardCharsets.UTF_8)));
 
         assertMockEndpointsSatisfied();
     }
@@ -67,6 +95,8 @@ public class AhcProducePostTest extends BaseAhcTest {
                         .to("mock:result");
 
                 from(getTestServerEndpointUri())
+                        .convertBodyTo(String.class)
+                        .to("mock:input")
                         .transform(simple("Bye ${body}"));
             }
         };
