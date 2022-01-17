@@ -43,6 +43,7 @@ import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 
@@ -101,7 +102,7 @@ public class JsltEndpoint extends ResourceEndpoint {
                 if (jsltStringFromHeader != null) {
                     parser = new Parser(new StringReader(jsltStringFromHeader)).withSource("<inline>");
                 } else {
-                    stream = JsltEndpoint.class.getClassLoader().getResourceAsStream(getResourceUri());
+                    stream = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), getResourceUri());
                     if (stream == null) {
                         throw new JsltException("Cannot load resource '" + getResourceUri() + "': not found");
                     }
