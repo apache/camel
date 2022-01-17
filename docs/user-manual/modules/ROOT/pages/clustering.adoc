@@ -126,7 +126,7 @@ context.addRoutes(new RouteBuilder {
 
 - *ClusteredRouteController*
 +
-This is an implementation of the _RouteController SPI_ that lets the camel context start then starts/stops the routes when the leadership is taken/lost. This is well integrated with spring-boot apps so assuming you have tour routes set-up like:
+This is an implementation of the _RouteController SPI_ that lets the camel context start then starts/stops the routes when the leadership is taken/lost. This is well integrated with spring-boot apps so assuming you have your routes set-up like:
 +
 [source,java]
 ----
@@ -162,7 +162,7 @@ camel.clustered.controller.routes[heartbeat].clustered = false
 
 - *Master Component*
 +
-The master component is similar to a _ClusteredRoutePolicy_ but it works on consumer level so it ensure the only a single endpoint in a cluster is consuming resources at any point in time. Set it up is very easy and all you need is to prefix singleton endpoints according to the master component syntax:
+The master component is similar to a _ClusteredRoutePolicy_ but it works on consumer level so it ensures the only a single endpoint in a cluster is consuming resources at any point in time. Set it up is very easy and all you need is to prefix singleton endpoints according to the master component syntax:
 +
 [source,text]
 ----

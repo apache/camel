@@ -36,7 +36,7 @@ annotated with one or more `@UriParam` or `@UriParams` annotations
 For example see the `TimerEndpoint` from the `camel-timer` component and
 notice how it is using these annotations.
 
-Not only are the annotations useful for automatically generating the
+The annotations are not only useful for automatically generating the
 documentation; we can use them to refine the validation of the code
 during configuration and can be useful for tooling providers, so they
 can more easily introspect the configuration options.

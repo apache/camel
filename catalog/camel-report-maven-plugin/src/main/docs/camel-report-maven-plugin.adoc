@@ -168,7 +168,7 @@ You can pass in the options using `-D` style as shown:
 
 ----
 $cd myproject
-$mvn org.apache.camel:camel-report-maven-plugin:3.0.0:validate -DincludeTest=true
+$mvn org.apache.camel:camel-report-maven-plugin:3.0.0:validate -Dcamel.includeTest=true
 ----
 
 
