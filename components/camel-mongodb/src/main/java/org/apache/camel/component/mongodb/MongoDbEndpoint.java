@@ -732,8 +732,8 @@ public class MongoDbEndpoint extends DefaultEndpoint {
 
     /**
      * Host address of mongodb server in `[host]:[port]` format. It's possible also use more than one address, as comma
-     * separated list of hosts: `[host1]:[port1],[host2]:[port2]`. If hosts parameter is specified, it is not necessary
-     * to specify the connectionBean; if it is provided it is ignored.
+     * separated list of hosts: `[host1]:[port1],[host2]:[port2]`. If the hosts parameter is specified, the provided
+     * connectionBean is ignored.
      *
      * @param hosts
      */

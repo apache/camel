@@ -60,7 +60,7 @@ for this component:
 
 ---------------------------------------------------------------------------------------------------------------
 mongodb:connectionBean?database=databaseName&collection=collectionName&operation=operationName[&moreOptions...]
-mongodb:?hosts=hostnames&database=databaseName&collection=collectionName&operation=operationName[&moreOptions...]
+mongodb:dummy?hosts=hostnames&database=databaseName&collection=collectionName&operation=operationName[&moreOptions...]
 ---------------------------------------------------------------------------------------------------------------
 
 // component-configure options: START

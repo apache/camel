@@ -27,7 +27,7 @@ class MongoDbEndpointHostsTest extends CamelTestSupport {
     @Test
     void testMongoDbEndpoint() {
         MongoDbEndpoint mongoDb
-                = context.getEndpoint("mongodb:?hosts=localhost&database=test&collection=test&operation=findAll",
+                = context.getEndpoint("mongodb:dummy?hosts=localhost&database=test&collection=test&operation=findAll",
                         MongoDbEndpoint.class);
         assertNotNull(mongoDb);
         assertNotNull(mongoDb.getMongoConnection());
@@ -41,7 +41,7 @@ class MongoDbEndpointHostsTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:dbFromHost").to("mongodb:?hosts=localhost&database=test&collection=test&operation=findAll");
+                from("direct:dbFromHost").to("mongodb:dummy?hosts=localhost&database=test&collection=test&operation=findAll");
             }
         };
     }
