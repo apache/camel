@@ -39,14 +39,6 @@ Camel offers encryption/decryption services to secure payloads or
 selectively apply encryption/decryption capabilities on
 portions/sections of a payload.
 
-These capabilities are offered by the following components:
-
-* xref:components:dataformats:xmlSecurity-dataformat.adoc[XML Security DataFormat] (XML
-Encryption support)
-* xref:components:dataformats:crypto-dataformat.adoc[Crypto DataFormat] (Encryption + PGP support)
-* xref:components::crypto-component.adoc[Crypto component] (Signature
-support)
-
 == Endpoint Security
 
 Some components in Camel offer an ability to secure their endpoints
