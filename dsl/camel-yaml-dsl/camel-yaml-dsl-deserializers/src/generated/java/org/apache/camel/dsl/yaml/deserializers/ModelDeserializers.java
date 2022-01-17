@@ -3130,7 +3130,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "fhir-xml", type = "object:org.apache.camel.model.dataformat.FhirXmlDataFormat"),
                     @YamlProperty(name = "flatpack", type = "object:org.apache.camel.model.dataformat.FlatpackDataFormat"),
                     @YamlProperty(name = "grok", type = "object:org.apache.camel.model.dataformat.GrokDataFormat"),
-                    @YamlProperty(name = "gzip-deflator", type = "object:org.apache.camel.model.dataformat.GzipDeflaterDataFormat"),
+                    @YamlProperty(name = "gzip-deflater", type = "object:org.apache.camel.model.dataformat.GzipDeflaterDataFormat"),
                     @YamlProperty(name = "hl7", type = "object:org.apache.camel.model.dataformat.HL7DataFormat"),
                     @YamlProperty(name = "ical", type = "object:org.apache.camel.model.dataformat.IcalDataFormat"),
                     @YamlProperty(name = "jackson-xml", type = "object:org.apache.camel.model.dataformat.JacksonXMLDataFormat"),
@@ -3326,7 +3326,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDataFormats(existing);
                     break;
                 }
-                case "gzip-deflator": {
+                case "gzip-deflater": {
                     org.apache.camel.model.dataformat.GzipDeflaterDataFormat val = asType(node, org.apache.camel.model.dataformat.GzipDeflaterDataFormat.class);
                     java.util.List<org.apache.camel.model.DataFormatDefinition> existing = target.getDataFormats();
                     if (existing == null) {

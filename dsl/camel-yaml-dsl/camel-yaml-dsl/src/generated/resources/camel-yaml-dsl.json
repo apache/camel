@@ -4223,7 +4223,7 @@
           "grok" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GrokDataFormat"
           },
-          "gzip-deflator" : {
+          "gzip-deflater" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GzipDeflaterDataFormat"
           },
           "hl7" : {
