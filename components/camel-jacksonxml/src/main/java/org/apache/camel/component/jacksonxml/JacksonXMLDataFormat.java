@@ -52,7 +52,7 @@ import org.slf4j.LoggerFactory;
  * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat}) using
  * <a href="https://github.com/FasterXML/jackson">Jackson</a> to marshal to and from XML.
  */
-@Dataformat("jacksonxml")
+@Dataformat("jacksonXml")
 public class JacksonXMLDataFormat extends ServiceSupport
         implements DataFormat, DataFormatName, DataFormatContentTypeHeader, CamelContextAware {
 
@@ -148,7 +148,7 @@ public class JacksonXMLDataFormat extends ServiceSupport
 
     @Override
     public String getDataFormatName() {
-        return "xml-jackson";
+        return "jacksonXml";
     }
 
     @Override

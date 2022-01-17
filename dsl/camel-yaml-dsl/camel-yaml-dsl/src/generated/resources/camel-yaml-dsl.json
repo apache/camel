@@ -1402,8 +1402,8 @@
           "grok" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GrokDataFormat"
           },
-          "gzip" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GzipDataFormat"
+          "gzip-deflater" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GzipDeflaterDataFormat"
           },
           "hl7" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.HL7DataFormat"
@@ -1414,7 +1414,7 @@
           "inherit-error-handler" : {
             "type" : "boolean"
           },
-          "jacksonxml" : {
+          "jackson-xml" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.JacksonXMLDataFormat"
           },
           "jaxb" : {
@@ -1441,16 +1441,13 @@
           "rss" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.RssDataFormat"
           },
-          "secure-xml" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XMLSecurityDataFormat"
-          },
-          "soapjaxb" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SoapJaxbDataFormat"
+          "soap" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SoapDataFormat"
           },
           "syslog" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SyslogDataFormat"
           },
-          "tarfile" : {
+          "tar-file" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.TarFileDataFormat"
           },
           "thrift" : {
@@ -1463,13 +1460,13 @@
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityCsvDataFormat"
           },
           "univocity-fixed" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityFixedWidthDataFormat"
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityFixedDataFormat"
           },
           "univocity-tsv" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityTsvDataFormat"
           },
-          "xmlrpc" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XmlRpcDataFormat"
+          "xml-security" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XMLSecurityDataFormat"
           },
           "xstream" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XStreamDataFormat"
@@ -1477,10 +1474,10 @@
           "yaml" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.YAMLDataFormat"
           },
-          "zip" : {
+          "zip-deflater" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ZipDeflaterDataFormat"
           },
-          "zipfile" : {
+          "zip-file" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ZipFileDataFormat"
           }
         }
@@ -2867,8 +2864,8 @@
           "grok" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GrokDataFormat"
           },
-          "gzip" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GzipDataFormat"
+          "gzip-deflater" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GzipDeflaterDataFormat"
           },
           "hl7" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.HL7DataFormat"
@@ -2879,7 +2876,7 @@
           "inherit-error-handler" : {
             "type" : "boolean"
           },
-          "jacksonxml" : {
+          "jackson-xml" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.JacksonXMLDataFormat"
           },
           "jaxb" : {
@@ -2906,16 +2903,13 @@
           "rss" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.RssDataFormat"
           },
-          "secure-xml" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XMLSecurityDataFormat"
-          },
-          "soapjaxb" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SoapJaxbDataFormat"
+          "soap" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SoapDataFormat"
           },
           "syslog" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SyslogDataFormat"
           },
-          "tarfile" : {
+          "tar-file" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.TarFileDataFormat"
           },
           "thrift" : {
@@ -2928,13 +2922,13 @@
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityCsvDataFormat"
           },
           "univocity-fixed" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityFixedWidthDataFormat"
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityFixedDataFormat"
           },
           "univocity-tsv" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityTsvDataFormat"
           },
-          "xmlrpc" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XmlRpcDataFormat"
+          "xml-security" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XMLSecurityDataFormat"
           },
           "xstream" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XStreamDataFormat"
@@ -2942,10 +2936,10 @@
           "yaml" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.YAMLDataFormat"
           },
-          "zip" : {
+          "zip-deflater" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ZipDeflaterDataFormat"
           },
-          "zipfile" : {
+          "zip-file" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ZipFileDataFormat"
           }
         }
@@ -4229,8 +4223,8 @@
           "grok" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GrokDataFormat"
           },
-          "gzip" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GzipDataFormat"
+          "gzip-deflator" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GzipDeflaterDataFormat"
           },
           "hl7" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.HL7DataFormat"
@@ -4238,7 +4232,7 @@
           "ical" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.IcalDataFormat"
           },
-          "jacksonxml" : {
+          "jackson-xml" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.JacksonXMLDataFormat"
           },
           "jaxb" : {
@@ -4265,16 +4259,13 @@
           "rss" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.RssDataFormat"
           },
-          "secure-xml" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XMLSecurityDataFormat"
-          },
-          "soapjaxb" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SoapJaxbDataFormat"
+          "soap" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SoapDataFormat"
           },
           "syslog" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SyslogDataFormat"
           },
-          "tarfile" : {
+          "tar-file" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.TarFileDataFormat"
           },
           "thrift" : {
@@ -4287,13 +4278,13 @@
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityCsvDataFormat"
           },
           "univocity-fixed" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityFixedWidthDataFormat"
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityFixedDataFormat"
           },
           "univocity-tsv" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityTsvDataFormat"
           },
-          "xmlrpc" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XmlRpcDataFormat"
+          "xml-security" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XMLSecurityDataFormat"
           },
           "xstream" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XStreamDataFormat"
@@ -4301,10 +4292,10 @@
           "yaml" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.YAMLDataFormat"
           },
-          "zip" : {
+          "zip-deflater" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ZipDeflaterDataFormat"
           },
-          "zipfile" : {
+          "zip-file" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ZipFileDataFormat"
           }
         }
@@ -4474,7 +4465,7 @@
         },
         "required" : [ "pattern" ]
       },
-      "org.apache.camel.model.dataformat.GzipDataFormat" : {
+      "org.apache.camel.model.dataformat.GzipDeflaterDataFormat" : {
         "type" : "object",
         "properties" : {
           "id" : {
@@ -4880,7 +4871,7 @@
           }
         }
       },
-      "org.apache.camel.model.dataformat.SoapJaxbDataFormat" : {
+      "org.apache.camel.model.dataformat.SoapDataFormat" : {
         "oneOf" : [ {
           "type" : "string"
         }, {
@@ -5039,7 +5030,7 @@
           }
         }
       },
-      "org.apache.camel.model.dataformat.UniVocityFixedWidthDataFormat" : {
+      "org.apache.camel.model.dataformat.UniVocityFixedDataFormat" : {
         "type" : "object",
         "properties" : {
           "as-map" : {
@@ -5265,17 +5256,6 @@
             }
           }
         } ]
-      },
-      "org.apache.camel.model.dataformat.XmlRpcDataFormat" : {
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "string"
-          },
-          "request" : {
-            "type" : "boolean"
-          }
-        }
       },
       "org.apache.camel.model.dataformat.YAMLDataFormat" : {
         "type" : "object",
@@ -7154,8 +7134,8 @@
           "grok" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GrokDataFormat"
           },
-          "gzip" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GzipDataFormat"
+          "gzip-deflater" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GzipDeflaterDataFormat"
           },
           "hl7" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.HL7DataFormat"
@@ -7163,7 +7143,7 @@
           "ical" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.IcalDataFormat"
           },
-          "jacksonxml" : {
+          "jackson-xml" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.JacksonXMLDataFormat"
           },
           "jaxb" : {
@@ -7196,16 +7176,13 @@
           "scheme" : {
             "type" : "string"
           },
-          "secure-xml" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XMLSecurityDataFormat"
-          },
-          "soapjaxb" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SoapJaxbDataFormat"
+          "soap" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SoapDataFormat"
           },
           "syslog" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SyslogDataFormat"
           },
-          "tarfile" : {
+          "tar-file" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.TarFileDataFormat"
           },
           "thrift" : {
@@ -7221,13 +7198,13 @@
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityCsvDataFormat"
           },
           "univocity-fixed" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityFixedWidthDataFormat"
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityFixedDataFormat"
           },
           "univocity-tsv" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityTsvDataFormat"
           },
-          "xmlrpc" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XmlRpcDataFormat"
+          "xml-security" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XMLSecurityDataFormat"
           },
           "xstream" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XStreamDataFormat"
@@ -7235,10 +7212,10 @@
           "yaml" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.YAMLDataFormat"
           },
-          "zip" : {
+          "zip-deflater" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ZipDeflaterDataFormat"
           },
-          "zipfile" : {
+          "zip-file" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ZipFileDataFormat"
           }
         }

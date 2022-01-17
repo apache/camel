@@ -27,7 +27,7 @@ import org.apache.camel.spi.Metadata;
  * Marshal and unmarshal Java objects from and to TSV (Tab-Separated Values) records using UniVocity Parsers.
  */
 @Metadata(firstVersion = "2.15.0", label = "dataformat,transformation,csv", title = "uniVocity TSV")
-@XmlRootElement(name = "univocity-tsv")
+@XmlRootElement(name = "univocityTsv")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UniVocityTsvDataFormat extends UniVocityAbstractDataFormat {
     @XmlAttribute
@@ -35,7 +35,7 @@ public class UniVocityTsvDataFormat extends UniVocityAbstractDataFormat {
     private String escapeChar;
 
     public UniVocityTsvDataFormat() {
-        super("univocity-tsv");
+        super("univocityTsv");
     }
 
     public String getEscapeChar() {

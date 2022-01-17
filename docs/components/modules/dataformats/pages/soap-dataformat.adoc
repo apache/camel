@@ -1,0 +1,1 @@
+../../../../../components/camel-soap/src/main/docs/soap-dataformat.adoc

@@ -105,7 +105,7 @@ public class SoapCxfClientTest extends RouteBuilder {
     public void configure() throws Exception {
         String jaxbPackage = GetCustomersByName.class.getPackage().getName();
         ElementNameStrategy elNameStrat = new ServiceInterfaceStrategy(CustomerService.class, false);
-        SoapJaxbDataFormat soapDataFormat = new SoapJaxbDataFormat(jaxbPackage, elNameStrat);
+        SoapDataFormat soapDataFormat = new SoapDataFormat(jaxbPackage, elNameStrat);
         getContext().setTracing(true);
         from("direct:cxfclient") //
                 .onException(Exception.class).handled(true).marshal(soapDataFormat).end() //

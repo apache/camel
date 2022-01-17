@@ -1,0 +1,1 @@
+../../../../../components/camel-mail/src/main/docs/mimeMultipart-dataformat.adoc
