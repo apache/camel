@@ -66,7 +66,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     @UriParam(description = "Sets the connection bean used as a client for connecting to a database.")
     private MongoClient mongoConnection;
 
-    @UriPath(description = "Sets the connection bean reference used to lookup a client for connecting to a database.")
+    @UriPath(description = "Sets the connection bean reference used to lookup a client for connecting to a database if no hosts parameter is present.")
     @Metadata(required = true)
     private String connectionBean;
 
@@ -732,7 +732,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
 
     /**
      * Host address of mongodb server in `[host]:[port]` format. It's possible also use more than one address, as comma
-     * separated list of hosts: `[host1]:[port1],[host2]:[port2]`. If hosts parameter is specified, provided
+     * separated list of hosts: `[host1]:[port1],[host2]:[port2]`. If the hosts parameter is specified, the provided
      * connectionBean is ignored.
      *
      * @param hosts
