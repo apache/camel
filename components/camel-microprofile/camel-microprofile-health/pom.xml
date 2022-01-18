@@ -46,16 +46,22 @@
         </dependency>
 
         <dependency>
-            <groupId>org.eclipse.microprofile.health</groupId>
-            <artifactId>microprofile-health-api</artifactId>
-            <version>${microprofile-health-version}</version>
-            <scope>provided</scope>
+            <groupId>io.smallrye</groupId>
+            <artifactId>smallrye-health</artifactId>
+            <version>${smallrye-health-version}</version>
         </dependency>
-        <!-- smallrye health uses cdi api -->
+        <dependency>
+            <groupId>io.smallrye.config</groupId>
+            <artifactId>smallrye-config</artifactId>
+            <version>${smallrye-config-version}</version>
+        </dependency>
+
+        <!-- smallrye health uses CDI api -->
         <dependency>
             <groupId>javax.enterprise</groupId>
             <artifactId>cdi-api</artifactId>
             <version>${cdi-api-2.0-version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- testing -->
@@ -64,17 +70,10 @@
             <artifactId>camel-test-junit5</artifactId>
             <scope>test</scope>
         </dependency>
-
         <dependency>
-            <groupId>io.smallrye</groupId>
-            <artifactId>smallrye-health</artifactId>
-            <version>${smallrye-health-version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.smallrye.config</groupId>
-            <artifactId>smallrye-config</artifactId>
-            <version>${smallrye-config-version}</version>
+            <groupId>org.jboss.weld</groupId>
+            <artifactId>weld-junit5</artifactId>
+            <version>${weld-junit5-version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -104,4 +103,23 @@
         </dependency>
 
     </dependencies>
+
+    <profiles>
+        <profile>
+            <id>jdk17-build</id>
+            <activation>
+                <jdk>[17,)</jdk>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <argLine>--add-opens java.base/java.lang=ALL-UNNAMED</argLine>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

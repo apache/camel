@@ -22,57 +22,61 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.stream.JsonParser;
 
-import io.smallrye.health.AsyncHealthCheckFactory;
+import io.smallrye.config.inject.ConfigExtension;
 import io.smallrye.health.SmallRyeHealth;
 import io.smallrye.health.SmallRyeHealthReporter;
-import io.smallrye.health.registry.LivenessHealthRegistry;
-import io.smallrye.health.registry.ReadinessHealthRegistry;
-import io.smallrye.health.registry.StartupHealthRegistry;
-import io.smallrye.health.registry.WellnessHealthRegistry;
+import org.apache.camel.CamelContext;
 import org.apache.camel.health.HealthCheck;
+import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckResultBuilder;
+import org.apache.camel.impl.health.AbstractHealthCheck;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.apache.camel.util.ReflectionHelper;
 import org.eclipse.microprofile.health.HealthCheckResponse;
-import org.junit.jupiter.api.BeforeEach;
+import org.jboss.weld.junit5.auto.AddExtensions;
+import org.jboss.weld.junit5.auto.EnableAutoWeld;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@EnableAutoWeld
+@AddExtensions(ConfigExtension.class)
 public class CamelMicroProfileHealthTestSupport extends CamelTestSupport {
 
-    protected SmallRyeHealthReporter reporter;
+    @Inject
+    SmallRyeHealthReporter reporter;
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
-        reporter = new SmallRyeHealthReporter();
-
-        // we do not run in CDI so we have to setup this with reflection
-        ReflectionHelper.setField(reporter.getClass().getDeclaredField("asyncHealthCheckFactory"), reporter,
-                new AsyncHealthCheckFactory());
-        ReflectionHelper.setField(reporter.getClass().getDeclaredField("livenessHealthRegistry"), reporter,
-                new LivenessHealthRegistry());
-        ReflectionHelper.setField(reporter.getClass().getDeclaredField("readinessHealthRegistry"), reporter,
-                new ReadinessHealthRegistry());
-        ReflectionHelper.setField(reporter.getClass().getDeclaredField("wellnessHealthRegistry"), reporter,
-                new WellnessHealthRegistry());
-        ReflectionHelper.setField(reporter.getClass().getDeclaredField("startupHealthRegistry"), reporter,
-                new StartupHealthRegistry());
-        ReflectionHelper.setField(reporter.getClass().getDeclaredField("timeoutSeconds"), reporter, 60);
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext camelContext = super.createCamelContext();
+        HealthCheckRegistry registry = new CamelMicroProfileHealthCheckRegistry();
+        camelContext.setExtension(HealthCheckRegistry.class, registry);
+        return camelContext;
     }
 
     protected void assertHealthCheckOutput(
-            String expectedName, HealthCheckResponse.Status expectedState, JsonObject healthObject,
+            String expectedName,
+            HealthCheckResponse.Status expectedState,
+            JsonObject healthObject) {
+        assertHealthCheckOutput(expectedName, expectedState, healthObject, null);
+    }
+
+    protected void assertHealthCheckOutput(
+            String expectedName,
+            HealthCheckResponse.Status expectedState,
+            JsonObject healthObject,
             Consumer<JsonObject> dataObjectAssertions) {
+
         assertEquals(expectedName, healthObject.getString("name"));
         assertEquals(expectedState.name(), healthObject.getString("status"));
-        dataObjectAssertions.accept(healthObject.getJsonObject("data"));
+
+        if (dataObjectAssertions != null) {
+            dataObjectAssertions.accept(healthObject.getJsonObject("data"));
+        }
     }
 
     protected JsonObject getHealthJson(SmallRyeHealth health) {
@@ -89,24 +93,42 @@ public class CamelMicroProfileHealthTestSupport extends CamelTestSupport {
     }
 
     protected HealthCheck createLivenessCheck(String id, boolean enabled, Consumer<HealthCheckResultBuilder> consumer) {
-        HealthCheck healthCheck = new AbstractCamelMicroProfileLivenessCheck(id) {
+        HealthCheck livenessCheck = new AbstractHealthCheck(id) {
             @Override
             protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
                 consumer.accept(builder);
             }
+
+            @Override
+            public boolean isReadiness() {
+                return false;
+            }
         };
-        healthCheck.getConfiguration().setEnabled(enabled);
-        return healthCheck;
+        livenessCheck.getConfiguration().setEnabled(enabled);
+        return livenessCheck;
     }
 
     protected HealthCheck createReadinessCheck(String id, boolean enabled, Consumer<HealthCheckResultBuilder> consumer) {
-        HealthCheck healthCheck = new AbstractCamelMicroProfileReadinessCheck(id) {
+        HealthCheck readinessCheck = new AbstractHealthCheck(id) {
             @Override
             protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
                 consumer.accept(builder);
             }
+
+            @Override
+            public boolean isLiveness() {
+                return false;
+            }
         };
-        healthCheck.getConfiguration().setEnabled(enabled);
-        return healthCheck;
+        readinessCheck.getConfiguration().setEnabled(enabled);
+        return readinessCheck;
+
+    }
+
+    /**
+     * Dump health check status to stdout, useful for debugging.
+     */
+    protected void dumpHealth(SmallRyeHealth health) {
+        reporter.reportHealth(System.out, health);
     }
 }
