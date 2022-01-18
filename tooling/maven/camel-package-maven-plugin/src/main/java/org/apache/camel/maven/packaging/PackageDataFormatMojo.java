@@ -342,13 +342,13 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
 
             if ("type".equals(option.getName()) && "bindy".equals(model.getModelName())) {
                 switch (name) {
-                    case "bindy-csv":
+                    case "bindyCsv":
                         option.setDefaultValue("Csv");
                         break;
-                    case "bindy-fixed":
+                    case "bindyFixed":
                         option.setDefaultValue("Fixed");
                         break;
-                    case "bindy-kvp":
+                    case "bindyKvp":
                         option.setDefaultValue("KeyValue");
                         break;
                     default:
@@ -428,7 +428,7 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
         if ("json-gson".equals(name) || "json-jackson".equals(name) || "json-johnzon".equals(name)
                 || "json-xstream".equals(name) || "json-fastjson".equals(name) || "json-jsonb".equals(name)) {
             return "json";
-        } else if ("bindy-csv".equals(name) || "bindy-fixed".equals(name) || "bindy-kvp".equals(name)) {
+        } else if ("bindyCsv".equals(name) || "bindyFixed".equals(name) || "bindyKvp".equals(name)) {
             return "bindy";
         } else if ("yaml-snakeyaml".equals(name)) {
             return "yaml";
@@ -482,11 +482,11 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
             return "JSON XStream";
         } else if ("json-fastjson".equals(name)) {
             return "JSON Fastjson";
-        } else if ("bindy-csv".equals(name)) {
+        } else if ("bindyCsv".equals(name)) {
             return "Bindy CSV";
-        } else if ("bindy-fixed".equals(name)) {
+        } else if ("bindyFixed".equals(name)) {
             return "Bindy Fixed Length";
-        } else if ("bindy-kvp".equals(name)) {
+        } else if ("bindyKvp".equals(name)) {
             return "Bindy Key Value Pair";
         } else if ("yaml-snakeyaml".equals(name)) {
             return "YAML SnakeYAML";

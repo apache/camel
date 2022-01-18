@@ -46,16 +46,19 @@ The data formats naming has been made consistent to use Camel Case:
 [width="100%",cols="1m,1m",options="header"]
 |====
 | Old Name | New Name
+| bindy-csv | bindyCsv
+| bindy-fixed | bindyFixed
+| bindy-kvp | bindyKvp
 | gzip-deflater | gzipDeflater
-| zip-deflater | zipDeflater
 | jacksonxml | jacksonXml
 | mime-multipart | mimeMultipart
 | secureXML | xmlSecurity
 | soapjaxb | soap
+| tarfile | tarFile
 | univociy-csv | univociyCsv
 | univociy-fixed | univociyFixed
 | univociy-tsv | univociyTsv
-| tarfile | tarFile
+| zip-deflater | zipDeflater
 | zipfile | zipFile
 |====
 

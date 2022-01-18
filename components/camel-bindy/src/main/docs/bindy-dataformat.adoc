@@ -58,7 +58,7 @@ you can put multiple models in the same package.
 
 == Options
 
-:shortName: bindy-csv
+:shortName: bindyCsv
 include::partial$dataformat-options.adoc[]
 
 == Annotations
