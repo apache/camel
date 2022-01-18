@@ -111,7 +111,8 @@ public interface Exchange {
     String EXCEPTION_CAUGHT = "CamelExceptionCaught";
     String EXCEPTION_HANDLED = "CamelExceptionHandled";
     String EVALUATE_EXPRESSION_RESULT = "CamelEvaluateExpressionResult";
-    String ERRORHANDLER_CIRCUIT_DETECTED = "CamelFErrorHandlerCircuitDetected";
+    String ERRORHANDLER_BRIDGE = "CamelErrorHandlerBridge";
+    String ERRORHANDLER_CIRCUIT_DETECTED = "CamelErrorHandlerCircuitDetected";
     @Deprecated
     String ERRORHANDLER_HANDLED = "CamelErrorHandlerHandled";
     @Deprecated
