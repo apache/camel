@@ -14,11 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.kafka;
+package org.apache.camel.component.kafka.consumer;
 
 import java.util.Collection;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.component.kafka.KafkaManualCommit;
+import org.apache.camel.component.kafka.KafkaManualCommitFactory;
 import org.apache.camel.spi.StateRepository;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.common.TopicPartition;

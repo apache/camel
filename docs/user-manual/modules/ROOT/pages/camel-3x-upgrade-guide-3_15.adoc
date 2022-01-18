@@ -172,6 +172,16 @@ JTA support is moved out of `camel-cdi` to its own `camel-cdi-jta` module.
 
 The `org.apache.camel.cdi.Main` class has moved from `camel-cdi` to `camel-cdi-main` JAR.
 
+=== camel-kafka
+
+The following classes were moved from `org.apache.camel.component.kafka` to `org.apache.camel.component.kafka.consumer`:
+
+* DefaultKafkaManualAsyncCommit
+* DefaultKafkaManualAsyncCommitFactory
+* DefaultKafkaManualSyncCommit
+* DefaultKafkaManualSyncCommitFactory
+* KafkaAsyncManualCommit
+
 === camel-karaf
 
 The `camel-endpointdsl` and `camel-componentdsl` is no longer supported on Apache Karaf.
@@ -190,3 +200,4 @@ Removed the option `startDelaySeconds` as this does not work correctly and cause
 === camel-rabbitmq
 
 The rabbitmq producer has migrated from commons-poll v1 to v2.
+

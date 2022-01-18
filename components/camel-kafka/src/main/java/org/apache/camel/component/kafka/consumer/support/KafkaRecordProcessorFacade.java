@@ -24,7 +24,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.component.kafka.KafkaAsyncManualCommit;
+import org.apache.camel.component.kafka.consumer.KafkaAsyncManualCommit;
 import org.apache.camel.component.kafka.KafkaConsumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
