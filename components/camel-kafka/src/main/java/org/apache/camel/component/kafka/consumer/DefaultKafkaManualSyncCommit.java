@@ -14,11 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.kafka;
+package org.apache.camel.component.kafka.consumer;
 
 import java.time.Duration;
 import java.util.Collections;
 
+import org.apache.camel.component.kafka.KafkaManualCommit;
 import org.apache.camel.component.kafka.consumer.support.KafkaRecordProcessor;
 import org.apache.camel.spi.StateRepository;
 import org.apache.kafka.clients.consumer.Consumer;

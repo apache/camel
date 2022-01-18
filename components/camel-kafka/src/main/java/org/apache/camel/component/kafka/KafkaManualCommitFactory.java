@@ -19,6 +19,7 @@ package org.apache.camel.component.kafka;
 import java.util.Collection;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.component.kafka.consumer.KafkaAsyncManualCommit;
 import org.apache.camel.spi.StateRepository;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.common.TopicPartition;

@@ -24,7 +24,7 @@ import java.util.stream.StreamSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.component.kafka.KafkaAsyncManualCommit;
+import org.apache.camel.component.kafka.consumer.KafkaAsyncManualCommit;
 import org.apache.camel.component.kafka.KafkaConfiguration;
 import org.apache.camel.component.kafka.KafkaConstants;
 import org.apache.camel.component.kafka.KafkaManualCommit;

@@ -25,7 +25,7 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.AggregationStrategies;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.kafka.DefaultKafkaManualAsyncCommitFactory;
+import org.apache.camel.component.kafka.consumer.DefaultKafkaManualAsyncCommitFactory;
 import org.apache.camel.component.kafka.KafkaConstants;
 import org.apache.camel.component.kafka.KafkaManualCommit;
 import org.apache.camel.component.kafka.KafkaManualCommitFactory;
