@@ -62,6 +62,30 @@ The data formats naming has been made consistent to use Camel Case:
 | zipfile | zipFile
 |====
 
+The Spring Boot auto-configuration names has also been renamed
+(uses dash case as this is Spring Boot naming style):
+
+[width="100%",cols="1m,1m",options="header"]
+|====
+| Old Name | New Name
+| camel.dataformat.fhirjson | camel.dataformat.fhir-json
+| camel.dataformat.fhirxml | camel.dataformat.fhir-xml
+| camel.dataformat.gzipdeflater | camel.dataformat.gzip-deflater
+| camel.dataformat.jacksonxml | camel.dataformat.jackson-xml
+| camel.dataformat.jsonapi | camel.dataformat.json-api
+| camel.dataformat.mimemultipart | camel.dataformat.mime-multipart
+| camel.dataformat.securexml | camel.dataformat.xml-security
+| camel.dataformat.tarfile | camel.dataformat.tar-file
+| camel.dataformat.tidymarkup | camel.dataformat.tidy-markup
+| camel.dataformat.univocitycsv | camel.dataformat.univocity-csv
+| camel.dataformat.univocityfixed | camel.dataformat.univocity-fixed
+| camel.dataformat.univocitytsv | camel.dataformat.univocity-tsv
+| camel.dataformat.zipdeflater | camel.dataformat.zip-deflater
+| camel.dataformat.zipfile | camel.dataformat.zip-file
+|====
+
+
+
 ==== Message History
 
 The message history output has changed to include source column, which refers to the Java class/XML file
