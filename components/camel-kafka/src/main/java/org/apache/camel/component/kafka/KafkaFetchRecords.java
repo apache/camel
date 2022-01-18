@@ -165,8 +165,7 @@ class KafkaFetchRecords implements Runnable {
             }
 
             KafkaRecordProcessorFacade recordProcessorFacade = new KafkaRecordProcessorFacade(
-                    kafkaConsumer,
-                    lastProcessedOffset, threadId, isAutoCommitEnabled(), consumer, asyncCommits);
+                    kafkaConsumer, lastProcessedOffset, threadId, consumer, asyncCommits);
 
             Duration pollDuration = Duration.ofMillis(pollTimeoutMs);
             while (isKafkaConsumerRunnable() && isRetrying() && isConnected()) {
@@ -278,7 +277,7 @@ class KafkaFetchRecords implements Runnable {
 
     private void commit() {
         processAsyncCommits();
-        if (isAutoCommitEnabled()) {
+        if (kafkaConsumer.getEndpoint().getConfiguration().isAutoCommitEnable()) {
             if ("async".equals(kafkaConsumer.getEndpoint().getConfiguration().getAutoCommitOnStop())) {
                 LOG.info("Auto commitAsync on stop {} from {}", threadId, getPrintableTopic());
                 consumer.commitAsync();
@@ -417,11 +416,6 @@ class KafkaFetchRecords implements Runnable {
 
     void stop() {
         safeStop();
-    }
-
-    private boolean isAutoCommitEnabled() {
-        return kafkaConsumer.getEndpoint().getConfiguration().getAutoCommitEnable() != null
-                && kafkaConsumer.getEndpoint().getConfiguration().getAutoCommitEnable();
     }
 
     public boolean isConnected() {
