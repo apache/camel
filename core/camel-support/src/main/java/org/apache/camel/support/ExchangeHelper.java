@@ -613,6 +613,16 @@ public final class ExchangeHelper {
     }
 
     /**
+     * Checks whether the exchange has been error handler bridged
+     *
+     * @param  exchange the exchange
+     * @return          <tt>true</tt> if error handler bridged, <tt>false</tt> otherwise
+     */
+    public static boolean isErrorHandlerBridge(Exchange exchange) {
+        return exchange.getProperty(ExchangePropertyKey.ERRORHANDLER_BRIDGE, false, Boolean.class);
+    }
+
+    /**
      * Checks whether the exchange {@link UnitOfWork} is exhausted
      *
      * @param  exchange the exchange
