@@ -34,18 +34,16 @@ public class PartitionAssignmentListener implements ConsumerRebalanceListener {
     private static final Logger LOG = LoggerFactory.getLogger(PartitionAssignmentListener.class);
 
     private final String threadId;
-    private final String topicName;
     private final KafkaConfiguration configuration;
     private final Consumer consumer;
     private final Map<String, Long> lastProcessedOffset;
     private final KafkaConsumerResumeStrategy resumeStrategy;
     private Supplier<Boolean> stopStateSupplier;
 
-    public PartitionAssignmentListener(String threadId, String topicName, KafkaConfiguration configuration,
+    public PartitionAssignmentListener(String threadId, KafkaConfiguration configuration,
                                        Consumer consumer, Map<String, Long> lastProcessedOffset,
                                        Supplier<Boolean> stopStateSupplier) {
         this.threadId = threadId;
-        this.topicName = topicName;
         this.configuration = configuration;
         this.consumer = consumer;
         this.lastProcessedOffset = lastProcessedOffset;
@@ -56,12 +54,13 @@ public class PartitionAssignmentListener implements ConsumerRebalanceListener {
 
     @Override
     public void onPartitionsRevoked(Collection<TopicPartition> partitions) {
-        LOG.debug("onPartitionsRevoked: {} from topic {}", threadId, topicName);
 
         // if camel is stopping, or we are not running
         boolean stopping = stopStateSupplier.get();
 
         for (TopicPartition partition : partitions) {
+            LOG.debug("onPartitionsRevoked: {} from {}", threadId, partition.topic());
+
             String offsetKey = serializeOffsetKey(partition);
             Long offset = lastProcessedOffset.get(offsetKey);
             if (offset == null) {
@@ -84,7 +83,9 @@ public class PartitionAssignmentListener implements ConsumerRebalanceListener {
 
     @Override
     public void onPartitionsAssigned(Collection<TopicPartition> partitions) {
-        LOG.debug("onPartitionsAssigned: {} from topic {}", threadId, topicName);
+        if (LOG.isDebugEnabled()) {
+            partitions.forEach(p -> LOG.debug("onPartitionsAssigned: {} from {}", threadId, p.topic()));
+        }
 
         resumeStrategy.resume(consumer);
     }
