@@ -59,7 +59,6 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
     public DefaultHealthCheckRegistry(CamelContext camelContext) {
         this.checks = new CopyOnWriteArraySet<>();
         this.repositories = new CopyOnWriteArraySet<>();
-        this.repositories.add(new HealthCheckRegistryRepository());
 
         setCamelContext(camelContext);
     }
@@ -87,6 +86,14 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
     @Override
     protected void doInit() throws Exception {
         super.doInit();
+
+        Optional<HealthCheckRepository> hcr = repositories.stream()
+                .filter(repository -> repository instanceof HealthCheckRegistryRepository)
+                .findFirst();
+
+        if (!hcr.isPresent()) {
+            register(new HealthCheckRegistryRepository());
+        }
 
         for (HealthCheck check : checks) {
             CamelContextAware.trySetCamelContext(check, camelContext);
