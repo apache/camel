@@ -9944,7 +9944,11 @@ endpoint.
         <xs:attribute name="ref" type="xs:string" use="required">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Reference to the Processor to lookup in the registry to use.
+Reference to the Processor to lookup in the registry to use. Can also be used
+for creating new beans by their class name by prefixing with #class, eg
+#class:com.foo.MyClassType. And it is also possible to refer to singleton beans
+by their type in the registry by prefixing with #type: syntax, eg
+#type:com.foo.MyClassType.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -13156,7 +13160,7 @@ Set a reference to a custom Expression to use.
         <xs:element ref="tns:fhirXml"/>
         <xs:element ref="tns:flatpack"/>
         <xs:element ref="tns:grok"/>
-        <xs:element name="gzipDeflator" type="tns:gzipDeflaterDataFormat"/>
+        <xs:element ref="tns:gzipDeflater"/>
         <xs:element ref="tns:hl7"/>
         <xs:element ref="tns:ical"/>
         <xs:element ref="tns:jacksonXml"/>
