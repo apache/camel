@@ -5,7 +5,7 @@
 ** xref:any23-dataformat.adoc[Any23]
 ** xref:asn1-dataformat.adoc[ASN.1 File]
 ** xref:avro-dataformat.adoc[Avro]
-** xref:avro-jackson-dataformat.adoc[Avro Jackson]
+** xref:avroJackson-dataformat.adoc[Avro Jackson]
 ** xref:barcode-dataformat.adoc[Barcode]
 ** xref:base64-dataformat.adoc[Base64]
 ** xref:beanio-dataformat.adoc[BeanIO]

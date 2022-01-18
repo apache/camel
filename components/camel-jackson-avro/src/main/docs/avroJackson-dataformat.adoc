@@ -1,6 +1,6 @@
 = Avro Jackson DataFormat
 :doctitle: Avro Jackson
-:shortname: avro-jackson
+:shortname: avroJackson
 :artifactid: camel-jackson-avro
 :description: Marshal POJOs to Avro and back using Jackson.
 :since: 3.10

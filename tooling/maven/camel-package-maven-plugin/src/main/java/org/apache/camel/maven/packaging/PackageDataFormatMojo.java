@@ -432,7 +432,7 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
             return "bindy";
         } else if ("yaml-snakeyaml".equals(name)) {
             return "yaml";
-        } else if ("avro-jackson".equals(name)) {
+        } else if ("avroJackson".equals(name)) {
             return "avro";
         } else if ("protobuf-jackson".equals(name)) {
             return "protobuf";
@@ -454,7 +454,7 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
                 return "2.0.0";
             case "json-fastjson":
                 return "2.20.0";
-            case "avro-jackson":
+            case "avroJackson":
                 return "3.10.0";
             case "protobuf-jackson":
                 return "3.10.0";
@@ -470,7 +470,7 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
             return "JSON Gson";
         } else if ("json-jackson".equals(name)) {
             return "JSON Jackson";
-        } else if ("avro-jackson".equals(name)) {
+        } else if ("avroJackson".equals(name)) {
             return "Avro Jackson";
         } else if ("protobuf-jackson".equals(name)) {
             return "Protobuf Jackson";

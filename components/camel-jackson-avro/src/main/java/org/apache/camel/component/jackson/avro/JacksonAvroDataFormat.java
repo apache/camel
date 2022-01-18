@@ -25,7 +25,7 @@ import org.apache.camel.spi.annotations.Dataformat;
 /**
  * Marshal POJOs to Avro and back using Jackson.
  */
-@Dataformat("avro-jackson")
+@Dataformat("avroJackson")
 @Metadata(firstVersion = "3.10.0", title = "Avro Jackson", excludeProperties = "library,instanceClassName,schema")
 public class JacksonAvroDataFormat extends AbstractJacksonDataFormat {
 
@@ -77,7 +77,7 @@ public class JacksonAvroDataFormat extends AbstractJacksonDataFormat {
 
     @Override
     public String getDataFormatName() {
-        return "avro-jackson";
+        return "avroJackson";
     }
 
     @Override

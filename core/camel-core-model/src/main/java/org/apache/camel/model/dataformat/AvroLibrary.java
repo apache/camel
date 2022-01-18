@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum AvroLibrary {
     ApacheAvro("avro"),
-    Jackson("avro-jackson");
+    Jackson("avroJackson");
 
     private final String dataFormatName;
 
