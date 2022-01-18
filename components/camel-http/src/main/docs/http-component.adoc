@@ -165,7 +165,7 @@ after the camel-jetty or camel-cxf endpoint.
 [source,java]
 ----------------------------------------------------------------------------------
 HttpServletRequest request = exchange.getIn().getBody(HttpServletRequest.class);
-HttpServletRequest response = exchange.getIn().getBody(HttpServletResponse.class);
+HttpServletResponse response = exchange.getIn().getBody(HttpServletResponse.class);
 ----------------------------------------------------------------------------------
 
 == Configuring URI to call
