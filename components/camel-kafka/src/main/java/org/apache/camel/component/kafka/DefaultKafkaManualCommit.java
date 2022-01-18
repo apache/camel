@@ -42,11 +42,6 @@ public abstract class DefaultKafkaManualCommit implements KafkaManualCommit {
         this.commitTimeout = commitTimeout;
     }
 
-    @Override
-    public void commitSync() {
-        throw new IllegalStateException("This method is deprecated and should not be used anymore.");
-    }
-
     protected String serializeOffsetKey(TopicPartition topicPartition) {
         return topicPartition.topic() + '/' + topicPartition.partition();
     }

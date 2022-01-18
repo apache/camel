@@ -28,13 +28,4 @@ public interface KafkaManualCommit {
      * @see org.apache.kafka.clients.consumer.KafkaConsumer#commitAsync()
      */
     void commit();
-
-    /**
-     * Commit synchronously.
-     *
-     * @see        org.apache.kafka.clients.consumer.KafkaConsumer#commitSync()
-     * @deprecated use commit function instead.
-     */
-    @Deprecated
-    void commitSync();
 }

@@ -40,11 +40,6 @@ public class DefaultKafkaManualSyncCommit extends DefaultKafkaManualCommit imple
     }
 
     @Override
-    public void commitSync() {
-        commit();
-    }
-
-    @Override
     public void commit() {
         commitOffset(getOffsetRepository(), getPartition(), getRecordOffset());
     }
