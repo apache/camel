@@ -43,14 +43,13 @@ public class KafkaRecordProcessorFacade {
     private final KafkaRecordProcessor kafkaRecordProcessor;
 
     public KafkaRecordProcessorFacade(KafkaConsumer camelKafkaConsumer, Map<String, Long> lastProcessedOffset, String threadId,
-                                      boolean autoCommit,
                                       org.apache.kafka.clients.consumer.Consumer<?, ?> consumer,
                                       ConcurrentLinkedQueue<KafkaAsyncManualCommit> asyncCommits) {
         this.camelKafkaConsumer = camelKafkaConsumer;
         this.lastProcessedOffset = lastProcessedOffset;
         this.threadId = threadId;
 
-        kafkaRecordProcessor = buildKafkaRecordProcessor(autoCommit, consumer, asyncCommits);
+        kafkaRecordProcessor = buildKafkaRecordProcessor(consumer, asyncCommits);
     }
 
     private boolean isStopping() {
@@ -138,11 +137,9 @@ public class KafkaRecordProcessorFacade {
     }
 
     private KafkaRecordProcessor buildKafkaRecordProcessor(
-            boolean autoCommit,
             org.apache.kafka.clients.consumer.Consumer<?, ?> consumer,
             ConcurrentLinkedQueue<KafkaAsyncManualCommit> asyncCommits) {
         return new KafkaRecordProcessor(
-                autoCommit,
                 camelKafkaConsumer.getEndpoint().getConfiguration(),
                 camelKafkaConsumer.getProcessor(),
                 consumer,

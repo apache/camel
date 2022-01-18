@@ -198,7 +198,7 @@ public interface KafkaComponentBuilderFactory {
          * when the process fails as the position from which the new consumer
          * will begin.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
@@ -206,8 +206,7 @@ public interface KafkaComponentBuilderFactory {
          * @param autoCommitEnable the value to set
          * @return the dsl builder
          */
-        default KafkaComponentBuilder autoCommitEnable(
-                java.lang.Boolean autoCommitEnable) {
+        default KafkaComponentBuilder autoCommitEnable(boolean autoCommitEnable) {
             doSetProperty("autoCommitEnable", autoCommitEnable);
             return this;
         }
@@ -2016,7 +2015,7 @@ public interface KafkaComponentBuilderFactory {
             case "reconnectBackoffMaxMs": getOrCreateConfiguration((KafkaComponent) component).setReconnectBackoffMaxMs((java.lang.Integer) value); return true;
             case "shutdownTimeout": getOrCreateConfiguration((KafkaComponent) component).setShutdownTimeout((int) value); return true;
             case "allowManualCommit": getOrCreateConfiguration((KafkaComponent) component).setAllowManualCommit((boolean) value); return true;
-            case "autoCommitEnable": getOrCreateConfiguration((KafkaComponent) component).setAutoCommitEnable((java.lang.Boolean) value); return true;
+            case "autoCommitEnable": getOrCreateConfiguration((KafkaComponent) component).setAutoCommitEnable((boolean) value); return true;
             case "autoCommitIntervalMs": getOrCreateConfiguration((KafkaComponent) component).setAutoCommitIntervalMs((java.lang.Integer) value); return true;
             case "autoCommitOnStop": getOrCreateConfiguration((KafkaComponent) component).setAutoCommitOnStop((java.lang.String) value); return true;
             case "autoOffsetReset": getOrCreateConfiguration((KafkaComponent) component).setAutoOffsetReset((java.lang.String) value); return true;
