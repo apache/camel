@@ -13160,7 +13160,7 @@ Set a reference to a custom Expression to use.
         <xs:element ref="tns:fhirXml"/>
         <xs:element ref="tns:flatpack"/>
         <xs:element ref="tns:grok"/>
-        <xs:element name="gzipDeflator" type="tns:gzipDeflaterDataFormat"/>
+        <xs:element ref="tns:gzipDeflater"/>
         <xs:element ref="tns:hl7"/>
         <xs:element ref="tns:ical"/>
         <xs:element ref="tns:jacksonXml"/>
