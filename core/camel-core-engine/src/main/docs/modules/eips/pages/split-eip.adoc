@@ -68,7 +68,7 @@ The previous example can also be done as follows:
 [source,java]
 ----
 from("direct:a")
-    .split(body()).delimiter("\n"))
+    .split(body()).delimiter("\n")
         .to("direct:b");
 ----
 
