@@ -30,14 +30,14 @@ import org.apache.camel.spi.Registry;
  * A Jackson {@link JsonPathAdapter} which is using Jackson to convert the message body to {@link Map}. This allows us
  * to support POJO classes with camel-jsonpath.
  */
-public class jacksonAdapter implements JsonPathAdapter {
+public class JacksonJsonAdapter implements JsonPathAdapter {
 
     private static final String JACKSON_JAXB_MODULE = "com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule";
 
     private final ObjectMapper defaultMapper;
     private CamelContext camelContext;
 
-    public jacksonAdapter() {
+    public JacksonJsonAdapter() {
         defaultMapper = new ObjectMapper();
     }
 

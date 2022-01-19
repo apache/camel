@@ -18,7 +18,7 @@ package org.apache.camel.component.jacksonxml;
 
 import org.apache.camel.builder.RouteBuilder;
 
-public class jacksonDataFormatTest extends JacksonMarshalTest {
+public class JacksonJsonDataFormatTest extends JacksonMarshalTest {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {

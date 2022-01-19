@@ -4666,7 +4666,7 @@
           },
           "library" : {
             "type" : "string",
-            "enum" : [ "Fastjson", "Gson", "Jackson", "Johnzon", "Jsonb", "XStream" ]
+            "enum" : [ "Fastjson", "Gson", "Jackson", "Johnzon", "Jsonb", "XStream", "dataFormatName" ]
           },
           "module-class-names" : {
             "type" : "string"

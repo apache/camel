@@ -14439,7 +14439,7 @@ Default value: false
     <xs:attribute name="jsonDataFormat" type="xs:string">
       <xs:annotation>
         <xs:documentation xml:lang="en"><![CDATA[
-Name of specific json data format to use. By default json-jackson will be used.
+Name of specific json data format to use. By default jackson will be used.
 Important: This option is only for setting a custom name of the data format, not
 to refer to an existing data format instance.
         ]]></xs:documentation>
@@ -15820,12 +15820,12 @@ multiple certificates.
 
   <xs:simpleType name="jsonLibrary">
     <xs:restriction base="xs:string">
-      <xs:enumeration value="XStream"/>
+      <xs:enumeration value="Fastjson"/>
+      <xs:enumeration value="Gson"/>
       <xs:enumeration value="Jackson"/>
       <xs:enumeration value="Johnzon"/>
-      <xs:enumeration value="Gson"/>
-      <xs:enumeration value="Fastjson"/>
       <xs:enumeration value="Jsonb"/>
+      <xs:enumeration value="XStream"/>
     </xs:restriction>
   </xs:simpleType>
 

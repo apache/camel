@@ -26,7 +26,7 @@ import javax.net.ssl.SSLContext;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.fasterxml.jackson.jaxrs.json.jacksonProvider;
+import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
@@ -56,7 +56,7 @@ public final class ServiceNowClient {
                 configuration.getApiUrl(),
                 Arrays.asList(
                         new AuthenticationRequestFilter(configuration),
-                        new jacksonProvider(configuration.getOrCreateMapper())),
+                        new JacksonJsonProvider(configuration.getOrCreateMapper())),
                 true);
 
         configureRequestContext(camelContext, configuration, client);

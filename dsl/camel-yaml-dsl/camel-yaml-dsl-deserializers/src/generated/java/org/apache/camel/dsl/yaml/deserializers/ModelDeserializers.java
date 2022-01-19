@@ -7274,7 +7274,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "include", type = "string"),
                     @YamlProperty(name = "json-view", type = "string"),
-                    @YamlProperty(name = "library", type = "enum:Fastjson,Gson,Jackson,Johnzon,Jsonb,XStream"),
+                    @YamlProperty(name = "library", type = "enum:Fastjson,Gson,Jackson,Johnzon,Jsonb,XStream,dataFormatName"),
                     @YamlProperty(name = "module-class-names", type = "string"),
                     @YamlProperty(name = "module-refs", type = "string"),
                     @YamlProperty(name = "naming-strategy", type = "string"),
