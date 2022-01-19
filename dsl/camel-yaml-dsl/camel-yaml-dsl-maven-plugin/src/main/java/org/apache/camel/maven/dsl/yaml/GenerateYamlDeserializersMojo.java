@@ -912,9 +912,13 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
 
             Set<String> values = new TreeSet<>();
 
+            // gather enum values
             List<FieldInfo> fields = c.fields();
-            for (int i = 1; i< fields.size(); i++) {
-                values.add(fields.get(i).name());
+            for (int i = 1; i < fields.size(); i++) {
+                FieldInfo f = fields.get(i);
+                if (f.isEnumConstant()) {
+                    values.add(f.name());
+                }
             }
 
             AnnotationSpec.Builder builder = AnnotationSpec.builder(CN_YAML_PROPERTY);
@@ -1055,9 +1059,13 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
 
             Set<String> values = new TreeSet<>();
 
+            // gather enum values
             List<FieldInfo> fields = c.fields();
-            for (int i = 1; i< fields.size(); i++) {
-                values.add(fields.get(i).name());
+            for (int i = 1; i < fields.size(); i++) {
+                FieldInfo f = fields.get(i);
+                if (f.isEnumConstant()) {
+                    values.add(f.name());
+                }
             }
 
             AnnotationSpec.Builder builder = AnnotationSpec.builder(CN_YAML_PROPERTY);

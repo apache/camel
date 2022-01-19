@@ -3861,7 +3861,7 @@
             },
             "library" : {
               "type" : "string",
-              "enum" : [ "ApacheAvro", "Jackson", "dataFormatName" ]
+              "enum" : [ "ApacheAvro", "Jackson" ]
             },
             "module-class-names" : {
               "type" : "string"
@@ -4666,7 +4666,7 @@
           },
           "library" : {
             "type" : "string",
-            "enum" : [ "Fastjson", "Gson", "Jackson", "Johnzon", "Jsonb", "XStream", "dataFormatName" ]
+            "enum" : [ "Fastjson", "Gson", "Jackson", "Johnzon", "Jsonb", "XStream" ]
           },
           "module-class-names" : {
             "type" : "string"
@@ -4834,7 +4834,7 @@
             },
             "library" : {
               "type" : "string",
-              "enum" : [ "GoogleProtobuf", "Jackson", "dataFormatName" ]
+              "enum" : [ "GoogleProtobuf", "Jackson" ]
             },
             "module-class-names" : {
               "type" : "string"
@@ -5277,7 +5277,7 @@
           },
           "library" : {
             "type" : "string",
-            "enum" : [ "SnakeYAML", "dataFormatName" ]
+            "enum" : [ "SnakeYAML" ]
           },
           "max-aliases-for-collections" : {
             "type" : "number"
