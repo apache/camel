@@ -221,12 +221,31 @@
                 <artifactId>camel-yaml-dsl-maven-plugin</artifactId>
                 <version>${project.version}</version>
                 <executions>
+                    <!-- camelCase -->
                     <execution>
+                        <id>generate-yaml-schema-camelCase</id>
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>generate-yaml-schema</goal>
                         </goals>
                         <configuration>
+                            <kebabCase>false</kebabCase>
+                            <outputFile>src/generated/resources/camelYamlDsl.json</outputFile>
+                            <bannedDefinitions>
+                                <bannedDefinition>org.apache.camel.model.FromDefinition</bannedDefinition>
+                            </bannedDefinitions>
+                        </configuration>
+                    </execution>
+                    <!-- kebab-case -->
+                    <execution>
+                        <id>generate-yaml-schema-kebab-case</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate-yaml-schema</goal>
+                        </goals>
+                        <configuration>
+                            <kebabCase>true</kebabCase>
+                            <outputFile>src/generated/resources/camel-yaml-dsl.json</outputFile>
                             <bannedDefinitions>
                                 <bannedDefinition>org.apache.camel.model.FromDefinition</bannedDefinition>
                             </bannedDefinitions>
