@@ -112,7 +112,7 @@ create multiple exchanges from a single one. If no `org.apache.camel.http.common
 is used before this, each multicast or splitter branch will have its own cookie store. This will not be the case
 if the first invocation of one of the endpoints using the cookie handler is before the multicast, because in
 this case the cookie store will be attached to the original exchange, and the exchanges created by the multicast
-will copy the reference to this cookie store (so there is effectively a shared cookie store across branches.
+will copy the reference to this cookie store so there is effectively a shared cookie store across branches.
 As a workaround, you can call a `cookieHandler.getCookieStore()` e.g. by setting this to some dummy header.
 
 == Component Developers

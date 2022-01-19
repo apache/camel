@@ -130,14 +130,14 @@ a `String` prior which is safe to be re-read multiple times.
 [source,java]
 ----
 from("queue:foo").
-  filter().xpath("//foo")).
+  filter().xpath("//foo").
   to("queue:bar")
 ----
 
 [source,java]
 ----
 from("queue:foo").
-  choice().xpath("//foo")).to("queue:bar").
+  choice().xpath("//foo").to("queue:bar").
   otherwise().to("queue:others");
 ----
 
@@ -282,7 +282,7 @@ in the line with `xmlns:foo="http://example.com/person"`:
 </beans>
 ----
 
-This namespace uses `foo` as prefix, so the `<xpath>` expression uses `/foo:` to use this namespace.
+This namespace uses `foo` as prefix, so the `<xpath>` expression uses `foo:` to use this namespace.
 
 == Using @XPath Annotation for Bean Integration
 

@@ -168,9 +168,10 @@ For example, a xref:components:eips:bean-eip.adoc[Bean] such as:
 ----
 public class Bar {
     public String doSomething(String body) {
-    // process the in body and return whatever you want 
-    return "Bye World"; 
-} 
+        // process the in body and return whatever you want
+        return "Bye World";
+    }
+}
 ----
 
 Or the Exchange example. Notice that the return type must be *void* when
@@ -182,7 +183,8 @@ there is only a single parameter of the type
  public class Bar {
      public void doSomething(Exchange exchange) {
          // process the exchange 
-         exchange.getIn().setBody("Bye World"); 
+         exchange.getIn().setBody("Bye World");
+     }
  }
 ----
 
@@ -192,7 +194,7 @@ You can mark a method in your bean with the `@Handler` annotation to
 indicate that this method should be used for xref:bean-binding.adoc[Bean
 Binding].
 
-This has an advantage as you need not specify a method name in the Camel
+This has an advantage as you don't need to specify a method name in the Camel
 route, and therefore do not run into problems after renaming the method
 in an IDE that can't find all its references.
 
@@ -358,10 +360,10 @@ the method with 2 parameters we do
     .to("mock:result");
 ----
 
-By default Camel will match the type name using the simple name, e.g.
-any leading package name will be disregarded. However if you want to
+By default, Camel will match the type name using the simple name, e.g.
+any leading package name will be disregarded. However, if you want to
 match using the FQN, then specify the FQN type and Camel will leverage
-that. So if you have a `com.foo.MyOrder` and you want to match against
+that. So if you have a parameter of type `com.foo.MyOrder` and you want to match against
 the FQN, and *not* the simple name "MyOrder", then follow this example:
 
 [source,java]

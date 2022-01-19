@@ -29,9 +29,7 @@ xref:manual::route-configuration.adoc[Route Configuration].
 This means multiple interceptors can be _triggered_.
 
 Most of the examples in this page are on global scope.
-To use route scope, then its similar but is done on the route.
-
-For example the first example further below can be done as shown on route scope:
+To use route scope, then it is similar, but it is done on the route as shown in the following example.
 
 [source,java]
 -------------------------------------------------------------------------
@@ -64,8 +62,8 @@ All these interceptors support the following features:
 * `skip` when used with `interceptSendToEndpoint` will *skip* sending the message to the original intended endpoint.
 * `afterUri` when used with `interceptSendToEndpoint` allows to send
 the message to an xref:message-endpoint.adoc[endpoint] afterwards.
-* `interceptFrom` and `interceptSendToEndpoint` supports endpoint
-URI pattern matching by: exact uri, wildcard, regular expression. See further below for more details.
+* `interceptFrom` and `interceptSendToEndpoint` support endpoint
+URI pattern matching by exact uri, wildcard and regular expression. See further below for more details.
 * The intercepted endpoint uri is stored as message header with the key
 `Exchange.INTERCEPTED_ENDPOINT`.
 
@@ -156,12 +154,12 @@ And in XML:
 === Stop routing after being intercepted
 
 It is also possible to stop continue routing after being intercepted.
-Now suppose if the message body contains the word Test we want to log and stop, then we can do:
+Now suppose that if the message body contains the word Hello we want to log and stop, then we can do:
 
 [source,java]
 ----
 intercept().when(body().contains("Hello"))
-  .to("mock:intercepted")
+  .to("log:test")
   .stop(); // stop continue routing
 
 from("jms:queue:order")
@@ -177,7 +175,7 @@ And in XML:
 
   <intercept>
       <when>
-        <simple>${body} contains 'Test'</simple>
+        <simple>${body} contains 'Hello'</simple>
         <to uri="log:test"/>
         <stop/> <!-- stop continue routing -->
       </when>
@@ -250,7 +248,7 @@ from("file:inbox")
   .to("ftp:someserver/backup")
 ----
 
-In this example then only messages from the JMS route is intercepted, because
+In this example then only messages from the JMS route are intercepted, because
 we specified a pattern in the `interceptFrom` as `jms*` (uses a wildcard).
 
 The pattern syntax is documented in more details later.
@@ -295,7 +293,7 @@ The `afterUri` option, is used when you need to process
 the response message from the intended destination. This functionality
 was added later to the interceptor, in a form of sending to yet another xref:message-endpoint.adoc[endpoint].
 
-Let start with a basic example, where we want to intercept when a
+Let's start with a basic example, where we want to intercept when a
 message is being sent to xref:ROOT:kafka-component.adoc[kafka]:
 
 [source,java]
@@ -369,7 +367,7 @@ And in XML:
 Sometimes you want to *intercept and skip* sending messages to a specific endpoint.
 
 For example to avoid sending any message to kafka, but detour them to a
-xref:ROOT:mock-component.adoc[mock] endpoint, can be done as follows:
+xref:ROOT:mock-component.adoc[mock] endpoint, it can be done as follows:
 
 [source,java]
 ----
@@ -406,7 +404,7 @@ And in XML:
 
 You can combine both a xref:manual::predicate.adoc[predicate] and skip sending to the original endpoint.
 For example suppose you have some "test" messages that sometimes occur, and that you
-want to avoid sending these message to a downstream kafka system, then this can be done as shown:
+want to avoid sending these messages to a downstream kafka system, then this can be done as shown:
 
 [source,java]
 ----
@@ -443,7 +441,7 @@ And in XML:
 
 == Intercepting endpoints using pattern matching
 
-The `interceptFrom` and `interceptSendToEndpoint` supports endpoint pattern
+The `interceptFrom` and `interceptSendToEndpoint` support endpoint pattern
 matching by the following rules in the given order:
 
 * match by exact URI name
@@ -454,7 +452,7 @@ matching by the following rules in the given order:
 
 This matches only a specific endpoint with exactly the same URI.
 
-For example to intercept messages being send to a specific JMS queue you can do:
+For example to intercept messages being sent to a specific JMS queue you can do:
 
 [source,java]
 -------------------------------------
@@ -463,7 +461,7 @@ interceptSendToEndpoint("jms:queue:cheese").to("log:smelly");
 
 === Intercepting when matching endpoints by wildcard
 
-Match by wildcard allows you to match a range of endpoint or all of a
+Match by wildcard allows you to match a range of endpoints or all of a
 given type. For instance use `file:*` will match all xref:ROOT:file-component.adoc[file] based endpoints.
 
 [source,java]

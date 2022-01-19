@@ -18,15 +18,15 @@ The controller also starts the routes sequentially and using a single thread.
 This means there are no concurrent startup, meaning the routes are started
 more reliably without concurrency issues.
 
-If a route fails on startup then its often its `Consumer` that trigger an error
-in its startup. Some components offers a way to handle this internally and
-attempt to recover from this. However most components do not offer such a feature
+If a route fails on startup then it is often its `Consumer` that triggers an error
+in its startup. Some components offer a way to handle this internally and
+attempt to recover from this. However, most components do not offer such a feature
 and therefore in most situations the route would fail to startup and therefore
 also Camel itself. The JMS component is an example of a component that can
 recover from startup issues in the `Consumer` such as failing to connect to the JMS broker.
 
-The `SupervisingRouteController` is capable of handling this, and manage routes
-that has failed to startup, by taking over and attempt to restart these routes.
+The `SupervisingRouteController` is capable of handling this, and manages routes
+that have failed to startup, by taking over and attempting to restart these routes.
 
 Given the routes below:
 
@@ -39,8 +39,8 @@ from("salesforce:cheese")
   to("log:cheese");
 ----
 
-Then the two routes may fail on startup. However the first route with the file component
-would very likely always startup as its just using the file system that is reliable.
+Then the two routes may fail on startup. However, the first route with the file component
+would very likely always startup as it is just using the file system that is reliable.
 
 The second route however is using Salesforce which can fail starting up if there is no network
 connecting to Salesforce.
@@ -170,7 +170,7 @@ from("aws-s3:foo")
 
 ----
 
-Then suppose we should fail fast if any AWS routes fails to starup. This can be done
+Then suppose we should fail fast if any AWS route fails to startup. This can be done
 by excluding by pattern `aws*` (uri or route id)
 
 [source,java]

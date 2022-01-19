@@ -58,7 +58,7 @@ from("direct:start")
         .to("mock:sync")
     // must use end to denote the end of the onCompletion route
     .end()
-    // here the original route contiues
+    // here the original route contiunes
     .process(new MyProcessor())
     .to("mock:result");
 -----------------------------------------------------------
@@ -119,7 +119,7 @@ attribute on the `<onCompletion>` tag, so the failure example would be:
 <route>
     <from uri="direct:start"/>
     <!-- this onCompletion block will only be executed when the exchange is done being routed -->
-    <!-- this callback is only triggered when the exchange failed, as we have onFailure=true -->
+    <!-- this callback is only triggered when the exchange failed, as we have onFailureOnly=true -->
     <onCompletion onFailureOnly="true">
         <to uri="log:sync"/>
         <to uri="mock:sync"/>
@@ -136,7 +136,7 @@ defined globally. An example below:
 
 [source,java]
 ----
-// define a global on completion that is invoked when the exchange is complete
+// define a global on completion that is invoked when the exchange is done being routed
 onCompletion().to("log:global").to("mock:sync");
  
 from("direct:start")
@@ -148,7 +148,7 @@ And in XML:
 
 [source,xml]
 ----
-<!-- this is a global onCompletion route that is invoke when any exchange is complete
+<!-- this is a global onCompletion route that is invoked when any exchange is done being routed
      as a kind of after callback -->
 <onCompletion>
     <to uri="log:global"/>
@@ -162,14 +162,14 @@ And in XML:
 </route>
 ----
 
-IMPORTANT: If an OnCompletion is defined in a route, it overrides *all* global
-scoped and thus it is only the route scoped that are used. The globally
+IMPORTANT: If an `onCompletion` is defined in a route, it overrides *all* global
+scoped, and thus it is only the route scoped that is used. The globally
 scoped are not in use.
 
 === Using onCompletion with onWhen predicate
 
 As other DSL in Camel you can attach a predicate to
-the OnCompletion so it only triggers in certain conditions, when the
+the `onCompletion`, so it only triggers in certain conditions, when the
 predicate matches. For example to only trigger if the message body contains the word
 _Hello_ we can do like:
 
@@ -177,20 +177,20 @@ _Hello_ we can do like:
 ----
 from("direct:start")
     .onCompletion().onWhen(body().contains("Hello"))
-        // this route is only invoked when the original route is complete as a kind
-        // of completion callback. And also only if the onWhen predicate is true
+        // this route is only invoked when the original route is done being routed
+        // and the onWhen predicate is true
         .to("log:sync")
         .to("mock:sync")
     // must use end to denote the end of the onCompletion route
     .end()
-    // here the original route contiues
+    // here the original route continues
     .to("log:original")
     .to("mock:result");
 ----
 
 == Using onCompletion with or without thread pool
 
-To use thread pool then either set a `executorService` or set
+To use a thread pool then either set a `executorService` or set
 `parallelProcessing` to true.
 
 For example in Java DSL do
@@ -208,7 +208,7 @@ And in XML DSL:
 [source,xml]
 ----
 <onCompletion parallelProcessing="true">
-  <to uri="before"/>
+  <to uri="mock:before"/>
   <delay><constant>1000</constant></delay>
   <setBody><simple>OnComplete:${body}</simple></setBody>
 </onCompletion>
@@ -220,7 +220,7 @@ to be used, using the `executorServiceRef` option
 [source,xml]
 ----
 <onCompletion executorServiceRef="myThreadPool">
-  <to uri="before"/>
+  <to uri="mock:before"/>
   <delay><constant>1000</constant></delay>
   <setBody><simple>OnComplete:${body}</simple></setBody>
 </onCompletion>
@@ -228,7 +228,7 @@ to be used, using the `executorServiceRef` option
 
 === OnCompletion consumer modes
 
-OnCompletion supports two modes that affects the route consumer:
+OnCompletion supports two modes that affect the route consumer:
 
 * AfterConsumer - Default mode which runs after the consumer is done
 * BeforeConsumer - Runs before the consumer is done, and before the
@@ -237,9 +237,9 @@ consumer writes back response to the callee
 The AfterConsumer mode is the default mode which is the same behavior as
 in older Camel releases.
 
-The new BeforeConsumer mode is used to run onCompletion before the
+The new BeforeConsumer mode is used to run `onCompletion` before the
 consumer writes its response back to the callee (if in InOut mode). This
-allows the onCompletion to modify the Exchange, such as adding special
+allows the `onCompletion` to modify the Exchange, such as adding special
 headers, or to log the Exchange as a response logger etc.
 
 For example to always add a "created by" header you
