@@ -114,6 +114,12 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
         setContentTypeFormat(contentTypeFormat);
     }
 
+    @Override
+    public String getDataFormatName() {
+        // protobuf data format is special as the name can be from different bundles
+        return this.library != null ? this.library.getDataFormatName() : "protobuf";
+    }
+
     public String getInstanceClass() {
         return instanceClass;
     }
@@ -381,12 +387,6 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
      */
     public void setAutoDiscoverObjectMapper(String autoDiscoverObjectMapper) {
         this.autoDiscoverObjectMapper = autoDiscoverObjectMapper;
-    }
-
-    @Override
-    public String getDataFormatName() {
-        // protobuf data format is special as the name can be from different bundles
-        return this.library != null ? this.library.getDataFormatName() : "protobuf";
     }
 
     /**

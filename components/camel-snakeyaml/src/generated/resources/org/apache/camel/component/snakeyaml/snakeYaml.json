@@ -1,7 +1,7 @@
 {
   "dataformat": {
     "kind": "dataformat",
-    "name": "yaml-snakeyaml",
+    "name": "snakeYaml",
     "title": "YAML SnakeYAML",
     "description": "Marshal and unmarshal Java objects to and from YAML using SnakeYAML",
     "deprecated": false,

@@ -1,6 +1,6 @@
 = YAML SnakeYAML DataFormat
 :doctitle: YAML SnakeYAML
-:shortname: yaml-snakeyaml
+:shortname: snakeYaml
 :artifactid: camel-snakeyaml
 :description: Marshal and unmarshal Java objects to and from YAML using SnakeYAML
 :since: 2.17
@@ -132,10 +132,6 @@ substituting the version number for the latest & greatest release
   <version>${camel-version}</version>
 </dependency>
 ------------------------------------------
-
- 
-
- 
 
 
 include::spring-boot:partial$starter.adoc[]

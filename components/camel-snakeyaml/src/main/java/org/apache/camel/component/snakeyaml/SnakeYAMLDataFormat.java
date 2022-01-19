@@ -54,7 +54,7 @@ import org.yaml.snakeyaml.resolver.Resolver;
 /**
  * Marshal and unmarshal Java objects to and from YAML using <a href="http://www.snakeyaml.org">SnakeYAML</a>
  */
-@Dataformat("yaml-snakeyaml")
+@Dataformat("snakeYaml")
 public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
 
     private CamelContext camelContext;
@@ -98,7 +98,7 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
 
     @Override
     public String getDataFormatName() {
-        return "yaml-snakeyaml";
+        return "snakeYaml";
     }
 
     @Override

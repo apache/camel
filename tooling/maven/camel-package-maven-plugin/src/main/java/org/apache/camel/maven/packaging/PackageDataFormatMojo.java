@@ -430,7 +430,7 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
             return "json";
         } else if ("bindyCsv".equals(name) || "bindyFixed".equals(name) || "bindyKvp".equals(name)) {
             return "bindy";
-        } else if ("yaml-snakeyaml".equals(name)) {
+        } else if ("snakeYaml".equals(name)) {
             return "yaml";
         } else if ("avroJackson".equals(name)) {
             return "avro";
@@ -487,7 +487,7 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
             return "Bindy Fixed Length";
         } else if ("bindyKvp".equals(name)) {
             return "Bindy Key Value Pair";
-        } else if ("yaml-snakeyaml".equals(name)) {
+        } else if ("snakeYaml".equals(name)) {
             return "YAML SnakeYAML";
         }
         return title;

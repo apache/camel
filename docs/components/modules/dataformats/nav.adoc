@@ -45,6 +45,6 @@
 ** xref:univocityTsv-dataformat.adoc[uniVocity TSV]
 ** xref:xmlSecurity-dataformat.adoc[XML Security]
 ** xref:xstream-dataformat.adoc[XStream]
-** xref:yaml-snakeyaml-dataformat.adoc[YAML SnakeYAML]
+** xref:snakeYaml-dataformat.adoc[YAML SnakeYAML]
 ** xref:zipDeflater-dataformat.adoc[Zip Deflater]
 ** xref:zipFile-dataformat.adoc[Zip File]

@@ -59,6 +59,7 @@ The data formats naming has been made consistent to use Camel Case:
 | univociy-csv | univociyCsv
 | univociy-fixed | univociyFixed
 | univociy-tsv | univociyTsv
+| yaml-snakeyaml | snakeYaml
 | zip-deflater | zipDeflater
 | zipfile | zipFile
 |====
