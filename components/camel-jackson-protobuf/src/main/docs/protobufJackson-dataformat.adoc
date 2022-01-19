@@ -1,6 +1,6 @@
 = Protobuf Jackson DataFormat
 :doctitle: Protobuf Jackson
-:shortname: protobuf-jackson
+:shortname: protobufJackson
 :artifactid: camel-jackson-protobuf
 :description: Marshal POJOs to Protobuf and back using Jackson.
 :since: 3.10

@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum ProtobufLibrary {
     GoogleProtobuf("protobuf"),
-    Jackson("protobuf-jackson");
+    Jackson("protobufJackson");
 
     private final String dataFormatName;
 

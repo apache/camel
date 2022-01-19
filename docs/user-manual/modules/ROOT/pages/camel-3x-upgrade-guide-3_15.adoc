@@ -52,6 +52,7 @@ The data formats naming has been made consistent to use Camel Case:
 | gzip-deflater | gzipDeflater
 | jacksonxml | jacksonXml
 | mime-multipart | mimeMultipart
+| protobuf-jackson | protobufJackson
 | secureXML | xmlSecurity
 | soapjaxb | soap
 | tarfile | tarFile

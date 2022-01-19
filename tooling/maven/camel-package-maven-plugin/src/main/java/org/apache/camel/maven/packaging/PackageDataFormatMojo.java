@@ -434,7 +434,7 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
             return "yaml";
         } else if ("avroJackson".equals(name)) {
             return "avro";
-        } else if ("protobuf-jackson".equals(name)) {
+        } else if ("protobufJackson".equals(name)) {
             return "protobuf";
         }
         return name;
@@ -456,14 +456,13 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
                 return "2.20.0";
             case "avroJackson":
                 return "3.10.0";
-            case "protobuf-jackson":
+            case "protobufJackson":
                 return "3.10.0";
             default:
                 return firstVersion;
         }
     }
 
-    // TODO: split json / bindy into multiple jsons descriptors
     private static String asModelTitle(String name, String title) {
         // special for some data formats
         if ("json-gson".equals(name)) {
@@ -472,7 +471,7 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
             return "JSON Jackson";
         } else if ("avroJackson".equals(name)) {
             return "Avro Jackson";
-        } else if ("protobuf-jackson".equals(name)) {
+        } else if ("protobufJackson".equals(name)) {
             return "Protobuf Jackson";
         } else if ("json-johnzon".equals(name)) {
             return "JSON Johnzon";
