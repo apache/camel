@@ -16,15 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.util.*;
 import java.util.Map;
 import java.util.concurrent.*;
-import java.util.function.*;
-import java.util.stream.*;
+
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
+import org.apache.camel.component.kafka.consumer.KafkaManualCommitFactory;
 
 /**
  * Sent and receive messages to/from an Apache Kafka broker.
@@ -1858,7 +1857,7 @@ public interface KafkaEndpointBuilderFactory {
          * box.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.kafka.KafkaManualCommitFactory&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.kafka.consumer.KafkaManualCommitFactory&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1866,7 +1865,7 @@ public interface KafkaEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedKafkaEndpointConsumerBuilder kafkaManualCommitFactory(
-                org.apache.camel.component.kafka.KafkaManualCommitFactory kafkaManualCommitFactory) {
+                KafkaManualCommitFactory kafkaManualCommitFactory) {
             doSetProperty("kafkaManualCommitFactory", kafkaManualCommitFactory);
             return this;
         }
@@ -1878,7 +1877,7 @@ public interface KafkaEndpointBuilderFactory {
          * box.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.kafka.KafkaManualCommitFactory&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.kafka.consumer.KafkaManualCommitFactory&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
          * 

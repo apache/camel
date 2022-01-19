@@ -17,8 +17,10 @@
 
 package org.apache.camel.component.kafka.consumer.support;
 
+import org.apache.camel.component.kafka.consumer.DefaultCommitManager;
+
 public final class ProcessingResult {
-    private static final ProcessingResult UNPROCESSED_RESULT = new ProcessingResult(false, KafkaRecordProcessor.START_OFFSET);
+    private static final ProcessingResult UNPROCESSED_RESULT = new ProcessingResult(false, DefaultCommitManager.START_OFFSET);
 
     private final boolean breakOnErrorHit;
     private final long partitionLastOffset;

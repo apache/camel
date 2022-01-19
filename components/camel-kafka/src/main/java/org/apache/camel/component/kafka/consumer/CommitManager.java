@@ -14,23 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.consumer;
 
-import java.util.Collection;
-
 import org.apache.camel.Exchange;
-import org.apache.camel.spi.StateRepository;
-import org.apache.kafka.clients.consumer.Consumer;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.TopicPartition;
 
-public class DefaultKafkaManualCommitFactory implements KafkaManualCommitFactory {
+public interface CommitManager {
 
-    @Override
-    public KafkaManualCommit newInstance(
-            Exchange exchange, Consumer consumer, String topicName, String threadId,
-            StateRepository<String, String> offsetRepository,
-            TopicPartition partition, long recordOffset, long commitTimeout, Collection<KafkaAsyncManualCommit> asyncCommits) {
-        return new DefaultKafkaManualSyncCommit(
-                consumer, topicName, threadId, offsetRepository, partition, recordOffset, commitTimeout);
-    }
+    KafkaManualCommit getManualCommit(Exchange exchange, TopicPartition partition, ConsumerRecord<Object, Object> record);
+
+    void commitOffset(TopicPartition partition, long partitionLastOffset);
+
+    void commitOffsetForce(TopicPartition partition, long partitionLastOffset);
+
+    void commitOffsetOnStop(TopicPartition partition, long partitionLastOffset);
+
+    @Deprecated
+    void processAsyncCommits();
+
+    void commit();
 }
