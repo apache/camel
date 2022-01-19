@@ -82,6 +82,7 @@ The Spring Boot auto-configuration names has also been renamed
 | camel.dataformat.univocitycsv | camel.dataformat.univocity-csv
 | camel.dataformat.univocityfixed | camel.dataformat.univocity-fixed
 | camel.dataformat.univocitytsv | camel.dataformat.univocity-tsv
+| camel.dataformat.yaml-snakeyaml | camel.dataformat.snake-yaml
 | camel.dataformat.zipdeflater | camel.dataformat.zip-deflater
 | camel.dataformat.zipfile | camel.dataformat.zip-file
 |====
