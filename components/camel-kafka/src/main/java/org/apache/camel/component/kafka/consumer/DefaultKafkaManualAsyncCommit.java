@@ -18,6 +18,7 @@ package org.apache.camel.component.kafka.consumer;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Objects;
 
 import org.apache.camel.spi.StateRepository;
 import org.apache.kafka.clients.consumer.Consumer;
@@ -37,7 +38,7 @@ public class DefaultKafkaManualAsyncCommit extends DefaultKafkaManualCommit impl
                                          long recordOffset, long commitTimeout,
                                          Collection<KafkaAsyncManualCommit> asyncCommits) {
         super(consumer, topicName, threadId, offsetRepository, partition, recordOffset, commitTimeout);
-        this.asyncCommits = asyncCommits;
+        this.asyncCommits = Objects.requireNonNull(asyncCommits);
 
         LOG.debug("Using commit timeout of {}", commitTimeout);
     }
@@ -54,7 +55,7 @@ public class DefaultKafkaManualAsyncCommit extends DefaultKafkaManualCommit impl
 
     protected void commitAsyncOffset(
             StateRepository<String, String> offsetRepository, TopicPartition partition, long recordOffset) {
-        if (recordOffset != DefaultCommitManager.START_OFFSET) {
+        if (recordOffset != AbstractCommitManager.START_OFFSET) {
             if (offsetRepository != null) {
                 offsetRepository.setState(serializeOffsetKey(partition), serializeOffsetValue(recordOffset));
             } else {

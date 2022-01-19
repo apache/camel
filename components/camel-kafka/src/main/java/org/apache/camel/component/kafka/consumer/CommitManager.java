@@ -32,7 +32,9 @@ public interface CommitManager {
     void commitOffsetOnStop(TopicPartition partition, long partitionLastOffset);
 
     @Deprecated
-    void processAsyncCommits();
+    default void processAsyncCommits() {
+
+    }
 
     void commit();
 }

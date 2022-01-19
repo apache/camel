@@ -16,14 +16,15 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
 import java.util.Map;
 import java.util.concurrent.*;
-
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.component.kafka.consumer.KafkaManualCommitFactory;
 
 /**
  * Sent and receive messages to/from an Apache Kafka broker.
@@ -1865,7 +1866,7 @@ public interface KafkaEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedKafkaEndpointConsumerBuilder kafkaManualCommitFactory(
-                KafkaManualCommitFactory kafkaManualCommitFactory) {
+                org.apache.camel.component.kafka.consumer.KafkaManualCommitFactory kafkaManualCommitFactory) {
             doSetProperty("kafkaManualCommitFactory", kafkaManualCommitFactory);
             return this;
         }

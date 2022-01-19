@@ -27,7 +27,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Pattern;
 
 import org.apache.camel.component.kafka.consumer.CommitManager;
-import org.apache.camel.component.kafka.consumer.DefaultCommitManager;
+import org.apache.camel.component.kafka.consumer.CommitManagers;
 import org.apache.camel.component.kafka.consumer.support.KafkaRecordProcessorFacade;
 import org.apache.camel.component.kafka.consumer.support.PartitionAssignmentListener;
 import org.apache.camel.component.kafka.consumer.support.ProcessingResult;
@@ -82,10 +82,10 @@ class KafkaFetchRecords implements Runnable {
                 if (!isConnected()) {
                     createConsumer();
 
+                    commitManager = CommitManagers.createCommitManager(consumer, kafkaConsumer, threadId, getPrintableTopic());
+
                     initializeConsumer();
                     setConnected(true);
-
-                    commitManager = new DefaultCommitManager(consumer, kafkaConsumer, threadId, getPrintableTopic());
                 }
             } catch (Exception e) {
                 setConnected(false);
