@@ -30,7 +30,7 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 
-import com.fasterxml.jackson.jaxrs.json.jacksonProvider;
+import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import org.apache.camel.component.bonita.api.filter.BonitaAuthFilter;
 import org.apache.camel.component.bonita.api.filter.JsonClientFilter;
 import org.apache.camel.component.bonita.api.model.FileInput;
@@ -52,7 +52,7 @@ public class BonitaAPIUtil {
             instance = new BonitaAPIUtil();
             ClientBuilder clientBuilder = ClientBuilder.newBuilder();
             Client client = clientBuilder.build();
-            client.register(jacksonProvider.class);
+            client.register(JacksonJsonProvider.class);
             client.register(new JsonClientFilter());
             client.register(new BonitaAuthFilter(bonitaAPIConfig));
             instance.setWebTarget(client.target(bonitaAPIConfig.getBaseBonitaURI()));
