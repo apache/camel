@@ -44,7 +44,7 @@ public class DefaultKafkaManualSyncCommit extends DefaultKafkaManualCommit imple
     }
 
     protected void commitOffset(StateRepository<String, String> offsetRepository, TopicPartition partition, long recordOffset) {
-        if (recordOffset != DefaultCommitManager.START_OFFSET) {
+        if (recordOffset != AbstractCommitManager.START_OFFSET) {
             if (offsetRepository != null) {
                 offsetRepository.setState(serializeOffsetKey(partition), serializeOffsetValue(recordOffset));
             } else {

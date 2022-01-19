@@ -17,10 +17,10 @@
 
 package org.apache.camel.component.kafka.consumer.support;
 
-import org.apache.camel.component.kafka.consumer.DefaultCommitManager;
+import org.apache.camel.component.kafka.consumer.AbstractCommitManager;
 
 public final class ProcessingResult {
-    private static final ProcessingResult UNPROCESSED_RESULT = new ProcessingResult(false, DefaultCommitManager.START_OFFSET);
+    private static final ProcessingResult UNPROCESSED_RESULT = new ProcessingResult(false, AbstractCommitManager.START_OFFSET);
 
     private final boolean breakOnErrorHit;
     private final long partitionLastOffset;
