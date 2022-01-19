@@ -6,7 +6,7 @@ and thread pools from the JDK concurrency API.
 This page focuses on thread pools.
 Camel leverages thread pools in several places such as:
 
-* several xref:components:eips:enterprise-integration-patterns.adoc[EIP] patterns supports using thread pools for
+* Several xref:components:eips:enterprise-integration-patterns.adoc[EIP] patterns support using thread pools for
 concurrency
 * xref:components::seda-component.adoc[SEDA] component for asynchronous connectivity
 * xref:components:eips:threads-eip.adoc[Threads] EIP in Camel routes
@@ -37,7 +37,7 @@ xref:components:eips:multicast-eip.adoc[Multicast] with `parallelProcessing=true
 then it would create a thread pool based on the profile above.
 
 You can define as many thread pool profiles as you like. But there must
-only *one* default profile. A custom thread pool profile will inherit
+be only *one* default profile. A custom thread pool profile will inherit
 from the default profile. Which means that any option you do not
 explicit define will fallback and use the option from the default
 profile.
@@ -140,7 +140,7 @@ In the pattern you can use the following placeholders
 * `\#camelId#` - The xref:camelcontext.adoc[CamelContext] name
 * `\#counter#` An unique incrementing counter
 * `\#name#` - The thread name
-* `\#longName#` - The long thread name which can includes endpoint parameters etc.
+* `\#longName#` - The long thread name which can include endpoint parameters etc.
 
 In Spring XML the pattern can be set with `threadNamePattern` attribute as shown:
 
@@ -181,18 +181,18 @@ All thread pools created by Camel will be properly shutdown when
 run in a server environment with hot deployments and the likes.
 
 The `ExecutorServiceManager` has APIs for shutting down thread pools
-graceful and aggressively. Its encourage to use this API for creating
+gracefully and aggressively. It is encouraged to use this API for creating
 and shutting down thread pools.
 
-The graceful `shutdownGraceful(executorService)` method from `ExecutorServiceManager`
+The method `shutdownGraceful(executorService)` from `ExecutorServiceManager`
 will shutdown graceful at first, until a timeout value is hit. After
-that it shutdown aggressively, again using the timeout value to wait for
+that it shuts down aggressively, again using the timeout value to wait for
 the operation to complete. This means you can wait at most 2 x timeout
 for shutting down the thread pool.
 
 The timeout value is by default `10000` millis. You can configure a
 custom value on the `ExecutorServiceManager` if needed. During shutdown
-Camel will log every 2nd second at INFO level progress of shutting down
+Camel will log every 2 seconds at INFO level progress of shutting down
 the thread pool. For example in case a shutdown takes a while, then
 there is activity in the logs.
 

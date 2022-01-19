@@ -64,7 +64,7 @@ as type conversion are often implicit in use where you would just declare the re
 
 [NOTE]
 ====
-In Camel, all the official Camel components, comes with source code generated `TypeConverter`
+In Camel, all the official Camel components, come with source code generated `TypeConverter`
 (via `camel-component-maven-plugin`) that allows Camel to load these converters very quickly,
 and invoke these type converters at runtime via quick Java method invocations (no reflection overhead).
 ====
@@ -97,10 +97,10 @@ Enabling statistics in XML DSL:
 
 == TypeConverter using @Converter annotation
 
-All the type converters that comes out of the box are coded as Java methods on _converter_ classes.
+All the type converters that come out of the box are coded as Java methods on _converter_ classes.
 
 This means a class has been annotated with `@Converter` and the methods in the class
-becomes a type converter _pair_ when the methods is also annotated with `@Converter` such as:
+annotated with `@Converter` become a type converter _pair_ like in the following example:
 
 [source,java]
 ----
@@ -167,11 +167,11 @@ public class IOConverter {
 }
 ----
 
-There is a few limitations:
+There are few limitations:
 
-- fallback converters is not supported
+- fallback converters are not supported
 - the order of the `@Converter` methods matters. If you have multiple `@Converter` methods that accept as _from_ type
-types which are from the same class hierachy then put the methods first that are the most concrete.
+types which are from the same class hierarchy then put the methods first that are the most concrete.
 
 For example in `camel-xml-jaxp` we have in the `XmlConverter` multiple `@Converter` methods which can convert to `DomSource`.
 We had to put the method that takes `org.w3c.dom.Document` before the method that takes `org.w3c.dom.Node` as `Document` extends `Node`.
@@ -218,9 +218,9 @@ has been enhanced to also look for methods defined with a
 converter.
 
 Fallback type converters are used as a last resort for converting a
-given value to another type. Its used when the regular type converters
+given value to another type. It is used when the regular type converters
 give up.
-The fallback converters is also meant for a broader scope, so its method
+The fallback converters are also meant for a broader scope, so its method
 signature is a bit different:
 
 [source,java]
@@ -229,7 +229,7 @@ signature is a bit different:
 public static <T> T convertTo(Class<T> type, Exchange exchange, Object value, TypeConverterRegistry registry)
 ----
 
-Or you can use the non generic signature.
+Or you can use the non-generic signature.
 
 [source,java]
 ----
@@ -239,17 +239,17 @@ public static Object convertTo(Class type, Exchange exchange, Object value, Type
 
 And the method name can be anything (`convertTo` is not required as a
 name), so it can be named `convertMySpecialTypes` if you like. +
-The `Exchange` parameter is optional, just as its with the regular
+The `Exchange` parameter is optional, just like the regular
 `@Converter` methods.
 
 The purpose with this broad scope method signature is allowing you to
 control if you can convert the given type or not. The `type` parameter
-holds the type we want the `value` converted to. Its used internally in
-Camel for wrapper objects so we can delegate the type convertions to the
+holds the type we want the `value` converted to. It is used internally in
+Camel for wrapper objects, so we can delegate the type conversion to the
 body that is wrapped.
 
 For instance in the method below we will handle all type conversions
-that is based on the wrapper class `GenericFile` and we let Camel do the
+that are based on the wrapper class `GenericFile` and we let Camel do the
 type conversions on its body instead.
 
 [source,java]
@@ -288,7 +288,7 @@ injection to customize the converter
 The type converter accepts the `Exchange` as an optional 2nd parameter.
 This is usable if the type converter for instance needs information from
 the current exchange. For instance combined with the encoding support
-its possible for type converters to convert with the configured
+it is possible for type converters to convert with the configured
 encoding. An example from camel-core for the `byte[]` -> `String`
 converter:
 
@@ -303,7 +303,7 @@ public static String toString(byte[] data, Exchange exchange) {
         } catch (UnsupportedEncodingException e) {
             // ignore
         }
-        return new String(data);
     }
+    return new String(data);
 }
 ----
