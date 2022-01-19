@@ -5277,7 +5277,7 @@
           },
           "library" : {
             "type" : "string",
-            "enum" : [ "SnakeYAML" ]
+            "enum" : [ "SnakeYAML", "dataFormatName" ]
           },
           "max-aliases-for-collections" : {
             "type" : "number"

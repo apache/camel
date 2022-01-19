@@ -18233,7 +18233,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "constructor", type = "string"),
                     @YamlProperty(name = "dumper-options", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
-                    @YamlProperty(name = "library", type = "enum:SnakeYAML"),
+                    @YamlProperty(name = "library", type = "enum:SnakeYAML,dataFormatName"),
                     @YamlProperty(name = "max-aliases-for-collections", type = "number"),
                     @YamlProperty(name = "pretty-flow", type = "boolean"),
                     @YamlProperty(name = "representer", type = "string"),
