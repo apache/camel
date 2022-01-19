@@ -1,1 +1,0 @@
-../../../../../components/camel-jackson/src/main/docs/json-jackson-dataformat.adoc

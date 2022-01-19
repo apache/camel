@@ -1,6 +1,6 @@
 = JSON XStream DataFormat
 :doctitle: JSON XStream
-:shortname: json-xstream
+:shortname: xstreamJson
 :artifactid: camel-xstream
 :description: Marshal POJOs to JSON and back using XStream
 :since: 2.0

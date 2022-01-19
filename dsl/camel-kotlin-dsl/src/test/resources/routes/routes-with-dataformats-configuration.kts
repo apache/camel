@@ -18,7 +18,7 @@ import org.apache.camel.component.jackson.JacksonDataFormat
 
 camel {
     dataFormats {
-        dataFormat<JacksonDataFormat>("json-jackson") {
+        dataFormat<JacksonDataFormat>("jackson") {
             unmarshalType = Map::class.java
             isPrettyPrint = true
         }

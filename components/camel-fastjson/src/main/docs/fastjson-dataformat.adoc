@@ -1,6 +1,6 @@
 = JSON Fastjson DataFormat
 :doctitle: JSON Fastjson
-:shortname: json-fastjson
+:shortname: fastjson
 :artifactid: camel-fastjson
 :description: Marshal POJOs to JSON and back using Fastjson
 :since: 2.20

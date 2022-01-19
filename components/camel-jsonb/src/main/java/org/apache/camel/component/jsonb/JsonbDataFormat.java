@@ -39,7 +39,7 @@ import org.apache.camel.support.service.ServiceSupport;
 /**
  * Marshal POJOs to JSON and back using JSON-B.
  */
-@Dataformat("json-jsonb")
+@Dataformat("jsonb")
 @Metadata(includeProperties = "unmarshalTypeName,unmarshalType,objectMapper,prettyPrint,binaryStrategy,encoding,propertyOrder,propertyamingStrategy,skipNull")
 public class JsonbDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
     private CamelContext camelContext;
@@ -98,7 +98,7 @@ public class JsonbDataFormat extends ServiceSupport implements DataFormat, DataF
 
     @Override
     public String getDataFormatName() {
-        return "json-jsonb";
+        return "jsonb";
     }
 
     public Jsonb getObjectMapper() {

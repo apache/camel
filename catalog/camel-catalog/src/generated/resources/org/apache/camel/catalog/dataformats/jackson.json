@@ -1,7 +1,7 @@
 {
   "dataformat": {
     "kind": "dataformat",
-    "name": "json-jackson",
+    "name": "jackson",
     "title": "JSON Jackson",
     "description": "Marshal POJOs to JSON and back using Jackson",
     "deprecated": false,

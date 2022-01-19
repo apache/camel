@@ -161,7 +161,7 @@ class GroovyRouteBuilderLoaderTest extends Specification {
             loadRoute('/routes/routes-with-dataformats-configuration.groovy')
 
         then:
-            with(context.resolveDataFormat('json-jackson'), JacksonDataFormat) {
+            with(context.resolveDataFormat('jackson'), JacksonDataFormat) {
                 unmarshalType == Map.class
                 prettyPrint
             }

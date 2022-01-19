@@ -55,7 +55,7 @@ public class RestJsonBindingInvalidDataTest extends ServletCamelRouterTestSuppor
                 restConfiguration()
                         .component("servlet")
                         // use gson data format
-                        .jsonDataFormat("json-gson")
+                        .jsonDataFormat("gson")
                         .bindingMode(RestBindingMode.json);
 
                 // catch gson json error so we can return a custom response message

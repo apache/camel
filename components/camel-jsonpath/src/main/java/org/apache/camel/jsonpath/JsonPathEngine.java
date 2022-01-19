@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
-import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
+import com.jayway.jsonpath.spi.json.jacksonProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
@@ -48,7 +48,7 @@ public class JsonPathEngine {
 
     private static final Logger LOG = LoggerFactory.getLogger(JsonPathEngine.class);
 
-    private static final String JACKSON_JSON_ADAPTER = "org.apache.camel.jsonpath.jackson.JacksonJsonAdapter";
+    private static final String JACKSON_JSON_ADAPTER = "org.apache.camel.jsonpath.jackson.jacksonAdapter";
 
     private static final Pattern SIMPLE_PATTERN = Pattern.compile("\\$\\{[^\\}]+\\}", Pattern.MULTILINE);
     private final String expression;
@@ -74,7 +74,7 @@ public class JsonPathEngine {
         if (options != null) {
             builder.options(options);
         }
-        builder.jsonProvider(new JacksonJsonProvider());
+        builder.jsonProvider(new jacksonProvider());
         builder.mappingProvider(new JacksonMappingProvider());
         if (suppressExceptions) {
             builder.options(SUPPRESS_EXCEPTIONS);
@@ -242,7 +242,7 @@ public class JsonPathEngine {
         doInitAdapter(exchange);
 
         if (adapter != null) {
-            LOG.trace("Attempting to use JacksonJsonAdapter: {}", adapter);
+            LOG.trace("Attempting to use jacksonAdapter: {}", adapter);
             Map map = adapter.readValue(json, exchange);
 
             if (json instanceof StreamCache) {
@@ -251,7 +251,7 @@ public class JsonPathEngine {
 
             if (map != null) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("JacksonJsonAdapter converted object from: {} to: java.util.Map",
+                    LOG.debug("jacksonAdapter converted object from: {} to: java.util.Map",
                             ObjectHelper.classCanonicalName(json));
                 }
                 return JsonPath.using(configuration).parse(map).read(path);
@@ -265,19 +265,19 @@ public class JsonPathEngine {
         if (!initJsonAdapter) {
             try {
                 // need to load this adapter dynamically as its optional
-                LOG.debug("Attempting to enable JacksonJsonAdapter by resolving: {} from classpath", JACKSON_JSON_ADAPTER);
+                LOG.debug("Attempting to enable jacksonAdapter by resolving: {} from classpath", JACKSON_JSON_ADAPTER);
                 Class<?> clazz = exchange.getContext().getClassResolver().resolveClass(JACKSON_JSON_ADAPTER);
                 if (clazz != null) {
                     Object obj = exchange.getContext().getInjector().newInstance(clazz);
                     if (obj instanceof JsonPathAdapter) {
                         adapter = (JsonPathAdapter) obj;
                         adapter.init(exchange.getContext());
-                        LOG.debug("JacksonJsonAdapter found on classpath and enabled for camel-jsonpath: {}", adapter);
+                        LOG.debug("jacksonAdapter found on classpath and enabled for camel-jsonpath: {}", adapter);
                     }
                 }
             } catch (Exception e) {
                 LOG.debug(
-                        "Cannot load {} from classpath to enable JacksonJsonAdapter due {}. JacksonJsonAdapter is not enabled.",
+                        "Cannot load {} from classpath to enable jacksonAdapter due {}. jacksonAdapter is not enabled.",
                         JACKSON_JSON_ADAPTER, e.getMessage(),
                         e);
             }

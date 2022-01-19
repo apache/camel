@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
 
 /**
- * Supported Avro marshalers.
+ * Supported protobuf libraries.
  */
 @XmlType
 @XmlEnum

@@ -20,7 +20,7 @@ import java.util.Collections;
 
 import javax.ws.rs.core.MediaType;
 
-import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
+import com.fasterxml.jackson.jaxrs.json.jacksonProvider;
 import org.apache.camel.component.wordpress.api.auth.WordpressAuthentication;
 import org.apache.camel.component.wordpress.api.service.WordpressService;
 import org.apache.cxf.ext.logging.LoggingInInterceptor;
@@ -47,7 +47,7 @@ abstract class AbstractWordpressServiceAdapter<A> implements WordpressService {
 
         // @formatter:off
         this.spi = JAXRSClientFactory.create(wordpressUrl, this.getSpiType(),
-                Collections.singletonList(new JacksonJsonProvider()));
+                Collections.singletonList(new jacksonProvider()));
         // @formatter:on
         WebClient.client(spi).type(MediaType.APPLICATION_JSON_TYPE);
         WebClient.client(spi).accept(MediaType.APPLICATION_JSON_TYPE);

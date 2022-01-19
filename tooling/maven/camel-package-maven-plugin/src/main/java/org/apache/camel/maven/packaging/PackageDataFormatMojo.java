@@ -355,32 +355,32 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
                 }
 
             }
-            if ("objectMapper".equals(option.getName()) && "json-johnzon".equals(name)) {
+            if ("objectMapper".equals(option.getName()) && "johnzon".equals(name)) {
                 option.setDisplayName("Mapper");
                 option.setDescription("Lookup and use the existing Mapper with the given id.");
             }
-            if ("objectMapper".equals(option.getName()) && "json-jsonb".equals(name)) {
+            if ("objectMapper".equals(option.getName()) && "jsonb".equals(name)) {
                 option.setDisplayName("Jsonb instance");
                 option.setDescription("Lookup and use the existing Jsonb instance with the given id.");
             }
             if ("library".equals(option.getName()) && "json".equals(model.getModelName())) {
                 switch (name) {
-                    case "json-gson":
+                    case "gson":
                         option.setDefaultValue("Gson");
                         break;
-                    case "json-jackson":
+                    case "jackson":
                         option.setDefaultValue("Jackson");
                         break;
-                    case "json-johnzon":
+                    case "johnzon":
                         option.setDefaultValue("Johnzon");
                         break;
-                    case "json-jsonb":
+                    case "jsonb":
                         option.setDefaultValue("JSON-B");
                         break;
                     case "json-fastson":
                         option.setDefaultValue("Fastjson");
                         break;
-                    case "json-xstream":
+                    case "xstreamJson":
                         option.setDefaultValue("XStream");
                         break;
                     default:
@@ -425,8 +425,8 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
 
     private static String asModelName(String name) {
         // special for some data formats
-        if ("json-gson".equals(name) || "json-jackson".equals(name) || "json-johnzon".equals(name)
-                || "json-xstream".equals(name) || "json-fastjson".equals(name) || "json-jsonb".equals(name)) {
+        if ("gson".equals(name) || "jackson".equals(name) || "johnzon".equals(name)
+                || "xstreamJson".equals(name) || "fastjson".equals(name) || "jsonb".equals(name)) {
             return "json";
         } else if ("bindyCsv".equals(name) || "bindyFixed".equals(name) || "bindyKvp".equals(name)) {
             return "bindy";
@@ -442,17 +442,17 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
 
     private static String asModelFirstVersion(String name, String firstVersion) {
         switch (name) {
-            case "json-gson":
+            case "gson":
                 return "2.10.0";
-            case "json-jackson":
+            case "jackson":
                 return "2.0.0";
-            case "json-johnzon":
+            case "johnzon":
                 return "2.18.0";
-            case "json-jsonb":
+            case "jsonb":
                 return "3.7.0";
-            case "json-xstream":
+            case "xstreamJson":
                 return "2.0.0";
-            case "json-fastjson":
+            case "fastjson":
                 return "2.20.0";
             case "avroJackson":
                 return "3.10.0";
@@ -465,21 +465,21 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
 
     private static String asModelTitle(String name, String title) {
         // special for some data formats
-        if ("json-gson".equals(name)) {
+        if ("gson".equals(name)) {
             return "JSON Gson";
-        } else if ("json-jackson".equals(name)) {
+        } else if ("jackson".equals(name)) {
             return "JSON Jackson";
         } else if ("avroJackson".equals(name)) {
             return "Avro Jackson";
         } else if ("protobufJackson".equals(name)) {
             return "Protobuf Jackson";
-        } else if ("json-johnzon".equals(name)) {
+        } else if ("johnzon".equals(name)) {
             return "JSON Johnzon";
-        } else if ("json-jsonb".equals(name)) {
+        } else if ("jsonb".equals(name)) {
             return "JSON JSON-B";
-        } else if ("json-xstream".equals(name)) {
+        } else if ("xstreamJson".equals(name)) {
             return "JSON XStream";
-        } else if ("json-fastjson".equals(name)) {
+        } else if ("fastjson".equals(name)) {
             return "JSON Fastjson";
         } else if ("bindyCsv".equals(name)) {
             return "Bindy CSV";

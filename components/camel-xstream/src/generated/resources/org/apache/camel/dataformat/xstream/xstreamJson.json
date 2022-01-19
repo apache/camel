@@ -1,7 +1,7 @@
 {
   "dataformat": {
     "kind": "dataformat",
-    "name": "json-xstream",
+    "name": "xstreamJson",
     "title": "JSON XStream",
     "description": "Marshal POJOs to JSON and back using XStream",
     "deprecated": false,
