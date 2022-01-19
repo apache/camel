@@ -14,18 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.kafka;
+package org.apache.camel.component.kafka.consumer;
+
+import java.util.Collection;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.spi.StateRepository;
+import org.apache.kafka.clients.consumer.Consumer;
+import org.apache.kafka.common.TopicPartition;
 
 /**
- * Can be used for forcing manual offset commit when using Kafka consumer.
+ * Factory to create a new {@link KafkaManualCommit} to store on the {@link Exchange}.
  */
-public interface KafkaManualCommit {
+public interface KafkaManualCommitFactory {
 
     /**
-     * Commit synchronously or asynchronously depending on the implementation.
-     *
-     * @see org.apache.kafka.clients.consumer.KafkaConsumer#commitSync()
-     * @see org.apache.kafka.clients.consumer.KafkaConsumer#commitAsync()
+     * Creates a new instance
      */
-    void commit();
+    KafkaManualCommit newInstance(
+            Exchange exchange, Consumer consumer, String topicName, String threadId,
+            StateRepository<String, String> offsetRepository,
+            TopicPartition partition, long recordOffset, long commitTimeout, Collection<KafkaAsyncManualCommit> asyncCommits);
 }

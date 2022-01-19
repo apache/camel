@@ -21,6 +21,7 @@ import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.kafka.KafkaComponent;
+import org.apache.camel.component.kafka.consumer.KafkaManualCommitFactory;
 
 /**
  * Sent and receive messages to/from an Apache Kafka broker.
@@ -789,7 +790,7 @@ public interface KafkaComponentBuilderFactory {
          * box.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.kafka.KafkaManualCommitFactory&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.kafka.consumer.KafkaManualCommitFactory&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
          * 
@@ -797,7 +798,7 @@ public interface KafkaComponentBuilderFactory {
          * @return the dsl builder
          */
         default KafkaComponentBuilder kafkaManualCommitFactory(
-                org.apache.camel.component.kafka.KafkaManualCommitFactory kafkaManualCommitFactory) {
+                KafkaManualCommitFactory kafkaManualCommitFactory) {
             doSetProperty("kafkaManualCommitFactory", kafkaManualCommitFactory);
             return this;
         }
@@ -2046,7 +2047,7 @@ public interface KafkaComponentBuilderFactory {
             case "specificAvroReader": getOrCreateConfiguration((KafkaComponent) component).setSpecificAvroReader((boolean) value); return true;
             case "topicIsPattern": getOrCreateConfiguration((KafkaComponent) component).setTopicIsPattern((boolean) value); return true;
             case "valueDeserializer": getOrCreateConfiguration((KafkaComponent) component).setValueDeserializer((java.lang.String) value); return true;
-            case "kafkaManualCommitFactory": ((KafkaComponent) component).setKafkaManualCommitFactory((org.apache.camel.component.kafka.KafkaManualCommitFactory) value); return true;
+            case "kafkaManualCommitFactory": ((KafkaComponent) component).setKafkaManualCommitFactory((KafkaManualCommitFactory) value); return true;
             case "pollExceptionStrategy": ((KafkaComponent) component).setPollExceptionStrategy((org.apache.camel.component.kafka.PollExceptionStrategy) value); return true;
             case "bufferMemorySize": getOrCreateConfiguration((KafkaComponent) component).setBufferMemorySize((java.lang.Integer) value); return true;
             case "compressionCodec": getOrCreateConfiguration((KafkaComponent) component).setCompressionCodec((java.lang.String) value); return true;

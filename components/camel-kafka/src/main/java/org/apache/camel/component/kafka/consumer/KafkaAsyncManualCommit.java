@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.kafka.consumer;
 
-import org.apache.camel.component.kafka.KafkaManualCommit;
-
 /**
  * Can be used for forcing async manual offset commit when using Kafka consumer.
  */

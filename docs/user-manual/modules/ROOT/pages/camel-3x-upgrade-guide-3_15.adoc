@@ -181,6 +181,8 @@ The following classes were moved from `org.apache.camel.component.kafka` to `org
 * DefaultKafkaManualSyncCommit
 * DefaultKafkaManualSyncCommitFactory
 * KafkaAsyncManualCommit
+* KafkaManualCommit
+* KafkaManualCommitFactory
 
 === camel-karaf
 

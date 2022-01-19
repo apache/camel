@@ -22,12 +22,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Pattern;
 
-import org.apache.camel.component.kafka.consumer.KafkaAsyncManualCommit;
+import org.apache.camel.component.kafka.consumer.CommitManager;
+import org.apache.camel.component.kafka.consumer.DefaultCommitManager;
 import org.apache.camel.component.kafka.consumer.support.KafkaRecordProcessorFacade;
 import org.apache.camel.component.kafka.consumer.support.PartitionAssignmentListener;
 import org.apache.camel.component.kafka.consumer.support.ProcessingResult;
@@ -53,7 +53,7 @@ class KafkaFetchRecords implements Runnable {
     private final PollExceptionStrategy pollExceptionStrategy;
     private final BridgeExceptionHandlerToErrorHandler bridge;
     private final ReentrantLock lock = new ReentrantLock();
-    private final ConcurrentLinkedQueue<KafkaAsyncManualCommit> asyncCommits = new ConcurrentLinkedQueue<>();
+    private CommitManager commitManager;
 
     private boolean retry = true;
     private boolean reconnect; // must be false at init (this is the policy whether to reconnect)
@@ -84,6 +84,8 @@ class KafkaFetchRecords implements Runnable {
 
                     initializeConsumer();
                     setConnected(true);
+
+                    commitManager = new DefaultCommitManager(consumer, kafkaConsumer, threadId, getPrintableTopic());
                 }
             } catch (Exception e) {
                 setConnected(false);
@@ -136,7 +138,7 @@ class KafkaFetchRecords implements Runnable {
     private void subscribe() {
         PartitionAssignmentListener listener = new PartitionAssignmentListener(
                 threadId, kafkaConsumer.getEndpoint().getConfiguration(), consumer, lastProcessedOffset,
-                this::isRunnable);
+                this::isRunnable, commitManager);
 
         if (LOG.isInfoEnabled()) {
             LOG.info("Subscribing {} to {}", threadId, getPrintableTopic());
@@ -166,13 +168,13 @@ class KafkaFetchRecords implements Runnable {
             }
 
             KafkaRecordProcessorFacade recordProcessorFacade = new KafkaRecordProcessorFacade(
-                    kafkaConsumer, lastProcessedOffset, threadId, consumer, asyncCommits);
+                    kafkaConsumer, lastProcessedOffset, threadId, commitManager);
 
             Duration pollDuration = Duration.ofMillis(pollTimeoutMs);
             while (isKafkaConsumerRunnable() && isRetrying() && isConnected()) {
                 ConsumerRecords<Object, Object> allRecords = consumer.poll(pollDuration);
 
-                processAsyncCommits();
+                commitManager.processAsyncCommits();
 
                 ProcessingResult result = recordProcessorFacade.processPolledRecords(allRecords);
 
@@ -188,14 +190,14 @@ class KafkaFetchRecords implements Runnable {
 
             if (!isConnected()) {
                 LOG.debug("Not reconnecting, check whether to auto-commit or not ...");
-                commit();
+                commitManager.commit();
             }
 
             safeUnsubscribe();
         } catch (InterruptException e) {
             kafkaConsumer.getExceptionHandler().handleException("Interrupted while consuming " + threadId + " from kafka topic",
                     e);
-            commit();
+            commitManager.commit();
 
             LOG.info("Unsubscribing {} from {}", threadId, getPrintableTopic());
             safeUnsubscribe();
@@ -227,12 +229,6 @@ class KafkaFetchRecords implements Runnable {
                 safeUnsubscribe();
                 IOHelper.close(consumer);
             }
-        }
-    }
-
-    private void processAsyncCommits() {
-        while (!asyncCommits.isEmpty()) {
-            asyncCommits.poll().processAsyncCommit();
         }
     }
 
@@ -273,21 +269,6 @@ class KafkaFetchRecords implements Runnable {
             return "topic pattern " + topicPattern;
         } else {
             return "topic " + topicName;
-        }
-    }
-
-    private void commit() {
-        processAsyncCommits();
-        if (kafkaConsumer.getEndpoint().getConfiguration().isAutoCommitEnable()) {
-            if ("async".equals(kafkaConsumer.getEndpoint().getConfiguration().getAutoCommitOnStop())) {
-                LOG.info("Auto commitAsync on stop {} from {}", threadId, getPrintableTopic());
-                consumer.commitAsync();
-            } else if ("sync".equals(kafkaConsumer.getEndpoint().getConfiguration().getAutoCommitOnStop())) {
-                LOG.info("Auto commitSync on stop {} from {}", threadId, getPrintableTopic());
-                consumer.commitSync();
-            } else if ("none".equals(kafkaConsumer.getEndpoint().getConfiguration().getAutoCommitOnStop())) {
-                LOG.info("Auto commit on stop {} from {} is disabled (none)", threadId, getPrintableTopic());
-            }
         }
     }
 

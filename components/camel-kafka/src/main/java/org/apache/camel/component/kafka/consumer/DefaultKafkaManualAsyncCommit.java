@@ -19,7 +19,6 @@ package org.apache.camel.component.kafka.consumer;
 import java.util.Collection;
 import java.util.Collections;
 
-import org.apache.camel.component.kafka.consumer.support.KafkaRecordProcessor;
 import org.apache.camel.spi.StateRepository;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
@@ -55,7 +54,7 @@ public class DefaultKafkaManualAsyncCommit extends DefaultKafkaManualCommit impl
 
     protected void commitAsyncOffset(
             StateRepository<String, String> offsetRepository, TopicPartition partition, long recordOffset) {
-        if (recordOffset != KafkaRecordProcessor.START_OFFSET) {
+        if (recordOffset != DefaultCommitManager.START_OFFSET) {
             if (offsetRepository != null) {
                 offsetRepository.setState(serializeOffsetKey(partition), serializeOffsetValue(recordOffset));
             } else {

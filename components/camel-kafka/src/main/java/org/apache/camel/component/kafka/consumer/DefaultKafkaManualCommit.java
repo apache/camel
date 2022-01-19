@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.kafka.consumer;
 
-import org.apache.camel.component.kafka.KafkaManualCommit;
 import org.apache.camel.spi.StateRepository;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.common.TopicPartition;

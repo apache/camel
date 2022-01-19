@@ -19,8 +19,6 @@ package org.apache.camel.component.kafka.consumer;
 import java.time.Duration;
 import java.util.Collections;
 
-import org.apache.camel.component.kafka.KafkaManualCommit;
-import org.apache.camel.component.kafka.consumer.support.KafkaRecordProcessor;
 import org.apache.camel.spi.StateRepository;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
@@ -46,7 +44,7 @@ public class DefaultKafkaManualSyncCommit extends DefaultKafkaManualCommit imple
     }
 
     protected void commitOffset(StateRepository<String, String> offsetRepository, TopicPartition partition, long recordOffset) {
-        if (recordOffset != KafkaRecordProcessor.START_OFFSET) {
+        if (recordOffset != DefaultCommitManager.START_OFFSET) {
             if (offsetRepository != null) {
                 offsetRepository.setState(serializeOffsetKey(partition), serializeOffsetValue(recordOffset));
             } else {
