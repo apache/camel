@@ -32,7 +32,7 @@ import org.apache.camel.TypeConverters;
 public interface TypeConverterRegistry extends StaticService, CamelContextAware {
 
     /**
-     * Utilization statistics of the this registry.
+     * Utilization statistics of the registry.
      */
     interface Statistics {
 

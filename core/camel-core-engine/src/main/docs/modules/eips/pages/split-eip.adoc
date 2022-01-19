@@ -160,7 +160,7 @@ The example below enabled parallel mode:
 [source,java]
 ----
 from("direct:a")
-  .split(body()).paralllelProcessing()
+  .split(body()).parallelProcessing()
     .to("direct:x")
     .to("direct:y")
     .to("direct:z");
@@ -193,7 +193,7 @@ continues.
 [source,java]
 ----
 from("direct:a")
-  .split(body()).paralllelProcessing()
+  .split(body()).parallelProcessing()
     .to("direct:x")
     .to("direct:y")
     .to("direct:z")

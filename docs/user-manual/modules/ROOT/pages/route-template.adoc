@@ -1,7 +1,7 @@
 = Route Template
 
-A Route template is as its name implies a template for a route, which are used
-to create routes from a set of input parameters. Another way of think is that
+A Route template is as its name implies a template for a route, which is used
+to create routes from a set of input parameters. In other words,
 route templates are parameterized routes.
 
 _Route template_ + _input parameters_ => _route_
@@ -53,9 +53,9 @@ And in XML DSL
 ----
 
 In the examples above there was one route template, but you can define as many as you want.
-Each template must have an unique id. The template parameters are used for defining the parameters
+Each template must have a unique id. The template parameters are used for defining the parameters
 the template accepts. As you can see there are 3 parameters: name, greeting, and myPeriod. The first two
-parameters are mandatory, where as myPeriod is optional as it has a default value of 3s.
+parameters are mandatory, whereas myPeriod is optional as it has a default value of 3s.
 
 The template parameters are then used in the route as regular property placeholders with the `{{ }}` syntax.
 Notice how we use `{\{name}}` and `{\{greeting}}` in the timer endpoint and the simple language.
@@ -78,7 +78,7 @@ Template parameters take precedence over regular property placeholders.
 
 To create routes from route templates, then you should use `org.apache.camel.builder.TemplatedRouteBuilder`.
 
-In the following you can see how this is done with the builder as shown below:
+In the following code snippet, you can see how this is done with the builder:
 
 [source,java]
 ----
@@ -102,7 +102,7 @@ not started yet.
 If no route id is provided, then Camel will auto assign a route id. In the example above then Camel would
 assign route ids such as `route1`, `route2` to these routes.
 
-If you want to specify a route id, then use `routeId` as follows, where the name is myCoolRoute:
+If you want to specify a route id, then use `routeId` as follows, where the id is set to myCoolRoute:
 
 [source,java]
 ----
@@ -139,19 +139,19 @@ The template has two parameters to specify the AWS region and the S3 bucket. To 
 then a `software.amazon.awssdk.services.s3.S3Client` bean is needed.
 
 To create this bean we specify this with the `templateBean` DSL where we specify the bean id as `myClient`.
-The type of the bean can be specified (`S3Client.class`) however its optional
-(can be use if you need to let beans be discovered by type and not name).
+The type of the bean can be specified (`S3Client.class`) however it is optional
+(can be used if you need to let beans be discovered by type and not by name).
 
 This ensures that the code creating the bean is executed later ( when Camel is creating a route from the template),
 then the code must be specified as a _supplier_. Because we want during creation of the bean access to template parameters,
 we use a Camel `BeanSupplier` which gives access to `RouteTemplateContext` that is the _rtc_ variable in the code above.
 
-*Important:* the local bean with id `myClient` *must* be referred to using Camel's property placeholder syntax, eg `{\{myClient}}`
+IMPORTANT: The local bean with id `myClient` *must* be referred to using Camel's property placeholder syntax, eg `{\{myClient}}`
 in the route template, as shown above with the _to_ endpoint. This is because the local
-bean must be made unique and Camel will internally re-assign the bean id to use an unique id instead of `myClient`. And this is done with the help
+bean must be made unique and Camel will internally re-assign the bean id to use a unique id instead of `myClient`. And this is done with the help
 of the property placeholder functionality.
 
-If multiple routes is created from this template, then each of the created routes, have their own
+If multiple routes are created from this template, then each of the created routes, have their own
 S3Client bean created.
 
 === Binding beans to route templates from template builder
@@ -287,7 +287,7 @@ In XML DSL you would do:
 
 === Binding beans to route templates using scripting languages
 
-You can use scripting languages like groovy, joor, mvel which creates the bean.
+You can use scripting languages like groovy, joor, mvel to create the bean.
 This allows to define route templates with the scripting language built-in (such as groovy).
 
 For example creating the AWS S3 client can be done as shown in Java (with inlined groovy code):
@@ -539,11 +539,11 @@ camel.route-template[1].result=cheese
 The SPI interface `org.apache.camel.spi.RouteTemplateParameterSource` can be used to implement custom sources that
 are used during startup of Camel to create routes via the templates with parameters from the custom source(s).
 
-For example a custom source can be implemented that reads parameters from a shared database that Camel uses during staring
-by creating routes. This allows to externalize these parameters and as well to easily add more routes with varying parameters.
+For example a custom source can be implemented to read parameters from a shared database that Camel uses during startup
+to create routes. This allows to externalize these parameters and as well to easily add more routes with varying parameters.
 
 To let Camel discover custom sources then register the source into the Camel registry.
 
 == See Also
 
-See the example https://github.com/apache/camel-examples/tree/main/examples/routetemplate[camel-example-routetemplate].
+See the example https://github.com/apache/camel-examples/tree/main/examples/routetemplate[camel-examples/examples/routetemplate/].
