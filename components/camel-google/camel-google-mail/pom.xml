@@ -54,7 +54,16 @@
                     <groupId>com.google.code.findbugs</groupId>
                     <artifactId>jsr305</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>com.google.oauth-client</groupId>
+                    <artifactId>google-oauth-client</artifactId>
+                </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.google.oauth-client</groupId>
+            <artifactId>google-oauth-client</artifactId>
+            <version>${google-mail-api-client-version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.oauth-client</groupId>
