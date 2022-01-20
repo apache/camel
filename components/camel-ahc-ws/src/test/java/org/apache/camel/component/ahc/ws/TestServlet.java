@@ -34,6 +34,7 @@ public class TestServlet {
     @OnWebSocketConnect
     public void handleConnect(Session session) {
         this.session = session;
+        send("Connected!");
     }
 
     @OnWebSocketMessage

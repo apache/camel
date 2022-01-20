@@ -172,9 +172,15 @@ public class WsEndpoint extends AhcEndpoint {
         }
 
         @Override
-        public void onClose(WebSocket websocket, int code, String reason) {
+        public void onClose(WebSocket socket, int code, String reason) {
             LOG.debug("websocket closed - reconnecting");
             try {
+                if (websocket != null) {
+                    // set websocket to null and remove the listener
+                    websocket.removeWebSocketListener(listener);
+                    websocket.sendCloseFrame();
+                    websocket = null;
+                }
                 reConnect();
             } catch (Exception e) {
                 LOG.warn("Error re-connecting to websocket", e);
