@@ -27,10 +27,54 @@ import org.apache.kafka.common.TopicPartition;
  * Factory to create a new {@link KafkaManualCommit} to store on the {@link Exchange}.
  */
 public interface KafkaManualCommitFactory {
+    /**
+     * A holder class for the Camel exchange related payload, such as the exchange itself, the consumer, thread ID, etc
+     */
+    class CamelExchangePayload {
+        public final Exchange exchange;
+        public final Consumer<?, ?> consumer;
+        public final String threadId;
+        public final StateRepository<String, String> offsetRepository;
+        public final Collection<KafkaAsyncManualCommit> asyncCommits;
+
+        public CamelExchangePayload(Exchange exchange, Consumer<?, ?> consumer, String threadId,
+                                    StateRepository<String, String> offsetRepository,
+                                    Collection<KafkaAsyncManualCommit> asyncCommits) {
+            this.exchange = exchange;
+            this.consumer = consumer;
+            this.threadId = threadId;
+            this.offsetRepository = offsetRepository;
+            this.asyncCommits = asyncCommits;
+        }
+    }
+
+    /**
+     * A holder class for the payload related to the Kafka record, such as partition and topic information
+     */
+    class KafkaRecordPayload {
+        public final TopicPartition partition;
+        public final long recordOffset;
+        public final long commitTimeout;
+
+        public KafkaRecordPayload(TopicPartition partition, long recordOffset, long commitTimeout) {
+            this.partition = partition;
+            this.recordOffset = recordOffset;
+            this.commitTimeout = commitTimeout;
+        }
+    }
 
     /**
      * Creates a new instance
+     * 
+     * @param camelExchangePayload the exchange-related payload from Camel
+     * @param kafkaRecordPayload   the record-related payload from Kafka
      */
+    KafkaManualCommit newInstance(CamelExchangePayload camelExchangePayload, KafkaRecordPayload kafkaRecordPayload);
+
+    /**
+     * @deprecated Use KafkaManualCommitFactory#newInstance(CamelExchangePayload, KafkaRecordPayload)
+     */
+    @Deprecated(since = "3.15.0")
     KafkaManualCommit newInstance(
             Exchange exchange, Consumer consumer, String topicName, String threadId,
             StateRepository<String, String> offsetRepository,

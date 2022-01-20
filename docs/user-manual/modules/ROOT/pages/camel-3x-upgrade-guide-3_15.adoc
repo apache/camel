@@ -177,6 +177,8 @@ The following classes were moved from `org.apache.camel.component.kafka` to `org
 * KafkaManualCommit
 * KafkaManualCommitFactory
 
+The signature for `KafkaManualCommitFactory` and its classes has been adjusted to abstract some runtime parameters. The old signature is still available but will be removed in 3.16.0.
+
 === camel-karaf
 
 The `camel-endpointdsl` and `camel-componentdsl` is no longer supported on Apache Karaf.

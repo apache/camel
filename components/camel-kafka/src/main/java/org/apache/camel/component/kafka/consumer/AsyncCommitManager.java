@@ -22,7 +22,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kafka.KafkaConsumer;
-import org.apache.camel.spi.StateRepository;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
@@ -82,11 +81,8 @@ public class AsyncCommitManager extends AbstractCommitManager {
     @Override
     public KafkaManualCommit getManualCommit(
             Exchange exchange, TopicPartition partition, ConsumerRecord<Object, Object> record) {
-        KafkaManualCommitFactory manualCommitFactory = kafkaConsumer.getEndpoint().getKafkaManualCommitFactory();
-        StateRepository<String, String> offsetRepository = configuration.getOffsetRepository();
-        long commitTimeoutMs = configuration.getCommitTimeoutMs();
 
-        return manualCommitFactory.newInstance(exchange, consumer, partition.topic(), threadId,
-                offsetRepository, partition, record.offset(), commitTimeoutMs, asyncCommits);
+        KafkaManualCommitFactory manualCommitFactory = kafkaConsumer.getEndpoint().getKafkaManualCommitFactory();
+        return getManualCommit(exchange, partition, record, asyncCommits, manualCommitFactory);
     }
 }

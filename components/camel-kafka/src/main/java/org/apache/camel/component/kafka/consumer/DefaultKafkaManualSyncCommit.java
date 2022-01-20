@@ -20,7 +20,6 @@ import java.time.Duration;
 import java.util.Collections;
 
 import org.apache.camel.spi.StateRepository;
-import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.common.TopicPartition;
 import org.slf4j.Logger;
@@ -30,12 +29,9 @@ public class DefaultKafkaManualSyncCommit extends DefaultKafkaManualCommit imple
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultKafkaManualSyncCommit.class);
 
-    public DefaultKafkaManualSyncCommit(Consumer consumer, String topicName, String threadId,
-                                        StateRepository<String, String> offsetRepository, TopicPartition partition,
-                                        long recordOffset, long commitTimeout) {
-        super(consumer, topicName, threadId, offsetRepository, partition, recordOffset, commitTimeout);
-
-        LOG.debug("Using commit timeout of {}", commitTimeout);
+    public DefaultKafkaManualSyncCommit(KafkaManualCommitFactory.CamelExchangePayload camelExchangePayload,
+                                        KafkaManualCommitFactory.KafkaRecordPayload kafkaRecordPayload) {
+        super(camelExchangePayload, kafkaRecordPayload);
     }
 
     @Override
@@ -49,7 +45,8 @@ public class DefaultKafkaManualSyncCommit extends DefaultKafkaManualCommit imple
                 offsetRepository.setState(serializeOffsetKey(partition), serializeOffsetValue(recordOffset));
             } else {
                 LOG.debug("CommitSync {} from topic {} with offset: {}", getThreadId(), getTopicName(), recordOffset);
-                getConsumer().commitSync(Collections.singletonMap(partition, new OffsetAndMetadata(recordOffset + 1)),
+                camelExchangePayload.consumer.commitSync(
+                        Collections.singletonMap(partition, new OffsetAndMetadata(recordOffset + 1)),
                         Duration.ofMillis(getCommitTimeout()));
                 LOG.debug("CommitSync done for {} from topic {} with offset: {}", getThreadId(), getTopicName(), recordOffset);
             }
