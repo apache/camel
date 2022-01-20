@@ -400,7 +400,7 @@ public void process(Exchange exchange) {
 ----
 
 This will force a synchronous commit which will block until the commit is acknowledge on Kafka, or if it fails an exception is thrown.
-You can use an asynchronous commit as well by configuring the `KafkaManualCommitFactory` with the `DefaultKafkaManualAsyncCommitFactory`implementation.
+You can use an asynchronous commit as well by configuring the `KafkaManualCommitFactory` with the `DefaultKafkaManualAsyncCommitFactory` implementation.
 
 The commit will then be done in the next consumer loop using the kafka asynchronous commit api.
 Be aware that records from a partition must be processed and committed by a unique thread.
