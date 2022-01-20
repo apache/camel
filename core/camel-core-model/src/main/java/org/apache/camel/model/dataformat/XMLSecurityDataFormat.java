@@ -33,8 +33,8 @@ import org.apache.camel.support.jsse.KeyStoreParameters;
 /**
  * Encrypt and decrypt XML payloads using Apache Santuario.
  */
-@Metadata(firstVersion = "2.0.0", label = "dataformat,transformation,xml,security", title = "XML Security")
-@XmlRootElement(name = "secureXML")
+@Metadata(firstVersion = "2.0.0", label = "dataformat,transformation,xml", title = "XML Security")
+@XmlRootElement(name = "xmlSecurity")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XMLSecurityDataFormat extends DataFormatDefinition implements NamespaceAware {
 
@@ -74,7 +74,7 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
     private Map<String, String> namespaces;
 
     public XMLSecurityDataFormat() {
-        super("secureXML");
+        super("xmlSecurity");
     }
 
     public String getXmlCipherAlgorithm() {

@@ -54,11 +54,11 @@ public class KafkaRecordProcessor {
     private final String threadId;
     private final ConcurrentLinkedQueue<KafkaAsyncManualCommit> asyncCommits;
 
-    public KafkaRecordProcessor(boolean autoCommitEnabled, KafkaConfiguration configuration,
+    public KafkaRecordProcessor(KafkaConfiguration configuration,
                                 Processor processor, Consumer<?, ?> consumer,
                                 KafkaManualCommitFactory manualCommitFactory,
                                 String threadId, ConcurrentLinkedQueue<KafkaAsyncManualCommit> asyncCommits) {
-        this.autoCommitEnabled = autoCommitEnabled;
+        this.autoCommitEnabled = configuration.isAutoCommitEnable();
         this.configuration = configuration;
         this.processor = processor;
         this.consumer = consumer;

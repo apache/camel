@@ -71,12 +71,12 @@ public class JacksonMarshalViewTest extends CamelTestSupport {
             public void configure() throws Exception {
 
                 // START SNIPPET: format
-                from("direct:inPojoAgeView").marshal().jacksonxml(TestPojoView.class, Views.Age.class);
+                from("direct:inPojoAgeView").marshal().jacksonXml(TestPojoView.class, Views.Age.class);
                 // END SNIPPET: format
-                from("direct:backPojoAgeView").unmarshal().jacksonxml(TestPojoView.class).to("mock:reversePojoAgeView");
+                from("direct:backPojoAgeView").unmarshal().jacksonXml(TestPojoView.class).to("mock:reversePojoAgeView");
 
-                from("direct:inPojoWeightView").marshal().jacksonxml(TestPojoView.class, Views.Weight.class);
-                from("direct:backPojoWeightView").unmarshal().jacksonxml(TestPojoView.class).to("mock:reversePojoWeightView");
+                from("direct:inPojoWeightView").marshal().jacksonXml(TestPojoView.class, Views.Weight.class);
+                from("direct:backPojoWeightView").unmarshal().jacksonXml(TestPojoView.class).to("mock:reversePojoWeightView");
             }
         };
     }

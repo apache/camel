@@ -94,7 +94,10 @@ class KafkaFetchRecords implements Runnable {
             startPolling();
         } while ((isRetrying() || isReconnect()) && isKafkaConsumerRunnable());
 
-        LOG.info("Terminating KafkaConsumer thread: {} receiving from topic: {}", threadId, topicName);
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Terminating KafkaConsumer thread: {} receiving from {}", threadId, getPrintableTopic());
+        }
+
         safeUnsubscribe();
         IOHelper.close(consumer);
     }
@@ -131,14 +134,16 @@ class KafkaFetchRecords implements Runnable {
 
     private void subscribe() {
         PartitionAssignmentListener listener = new PartitionAssignmentListener(
-                threadId, topicName,
-                kafkaConsumer.getEndpoint().getConfiguration(), consumer, lastProcessedOffset, this::isRunnable);
+                threadId, kafkaConsumer.getEndpoint().getConfiguration(), consumer, lastProcessedOffset,
+                this::isRunnable);
+
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Subscribing {} to {}", threadId, getPrintableTopic());
+        }
 
         if (topicPattern != null) {
-            LOG.info("Subscribing {} to topic pattern {}", threadId, topicName);
             consumer.subscribe(topicPattern, listener);
         } else {
-            LOG.info("Subscribing {} to topic {}", threadId, topicName);
             consumer.subscribe(Arrays.asList(topicName.split(",")), listener);
         }
     }
@@ -154,11 +159,13 @@ class KafkaFetchRecords implements Runnable {
             lock.lock();
 
             long pollTimeoutMs = kafkaConsumer.getEndpoint().getConfiguration().getPollTimeoutMs();
-            LOG.trace("Polling {} from topic: {} with timeout: {}", threadId, topicName, pollTimeoutMs);
+
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Polling {} from {} with timeout: {}", threadId, getPrintableTopic(), pollTimeoutMs);
+            }
 
             KafkaRecordProcessorFacade recordProcessorFacade = new KafkaRecordProcessorFacade(
-                    kafkaConsumer,
-                    lastProcessedOffset, threadId, isAutoCommitEnabled(), consumer, asyncCommits);
+                    kafkaConsumer, lastProcessedOffset, threadId, consumer, asyncCommits);
 
             Duration pollDuration = Duration.ofMillis(pollTimeoutMs);
             while (isKafkaConsumerRunnable() && isRetrying() && isConnected()) {
@@ -189,20 +196,24 @@ class KafkaFetchRecords implements Runnable {
                     e);
             commit();
 
-            LOG.info("Unsubscribing {} from topic {}", threadId, topicName);
+            LOG.info("Unsubscribing {} from {}", threadId, getPrintableTopic());
             safeUnsubscribe();
             Thread.currentThread().interrupt();
         } catch (WakeupException e) {
             // This is normal: it raises this exception when calling the wakeUp (which happens when we stop)
-            LOG.trace("The kafka consumer was woken up while polling on thread {} for topic {}", threadId, topicName);
+
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("The kafka consumer was woken up while polling on thread {} for {}", threadId, getPrintableTopic());
+            }
+
             safeUnsubscribe();
         } catch (Exception e) {
             if (LOG.isDebugEnabled()) {
-                LOG.warn("Exception {} caught while polling {} from kafka topic {} at offset {}: {}",
-                        e.getClass().getName(), threadId, topicName, lastProcessedOffset, e.getMessage(), e);
+                LOG.warn("Exception {} caught while polling {} from kafka {} at offset {}: {}",
+                        e.getClass().getName(), threadId, getPrintableTopic(), lastProcessedOffset, e.getMessage(), e);
             } else {
-                LOG.warn("Exception {} caught while polling {} from kafka topic {} at offset {}: {}",
-                        e.getClass().getName(), threadId, topicName, lastProcessedOffset, e.getMessage());
+                LOG.warn("Exception {} caught while polling {} from kafka {} at offset {}: {}",
+                        e.getClass().getName(), threadId, getPrintableTopic(), lastProcessedOffset, e.getMessage());
             }
 
             handleAccordingToStrategy(partitionLastOffset, e);
@@ -240,26 +251,41 @@ class KafkaFetchRecords implements Runnable {
     }
 
     private void safeUnsubscribe() {
+        final String printableTopic = getPrintableTopic();
+
         try {
             consumer.unsubscribe();
+        } catch (IllegalStateException e) {
+            LOG.warn("The consumer is likely already closed. Skipping the unsubscription from {}", printableTopic);
         } catch (Exception e) {
             kafkaConsumer.getExceptionHandler().handleException(
-                    "Error unsubscribing " + threadId + " from kafka topic " + topicName,
-                    e);
+                    "Error unsubscribing thread " + threadId + " from kafka " + printableTopic, e);
+        }
+    }
+
+    /*
+     * This is only used for presenting log messages that take into consideration that it might be subscribed to a topic
+     * or a topic pattern.
+     */
+    private String getPrintableTopic() {
+        if (topicPattern != null) {
+            return "topic pattern " + topicPattern;
+        } else {
+            return "topic " + topicName;
         }
     }
 
     private void commit() {
         processAsyncCommits();
-        if (isAutoCommitEnabled()) {
+        if (kafkaConsumer.getEndpoint().getConfiguration().isAutoCommitEnable()) {
             if ("async".equals(kafkaConsumer.getEndpoint().getConfiguration().getAutoCommitOnStop())) {
-                LOG.info("Auto commitAsync on stop {} from topic {}", threadId, topicName);
+                LOG.info("Auto commitAsync on stop {} from {}", threadId, getPrintableTopic());
                 consumer.commitAsync();
             } else if ("sync".equals(kafkaConsumer.getEndpoint().getConfiguration().getAutoCommitOnStop())) {
-                LOG.info("Auto commitSync on stop {} from topic {}", threadId, topicName);
+                LOG.info("Auto commitSync on stop {} from {}", threadId, getPrintableTopic());
                 consumer.commitSync();
             } else if ("none".equals(kafkaConsumer.getEndpoint().getConfiguration().getAutoCommitOnStop())) {
-                LOG.info("Auto commit on stop {} from topic {} is disabled (none)", threadId, topicName);
+                LOG.info("Auto commit on stop {} from {} is disabled (none)", threadId, getPrintableTopic());
             }
         }
     }
@@ -320,7 +346,12 @@ class KafkaFetchRecords implements Runnable {
         Set<TopicPartition> tps = consumer.assignment();
         if (tps != null && partitionLastOffset != -1) {
             long next = partitionLastOffset + 1;
-            LOG.info("Consumer seeking to next offset {} to continue polling next message from topic: {}", next, topicName);
+
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Consumer seeking to next offset {} to continue polling next message from {}", next,
+                        getPrintableTopic());
+            }
+
             for (TopicPartition tp : tps) {
                 consumer.seek(tp, next);
             }
@@ -328,8 +359,8 @@ class KafkaFetchRecords implements Runnable {
             for (TopicPartition tp : tps) {
                 long next = consumer.position(tp) + 1;
                 if (!logged) {
-                    LOG.info("Consumer seeking to next offset {} to continue polling next message from topic: {}", next,
-                            topicName);
+                    LOG.info("Consumer seeking to next offset {} to continue polling next message from {}", next,
+                            getPrintableTopic());
                     logged = true;
                 }
                 consumer.seek(tp, next);
@@ -385,11 +416,6 @@ class KafkaFetchRecords implements Runnable {
 
     void stop() {
         safeStop();
-    }
-
-    private boolean isAutoCommitEnabled() {
-        return kafkaConsumer.getEndpoint().getConfiguration().getAutoCommitEnable() != null
-                && kafkaConsumer.getEndpoint().getConfiguration().getAutoCommitEnable();
     }
 
     public boolean isConnected() {

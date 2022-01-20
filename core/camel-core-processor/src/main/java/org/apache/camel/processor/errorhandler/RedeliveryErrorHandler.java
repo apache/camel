@@ -451,10 +451,12 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             // and it has not been handled by the failure processor before
             // or not exhausted
             boolean failure = exchange.getException() != null
-                    && !ExchangeHelper.isFailureHandled(exchange)
-                    && !exchange.isRedeliveryExhausted();
+                    && !exchange.isRedeliveryExhausted()
+                    && !ExchangeHelper.isFailureHandled(exchange);
+            // error handled bridged
+            boolean bridge = ExchangeHelper.isErrorHandlerBridge(exchange);
 
-            if (failure) {
+            if (failure || bridge) {
                 // previous processing cause an exception
                 handleException();
                 onExceptionOccurred();

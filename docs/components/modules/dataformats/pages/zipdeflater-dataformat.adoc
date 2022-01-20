@@ -1,1 +1,0 @@
-../../../../../components/camel-zip-deflater/src/main/docs/zipdeflater-dataformat.adoc

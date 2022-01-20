@@ -58,7 +58,7 @@ import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Dataformat("mime-multipart")
+@Dataformat("mimeMultipart")
 public class MimeMultipartDataFormat extends DefaultDataFormat {
     private static final Logger LOG = LoggerFactory.getLogger(MimeMultipartDataFormat.class);
     private static final String MIME_VERSION = "MIME-Version";
@@ -314,7 +314,7 @@ public class MimeMultipartDataFormat extends DefaultDataFormat {
         }
         // or a generated content id
         if (key == null) {
-            key = UUID.randomUUID().toString() + "@camel.apache.org";
+            key = UUID.randomUUID() + "@camel.apache.org";
         }
         return MimeUtility.decodeText(key);
     }

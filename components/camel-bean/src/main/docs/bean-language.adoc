@@ -64,7 +64,7 @@ public class MyBean {
 ----
 
 How this method uses `Exchange` in the method signature. You would often not do that,
-and use non Camel types. For example by using `String` then Camel will automatic
+and use non Camel types. For example by using `String` then Camel will automatically
 convert the message body to this type when calling the method:
 
 [source,java]
@@ -89,10 +89,10 @@ or other expressions.
 === Non-Registry Beans
 
 The Bean Method Language also supports invoking beans
-that isn't registered in the xref:manual::registry.adoc[Registry].
+that are not registered in the xref:manual::registry.adoc[Registry].
 
-Camel can instantiate the bean and invoke the method if given a class
-or invoke an already existing instance.
+Camel can instantiate the bean of a given type and invoke the method
+or invoke the method on an already existing instance.
 
 [source,java]
 ----

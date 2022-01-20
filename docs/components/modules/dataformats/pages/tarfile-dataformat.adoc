@@ -1,1 +1,0 @@
-../../../../../components/camel-tarfile/src/main/docs/tarfile-dataformat.adoc

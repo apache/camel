@@ -253,7 +253,7 @@ Handle CSV (Comma Separated Values) payloads.
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="customDataFormat" type="tns:customDataFormat">
+  <xs:element name="custom" type="tns:customDataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 Delegate to a custom org.apache.camel.spi.DataFormat implementation via Camel
@@ -523,7 +523,7 @@ Evaluates a Groovy script.
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="gzipdeflater" type="tns:gzipDataFormat">
+  <xs:element name="gzipDeflater" type="tns:gzipDeflaterDataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 Compress and decompress messages using java.util.zip.GZIPStream.
@@ -653,7 +653,7 @@ Intercepts messages being sent to an endpoint
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="jacksonxml" type="tns:jacksonXMLDataFormat">
+  <xs:element name="jacksonXml" type="tns:jacksonXMLDataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 Unmarshal a XML payloads to POJOs and back using XMLMapper extension of Jackson.
@@ -798,7 +798,7 @@ Calls a Java bean method.
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="mime-multipart" type="tns:mimeMultipartDataFormat">
+  <xs:element name="mimeMultipart" type="tns:mimeMultipartDataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 Marshal Camel messages with attachments into MIME-Multipart messages and back.
@@ -1383,14 +1383,6 @@ Cryptographically strong random number generator
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="secureXML" type="tns:xmlSecurityDataFormat">
-    <xs:annotation>
-      <xs:documentation xml:lang="en"><![CDATA[
-Encrypt and decrypt XML payloads using Apache Santuario.
-      ]]></xs:documentation>
-    </xs:annotation>
-  </xs:element>
-
   <xs:element name="security" type="tns:securityDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
@@ -1503,7 +1495,7 @@ Evaluates a Camel simple expression.
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="soapjaxb" type="tns:soapJaxbDataFormat">
+  <xs:element name="soap" type="tns:soapDataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 Marshal Java objects to SOAP messages and back.
@@ -1601,7 +1593,7 @@ Marshall SyslogMessages to RFC3164 and RFC5424 messages and back.
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="tarfile" type="tns:tarFileDataFormat">
+  <xs:element name="tarFile" type="tns:tarFileDataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 Archive files into tarballs or extract files from tarballs.
@@ -1762,7 +1754,7 @@ null
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="univocity-csv" type="tns:uniVocityCsvDataFormat">
+  <xs:element name="univocityCsv" type="tns:uniVocityCsvDataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 Marshal and unmarshal Java objects from and to CSV (Comma Separated Values)
@@ -1771,7 +1763,7 @@ using UniVocity Parsers.
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="univocity-fixed" type="tns:uniVocityFixedWidthDataFormat">
+  <xs:element name="univocityFixed" type="tns:uniVocityFixedDataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 Marshal and unmarshal Java objects from and to fixed length records using
@@ -1780,7 +1772,7 @@ UniVocity Parsers.
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="univocity-header" type="tns:uniVocityHeader">
+  <xs:element name="univocityHeader" type="tns:uniVocityHeader">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 To configure headers for UniVocity data formats.
@@ -1788,7 +1780,7 @@ To configure headers for UniVocity data formats.
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="univocity-tsv" type="tns:uniVocityTsvDataFormat">
+  <xs:element name="univocityTsv" type="tns:uniVocityTsvDataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 Marshal and unmarshal Java objects from and to TSV (Tab-Separated Values)
@@ -1855,10 +1847,10 @@ while continue routing the original message.
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="xmlrpc" type="tns:xmlRpcDataFormat">
+  <xs:element name="xmlSecurity" type="tns:xmlSecurityDataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-Marshal and unmarshal XML RPC protocol requests or responses.
+Encrypt and decrypt XML payloads using Apache Santuario.
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -1903,7 +1895,7 @@ Marshal and unmarshal Java objects to and from YAML.
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="zipdeflater" type="tns:zipDeflaterDataFormat">
+  <xs:element name="zipDeflater" type="tns:zipDeflaterDataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 Compress and decompress streams using java.util.zip.Deflater and
@@ -1912,7 +1904,7 @@ java.util.zip.Inflater.
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="zipfile" type="tns:zipFileDataFormat">
+  <xs:element name="zipFile" type="tns:zipFileDataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 Compression and decompress streams using java.util.zip.ZipStream.
@@ -5880,37 +5872,36 @@ it reaches the end when Camel is shut down. Default value: false
             <xs:element ref="tns:cbor"/>
             <xs:element ref="tns:crypto"/>
             <xs:element ref="tns:csv"/>
-            <xs:element name="custom" type="tns:customDataFormat"/>
+            <xs:element ref="tns:custom"/>
             <xs:element ref="tns:fhirJson"/>
             <xs:element ref="tns:fhirXml"/>
             <xs:element ref="tns:flatpack"/>
             <xs:element ref="tns:grok"/>
-            <xs:element name="gzip" type="tns:gzipDataFormat"/>
+            <xs:element ref="tns:gzipDeflater"/>
             <xs:element ref="tns:hl7"/>
             <xs:element ref="tns:ical"/>
-            <xs:element ref="tns:jacksonxml"/>
+            <xs:element ref="tns:jacksonXml"/>
             <xs:element ref="tns:jaxb"/>
             <xs:element ref="tns:json"/>
             <xs:element ref="tns:jsonApi"/>
             <xs:element ref="tns:lzf"/>
-            <xs:element name="mimeMultipart" type="tns:mimeMultipartDataFormat"/>
+            <xs:element ref="tns:mimeMultipart"/>
             <xs:element ref="tns:protobuf"/>
             <xs:element ref="tns:rss"/>
-            <xs:element ref="tns:secureXML"/>
-            <xs:element ref="tns:soapjaxb"/>
+            <xs:element ref="tns:soap"/>
             <xs:element ref="tns:syslog"/>
-            <xs:element ref="tns:tarfile"/>
+            <xs:element ref="tns:tarFile"/>
             <xs:element ref="tns:thrift"/>
             <xs:element ref="tns:tidyMarkup"/>
-            <xs:element ref="tns:univocity-csv"/>
-            <xs:element ref="tns:univocity-fixed"/>
-            <xs:element ref="tns:univocity-tsv"/>
-            <xs:element ref="tns:xmlrpc"/>
+            <xs:element ref="tns:univocityCsv"/>
+            <xs:element ref="tns:univocityFixed"/>
+            <xs:element ref="tns:univocityTsv"/>
+            <xs:element ref="tns:xmlSecurity"/>
             <xs:element ref="tns:xstream"/>
             <xs:element ref="tns:pgp"/>
             <xs:element ref="tns:yaml"/>
-            <xs:element name="zip" type="tns:zipDeflaterDataFormat"/>
-            <xs:element ref="tns:zipfile"/>
+            <xs:element ref="tns:zipDeflater"/>
+            <xs:element ref="tns:zipFile"/>
           </xs:choice>
         </xs:sequence>
       </xs:extension>
@@ -7036,7 +7027,7 @@ Default value: false
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:complexType name="gzipDataFormat">
+  <xs:complexType name="gzipDeflaterDataFormat">
     <xs:complexContent>
       <xs:extension base="tns:dataFormat">
         <xs:sequence/>
@@ -7877,126 +7868,7 @@ Default value: true
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:complexType name="xmlSecurityDataFormat">
-    <xs:complexContent>
-      <xs:extension base="tns:dataFormat">
-        <xs:sequence/>
-        <xs:attribute name="xmlCipherAlgorithm" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-The cipher algorithm to be used for encryption/decryption of the XML message
-content. The available choices are: XMLCipher.TRIPLEDES XMLCipher.AES_128
-XMLCipher.AES_128_GCM XMLCipher.AES_192 XMLCipher.AES_192_GCM XMLCipher.AES_256
-XMLCipher.AES_256_GCM XMLCipher.SEED_128 XMLCipher.CAMELLIA_128
-XMLCipher.CAMELLIA_192 XMLCipher.CAMELLIA_256 The default value is
-XMLCipher.AES_256_GCM. Default value: AES-256-GCM
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="passPhrase" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-A String used as passPhrase to encrypt/decrypt content. The passPhrase has to be
-provided. The passPhrase needs to be put together in conjunction with the
-appropriate encryption algorithm. For example using TRIPLEDES the passPhase can
-be a Only another 24 Byte key.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="passPhraseByte" type="xs:base64Binary">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-A byte used as passPhrase to encrypt/decrypt content. The passPhrase has to be
-provided. The passPhrase needs to be put together in conjunction with the
-appropriate encryption algorithm. For example using TRIPLEDES the passPhase can
-be a Only another 24 Byte key.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="secureTag" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-The XPath reference to the XML Element selected for encryption/decryption. If no
-tag is specified, the entire payload is encrypted/decrypted.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="secureTagContents" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-A boolean value to specify whether the XML Element is to be encrypted or the
-contents of the XML Element false = Element Level true = Element Content Level.
-Default value: false
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="keyCipherAlgorithm" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-The cipher algorithm to be used for encryption/decryption of the asymmetric key.
-The available choices are: XMLCipher.RSA_v1dot5 XMLCipher.RSA_OAEP
-XMLCipher.RSA_OAEP_11 The default value is XMLCipher.RSA_OAEP. Default value:
-RSA_OAEP
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="recipientKeyAlias" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-The key alias to be used when retrieving the recipient's public or private key
-from a KeyStore when performing asymmetric key encryption or decryption.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="keyOrTrustStoreParametersRef" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Refers to a KeyStore instance to lookup in the registry, which is used for
-configuration options for creating and loading a KeyStore instance that
-represents the sender's trustStore or recipient's keyStore.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="keyPassword" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-The password to be used for retrieving the private key from the KeyStore. This
-key is used for asymmetric decryption.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="digestAlgorithm" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-The digest algorithm to use with the RSA OAEP algorithm. The available choices
-are: XMLCipher.SHA1 XMLCipher.SHA256 XMLCipher.SHA512 The default value is
-XMLCipher.SHA1. Default value: SHA1
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="mgfAlgorithm" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-The MGF Algorithm to use with the RSA OAEP algorithm. The available choices are:
-EncryptionConstants.MGF1_SHA1 EncryptionConstants.MGF1_SHA256
-EncryptionConstants.MGF1_SHA512 The default value is
-EncryptionConstants.MGF1_SHA1. Default value: MGF1_SHA1
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="addKeyValueForEncryptedKey" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Whether to add the public key used to encrypt the session key as a KeyValue in
-the EncryptedKey structure or not. Default value: true
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:complexType name="soapJaxbDataFormat">
+  <xs:complexType name="soapDataFormat">
     <xs:complexContent>
       <xs:extension base="tns:dataFormat">
         <xs:sequence/>
@@ -8215,7 +8087,7 @@ The delimiter of values. Default value: ,
     <xs:complexContent>
       <xs:extension base="tns:dataFormat">
         <xs:sequence>
-          <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:univocity-header"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:univocityHeader"/>
         </xs:sequence>
         <xs:attribute name="nullValue" type="xs:string">
           <xs:annotation>
@@ -8338,7 +8210,7 @@ Header length.
     </xs:simpleContent>
   </xs:complexType>
 
-  <xs:complexType name="uniVocityFixedWidthDataFormat">
+  <xs:complexType name="uniVocityFixedDataFormat">
     <xs:complexContent>
       <xs:extension base="tns:uniVocityAbstractDataFormat">
         <xs:sequence/>
@@ -8384,15 +8256,118 @@ The escape character. Default value: \
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:complexType name="xmlRpcDataFormat">
+  <xs:complexType name="xmlSecurityDataFormat">
     <xs:complexContent>
       <xs:extension base="tns:dataFormat">
         <xs:sequence/>
-        <xs:attribute name="request" type="xs:string">
+        <xs:attribute name="xmlCipherAlgorithm" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Whether to marshal/unmarshal request or response Is by default false. Default
-value: false
+The cipher algorithm to be used for encryption/decryption of the XML message
+content. The available choices are: XMLCipher.TRIPLEDES XMLCipher.AES_128
+XMLCipher.AES_128_GCM XMLCipher.AES_192 XMLCipher.AES_192_GCM XMLCipher.AES_256
+XMLCipher.AES_256_GCM XMLCipher.SEED_128 XMLCipher.CAMELLIA_128
+XMLCipher.CAMELLIA_192 XMLCipher.CAMELLIA_256 The default value is
+XMLCipher.AES_256_GCM. Default value: AES-256-GCM
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="passPhrase" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+A String used as passPhrase to encrypt/decrypt content. The passPhrase has to be
+provided. The passPhrase needs to be put together in conjunction with the
+appropriate encryption algorithm. For example using TRIPLEDES the passPhase can
+be a Only another 24 Byte key.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="passPhraseByte" type="xs:base64Binary">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+A byte used as passPhrase to encrypt/decrypt content. The passPhrase has to be
+provided. The passPhrase needs to be put together in conjunction with the
+appropriate encryption algorithm. For example using TRIPLEDES the passPhase can
+be a Only another 24 Byte key.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="secureTag" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+The XPath reference to the XML Element selected for encryption/decryption. If no
+tag is specified, the entire payload is encrypted/decrypted.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="secureTagContents" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+A boolean value to specify whether the XML Element is to be encrypted or the
+contents of the XML Element false = Element Level true = Element Content Level.
+Default value: false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="keyCipherAlgorithm" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+The cipher algorithm to be used for encryption/decryption of the asymmetric key.
+The available choices are: XMLCipher.RSA_v1dot5 XMLCipher.RSA_OAEP
+XMLCipher.RSA_OAEP_11 The default value is XMLCipher.RSA_OAEP. Default value:
+RSA_OAEP
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="recipientKeyAlias" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+The key alias to be used when retrieving the recipient's public or private key
+from a KeyStore when performing asymmetric key encryption or decryption.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="keyOrTrustStoreParametersRef" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Refers to a KeyStore instance to lookup in the registry, which is used for
+configuration options for creating and loading a KeyStore instance that
+represents the sender's trustStore or recipient's keyStore.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="keyPassword" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+The password to be used for retrieving the private key from the KeyStore. This
+key is used for asymmetric decryption.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="digestAlgorithm" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+The digest algorithm to use with the RSA OAEP algorithm. The available choices
+are: XMLCipher.SHA1 XMLCipher.SHA256 XMLCipher.SHA512 The default value is
+XMLCipher.SHA1. Default value: SHA1
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="mgfAlgorithm" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+The MGF Algorithm to use with the RSA OAEP algorithm. The available choices are:
+EncryptionConstants.MGF1_SHA1 EncryptionConstants.MGF1_SHA256
+EncryptionConstants.MGF1_SHA512 The default value is
+EncryptionConstants.MGF1_SHA1. Default value: MGF1_SHA1
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="addKeyValueForEncryptedKey" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Whether to add the public key used to encrypt the session key as a KeyValue in
+the EncryptedKey structure or not. Default value: true
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -8750,7 +8725,7 @@ Whether to filter by class type or regular expression.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 To specify a specific compression between 0-9. -1 is default compression, 0 is
-no compression, and 9 is best compression. Default value: -1
+no compression, and 9 is the best compression. Default value: -1
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -9969,7 +9944,11 @@ endpoint.
         <xs:attribute name="ref" type="xs:string" use="required">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Reference to the Processor to lookup in the registry to use.
+Reference to the Processor to lookup in the registry to use. Can also be used
+for creating new beans by their class name by prefixing with #class, eg
+#class:com.foo.MyClassType. And it is also possible to refer to singleton beans
+by their type in the registry by prefixing with #type: syntax, eg
+#type:com.foo.MyClassType.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -12197,37 +12176,36 @@ Sets a reference to use for lookup the policy in the registry.
             <xs:element ref="tns:cbor"/>
             <xs:element ref="tns:crypto"/>
             <xs:element ref="tns:csv"/>
-            <xs:element name="custom" type="tns:customDataFormat"/>
+            <xs:element ref="tns:custom"/>
             <xs:element ref="tns:fhirJson"/>
             <xs:element ref="tns:fhirXml"/>
             <xs:element ref="tns:flatpack"/>
             <xs:element ref="tns:grok"/>
-            <xs:element name="gzip" type="tns:gzipDataFormat"/>
+            <xs:element ref="tns:gzipDeflater"/>
             <xs:element ref="tns:hl7"/>
             <xs:element ref="tns:ical"/>
-            <xs:element ref="tns:jacksonxml"/>
+            <xs:element ref="tns:jacksonXml"/>
             <xs:element ref="tns:jaxb"/>
             <xs:element ref="tns:json"/>
             <xs:element ref="tns:jsonApi"/>
             <xs:element ref="tns:lzf"/>
-            <xs:element name="mimeMultipart" type="tns:mimeMultipartDataFormat"/>
+            <xs:element ref="tns:mimeMultipart"/>
             <xs:element ref="tns:protobuf"/>
             <xs:element ref="tns:rss"/>
-            <xs:element ref="tns:secureXML"/>
-            <xs:element ref="tns:soapjaxb"/>
+            <xs:element ref="tns:soap"/>
             <xs:element ref="tns:syslog"/>
-            <xs:element ref="tns:tarfile"/>
+            <xs:element ref="tns:tarFile"/>
             <xs:element ref="tns:thrift"/>
             <xs:element ref="tns:tidyMarkup"/>
-            <xs:element ref="tns:univocity-csv"/>
-            <xs:element ref="tns:univocity-fixed"/>
-            <xs:element ref="tns:univocity-tsv"/>
-            <xs:element ref="tns:xmlrpc"/>
+            <xs:element ref="tns:univocityCsv"/>
+            <xs:element ref="tns:univocityFixed"/>
+            <xs:element ref="tns:univocityTsv"/>
+            <xs:element ref="tns:xmlSecurity"/>
             <xs:element ref="tns:xstream"/>
             <xs:element ref="tns:pgp"/>
             <xs:element ref="tns:yaml"/>
-            <xs:element name="zip" type="tns:zipDeflaterDataFormat"/>
-            <xs:element ref="tns:zipfile"/>
+            <xs:element ref="tns:zipDeflater"/>
+            <xs:element ref="tns:zipFile"/>
           </xs:choice>
         </xs:sequence>
       </xs:extension>
@@ -13177,37 +13155,36 @@ Set a reference to a custom Expression to use.
         <xs:element ref="tns:cbor"/>
         <xs:element ref="tns:crypto"/>
         <xs:element ref="tns:csv"/>
-        <xs:element name="custom" type="tns:customDataFormat"/>
+        <xs:element ref="tns:custom"/>
         <xs:element ref="tns:fhirJson"/>
         <xs:element ref="tns:fhirXml"/>
         <xs:element ref="tns:flatpack"/>
         <xs:element ref="tns:grok"/>
-        <xs:element name="gzip" type="tns:gzipDataFormat"/>
+        <xs:element ref="tns:gzipDeflater"/>
         <xs:element ref="tns:hl7"/>
         <xs:element ref="tns:ical"/>
-        <xs:element ref="tns:jacksonxml"/>
+        <xs:element ref="tns:jacksonXml"/>
         <xs:element ref="tns:jaxb"/>
         <xs:element ref="tns:json"/>
         <xs:element ref="tns:jsonApi"/>
         <xs:element ref="tns:lzf"/>
-        <xs:element name="mimeMultipart" type="tns:mimeMultipartDataFormat"/>
+        <xs:element ref="tns:mimeMultipart"/>
         <xs:element ref="tns:protobuf"/>
         <xs:element ref="tns:rss"/>
-        <xs:element ref="tns:secureXML"/>
-        <xs:element ref="tns:soapjaxb"/>
+        <xs:element ref="tns:soap"/>
         <xs:element ref="tns:syslog"/>
-        <xs:element ref="tns:tarfile"/>
+        <xs:element ref="tns:tarFile"/>
         <xs:element ref="tns:thrift"/>
         <xs:element ref="tns:tidyMarkup"/>
-        <xs:element ref="tns:univocity-csv"/>
-        <xs:element ref="tns:univocity-fixed"/>
-        <xs:element ref="tns:univocity-tsv"/>
-        <xs:element ref="tns:xmlrpc"/>
+        <xs:element ref="tns:univocityCsv"/>
+        <xs:element ref="tns:univocityFixed"/>
+        <xs:element ref="tns:univocityTsv"/>
+        <xs:element ref="tns:xmlSecurity"/>
         <xs:element ref="tns:xstream"/>
         <xs:element ref="tns:pgp"/>
         <xs:element ref="tns:yaml"/>
-        <xs:element name="zip" type="tns:zipDeflaterDataFormat"/>
-        <xs:element ref="tns:zipfile"/>
+        <xs:element ref="tns:zipDeflater"/>
+        <xs:element ref="tns:zipFile"/>
       </xs:choice>
     </xs:sequence>
   </xs:complexType>
@@ -14462,7 +14439,7 @@ Default value: false
     <xs:attribute name="jsonDataFormat" type="xs:string">
       <xs:annotation>
         <xs:documentation xml:lang="en"><![CDATA[
-Name of specific json data format to use. By default json-jackson will be used.
+Name of specific json data format to use. By default jackson will be used.
 Important: This option is only for setting a custom name of the data format, not
 to refer to an existing data format instance.
         ]]></xs:documentation>
@@ -14788,37 +14765,36 @@ OpenId Connect URL to discover OAuth2 configuration values.
             <xs:element ref="tns:cbor"/>
             <xs:element ref="tns:crypto"/>
             <xs:element ref="tns:csv"/>
-            <xs:element name="custom" type="tns:customDataFormat"/>
+            <xs:element ref="tns:custom"/>
             <xs:element ref="tns:fhirJson"/>
             <xs:element ref="tns:fhirXml"/>
             <xs:element ref="tns:flatpack"/>
             <xs:element ref="tns:grok"/>
-            <xs:element name="gzip" type="tns:gzipDataFormat"/>
+            <xs:element ref="tns:gzipDeflater"/>
             <xs:element ref="tns:hl7"/>
             <xs:element ref="tns:ical"/>
-            <xs:element ref="tns:jacksonxml"/>
+            <xs:element ref="tns:jacksonXml"/>
             <xs:element ref="tns:jaxb"/>
             <xs:element ref="tns:json"/>
             <xs:element ref="tns:jsonApi"/>
             <xs:element ref="tns:lzf"/>
-            <xs:element name="mimeMultipart" type="tns:mimeMultipartDataFormat"/>
+            <xs:element ref="tns:mimeMultipart"/>
             <xs:element ref="tns:protobuf"/>
             <xs:element ref="tns:rss"/>
-            <xs:element ref="tns:secureXML"/>
-            <xs:element ref="tns:soapjaxb"/>
+            <xs:element ref="tns:soap"/>
             <xs:element ref="tns:syslog"/>
-            <xs:element ref="tns:tarfile"/>
+            <xs:element ref="tns:tarFile"/>
             <xs:element ref="tns:thrift"/>
             <xs:element ref="tns:tidyMarkup"/>
-            <xs:element ref="tns:univocity-csv"/>
-            <xs:element ref="tns:univocity-fixed"/>
-            <xs:element ref="tns:univocity-tsv"/>
-            <xs:element ref="tns:xmlrpc"/>
+            <xs:element ref="tns:univocityCsv"/>
+            <xs:element ref="tns:univocityFixed"/>
+            <xs:element ref="tns:univocityTsv"/>
+            <xs:element ref="tns:xmlSecurity"/>
             <xs:element ref="tns:xstream"/>
             <xs:element ref="tns:pgp"/>
             <xs:element ref="tns:yaml"/>
-            <xs:element name="zip" type="tns:zipDeflaterDataFormat"/>
-            <xs:element ref="tns:zipfile"/>
+            <xs:element ref="tns:zipDeflater"/>
+            <xs:element ref="tns:zipFile"/>
           </xs:choice>
         </xs:sequence>
         <xs:attribute name="ref" type="xs:string"/>
@@ -15844,12 +15820,12 @@ multiple certificates.
 
   <xs:simpleType name="jsonLibrary">
     <xs:restriction base="xs:string">
-      <xs:enumeration value="XStream"/>
+      <xs:enumeration value="Fastjson"/>
+      <xs:enumeration value="Gson"/>
       <xs:enumeration value="Jackson"/>
       <xs:enumeration value="Johnzon"/>
-      <xs:enumeration value="Gson"/>
-      <xs:enumeration value="Fastjson"/>
       <xs:enumeration value="Jsonb"/>
+      <xs:enumeration value="XStream"/>
     </xs:restriction>
   </xs:simpleType>
 

@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.jms.tx;
 
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Policy;
-import org.apache.camel.spring.SpringRouteBuilder;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
 import org.junit.jupiter.api.Test;
 
@@ -33,11 +33,12 @@ public class QueueToQueueTransactionTest extends AbstractTransactionTest {
     public void testRollbackUsingXmlQueueToQueue() throws Exception {
 
         // configure routes and add to camel context
-        context.addRoutes(new SpringRouteBuilder() {
+        context.addRoutes(new RouteBuilder() {
 
             @Override
             public void configure() throws Exception {
-                Policy required = lookup("PROPAGATION_REQUIRED_POLICY", SpringTransactionPolicy.class);
+                Policy required = context().getRegistry().lookupByNameAndType("PROPAGATION_REQUIRED_POLICY",
+                        SpringTransactionPolicy.class);
                 from("activemq:queue:foo?transacted=true").policy(required).process(new ConditionalExceptionProcessor())
                         .to("activemq:queue:bar?transacted=true");
             }

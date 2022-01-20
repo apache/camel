@@ -139,9 +139,9 @@ After that we start Camel.
 
 === Logging before and after advicing routes
 
-When using `adviceWith` then Camel will automatic log, the before and after, of each adviced route, in XML format.
+When using `adviceWith` then Camel will automatically log, the before and after, of each adviced route, in XML format.
 
-However this requires to have `camel-xml-jaxb` as dependency, which you can add as test scoped if using Maven:
+However, this requires to have `camel-xml-jaxb` as dependency, which you can add as test scoped if using Maven:
 
 [source,xml]
 ----
@@ -379,14 +379,14 @@ weaveByToUri("direct:branch*").replace().to("mock:cheese");
 Notice the `weaveByToUri` method is using a wildcard (`*`) to match the two branches.
 
 TIP: You can also use `mockEndpoints` to auto mock instead of `weaveByToUri` in the example above.
-The `weave` methods has a lot more power to manipulate the route, such as message transformation, routing the message or much more.
+The `weave` methods have a lot more power to manipulate the route, such as message transformation, routing the message or much more.
 
 === weaveAddFirst and weaveAddLast
 
 The `weaveAddFirst` and `weaveAddLast` is a shorthand to easily add nodes to the route.
-These methods can only add to an existing routes. If you want to manipulate the route, then use the other `weave` methods as already covered.
+These methods can only add to an existing route. If you want to manipulate the route, then use the other `weave` methods as already covered.
 
-The `weaveAddFirst` methods adds in the beginning of the route, and `weaveAddLast` at the end.
+The `weaveAddFirst` method adds in the beginning of the route, and `weaveAddLast` at the end.
 Using them works the same as the other `weaveBy` methods, so see above for examples.
 
 === weave using node selection

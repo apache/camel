@@ -81,7 +81,7 @@ class MarshalTest extends YamlTestSupport {
             ]
 
             expected << [
-                'json-gson', 'json-gson', 'json-jackson', 'json-jackson', 'json-gson'
+                'gson', 'gson', 'jackson', 'jackson', 'gson'
             ]
     }
 }

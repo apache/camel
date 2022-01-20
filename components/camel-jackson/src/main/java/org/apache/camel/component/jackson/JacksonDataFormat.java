@@ -23,7 +23,7 @@ import org.apache.camel.spi.annotations.Dataformat;
 /**
  * Marshal POJOs to JSON and back using <a href="https://github.com/FasterXML/jackson">Jackson</a>
  */
-@Dataformat("json-jackson")
+@Dataformat("jackson")
 @Metadata(excludeProperties = "library,permissions,dropRootNode")
 public class JacksonDataFormat extends AbstractJacksonDataFormat {
 
@@ -75,7 +75,7 @@ public class JacksonDataFormat extends AbstractJacksonDataFormat {
 
     @Override
     public String getDataFormatName() {
-        return "json-jackson";
+        return "jackson";
     }
 
     @Override

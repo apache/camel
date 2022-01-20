@@ -73,11 +73,11 @@ public class BindyDataFormat extends DataFormatDefinition {
     @Override
     public String getDataFormatName() {
         if ("Csv".equals(type)) {
-            return "bindy-csv";
+            return "bindyCsv";
         } else if ("Fixed".equals(type)) {
-            return "bindy-fixed";
+            return "bindyFixed";
         } else {
-            return "bindy-kvp";
+            return "bindyKvp";
         }
     }
 

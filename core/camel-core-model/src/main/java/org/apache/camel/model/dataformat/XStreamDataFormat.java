@@ -75,7 +75,7 @@ public class XStreamDataFormat extends DataFormatDefinition implements ContentTy
 
     @Override
     public String getDataFormatName() {
-        return "json".equals(driver) ? "json-xstream" : "xstream";
+        return "json".equals(driver) ? "xstreamJson" : "xstream";
     }
 
     public String getEncoding() {

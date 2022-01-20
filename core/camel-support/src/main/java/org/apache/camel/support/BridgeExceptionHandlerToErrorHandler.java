@@ -17,6 +17,7 @@
 package org.apache.camel.support;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.ExceptionHandler;
@@ -66,6 +67,8 @@ public class BridgeExceptionHandlerToErrorHandler implements ExceptionHandler {
         exchange.setException(exception);
         // and the message
         exchange.getIn().setBody(message);
+        // mark as bridged
+        exchange.setProperty(ExchangePropertyKey.ERRORHANDLER_BRIDGE, true);
         // and mark as redelivery exhausted as we cannot do redeliveries
         exchange.adapt(ExtendedExchange.class).setRedeliveryExhausted(true);
 

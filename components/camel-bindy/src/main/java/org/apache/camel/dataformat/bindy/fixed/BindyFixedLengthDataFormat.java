@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Marshal and unmarshal between POJOs and fixed field length format using Camel Bindy
  */
-@Dataformat("bindy-fixed")
+@Dataformat("bindyFixed")
 public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
 
     public static final String CAMEL_BINDY_FIXED_LENGTH_HEADER = "CamelBindyFixedLengthHeader";
@@ -64,7 +64,7 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
 
     @Override
     public String getDataFormatName() {
-        return "bindy-fixed";
+        return "bindyFixed";
     }
 
     @Override

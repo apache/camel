@@ -43,7 +43,7 @@ import static org.apache.camel.Exchange.FILE_NAME;
 /**
  * Tar file data format. Based on ZipFileDataFormat from camel-zipfile component
  */
-@Dataformat("tarfile")
+@Dataformat("tarFile")
 public class TarFileDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
     /**
      * The default maximum decompressed size (in bytes), which corresponds to 1G.
@@ -56,7 +56,7 @@ public class TarFileDataFormat extends ServiceSupport implements DataFormat, Dat
 
     @Override
     public String getDataFormatName() {
-        return "tarfile";
+        return "tarFile";
     }
 
     @Override

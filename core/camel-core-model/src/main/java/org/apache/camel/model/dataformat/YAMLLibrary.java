@@ -25,5 +25,16 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType
 @XmlEnum
 public enum YAMLLibrary {
-    SnakeYAML
+    SnakeYAML("snakeYaml");
+
+    private final String dataFormatName;
+
+    YAMLLibrary(String dataFormatName) {
+        this.dataFormatName = dataFormatName;
+    }
+
+    public String getDataFormatName() {
+        return dataFormatName;
+    }
+
 }

@@ -1,0 +1,1 @@
+../../../../../components/camel-johnzon/src/main/docs/johnzon-dataformat.adoc

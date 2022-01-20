@@ -316,6 +316,18 @@ public class URISupportTest {
     }
 
     @Test
+    public void testSanitizeUriWithRawPasswordAndSimpleExpression() {
+        String uriPlain
+                = "http://foo?username=me&password=RAW(me#@123)&foo=bar&port=21&tempFileName=${file:name.noext}.tmp&anotherOption=true";
+        String uriCurly
+                = "http://foo?username=me&password=RAW{me#@123}&foo=bar&port=21&tempFileName=${file:name.noext}.tmp&anotherOption=true";
+        String expected
+                = "http://foo?username=me&password=xxxxxx&foo=bar&port=21&tempFileName=${file:name.noext}.tmp&anotherOption=true";
+        assertEquals(expected, URISupport.sanitizeUri(uriPlain));
+        assertEquals(expected, URISupport.sanitizeUri(uriCurly));
+    }
+
+    @Test
     public void testSanitizeSaslJaasConfig() throws Exception {
         String out1 = URISupport.sanitizeUri(
                 "kafka://MY-TOPIC-NAME?saslJaasConfig=org.apache.kafka.common.security.plain.PlainLoginModule required username=scott password=tiger");

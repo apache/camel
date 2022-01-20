@@ -6,16 +6,16 @@ Maven Plugin] allows third party component developers to generate all the necess
 
 == Goals Supported
 
-The following goals is supported:
+The following goal is supported:
 
 === generate
 
 This goal will generate the following metadata files and Java files:
 
 * Jandex index: it will generate a Jandex index for used Java annotations within the project which allows to more efficiency to search and load the annotations to generate other metadata as mentioned below.
-* Type Converter Loader: it will xref:type-converter.adoc[generate a loader for type converter] annotated with `@Converter(loader = true)` to allow faster way for Camel to load these converter.
+* Type Converter Loader: it will generate a loader for xref:type-converter.adoc[type converter] annotated with `@Converter(loader = true)` to allow faster way for Camel to load these converters.
 * SPIs: it will generate all Service Provider Interfaces (SPI) for the component. This allows Camel to auto-discover your component without adding it manually to the Camel context.
-* Configurers: it will generate all configurer Java classes from `@Configuer` annotated classes.
+* Configurers: it will generate all configurer Java classes from `@Configurer` annotated classes.
 * Endpoint Schema: it will generate the property configurers as well as schema JSONs extracted from the component's Endpoint and Component classes. This allows Camel to avoid reflections while configuring the properties, thus allows for better efficiency.
 * Prepare Component: it analyzes if the maven module contains Camel modules such as `components`, `dataformats`, `languages` and others. And for each of those generates extra descriptors and schema files for easier auto-discovery in Camel and tooling. 
 * Validate Component: it validates the Camel component if the meta-files for `components`, `dataformats`, `languages` and others, all contains the needed meta-data such as assigned labels, documentation for each option.

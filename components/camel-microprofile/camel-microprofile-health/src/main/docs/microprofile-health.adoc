@@ -27,6 +27,13 @@ for this component:
 
 == Usage
 
+This component provides a custom `HealthCheckRegistry` implementation that needs to be registered on the `CamelContext`.
+[source,java]
+----
+HealthCheckRegistry registry = new CamelMicroProfileHealthCheckRegistry();
+camelContext.setExtension(HealthCheckRegistry.class, registry);
+----
+
 By default, Camel health checks are registered as both MicroProfile Health liveness and readiness checks. To have finer control over whether a Camel health check should
 be considered either a readiness or liveness check, you can extend `AbstractHealthCheck` and override the `isLiveness()` and `isReadiness()` methods.
 
@@ -57,14 +64,3 @@ public class MyHealthCheck extends AbstractHealthCheck {
     }
 }
 ----
-
-== Auto discovery
-
-The expectation is that this component is run within a MicroProfile container, where CDI and a library implementing the MicroProfile health specification is available.
-E.g https://github.com/smallrye/smallrye-health[SmallRye Health].
-
-In this scenario, the readiness and liveness checks are automatically discovered and registered for you.
-
-However, it's still possible to manually
-register Health checks without CDI. Ensure your camel health checks are available in the Camel registry and add an instance of
-`CamelMicroProfileReadinessCheck` and `CamelMicroProfileLivenessCheck` to the health check registry of your MicroProfile Health implementation.

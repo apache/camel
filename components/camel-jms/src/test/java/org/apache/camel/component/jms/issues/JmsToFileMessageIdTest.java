@@ -68,7 +68,7 @@ public class JmsToFileMessageIdTest extends CamelTestSupport {
                             String camelId = exchange.getIn().getMessageId();
                             assertNotNull(camelId);
 
-                            JmsMessage jms = (JmsMessage) exchange.getIn();
+                            JmsMessage jms = exchange.getIn(JmsMessage.class);
                             String jmsId = jms.getJmsMessage().getJMSMessageID();
                             assertNotNull(jmsId);
 

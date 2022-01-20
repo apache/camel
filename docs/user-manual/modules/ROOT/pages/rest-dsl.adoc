@@ -292,7 +292,7 @@ for example `camel-jaxb` is not on the classpath, then XML binding is
 not enabled.
 
 |json |Binding to/from json is enabled, and requires a json capable data
-format on the classpath. By default Camel will use `json-jackson` as the
+format on the classpath. By default Camel will use `jackson` as the
 data format. See the INFO box below for more details.
 
 |xml |Binding to/from xml is enabled, and requires `camel-jaxb` on the
@@ -740,9 +740,9 @@ restConfiguration().component("jetty").host("localhost")
 The Rest DSL supports OpenAPI and Swagger by
 the `camel-openapi-java` and `camel-swagger-java` modules.
 
-You can define each parameter fine grained
+You can define each parameter fine-grained
 with details such as name, description, data type, parameter type and so
-on, using the <param>. For example to define the id path parameter you
+on, using the `param`. For example to define the id path parameter you
 can do as shown below:
 
 [source,xml]
@@ -790,7 +790,7 @@ And in Java DSL:
 
 The generated API documentation can be configured to include vendor extensions (https://swagger.io/specification/#specificationExtensions)
 which document the operations and definitions with additional information, such as class name of model classes, camel context id and route id's.
-This information can aid developers and during troubleshooting. However, at production usage you may wish to not have this turned
+This information can be very helpful for developers especially during troubleshooting. However, at production usage you may wish to not have this turned
 on to avoid leaking implementation details into your API docs.
 
 The vendor extension information is stored in the API documentation with keys starting with `x-`.

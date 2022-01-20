@@ -142,7 +142,7 @@ import org.apache.camel.model.dataformat.FhirJsonDataFormat;
 import org.apache.camel.model.dataformat.FhirXmlDataFormat;
 import org.apache.camel.model.dataformat.FlatpackDataFormat;
 import org.apache.camel.model.dataformat.GrokDataFormat;
-import org.apache.camel.model.dataformat.GzipDataFormat;
+import org.apache.camel.model.dataformat.GzipDeflaterDataFormat;
 import org.apache.camel.model.dataformat.HL7DataFormat;
 import org.apache.camel.model.dataformat.IcalDataFormat;
 import org.apache.camel.model.dataformat.JacksonXMLDataFormat;
@@ -154,18 +154,17 @@ import org.apache.camel.model.dataformat.MimeMultipartDataFormat;
 import org.apache.camel.model.dataformat.PGPDataFormat;
 import org.apache.camel.model.dataformat.ProtobufDataFormat;
 import org.apache.camel.model.dataformat.RssDataFormat;
-import org.apache.camel.model.dataformat.SoapJaxbDataFormat;
+import org.apache.camel.model.dataformat.SoapDataFormat;
 import org.apache.camel.model.dataformat.SyslogDataFormat;
 import org.apache.camel.model.dataformat.TarFileDataFormat;
 import org.apache.camel.model.dataformat.ThriftDataFormat;
 import org.apache.camel.model.dataformat.TidyMarkupDataFormat;
 import org.apache.camel.model.dataformat.UniVocityCsvDataFormat;
-import org.apache.camel.model.dataformat.UniVocityFixedWidthDataFormat;
+import org.apache.camel.model.dataformat.UniVocityFixedDataFormat;
 import org.apache.camel.model.dataformat.UniVocityHeader;
 import org.apache.camel.model.dataformat.UniVocityTsvDataFormat;
 import org.apache.camel.model.dataformat.XMLSecurityDataFormat;
 import org.apache.camel.model.dataformat.XStreamDataFormat;
-import org.apache.camel.model.dataformat.XmlRpcDataFormat;
 import org.apache.camel.model.dataformat.YAMLDataFormat;
 import org.apache.camel.model.dataformat.YAMLTypeFilterDefinition;
 import org.apache.camel.model.dataformat.ZipDeflaterDataFormat;
@@ -588,7 +587,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "include", type = "string"),
                     @YamlProperty(name = "instance-class-name", type = "string"),
                     @YamlProperty(name = "json-view", type = "string"),
-                    @YamlProperty(name = "library", type = "enum:ApacheAvro,Jackson,dataFormatName"),
+                    @YamlProperty(name = "library", type = "enum:ApacheAvro,Jackson"),
                     @YamlProperty(name = "module-class-names", type = "string"),
                     @YamlProperty(name = "module-refs", type = "string"),
                     @YamlProperty(name = "object-mapper", type = "string"),
@@ -2532,10 +2531,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             inline = true,
             types = org.apache.camel.model.dataformat.CustomDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            nodes = {
-                    "custom-data-format",
-                    "customDataFormat"
-            },
+            nodes = "custom",
             properties = {
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "ref", type = "string", required = true)
@@ -2834,10 +2830,10 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "flatpack", type = "object:org.apache.camel.model.dataformat.FlatpackDataFormat"),
                     @YamlProperty(name = "from-type", type = "string"),
                     @YamlProperty(name = "grok", type = "object:org.apache.camel.model.dataformat.GrokDataFormat"),
-                    @YamlProperty(name = "gzip", type = "object:org.apache.camel.model.dataformat.GzipDataFormat"),
+                    @YamlProperty(name = "gzip-deflater", type = "object:org.apache.camel.model.dataformat.GzipDeflaterDataFormat"),
                     @YamlProperty(name = "hl7", type = "object:org.apache.camel.model.dataformat.HL7DataFormat"),
                     @YamlProperty(name = "ical", type = "object:org.apache.camel.model.dataformat.IcalDataFormat"),
-                    @YamlProperty(name = "jacksonxml", type = "object:org.apache.camel.model.dataformat.JacksonXMLDataFormat"),
+                    @YamlProperty(name = "jackson-xml", type = "object:org.apache.camel.model.dataformat.JacksonXMLDataFormat"),
                     @YamlProperty(name = "jaxb", type = "object:org.apache.camel.model.dataformat.JaxbDataFormat"),
                     @YamlProperty(name = "json", type = "object:org.apache.camel.model.dataformat.JsonDataFormat"),
                     @YamlProperty(name = "json-api", type = "object:org.apache.camel.model.dataformat.JsonApiDataFormat"),
@@ -2848,21 +2844,20 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "ref", type = "string"),
                     @YamlProperty(name = "rss", type = "object:org.apache.camel.model.dataformat.RssDataFormat"),
                     @YamlProperty(name = "scheme", type = "string"),
-                    @YamlProperty(name = "secure-xml", type = "object:org.apache.camel.model.dataformat.XMLSecurityDataFormat"),
-                    @YamlProperty(name = "soapjaxb", type = "object:org.apache.camel.model.dataformat.SoapJaxbDataFormat"),
+                    @YamlProperty(name = "soap", type = "object:org.apache.camel.model.dataformat.SoapDataFormat"),
                     @YamlProperty(name = "syslog", type = "object:org.apache.camel.model.dataformat.SyslogDataFormat"),
-                    @YamlProperty(name = "tarfile", type = "object:org.apache.camel.model.dataformat.TarFileDataFormat"),
+                    @YamlProperty(name = "tar-file", type = "object:org.apache.camel.model.dataformat.TarFileDataFormat"),
                     @YamlProperty(name = "thrift", type = "object:org.apache.camel.model.dataformat.ThriftDataFormat"),
                     @YamlProperty(name = "tidy-markup", type = "object:org.apache.camel.model.dataformat.TidyMarkupDataFormat"),
                     @YamlProperty(name = "to-type", type = "string"),
                     @YamlProperty(name = "univocity-csv", type = "object:org.apache.camel.model.dataformat.UniVocityCsvDataFormat"),
-                    @YamlProperty(name = "univocity-fixed", type = "object:org.apache.camel.model.dataformat.UniVocityFixedWidthDataFormat"),
+                    @YamlProperty(name = "univocity-fixed", type = "object:org.apache.camel.model.dataformat.UniVocityFixedDataFormat"),
                     @YamlProperty(name = "univocity-tsv", type = "object:org.apache.camel.model.dataformat.UniVocityTsvDataFormat"),
-                    @YamlProperty(name = "xmlrpc", type = "object:org.apache.camel.model.dataformat.XmlRpcDataFormat"),
+                    @YamlProperty(name = "xml-security", type = "object:org.apache.camel.model.dataformat.XMLSecurityDataFormat"),
                     @YamlProperty(name = "xstream", type = "object:org.apache.camel.model.dataformat.XStreamDataFormat"),
                     @YamlProperty(name = "yaml", type = "object:org.apache.camel.model.dataformat.YAMLDataFormat"),
-                    @YamlProperty(name = "zip", type = "object:org.apache.camel.model.dataformat.ZipDeflaterDataFormat"),
-                    @YamlProperty(name = "zipfile", type = "object:org.apache.camel.model.dataformat.ZipFileDataFormat")
+                    @YamlProperty(name = "zip-deflater", type = "object:org.apache.camel.model.dataformat.ZipDeflaterDataFormat"),
+                    @YamlProperty(name = "zip-file", type = "object:org.apache.camel.model.dataformat.ZipFileDataFormat")
             }
     )
     public static class DataFormatTransformerDefinitionDeserializer extends YamlDeserializerBase<DataFormatTransformerDefinition> {
@@ -2959,8 +2954,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDataFormatType(val);
                     break;
                 }
-                case "gzip": {
-                    org.apache.camel.model.dataformat.GzipDataFormat val = asType(node, org.apache.camel.model.dataformat.GzipDataFormat.class);
+                case "gzip-deflater": {
+                    org.apache.camel.model.dataformat.GzipDeflaterDataFormat val = asType(node, org.apache.camel.model.dataformat.GzipDeflaterDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }
@@ -2974,7 +2969,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDataFormatType(val);
                     break;
                 }
-                case "jacksonxml": {
+                case "jackson-xml": {
                     org.apache.camel.model.dataformat.JacksonXMLDataFormat val = asType(node, org.apache.camel.model.dataformat.JacksonXMLDataFormat.class);
                     target.setDataFormatType(val);
                     break;
@@ -3014,13 +3009,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDataFormatType(val);
                     break;
                 }
-                case "secure-xml": {
-                    org.apache.camel.model.dataformat.XMLSecurityDataFormat val = asType(node, org.apache.camel.model.dataformat.XMLSecurityDataFormat.class);
-                    target.setDataFormatType(val);
-                    break;
-                }
-                case "soapjaxb": {
-                    org.apache.camel.model.dataformat.SoapJaxbDataFormat val = asType(node, org.apache.camel.model.dataformat.SoapJaxbDataFormat.class);
+                case "soap": {
+                    org.apache.camel.model.dataformat.SoapDataFormat val = asType(node, org.apache.camel.model.dataformat.SoapDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }
@@ -3029,7 +3019,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDataFormatType(val);
                     break;
                 }
-                case "tarfile": {
+                case "tar-file": {
                     org.apache.camel.model.dataformat.TarFileDataFormat val = asType(node, org.apache.camel.model.dataformat.TarFileDataFormat.class);
                     target.setDataFormatType(val);
                     break;
@@ -3050,7 +3040,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "univocity-fixed": {
-                    org.apache.camel.model.dataformat.UniVocityFixedWidthDataFormat val = asType(node, org.apache.camel.model.dataformat.UniVocityFixedWidthDataFormat.class);
+                    org.apache.camel.model.dataformat.UniVocityFixedDataFormat val = asType(node, org.apache.camel.model.dataformat.UniVocityFixedDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }
@@ -3059,8 +3049,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDataFormatType(val);
                     break;
                 }
-                case "xmlrpc": {
-                    org.apache.camel.model.dataformat.XmlRpcDataFormat val = asType(node, org.apache.camel.model.dataformat.XmlRpcDataFormat.class);
+                case "xml-security": {
+                    org.apache.camel.model.dataformat.XMLSecurityDataFormat val = asType(node, org.apache.camel.model.dataformat.XMLSecurityDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }
@@ -3079,12 +3069,12 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDataFormatType(val);
                     break;
                 }
-                case "zip": {
+                case "zip-deflater": {
                     org.apache.camel.model.dataformat.ZipDeflaterDataFormat val = asType(node, org.apache.camel.model.dataformat.ZipDeflaterDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }
-                case "zipfile": {
+                case "zip-file": {
                     org.apache.camel.model.dataformat.ZipFileDataFormat val = asType(node, org.apache.camel.model.dataformat.ZipFileDataFormat.class);
                     target.setDataFormatType(val);
                     break;
@@ -3140,10 +3130,10 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "fhir-xml", type = "object:org.apache.camel.model.dataformat.FhirXmlDataFormat"),
                     @YamlProperty(name = "flatpack", type = "object:org.apache.camel.model.dataformat.FlatpackDataFormat"),
                     @YamlProperty(name = "grok", type = "object:org.apache.camel.model.dataformat.GrokDataFormat"),
-                    @YamlProperty(name = "gzip", type = "object:org.apache.camel.model.dataformat.GzipDataFormat"),
+                    @YamlProperty(name = "gzip-deflater", type = "object:org.apache.camel.model.dataformat.GzipDeflaterDataFormat"),
                     @YamlProperty(name = "hl7", type = "object:org.apache.camel.model.dataformat.HL7DataFormat"),
                     @YamlProperty(name = "ical", type = "object:org.apache.camel.model.dataformat.IcalDataFormat"),
-                    @YamlProperty(name = "jacksonxml", type = "object:org.apache.camel.model.dataformat.JacksonXMLDataFormat"),
+                    @YamlProperty(name = "jackson-xml", type = "object:org.apache.camel.model.dataformat.JacksonXMLDataFormat"),
                     @YamlProperty(name = "jaxb", type = "object:org.apache.camel.model.dataformat.JaxbDataFormat"),
                     @YamlProperty(name = "json", type = "object:org.apache.camel.model.dataformat.JsonDataFormat"),
                     @YamlProperty(name = "json-api", type = "object:org.apache.camel.model.dataformat.JsonApiDataFormat"),
@@ -3152,20 +3142,19 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "pgp", type = "object:org.apache.camel.model.dataformat.PGPDataFormat"),
                     @YamlProperty(name = "protobuf", type = "object:org.apache.camel.model.dataformat.ProtobufDataFormat"),
                     @YamlProperty(name = "rss", type = "object:org.apache.camel.model.dataformat.RssDataFormat"),
-                    @YamlProperty(name = "secure-xml", type = "object:org.apache.camel.model.dataformat.XMLSecurityDataFormat"),
-                    @YamlProperty(name = "soapjaxb", type = "object:org.apache.camel.model.dataformat.SoapJaxbDataFormat"),
+                    @YamlProperty(name = "soap", type = "object:org.apache.camel.model.dataformat.SoapDataFormat"),
                     @YamlProperty(name = "syslog", type = "object:org.apache.camel.model.dataformat.SyslogDataFormat"),
-                    @YamlProperty(name = "tarfile", type = "object:org.apache.camel.model.dataformat.TarFileDataFormat"),
+                    @YamlProperty(name = "tar-file", type = "object:org.apache.camel.model.dataformat.TarFileDataFormat"),
                     @YamlProperty(name = "thrift", type = "object:org.apache.camel.model.dataformat.ThriftDataFormat"),
                     @YamlProperty(name = "tidy-markup", type = "object:org.apache.camel.model.dataformat.TidyMarkupDataFormat"),
                     @YamlProperty(name = "univocity-csv", type = "object:org.apache.camel.model.dataformat.UniVocityCsvDataFormat"),
-                    @YamlProperty(name = "univocity-fixed", type = "object:org.apache.camel.model.dataformat.UniVocityFixedWidthDataFormat"),
+                    @YamlProperty(name = "univocity-fixed", type = "object:org.apache.camel.model.dataformat.UniVocityFixedDataFormat"),
                     @YamlProperty(name = "univocity-tsv", type = "object:org.apache.camel.model.dataformat.UniVocityTsvDataFormat"),
-                    @YamlProperty(name = "xmlrpc", type = "object:org.apache.camel.model.dataformat.XmlRpcDataFormat"),
+                    @YamlProperty(name = "xml-security", type = "object:org.apache.camel.model.dataformat.XMLSecurityDataFormat"),
                     @YamlProperty(name = "xstream", type = "object:org.apache.camel.model.dataformat.XStreamDataFormat"),
                     @YamlProperty(name = "yaml", type = "object:org.apache.camel.model.dataformat.YAMLDataFormat"),
-                    @YamlProperty(name = "zip", type = "object:org.apache.camel.model.dataformat.ZipDeflaterDataFormat"),
-                    @YamlProperty(name = "zipfile", type = "object:org.apache.camel.model.dataformat.ZipFileDataFormat")
+                    @YamlProperty(name = "zip-deflater", type = "object:org.apache.camel.model.dataformat.ZipDeflaterDataFormat"),
+                    @YamlProperty(name = "zip-file", type = "object:org.apache.camel.model.dataformat.ZipFileDataFormat")
             }
     )
     public static class DataFormatsDefinitionDeserializer extends YamlDeserializerBase<DataFormatsDefinition> {
@@ -3337,8 +3326,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDataFormats(existing);
                     break;
                 }
-                case "gzip": {
-                    org.apache.camel.model.dataformat.GzipDataFormat val = asType(node, org.apache.camel.model.dataformat.GzipDataFormat.class);
+                case "gzip-deflater": {
+                    org.apache.camel.model.dataformat.GzipDeflaterDataFormat val = asType(node, org.apache.camel.model.dataformat.GzipDeflaterDataFormat.class);
                     java.util.List<org.apache.camel.model.DataFormatDefinition> existing = target.getDataFormats();
                     if (existing == null) {
                         existing = new java.util.ArrayList<>();
@@ -3367,7 +3356,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDataFormats(existing);
                     break;
                 }
-                case "jacksonxml": {
+                case "jackson-xml": {
                     org.apache.camel.model.dataformat.JacksonXMLDataFormat val = asType(node, org.apache.camel.model.dataformat.JacksonXMLDataFormat.class);
                     java.util.List<org.apache.camel.model.DataFormatDefinition> existing = target.getDataFormats();
                     if (existing == null) {
@@ -3447,18 +3436,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDataFormats(existing);
                     break;
                 }
-                case "secure-xml": {
-                    org.apache.camel.model.dataformat.XMLSecurityDataFormat val = asType(node, org.apache.camel.model.dataformat.XMLSecurityDataFormat.class);
-                    java.util.List<org.apache.camel.model.DataFormatDefinition> existing = target.getDataFormats();
-                    if (existing == null) {
-                        existing = new java.util.ArrayList<>();
-                    }
-                    existing.add(val);
-                    target.setDataFormats(existing);
-                    break;
-                }
-                case "soapjaxb": {
-                    org.apache.camel.model.dataformat.SoapJaxbDataFormat val = asType(node, org.apache.camel.model.dataformat.SoapJaxbDataFormat.class);
+                case "soap": {
+                    org.apache.camel.model.dataformat.SoapDataFormat val = asType(node, org.apache.camel.model.dataformat.SoapDataFormat.class);
                     java.util.List<org.apache.camel.model.DataFormatDefinition> existing = target.getDataFormats();
                     if (existing == null) {
                         existing = new java.util.ArrayList<>();
@@ -3477,7 +3456,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDataFormats(existing);
                     break;
                 }
-                case "tarfile": {
+                case "tar-file": {
                     org.apache.camel.model.dataformat.TarFileDataFormat val = asType(node, org.apache.camel.model.dataformat.TarFileDataFormat.class);
                     java.util.List<org.apache.camel.model.DataFormatDefinition> existing = target.getDataFormats();
                     if (existing == null) {
@@ -3518,7 +3497,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "univocity-fixed": {
-                    org.apache.camel.model.dataformat.UniVocityFixedWidthDataFormat val = asType(node, org.apache.camel.model.dataformat.UniVocityFixedWidthDataFormat.class);
+                    org.apache.camel.model.dataformat.UniVocityFixedDataFormat val = asType(node, org.apache.camel.model.dataformat.UniVocityFixedDataFormat.class);
                     java.util.List<org.apache.camel.model.DataFormatDefinition> existing = target.getDataFormats();
                     if (existing == null) {
                         existing = new java.util.ArrayList<>();
@@ -3537,8 +3516,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDataFormats(existing);
                     break;
                 }
-                case "xmlrpc": {
-                    org.apache.camel.model.dataformat.XmlRpcDataFormat val = asType(node, org.apache.camel.model.dataformat.XmlRpcDataFormat.class);
+                case "xml-security": {
+                    org.apache.camel.model.dataformat.XMLSecurityDataFormat val = asType(node, org.apache.camel.model.dataformat.XMLSecurityDataFormat.class);
                     java.util.List<org.apache.camel.model.DataFormatDefinition> existing = target.getDataFormats();
                     if (existing == null) {
                         existing = new java.util.ArrayList<>();
@@ -3577,7 +3556,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDataFormats(existing);
                     break;
                 }
-                case "zip": {
+                case "zip-deflater": {
                     org.apache.camel.model.dataformat.ZipDeflaterDataFormat val = asType(node, org.apache.camel.model.dataformat.ZipDeflaterDataFormat.class);
                     java.util.List<org.apache.camel.model.DataFormatDefinition> existing = target.getDataFormats();
                     if (existing == null) {
@@ -3587,7 +3566,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDataFormats(existing);
                     break;
                 }
-                case "zipfile": {
+                case "zip-file": {
                     org.apache.camel.model.dataformat.ZipFileDataFormat val = asType(node, org.apache.camel.model.dataformat.ZipFileDataFormat.class);
                     java.util.List<org.apache.camel.model.DataFormatDefinition> existing = target.getDataFormats();
                     if (existing == null) {
@@ -5707,23 +5686,26 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            types = org.apache.camel.model.dataformat.GzipDataFormat.class,
+            types = org.apache.camel.model.dataformat.GzipDeflaterDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            nodes = "gzipdeflater",
+            nodes = {
+                    "gzip-deflater",
+                    "gzipDeflater"
+            },
             properties = @YamlProperty(name = "id", type = "string")
     )
-    public static class GzipDataFormatDeserializer extends YamlDeserializerBase<GzipDataFormat> {
-        public GzipDataFormatDeserializer() {
-            super(GzipDataFormat.class);
+    public static class GzipDeflaterDataFormatDeserializer extends YamlDeserializerBase<GzipDeflaterDataFormat> {
+        public GzipDeflaterDataFormatDeserializer() {
+            super(GzipDeflaterDataFormat.class);
         }
 
         @Override
-        protected GzipDataFormat newInstance() {
-            return new GzipDataFormat();
+        protected GzipDeflaterDataFormat newInstance() {
+            return new GzipDeflaterDataFormat();
         }
 
         @Override
-        protected boolean setProperty(GzipDataFormat target, String propertyKey,
+        protected boolean setProperty(GzipDeflaterDataFormat target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
                 case "id": {
@@ -6872,7 +6854,10 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     @YamlType(
             types = org.apache.camel.model.dataformat.JacksonXMLDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            nodes = "jacksonxml",
+            nodes = {
+                    "jackson-xml",
+                    "jacksonXml"
+            },
             properties = {
                     @YamlProperty(name = "allow-jms-type", type = "boolean"),
                     @YamlProperty(name = "allow-unmarshall-type", type = "boolean"),
@@ -8126,11 +8111,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "fhir-xml", type = "object:org.apache.camel.model.dataformat.FhirXmlDataFormat"),
                     @YamlProperty(name = "flatpack", type = "object:org.apache.camel.model.dataformat.FlatpackDataFormat"),
                     @YamlProperty(name = "grok", type = "object:org.apache.camel.model.dataformat.GrokDataFormat"),
-                    @YamlProperty(name = "gzip", type = "object:org.apache.camel.model.dataformat.GzipDataFormat"),
+                    @YamlProperty(name = "gzip-deflater", type = "object:org.apache.camel.model.dataformat.GzipDeflaterDataFormat"),
                     @YamlProperty(name = "hl7", type = "object:org.apache.camel.model.dataformat.HL7DataFormat"),
                     @YamlProperty(name = "ical", type = "object:org.apache.camel.model.dataformat.IcalDataFormat"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
-                    @YamlProperty(name = "jacksonxml", type = "object:org.apache.camel.model.dataformat.JacksonXMLDataFormat"),
+                    @YamlProperty(name = "jackson-xml", type = "object:org.apache.camel.model.dataformat.JacksonXMLDataFormat"),
                     @YamlProperty(name = "jaxb", type = "object:org.apache.camel.model.dataformat.JaxbDataFormat"),
                     @YamlProperty(name = "json", type = "object:org.apache.camel.model.dataformat.JsonDataFormat"),
                     @YamlProperty(name = "json-api", type = "object:org.apache.camel.model.dataformat.JsonApiDataFormat"),
@@ -8139,20 +8124,19 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "pgp", type = "object:org.apache.camel.model.dataformat.PGPDataFormat"),
                     @YamlProperty(name = "protobuf", type = "object:org.apache.camel.model.dataformat.ProtobufDataFormat"),
                     @YamlProperty(name = "rss", type = "object:org.apache.camel.model.dataformat.RssDataFormat"),
-                    @YamlProperty(name = "secure-xml", type = "object:org.apache.camel.model.dataformat.XMLSecurityDataFormat"),
-                    @YamlProperty(name = "soapjaxb", type = "object:org.apache.camel.model.dataformat.SoapJaxbDataFormat"),
+                    @YamlProperty(name = "soap", type = "object:org.apache.camel.model.dataformat.SoapDataFormat"),
                     @YamlProperty(name = "syslog", type = "object:org.apache.camel.model.dataformat.SyslogDataFormat"),
-                    @YamlProperty(name = "tarfile", type = "object:org.apache.camel.model.dataformat.TarFileDataFormat"),
+                    @YamlProperty(name = "tar-file", type = "object:org.apache.camel.model.dataformat.TarFileDataFormat"),
                     @YamlProperty(name = "thrift", type = "object:org.apache.camel.model.dataformat.ThriftDataFormat"),
                     @YamlProperty(name = "tidy-markup", type = "object:org.apache.camel.model.dataformat.TidyMarkupDataFormat"),
                     @YamlProperty(name = "univocity-csv", type = "object:org.apache.camel.model.dataformat.UniVocityCsvDataFormat"),
-                    @YamlProperty(name = "univocity-fixed", type = "object:org.apache.camel.model.dataformat.UniVocityFixedWidthDataFormat"),
+                    @YamlProperty(name = "univocity-fixed", type = "object:org.apache.camel.model.dataformat.UniVocityFixedDataFormat"),
                     @YamlProperty(name = "univocity-tsv", type = "object:org.apache.camel.model.dataformat.UniVocityTsvDataFormat"),
-                    @YamlProperty(name = "xmlrpc", type = "object:org.apache.camel.model.dataformat.XmlRpcDataFormat"),
+                    @YamlProperty(name = "xml-security", type = "object:org.apache.camel.model.dataformat.XMLSecurityDataFormat"),
                     @YamlProperty(name = "xstream", type = "object:org.apache.camel.model.dataformat.XStreamDataFormat"),
                     @YamlProperty(name = "yaml", type = "object:org.apache.camel.model.dataformat.YAMLDataFormat"),
-                    @YamlProperty(name = "zip", type = "object:org.apache.camel.model.dataformat.ZipDeflaterDataFormat"),
-                    @YamlProperty(name = "zipfile", type = "object:org.apache.camel.model.dataformat.ZipFileDataFormat")
+                    @YamlProperty(name = "zip-deflater", type = "object:org.apache.camel.model.dataformat.ZipDeflaterDataFormat"),
+                    @YamlProperty(name = "zip-file", type = "object:org.apache.camel.model.dataformat.ZipFileDataFormat")
             }
     )
     public static class MarshalDefinitionDeserializer extends YamlDeserializerBase<MarshalDefinition> {
@@ -8249,8 +8233,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDataFormatType(val);
                     break;
                 }
-                case "gzip": {
-                    org.apache.camel.model.dataformat.GzipDataFormat val = asType(node, org.apache.camel.model.dataformat.GzipDataFormat.class);
+                case "gzip-deflater": {
+                    org.apache.camel.model.dataformat.GzipDeflaterDataFormat val = asType(node, org.apache.camel.model.dataformat.GzipDeflaterDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }
@@ -8264,7 +8248,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDataFormatType(val);
                     break;
                 }
-                case "jacksonxml": {
+                case "jackson-xml": {
                     org.apache.camel.model.dataformat.JacksonXMLDataFormat val = asType(node, org.apache.camel.model.dataformat.JacksonXMLDataFormat.class);
                     target.setDataFormatType(val);
                     break;
@@ -8304,13 +8288,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDataFormatType(val);
                     break;
                 }
-                case "secure-xml": {
-                    org.apache.camel.model.dataformat.XMLSecurityDataFormat val = asType(node, org.apache.camel.model.dataformat.XMLSecurityDataFormat.class);
-                    target.setDataFormatType(val);
-                    break;
-                }
-                case "soapjaxb": {
-                    org.apache.camel.model.dataformat.SoapJaxbDataFormat val = asType(node, org.apache.camel.model.dataformat.SoapJaxbDataFormat.class);
+                case "soap": {
+                    org.apache.camel.model.dataformat.SoapDataFormat val = asType(node, org.apache.camel.model.dataformat.SoapDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }
@@ -8319,7 +8298,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDataFormatType(val);
                     break;
                 }
-                case "tarfile": {
+                case "tar-file": {
                     org.apache.camel.model.dataformat.TarFileDataFormat val = asType(node, org.apache.camel.model.dataformat.TarFileDataFormat.class);
                     target.setDataFormatType(val);
                     break;
@@ -8340,7 +8319,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "univocity-fixed": {
-                    org.apache.camel.model.dataformat.UniVocityFixedWidthDataFormat val = asType(node, org.apache.camel.model.dataformat.UniVocityFixedWidthDataFormat.class);
+                    org.apache.camel.model.dataformat.UniVocityFixedDataFormat val = asType(node, org.apache.camel.model.dataformat.UniVocityFixedDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }
@@ -8349,8 +8328,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDataFormatType(val);
                     break;
                 }
-                case "xmlrpc": {
-                    org.apache.camel.model.dataformat.XmlRpcDataFormat val = asType(node, org.apache.camel.model.dataformat.XmlRpcDataFormat.class);
+                case "xml-security": {
+                    org.apache.camel.model.dataformat.XMLSecurityDataFormat val = asType(node, org.apache.camel.model.dataformat.XMLSecurityDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }
@@ -8369,12 +8348,12 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDataFormatType(val);
                     break;
                 }
-                case "zip": {
+                case "zip-deflater": {
                     org.apache.camel.model.dataformat.ZipDeflaterDataFormat val = asType(node, org.apache.camel.model.dataformat.ZipDeflaterDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }
-                case "zipfile": {
+                case "zip-file": {
                     org.apache.camel.model.dataformat.ZipFileDataFormat val = asType(node, org.apache.camel.model.dataformat.ZipFileDataFormat.class);
                     target.setDataFormatType(val);
                     break;
@@ -8491,7 +8470,10 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     @YamlType(
             types = org.apache.camel.model.dataformat.MimeMultipartDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            nodes = "mime-multipart",
+            nodes = {
+                    "mime-multipart",
+                    "mimeMultipart"
+            },
             properties = {
                     @YamlProperty(name = "binary-content", type = "boolean"),
                     @YamlProperty(name = "headers-inline", type = "boolean"),
@@ -10215,7 +10197,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "include", type = "string"),
                     @YamlProperty(name = "instance-class", type = "string"),
                     @YamlProperty(name = "json-view", type = "string"),
-                    @YamlProperty(name = "library", type = "enum:GoogleProtobuf,Jackson,dataFormatName"),
+                    @YamlProperty(name = "library", type = "enum:GoogleProtobuf,Jackson"),
                     @YamlProperty(name = "module-class-names", type = "string"),
                     @YamlProperty(name = "module-refs", type = "string"),
                     @YamlProperty(name = "object-mapper", type = "string"),
@@ -14642,9 +14624,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
 
     @YamlType(
             inline = true,
-            types = org.apache.camel.model.dataformat.SoapJaxbDataFormat.class,
+            types = org.apache.camel.model.dataformat.SoapDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            nodes = "soapjaxb",
+            nodes = "soap",
             properties = {
                     @YamlProperty(name = "context-path", type = "string", required = true),
                     @YamlProperty(name = "element-name-strategy-ref", type = "string"),
@@ -14655,23 +14637,23 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "version", type = "string")
             }
     )
-    public static class SoapJaxbDataFormatDeserializer extends YamlDeserializerBase<SoapJaxbDataFormat> {
-        public SoapJaxbDataFormatDeserializer() {
-            super(SoapJaxbDataFormat.class);
+    public static class SoapDataFormatDeserializer extends YamlDeserializerBase<SoapDataFormat> {
+        public SoapDataFormatDeserializer() {
+            super(SoapDataFormat.class);
         }
 
         @Override
-        protected SoapJaxbDataFormat newInstance() {
-            return new SoapJaxbDataFormat();
+        protected SoapDataFormat newInstance() {
+            return new SoapDataFormat();
         }
 
         @Override
-        protected SoapJaxbDataFormat newInstance(String value) {
-            return new SoapJaxbDataFormat(value);
+        protected SoapDataFormat newInstance(String value) {
+            return new SoapDataFormat(value);
         }
 
         @Override
-        protected boolean setProperty(SoapJaxbDataFormat target, String propertyKey,
+        protected boolean setProperty(SoapDataFormat target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
                 case "context-path": {
@@ -15275,7 +15257,10 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     @YamlType(
             types = org.apache.camel.model.dataformat.TarFileDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            nodes = "tarfile",
+            nodes = {
+                    "tar-file",
+                    "tarFile"
+            },
             properties = {
                     @YamlProperty(name = "allow-empty-directory", type = "boolean"),
                     @YamlProperty(name = "id", type = "string"),
@@ -16387,7 +16372,10 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     @YamlType(
             types = org.apache.camel.model.dataformat.UniVocityCsvDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            nodes = "univocity-csv",
+            nodes = {
+                    "univocity-csv",
+                    "univocityCsv"
+            },
             properties = {
                     @YamlProperty(name = "as-map", type = "boolean"),
                     @YamlProperty(name = "comment", type = "string"),
@@ -16528,9 +16516,12 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            types = org.apache.camel.model.dataformat.UniVocityFixedWidthDataFormat.class,
+            types = org.apache.camel.model.dataformat.UniVocityFixedDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            nodes = "univocity-fixed",
+            nodes = {
+                    "univocity-fixed",
+                    "univocityFixed"
+            },
             properties = {
                     @YamlProperty(name = "as-map", type = "boolean"),
                     @YamlProperty(name = "comment", type = "string"),
@@ -16552,18 +16543,18 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "univocity-header", type = "array:org.apache.camel.model.dataformat.UniVocityHeader")
             }
     )
-    public static class UniVocityFixedWidthDataFormatDeserializer extends YamlDeserializerBase<UniVocityFixedWidthDataFormat> {
-        public UniVocityFixedWidthDataFormatDeserializer() {
-            super(UniVocityFixedWidthDataFormat.class);
+    public static class UniVocityFixedDataFormatDeserializer extends YamlDeserializerBase<UniVocityFixedDataFormat> {
+        public UniVocityFixedDataFormatDeserializer() {
+            super(UniVocityFixedDataFormat.class);
         }
 
         @Override
-        protected UniVocityFixedWidthDataFormat newInstance() {
-            return new UniVocityFixedWidthDataFormat();
+        protected UniVocityFixedDataFormat newInstance() {
+            return new UniVocityFixedDataFormat();
         }
 
         @Override
-        protected boolean setProperty(UniVocityFixedWidthDataFormat target, String propertyKey,
+        protected boolean setProperty(UniVocityFixedDataFormat target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
                 case "as-map": {
@@ -16667,7 +16658,10 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     @YamlType(
             types = org.apache.camel.model.dataformat.UniVocityHeader.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            nodes = "univocity-header",
+            nodes = {
+                    "univocity-header",
+                    "univocityHeader"
+            },
             properties = {
                     @YamlProperty(name = "length", type = "string"),
                     @YamlProperty(name = "name", type = "string")
@@ -16708,7 +16702,10 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     @YamlType(
             types = org.apache.camel.model.dataformat.UniVocityTsvDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            nodes = "univocity-tsv",
+            nodes = {
+                    "univocity-tsv",
+                    "univocityTsv"
+            },
             properties = {
                     @YamlProperty(name = "as-map", type = "boolean"),
                     @YamlProperty(name = "comment", type = "string"),
@@ -16850,11 +16847,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "fhir-xml", type = "object:org.apache.camel.model.dataformat.FhirXmlDataFormat"),
                     @YamlProperty(name = "flatpack", type = "object:org.apache.camel.model.dataformat.FlatpackDataFormat"),
                     @YamlProperty(name = "grok", type = "object:org.apache.camel.model.dataformat.GrokDataFormat"),
-                    @YamlProperty(name = "gzip", type = "object:org.apache.camel.model.dataformat.GzipDataFormat"),
+                    @YamlProperty(name = "gzip-deflater", type = "object:org.apache.camel.model.dataformat.GzipDeflaterDataFormat"),
                     @YamlProperty(name = "hl7", type = "object:org.apache.camel.model.dataformat.HL7DataFormat"),
                     @YamlProperty(name = "ical", type = "object:org.apache.camel.model.dataformat.IcalDataFormat"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
-                    @YamlProperty(name = "jacksonxml", type = "object:org.apache.camel.model.dataformat.JacksonXMLDataFormat"),
+                    @YamlProperty(name = "jackson-xml", type = "object:org.apache.camel.model.dataformat.JacksonXMLDataFormat"),
                     @YamlProperty(name = "jaxb", type = "object:org.apache.camel.model.dataformat.JaxbDataFormat"),
                     @YamlProperty(name = "json", type = "object:org.apache.camel.model.dataformat.JsonDataFormat"),
                     @YamlProperty(name = "json-api", type = "object:org.apache.camel.model.dataformat.JsonApiDataFormat"),
@@ -16863,20 +16860,19 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "pgp", type = "object:org.apache.camel.model.dataformat.PGPDataFormat"),
                     @YamlProperty(name = "protobuf", type = "object:org.apache.camel.model.dataformat.ProtobufDataFormat"),
                     @YamlProperty(name = "rss", type = "object:org.apache.camel.model.dataformat.RssDataFormat"),
-                    @YamlProperty(name = "secure-xml", type = "object:org.apache.camel.model.dataformat.XMLSecurityDataFormat"),
-                    @YamlProperty(name = "soapjaxb", type = "object:org.apache.camel.model.dataformat.SoapJaxbDataFormat"),
+                    @YamlProperty(name = "soap", type = "object:org.apache.camel.model.dataformat.SoapDataFormat"),
                     @YamlProperty(name = "syslog", type = "object:org.apache.camel.model.dataformat.SyslogDataFormat"),
-                    @YamlProperty(name = "tarfile", type = "object:org.apache.camel.model.dataformat.TarFileDataFormat"),
+                    @YamlProperty(name = "tar-file", type = "object:org.apache.camel.model.dataformat.TarFileDataFormat"),
                     @YamlProperty(name = "thrift", type = "object:org.apache.camel.model.dataformat.ThriftDataFormat"),
                     @YamlProperty(name = "tidy-markup", type = "object:org.apache.camel.model.dataformat.TidyMarkupDataFormat"),
                     @YamlProperty(name = "univocity-csv", type = "object:org.apache.camel.model.dataformat.UniVocityCsvDataFormat"),
-                    @YamlProperty(name = "univocity-fixed", type = "object:org.apache.camel.model.dataformat.UniVocityFixedWidthDataFormat"),
+                    @YamlProperty(name = "univocity-fixed", type = "object:org.apache.camel.model.dataformat.UniVocityFixedDataFormat"),
                     @YamlProperty(name = "univocity-tsv", type = "object:org.apache.camel.model.dataformat.UniVocityTsvDataFormat"),
-                    @YamlProperty(name = "xmlrpc", type = "object:org.apache.camel.model.dataformat.XmlRpcDataFormat"),
+                    @YamlProperty(name = "xml-security", type = "object:org.apache.camel.model.dataformat.XMLSecurityDataFormat"),
                     @YamlProperty(name = "xstream", type = "object:org.apache.camel.model.dataformat.XStreamDataFormat"),
                     @YamlProperty(name = "yaml", type = "object:org.apache.camel.model.dataformat.YAMLDataFormat"),
-                    @YamlProperty(name = "zip", type = "object:org.apache.camel.model.dataformat.ZipDeflaterDataFormat"),
-                    @YamlProperty(name = "zipfile", type = "object:org.apache.camel.model.dataformat.ZipFileDataFormat")
+                    @YamlProperty(name = "zip-deflater", type = "object:org.apache.camel.model.dataformat.ZipDeflaterDataFormat"),
+                    @YamlProperty(name = "zip-file", type = "object:org.apache.camel.model.dataformat.ZipFileDataFormat")
             }
     )
     public static class UnmarshalDefinitionDeserializer extends YamlDeserializerBase<UnmarshalDefinition> {
@@ -16973,8 +16969,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDataFormatType(val);
                     break;
                 }
-                case "gzip": {
-                    org.apache.camel.model.dataformat.GzipDataFormat val = asType(node, org.apache.camel.model.dataformat.GzipDataFormat.class);
+                case "gzip-deflater": {
+                    org.apache.camel.model.dataformat.GzipDeflaterDataFormat val = asType(node, org.apache.camel.model.dataformat.GzipDeflaterDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }
@@ -16988,7 +16984,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDataFormatType(val);
                     break;
                 }
-                case "jacksonxml": {
+                case "jackson-xml": {
                     org.apache.camel.model.dataformat.JacksonXMLDataFormat val = asType(node, org.apache.camel.model.dataformat.JacksonXMLDataFormat.class);
                     target.setDataFormatType(val);
                     break;
@@ -17028,13 +17024,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDataFormatType(val);
                     break;
                 }
-                case "secure-xml": {
-                    org.apache.camel.model.dataformat.XMLSecurityDataFormat val = asType(node, org.apache.camel.model.dataformat.XMLSecurityDataFormat.class);
-                    target.setDataFormatType(val);
-                    break;
-                }
-                case "soapjaxb": {
-                    org.apache.camel.model.dataformat.SoapJaxbDataFormat val = asType(node, org.apache.camel.model.dataformat.SoapJaxbDataFormat.class);
+                case "soap": {
+                    org.apache.camel.model.dataformat.SoapDataFormat val = asType(node, org.apache.camel.model.dataformat.SoapDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }
@@ -17043,7 +17034,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDataFormatType(val);
                     break;
                 }
-                case "tarfile": {
+                case "tar-file": {
                     org.apache.camel.model.dataformat.TarFileDataFormat val = asType(node, org.apache.camel.model.dataformat.TarFileDataFormat.class);
                     target.setDataFormatType(val);
                     break;
@@ -17064,7 +17055,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "univocity-fixed": {
-                    org.apache.camel.model.dataformat.UniVocityFixedWidthDataFormat val = asType(node, org.apache.camel.model.dataformat.UniVocityFixedWidthDataFormat.class);
+                    org.apache.camel.model.dataformat.UniVocityFixedDataFormat val = asType(node, org.apache.camel.model.dataformat.UniVocityFixedDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }
@@ -17073,8 +17064,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDataFormatType(val);
                     break;
                 }
-                case "xmlrpc": {
-                    org.apache.camel.model.dataformat.XmlRpcDataFormat val = asType(node, org.apache.camel.model.dataformat.XmlRpcDataFormat.class);
+                case "xml-security": {
+                    org.apache.camel.model.dataformat.XMLSecurityDataFormat val = asType(node, org.apache.camel.model.dataformat.XMLSecurityDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }
@@ -17093,12 +17084,12 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDataFormatType(val);
                     break;
                 }
-                case "zip": {
+                case "zip-deflater": {
                     org.apache.camel.model.dataformat.ZipDeflaterDataFormat val = asType(node, org.apache.camel.model.dataformat.ZipDeflaterDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }
-                case "zipfile": {
+                case "zip-file": {
                     org.apache.camel.model.dataformat.ZipFileDataFormat val = asType(node, org.apache.camel.model.dataformat.ZipFileDataFormat.class);
                     target.setDataFormatType(val);
                     break;
@@ -17749,8 +17740,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.XMLSecurityDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = {
-                    "secure-xml",
-                    "secureXML"
+                    "xml-security",
+                    "xmlSecurity"
             },
             properties = {
                     @YamlProperty(name = "add-key-value-for-encrypted-key", type = "boolean"),
@@ -18233,47 +18224,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            types = org.apache.camel.model.dataformat.XmlRpcDataFormat.class,
-            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            nodes = "xmlrpc",
-            properties = {
-                    @YamlProperty(name = "id", type = "string"),
-                    @YamlProperty(name = "request", type = "boolean")
-            }
-    )
-    public static class XmlRpcDataFormatDeserializer extends YamlDeserializerBase<XmlRpcDataFormat> {
-        public XmlRpcDataFormatDeserializer() {
-            super(XmlRpcDataFormat.class);
-        }
-
-        @Override
-        protected XmlRpcDataFormat newInstance() {
-            return new XmlRpcDataFormat();
-        }
-
-        @Override
-        protected boolean setProperty(XmlRpcDataFormat target, String propertyKey,
-                String propertyName, Node node) {
-            switch(propertyKey) {
-                case "id": {
-                    String val = asText(node);
-                    target.setId(val);
-                    break;
-                }
-                case "request": {
-                    String val = asText(node);
-                    target.setRequest(val);
-                    break;
-                }
-                default: {
-                    return false;
-                }
-            }
-            return true;
-        }
-    }
-
-    @YamlType(
             types = org.apache.camel.model.dataformat.YAMLDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = "yaml",
@@ -18426,7 +18376,10 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     @YamlType(
             types = org.apache.camel.model.dataformat.ZipDeflaterDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            nodes = "zipdeflater",
+            nodes = {
+                    "zip-deflater",
+                    "zipDeflater"
+            },
             properties = {
                     @YamlProperty(name = "compression-level", type = "number"),
                     @YamlProperty(name = "id", type = "string")
@@ -18467,7 +18420,10 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     @YamlType(
             types = org.apache.camel.model.dataformat.ZipFileDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            nodes = "zipfile",
+            nodes = {
+                    "zip-file",
+                    "zipFile"
+            },
             properties = {
                     @YamlProperty(name = "allow-empty-directory", type = "boolean"),
                     @YamlProperty(name = "id", type = "string"),

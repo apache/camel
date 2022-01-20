@@ -19,7 +19,7 @@ include::partial$eip-options.adoc[]
 
 == Using Throttle
 
-The below example will throttle messages all messages received on seda:a before being sent to mock:result
+The below example will throttle messages received on seda:a before being sent to mock:result
 ensuring that a maximum of 3 messages are sent during a running 10-seconds window slot.
 
 [source,java]
@@ -41,7 +41,7 @@ from("seda:a")
   .to("seda:b");
 ----
 
-And the examples in XML:
+And the same examples but in XML:
 
 [source,xml]
 ----
@@ -54,7 +54,7 @@ And the examples in XML:
 </route>
 ----
 
-And to throttle 50 message per second:
+And to throttle 50 messages per second:
 
 [source,xml]
 ----
@@ -169,7 +169,7 @@ from("seda:a")
   .to("seda:b");
 ---------------------
 
-In the example above messages a throttled by the header with name region.
+In the example above messages are throttled by the header with name region.
 So suppose there are regions for US, EMEA, and ASIA, then we have three different groups, that each
 are throttled by 100 messages per second.
 

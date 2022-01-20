@@ -137,7 +137,7 @@ NotifyBuilder notify = new NotifyBuilder(context)
 .create();
 ----
 
-Here, we just say that at least three message should be done received from any of myCoolRoutes (notice the wildcard matching).
+Here both 5 foo messages and 7 bar messages must be done. Notice the use of the and operator.
 
 [source,java]
 ----
@@ -147,7 +147,7 @@ NotifyBuilder notify = new NotifyBuilder(context)
     .create();
 ----
 
-Here both 5 foo messages and 7 bar messages must be done. Notice the use of the and operator.
+Here we expect to receive two messages whose body is Hello World then Bye World.
 
 [source,java]
 ----
@@ -156,7 +156,7 @@ NotifyBuilder notify = new NotifyBuilder(context)
     .create();
 ----
 
-Here we expect to receive two messages with Hello World and Bye World.
+Here we expect to receive a message which contains Camel in the body.
 
 [source,java]
 ----
@@ -167,12 +167,10 @@ NotifyBuilder notify = new NotifyBuilder(context)
 
 === Using mock endpoint for fine-grained expectations
 
-Here we want to match when we have received a message which contains Camel in the body.
-
 [source,java]
 ----
-// lets use a mock to set the expressions as it got many great assertions for that
-// notice we use mock:assert which does NOT exist in the route, its just a pseudo name
+// let's use a mock to set the expressions as it got many great assertions for that
+// notice we use mock:assert which does NOT exist in the route, it's just a pseudo name
 MockEndpoint mock = getMockEndpoint("mock:assert");
 mock.expectedBodiesReceivedInAnyOrder("Hello World", "Bye World", "Hi World");
 

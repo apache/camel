@@ -28,7 +28,7 @@ import org.apache.camel.spi.Metadata;
  * Delegate to a custom {@link org.apache.camel.spi.DataFormat} implementation via Camel registry.
  */
 @Metadata(label = "dataformat,transformation", title = "Custom")
-@XmlRootElement(name = "customDataFormat")
+@XmlRootElement(name = "custom")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CustomDataFormat extends DataFormatDefinition {
     @XmlAttribute(required = true)

@@ -33,7 +33,7 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "allowmanualcommit":
         case "allowManualCommit": getOrCreateConfiguration(target).setAllowManualCommit(property(camelContext, boolean.class, value)); return true;
         case "autocommitenable":
-        case "autoCommitEnable": getOrCreateConfiguration(target).setAutoCommitEnable(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "autoCommitEnable": getOrCreateConfiguration(target).setAutoCommitEnable(property(camelContext, boolean.class, value)); return true;
         case "autocommitintervalms":
         case "autoCommitIntervalMs": getOrCreateConfiguration(target).setAutoCommitIntervalMs(property(camelContext, java.lang.Integer.class, value)); return true;
         case "autocommitonstop":
@@ -247,7 +247,7 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "allowmanualcommit":
         case "allowManualCommit": return boolean.class;
         case "autocommitenable":
-        case "autoCommitEnable": return java.lang.Boolean.class;
+        case "autoCommitEnable": return boolean.class;
         case "autocommitintervalms":
         case "autoCommitIntervalMs": return java.lang.Integer.class;
         case "autocommitonstop":
@@ -457,7 +457,7 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "allowmanualcommit":
         case "allowManualCommit": return getOrCreateConfiguration(target).isAllowManualCommit();
         case "autocommitenable":
-        case "autoCommitEnable": return getOrCreateConfiguration(target).getAutoCommitEnable();
+        case "autoCommitEnable": return getOrCreateConfiguration(target).isAutoCommitEnable();
         case "autocommitintervalms":
         case "autoCommitIntervalMs": return getOrCreateConfiguration(target).getAutoCommitIntervalMs();
         case "autocommitonstop":

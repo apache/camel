@@ -27,7 +27,6 @@ import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.NamespaceAware;
-import org.apache.camel.support.CamelContextHelper;
 
 public class XPathExpressionReifier extends ExpressionReifier<XPathExpression> {
 
@@ -113,8 +112,7 @@ public class XPathExpressionReifier extends ExpressionReifier<XPathExpression> {
             }
         }
         if (definition.getXPathFactory() == null && definition.getFactoryRef() != null) {
-            definition.setXPathFactory(
-                    CamelContextHelper.mandatoryLookupAndConvert(camelContext, definition.getFactoryRef(), XPathFactory.class));
+            definition.setXPathFactory(mandatoryLookup(definition.getFactoryRef(), XPathFactory.class));
         }
     }
 

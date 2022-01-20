@@ -1,1 +1,0 @@
-../../../../../components/camel-zipfile/src/main/docs/zipfile-dataformat.adoc

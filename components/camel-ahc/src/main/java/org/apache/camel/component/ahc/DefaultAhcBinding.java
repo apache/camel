@@ -183,14 +183,15 @@ public class DefaultAhcBinding implements AhcBinding {
         try {
             Object data = in.getBody();
             if (data != null) {
-                if (contentType != null && AhcConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(contentType)) {
-
+                if (data instanceof BodyGenerator) {
+                    // use existing ahc body generator
+                    body = (BodyGenerator) data;
+                } else if (AhcConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(contentType)) {
                     if (!endpoint.getComponent().isAllowJavaSerializedObject()) {
                         throw new CamelExchangeException(
                                 "Content-type " + AhcConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT + " is not allowed",
                                 exchange);
                     }
-
                     // serialized java object
                     Serializable obj = in.getMandatoryBody(Serializable.class);
                     // write object to output stream
@@ -201,6 +202,8 @@ public class DefaultAhcBinding implements AhcBinding {
                     if (file != null) {
                         body = new FileBodyGenerator(file);
                     }
+                } else if (data instanceof byte[]) {
+                    body = new ByteArrayBodyGenerator((byte[]) data);
                 } else if (data instanceof String) {
                     // be a bit careful with String as any type can most likely be converted to String
                     // so we only do an instanceof check and accept String if the body is really a String

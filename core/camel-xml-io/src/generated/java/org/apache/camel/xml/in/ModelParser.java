@@ -2089,8 +2089,8 @@ public class ModelParser extends BaseParser {
             return true;
         }, noElementHandler(), noValueHandler());
     }
-    protected GzipDataFormat doParseGzipDataFormat() throws IOException, XmlPullParserException {
-        return doParse(new GzipDataFormat(),
+    protected GzipDeflaterDataFormat doParseGzipDeflaterDataFormat() throws IOException, XmlPullParserException {
+        return doParse(new GzipDeflaterDataFormat(),
             identifiedTypeAttributeHandler(), noElementHandler(), noValueHandler());
     }
     protected HL7DataFormat doParseHL7DataFormat() throws IOException, XmlPullParserException {
@@ -2279,8 +2279,8 @@ public class ModelParser extends BaseParser {
         return doParse(new RssDataFormat(),
             identifiedTypeAttributeHandler(), noElementHandler(), noValueHandler());
     }
-    protected SoapJaxbDataFormat doParseSoapJaxbDataFormat() throws IOException, XmlPullParserException {
-        return doParse(new SoapJaxbDataFormat(), (def, key, val) -> {
+    protected SoapDataFormat doParseSoapDataFormat() throws IOException, XmlPullParserException {
+        return doParse(new SoapDataFormat(), (def, key, val) -> {
             switch (key) {
                 case "contextPath": def.setContextPath(val); break;
                 case "elementNameStrategyRef": def.setElementNameStrategyRef(val); break;
@@ -2365,7 +2365,7 @@ public class ModelParser extends BaseParser {
     }
     protected <T extends UniVocityAbstractDataFormat> ElementHandler<T> uniVocityAbstractDataFormatElementHandler() {
         return (def, key) -> {
-            if ("univocity-header".equals(key)) {
+            if ("univocityHeader".equals(key)) {
                 doAdd(doParseUniVocityHeader(), def.getHeaders(), def::setHeaders);
                 return true;
             }
@@ -2381,8 +2381,8 @@ public class ModelParser extends BaseParser {
             return false;
         }, noElementHandler(), (def, val) -> def.setName(val));
     }
-    protected UniVocityFixedWidthDataFormat doParseUniVocityFixedWidthDataFormat() throws IOException, XmlPullParserException {
-        return doParse(new UniVocityFixedWidthDataFormat(), (def, key, val) -> {
+    protected UniVocityFixedDataFormat doParseUniVocityFixedDataFormat() throws IOException, XmlPullParserException {
+        return doParse(new UniVocityFixedDataFormat(), (def, key, val) -> {
             switch (key) {
                 case "padding": def.setPadding(val); break;
                 case "recordEndsOnNewline": def.setRecordEndsOnNewline(val); break;
@@ -2443,15 +2443,6 @@ public class ModelParser extends BaseParser {
             }
             return true;
         }, noValueHandler());
-    }
-    protected XmlRpcDataFormat doParseXmlRpcDataFormat() throws IOException, XmlPullParserException {
-        return doParse(new XmlRpcDataFormat(), (def, key, val) -> {
-            if ("request".equals(key)) {
-                def.setRequest(val);
-                return true;
-            }
-            return identifiedTypeAttributeHandler().accept(def, key, val);
-        }, noElementHandler(), noValueHandler());
     }
     protected YAMLDataFormat doParseYAMLDataFormat() throws IOException, XmlPullParserException {
         return doParse(new YAMLDataFormat(), (def, key, val) -> {
@@ -3271,37 +3262,36 @@ public class ModelParser extends BaseParser {
             case "cbor": return doParseCBORDataFormat();
             case "crypto": return doParseCryptoDataFormat();
             case "csv": return doParseCsvDataFormat();
-            case "customDataFormat": return doParseCustomDataFormat();
+            case "custom": return doParseCustomDataFormat();
             case "fhirJson": return doParseFhirJsonDataFormat();
             case "fhirXml": return doParseFhirXmlDataFormat();
             case "flatpack": return doParseFlatpackDataFormat();
             case "grok": return doParseGrokDataFormat();
-            case "gzipdeflater": return doParseGzipDataFormat();
+            case "gzipDeflater": return doParseGzipDeflaterDataFormat();
             case "hl7": return doParseHL7DataFormat();
             case "ical": return doParseIcalDataFormat();
-            case "jacksonxml": return doParseJacksonXMLDataFormat();
+            case "jacksonXml": return doParseJacksonXMLDataFormat();
             case "jaxb": return doParseJaxbDataFormat();
             case "jsonApi": return doParseJsonApiDataFormat();
             case "json": return doParseJsonDataFormat();
             case "lzf": return doParseLZFDataFormat();
-            case "mime-multipart": return doParseMimeMultipartDataFormat();
+            case "mimeMultipart": return doParseMimeMultipartDataFormat();
             case "pgp": return doParsePGPDataFormat();
             case "protobuf": return doParseProtobufDataFormat();
             case "rss": return doParseRssDataFormat();
-            case "soapjaxb": return doParseSoapJaxbDataFormat();
+            case "soap": return doParseSoapDataFormat();
             case "syslog": return doParseSyslogDataFormat();
-            case "tarfile": return doParseTarFileDataFormat();
+            case "tarFile": return doParseTarFileDataFormat();
             case "thrift": return doParseThriftDataFormat();
             case "tidyMarkup": return doParseTidyMarkupDataFormat();
-            case "univocity-csv": return doParseUniVocityCsvDataFormat();
-            case "univocity-fixed": return doParseUniVocityFixedWidthDataFormat();
-            case "univocity-tsv": return doParseUniVocityTsvDataFormat();
-            case "secureXML": return doParseXMLSecurityDataFormat();
+            case "univocityCsv": return doParseUniVocityCsvDataFormat();
+            case "univocityFixed": return doParseUniVocityFixedDataFormat();
+            case "univocityTsv": return doParseUniVocityTsvDataFormat();
+            case "xmlSecurity": return doParseXMLSecurityDataFormat();
             case "xstream": return doParseXStreamDataFormat();
-            case "xmlrpc": return doParseXmlRpcDataFormat();
             case "yaml": return doParseYAMLDataFormat();
-            case "zipdeflater": return doParseZipDeflaterDataFormat();
-            case "zipfile": return doParseZipFileDataFormat();
+            case "zipDeflater": return doParseZipDeflaterDataFormat();
+            case "zipFile": return doParseZipFileDataFormat();
             default: return null;
         }
     }

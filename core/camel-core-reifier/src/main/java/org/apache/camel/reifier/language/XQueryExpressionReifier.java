@@ -24,7 +24,6 @@ import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.XQueryExpression;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.NamespaceAware;
-import org.apache.camel.support.CamelContextHelper;
 
 public class XQueryExpressionReifier extends ExpressionReifier<XQueryExpression> {
 
@@ -77,8 +76,7 @@ public class XQueryExpressionReifier extends ExpressionReifier<XQueryExpression>
             }
         }
         if (definition.getConfiguration() == null && definition.getConfigurationRef() != null) {
-            definition.setConfiguration(
-                    CamelContextHelper.mandatoryLookupAndConvert(camelContext, definition.getConfigurationRef(), Object.class));
+            definition.setConfiguration(mandatoryLookup(definition.getConfigurationRef(), Object.class));
         }
     }
 

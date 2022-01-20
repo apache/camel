@@ -85,7 +85,13 @@ public class ProcessDefinition extends NoOutputDefinition<ProcessDefinition> {
     }
 
     /**
-     * Reference to the {@link Processor} to lookup in the registry to use.
+     * Reference to the Processor to lookup in the registry to use.
+     *
+     * Can also be used for creating new beans by their class name by prefixing with #class, eg
+     * #class:com.foo.MyClassType.
+     *
+     * And it is also possible to refer to singleton beans by their type in the registry by prefixing with #type:
+     * syntax, eg #type:com.foo.MyClassType
      */
     public void setRef(String ref) {
         this.ref = ref;

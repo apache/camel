@@ -77,7 +77,7 @@ public class Soap12UnMarshalTest extends CamelTestSupport {
 
             @Override
             public void configure() throws Exception {
-                from("direct:start").unmarshal().soapjaxb12(SERVICE_PACKAGE)
+                from("direct:start").unmarshal().soap12(SERVICE_PACKAGE)
                         .to("mock:result");
             }
         };
