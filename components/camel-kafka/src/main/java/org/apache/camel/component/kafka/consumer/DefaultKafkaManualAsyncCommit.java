@@ -16,12 +16,9 @@
  */
 package org.apache.camel.component.kafka.consumer;
 
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Objects;
 
 import org.apache.camel.spi.StateRepository;
-import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.common.TopicPartition;
 import org.slf4j.Logger;
@@ -31,21 +28,14 @@ public class DefaultKafkaManualAsyncCommit extends DefaultKafkaManualCommit impl
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultKafkaManualAsyncCommit.class);
 
-    private final Collection<KafkaAsyncManualCommit> asyncCommits;
-
-    public DefaultKafkaManualAsyncCommit(Consumer consumer, String topicName, String threadId,
-                                         StateRepository<String, String> offsetRepository, TopicPartition partition,
-                                         long recordOffset, long commitTimeout,
-                                         Collection<KafkaAsyncManualCommit> asyncCommits) {
-        super(consumer, topicName, threadId, offsetRepository, partition, recordOffset, commitTimeout);
-        this.asyncCommits = Objects.requireNonNull(asyncCommits);
-
-        LOG.debug("Using commit timeout of {}", commitTimeout);
+    public DefaultKafkaManualAsyncCommit(KafkaManualCommitFactory.CamelExchangePayload camelExchangePayload,
+                                         KafkaManualCommitFactory.KafkaRecordPayload recordPayload) {
+        super(camelExchangePayload, recordPayload);
     }
 
     @Override
     public void commit() {
-        asyncCommits.add(this);
+        camelExchangePayload.asyncCommits.add(this);
     }
 
     @Override
@@ -60,7 +50,8 @@ public class DefaultKafkaManualAsyncCommit extends DefaultKafkaManualCommit impl
                 offsetRepository.setState(serializeOffsetKey(partition), serializeOffsetValue(recordOffset));
             } else {
                 LOG.debug("CommitAsync {} from topic {} with offset: {}", getThreadId(), getTopicName(), recordOffset);
-                getConsumer().commitAsync(Collections.singletonMap(partition, new OffsetAndMetadata(recordOffset + 1)),
+                camelExchangePayload.consumer.commitAsync(
+                        Collections.singletonMap(partition, new OffsetAndMetadata(recordOffset + 1)),
                         (offsets, exception) -> {
                             if (exception != null) {
                                 LOG.error("Error during async commit for {} from topic {} with offset {}: ",

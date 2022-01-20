@@ -22,24 +22,13 @@ import org.apache.kafka.common.TopicPartition;
 
 public abstract class DefaultKafkaManualCommit implements KafkaManualCommit {
 
-    private final Consumer consumer;
-    private final String topicName;
-    private final String threadId;
-    private final StateRepository<String, String> offsetRepository;
-    private final TopicPartition partition;
-    private final long recordOffset;
-    private final long commitTimeout;
+    protected final KafkaManualCommitFactory.CamelExchangePayload camelExchangePayload;
+    protected final KafkaManualCommitFactory.KafkaRecordPayload kafkaRecordPayload;
 
-    public DefaultKafkaManualCommit(Consumer consumer, String topicName, String threadId,
-                                    StateRepository<String, String> offsetRepository, TopicPartition partition,
-                                    long recordOffset, long commitTimeout) {
-        this.consumer = consumer;
-        this.topicName = topicName;
-        this.threadId = threadId;
-        this.offsetRepository = offsetRepository;
-        this.partition = partition;
-        this.recordOffset = recordOffset;
-        this.commitTimeout = commitTimeout;
+    public DefaultKafkaManualCommit(KafkaManualCommitFactory.CamelExchangePayload camelExchangePayload,
+                                    KafkaManualCommitFactory.KafkaRecordPayload kafkaRecordPayload) {
+        this.camelExchangePayload = camelExchangePayload;
+        this.kafkaRecordPayload = kafkaRecordPayload;
     }
 
     protected String serializeOffsetKey(TopicPartition topicPartition) {
@@ -50,31 +39,53 @@ public abstract class DefaultKafkaManualCommit implements KafkaManualCommit {
         return String.valueOf(offset);
     }
 
-    public Consumer getConsumer() {
-        return consumer;
+    /**
+     * @deprecated Use {@link #getCamelExchangePayload()}
+     */
+    @Deprecated(since = "3.15.0")
+    public Consumer<?, ?> getConsumer() {
+        return camelExchangePayload.consumer;
     }
 
     public String getTopicName() {
-        return topicName;
+        return getPartition().topic();
     }
 
     public String getThreadId() {
-        return threadId;
+        return camelExchangePayload.threadId;
     }
 
     public StateRepository<String, String> getOffsetRepository() {
-        return offsetRepository;
+        return camelExchangePayload.offsetRepository;
     }
 
     public TopicPartition getPartition() {
-        return partition;
+        return kafkaRecordPayload.partition;
     }
 
     public long getRecordOffset() {
-        return recordOffset;
+        return kafkaRecordPayload.recordOffset;
     }
 
     public long getCommitTimeout() {
-        return commitTimeout;
+        return kafkaRecordPayload.commitTimeout;
+    }
+
+    /**
+     * Gets the Camel Exchange payload
+     * 
+     * @return
+     */
+    public KafkaManualCommitFactory.CamelExchangePayload getCamelExchangePayload() {
+        return camelExchangePayload;
+    }
+
+    /**
+     * Gets the Kafka record payload
+     * 
+     * @return
+     */
+    public KafkaManualCommitFactory.KafkaRecordPayload getKafkaRecordPayload() {
+        return kafkaRecordPayload;
     }
 }

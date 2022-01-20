@@ -18,6 +18,7 @@
 package org.apache.camel.component.kafka.consumer;
 
 import java.time.Duration;
+import java.util.Collection;
 import java.util.Collections;
 
 import org.apache.camel.Exchange;
@@ -33,13 +34,14 @@ import org.slf4j.LoggerFactory;
 
 public abstract class AbstractCommitManager implements CommitManager {
     public static final long START_OFFSET = -1;
-
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCommitManager.class);
-    private final Consumer<?, ?> consumer;
+
     protected final KafkaConsumer kafkaConsumer;
     protected final String threadId;
     protected final String printableTopic;
     protected final KafkaConfiguration configuration;
+
+    private final Consumer<?, ?> consumer;
 
     public AbstractCommitManager(Consumer<?, ?> consumer, KafkaConsumer kafkaConsumer, String threadId, String printableTopic) {
         this.consumer = consumer;
@@ -49,15 +51,29 @@ public abstract class AbstractCommitManager implements CommitManager {
         this.configuration = kafkaConsumer.getEndpoint().getConfiguration();
     }
 
-    @Override
-    public KafkaManualCommit getManualCommit(
-            Exchange exchange, TopicPartition partition, ConsumerRecord<Object, Object> record) {
-        KafkaManualCommitFactory manualCommitFactory = kafkaConsumer.getEndpoint().getKafkaManualCommitFactory();
+    protected KafkaManualCommit getManualCommit(
+            Exchange exchange, TopicPartition partition, ConsumerRecord<Object, Object> record,
+            Collection<KafkaAsyncManualCommit> asyncCommits,
+            KafkaManualCommitFactory manualCommitFactory) {
+
         StateRepository<String, String> offsetRepository = configuration.getOffsetRepository();
         long commitTimeoutMs = configuration.getCommitTimeoutMs();
 
-        return manualCommitFactory.newInstance(exchange, consumer, partition.topic(), threadId,
-                offsetRepository, partition, record.offset(), commitTimeoutMs, null);
+        KafkaManualCommitFactory.CamelExchangePayload camelExchangePayload = new KafkaManualCommitFactory.CamelExchangePayload(
+                exchange, consumer, threadId, offsetRepository, asyncCommits);
+        KafkaManualCommitFactory.KafkaRecordPayload kafkaRecordPayload = new KafkaManualCommitFactory.KafkaRecordPayload(
+                partition,
+                record.offset(), commitTimeoutMs);
+
+        return manualCommitFactory.newInstance(camelExchangePayload, kafkaRecordPayload);
+    }
+
+    @Override
+    public KafkaManualCommit getManualCommit(
+            Exchange exchange, TopicPartition partition, ConsumerRecord<Object, Object> record) {
+
+        KafkaManualCommitFactory manualCommitFactory = kafkaConsumer.getEndpoint().getKafkaManualCommitFactory();
+        return getManualCommit(exchange, partition, record, null, manualCommitFactory);
     }
 
     @Override

@@ -26,11 +26,23 @@ import org.apache.kafka.common.TopicPartition;
 public class DefaultKafkaManualCommitFactory implements KafkaManualCommitFactory {
 
     @Override
+    public KafkaManualCommit newInstance(CamelExchangePayload camelExchangePayload, KafkaRecordPayload kafkaRecordPayload) {
+        return new DefaultKafkaManualSyncCommit(camelExchangePayload, kafkaRecordPayload);
+    }
+
+    /**
+     * @deprecated Use DefaultKafkaManualCommitFactory#newInstance(CamelExchangePayload, KafkaRecordPayload)
+     */
+    @Deprecated(since = "3.15.0")
+    @Override
     public KafkaManualCommit newInstance(
             Exchange exchange, Consumer consumer, String topicName, String threadId,
             StateRepository<String, String> offsetRepository,
             TopicPartition partition, long recordOffset, long commitTimeout, Collection<KafkaAsyncManualCommit> asyncCommits) {
-        return new DefaultKafkaManualSyncCommit(
-                consumer, topicName, threadId, offsetRepository, partition, recordOffset, commitTimeout);
+        CamelExchangePayload camelExchangePayload
+                = new CamelExchangePayload(exchange, consumer, threadId, offsetRepository, asyncCommits);
+        KafkaRecordPayload kafkaRecordPayload = new KafkaRecordPayload(partition, recordOffset, commitTimeout);
+
+        return newInstance(camelExchangePayload, kafkaRecordPayload);
     }
 }
