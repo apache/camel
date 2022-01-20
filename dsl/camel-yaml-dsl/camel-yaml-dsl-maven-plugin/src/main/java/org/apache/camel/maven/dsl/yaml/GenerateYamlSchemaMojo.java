@@ -126,9 +126,11 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
 
         // filter out unwanted cases when in camelCase mode
         if (!kebabCase) {
-            definitions.forEach(this::filterCase);
-            filterCase(step);
-            filterCase(root.with("items"));
+            for (JsonNode definition : definitions) {
+                kebabToCamelCase(definition);
+            }
+            kebabToCamelCase(step);
+            kebabToCamelCase(root.with("items"));
         }
 
         try {
@@ -203,28 +205,27 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
         }
     }
 
-    private void filterCase(JsonNode node) {
+    private void kebabToCamelCase(JsonNode node) {
         if (node instanceof ObjectNode) {
             ObjectNode on = (ObjectNode) node;
-            JsonNode jn = on.with("properties");
-            if (jn.isEmpty()) {
+            JsonNode jn = on.get("properties");
+            if (jn == null || jn.isEmpty()) {
                 jn = on.findPath("properties");
             }
-            if (jn instanceof ObjectNode) {
+            if (jn != null && !jn.isEmpty() && jn instanceof ObjectNode) {
                 ObjectNode p = (ObjectNode) jn;
-                Map<String, JsonNode> keep = new LinkedHashMap<>();
-
+                Map<String, JsonNode> rebuild = new LinkedHashMap<>();
                 // the properties are in mixed kebab-case and camelCase
                 for (Iterator<String> it = p.fieldNames(); it.hasNext(); ) {
                     String n = it.next();
                     String t = StringHelper.dashToCamelCase(n);
                     JsonNode prop = p.get(n);
-                    keep.put(t, prop);
+                    rebuild.put(t, prop);
                 }
-
-                // rebuild
-                p.removeAll();
-                keep.forEach(p::set);
+                if (!rebuild.isEmpty()) {
+                    p.removeAll();
+                    rebuild.forEach(p::set);
+                }
             }
         }
     }

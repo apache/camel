@@ -224,8 +224,7 @@
               "type" : "boolean"
             }
           }
-        } ],
-        "properties" : { }
+        } ]
       },
       "org.apache.camel.builder.DefaultErrorHandlerBuilder" : {
         "type" : "object",
@@ -262,15 +261,13 @@
         }
       },
       "org.apache.camel.builder.NoErrorHandlerBuilder" : {
-        "type" : "object",
-        "properties" : { }
+        "type" : "object"
       },
       "org.apache.camel.dsl.yaml.deserializers.BeansDeserializer" : {
         "type" : "array",
         "items" : {
           "$ref" : "#/items/definitions/org.apache.camel.dsl.yaml.deserializers.NamedBeanDefinition"
-        },
-        "properties" : { }
+        }
       },
       "org.apache.camel.dsl.yaml.deserializers.NamedBeanDefinition" : {
         "type" : "object",
@@ -446,8 +443,7 @@
               "type" : "string"
             }
           }
-        } ],
-        "properties" : { }
+        } ]
       },
       "org.apache.camel.model.CatchDefinition" : {
         "type" : "object",
@@ -588,8 +584,7 @@
             }
           }
         } ],
-        "required" : [ "type" ],
-        "properties" : { }
+        "required" : [ "type" ]
       },
       "org.apache.camel.model.DataFormatDefinition" : {
         "type" : "object",
@@ -635,8 +630,7 @@
               "type" : "string"
             }
           }
-        } ],
-        "properties" : { }
+        } ]
       },
       "org.apache.camel.model.DynamicRouterDefinition" : {
         "type" : "object",
@@ -1043,8 +1037,7 @@
             }
           }
         } ],
-        "required" : [ "uri" ],
-        "properties" : { }
+        "required" : [ "uri" ]
       },
       "org.apache.camel.model.InOutDefinition" : {
         "oneOf" : [ {
@@ -1063,8 +1056,7 @@
             }
           }
         } ],
-        "required" : [ "uri" ],
-        "properties" : { }
+        "required" : [ "uri" ]
       },
       "org.apache.camel.model.InputTypeDefinition" : {
         "type" : "object",
@@ -1111,8 +1103,7 @@
               "type" : "string"
             }
           }
-        } ],
-        "properties" : { }
+        } ]
       },
       "org.apache.camel.model.InterceptSendToEndpointDefinition" : {
         "oneOf" : [ {
@@ -1140,8 +1131,7 @@
             }
           }
         } ],
-        "required" : [ "uri" ],
-        "properties" : { }
+        "required" : [ "uri" ]
       },
       "org.apache.camel.model.KameletDefinition" : {
         "oneOf" : [ {
@@ -1166,8 +1156,7 @@
             }
           }
         } ],
-        "required" : [ "name" ],
-        "properties" : { }
+        "required" : [ "name" ]
       },
       "org.apache.camel.model.LoadBalanceDefinition" : {
         "type" : "object",
@@ -1238,8 +1227,7 @@
             }
           }
         } ],
-        "required" : [ "message" ],
-        "properties" : { }
+        "required" : [ "message" ]
       },
       "org.apache.camel.model.LoopDefinition" : {
         "type" : "object",
@@ -1874,8 +1862,7 @@
             }
           }
         } ],
-        "required" : [ "name" ],
-        "properties" : { }
+        "required" : [ "name" ]
       },
       "org.apache.camel.model.RemoveHeadersDefinition" : {
         "oneOf" : [ {
@@ -1894,8 +1881,7 @@
             }
           }
         } ],
-        "required" : [ "pattern" ],
-        "properties" : { }
+        "required" : [ "pattern" ]
       },
       "org.apache.camel.model.RemovePropertiesDefinition" : {
         "oneOf" : [ {
@@ -1914,8 +1900,7 @@
             }
           }
         } ],
-        "required" : [ "pattern" ],
-        "properties" : { }
+        "required" : [ "pattern" ]
       },
       "org.apache.camel.model.RemovePropertyDefinition" : {
         "oneOf" : [ {
@@ -1930,8 +1915,7 @@
               "type" : "string"
             }
           }
-        } ],
-        "properties" : { }
+        } ]
       },
       "org.apache.camel.model.ResequenceDefinition" : {
         "type" : "object",
@@ -2032,8 +2016,7 @@
               "type" : "string"
             }
           }
-        } ],
-        "properties" : { }
+        } ]
       },
       "org.apache.camel.model.RouteBuilderDefinition" : {
         "oneOf" : [ {
@@ -2049,8 +2032,7 @@
             }
           }
         } ],
-        "required" : [ "ref" ],
-        "properties" : { }
+        "required" : [ "ref" ]
       },
       "org.apache.camel.model.RouteConfigurationContextRefDefinition" : {
         "type" : "object",
@@ -2101,8 +2083,7 @@
               }
             }
           }
-        } ],
-        "properties" : { }
+        } ]
       },
       "org.apache.camel.model.RouteContextRefDefinition" : {
         "type" : "object",
@@ -2160,8 +2141,7 @@
             }
           }
         } ],
-        "required" : [ "name", "type" ],
-        "properties" : { }
+        "required" : [ "name", "type" ]
       },
       "org.apache.camel.model.RouteTemplateDefinition" : {
         "type" : "object",
@@ -2215,8 +2195,7 @@
               "type" : "string"
             }
           }
-        } ],
-        "properties" : { }
+        } ]
       },
       "org.apache.camel.model.RoutingSlipDefinition" : {
         "oneOf" : [ {
@@ -2243,8 +2222,7 @@
         } ],
         "anyOf" : [ {
           "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
-        } ],
-        "properties" : { }
+        } ]
       },
       "org.apache.camel.model.SagaActionUriDefinition" : {
         "oneOf" : [ {
@@ -2263,8 +2241,7 @@
             }
           }
         } ],
-        "required" : [ "uri" ],
-        "properties" : { }
+        "required" : [ "uri" ]
       },
       "org.apache.camel.model.SagaDefinition" : {
         "type" : "object",
@@ -2381,8 +2358,7 @@
             }
           }
         } ],
-        "required" : [ "pattern" ],
-        "properties" : { }
+        "required" : [ "pattern" ]
       },
       "org.apache.camel.model.SetHeaderDefinition" : {
         "type" : "object",
@@ -2654,8 +2630,7 @@
             }
           }
         } ],
-        "required" : [ "uri" ],
-        "properties" : { }
+        "required" : [ "uri" ]
       },
       "org.apache.camel.model.ToDynamicDefinition" : {
         "oneOf" : [ {
@@ -2689,8 +2664,7 @@
             }
           }
         } ],
-        "required" : [ "uri" ],
-        "properties" : { }
+        "required" : [ "uri" ]
       },
       "org.apache.camel.model.TransactedDefinition" : {
         "type" : "object",
@@ -3516,8 +3490,7 @@
             }
           }
         } ],
-        "required" : [ "name" ],
-        "properties" : { }
+        "required" : [ "name" ]
       },
       "org.apache.camel.model.cloud.ServiceCallExpressionConfiguration" : {
         "type" : "object",
@@ -3716,8 +3689,7 @@
               "type" : "boolean"
             }
           }
-        } ],
-        "properties" : { }
+        } ]
       },
       "org.apache.camel.model.dataformat.Any23DataFormat" : {
         "oneOf" : [ {
@@ -3747,8 +3719,7 @@
               "type" : "string"
             }
           }
-        } ],
-        "properties" : { }
+        } ]
       },
       "org.apache.camel.model.dataformat.AvroDataFormat" : {
         "oneOf" : [ {
@@ -3821,8 +3792,7 @@
               "type" : "boolean"
             }
           }
-        } ],
-        "properties" : { }
+        } ]
       },
       "org.apache.camel.model.dataformat.BarcodeDataFormat" : {
         "type" : "object",
@@ -4091,8 +4061,7 @@
               "type" : "boolean"
             }
           }
-        } ],
-        "properties" : { }
+        } ]
       },
       "org.apache.camel.model.dataformat.CustomDataFormat" : {
         "oneOf" : [ {
@@ -4108,8 +4077,7 @@
             }
           }
         } ],
-        "required" : [ "ref" ],
-        "properties" : { }
+        "required" : [ "ref" ]
       },
       "org.apache.camel.model.dataformat.DataFormatsDefinition" : {
         "type" : "object",
@@ -4797,8 +4765,7 @@
               "type" : "boolean"
             }
           }
-        } ],
-        "properties" : { }
+        } ]
       },
       "org.apache.camel.model.dataformat.RssDataFormat" : {
         "type" : "object",
@@ -4837,8 +4804,7 @@
             }
           }
         } ],
-        "required" : [ "contextPath" ],
-        "properties" : { }
+        "required" : [ "contextPath" ]
       },
       "org.apache.camel.model.dataformat.SyslogDataFormat" : {
         "type" : "object",
@@ -4887,8 +4853,7 @@
               "type" : "string"
             }
           }
-        } ],
-        "properties" : { }
+        } ]
       },
       "org.apache.camel.model.dataformat.TidyMarkupDataFormat" : {
         "type" : "object",
@@ -5194,8 +5159,7 @@
               "type" : "string"
             }
           }
-        } ],
-        "properties" : { }
+        } ]
       },
       "org.apache.camel.model.dataformat.YAMLDataFormat" : {
         "type" : "object",
@@ -5307,8 +5271,7 @@
             }
           }
         } ],
-        "required" : [ "expression" ],
-        "properties" : { }
+        "required" : [ "expression" ]
       },
       "org.apache.camel.model.language.ConstantExpression" : {
         "oneOf" : [ {
@@ -5330,8 +5293,7 @@
             }
           }
         } ],
-        "required" : [ "expression" ],
-        "properties" : { }
+        "required" : [ "expression" ]
       },
       "org.apache.camel.model.language.DatasonnetExpression" : {
         "oneOf" : [ {
@@ -5359,8 +5321,7 @@
             }
           }
         } ],
-        "required" : [ "expression" ],
-        "properties" : { }
+        "required" : [ "expression" ]
       },
       "org.apache.camel.model.language.ExchangePropertyExpression" : {
         "oneOf" : [ {
@@ -5379,8 +5340,7 @@
             }
           }
         } ],
-        "required" : [ "expression" ],
-        "properties" : { }
+        "required" : [ "expression" ]
       },
       "org.apache.camel.model.language.ExpressionDefinition" : {
         "type" : "object",
@@ -5464,8 +5424,7 @@
             }
           }
         } ],
-        "required" : [ "expression" ],
-        "properties" : { }
+        "required" : [ "expression" ]
       },
       "org.apache.camel.model.language.HeaderExpression" : {
         "oneOf" : [ {
@@ -5484,8 +5443,7 @@
             }
           }
         } ],
-        "required" : [ "expression" ],
-        "properties" : { }
+        "required" : [ "expression" ]
       },
       "org.apache.camel.model.language.Hl7TerserExpression" : {
         "oneOf" : [ {
@@ -5504,8 +5462,7 @@
             }
           }
         } ],
-        "required" : [ "expression" ],
-        "properties" : { }
+        "required" : [ "expression" ]
       },
       "org.apache.camel.model.language.JoorExpression" : {
         "oneOf" : [ {
@@ -5533,8 +5490,7 @@
             }
           }
         } ],
-        "required" : [ "expression" ],
-        "properties" : { }
+        "required" : [ "expression" ]
       },
       "org.apache.camel.model.language.JsonPathExpression" : {
         "oneOf" : [ {
@@ -5574,8 +5530,7 @@
             }
           }
         } ],
-        "required" : [ "expression" ],
-        "properties" : { }
+        "required" : [ "expression" ]
       },
       "org.apache.camel.model.language.LanguageExpression" : {
         "type" : "object",
@@ -5624,8 +5579,7 @@
             }
           }
         } ],
-        "required" : [ "expression" ],
-        "properties" : { }
+        "required" : [ "expression" ]
       },
       "org.apache.camel.model.language.MvelExpression" : {
         "oneOf" : [ {
@@ -5644,8 +5598,7 @@
             }
           }
         } ],
-        "required" : [ "expression" ],
-        "properties" : { }
+        "required" : [ "expression" ]
       },
       "org.apache.camel.model.language.OgnlExpression" : {
         "oneOf" : [ {
@@ -5664,8 +5617,7 @@
             }
           }
         } ],
-        "required" : [ "expression" ],
-        "properties" : { }
+        "required" : [ "expression" ]
       },
       "org.apache.camel.model.language.RefExpression" : {
         "oneOf" : [ {
@@ -5684,8 +5636,7 @@
             }
           }
         } ],
-        "required" : [ "expression" ],
-        "properties" : { }
+        "required" : [ "expression" ]
       },
       "org.apache.camel.model.language.SimpleExpression" : {
         "oneOf" : [ {
@@ -5707,8 +5658,7 @@
             }
           }
         } ],
-        "required" : [ "expression" ],
-        "properties" : { }
+        "required" : [ "expression" ]
       },
       "org.apache.camel.model.language.SpELExpression" : {
         "oneOf" : [ {
@@ -5727,8 +5677,7 @@
             }
           }
         } ],
-        "required" : [ "expression" ],
-        "properties" : { }
+        "required" : [ "expression" ]
       },
       "org.apache.camel.model.language.TokenizerExpression" : {
         "oneOf" : [ {
@@ -5777,8 +5726,7 @@
             }
           }
         } ],
-        "required" : [ "expression", "token" ],
-        "properties" : { }
+        "required" : [ "expression", "token" ]
       },
       "org.apache.camel.model.language.XMLTokenizerExpression" : {
         "oneOf" : [ {
@@ -5806,8 +5754,7 @@
             }
           }
         } ],
-        "required" : [ "expression" ],
-        "properties" : { }
+        "required" : [ "expression" ]
       },
       "org.apache.camel.model.language.XPathExpression" : {
         "oneOf" : [ {
@@ -5853,8 +5800,7 @@
             }
           }
         } ],
-        "required" : [ "expression" ],
-        "properties" : { }
+        "required" : [ "expression" ]
       },
       "org.apache.camel.model.language.XQueryExpression" : {
         "oneOf" : [ {
@@ -5882,8 +5828,7 @@
             }
           }
         } ],
-        "required" : [ "expression" ],
-        "properties" : { }
+        "required" : [ "expression" ]
       },
       "org.apache.camel.model.loadbalancer.CustomLoadBalancerDefinition" : {
         "oneOf" : [ {
@@ -5899,8 +5844,7 @@
             }
           }
         } ],
-        "required" : [ "ref" ],
-        "properties" : { }
+        "required" : [ "ref" ]
       },
       "org.apache.camel.model.loadbalancer.FailoverLoadBalancerDefinition" : {
         "type" : "object",
