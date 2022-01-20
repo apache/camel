@@ -475,7 +475,9 @@ public interface ElasticsearchEndpointBuilderFactory {
         }
         /**
          * Enable automatically discover nodes from a running Elasticsearch
-         * cluster.
+         * cluster. If this option is used in conjunction with Spring Boot then
+         * it's managed by the Spring Boot configuration (see: Disable Sniffer
+         * in Spring Boot).
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -492,7 +494,9 @@ public interface ElasticsearchEndpointBuilderFactory {
         }
         /**
          * Enable automatically discover nodes from a running Elasticsearch
-         * cluster.
+         * cluster. If this option is used in conjunction with Spring Boot then
+         * it's managed by the Spring Boot configuration (see: Disable Sniffer
+         * in Spring Boot).
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
