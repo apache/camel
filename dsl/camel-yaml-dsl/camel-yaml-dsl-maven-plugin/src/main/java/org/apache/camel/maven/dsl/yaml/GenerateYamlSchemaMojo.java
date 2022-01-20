@@ -21,8 +21,8 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -163,7 +163,7 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
                 Comparator.comparing(property -> annotationValue(property, "name").map(AnnotationValue::asString).orElse("")));
 
         for (AnnotationInstance property : properties) {
-            final String propertyName = valueCase(annotationValue(property, "name").map(AnnotationValue::asString).orElse(""));
+            final String propertyName = annotationValue(property, "name").map(AnnotationValue::asString).orElse("");
             final String propertyType = annotationValue(property, "type").map(AnnotationValue::asString).orElse("");
             final boolean propertyRequired
                     = annotationValue(property, "required").map(AnnotationValue::asBoolean).orElse(false);
@@ -197,7 +197,8 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
             setProperty(objectDefinition, propertyName, propertyType);
 
             if (propertyRequired) {
-                definition.withArray("required").add(propertyName);
+                String name = kebabCase ? propertyName : StringHelper.dashToCamelCase(propertyName);
+                definition.withArray("required").add(name);
             }
         }
     }
@@ -205,29 +206,27 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
     private void filterCase(JsonNode node) {
         if (node instanceof ObjectNode) {
             ObjectNode on = (ObjectNode) node;
-            ObjectNode p = on.with("properties");
-            Set<String> keep = new HashSet<>();
-            for (Iterator<String> it = p.fieldNames(); it.hasNext(); ) {
-                String n = it.next();
-                String t = valueCase(n);
-                if (t.equals(n)) {
-                    keep.add(n);
-                }
+            JsonNode jn = on.with("properties");
+            if (jn.isEmpty()) {
+                jn = on.findPath("properties");
             }
-            if (!keep.isEmpty()) {
-                p.retain(keep);
-            }
-        }
-    }
+            if (jn instanceof ObjectNode) {
+                ObjectNode p = (ObjectNode) jn;
+                Map<String, JsonNode> keep = new LinkedHashMap<>();
 
-    private String valueCase(String value) {
-        if (kebabCase) {
-            // kebab was the original case for yaml-dsl
-            return value;
-        } else {
-            value = StringHelper.dashToCamelCase(value);
+                // the properties are in mixed kebab-case and camelCase
+                for (Iterator<String> it = p.fieldNames(); it.hasNext(); ) {
+                    String n = it.next();
+                    String t = StringHelper.dashToCamelCase(n);
+                    JsonNode prop = p.get(n);
+                    keep.put(t, prop);
+                }
+
+                // rebuild
+                p.removeAll();
+                keep.forEach(p::set);
+            }
         }
-        return value;
     }
 
     private void setProperty(
@@ -287,7 +286,7 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
                 .map(AnnotationValue::asNestedArray)
                 .ifPresent(properties -> {
                     for (AnnotationInstance property : properties) {
-                        final String propertyName = valueCase(annotationValue(property, "name").map(AnnotationValue::asString).orElse(""));
+                        final String propertyName = annotationValue(property, "name").map(AnnotationValue::asString).orElse("");
                         final String propertyType = annotationValue(property, "type").map(AnnotationValue::asString).orElse("");
 
                         if (ObjectHelper.isEmpty(propertyName) || ObjectHelper.isEmpty(propertyType)) {

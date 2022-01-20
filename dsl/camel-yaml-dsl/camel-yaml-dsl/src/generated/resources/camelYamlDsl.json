@@ -713,6 +713,54 @@
           },
           "exchangeProperty" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExchangePropertyExpression"
+          },
+          "groovy" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.GroovyExpression"
+          },
+          "header" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.HeaderExpression"
+          },
+          "hl7terser" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.Hl7TerserExpression"
+          },
+          "joor" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.JoorExpression"
+          },
+          "jsonpath" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.JsonPathExpression"
+          },
+          "language" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.LanguageExpression"
+          },
+          "method" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.MethodCallExpression"
+          },
+          "mvel" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.MvelExpression"
+          },
+          "ognl" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.OgnlExpression"
+          },
+          "ref" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.RefExpression"
+          },
+          "simple" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.SimpleExpression"
+          },
+          "spel" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.SpELExpression"
+          },
+          "tokenize" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.TokenizerExpression"
+          },
+          "xpath" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.XPathExpression"
+          },
+          "xquery" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.XQueryExpression"
+          },
+          "xtokenize" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.XMLTokenizerExpression"
           }
         }
       },
@@ -5348,6 +5396,54 @@
           },
           "exchangeProperty" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExchangePropertyExpression"
+          },
+          "groovy" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.GroovyExpression"
+          },
+          "header" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.HeaderExpression"
+          },
+          "hl7terser" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.Hl7TerserExpression"
+          },
+          "joor" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.JoorExpression"
+          },
+          "jsonpath" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.JsonPathExpression"
+          },
+          "language" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.LanguageExpression"
+          },
+          "method" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.MethodCallExpression"
+          },
+          "mvel" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.MvelExpression"
+          },
+          "ognl" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.OgnlExpression"
+          },
+          "ref" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.RefExpression"
+          },
+          "simple" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.SimpleExpression"
+          },
+          "spel" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.SpELExpression"
+          },
+          "tokenize" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.TokenizerExpression"
+          },
+          "xpath" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.XPathExpression"
+          },
+          "xquery" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.XQueryExpression"
+          },
+          "xtokenize" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.XMLTokenizerExpression"
           }
         }
       },
