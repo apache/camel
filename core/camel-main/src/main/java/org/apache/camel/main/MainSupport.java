@@ -103,7 +103,10 @@ public abstract class MainSupport extends BaseMainSupport {
         }
     }
 
-    private void internalBeforeStart() {
+    /**
+     * Tasks to run before start() is called.
+     */
+    protected void internalBeforeStart() {
         // used while waiting to be done
         durationMaxIdleSeconds = mainConfigurationProperties.getDurationMaxIdleSeconds();
         durationMaxMessages = mainConfigurationProperties.getDurationMaxMessages();
@@ -112,10 +115,7 @@ public abstract class MainSupport extends BaseMainSupport {
         durationMaxAction = mainConfigurationProperties.getDurationMaxAction();
 
         // register main as bootstrap
-        CamelContext context = getCamelContext();
-        if (context != null) {
-            context.adapt(ExtendedCamelContext.class).addBootstrap(new MainBootstrapCloseable(this));
-        }
+        registerMainBootstrap();
     }
 
     /**
@@ -164,6 +164,16 @@ public abstract class MainSupport extends BaseMainSupport {
      */
     public Runnable getCompleteTask() {
         return this::completed;
+    }
+
+    /**
+     * Registers {@link MainBootstrapCloseable} with the CamelContext.
+     */
+    protected void registerMainBootstrap() {
+        CamelContext context = getCamelContext();
+        if (context != null) {
+            context.adapt(ExtendedCamelContext.class).addBootstrap(new MainBootstrapCloseable(this));
+        }
     }
 
     @Deprecated
