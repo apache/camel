@@ -259,5 +259,15 @@ MultiSearchRequest request = new MultiSearchRequest().add(req1).add(req);
 Item[] response = template.requestBody("direct:search", request, Item[].class);
 ----
 
+== Disable Sniffer when using Spring Boot
+
+When Spring Boot is on the classpath the Sniffer client for Elasticsearch is enabled by default. This option can be disabled in the Spring Boot Configuration:
+
+[source,yaml]
+----
+spring:
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.elasticsearch.ElasticsearchRestClientAutoConfiguration
+----
 
 include::spring-boot:partial$starter.adoc[]
