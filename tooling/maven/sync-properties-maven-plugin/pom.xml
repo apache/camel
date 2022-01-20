@@ -31,7 +31,7 @@
     <artifactId>sync-properties-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
     <name>Camel :: Maven Plugins :: Sync Properties</name>
-    <description>Maven plugin to help generating Sync Properties between POMs</description>
+    <description>A Maven plugin that copies one POM file's  properties to different POM file</description>
 
     <dependencyManagement>
         <dependencies>
