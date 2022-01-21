@@ -24,7 +24,6 @@ import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.http.HttpMethods.GET;
@@ -80,7 +79,6 @@ public class HttpToDSOTimeoutTest extends BaseHttpTest {
     }
 
     @Test
-    @Disabled("TODO: https://issues.apache.org/jira/browse/CAMEL-17521")
     public void httpToD() throws Exception {
         Exchange exchange = template.request("direct:toD",
                 exchange1 -> {
