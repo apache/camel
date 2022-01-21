@@ -209,3 +209,7 @@ The rabbitmq producer has migrated from commons-poll v1 to v2.
 
 The contextPath specified in the REST configuration is no longer added to the paths of the operations in the generated openapi specification.
 
+=== camel-google-drive
+
+The `camel-google-drive` component has upgraded to the latest version of `google-api-services-drive`. This means that support for access to the Google Drive Realtime APIs 
+via URIs like `google-drive:drive-realtime` has been removed. Google deprecated and retired the realtime APIs some time ago.  

@@ -109,9 +109,6 @@ public class GoogleDriveEndpoint extends AbstractApiEndpoint<GoogleDriveApiName,
             case DRIVE_PROPERTIES:
                 apiProxy = getClient().properties();
                 break;
-            case DRIVE_REALTIME:
-                apiProxy = getClient().realtime();
-                break;
             case DRIVE_REPLIES:
                 apiProxy = getClient().replies();
                 break;

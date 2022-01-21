@@ -21,7 +21,6 @@ import org.apache.camel.component.google.drive.DriveFilesEndpointConfiguration;
 import org.apache.camel.component.google.drive.DriveParentsEndpointConfiguration;
 import org.apache.camel.component.google.drive.DrivePermissionsEndpointConfiguration;
 import org.apache.camel.component.google.drive.DrivePropertiesEndpointConfiguration;
-import org.apache.camel.component.google.drive.DriveRealtimeEndpointConfiguration;
 import org.apache.camel.component.google.drive.DriveRepliesEndpointConfiguration;
 import org.apache.camel.component.google.drive.DriveRevisionsEndpointConfiguration;
 
@@ -95,11 +94,6 @@ public final class GoogleDriveApiCollection extends ApiCollection<GoogleDriveApi
 
         aliases.clear();
         nullableArgs = Arrays.asList();
-        apiHelpers.put(GoogleDriveApiName.DRIVE_REALTIME, new ApiMethodHelper<DriveRealtimeApiMethod>(DriveRealtimeApiMethod.class, aliases, nullableArgs));
-        apiMethods.put(DriveRealtimeApiMethod.class, GoogleDriveApiName.DRIVE_REALTIME);
-
-        aliases.clear();
-        nullableArgs = Arrays.asList();
         apiHelpers.put(GoogleDriveApiName.DRIVE_REPLIES, new ApiMethodHelper<DriveRepliesApiMethod>(DriveRepliesApiMethod.class, aliases, nullableArgs));
         apiMethods.put(DriveRepliesApiMethod.class, GoogleDriveApiName.DRIVE_REPLIES);
 
@@ -144,9 +138,6 @@ public final class GoogleDriveApiCollection extends ApiCollection<GoogleDriveApi
                 break;
             case DRIVE_PROPERTIES:
                 result = new DrivePropertiesEndpointConfiguration();
-                break;
-            case DRIVE_REALTIME:
-                result = new DriveRealtimeEndpointConfiguration();
                 break;
             case DRIVE_REPLIES:
                 result = new DriveRepliesEndpointConfiguration();
