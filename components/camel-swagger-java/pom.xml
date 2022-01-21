@@ -37,7 +37,7 @@
         <label>rest,api</label>
 
         <camel.osgi.import.before.defaults>
-            com.fasterxml.jackson.*;version="[2.11,3)"
+            com.fasterxml.jackson.*;version="[2.13,3)"
         </camel.osgi.import.before.defaults>
         <camel.surefire.parallel>true</camel.surefire.parallel>
     </properties>
