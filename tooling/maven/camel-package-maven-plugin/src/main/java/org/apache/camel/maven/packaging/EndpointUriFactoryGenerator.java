@@ -61,9 +61,11 @@ public final class EndpointUriFactoryGenerator {
         w.write("\n");
         w.write("    private static final Set<String> PROPERTY_NAMES;\n");
         w.write("    private static final Set<String> SECRET_PROPERTY_NAMES;\n");
+        w.write("    private static final Set<String> MULTI_VALUE_PREFIXES;\n");
         w.write("    static {\n");
         w.write(generatePropertyNames(model));
         w.write(generateSecretPropertyNames(model));
+        w.write(generateMultiValuePrefixes(model));
         w.write("    }\n");
         w.write("\n");
         w.write("    @Override\n");
@@ -103,6 +105,11 @@ public final class EndpointUriFactoryGenerator {
         w.write("    @Override\n");
         w.write("    public Set<String> secretPropertyNames() {\n");
         w.write("        return SECRET_PROPERTY_NAMES;\n");
+        w.write("    }\n");
+        w.write("\n");
+        w.write("    @Override\n");
+        w.write("    public Set<String> multiValuePrefixes() {\n");
+        w.write("        return MULTI_VALUE_PREFIXES;\n");
         w.write("    }\n");
         w.write("\n");
         w.write("    @Override\n");
@@ -166,6 +173,35 @@ public final class EndpointUriFactoryGenerator {
             sb.append("        secretProps.add(\"").append(property).append("\");\n");
         }
         sb.append("        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);\n");
+        return sb.toString();
+    }
+
+    private static String generateMultiValuePrefixes(ComponentModel model) {
+        Set<String> prefixes = new HashSet<>();
+        model.getEndpointOptions().stream()
+                .filter(ComponentModel.EndpointOptionModel::isMultiValue)
+                .map(ComponentModel.EndpointOptionModel::getPrefix)
+                .forEach(prefixes::add);
+
+        // gather all the option names from the api (they can be duplicated as the same name
+        // can be used by multiple methods)
+        model.getApiOptions().stream()
+                .flatMap(a -> a.getMethods().stream())
+                .flatMap(m -> m.getOptions().stream())
+                .filter(ComponentModel.ApiOptionModel::isMultiValue)
+                .map(ComponentModel.ApiOptionModel::getPrefix)
+                .forEach(prefixes::add);
+
+        if (prefixes.isEmpty()) {
+            return "        MULTI_VALUE_PREFIXES = Collections.emptySet();\n";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("        Set<String> prefixes = new HashSet<>(").append(prefixes.size()).append(");\n");
+        for (String property : prefixes) {
+            sb.append("        prefixes.add(\"").append(property).append("\");\n");
+        }
+        sb.append("        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);\n");
         return sb.toString();
     }
 
