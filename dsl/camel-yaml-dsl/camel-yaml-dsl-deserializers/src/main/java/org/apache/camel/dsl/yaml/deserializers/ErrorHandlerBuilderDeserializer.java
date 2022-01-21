@@ -48,12 +48,9 @@ import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.setDeseri
           types = ErrorHandlerBuilderRef.class,
           order = YamlDeserializerResolver.ORDER_DEFAULT,
           properties = {
-                  @YamlProperty(name = "ref",
-                                type = "string"),
-                  @YamlProperty(name = "none",
-                                type = "object:org.apache.camel.builder.NoErrorHandlerBuilder"),
-                  @YamlProperty(name = "log",
-                                type = "object:org.apache.camel.builder.DefaultErrorHandlerBuilder"),
+                  @YamlProperty(name = "ref", type = "string"),
+                  @YamlProperty(name = "none", type = "object:org.apache.camel.builder.NoErrorHandlerBuilder"),
+                  @YamlProperty(name = "log", type = "object:org.apache.camel.builder.DefaultErrorHandlerBuilder"),
                   @YamlProperty(name = "dead-letter-channel",
                                 type = "object:org.apache.camel.builder.DeadLetterChannelBuilder"),
           })

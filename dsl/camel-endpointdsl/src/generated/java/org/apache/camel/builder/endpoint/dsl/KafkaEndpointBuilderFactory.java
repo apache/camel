@@ -1858,7 +1858,7 @@ public interface KafkaEndpointBuilderFactory {
          * box.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.kafka.KafkaManualCommitFactory&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.kafka.consumer.KafkaManualCommitFactory&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1866,7 +1866,7 @@ public interface KafkaEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedKafkaEndpointConsumerBuilder kafkaManualCommitFactory(
-                org.apache.camel.component.kafka.KafkaManualCommitFactory kafkaManualCommitFactory) {
+                org.apache.camel.component.kafka.consumer.KafkaManualCommitFactory kafkaManualCommitFactory) {
             doSetProperty("kafkaManualCommitFactory", kafkaManualCommitFactory);
             return this;
         }
@@ -1878,7 +1878,7 @@ public interface KafkaEndpointBuilderFactory {
          * box.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.kafka.KafkaManualCommitFactory&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.kafka.consumer.KafkaManualCommitFactory&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
          * 

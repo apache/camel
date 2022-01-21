@@ -773,7 +773,7 @@ public class CamelCatalogTest {
         assertEquals("foo", result.getLenient().iterator().next());
 
         // data format
-        result = catalog.validateEndpointProperties("dataformat:zipdeflater:marshal?compressionLevel=2", true);
+        result = catalog.validateEndpointProperties("dataformat:zipDeflater:marshal?compressionLevel=2", true);
         assertTrue(result.isSuccess());
 
         // 2 slash after component name

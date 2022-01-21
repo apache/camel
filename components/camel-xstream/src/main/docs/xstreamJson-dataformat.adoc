@@ -1,0 +1,53 @@
+= JSON XStream DataFormat
+:doctitle: JSON XStream
+:shortname: xstreamJson
+:artifactid: camel-xstream
+:description: Marshal POJOs to JSON and back using XStream
+:since: 2.0
+:supportlevel: Stable
+//Manually maintained attributes
+:camel-spring-boot-name: xstream
+
+*Since Camel {since}*
+
+XStream is a Data Format which uses the
+http://xstream.codehaus.org/[XStream library] to marshal and unmarshal
+Java objects to and from JSon. However XStream was created primary for working
+with XML and therefore using JSon with XStream is not as popular as for example
+Jackson is for JSon.
+
+To use XStream in your camel routes you need to add the a dependency
+on *camel-xstream* which implements this data format.
+
+Maven users will need to add the following dependency to their
+`pom.xml` for this component:
+
+[source,xml]
+----------------------------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-xstream</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----------------------------------------------------------
+
+== Options
+
+// dataformat options: START
+include::partial$dataformat-options.adoc[]
+// dataformat options: END
+
+
+== Using the Java DSL
+
+[source,java]
+-----------------------------------------------------------
+// lets turn Object messages into XML then send to MQSeries
+from("activemq:My.Queue").
+  marshal().json(JsonLibrary.XStream).
+  to("mqseries:Another.Queue");
+-----------------------------------------------------------
+
+
+include::spring-boot:partial$starter.adoc[]

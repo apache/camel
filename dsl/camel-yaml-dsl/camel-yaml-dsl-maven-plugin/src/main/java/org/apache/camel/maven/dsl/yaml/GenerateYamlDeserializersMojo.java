@@ -440,7 +440,6 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
 
         builder.addModifiers(Modifier.PUBLIC, Modifier.STATIC);
 
-
         if (extendsType(info, SEND_DEFINITION_CLASS) || extendsType(info, TO_DYNAMIC_DEFINITION_CLASS)) {
             builder.superclass(ParameterizedTypeName.get(CN_ENDPOINT_AWARE_DESERIALIZER_BASE, targetType));
         } else {
@@ -545,6 +544,15 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
             setProperty.addStatement("target.setDescription(val)");
             setProperty.addStatement("break");
             setProperty.endControlFlow();
+
+            properties.add(
+                yamlProperty(
+                        "id",
+                        "string"));
+            properties.add(
+                yamlProperty(
+                        "description",
+                        "string"));
         }
 
         if (implementType(info, OUTPUT_NODE_CLASS)) {
@@ -912,9 +920,13 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
 
             Set<String> values = new TreeSet<>();
 
+            // gather enum values
             List<FieldInfo> fields = c.fields();
-            for (int i = 1; i< fields.size(); i++) {
-                values.add(fields.get(i).name());
+            for (int i = 1; i < fields.size(); i++) {
+                FieldInfo f = fields.get(i);
+                if (f.isEnumConstant()) {
+                    values.add(f.name());
+                }
             }
 
             AnnotationSpec.Builder builder = AnnotationSpec.builder(CN_YAML_PROPERTY);
@@ -1055,9 +1067,13 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
 
             Set<String> values = new TreeSet<>();
 
+            // gather enum values
             List<FieldInfo> fields = c.fields();
-            for (int i = 1; i< fields.size(); i++) {
-                values.add(fields.get(i).name());
+            for (int i = 1; i < fields.size(); i++) {
+                FieldInfo f = fields.get(i);
+                if (f.isEnumConstant()) {
+                    values.add(f.name());
+                }
             }
 
             AnnotationSpec.Builder builder = AnnotationSpec.builder(CN_YAML_PROPERTY);

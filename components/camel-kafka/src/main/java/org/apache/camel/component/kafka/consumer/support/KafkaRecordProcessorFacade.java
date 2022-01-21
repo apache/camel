@@ -21,11 +21,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.component.kafka.KafkaAsyncManualCommit;
 import org.apache.camel.component.kafka.KafkaConsumer;
+import org.apache.camel.component.kafka.consumer.CommitManager;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.common.TopicPartition;
@@ -41,15 +40,17 @@ public class KafkaRecordProcessorFacade {
     private final Map<String, Long> lastProcessedOffset;
     private final String threadId;
     private final KafkaRecordProcessor kafkaRecordProcessor;
+    private final CommitManager commitManager;
 
     public KafkaRecordProcessorFacade(KafkaConsumer camelKafkaConsumer, Map<String, Long> lastProcessedOffset, String threadId,
-                                      org.apache.kafka.clients.consumer.Consumer<?, ?> consumer,
-                                      ConcurrentLinkedQueue<KafkaAsyncManualCommit> asyncCommits) {
+                                      CommitManager commitManager) {
         this.camelKafkaConsumer = camelKafkaConsumer;
         this.lastProcessedOffset = lastProcessedOffset;
         this.threadId = threadId;
+        this.commitManager = commitManager;
 
-        kafkaRecordProcessor = buildKafkaRecordProcessor(consumer, asyncCommits);
+        kafkaRecordProcessor = buildKafkaRecordProcessor(commitManager);
+
     }
 
     private boolean isStopping() {
@@ -83,7 +84,7 @@ public class KafkaRecordProcessorFacade {
             if (!lastResult.isBreakOnErrorHit()) {
                 LOG.debug("Committing offset on successful execution");
                 // all records processed from partition so commit them
-                kafkaRecordProcessor.commitOffset(partition, lastResult.getPartitionLastOffset(), false, false);
+                commitManager.commitOffset(partition, lastResult.getPartitionLastOffset());
             }
         }
 
@@ -136,13 +137,10 @@ public class KafkaRecordProcessorFacade {
         }
     }
 
-    private KafkaRecordProcessor buildKafkaRecordProcessor(
-            org.apache.kafka.clients.consumer.Consumer<?, ?> consumer,
-            ConcurrentLinkedQueue<KafkaAsyncManualCommit> asyncCommits) {
+    private KafkaRecordProcessor buildKafkaRecordProcessor(CommitManager commitManager) {
         return new KafkaRecordProcessor(
                 camelKafkaConsumer.getEndpoint().getConfiguration(),
                 camelKafkaConsumer.getProcessor(),
-                consumer,
-                camelKafkaConsumer.getEndpoint().getKafkaManualCommitFactory(), threadId, asyncCommits);
+                commitManager);
     }
 }

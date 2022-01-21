@@ -1,1 +1,0 @@
-../../../../../components/camel-snakeyaml/src/main/docs/yaml-snakeyaml-dataformat.adoc

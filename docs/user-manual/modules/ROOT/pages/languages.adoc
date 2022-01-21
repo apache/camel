@@ -9,7 +9,7 @@ within the xref:routes.adoc[Routes] and xref:dsl.adoc[DSL]..
 == Supported languages
 
 There are about 20 different xref:components:languages:index.adoc[Languages] such
-as scripted programming languages such as Groovy, and template based languages like Velocity and Freemarker,
+as scripted programming languages like Groovy, and template based languages like Velocity and Freemarker,
 and XML/JSon languages, and many others.
 
 Most of these languages are also supported used as

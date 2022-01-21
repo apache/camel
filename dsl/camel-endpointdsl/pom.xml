@@ -59,6 +59,10 @@
                     <groupId>org.apache.camel</groupId>
                     <artifactId>camel-threadpoolfactory-vertx</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.apache.camel</groupId>
+                    <artifactId>camel-microprofile-config</artifactId>
+                </exclusion>
                 <!-- exclude javax.annotation packages as they cause javadoc WARN on java8 vs java11 -->
                 <exclusion>
                     <groupId>javax.annotation</groupId>

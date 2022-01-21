@@ -292,7 +292,7 @@ for example `camel-jaxb` is not on the classpath, then XML binding is
 not enabled.
 
 |json |Binding to/from json is enabled, and requires a json capable data
-format on the classpath. By default Camel will use `json-jackson` as the
+format on the classpath. By default Camel will use `jackson` as the
 data format. See the INFO box below for more details.
 
 |xml |Binding to/from xml is enabled, and requires `camel-jaxb` on the

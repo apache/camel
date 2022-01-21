@@ -16,10 +16,10 @@ which are added to the CamelContext.
 To use `LambdaRouteBuilder` you need to create a method that returns `LambdaRouteBuilder` which then
 allows to use Java lambda style to define a single route.
 
-In the example below the method myRoute is used to create a Camel route that consume from Kafka and send the messages to JMS.
+In the example below the method `myRoute` is used to create a Camel route that consumes from Kafka and sends the messages to JMS.
 
-To make the route discoverable by Camel during startup, then the method must be annotated. In standalone mode with `camel-main`
-you should use `@BindToRegistry` and with Spring Boot use `@Bean` and with Quarkus then use `@Produce`.
+To make the route discoverable by Camel during startup, then the method must be annotated.
+The method should be annotated with `@BindToRegistry` in standalone mode with `camel-main`, `@Bean` in case of Spring Boot or `@Produce` in case of Quarkus.
 
 [source,java]
 ----

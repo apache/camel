@@ -409,8 +409,8 @@ public class RestConfigurationDefinition {
     }
 
     /**
-     * Name of specific json data format to use. By default json-jackson will be used. Important: This option is only
-     * for setting a custom name of the data format, not to refer to an existing data format instance.
+     * Name of specific json data format to use. By default jackson will be used. Important: This option is only for
+     * setting a custom name of the data format, not to refer to an existing data format instance.
      */
     public void setJsonDataFormat(String jsonDataFormat) {
         this.jsonDataFormat = jsonDataFormat;

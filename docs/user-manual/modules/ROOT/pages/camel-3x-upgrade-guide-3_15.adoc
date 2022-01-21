@@ -51,13 +51,21 @@ The data formats naming has been made consistent to use Camel Case:
 | bindy-kvp | bindyKvp
 | gzip-deflater | gzipDeflater
 | jacksonxml | jacksonXml
+| json-fastjson | fastjson
+| json-gson | gson
+| json-jackson | jackson
+| json-johnzon | johnzon
+| json-jsonb | jsonb
+| json-xstream | xstreamJson
 | mime-multipart | mimeMultipart
+| protobuf-jackson | protobufJackson
 | secureXML | xmlSecurity
 | soapjaxb | soap
 | tarfile | tarFile
 | univociy-csv | univociyCsv
 | univociy-fixed | univociyFixed
 | univociy-tsv | univociyTsv
+| yaml-snakeyaml | snakeYaml
 | zip-deflater | zipDeflater
 | zipfile | zipFile
 |====
@@ -80,11 +88,10 @@ The Spring Boot auto-configuration names has also been renamed
 | camel.dataformat.univocitycsv | camel.dataformat.univocity-csv
 | camel.dataformat.univocityfixed | camel.dataformat.univocity-fixed
 | camel.dataformat.univocitytsv | camel.dataformat.univocity-tsv
+| camel.dataformat.yaml-snakeyaml | camel.dataformat.snake-yaml
 | camel.dataformat.zipdeflater | camel.dataformat.zip-deflater
 | camel.dataformat.zipfile | camel.dataformat.zip-file
 |====
-
-
 
 ==== Message History
 
@@ -165,6 +172,20 @@ JTA support is moved out of `camel-cdi` to its own `camel-cdi-jta` module.
 
 The `org.apache.camel.cdi.Main` class has moved from `camel-cdi` to `camel-cdi-main` JAR.
 
+=== camel-kafka
+
+The following classes were moved from `org.apache.camel.component.kafka` to `org.apache.camel.component.kafka.consumer`:
+
+* DefaultKafkaManualAsyncCommit
+* DefaultKafkaManualAsyncCommitFactory
+* DefaultKafkaManualSyncCommit
+* DefaultKafkaManualSyncCommitFactory
+* KafkaAsyncManualCommit
+* KafkaManualCommit
+* KafkaManualCommitFactory
+
+The signature for `KafkaManualCommitFactory` and its classes has been adjusted to abstract some runtime parameters. The old signature is still available but will be removed in 3.16.0.
+
 === camel-karaf
 
 The `camel-endpointdsl` and `camel-componentdsl` is no longer supported on Apache Karaf.
@@ -183,3 +204,4 @@ Removed the option `startDelaySeconds` as this does not work correctly and cause
 === camel-rabbitmq
 
 The rabbitmq producer has migrated from commons-poll v1 to v2.
+

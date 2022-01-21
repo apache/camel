@@ -52,7 +52,7 @@ In the route above the xref:predicate.adoc[Predicate] is the
 `header("type").isEqualTo("widget")` as it is constructed as an
 xref:expression.adoc[Expression] that is evaluated as a
 xref:predicate.adoc[Predicate]. To do this the various _Builder classes_
-helps us here to create a nice and fluent syntax. `isEqualTo` is a
+help us here to create a nice and fluent syntax. `isEqualTo` is a
 builder method that returns a xref:predicate.adoc[Predicate] based on
 the input.
 
@@ -83,7 +83,7 @@ from("jms:queue:order")
 You can use the *not* method on the `PredicateBuilder` to negate a
 predicate.
 
-First we import the not static, so it makes our route nice and easy to
+First, we import the static method `not`, so it makes our route nice and easy to
 read:
 
 [source,java]
@@ -112,9 +112,8 @@ Currently, this feature is only available in the Java-based DSLs, and not
 in other DSLs such as XML.
 
 Using the
-https://www.javadoc.io/doc/org.apache.camel/camel-support/current/org/apache/camel/support/builder/PredicateBuilder.html[`PredicateBuilder`]
-class, you can combine predicates *from different Expression Languages*
-based on logical operators and comparison operators:
+https://www.javadoc.io/doc/org.apache.camel/camel-support/current/org/apache/camel/support/builder/PredicateBuilder.html[`PredicateBuilder`] class,
+you can combine predicates *from different Expression Languages* based on logical operators and comparison operators:
 
 * `not`, `and`, `or`
 * `isNull`, `isNotNull`

@@ -25,7 +25,7 @@ import org.apache.camel.spi.annotations.Dataformat;
 /**
  * Marshal POJOs to Protobuf and back using Jackson.
  */
-@Dataformat("protobuf-jackson")
+@Dataformat("protobufJackson")
 @Metadata(firstVersion = "3.10.0", title = "Protobuf Jackson",
           excludeProperties = "library,instanceClass,contentTypeFormat,defaultInstance")
 public class JacksonProtobufDataFormat extends AbstractJacksonDataFormat {
@@ -78,7 +78,7 @@ public class JacksonProtobufDataFormat extends AbstractJacksonDataFormat {
 
     @Override
     public String getDataFormatName() {
-        return "protobuf-jackson";
+        return "protobufJackson";
     }
 
     @Override

@@ -2,7 +2,7 @@
 
 The
 https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Processor.html[Processor]
-interface is used for implement consumers of message exchanges or to
+interface is used to implement consumers of message exchanges or to
 implement a xref:components:eips:message-translator.adoc[Message Translator],
 and other use-cases.
 
@@ -107,5 +107,5 @@ The process can be used in routes as an anonymous inner class such:
 This is usable for quickly whirling up some code. If the code in the
 inner class gets a bit more complicated it is of course advised to
 refactor it into a separate class. This approach is better if you do not want to use this processor again.
-From reusability perspective, it is not recommended to use this approach with annonymois inner classes.
+From reusability perspective, it is not recommended to use this approach with anonymous inner classes.
 

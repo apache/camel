@@ -72,7 +72,7 @@ class UnmarshalTest extends YamlTestSupport {
             ]
 
             expected << [
-                'json-gson', 'json-gson', 'json-jackson', 'json-jackson'
+                'gson', 'gson', 'jackson', 'jackson'
             ]
     }
 }

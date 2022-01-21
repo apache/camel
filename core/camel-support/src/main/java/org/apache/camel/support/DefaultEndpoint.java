@@ -410,7 +410,10 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
             configurer = ((PropertyConfigurerAware) bean).getPropertyConfigurer(bean);
         }
         // use configurer and ignore case as end users may type an option name with mixed case
-        PropertyBindingSupport.build().withConfigurer(configurer).withIgnoreCase(true).bind(camelContext, bean, parameters);
+        PropertyBindingSupport.build().withConfigurer(configurer).withIgnoreCase(true)
+                // if the endpoint is lenient then use optional
+                .withOptional(isLenientProperties())
+                .bind(camelContext, bean, parameters);
     }
 
     /**
