@@ -205,3 +205,7 @@ Removed the option `startDelaySeconds` as this does not work correctly and cause
 
 The rabbitmq producer has migrated from commons-poll v1 to v2.
 
+=== camel-openapi-java
+
+The contextPath specified in the REST configuration is no longer added to the paths of the operations in the generated openapi specification.
+
