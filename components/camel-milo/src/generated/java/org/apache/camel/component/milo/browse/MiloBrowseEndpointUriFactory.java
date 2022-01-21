@@ -19,6 +19,7 @@ public class MiloBrowseEndpointUriFactory extends org.apache.camel.support.compo
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(30);
         props.add("productUri");
@@ -56,6 +57,7 @@ public class MiloBrowseEndpointUriFactory extends org.apache.camel.support.compo
         secretProps.add("keyStorePassword");
         secretProps.add("keyPassword");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
+        MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 
     @Override
@@ -83,6 +85,11 @@ public class MiloBrowseEndpointUriFactory extends org.apache.camel.support.compo
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

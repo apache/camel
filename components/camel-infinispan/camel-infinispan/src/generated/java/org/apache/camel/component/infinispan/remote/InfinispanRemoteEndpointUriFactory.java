@@ -19,6 +19,7 @@ public class InfinispanRemoteEndpointUriFactory extends org.apache.camel.support
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(27);
         props.add("defaultValue");
@@ -52,6 +53,7 @@ public class InfinispanRemoteEndpointUriFactory extends org.apache.camel.support
         Set<String> secretProps = new HashSet<>(1);
         secretProps.add("password");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
+        MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 
     @Override
@@ -79,6 +81,11 @@ public class InfinispanRemoteEndpointUriFactory extends org.apache.camel.support
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

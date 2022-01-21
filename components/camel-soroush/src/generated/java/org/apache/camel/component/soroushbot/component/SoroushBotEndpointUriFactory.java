@@ -19,6 +19,7 @@ public class SoroushBotEndpointUriFactory extends org.apache.camel.support.compo
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(21);
         props.add("retryWaitingTime");
@@ -46,6 +47,7 @@ public class SoroushBotEndpointUriFactory extends org.apache.camel.support.compo
         Set<String> secretProps = new HashSet<>(1);
         secretProps.add("authorizationToken");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
+        MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 
     @Override
@@ -73,6 +75,11 @@ public class SoroushBotEndpointUriFactory extends org.apache.camel.support.compo
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override
