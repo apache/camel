@@ -16,9 +16,26 @@
  */
 package org.apache.camel.component.http;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import org.apache.camel.Exchange;
 import org.apache.camel.spi.annotations.SendDynamic;
 
 @SendDynamic("http,https")
 public class HttpSendDynamicAware extends org.apache.camel.http.base.HttpSendDynamicAware {
 
+    @Override
+    public Map<String, Object> endpointLenientProperties(Exchange exchange, String uri) throws Exception {
+        Map<String, Object> answer = new LinkedHashMap<>();
+
+        // workaround as we need to remove all prefix options as they are not part of lenient properties
+        Map<String, Object> properties = super.endpointLenientProperties(exchange, uri);
+        properties.forEach((k, v) -> {
+            if (!k.startsWith("httpClient.")) {
+                answer.put(k, v);
+            }
+        });
+        return answer;
+    }
 }
