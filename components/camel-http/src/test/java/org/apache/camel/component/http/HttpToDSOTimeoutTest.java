@@ -49,6 +49,10 @@ public class HttpToDSOTimeoutTest extends BaseHttpTest {
                         new BasicValidationHandler(
                                 "/bar", GET.name(), null, null,
                                 getExpectedContent()))
+                .registerHandler("/baz",
+                        new BasicValidationHandler(
+                                "/baz", GET.name(), null, null,
+                                getExpectedContent()))
                 .create();
         localServer.start();
 
@@ -84,6 +88,14 @@ public class HttpToDSOTimeoutTest extends BaseHttpTest {
         assertExchange(exchange);
     }
 
+    @Test
+    public void httpToDoff() throws Exception {
+        Exchange exchange = template.request("direct:toDoff",
+                exchange1 -> {
+                });
+        assertExchange(exchange);
+    }
+
     @Override
     protected RoutesBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -94,6 +106,9 @@ public class HttpToDSOTimeoutTest extends BaseHttpTest {
 
                 from("direct:toD")
                         .toD(baseUrl + "/bar?httpClient.SocketTimeout=5000");
+
+                from("direct:toDoff")
+                        .toD().allowOptimisedComponents(false).uri(baseUrl + "/baz?httpClient.SocketTimeout=5000");
             }
         };
     }
