@@ -54,8 +54,12 @@ public class FhirComponent extends AbstractApiComponent<FhirApiName, FhirConfigu
 
                 return;
             } else if (configuration != null) {
-                endpointConfiguration.setServerUrl(configuration.getServerUrl());
-                endpointConfiguration.setFhirContext(configuration.getFhirContext());
+                if (endpointConfiguration.getServerUrl() == null) {
+                    endpointConfiguration.setServerUrl(configuration.getServerUrl());
+                }
+                if (endpointConfiguration.getFhirContext() == null) {
+                    endpointConfiguration.setFhirContext(configuration.getFhirContext());
+                }
             }
 
             endpointConfiguration.setClient(createClient(endpointConfiguration));
