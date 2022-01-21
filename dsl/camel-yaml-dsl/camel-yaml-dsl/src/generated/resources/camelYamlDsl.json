@@ -2097,6 +2097,9 @@
       "org.apache.camel.model.RouteDefinition" : {
         "type" : "object",
         "properties" : {
+          "description" : {
+            "type" : "string"
+          },
           "from" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.FromDefinition"
           },
