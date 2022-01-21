@@ -440,7 +440,6 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
 
         builder.addModifiers(Modifier.PUBLIC, Modifier.STATIC);
 
-
         if (extendsType(info, SEND_DEFINITION_CLASS) || extendsType(info, TO_DYNAMIC_DEFINITION_CLASS)) {
             builder.superclass(ParameterizedTypeName.get(CN_ENDPOINT_AWARE_DESERIALIZER_BASE, targetType));
         } else {
@@ -545,6 +544,15 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
             setProperty.addStatement("target.setDescription(val)");
             setProperty.addStatement("break");
             setProperty.endControlFlow();
+
+            properties.add(
+                yamlProperty(
+                        "id",
+                        "string"));
+            properties.add(
+                yamlProperty(
+                        "description",
+                        "string"));
         }
 
         if (implementType(info, OUTPUT_NODE_CLASS)) {

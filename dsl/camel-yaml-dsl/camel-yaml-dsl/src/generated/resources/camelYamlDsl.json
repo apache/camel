@@ -368,6 +368,9 @@
           "correlationExpression" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.ExpressionSubElementDefinition"
           },
+          "description" : {
+            "type" : "string"
+          },
           "discardOnAggregationFailure" : {
             "type" : "boolean"
           },
@@ -382,6 +385,9 @@
           },
           "forceCompletionOnStop" : {
             "type" : "boolean"
+          },
+          "id" : {
+            "type" : "string"
           },
           "ignoreInvalidCorrelationKeys" : {
             "type" : "boolean"
@@ -430,6 +436,12 @@
             "cache" : {
               "type" : "boolean"
             },
+            "description" : {
+              "type" : "string"
+            },
+            "id" : {
+              "type" : "string"
+            },
             "inheritErrorHandler" : {
               "type" : "boolean"
             },
@@ -448,11 +460,17 @@
       "org.apache.camel.model.CatchDefinition" : {
         "type" : "object",
         "properties" : {
+          "description" : {
+            "type" : "string"
+          },
           "exception" : {
             "type" : "array",
             "items" : {
               "type" : "string"
             }
+          },
+          "id" : {
+            "type" : "string"
           },
           "inheritErrorHandler" : {
             "type" : "boolean"
@@ -471,6 +489,12 @@
       "org.apache.camel.model.ChoiceDefinition" : {
         "type" : "object",
         "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
           "inheritErrorHandler" : {
             "type" : "boolean"
           },
@@ -497,11 +521,17 @@
           "configurationRef" : {
             "type" : "string"
           },
+          "description" : {
+            "type" : "string"
+          },
           "faultToleranceConfiguration" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.FaultToleranceConfigurationDefinition"
           },
           "hystrixConfiguration" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.HystrixConfigurationDefinition"
+          },
+          "id" : {
+            "type" : "string"
           },
           "inheritErrorHandler" : {
             "type" : "boolean"
@@ -523,7 +553,13 @@
       "org.apache.camel.model.ClaimCheckDefinition" : {
         "type" : "object",
         "properties" : {
+          "description" : {
+            "type" : "string"
+          },
           "filter" : {
+            "type" : "string"
+          },
+          "id" : {
             "type" : "string"
           },
           "inheritErrorHandler" : {
@@ -573,6 +609,12 @@
             "charset" : {
               "type" : "string"
             },
+            "description" : {
+              "type" : "string"
+            },
+            "id" : {
+              "type" : "string"
+            },
             "inheritErrorHandler" : {
               "type" : "boolean"
             },
@@ -606,11 +648,17 @@
           "callerRunsWhenRejected" : {
             "type" : "boolean"
           },
+          "description" : {
+            "type" : "string"
+          },
           "executorServiceRef" : {
             "type" : "string"
           },
           "expression" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+          },
+          "id" : {
+            "type" : "string"
           },
           "inheritErrorHandler" : {
             "type" : "boolean"
@@ -641,8 +689,14 @@
           "cacheSize" : {
             "type" : "number"
           },
+          "description" : {
+            "type" : "string"
+          },
           "expression" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+          },
+          "id" : {
+            "type" : "string"
           },
           "ignoreInvalidEndpoints" : {
             "type" : "boolean"
@@ -670,8 +724,14 @@
           "cacheSize" : {
             "type" : "number"
           },
+          "description" : {
+            "type" : "string"
+          },
           "expression" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+          },
+          "id" : {
+            "type" : "string"
           },
           "ignoreInvalidEndpoint" : {
             "type" : "boolean"
@@ -811,8 +871,14 @@
           "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
         } ],
         "properties" : {
+          "description" : {
+            "type" : "string"
+          },
           "expression" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+          },
+          "id" : {
+            "type" : "string"
           },
           "inheritErrorHandler" : {
             "type" : "boolean"
@@ -831,6 +897,12 @@
       "org.apache.camel.model.FinallyDefinition" : {
         "type" : "object",
         "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
           "inheritErrorHandler" : {
             "type" : "boolean"
           },
@@ -993,11 +1065,17 @@
           "completionEager" : {
             "type" : "string"
           },
+          "description" : {
+            "type" : "string"
+          },
           "eager" : {
             "type" : "boolean"
           },
           "expression" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+          },
+          "id" : {
+            "type" : "string"
           },
           "inheritErrorHandler" : {
             "type" : "boolean"
@@ -1026,6 +1104,12 @@
         }, {
           "type" : "object",
           "properties" : {
+            "description" : {
+              "type" : "string"
+            },
+            "id" : {
+              "type" : "string"
+            },
             "inheritErrorHandler" : {
               "type" : "boolean"
             },
@@ -1045,6 +1129,12 @@
         }, {
           "type" : "object",
           "properties" : {
+            "description" : {
+              "type" : "string"
+            },
+            "id" : {
+              "type" : "string"
+            },
             "inheritErrorHandler" : {
               "type" : "boolean"
             },
@@ -1061,6 +1151,12 @@
       "org.apache.camel.model.InputTypeDefinition" : {
         "type" : "object",
         "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
           "urn" : {
             "type" : "string"
           },
@@ -1073,6 +1169,12 @@
       "org.apache.camel.model.InterceptDefinition" : {
         "type" : "object",
         "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
           "inheritErrorHandler" : {
             "type" : "boolean"
           },
@@ -1090,6 +1192,12 @@
         }, {
           "type" : "object",
           "properties" : {
+            "description" : {
+              "type" : "string"
+            },
+            "id" : {
+              "type" : "string"
+            },
             "inheritErrorHandler" : {
               "type" : "boolean"
             },
@@ -1112,6 +1220,12 @@
           "type" : "object",
           "properties" : {
             "afterUri" : {
+              "type" : "string"
+            },
+            "description" : {
+              "type" : "string"
+            },
+            "id" : {
               "type" : "string"
             },
             "inheritErrorHandler" : {
@@ -1164,8 +1278,14 @@
           "customLoadBalancer" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.loadbalancer.CustomLoadBalancerDefinition"
           },
+          "description" : {
+            "type" : "string"
+          },
           "failover" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.loadbalancer.FailoverLoadBalancerDefinition"
+          },
+          "id" : {
+            "type" : "string"
           },
           "inheritErrorHandler" : {
             "type" : "boolean"
@@ -1207,6 +1327,12 @@
         }, {
           "type" : "object",
           "properties" : {
+            "description" : {
+              "type" : "string"
+            },
+            "id" : {
+              "type" : "string"
+            },
             "inheritErrorHandler" : {
               "type" : "boolean"
             },
@@ -1241,11 +1367,17 @@
           "copy" : {
             "type" : "boolean"
           },
+          "description" : {
+            "type" : "string"
+          },
           "doWhile" : {
             "type" : "boolean"
           },
           "expression" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+          },
+          "id" : {
+            "type" : "string"
           },
           "inheritErrorHandler" : {
             "type" : "boolean"
@@ -1294,6 +1426,9 @@
           "custom" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.CustomDataFormat"
           },
+          "description" : {
+            "type" : "string"
+          },
           "fhirJson" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.FhirJsonDataFormat"
           },
@@ -1314,6 +1449,9 @@
           },
           "ical" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.IcalDataFormat"
+          },
+          "id" : {
+            "type" : "string"
           },
           "inheritErrorHandler" : {
             "type" : "boolean"
@@ -1389,7 +1527,13 @@
       "org.apache.camel.model.MulticastDefinition" : {
         "type" : "object",
         "properties" : {
+          "description" : {
+            "type" : "string"
+          },
           "executorServiceRef" : {
+            "type" : "string"
+          },
+          "id" : {
             "type" : "string"
           },
           "inheritErrorHandler" : {
@@ -1439,7 +1583,13 @@
       "org.apache.camel.model.OnCompletionDefinition" : {
         "type" : "object",
         "properties" : {
+          "description" : {
+            "type" : "string"
+          },
           "executorServiceRef" : {
+            "type" : "string"
+          },
+          "id" : {
             "type" : "string"
           },
           "inheritErrorHandler" : {
@@ -1477,6 +1627,9 @@
           "continued" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.ExpressionSubElementDefinition"
           },
+          "description" : {
+            "type" : "string"
+          },
           "exception" : {
             "type" : "array",
             "items" : {
@@ -1485,6 +1638,9 @@
           },
           "handled" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.ExpressionSubElementDefinition"
+          },
+          "id" : {
+            "type" : "string"
           },
           "inheritErrorHandler" : {
             "type" : "boolean"
@@ -1524,8 +1680,14 @@
       "org.apache.camel.model.OnFallbackDefinition" : {
         "type" : "object",
         "properties" : {
+          "description" : {
+            "type" : "string"
+          },
           "fallbackViaNetwork" : {
             "type" : "boolean"
+          },
+          "id" : {
+            "type" : "string"
           },
           "inheritErrorHandler" : {
             "type" : "boolean"
@@ -1561,6 +1723,12 @@
       "org.apache.camel.model.OtherwiseDefinition" : {
         "type" : "object",
         "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
           "inheritErrorHandler" : {
             "type" : "boolean"
           },
@@ -1575,6 +1743,12 @@
       "org.apache.camel.model.OutputDefinition" : {
         "type" : "object",
         "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
           "inheritErrorHandler" : {
             "type" : "boolean"
           },
@@ -1589,6 +1763,12 @@
       "org.apache.camel.model.OutputTypeDefinition" : {
         "type" : "object",
         "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
           "urn" : {
             "type" : "string"
           },
@@ -1624,6 +1804,12 @@
       "org.apache.camel.model.PipelineDefinition" : {
         "type" : "object",
         "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
           "inheritErrorHandler" : {
             "type" : "boolean"
           },
@@ -1638,6 +1824,12 @@
       "org.apache.camel.model.PolicyDefinition" : {
         "type" : "object",
         "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
           "inheritErrorHandler" : {
             "type" : "boolean"
           },
@@ -1665,8 +1857,14 @@
           "cacheSize" : {
             "type" : "number"
           },
+          "description" : {
+            "type" : "string"
+          },
           "expression" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+          },
+          "id" : {
+            "type" : "string"
           },
           "ignoreInvalidEndpoint" : {
             "type" : "number"
@@ -1691,6 +1889,12 @@
       "org.apache.camel.model.ProcessDefinition" : {
         "type" : "object",
         "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
           "inheritErrorHandler" : {
             "type" : "boolean"
           },
@@ -1724,11 +1928,17 @@
           "delimiter" : {
             "type" : "string"
           },
+          "description" : {
+            "type" : "string"
+          },
           "executorServiceRef" : {
             "type" : "string"
           },
           "expression" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+          },
+          "id" : {
+            "type" : "string"
           },
           "ignoreInvalidEndpoints" : {
             "type" : "boolean"
@@ -1854,6 +2064,12 @@
         }, {
           "type" : "object",
           "properties" : {
+            "description" : {
+              "type" : "string"
+            },
+            "id" : {
+              "type" : "string"
+            },
             "inheritErrorHandler" : {
               "type" : "boolean"
             },
@@ -1870,7 +2086,13 @@
         }, {
           "type" : "object",
           "properties" : {
+            "description" : {
+              "type" : "string"
+            },
             "excludePattern" : {
+              "type" : "string"
+            },
+            "id" : {
               "type" : "string"
             },
             "inheritErrorHandler" : {
@@ -1889,7 +2111,13 @@
         }, {
           "type" : "object",
           "properties" : {
+            "description" : {
+              "type" : "string"
+            },
             "excludePattern" : {
+              "type" : "string"
+            },
+            "id" : {
               "type" : "string"
             },
             "inheritErrorHandler" : {
@@ -1908,6 +2136,12 @@
         }, {
           "type" : "object",
           "properties" : {
+            "description" : {
+              "type" : "string"
+            },
+            "id" : {
+              "type" : "string"
+            },
             "inheritErrorHandler" : {
               "type" : "boolean"
             },
@@ -1926,8 +2160,14 @@
           "batchConfig" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.config.BatchResequencerConfig"
           },
+          "description" : {
+            "type" : "string"
+          },
           "expression" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+          },
+          "id" : {
+            "type" : "string"
           },
           "inheritErrorHandler" : {
             "type" : "boolean"
@@ -2003,6 +2243,12 @@
         }, {
           "type" : "object",
           "properties" : {
+            "description" : {
+              "type" : "string"
+            },
+            "id" : {
+              "type" : "string"
+            },
             "inheritErrorHandler" : {
               "type" : "boolean"
             },
@@ -2209,8 +2455,14 @@
             "cacheSize" : {
               "type" : "number"
             },
+            "description" : {
+              "type" : "string"
+            },
             "expression" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+            },
+            "id" : {
+              "type" : "string"
             },
             "ignoreInvalidEndpoints" : {
               "type" : "boolean"
@@ -2233,6 +2485,12 @@
         }, {
           "type" : "object",
           "properties" : {
+            "description" : {
+              "type" : "string"
+            },
+            "id" : {
+              "type" : "string"
+            },
             "inheritErrorHandler" : {
               "type" : "boolean"
             },
@@ -2256,6 +2514,12 @@
             "$ref" : "#/items/definitions/org.apache.camel.model.SagaActionUriDefinition"
           },
           "completionMode" : {
+            "type" : "string"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "id" : {
             "type" : "string"
           },
           "inheritErrorHandler" : {
@@ -2305,6 +2569,12 @@
       "org.apache.camel.model.SamplingDefinition" : {
         "type" : "object",
         "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
           "inheritErrorHandler" : {
             "type" : "boolean"
           },
@@ -2325,8 +2595,14 @@
           "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
         } ],
         "properties" : {
+          "description" : {
+            "type" : "string"
+          },
           "expression" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+          },
+          "id" : {
+            "type" : "string"
           },
           "inheritErrorHandler" : {
             "type" : "boolean"
@@ -2339,8 +2615,14 @@
           "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
         } ],
         "properties" : {
+          "description" : {
+            "type" : "string"
+          },
           "expression" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+          },
+          "id" : {
+            "type" : "string"
           },
           "inheritErrorHandler" : {
             "type" : "boolean"
@@ -2353,6 +2635,12 @@
         }, {
           "type" : "object",
           "properties" : {
+            "description" : {
+              "type" : "string"
+            },
+            "id" : {
+              "type" : "string"
+            },
             "inheritErrorHandler" : {
               "type" : "boolean"
             },
@@ -2369,8 +2657,14 @@
           "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
         } ],
         "properties" : {
+          "description" : {
+            "type" : "string"
+          },
           "expression" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+          },
+          "id" : {
+            "type" : "string"
           },
           "inheritErrorHandler" : {
             "type" : "boolean"
@@ -2387,8 +2681,14 @@
           "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
         } ],
         "properties" : {
+          "description" : {
+            "type" : "string"
+          },
           "expression" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+          },
+          "id" : {
+            "type" : "string"
           },
           "inheritErrorHandler" : {
             "type" : "boolean"
@@ -2408,8 +2708,14 @@
           "comparatorRef" : {
             "type" : "string"
           },
+          "description" : {
+            "type" : "string"
+          },
           "expression" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+          },
+          "id" : {
+            "type" : "string"
           },
           "inheritErrorHandler" : {
             "type" : "boolean"
@@ -2425,11 +2731,17 @@
           "delimiter" : {
             "type" : "string"
           },
+          "description" : {
+            "type" : "string"
+          },
           "executorServiceRef" : {
             "type" : "string"
           },
           "expression" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+          },
+          "id" : {
+            "type" : "string"
           },
           "inheritErrorHandler" : {
             "type" : "boolean"
@@ -2478,6 +2790,12 @@
       "org.apache.camel.model.StepDefinition" : {
         "type" : "object",
         "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
           "inheritErrorHandler" : {
             "type" : "boolean"
           },
@@ -2492,6 +2810,12 @@
       "org.apache.camel.model.StopDefinition" : {
         "type" : "object",
         "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
           "inheritErrorHandler" : {
             "type" : "boolean"
           }
@@ -2505,6 +2829,12 @@
           },
           "defaultProfile" : {
             "type" : "boolean"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
           },
           "keepAliveTime" : {
             "type" : "number"
@@ -2535,7 +2865,13 @@
           "callerRunsWhenRejected" : {
             "type" : "string"
           },
+          "description" : {
+            "type" : "string"
+          },
           "executorServiceRef" : {
+            "type" : "string"
+          },
+          "id" : {
             "type" : "string"
           },
           "inheritErrorHandler" : {
@@ -2579,11 +2915,17 @@
           "correlationExpression" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.ExpressionSubElementDefinition"
           },
+          "description" : {
+            "type" : "string"
+          },
           "executorServiceRef" : {
             "type" : "string"
           },
           "expression" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+          },
+          "id" : {
+            "type" : "string"
           },
           "inheritErrorHandler" : {
             "type" : "boolean"
@@ -2599,7 +2941,13 @@
       "org.apache.camel.model.ThrowExceptionDefinition" : {
         "type" : "object",
         "properties" : {
+          "description" : {
+            "type" : "string"
+          },
           "exceptionType" : {
+            "type" : "string"
+          },
+          "id" : {
             "type" : "string"
           },
           "inheritErrorHandler" : {
@@ -2619,6 +2967,12 @@
         }, {
           "type" : "object",
           "properties" : {
+            "description" : {
+              "type" : "string"
+            },
+            "id" : {
+              "type" : "string"
+            },
             "inheritErrorHandler" : {
               "type" : "boolean"
             },
@@ -2650,6 +3004,12 @@
             "cacheSize" : {
               "type" : "number"
             },
+            "description" : {
+              "type" : "string"
+            },
+            "id" : {
+              "type" : "string"
+            },
             "ignoreInvalidEndpoint" : {
               "type" : "boolean"
             },
@@ -2672,6 +3032,12 @@
       "org.apache.camel.model.TransactedDefinition" : {
         "type" : "object",
         "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
           "inheritErrorHandler" : {
             "type" : "boolean"
           },
@@ -2692,8 +3058,14 @@
           "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
         } ],
         "properties" : {
+          "description" : {
+            "type" : "string"
+          },
           "expression" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+          },
+          "id" : {
+            "type" : "string"
           },
           "inheritErrorHandler" : {
             "type" : "boolean"
@@ -2703,6 +3075,9 @@
       "org.apache.camel.model.TryDefinition" : {
         "type" : "object",
         "properties" : {
+          "description" : {
+            "type" : "string"
+          },
           "doCatch" : {
             "type" : "array",
             "items" : {
@@ -2711,6 +3086,9 @@
           },
           "doFinally" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.FinallyDefinition"
+          },
+          "id" : {
+            "type" : "string"
           },
           "inheritErrorHandler" : {
             "type" : "boolean"
@@ -2759,6 +3137,9 @@
           "custom" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.CustomDataFormat"
           },
+          "description" : {
+            "type" : "string"
+          },
           "fhirJson" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.FhirJsonDataFormat"
           },
@@ -2779,6 +3160,9 @@
           },
           "ical" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.IcalDataFormat"
+          },
+          "id" : {
+            "type" : "string"
           },
           "inheritErrorHandler" : {
             "type" : "boolean"
@@ -2857,8 +3241,14 @@
           "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
         } ],
         "properties" : {
+          "description" : {
+            "type" : "string"
+          },
           "expression" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+          },
+          "id" : {
+            "type" : "string"
           },
           "inheritErrorHandler" : {
             "type" : "boolean"
@@ -2871,8 +3261,14 @@
           "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
         } ],
         "properties" : {
+          "description" : {
+            "type" : "string"
+          },
           "expression" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+          },
+          "id" : {
+            "type" : "string"
           },
           "inheritErrorHandler" : {
             "type" : "boolean"
@@ -2891,8 +3287,14 @@
           "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
         } ],
         "properties" : {
+          "description" : {
+            "type" : "string"
+          },
           "expression" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+          },
+          "id" : {
+            "type" : "string"
           },
           "inheritErrorHandler" : {
             "type" : "boolean"
@@ -2923,10 +3325,16 @@
           "copy" : {
             "type" : "boolean"
           },
+          "description" : {
+            "type" : "string"
+          },
           "dynamicUri" : {
             "type" : "boolean"
           },
           "executorServiceRef" : {
+            "type" : "string"
+          },
+          "id" : {
             "type" : "string"
           },
           "ignoreInvalidEndpoint" : {
@@ -3437,6 +3845,9 @@
             "defaultLoadBalancer" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.cloud.DefaultServiceCallServiceLoadBalancerConfiguration"
             },
+            "description" : {
+              "type" : "string"
+            },
             "dnsServiceDiscovery" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.cloud.DnsServiceCallServiceDiscoveryConfiguration"
             },
@@ -3451,6 +3862,9 @@
             },
             "healthyServiceFilter" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.cloud.HealthyServiceCallServiceFilterConfiguration"
+            },
+            "id" : {
+              "type" : "string"
             },
             "inheritErrorHandler" : {
               "type" : "boolean"
@@ -5943,7 +6357,13 @@
           "deprecated" : {
             "type" : "boolean"
           },
+          "description" : {
+            "type" : "string"
+          },
           "enableCors" : {
+            "type" : "string"
+          },
+          "id" : {
             "type" : "string"
           },
           "method" : {
@@ -6020,7 +6440,13 @@
           "deprecated" : {
             "type" : "boolean"
           },
+          "description" : {
+            "type" : "string"
+          },
           "enableCors" : {
+            "type" : "string"
+          },
+          "id" : {
             "type" : "string"
           },
           "method" : {
@@ -6097,7 +6523,13 @@
           "deprecated" : {
             "type" : "boolean"
           },
+          "description" : {
+            "type" : "string"
+          },
           "enableCors" : {
+            "type" : "string"
+          },
+          "id" : {
             "type" : "string"
           },
           "method" : {
@@ -6174,7 +6606,13 @@
           "deprecated" : {
             "type" : "boolean"
           },
+          "description" : {
+            "type" : "string"
+          },
           "enableCors" : {
+            "type" : "string"
+          },
+          "id" : {
             "type" : "string"
           },
           "method" : {
@@ -6251,7 +6689,13 @@
           "deprecated" : {
             "type" : "boolean"
           },
+          "description" : {
+            "type" : "string"
+          },
           "enableCors" : {
+            "type" : "string"
+          },
+          "id" : {
             "type" : "string"
           },
           "method" : {
@@ -6328,7 +6772,13 @@
           "deprecated" : {
             "type" : "boolean"
           },
+          "description" : {
+            "type" : "string"
+          },
           "enableCors" : {
+            "type" : "string"
+          },
+          "id" : {
             "type" : "string"
           },
           "method" : {
@@ -6402,7 +6852,13 @@
           "consumes" : {
             "type" : "string"
           },
+          "description" : {
+            "type" : "string"
+          },
           "enableCors" : {
+            "type" : "string"
+          },
+          "id" : {
             "type" : "string"
           },
           "outType" : {
@@ -6549,6 +7005,9 @@
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.DeleteVerbDefinition"
             }
           },
+          "description" : {
+            "type" : "string"
+          },
           "enableCors" : {
             "type" : "string"
           },
@@ -6563,6 +7022,9 @@
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.HeadVerbDefinition"
             }
+          },
+          "id" : {
+            "type" : "string"
           },
           "patch" : {
             "type" : "array",
@@ -6870,6 +7332,12 @@
       "org.apache.camel.model.rest.RestsDefinition" : {
         "type" : "object",
         "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
           "rest" : {
             "type" : "array",
             "items" : {
@@ -6908,7 +7376,13 @@
           "deprecated" : {
             "type" : "boolean"
           },
+          "description" : {
+            "type" : "string"
+          },
           "enableCors" : {
+            "type" : "string"
+          },
+          "id" : {
             "type" : "string"
           },
           "method" : {
