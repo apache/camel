@@ -17,7 +17,7 @@
 The Stub component provides a simple way to stub out any physical
 endpoints while in development or testing, allowing you for example to
 run a route without needing to actually connect to a specific
-xref:mail-component.adoc[SMTP] or xref:mail-component.adoc[Http] endpoint. Just add *stub:*
+xref:mail-component.adoc[SMTP] or xref:http-component.adoc[Http] endpoint. Just add *stub:*
 in front of any endpoint URI to stub out the endpoint.
 
 Internally the Stub component creates xref:vm-component.adoc[VM] endpoints. The

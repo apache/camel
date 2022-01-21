@@ -80,7 +80,7 @@ public class StubEndpointUriFactory extends org.apache.camel.support.component.E
 
     @Override
     public boolean isLenientProperties() {
-        return false;
+        return true;
     }
 }
 
