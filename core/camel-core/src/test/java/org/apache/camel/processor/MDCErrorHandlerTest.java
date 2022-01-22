@@ -44,7 +44,8 @@ public class MDCErrorHandlerTest extends ContextTestSupport {
                     public void process(Exchange exchange) throws Exception {
                         var m = MDC.getCopyOfContextMap();
                         Assertions.assertEquals(5, m.size());
-                        Assertions.assertEquals(exchange.getMessage().getHeader(Exchange.BREADCRUMB_ID), m.get("camel.breadcrumbId"));
+                        Assertions.assertEquals(exchange.getMessage().getHeader(Exchange.BREADCRUMB_ID),
+                                m.get("camel.breadcrumbId"));
                         Assertions.assertEquals("start", m.get("camel.routeId"));
                     }
                 }));
@@ -59,7 +60,8 @@ public class MDCErrorHandlerTest extends ContextTestSupport {
                             public void process(Exchange exchange) throws Exception {
                                 var m = MDC.getCopyOfContextMap();
                                 Assertions.assertEquals(5, m.size());
-                                Assertions.assertEquals(exchange.getMessage().getHeader(Exchange.BREADCRUMB_ID), m.get("camel.breadcrumbId"));
+                                Assertions.assertEquals(exchange.getMessage().getHeader(Exchange.BREADCRUMB_ID),
+                                        m.get("camel.breadcrumbId"));
                                 Assertions.assertEquals("dead", m.get("camel.routeId"));
                             }
                         })
