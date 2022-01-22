@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import java.util.Map;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -42,7 +44,7 @@ public class MDCErrorHandlerTest extends ContextTestSupport {
                 errorHandler(deadLetterChannel("direct:dead").onExceptionOccurred(new Processor() {
                     @Override
                     public void process(Exchange exchange) throws Exception {
-                        var m = MDC.getCopyOfContextMap();
+                        Map<String, String> m = MDC.getCopyOfContextMap();
                         Assertions.assertEquals(5, m.size());
                         Assertions.assertEquals(exchange.getMessage().getHeader(Exchange.BREADCRUMB_ID),
                                 m.get("camel.breadcrumbId"));
@@ -58,7 +60,7 @@ public class MDCErrorHandlerTest extends ContextTestSupport {
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) throws Exception {
-                                var m = MDC.getCopyOfContextMap();
+                                Map<String, String> m = MDC.getCopyOfContextMap();
                                 Assertions.assertEquals(5, m.size());
                                 Assertions.assertEquals(exchange.getMessage().getHeader(Exchange.BREADCRUMB_ID),
                                         m.get("camel.breadcrumbId"));
