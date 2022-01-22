@@ -47,14 +47,14 @@ public class DeadLetterChannelReifier extends DefaultErrorHandlerReifier<DeadLet
 
         DeadLetterChannel answer = new DeadLetterChannel(
                 camelContext, processor, logger,
-                getBean(Processor.class, definition.getOnRedelivery(), definition.getOnRedeliveryRef()),
+                getProcessor(definition.getOnRedelivery(), definition.getOnRedeliveryRef()),
                 redeliveryPolicy, deadLetterProcessor,
                 definition.getDeadLetterUri(), definition.isDeadLetterHandleNewException(), definition.isUseOriginalMessage(),
                 definition.isUseOriginalBody(),
                 definition.getRetryWhilePolicy(camelContext),
                 getExecutorService(definition.getExecutorService(), definition.getExecutorServiceRef()),
-                getBean(Processor.class, definition.getOnPrepareFailure(), definition.getOnPrepareFailureRef()),
-                getBean(Processor.class, definition.getOnExceptionOccurred(), definition.getOnExceptionOccurredRef()));
+                getProcessor(definition.getOnPrepareFailure(), definition.getOnPrepareFailureRef()),
+                getProcessor(definition.getOnExceptionOccurred(), definition.getOnExceptionOccurredRef()));
         // configure error handler before we can use it
         configure(answer);
         return answer;

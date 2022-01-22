@@ -43,12 +43,12 @@ public class DefaultErrorHandlerReifier<T extends DefaultErrorHandlerProperties>
 
         DefaultErrorHandler answer = new DefaultErrorHandler(
                 camelContext, processor, logger,
-                getBean(Processor.class, definition.getOnRedelivery(), definition.getOnRedeliveryRef()),
+                getProcessor(definition.getOnRedelivery(), definition.getOnRedeliveryRef()),
                 redeliveryPolicy,
                 getPredicate(definition.getRetryWhile(), definition.getRetryWhileRef()),
                 getExecutorService(definition.getExecutorService(), definition.getExecutorServiceRef()),
-                getBean(Processor.class, definition.getOnPrepareFailure(), definition.getOnPrepareFailureRef()),
-                getBean(Processor.class, definition.getOnExceptionOccurred(), definition.getOnExceptionOccurredRef()));
+                getProcessor(definition.getOnPrepareFailure(), definition.getOnPrepareFailureRef()),
+                getProcessor(definition.getOnExceptionOccurred(), definition.getOnExceptionOccurredRef()));
         // configure error handler before we can use it
         configure(answer);
         return answer;
