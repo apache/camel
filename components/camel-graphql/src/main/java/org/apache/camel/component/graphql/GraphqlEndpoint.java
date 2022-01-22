@@ -189,7 +189,7 @@ public class GraphqlEndpoint extends DefaultEndpoint {
     public String getQuery() {
         if (query == null && queryFile != null) {
             try {
-                query = IOHelper.loadText(ObjectHelper.loadResourceAsStream(queryFile));
+                query = IOHelper.loadText(ObjectHelper.loadResourceAsStream(queryFile, getClass().getClassLoader()));
             } catch (IOException e) {
                 throw new RuntimeCamelException("Failed to read query file: " + queryFile, e);
             }
