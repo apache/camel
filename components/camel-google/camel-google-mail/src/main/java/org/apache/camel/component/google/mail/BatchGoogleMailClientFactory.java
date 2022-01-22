@@ -17,7 +17,7 @@
 package org.apache.camel.component.google.mail;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Collection;
 
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
@@ -42,7 +42,8 @@ public class BatchGoogleMailClientFactory implements GoogleMailClientFactory {
 
     @Override
     public Gmail makeClient(
-            String clientId, String clientSecret, String applicationName, String refreshToken, String accessToken) {
+            String clientId, String clientSecret, Collection<String> scopes, String applicationName, String refreshToken,
+            String accessToken) {
         if (clientId == null || clientSecret == null) {
             throw new IllegalArgumentException("clientId and clientSecret are required to create Gmail client.");
         }
@@ -70,12 +71,12 @@ public class BatchGoogleMailClientFactory implements GoogleMailClientFactory {
 
     @Override
     public Gmail makeClient(
-            CamelContext camelContext, String keyResource, String applicationName, String delegate, List<String> gmailScopes) {
+            CamelContext camelContext, String keyResource, Collection<String> scopes, String applicationName, String delegate) {
         if (keyResource == null) {
             throw new IllegalArgumentException("keyResource is required to create Gmail client.");
         }
         try {
-            Credential credential = authorizeServiceAccount(camelContext, keyResource, delegate, gmailScopes);
+            Credential credential = authorizeServiceAccount(camelContext, keyResource, delegate, scopes);
             return new Gmail.Builder(transport, jsonFactory, credential).setApplicationName(applicationName).build();
         } catch (Exception e) {
             throw new RuntimeCamelException("Could not create Gmail client.", e);
@@ -83,12 +84,13 @@ public class BatchGoogleMailClientFactory implements GoogleMailClientFactory {
     }
 
     private Credential authorizeServiceAccount(
-            CamelContext camelContext, String keyResource, String delegate, List<String> gmailScopes) {
+            CamelContext camelContext, String keyResource, String delegate, Collection<String> scopes) {
         // authorize
         try {
             GoogleCredential cred = GoogleCredential
-                    .fromStream(ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, keyResource))
-                    .createScoped(gmailScopes != null && gmailScopes.size() != 0 ? gmailScopes : null)
+                    .fromStream(ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, keyResource), transport,
+                            jsonFactory)
+                    .createScoped(scopes != null && scopes.size() != 0 ? scopes : null)
                     .createDelegated(delegate);
             cred.refreshToken();
             return cred;

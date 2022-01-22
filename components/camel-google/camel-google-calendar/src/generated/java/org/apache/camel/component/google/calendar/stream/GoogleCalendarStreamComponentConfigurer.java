@@ -49,8 +49,11 @@ public class GoogleCalendarStreamComponentConfigurer extends PropertyConfigurerS
         case "considerLastUpdate": getOrCreateConfiguration(target).setConsiderLastUpdate(property(camelContext, boolean.class, value)); return true;
         case "consumefromnow":
         case "consumeFromNow": getOrCreateConfiguration(target).setConsumeFromNow(property(camelContext, boolean.class, value)); return true;
+        case "delegate": getOrCreateConfiguration(target).setDelegate(property(camelContext, java.lang.String.class, value)); return true;
         case "emailaddress":
         case "emailAddress": getOrCreateConfiguration(target).setEmailAddress(property(camelContext, java.lang.String.class, value)); return true;
+        case "keyresource":
+        case "keyResource": getOrCreateConfiguration(target).setKeyResource(property(camelContext, java.lang.String.class, value)); return true;
         case "maxresults":
         case "maxResults": getOrCreateConfiguration(target).setMaxResults(property(camelContext, int.class, value)); return true;
         case "p12filename":
@@ -90,8 +93,11 @@ public class GoogleCalendarStreamComponentConfigurer extends PropertyConfigurerS
         case "considerLastUpdate": return boolean.class;
         case "consumefromnow":
         case "consumeFromNow": return boolean.class;
+        case "delegate": return java.lang.String.class;
         case "emailaddress":
         case "emailAddress": return java.lang.String.class;
+        case "keyresource":
+        case "keyResource": return java.lang.String.class;
         case "maxresults":
         case "maxResults": return int.class;
         case "p12filename":
@@ -132,8 +138,11 @@ public class GoogleCalendarStreamComponentConfigurer extends PropertyConfigurerS
         case "considerLastUpdate": return getOrCreateConfiguration(target).isConsiderLastUpdate();
         case "consumefromnow":
         case "consumeFromNow": return getOrCreateConfiguration(target).isConsumeFromNow();
+        case "delegate": return getOrCreateConfiguration(target).getDelegate();
         case "emailaddress":
         case "emailAddress": return getOrCreateConfiguration(target).getEmailAddress();
+        case "keyresource":
+        case "keyResource": return getOrCreateConfiguration(target).getKeyResource();
         case "maxresults":
         case "maxResults": return getOrCreateConfiguration(target).getMaxResults();
         case "p12filename":

@@ -24,7 +24,7 @@ public class GoogleMailComponentConfigurer extends PropertyConfigurerSupport imp
         map.put("clientId", java.lang.String.class);
         map.put("configuration", org.apache.camel.component.google.mail.GoogleMailConfiguration.class);
         map.put("delegate", java.lang.String.class);
-        map.put("scopes", java.util.List.class);
+        map.put("scopes", java.util.Collection.class);
         map.put("bridgeErrorHandler", boolean.class);
         map.put("lazyStartProducer", boolean.class);
         map.put("autowiredEnabled", boolean.class);
@@ -69,7 +69,7 @@ public class GoogleMailComponentConfigurer extends PropertyConfigurerSupport imp
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "refreshtoken":
         case "refreshToken": getOrCreateConfiguration(target).setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
-        case "scopes": getOrCreateConfiguration(target).setScopes(property(camelContext, java.util.List.class, value)); return true;
+        case "scopes": getOrCreateConfiguration(target).setScopes(property(camelContext, java.util.Collection.class, value)); return true;
         default: return false;
         }
     }
@@ -104,7 +104,7 @@ public class GoogleMailComponentConfigurer extends PropertyConfigurerSupport imp
         case "lazyStartProducer": return boolean.class;
         case "refreshtoken":
         case "refreshToken": return java.lang.String.class;
-        case "scopes": return java.util.List.class;
+        case "scopes": return java.util.Collection.class;
         default: return null;
         }
     }

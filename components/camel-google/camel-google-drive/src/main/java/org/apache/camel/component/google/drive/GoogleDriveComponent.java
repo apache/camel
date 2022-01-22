@@ -50,12 +50,20 @@ public class GoogleDriveComponent
         return getCamelContext().getTypeConverter().convertTo(GoogleDriveApiName.class, apiNameStr);
     }
 
-    public Drive getClient(GoogleDriveConfiguration googleDriveConfiguration) {
+    public Drive getClient(GoogleDriveConfiguration config) {
         if (client == null) {
-            client = getClientFactory().makeClient(googleDriveConfiguration.getClientId(),
-                    googleDriveConfiguration.getClientSecret(),
-                    googleDriveConfiguration.getScopes(), googleDriveConfiguration.getApplicationName(),
-                    googleDriveConfiguration.getRefreshToken(), googleDriveConfiguration.getAccessToken());
+            if (config.getClientId() != null && !config.getClientId().isBlank()
+                    && config.getClientSecret() != null && !config.getClientSecret().isBlank()) {
+                client = getClientFactory().makeClient(config.getClientId(),
+                        config.getClientSecret(), config.getScopes(),
+                        config.getApplicationName(), config.getRefreshToken(), config.getAccessToken());
+            } else if (config.getKeyResource() != null && !config.getKeyResource().isBlank()) {
+                client = getClientFactory().makeClient(getCamelContext(), config.getKeyResource(),
+                        config.getScopes(), config.getApplicationName(), config.getDelegate());
+            } else {
+                throw new IllegalArgumentException(
+                        "(clientId and clientSecret) or keyResource are required to create Google Drive client");
+            }
         }
         return client;
     }

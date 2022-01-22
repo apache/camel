@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.google.mail.stream;
 
+import java.util.List;
+
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
@@ -48,6 +50,13 @@ public class GoogleMailStreamConfiguration implements Cloneable {
     private String labels;
     @UriParam(defaultValue = "true")
     private boolean markAsRead = true;
+    /* Service account */
+    @UriParam(label = "security")
+    private String keyResource;
+    @UriParam
+    private String delegate;
+    @UriParam
+    private List<String> scopes;
 
     public String getClientId() {
         return clientId;
@@ -158,6 +167,43 @@ public class GoogleMailStreamConfiguration implements Cloneable {
      */
     public void setMarkAsRead(boolean markAsRead) {
         this.markAsRead = markAsRead;
+    }
+
+    public String getKeyResource() {
+        return keyResource;
+    }
+
+    /**
+     * Sets "*.json" file with credentials for Service account
+     * 
+     * @param keyResource String file, classpath, or http url
+     */
+    public void setKeyResource(String keyResource) {
+        this.keyResource = keyResource;
+    }
+
+    public String getDelegate() {
+        return delegate;
+    }
+
+    /**
+     * Delegate for wide-domain service account
+     */
+    public void setDelegate(String delegate) {
+        this.delegate = delegate;
+    }
+
+    public List<String> getScopes() {
+        return scopes;
+    }
+
+    /**
+     * GMail scopes
+     * 
+     * @see com.google.api.services.gmail.GmailScopes
+     */
+    public void setScopes(List<String> scopes) {
+        this.scopes = scopes;
     }
 
     // *************************************************

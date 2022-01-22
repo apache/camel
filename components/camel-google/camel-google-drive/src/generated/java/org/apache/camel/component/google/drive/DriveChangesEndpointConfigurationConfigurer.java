@@ -27,6 +27,8 @@ public class DriveChangesEndpointConfigurationConfigurer extends org.apache.came
         map.put("ClientId", java.lang.String.class);
         map.put("ClientSecret", java.lang.String.class);
         map.put("ContentChannel", com.google.api.services.drive.model.Channel.class);
+        map.put("Delegate", java.lang.String.class);
+        map.put("KeyResource", java.lang.String.class);
         map.put("MethodName", java.lang.String.class);
         map.put("RefreshToken", java.lang.String.class);
         map.put("Scopes", java.util.List.class);
@@ -51,6 +53,10 @@ public class DriveChangesEndpointConfigurationConfigurer extends org.apache.came
         case "ClientSecret": target.setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
         case "contentchannel":
         case "ContentChannel": target.setContentChannel(property(camelContext, com.google.api.services.drive.model.Channel.class, value)); return true;
+        case "delegate":
+        case "Delegate": target.setDelegate(property(camelContext, java.lang.String.class, value)); return true;
+        case "keyresource":
+        case "KeyResource": target.setKeyResource(property(camelContext, java.lang.String.class, value)); return true;
         case "methodname":
         case "MethodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
         case "refreshtoken":
@@ -83,6 +89,10 @@ public class DriveChangesEndpointConfigurationConfigurer extends org.apache.came
         case "ClientSecret": return java.lang.String.class;
         case "contentchannel":
         case "ContentChannel": return com.google.api.services.drive.model.Channel.class;
+        case "delegate":
+        case "Delegate": return java.lang.String.class;
+        case "keyresource":
+        case "KeyResource": return java.lang.String.class;
         case "methodname":
         case "MethodName": return java.lang.String.class;
         case "refreshtoken":
@@ -111,6 +121,10 @@ public class DriveChangesEndpointConfigurationConfigurer extends org.apache.came
         case "ClientSecret": return target.getClientSecret();
         case "contentchannel":
         case "ContentChannel": return target.getContentChannel();
+        case "delegate":
+        case "Delegate": return target.getDelegate();
+        case "keyresource":
+        case "KeyResource": return target.getKeyResource();
         case "methodname":
         case "MethodName": return target.getMethodName();
         case "refreshtoken":

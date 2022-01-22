@@ -19,11 +19,15 @@ package org.apache.camel.component.google.drive;
 import java.util.Collection;
 
 import com.google.api.services.drive.Drive;
+import org.apache.camel.CamelContext;
 
 public interface GoogleDriveClientFactory {
 
     Drive makeClient(
             String clientId, String clientSecret, Collection<String> scopes, String applicationName, String refreshToken,
             String accessToken);
+
+    Drive makeClient(
+            CamelContext camelContext, String keyResource, Collection<String> scopes, String applicationName, String delegate);
 
 }

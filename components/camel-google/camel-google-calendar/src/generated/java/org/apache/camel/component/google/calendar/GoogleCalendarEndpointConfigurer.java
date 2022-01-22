@@ -24,8 +24,9 @@ public class GoogleCalendarEndpointConfigurer extends PropertyConfigurerSupport 
         map.put("methodName", java.lang.String.class);
         map.put("applicationName", java.lang.String.class);
         map.put("clientId", java.lang.String.class);
+        map.put("delegate", java.lang.String.class);
         map.put("inBody", java.lang.String.class);
-        map.put("scopes", java.lang.String.class);
+        map.put("scopes", java.util.List.class);
         map.put("bridgeErrorHandler", boolean.class);
         map.put("sendEmptyMessageWhenIdle", boolean.class);
         map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
@@ -49,6 +50,7 @@ public class GoogleCalendarEndpointConfigurer extends PropertyConfigurerSupport 
         map.put("accessToken", java.lang.String.class);
         map.put("clientSecret", java.lang.String.class);
         map.put("emailAddress", java.lang.String.class);
+        map.put("keyResource", java.lang.String.class);
         map.put("p12FileName", java.lang.String.class);
         map.put("refreshToken", java.lang.String.class);
         map.put("user", java.lang.String.class);
@@ -76,6 +78,7 @@ public class GoogleCalendarEndpointConfigurer extends PropertyConfigurerSupport 
         case "clientsecret":
         case "clientSecret": target.getConfiguration().setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
+        case "delegate": target.getConfiguration().setDelegate(property(camelContext, java.lang.String.class, value)); return true;
         case "emailaddress":
         case "emailAddress": target.getConfiguration().setEmailAddress(property(camelContext, java.lang.String.class, value)); return true;
         case "exceptionhandler":
@@ -87,6 +90,8 @@ public class GoogleCalendarEndpointConfigurer extends PropertyConfigurerSupport 
         case "inBody": target.setInBody(property(camelContext, java.lang.String.class, value)); return true;
         case "initialdelay":
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
+        case "keyresource":
+        case "keyResource": target.getConfiguration().setKeyResource(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "p12filename":
@@ -104,7 +109,7 @@ public class GoogleCalendarEndpointConfigurer extends PropertyConfigurerSupport 
         case "scheduler": target.setScheduler(property(camelContext, java.lang.Object.class, value)); return true;
         case "schedulerproperties":
         case "schedulerProperties": target.setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
-        case "scopes": target.getConfiguration().setScopes(property(camelContext, java.lang.String.class, value)); return true;
+        case "scopes": target.getConfiguration().setScopes(property(camelContext, java.util.List.class, value)); return true;
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
         case "startscheduler":
@@ -143,6 +148,7 @@ public class GoogleCalendarEndpointConfigurer extends PropertyConfigurerSupport 
         case "clientsecret":
         case "clientSecret": return java.lang.String.class;
         case "delay": return long.class;
+        case "delegate": return java.lang.String.class;
         case "emailaddress":
         case "emailAddress": return java.lang.String.class;
         case "exceptionhandler":
@@ -154,6 +160,8 @@ public class GoogleCalendarEndpointConfigurer extends PropertyConfigurerSupport 
         case "inBody": return java.lang.String.class;
         case "initialdelay":
         case "initialDelay": return long.class;
+        case "keyresource":
+        case "keyResource": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "p12filename":
@@ -171,7 +179,7 @@ public class GoogleCalendarEndpointConfigurer extends PropertyConfigurerSupport 
         case "scheduler": return java.lang.Object.class;
         case "schedulerproperties":
         case "schedulerProperties": return java.util.Map.class;
-        case "scopes": return java.lang.String.class;
+        case "scopes": return java.util.List.class;
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": return boolean.class;
         case "startscheduler":
@@ -206,6 +214,7 @@ public class GoogleCalendarEndpointConfigurer extends PropertyConfigurerSupport 
         case "clientsecret":
         case "clientSecret": return target.getConfiguration().getClientSecret();
         case "delay": return target.getDelay();
+        case "delegate": return target.getConfiguration().getDelegate();
         case "emailaddress":
         case "emailAddress": return target.getConfiguration().getEmailAddress();
         case "exceptionhandler":
@@ -217,6 +226,8 @@ public class GoogleCalendarEndpointConfigurer extends PropertyConfigurerSupport 
         case "inBody": return target.getInBody();
         case "initialdelay":
         case "initialDelay": return target.getInitialDelay();
+        case "keyresource":
+        case "keyResource": return target.getConfiguration().getKeyResource();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "p12filename":
@@ -253,6 +264,7 @@ public class GoogleCalendarEndpointConfigurer extends PropertyConfigurerSupport 
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "schedulerproperties":
         case "schedulerProperties": return java.lang.Object.class;
+        case "scopes": return java.lang.String.class;
         default: return null;
         }
     }

@@ -19,12 +19,15 @@ package org.apache.camel.component.google.calendar;
 import java.util.Collection;
 
 import com.google.api.services.calendar.Calendar;
+import org.apache.camel.CamelContext;
 
 public interface GoogleCalendarClientFactory {
 
     Calendar makeClient(
-            String clientId, String clientSecret, Collection<String> scopes,
-            String applicationName, String refreshToken, String accessToken,
-            String emailAddress, String p12FileName, String user);
+            String clientId, String clientSecret, Collection<String> scopes, String applicationName, String refreshToken,
+            String accessToken, String emailAddress,
+            String p12FileName, String user);
 
+    Calendar makeClient(
+            CamelContext camelContext, String keyResource, Collection<String> scopes, String applicationName, String delegate);
 }

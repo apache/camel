@@ -67,7 +67,8 @@ public class AbstractGoogleCalendarTestSupport extends CamelTestSupport {
 
         return !properties.getProperty("clientId", "").isEmpty()
                 && !properties.getProperty("clientSecret", "").isEmpty()
-                && !properties.getProperty("accessToken", "").isEmpty();
+                && !properties.getProperty("accessToken", "").isEmpty()
+                || !properties.getProperty("keyResource", "").isEmpty();
     }
 
     @BeforeEach

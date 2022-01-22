@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.google.sheets;
 
+import java.util.Collection;
+
 import org.apache.camel.component.google.sheets.internal.GoogleSheetsApiName;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
@@ -47,6 +49,13 @@ public class GoogleSheetsConfiguration extends AbstractApiConfiguration {
     private String refreshToken;
     @UriParam
     private String applicationName;
+    @UriParam
+    private Collection<String> scopes;
+    /* Service account */
+    @UriParam(label = "security")
+    private String keyResource;
+    @UriParam
+    private String delegate;
 
     public GoogleSheetsApiName getApiName() {
         return apiName;
@@ -124,5 +133,42 @@ public class GoogleSheetsConfiguration extends AbstractApiConfiguration {
      */
     public void setApplicationName(String applicationName) {
         this.applicationName = applicationName;
+    }
+
+    public Collection<String> getScopes() {
+        return scopes;
+    }
+
+    /**
+     * Sheets scopes
+     * 
+     * @see com.google.api.services.sheets.v4.SheetsScopes
+     */
+    public void setScopes(Collection<String> scopes) {
+        this.scopes = scopes;
+    }
+
+    public String getKeyResource() {
+        return keyResource;
+    }
+
+    /**
+     * Sets "*.json" file with credentials for Service account
+     * 
+     * @param keyResource String file, classpath, or http url
+     */
+    public void setKeyResource(String keyResource) {
+        this.keyResource = keyResource;
+    }
+
+    public String getDelegate() {
+        return delegate;
+    }
+
+    /**
+     * Delegate for wide-domain service account
+     */
+    public void setDelegate(String delegate) {
+        this.delegate = delegate;
     }
 }

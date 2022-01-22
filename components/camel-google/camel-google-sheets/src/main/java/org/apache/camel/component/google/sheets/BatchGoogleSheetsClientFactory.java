@@ -16,13 +16,18 @@
  */
 package org.apache.camel.component.google.sheets;
 
+import java.io.IOException;
+import java.util.Collection;
+
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.sheets.v4.Sheets;
+import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.ObjectHelper;
 
 public class BatchGoogleSheetsClientFactory implements GoogleSheetsClientFactory {
@@ -47,6 +52,7 @@ public class BatchGoogleSheetsClientFactory implements GoogleSheetsClientFactory
     public Sheets makeClient(
             String clientId,
             String clientSecret,
+            Collection<String> scopes,
             String applicationName,
             String refreshToken,
             String accessToken) {
@@ -55,7 +61,7 @@ public class BatchGoogleSheetsClientFactory implements GoogleSheetsClientFactory
         }
 
         try {
-            Credential credential = authorize(clientId, clientSecret, refreshToken, accessToken);
+            Credential credential = authorize(clientId, clientSecret, scopes, refreshToken, accessToken);
 
             Sheets.Builder clientBuilder = new Sheets.Builder(transport, jsonFactory, credential)
                     .setApplicationName(applicationName);
@@ -76,12 +82,14 @@ public class BatchGoogleSheetsClientFactory implements GoogleSheetsClientFactory
     }
 
     // Authorizes the installed application to access user's protected data.
-    private Credential authorize(String clientId, String clientSecret, String refreshToken, String accessToken) {
+    private Credential authorize(
+            String clientId, String clientSecret, Collection<String> scopes, String refreshToken, String accessToken) {
         // authorize
         Credential credential = new GoogleCredential.Builder()
                 .setJsonFactory(jsonFactory)
                 .setTransport(transport)
                 .setClientSecrets(clientId, clientSecret)
+                .setServiceAccountScopes(scopes)
                 .build();
 
         if (ObjectHelper.isNotEmpty(refreshToken)) {
@@ -93,5 +101,35 @@ public class BatchGoogleSheetsClientFactory implements GoogleSheetsClientFactory
         }
 
         return credential;
+    }
+
+    @Override
+    public Sheets makeClient(
+            CamelContext camelContext, String keyResource, Collection<String> scopes, String applicationName, String delegate) {
+        if (keyResource == null) {
+            throw new IllegalArgumentException("keyResource is required to create Google Sheets client.");
+        }
+        try {
+            Credential credential = authorizeServiceAccount(camelContext, keyResource, delegate, scopes);
+            return new Sheets.Builder(transport, jsonFactory, credential).setApplicationName(applicationName).build();
+        } catch (Exception e) {
+            throw new RuntimeCamelException("Could not create Google Sheets client.", e);
+        }
+    }
+
+    private Credential authorizeServiceAccount(
+            CamelContext camelContext, String keyResource, String delegate, Collection<String> scopes) {
+        // authorize
+        try {
+            GoogleCredential cred = GoogleCredential
+                    .fromStream(ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, keyResource), transport,
+                            jsonFactory)
+                    .createScoped(scopes != null && scopes.size() != 0 ? scopes : null)
+                    .createDelegated(delegate);
+            cred.refreshToken();
+            return cred;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -21,10 +21,11 @@ public class GoogleMailStreamEndpointUriFactory extends org.apache.camel.support
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(29);
+        Set<String> props = new HashSet<>(32);
         props.add("backoffMultiplier");
         props.add("initialDelay");
         props.add("markAsRead");
+        props.add("delegate");
         props.add("scheduler");
         props.add("bridgeErrorHandler");
         props.add("useFixedDelay");
@@ -38,6 +39,7 @@ public class GoogleMailStreamEndpointUriFactory extends org.apache.camel.support
         props.add("repeatCount");
         props.add("timeUnit");
         props.add("clientId");
+        props.add("keyResource");
         props.add("query");
         props.add("sendEmptyMessageWhenIdle");
         props.add("schedulerProperties");
@@ -49,6 +51,7 @@ public class GoogleMailStreamEndpointUriFactory extends org.apache.camel.support
         props.add("delay");
         props.add("pollStrategy");
         props.add("startScheduler");
+        props.add("scopes");
         props.add("exceptionHandler");
         props.add("refreshToken");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);

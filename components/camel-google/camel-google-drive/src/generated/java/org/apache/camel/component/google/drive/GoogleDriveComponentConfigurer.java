@@ -23,6 +23,7 @@ public class GoogleDriveComponentConfigurer extends PropertyConfigurerSupport im
         map.put("applicationName", java.lang.String.class);
         map.put("clientId", java.lang.String.class);
         map.put("configuration", org.apache.camel.component.google.drive.GoogleDriveConfiguration.class);
+        map.put("delegate", java.lang.String.class);
         map.put("scopes", java.util.List.class);
         map.put("bridgeErrorHandler", boolean.class);
         map.put("lazyStartProducer", boolean.class);
@@ -30,6 +31,7 @@ public class GoogleDriveComponentConfigurer extends PropertyConfigurerSupport im
         map.put("clientFactory", org.apache.camel.component.google.drive.GoogleDriveClientFactory.class);
         map.put("accessToken", java.lang.String.class);
         map.put("clientSecret", java.lang.String.class);
+        map.put("keyResource", java.lang.String.class);
         map.put("refreshToken", java.lang.String.class);
         ALL_OPTIONS = map;
     }
@@ -60,6 +62,9 @@ public class GoogleDriveComponentConfigurer extends PropertyConfigurerSupport im
         case "clientsecret":
         case "clientSecret": getOrCreateConfiguration(target).setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.google.drive.GoogleDriveConfiguration.class, value)); return true;
+        case "delegate": getOrCreateConfiguration(target).setDelegate(property(camelContext, java.lang.String.class, value)); return true;
+        case "keyresource":
+        case "keyResource": getOrCreateConfiguration(target).setKeyResource(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "refreshtoken":
@@ -92,6 +97,9 @@ public class GoogleDriveComponentConfigurer extends PropertyConfigurerSupport im
         case "clientsecret":
         case "clientSecret": return java.lang.String.class;
         case "configuration": return org.apache.camel.component.google.drive.GoogleDriveConfiguration.class;
+        case "delegate": return java.lang.String.class;
+        case "keyresource":
+        case "keyResource": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "refreshtoken":
@@ -120,6 +128,9 @@ public class GoogleDriveComponentConfigurer extends PropertyConfigurerSupport im
         case "clientsecret":
         case "clientSecret": return getOrCreateConfiguration(target).getClientSecret();
         case "configuration": return target.getConfiguration();
+        case "delegate": return getOrCreateConfiguration(target).getDelegate();
+        case "keyresource":
+        case "keyResource": return getOrCreateConfiguration(target).getKeyResource();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "refreshtoken":

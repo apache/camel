@@ -27,7 +27,9 @@ public class DriveFilesEndpointConfigurationConfigurer extends org.apache.camel.
         map.put("ClientSecret", java.lang.String.class);
         map.put("Content", com.google.api.services.drive.model.File.class);
         map.put("ContentChannel", com.google.api.services.drive.model.Channel.class);
+        map.put("Delegate", java.lang.String.class);
         map.put("FileId", java.lang.String.class);
+        map.put("KeyResource", java.lang.String.class);
         map.put("MediaContent", com.google.api.client.http.AbstractInputStreamContent.class);
         map.put("MethodName", java.lang.String.class);
         map.put("MimeType", java.lang.String.class);
@@ -54,8 +56,12 @@ public class DriveFilesEndpointConfigurationConfigurer extends org.apache.camel.
         case "Content": target.setContent(property(camelContext, com.google.api.services.drive.model.File.class, value)); return true;
         case "contentchannel":
         case "ContentChannel": target.setContentChannel(property(camelContext, com.google.api.services.drive.model.Channel.class, value)); return true;
+        case "delegate":
+        case "Delegate": target.setDelegate(property(camelContext, java.lang.String.class, value)); return true;
         case "fileid":
         case "FileId": target.setFileId(property(camelContext, java.lang.String.class, value)); return true;
+        case "keyresource":
+        case "KeyResource": target.setKeyResource(property(camelContext, java.lang.String.class, value)); return true;
         case "mediacontent":
         case "MediaContent": target.setMediaContent(property(camelContext, com.google.api.client.http.AbstractInputStreamContent.class, value)); return true;
         case "methodname":
@@ -92,8 +98,12 @@ public class DriveFilesEndpointConfigurationConfigurer extends org.apache.camel.
         case "Content": return com.google.api.services.drive.model.File.class;
         case "contentchannel":
         case "ContentChannel": return com.google.api.services.drive.model.Channel.class;
+        case "delegate":
+        case "Delegate": return java.lang.String.class;
         case "fileid":
         case "FileId": return java.lang.String.class;
+        case "keyresource":
+        case "KeyResource": return java.lang.String.class;
         case "mediacontent":
         case "MediaContent": return com.google.api.client.http.AbstractInputStreamContent.class;
         case "methodname":
@@ -126,8 +136,12 @@ public class DriveFilesEndpointConfigurationConfigurer extends org.apache.camel.
         case "Content": return target.getContent();
         case "contentchannel":
         case "ContentChannel": return target.getContentChannel();
+        case "delegate":
+        case "Delegate": return target.getDelegate();
         case "fileid":
         case "FileId": return target.getFileId();
+        case "keyresource":
+        case "KeyResource": return target.getKeyResource();
         case "mediacontent":
         case "MediaContent": return target.getMediaContent();
         case "methodname":

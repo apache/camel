@@ -181,6 +181,16 @@
                                     <fromJavasource />
                                 </api>
                                 <api>
+                                    <apiName>drive-drives</apiName>
+                                    <proxyClass>com.google.api.services.drive.Drive$Drives</proxyClass>
+                                    <fromJavasource />
+                                </api>
+                                <api>
+                                    <apiName>drive-teamdrives</apiName>
+                                    <proxyClass>com.google.api.services.drive.Drive$Teamdrives</proxyClass>
+                                    <fromJavasource />
+                                </api>
+                                <api>
                                     <apiName>drive-replies</apiName>
                                     <proxyClass>com.google.api.services.drive.Drive$Replies</proxyClass>
                                     <fromJavasource />
