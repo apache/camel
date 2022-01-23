@@ -111,7 +111,13 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
         }
         S s = getOrCreatePool(endpoint).acquire();
         if (s != null && cache != null) {
-            synchronized (cacheLock) {
+            if (isStoppingOrStopped()) {
+                // during stopping then access to the cache is synchronized
+                synchronized (cacheLock) {
+                    cache.putIfAbsent(s, s);
+                }
+            } else {
+                // optimize for normal operation
                 cache.putIfAbsent(s, s);
             }
         }
@@ -132,7 +138,7 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
     }
 
     private Pool<S> getOrCreatePool(Endpoint endpoint) {
-        // its a pool so we have a lot more hits, so use regular get, and then fallback to computeIfAbsent
+        // it is a pool, so we have a lot more hits, so use regular get, and then fallback to computeIfAbsent
         Pool<S> answer = pool.get(endpoint);
         if (answer == null) {
             boolean singleton = endpoint.isSingletonProducer();
