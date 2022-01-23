@@ -12238,6 +12238,16 @@ Sets a reference to use for lookup the policy in the registry.
           <xs:element ref="tns:xpath"/>
           <xs:element ref="tns:xquery"/>
         </xs:choice>
+        <xs:attribute name="predicateExceptionFactory" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+The bean id of custom PredicateExceptionFactory to use for creating the
+exception when the validation fails. By default, Camel will throw
+PredicateValidationException. By using a custom factory you can control which
+exception to throw instead.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
