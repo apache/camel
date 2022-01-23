@@ -2,7 +2,7 @@
   "other": {
     "kind": "other",
     "name": "jfr",
-    "title": "Jfr",
+    "title": "JFR",
     "description": "Diagnose Camel applications with Java Flight Recorder",
     "deprecated": false,
     "firstVersion": "3.8.0",
