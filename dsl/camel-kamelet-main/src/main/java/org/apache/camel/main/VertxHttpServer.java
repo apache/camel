@@ -43,14 +43,13 @@ import org.slf4j.LoggerFactory;
  */
 public final class VertxHttpServer {
 
-    private static final Logger LOG = LoggerFactory.getLogger(VertxHttpServer.class);
+    static VertxPlatformHttpRouter router;
+    static VertxPlatformHttpServer server;
+    static PlatformHttpComponent phc;
 
+    private static final Logger LOG = LoggerFactory.getLogger(VertxHttpServer.class);
     private static final AtomicBoolean REGISTERED = new AtomicBoolean();
     private static final AtomicBoolean CONSOLE = new AtomicBoolean();
-
-    private static VertxPlatformHttpRouter router;
-    private static VertxPlatformHttpServer server;
-    private static PlatformHttpComponent phc;
 
     private VertxHttpServer() {
     }
@@ -75,7 +74,9 @@ public final class VertxHttpServer {
             camelContext.addService(server);
             server.start();
             router = VertxPlatformHttpRouter.lookup(camelContext);
-            phc = camelContext.getComponent("platform-http", PlatformHttpComponent.class);
+            if (phc == null) {
+                phc = camelContext.getComponent("platform-http", PlatformHttpComponent.class);
+            }
 
             // after camel is started then add event notifier
             camelContext.addStartupListener(new StartupListener() {

@@ -21,6 +21,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Component;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.component.platform.http.PlatformHttpComponent;
 import org.apache.camel.impl.engine.DefaultComponentResolver;
 import org.apache.camel.tooling.model.ComponentModel;
 
@@ -52,13 +53,15 @@ final class DependencyDownloaderComponentResolver extends DefaultComponentResolv
         if (model != null && !DownloaderHelper.alreadyOnClasspath(camelContext, model.getArtifactId())) {
             DownloaderHelper.downloadDependency(camelContext, model.getGroupId(), model.getArtifactId(), model.getVersion());
         }
+        Component answer = super.resolveComponent(name, context);
 
-        if ("platform-http".equals(name)) {
+        if (answer instanceof PlatformHttpComponent) {
             // setup a default http server on port 8080 if not already done
+            VertxHttpServer.phc = (PlatformHttpComponent) answer;
             VertxHttpServer.registerServer(camelContext);
         }
 
-        return super.resolveComponent(name, context);
+        return answer;
     }
 
 }
