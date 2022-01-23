@@ -167,6 +167,9 @@ public class DynamicRouterControlChannelProcessor extends AsyncProcessorSupport 
             case UNSUBSCRIBE:
                 processor.removeFilter(controlMessage.getId());
                 break;
+            default:
+                // Cannot get here due to enum
+                break;
         }
         callback.done(true);
         return true;
