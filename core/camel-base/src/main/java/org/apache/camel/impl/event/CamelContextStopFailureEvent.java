@@ -36,6 +36,6 @@ public class CamelContextStopFailureEvent extends AbstractContextEvent implement
 
     @Override
     public String toString() {
-        return "Failed to stop Camel: " + getContext().getName() + " due to " + cause.getMessage();
+        return "Failed to stop CamelContext: " + getContext().getName() + " due to " + cause.getMessage();
     }
 }

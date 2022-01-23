@@ -78,7 +78,7 @@ public class EventNotifierServiceStoppingFailedEventTest extends ContextTestSupp
         assertIsInstanceOf(CamelContextStoppedEvent.class, events.get(8));
 
         assertEquals("Fail B", event.getCause().getMessage());
-        assertEquals("Failure to stop service: B due to Fail B", event.toString());
+        assertEquals("Service stop failure: B due to Fail B", event.toString());
     }
 
     private static final class MyService implements Service {

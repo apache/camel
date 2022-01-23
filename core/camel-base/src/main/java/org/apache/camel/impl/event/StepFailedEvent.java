@@ -35,6 +35,6 @@ public class StepFailedEvent extends AbstractStepEvent implements CamelEvent.Ste
 
     @Override
     public String toString() {
-        return "Step[" + getStepId() + "] failed";
+        return "Step failure: " + getStepId() + " due to " + getCause().getMessage();
     }
 }

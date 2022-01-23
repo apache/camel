@@ -41,6 +41,8 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StartupStep;
+import org.apache.camel.console.DevConsole;
+import org.apache.camel.console.DevConsoleRegistry;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckConfiguration;
 import org.apache.camel.health.HealthCheckRegistry;
@@ -721,6 +723,7 @@ public abstract class BaseMainSupport extends BaseService {
         Map<String, Object> lraProperties = new LinkedHashMap<>();
         Map<String, Object> routeTemplateProperties = new LinkedHashMap<>();
         Map<String, Object> beansProperties = new LinkedHashMap<>();
+        Map<String, Object> devConsoleProperties = new LinkedHashMap<>();
         Map<String, String> globalOptions = new LinkedHashMap<>();
         for (String key : prop.stringPropertyNames()) {
             if (key.startsWith("camel.context.")) {
@@ -777,6 +780,12 @@ public abstract class BaseMainSupport extends BaseService {
                 String option = key.substring(20);
                 validateOptionAndValue(key, option, value);
                 routeTemplateProperties.put(optionKey(option), value);
+            } else if (key.startsWith("camel.dev-console.")) {
+                // grab the value
+                String value = prop.getProperty(key);
+                String option = key.substring(18);
+                validateOptionAndValue(key, option, value);
+                devConsoleProperties.put(optionKey(option), value);
             } else if (key.startsWith("camel.beans.")) {
                 // grab the value
                 String value = prop.getProperty(key);
@@ -786,7 +795,7 @@ public abstract class BaseMainSupport extends BaseService {
             } else if (key.startsWith("camel.global-options.")) {
                 // grab the value
                 String value = prop.getProperty(key);
-                String option = key.substring(12);
+                String option = key.substring(21);
                 validateOptionAndValue(key, option, value);
                 globalOptions.put(optionKey(option), value);
             }
@@ -822,7 +831,9 @@ public abstract class BaseMainSupport extends BaseService {
             MainSupportModelConfigurer.setThreadPoolProperties(camelContext, mainConfigurationProperties, threadPoolProperties,
                     mainConfigurationProperties.isAutoConfigurationFailFast(), autoConfiguredProperties);
         }
-        if (!healthProperties.isEmpty() || mainConfigurationProperties.hasHealthCheckConfiguration()) {
+        // need to let camel-main setup health-check using its convention over configuration
+        boolean hc = mainConfigurationProperties.health().getEnabled() != null; // health-check is enabled by default
+        if (hc || !healthProperties.isEmpty() || mainConfigurationProperties.hasHealthCheckConfiguration()) {
             LOG.debug("Auto-configuring HealthCheck from loaded properties: {}", healthProperties.size());
             setHealthCheckProperties(camelContext, healthProperties, mainConfigurationProperties.isAutoConfigurationFailFast(),
                     autoConfiguredProperties);
@@ -835,6 +846,12 @@ public abstract class BaseMainSupport extends BaseService {
         if (!lraProperties.isEmpty() || mainConfigurationProperties.hasLraConfiguration()) {
             LOG.debug("Auto-configuring Saga LRA from loaded properties: {}", lraProperties.size());
             setLraCheckProperties(camelContext, lraProperties, mainConfigurationProperties.isAutoConfigurationFailFast(),
+                    autoConfiguredProperties);
+        }
+        if (!devConsoleProperties.isEmpty()) {
+            LOG.debug("Auto-configuring Dev Console from loaded properties: {}", devConsoleProperties.size());
+            setDevConsoleProperties(camelContext, devConsoleProperties,
+                    mainConfigurationProperties.isAutoConfigurationFailFast(),
                     autoConfiguredProperties);
         }
 
@@ -1044,6 +1061,28 @@ public abstract class BaseMainSupport extends BaseService {
         if (enabled) {
             CamelSagaService css = resolveLraSagaService(camelContext);
             setPropertiesOnTarget(camelContext, css, lraProperties, "camel.lra.", failIfNotSet, true, autoConfiguredProperties);
+        }
+    }
+
+    private void setDevConsoleProperties(
+            CamelContext camelContext, Map<String, Object> properties,
+            boolean failIfNotSet, Map<String, String> autoConfiguredProperties)
+            throws Exception {
+
+        // make defensive copy as we mutate the map
+        Set<String> keys = new LinkedHashSet<>(properties.keySet());
+        // set properties per console
+        for (String key : keys) {
+            String name = StringHelper.before(key, ".");
+            DevConsole console = camelContext.getExtension(DevConsoleRegistry.class).resolveById(name);
+            if (console == null) {
+                throw new IllegalArgumentException(
+                        "Cannot resolve DevConsole with id: " + name);
+            }
+            // configure all the properties on the console at once (to ensure they are configured in right order)
+            Map<String, Object> config = PropertiesHelper.extractProperties(properties, name + ".");
+            setPropertiesOnTarget(camelContext, console, config, "camel.dev-console." + name + ".", failIfNotSet, true,
+                    autoConfiguredProperties);
         }
     }
 

@@ -37,6 +37,6 @@ public class CamelContextStartupFailureEvent extends AbstractContextEvent
 
     @Override
     public String toString() {
-        return "Failed to start Camel: " + getContext().getName() + " due to " + cause.getMessage();
+        return "CamelContext startup failure: " + getContext().getName() + " due to " + cause.getMessage();
     }
 }

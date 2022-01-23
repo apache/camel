@@ -40,6 +40,7 @@
         <module>dummy-component</module>
         <!-- catalog -->
         <module>camel-catalog</module>
+        <module>camel-catalog-console</module>
         <module>camel-catalog-lucene</module>
         <module>camel-catalog-maven</module>
         <!-- tooling that depends on catalog -->

@@ -36,6 +36,6 @@ public class CamelContextResumeFailureEvent extends AbstractContextEvent impleme
 
     @Override
     public String toString() {
-        return "Failed to resume Camel: " + getContext().getName() + " due to " + cause.getMessage();
+        return "Failed to resume CamelContext: " + getContext().getName() + " due to " + cause.getMessage();
     }
 }

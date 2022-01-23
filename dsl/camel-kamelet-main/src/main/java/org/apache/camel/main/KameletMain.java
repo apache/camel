@@ -167,6 +167,17 @@ public class KameletMain extends MainCommandLineSupport {
         if (port != null) {
             VertxHttpServer.registerServer(answer, Integer.parseInt(port.toString()));
         }
+        boolean console = "true".equals(getInitialProperties().get("camel.jbang.console"));
+        if (console && port == null) {
+            // use default port 8080 if console is enabled
+            VertxHttpServer.registerServer(answer, 8080);
+        }
+        if (console) {
+            // turn on developer console
+            configure().withDevConsoleEnabled(true);
+            VertxHttpServer.registerConsole(answer);
+        }
+        configure().withLoadHealthChecks(true);
 
         // need to setup jfr early
         Object jfr = getInitialProperties().get("camel.jbang.jfr");

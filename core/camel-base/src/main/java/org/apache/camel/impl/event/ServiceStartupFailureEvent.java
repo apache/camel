@@ -51,6 +51,6 @@ public class ServiceStartupFailureEvent extends EventObject implements CamelEven
 
     @Override
     public String toString() {
-        return "Failure to start service: " + service + " due to " + cause.getMessage();
+        return "Service startup failure: " + service + " due to " + cause.getMessage();
     }
 }

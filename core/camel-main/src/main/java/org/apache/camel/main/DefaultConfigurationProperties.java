@@ -53,6 +53,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private int consumerTemplateCacheSize = 1000;
     private boolean loadTypeConverters;
     private boolean loadHealthChecks;
+    private boolean devConsoleEnabled;
     private int logDebugMaxChars;
     private boolean streamCachingEnabled;
     private String streamCachingSpoolDirectory;
@@ -377,6 +378,19 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setLoadHealthChecks(boolean loadHealthChecks) {
         this.loadHealthChecks = loadHealthChecks;
+    }
+
+    public boolean isDevConsoleEnabled() {
+        return devConsoleEnabled;
+    }
+
+    /**
+     * Whether to enable developer console (requires camel-console on classpath).
+     *
+     * The developer console is only for assisting during development. This is NOT for production usage.
+     */
+    public void setDevConsoleEnabled(boolean devConsoleEnabled) {
+        this.devConsoleEnabled = devConsoleEnabled;
     }
 
     public int getLogDebugMaxChars() {
@@ -1612,6 +1626,16 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withLoadHealthChecks(boolean loadHealthChecks) {
         this.loadHealthChecks = loadHealthChecks;
+        return (T) this;
+    }
+
+    /**
+     * Whether to enable developer console (requires camel-console on classpath).
+     *
+     * The developer console is only for assisting during development. This is NOT for production usage.
+     */
+    public T withDevConsoleEnabled(boolean devConsoleEnabled) {
+        this.devConsoleEnabled = devConsoleEnabled;
         return (T) this;
     }
 

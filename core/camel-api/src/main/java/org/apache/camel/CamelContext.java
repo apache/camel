@@ -1204,6 +1204,20 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     void setSourceLocationEnabled(Boolean sourceLocationEnabled);
 
     /**
+     * Whether to enable developer console (requires camel-console on classpath).
+     *
+     * The developer console is only for assisting during development. This is NOT for production usage.
+     */
+    Boolean isDevConsole();
+
+    /**
+     * Whether to enable developer console (requires camel-console on classpath)
+     *
+     * The developer console is only for assisting during development. This is NOT for production usage.
+     */
+    void setDevConsole(Boolean loadDevConsoles);
+
+    /**
      * Whether or not type converter statistics is enabled.
      * <p/>
      * By default the type converter utilization statistics is disabled. <b>Notice:</b> If enabled then there is a
