@@ -27,6 +27,8 @@ import org.apache.camel.spi.UriPath;
 
 import static org.apache.camel.component.dynamicrouter.DynamicRouterConstants.ACTION_GROUP;
 import static org.apache.camel.component.dynamicrouter.DynamicRouterConstants.CHANNEL_GROUP;
+import static org.apache.camel.component.dynamicrouter.DynamicRouterConstants.MODE_ALL_MATCH;
+import static org.apache.camel.component.dynamicrouter.DynamicRouterConstants.MODE_FIRST_MATCH;
 import static org.apache.camel.component.dynamicrouter.DynamicRouterConstants.PATH_PARAMS_PATTERN;
 import static org.apache.camel.component.dynamicrouter.DynamicRouterConstants.SUBSCRIBE_GROUP;
 
@@ -106,6 +108,16 @@ public class DynamicRouterConfiguration {
      */
     @UriParam(label = "control", defaultValue = "simple", description = "The subscription predicate language.")
     private String expressionLanguage = "simple";
+
+    /**
+     * Sets the behavior of the Dynamic Router when routing participants are selected to receive an incoming exchange.
+     * If the mode is "firstMatch", then the exchange is routed only to the first participant that has a matching
+     * predicate. If the mode is "allMatch", then the exchange is routed to all participants that have a matching
+     * predicate.
+     */
+    @UriParam(label = "common", defaultValue = MODE_FIRST_MATCH, enums = MODE_FIRST_MATCH + "," + MODE_ALL_MATCH,
+              description = "Recipient mode: firstMatch or allMatch")
+    private String recipientMode = MODE_FIRST_MATCH;
 
     /**
      * Flag to ensure synchronous processing.
@@ -309,6 +321,30 @@ public class DynamicRouterConfiguration {
      */
     public void setExpressionLanguage(final String expressionLanguage) {
         this.expressionLanguage = expressionLanguage;
+    }
+
+    /**
+     * Gets the behavior of the Dynamic Router when routing participants are selected to receive an incoming exchange.
+     * If the mode is "firstMatch", then the exchange is routed only to the first participant that has a matching
+     * predicate. If the mode is "allMatch", then the exchange is routed to all participants that have a matching
+     * predicate.
+     *
+     * @return the recipient mode
+     */
+    public String getRecipientMode() {
+        return recipientMode;
+    }
+
+    /**
+     * Sets the behavior of the Dynamic Router when routing participants are selected to receive an incoming exchange.
+     * If the mode is "firstMatch", then the exchange is routed only to the first participant that has a matching
+     * predicate. If the mode is "allMatch", then the exchange is routed to all participants that have a matching
+     * predicate.
+     *
+     * @param recipientMode the recipient mode
+     */
+    public void setRecipientMode(final String recipientMode) {
+        this.recipientMode = recipientMode;
     }
 
     /**

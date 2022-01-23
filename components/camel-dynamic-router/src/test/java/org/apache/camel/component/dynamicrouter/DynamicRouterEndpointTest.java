@@ -21,10 +21,12 @@ import org.apache.camel.component.dynamicrouter.support.DynamicRouterTestSupport
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.component.dynamicrouter.DynamicRouterConstants.CONTROL_CHANNEL_NAME;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
 
 class DynamicRouterEndpointTest extends DynamicRouterTestSupport {
 
@@ -48,10 +50,12 @@ class DynamicRouterEndpointTest extends DynamicRouterTestSupport {
     }
 
     @Test
-    void testCreateControlChannelEndpointWithError() {
+    void testInitControlChannelEndpointWithError() {
+        when(configuration.getChannel()).thenReturn(CONTROL_CHANNEL_NAME);
+        DynamicRouterEndpoint controlEndpoint = new DynamicRouterEndpoint(
+                BASE_URI, component, configuration, () -> controlChannelProcessorFactory, () -> controlProducerFactory);
         doThrow(new RuntimeException()).when(component)
                 .setControlChannelProcessor(any(DynamicRouterControlChannelProcessor.class));
-        assertThrows(IllegalStateException.class, () -> new DynamicRouterEndpoint(
-                BASE_URI, component, configuration, () -> controlChannelProcessorFactory, () -> controlProducerFactory));
+        assertThrows(IllegalStateException.class, controlEndpoint::doInit);
     }
 }

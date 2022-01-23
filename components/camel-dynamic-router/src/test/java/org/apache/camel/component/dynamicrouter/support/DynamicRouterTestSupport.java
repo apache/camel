@@ -189,7 +189,7 @@ public class DynamicRouterTestSupport extends CamelTestSupport {
         processorFactory = new DynamicRouterProcessorFactory() {
             @Override
             public DynamicRouterProcessor getInstance(
-                    String id, CamelContext camelContext, boolean warnDroppedMessage,
+                    String id, CamelContext camelContext, String recipientMode, boolean warnDroppedMessage,
                     Supplier<PrioritizedFilterProcessorFactory> filterProcessorFactorySupplier) {
                 return processor;
             }

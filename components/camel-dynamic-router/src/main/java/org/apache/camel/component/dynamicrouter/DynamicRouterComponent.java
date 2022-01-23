@@ -145,8 +145,8 @@ public class DynamicRouterComponent extends DefaultComponent {
             endpoint = endpointFactorySupplier.get()
                     .getInstance(uri, this, configuration, processorFactorySupplier, producerFactorySupplier,
                             filterProcessorFactorySupplier);
-            setProperties(endpoint, parameters);
         }
+        setProperties(endpoint, parameters);
         return endpoint;
     }
 

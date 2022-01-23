@@ -31,6 +31,8 @@ public class DynamicRouterEndpointConfigurer extends PropertyConfigurerSupport i
         case "predicatebean":
         case "predicateBean": target.getConfiguration().setPredicateBean(property(camelContext, org.apache.camel.Predicate.class, value)); return true;
         case "priority": target.getConfiguration().setPriority(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "recipientmode":
+        case "recipientMode": target.getConfiguration().setRecipientMode(property(camelContext, java.lang.String.class, value)); return true;
         case "subscriptionid":
         case "subscriptionId": target.getConfiguration().setSubscriptionId(property(camelContext, java.lang.String.class, value)); return true;
         case "synchronous": target.getConfiguration().setSynchronous(property(camelContext, boolean.class, value)); return true;
@@ -53,6 +55,8 @@ public class DynamicRouterEndpointConfigurer extends PropertyConfigurerSupport i
         case "predicatebean":
         case "predicateBean": return org.apache.camel.Predicate.class;
         case "priority": return java.lang.Integer.class;
+        case "recipientmode":
+        case "recipientMode": return java.lang.String.class;
         case "subscriptionid":
         case "subscriptionId": return java.lang.String.class;
         case "synchronous": return boolean.class;
@@ -76,6 +80,8 @@ public class DynamicRouterEndpointConfigurer extends PropertyConfigurerSupport i
         case "predicatebean":
         case "predicateBean": return target.getConfiguration().getPredicateBean();
         case "priority": return target.getConfiguration().getPriority();
+        case "recipientmode":
+        case "recipientMode": return target.getConfiguration().getRecipientMode();
         case "subscriptionid":
         case "subscriptionId": return target.getConfiguration().getSubscriptionId();
         case "synchronous": return target.getConfiguration().isSynchronous();

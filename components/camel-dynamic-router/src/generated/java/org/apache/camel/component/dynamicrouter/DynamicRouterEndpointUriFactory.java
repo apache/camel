@@ -21,18 +21,19 @@ public class DynamicRouterEndpointUriFactory extends org.apache.camel.support.co
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(12);
+        Set<String> props = new HashSet<>(13);
+        props.add("recipientMode");
+        props.add("synchronous");
+        props.add("channel");
+        props.add("expressionLanguage");
+        props.add("priority");
         props.add("subscribeChannel");
         props.add("predicate");
         props.add("lazyStartProducer");
         props.add("destinationUri");
-        props.add("synchronous");
         props.add("warnDroppedMessage");
-        props.add("channel");
-        props.add("expressionLanguage");
         props.add("predicateBean");
         props.add("controlAction");
-        props.add("priority");
         props.add("subscriptionId");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();

@@ -56,9 +56,25 @@ public class DynamicRouterEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(DynamicRouterEndpoint.class);
 
     /**
+     * Creates the {@link DynamicRouterProcessor} instance.
+     */
+    private Supplier<DynamicRouterProcessorFactory> processorFactorySupplier = DynamicRouterProcessorFactory::new;
+
+    /**
      * Creates a {@link DynamicRouterProducer} instance.
      */
     private Supplier<DynamicRouterProducerFactory> producerFactorySupplier = DynamicRouterProducerFactory::new;
+
+    /**
+     * Creates the {@link PrioritizedFilterProcessor} instance.
+     */
+    private Supplier<PrioritizedFilterProcessorFactory> filterProcessorFactorySupplier = PrioritizedFilterProcessorFactory::new;
+
+    /**
+     * Creates the {@link DynamicRouterControlChannelProcessor} instance.
+     */
+    private Supplier<DynamicRouterControlChannelProcessorFactory> controlChannelProcessorFactorySupplier
+            = DynamicRouterControlChannelProcessorFactory::new;
 
     /**
      * Creates a {@link DynamicRouterControlProducer} instance.
@@ -91,11 +107,9 @@ public class DynamicRouterEndpoint extends DefaultEndpoint {
                                  final Supplier<PrioritizedFilterProcessorFactory> filterProcessorFactorySupplier) {
         super(uri, component);
         this.configuration = configuration;
+        this.processorFactorySupplier = processorFactorySupplier;
         this.producerFactorySupplier = producerFactorySupplier;
-        final DynamicRouterProcessor processor = processorFactorySupplier.get()
-                .getInstance("dynamicRouterProcessor-" + configuration.getChannel(), getCamelContext(),
-                        configuration.isWarnDroppedMessage(), filterProcessorFactorySupplier);
-        component.addRoutingProcessor(configuration.getChannel(), processor);
+        this.filterProcessorFactorySupplier = filterProcessorFactorySupplier;
         LOG.debug("Created Dynamic Router endpoint URI: {}", uri);
     }
 
@@ -115,22 +129,37 @@ public class DynamicRouterEndpoint extends DefaultEndpoint {
                                  final Supplier<DynamicRouterControlProducerFactory> controlProducerFactorySupplier) {
         super(uri, component);
         this.configuration = configuration;
+        this.controlChannelProcessorFactorySupplier = processorFactorySupplier;
         this.controlProducerFactorySupplier = controlProducerFactorySupplier;
-        final DynamicRouterControlChannelProcessor processor = processorFactorySupplier.get()
-                .getInstance(component);
-        processor.setConfiguration(configuration);
-        try {
-            // There can be multiple control actions, but we do not want to
-            // create another consumer on the control channel, so check to
-            // see if the consumer has already been created, and skip the
-            // creation of another consumer if one already exists
-            if (component.getControlChannelProcessor() == null) {
-                component.setControlChannelProcessor(processor);
-            }
-        } catch (Exception e) {
-            throw new IllegalStateException("Could not create Dynamic Router endpoint", e);
-        }
         LOG.debug("Created Dynamic Router Control Channel endpoint URI: {}", uri);
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+        DynamicRouterComponent component = getDynamicRouterComponent();
+        if (CONTROL_CHANNEL_NAME.equals(configuration.getChannel())) {
+            final DynamicRouterControlChannelProcessor processor = controlChannelProcessorFactorySupplier.get()
+                    .getInstance(component);
+            processor.setConfiguration(configuration);
+            try {
+                // There can be multiple control actions, but we do not want to
+                // create another consumer on the control channel, so check to
+                // see if the consumer has already been created, and skip the
+                // creation of another consumer if one already exists
+                if (component.getControlChannelProcessor() == null) {
+                    component.setControlChannelProcessor(processor);
+                }
+            } catch (Exception e) {
+                throw new IllegalStateException("Could not create Dynamic Router endpoint", e);
+            }
+        } else {
+            final DynamicRouterProcessor processor = processorFactorySupplier.get()
+                    .getInstance("dynamicRouterProcessor-" + configuration.getChannel(), getCamelContext(),
+                            configuration.getRecipientMode(), configuration.isWarnDroppedMessage(),
+                            filterProcessorFactorySupplier);
+            component.addRoutingProcessor(configuration.getChannel(), processor);
+        }
     }
 
     /**

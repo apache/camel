@@ -49,6 +49,16 @@ public abstract class DynamicRouterConstants {
     public static final String TITLE = "Dynamic Router";
 
     /**
+     * The mode for sending an exchange to recipients: send only to the first match.
+     */
+    public static final String MODE_FIRST_MATCH = "firstMatch";
+
+    /**
+     * The mode for sending an exchange to recipients: send to all matching.
+     */
+    public static final String MODE_ALL_MATCH = "allMatch";
+
+    /**
      * The syntax, for the auto-generated documentation.
      */
     public static final String SYNTAX = COMPONENT_SCHEME + ":channel";
