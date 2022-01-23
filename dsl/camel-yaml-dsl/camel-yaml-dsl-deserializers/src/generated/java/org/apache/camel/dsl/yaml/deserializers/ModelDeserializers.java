@@ -17280,7 +17280,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "description", type = "string"),
                     @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
                     @YamlProperty(name = "id", type = "string"),
-                    @YamlProperty(name = "inherit-error-handler", type = "boolean")
+                    @YamlProperty(name = "inherit-error-handler", type = "boolean"),
+                    @YamlProperty(name = "predicate-exception-factory", type = "string")
             }
     )
     public static class ValidateDefinitionDeserializer extends YamlDeserializerBase<ValidateDefinition> {
@@ -17305,6 +17306,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "inherit-error-handler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
+                    break;
+                }
+                case "predicate-exception-factory": {
+                    String val = asText(node);
+                    target.setPredicateExceptionFactory(val);
                     break;
                 }
                 case "id": {

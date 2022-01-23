@@ -3348,6 +3348,9 @@
           },
           "inherit-error-handler" : {
             "type" : "boolean"
+          },
+          "predicate-exception-factory" : {
+            "type" : "string"
           }
         }
       },

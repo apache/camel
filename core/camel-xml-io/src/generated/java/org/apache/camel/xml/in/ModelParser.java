@@ -1474,8 +1474,13 @@ public class ModelParser extends BaseParser {
         }, noValueHandler());
     }
     protected ValidateDefinition doParseValidateDefinition() throws IOException, XmlPullParserException {
-        return doParse(new ValidateDefinition(),
-            processorDefinitionAttributeHandler(), expressionNodeElementHandler(), noValueHandler());
+        return doParse(new ValidateDefinition(), (def, key, val) -> {
+            if ("predicateExceptionFactory".equals(key)) {
+                def.setPredicateExceptionFactory(val);
+                return true;
+            }
+            return processorDefinitionAttributeHandler().accept(def, key, val);
+        }, expressionNodeElementHandler(), noValueHandler());
     }
     protected WireTapDefinition doParseWireTapDefinition() throws IOException, XmlPullParserException {
         return doParse(new WireTapDefinition(), (def, key, val) -> {
