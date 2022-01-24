@@ -26,6 +26,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 
 import static org.apache.camel.component.google.sheets.server.GoogleSheetsApiTestServerAssert.assertThatGoogleApi;
 import static org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamConstants.MAJOR_DIMENSION;
@@ -36,6 +37,8 @@ import static org.apache.camel.component.google.sheets.stream.GoogleSheetsStream
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@EnabledIf(value = "org.apache.camel.component.google.sheets.AbstractGoogleSheetsTestSupport#hasCredentials",
+           disabledReason = "Google Sheets credentials were not provided")
 public class SheetsStreamConsumerIntegrationTest extends AbstractGoogleSheetsStreamTestSupport {
 
     private String range = TEST_SHEET + "!A1:B2";

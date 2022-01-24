@@ -43,8 +43,11 @@ public class GoogleSheetsStreamComponentConfigurer extends PropertyConfigurerSup
         case "clientsecret":
         case "clientSecret": getOrCreateConfiguration(target).setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamConfiguration.class, value)); return true;
+        case "delegate": getOrCreateConfiguration(target).setDelegate(property(camelContext, java.lang.String.class, value)); return true;
         case "includegriddata":
         case "includeGridData": getOrCreateConfiguration(target).setIncludeGridData(property(camelContext, boolean.class, value)); return true;
+        case "keyresource":
+        case "keyResource": getOrCreateConfiguration(target).setKeyResource(property(camelContext, java.lang.String.class, value)); return true;
         case "majordimension":
         case "majorDimension": getOrCreateConfiguration(target).setMajorDimension(property(camelContext, java.lang.String.class, value)); return true;
         case "maxresults":
@@ -79,8 +82,11 @@ public class GoogleSheetsStreamComponentConfigurer extends PropertyConfigurerSup
         case "clientsecret":
         case "clientSecret": return java.lang.String.class;
         case "configuration": return org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamConfiguration.class;
+        case "delegate": return java.lang.String.class;
         case "includegriddata":
         case "includeGridData": return boolean.class;
+        case "keyresource":
+        case "keyResource": return java.lang.String.class;
         case "majordimension":
         case "majorDimension": return java.lang.String.class;
         case "maxresults":
@@ -116,8 +122,11 @@ public class GoogleSheetsStreamComponentConfigurer extends PropertyConfigurerSup
         case "clientsecret":
         case "clientSecret": return getOrCreateConfiguration(target).getClientSecret();
         case "configuration": return target.getConfiguration();
+        case "delegate": return getOrCreateConfiguration(target).getDelegate();
         case "includegriddata":
         case "includeGridData": return getOrCreateConfiguration(target).isIncludeGridData();
+        case "keyresource":
+        case "keyResource": return getOrCreateConfiguration(target).getKeyResource();
         case "majordimension":
         case "majorDimension": return getOrCreateConfiguration(target).getMajorDimension();
         case "maxresults":

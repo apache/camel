@@ -29,7 +29,7 @@ public class GoogleMailConfigurationConfigurer extends org.apache.camel.support.
         map.put("KeyResource", java.lang.String.class);
         map.put("MethodName", java.lang.String.class);
         map.put("RefreshToken", java.lang.String.class);
-        map.put("Scopes", java.util.List.class);
+        map.put("Scopes", java.util.Collection.class);
         ALL_OPTIONS = map;
     }
 
@@ -56,7 +56,7 @@ public class GoogleMailConfigurationConfigurer extends org.apache.camel.support.
         case "refreshtoken":
         case "RefreshToken": target.setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
         case "scopes":
-        case "Scopes": target.setScopes(property(camelContext, java.util.List.class, value)); return true;
+        case "Scopes": target.setScopes(property(camelContext, java.util.Collection.class, value)); return true;
         default: return false;
         }
     }
@@ -88,7 +88,7 @@ public class GoogleMailConfigurationConfigurer extends org.apache.camel.support.
         case "refreshtoken":
         case "RefreshToken": return java.lang.String.class;
         case "scopes":
-        case "Scopes": return java.util.List.class;
+        case "Scopes": return java.util.Collection.class;
         default: return null;
         }
     }

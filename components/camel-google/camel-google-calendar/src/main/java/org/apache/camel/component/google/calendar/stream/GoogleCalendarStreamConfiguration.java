@@ -66,6 +66,11 @@ public class GoogleCalendarStreamConfiguration implements Cloneable {
     private boolean considerLastUpdate;
     @UriParam
     private boolean syncFlow;
+    /* Service account */
+    @UriParam(label = "security")
+    private String keyResource;
+    @UriParam
+    private String delegate;
 
     public String getClientId() {
         return clientId;
@@ -245,6 +250,30 @@ public class GoogleCalendarStreamConfiguration implements Cloneable {
      */
     public void setConsiderLastUpdate(boolean considerLastUpdate) {
         this.considerLastUpdate = considerLastUpdate;
+    }
+
+    public String getKeyResource() {
+        return keyResource;
+    }
+
+    /**
+     * Sets "*.json" file with credentials for Service account
+     * 
+     * @param keyResource String file, classpath, or http url
+     */
+    public void setKeyResource(String keyResource) {
+        this.keyResource = keyResource;
+    }
+
+    public String getDelegate() {
+        return delegate;
+    }
+
+    /**
+     * Delegate for wide-domain service account
+     */
+    public void setDelegate(String delegate) {
+        this.delegate = delegate;
     }
 
     // *************************************************

@@ -26,6 +26,7 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.drive.Drive;
+import org.apache.camel.CamelContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,5 +70,11 @@ public class InteractiveGoogleDriveClientFactory implements GoogleDriveClientFac
                         .build();
         // authorize
         return new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("user");
+    }
+
+    @Override
+    public Drive makeClient(
+            CamelContext camelContext, String keyResource, Collection<String> scopes, String applicationName, String delegate) {
+        throw new IllegalArgumentException("Not implemented");
     }
 }

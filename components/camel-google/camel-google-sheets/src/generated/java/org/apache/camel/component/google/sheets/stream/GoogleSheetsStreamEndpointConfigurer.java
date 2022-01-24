@@ -38,6 +38,7 @@ public class GoogleSheetsStreamEndpointConfigurer extends PropertyConfigurerSupp
         case "clientsecret":
         case "clientSecret": target.getConfiguration().setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
+        case "delegate": target.getConfiguration().setDelegate(property(camelContext, java.lang.String.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
@@ -47,6 +48,8 @@ public class GoogleSheetsStreamEndpointConfigurer extends PropertyConfigurerSupp
         case "includeGridData": target.getConfiguration().setIncludeGridData(property(camelContext, boolean.class, value)); return true;
         case "initialdelay":
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
+        case "keyresource":
+        case "keyResource": target.getConfiguration().setKeyResource(property(camelContext, java.lang.String.class, value)); return true;
         case "majordimension":
         case "majorDimension": target.getConfiguration().setMajorDimension(property(camelContext, java.lang.String.class, value)); return true;
         case "maxresults":
@@ -102,6 +105,7 @@ public class GoogleSheetsStreamEndpointConfigurer extends PropertyConfigurerSupp
         case "clientsecret":
         case "clientSecret": return java.lang.String.class;
         case "delay": return long.class;
+        case "delegate": return java.lang.String.class;
         case "exceptionhandler":
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
@@ -111,6 +115,8 @@ public class GoogleSheetsStreamEndpointConfigurer extends PropertyConfigurerSupp
         case "includeGridData": return boolean.class;
         case "initialdelay":
         case "initialDelay": return long.class;
+        case "keyresource":
+        case "keyResource": return java.lang.String.class;
         case "majordimension":
         case "majorDimension": return java.lang.String.class;
         case "maxresults":
@@ -167,6 +173,7 @@ public class GoogleSheetsStreamEndpointConfigurer extends PropertyConfigurerSupp
         case "clientsecret":
         case "clientSecret": return target.getConfiguration().getClientSecret();
         case "delay": return target.getDelay();
+        case "delegate": return target.getConfiguration().getDelegate();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
@@ -176,6 +183,8 @@ public class GoogleSheetsStreamEndpointConfigurer extends PropertyConfigurerSupp
         case "includeGridData": return target.getConfiguration().isIncludeGridData();
         case "initialdelay":
         case "initialDelay": return target.getInitialDelay();
+        case "keyresource":
+        case "keyResource": return target.getConfiguration().getKeyResource();
         case "majordimension":
         case "majorDimension": return target.getConfiguration().getMajorDimension();
         case "maxresults":

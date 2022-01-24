@@ -21,6 +21,7 @@ import java.util.Collection;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.drive.Drive;
+import org.apache.camel.CamelContext;
 
 public class MyClientFactory implements GoogleDriveClientFactory {
 
@@ -32,5 +33,11 @@ public class MyClientFactory implements GoogleDriveClientFactory {
             String clientId, String clientSecret, Collection<String> scopes, String applicationName, String refreshToken,
             String accessToken) {
         return new Drive(new NetHttpTransport(), new JacksonFactory(), null);
+    }
+
+    @Override
+    public Drive makeClient(
+            CamelContext camelContext, String keyResource, Collection<String> scopes, String applicationName, String delegate) {
+        throw new IllegalArgumentException("Not implemented");
     }
 }

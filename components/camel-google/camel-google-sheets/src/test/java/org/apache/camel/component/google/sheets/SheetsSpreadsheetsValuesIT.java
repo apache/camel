@@ -35,6 +35,7 @@ import org.apache.camel.component.google.sheets.internal.GoogleSheetsConstants;
 import org.apache.camel.component.google.sheets.internal.SheetsSpreadsheetsValuesApiMethod;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +47,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Test class for {@link com.google.api.services.sheets.v4.Sheets.Spreadsheets.Values} APIs.
  */
+@EnabledIf(value = "org.apache.camel.component.google.sheets.AbstractGoogleSheetsTestSupport#hasCredentials",
+           disabledReason = "Google Sheets credentials were not provided")
 public class SheetsSpreadsheetsValuesIT extends AbstractGoogleSheetsTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(SheetsSpreadsheetsValuesIT.class);

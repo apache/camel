@@ -26,7 +26,9 @@ public class DriveParentsEndpointConfigurationConfigurer extends org.apache.came
         map.put("ClientId", java.lang.String.class);
         map.put("ClientSecret", java.lang.String.class);
         map.put("Content", com.google.api.services.drive.model.ParentReference.class);
+        map.put("Delegate", java.lang.String.class);
         map.put("FileId", java.lang.String.class);
+        map.put("KeyResource", java.lang.String.class);
         map.put("MethodName", java.lang.String.class);
         map.put("ParentId", java.lang.String.class);
         map.put("RefreshToken", java.lang.String.class);
@@ -50,8 +52,12 @@ public class DriveParentsEndpointConfigurationConfigurer extends org.apache.came
         case "ClientSecret": target.setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
         case "content":
         case "Content": target.setContent(property(camelContext, com.google.api.services.drive.model.ParentReference.class, value)); return true;
+        case "delegate":
+        case "Delegate": target.setDelegate(property(camelContext, java.lang.String.class, value)); return true;
         case "fileid":
         case "FileId": target.setFileId(property(camelContext, java.lang.String.class, value)); return true;
+        case "keyresource":
+        case "KeyResource": target.setKeyResource(property(camelContext, java.lang.String.class, value)); return true;
         case "methodname":
         case "MethodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
         case "parentid":
@@ -84,8 +90,12 @@ public class DriveParentsEndpointConfigurationConfigurer extends org.apache.came
         case "ClientSecret": return java.lang.String.class;
         case "content":
         case "Content": return com.google.api.services.drive.model.ParentReference.class;
+        case "delegate":
+        case "Delegate": return java.lang.String.class;
         case "fileid":
         case "FileId": return java.lang.String.class;
+        case "keyresource":
+        case "KeyResource": return java.lang.String.class;
         case "methodname":
         case "MethodName": return java.lang.String.class;
         case "parentid":
@@ -114,8 +124,12 @@ public class DriveParentsEndpointConfigurationConfigurer extends org.apache.came
         case "ClientSecret": return target.getClientSecret();
         case "content":
         case "Content": return target.getContent();
+        case "delegate":
+        case "Delegate": return target.getDelegate();
         case "fileid":
         case "FileId": return target.getFileId();
+        case "keyresource":
+        case "KeyResource": return target.getKeyResource();
         case "methodname":
         case "MethodName": return target.getMethodName();
         case "parentid":

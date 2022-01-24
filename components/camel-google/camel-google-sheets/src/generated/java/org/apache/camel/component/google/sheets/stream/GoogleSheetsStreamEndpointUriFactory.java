@@ -21,11 +21,12 @@ public class GoogleSheetsStreamEndpointUriFactory extends org.apache.camel.suppo
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(32);
+        Set<String> props = new HashSet<>(34);
         props.add("backoffMultiplier");
         props.add("majorDimension");
         props.add("range");
         props.add("initialDelay");
+        props.add("delegate");
         props.add("scheduler");
         props.add("bridgeErrorHandler");
         props.add("useFixedDelay");
@@ -40,6 +41,7 @@ public class GoogleSheetsStreamEndpointUriFactory extends org.apache.camel.suppo
         props.add("repeatCount");
         props.add("timeUnit");
         props.add("clientId");
+        props.add("keyResource");
         props.add("sendEmptyMessageWhenIdle");
         props.add("schedulerProperties");
         props.add("splitResults");

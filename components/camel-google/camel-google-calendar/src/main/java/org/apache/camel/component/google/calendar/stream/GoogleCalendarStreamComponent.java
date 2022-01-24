@@ -47,13 +47,19 @@ public class GoogleCalendarStreamComponent extends DefaultComponent {
         this.configuration = new GoogleCalendarStreamConfiguration();
     }
 
-    public Calendar getClient(GoogleCalendarStreamConfiguration endpointConfiguration) {
+    public Calendar getClient(GoogleCalendarStreamConfiguration config) {
         if (client == null) {
-            client = getClientFactory().makeClient(endpointConfiguration.getClientId(),
-                    endpointConfiguration.getClientSecret(), endpointConfiguration.getScopes(),
-                    endpointConfiguration.getApplicationName(), endpointConfiguration.getRefreshToken(),
-                    endpointConfiguration.getAccessToken(), endpointConfiguration.getEmailAddress(),
-                    endpointConfiguration.getP12FileName(), endpointConfiguration.getUser());
+            if (config.getClientId() != null && config.getClientSecret() != null) {
+                client = getClientFactory().makeClient(config.getClientId(), config.getClientSecret(), config.getScopes(),
+                        config.getApplicationName(), config.getRefreshToken(),
+                        config.getAccessToken(), config.getEmailAddress(), config.getP12FileName(), config.getUser());
+            } else if (config.getKeyResource() != null) {
+                client = getClientFactory().makeClient(getCamelContext(), config.getKeyResource(), config.getScopes(),
+                        config.getApplicationName(), config.getDelegate());
+            } else {
+                throw new IllegalArgumentException(
+                        "(clientId and clientSecret) or keyResource are required to create Gmail client");
+            }
         }
         return client;
     }
