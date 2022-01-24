@@ -200,8 +200,7 @@ public class SharedCamelInternalProcessor implements SharedInternalProcessor {
         } else {
             final UnitOfWork uow = exchange.getUnitOfWork();
 
-            // do uow before processing and if a value is returned the the uow wants to be processed after
-            // was well in the same thread
+            // do uow before processing and if a value is returned then the uow wants to be processed after in the same thread
             AsyncCallback async = callback;
             boolean beforeAndAfter = uow.isBeforeAfterProcess();
             if (beforeAndAfter) {
