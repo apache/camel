@@ -384,7 +384,7 @@
                     </executions>
                     <configuration>
                         <reuseForks>true</reuseForks>
-                        <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
+                        <forkedProcessTimeoutInSeconds>${camel.failsafe.forkTimeout}</forkedProcessTimeoutInSeconds>
                         <redirectTestOutputToFile>false</redirectTestOutputToFile>
                         <systemPropertyVariables>
                             <visibleassertions.silence>true</visibleassertions.silence>

@@ -43,6 +43,7 @@
         <camel.surefire.parallel>false</camel.surefire.parallel>
         <camel.surefire.parallel.factor>1</camel.surefire.parallel.factor>
         <camel.surefire.parallel.strategy>dynamic</camel.surefire.parallel.strategy>
+        <camel.failsafe.forkTimeout>600</camel.failsafe.forkTimeout>
         <cxf.xjc.jvmArgs/>
         <trimStackTrace>false</trimStackTrace>
         <checkstyle.failOnViolation>false</checkstyle.failOnViolation>
