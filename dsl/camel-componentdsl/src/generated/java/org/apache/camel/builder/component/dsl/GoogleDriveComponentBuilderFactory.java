@@ -97,6 +97,20 @@ public interface GoogleDriveComponentBuilderFactory {
             return this;
         }
         /**
+         * Delegate for wide-domain service account.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param delegate the value to set
+         * @return the dsl builder
+         */
+        default GoogleDriveComponentBuilder delegate(java.lang.String delegate) {
+            doSetProperty("delegate", delegate);
+            return this;
+        }
+        /**
          * Specifies the level of permissions you want a drive application to
          * have to a user account. See
          * https://developers.google.com/drive/web/scopes for more info.
@@ -230,6 +244,21 @@ public interface GoogleDriveComponentBuilderFactory {
             return this;
         }
         /**
+         * Sets .json file with credentials for Service account.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param keyResource the value to set
+         * @return the dsl builder
+         */
+        default GoogleDriveComponentBuilder keyResource(
+                java.lang.String keyResource) {
+            doSetProperty("keyResource", keyResource);
+            return this;
+        }
+        /**
          * OAuth 2 refresh token. Using this, the Google Calendar component can
          * obtain a new accessToken whenever the current one expires - a
          * necessity if the application is long-lived.
@@ -273,6 +302,7 @@ public interface GoogleDriveComponentBuilderFactory {
             case "applicationName": getOrCreateConfiguration((GoogleDriveComponent) component).setApplicationName((java.lang.String) value); return true;
             case "clientId": getOrCreateConfiguration((GoogleDriveComponent) component).setClientId((java.lang.String) value); return true;
             case "configuration": ((GoogleDriveComponent) component).setConfiguration((org.apache.camel.component.google.drive.GoogleDriveConfiguration) value); return true;
+            case "delegate": getOrCreateConfiguration((GoogleDriveComponent) component).setDelegate((java.lang.String) value); return true;
             case "scopes": getOrCreateConfiguration((GoogleDriveComponent) component).setScopes((java.util.List) value); return true;
             case "bridgeErrorHandler": ((GoogleDriveComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((GoogleDriveComponent) component).setLazyStartProducer((boolean) value); return true;
@@ -280,6 +310,7 @@ public interface GoogleDriveComponentBuilderFactory {
             case "clientFactory": ((GoogleDriveComponent) component).setClientFactory((org.apache.camel.component.google.drive.GoogleDriveClientFactory) value); return true;
             case "accessToken": getOrCreateConfiguration((GoogleDriveComponent) component).setAccessToken((java.lang.String) value); return true;
             case "clientSecret": getOrCreateConfiguration((GoogleDriveComponent) component).setClientSecret((java.lang.String) value); return true;
+            case "keyResource": getOrCreateConfiguration((GoogleDriveComponent) component).setKeyResource((java.lang.String) value); return true;
             case "refreshToken": getOrCreateConfiguration((GoogleDriveComponent) component).setRefreshToken((java.lang.String) value); return true;
             default: return false;
             }

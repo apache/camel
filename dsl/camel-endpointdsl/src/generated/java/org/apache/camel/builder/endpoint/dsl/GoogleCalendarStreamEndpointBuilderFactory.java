@@ -203,6 +203,20 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
             return this;
         }
         /**
+         * Delegate for wide-domain service account.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param delegate the value to set
+         * @return the dsl builder
+         */
+        default GoogleCalendarStreamEndpointBuilder delegate(String delegate) {
+            doSetProperty("delegate", delegate);
+            return this;
+        }
+        /**
          * Max results to be returned.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
@@ -874,6 +888,21 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
         default GoogleCalendarStreamEndpointBuilder emailAddress(
                 String emailAddress) {
             doSetProperty("emailAddress", emailAddress);
+            return this;
+        }
+        /**
+         * Sets .json file with credentials for Service account.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param keyResource the value to set
+         * @return the dsl builder
+         */
+        default GoogleCalendarStreamEndpointBuilder keyResource(
+                String keyResource) {
+            doSetProperty("keyResource", keyResource);
             return this;
         }
         /**
