@@ -1,0 +1,14 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "xml-io-util",
+    "title": "Xml Io Util",
+    "description": "Camel XML IO Utilities",
+    "deprecated": false,
+    "firstVersion": "3.10.0",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-xml-io-util",
+    "version": "3.15.0-SNAPSHOT"
+  }
+}

@@ -32,6 +32,10 @@
     <name>Camel :: Core Catalog</name>
     <description>The Camel Core Catalog</description>
 
+    <properties>
+        <firstVersion>3.1.0</firstVersion>
+    </properties>
+
     <dependencies>
 
         <!-- required dependencies by camel-core-catalog -->

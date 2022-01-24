@@ -31,6 +31,10 @@
     <name>Camel :: XML IO Util</name>
     <description>Camel XML IO Utilities</description>
 
+    <properties>
+        <firstVersion>3.10.0</firstVersion>
+    </properties>
+
     <dependencies>
 
         <dependency>

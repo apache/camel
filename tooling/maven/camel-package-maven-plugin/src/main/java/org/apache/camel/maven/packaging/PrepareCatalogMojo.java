@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -67,7 +68,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
     private static final String[] EXCLUDE_DOC_FILES
             = {
-                    "camel-core-model", "camel-core-xml", "camel-http-common", "camel-http-base", "camel-jetty-common",
+                    "camel-base", "camel-core-model", "camel-core-xml", "camel-http-common", "camel-http-base",
+                    "camel-jetty-common",
                     "camel-debezium-common", "camel-infinispan-common", "camel-vertx-common",
                     "camel-huaweicloud-common" };
 
@@ -143,7 +145,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
     /**
      * The camel-core directory
      */
-    @Parameter(defaultValue = "${project.build.directory}/../../../core/camel-core-engine")
+    @Parameter(defaultValue = "${project.build.directory}/../../../core/")
     protected File coreDir;
 
     /**
@@ -153,22 +155,16 @@ public class PrepareCatalogMojo extends AbstractMojo {
     protected File modelDir;
 
     /**
-     * The camel-base directory
+     * The DSL directory
      */
-    @Parameter(defaultValue = "${project.build.directory}/../../../core/camel-base")
-    protected File baseDir;
+    @Parameter(defaultValue = "${project.build.directory}/../../../dsl/")
+    protected File dslDir;
 
     /**
      * The camel-core-languages directory
      */
     @Parameter(defaultValue = "${project.build.directory}/../../../core/camel-core-languages")
     protected File languagesDir;
-
-    /**
-     * The camel-xml-jaxp directory
-     */
-    @Parameter(defaultValue = "${project.build.directory}/../../../core/camel-xml-jaxp")
-    protected File jaxpDir;
 
     /**
      * The directory where the camel-spring XML models are
@@ -202,7 +198,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
     private Collection<Path> allJsonFiles;
     private Collection<Path> allPropertiesFiles;
-    private Map<Path, BaseModel<?>> allModels;
+    private Map<Path, BaseModel<?>> allModels = new HashMap<>();
 
     private static String asComponentName(Path file) {
         String name = file.getFileName().toString();
@@ -227,9 +223,10 @@ public class PrepareCatalogMojo extends AbstractMojo {
             allJsonFiles = new TreeSet<>();
             allPropertiesFiles = new TreeSet<>();
 
-            Stream.concat(list(componentsDir.toPath()),
-                    Stream.of(coreDir.toPath(), modelDir.toPath(), baseDir.toPath(), languagesDir.toPath(), jaxpDir.toPath(),
-                            springDir.toPath()))
+            Stream<Path> paths
+                    = Stream.of(list(coreDir.toPath()), list(componentsDir.toPath()), list(dslDir.toPath())).flatMap(s -> s);
+            Stream.concat(paths,
+                    Stream.of(languagesDir.toPath(), springDir.toPath()))
                     .filter(dir -> !"target".equals(dir.getFileName().toString()))
                     .flatMap(p -> getComponentPath(p).stream())
                     .filter(dir -> Files.isDirectory(dir.resolve("src")))
@@ -243,7 +240,13 @@ public class PrepareCatalogMojo extends AbstractMojo {
                             allPropertiesFiles.add(p);
                         }
                     });
-            allModels = allJsonFiles.stream().collect(Collectors.toMap(p -> p, JsonMapper::generateModel));
+
+            for (Path p : allJsonFiles) {
+                var m = JsonMapper.generateModel(p);
+                if (m != null) {
+                    allModels.put(p, m);
+                }
+            }
 
             executeModel();
             Set<String> components = executeComponents();
@@ -260,7 +263,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
     }
 
     protected void executeModel() throws Exception {
-        Path coreDir = this.modelDir.toPath();
+        Path modelDir = this.modelDir.toPath();
         Path springDir = this.springDir.toPath();
         Path modelsOutDir = this.modelsOutDir.toPath();
 
@@ -275,7 +278,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
         Map<String, Set<String>> usedLabels = new TreeMap<>();
 
         // find all json files in camel-core and camel-spring
-        Path coreDirTarget = coreDir.resolve("target/classes/org/apache/camel/model");
+        Path coreDirTarget = modelDir.resolve("target/classes/org/apache/camel/model");
         Path springTarget1 = springDir.resolve("target/classes/org/apache/camel/spring");
         Path springTarget2 = springDir.resolve("target/classes/org/apache/camel/core/xml");
         jsonFiles = allJsonFiles.stream()
@@ -560,30 +563,51 @@ public class PrepareCatalogMojo extends AbstractMojo {
         jsonFiles = allJsonFiles.stream().filter(p -> {
             Path m = getModule(p);
             switch (m.getFileName().toString()) {
+                // we want to skip some JARs from core
+                case "camel-api":
+                case "camel-base":
+                case "camel-base-engine":
+                case "camel-core":
+                case "camel-core-catalog":
+                case "camel-core-engine":
+                case "camel-core-languages":
                 case "camel-core-model":
+                case "camel-core-processor":
+                case "camel-core-reifier":
                 case "camel-core-xml":
-                case "camel-box":
-                case "camel-http-base":
-                case "camel-http-common":
-                case "camel-jetty-common":
+                case "camel-management-api":
+                case "camel-support":
+                case "camel-util":
+                case "camel-xml-io":
+                case "camel-xml-io-util":
+                case "camel-xml-jaxb":
+                case "camel-xml-jaxp":
+                // and some from dsl
+                case "camel-dsl-support":
+                case "camel-endpointdsl-support":
+                // and components with middle folders
                 case "camel-as2":
                 case "camel-avro-rpc":
+                case "camel-aws":
+                case "camel-azure":
+                case "camel-box":
+                case "camel-debezium":
+                case "camel-debezium-common":
+                case "camel-fhir":
+                case "camel-google":
+                case "camel-http-base":
+                case "camel-http-common":
+                case "camel-huawei":
+                case "camel-infinispan":
+                case "camel-jetty-common":
+                case "camel-kantive":
+                case "camel-microprofile":
                 case "camel-olingo2":
                 case "camel-olingo4":
-                case "camel-servicenow":
                 case "camel-salesforce":
-                case "camel-fhir":
-                case "camel-debezium-common":
-                case "camel-vertx":
-                case "camel-infinispan":
-                case "camel-azure":
-                case "camel-google":
-                case "camel-microprofile":
-                case "camel-debezium":
+                case "camel-servicenow":
                 case "camel-test":
-                case "camel-aws":
-                case "camel-huawei":
-                case "camel-kantive":
+                case "camel-vertx":
                     return false;
                 default:
                     return true;
@@ -664,14 +688,14 @@ public class PrepareCatalogMojo extends AbstractMojo {
         // lets use sorted set/maps
         Set<Path> adocFiles = new TreeSet<>();
         Set<Path> missingAdocFiles = new TreeSet<>();
-        Set<Path> duplicateAdocFiles = new TreeSet<>();
+        Set<Path> duplicateAdocFiles;
 
         // find all camel maven modules
         Stream.concat(
                 list(componentsDir.toPath())
                         .filter(dir -> !dir.getFileName().startsWith(".") && !"target".equals(dir.getFileName().toString()))
                         .flatMap(p -> getComponentPath(p).stream()),
-                Stream.of(coreDir.toPath(), baseDir.toPath(), languagesDir.toPath(), jaxpDir.toPath()))
+                Stream.of(coreDir.toPath(), languagesDir.toPath()))
                 .forEach(dir -> {
                     List<Path> l = PackageHelper.walk(dir.resolve("src/main/docs"))
                             .filter(f -> f.getFileName().toString().endsWith(".adoc"))

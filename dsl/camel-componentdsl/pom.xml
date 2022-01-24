@@ -32,6 +32,11 @@
     <name>Camel :: Component DSL</name>
     <description>The Camel Component DSL</description>
 
+    <properties>
+        <firstVersion>3.1.0</firstVersion>
+        <title>Java Component DSL</title>
+    </properties>
+
     <dependencies>
 
         <dependency>

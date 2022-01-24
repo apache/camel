@@ -1,12 +1,13 @@
 = Groovy Dsl Component
-//TODO there is no .json file for this doc page, so it is not updated automatically by UpdateReadmeMojo.
-//Header attributes written by hand.
 :doctitle: Groovy Dsl
+:shortname: groovy-dsl
 :artifactid: camel-groovy-dsl
 :description: Camel DSL with Groovy
-:supportlevel: Experimental/Preview
-:since: 3
+:since: 3.9
+:supportlevel: Experimental
 //Manually maintained attributes
 :group: DSL
+
+*Since Camel {since}*
 
 See xref:manual:ROOT:dsl.adoc[DSL]

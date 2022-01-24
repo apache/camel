@@ -33,6 +33,10 @@
     <name>Camel :: Endpoint DSL :: Support</name>
     <description>Camel Endpoint DSL Support</description>
 
+    <properties>
+        <firstVersion>3.15.0</firstVersion>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>

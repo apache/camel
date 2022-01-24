@@ -35,6 +35,7 @@
 
     <properties>
         <firstVersion>3.9.0</firstVersion>
+        <title>Java DSL (runtime compiled)</title>
         <sourcecheckExcludes>
             **/resources/**/My*.java
         </sourcecheckExcludes>

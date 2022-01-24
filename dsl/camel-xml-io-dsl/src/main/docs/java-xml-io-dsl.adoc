@@ -8,4 +8,6 @@
 //Manually maintained attributes
 :group: DSL
 
+*Since Camel {since}*
+
 See xref:manual:ROOT:dsl.adoc[DSL]

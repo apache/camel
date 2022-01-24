@@ -35,6 +35,7 @@
 
     <properties>
         <firstVersion>3.11.0</firstVersion>
+        <supportLevel>Experimental</supportLevel>
     </properties>
 
     <dependencies>

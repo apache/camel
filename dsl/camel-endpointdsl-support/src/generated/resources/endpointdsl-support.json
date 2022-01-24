@@ -1,0 +1,14 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "endpointdsl-support",
+    "title": "Endpointdsl Support",
+    "description": "Camel Endpoint DSL Support",
+    "deprecated": false,
+    "firstVersion": "3.15.0",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-endpointdsl-support",
+    "version": "3.15.0-SNAPSHOT"
+  }
+}

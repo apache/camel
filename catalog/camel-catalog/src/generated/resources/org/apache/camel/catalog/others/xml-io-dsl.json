@@ -1,0 +1,14 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "xml-io-dsl",
+    "title": "XML DSL",
+    "description": "Camel XML DSL with camel-xml-io",
+    "deprecated": false,
+    "firstVersion": "3.9.0",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-xml-io-dsl",
+    "version": "3.15.0-SNAPSHOT"
+  }
+}

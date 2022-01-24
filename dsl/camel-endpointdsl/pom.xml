@@ -33,6 +33,8 @@
     <description>The Camel Endpoint DSL</description>
 
     <properties>
+        <firstVersion>3.0.0</firstVersion>
+        <title>Java Endpoint DSL</title>
         <camel.osgi.import>
             javax.xml.bind*;version="[2.2,3.0)",
             *
