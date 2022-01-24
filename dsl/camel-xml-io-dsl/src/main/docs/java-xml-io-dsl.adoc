@@ -4,6 +4,7 @@
 :doctitle: XML Io Dsl
 :artifactid: camel-xml-io-dsl
 :description: Camel DSL with XML
+:since: 3.9
 :supportlevel: Stable
 //Manually maintained attributes
 :group: DSL

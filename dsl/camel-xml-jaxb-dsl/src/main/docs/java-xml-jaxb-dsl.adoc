@@ -4,6 +4,7 @@
 :doctitle: Jaxb XML Dsl
 :artifactid: camel-xml-jaxb-dsl
 :description: Camel DSL with YAML
+:since: 3.9
 :supportlevel: Stable
 //Manually maintained attributes
 :group: DSL
