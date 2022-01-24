@@ -5,6 +5,8 @@
     "title": "Jbang Main",
     "description": "Camel JBang",
     "deprecated": false,
+    "firstVersion": "3.12.0",
+    "label": "jbang",
     "supportLevel": "Experimental",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jbang-main",

@@ -36,6 +36,7 @@
     <properties>
         <firstVersion>3.10.0</firstVersion>
         <title>DSL Support</title>
+        <label>dsl</label>
     </properties>
 
     <dependencies>

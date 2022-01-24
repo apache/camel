@@ -6,6 +6,7 @@
     "description": "Main to run Kamelet standalone",
     "deprecated": false,
     "firstVersion": "3.11.0",
+    "label": "jbang",
     "supportLevel": "Experimental",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kamelet-main",

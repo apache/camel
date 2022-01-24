@@ -5,6 +5,8 @@
     "title": "Jbang Core",
     "description": "Camel JBang Core",
     "deprecated": false,
+    "firstVersion": "3.12.0",
+    "label": "jbang",
     "supportLevel": "Experimental",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jbang-core",

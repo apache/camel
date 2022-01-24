@@ -35,6 +35,8 @@
 
     <properties>
         <firstVersion>3.15.0</firstVersion>
+        <title>EndpointDSL Support</title>
+        <label>dsl</label>
     </properties>
 
     <dependencies>
