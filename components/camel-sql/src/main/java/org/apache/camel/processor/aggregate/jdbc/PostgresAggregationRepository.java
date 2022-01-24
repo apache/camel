@@ -51,8 +51,10 @@ public class PostgresAggregationRepository extends JdbcAggregationRepository {
      * @param exchange       the aggregated exchange
      * @param repositoryName The name of the table
      */
+    @Override
     protected void insert(
-            final CamelContext camelContext, final String correlationId, final Exchange exchange, String repositoryName)
+            final CamelContext camelContext, final String correlationId, final Exchange exchange, String repositoryName,
+            final Long version, final boolean completed)
             throws Exception {
         // The default totalParameterIndex is 2 for ID and Exchange. Depending on logic this will be increased
         int totalParameterIndex = 2;
@@ -85,7 +87,7 @@ public class PostgresAggregationRepository extends JdbcAggregationRepository {
 
         String sql = queryBuilder.toString();
 
-        int updateCount = insertHelper(camelContext, correlationId, exchange, sql, 1L);
+        int updateCount = insertHelper(camelContext, correlationId, exchange, sql, 1L, completed);
         if (updateCount == 0 && getRepositoryName().equals(repositoryName)) {
             throw new DataIntegrityViolationException("No row was inserted due to data violation");
         }

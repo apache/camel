@@ -747,6 +747,15 @@ class="org.apache.camel.processor.aggregate.jdbc.JdbcAggregationRepository">
 Propagation is specified by constants of `org.springframework.transaction.TransactionDefinition` interface,
 so `propagationBehaviorName` is convenient setter that allows to use names of the constants.
 
+=== Clustering
+In order to work in a clustered configuration correctly, recovery mechanism needs to be dealt separately by members of the cluster : a member may only recover exchanges that it completed itself.
+
+To enable this behaviour, property `recoverByInstance` must be set to true, and `instanceId` property must be defined using a unique identifier (a string) for each member of the cluster.
+
+Besides, completed table must have a `instance_id VARCHAR(255)` column.
+
+N.B. : since each member is the only responsible for the recovery of its completed exchanges, if a member is stopped, its completed exchanges will not be recovered until it is restarted, unless you update completed table to affect them to another member (by changing `instance_id` for those completed exchanges).
+
 === PostgreSQL case
 
 There's special database that may cause problems with optimistic locking used by `JdbcAggregationRepository`.

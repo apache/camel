@@ -34,7 +34,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.OptimisticLockingAggregationRepository;
-import org.apache.camel.spi.OptimisticLockingAggregationRepository.OptimisticLockingException;
 import org.apache.camel.spi.RecoverableAggregationRepository;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -68,6 +67,9 @@ public class JdbcAggregationRepository extends ServiceSupport
     protected static final String ID = "id";
     protected static final String BODY = "body";
 
+    private static final String COMPLETED_SUFFIX = "_completed";
+    private static final String INSTANCE_ID = "instance_id";
+
     // optimistic locking: version identifier needed to avoid the lost update problem
     private static final String VERSION = "version";
     private static final String VERSION_PROPERTY = "CamelOptimisticLockVersion";
@@ -94,6 +96,8 @@ public class JdbcAggregationRepository extends ServiceSupport
     private List<String> headersToStoreAsText;
     private boolean storeBodyAsText;
     private boolean allowSerializedHeaders;
+    private boolean recoveryByInstance;
+    private String instanceId = "DEFAULT";
 
     /**
      * Creates an aggregation repository
@@ -179,7 +183,7 @@ public class JdbcAggregationRepository extends ServiceSupport
                         }
                     } else {
                         LOG.debug("Inserting record with key {}", key);
-                        insert(camelContext, correlationId, exchange, getRepositoryName(), 1L);
+                        insert(camelContext, correlationId, exchange, getRepositoryName(), 1L, false);
                     }
 
                 } catch (Exception e) {
@@ -236,10 +240,12 @@ public class JdbcAggregationRepository extends ServiceSupport
      * @param exchange       Aggregated exchange to insert
      * @param repositoryName Table's name
      * @param version        Version identifier
+     * @param completed      Exchange is completed
      */
     protected void insert(
-            final CamelContext camelContext, final String correlationId, final Exchange exchange, String repositoryName,
-            Long version)
+            final CamelContext camelContext, final String correlationId, final Exchange exchange, final String repositoryName,
+            final Long version,
+            final boolean completed)
             throws Exception {
         // The default totalParameterIndex is 3 for ID, Exchange and version. Depending on logic this will be increased.
         int totalParameterIndex = 3;
@@ -260,7 +266,10 @@ public class JdbcAggregationRepository extends ServiceSupport
                 totalParameterIndex++;
             }
         }
-
+        if (completed && recoveryByInstance) {
+            queryBuilder.append(", ").append(INSTANCE_ID);
+            totalParameterIndex++;
+        }
         queryBuilder.append(") VALUES (");
 
         for (int i = 0; i < totalParameterIndex - 1; i++) {
@@ -270,11 +279,12 @@ public class JdbcAggregationRepository extends ServiceSupport
 
         String sql = queryBuilder.toString();
 
-        insertHelper(camelContext, correlationId, exchange, sql, version);
+        insertHelper(camelContext, correlationId, exchange, sql, version, completed);
     }
 
     protected int insertHelper(
-            final CamelContext camelContext, final String key, final Exchange exchange, String sql, final Long version)
+            final CamelContext camelContext, final String key, final Exchange exchange, final String sql, final Long version,
+            final boolean completed)
             throws Exception {
         final byte[] data = codec.marshallExchange(camelContext, exchange, allowSerializedHeaders);
         Integer insertCount = jdbcTemplate.execute(sql,
@@ -294,8 +304,11 @@ public class JdbcAggregationRepository extends ServiceSupport
                                 ps.setString(++totalParameterIndex, headerValue);
                             }
                         }
-                    }
-                });
+                        if (completed && recoveryByInstance) {
+                            ps.setString(++totalParameterIndex, instanceId);
+                        }
+                 }
+        });
         return insertCount == null ? 0 : insertCount;
     }
 
@@ -384,13 +397,21 @@ public class JdbcAggregationRepository extends ServiceSupport
                 try {
                     LOG.debug("Removing key {}", key);
 
-                    jdbcTemplate.update("DELETE FROM " + getRepositoryName() + " WHERE " + ID + " = ? AND " + VERSION + " = ?",
-                            key, version);
-
-                    insert(camelContext, confirmKey, exchange, getRepositoryNameCompleted(), version);
+                    final int mustBeOne = jdbcTemplate.update(
+                            "DELETE FROM " + getRepositoryName() + " WHERE " + ID + " = ? AND " + VERSION + " = ?", key,
+                            version);
+                    if (mustBeOne != 1) {
+                        LOG.error("problem removing row " + key + " from " + getRepositoryName()
+                                  + " - DELETE statement did not return 1 but " + mustBeOne);
+                    }
+                    insert(camelContext, confirmKey, exchange, getRepositoryNameCompleted(), version, true);
 
                 } catch (Exception e) {
-                    throw new RuntimeException("Error removing key " + key + " from repository " + repositoryName, e);
+                    throw new RuntimeException(
+                            "Error removing key " + key + " from repository " + repositoryName + " and inserting key "
+                                               + confirmKey + " to repository "
+                                               + getRepositoryNameCompleted(),
+                            e);
                 }
             }
         });
@@ -402,9 +423,12 @@ public class JdbcAggregationRepository extends ServiceSupport
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 LOG.debug("Confirming exchangeId {}", exchangeId);
                 final String confirmKey = exchangeId;
-
-                jdbcTemplate.update("DELETE FROM " + getRepositoryNameCompleted() + " WHERE " + ID + " = ?",
-                        confirmKey);
+                final int mustBeOne = jdbcTemplate
+                        .update("DELETE FROM " + getRepositoryNameCompleted() + " WHERE " + ID + " = ?", confirmKey);
+                if (mustBeOne != 1) {
+                    LOG.error("problem removing row " + confirmKey + " from " + getRepositoryNameCompleted()
+                              + " - DELETE statement did not return 1 but " + mustBeOne);
+                }
 
             }
         });
@@ -416,8 +440,22 @@ public class JdbcAggregationRepository extends ServiceSupport
     }
 
     @Override
-    public Set<String> scan(CamelContext camelContext) {
-        return getKeys(getRepositoryNameCompleted());
+    public Set<String> scan(final CamelContext camelContext) {
+        return transactionTemplateReadOnly.execute(new TransactionCallback<LinkedHashSet<String>>() {
+            public LinkedHashSet<String> doInTransaction(final TransactionStatus status) {
+                final List<String> keys = jdbcTemplate
+                        .query("SELECT " + ID + " FROM " + getRepositoryNameCompleted()
+                               + (isRecoveryByInstance() ? " WHERE INSTANCE_ID='" + instanceId + "'" : ""),
+                                new RowMapper<String>() {
+                                    public String mapRow(final ResultSet rs, final int rowNum) throws SQLException {
+                                        final String id = rs.getString(ID);
+                                        LOG.trace("getKey {}", id);
+                                        return id;
+                                    }
+                                });
+                return new LinkedHashSet<>(keys);
+            }
+        });
     }
 
     /**
@@ -448,6 +486,34 @@ public class JdbcAggregationRepository extends ServiceSupport
         Exchange answer = get(key, getRepositoryNameCompleted(), camelContext);
         LOG.debug("Recovering exchangeId {} -> {}", key, answer);
         return answer;
+    }
+
+    /**
+     * Used in clustered environment, this properties indicates if recovery must be done only on completed exchange that
+     * were completed by this instance
+     * 
+     * @return
+     */
+    public boolean isRecoveryByInstance() {
+        return recoveryByInstance;
+    }
+
+    public void setRecoveryByInstance(final boolean recoveryByInstance) {
+        this.recoveryByInstance = recoveryByInstance;
+    }
+
+    /**
+     * Used in clustered environment, this properties must be defined when recoveryByInstance is true, in order to
+     * distinguish which instance completed which exchange.
+     * 
+     * @return
+     */
+    public String getInstanceId() {
+        return instanceId;
+    }
+
+    public void setInstanceId(final String instanceId) {
+        this.instanceId = instanceId;
     }
 
     /**
@@ -613,7 +679,7 @@ public class JdbcAggregationRepository extends ServiceSupport
     }
 
     public String getRepositoryNameCompleted() {
-        return getRepositoryName() + "_completed";
+        return getRepositoryName() + COMPLETED_SUFFIX;
     }
 
     @Override
