@@ -158,12 +158,6 @@ public final class ExchangeHeaders {
 
     public static final HttpString UNIT_OF_WORK_EXHAUSTED = new HttpString("CamelUnitOfWorkExhausted");
 
-    /**
-     * @deprecated UNIT_OF_WORK_PROCESS_SYNC is not in use and will be removed in future Camel release
-     */
-    @Deprecated
-    public static final HttpString UNIT_OF_WORK_PROCESS_SYNC = new HttpString("CamelUnitOfWorkProcessSync");
-
     public static final HttpString XSLT_FILE_NAME = new HttpString("CamelXsltFileName");
     public static final HttpString XSLT_ERROR = new HttpString("CamelXsltError");
     public static final HttpString XSLT_FATAL_ERROR = new HttpString("CamelXsltFatalError");
