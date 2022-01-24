@@ -105,7 +105,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * GMail scopes.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.Collection&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -113,7 +113,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * @return the dsl builder
          */
         default GoogleMailEndpointConsumerBuilder scopes(
-                List<java.lang.String> scopes) {
+                Collection<java.lang.String> scopes) {
             doSetProperty("scopes", scopes);
             return this;
         }
@@ -121,7 +121,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * GMail scopes.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.Collection&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -942,7 +942,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * GMail scopes.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.Collection&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -950,7 +950,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * @return the dsl builder
          */
         default GoogleMailEndpointProducerBuilder scopes(
-                List<java.lang.String> scopes) {
+                Collection<java.lang.String> scopes) {
             doSetProperty("scopes", scopes);
             return this;
         }
@@ -958,7 +958,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * GMail scopes.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.Collection&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -1162,14 +1162,15 @@ public interface GoogleMailEndpointBuilderFactory {
          * GMail scopes.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.Collection&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
          * @param scopes the value to set
          * @return the dsl builder
          */
-        default GoogleMailEndpointBuilder scopes(List<java.lang.String> scopes) {
+        default GoogleMailEndpointBuilder scopes(
+                Collection<java.lang.String> scopes) {
             doSetProperty("scopes", scopes);
             return this;
         }
@@ -1177,7 +1178,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * GMail scopes.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.Collection&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
