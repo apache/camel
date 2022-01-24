@@ -36,6 +36,7 @@
         <firstVersion>3.9.0</firstVersion>
         <label>spring</label>
         <supportLevel>Stable</supportLevel>
+        <title>Spring XML</title>
         <camel.osgi.import>
             javax.xml.bind*;version="[2.2,3.0)",
             *
