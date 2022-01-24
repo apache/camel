@@ -673,15 +673,6 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                 TypeSpecHolder.put(attributes, "node", value);
             });
 
-        //
-        // Workaround for:
-        //     https://issues.apache.org/jira/browse/CAMEL-16490
-        //
-        if (info.name().equals(TO_DYNAMIC_DEFINITION_CLASS)) {
-            yamlTypeAnnotation.addMember("nodes", "$S", "tod");
-            TypeSpecHolder.put(attributes, "node", "tod");
-        }
-
         properties.stream().sorted(Comparator.comparing(a -> a.members.get("name").toString())).forEach(spec -> {
             yamlTypeAnnotation.addMember("properties", "$L", spec);
         });

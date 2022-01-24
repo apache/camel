@@ -472,7 +472,6 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.ToDefinition": return new ModelDeserializers.ToDefinitionDeserializer();
             case "to-d": return new ModelDeserializers.ToDynamicDefinitionDeserializer();
             case "toD": return new ModelDeserializers.ToDynamicDefinitionDeserializer();
-            case "tod": return new ModelDeserializers.ToDynamicDefinitionDeserializer();
             case "org.apache.camel.model.ToDynamicDefinition": return new ModelDeserializers.ToDynamicDefinitionDeserializer();
             case "tokenize": return new ModelDeserializers.TokenizerExpressionDeserializer();
             case "org.apache.camel.model.language.TokenizerExpression": return new ModelDeserializers.TokenizerExpressionDeserializer();

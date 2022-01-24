@@ -16010,8 +16010,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = {
                     "to-d",
-                    "toD",
-                    "tod"
+                    "toD"
             },
             properties = {
                     @YamlProperty(name = "allow-optimised-components", type = "boolean"),
