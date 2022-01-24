@@ -17,13 +17,15 @@
 
 package org.apache.camel.component.couchdb.consumer;
 
+import org.apache.camel.Offset;
 import org.apache.camel.Resumable;
 import org.apache.camel.component.couchdb.CouchDbClientWrapper;
+import org.apache.camel.resume.Offsets;
 
 /**
  * Wraps the resume data for CouchDb
  */
-public class CouchDbResumable implements Resumable<String> {
+public class CouchDbResumable implements Resumable<String, String> {
     private final CouchDbClientWrapper clientWrapper;
     private String offset;
 
@@ -33,13 +35,18 @@ public class CouchDbResumable implements Resumable<String> {
     }
 
     @Override
-    public void setLastOffset(String offset) {
+    public void updateLastOffset(String offset) {
         this.offset = offset;
     }
 
     @Override
-    public String getLastOffset() {
-        return offset;
+    public Offset<String> getLastOffset() {
+        return Offsets.of(offset);
+    }
+
+    @Override
+    public String getAddressable() {
+        return null;
     }
 
     /**

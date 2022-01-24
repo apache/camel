@@ -15,25 +15,22 @@
  * limitations under the License.
  */
 
-package org.apache.camel.component.couchdb.consumer;
-
-import org.apache.camel.component.couchdb.CouchDbClientWrapper;
+package org.apache.camel;
 
 /**
- * A resume strategy that resumes from the last update sequence
+ * An updatable resume strategy
+ *
+ * @param <K> the type of the key, name or object that can be addressed by the given offset
+ * @param <T> the type of the addressable value for the resumable object (for example, a file would use a Long value)
+ * @param <T> a resumable type capable of handling/storing/holding resumable information for the addressable and offset
  */
-public final class LatestUpdateSequenceResumeStrategy implements CouchDbResumeStrategy {
-    private CouchDbResumable resumable;
+public interface UpdatableConsumerResumeStrategy<K, V, T extends Resumable<K, V>> {
 
-    @Override
-    public void setResumable(CouchDbResumable resumable) {
-        this.resumable = resumable;
-    }
-
-    @Override
-    public void resume() {
-        CouchDbClientWrapper clientWrapper = resumable.getClientWrapper();
-
-        resumable.updateLastOffset(clientWrapper.getLatestUpdateSequence());
-    }
+    /**
+     * Updates the last processed offset
+     * 
+     * @param  offset    the offset to update
+     * @throws Exception if unable to update the offset
+     */
+    void updateLastOffset(T offset) throws Exception;
 }

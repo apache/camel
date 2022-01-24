@@ -28,10 +28,17 @@ public final class ResumeStrategyFactory {
      * A NO-OP resume strategy that does nothing (i.e.: no resume)
      */
     private static class NoOpKafkaConsumerResumeStrategy implements KafkaConsumerResumeStrategy {
+
         @SuppressWarnings("unused")
         @Override
-        public void resume(Consumer<?, ?> consumer) {
-            // NO-OP
+        public void setConsumer(Consumer<?, ?> consumer) {
+
+        }
+
+        @SuppressWarnings("unused")
+        @Override
+        public void resume() {
+
         }
     }
 

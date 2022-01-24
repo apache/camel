@@ -15,25 +15,33 @@
  * limitations under the License.
  */
 
-package org.apache.camel.component.couchdb.consumer;
+package org.apache.camel.component.kafka.consumer.support;
 
-import org.apache.camel.component.couchdb.CouchDbClientWrapper;
+import org.apache.camel.Offset;
+import org.apache.camel.Resumable;
+import org.apache.camel.resume.Offsets;
 
-/**
- * A resume strategy that resumes from the last update sequence
- */
-public final class LatestUpdateSequenceResumeStrategy implements CouchDbResumeStrategy {
-    private CouchDbResumable resumable;
+public class KafkaResumable implements Resumable<String, String> {
+    private String partition;
+    private String offset;
 
-    @Override
-    public void setResumable(CouchDbResumable resumable) {
-        this.resumable = resumable;
+    public KafkaResumable(String partition, String offset) {
+        this.partition = partition;
+        this.offset = offset;
     }
 
     @Override
-    public void resume() {
-        CouchDbClientWrapper clientWrapper = resumable.getClientWrapper();
+    public void updateLastOffset(String offset) {
+        this.offset = offset;
+    }
 
-        resumable.updateLastOffset(clientWrapper.getLatestUpdateSequence());
+    @Override
+    public Offset<String> getLastOffset() {
+        return Offsets.of(offset);
+    }
+
+    @Override
+    public String getAddressable() {
+        return partition;
     }
 }

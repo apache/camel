@@ -15,25 +15,10 @@
  * limitations under the License.
  */
 
-package org.apache.camel.component.couchdb.consumer;
+package org.apache.camel.component.file.consumer;
 
-import org.apache.camel.component.couchdb.CouchDbClientWrapper;
+import org.apache.camel.Resumable;
 
-/**
- * A resume strategy that resumes from the last update sequence
- */
-public final class LatestUpdateSequenceResumeStrategy implements CouchDbResumeStrategy {
-    private CouchDbResumable resumable;
+public interface GenericFileResumable<T> extends Resumable<T, Long> {
 
-    @Override
-    public void setResumable(CouchDbResumable resumable) {
-        this.resumable = resumable;
-    }
-
-    @Override
-    public void resume() {
-        CouchDbClientWrapper clientWrapper = resumable.getClientWrapper();
-
-        resumable.updateLastOffset(clientWrapper.getLatestUpdateSequence());
-    }
 }

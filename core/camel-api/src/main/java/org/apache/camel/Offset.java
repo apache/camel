@@ -15,25 +15,20 @@
  * limitations under the License.
  */
 
-package org.apache.camel.component.couchdb.consumer;
-
-import org.apache.camel.component.couchdb.CouchDbClientWrapper;
+package org.apache.camel;
 
 /**
- * A resume strategy that resumes from the last update sequence
+ * Generic offset without a concrete type
+ *
+ * @param <T> the type of the offset
  */
-public final class LatestUpdateSequenceResumeStrategy implements CouchDbResumeStrategy {
-    private CouchDbResumable resumable;
+public interface Offset<T> {
 
-    @Override
-    public void setResumable(CouchDbResumable resumable) {
-        this.resumable = resumable;
-    }
+    /**
+     * Gets the offset value
+     *
+     * @return the offset value
+     */
+    T offset();
 
-    @Override
-    public void resume() {
-        CouchDbClientWrapper clientWrapper = resumable.getClientWrapper();
-
-        resumable.updateLastOffset(clientWrapper.getLatestUpdateSequence());
-    }
 }

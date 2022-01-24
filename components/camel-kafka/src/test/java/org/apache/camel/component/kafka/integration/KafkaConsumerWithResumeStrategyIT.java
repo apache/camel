@@ -24,6 +24,7 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kafka.consumer.support.KafkaConsumerResumeStrategy;
+import org.apache.camel.component.kafka.consumer.support.KafkaResumable;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.junit.jupiter.api.AfterEach;
@@ -53,14 +54,21 @@ public class KafkaConsumerWithResumeStrategyIT extends BaseEmbeddedKafkaTestSupp
         }
 
         @Override
-        public void resume(Consumer<?, ?> consumer) {
-            resumeCalled = true;
-
+        public void setConsumer(Consumer<?, ?> consumer) {
             if (consumer != null) {
                 consumerIsNull = false;
             }
+        }
 
+        @Override
+        public void resume(KafkaResumable resumable) {
+            resumeCalled = true;
             messagesLatch.countDown();
+        }
+
+        @Override
+        public void resume() {
+
         }
 
         public boolean isResumeCalled() {

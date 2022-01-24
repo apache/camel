@@ -18,8 +18,10 @@
 package org.apache.camel.component.kafka.consumer.support;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.apache.camel.component.kafka.KafkaConfiguration;
 import org.apache.camel.component.kafka.consumer.CommitManager;
@@ -53,6 +55,7 @@ public class PartitionAssignmentListener implements ConsumerRebalanceListener {
         this.stopStateSupplier = stopStateSupplier;
 
         this.resumeStrategy = ResumeStrategyFactory.newResumeStrategy(configuration);
+        resumeStrategy.setConsumer(consumer);
     }
 
     @Override
@@ -91,10 +94,14 @@ public class PartitionAssignmentListener implements ConsumerRebalanceListener {
 
     @Override
     public void onPartitionsAssigned(Collection<TopicPartition> partitions) {
+
         if (LOG.isDebugEnabled()) {
             partitions.forEach(p -> LOG.debug("onPartitionsAssigned: {} from {}", threadId, p.topic()));
-        }
 
-        resumeStrategy.resume(consumer);
+        }
+        List<KafkaResumable> resumables = partitions.stream()
+                .map(p -> new KafkaResumable(String.valueOf(p.partition()), p.topic())).collect(Collectors.toList());
+
+        resumables.forEach(r -> resumeStrategy.resume(r));
     }
 }
