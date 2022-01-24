@@ -214,6 +214,24 @@
             "deadLetterHandleNewException" : {
               "type" : "boolean"
             },
+            "deadLetterUri" : {
+              "type" : "string"
+            },
+            "executorServiceRef" : {
+              "type" : "string"
+            },
+            "onExceptionOccurredRef" : {
+              "type" : "string"
+            },
+            "onPrepareFailureRef" : {
+              "type" : "string"
+            },
+            "onRedeliveryRef" : {
+              "type" : "string"
+            },
+            "retryWhileRef" : {
+              "type" : "string"
+            },
             "useOriginalBody" : {
               "type" : "boolean"
             },
@@ -231,6 +249,24 @@
           },
           "deadLetterHandleNewException" : {
             "type" : "boolean"
+          },
+          "deadLetterUri" : {
+            "type" : "string"
+          },
+          "executorServiceRef" : {
+            "type" : "string"
+          },
+          "onExceptionOccurredRef" : {
+            "type" : "string"
+          },
+          "onPrepareFailureRef" : {
+            "type" : "string"
+          },
+          "onRedeliveryRef" : {
+            "type" : "string"
+          },
+          "retryWhileRef" : {
+            "type" : "string"
           },
           "useOriginalBody" : {
             "type" : "boolean"

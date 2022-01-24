@@ -3685,6 +3685,12 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "async-delayed-redelivery", type = "boolean"),
                     @YamlProperty(name = "dead-letter-handle-new-exception", type = "boolean"),
+                    @YamlProperty(name = "dead-letter-uri", type = "string"),
+                    @YamlProperty(name = "executor-service-ref", type = "string"),
+                    @YamlProperty(name = "on-exception-occurred-ref", type = "string"),
+                    @YamlProperty(name = "on-prepare-failure-ref", type = "string"),
+                    @YamlProperty(name = "on-redelivery-ref", type = "string"),
+                    @YamlProperty(name = "retry-while-ref", type = "string"),
                     @YamlProperty(name = "use-original-body", type = "boolean"),
                     @YamlProperty(name = "use-original-message", type = "boolean")
             }
@@ -3772,6 +3778,12 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "async-delayed-redelivery", type = "boolean"),
                     @YamlProperty(name = "dead-letter-handle-new-exception", type = "boolean"),
+                    @YamlProperty(name = "dead-letter-uri", type = "string"),
+                    @YamlProperty(name = "executor-service-ref", type = "string"),
+                    @YamlProperty(name = "on-exception-occurred-ref", type = "string"),
+                    @YamlProperty(name = "on-prepare-failure-ref", type = "string"),
+                    @YamlProperty(name = "on-redelivery-ref", type = "string"),
+                    @YamlProperty(name = "retry-while-ref", type = "string"),
                     @YamlProperty(name = "use-original-body", type = "boolean"),
                     @YamlProperty(name = "use-original-message", type = "boolean")
             }
@@ -4544,7 +4556,10 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             inline = true,
             types = org.apache.camel.builder.ErrorHandlerBuilderRef.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            properties = @YamlProperty(name = "support-transacted", type = "boolean")
+            properties = {
+                    @YamlProperty(name = "ref", type = "string"),
+                    @YamlProperty(name = "support-transacted", type = "boolean")
+            }
     )
     public static class ErrorHandlerBuilderRefDeserializer extends YamlDeserializerBase<ErrorHandlerBuilderRef> {
         public ErrorHandlerBuilderRefDeserializer() {

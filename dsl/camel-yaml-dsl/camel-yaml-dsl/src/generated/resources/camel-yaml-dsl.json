@@ -307,6 +307,24 @@
             "dead-letter-handle-new-exception" : {
               "type" : "boolean"
             },
+            "dead-letter-uri" : {
+              "type" : "string"
+            },
+            "executor-service-ref" : {
+              "type" : "string"
+            },
+            "on-exception-occurred-ref" : {
+              "type" : "string"
+            },
+            "on-prepare-failure-ref" : {
+              "type" : "string"
+            },
+            "on-redelivery-ref" : {
+              "type" : "string"
+            },
+            "retry-while-ref" : {
+              "type" : "string"
+            },
             "use-original-body" : {
               "type" : "boolean"
             },
@@ -324,6 +342,24 @@
           },
           "dead-letter-handle-new-exception" : {
             "type" : "boolean"
+          },
+          "dead-letter-uri" : {
+            "type" : "string"
+          },
+          "executor-service-ref" : {
+            "type" : "string"
+          },
+          "on-exception-occurred-ref" : {
+            "type" : "string"
+          },
+          "on-prepare-failure-ref" : {
+            "type" : "string"
+          },
+          "on-redelivery-ref" : {
+            "type" : "string"
+          },
+          "retry-while-ref" : {
+            "type" : "string"
           },
           "use-original-body" : {
             "type" : "boolean"

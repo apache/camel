@@ -1115,6 +1115,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                     cb.addStatement("String val = asText(node)");
                     cb.addStatement("target.$L(val)", method.name());
                     cb.addStatement("break");
+                    annotations.add(yamlProperty(name, "string"));
                     break;
                 case "java.lang.Class":
                     cb.addStatement("java.lang.Class<?> val = asClass(node)");
