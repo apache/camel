@@ -1,5 +1,5 @@
-= Js Dsl Component
-:doctitle: Js Dsl
+= JavaScript DSL Component
+:doctitle: JavaScript DSL
 :shortname: js-dsl
 :artifactid: camel-js-dsl
 :description: Camel DSL with JavaScript

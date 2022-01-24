@@ -1,5 +1,5 @@
-= Java Joor Dsl Component
-:doctitle: Java Joor Dsl
+= Java DSL (runtime compiled) Component
+:doctitle: Java DSL (runtime compiled)
 :shortname: java-joor-dsl
 :artifactid: camel-java-joor-dsl
 :description: Camel Java DSL with jOOR
