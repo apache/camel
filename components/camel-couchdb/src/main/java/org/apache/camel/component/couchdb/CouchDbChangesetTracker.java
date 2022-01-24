@@ -55,12 +55,13 @@ public class CouchDbChangesetTracker implements Runnable {
         if (sequence == null) {
             CouchDbResumeStrategy resumeStrategy = CouchDdResumeStrategyFactory.newResumeStrategy(this.endpoint);
 
-            resumeStrategy.resume(resumable);
+            resumeStrategy.setResumable(resumable);
+            resumeStrategy.resume();
         }
 
         LOG.debug("Last sequence [{}]", resumable.getLastOffset());
         changes = couchClient.changes().style(endpoint.getStyle()).includeDocs(true)
-                .since(resumable.getLastOffset()).heartBeat(endpoint.getHeartbeat()).continuousChanges();
+                .since(resumable.getLastOffset().offset()).heartBeat(endpoint.getHeartbeat()).continuousChanges();
     }
 
     @Override

@@ -28,13 +28,19 @@ public class SeekPolicyKafkaConsumerResumeStrategy implements KafkaConsumerResum
     private static final Logger LOG = LoggerFactory.getLogger(SeekPolicyKafkaConsumerResumeStrategy.class);
 
     private final String seekPolicy;
+    private Consumer<?, ?> consumer;
 
     public SeekPolicyKafkaConsumerResumeStrategy(String seekPolicy) {
         this.seekPolicy = seekPolicy;
     }
 
     @Override
-    public void resume(final Consumer<?, ?> consumer) {
+    public void setConsumer(Consumer<?, ?> consumer) {
+        this.consumer = consumer;
+    }
+
+    @Override
+    public void resume() {
         if (seekPolicy.equals("beginning")) {
             LOG.debug("Seeking from the beginning of topic");
             consumer.seekToBeginning(consumer.assignment());
@@ -42,5 +48,14 @@ public class SeekPolicyKafkaConsumerResumeStrategy implements KafkaConsumerResum
             LOG.debug("Seeking from the end off the topic");
             consumer.seekToEnd(consumer.assignment());
         }
+    }
+
+    /*
+     * Note: when using the seek policy strategy, we don't use the resumable information
+     * because we use the consumer to set the policy.
+     */
+    @Override
+    public void resume(KafkaResumable resumable) {
+        resume();
     }
 }

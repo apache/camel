@@ -178,7 +178,8 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer {
             resumeStrategy = getEndpoint().getConfiguration().getResumeStrategy();
         }
 
-        resumeStrategy.resume(req);
+        resumeStrategy.setRequestBuilder(req);
+        resumeStrategy.resume();
     }
 
     private Queue<Exchange> createExchanges(List<Record> records) {

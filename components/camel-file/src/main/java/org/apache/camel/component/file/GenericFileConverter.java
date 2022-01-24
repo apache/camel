@@ -194,7 +194,7 @@ public final class GenericFileConverter {
                 reader = IOHelper.toReader(f, ExchangeHelper.getCharsetName(exchange));
             }
 
-            reader.skip(file.getLastOffset());
+            reader.skip(file.getLastOffset().offset());
             return reader;
         }
         return null;
