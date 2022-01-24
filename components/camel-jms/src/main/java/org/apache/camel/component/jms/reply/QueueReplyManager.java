@@ -27,8 +27,11 @@ import javax.jms.Session;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.jms.ConsumerType;
 import org.apache.camel.component.jms.DefaultSpringErrorHandler;
+import org.apache.camel.component.jms.MessageListenerContainerFactory;
 import org.apache.camel.component.jms.ReplyToType;
+import org.apache.camel.component.jms.SimpleJmsMessageListenerContainer;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
 import org.springframework.jms.support.destination.DestinationResolver;
@@ -122,6 +125,113 @@ public class QueueReplyManager extends ReplyManagerSupport {
 
     @Override
     protected AbstractMessageListenerContainer createListenerContainer() throws Exception {
+        if (endpoint.getConfiguration().getReplyToConsumerType() == ConsumerType.Default) {
+            return createDefaultListenerContainer();
+        } else if (endpoint.getConfiguration().getReplyToConsumerType() == ConsumerType.Simple) {
+            return createSimpleListenerContainer();
+        } else {
+            MessageListenerContainerFactory factory = endpoint.getConfiguration().getMessageListenerContainerFactory();
+            if (factory != null) {
+                return factory.createMessageListenerContainer(endpoint);
+            }
+            throw new IllegalArgumentException(
+                    "ReplyToConsumerType.Custom requires that a MessageListenerContainerFactory has been configured");
+        }
+    }
+
+    protected AbstractMessageListenerContainer createSimpleListenerContainer() {
+        SimpleJmsMessageListenerContainer answer;
+
+        ReplyToType type = endpoint.getConfiguration().getReplyToType();
+        if (type == null) {
+            // use shared by default for reply queues
+            type = ReplyToType.Shared;
+        }
+
+        if (ReplyToType.Shared == type) {
+            // shared reply to queues support either a fixed or dynamic JMS message selector
+            String replyToSelectorName = endpoint.getReplyToDestinationSelectorName();
+            if (replyToSelectorName != null) {
+                // create a random selector value we will use for the reply queue
+                // NOSONAR
+                replyToSelectorValue = "ID:" + new BigInteger(24 * 8, new Random()).toString(16);
+                String fixedMessageSelector = replyToSelectorName + "='" + replyToSelectorValue + "'";
+                answer = new SharedQueueSimpleMessageListenerContainer(endpoint, fixedMessageSelector);
+                log.debug("Using shared queue: {} with fixed message selector [{}] as reply listener: {}",
+                        endpoint.getReplyTo(), fixedMessageSelector, answer);
+            } else {
+                // simple message listener must use fixed selector name
+                throw new IllegalArgumentException(
+                        "ReplyToDestinationSelectorName must be configured when using Simple ReplyToConsumerType");
+            }
+        } else if (ReplyToType.Exclusive == type) {
+            answer = new ExclusiveQueueSimpleMessageListenerContainer(endpoint);
+            log.debug("Using exclusive queue: {} as reply listener: {}", endpoint.getReplyTo(), answer);
+        } else {
+            throw new IllegalArgumentException("ReplyToType " + type + " is not supported for reply queues");
+        }
+
+        DestinationResolver resolver = endpoint.getDestinationResolver();
+        if (resolver == null) {
+            resolver = answer.getDestinationResolver();
+        }
+        answer.setDestinationResolver(new DestinationResolverDelegate(resolver));
+        answer.setDestinationName(endpoint.getReplyTo());
+
+        answer.setAutoStartup(true);
+        answer.setMessageListener(this);
+        answer.setPubSubDomain(false);
+        answer.setSubscriptionDurable(false);
+        answer.setConcurrentConsumers(endpoint.getReplyToConcurrentConsumers());
+        answer.setConnectionFactory(endpoint.getConfiguration().getOrCreateConnectionFactory());
+        String clientId = endpoint.getClientId();
+        if (clientId != null) {
+            clientId += ".CamelReplyManager";
+            answer.setClientId(clientId);
+        }
+
+        // we cannot do request-reply over JMS with transaction
+        answer.setSessionTransacted(false);
+
+        // other optional properties
+        if (endpoint.getExceptionListener() != null) {
+            answer.setExceptionListener(endpoint.getExceptionListener());
+        }
+        if (endpoint.getErrorHandler() != null) {
+            answer.setErrorHandler(endpoint.getErrorHandler());
+        } else {
+            answer.setErrorHandler(new DefaultSpringErrorHandler(
+                    endpoint.getCamelContext(), QueueReplyManager.class, endpoint.getErrorHandlerLoggingLevel(),
+                    endpoint.isErrorHandlerLogStackTrace()));
+        }
+        // set task executor
+        if (endpoint.getTaskExecutor() != null) {
+            log.debug("Using custom TaskExecutor: {} on listener container: {}", endpoint.getTaskExecutor(), answer);
+            answer.setTaskExecutor(endpoint.getTaskExecutor());
+        }
+
+        // setup a bean name which is used by Spring JMS as the thread name
+        String name = "QueueReplyManager[" + answer.getDestinationName() + "]";
+        answer.setBeanName(name);
+
+        if (endpoint.getReplyToConcurrentConsumers() > 1) {
+            if (ReplyToType.Shared == type) {
+                // warn if using concurrent consumer with shared reply queue as that may not work properly
+                log.warn(
+                        "Using {} concurrent consumer on {} with shared queue {} may not work properly with all message brokers.",
+                        endpoint.getReplyToConcurrentConsumers(), name,
+                        endpoint.getReplyTo());
+            } else {
+                // log that we are using concurrent consumers
+                log.info("Using {} concurrent consumers on {}",
+                        endpoint.getReplyToConcurrentConsumers(), name);
+            }
+        }
+
+        return answer;
+    }
+
+    protected DefaultMessageListenerContainer createDefaultListenerContainer() throws Exception {
         DefaultMessageListenerContainer answer;
 
         ReplyToType type = endpoint.getConfiguration().getReplyToType();
@@ -139,17 +249,12 @@ public class QueueReplyManager extends ReplyManagerSupport {
                 replyToSelectorValue = "ID:" + new BigInteger(24 * 8, new Random()).toString(16);
                 String fixedMessageSelector = replyToSelectorName + "='" + replyToSelectorValue + "'";
                 answer = new SharedQueueMessageListenerContainer(endpoint, fixedMessageSelector);
-                // must use cache level consumer for fixed message selector
-                answer.setCacheLevel(DefaultMessageListenerContainer.CACHE_CONSUMER);
                 log.debug("Using shared queue: {} with fixed message selector [{}] as reply listener: {}",
                         endpoint.getReplyTo(), fixedMessageSelector, answer);
             } else {
                 // use a dynamic message selector which will select the message we want to receive as reply
                 dynamicMessageSelector = new MessageSelectorCreator(correlation);
                 answer = new SharedQueueMessageListenerContainer(endpoint, dynamicMessageSelector);
-                // must use cache level session for dynamic message selector,
-                // as otherwise the dynamic message selector will not be updated on-the-fly
-                answer.setCacheLevel(DefaultMessageListenerContainer.CACHE_SESSION);
                 log.debug("Using shared queue: {} with dynamic message selector as reply listener: {}", endpoint.getReplyTo(),
                         answer);
             }
@@ -159,8 +264,6 @@ public class QueueReplyManager extends ReplyManagerSupport {
                     endpoint);
         } else if (ReplyToType.Exclusive == type) {
             answer = new ExclusiveQueueMessageListenerContainer(endpoint);
-            // must use cache level consumer for exclusive as there is no message selector
-            answer.setCacheLevel(DefaultMessageListenerContainer.CACHE_CONSUMER);
             log.debug("Using exclusive queue: {} as reply listener: {}", endpoint.getReplyTo(), answer);
         } else {
             throw new IllegalArgumentException("ReplyToType " + type + " is not supported for reply queues");
