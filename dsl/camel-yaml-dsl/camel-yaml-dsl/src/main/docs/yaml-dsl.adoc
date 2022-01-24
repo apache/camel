@@ -1,5 +1,5 @@
-= Yaml Dsl Component
-:doctitle: Yaml Dsl
+= YAML DSL Component
+:doctitle: YAML DSL
 :shortname: yaml-dsl
 :artifactid: camel-yaml-dsl
 :description: Camel DSL with YAML

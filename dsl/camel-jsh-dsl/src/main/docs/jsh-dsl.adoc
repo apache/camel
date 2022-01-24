@@ -1,5 +1,5 @@
-= Jsh Dsl Component
-:doctitle: Jsh Dsl
+= JavaShell DSL Component
+:doctitle: JavaShell DSL
 :shortname: jsh-dsl
 :artifactid: camel-jsh-dsl
 :description: Camel DSL with JavaShell

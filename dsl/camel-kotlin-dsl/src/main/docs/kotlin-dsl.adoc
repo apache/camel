@@ -1,5 +1,5 @@
-= Kotlin Dsl Component
-:doctitle: Kotlin Dsl
+= Kotlin DSL Component
+:doctitle: Kotlin DSL
 :shortname: kotlin-dsl
 :artifactid: camel-kotlin-dsl
 :description: Camel DSL with Kotlin
