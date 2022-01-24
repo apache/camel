@@ -72,6 +72,7 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
     private static final String INTEGRATION_VERSION = "camel.apache.org/v1";
     private static final String BINDING_VERSION = "camel.apache.org/v1";
     private static final String STRIMZI_VERSION = "kafka.strimzi.io/v1";
+    private static final String KNATIVE_VERSION = "messaging.knative.dev/v1";
 
     public YamlRoutesBuilderLoader() {
         super(EXTENSION);
@@ -390,8 +391,11 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
         boolean strimzi
                 = !kamelet && mn != null && anyTupleMatches(mn.getValue(), "apiVersion", v -> v.startsWith(STRIMZI_VERSION))
                         && anyTupleMatches(mn.getValue(), "kind", "KafkaTopic");
+        boolean knative
+                = !kamelet && !strimzi && mn != null
+                        && anyTupleMatches(mn.getValue(), "apiVersion", v -> v.startsWith(KNATIVE_VERSION));
         String uri;
-        if (kamelet || strimzi) {
+        if (kamelet || strimzi || knative) {
             uri = extractTupleValue(mn.getValue(), "name");
         } else {
             uri = extractTupleValue(node.getValue(), "uri");
@@ -409,6 +413,8 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
             return "kamelet:" + uri;
         } else if (strimzi) {
             return "kafka:" + uri;
+        } else if (knative) {
+            return "knative:channel/" + uri;
         } else {
             return uri;
         }
