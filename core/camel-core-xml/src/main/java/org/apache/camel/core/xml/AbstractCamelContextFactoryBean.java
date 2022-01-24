@@ -49,6 +49,8 @@ import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.component.properties.PropertiesLocation;
 import org.apache.camel.component.properties.PropertiesParser;
+import org.apache.camel.console.DevConsole;
+import org.apache.camel.console.DevConsoleRegistry;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.impl.debugger.BacklogTracer;
@@ -407,6 +409,25 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
                 for (HealthCheckRepository repository : repositories) {
                     healthCheckRegistry.register(repository);
                 }
+            }
+        }
+        // Dev console registry
+        DevConsoleRegistry devConsoleRegistry = getBeanForType(DevConsoleRegistry.class);
+        if (devConsoleRegistry != null) {
+            devConsoleRegistry.setCamelContext(getContext());
+            LOG.debug("Using DevConsoleRegistry: {}", devConsoleRegistry);
+            getContext().setExtension(DevConsoleRegistry.class, devConsoleRegistry);
+        } else {
+            // okay attempt to inject this camel context into existing dev console (if any)
+            devConsoleRegistry = DevConsoleRegistry.get(getContext());
+            if (devConsoleRegistry != null) {
+                devConsoleRegistry.setCamelContext(getContext());
+            }
+        }
+        if (devConsoleRegistry != null) {
+            Set<DevConsole> consoles = getContext().getRegistry().findByType(DevConsole.class);
+            for (DevConsole console : consoles) {
+                devConsoleRegistry.register(console);
             }
         }
         // UuidGenerator

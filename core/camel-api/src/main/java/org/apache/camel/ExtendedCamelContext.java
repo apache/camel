@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.catalog.RuntimeCamelCatalog;
+import org.apache.camel.console.DevConsoleResolver;
 import org.apache.camel.health.HealthCheckResolver;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
@@ -353,6 +354,20 @@ public interface ExtendedCamelContext extends CamelContext {
      * @param healthCheckResolver the resolver
      */
     void setHealthCheckResolver(HealthCheckResolver healthCheckResolver);
+
+    /**
+     * Gets the current dev console resolver
+     *
+     * @return the resolver
+     */
+    DevConsoleResolver getDevConsoleResolver();
+
+    /**
+     * Sets a custom dev console resolver
+     *
+     * @param devConsoleResolver the resolver
+     */
+    void setDevConsoleResolver(DevConsoleResolver devConsoleResolver);
 
     /**
      * Returns the package scanning class resolver

@@ -174,7 +174,7 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         return new File(generatedSrcDir, fileName.toString());
     }
 
-    private String getEnumName() throws MojoExecutionException {
+    private String getEnumName() {
         String proxyClassWithCanonicalName = getProxyClassWithCanonicalName(proxyClass);
         String prefix = classPrefix != null ? classPrefix : "";
         return prefix + proxyClassWithCanonicalName.substring(proxyClassWithCanonicalName.lastIndexOf('.') + 1) + "ApiMethod";
@@ -197,7 +197,7 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         return fileName.toString();
     }
 
-    private String getUnitTestName() throws MojoExecutionException {
+    private String getUnitTestName() {
         String proxyClassWithCanonicalName = getProxyClassWithCanonicalName(proxyClass);
         String prefix = classPrefix != null ? classPrefix : "";
         return prefix + proxyClassWithCanonicalName.substring(proxyClassWithCanonicalName.lastIndexOf('.') + 1)
@@ -267,7 +267,7 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         return new File(generatedSrcDir, fileName.toString());
     }
 
-    private String getConfigName() throws MojoExecutionException {
+    private String getConfigName() {
         String proxyClassWithCanonicalName = getProxyClassWithCanonicalName(proxyClass);
         String prefix = classPrefix != null ? classPrefix : "";
         return prefix + proxyClassWithCanonicalName.substring(proxyClassWithCanonicalName.lastIndexOf('.') + 1)

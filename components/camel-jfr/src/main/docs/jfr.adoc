@@ -1,5 +1,5 @@
-= Jfr Component
-:doctitle: Jfr
+= JFR Component
+:doctitle: JFR
 :shortname: jfr
 :artifactid: camel-jfr
 :description: Diagnose Camel applications with Java Flight Recorder

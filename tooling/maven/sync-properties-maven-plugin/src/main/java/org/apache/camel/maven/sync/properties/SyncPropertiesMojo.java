@@ -41,31 +41,31 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 /**
- * Copy the properties in a POM in a different POM for syncing purpose.
+ * Copy the properties from a source POM to a different destination POM for syncing purposes.
  */
 @Mojo(name = "sync-properties", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true)
 public class SyncPropertiesMojo extends AbstractMojo {
 
     /**
-     * The source pom template file.
+     * The source POM file from which the required properties should be copied.
      */
     @Parameter(defaultValue = "${basedir}/../../../parent/pom.xml")
     protected File sourcePom;
 
     /**
-     * The pom file.
+     * The destination POM file to which the required source properties should be copied.
      */
     @Parameter(defaultValue = "${basedir}/../../../camel-dependencies/pom.xml")
     protected File targetPom;
 
     /**
-     * The license header file.
+     * The license header file that should be inserted at the top of the destination POM file.
      */
     @Parameter(defaultValue = "${basedir}/../../etc/apache-header.xml")
     protected File licenseHeader;
 
     /**
-     * The Maven project
+     * The Maven project.
      */
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
     protected MavenProject project;

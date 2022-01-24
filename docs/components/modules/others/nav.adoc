@@ -27,7 +27,7 @@
 ** xref:headersmap.adoc[Headersmap]
 ** xref:hystrix.adoc[Hystrix]
 ** xref:jasypt.adoc[Jasypt]
-** xref:jfr.adoc[Jfr]
+** xref:jfr.adoc[JFR]
 ** xref:jta.adoc[JTA]
 ** xref:knative-api.adoc[Knative Api]
 ** xref:knative-http.adoc[Knative Http]

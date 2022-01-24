@@ -96,6 +96,9 @@ class Run implements Callable<Integer> {
     @Option(names = { "--port" }, description = "Embeds a local HTTP server on this port")
     private int port;
 
+    @Option(names = { "--console" }, description = "Developer console at /dev on local HTTP server (port 8080 by default)")
+    private boolean console;
+
     @Override
     public Integer call() throws Exception {
         if (stopRequested) {
@@ -141,7 +144,6 @@ class Run implements Callable<Integer> {
         main.addInitialProperty("camel.main.sourceLocationEnabled", "true");
         main.addInitialProperty("camel.main.tracing", trace ? "true" : "false");
 
-        // durations
         if (maxMessages > 0) {
             main.addInitialProperty("camel.main.durationMaxMessages", String.valueOf(maxMessages));
         }
@@ -153,6 +155,9 @@ class Run implements Callable<Integer> {
         }
         if (port > 0) {
             main.addInitialProperty("camel.jbang.platform-http.port", String.valueOf(port));
+        }
+        if (console) {
+            main.addInitialProperty("camel.jbang.console", "true");
         }
 
         if (jfr) {

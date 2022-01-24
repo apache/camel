@@ -51,6 +51,6 @@ public class ServiceStopFailureEvent extends EventObject implements CamelEvent.S
 
     @Override
     public String toString() {
-        return "Failure to stop service: " + service + " due to " + cause.getMessage();
+        return "Service stop failure: " + service + " due to " + cause.getMessage();
     }
 }

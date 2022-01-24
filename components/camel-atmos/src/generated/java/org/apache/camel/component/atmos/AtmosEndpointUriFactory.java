@@ -19,6 +19,7 @@ public class AtmosEndpointUriFactory extends org.apache.camel.support.component.
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(14);
         props.add("remotePath");
@@ -40,6 +41,7 @@ public class AtmosEndpointUriFactory extends org.apache.camel.support.component.
         secretProps.add("fullTokenId");
         secretProps.add("secretKey");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
+        MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 
     @Override
@@ -68,6 +70,11 @@ public class AtmosEndpointUriFactory extends org.apache.camel.support.component.
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

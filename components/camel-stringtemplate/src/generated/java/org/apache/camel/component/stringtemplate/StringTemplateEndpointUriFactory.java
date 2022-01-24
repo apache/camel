@@ -19,6 +19,7 @@ public class StringTemplateEndpointUriFactory extends org.apache.camel.support.c
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(7);
         props.add("allowTemplateFromHeader");
@@ -30,6 +31,7 @@ public class StringTemplateEndpointUriFactory extends org.apache.camel.support.c
         props.add("resourceUri");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
+        MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 
     @Override
@@ -57,6 +59,11 @@ public class StringTemplateEndpointUriFactory extends org.apache.camel.support.c
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

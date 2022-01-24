@@ -19,6 +19,7 @@ public class ZendeskEndpointUriFactory extends org.apache.camel.support.componen
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(140);
         props.add("includeArchived");
@@ -168,6 +169,9 @@ public class ZendeskEndpointUriFactory extends org.apache.camel.support.componen
         secretProps.add("token");
         secretProps.add("username");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
+        Set<String> prefixes = new HashSet<>(1);
+        prefixes.add("scheduler.");
+        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
     }
 
     @Override
@@ -195,6 +199,11 @@ public class ZendeskEndpointUriFactory extends org.apache.camel.support.componen
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

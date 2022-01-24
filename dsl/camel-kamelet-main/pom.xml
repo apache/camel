@@ -44,6 +44,18 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-debug</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-health</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-console</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-kamelet</artifactId>
         </dependency>
         <dependency>
@@ -72,6 +84,10 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-platform-http-vertx</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-resourceresolver-github</artifactId>
         </dependency>
         <dependency>
@@ -85,6 +101,10 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-debug</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-catalog-console</artifactId>
         </dependency>
 
         <dependency>

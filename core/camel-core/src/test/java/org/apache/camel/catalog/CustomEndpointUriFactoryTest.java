@@ -306,6 +306,11 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
         }
 
         @Override
+        public Set<String> multiValuePrefixes() {
+            return Collections.emptySet();
+        }
+
+        @Override
         public boolean isLenientProperties() {
             return false;
         }
@@ -348,6 +353,11 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
         }
 
         @Override
+        public Set<String> multiValuePrefixes() {
+            return Collections.emptySet();
+        }
+
+        @Override
         public boolean isLenientProperties() {
             return false;
         }
@@ -382,6 +392,11 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
 
         @Override
         public Set<String> secretPropertyNames() {
+            return Collections.emptySet();
+        }
+
+        @Override
+        public Set<String> multiValuePrefixes() {
             return Collections.emptySet();
         }
 
@@ -421,6 +436,11 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
         }
 
         @Override
+        public Set<String> multiValuePrefixes() {
+            return Collections.emptySet();
+        }
+
+        @Override
         public boolean isLenientProperties() {
             return false;
         }
@@ -454,6 +474,11 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
 
         @Override
         public Set<String> secretPropertyNames() {
+            return Collections.emptySet();
+        }
+
+        @Override
+        public Set<String> multiValuePrefixes() {
             return Collections.emptySet();
         }
 

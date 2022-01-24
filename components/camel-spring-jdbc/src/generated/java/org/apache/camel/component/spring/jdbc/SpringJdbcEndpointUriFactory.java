@@ -19,6 +19,7 @@ public class SpringJdbcEndpointUriFactory extends org.apache.camel.support.compo
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(15);
         props.add("resetAutoCommit");
@@ -38,6 +39,9 @@ public class SpringJdbcEndpointUriFactory extends org.apache.camel.support.compo
         props.add("readSize");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
+        Set<String> prefixes = new HashSet<>(1);
+        prefixes.add("statement.");
+        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
     }
 
     @Override
@@ -65,6 +69,11 @@ public class SpringJdbcEndpointUriFactory extends org.apache.camel.support.compo
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

@@ -29,6 +29,8 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.TypeConverters;
 import org.apache.camel.cloud.ServiceRegistry;
 import org.apache.camel.cluster.CamelClusterService;
+import org.apache.camel.console.DevConsole;
+import org.apache.camel.console.DevConsoleRegistry;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.impl.debugger.BacklogTracer;
@@ -226,6 +228,7 @@ public final class DefaultConfigurationConfigurer {
         camelContext.setMDCLoggingKeysPattern(config.getMdcLoggingKeysPattern());
         camelContext.setLoadTypeConverters(config.isLoadTypeConverters());
         camelContext.setLoadHealthChecks(config.isLoadHealthChecks());
+        camelContext.setDevConsole(config.isDevConsoleEnabled());
         if (config.isRoutesReloadEnabled()) {
             RouteWatcherReloadStrategy reloader = new RouteWatcherReloadStrategy(
                     config.getRoutesReloadDirectory(), config.isRoutesReloadDirectoryRecursive());
@@ -514,6 +517,25 @@ public final class DefaultConfigurationConfigurer {
                 for (HealthCheckRepository repository : repositories) {
                     healthCheckRegistry.register(repository);
                 }
+            }
+        }
+        // dev console
+        DevConsoleRegistry devConsoleRegistry = getSingleBeanOfType(registry, DevConsoleRegistry.class);
+        if (devConsoleRegistry != null) {
+            devConsoleRegistry.setCamelContext(camelContext);
+            LOG.debug("Using DevConsoleRegistry: {}", devConsoleRegistry);
+            camelContext.setExtension(DevConsoleRegistry.class, devConsoleRegistry);
+        } else {
+            // okay attempt to inject this camel context into existing dev console (if any)
+            devConsoleRegistry = DevConsoleRegistry.get(camelContext);
+            if (devConsoleRegistry != null) {
+                devConsoleRegistry.setCamelContext(camelContext);
+            }
+        }
+        if (devConsoleRegistry != null) {
+            Set<DevConsole> consoles = registry.findByType(DevConsole.class);
+            for (DevConsole console : consoles) {
+                devConsoleRegistry.register(console);
             }
         }
 

@@ -19,6 +19,7 @@ public class SedaEndpointUriFactory extends org.apache.camel.support.component.E
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(19);
         props.add("exchangePattern");
@@ -42,6 +43,7 @@ public class SedaEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("queue");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
+        MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 
     @Override
@@ -69,6 +71,11 @@ public class SedaEndpointUriFactory extends org.apache.camel.support.component.E
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

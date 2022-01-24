@@ -95,6 +95,11 @@ public class ToDynamicSendDynamicAwareTest extends ContextTestSupport {
         }
 
         @Override
+        public Set<String> multiValuePrefixes() {
+            return null;
+        }
+
+        @Override
         public boolean isLenientProperties() {
             return false;
         }

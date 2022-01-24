@@ -37,7 +37,7 @@
         <firstVersion>3.1.0</firstVersion>
         <label>rest,api,http</label>
         <camel.osgi.import.before.defaults>
-            com.fasterxml.jackson.*;version="[2.11,3)",
+            com.fasterxml.jackson.*;version="[2.13,3)",
             io.apicurio.datamodels*
         </camel.osgi.import.before.defaults>
     </properties>

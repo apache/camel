@@ -20,6 +20,7 @@ import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerBase;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerResolver;
 import org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException;
+import org.apache.camel.model.DescriptionDefinition;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.annotations.YamlIn;
@@ -36,6 +37,7 @@ import org.snakeyaml.engine.v2.nodes.NodeTuple;
           order = YamlDeserializerResolver.ORDER_DEFAULT,
           properties = {
                   @YamlProperty(name = "id", type = "string"),
+                  @YamlProperty(name = "description", type = "string"),
                   @YamlProperty(name = "group", type = "string"),
                   @YamlProperty(name = "route-configuration-id", type = "string"),
                   @YamlProperty(name = "from", type = "object:org.apache.camel.model.FromDefinition", required = true)
@@ -64,6 +66,9 @@ public class RouteDefinitionDeserializer extends YamlDeserializerBase<RouteDefin
             switch (key) {
                 case "id":
                     target.setId(asText(val));
+                    break;
+                case "description":
+                    target.setDescription(new DescriptionDefinition(asText(val)));
                     break;
                 case "group":
                     target.setGroup(asText(val));

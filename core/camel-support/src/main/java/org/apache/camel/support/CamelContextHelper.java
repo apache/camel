@@ -41,6 +41,7 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
  * A number of helper methods
  */
 public final class CamelContextHelper {
+
     public static final String MODEL_DOCUMENTATION_PREFIX = "org/apache/camel/model/";
 
     /**

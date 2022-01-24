@@ -42,7 +42,8 @@ public class ClassPathURIResolver implements URIResolver {
     @Override
     public Source resolve(String href, String base) throws TransformerException {
         InputStream stream
-                = org.apache.camel.util.ObjectHelper.loadResourceAsStream(rulesDir.concat("/").concat(href));
+                = org.apache.camel.util.ObjectHelper.loadResourceAsStream(rulesDir.concat("/").concat(href),
+                        getClass().getClassLoader());
         if (stream != null) {
             return new StreamSource(stream);
         } else {

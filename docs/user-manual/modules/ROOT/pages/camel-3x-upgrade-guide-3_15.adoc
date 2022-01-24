@@ -156,6 +156,8 @@ This should correctly be done with `steps` as child of `from`:
         - log: "message"
 ----
 
+The `tod` EIP name has been removed, the correct names to use is `toD`.
+
 === camel-jbang
 
 The JBang app that was previously named `CamelJBang` is now named `camel`. It is still possible to use the older name by installing it using `CamelJBang@apache/camel` but this approach is deprecated and should not be used in the future.
@@ -190,7 +192,7 @@ The signature for `KafkaManualCommitFactory` and its classes has been adjusted t
 
 The `camel-endpointdsl` and `camel-componentdsl` is no longer supported on Apache Karaf.
 
-The `camel-osg-activator` and `camel-google-mail` has been removed.
+The `camel-osg-activator`, `camel-google-mail`, and `camel-jooq` has been removed.
 
 === camel-netty / camel-netty-http
 
@@ -205,3 +207,11 @@ Removed the option `startDelaySeconds` as this does not work correctly and cause
 
 The rabbitmq producer has migrated from commons-poll v1 to v2.
 
+=== camel-openapi-java
+
+The contextPath specified in the REST configuration is no longer added to the paths of the operations in the generated openapi specification.
+
+=== camel-google-drive
+
+The `camel-google-drive` component has upgraded to the latest version of `google-api-services-drive`. This means that support for access to the Google Drive Realtime APIs 
+via URIs like `google-drive:drive-realtime` has been removed. Google deprecated and retired the realtime APIs some time ago.  
