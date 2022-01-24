@@ -247,12 +247,6 @@
           "asyncDelayedRedelivery" : {
             "type" : "boolean"
           },
-          "deadLetterHandleNewException" : {
-            "type" : "boolean"
-          },
-          "deadLetterUri" : {
-            "type" : "string"
-          },
           "executorServiceRef" : {
             "type" : "string"
           },

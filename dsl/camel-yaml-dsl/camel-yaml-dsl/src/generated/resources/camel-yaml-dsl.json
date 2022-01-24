@@ -340,12 +340,6 @@
           "async-delayed-redelivery" : {
             "type" : "boolean"
           },
-          "dead-letter-handle-new-exception" : {
-            "type" : "boolean"
-          },
-          "dead-letter-uri" : {
-            "type" : "string"
-          },
           "executor-service-ref" : {
             "type" : "string"
           },

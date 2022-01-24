@@ -3777,8 +3777,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
                     @YamlProperty(name = "async-delayed-redelivery", type = "boolean"),
-                    @YamlProperty(name = "dead-letter-handle-new-exception", type = "boolean"),
-                    @YamlProperty(name = "dead-letter-uri", type = "string"),
                     @YamlProperty(name = "executor-service-ref", type = "string"),
                     @YamlProperty(name = "on-exception-occurred-ref", type = "string"),
                     @YamlProperty(name = "on-prepare-failure-ref", type = "string"),
@@ -3805,16 +3803,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "async-delayed-redelivery": {
                     boolean val = asBoolean(node);
                     target.setAsyncDelayedRedelivery(val);
-                    break;
-                }
-                case "dead-letter-handle-new-exception": {
-                    boolean val = asBoolean(node);
-                    target.setDeadLetterHandleNewException(val);
-                    break;
-                }
-                case "dead-letter-uri": {
-                    String val = asText(node);
-                    target.setDeadLetterUri(val);
                     break;
                 }
                 case "executor-service-ref": {
