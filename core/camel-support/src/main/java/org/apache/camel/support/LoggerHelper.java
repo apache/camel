@@ -48,6 +48,8 @@ public final class LoggerHelper {
                 // is it a class or file?
                 name = loc;
                 if (loc.contains(":")) {
+                    // strip prefix
+                    loc = loc.substring(loc.indexOf(':') + 1);
                     // file based such as xml and yaml
                     name = FileUtil.stripPath(loc);
                 } else {
