@@ -18,6 +18,7 @@ package org.apache.camel.reifier;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.LineNumberAware;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
@@ -38,15 +39,18 @@ public class SendReifier extends ProcessorReifier<SendDefinition<?>> {
     }
 
     public Endpoint resolveEndpoint() {
+        Endpoint answer;
         if (definition.getEndpoint() == null) {
             if (definition.getEndpointProducerBuilder() == null) {
-                return CamelContextHelper.resolveEndpoint(camelContext, definition.getEndpointUri(), null);
+                answer = CamelContextHelper.resolveEndpoint(camelContext, definition.getEndpointUri(), null);
             } else {
-                return definition.getEndpointProducerBuilder().resolve(camelContext);
+                answer = definition.getEndpointProducerBuilder().resolve(camelContext);
             }
         } else {
-            return definition.getEndpoint();
+            answer = definition.getEndpoint();
         }
+        LineNumberAware.trySetLineNumberAware(answer, definition);
+        return answer;
     }
 
 }
