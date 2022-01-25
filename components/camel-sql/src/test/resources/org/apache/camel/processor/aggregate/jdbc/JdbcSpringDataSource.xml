@@ -55,12 +55,17 @@
     <jdbc:embedded-database id="{{testClassSimpleName}}-dataSource4" type="DERBY">
         <jdbc:script location="classpath:/sql/init4.sql"/>
     </jdbc:embedded-database>
+    
+    <!-- In Memory Database #5 -->
+    <jdbc:embedded-database id="{{testClassSimpleName}}-dataSource5" type="DERBY">
+        <jdbc:script location="classpath:/sql/init5.sql"/>
+    </jdbc:embedded-database>
 
     <bean id="repo1" class="org.apache.camel.processor.aggregate.jdbc.JdbcAggregationRepository">
         <property name="repositoryName" value="aggregationRepo1"/>
         <property name="transactionManager" ref="txManager1"/>
         <property name="dataSource" ref="{{testClassSimpleName}}-dataSource1"/>
-    </bean>
+    </bean>    
 
     <bean id="repo2" class="org.apache.camel.processor.aggregate.jdbc.JdbcAggregationRepository">
         <property name="repositoryName" value="aggregationRepo2"/>
@@ -97,6 +102,17 @@
             </list>
         </property>
     </bean>
+    
+    <bean id="repo5" class="org.apache.camel.processor.aggregate.jdbc.ClusteredJdbcAggregationRepository">
+        <property name="repositoryName" value="aggregationRepo5"/>
+        <property name="transactionManager" ref="txManager5"/>
+        <property name="dataSource" ref="{{testClassSimpleName}}-dataSource5"/>
+    </bean>
+    <bean id="repo6" class="org.apache.camel.processor.aggregate.jdbc.ClusteredJdbcAggregationRepository">
+        <property name="repositoryName" value="aggregationRepo5"/>
+        <property name="transactionManager" ref="txManager5"/>
+        <property name="dataSource" ref="{{testClassSimpleName}}-dataSource5"/>
+    </bean>
 
     <bean id="txManager1" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
         <property name="dataSource" ref="{{testClassSimpleName}}-dataSource1"/>
@@ -112,6 +128,10 @@
 
     <bean id="txManager4" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
         <property name="dataSource" ref="{{testClassSimpleName}}-dataSource4"/>
+    </bean>
+    
+    <bean id="txManager5" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="{{testClassSimpleName}}-dataSource5"/>
     </bean>
 
 </beans>

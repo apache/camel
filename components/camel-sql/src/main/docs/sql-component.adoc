@@ -748,7 +748,9 @@ Propagation is specified by constants of `org.springframework.transaction.Transa
 so `propagationBehaviorName` is convenient setter that allows to use names of the constants.
 
 === Clustering
-In order to work in a clustered configuration correctly, recovery mechanism needs to be dealt separately by members of the cluster : a member may only recover exchanges that it completed itself.
+JdbcAggregationRepository does not provide recovery in a clustered environment.
+
+You may use ClusteredJdbcAggregationRepository that provides a limited support for recovery in a clustered environment : recovery mechanism is dealt separately by members of the cluster, i.e. a member may only recover exchanges that it completed itself.
 
 To enable this behaviour, property `recoverByInstance` must be set to true, and `instanceId` property must be defined using a unique identifier (a string) for each member of the cluster.
 
