@@ -34,7 +34,6 @@ import org.apache.lucene.store.ByteBuffersDirectory;
 public class LuceneSuggestionStrategy implements SuggestionStrategy {
 
     private int maxSuggestions = 3;
-    private SpellChecker checker;
 
     @Override
     public String[] suggestEndpointOptions(Set<String> names, String unknownOption) {
@@ -51,7 +50,7 @@ public class LuceneSuggestionStrategy implements SuggestionStrategy {
 
             // use in-memory lucene spell checker to make the suggestions
             try (ByteBuffersDirectory dir = new ByteBuffersDirectory()) {
-                checker = new SpellChecker(dir);
+                SpellChecker checker = new SpellChecker(dir);
                 checker.indexDictionary(words, new IndexWriterConfig(new KeywordAnalyzer()), false);
 
                 return checker.suggestSimilar(unknownOption, maxSuggestions);

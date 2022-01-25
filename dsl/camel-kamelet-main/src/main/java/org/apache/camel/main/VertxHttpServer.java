@@ -16,20 +16,25 @@
  */
 package org.apache.camel.main;
 
-import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import io.vertx.core.Handler;
+import io.vertx.core.http.HttpMethod;
+import io.vertx.ext.web.Route;
+import io.vertx.ext.web.RoutingContext;
 import org.apache.camel.CamelContext;
-import org.apache.camel.Component;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StartupListener;
+import org.apache.camel.component.platform.http.PlatformHttpComponent;
+import org.apache.camel.component.platform.http.vertx.VertxPlatformHttpRouter;
+import org.apache.camel.component.platform.http.vertx.VertxPlatformHttpServer;
+import org.apache.camel.component.platform.http.vertx.VertxPlatformHttpServerConfiguration;
+import org.apache.camel.console.DevConsole;
+import org.apache.camel.console.DevConsoleRegistry;
 import org.apache.camel.spi.CamelEvent;
-import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.SimpleEventNotifierSupport;
-import org.apache.camel.util.ReflectionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,9 +43,13 @@ import org.slf4j.LoggerFactory;
  */
 public final class VertxHttpServer {
 
-    private static final Logger LOG = LoggerFactory.getLogger(VertxHttpServer.class);
+    static VertxPlatformHttpRouter router;
+    static VertxPlatformHttpServer server;
+    static PlatformHttpComponent phc;
 
+    private static final Logger LOG = LoggerFactory.getLogger(VertxHttpServer.class);
     private static final AtomicBoolean REGISTERED = new AtomicBoolean();
+    private static final AtomicBoolean CONSOLE = new AtomicBoolean();
 
     private VertxHttpServer() {
     }
@@ -59,20 +68,15 @@ public final class VertxHttpServer {
 
     private static void doRegisterServer(CamelContext camelContext, int port) {
         try {
-            // must load via the classloader set on camel context that will have the classes on its classpath
-            Class<?> clazz = camelContext.getClassResolver()
-                    .resolveMandatoryClass(
-                            "org.apache.camel.component.platform.http.vertx.VertxPlatformHttpServerConfiguration");
-            Object config = clazz.getConstructors()[0].newInstance();
-            camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection()
-                    .setProperty(camelContext, config, "port", port);
-
-            clazz = camelContext.getClassResolver()
-                    .resolveMandatoryClass(
-                            "org.apache.camel.component.platform.http.vertx.VertxPlatformHttpServer");
-            Object server = clazz.getConstructors()[0].newInstance(config);
-
+            VertxPlatformHttpServerConfiguration config = new VertxPlatformHttpServerConfiguration();
+            config.setPort(port);
+            server = new VertxPlatformHttpServer(config);
             camelContext.addService(server);
+            server.start();
+            router = VertxPlatformHttpRouter.lookup(camelContext);
+            if (phc == null) {
+                phc = camelContext.getComponent("platform-http", PlatformHttpComponent.class);
+            }
 
             // after camel is started then add event notifier
             camelContext.addStartupListener(new StartupListener() {
@@ -80,8 +84,6 @@ public final class VertxHttpServer {
                 public void onCamelContextStarted(CamelContext context, boolean alreadyStarted) throws Exception {
                     camelContext.getManagementStrategy().addEventNotifier(new SimpleEventNotifierSupport() {
 
-                        private volatile Component phc;
-                        private volatile Method method;
                         private Set<String> last;
 
                         @Override
@@ -92,11 +94,6 @@ public final class VertxHttpServer {
 
                         @Override
                         public void notify(CamelEvent event) throws Exception {
-                            if (method == null) {
-                                phc = camelContext.getComponent("platform-http", Component.class);
-                                method = ReflectionHelper.findMethod(phc.getClass(), "getHttpEndpoints");
-                            }
-
                             // when reloading then there may be more routes in the same batch, so we only want
                             // to log the summary at the end
                             if (event instanceof CamelEvent.RouteReloadedEvent) {
@@ -106,7 +103,7 @@ public final class VertxHttpServer {
                                 }
                             }
 
-                            Set<String> endpoints = (Set<String>) ObjectHelper.invokeMethodSafe(method, phc);
+                            Set<String> endpoints = phc.getHttpEndpoints();
                             if (endpoints.isEmpty()) {
                                 return;
                             }
@@ -129,6 +126,47 @@ public final class VertxHttpServer {
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeException(e);
         }
+    }
+
+    public static void registerConsole(CamelContext camelContext) {
+        if (CONSOLE.compareAndSet(false, true)) {
+            doRegisterConsole(camelContext);
+        }
+    }
+
+    private static void doRegisterConsole(CamelContext context) {
+        Route dev = router.route("/dev");
+        dev.method(HttpMethod.GET);
+        dev.handler(router.bodyHandler());
+        dev.produces("text/plain");
+        dev.handler(new Handler<RoutingContext>() {
+            @Override
+            public void handle(RoutingContext ctx) {
+                DevConsoleRegistry dcr = context.getExtension(DevConsoleRegistry.class);
+                if (dcr != null && dcr.isEnabled()) {
+                    StringBuilder sb = new StringBuilder();
+                    dcr.stream().forEach(c -> {
+                        if (c.supportMediaType(DevConsole.MediaType.TEXT)) {
+                            String text = (String) c.call(DevConsole.MediaType.TEXT);
+                            if (text != null) {
+                                sb.append(c.getDisplayName()).append(":");
+                                sb.append("\n\n");
+                                sb.append(text);
+                                sb.append("\n\n");
+                            }
+                        }
+                    });
+                    if (sb.length() > 0) {
+                        ctx.end(sb.toString());
+                    } else {
+                        ctx.end("Developer Console is not enabled");
+                    }
+                } else {
+                    ctx.end("Developer Console is not enabled");
+                }
+            }
+        });
+        phc.addHttpEndpoint("/dev");
     }
 
 }

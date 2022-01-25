@@ -35,6 +35,7 @@ public abstract class SendDynamicAwareSupport extends ServiceSupport implements 
 
     private CamelContext camelContext;
     private Set<String> knownProperties;
+    private Set<String> knownPrefixes;
     private String scheme;
 
     @Override
@@ -64,13 +65,14 @@ public abstract class SendDynamicAwareSupport extends ServiceSupport implements 
 
     @Override
     protected void doInit() throws Exception {
-        if (knownProperties == null) {
-            // optimize to eager load the list of known properties
+        if (knownProperties == null || knownPrefixes == null) {
+            // optimize to eager load the list of known properties/prefixes
             EndpointUriFactory factory = getCamelContext().adapt(ExtendedCamelContext.class).getEndpointUriFactory(getScheme());
             if (factory == null) {
                 throw new IllegalStateException("Cannot find EndpointUriFactory for component: " + getScheme());
             }
             knownProperties = factory.propertyNames();
+            knownPrefixes = factory.multiValuePrefixes();
         }
     }
 
@@ -112,7 +114,13 @@ public abstract class SendDynamicAwareSupport extends ServiceSupport implements 
             }
             properties = new LinkedHashMap<>();
             map.forEach((k, v) -> {
-                if (!knownProperties.contains(k)) {
+                // we only accept if the key is not an existing known property
+                // or that the key is not from a multi-value (prefix)
+                boolean accept = !knownProperties.contains(k);
+                if (accept && !knownPrefixes.isEmpty()) {
+                    accept = knownPrefixes.stream().noneMatch(k::startsWith);
+                }
+                if (accept) {
                     properties.put(k, v.toString());
                 }
             });

@@ -27,8 +27,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Compress and decompress streams using <code>java.util.zip.Deflater</code> and <code>java.util.zip.Inflater</code>.
  */
-@Metadata(firstVersion = "2.12.0", label = "dataformat,transformation", title = "Zip Deflate Compression")
-@XmlRootElement(name = "zipdeflater")
+@Metadata(firstVersion = "2.12.0", label = "dataformat,transformation", title = "Zip Deflater")
+@XmlRootElement(name = "zipDeflater")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ZipDeflaterDataFormat extends DataFormatDefinition {
     @XmlAttribute
@@ -36,7 +36,7 @@ public class ZipDeflaterDataFormat extends DataFormatDefinition {
     private String compressionLevel;
 
     public ZipDeflaterDataFormat() {
-        super("zipdeflater");
+        super("zipDeflater");
     }
 
     public String getCompressionLevel() {
@@ -44,7 +44,7 @@ public class ZipDeflaterDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * To specify a specific compression between 0-9. -1 is default compression, 0 is no compression, and 9 is best
+     * To specify a specific compression between 0-9. -1 is default compression, 0 is no compression, and 9 is the best
      * compression.
      */
     public void setCompressionLevel(String compressionLevel) {

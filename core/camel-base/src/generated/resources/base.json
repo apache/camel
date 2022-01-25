@@ -1,0 +1,14 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "base",
+    "title": "Base",
+    "description": "The Base Camel Framework",
+    "deprecated": false,
+    "firstVersion": "3.0.0",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-base",
+    "version": "3.15.0-SNAPSHOT"
+  }
+}

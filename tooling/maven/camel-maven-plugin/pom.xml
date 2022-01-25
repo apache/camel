@@ -82,14 +82,10 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-spring-main</artifactId>
         </dependency>
+        <!-- camel-cdi-main has Main class for running CDI -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-spring-javaconfig</artifactId>
-        </dependency>
-        <!-- camel-cdi has Main class for running CDI -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-cdi</artifactId>
+            <artifactId>camel-cdi-main</artifactId>
         </dependency>
         <!-- for logging in color -->
         <dependency>

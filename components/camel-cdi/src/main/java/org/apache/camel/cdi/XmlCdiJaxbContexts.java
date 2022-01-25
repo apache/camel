@@ -24,6 +24,7 @@ import javax.xml.bind.JAXBException;
 import org.apache.camel.cdi.xml.ApplicationContextFactoryBean;
 import org.apache.camel.model.Constants;
 
+@Deprecated
 enum XmlCdiJaxbContexts {
 
     CAMEL_CDI(Constants.JAXB_CONTEXT_PACKAGES, ApplicationContextFactoryBean.class.getPackage().getName());

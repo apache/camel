@@ -8,6 +8,7 @@
     "firstVersion": "2.17.0",
     "label": "dataformat,transformation,yaml",
     "javaType": "org.apache.camel.model.dataformat.YAMLDataFormat",
+    "abstract": false,
     "input": false,
     "output": false
   },

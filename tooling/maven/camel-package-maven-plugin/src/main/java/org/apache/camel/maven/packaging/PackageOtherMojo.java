@@ -73,6 +73,11 @@ public class PackageOtherMojo extends AbstractGeneratorMojo {
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+        // should be JAR packaging
+        if ("pom".equals(project.getPackaging())) {
+            return;
+        }
+
         File f = new File(project.getBasedir(), "target/classes");
         File comp = new File(f, "META-INF/services/org/apache/camel/component");
         if (comp.exists() && comp.isDirectory()) {

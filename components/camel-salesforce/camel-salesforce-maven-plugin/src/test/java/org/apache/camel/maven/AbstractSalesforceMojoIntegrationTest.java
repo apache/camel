@@ -26,10 +26,13 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
+import org.apache.camel.component.salesforce.codegen.AbstractSalesforceExecution;
 import org.apache.camel.component.salesforce.internal.client.RestClient;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -42,13 +45,25 @@ public class AbstractSalesforceMojoIntegrationTest {
     @Test
     public void shouldLoginAndProvideRestClient() throws IOException, MojoExecutionException, MojoFailureException {
         final AbstractSalesforceMojo mojo = new AbstractSalesforceMojo() {
-            @Override
-            protected void executeWithClient(final RestClient client) throws MojoExecutionException {
-                assertThat(client).isNotNull();
+            final Logger logger = LoggerFactory.getLogger(AbstractSalesforceExecution.class.getName());
 
-                client.getGlobalObjects(NO_HEADERS, (response, headers, exception) -> {
-                    assertThat(exception).isNull();
-                });
+            @Override
+            protected AbstractSalesforceExecution getSalesforceExecution() {
+                return new AbstractSalesforceExecution() {
+                    @Override
+                    protected void executeWithClient(RestClient client) {
+                        assertThat(client).isNotNull();
+
+                        client.getGlobalObjects(NO_HEADERS, (response, headers, exception) -> {
+                            assertThat(exception).isNull();
+                        });
+                    }
+
+                    @Override
+                    protected Logger getLog() {
+                        return logger;
+                    }
+                };
             }
         };
 

@@ -125,8 +125,8 @@ public interface MongoDbEndpointBuilderFactory {
         /**
          * Host address of mongodb server in host:port format. It's possible
          * also use more than one address, as comma separated list of hosts:
-         * host1:port1,host2:port2. If hosts parameter is specified, provided
-         * connectionBean is ignored.
+         * host1:port1,host2:port2. If the hosts parameter is specified, the
+         * provided connectionBean is ignored.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -803,8 +803,8 @@ public interface MongoDbEndpointBuilderFactory {
         /**
          * Host address of mongodb server in host:port format. It's possible
          * also use more than one address, as comma separated list of hosts:
-         * host1:port1,host2:port2. If hosts parameter is specified, provided
-         * connectionBean is ignored.
+         * host1:port1,host2:port2. If the hosts parameter is specified, the
+         * provided connectionBean is ignored.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1259,8 +1259,8 @@ public interface MongoDbEndpointBuilderFactory {
         /**
          * Host address of mongodb server in host:port format. It's possible
          * also use more than one address, as comma separated list of hosts:
-         * host1:port1,host2:port2. If hosts parameter is specified, provided
-         * connectionBean is ignored.
+         * host1:port1,host2:port2. If the hosts parameter is specified, the
+         * provided connectionBean is ignored.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1587,7 +1587,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * Path parameter: connectionBean (required)
          * Sets the connection bean reference used to lookup a client for
-         * connecting to a database.
+         * connecting to a database if no hosts parameter is present.
          * 
          * @param path connectionBean
          * @return the dsl builder
@@ -1607,7 +1607,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * Path parameter: connectionBean (required)
          * Sets the connection bean reference used to lookup a client for
-         * connecting to a database.
+         * connecting to a database if no hosts parameter is present.
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

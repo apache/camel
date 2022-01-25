@@ -19,8 +19,9 @@ public class DebeziumMongodbEndpointUriFactory extends org.apache.camel.support.
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(60);
+        Set<String> props = new HashSet<>(62);
         props.add("mongodbServerSelectionTimeoutMs");
         props.add("maxBatchSize");
         props.add("internalKeyConverter");
@@ -54,6 +55,7 @@ public class DebeziumMongodbEndpointUriFactory extends org.apache.camel.support.
         props.add("snapshotFetchSize");
         props.add("offsetStoragePartitions");
         props.add("databaseExcludeList");
+        props.add("captureMode");
         props.add("additionalProperties");
         props.add("offsetStorageReplicationFactor");
         props.add("exceptionHandler");
@@ -61,6 +63,7 @@ public class DebeziumMongodbEndpointUriFactory extends org.apache.camel.support.
         props.add("snapshotIncludeCollectionList");
         props.add("databaseHistoryFileFilename");
         props.add("cursorMaxAwaitTimeMs");
+        props.add("transactionTopic");
         props.add("offsetStorage");
         props.add("internalValueConverter");
         props.add("snapshotMaxThreads");
@@ -83,6 +86,9 @@ public class DebeziumMongodbEndpointUriFactory extends org.apache.camel.support.
         props.add("offsetCommitPolicy");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
+        Set<String> prefixes = new HashSet<>(1);
+        prefixes.add("additionalProperties.");
+        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
     }
 
     @Override
@@ -110,6 +116,11 @@ public class DebeziumMongodbEndpointUriFactory extends org.apache.camel.support.
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

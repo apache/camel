@@ -45,7 +45,7 @@ public class SplitterStreamingErrorHandlingTest extends ContextTestSupport {
         getMockEndpoint("mock:b").expectedBodiesReceived("A", "B", "D", "E");
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        // we do not stop on exception and thus the splitted message which
+        // we do not stop on exception and thus the split message which
         // failed
         // would be silently ignored so we can continue routing
         // you can always use a custom aggregation strategy to deal with errors

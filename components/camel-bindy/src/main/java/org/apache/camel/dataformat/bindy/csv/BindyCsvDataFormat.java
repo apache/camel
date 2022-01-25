@@ -51,7 +51,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Marshal and unmarshal between POJOs and Comma separated values (CSV) format using Camel Bindy
  */
-@Dataformat("bindy-csv")
+@Dataformat("bindyCsv")
 public class BindyCsvDataFormat extends BindyAbstractDataFormat {
     private static final Logger LOG = LoggerFactory.getLogger(BindyCsvDataFormat.class);
 
@@ -64,7 +64,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
 
     @Override
     public String getDataFormatName() {
-        return "bindy-csv";
+        return "bindyCsv";
     }
 
     @Override

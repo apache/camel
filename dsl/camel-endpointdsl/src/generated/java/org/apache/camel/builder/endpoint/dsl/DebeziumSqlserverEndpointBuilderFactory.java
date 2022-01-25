@@ -957,6 +957,21 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
             return this;
         }
         /**
+         * The query executed with every heartbeat.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: sqlserver
+         * 
+         * @param heartbeatActionQuery the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverEndpointBuilder heartbeatActionQuery(
+                String heartbeatActionQuery) {
+            doSetProperty("heartbeatActionQuery", heartbeatActionQuery);
+            return this;
+        }
+        /**
          * Length of an interval in milli-seconds in in which the connector
          * periodically sends heartbeat messages to a heartbeat topic. Use 0 to
          * disable heartbeat messages. Disabled by default.
@@ -1050,6 +1065,165 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
         default DebeziumSqlserverEndpointBuilder includeSchemaChanges(
                 String includeSchemaChanges) {
             doSetProperty("includeSchemaChanges", includeSchemaChanges);
+            return this;
+        }
+        /**
+         * Whether the connector parse table and column's comment to metadata
+         * object.Note: Enable this option will bring the implications on memory
+         * usage. The number and size of ColumnImpl objects is what largely
+         * impacts how much memory is consumed by the Debezium connectors, and
+         * adding a String to each of them can potentially be quite heavy. The
+         * default is 'false'.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: sqlserver
+         * 
+         * @param includeSchemaComments the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverEndpointBuilder includeSchemaComments(
+                boolean includeSchemaComments) {
+            doSetProperty("includeSchemaComments", includeSchemaComments);
+            return this;
+        }
+        /**
+         * Whether the connector parse table and column's comment to metadata
+         * object.Note: Enable this option will bring the implications on memory
+         * usage. The number and size of ColumnImpl objects is what largely
+         * impacts how much memory is consumed by the Debezium connectors, and
+         * adding a String to each of them can potentially be quite heavy. The
+         * default is 'false'.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: sqlserver
+         * 
+         * @param includeSchemaComments the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverEndpointBuilder includeSchemaComments(
+                String includeSchemaComments) {
+            doSetProperty("includeSchemaComments", includeSchemaComments);
+            return this;
+        }
+        /**
+         * Detect schema change during an incremental snapshot and re-select a
+         * current chunk to avoid locking DDLs. Note that changes to a primary
+         * key are not supported and can cause incorrect results if performed
+         * during an incremental snapshot. Another limitation is that if a
+         * schema change affects only columns' default values, then the change
+         * won't be detected until the DDL is processed from the binlog stream.
+         * This doesn't affect the snapshot events' values, but the schema of
+         * snapshot events may have outdated defaults.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: sqlserver
+         * 
+         * @param incrementalSnapshotAllowSchemaChanges the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverEndpointBuilder incrementalSnapshotAllowSchemaChanges(
+                boolean incrementalSnapshotAllowSchemaChanges) {
+            doSetProperty("incrementalSnapshotAllowSchemaChanges", incrementalSnapshotAllowSchemaChanges);
+            return this;
+        }
+        /**
+         * Detect schema change during an incremental snapshot and re-select a
+         * current chunk to avoid locking DDLs. Note that changes to a primary
+         * key are not supported and can cause incorrect results if performed
+         * during an incremental snapshot. Another limitation is that if a
+         * schema change affects only columns' default values, then the change
+         * won't be detected until the DDL is processed from the binlog stream.
+         * This doesn't affect the snapshot events' values, but the schema of
+         * snapshot events may have outdated defaults.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: sqlserver
+         * 
+         * @param incrementalSnapshotAllowSchemaChanges the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverEndpointBuilder incrementalSnapshotAllowSchemaChanges(
+                String incrementalSnapshotAllowSchemaChanges) {
+            doSetProperty("incrementalSnapshotAllowSchemaChanges", incrementalSnapshotAllowSchemaChanges);
+            return this;
+        }
+        /**
+         * The maximum size of chunk for incremental snapshotting.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1024
+         * Group: sqlserver
+         * 
+         * @param incrementalSnapshotChunkSize the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverEndpointBuilder incrementalSnapshotChunkSize(
+                int incrementalSnapshotChunkSize) {
+            doSetProperty("incrementalSnapshotChunkSize", incrementalSnapshotChunkSize);
+            return this;
+        }
+        /**
+         * The maximum size of chunk for incremental snapshotting.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1024
+         * Group: sqlserver
+         * 
+         * @param incrementalSnapshotChunkSize the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverEndpointBuilder incrementalSnapshotChunkSize(
+                String incrementalSnapshotChunkSize) {
+            doSetProperty("incrementalSnapshotChunkSize", incrementalSnapshotChunkSize);
+            return this;
+        }
+        /**
+         * Add OPTION(RECOMPILE) on each SELECT statement during the incremental
+         * snapshot process. This prevents parameter sniffing but can cause CPU
+         * pressure on the source database.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: sqlserver
+         * 
+         * @param incrementalSnapshotOptionRecompile the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverEndpointBuilder incrementalSnapshotOptionRecompile(
+                boolean incrementalSnapshotOptionRecompile) {
+            doSetProperty("incrementalSnapshotOptionRecompile", incrementalSnapshotOptionRecompile);
+            return this;
+        }
+        /**
+         * Add OPTION(RECOMPILE) on each SELECT statement during the incremental
+         * snapshot process. This prevents parameter sniffing but can cause CPU
+         * pressure on the source database.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: sqlserver
+         * 
+         * @param incrementalSnapshotOptionRecompile the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverEndpointBuilder incrementalSnapshotOptionRecompile(
+                String incrementalSnapshotOptionRecompile) {
+            doSetProperty("incrementalSnapshotOptionRecompile", incrementalSnapshotOptionRecompile);
             return this;
         }
         /**
@@ -1840,6 +2014,24 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
         default DebeziumSqlserverEndpointBuilder tombstonesOnDelete(
                 String tombstonesOnDelete) {
             doSetProperty("tombstonesOnDelete", tombstonesOnDelete);
+            return this;
+        }
+        /**
+         * The name of the transaction metadata topic. The placeholder
+         * ${database.server.name} can be used for referring to the connector's
+         * logical name; defaults to ${database.server.name}.transaction.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: ${database.server.name}.transaction
+         * Group: sqlserver
+         * 
+         * @param transactionTopic the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverEndpointBuilder transactionTopic(
+                String transactionTopic) {
+            doSetProperty("transactionTopic", transactionTopic);
             return this;
         }
     }

@@ -31,7 +31,6 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ScriptHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.StopWatch;
-import org.apache.camel.util.StringHelper;
 import org.joor.Reflect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -258,7 +257,7 @@ public class JoorCompiler extends ServiceSupport implements StaticService {
         for (Map.Entry<String, String> entry : aliases.entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue();
-            script = StringHelper.replaceAll(script, key, value);
+            script = script.replace(key, value);
         }
         return script;
     }

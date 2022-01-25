@@ -71,7 +71,7 @@ public class SplitPropertiesFileIssueTest extends ContextTestSupport {
 
             // now we use our own expressions to split the file as we like it
             // what we return is just the list of the two Camel Message objects
-            // which contains the splitted data (our way)
+            // which contains the split data (our way)
             List<Message> answer = new ArrayList<>();
             answer.add(msg1);
             answer.add(msg2);

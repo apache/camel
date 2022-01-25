@@ -23,12 +23,15 @@ public class GoogleMailComponentConfigurer extends PropertyConfigurerSupport imp
         map.put("applicationName", java.lang.String.class);
         map.put("clientId", java.lang.String.class);
         map.put("configuration", org.apache.camel.component.google.mail.GoogleMailConfiguration.class);
+        map.put("delegate", java.lang.String.class);
+        map.put("scopes", java.util.Collection.class);
         map.put("bridgeErrorHandler", boolean.class);
         map.put("lazyStartProducer", boolean.class);
         map.put("autowiredEnabled", boolean.class);
         map.put("clientFactory", org.apache.camel.component.google.mail.GoogleMailClientFactory.class);
         map.put("accessToken", java.lang.String.class);
         map.put("clientSecret", java.lang.String.class);
+        map.put("keyResource", java.lang.String.class);
         map.put("refreshToken", java.lang.String.class);
         ALL_OPTIONS = map;
     }
@@ -59,10 +62,14 @@ public class GoogleMailComponentConfigurer extends PropertyConfigurerSupport imp
         case "clientsecret":
         case "clientSecret": getOrCreateConfiguration(target).setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.google.mail.GoogleMailConfiguration.class, value)); return true;
+        case "delegate": getOrCreateConfiguration(target).setDelegate(property(camelContext, java.lang.String.class, value)); return true;
+        case "keyresource":
+        case "keyResource": getOrCreateConfiguration(target).setKeyResource(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "refreshtoken":
         case "refreshToken": getOrCreateConfiguration(target).setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "scopes": getOrCreateConfiguration(target).setScopes(property(camelContext, java.util.Collection.class, value)); return true;
         default: return false;
         }
     }
@@ -90,10 +97,14 @@ public class GoogleMailComponentConfigurer extends PropertyConfigurerSupport imp
         case "clientsecret":
         case "clientSecret": return java.lang.String.class;
         case "configuration": return org.apache.camel.component.google.mail.GoogleMailConfiguration.class;
+        case "delegate": return java.lang.String.class;
+        case "keyresource":
+        case "keyResource": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "refreshtoken":
         case "refreshToken": return java.lang.String.class;
+        case "scopes": return java.util.Collection.class;
         default: return null;
         }
     }
@@ -117,10 +128,22 @@ public class GoogleMailComponentConfigurer extends PropertyConfigurerSupport imp
         case "clientsecret":
         case "clientSecret": return getOrCreateConfiguration(target).getClientSecret();
         case "configuration": return target.getConfiguration();
+        case "delegate": return getOrCreateConfiguration(target).getDelegate();
+        case "keyresource":
+        case "keyResource": return getOrCreateConfiguration(target).getKeyResource();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "refreshtoken":
         case "refreshToken": return getOrCreateConfiguration(target).getRefreshToken();
+        case "scopes": return getOrCreateConfiguration(target).getScopes();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "scopes": return java.lang.String.class;
         default: return null;
         }
     }

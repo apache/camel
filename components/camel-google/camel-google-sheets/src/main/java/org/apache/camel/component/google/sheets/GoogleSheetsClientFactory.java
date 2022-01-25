@@ -16,15 +16,25 @@
  */
 package org.apache.camel.component.google.sheets;
 
+import java.util.Collection;
+
 import com.google.api.services.sheets.v4.Sheets;
+import org.apache.camel.CamelContext;
 
 public interface GoogleSheetsClientFactory {
 
     Sheets makeClient(
             String clientId,
             String clientSecret,
+            Collection<String> scopes,
             String applicationName,
             String refreshToken,
             String accessToken);
 
+    Sheets makeClient(
+            CamelContext camelContext,
+            String keyResource,
+            Collection<String> scopes,
+            String applicationName,
+            String delegate);
 }

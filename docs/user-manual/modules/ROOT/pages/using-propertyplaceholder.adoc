@@ -543,8 +543,8 @@ A `PropertySource` can define that it supports loading all its properties
 This allows Camel properties component to load these properties at once during startup.
 
 For example the `camel-microprofile-config` component is implemented using this.
-The 3rd-party `PropertySource` can automatic be discovered from classpath when Camel is starting up.
-This is done by include the file `META-INF/services/org/apache/camel/property-source-factory` file which refers to the fully qualified class name of the `PropertySource` implementation.
+The 3rd-party `PropertySource` can automatically be discovered from classpath when Camel is starting up.
+This is done by including the file `META-INF/services/org/apache/camel/property-source-factory` which refers to the fully qualified class name of the `PropertySource` implementation.
 
 See xref:components:others:microprofile-config.adoc[MicroProfile Config] component as an example.
 
@@ -553,6 +553,6 @@ You can also register 3rd-party property sources via Java API:
 [source,java]
 ----
 PropertiesComponent pc = context.getPropertiesComponent();
-pc.addPropertySource(myPropertySource);
+pc.addPropertiesSource(myPropertySource);
 ----
 

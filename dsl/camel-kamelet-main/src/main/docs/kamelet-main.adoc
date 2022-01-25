@@ -1,11 +1,10 @@
 = Kamelet Main Component
-//TODO there is no .json file for this doc page, so it is not updated automatically by UpdateReadmeMojo.
-//Header attributes written by hand.
 :doctitle: Kamelet Main
+:shortname: kamelet-main
 :artifactid: camel-kamelet-main
 :description: Main to run Kamelet standalone
 :since: 3.11
-:supportlevel: Preview
+:supportlevel: Experimental
 //Manually maintained attributes
 :group: DSL
 
@@ -55,4 +54,3 @@ NOTE: The dependencies are downloaded to `~/.groovy/grapes` directory. To force 
 
 You can find an example with this at
 https://github.com/apache/camel-examples/tree/main/examples/kamelet-main[kamelet-main].
-

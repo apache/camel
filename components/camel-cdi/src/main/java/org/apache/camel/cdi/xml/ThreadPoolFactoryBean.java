@@ -30,6 +30,7 @@ import org.apache.camel.core.xml.AbstractCamelThreadPoolFactoryBean;
  */
 @XmlRootElement(name = "threadPool")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Deprecated
 public class ThreadPoolFactoryBean extends AbstractCamelThreadPoolFactoryBean implements BeanManagerAware {
 
     @XmlTransient

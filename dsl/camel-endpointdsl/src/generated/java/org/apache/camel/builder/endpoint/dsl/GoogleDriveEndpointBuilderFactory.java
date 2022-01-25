@@ -109,6 +109,20 @@ public interface GoogleDriveEndpointBuilderFactory {
             return this;
         }
         /**
+         * Delegate for wide-domain service account.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param delegate the value to set
+         * @return the dsl builder
+         */
+        default GoogleDriveEndpointConsumerBuilder delegate(String delegate) {
+            doSetProperty("delegate", delegate);
+            return this;
+        }
+        /**
          * Sets the name of a parameter to be passed in the exchange In Body.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -750,6 +764,21 @@ public interface GoogleDriveEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets .json file with credentials for Service account.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param keyResource the value to set
+         * @return the dsl builder
+         */
+        default GoogleDriveEndpointConsumerBuilder keyResource(
+                String keyResource) {
+            doSetProperty("keyResource", keyResource);
+            return this;
+        }
+        /**
          * OAuth 2 refresh token. Using this, the Google Calendar component can
          * obtain a new accessToken whenever the current one expires - a
          * necessity if the application is long-lived.
@@ -961,6 +990,20 @@ public interface GoogleDriveEndpointBuilderFactory {
             return this;
         }
         /**
+         * Delegate for wide-domain service account.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param delegate the value to set
+         * @return the dsl builder
+         */
+        default GoogleDriveEndpointProducerBuilder delegate(String delegate) {
+            doSetProperty("delegate", delegate);
+            return this;
+        }
+        /**
          * Sets the name of a parameter to be passed in the exchange In Body.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -1090,6 +1133,21 @@ public interface GoogleDriveEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets .json file with credentials for Service account.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param keyResource the value to set
+         * @return the dsl builder
+         */
+        default GoogleDriveEndpointProducerBuilder keyResource(
+                String keyResource) {
+            doSetProperty("keyResource", keyResource);
+            return this;
+        }
+        /**
          * OAuth 2 refresh token. Using this, the Google Calendar component can
          * obtain a new accessToken whenever the current one expires - a
          * necessity if the application is long-lived.
@@ -1193,6 +1251,20 @@ public interface GoogleDriveEndpointBuilderFactory {
             return this;
         }
         /**
+         * Delegate for wide-domain service account.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param delegate the value to set
+         * @return the dsl builder
+         */
+        default GoogleDriveEndpointBuilder delegate(String delegate) {
+            doSetProperty("delegate", delegate);
+            return this;
+        }
+        /**
          * Sets the name of a parameter to be passed in the exchange In Body.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -1270,6 +1342,20 @@ public interface GoogleDriveEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets .json file with credentials for Service account.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param keyResource the value to set
+         * @return the dsl builder
+         */
+        default GoogleDriveEndpointBuilder keyResource(String keyResource) {
+            doSetProperty("keyResource", keyResource);
+            return this;
+        }
+        /**
          * OAuth 2 refresh token. Using this, the Google Calendar component can
          * obtain a new accessToken whenever the current one expires - a
          * necessity if the application is long-lived.
@@ -1312,10 +1398,11 @@ public interface GoogleDriveEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * There are 13 enums and the value can be one of: DRIVE_ABOUT,
+         * There are 14 enums and the value can be one of: DRIVE_ABOUT,
          * DRIVE_APPS, DRIVE_CHANGES, DRIVE_CHANNELS, DRIVE_CHILDREN,
          * DRIVE_COMMENTS, DRIVE_FILES, DRIVE_PARENTS, DRIVE_PERMISSIONS,
-         * DRIVE_PROPERTIES, DRIVE_REALTIME, DRIVE_REPLIES, DRIVE_REVISIONS
+         * DRIVE_PROPERTIES, DRIVE_DRIVES, DRIVE_TEAMDRIVES, DRIVE_REPLIES,
+         * DRIVE_REVISIONS
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation
@@ -1341,10 +1428,11 @@ public interface GoogleDriveEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * There are 13 enums and the value can be one of: DRIVE_ABOUT,
+         * There are 14 enums and the value can be one of: DRIVE_ABOUT,
          * DRIVE_APPS, DRIVE_CHANGES, DRIVE_CHANNELS, DRIVE_CHILDREN,
          * DRIVE_COMMENTS, DRIVE_FILES, DRIVE_PARENTS, DRIVE_PERMISSIONS,
-         * DRIVE_PROPERTIES, DRIVE_REALTIME, DRIVE_REPLIES, DRIVE_REVISIONS
+         * DRIVE_PROPERTIES, DRIVE_DRIVES, DRIVE_TEAMDRIVES, DRIVE_REPLIES,
+         * DRIVE_REVISIONS
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation

@@ -1,5 +1,5 @@
-= Spring Xml Component
-:doctitle: Spring Xml
+= Spring XML Component
+:doctitle: Spring XML
 :shortname: spring-xml
 :artifactid: camel-spring-xml
 :description: Camel Spring with XML DSL

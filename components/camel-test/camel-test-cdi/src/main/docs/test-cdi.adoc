@@ -463,7 +463,7 @@ public class CamelCdiTest {
         public void configure() {
             from("direct:out").routeId("test").to("mock:out");
         }
-    
+
     }
 
     // And retrieve the MockEndpoint for further assertions
@@ -473,7 +473,7 @@ public class CamelCdiTest {
 }
 ----
 
-You can find more information in xref:cdi.adoc#CDI-Auto-detectingCamelroutes[auto-detecting Camel
+You can find more information in xref:cdi.adoc#_auto_detecting_camel_routes[auto-detecting Camel
 routes].
 
 In case you prefer declaring the `RouteBuilder` bean in a separate class,

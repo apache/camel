@@ -57,4 +57,4 @@ The implementation of the Kamelet EIP is located in the `camel-kamelet` JAR, so 
 
 == See Also
 
-See the example https://github.com/apache/camel-examples/tree/master/examples/kamelet[camel-example-kamelet].
+See the example https://github.com/apache/camel-examples/tree/main/examples/kamelet[camel-example-kamelet].

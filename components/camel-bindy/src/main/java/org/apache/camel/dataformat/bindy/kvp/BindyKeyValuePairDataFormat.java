@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Marshal and unmarshal between POJOs and key-value pair (KVP) format using Camel Bindy
  */
-@Dataformat("bindy-kvp")
+@Dataformat("bindyKvp")
 public class BindyKeyValuePairDataFormat extends BindyAbstractDataFormat {
 
     private static final Logger LOG = LoggerFactory.getLogger(BindyKeyValuePairDataFormat.class);
@@ -62,7 +62,7 @@ public class BindyKeyValuePairDataFormat extends BindyAbstractDataFormat {
 
     @Override
     public String getDataFormatName() {
-        return "bindy-kvp";
+        return "bindyKvp";
     }
 
     @Override

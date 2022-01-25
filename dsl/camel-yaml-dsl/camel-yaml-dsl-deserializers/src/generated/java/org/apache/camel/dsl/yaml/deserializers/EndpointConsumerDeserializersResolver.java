@@ -69,6 +69,7 @@ public final class EndpointConsumerDeserializersResolver implements YamlDeserial
             case "disruptor-vm":
             case "docker":
             case "dropbox":
+            case "dynamic-router":
             case "ehcache":
             case "elsql":
             case "etcd-stats":
@@ -132,6 +133,7 @@ public final class EndpointConsumerDeserializersResolver implements YamlDeserial
             case "jt400":
             case "kafka":
             case "kamelet":
+            case "knative":
             case "kubernetes-custom-resources":
             case "kubernetes-deployments":
             case "kubernetes-hpa":

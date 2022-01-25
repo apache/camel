@@ -716,6 +716,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
     // Properties
     // -----------------------------------------------------------------------
 
+    @Override
     public FromDefinition getInput() {
         return input;
     }
@@ -732,9 +733,9 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
         // does not have a <from> as it is implied to be the rest endpoint
         this.input = input;
 
-        if (getCamelContext() != null && getCamelContext().isDebugging()) {
-            // we want to capture source location:line for every output when debugging is enabled
-            // this is an expensive operation and therefore only used if debugging is enabled
+        if (getCamelContext() != null && (getCamelContext().isSourceLocationEnabled() || getCamelContext().isDebugging()
+                || getCamelContext().isTracing())) {
+            // we want to capture source location:line for every output
             ProcessorDefinitionHelper.prepareSourceLocation(input);
             if (log.isDebugEnabled()) {
                 log.debug("{} located in {}:{}", input.getShortName(), input.getLocation(),

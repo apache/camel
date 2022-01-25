@@ -86,7 +86,7 @@ public class FacebookConsumer extends ScheduledPollConsumer {
             if (queryString.contains(SINCE_PREFIX)) {
                 // use the user supplied value to start with
                 final int startIndex = queryString.indexOf(SINCE_PREFIX) + SINCE_PREFIX.length();
-                int endIndex = queryString.indexOf('&', startIndex);
+                int endIndex = queryString.indexOf("&", startIndex);
                 if (endIndex == -1) {
                     // ignore the closing square bracket
                     endIndex = queryString.length() - 1;

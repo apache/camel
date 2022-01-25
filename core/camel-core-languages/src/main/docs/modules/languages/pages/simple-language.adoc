@@ -201,7 +201,7 @@ _max_ (excluded)
 |collate(group) |List |The collate function iterates the message body and groups
 the data into sub lists of specified size. This can be used with the
 Splitter EIP to split a message body and group/batch
-the splitted sub message into a group of N sub lists. This method works
+the split sub message into a group of N sub lists. This method works
 similar to the collate method in Groovy.
 
 |skip(number) |Iterator |The skip function iterates the message body and skips
@@ -224,8 +224,8 @@ When using *OGNL* then `camel-bean` JAR is required to be on the classpath.
 Camel's OGNL support is for invoking methods only. You cannot access
 fields. Camel support accessing the length field of Java arrays.
 
-The xref:simple-language.adoc[Simple] and xref:simple-language.adoc[Bean] language now
-supports a Camel OGNL notation for invoking beans in a chain like
+The xref:simple-language.adoc[Simple] and xref:simple-language.adoc[Bean] languages now
+support a Camel OGNL notation for invoking beans in a chain like
 fashion. Suppose the Message IN body contains a POJO which has a `getAddress()`
 method.
 
@@ -353,7 +353,7 @@ simple("${body.address.zip} > 1000")
 
 The parser is limited to only support a single operator.
 
-To enable it the left value must be enclosed in $\{ }. The syntax is:
+To enable it the left value must be enclosed in `${ }`. The syntax is:
 
 [source]
 --------------------------
@@ -361,7 +361,7 @@ ${leftValue} OP rightValue
 --------------------------
 
 Where the `rightValue` can be a String literal enclosed in `' '`,
-`null`, a constant value or another expression enclosed in `$\{ }`.
+`null`, a constant value or another expression enclosed in `${ }`.
 
 IMPORTANT: There *must* be spaces around the operator.
 
@@ -679,7 +679,7 @@ from("direct:hello")
     .to("mock:reply");
 ----
 
-Notice that we must use $\{ } placeholders in the expression now to
+Notice that we must use ${ } placeholders in the expression now to
 allow Camel to parse it correctly.
 
 And this sample uses the date command to output current date.

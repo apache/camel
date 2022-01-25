@@ -8,6 +8,7 @@
     "firstVersion": "1.1.0",
     "label": "language,core,java",
     "javaType": "org.apache.camel.model.language.SimpleExpression",
+    "abstract": false,
     "input": false,
     "output": false
   },

@@ -40,6 +40,7 @@ public interface AtomixMessagingComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static AtomixMessagingComponentBuilder atomixMessaging() {
         return new AtomixMessagingComponentBuilderImpl();
     }

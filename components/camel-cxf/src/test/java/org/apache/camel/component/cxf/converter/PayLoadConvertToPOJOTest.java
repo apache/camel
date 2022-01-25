@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.cxf.converter;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -24,22 +23,18 @@ import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.non_wrapper.Person;
 import org.apache.camel.non_wrapper.types.GetPerson;
 import org.apache.camel.non_wrapper.types.GetPersonResponse;
-import org.apache.camel.spring.SpringCamelContext;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.AbstractXmlApplicationContext;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class PayLoadConvertToPOJOTest extends CamelTestSupport {
-    protected AbstractXmlApplicationContext applicationContext;
+public class PayLoadConvertToPOJOTest extends CamelSpringTestSupport {
 
     @BeforeAll
     public static void setUpSystemProperty() {
@@ -52,23 +47,10 @@ public class PayLoadConvertToPOJOTest extends CamelTestSupport {
     }
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        applicationContext = createApplicationContext();
-        super.setUp();
-        assertNotNull(applicationContext, "Should have created a valid spring context");
-    }
-
-    @Override
     @AfterEach
     public void tearDown() throws Exception {
         IOHelper.close(applicationContext);
         super.tearDown();
-    }
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        return SpringCamelContext.springCamelContext(applicationContext, true);
     }
 
     @Test
@@ -109,7 +91,8 @@ public class PayLoadConvertToPOJOTest extends CamelTestSupport {
         };
     }
 
-    protected ClassPathXmlApplicationContext createApplicationContext() {
+    @Override
+    protected AbstractApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/converter/PayloadConverterBeans.xml");
     }
 

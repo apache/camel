@@ -25,6 +25,7 @@ import java.util.function.BiFunction;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ErrorHandlerFactory;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Predicate;
@@ -115,8 +116,8 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends
         if (retryWhile == null && def.getRetryWhile() != null) {
             retryWhile = createPredicate(def.getRetryWhile());
         }
-        Processor onRedelivery = getBean(Processor.class, def.getOnRedelivery(), def.getOnRedeliveryRef());
-        Processor onExceptionOccurred = getBean(Processor.class, def.getOnExceptionOccurred(), def.getOnExceptionOccurredRef());
+        Processor onRedelivery = getProcessor(def.getOnRedelivery(), def.getOnRedeliveryRef());
+        Processor onExceptionOccurred = getProcessor(def.getOnExceptionOccurred(), def.getOnExceptionOccurredRef());
         return new ExceptionPolicy(
                 def.getId(), CamelContextHelper.getRouteId(def),
                 parseBoolean(def.getUseOriginalMessage(), false),
@@ -351,6 +352,18 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends
             bean = lookup(ref, clazz);
         }
         return bean;
+    }
+
+    protected Processor getProcessor(Processor processor, String ref) {
+        if (processor == null) {
+            processor = getBean(Processor.class, null, ref);
+        }
+        if (processor != null) {
+            // must wrap the processor in an UoW
+            processor = camelContext.adapt(ExtendedCamelContext.class).getInternalProcessorFactory()
+                    .addUnitOfWorkProcessorAdvice(camelContext, processor, route);
+        }
+        return processor;
     }
 
 }

@@ -33,6 +33,7 @@ public class LoggingStartupStepRecorder extends DefaultStartupStepRecorder {
         setEnabled(true);
     }
 
+    @Override
     protected void onEndStep(StartupStep step) {
         if (LOG.isInfoEnabled()) {
             long delta = System.currentTimeMillis() - step.getBeginTime();

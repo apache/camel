@@ -118,11 +118,6 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
 
     @Override
     protected boolean processExchange(Exchange exchange) {
-        // mark the exchange to be processed synchronously as the ftp client is
-        // not thread safe
-        // and we must execute the callbacks in the same thread as this consumer
-        exchange.setProperty(Exchange.UNIT_OF_WORK_PROCESS_SYNC, Boolean.TRUE);
-
         // defer disconnect til the UoW is complete - but only the last exchange
         // from the batch should do that
         boolean isLast = exchange.getProperty(ExchangePropertyKey.BATCH_COMPLETE, true, Boolean.class);

@@ -192,7 +192,7 @@ namespace "http://www.mycompany.com/foo/2" is not using any prefix.
   </util:map>
 -----------------------------------------------------------------------
 
-To use this in xref:jaxb-dataformat.adoc[JAXB] or xref:jaxb-dataformat.adoc[SOAP] you refer to
+To use this in JAXB or SOAP data formats you refer to
 this map, using the `namespacePrefixRef` attribute as shown below. Then
 Camel will lookup in the Registry a `java.util.Map`
 with the id "myMap", which was what we defined above.
@@ -200,7 +200,7 @@ with the id "myMap", which was what we defined above.
 [source,xml]
 ----------------------------------------------------------------------------------------
   <marshal>
-    <soapjaxb version="1.2" contextPath="com.mycompany.foo" namespacePrefixRef="myMap"/>
+    <soap version="1.2" contextPath="com.mycompany.foo" namespacePrefixRef="myMap"/>
   </marshal>
 ----------------------------------------------------------------------------------------
 

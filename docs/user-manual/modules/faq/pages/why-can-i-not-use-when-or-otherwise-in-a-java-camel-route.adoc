@@ -81,17 +81,7 @@ xref:components:eips:enterprise-integration-patterns.adoc[EIP]s which often have
 methods to configure or as part of the
 xref:components:eips:enterprise-integration-patterns.adoc[EIP] itself. For example the
 xref:components:eips:split-eip.adoc[Splitter] EIP has a sub-route which denotes the
-routing of each splitted message. You would also have to use
+routing of each split message. You would also have to use
 `.endChoice()` to indicate the end of the sub-route and to return back
-to the xref:components:eips:choice-eip.adoc[Content Based Router]. Note
-`.endChoice()` is *Since Camel 2.7*.
+to the xref:components:eips:choice-eip.adoc[Content Based Router].
 
-[[WhycanInotusewhenorotherwiseinaJavaCamelroute-Stillproblems]]
-== Still problems
-
-If there are still problems, then you can split your route into multiple
-routes, and link them together using the xref:components::direct-component.adoc[Direct]
-component.
-There can be some combinations of xref:components:eips:enterprise-integration-patterns.adoc[EIP]s
-that can hit limits in how far we can take the fluent builder DSL with
-generics you can do in Java programming language (1.7 and below).

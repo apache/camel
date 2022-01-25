@@ -1416,6 +1416,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * @param path resourceName
          * @return the dsl builder
          */
+        @Deprecated
         default AtomixMapEndpointBuilder atomixMap(String path) {
             return AtomixMapEndpointBuilderFactory.endpointBuilder("atomix-map", path);
         }
@@ -1437,12 +1438,14 @@ public interface AtomixMapEndpointBuilderFactory {
          * @param path resourceName
          * @return the dsl builder
          */
+        @Deprecated
         default AtomixMapEndpointBuilder atomixMap(
                 String componentName,
                 String path) {
             return AtomixMapEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
+    @Deprecated
     static AtomixMapEndpointBuilder endpointBuilder(
             String componentName,
             String path) {

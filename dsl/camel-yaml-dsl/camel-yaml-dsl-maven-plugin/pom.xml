@@ -32,6 +32,10 @@
     <name>Camel :: YAML DSL :: Maven Plugins</name>
     <description>Maven plugin to auto generate YAML DSL</description>
 
+    <properties>
+        <firstVersion>3.9.0</firstVersion>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>

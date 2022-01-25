@@ -71,6 +71,7 @@ public class HybridSourceDataBinding extends JAXBDataBinding {
         if (cls == XMLStreamWriter.class) {
             return (DataWriter<T>) new XMLStreamDataWriter() {
 
+                @Override
                 public void write(Object obj, MessagePartInfo part, XMLStreamWriter output) {
                     if (obj == null) {
                         return;

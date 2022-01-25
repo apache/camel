@@ -347,10 +347,12 @@ public abstract class BuilderSupport implements CamelContextAware {
     /**
      * Resolves the given URI to an endpoint
      *
-     * @param  uri                     the uri to resolve
-     * @throws NoSuchEndpointException if the endpoint URI could not be resolved
-     * @return                         the endpoint
+     * @param      uri                     the uri to resolve
+     * @throws     NoSuchEndpointException if the endpoint URI could not be resolved
+     * @return                             the endpoint
+     * @deprecated                         use {@link CamelContext#getEndpoint(String)} instead
      */
+    @Deprecated
     public Endpoint endpoint(String uri) throws NoSuchEndpointException {
         ObjectHelper.notNull(uri, "uri");
         Endpoint endpoint = getContext().getEndpoint(uri);
@@ -363,11 +365,13 @@ public abstract class BuilderSupport implements CamelContextAware {
     /**
      * Resolves the given URI to an endpoint of the specified type
      *
-     * @param  uri                     the uri to resolve
-     * @param  type                    the excepted type of the endpoint
-     * @throws NoSuchEndpointException if the endpoint URI could not be resolved
-     * @return                         the endpoint
+     * @param      uri                     the uri to resolve
+     * @param      type                    the excepted type of the endpoint
+     * @throws     NoSuchEndpointException if the endpoint URI could not be resolved
+     * @return                             the endpoint
+     * @deprecated                         use {@link CamelContext#getEndpoint(String, Class)} instead
      */
+    @Deprecated
     public <T extends Endpoint> T endpoint(String uri, Class<T> type) throws NoSuchEndpointException {
         ObjectHelper.notNull(uri, "uri");
         T endpoint = getContext().getEndpoint(uri, type);
@@ -380,10 +384,12 @@ public abstract class BuilderSupport implements CamelContextAware {
     /**
      * Resolves the list of URIs into a list of {@link Endpoint} instances
      *
-     * @param  uris                    list of endpoints to resolve
-     * @throws NoSuchEndpointException if an endpoint URI could not be resolved
-     * @return                         list of endpoints
+     * @param      uris                    list of endpoints to resolve
+     * @throws     NoSuchEndpointException if an endpoint URI could not be resolved
+     * @return                             list of endpoints
+     * @deprecated                         use {@link CamelContext#getEndpoint(String)} instead
      */
+    @Deprecated
     public List<Endpoint> endpoints(String... uris) throws NoSuchEndpointException {
         List<Endpoint> endpoints = new ArrayList<>();
         for (String uri : uris) {
@@ -398,6 +404,7 @@ public abstract class BuilderSupport implements CamelContextAware {
      * @param  endpoints endpoints
      * @return           list of the given endpoints
      */
+    @Deprecated
     public List<Endpoint> endpoints(Endpoint... endpoints) {
         List<Endpoint> answer = new ArrayList<>();
         answer.addAll(Arrays.asList(endpoints));
@@ -431,7 +438,7 @@ public abstract class BuilderSupport implements CamelContextAware {
      * @return               the builder
      */
     public DeadLetterChannelBuilder deadLetterChannel(String deadLetterUri) {
-        return deadLetterChannel(endpoint(deadLetterUri));
+        return new DeadLetterChannelBuilder(deadLetterUri);
     }
 
     /**

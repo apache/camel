@@ -6,6 +6,7 @@
     "deprecated": false,
     "label": "dataformat,transformation,yaml",
     "javaType": "org.apache.camel.model.dataformat.YAMLTypeFilterDefinition",
+    "abstract": false,
     "input": false,
     "output": false
   },

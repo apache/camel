@@ -48,6 +48,7 @@ public class HazelcastTopicConsumer extends HazelcastDefaultConsumer {
         listener = topic.addMessageListener(new CamelMessageListener(this, cacheName));
     }
 
+    @Override
     protected void doStop() throws Exception {
         topic.removeMessageListener(listener);
 

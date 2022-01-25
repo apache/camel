@@ -22,7 +22,6 @@ import java.util.Properties;
 import java.util.function.Predicate;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.ToDefinition;
@@ -137,11 +136,11 @@ public final class Kamelet {
         // must make the source and sink endpoints are unique by appending the route id before we create the route from the template
         if (def.getInput().getEndpointUri().startsWith("kamelet:source")
                 || def.getInput().getEndpointUri().startsWith("kamelet://source")) {
-            def.setInput(null);
-            def.setInput(new FromDefinition("kamelet://source?" + PARAM_ROUTE_ID + "=" + rid));
+            def.getInput().setUri("kamelet://source?" + PARAM_ROUTE_ID + "=" + rid);
         }
 
         // there must be at least one sink
+        int line = -1;
         boolean sink = false;
         Collection<ToDefinition> col = filterTypeInOutputs(def.getOutputs(), ToDefinition.class);
         for (ToDefinition to : col) {
@@ -149,9 +148,15 @@ public final class Kamelet {
                 to.setUri("kamelet://sink?" + PARAM_ROUTE_ID + "=" + rid);
                 sink = true;
             }
+            line = to.getLineNumber();
         }
         if (!sink) {
+            // this is appended and is used to go back to the kamelet that called me
             ToDefinition to = new ToDefinition("kamelet://sink?" + PARAM_ROUTE_ID + "=" + rid);
+            to.setLocation(def.getInput().getLocation());
+            if (line != -1) {
+                to.setLineNumber(line + 1);
+            }
             def.getOutputs().add(to);
         }
 

@@ -31,9 +31,12 @@ public class SheetsSpreadsheetsValuesEndpointConfigurationConfigurer extends org
         map.put("ClientId", java.lang.String.class);
         map.put("ClientSecret", java.lang.String.class);
         map.put("Content", com.google.api.services.sheets.v4.model.BatchClearValuesByDataFilterRequest.class);
+        map.put("Delegate", java.lang.String.class);
+        map.put("KeyResource", java.lang.String.class);
         map.put("MethodName", java.lang.String.class);
         map.put("Range", java.lang.String.class);
         map.put("RefreshToken", java.lang.String.class);
+        map.put("Scopes", java.util.Collection.class);
         map.put("SplitResult", boolean.class);
         map.put("SpreadsheetId", java.lang.String.class);
         map.put("Values", com.google.api.services.sheets.v4.model.ValueRange.class);
@@ -66,12 +69,18 @@ public class SheetsSpreadsheetsValuesEndpointConfigurationConfigurer extends org
         case "ClientSecret": target.setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
         case "content":
         case "Content": target.setContent(property(camelContext, com.google.api.services.sheets.v4.model.BatchClearValuesByDataFilterRequest.class, value)); return true;
+        case "delegate":
+        case "Delegate": target.setDelegate(property(camelContext, java.lang.String.class, value)); return true;
+        case "keyresource":
+        case "KeyResource": target.setKeyResource(property(camelContext, java.lang.String.class, value)); return true;
         case "methodname":
         case "MethodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
         case "range":
         case "Range": target.setRange(property(camelContext, java.lang.String.class, value)); return true;
         case "refreshtoken":
         case "RefreshToken": target.setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "scopes":
+        case "Scopes": target.setScopes(property(camelContext, java.util.Collection.class, value)); return true;
         case "splitresult":
         case "SplitResult": target.setSplitResult(property(camelContext, boolean.class, value)); return true;
         case "spreadsheetid":
@@ -112,12 +121,18 @@ public class SheetsSpreadsheetsValuesEndpointConfigurationConfigurer extends org
         case "ClientSecret": return java.lang.String.class;
         case "content":
         case "Content": return com.google.api.services.sheets.v4.model.BatchClearValuesByDataFilterRequest.class;
+        case "delegate":
+        case "Delegate": return java.lang.String.class;
+        case "keyresource":
+        case "KeyResource": return java.lang.String.class;
         case "methodname":
         case "MethodName": return java.lang.String.class;
         case "range":
         case "Range": return java.lang.String.class;
         case "refreshtoken":
         case "RefreshToken": return java.lang.String.class;
+        case "scopes":
+        case "Scopes": return java.util.Collection.class;
         case "splitresult":
         case "SplitResult": return boolean.class;
         case "spreadsheetid":
@@ -154,18 +169,33 @@ public class SheetsSpreadsheetsValuesEndpointConfigurationConfigurer extends org
         case "ClientSecret": return target.getClientSecret();
         case "content":
         case "Content": return target.getContent();
+        case "delegate":
+        case "Delegate": return target.getDelegate();
+        case "keyresource":
+        case "KeyResource": return target.getKeyResource();
         case "methodname":
         case "MethodName": return target.getMethodName();
         case "range":
         case "Range": return target.getRange();
         case "refreshtoken":
         case "RefreshToken": return target.getRefreshToken();
+        case "scopes":
+        case "Scopes": return target.getScopes();
         case "splitresult":
         case "SplitResult": return target.isSplitResult();
         case "spreadsheetid":
         case "SpreadsheetId": return target.getSpreadsheetId();
         case "values":
         case "Values": return target.getValues();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "scopes":
+        case "Scopes": return java.lang.String.class;
         default: return null;
         }
     }

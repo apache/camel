@@ -192,7 +192,7 @@ public class TwitterConfiguration {
 
     /**
      * Bounding boxes, created by pairs of lat/lons. Can be used for filter. A pair is defined as lat,lon. And multiple
-     * paris can be separated by semi colon.
+     * pairs can be separated by semicolon.
      */
     public void setLocations(String locations) {
         this.locations = locations;

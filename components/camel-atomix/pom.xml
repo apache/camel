@@ -29,7 +29,7 @@
 
     <artifactId>camel-atomix</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Atomix</name>
+    <name>Camel :: Atomix (deprecated)</name>
     <description>Camel Atomix support</description>
 
     <properties>

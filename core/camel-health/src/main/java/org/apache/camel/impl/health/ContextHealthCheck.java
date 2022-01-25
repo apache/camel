@@ -27,20 +27,9 @@ import org.apache.camel.health.HealthCheckResultBuilder;
  */
 @org.apache.camel.spi.annotations.HealthCheck("context-check")
 public final class ContextHealthCheck extends AbstractHealthCheck {
-    private CamelContext camelContext;
 
     public ContextHealthCheck() {
         super("camel", "context");
-    }
-
-    @Override
-    public CamelContext getCamelContext() {
-        return camelContext;
-    }
-
-    @Override
-    public void setCamelContext(CamelContext camelContext) {
-        this.camelContext = camelContext;
     }
 
     @Override
@@ -53,14 +42,14 @@ public final class ContextHealthCheck extends AbstractHealthCheck {
     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
         builder.unknown();
 
-        if (camelContext != null) {
-            builder.detail("context.name", camelContext.getName());
-            builder.detail("context.version", camelContext.getVersion());
-            builder.detail("context.status", camelContext.getStatus().name());
+        if (getCamelContext() != null) {
+            builder.detail("context.name", getCamelContext().getName());
+            builder.detail("context.version", getCamelContext().getVersion());
+            builder.detail("context.status", getCamelContext().getStatus().name());
 
-            if (camelContext.getStatus().isStarted()) {
+            if (getCamelContext().getStatus().isStarted()) {
                 builder.up();
-            } else if (camelContext.getStatus().isStopped()) {
+            } else if (getCamelContext().getStatus().isStopped()) {
                 builder.down();
             }
         }

@@ -170,18 +170,6 @@ public class RunMojo extends AbstractExecMojo {
     private String mainClass;
 
     /**
-     * The basedPackages that spring java config want to gets.
-     */
-    @Parameter(property = "camel.basedPackages")
-    private String basedPackages;
-
-    /**
-     * The configClasses that spring java config want to gets.
-     */
-    @Parameter(property = "camel.configClasses")
-    private String configClasses;
-
-    /**
      * The classpath based application context uri that spring want to gets.
      */
     @Parameter(property = "camel.applicationContextUri")
@@ -312,8 +300,6 @@ public class RunMojo extends AbstractExecMojo {
             getLog().info("You can skip tests from the command line using: mvn " + goal() + " -Dmaven.test.skip=true");
         }
 
-        boolean usingSpringJavaConfigureMain = false;
-
         boolean useCdiMain;
         if (useCDI != null) {
             // use configured value
@@ -345,17 +331,6 @@ public class RunMojo extends AbstractExecMojo {
             args.add(fileApplicationContextUri);
         }
 
-        if (configClasses != null) {
-            args.add("-cc");
-            args.add(configClasses);
-            usingSpringJavaConfigureMain = true;
-        }
-        if (basedPackages != null) {
-            args.add("-bp");
-            args.add(basedPackages);
-            usingSpringJavaConfigureMain = true;
-        }
-
         if (!duration.equals("-1")) {
             args.add("-d");
             args.add(duration);
@@ -372,10 +347,7 @@ public class RunMojo extends AbstractExecMojo {
             args.addAll(Arrays.asList(arguments));
         }
 
-        if (usingSpringJavaConfigureMain) {
-            mainClass = "org.apache.camel.spring.javaconfig.Main";
-            getLog().info("Using org.apache.camel.spring.javaconfig.Main to initiate a CamelContext");
-        } else if (useCdiMain) {
+        if (useCdiMain) {
             mainClass = "org.apache.camel.cdi.Main";
             // must include plugin dependencies for cdi
             extraPluginDependencyArtifactId = "camel-cdi";
@@ -649,8 +621,8 @@ public class RunMojo extends AbstractExecMojo {
     private boolean detectCDIOnClassPath() {
         List<Dependency> deps = project.getCompileDependencies();
         for (Dependency dep : deps) {
-            if ("org.apache.camel".equals(dep.getGroupId()) && "camel-cdi".equals(dep.getArtifactId())) {
-                getLog().info("camel-cdi detected on classpath");
+            if ("org.apache.camel".equals(dep.getGroupId()) && "camel-cdi-main".equals(dep.getArtifactId())) {
+                getLog().info("camel-cdi-main detected on classpath");
                 return true;
             }
         }

@@ -17,6 +17,7 @@
 package org.apache.camel.tooling.util;
 
 import java.util.Collection;
+import java.util.Locale;
 
 /**
  * Some String helper methods
@@ -188,6 +189,49 @@ public final class Strings {
             dash = false;
         }
         return sb.toString();
+    }
+
+    /**
+     * Converts the string from camel case into dash format (helloGreatWorld -> hello-great-world)
+     *
+     * @param  text the string
+     * @return      the string camel cased
+     */
+    public static String camelCaseToDash(String text) {
+        if (text == null || text.isEmpty()) {
+            return text;
+        }
+        StringBuilder answer = new StringBuilder();
+
+        Character prev = null;
+        Character next = null;
+        char[] arr = text.toCharArray();
+        for (int i = 0; i < arr.length; i++) {
+            char ch = arr[i];
+            if (i < arr.length - 1) {
+                next = arr[i + 1];
+            } else {
+                next = null;
+            }
+            if (ch == '-' || ch == '_') {
+                answer.append("-");
+            } else if (Character.isUpperCase(ch) && prev != null && !Character.isUpperCase(prev)) {
+                if (prev != '-' && prev != '_') {
+                    answer.append("-");
+                }
+                answer.append(ch);
+            } else if (Character.isUpperCase(ch) && prev != null && next != null && Character.isLowerCase(next)) {
+                if (prev != '-' && prev != '_') {
+                    answer.append("-");
+                }
+                answer.append(ch);
+            } else {
+                answer.append(ch);
+            }
+            prev = ch;
+        }
+
+        return answer.toString().toLowerCase(Locale.ENGLISH);
     }
 
 }

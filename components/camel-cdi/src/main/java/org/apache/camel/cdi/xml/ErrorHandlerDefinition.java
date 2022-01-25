@@ -29,6 +29,7 @@ import org.apache.camel.model.IdentifiedType;
  */
 @XmlRootElement(name = "errorHandler")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Deprecated
 public class ErrorHandlerDefinition extends IdentifiedType {
 
     @XmlAttribute

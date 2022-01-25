@@ -28,6 +28,8 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private String gtidSourceIncludes;
     @UriParam(label = LABEL_NAME, defaultValue = "class com.mysql.cj.jdbc.Driver")
     private String databaseJdbcDriver = "com.mysql.cj.jdbc.Driver";
+    @UriParam(label = LABEL_NAME)
+    private String heartbeatActionQuery;
     @UriParam(label = LABEL_NAME, defaultValue = "500ms", javaType = "java.time.Duration")
     private long pollIntervalMs = 500;
     @UriParam(label = LABEL_NAME, defaultValue = "100ms", javaType = "java.time.Duration")
@@ -70,6 +72,8 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private String columnWhitelist;
     @UriParam(label = LABEL_NAME)
     private String databaseSslTruststorePassword;
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean incrementalSnapshotAllowSchemaChanges = false;
     @UriParam(label = LABEL_NAME)
     private String columnIncludeList;
     @UriParam(label = LABEL_NAME, defaultValue = "true")
@@ -125,6 +129,8 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private String decimalHandlingMode = "precise";
     @UriParam(label = LABEL_NAME, defaultValue = "bytes")
     private String binaryHandlingMode = "bytes";
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean includeSchemaComments = false;
     @UriParam(label = LABEL_NAME, defaultValue = "off")
     private String snapshotNewTables = "off";
     @UriParam(label = LABEL_NAME, defaultValue = "false")
@@ -141,6 +147,8 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private long databaseServerId;
     @UriParam(label = LABEL_NAME, defaultValue = "0")
     private long maxQueueSizeInBytes = 0;
+    @UriParam(label = LABEL_NAME, defaultValue = "${database.server.name}.transaction")
+    private String transactionTopic = "${database.server.name}.transaction";
     @UriParam(label = LABEL_NAME, defaultValue = "adaptive_time_microseconds")
     private String timePrecisionMode = "adaptive_time_microseconds";
     @UriParam(label = LABEL_NAME, defaultValue = "fail")
@@ -293,6 +301,17 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
 
     public String getDatabaseJdbcDriver() {
         return databaseJdbcDriver;
+    }
+
+    /**
+     * The query executed with every heartbeat.
+     */
+    public void setHeartbeatActionQuery(String heartbeatActionQuery) {
+        this.heartbeatActionQuery = heartbeatActionQuery;
+    }
+
+    public String getHeartbeatActionQuery() {
+        return heartbeatActionQuery;
     }
 
     /**
@@ -575,6 +594,25 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
 
     public String getDatabaseSslTruststorePassword() {
         return databaseSslTruststorePassword;
+    }
+
+    /**
+     * Detect schema change during an incremental snapshot and re-select a
+     * current chunk to avoid locking DDLs. Note that changes to a primary key
+     * are not supported and can cause incorrect results if performed during an
+     * incremental snapshot. Another limitation is that if a schema change
+     * affects only columns' default values, then the change won't be detected
+     * until the DDL is processed from the binlog stream. This doesn't affect
+     * the snapshot events' values, but the schema of snapshot events may have
+     * outdated defaults.
+     */
+    public void setIncrementalSnapshotAllowSchemaChanges(
+            boolean incrementalSnapshotAllowSchemaChanges) {
+        this.incrementalSnapshotAllowSchemaChanges = incrementalSnapshotAllowSchemaChanges;
+    }
+
+    public boolean isIncrementalSnapshotAllowSchemaChanges() {
+        return incrementalSnapshotAllowSchemaChanges;
     }
 
     /**
@@ -939,6 +977,22 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Whether the connector parse table and column's comment to metadata
+     * object.Note: Enable this option will bring the implications on memory
+     * usage. The number and size of ColumnImpl objects is what largely impacts
+     * how much memory is consumed by the Debezium connectors, and adding a
+     * String to each of them can potentially be quite heavy. The default is
+     * 'false'.
+     */
+    public void setIncludeSchemaComments(boolean includeSchemaComments) {
+        this.includeSchemaComments = includeSchemaComments;
+    }
+
+    public boolean isIncludeSchemaComments() {
+        return includeSchemaComments;
+    }
+
+    /**
      * BETA FEATURE: On connector restart, the connector will check if there
      * have been any new tables added to the configuration, and snapshot them.
      * There is presently only two options:'off': Default behavior. Do not
@@ -1053,6 +1107,19 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
 
     public long getMaxQueueSizeInBytes() {
         return maxQueueSizeInBytes;
+    }
+
+    /**
+     * The name of the transaction metadata topic. The placeholder
+     * ${database.server.name} can be used for referring to the connector's
+     * logical name; defaults to ${database.server.name}.transaction.
+     */
+    public void setTransactionTopic(String transactionTopic) {
+        this.transactionTopic = transactionTopic;
+    }
+
+    public String getTransactionTopic() {
+        return transactionTopic;
     }
 
     /**
@@ -1291,6 +1358,7 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "include.schema.changes", includeSchemaChanges);
         addPropertyIfNotNull(configBuilder, "gtid.source.includes", gtidSourceIncludes);
         addPropertyIfNotNull(configBuilder, "database.jdbc.driver", databaseJdbcDriver);
+        addPropertyIfNotNull(configBuilder, "heartbeat.action.query", heartbeatActionQuery);
         addPropertyIfNotNull(configBuilder, "poll.interval.ms", pollIntervalMs);
         addPropertyIfNotNull(configBuilder, "database.history.kafka.recovery.poll.interval.ms", databaseHistoryKafkaRecoveryPollIntervalMs);
         addPropertyIfNotNull(configBuilder, "signal.data.collection", signalDataCollection);
@@ -1312,6 +1380,7 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "heartbeat.interval.ms", heartbeatIntervalMs);
         addPropertyIfNotNull(configBuilder, "column.whitelist", columnWhitelist);
         addPropertyIfNotNull(configBuilder, "database.ssl.truststore.password", databaseSslTruststorePassword);
+        addPropertyIfNotNull(configBuilder, "incremental.snapshot.allow.schema.changes", incrementalSnapshotAllowSchemaChanges);
         addPropertyIfNotNull(configBuilder, "column.include.list", columnIncludeList);
         addPropertyIfNotNull(configBuilder, "enable.time.adjuster", enableTimeAdjuster);
         addPropertyIfNotNull(configBuilder, "column.propagate.source.type", columnPropagateSourceType);
@@ -1339,6 +1408,7 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "tombstones.on.delete", tombstonesOnDelete);
         addPropertyIfNotNull(configBuilder, "decimal.handling.mode", decimalHandlingMode);
         addPropertyIfNotNull(configBuilder, "binary.handling.mode", binaryHandlingMode);
+        addPropertyIfNotNull(configBuilder, "include.schema.comments", includeSchemaComments);
         addPropertyIfNotNull(configBuilder, "snapshot.new.tables", snapshotNewTables);
         addPropertyIfNotNull(configBuilder, "database.history.skip.unparseable.ddl", databaseHistorySkipUnparseableDdl);
         addPropertyIfNotNull(configBuilder, "table.ignore.builtin", tableIgnoreBuiltin);
@@ -1347,6 +1417,7 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "bigint.unsigned.handling.mode", bigintUnsignedHandlingMode);
         addPropertyIfNotNull(configBuilder, "database.server.id", databaseServerId);
         addPropertyIfNotNull(configBuilder, "max.queue.size.in.bytes", maxQueueSizeInBytes);
+        addPropertyIfNotNull(configBuilder, "transaction.topic", transactionTopic);
         addPropertyIfNotNull(configBuilder, "time.precision.mode", timePrecisionMode);
         addPropertyIfNotNull(configBuilder, "event.deserialization.failure.handling.mode", eventDeserializationFailureHandlingMode);
         addPropertyIfNotNull(configBuilder, "database.server.name", databaseServerName);

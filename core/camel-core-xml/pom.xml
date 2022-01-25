@@ -32,6 +32,7 @@
     <description>Camel Core XML support</description>
 
     <properties>
+        <firstVersion>2.4.0</firstVersion>
         <camel.osgi.import>
             javax.xml.bind*;version="[2.2,3.0)",
             *

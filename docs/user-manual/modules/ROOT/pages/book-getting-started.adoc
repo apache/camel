@@ -158,9 +158,9 @@ xref:book-getting-started.adoc[Section ("Online Javadoc
 documentation")], Camel provides a separate Javadoc hierarchy for each
 communications technology supported by Camel. Because of this, you will
 find documentation on, say, the `JmsEndpoint` class in the
-http://camel.apache.org/maven/current/camel-jms/apidocs/[JMS Javadoc
+http://javadoc.io/doc/org.apache.camel/camel-jms/latest/[JMS Javadoc
 hierarchy], while documentation for, say, the `FtpEndpoint` class is in
-the http://camel.apache.org/maven/current/camel-ftp/apidocs/[FTP Javadoc
+the http://javadoc.io/doc/org.apache.camel/camel-ftp/latest/[FTP Javadoc
 hierarchy].
 
 [[BookGettingStarted-CamelContext]]

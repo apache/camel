@@ -144,16 +144,19 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
         endpoint.getComponent().unregisterEndpoint(this, endpoint.getHttpHandlerRegistrationInfo(), endpoint.getSslContext());
     }
 
+    @Override
     protected void doSuspend() throws Exception {
         this.suspended = true;
         super.doSuspend();
     }
 
+    @Override
     protected void doResume() throws Exception {
         this.suspended = false;
         super.doResume();
     }
 
+    @Override
     public boolean isSuspended() {
         return this.suspended;
     }

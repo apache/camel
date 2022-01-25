@@ -36,7 +36,7 @@
     <activemq-artemis-version>2.19.0</activemq-artemis-version>
     <activemq-version>5.16.3</activemq-version>
     <ahc-version>2.12.3</ahc-version>
-    <apache-any23-version>2.4</apache-any23-version>
+    <apache-any23-version>2.6</apache-any23-version>
     <apache-drill-version>1.19.0</apache-drill-version>
     <apache-gora-version>0.9</apache-gora-version>
     <apacheds-version>2.0.0.AM26</apacheds-version>
@@ -149,7 +149,6 @@
     <commons-logging-version>1.2</commons-logging-version>
     <commons-math3-version>3.6.1</commons-math3-version>
     <commons-net-version>3.8.0</commons-net-version>
-    <commons-pool-version>1.6</commons-pool-version>
     <commons-pool2-version>2.11.1</commons-pool2-version>
     <commons-text-version>1.9</commons-text-version>
     <commons-validator-version>1.7</commons-validator-version>
@@ -446,8 +445,6 @@
     <opentelemetry-version>1.9.1</opentelemetry-version>
     <opentracing-tracerresolver-version>0.1.8</opentracing-tracerresolver-version>
     <opentracing-version>0.33.0</opentracing-version>
-    <openwebbeans-version>1.7.3</openwebbeans-version>
-    <openwebbeans1-version>1.2.7</openwebbeans1-version>
     <optaplanner-version>8.9.1.Final</optaplanner-version>
     <os-maven-plugin-version>1.7.0</os-maven-plugin-version>
     <paho-version>1.2.5</paho-version>

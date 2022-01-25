@@ -165,7 +165,7 @@ information about redeliver and which redeliver options exists.
 
 === No redelivery is default for onException
 
-By default any xref:exception-clause.adoc[Exception Clause] will *not*
+By default, any xref:exception-clause.adoc[Exception Clause] will *not*
 redeliver! (as it sets the `maximumRedeliveries` option to 0).
 
 Sometimes you want to configure the redelivery policy on a per exception
@@ -255,7 +255,7 @@ asynchronous behavior by the *`asyncDelayedRedelivery`* option. This
 option can be set on the *`errorHandler`*, *`onException`* or the
 redelivery policies.
 
-By default the error handler will create and use a scheduled thread pool
+By default, the error handler will create and use a scheduled thread pool
 to trigger redelivery in the future. You can also configure
 the *`executorServiceRef`* on the xref:error-handler.adoc[Error Handler]
 to indicate a reference to either a shared thread pool you can enlist in
@@ -293,7 +293,7 @@ a *`onException`* clause for the particular exception.
 [source,java]
 ----
 // here we register exception cause for MyFunctionException
-// when this exception occur we want it to be processed by our
+// when this exception occurs we want it to be processed by our
 // processor
 onException(MyFunctionalException.class)
   .process(new MyFunctionFailureHandler())
@@ -304,7 +304,7 @@ onException(MyFunctionalException.class)
 So what happens is that whenever a *`MyFunctionalException`* is thrown it
 is being routed to our processor *`MyFunctionFailureHandler`*. So you
 can say that the exchange is diverted when a *`MyFunctionalException`*
-is thrown during processing. It's important to distinct this as perfect
+is thrown during processing. It's important to distinct this as perfectly
 valid. The default redelivery policy from the
 xref:components:eips:dead-letter-channel.adoc[Dead Letter Channel] will not kick in, so
 our processor receives the Exchange directly, without any redeliver
@@ -321,8 +321,8 @@ of the route. So lets look the code for our processor.
             // the caused by exception is stored in a property on the exchange
             Throwable caused = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Throwable.class);
             assertNotNull(caused);
-            // here you can do what you want, but Camel regard this exception as
-            // handled, and this processor as a failurehandler, so it wont do redeliveries.
+            // here you can do what you want, but Camel regards this exception as
+            // handled, and this processor as a failure handler, so it won't do redeliveries.
             // So this is the end of this route.
         }
     }
@@ -335,10 +335,10 @@ what you want.
 
 == Marking Exceptions as Handled
 
-See also the section xref:exception-clause.adoc[Handle and continue exceptions] below.
+See also the section <<Handle and Continue Exceptions>> below.
 
 Using *`onException`* to handle known exceptions is a very powerful
-feature in Camel. However prior to Camel 1.5 you could not mark the
+feature in Camel. However, prior to Camel 1.5, you could not mark the
 exception as being handled, so the caller would still receive the caused
 exception as a response. In Camel 1.5 you can now change this behavior
 with the new *handle* DSL. The handle is a
@@ -347,9 +347,9 @@ of parameters:
 
 * Boolean
 * xref:predicate.adoc[Predicate]
-* xref:expression.adoc[Expression] that will be evaluates as a
-xref:predicate.adoc[Predicate] using this rule set: If the expressions
-returns a Boolean its used directly. For any other response its regarded
+* xref:expression.adoc[Expression] that will be evaluated as a
+xref:predicate.adoc[Predicate] using this rule set: If the expression
+returns a Boolean, it is used directly. For any other response, it is regarded
 as `true` if the response is `not null`.
 
 For instance to mark all *`ValidationException`* as being handled we can
@@ -397,7 +397,7 @@ to the caller. First we setup our routing as:
         .to("mock:result");
 ----
 
-Then we have our service beans that is just plain POJO demonstrating how you
+Then we have our service bean that is just a plain POJO demonstrating how you
 can use xref:bean-integration.adoc[Bean Integration] in Camel to avoid
 being tied to the Camel API:
 
@@ -569,7 +569,7 @@ thrown we can do this:
 
 [source,java]
 ----
-onException(IDontCareException)
+onException(IDontCareException.class)
     .continued(true);
 ----
 
@@ -609,7 +609,7 @@ And the same example in Spring XML DSL:
         <route>
             <from uri="direct:start"/>
             <to uri="mock:start"/>
-            <throwException ref="forced"/>
+            <throwException message="Forced" exceptionType="java.lang.IllegalArgumentException"/>
             <to uri="mock:result"/>
         </route>
 
@@ -691,10 +691,10 @@ would be:
 The original input means the input message that are bounded by the current unit of work. An unit of work typically spans one route, or multiple routes if they are connected 
 using internal endpoints such as direct or seda. When messages are passed via external
 endpoints such as JMS or HTTP then the consumer will create a new unit of work, with the
-message it received as input as the original input. Also some EIP patterns such as splitter,
+message it received as input as the original input. Also, some EIP patterns such as splitter,
 multicast, will create a new unit of work boundary for the messages in their sub-route
-(eg the splitted message); however these EIPs have an option named shareUnitOfWork which
-allows to combine with the parent unit of work in regard to error handling and therefore use
+(i.e. the split message); however these EIPs have an option named shareUnitOfWork which
+allows combining with the parent unit of work in regard to error handling and therefore use
 the parent original message.
 
 == Using `useOriginalBody`
@@ -986,7 +986,7 @@ just before a redelivery attempt is being performed, that means it will
 not happen right after an exception was thrown. For example if the error
 handler has been configured to perform 5 seconds delay between
 redelivery attempts, then the redelivery processor is invoked 5 seconds
-later sine the exception was thrown. On the other hand
+after the exception was thrown. On the other hand
 the *`onExceptionOccurred`* processor is always invoked right after the
 exception was thrown, and also if redelivery has been disabled.
 
@@ -1051,14 +1051,8 @@ public class MyRetryBean {
 
     // using bean binding we can bind the information from the exchange to
     // the types we have in our method signature
-    public boolean retry(@Header(Exchange.REDELIVERY_COUNTER) Integer counter, @Body String body, @ExchangeException Exception causedBy) {
+    public boolean retry(@Header(Exchange.REDELIVERY_COUNTER) Integer counter) {
         // NOTE: counter is the redelivery attempt, will start from 1
-        invoked++;
-
-        assertEquals("Hello World", body);
-        boolean b = causedBy instanceof MyFunctionalException;
-        assertTrue(b);
-
         // we can of course do what ever we want to determine the result but
         // this is a unit test so we end after 3 attempts
         return counter < 3;
@@ -1069,7 +1063,7 @@ public class MyRetryBean {
 == Using Custom ExceptionPolicyStrategy
 
 The default
-https://www.javadoc.io/doc/org.apache.camel/camel-base/current/org/apache/camel/processor/errorhandler/ExceptionPolicyStrategy.html[ExceptionPolicyStrategy]
+https://www.javadoc.io/doc/org.apache.camel/camel-core-processor/current/org/apache/camel/processor/errorhandler/ExceptionPolicyStrategy.html[ExceptionPolicyStrategy]
 in Camel should be sufficient in nearly all use-cases.
 However, if you need to use your own (use only for rare and advanced use-cases) this can be configured as the
 sample below illustrates:
@@ -1081,8 +1075,7 @@ errorHandler(deadLetterChannel("mock:error").exceptionPolicyStrategy(new MyPolic
 ----
 
 Using our own strategy *`MyPolicy`* we can change the default behavior of
-Camel with our own code to resolve which
-http://camel.apache.org/maven/camel-core/apidocs/org/apache/camel/model/ExceptionType.html[ExceptionType]
+Camel with our own code to resolve which exception type
 from above should be handling the given thrown exception.
 
 [source,java]
@@ -1090,7 +1083,7 @@ from above should be handling the given thrown exception.
 public static class MyPolicy implements ExceptionPolicyStrategy {
 
     @Override
-    public ExceptionPolicyKey getExceptionPolicy(Set<ExceptionPolicyKey> exceptionPolicices, Exchange exchange, Throwable exception) {
+    public ExceptionPolicyKey getExceptionPolicy(Set<ExceptionPolicyKey> exceptionPolicies, Exchange exchange, Throwable exception) {
         // This is just an example that always forces the exception type configured
         // with MyPolicyException to win.
         return new ExceptionPolicyKey(null, MyPolicyException.class, null);

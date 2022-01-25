@@ -7,6 +7,7 @@
     "deprecated": false,
     "label": "eip,transformation",
     "javaType": "org.apache.camel.model.TransformDefinition",
+    "abstract": false,
     "input": true,
     "output": false
   },

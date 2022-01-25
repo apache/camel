@@ -78,7 +78,7 @@
     -->
     <profiles>
         <profile>
-            <id>ibmjdk</id>
+            <id>ibm-jdk</id>
             <activation>
                 <property>
                     <name>java.vendor</name>

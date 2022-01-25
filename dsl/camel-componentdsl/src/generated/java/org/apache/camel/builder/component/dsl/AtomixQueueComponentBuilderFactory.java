@@ -40,6 +40,7 @@ public interface AtomixQueueComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static AtomixQueueComponentBuilder atomixQueue() {
         return new AtomixQueueComponentBuilderImpl();
     }

@@ -19,11 +19,13 @@ public class GoogleMailStreamEndpointUriFactory extends org.apache.camel.support
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(29);
+        Set<String> props = new HashSet<>(32);
         props.add("backoffMultiplier");
         props.add("initialDelay");
         props.add("markAsRead");
+        props.add("delegate");
         props.add("scheduler");
         props.add("bridgeErrorHandler");
         props.add("useFixedDelay");
@@ -37,6 +39,7 @@ public class GoogleMailStreamEndpointUriFactory extends org.apache.camel.support
         props.add("repeatCount");
         props.add("timeUnit");
         props.add("clientId");
+        props.add("keyResource");
         props.add("query");
         props.add("sendEmptyMessageWhenIdle");
         props.add("schedulerProperties");
@@ -48,6 +51,7 @@ public class GoogleMailStreamEndpointUriFactory extends org.apache.camel.support
         props.add("delay");
         props.add("pollStrategy");
         props.add("startScheduler");
+        props.add("scopes");
         props.add("exceptionHandler");
         props.add("refreshToken");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
@@ -56,6 +60,9 @@ public class GoogleMailStreamEndpointUriFactory extends org.apache.camel.support
         secretProps.add("accessToken");
         secretProps.add("refreshToken");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
+        Set<String> prefixes = new HashSet<>(1);
+        prefixes.add("scheduler.");
+        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
     }
 
     @Override
@@ -83,6 +90,11 @@ public class GoogleMailStreamEndpointUriFactory extends org.apache.camel.support
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

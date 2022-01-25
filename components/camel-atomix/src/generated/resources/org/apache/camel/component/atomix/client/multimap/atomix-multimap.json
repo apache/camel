@@ -4,7 +4,7 @@
     "name": "atomix-multimap",
     "title": "Atomix MultiMap",
     "description": "Access Atomix's distributed multi map.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.20.0",
     "label": "clustering",
     "javaType": "org.apache.camel.component.atomix.client.multimap.AtomixMultiMapComponent",

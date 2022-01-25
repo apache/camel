@@ -370,8 +370,8 @@ public final class EndpointHelper {
                 throw new NoSuchBeanException(value, e);
             }
         } else {
-            String valueNoHash = StringHelper.replaceAll(value, "#bean:", "");
-            valueNoHash = StringHelper.replaceAll(valueNoHash, "#", "");
+            String valueNoHash = value.replace("#bean:", "");
+            valueNoHash = valueNoHash.replace("#", "");
             if (mandatory) {
                 return CamelContextHelper.mandatoryLookupAndConvert(context, valueNoHash, type);
             } else {

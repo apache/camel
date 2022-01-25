@@ -33,6 +33,7 @@
     <description>The Core Camel Framework</description>
 
     <properties>
+        <firstVersion>1.0.0</firstVersion>
         <camel.surefire.forkTimeout>3000</camel.surefire.forkTimeout>
         <camel.surefire.parallel.strategy>custom</camel.surefire.parallel.strategy>
     </properties>
@@ -208,6 +209,13 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Used for the exception tests -->
+        <dependency>
+            <groupId>javax.xml.soap</groupId>
+            <artifactId>javax.xml.soap-api</artifactId>
             <scope>test</scope>
         </dependency>
 

@@ -29,12 +29,8 @@
     <artifactId>camel-beanio</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: BeanIO</name>
+    <name>Camel :: BeanIO (deprecated)</name>
     <description>Camel BeanIO data format support</description>
-    <url>http://www.beanio.org</url>
-
-    <properties>
-    </properties>
 
     <dependencies>
         <dependency>

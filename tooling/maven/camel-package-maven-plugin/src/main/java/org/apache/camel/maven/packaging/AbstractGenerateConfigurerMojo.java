@@ -153,17 +153,7 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
                         .filter(annotation -> asBooleanDefaultTrue(annotation, "generateConfigurer"))
                         .forEach(annotation -> {
                             String currentClass = annotation.target().asClass().name().toString();
-                            boolean bootstrap = asBooleanDefaultFalse(annotation, "bootstrap");
-                            boolean extended = asBooleanDefaultFalse(annotation, "extended");
-                            if (bootstrap && extended) {
-                                bootstrapAndExtendedSet.add(currentClass);
-                            } else if (bootstrap) {
-                                bootstrapSet.add(currentClass);
-                            } else if (extended) {
-                                extendedSet.add(currentClass);
-                            } else {
-                                set.add(currentClass);
-                            }
+                            addToSets(annotation, bootstrapAndExtendedSet, currentClass, bootstrapSet, extendedSet, set);
                         });
             }
         }
@@ -181,17 +171,7 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
                 ClassInfo ci = index.getClassByName(DotName.createSimple(clazz));
                 AnnotationInstance ai = ci != null ? ci.classAnnotation(CONFIGURER) : null;
                 if (ai != null) {
-                    boolean bootstrap = asBooleanDefaultFalse(ai, "bootstrap");
-                    boolean extended = asBooleanDefaultFalse(ai, "extended");
-                    if (bootstrap && extended) {
-                        bootstrapAndExtendedSet.add(clazz);
-                    } else if (bootstrap) {
-                        bootstrapSet.add(clazz);
-                    } else if (extended) {
-                        extendedSet.add(clazz);
-                    } else {
-                        set.add(clazz);
-                    }
+                    addToSets(ai, bootstrapAndExtendedSet, clazz, bootstrapSet, extendedSet, set);
                 } else {
                     set.add(clazz);
                 }
@@ -199,64 +179,49 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
         }
 
         for (String fqn : set) {
-            try {
-                String targetFqn = fqn;
-                int pos = fqn.indexOf('=');
-                if (pos != -1) {
-                    targetFqn = fqn.substring(pos + 1);
-                    fqn = fqn.substring(0, pos);
-                }
-                List<ConfigurerOption> options = processClass(fqn);
-                generateConfigurer(fqn, targetFqn, options, sourcesOutputDir, false, false);
-                generateMetaInfConfigurer(fqn, targetFqn, resourcesOutputDir);
-            } catch (Exception e) {
-                throw new MojoExecutionException("Error processing class: " + fqn, e);
-            }
+            processClass(fqn, sourcesOutputDir, false, false, resourcesOutputDir);
         }
         for (String fqn : bootstrapSet) {
-            try {
-                String targetFqn = fqn;
-                int pos = fqn.indexOf('=');
-                if (pos != -1) {
-                    targetFqn = fqn.substring(pos + 1);
-                    fqn = fqn.substring(0, pos);
-                }
-                List<ConfigurerOption> options = processClass(fqn);
-                generateConfigurer(fqn, targetFqn, options, sourcesOutputDir, false, true);
-                generateMetaInfConfigurer(fqn, targetFqn, resourcesOutputDir);
-            } catch (Exception e) {
-                throw new MojoExecutionException("Error processing class: " + fqn, e);
-            }
+            processClass(fqn, sourcesOutputDir, false, true, resourcesOutputDir);
         }
         for (String fqn : extendedSet) {
-            try {
-                String targetFqn = fqn;
-                int pos = fqn.indexOf('=');
-                if (pos != -1) {
-                    targetFqn = fqn.substring(pos + 1);
-                    fqn = fqn.substring(0, pos);
-                }
-                List<ConfigurerOption> options = processClass(fqn);
-                generateConfigurer(fqn, targetFqn, options, sourcesOutputDir, true, false);
-                generateMetaInfConfigurer(fqn, targetFqn, resourcesOutputDir);
-            } catch (Exception e) {
-                throw new MojoExecutionException("Error processing class: " + fqn, e);
-            }
+            processClass(fqn, sourcesOutputDir, true, false, resourcesOutputDir);
         }
         for (String fqn : bootstrapAndExtendedSet) {
-            try {
-                String targetFqn = fqn;
-                int pos = fqn.indexOf('=');
-                if (pos != -1) {
-                    targetFqn = fqn.substring(pos + 1);
-                    fqn = fqn.substring(0, pos);
-                }
-                List<ConfigurerOption> options = processClass(fqn);
-                generateConfigurer(fqn, targetFqn, options, sourcesOutputDir, true, true);
-                generateMetaInfConfigurer(fqn, targetFqn, resourcesOutputDir);
-            } catch (Exception e) {
-                throw new MojoExecutionException("Error processing class: " + fqn, e);
+            processClass(fqn, sourcesOutputDir, true, true, resourcesOutputDir);
+        }
+    }
+
+    private void addToSets(
+            AnnotationInstance annotation, Set<String> bootstrapAndExtendedSet, String currentClass, Set<String> bootstrapSet,
+            Set<String> extendedSet, Set<String> set) {
+        boolean bootstrap = asBooleanDefaultFalse(annotation, "bootstrap");
+        boolean extended = asBooleanDefaultFalse(annotation, "extended");
+        if (bootstrap && extended) {
+            bootstrapAndExtendedSet.add(currentClass);
+        } else if (bootstrap) {
+            bootstrapSet.add(currentClass);
+        } else if (extended) {
+            extendedSet.add(currentClass);
+        } else {
+            set.add(currentClass);
+        }
+    }
+
+    private void processClass(String fqn, File sourcesOutputDir, boolean extended, boolean bootstrap, File resourcesOutputDir)
+            throws MojoExecutionException {
+        try {
+            String targetFqn = fqn;
+            int pos = fqn.indexOf('=');
+            if (pos != -1) {
+                targetFqn = fqn.substring(pos + 1);
+                fqn = fqn.substring(0, pos);
             }
+            List<ConfigurerOption> options = processClass(fqn);
+            generateConfigurer(fqn, targetFqn, options, sourcesOutputDir, extended, bootstrap);
+            generateMetaInfConfigurer(fqn, targetFqn, resourcesOutputDir);
+        } catch (Exception e) {
+            throw new MojoExecutionException("Error processing class: " + fqn, e);
         }
     }
 

@@ -8,6 +8,7 @@
     "firstVersion": "2.7.0",
     "label": "language,spring",
     "javaType": "org.apache.camel.model.language.SpELExpression",
+    "abstract": false,
     "input": false,
     "output": false
   },

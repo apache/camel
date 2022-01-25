@@ -190,7 +190,7 @@ resultEndpoint.expectedBodiesReceived("firstMessageBody", "secondMessageBody", "
 == Adding expectations to specific messages
 
 In addition, you can use the
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/component/mock/MockEndpoint.html#message(int)[`message(int
+http://javadoc.io/doc/org.apache.camel/camel-mock/latest/org/apache/camel/component/mock/MockEndpoint.html#message-int-[`message(int
 messageIndex)`] method to add assertions about a specific message that is
 received.
 

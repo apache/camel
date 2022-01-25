@@ -67,7 +67,7 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
                     boolean useSubUnitOfWork, boolean parallelAggregate) {
         this(camelContext, route, expression, destination, aggregationStrategy, parallelProcessing, executorService,
              shutdownExecutorService, streaming, stopOnException, timeout,
-             onPrepare, useSubUnitOfWork, parallelAggregate, false, ",");
+             onPrepare, useSubUnitOfWork, parallelAggregate, ",");
     }
 
     public Splitter(CamelContext camelContext, Route route, Expression expression, Processor destination,
@@ -75,33 +75,9 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
                     ExecutorService executorService, boolean shutdownExecutorService, boolean streaming,
                     boolean stopOnException, long timeout, Processor onPrepare,
                     boolean useSubUnitOfWork, boolean parallelAggregate, String delimiter) {
-        this(camelContext, route, expression, destination, aggregationStrategy, parallelProcessing, executorService,
-             shutdownExecutorService, streaming, stopOnException, timeout,
-             onPrepare, useSubUnitOfWork, parallelAggregate, false, delimiter);
-    }
-
-    public Splitter(CamelContext camelContext, Route route, Expression expression, Processor destination,
-                    AggregationStrategy aggregationStrategy, boolean parallelProcessing,
-                    ExecutorService executorService, boolean shutdownExecutorService, boolean streaming,
-                    boolean stopOnException, long timeout, Processor onPrepare,
-                    boolean useSubUnitOfWork, boolean parallelAggregate, boolean stopOnAggregateException) {
         super(camelContext, route, Collections.singleton(destination), aggregationStrategy, parallelProcessing, executorService,
               shutdownExecutorService, streaming, stopOnException,
-              timeout, onPrepare, useSubUnitOfWork, parallelAggregate, stopOnAggregateException);
-        this.expression = expression;
-        this.delimiter = ",";
-        notNull(expression, "expression");
-        notNull(destination, "destination");
-    }
-
-    public Splitter(CamelContext camelContext, Route route, Expression expression, Processor destination,
-                    AggregationStrategy aggregationStrategy, boolean parallelProcessing,
-                    ExecutorService executorService, boolean shutdownExecutorService, boolean streaming,
-                    boolean stopOnException, long timeout, Processor onPrepare,
-                    boolean useSubUnitOfWork, boolean parallelAggregate, boolean stopOnAggregateException, String delimiter) {
-        super(camelContext, route, Collections.singleton(destination), aggregationStrategy, parallelProcessing, executorService,
-              shutdownExecutorService, streaming, stopOnException,
-              timeout, onPrepare, useSubUnitOfWork, parallelAggregate, stopOnAggregateException);
+              timeout, onPrepare, useSubUnitOfWork, parallelAggregate);
         this.expression = expression;
         StringHelper.notEmpty(delimiter, "delimiter");
         this.delimiter = delimiter;
@@ -275,6 +251,7 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
                     }
                 }
 
+                @Override
                 public void remove() {
                     throw new UnsupportedOperationException("Remove is not supported by this iterator");
                 }
@@ -345,7 +322,7 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
             answer.setExchangeId(exchange.getExchangeId());
         }
         if (exchange.getContext().isMessageHistory()) {
-            // we do not want to copy the message history for splitted sub-messages
+            // we do not want to copy the message history for split sub-messages
             answer.removeProperty(ExchangePropertyKey.MESSAGE_HISTORY);
         }
         return answer;

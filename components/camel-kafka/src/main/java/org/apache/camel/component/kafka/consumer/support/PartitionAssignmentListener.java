@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import org.apache.camel.component.kafka.KafkaConfiguration;
+import org.apache.camel.component.kafka.consumer.CommitManager;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRebalanceListener;
 import org.apache.kafka.common.TopicPartition;
@@ -34,21 +35,21 @@ public class PartitionAssignmentListener implements ConsumerRebalanceListener {
     private static final Logger LOG = LoggerFactory.getLogger(PartitionAssignmentListener.class);
 
     private final String threadId;
-    private final String topicName;
     private final KafkaConfiguration configuration;
     private final Consumer consumer;
     private final Map<String, Long> lastProcessedOffset;
     private final KafkaConsumerResumeStrategy resumeStrategy;
+    private final CommitManager commitManager;
     private Supplier<Boolean> stopStateSupplier;
 
-    public PartitionAssignmentListener(String threadId, String topicName, KafkaConfiguration configuration,
+    public PartitionAssignmentListener(String threadId, KafkaConfiguration configuration,
                                        Consumer consumer, Map<String, Long> lastProcessedOffset,
-                                       Supplier<Boolean> stopStateSupplier) {
+                                       Supplier<Boolean> stopStateSupplier, CommitManager commitManager) {
         this.threadId = threadId;
-        this.topicName = topicName;
         this.configuration = configuration;
         this.consumer = consumer;
         this.lastProcessedOffset = lastProcessedOffset;
+        this.commitManager = commitManager;
         this.stopStateSupplier = stopStateSupplier;
 
         this.resumeStrategy = ResumeStrategyFactory.newResumeStrategy(configuration);
@@ -56,12 +57,13 @@ public class PartitionAssignmentListener implements ConsumerRebalanceListener {
 
     @Override
     public void onPartitionsRevoked(Collection<TopicPartition> partitions) {
-        LOG.debug("onPartitionsRevoked: {} from topic {}", threadId, topicName);
 
         // if camel is stopping, or we are not running
         boolean stopping = stopStateSupplier.get();
 
         for (TopicPartition partition : partitions) {
+            LOG.debug("onPartitionsRevoked: {} from {}", threadId, partition.topic());
+
             String offsetKey = serializeOffsetKey(partition);
             Long offset = lastProcessedOffset.get(offsetKey);
             if (offset == null) {
@@ -70,7 +72,12 @@ public class PartitionAssignmentListener implements ConsumerRebalanceListener {
             try {
                 // only commit offsets if the component has control
                 if (configuration.getAutoCommitEnable()) {
-                    KafkaRecordProcessor.commitOffset(configuration, consumer, partition, offset, stopping, false, threadId);
+                    if (stopping) {
+                        commitManager.commitOffsetOnStop(partition, offset);
+                    } else {
+                        commitManager.commitOffset(partition, offset);
+                    }
+
                 }
             } catch (Exception e) {
                 LOG.error("Error saving offset repository state {} from offsetKey {} with offset: {}", threadId, offsetKey,
@@ -84,7 +91,9 @@ public class PartitionAssignmentListener implements ConsumerRebalanceListener {
 
     @Override
     public void onPartitionsAssigned(Collection<TopicPartition> partitions) {
-        LOG.debug("onPartitionsAssigned: {} from topic {}", threadId, topicName);
+        if (LOG.isDebugEnabled()) {
+            partitions.forEach(p -> LOG.debug("onPartitionsAssigned: {} from {}", threadId, p.topic()));
+        }
 
         resumeStrategy.resume(consumer);
     }

@@ -62,10 +62,12 @@ public class CxfPayload<T> {
      */
     public List<Element> getBody() {
         return new AbstractList<Element>() {
+            @Override
             public boolean add(Element e) {
                 return body.add(new DOMSource(e));
             }
 
+            @Override
             public Element set(int index, Element element) {
                 Source s = body.set(index, new DOMSource(element));
                 try {
@@ -75,10 +77,12 @@ public class CxfPayload<T> {
                 }
             }
 
+            @Override
             public void add(int index, Element element) {
                 body.add(index, new DOMSource(element));
             }
 
+            @Override
             public Element remove(int index) {
                 Source s = body.remove(index);
                 try {

@@ -46,7 +46,6 @@ public class SplitReifier extends ExpressionReifier<SplitDefinition> {
         boolean isStreaming = parseBoolean(definition.getStreaming(), false);
         boolean isShareUnitOfWork = parseBoolean(definition.getShareUnitOfWork(), false);
         boolean isParallelAggregate = parseBoolean(definition.getParallelAggregate(), false);
-        boolean isStopOnAggregateException = parseBoolean(definition.getStopOnAggregateException(), false);
         boolean isStopOnException = parseBoolean(definition.getStopOnException(), false);
         boolean shutdownThreadPool = willCreateNewThreadPool(definition, isParallelProcessing);
         ExecutorService threadPool = getConfiguredExecutorService("Split", definition, isParallelProcessing);
@@ -68,12 +67,12 @@ public class SplitReifier extends ExpressionReifier<SplitDefinition> {
             answer = new Splitter(
                     camelContext, route, exp, childProcessor, definition.getAggregationStrategy(), isParallelProcessing,
                     threadPool, shutdownThreadPool, isStreaming, isStopOnException, timeout, definition.getOnPrepare(),
-                    isShareUnitOfWork, isParallelAggregate, isStopOnAggregateException, delimiter);
+                    isShareUnitOfWork, isParallelAggregate, delimiter);
         } else {
             answer = new Splitter(
                     camelContext, route, exp, childProcessor, definition.getAggregationStrategy(), isParallelProcessing,
                     threadPool, shutdownThreadPool, isStreaming, isStopOnException, timeout, definition.getOnPrepare(),
-                    isShareUnitOfWork, isParallelAggregate, isStopOnAggregateException);
+                    isShareUnitOfWork, isParallelAggregate);
         }
 
         return answer;

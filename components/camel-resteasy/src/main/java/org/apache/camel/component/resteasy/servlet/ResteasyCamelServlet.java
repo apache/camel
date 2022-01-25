@@ -293,6 +293,7 @@ public class ResteasyCamelServlet extends HttpServletDispatcher implements HttpR
     /**
      * Destroy ResteasyCamelServlet and delete registry created by it
      */
+    @Override
     public void destroy() {
         DefaultHttpRegistry.removeHttpRegistry(getServletName());
         if (httpRegistry != null) {
@@ -351,6 +352,7 @@ public class ResteasyCamelServlet extends HttpServletDispatcher implements HttpR
         return answer;
     }
 
+    @Override
     public String getServletName() {
         return servletName;
     }

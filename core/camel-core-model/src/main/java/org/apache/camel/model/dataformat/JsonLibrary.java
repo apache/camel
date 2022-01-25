@@ -20,17 +20,27 @@ import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
 
 /**
- * Supported JSON marshalers.
+ * Supported JSON libraries.
  */
 @XmlType
 @XmlEnum
 public enum JsonLibrary {
 
-    XStream,
-    Jackson,
-    Johnzon,
-    Gson,
-    Fastjson,
-    Jsonb
+    Fastjson("fastjson"),
+    Gson("gson"),
+    Jackson("jackson"),
+    Johnzon("johnzon"),
+    Jsonb("jsonb"),
+    XStream("xstreamJson");
+
+    private final String dataFormatName;
+
+    JsonLibrary(String dataFormatName) {
+        this.dataFormatName = dataFormatName;
+    }
+
+    public String getDataFormatName() {
+        return dataFormatName;
+    }
 
 }

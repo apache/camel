@@ -93,6 +93,13 @@ public class JmsConfiguration implements Cloneable {
                             + " When Custom is specified, the MessageListenerContainerFactory defined by the messageListenerContainerFactory option"
                             + " will determine what org.springframework.jms.listener.AbstractMessageListenerContainer to use.")
     private ConsumerType consumerType = ConsumerType.Default;
+    @UriParam(label = "consumer,advanced", defaultValue = "Default",
+              description = "The consumer type of the reply consumer (when doing request/reply), which can be one of: Simple, Default, or Custom."
+                            + " The consumer type determines which Spring JMS listener to use. Default will use org.springframework.jms.listener.DefaultMessageListenerContainer,"
+                            + " Simple will use org.springframework.jms.listener.SimpleMessageListenerContainer."
+                            + " When Custom is specified, the MessageListenerContainerFactory defined by the messageListenerContainerFactory option"
+                            + " will determine what org.springframework.jms.listener.AbstractMessageListenerContainer to use.")
+    private ConsumerType replyToConsumerType = ConsumerType.Default;
     @UriParam(label = "advanced",
               description = "Specifies a org.springframework.util.ErrorHandler to be invoked in case of any uncaught exceptions thrown while processing a Message."
                             + " By default these exceptions will be logged at the WARN level, if no errorHandler has been configured."
@@ -780,8 +787,14 @@ public class JmsConfiguration implements Cloneable {
         return container;
     }
 
+    @Deprecated
     public AbstractMessageListenerContainer chooseMessageListenerContainerImplementation(JmsEndpoint endpoint) {
-        switch (consumerType) {
+        return chooseMessageListenerContainerImplementation(endpoint, consumerType);
+    }
+
+    public AbstractMessageListenerContainer chooseMessageListenerContainerImplementation(
+            JmsEndpoint endpoint, ConsumerType type) {
+        switch (type) {
             case Simple:
                 return new SimpleJmsMessageListenerContainer(endpoint);
             case Default:
@@ -789,7 +802,7 @@ public class JmsConfiguration implements Cloneable {
             case Custom:
                 return getCustomMessageListenerContainer(endpoint);
             default:
-                throw new IllegalArgumentException("Unknown consumer type: " + consumerType);
+                throw new IllegalArgumentException("Unknown consumer type: " + type);
         }
     }
 
@@ -816,6 +829,22 @@ public class JmsConfiguration implements Cloneable {
      */
     public void setConsumerType(ConsumerType consumerType) {
         this.consumerType = consumerType;
+    }
+
+    public ConsumerType getReplyToConsumerType() {
+        return replyToConsumerType;
+    }
+
+    /**
+     * The consumer type of the reply consumer (when doing request/reply), which can be one of: Simple, Default, or
+     * Custom." The consumer type determines which Spring JMS listener to use. Default will use
+     * org.springframework.jms.listener.DefaultMessageListenerContainer," Simple will use
+     * org.springframework.jms.listener.SimpleMessageListenerContainer." When Custom is specified, the
+     * MessageListenerContainerFactory defined by the messageListenerContainerFactory option" will determine what
+     * org.springframework.jms.listener.AbstractMessageListenerContainer to use.
+     */
+    public void setReplyToConsumerType(ConsumerType replyToConsumerType) {
+        this.replyToConsumerType = replyToConsumerType;
     }
 
     public ConnectionFactory getConnectionFactory() {

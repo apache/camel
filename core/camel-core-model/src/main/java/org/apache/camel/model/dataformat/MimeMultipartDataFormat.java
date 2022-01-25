@@ -28,7 +28,7 @@ import org.apache.camel.spi.Metadata;
  * Marshal Camel messages with attachments into MIME-Multipart messages and back.
  */
 @Metadata(firstVersion = "2.17.0", label = "dataformat,transformation", title = "MIME Multipart")
-@XmlRootElement(name = "mime-multipart")
+@XmlRootElement(name = "mimeMultipart")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MimeMultipartDataFormat extends DataFormatDefinition {
 
@@ -48,7 +48,7 @@ public class MimeMultipartDataFormat extends DataFormatDefinition {
     private String binaryContent;
 
     public MimeMultipartDataFormat() {
-        super("mime-multipart");
+        super("mimeMultipart");
     }
 
     public String getMultipartSubType() {

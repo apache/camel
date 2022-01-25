@@ -56,9 +56,9 @@ public final class ThreadHelper {
         String shortName = name.contains("?") ? StringHelper.before(name, "?") : name;
 
         // replace tokens
-        String answer = StringHelper.replaceAll(pattern, "#counter#", "" + nextThreadCounter());
-        answer = StringHelper.replaceAll(answer, "#longName#", longName);
-        answer = StringHelper.replaceAll(answer, "#name#", shortName);
+        String answer = pattern.replace("#counter#", Long.toString(nextThreadCounter()));
+        answer = answer.replace("#longName#", longName);
+        answer = answer.replace("#name#", shortName);
 
         // are there any #word# combos left, if so they should be considered invalid tokens
         if (INVALID_PATTERN.matcher(answer).matches()) {

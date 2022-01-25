@@ -18,13 +18,16 @@ package org.apache.camel.model;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.PredicateExceptionFactory;
 
 /**
  * Validates a message based on an expression
@@ -34,6 +37,11 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "validate")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ValidateDefinition extends ExpressionNode {
+
+    @XmlAttribute
+    private String predicateExceptionFactory;
+    @XmlTransient
+    private PredicateExceptionFactory factory;
 
     public ValidateDefinition() {
     }
@@ -69,6 +77,46 @@ public class ValidateDefinition extends ExpressionNode {
     public void setExpression(ExpressionDefinition expression) {
         // override to include javadoc what the expression is used for
         super.setExpression(expression);
+    }
+
+    public PredicateExceptionFactory getFactory() {
+        return factory;
+    }
+
+    public String getPredicateExceptionFactory() {
+        return predicateExceptionFactory;
+    }
+
+    /**
+     * The bean id of custom PredicateExceptionFactory to use for creating the exception when the validation fails.
+     *
+     * By default, Camel will throw PredicateValidationException. By using a custom factory you can control which
+     * exception to throw instead.
+     */
+    public void setPredicateExceptionFactory(String predicateExceptionFactory) {
+        this.predicateExceptionFactory = predicateExceptionFactory;
+    }
+
+    /**
+     * The custom PredicateExceptionFactory to use for creating the exception when the validation fails.
+     *
+     * By default, Camel will throw PredicateValidationException. By using a custom factory you can control which
+     * exception to throw instead.
+     */
+    public ValidateDefinition predicateExceptionFactory(PredicateExceptionFactory factory) {
+        this.factory = factory;
+        return this;
+    }
+
+    /**
+     * The bean id of the custom PredicateExceptionFactory to use for creating the exception when the validation fails.
+     *
+     * By default, Camel will throw PredicateValidationException. By using a custom factory you can control which
+     * exception to throw instead.
+     */
+    public ValidateDefinition predicateExceptionFactory(String ref) {
+        this.predicateExceptionFactory = ref;
+        return this;
     }
 
 }

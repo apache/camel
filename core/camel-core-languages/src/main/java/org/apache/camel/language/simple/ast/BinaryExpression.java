@@ -322,11 +322,11 @@ public class BinaryExpression extends BaseSimpleNode {
             return "!is(exchange, " + leftExp + ", " + type + ")";
         } else if (operator == BinaryOperatorType.REGEX) {
             // regexp is a pain with escapes
-            String escaped = StringHelper.replaceAll(rightExp, "\\", "\\\\");
+            String escaped = rightExp.replace("\\", "\\\\");
             return "regexp(exchange, " + leftExp + ", " + escaped + ")";
         } else if (operator == BinaryOperatorType.NOT_REGEX) {
             // regexp is a pain with escapes
-            String escaped = StringHelper.replaceAll(rightExp, "\\", "\\\\");
+            String escaped = rightExp.replace("\\", "\\\\");
             return "!regexp(exchange, " + leftExp + ", " + escaped + ")";
         } else if (operator == BinaryOperatorType.IN) {
             return "in(exchange, " + leftExp + ", " + rightExp + ")";

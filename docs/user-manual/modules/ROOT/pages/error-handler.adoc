@@ -98,7 +98,7 @@ or in XML DSL:
 The TransactionErrorHandler is the
 default error handler in Camel for transacted routes.
 
-TIP:If you have marked a route as transacted using the *transacted* DSL then
+TIP: If you have marked a route as transacted using the *transacted* DSL then
 Camel will automatically use a
 TransactionErrorHandler. It will try
 to lookup the global/per route configured error handler and use it if
@@ -247,7 +247,7 @@ the `errorHandlerRef` attribute on the `route` tag.
 ----
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <template id="myTemplate"/>
-		<!-- set the errorHandlerRef to our DeadLetterChannel, this applies for this route only -->
+        <!-- set the errorHandlerRef to our DeadLetterChannel, this applies for this route only -->
         <route errorHandlerRef="myDeadLetterErrorHandler">
             <from uri="direct:in"/>
             <process ref="myFailureProcessor"/>
@@ -266,7 +266,7 @@ etc.
 [source,xml]
 ----
     <!-- here we configure our DeadLetterChannel -->
-	<bean id="myDeadLetterErrorHandler" class="org.apache.camel.builder.DeadLetterChannelBuilder">
+    <bean id="myDeadLetterErrorHandler" class="org.apache.camel.builder.DeadLetterChannelBuilder">
 	    <!-- exchanges is routed to mock:dead in cased redelivery failed -->
         <property name="deadLetterUri" value="mock:dead"/>
 		<!-- reference the redelivery policy to use -->
@@ -274,7 +274,7 @@ etc.
     </bean>
 
     <!-- here we set the redelivery settings -->
-	<bean id="myRedeliveryPolicyConfig" class="org.apache.camel.processor.errorhandler.RedeliveryPolicy">
+    <bean id="myRedeliveryPolicyConfig" class="org.apache.camel.processor.errorhandler.RedeliveryPolicy">
 	    <!-- try redelivery at most 3 times, after that the exchange is dead and its routed to the mock:dead endpoint -->
         <property name="maximumRedeliveries" value="3"/>
 		<!-- delay 250ms before redelivery -->

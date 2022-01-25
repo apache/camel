@@ -44,7 +44,6 @@ type `DefaultCamelContext`.
 Note that this bean can be customized programmatically and other Camel
 context beans can be deployed in the application as well.
 
-[[CDI-Auto-detectingCamelroutes]]
 == Auto-detecting Camel routes
 
 Camel CDI automatically collects all the `RoutesBuilder` beans in the
@@ -115,7 +114,7 @@ TypeConverter converter;
 == Camel context configuration
 
 If you just want to change the name of the default `CamelContext` bean,
-you can used the `@Named` qualifier provided by CDI, e.g.:
+you can use the `@Named` qualifier provided by CDI, e.g.:
 
 [source,java]
 ----
@@ -151,8 +150,8 @@ class CustomCamelContext extends DefaultCamelContext {
 }
 ----
 
-http://docs.jboss.org/cdi/spec/1.2/cdi-spec.html#producer_method[Producer]
-and http://docs.jboss.org/cdi/spec/1.2/cdi-spec.html#disposer_method[disposer]
+http://docs.jboss.org/cdi/spec/2.0/cdi-spec.html#producer_method[Producer]
+and http://docs.jboss.org/cdi/spec/2.0/cdi-spec.html#disposer_method[disposer]
 methods can also be used as well to customize the Camel context bean, e.g.:
 
 [source,java]
@@ -173,7 +172,7 @@ class CamelContextFactory {
 }
 ----
 
-Similarly, http://docs.jboss.org/cdi/spec/1.2/cdi-spec.html#producer_field[producer
+Similarly, http://docs.jboss.org/cdi/spec/2.0/cdi-spec.html#producer_field[producer
 fields] can be used, e.g.:
 
 [source,java]
@@ -253,10 +252,6 @@ static class DeltaSpikeParser extends DefaultPropertiesParser {
 }
 ----
 
-You can see the `camel-example-cdi-properties` example for a working
-example of a Camel CDI application using DeltaSpike configuration
-mechanism.
-
 == Auto-configured type converters
 
 CDI beans annotated with the `@Converter` annotation are automatically
@@ -287,7 +282,7 @@ are seamlessly supported by Camel CDI. So you can use any of these
 annotations in your CDI beans, e.g.:
 
 [width="100%",cols="1,2a,2a",options="header",]
-|===
+|==============================================
 |  |Camel annotation |CDI equivalent
 |Configuration property a|
 [source,java]
@@ -316,7 +311,6 @@ See configuration properties for more details.
 @Produce("mock:outbound")
 ProducerTemplate producer;
 
-// or using fluent template
 @Produce("mock:outbound")
 FluentProducerTemplate producer;
 ----
@@ -328,12 +322,11 @@ FluentProducerTemplate producer;
 @Uri("direct:outbound")
 ProducerTemplate producer;
 
-// or using fluent template
 @Produce("direct:outbound")
 FluentProducerTemplate producer;
 ----
 
-|Endpoint injection (default Camel context) a|
+|Endpoint injection a|
 [source,java]
 ----
 @EndpointInject("direct:inbound")
@@ -346,12 +339,6 @@ Endpoint endpoint;
 @Inject
 @Uri("direct:inbound")
 Endpoint endpoint;
-----
-
-----
-@Inject
-@Uri("direct:inbound")
-Endpoint contextEndpoint;
 ----
 
 |Bean injection (by type) a|
@@ -392,8 +379,7 @@ void consume(@Body String body) {
 }
 ----
 
- | 
-|===
+|==============================================
 
 === Bean component
 
@@ -424,13 +410,17 @@ from("direct:inbound").bean("foo");
 === Referring beans from Endpoint URIs
 
 When configuring endpoints using the URI syntax you can refer to beans
-in the Registry using the `pass:[#]` notation. If the URI
-parameter value starts with a `pass:[#]` sign then Camel CDI will lookup for a
+in the Registry using the `#bean:name` notation.
+
+NOTE: The older syntax with just `#name` has been deprecated due to ambiguity
+as Camel supports a number of additional functions that start with the # notation.
+
+If the URI parameter value starts with `#bean:` then Camel CDI will lookup for a
 bean of the given type by name, e.g.:
 
 [source,java]
 ----
-from("jms:queue:{{destination}}?transacted=true&transactionManager=#jtaTransactionManager").to("...");
+from("jms:queue:{{destination}}?transacted=true&transactionManager=#bean:jtaTransactionManager").to("...");
 ----
 
 Having the following CDI bean qualified
@@ -500,7 +490,7 @@ detected in the deployment, and that per Camel context.
 == CDI events endpoint
 
 The CDI event endpoint bridges
-the http://docs.jboss.org/cdi/spec/1.2/cdi-spec.html#events[CDI
+the http://docs.jboss.org/cdi/spec/2.0/cdi-spec.html#events[CDI
 events] with the Camel routes so that CDI events can be seamlessly
 observed / consumed (resp. produced / fired) from Camel consumers (resp.
 by Camel producers).
@@ -588,10 +578,10 @@ void observeCdiEvents(@Observes @FooQualifier List<String> event) {
 ----
 
 Note that the CDI event Camel endpoint dynamically adds
-an http://docs.jboss.org/cdi/spec/1.2/cdi-spec.html#observer_methods[observer
+an http://docs.jboss.org/cdi/spec/2.0/cdi-spec.html#observer_methods[observer
 method] for each unique combination of _event type_ and _event
 qualifiers_ and solely relies on the container
-typesafe http://docs.jboss.org/cdi/spec/1.2/cdi-spec.html#observer_resolution[observer
+typesafe http://docs.jboss.org/cdi/spec/2.0/cdi-spec.html#observer_resolution[observer
 resolution], which leads to an implementation as efficient as possible.
 
 Besides, as the impedance between the _typesafe_ nature of CDI and
@@ -622,7 +612,9 @@ endpoint instances and the observer methods as the CDI container doesn't
 have any ways of discovering the Camel context model during the
 deployment phase.
 
-== Camel XML configuration import
+== Camel XML configuration import (deprecated)
+
+WARNING: Using Camel XML in camel-cdi is deprecated and will be removed in the future.
 
 While CDI favors a typesafe dependency injection mechanism, it may be
 useful to reuse existing Camel XML configuration files into a Camel CDI
@@ -701,6 +693,8 @@ configuration, e.g.:
 
 == Transaction support
 
+NOTE: You must add camel-cdi-jta JAR as dependency for Camel CDI transaction support.
+
 Camel CDI provides support for Camel transactional client using JTA.
 
 That support is optional hence you need to have JTA in your application classpath, e.g., by explicitly add JTA as a dependency when using Maven:
@@ -718,9 +712,15 @@ You'll have to have your application deployed in a JTA capable container or prov
 
 [CAUTION]
 ====
-Note that, for the time being, the transaction manager is looked up as JNDI resource with the `java:/TransactionManager` key.
 
-More flexible strategies will be added in the future to support a wider range of deployment scenarios.
+Note that, for the time being, the transaction manager is looked up as JNDI resource with the following keys:
+
+----
+java:comp/TransactionManager
+java:appserver/TransactionManager
+java:pm/TransactionManager
+java:/TransactionManager
+----
 ====
 
 === Transaction policies
@@ -777,7 +777,7 @@ The list of supported transaction policy names is:
 
 Camel CDI provides a transactional error handler that extends the redelivery error handler, forces a rollback whenever an exception occurs and creates a new transaction for each redelivery.
 
-Camel CDI provides the `CdiRouteBuilder` class that exposes the `transactionErrorHandler` helper method to enable quick access to the configuration, e.g.:
+The `camel-cdi-jta` provides the `CdiRouteBuilder` class that exposes the `transactionErrorHandler` helper method to enable quick access to the configuration, e.g.:
 
 [source,java]
 ----
@@ -798,10 +798,10 @@ class MyRouteBean extends CdiRouteBuilder {
 
 == Lazy Injection / Programmatic Lookup
 
-While the CDI programmatic model favors a http://docs.jboss.org/cdi/spec/1.2/cdi-spec.html#typesafe_resolution[typesafe resolution]
+While the CDI programmatic model favors a http://docs.jboss.org/cdi/spec/2.0/cdi-spec.html#typesafe_resolution[typesafe resolution]
 mechanism that occurs at application initialization time, it is possible to perform
 dynamic / lazy injection later during the application execution using the
-http://docs.jboss.org/cdi/spec/1.2/cdi-spec.html#programmatic_lookup[programmatic lookup]
+http://docs.jboss.org/cdi/spec/2.0/cdi-spec.html#programmatic_lookup[programmatic lookup]
 mechanism.
 
 Camel CDI provides for convenience the annotation literals corresponding to the

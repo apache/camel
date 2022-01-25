@@ -36,6 +36,8 @@ import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.support.LoggerHelper.getLineNumberLoggerName;
+
 public class LogReifier extends ProcessorReifier<LogDefinition> {
 
     private static final Logger LOG = LoggerFactory.getLogger(LogReifier.class);
@@ -86,8 +88,11 @@ public class LogReifier extends ProcessorReifier<LogDefinition> {
                 }
             }
             if (name == null) {
-                name = route.getRouteId();
-                LOG.debug("LogName is not configured, using route id as logName: {}", name);
+                name = getLineNumberLoggerName(definition);
+                if (name == null) {
+                    name = route.getRouteId();
+                    LOG.debug("LogName is not configured, using route id as logName: {}", name);
+                }
             }
             logger = LoggerFactory.getLogger(name);
         }

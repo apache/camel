@@ -1,10 +1,11 @@
-= Atomix MultiMap Component
+= Atomix MultiMap Component (deprecated)
 :doctitle: Atomix MultiMap
 :shortname: atomix-multimap
 :artifactid: camel-atomix
 :description: Access Atomix's distributed multi map.
 :since: 2.20
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: atomix

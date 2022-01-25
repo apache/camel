@@ -20,49 +20,32 @@ import java.net.URL;
 
 import javax.xml.ws.BindingProvider;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.wssecurity.server.CxfServer;
 import org.apache.camel.hello_world_soap_http.Greeter;
 import org.apache.camel.hello_world_soap_http.GreeterService;
-import org.apache.camel.spring.SpringCamelContext;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.spring.SpringBusFactory;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.AbstractXmlApplicationContext;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class WSSecurityRouteTest extends CamelTestSupport {
+public class WSSecurityRouteTest extends CamelSpringTestSupport {
     static final int PORT = CXFTestSupport.getPort1();
     static CxfServer cxfServer;
-
-    private static AbstractXmlApplicationContext applicationContext;
 
     @BeforeAll
     public static void setupContext() throws Exception {
         cxfServer = new CxfServer();
-        applicationContext = createApplicationContext();
-    }
-
-    @AfterAll
-    public static void shutdownService() {
-        if (applicationContext != null) {
-            applicationContext.stop();
-        }
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        return SpringCamelContext.springCamelContext(applicationContext, true);
-    }
-
-    private static ClassPathXmlApplicationContext createApplicationContext() {
+    protected AbstractApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/wssecurity/camel/camel-context.xml");
     }
 

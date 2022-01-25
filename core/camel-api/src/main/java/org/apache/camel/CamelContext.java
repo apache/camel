@@ -60,8 +60,7 @@ import org.apache.camel.support.jsse.SSLContextParameters;
  * <p/>
  * The CamelContext offers the following methods {@link CamelContextLifecycle} to control the lifecycle:
  * <ul>
- * <li>{@link #start()} - to start (<b>important:</b> the start method is not blocked, see more details
- * <a href="http://camel.apache.org/running-camel-standalone-and-have-it-keep-running.html">here</a>)</li>
+ * <li>{@link #start()} - to start</li>
  * <li>{@link #stop()} - to shutdown (will stop all routes/components/endpoints etc and clear internal state/cache)</li>
  * <li>{@link #suspend()} - to pause routing messages</li>
  * <li>{@link #resume()} - to resume after a suspend</li>
@@ -1187,6 +1186,38 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     void setLoadHealthChecks(Boolean loadHealthChecks);
 
     /**
+     * Whether to capture precise source location:line-number for all EIPs in Camel routes.
+     *
+     * Enabling this will impact parsing Java based routes (also Groovy, Kotlin, etc.) on startup as this uses
+     * {@link StackTraceElement} to calculate the location from the Camel route, which comes with a performance cost.
+     * This only impact startup, not the performance of the routes at runtime.
+     */
+    Boolean isSourceLocationEnabled();
+
+    /**
+     * Whether to capture precise source location:line-number for all EIPs in Camel routes.
+     *
+     * Enabling this will impact parsing Java based routes (also Groovy, Kotlin, etc.) on startup as this uses
+     * {@link StackTraceElement} to calculate the location from the Camel route, which comes with a performance cost.
+     * This only impact startup, not the performance of the routes at runtime.
+     */
+    void setSourceLocationEnabled(Boolean sourceLocationEnabled);
+
+    /**
+     * Whether to enable developer console (requires camel-console on classpath).
+     *
+     * The developer console is only for assisting during development. This is NOT for production usage.
+     */
+    Boolean isDevConsole();
+
+    /**
+     * Whether to enable developer console (requires camel-console on classpath)
+     *
+     * The developer console is only for assisting during development. This is NOT for production usage.
+     */
+    void setDevConsole(Boolean loadDevConsoles);
+
+    /**
      * Whether or not type converter statistics is enabled.
      * <p/>
      * By default the type converter utilization statistics is disabled. <b>Notice:</b> If enabled then there is a
@@ -1259,6 +1290,22 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @param pattern the pattern
      */
     void setMDCLoggingKeysPattern(String pattern);
+
+    /**
+     * To use a custom tracing logging format.
+     *
+     * The default format (arrow, routeId, label) is: %-4.4s [%-12.12s] [%-33.33s]
+     */
+    String getTracingLoggingFormat();
+
+    /**
+     * To use a custom tracing logging format.
+     *
+     * The default format (arrow, routeId, label) is: %-4.4s [%-12.12s] [%-33.33s]
+     *
+     * @param format the logging format
+     */
+    void setTracingLoggingFormat(String format);
 
     /**
      * If dumping is enabled then Camel will during startup dump all loaded routes (incl rests and route templates)

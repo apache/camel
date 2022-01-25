@@ -18,14 +18,11 @@ package org.apache.camel.component.cxf.jaxrs;
 
 import java.util.List;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.spring.SpringCamelContext;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.cxf.ext.logging.LoggingInInterceptor;
 import org.apache.cxf.ext.logging.LoggingOutInterceptor;
 import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -36,22 +33,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  *
  */
-public class CxfRsProducerClientFactoryBeanTest {
-
-    private CamelContext context;
-    private AbstractApplicationContext applicationContext;
-
-    @BeforeEach
-    public void setUp() throws Exception {
-        applicationContext = new ClassPathXmlApplicationContext(
-                "org/apache/camel/component/cxf/jaxrs/CxfRsProducerClientFactoryBeanTest.xml");
-        context = SpringCamelContext.springCamelContext(applicationContext, false);
-        context.start();
-    }
+public class CxfRsProducerClientFactoryBeanTest extends CamelSpringTestSupport {
 
     @Test
     public void testProducerInOutInterceptors() throws Exception {
-        CxfRsEndpoint e = context.getEndpoint(
+        CxfRsEndpoint e = this.context.getEndpoint(
                 "cxfrs://bean://rsClientHttpInterceptors", CxfRsEndpoint.class);
         CxfRsProducer p = new CxfRsProducer(e);
         CxfRsProducer.ClientFactoryBeanCache cache = p.getClientFactoryBeanCache();
@@ -64,14 +50,9 @@ public class CxfRsProducerClientFactoryBeanTest {
         assertTrue(outs.get(0) instanceof LoggingOutInterceptor);
     }
 
-    @AfterEach
-    public void tearDown() throws Exception {
-        if (context != null) {
-            context.stop();
-        }
-        // need to shutdown the application context to shutdown the bus
-        if (applicationContext != null) {
-            applicationContext.close();
-        }
+    @Override
+    protected AbstractApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/cxf/jaxrs/CxfRsProducerClientFactoryBeanTest.xml");
     }
 }

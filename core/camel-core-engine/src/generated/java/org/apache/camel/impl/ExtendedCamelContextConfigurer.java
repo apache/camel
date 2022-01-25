@@ -37,6 +37,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "BacklogTracing": target.setBacklogTracing(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "beanintrospection":
         case "BeanIntrospection": target.setBeanIntrospection(property(camelContext, org.apache.camel.spi.BeanIntrospection.class, value)); return true;
+        case "beanpostprocessor":
+        case "BeanPostProcessor": target.setBeanPostProcessor(property(camelContext, org.apache.camel.spi.CamelBeanPostProcessor.class, value)); return true;
         case "bootstrapconfigurerresolver":
         case "BootstrapConfigurerResolver": target.setBootstrapConfigurerResolver(property(camelContext, org.apache.camel.spi.ConfigurerResolver.class, value)); return true;
         case "bootstrapfactoryfinder":
@@ -61,6 +63,10 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "DeferServiceFactory": target.setDeferServiceFactory(property(camelContext, org.apache.camel.spi.DeferServiceFactory.class, value)); return true;
         case "delayer":
         case "Delayer": target.setDelayer(property(camelContext, java.lang.Long.class, value)); return true;
+        case "devconsole":
+        case "DevConsole": target.setDevConsole(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "devconsoleresolver":
+        case "DevConsoleResolver": target.setDevConsoleResolver(property(camelContext, org.apache.camel.console.DevConsoleResolver.class, value)); return true;
         case "dumproutes":
         case "DumpRoutes": target.setDumpRoutes(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "errorhandlerfactory":
@@ -163,6 +169,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ShutdownRunningTask": target.setShutdownRunningTask(property(camelContext, org.apache.camel.ShutdownRunningTask.class, value)); return true;
         case "shutdownstrategy":
         case "ShutdownStrategy": target.setShutdownStrategy(property(camelContext, org.apache.camel.spi.ShutdownStrategy.class, value)); return true;
+        case "sourcelocationenabled":
+        case "SourceLocationEnabled": target.setSourceLocationEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "startupsteprecorder":
         case "StartupStepRecorder": target.setStartupStepRecorder(property(camelContext, org.apache.camel.spi.StartupStepRecorder.class, value)); return true;
         case "startupsummarylevel":
@@ -175,6 +183,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "Tracer": target.setTracer(property(camelContext, org.apache.camel.spi.Tracer.class, value)); return true;
         case "tracing":
         case "Tracing": target.setTracing(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "tracingloggingformat":
+        case "TracingLoggingFormat": target.setTracingLoggingFormat(property(camelContext, java.lang.String.class, value)); return true;
         case "tracingpattern":
         case "TracingPattern": target.setTracingPattern(property(camelContext, java.lang.String.class, value)); return true;
         case "tracingstandby":
@@ -220,6 +230,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "BacklogTracing": return java.lang.Boolean.class;
         case "beanintrospection":
         case "BeanIntrospection": return org.apache.camel.spi.BeanIntrospection.class;
+        case "beanpostprocessor":
+        case "BeanPostProcessor": return org.apache.camel.spi.CamelBeanPostProcessor.class;
         case "bootstrapconfigurerresolver":
         case "BootstrapConfigurerResolver": return org.apache.camel.spi.ConfigurerResolver.class;
         case "bootstrapfactoryfinder":
@@ -244,6 +256,10 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "DeferServiceFactory": return org.apache.camel.spi.DeferServiceFactory.class;
         case "delayer":
         case "Delayer": return java.lang.Long.class;
+        case "devconsole":
+        case "DevConsole": return java.lang.Boolean.class;
+        case "devconsoleresolver":
+        case "DevConsoleResolver": return org.apache.camel.console.DevConsoleResolver.class;
         case "dumproutes":
         case "DumpRoutes": return java.lang.Boolean.class;
         case "errorhandlerfactory":
@@ -346,6 +362,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ShutdownRunningTask": return org.apache.camel.ShutdownRunningTask.class;
         case "shutdownstrategy":
         case "ShutdownStrategy": return org.apache.camel.spi.ShutdownStrategy.class;
+        case "sourcelocationenabled":
+        case "SourceLocationEnabled": return java.lang.Boolean.class;
         case "startupsteprecorder":
         case "StartupStepRecorder": return org.apache.camel.spi.StartupStepRecorder.class;
         case "startupsummarylevel":
@@ -358,6 +376,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "Tracer": return org.apache.camel.spi.Tracer.class;
         case "tracing":
         case "Tracing": return java.lang.Boolean.class;
+        case "tracingloggingformat":
+        case "TracingLoggingFormat": return java.lang.String.class;
         case "tracingpattern":
         case "TracingPattern": return java.lang.String.class;
         case "tracingstandby":
@@ -404,6 +424,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "BacklogTracing": return target.isBacklogTracing();
         case "beanintrospection":
         case "BeanIntrospection": return target.getBeanIntrospection();
+        case "beanpostprocessor":
+        case "BeanPostProcessor": return target.getBeanPostProcessor();
         case "bootstrapconfigurerresolver":
         case "BootstrapConfigurerResolver": return target.getBootstrapConfigurerResolver();
         case "bootstrapfactoryfinder":
@@ -428,6 +450,10 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "DeferServiceFactory": return target.getDeferServiceFactory();
         case "delayer":
         case "Delayer": return target.getDelayer();
+        case "devconsole":
+        case "DevConsole": return target.isDevConsole();
+        case "devconsoleresolver":
+        case "DevConsoleResolver": return target.getDevConsoleResolver();
         case "dumproutes":
         case "DumpRoutes": return target.isDumpRoutes();
         case "errorhandlerfactory":
@@ -530,6 +556,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ShutdownRunningTask": return target.getShutdownRunningTask();
         case "shutdownstrategy":
         case "ShutdownStrategy": return target.getShutdownStrategy();
+        case "sourcelocationenabled":
+        case "SourceLocationEnabled": return target.isSourceLocationEnabled();
         case "startupsteprecorder":
         case "StartupStepRecorder": return target.getStartupStepRecorder();
         case "startupsummarylevel":
@@ -542,6 +570,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "Tracer": return target.getTracer();
         case "tracing":
         case "Tracing": return target.isTracing();
+        case "tracingloggingformat":
+        case "TracingLoggingFormat": return target.getTracingLoggingFormat();
         case "tracingpattern":
         case "TracingPattern": return target.getTracingPattern();
         case "tracingstandby":

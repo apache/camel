@@ -171,6 +171,11 @@ public class AWS2S3Producer extends DefaultProducer {
             createMultipartUploadRequest.acl(acl.toString());
         }
 
+        String contentType = exchange.getIn().getHeader(AWS2S3Constants.CONTENT_TYPE, String.class);
+        if (contentType != null) {
+            createMultipartUploadRequest.contentType(contentType);
+        }
+
         if (getConfiguration().isUseAwsKMS()) {
             createMultipartUploadRequest.ssekmsKeyId(getConfiguration().getAwsKMSKeyId());
             createMultipartUploadRequest.serverSideEncryption(ServerSideEncryption.AWS_KMS);
@@ -315,6 +320,11 @@ public class AWS2S3Producer extends DefaultProducer {
         if (cannedAcl != null) {
             ObjectCannedACL objectAcl = ObjectCannedACL.valueOf(cannedAcl);
             putObjectRequest.acl(objectAcl);
+        }
+
+        String contentType = exchange.getIn().getHeader(AWS2S3Constants.CONTENT_TYPE, String.class);
+        if (contentType != null) {
+            putObjectRequest.contentType(contentType);
         }
 
         BucketCannedACL acl = exchange.getIn().getHeader(AWS2S3Constants.ACL, BucketCannedACL.class);

@@ -32,12 +32,12 @@ import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 /**
  * GZip {@link org.apache.camel.spi.DataFormat} for reading/writing data using gzip.
  */
-@Dataformat("gzipdeflater")
+@Dataformat("gzipDeflater")
 public class GzipDeflaterDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
     @Override
     public String getDataFormatName() {
-        return "gzipdeflater";
+        return "gzipDeflater";
     }
 
     @Override

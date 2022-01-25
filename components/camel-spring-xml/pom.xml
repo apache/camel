@@ -36,6 +36,7 @@
         <firstVersion>3.9.0</firstVersion>
         <label>spring</label>
         <supportLevel>Stable</supportLevel>
+        <title>Spring XML</title>
         <camel.osgi.import>
             javax.xml.bind*;version="[2.2,3.0)",
             *
@@ -136,6 +137,10 @@
             <groupId>org.apache.derby</groupId>
             <artifactId>derby</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
         </dependency>
 
         <!-- logging for testing -->
@@ -615,8 +620,8 @@
                         <link>http://download.oracle.com/javase/7/docs/api/</link>
                         <link>http://download.oracle.com/javaee/7/api/</link>
                         <link>http://static.springsource.org/spring/docs/${spring-version}/javadoc-api/</link>
-                        <link>http://camel.apache.org/maven/current/camel-core-model/apidocs/</link>
-                        <link>http://camel.apache.org/maven/current/camel-core-engine/apidocs/</link>
+                        <link>http://javadoc.io/doc/org.apache.camel/camel-core-model/latest/</link>
+                        <link>http://javadoc.io/doc/org.apache.camel/camel-core-engine/latest/</link>
                     </links>
                     <linksource>true</linksource>
                     <maxmemory>256m</maxmemory>

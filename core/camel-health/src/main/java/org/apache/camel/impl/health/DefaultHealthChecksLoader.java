@@ -30,7 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * To load custom health-checks by classpath scanning.
+ * To load custom {@link HealthCheck} by classpath scanning.
  */
 public class DefaultHealthChecksLoader {
 

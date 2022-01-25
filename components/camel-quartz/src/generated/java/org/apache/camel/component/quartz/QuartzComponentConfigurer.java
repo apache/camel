@@ -43,8 +43,6 @@ public class QuartzComponentConfigurer extends PropertyConfigurerSupport impleme
         case "scheduler": target.setScheduler(property(camelContext, org.quartz.Scheduler.class, value)); return true;
         case "schedulerfactory":
         case "schedulerFactory": target.setSchedulerFactory(property(camelContext, org.quartz.SchedulerFactory.class, value)); return true;
-        case "startdelayedseconds":
-        case "startDelayedSeconds": target.setStartDelayedSeconds(property(camelContext, int.class, value)); return true;
         default: return false;
         }
     }
@@ -74,8 +72,6 @@ public class QuartzComponentConfigurer extends PropertyConfigurerSupport impleme
         case "scheduler": return org.quartz.Scheduler.class;
         case "schedulerfactory":
         case "schedulerFactory": return org.quartz.SchedulerFactory.class;
-        case "startdelayedseconds":
-        case "startDelayedSeconds": return int.class;
         default: return null;
         }
     }
@@ -106,8 +102,6 @@ public class QuartzComponentConfigurer extends PropertyConfigurerSupport impleme
         case "scheduler": return target.getScheduler();
         case "schedulerfactory":
         case "schedulerFactory": return target.getSchedulerFactory();
-        case "startdelayedseconds":
-        case "startDelayedSeconds": return target.getStartDelayedSeconds();
         default: return null;
         }
     }

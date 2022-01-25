@@ -22,29 +22,24 @@ import javax.xml.transform.Source;
 
 import org.w3c.dom.Element;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.jaxp.XmlConverter;
-import org.apache.camel.spring.SpringCamelContext;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.apache.camel.util.IOHelper;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.AbstractXmlApplicationContext;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class CxfPayLoadMessageXmlBindingRouterTest extends CamelTestSupport {
+public class CxfPayLoadMessageXmlBindingRouterTest extends CamelSpringTestSupport {
 
     protected static final String ROUTER_ADDRESS = "http://localhost:"
                                                    + CXFTestSupport.getPort1()
@@ -52,8 +47,6 @@ public class CxfPayLoadMessageXmlBindingRouterTest extends CamelTestSupport {
     protected static final String SERVICE_ADDRESS = "http://localhost:"
                                                     + CXFTestSupport.getPort2()
                                                     + "/CxfPayLoadMessageXmlBindingRouterTest/helloworld";
-
-    protected AbstractXmlApplicationContext applicationContext;
 
     protected static String getBindingId() {
         return "http://cxf.apache.org/bindings/xformat";
@@ -74,27 +67,7 @@ public class CxfPayLoadMessageXmlBindingRouterTest extends CamelTestSupport {
     }
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        applicationContext = createApplicationContext();
-        super.setUp();
-        assertNotNull(applicationContext, "Should have created a valid spring context");
-    }
-
-    @Override
-    @AfterEach
-    public void tearDown() throws Exception {
-
-        IOHelper.close(applicationContext);
-        super.tearDown();
-    }
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        return SpringCamelContext.springCamelContext(applicationContext, true);
-    }
-
-    protected ClassPathXmlApplicationContext createApplicationContext() {
+    protected AbstractApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/XmlBindingRouterContext.xml");
     }
 

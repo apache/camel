@@ -100,12 +100,12 @@ public class CamelCatalogTest {
     public void testFindDataFormatNames() {
         List<String> names = catalog.findDataFormatNames();
         assertNotNull(names);
-        assertTrue(names.contains("bindy-csv"));
+        assertTrue(names.contains("bindyCsv"));
         assertTrue(names.contains("hl7"));
         assertTrue(names.contains("jaxb"));
         assertTrue(names.contains("syslog"));
         assertTrue(names.contains("asn1"));
-        assertTrue(names.contains("zipfile"));
+        assertTrue(names.contains("zipFile"));
     }
 
     @Test
@@ -773,7 +773,7 @@ public class CamelCatalogTest {
         assertEquals("foo", result.getLenient().iterator().next());
 
         // data format
-        result = catalog.validateEndpointProperties("dataformat:zipdeflater:marshal?compressionLevel=2", true);
+        result = catalog.validateEndpointProperties("dataformat:zipDeflater:marshal?compressionLevel=2", true);
         assertTrue(result.isSuccess());
 
         // 2 slash after component name
@@ -1332,29 +1332,29 @@ public class CamelCatalogTest {
 
     @Test
     public void testValidateConfigurationPropertyDataformat() {
-        String text = "camel.dataformat.bindy-csv.type=csv";
+        String text = "camel.dataformat.bindyCsv.type=csv";
         ConfigurationPropertiesValidationResult result = catalog.validateConfigurationProperty(text);
         assertTrue(result.isSuccess());
 
-        text = "camel.dataformat.bindy-csv.locale=us";
+        text = "camel.dataformat.bindyCsv.locale=us";
         result = catalog.validateConfigurationProperty(text);
         assertTrue(result.isSuccess());
 
-        text = "camel.dataformat.bindy-csv.allowEmptyStream=abc";
+        text = "camel.dataformat.bindyCsv.allowEmptyStream=abc";
         result = catalog.validateConfigurationProperty(text);
         assertFalse(result.isSuccess());
-        assertEquals("abc", result.getInvalidBoolean().get("camel.dataformat.bindy-csv.allowEmptyStream"));
+        assertEquals("abc", result.getInvalidBoolean().get("camel.dataformat.bindyCsv.allowEmptyStream"));
 
-        text = "camel.dataformat.bindy-csv.foo=abc";
+        text = "camel.dataformat.bindyCsv.foo=abc";
         result = catalog.validateConfigurationProperty(text);
         assertFalse(result.isSuccess());
-        assertTrue(result.getUnknown().contains("camel.dataformat.bindy-csv.foo"));
+        assertTrue(result.getUnknown().contains("camel.dataformat.bindyCsv.foo"));
 
-        text = "camel.dataformat.bindy-csv.type=abc";
+        text = "camel.dataformat.bindyCsv.type=abc";
         result = catalog.validateConfigurationProperty(text);
         assertFalse(result.isSuccess());
-        assertEquals("abc", result.getInvalidEnum().get("camel.dataformat.bindy-csv.type"));
-        List<String> list = result.getEnumChoices("camel.dataformat.bindy-csv.type");
+        assertEquals("abc", result.getInvalidEnum().get("camel.dataformat.bindyCsv.type"));
+        List<String> list = result.getEnumChoices("camel.dataformat.bindyCsv.type");
         assertEquals(3, list.size());
         assertEquals("Csv", list.get(0));
         assertEquals("Fixed", list.get(1));

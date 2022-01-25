@@ -95,7 +95,7 @@ public class SplitterPojoTest extends ContextTestSupport {
          * The split body method returns something that is iteratable such as a java.util.List.
          *
          * @param  body the payload of the incoming message
-         * @return      a list containing each part splitted
+         * @return      a list containing each part split
          */
         public List<String> splitBody(String body) {
             // since this is based on an unit test you can of cause
@@ -116,7 +116,7 @@ public class SplitterPojoTest extends ContextTestSupport {
          *
          * @param  header the header of the incoming message with the name user
          * @param  body   the payload of the incoming message
-         * @return        a list containing each part splitted
+         * @return        a list containing each part split
          */
         public List<Message> splitMessage(@Header(value = "user") String header, @Body String body, CamelContext camelContext) {
             // we can leverage the Parameter Binding Annotations

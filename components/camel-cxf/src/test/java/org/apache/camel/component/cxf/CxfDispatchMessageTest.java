@@ -49,7 +49,7 @@ public class CxfDispatchMessageTest extends CxfDispatchTestSupport {
         Exchange exchange = sendJaxWsDispatchMessage(name, false);
         assertEquals(false, exchange.isFailed(), "The request should be handled sucessfully");
 
-        org.apache.camel.Message response = exchange.getOut();
+        org.apache.camel.Message response = exchange.getMessage();
         assertNotNull(response, "The response message must not be null");
 
         String value = decodeResponseFromMessage(response.getBody(InputStream.class), exchange);

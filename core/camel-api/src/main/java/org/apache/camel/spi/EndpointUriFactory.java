@@ -62,9 +62,14 @@ public interface EndpointUriFactory extends CamelContextAware {
     Set<String> propertyNames();
 
     /**
-     * Returns the names of the secret properties this endpoin supports.
+     * Returns the names of the secret properties this endpoint supports.
      */
     Set<String> secretPropertyNames();
+
+    /**
+     * Returns the prefixes of the multi-valued properties this endpoint supports.
+     */
+    Set<String> multiValuePrefixes();
 
     /**
      * Whether the endpoint is lenient or not.

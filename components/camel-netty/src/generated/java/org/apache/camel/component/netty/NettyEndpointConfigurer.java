@@ -88,10 +88,10 @@ public class NettyEndpointConfigurer extends PropertyConfigurerSupport implement
         case "passphrase": target.getConfiguration().setPassphrase(property(camelContext, java.lang.String.class, value)); return true;
         case "producerpoolenabled":
         case "producerPoolEnabled": target.getConfiguration().setProducerPoolEnabled(property(camelContext, boolean.class, value)); return true;
-        case "producerpoolmaxactive":
-        case "producerPoolMaxActive": target.getConfiguration().setProducerPoolMaxActive(property(camelContext, int.class, value)); return true;
         case "producerpoolmaxidle":
         case "producerPoolMaxIdle": target.getConfiguration().setProducerPoolMaxIdle(property(camelContext, int.class, value)); return true;
+        case "producerpoolmaxtotal":
+        case "producerPoolMaxTotal": target.getConfiguration().setProducerPoolMaxTotal(property(camelContext, int.class, value)); return true;
         case "producerpoolminevictableidle":
         case "producerPoolMinEvictableIdle": target.getConfiguration().setProducerPoolMinEvictableIdle(property(camelContext, long.class, value)); return true;
         case "producerpoolminidle":
@@ -223,10 +223,10 @@ public class NettyEndpointConfigurer extends PropertyConfigurerSupport implement
         case "passphrase": return java.lang.String.class;
         case "producerpoolenabled":
         case "producerPoolEnabled": return boolean.class;
-        case "producerpoolmaxactive":
-        case "producerPoolMaxActive": return int.class;
         case "producerpoolmaxidle":
         case "producerPoolMaxIdle": return int.class;
+        case "producerpoolmaxtotal":
+        case "producerPoolMaxTotal": return int.class;
         case "producerpoolminevictableidle":
         case "producerPoolMinEvictableIdle": return long.class;
         case "producerpoolminidle":
@@ -359,10 +359,10 @@ public class NettyEndpointConfigurer extends PropertyConfigurerSupport implement
         case "passphrase": return target.getConfiguration().getPassphrase();
         case "producerpoolenabled":
         case "producerPoolEnabled": return target.getConfiguration().isProducerPoolEnabled();
-        case "producerpoolmaxactive":
-        case "producerPoolMaxActive": return target.getConfiguration().getProducerPoolMaxActive();
         case "producerpoolmaxidle":
         case "producerPoolMaxIdle": return target.getConfiguration().getProducerPoolMaxIdle();
+        case "producerpoolmaxtotal":
+        case "producerPoolMaxTotal": return target.getConfiguration().getProducerPoolMaxTotal();
         case "producerpoolminevictableidle":
         case "producerPoolMinEvictableIdle": return target.getConfiguration().getProducerPoolMinEvictableIdle();
         case "producerpoolminidle":

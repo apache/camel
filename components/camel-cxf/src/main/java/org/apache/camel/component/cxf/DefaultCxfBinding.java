@@ -67,6 +67,7 @@ import org.apache.cxf.binding.soap.SoapBindingConstants;
 import org.apache.cxf.binding.soap.SoapHeader;
 import org.apache.cxf.binding.soap.SoapMessage;
 import org.apache.cxf.binding.soap.SoapVersion;
+import org.apache.cxf.common.util.PropertyUtils;
 import org.apache.cxf.common.util.StringUtils;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Endpoint;
@@ -78,7 +79,6 @@ import org.apache.cxf.jaxws.context.WrappedMessageContext;
 import org.apache.cxf.message.Attachment;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageContentsList;
-import org.apache.cxf.message.MessageUtils;
 import org.apache.cxf.security.LoginSecurityContext;
 import org.apache.cxf.security.SecurityContext;
 import org.apache.cxf.service.Service;
@@ -179,30 +179,30 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         LOG.trace("Populate exchange from CXF response message: {}", cxfMessage);
 
         // copy the InMessage header to OutMessage header
-        camelExchange.getOut().getHeaders().putAll(camelExchange.getIn().getHeaders());
+        camelExchange.getMessage().getHeaders().putAll(camelExchange.getIn().getHeaders());
 
         // propagate body
         String encoding = (String) camelExchange.getProperty(ExchangePropertyKey.CHARSET_NAME);
-        camelExchange.getOut().setBody(DefaultCxfBinding.getContentFromCxf(cxfMessage,
+        camelExchange.getMessage().setBody(DefaultCxfBinding.getContentFromCxf(cxfMessage,
                 camelExchange.getProperty(CxfConstants.DATA_FORMAT_PROPERTY, DataFormat.class), encoding));
 
         // propagate response context
         if (responseContext != null && responseContext.size() > 0) {
             if (!headerFilterStrategy.applyFilterToExternalHeaders(Client.RESPONSE_CONTEXT,
                     responseContext, camelExchange)) {
-                camelExchange.getOut().setHeader(Client.RESPONSE_CONTEXT, responseContext);
+                camelExchange.getMessage().setHeader(Client.RESPONSE_CONTEXT, responseContext);
                 LOG.trace("Set header = {} value = {}", Client.RESPONSE_CONTEXT, responseContext);
             }
         }
 
         // propagate protocol headers
-        propagateHeadersFromCxfToCamel(cxfMessage, camelExchange.getOut(), camelExchange);
+        propagateHeadersFromCxfToCamel(cxfMessage, camelExchange.getMessage(), camelExchange);
 
         // propagate attachments
         if (cxfMessage.getAttachments() != null) {
             // propagate attachments
             for (Attachment attachment : cxfMessage.getAttachments()) {
-                camelExchange.getOut(AttachmentMessage.class).addAttachmentObject(attachment.getId(),
+                camelExchange.getMessage(AttachmentMessage.class).addAttachmentObject(attachment.getId(),
                         createCamelAttachment(attachment));
             }
         }
@@ -374,8 +374,8 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
 
         org.apache.camel.Message response;
         if (camelExchange.getPattern().isOutCapable()) {
-            if (camelExchange.hasOut()) {
-                response = camelExchange.getOut();
+            if (camelExchange.getMessage() != null) {
+                response = camelExchange.getMessage();
                 LOG.trace("Get the response from the out message");
             } else { // Take the in message as a fall back
                 response = camelExchange.getIn();
@@ -415,8 +415,8 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
 
         org.apache.camel.Message response;
         if (camelExchange.getPattern().isOutCapable()) {
-            if (camelExchange.hasOut()) {
-                response = camelExchange.getOut();
+            if (camelExchange.getMessage() != null) {
+                response = camelExchange.getMessage();
                 LOG.trace("Get the response from the out message");
             } else { // Take the in message as a fall back
                 response = camelExchange.getIn();
@@ -487,7 +487,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
             }
         } else if (!cxfExchange.isOneWay()
                 && cxfExchange.getInMessage() != null
-                && MessageUtils
+                && PropertyUtils
                         .isTrue(cxfExchange.getInMessage().getContextualProperty("jaxws.provider.interpretNullAsOneway"))) {
             // treat this non-oneway call as oneway when the provider returns a null
             changeToOneway(cxfExchange);
@@ -497,8 +497,9 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         // propagate attachments
         Set<Attachment> attachments = null;
         boolean isXop = Boolean.valueOf(camelExchange.getProperty(Message.MTOM_ENABLED, String.class));
-        if (camelExchange.hasOut() && camelExchange.getOut(AttachmentMessage.class).hasAttachments()) {
-            for (Map.Entry<String, org.apache.camel.attachment.Attachment> entry : camelExchange.getOut(AttachmentMessage.class)
+        if (camelExchange.getMessage() != null && camelExchange.getMessage(AttachmentMessage.class).hasAttachments()) {
+            for (Map.Entry<String, org.apache.camel.attachment.Attachment> entry : camelExchange
+                    .getMessage(AttachmentMessage.class)
                     .getAttachmentObjects().entrySet()) {
                 if (attachments == null) {
                     attachments = new HashSet<>();

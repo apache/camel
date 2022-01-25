@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -108,6 +109,7 @@ public class RouteConfigurationsDefinition implements RouteConfigurationContaine
         if (id != null) {
             config.setId(id);
         }
+        CamelContextAware.trySetCamelContext(config, camelContext);
         return config;
     }
 

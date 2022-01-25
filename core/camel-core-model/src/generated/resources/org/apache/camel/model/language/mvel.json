@@ -8,6 +8,7 @@
     "firstVersion": "2.0.0",
     "label": "language,java",
     "javaType": "org.apache.camel.model.language.MvelExpression",
+    "abstract": false,
     "input": false,
     "output": false
   },

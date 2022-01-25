@@ -131,6 +131,19 @@ public class ModelParserTest {
         Assertions.assertEquals(26, route.getOutputs().get(1).getLineNumber());
     }
 
+    @Test
+    public void testLineNumberMultiline() throws Exception {
+        Path dir = getResourceFolder();
+        Path path = new File(dir.toFile(), "multiline.xml").toPath();
+        ModelParser parser = new ModelParser(Files.newInputStream(path), NAMESPACE);
+        RoutesDefinition routes = parser.parseRoutesDefinition().orElse(null);
+        assertNotNull(routes);
+        RouteDefinition route = routes.getRoutes().get(0);
+        Assertions.assertEquals(22, route.getInput().getLineNumber());
+        Assertions.assertEquals(23, route.getOutputs().get(0).getLineNumber());
+        Assertions.assertEquals(25, route.getOutputs().get(1).getLineNumber());
+    }
+
     private Path getResourceFolder() {
         String url = getClass().getClassLoader().getResource("barInterceptorRoute.xml").toString();
         if (url.startsWith("file:")) {

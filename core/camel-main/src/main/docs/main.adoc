@@ -1,11 +1,8 @@
 = Main Component
-//TODO the json file camel-main-configuration-metadata.json for this .adoc does not have a `model` section, so the UpdateReadmeMojo does not update this file.
-//Therefore the header is updated manually.
-//In addition, this has plenty of options, but the 'other' category does not generate option tables.
-//Should the 'other' categary generate option tables from the .json?
 :doctitle: Main
+:shortname: main
 :artifactid: camel-main
-:description: Camel Main support
+:description: Camel Main
 :since: 3.0
 :supportlevel: Stable
 
@@ -21,7 +18,7 @@ The following tables lists all the options:
 
 // main options: START
 === Camel Main configurations
-The camel.main supports 104 options, which are listed below.
+The camel.main supports 107 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -43,6 +40,7 @@ The camel.main supports 104 options, which are listed below.
 | *camel.main.configurations* | Sets the configuration objects used to configure the camel context. |  | List
 | *camel.main.consumerTemplate{zwsp}CacheSize* | Consumer template endpoints cache size. | 1000 | int
 | *camel.main.debugging* | Sets whether debugging is enabled or not. Default is false. | false | boolean
+| *camel.main.devConsoleEnabled* | Whether to enable developer console (requires camel-console on classpath). The developer console is only for assisting during development. This is NOT for production usage. | false | boolean
 | *camel.main.dumpRoutes* | If dumping is enabled then Camel will during startup dump all loaded routes (incl rests and route templates) represented as XML DSL into the log. This is intended for trouble shooting or to assist during development. Sensitive information that may be configured in the route endpoints could potentially be included in the dump output and is therefore not recommended to be used for production usage. This requires to have camel-xml-jaxb on the classpath to be able to dump the routes as XML. | false | boolean
 | *camel.main.durationHitExitCode* | Sets the exit code for the application if duration was hit |  | int
 | *camel.main.durationMaxAction* | Controls whether the Camel application should shutdown the JVM, or stop all routes, when duration max is triggered. | shutdown | String
@@ -105,6 +103,7 @@ The camel.main supports 104 options, which are listed below.
 | *camel.main.shutdownRoutesIn{zwsp}ReverseOrder* | Sets whether routes should be shutdown in reverse or the same order as they were started. | true | boolean
 | *camel.main.shutdownSuppress{zwsp}LoggingOnTimeout* | Whether Camel should try to suppress logging during shutdown and timeout was triggered, meaning forced shutdown is happening. And during forced shutdown we want to avoid logging errors/warnings et all in the logs as a side-effect of the forced timeout. Notice the suppress is a best effort as there may still be some logs coming from 3rd party libraries and whatnot, which Camel cannot control. This option is default false. | false | boolean
 | *camel.main.shutdownTimeout* | Timeout in seconds to graceful shutdown Camel. | 45 | int
+| *camel.main.sourceLocation{zwsp}Enabled* | Whether to capture precise source location:line-number for all EIPs in Camel routes. Enabling this will impact parsing Java based routes (also Groovy, Kotlin, etc.) on startup as this uses JDK StackTraceElement to calculate the location from the Camel route, which comes with a performance cost. This only impact startup, not the performance of the routes at runtime. | false | boolean
 | *camel.main.startupRecorder* | To use startup recorder for capturing execution time during starting Camel. The recorder can be one of: false (or off), logging, java-flight-recorder (or jfr). |  | String
 | *camel.main.startupRecorderDir* | Directory to store the recording. By default the current directory will be used. Use false to turn off saving recording to disk. |  | String
 | *camel.main.startupRecorder{zwsp}Duration* | How long time to run the startup recorder. Use 0 (default) to keep the recorder running until the JVM is exited. Use -1 to stop the recorder right after Camel has been started (to only focus on potential Camel startup performance bottlenecks) Use a positive value to keep recording for N seconds. When the recorder is stopped then the recording is auto saved to disk (note: save to disk can be disabled by setting startupRecorderDir to false) |  | long
@@ -124,6 +123,7 @@ The camel.main supports 104 options, which are listed below.
 | *camel.main.streamCaching{zwsp}StatisticsEnabled* | Sets whether stream caching statistics is enabled. | false | boolean
 | *camel.main.threadNamePattern* | Sets the thread name pattern used for creating the full thread name. The default pattern is: Camel (#camelId#) thread ##counter# - #name# Where #camelId# is the name of the CamelContext. and #counter# is a unique incrementing counter. and #name# is the regular thread name. You can also use #longName# which is the long thread name which can includes endpoint parameters etc. |  | String
 | *camel.main.tracing* | Sets whether tracing is enabled or not. Default is false. | false | boolean
+| *camel.main.tracingLogging{zwsp}Format* | To use a custom tracing logging format. The default format (arrow, routeId, label) is: %-4.4s %-12.12s %-33.33s | %-4.4s [%-12.12s] [%-33.33s] | String
 | *camel.main.tracingPattern* | Tracing pattern to match which node EIPs to trace. For example to match all To EIP nodes, use to. The pattern matches by node and route id's Multiple patterns can be separated by comma. |  | String
 | *camel.main.tracingStandby* | Whether to set tracing on standby. If on standby then the tracer is installed and made available. Then the tracer can be enabled later at runtime via JMX or via Tracer#setEnabled(boolean) . | false | boolean
 | *camel.main.useBreadcrumb* | Set whether breadcrumb is enabled. The default value is false. | false | boolean
@@ -408,6 +408,31 @@ camel.beans.foo.?company = Acme
 
 Then the company parameter is only set if `MyBean` has this option (silent ignore if no option present).
 Otherwise, if a parameter is set, and the bean does not have such a parameter, then an exception is thrown by Camel.
+
+=== Optional parameter values on beans
+
+If a parameter value on a bean is configured using xref:manual:ROOT:using-propertyplaceholder.adoc[Property Placeholder]
+and the placeholder is optional, then the placeholder can be marked as optional using `?` syntax, as shown:
+
+[source,properties]
+----
+camel.beans.foo = #class:com.foo.MyBean("Hello World", true, 123)
+camel.beans.foo.company = {{?companyName}}
+----
+
+Then the company parameter is only set if there is a property placeholder with the key _companyName_ (silent ignore if no option present).
+
+==== Default parameter values on beans
+
+It is possible to supply a default value (using `:defaultValue`) if the placeholder does not exist as shown:
+
+[source,properties]
+----
+camel.beans.foo = #class:com.foo.MyBean("Hello World", true, 123)
+camel.beans.foo.company = {{?companyName:Acme}}
+----
+
+Here the default value is _Acme_ that will be used if there is no property placeholder with the key _companyName_.
 
 === Nested parameters on beans
 

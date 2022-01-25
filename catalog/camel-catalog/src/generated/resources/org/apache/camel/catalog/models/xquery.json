@@ -8,6 +8,7 @@
     "firstVersion": "1.0.0",
     "label": "language,xml",
     "javaType": "org.apache.camel.model.language.XQueryExpression",
+    "abstract": false,
     "input": false,
     "output": false
   },

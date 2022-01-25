@@ -28,11 +28,14 @@ public class GmailUsersMessagesEndpointConfigurationConfigurer extends org.apach
         map.put("ClientId", java.lang.String.class);
         map.put("ClientSecret", java.lang.String.class);
         map.put("Content", com.google.api.services.gmail.model.Message.class);
+        map.put("Delegate", java.lang.String.class);
         map.put("Id", java.lang.String.class);
+        map.put("KeyResource", java.lang.String.class);
         map.put("MediaContent", com.google.api.client.http.AbstractInputStreamContent.class);
         map.put("MethodName", java.lang.String.class);
         map.put("ModifyMessageRequest", com.google.api.services.gmail.model.ModifyMessageRequest.class);
         map.put("RefreshToken", java.lang.String.class);
+        map.put("Scopes", java.util.Collection.class);
         map.put("UserId", java.lang.String.class);
         ALL_OPTIONS = map;
     }
@@ -57,8 +60,12 @@ public class GmailUsersMessagesEndpointConfigurationConfigurer extends org.apach
         case "ClientSecret": target.setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
         case "content":
         case "Content": target.setContent(property(camelContext, com.google.api.services.gmail.model.Message.class, value)); return true;
+        case "delegate":
+        case "Delegate": target.setDelegate(property(camelContext, java.lang.String.class, value)); return true;
         case "id":
         case "Id": target.setId(property(camelContext, java.lang.String.class, value)); return true;
+        case "keyresource":
+        case "KeyResource": target.setKeyResource(property(camelContext, java.lang.String.class, value)); return true;
         case "mediacontent":
         case "MediaContent": target.setMediaContent(property(camelContext, com.google.api.client.http.AbstractInputStreamContent.class, value)); return true;
         case "methodname":
@@ -67,6 +74,8 @@ public class GmailUsersMessagesEndpointConfigurationConfigurer extends org.apach
         case "ModifyMessageRequest": target.setModifyMessageRequest(property(camelContext, com.google.api.services.gmail.model.ModifyMessageRequest.class, value)); return true;
         case "refreshtoken":
         case "RefreshToken": target.setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "scopes":
+        case "Scopes": target.setScopes(property(camelContext, java.util.Collection.class, value)); return true;
         case "userid":
         case "UserId": target.setUserId(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -97,8 +106,12 @@ public class GmailUsersMessagesEndpointConfigurationConfigurer extends org.apach
         case "ClientSecret": return java.lang.String.class;
         case "content":
         case "Content": return com.google.api.services.gmail.model.Message.class;
+        case "delegate":
+        case "Delegate": return java.lang.String.class;
         case "id":
         case "Id": return java.lang.String.class;
+        case "keyresource":
+        case "KeyResource": return java.lang.String.class;
         case "mediacontent":
         case "MediaContent": return com.google.api.client.http.AbstractInputStreamContent.class;
         case "methodname":
@@ -107,6 +120,8 @@ public class GmailUsersMessagesEndpointConfigurationConfigurer extends org.apach
         case "ModifyMessageRequest": return com.google.api.services.gmail.model.ModifyMessageRequest.class;
         case "refreshtoken":
         case "RefreshToken": return java.lang.String.class;
+        case "scopes":
+        case "Scopes": return java.util.Collection.class;
         case "userid":
         case "UserId": return java.lang.String.class;
         default: return null;
@@ -133,8 +148,12 @@ public class GmailUsersMessagesEndpointConfigurationConfigurer extends org.apach
         case "ClientSecret": return target.getClientSecret();
         case "content":
         case "Content": return target.getContent();
+        case "delegate":
+        case "Delegate": return target.getDelegate();
         case "id":
         case "Id": return target.getId();
+        case "keyresource":
+        case "KeyResource": return target.getKeyResource();
         case "mediacontent":
         case "MediaContent": return target.getMediaContent();
         case "methodname":
@@ -143,8 +162,19 @@ public class GmailUsersMessagesEndpointConfigurationConfigurer extends org.apach
         case "ModifyMessageRequest": return target.getModifyMessageRequest();
         case "refreshtoken":
         case "RefreshToken": return target.getRefreshToken();
+        case "scopes":
+        case "Scopes": return target.getScopes();
         case "userid":
         case "UserId": return target.getUserId();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "scopes":
+        case "Scopes": return java.lang.String.class;
         default: return null;
         }
     }

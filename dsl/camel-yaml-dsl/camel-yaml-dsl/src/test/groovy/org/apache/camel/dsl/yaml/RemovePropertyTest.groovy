@@ -28,7 +28,7 @@ class RemovePropertyTest extends YamlTestSupport {
             context.routesLoader.loadRoutes(resource)
         then:
             with(context.routeDefinitions[0].outputs[0], RemovePropertyDefinition) {
-                propertyName == 'test'
+                name == 'test'
             }
         where:
             resource << [
@@ -37,7 +37,7 @@ class RemovePropertyTest extends YamlTestSupport {
                         uri: "direct:start"
                         steps:    
                           - remove-property:
-                              property-name: test
+                              name: test
                           - to: "mock:result"
                     '''),
                 asResource('expression-block', '''
@@ -45,7 +45,7 @@ class RemovePropertyTest extends YamlTestSupport {
                         uri: "direct:start"
                         steps:    
                           - remove-property:
-                              property-name: test
+                              name: test
                           - to: "mock:result"
                     ''')
             ]

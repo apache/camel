@@ -8,6 +8,7 @@
     "firstVersion": "2.20.0",
     "label": "dataformat,transformation",
     "javaType": "org.apache.camel.model.dataformat.ThriftDataFormat",
+    "abstract": false,
     "input": false,
     "output": false
   },

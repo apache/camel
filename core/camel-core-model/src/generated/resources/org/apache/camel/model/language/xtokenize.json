@@ -8,6 +8,7 @@
     "firstVersion": "2.14.0",
     "label": "language,core,xml",
     "javaType": "org.apache.camel.model.language.XMLTokenizerExpression",
+    "abstract": false,
     "input": false,
     "output": false
   },

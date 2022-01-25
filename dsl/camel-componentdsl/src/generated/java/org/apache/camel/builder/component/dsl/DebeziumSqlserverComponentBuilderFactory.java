@@ -768,6 +768,21 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             return this;
         }
         /**
+         * The query executed with every heartbeat.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: sqlserver
+         * 
+         * @param heartbeatActionQuery the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverComponentBuilder heartbeatActionQuery(
+                java.lang.String heartbeatActionQuery) {
+            doSetProperty("heartbeatActionQuery", heartbeatActionQuery);
+            return this;
+        }
+        /**
          * Length of an interval in milli-seconds in in which the connector
          * periodically sends heartbeat messages to a heartbeat topic. Use 0 to
          * disable heartbeat messages. Disabled by default.
@@ -821,6 +836,84 @@ public interface DebeziumSqlserverComponentBuilderFactory {
         default DebeziumSqlserverComponentBuilder includeSchemaChanges(
                 boolean includeSchemaChanges) {
             doSetProperty("includeSchemaChanges", includeSchemaChanges);
+            return this;
+        }
+        /**
+         * Whether the connector parse table and column's comment to metadata
+         * object.Note: Enable this option will bring the implications on memory
+         * usage. The number and size of ColumnImpl objects is what largely
+         * impacts how much memory is consumed by the Debezium connectors, and
+         * adding a String to each of them can potentially be quite heavy. The
+         * default is 'false'.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: sqlserver
+         * 
+         * @param includeSchemaComments the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverComponentBuilder includeSchemaComments(
+                boolean includeSchemaComments) {
+            doSetProperty("includeSchemaComments", includeSchemaComments);
+            return this;
+        }
+        /**
+         * Detect schema change during an incremental snapshot and re-select a
+         * current chunk to avoid locking DDLs. Note that changes to a primary
+         * key are not supported and can cause incorrect results if performed
+         * during an incremental snapshot. Another limitation is that if a
+         * schema change affects only columns' default values, then the change
+         * won't be detected until the DDL is processed from the binlog stream.
+         * This doesn't affect the snapshot events' values, but the schema of
+         * snapshot events may have outdated defaults.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: sqlserver
+         * 
+         * @param incrementalSnapshotAllowSchemaChanges the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverComponentBuilder incrementalSnapshotAllowSchemaChanges(
+                boolean incrementalSnapshotAllowSchemaChanges) {
+            doSetProperty("incrementalSnapshotAllowSchemaChanges", incrementalSnapshotAllowSchemaChanges);
+            return this;
+        }
+        /**
+         * The maximum size of chunk for incremental snapshotting.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1024
+         * Group: sqlserver
+         * 
+         * @param incrementalSnapshotChunkSize the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverComponentBuilder incrementalSnapshotChunkSize(
+                int incrementalSnapshotChunkSize) {
+            doSetProperty("incrementalSnapshotChunkSize", incrementalSnapshotChunkSize);
+            return this;
+        }
+        /**
+         * Add OPTION(RECOMPILE) on each SELECT statement during the incremental
+         * snapshot process. This prevents parameter sniffing but can cause CPU
+         * pressure on the source database.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: sqlserver
+         * 
+         * @param incrementalSnapshotOptionRecompile the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverComponentBuilder incrementalSnapshotOptionRecompile(
+                boolean incrementalSnapshotOptionRecompile) {
+            doSetProperty("incrementalSnapshotOptionRecompile", incrementalSnapshotOptionRecompile);
             return this;
         }
         /**
@@ -1352,6 +1445,24 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             doSetProperty("tombstonesOnDelete", tombstonesOnDelete);
             return this;
         }
+        /**
+         * The name of the transaction metadata topic. The placeholder
+         * ${database.server.name} can be used for referring to the connector's
+         * logical name; defaults to ${database.server.name}.transaction.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: ${database.server.name}.transaction
+         * Group: sqlserver
+         * 
+         * @param transactionTopic the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverComponentBuilder transactionTopic(
+                java.lang.String transactionTopic) {
+            doSetProperty("transactionTopic", transactionTopic);
+            return this;
+        }
     }
 
     class DebeziumSqlserverComponentBuilderImpl
@@ -1417,9 +1528,14 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             case "datatypePropagateSourceType": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatatypePropagateSourceType((java.lang.String) value); return true;
             case "decimalHandlingMode": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDecimalHandlingMode((java.lang.String) value); return true;
             case "eventProcessingFailureHandlingMode": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setEventProcessingFailureHandlingMode((java.lang.String) value); return true;
+            case "heartbeatActionQuery": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setHeartbeatActionQuery((java.lang.String) value); return true;
             case "heartbeatIntervalMs": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setHeartbeatIntervalMs((int) value); return true;
             case "heartbeatTopicsPrefix": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setHeartbeatTopicsPrefix((java.lang.String) value); return true;
             case "includeSchemaChanges": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setIncludeSchemaChanges((boolean) value); return true;
+            case "includeSchemaComments": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setIncludeSchemaComments((boolean) value); return true;
+            case "incrementalSnapshotAllowSchemaChanges": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setIncrementalSnapshotAllowSchemaChanges((boolean) value); return true;
+            case "incrementalSnapshotChunkSize": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setIncrementalSnapshotChunkSize((int) value); return true;
+            case "incrementalSnapshotOptionRecompile": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setIncrementalSnapshotOptionRecompile((boolean) value); return true;
             case "maxBatchSize": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setMaxBatchSize((int) value); return true;
             case "maxIterationTransactions": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setMaxIterationTransactions((int) value); return true;
             case "maxQueueSize": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setMaxQueueSize((int) value); return true;
@@ -1449,6 +1565,7 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             case "tableWhitelist": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setTableWhitelist((java.lang.String) value); return true;
             case "timePrecisionMode": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setTimePrecisionMode((java.lang.String) value); return true;
             case "tombstonesOnDelete": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setTombstonesOnDelete((boolean) value); return true;
+            case "transactionTopic": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setTransactionTopic((java.lang.String) value); return true;
             default: return false;
             }
         }

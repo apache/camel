@@ -44,6 +44,7 @@ public class GoogleCalendarStreamEndpointConfigurer extends PropertyConfigurerSu
         case "consumefromnow":
         case "consumeFromNow": target.getConfiguration().setConsumeFromNow(property(camelContext, boolean.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
+        case "delegate": target.getConfiguration().setDelegate(property(camelContext, java.lang.String.class, value)); return true;
         case "emailaddress":
         case "emailAddress": target.getConfiguration().setEmailAddress(property(camelContext, java.lang.String.class, value)); return true;
         case "exceptionhandler":
@@ -53,6 +54,8 @@ public class GoogleCalendarStreamEndpointConfigurer extends PropertyConfigurerSu
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
         case "initialdelay":
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
+        case "keyresource":
+        case "keyResource": target.getConfiguration().setKeyResource(property(camelContext, java.lang.String.class, value)); return true;
         case "maxresults":
         case "maxResults": target.getConfiguration().setMaxResults(property(camelContext, int.class, value)); return true;
         case "p12filename":
@@ -113,6 +116,7 @@ public class GoogleCalendarStreamEndpointConfigurer extends PropertyConfigurerSu
         case "consumefromnow":
         case "consumeFromNow": return boolean.class;
         case "delay": return long.class;
+        case "delegate": return java.lang.String.class;
         case "emailaddress":
         case "emailAddress": return java.lang.String.class;
         case "exceptionhandler":
@@ -122,6 +126,8 @@ public class GoogleCalendarStreamEndpointConfigurer extends PropertyConfigurerSu
         case "greedy": return boolean.class;
         case "initialdelay":
         case "initialDelay": return long.class;
+        case "keyresource":
+        case "keyResource": return java.lang.String.class;
         case "maxresults":
         case "maxResults": return int.class;
         case "p12filename":
@@ -183,6 +189,7 @@ public class GoogleCalendarStreamEndpointConfigurer extends PropertyConfigurerSu
         case "consumefromnow":
         case "consumeFromNow": return target.getConfiguration().isConsumeFromNow();
         case "delay": return target.getDelay();
+        case "delegate": return target.getConfiguration().getDelegate();
         case "emailaddress":
         case "emailAddress": return target.getConfiguration().getEmailAddress();
         case "exceptionhandler":
@@ -192,6 +199,8 @@ public class GoogleCalendarStreamEndpointConfigurer extends PropertyConfigurerSu
         case "greedy": return target.isGreedy();
         case "initialdelay":
         case "initialDelay": return target.getInitialDelay();
+        case "keyresource":
+        case "keyResource": return target.getConfiguration().getKeyResource();
         case "maxresults":
         case "maxResults": return target.getConfiguration().getMaxResults();
         case "p12filename":

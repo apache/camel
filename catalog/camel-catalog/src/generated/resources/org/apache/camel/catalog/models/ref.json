@@ -8,6 +8,7 @@
     "firstVersion": "2.8.0",
     "label": "language,core",
     "javaType": "org.apache.camel.model.language.RefExpression",
+    "abstract": false,
     "input": false,
     "output": false
   },

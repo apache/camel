@@ -1,0 +1,1 @@
+../../../../../components/camel-jsonb/src/main/docs/jsonb-dataformat.adoc

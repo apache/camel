@@ -171,9 +171,7 @@ public class SharedCamelInternalProcessor implements SharedInternalProcessor {
         // create internal callback which will execute the advices in reverse order when done
         AsyncCallback callback = new InternalCallback(states, exchange, originalCallback, resultProcessor);
 
-        // UNIT_OF_WORK_PROCESS_SYNC is @deprecated and we should remove it from Camel 3.0
-        Object synchronous = exchange.removeProperty(Exchange.UNIT_OF_WORK_PROCESS_SYNC);
-        if (exchange.isTransacted() || synchronous != null) {
+        if (exchange.isTransacted()) {
             // must be synchronized for transacted exchanges
             if (LOG.isTraceEnabled()) {
                 if (exchange.isTransacted()) {
@@ -200,8 +198,7 @@ public class SharedCamelInternalProcessor implements SharedInternalProcessor {
         } else {
             final UnitOfWork uow = exchange.getUnitOfWork();
 
-            // do uow before processing and if a value is returned the the uow wants to be processed after
-            // was well in the same thread
+            // do uow before processing and if a value is returned then the uow wants to be processed after in the same thread
             AsyncCallback async = callback;
             boolean beforeAndAfter = uow.isBeforeAfterProcess();
             if (beforeAndAfter) {

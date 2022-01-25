@@ -349,10 +349,7 @@ public class GenerateMojo extends AbstractExecMojo {
         // exclude take precedence
         if (excludes != null) {
             for (String exclude : excludes.split(",")) {
-                exclude = exclude.trim();
-                // try both with and without directory in the name
-                String fqn = stripRootPath(asRelativeFile(file.getAbsolutePath()));
-                boolean match = PatternHelper.matchPattern(fqn, exclude) || PatternHelper.matchPattern(file.getName(), exclude);
+                boolean match = isMatch(exclude, file);
                 if (match) {
                     return false;
                 }
@@ -362,10 +359,7 @@ public class GenerateMojo extends AbstractExecMojo {
         // include
         if (includes != null) {
             for (String include : includes.split(",")) {
-                include = include.trim();
-                // try both with and without directory in the name
-                String fqn = stripRootPath(asRelativeFile(file.getAbsolutePath()));
-                boolean match = PatternHelper.matchPattern(fqn, include) || PatternHelper.matchPattern(file.getName(), include);
+                boolean match = isMatch(include, file);
                 if (match) {
                     return true;
                 }
@@ -376,6 +370,13 @@ public class GenerateMojo extends AbstractExecMojo {
 
         // was not excluded nor failed include so its accepted
         return true;
+    }
+
+    private boolean isMatch(String include, File file) {
+        include = include.trim();
+        // try both with and without directory in the name
+        String fqn = stripRootPath(asRelativeFile(file.getAbsolutePath()));
+        return PatternHelper.matchPattern(fqn, include) || PatternHelper.matchPattern(file.getName(), include);
     }
 
     private String asRelativeFile(String name) {
@@ -395,40 +396,56 @@ public class GenerateMojo extends AbstractExecMojo {
     private String stripRootPath(String name) {
         // strip out any leading source / resource directory
 
-        List list = project.getCompileSourceRoots();
-        for (Object obj : list) {
-            String dir = (String) obj;
-            dir = asRelativeFile(dir);
-            if (name.startsWith(dir)) {
-                return name.substring(dir.length() + 1);
-            }
+        String compileSourceRoot = findInCompileSourceRoots(name);
+        if (compileSourceRoot != null) {
+            return compileSourceRoot;
         }
-        list = project.getTestCompileSourceRoots();
-        for (Object obj : list) {
-            String dir = (String) obj;
-            dir = asRelativeFile(dir);
-            if (name.startsWith(dir)) {
-                return name.substring(dir.length() + 1);
-            }
-        }
-        List resources = project.getResources();
-        for (Object obj : resources) {
-            Resource resource = (Resource) obj;
-            String dir = asRelativeFile(resource.getDirectory());
-            if (name.startsWith(dir)) {
-                return name.substring(dir.length() + 1);
-            }
-        }
-        resources = project.getTestResources();
-        for (Object obj : resources) {
-            Resource resource = (Resource) obj;
-            String dir = asRelativeFile(resource.getDirectory());
-            if (name.startsWith(dir)) {
-                return name.substring(dir.length() + 1);
-            }
+
+        String buildPath = findInResources(name);
+        if (buildPath != null) {
+            return buildPath;
         }
 
         return name;
+    }
+
+    private String findInCompileSourceRoots(String name) {
+        String compileSourceRoot = findInCompileSourceRoots(project.getCompileSourceRoots(), name);
+        if (compileSourceRoot != null) {
+            return compileSourceRoot;
+        }
+
+        return findInCompileSourceRoots(project.getTestCompileSourceRoots(), name);
+    }
+
+    private String findInCompileSourceRoots(List<String> list, String name) {
+        for (Object obj : list) {
+            String dir = (String) obj;
+            dir = asRelativeFile(dir);
+            if (name.startsWith(dir)) {
+                return name.substring(dir.length() + 1);
+            }
+        }
+        return null;
+    }
+
+    private String findInResources(String name) {
+        String buildPath = findInResources(project.getResources(), name);
+        if (buildPath != null) {
+            return buildPath;
+        }
+
+        return findInResources(project.getTestResources(), name);
+    }
+
+    private String findInResources(List<Resource> resources, String name) {
+        for (Resource resource : resources) {
+            String dir = asRelativeFile(resource.getDirectory());
+            if (name.startsWith(dir)) {
+                return name.substring(dir.length() + 1);
+            }
+        }
+        return null;
     }
 
     public static boolean updateResource(Path out, String data) {

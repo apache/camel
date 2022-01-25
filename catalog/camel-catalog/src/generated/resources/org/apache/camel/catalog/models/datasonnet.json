@@ -8,6 +8,7 @@
     "firstVersion": "3.7.0",
     "label": "language,transformation",
     "javaType": "org.apache.camel.model.language.DatasonnetExpression",
+    "abstract": false,
     "input": false,
     "output": false
   },

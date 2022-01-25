@@ -27,7 +27,9 @@ public class DriveChildrenEndpointConfigurationConfigurer extends org.apache.cam
         map.put("ClientId", java.lang.String.class);
         map.put("ClientSecret", java.lang.String.class);
         map.put("Content", com.google.api.services.drive.model.ChildReference.class);
+        map.put("Delegate", java.lang.String.class);
         map.put("FolderId", java.lang.String.class);
+        map.put("KeyResource", java.lang.String.class);
         map.put("MethodName", java.lang.String.class);
         map.put("RefreshToken", java.lang.String.class);
         map.put("Scopes", java.util.List.class);
@@ -52,8 +54,12 @@ public class DriveChildrenEndpointConfigurationConfigurer extends org.apache.cam
         case "ClientSecret": target.setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
         case "content":
         case "Content": target.setContent(property(camelContext, com.google.api.services.drive.model.ChildReference.class, value)); return true;
+        case "delegate":
+        case "Delegate": target.setDelegate(property(camelContext, java.lang.String.class, value)); return true;
         case "folderid":
         case "FolderId": target.setFolderId(property(camelContext, java.lang.String.class, value)); return true;
+        case "keyresource":
+        case "KeyResource": target.setKeyResource(property(camelContext, java.lang.String.class, value)); return true;
         case "methodname":
         case "MethodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
         case "refreshtoken":
@@ -86,8 +92,12 @@ public class DriveChildrenEndpointConfigurationConfigurer extends org.apache.cam
         case "ClientSecret": return java.lang.String.class;
         case "content":
         case "Content": return com.google.api.services.drive.model.ChildReference.class;
+        case "delegate":
+        case "Delegate": return java.lang.String.class;
         case "folderid":
         case "FolderId": return java.lang.String.class;
+        case "keyresource":
+        case "KeyResource": return java.lang.String.class;
         case "methodname":
         case "MethodName": return java.lang.String.class;
         case "refreshtoken":
@@ -116,8 +126,12 @@ public class DriveChildrenEndpointConfigurationConfigurer extends org.apache.cam
         case "ClientSecret": return target.getClientSecret();
         case "content":
         case "Content": return target.getContent();
+        case "delegate":
+        case "Delegate": return target.getDelegate();
         case "folderid":
         case "FolderId": return target.getFolderId();
+        case "keyresource":
+        case "KeyResource": return target.getKeyResource();
         case "methodname":
         case "MethodName": return target.getMethodName();
         case "refreshtoken":

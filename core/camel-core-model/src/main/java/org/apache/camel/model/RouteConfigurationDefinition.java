@@ -118,6 +118,7 @@ public class RouteConfigurationDefinition extends OptionalIdentifiedDefinition<R
      */
     public OnExceptionDefinition onException(Class<? extends Throwable> exceptionType) {
         OnExceptionDefinition answer = new OnExceptionDefinition(exceptionType);
+        answer.setRouteConfiguration(this);
         onExceptions.add(answer);
         return answer;
     }
@@ -131,6 +132,7 @@ public class RouteConfigurationDefinition extends OptionalIdentifiedDefinition<R
      */
     public OnExceptionDefinition onException(Class<? extends Throwable>... exceptions) {
         OnExceptionDefinition answer = new OnExceptionDefinition(Arrays.asList(exceptions));
+        answer.setRouteConfiguration(this);
         onExceptions.add(answer);
         return answer;
     }
@@ -143,6 +145,7 @@ public class RouteConfigurationDefinition extends OptionalIdentifiedDefinition<R
      */
     public OnCompletionDefinition onCompletion() {
         OnCompletionDefinition answer = new OnCompletionDefinition();
+        answer.setRouteConfiguration(this);
         // is global scoped by default
         answer.setRouteScoped(false);
         onCompletions.add(answer);
@@ -156,6 +159,7 @@ public class RouteConfigurationDefinition extends OptionalIdentifiedDefinition<R
      */
     public InterceptDefinition intercept() {
         InterceptDefinition answer = new InterceptDefinition();
+        answer.setRouteConfiguration(this);
         intercepts.add(answer);
         return answer;
     }
@@ -167,6 +171,7 @@ public class RouteConfigurationDefinition extends OptionalIdentifiedDefinition<R
      */
     public InterceptFromDefinition interceptFrom() {
         InterceptFromDefinition answer = new InterceptFromDefinition();
+        answer.setRouteConfiguration(this);
         interceptFroms.add(answer);
         return answer;
     }
@@ -179,6 +184,7 @@ public class RouteConfigurationDefinition extends OptionalIdentifiedDefinition<R
      */
     public InterceptFromDefinition interceptFrom(String uri) {
         InterceptFromDefinition answer = new InterceptFromDefinition(uri);
+        answer.setRouteConfiguration(this);
         interceptFroms.add(answer);
         return answer;
     }
@@ -191,6 +197,7 @@ public class RouteConfigurationDefinition extends OptionalIdentifiedDefinition<R
      */
     public InterceptSendToEndpointDefinition interceptSendToEndpoint(String uri) {
         InterceptSendToEndpointDefinition answer = new InterceptSendToEndpointDefinition(uri);
+        answer.setRouteConfiguration(this);
         interceptSendTos.add(answer);
         return answer;
     }

@@ -40,7 +40,7 @@ import static org.apache.camel.Exchange.FILE_NAME;
 /**
  * Zip file data format. See {@link org.apache.camel.model.dataformat.ZipDataFormat} for "deflate" compression.
  */
-@Dataformat("zipfile")
+@Dataformat("zipFile")
 public class ZipFileDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
     /**
      * The default maximum decompressed size (in bytes), which corresponds to 1G.
@@ -53,7 +53,7 @@ public class ZipFileDataFormat extends ServiceSupport implements DataFormat, Dat
 
     @Override
     public String getDataFormatName() {
-        return "zipfile";
+        return "zipFile";
     }
 
     @Override

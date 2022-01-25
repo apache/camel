@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.yaml
 
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
+import org.apache.camel.model.ChoiceDefinition
 import org.apache.camel.model.FromDefinition
 import org.apache.camel.model.LogDefinition
 import org.apache.camel.model.RouteDefinition
@@ -51,7 +52,7 @@ class LineNumberTest extends YamlTestSupport {
             }
             with(context.routeDefinitions[0].outputs[1], ToDefinition) {
                 uri == "direct:result"
-                lineNumber == 8
+                lineNumber == 9
             }
     }
 
@@ -68,13 +69,89 @@ class LineNumberTest extends YamlTestSupport {
         context.routeDefinitions.size() == 1
 
         with(context.routeDefinitions[0], RouteDefinition) {
-            input.lineNumber == 3
+            input.lineNumber == 4
             input.endpointUri == 'direct:info'
 
             with (outputs[0], LogDefinition) {
-                lineNumber == 5
+                lineNumber == 6
                 message == 'message'
             }
+        }
+    }
+
+    def "line number file"() {
+        setup:
+        def rloc = 'classpath:/stuff/my-route.yaml'
+        def rdsl = context.resourceLoader.resolveResource(rloc)
+        when:
+        loadRoutes rdsl
+        then:
+        context.routeDefinitions.size() == 1
+
+        with(context.routeDefinitions[0].input, FromDefinition) {
+            uri == "quartz:foo?cron={{myCron}}"
+            lineNumber == 20
+        }
+        with(context.routeDefinitions[0].outputs[0], LogDefinition) {
+            message == 'Start'
+            lineNumber == 22
+        }
+        with(context.routeDefinitions[0].outputs[1], ToDefinition) {
+            uri == "bean:myBean?method=hello"
+            lineNumber == 23
+        }
+        with(context.routeDefinitions[0].outputs[3], ToDefinition) {
+            uri == "bean:myBean?method=bye"
+            lineNumber == 25
+        }
+        with(context.routeDefinitions[0].outputs[4], LogDefinition) {
+            message == '${body}'
+            lineNumber == 26
+        }
+        with(context.routeDefinitions[0].outputs[5], ChoiceDefinition) {
+            lineNumber == 27
+        }
+        with(context.routeDefinitions[0].outputs[6], LogDefinition) {
+            message == '${header.textProp}'
+            lineNumber == 39
+        }
+    }
+
+    def "line number file with comments"() {
+        setup:
+        def rloc = 'classpath:/stuff/my-route-comment.yaml'
+        def rdsl = context.resourceLoader.resolveResource(rloc)
+        when:
+        loadRoutes rdsl
+        then:
+        context.routeDefinitions.size() == 1
+
+        with(context.routeDefinitions[0].input, FromDefinition) {
+            uri == "quartz:foo?cron={{myCron}}"
+            lineNumber == 22
+        }
+        with(context.routeDefinitions[0].outputs[0], LogDefinition) {
+            message == 'Start'
+            lineNumber == 25
+        }
+        with(context.routeDefinitions[0].outputs[1], ToDefinition) {
+            uri == "bean:myBean?method=hello"
+            lineNumber == 26
+        }
+        with(context.routeDefinitions[0].outputs[3], ToDefinition) {
+            uri == "bean:myBean?method=bye"
+            lineNumber == 30
+        }
+        with(context.routeDefinitions[0].outputs[4], LogDefinition) {
+            message == '${body}'
+            lineNumber == 31
+        }
+        with(context.routeDefinitions[0].outputs[5], ChoiceDefinition) {
+            lineNumber == 33 // TODO: should be 32
+        }
+        with(context.routeDefinitions[0].outputs[6], LogDefinition) {
+            message == '${header.textProp}'
+            lineNumber == 49
         }
     }
 

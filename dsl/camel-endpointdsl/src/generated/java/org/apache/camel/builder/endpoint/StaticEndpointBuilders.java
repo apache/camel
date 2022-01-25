@@ -568,6 +568,7 @@ public class StaticEndpointBuilders {
      * @param path resourceName
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.AtomixMapEndpointBuilderFactory.AtomixMapEndpointBuilder atomixMap(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.AtomixMapEndpointBuilderFactory.endpointBuilder("atomix-map", path);
@@ -590,6 +591,7 @@ public class StaticEndpointBuilders {
      * @param path resourceName
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.AtomixMapEndpointBuilderFactory.AtomixMapEndpointBuilder atomixMap(
             String componentName,
             String path) {
@@ -611,6 +613,7 @@ public class StaticEndpointBuilders {
      * @param path resourceName
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.AtomixMessagingEndpointBuilderFactory.AtomixMessagingEndpointBuilder atomixMessaging(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.AtomixMessagingEndpointBuilderFactory.endpointBuilder("atomix-messaging", path);
@@ -633,6 +636,7 @@ public class StaticEndpointBuilders {
      * @param path resourceName
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.AtomixMessagingEndpointBuilderFactory.AtomixMessagingEndpointBuilder atomixMessaging(
             String componentName,
             String path) {
@@ -654,6 +658,7 @@ public class StaticEndpointBuilders {
      * @param path resourceName
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.AtomixMultiMapEndpointBuilderFactory.AtomixMultiMapEndpointBuilder atomixMultimap(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.AtomixMultiMapEndpointBuilderFactory.endpointBuilder("atomix-multimap", path);
@@ -676,6 +681,7 @@ public class StaticEndpointBuilders {
      * @param path resourceName
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.AtomixMultiMapEndpointBuilderFactory.AtomixMultiMapEndpointBuilder atomixMultimap(
             String componentName,
             String path) {
@@ -697,6 +703,7 @@ public class StaticEndpointBuilders {
      * @param path resourceName
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.AtomixQueueEndpointBuilderFactory.AtomixQueueEndpointBuilder atomixQueue(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.AtomixQueueEndpointBuilderFactory.endpointBuilder("atomix-queue", path);
@@ -719,6 +726,7 @@ public class StaticEndpointBuilders {
      * @param path resourceName
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.AtomixQueueEndpointBuilderFactory.AtomixQueueEndpointBuilder atomixQueue(
             String componentName,
             String path) {
@@ -740,6 +748,7 @@ public class StaticEndpointBuilders {
      * @param path resourceName
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.AtomixSetEndpointBuilderFactory.AtomixSetEndpointBuilder atomixSet(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.AtomixSetEndpointBuilderFactory.endpointBuilder("atomix-set", path);
@@ -762,6 +771,7 @@ public class StaticEndpointBuilders {
      * @param path resourceName
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.AtomixSetEndpointBuilderFactory.AtomixSetEndpointBuilder atomixSet(
             String componentName,
             String path) {
@@ -783,6 +793,7 @@ public class StaticEndpointBuilders {
      * @param path resourceName
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.AtomixValueEndpointBuilderFactory.AtomixValueEndpointBuilder atomixValue(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.AtomixValueEndpointBuilderFactory.endpointBuilder("atomix-value", path);
@@ -805,6 +816,7 @@ public class StaticEndpointBuilders {
      * @param path resourceName
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.AtomixValueEndpointBuilderFactory.AtomixValueEndpointBuilder atomixValue(
             String componentName,
             String path) {
@@ -4296,6 +4308,51 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.DropboxEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Dynamic Router (camel-dynamic-router)
+     * The Dynamic Router component routes exchanges to recipients, and the
+     * recipients (and their rules) may change at runtime.
+     * 
+     * Category: endpoint,java
+     * Since: 3.15
+     * Maven coordinates: org.apache.camel:camel-dynamic-router
+     * 
+     * Syntax: <code>dynamic-router:channel</code>
+     * 
+     * Path parameter: channel (required)
+     * Channel of the Dynamic Router
+     * 
+     * @param path channel
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.DynamicRouterEndpointBuilderFactory.DynamicRouterEndpointBuilder dynamicRouter(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.DynamicRouterEndpointBuilderFactory.endpointBuilder("dynamic-router", path);
+    }
+    /**
+     * Dynamic Router (camel-dynamic-router)
+     * The Dynamic Router component routes exchanges to recipients, and the
+     * recipients (and their rules) may change at runtime.
+     * 
+     * Category: endpoint,java
+     * Since: 3.15
+     * Maven coordinates: org.apache.camel:camel-dynamic-router
+     * 
+     * Syntax: <code>dynamic-router:channel</code>
+     * 
+     * Path parameter: channel (required)
+     * Channel of the Dynamic Router
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path channel
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.DynamicRouterEndpointBuilderFactory.DynamicRouterEndpointBuilder dynamicRouter(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.DynamicRouterEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Ehcache (camel-ehcache)
      * Perform caching operations using Ehcache.
      * 
@@ -5542,10 +5599,10 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * There are 13 enums and the value can be one of: DRIVE_ABOUT, DRIVE_APPS,
+     * There are 14 enums and the value can be one of: DRIVE_ABOUT, DRIVE_APPS,
      * DRIVE_CHANGES, DRIVE_CHANNELS, DRIVE_CHILDREN, DRIVE_COMMENTS,
      * DRIVE_FILES, DRIVE_PARENTS, DRIVE_PERMISSIONS, DRIVE_PROPERTIES,
-     * DRIVE_REALTIME, DRIVE_REPLIES, DRIVE_REVISIONS
+     * DRIVE_DRIVES, DRIVE_TEAMDRIVES, DRIVE_REPLIES, DRIVE_REVISIONS
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -5572,10 +5629,10 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * There are 13 enums and the value can be one of: DRIVE_ABOUT, DRIVE_APPS,
+     * There are 14 enums and the value can be one of: DRIVE_ABOUT, DRIVE_APPS,
      * DRIVE_CHANGES, DRIVE_CHANNELS, DRIVE_CHILDREN, DRIVE_COMMENTS,
      * DRIVE_FILES, DRIVE_PARENTS, DRIVE_PERMISSIONS, DRIVE_PROPERTIES,
-     * DRIVE_REALTIME, DRIVE_REPLIES, DRIVE_REVISIONS
+     * DRIVE_DRIVES, DRIVE_TEAMDRIVES, DRIVE_REPLIES, DRIVE_REVISIONS
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -8917,6 +8974,57 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.KameletEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Knative (camel-knative)
+     * Send and receive events from Knative.
+     * 
+     * Category: cloud
+     * Since: 3.15
+     * Maven coordinates: org.apache.camel:camel-knative
+     * 
+     * Syntax: <code>knative:type/typeId</code>
+     * 
+     * Path parameter: type
+     * The Knative resource type
+     * There are 3 enums and the value can be one of: endpoint, channel, event
+     * 
+     * Path parameter: typeId
+     * The identifier of the Knative resource
+     * 
+     * @param path type/typeId
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.KnativeEndpointBuilderFactory.KnativeEndpointBuilder knative(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.KnativeEndpointBuilderFactory.endpointBuilder("knative", path);
+    }
+    /**
+     * Knative (camel-knative)
+     * Send and receive events from Knative.
+     * 
+     * Category: cloud
+     * Since: 3.15
+     * Maven coordinates: org.apache.camel:camel-knative
+     * 
+     * Syntax: <code>knative:type/typeId</code>
+     * 
+     * Path parameter: type
+     * The Knative resource type
+     * There are 3 enums and the value can be one of: endpoint, channel, event
+     * 
+     * Path parameter: typeId
+     * The identifier of the Knative resource
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path type/typeId
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.KnativeEndpointBuilderFactory.KnativeEndpointBuilder knative(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.KnativeEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Kubernetes ConfigMap (camel-kubernetes)
      * Perform operations on Kubernetes ConfigMaps and get notified on
      * ConfigMaps changes.
@@ -10556,7 +10664,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: connectionBean (required)
      * Sets the connection bean reference used to lookup a client for connecting
-     * to a database.
+     * to a database if no hosts parameter is present.
      * 
      * @param path connectionBean
      * @return the dsl builder
@@ -10577,7 +10685,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: connectionBean (required)
      * Sets the connection bean reference used to lookup a client for connecting
-     * to a database.
+     * to a database if no hosts parameter is present.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

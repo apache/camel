@@ -34,6 +34,6 @@ public class ExchangeCreatedEvent extends AbstractExchangeEvent implements Camel
 
     @Override
     public String toString() {
-        return getExchange().getExchangeId() + " exchange created: " + getExchange();
+        return getExchange().getExchangeId() + " exchange created";
     }
 }

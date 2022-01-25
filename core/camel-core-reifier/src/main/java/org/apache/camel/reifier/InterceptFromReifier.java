@@ -16,13 +16,13 @@
  */
 package org.apache.camel.reifier;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.model.InterceptFromDefinition;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.SetHeaderDefinition;
-import org.apache.camel.support.ExpressionAdapter;
+import org.apache.camel.support.processor.DelegateAsyncProcessor;
 
 public class InterceptFromReifier extends InterceptReifier<InterceptFromDefinition> {
 
@@ -31,28 +31,18 @@ public class InterceptFromReifier extends InterceptReifier<InterceptFromDefiniti
     }
 
     @Override
-    @SuppressWarnings({ "unchecked", "rawtypes" })
     public Processor createProcessor() throws Exception {
-        // insert a set header definition so we can set the intercepted endpoint
-        // uri as a header
-        // this allows us to use the same header for both the interceptFrom and
-        // interceptSendToEndpoint
-        SetHeaderDefinition headerDefinition = new SetHeaderDefinition(Exchange.INTERCEPTED_ENDPOINT, new ExpressionAdapter() {
-            public Object evaluate(Exchange exchange, Class type) {
+        final Processor child = this.createChildProcessor(true);
+
+        return new DelegateAsyncProcessor(child) {
+            @Override
+            public boolean process(Exchange exchange, AsyncCallback callback) {
                 if (exchange.getFromEndpoint() != null) {
-                    return exchange.getFromEndpoint().getEndpointUri();
-                } else {
-                    return null;
+                    exchange.getMessage().setHeader(Exchange.INTERCEPTED_ENDPOINT, exchange.getFromEndpoint().getEndpointUri());
                 }
+                return super.process(exchange, callback);
             }
-
-            public String toString() {
-                return "";
-            }
-        });
-        definition.getOutputs().add(0, headerDefinition);
-
-        return this.createChildProcessor(true);
+        };
     }
 
 }

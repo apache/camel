@@ -103,6 +103,7 @@ public final class EndpointProducerDeserializersResolver implements YamlDeserial
             case "dozer":
             case "drill":
             case "dropbox":
+            case "dynamic-router":
             case "ehcache":
             case "elasticsearch-rest":
             case "elsql":
@@ -193,6 +194,7 @@ public final class EndpointProducerDeserializersResolver implements YamlDeserial
             case "jt400":
             case "kafka":
             case "kamelet":
+            case "knative":
             case "kubernetes-config-maps":
             case "kubernetes-custom-resources":
             case "kubernetes-deployments":

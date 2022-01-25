@@ -712,6 +712,7 @@ public final class ObjectHelper {
                         return Array.get(array, idx++);
                     }
 
+                    @Override
                     public void remove() {
                         throw new UnsupportedOperationException();
                     }
@@ -738,6 +739,7 @@ public final class ObjectHelper {
                     return nodeList.item(idx++);
                 }
 
+                @Override
                 public void remove() {
                     throw new UnsupportedOperationException();
                 }
@@ -791,6 +793,7 @@ public final class ObjectHelper {
                             return s;
                         }
 
+                        @Override
                         public void remove() {
                             throw new UnsupportedOperationException();
                         }

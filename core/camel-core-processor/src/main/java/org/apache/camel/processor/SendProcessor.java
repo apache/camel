@@ -226,9 +226,6 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
         // if the producer is not singleton we need to use a producer cache
         if (!destination.isSingletonProducer() && producerCache == null) {
             // use a single producer cache as we need to only hold reference for one destination
-            // and use a regular HashMap as we do not want a soft reference store that may get re-claimed when low on memory
-            // as we want to ensure the producer is kept around, to ensure its lifecycle is fully managed,
-            // eg stopping the producer when we stop etc.
             producerCache = new DefaultProducerCache(this, camelContext, 0);
             // do not add as service as we do not want to manage the producer cache
         }

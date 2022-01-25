@@ -177,22 +177,6 @@ public class StringHelperTest {
     }
 
     @Test
-    public void testReplaceAll() throws Exception {
-        assertEquals("", StringHelper.replaceAll("", "", ""));
-        assertEquals(null, StringHelper.replaceAll(null, "", ""));
-        assertEquals("foobar", StringHelper.replaceAll("foobar", "###", "DOT"));
-
-        assertEquals("foobar", StringHelper.replaceAll("foo.bar", ".", ""));
-        assertEquals("fooDOTbar", StringHelper.replaceAll("foo.bar", ".", "DOT"));
-        assertEquals("fooDOTbar", StringHelper.replaceAll("foo###bar", "###", "DOT"));
-        assertEquals("foobar", StringHelper.replaceAll("foo###bar", "###", ""));
-        assertEquals("fooDOTbarDOTbaz", StringHelper.replaceAll("foo.bar.baz", ".", "DOT"));
-        assertEquals("fooDOTbarDOTbazDOT", StringHelper.replaceAll("foo.bar.baz.", ".", "DOT"));
-        assertEquals("DOTfooDOTbarDOTbazDOT", StringHelper.replaceAll(".foo.bar.baz.", ".", "DOT"));
-        assertEquals("fooDOT", StringHelper.replaceAll("foo.", ".", "DOT"));
-    }
-
-    @Test
     public void testRemoveInitialCharacters() throws Exception {
         assertEquals("foo", StringHelper.removeStartingCharacters("foo", '/'));
         assertEquals("foo", StringHelper.removeStartingCharacters("/foo", '/'));

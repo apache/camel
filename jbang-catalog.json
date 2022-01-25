@@ -3,7 +3,11 @@
 	"aliases": {
 	  "CamelJBang": {
 		"script-ref": "dsl/camel-jbang/camel-jbang-main/dist/CamelJBang.java",
-		"description": "A JBang-based Camel app for running Kamelets"
+		"description": "Run Apache Camel routes easily (deprecated - use camel instead)"
+	  },
+	  "camel": {
+		"script-ref": "dsl/camel-jbang/camel-jbang-main/dist/CamelJBang.java",
+		"description": "Run Apache Camel routes easily"
 	  }
 	}
 }

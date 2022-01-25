@@ -28,11 +28,11 @@
         <route>
             <from uri="direct:default"/>
             <marshal>
-                <univocity-fixed>
-                    <univocity-header length="3"/>
-                    <univocity-header length="3"/>
-                    <univocity-header length="5"/>
-                </univocity-fixed>
+                <univocityFixed>
+                    <univocityHeader length="3"/>
+                    <univocityHeader length="3"/>
+                    <univocityHeader length="5"/>
+                </univocityFixed>
             </marshal>
             <convertBodyTo type="String"/>
             <to uri="mock:result"/>
@@ -42,10 +42,10 @@
         <route>
             <from uri="direct:header"/>
             <marshal>
-                <univocity-fixed>
-                    <univocity-header length="3">A</univocity-header>
-                    <univocity-header length="5">C</univocity-header>
-                </univocity-fixed>
+                <univocityFixed>
+                    <univocityHeader length="3">A</univocityHeader>
+                    <univocityHeader length="5">C</univocityHeader>
+                </univocityFixed>
             </marshal>
             <convertBodyTo type="String"/>
             <to uri="mock:result"/>
@@ -55,10 +55,10 @@
         <route>
             <from uri="direct:advanced"/>
             <marshal>
-                <univocity-fixed nullValue="N/A" emptyValue="empty" padding="_">
-                    <univocity-header length="5"/>
-                    <univocity-header length="5"/>
-                </univocity-fixed>
+                <univocityFixed nullValue="N/A" emptyValue="empty" padding="_">
+                    <univocityHeader length="5"/>
+                    <univocityHeader length="5"/>
+                </univocityFixed>
             </marshal>
             <convertBodyTo type="String"/>
             <to uri="mock:result"/>

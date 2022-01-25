@@ -32,6 +32,8 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     private String schemaRefreshMode = "columns_diff";
     @UriParam(label = LABEL_NAME, defaultValue = "disable")
     private String databaseSslmode = "disable";
+    @UriParam(label = LABEL_NAME, defaultValue = "__debezium_unavailable_value")
+    private String unavailableValuePlaceholder = "__debezium_unavailable_value";
     @UriParam(label = LABEL_NAME)
     private String heartbeatActionQuery;
     @UriParam(label = LABEL_NAME)
@@ -80,8 +82,6 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     private String pluginName = "decoderbufs";
     @UriParam(label = LABEL_NAME)
     private String databaseSslpassword;
-    @UriParam(label = LABEL_NAME, defaultValue = "__debezium_unavailable_value")
-    private String toastedValuePlaceholder = "__debezium_unavailable_value";
     @UriParam(label = LABEL_NAME)
     private String schemaWhitelist;
     @UriParam(label = LABEL_NAME)
@@ -99,6 +99,8 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     private String skippedOperations;
     @UriParam(label = LABEL_NAME, defaultValue = "initial")
     private String snapshotMode = "initial";
+    @UriParam(label = LABEL_NAME)
+    private String messagePrefixIncludeList;
     @UriParam(label = LABEL_NAME, defaultValue = "8192")
     private int maxQueueSize = 8192;
     @UriParam(label = LABEL_NAME)
@@ -125,6 +127,8 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     private String decimalHandlingMode = "precise";
     @UriParam(label = LABEL_NAME, defaultValue = "bytes")
     private String binaryHandlingMode = "bytes";
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean includeSchemaComments = false;
     @UriParam(label = LABEL_NAME, defaultValue = "skip")
     private String truncateHandlingMode = "skip";
     @UriParam(label = LABEL_NAME, defaultValue = "true")
@@ -143,10 +147,14 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     private boolean slotDropOnStop = false;
     @UriParam(label = LABEL_NAME, defaultValue = "0")
     private long maxQueueSizeInBytes = 0;
+    @UriParam(label = LABEL_NAME, defaultValue = "${database.server.name}.transaction")
+    private String transactionTopic = "${database.server.name}.transaction";
     @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
     private long xminFetchIntervalMs = 0;
     @UriParam(label = LABEL_NAME, defaultValue = "adaptive")
     private String timePrecisionMode = "adaptive";
+    @UriParam(label = LABEL_NAME)
+    private String messagePrefixExcludeList;
     @UriParam(label = LABEL_NAME)
     @Metadata(required = true)
     private String databaseServerName;
@@ -307,6 +315,21 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
 
     public String getDatabaseSslmode() {
         return databaseSslmode;
+    }
+
+    /**
+     * Specify the constant that will be provided by Debezium to indicate that
+     * the original value is a toasted value not provided by the database. If
+     * starts with 'hex:' prefix it is expected that the rest of the string
+     * represents hexadecimal encoded octets.
+     */
+    public void setUnavailableValuePlaceholder(
+            String unavailableValuePlaceholder) {
+        this.unavailableValuePlaceholder = unavailableValuePlaceholder;
+    }
+
+    public String getUnavailableValuePlaceholder() {
+        return unavailableValuePlaceholder;
     }
 
     /**
@@ -619,20 +642,6 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Specify the constant that will be provided by Debezium to indicate that
-     * the original value is a toasted value not provided by the database. If
-     * starts with 'hex:' prefix it is expected that the rest of the string
-     * repesents hexadecimally encoded octets.
-     */
-    public void setToastedValuePlaceholder(String toastedValuePlaceholder) {
-        this.toastedValuePlaceholder = toastedValuePlaceholder;
-    }
-
-    public String getToastedValuePlaceholder() {
-        return toastedValuePlaceholder;
-    }
-
-    /**
      * The schemas for which events should be captured (deprecated, use
      * "schema.include.list" instead)
      */
@@ -737,6 +746,19 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
 
     public String getSnapshotMode() {
         return snapshotMode;
+    }
+
+    /**
+     * A comma-separated list of regular expressions that match the logical
+     * decoding message prefixes to be monitored. All prefixes are monitored by
+     * default.
+     */
+    public void setMessagePrefixIncludeList(String messagePrefixIncludeList) {
+        this.messagePrefixIncludeList = messagePrefixIncludeList;
+    }
+
+    public String getMessagePrefixIncludeList() {
+        return messagePrefixIncludeList;
     }
 
     /**
@@ -911,6 +933,22 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Whether the connector parse table and column's comment to metadata
+     * object.Note: Enable this option will bring the implications on memory
+     * usage. The number and size of ColumnImpl objects is what largely impacts
+     * how much memory is consumed by the Debezium connectors, and adding a
+     * String to each of them can potentially be quite heavy. The default is
+     * 'false'.
+     */
+    public void setIncludeSchemaComments(boolean includeSchemaComments) {
+        this.includeSchemaComments = includeSchemaComments;
+    }
+
+    public boolean isIncludeSchemaComments() {
+        return includeSchemaComments;
+    }
+
+    /**
      * Specify how TRUNCATE operations are handled for change events (supported
      * only on pg11+ pgoutput plugin), including: 'skip' to skip / ignore
      * TRUNCATE events (default), 'include' to handle and include TRUNCATE
@@ -1033,6 +1071,19 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * The name of the transaction metadata topic. The placeholder
+     * ${database.server.name} can be used for referring to the connector's
+     * logical name; defaults to ${database.server.name}.transaction.
+     */
+    public void setTransactionTopic(String transactionTopic) {
+        this.transactionTopic = transactionTopic;
+    }
+
+    public String getTransactionTopic() {
+        return transactionTopic;
+    }
+
+    /**
      * Specify how often (in ms) the xmin will be fetched from the replication
      * slot. This xmin value is exposed by the slot which gives a lower bound of
      * where a new replication slot could start from. The lower the value, the
@@ -1065,6 +1116,18 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
 
     public String getTimePrecisionMode() {
         return timePrecisionMode;
+    }
+
+    /**
+     * A comma-separated list of regular expressions that match the logical
+     * decoding message prefixes to be excluded from monitoring.
+     */
+    public void setMessagePrefixExcludeList(String messagePrefixExcludeList) {
+        this.messagePrefixExcludeList = messagePrefixExcludeList;
+    }
+
+    public String getMessagePrefixExcludeList() {
+        return messagePrefixExcludeList;
     }
 
     /**
@@ -1193,6 +1256,7 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "slot.max.retries", slotMaxRetries);
         addPropertyIfNotNull(configBuilder, "schema.refresh.mode", schemaRefreshMode);
         addPropertyIfNotNull(configBuilder, "database.sslmode", databaseSslmode);
+        addPropertyIfNotNull(configBuilder, "unavailable.value.placeholder", unavailableValuePlaceholder);
         addPropertyIfNotNull(configBuilder, "heartbeat.action.query", heartbeatActionQuery);
         addPropertyIfNotNull(configBuilder, "database.sslcert", databaseSslcert);
         addPropertyIfNotNull(configBuilder, "poll.interval.ms", pollIntervalMs);
@@ -1217,7 +1281,6 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "column.include.list", columnIncludeList);
         addPropertyIfNotNull(configBuilder, "plugin.name", pluginName);
         addPropertyIfNotNull(configBuilder, "database.sslpassword", databaseSslpassword);
-        addPropertyIfNotNull(configBuilder, "toasted.value.placeholder", toastedValuePlaceholder);
         addPropertyIfNotNull(configBuilder, "schema.whitelist", schemaWhitelist);
         addPropertyIfNotNull(configBuilder, "column.propagate.source.type", columnPropagateSourceType);
         addPropertyIfNotNull(configBuilder, "table.exclude.list", tableExcludeList);
@@ -1226,6 +1289,7 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "max.batch.size", maxBatchSize);
         addPropertyIfNotNull(configBuilder, "skipped.operations", skippedOperations);
         addPropertyIfNotNull(configBuilder, "snapshot.mode", snapshotMode);
+        addPropertyIfNotNull(configBuilder, "message.prefix.include.list", messagePrefixIncludeList);
         addPropertyIfNotNull(configBuilder, "max.queue.size", maxQueueSize);
         addPropertyIfNotNull(configBuilder, "snapshot.custom.class", snapshotCustomClass);
         addPropertyIfNotNull(configBuilder, "slot.name", slotName);
@@ -1239,6 +1303,7 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "slot.retry.delay.ms", slotRetryDelayMs);
         addPropertyIfNotNull(configBuilder, "decimal.handling.mode", decimalHandlingMode);
         addPropertyIfNotNull(configBuilder, "binary.handling.mode", binaryHandlingMode);
+        addPropertyIfNotNull(configBuilder, "include.schema.comments", includeSchemaComments);
         addPropertyIfNotNull(configBuilder, "truncate.handling.mode", truncateHandlingMode);
         addPropertyIfNotNull(configBuilder, "table.ignore.builtin", tableIgnoreBuiltin);
         addPropertyIfNotNull(configBuilder, "database.tcpKeepAlive", databaseTcpkeepalive);
@@ -1248,8 +1313,10 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "database.history.file.filename", databaseHistoryFileFilename);
         addPropertyIfNotNull(configBuilder, "slot.drop.on.stop", slotDropOnStop);
         addPropertyIfNotNull(configBuilder, "max.queue.size.in.bytes", maxQueueSizeInBytes);
+        addPropertyIfNotNull(configBuilder, "transaction.topic", transactionTopic);
         addPropertyIfNotNull(configBuilder, "xmin.fetch.interval.ms", xminFetchIntervalMs);
         addPropertyIfNotNull(configBuilder, "time.precision.mode", timePrecisionMode);
+        addPropertyIfNotNull(configBuilder, "message.prefix.exclude.list", messagePrefixExcludeList);
         addPropertyIfNotNull(configBuilder, "database.server.name", databaseServerName);
         addPropertyIfNotNull(configBuilder, "event.processing.failure.handling.mode", eventProcessingFailureHandlingMode);
         addPropertyIfNotNull(configBuilder, "snapshot.max.threads", snapshotMaxThreads);

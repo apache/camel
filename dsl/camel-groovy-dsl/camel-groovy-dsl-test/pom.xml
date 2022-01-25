@@ -34,6 +34,7 @@
     <description>Camel DSL with Groovy (Test)</description>
 
     <properties>
+        <firstVersion>3.10.0</firstVersion>
         <sourcecheckExcludes>
             **/resources/**/*.groovy
         </sourcecheckExcludes>

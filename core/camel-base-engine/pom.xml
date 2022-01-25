@@ -32,6 +32,10 @@
     <name>Camel :: Base Engine</name>
     <description>The Base Engine Camel Framework</description>
 
+    <properties>
+        <firstVersion>3.7.0</firstVersion>
+    </properties>
+
     <dependencies>
 
         <dependency>

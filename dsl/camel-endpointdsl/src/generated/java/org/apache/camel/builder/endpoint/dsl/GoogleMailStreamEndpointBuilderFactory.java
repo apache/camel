@@ -119,6 +119,20 @@ public interface GoogleMailStreamEndpointBuilderFactory {
             return this;
         }
         /**
+         * Delegate for wide-domain service account.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param delegate the value to set
+         * @return the dsl builder
+         */
+        default GoogleMailStreamEndpointBuilder delegate(String delegate) {
+            doSetProperty("delegate", delegate);
+            return this;
+        }
+        /**
          * Comma separated list of labels to take into account.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -206,6 +220,37 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          */
         default GoogleMailStreamEndpointBuilder query(String query) {
             doSetProperty("query", query);
+            return this;
+        }
+        /**
+         * GMail scopes.
+         * 
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param scopes the value to set
+         * @return the dsl builder
+         */
+        default GoogleMailStreamEndpointBuilder scopes(
+                List<java.lang.String> scopes) {
+            doSetProperty("scopes", scopes);
+            return this;
+        }
+        /**
+         * GMail scopes.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param scopes the value to set
+         * @return the dsl builder
+         */
+        default GoogleMailStreamEndpointBuilder scopes(String scopes) {
+            doSetProperty("scopes", scopes);
             return this;
         }
         /**
@@ -747,6 +792,20 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          */
         default GoogleMailStreamEndpointBuilder clientSecret(String clientSecret) {
             doSetProperty("clientSecret", clientSecret);
+            return this;
+        }
+        /**
+         * Sets .json file with credentials for Service account.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param keyResource the value to set
+         * @return the dsl builder
+         */
+        default GoogleMailStreamEndpointBuilder keyResource(String keyResource) {
+            doSetProperty("keyResource", keyResource);
             return this;
         }
         /**

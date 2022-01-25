@@ -30,6 +30,8 @@ public class CamelDebuggerFactory implements DebuggerFactory {
     public Debugger createDebugger(CamelContext camelContext) throws Exception {
         // must enable message history for debugger to capture more details
         camelContext.setMessageHistory(true);
+        // must enable source location so debugger tooling knows to map breakpoints to source code
+        camelContext.setSourceLocationEnabled(true);
 
         BacklogDebugger backlog = BacklogDebugger.createDebugger(camelContext);
         // we need to enable debugger after context is started

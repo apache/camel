@@ -57,7 +57,9 @@ public class DebeziumConsumer extends DefaultConsumer {
 
     @Override
     protected void doStop() throws Exception {
-        dbzEngine.close();
+        if (dbzEngine != null) {
+            dbzEngine.close();
+        }
 
         // shutdown the thread pool gracefully
         getEndpoint().getCamelContext().getExecutorServiceManager().shutdownGraceful(executorService);

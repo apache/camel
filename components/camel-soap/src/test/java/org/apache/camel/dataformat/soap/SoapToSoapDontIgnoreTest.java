@@ -36,8 +36,8 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SoapToSoapDontIgnoreTest extends CamelTestSupport {
-    private static SoapJaxbDataFormat soapjaxbModel;
-    private static SoapJaxbDataFormat soapjaxbModelDontIgnoreUnmarshalled;
+    private static SoapDataFormat soapjaxbModel;
+    private static SoapDataFormat soapjaxbModelDontIgnoreUnmarshalled;
     private static Map<String, String> namespacePrefixMap;
 
     @BeforeAll
@@ -48,13 +48,13 @@ public class SoapToSoapDontIgnoreTest extends CamelTestSupport {
         namespacePrefixMap.put("http://www.w3.org/2001/XMLSchema-instance", "xsi");
         namespacePrefixMap.put("http://www.example.com/contact", "cont");
         namespacePrefixMap.put("http://www.example.com/soapheaders", "custom");
-        soapjaxbModel = new SoapJaxbDataFormat("com.example.contact:com.example.soapheaders");
+        soapjaxbModel = new SoapDataFormat("com.example.contact:com.example.soapheaders");
         soapjaxbModel.setNamespacePrefix(namespacePrefixMap);
         soapjaxbModel.setPrettyPrint(true);
         soapjaxbModel.setIgnoreUnmarshalledHeaders(false);
         soapjaxbModel.setIgnoreJAXBElement(false);
         soapjaxbModel.setElementNameStrategy(new TypeNameStrategy());
-        soapjaxbModelDontIgnoreUnmarshalled = new SoapJaxbDataFormat(
+        soapjaxbModelDontIgnoreUnmarshalled = new SoapDataFormat(
                 "com.example.contact:com.example.soapheaders");
         soapjaxbModelDontIgnoreUnmarshalled.setNamespacePrefix(namespacePrefixMap);
         soapjaxbModelDontIgnoreUnmarshalled.setPrettyPrint(true);

@@ -220,7 +220,6 @@ public class DefaultCxfBindingTest {
         org.apache.cxf.message.Exchange cxfExchange = new org.apache.cxf.message.ExchangeImpl();
         Map<String, Object> requestContext = new HashMap<>();
 
-        String expectedSoapActionHeader = "urn:hello:world";
         exchange.getIn().setHeader(CxfConstants.OPERATION_NAMESPACE, "http://test123");
         exchange.getIn().setHeader(CxfConstants.OPERATION_NAME, "testOperation");
 
@@ -259,7 +258,7 @@ public class DefaultCxfBindingTest {
         assertEquals(responseContext, camelHeaders.get(Client.RESPONSE_CONTEXT));
 
         Map<String, org.apache.camel.attachment.Attachment> camelAttachments
-                = exchange.getOut(AttachmentMessage.class).getAttachmentObjects();
+                = exchange.getMessage(AttachmentMessage.class).getAttachmentObjects();
         assertNotNull(camelAttachments);
         assertNotNull(camelAttachments.get("att-1"));
         assertEquals("value 1", camelAttachments.get("att-1").getHeader("additional-header"));
@@ -297,10 +296,10 @@ public class DefaultCxfBindingTest {
         org.apache.cxf.message.Exchange cxfExchange = new org.apache.cxf.message.ExchangeImpl();
         exchange.setProperty(CxfConstants.DATA_FORMAT_PROPERTY, DataFormat.PAYLOAD);
 
-        exchange.getOut().setHeader("soapAction", "urn:hello:world");
-        exchange.getOut().setHeader("MyFruitHeader", "peach");
-        exchange.getOut(AttachmentMessage.class).addAttachment("att-1", new DataHandler(new FileDataSource("pom.xml")));
-        exchange.getOut(AttachmentMessage.class).getAttachmentObject("att-1").setHeader("attachment-header", "value 1");
+        exchange.getMessage().setHeader("soapAction", "urn:hello:world");
+        exchange.getMessage().setHeader("MyFruitHeader", "peach");
+        exchange.getMessage(AttachmentMessage.class).addAttachment("att-1", new DataHandler(new FileDataSource("pom.xml")));
+        exchange.getMessage(AttachmentMessage.class).getAttachmentObject("att-1").setHeader("attachment-header", "value 1");
 
         Endpoint endpoint = mock(Endpoint.class);
         Binding binding = mock(Binding.class);

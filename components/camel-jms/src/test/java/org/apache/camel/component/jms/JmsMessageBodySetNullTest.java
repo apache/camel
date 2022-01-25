@@ -83,7 +83,7 @@ public class JmsMessageBodySetNullTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("jms:queue:foo")
                         .to("mock:foo")
-                        .setBody(constant(null))
+                        .setBody(simple("${null}"))
                         .to("mock:bar");
             }
         });
@@ -105,7 +105,7 @@ public class JmsMessageBodySetNullTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("jms:queue:foo")
                         .to("mock:foo")
-                        .setBody(constant(null))
+                        .setBody(simple("${null}"))
                         .to("mock:bar");
             }
         });

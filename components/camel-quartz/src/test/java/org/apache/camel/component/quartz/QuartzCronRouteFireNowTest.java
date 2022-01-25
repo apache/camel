@@ -41,7 +41,7 @@ public class QuartzCronRouteFireNowTest extends BaseQuartzTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() throws SchedulerException {
-                // daily trigger strarted a day ago
+                // daily trigger started a day ago
                 from("quartz://daily?triggerStartDelay=" + TimeUnit.DAYS.toMillis(-1L) + "&cron=0+0+0+*+*+?")
                         .to("log:quartz")
                         .to("mock:result");

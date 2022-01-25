@@ -16,79 +16,38 @@
  */
 package org.apache.camel.component.kafka.consumer.support;
 
-import java.time.Duration;
-import java.util.Collections;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.StreamSupport;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.component.kafka.KafkaAsyncManualCommit;
 import org.apache.camel.component.kafka.KafkaConfiguration;
 import org.apache.camel.component.kafka.KafkaConstants;
-import org.apache.camel.component.kafka.KafkaManualCommit;
-import org.apache.camel.component.kafka.KafkaManualCommitFactory;
+import org.apache.camel.component.kafka.consumer.CommitManager;
+import org.apache.camel.component.kafka.consumer.KafkaManualCommit;
 import org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.HeaderFilterStrategy;
-import org.apache.camel.spi.StateRepository;
-import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.header.Header;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class KafkaRecordProcessor {
-    public static final long START_OFFSET = -1;
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaRecordProcessor.class);
 
     private final boolean autoCommitEnabled;
     private final KafkaConfiguration configuration;
     private final Processor processor;
-    private final Consumer<?, ?> consumer;
-    private final KafkaManualCommitFactory manualCommitFactory;
-    private final String threadId;
-    private final ConcurrentLinkedQueue<KafkaAsyncManualCommit> asyncCommits;
+    private final CommitManager commitManager;
 
-    public static final class ProcessResult {
-        private static final ProcessResult UNPROCESSED_RESULT = new ProcessResult(false, START_OFFSET);
-
-        private boolean breakOnErrorHit;
-        private long partitionLastOffset;
-
-        private ProcessResult(boolean breakOnErrorHit, long partitionLastOffset) {
-            this.breakOnErrorHit = breakOnErrorHit;
-            this.partitionLastOffset = partitionLastOffset;
-        }
-
-        public boolean isBreakOnErrorHit() {
-            return breakOnErrorHit;
-        }
-
-        public long getPartitionLastOffset() {
-            return partitionLastOffset;
-        }
-
-        public static ProcessResult newUnprocessed() {
-            return UNPROCESSED_RESULT;
-        }
-    }
-
-    public KafkaRecordProcessor(boolean autoCommitEnabled, KafkaConfiguration configuration,
-                                Processor processor, Consumer<?, ?> consumer,
-                                KafkaManualCommitFactory manualCommitFactory,
-                                String threadId, ConcurrentLinkedQueue<KafkaAsyncManualCommit> asyncCommits) {
-        this.autoCommitEnabled = autoCommitEnabled;
+    public KafkaRecordProcessor(KafkaConfiguration configuration, Processor processor, CommitManager commitManager) {
+        this.autoCommitEnabled = configuration.isAutoCommitEnable();
         this.configuration = configuration;
         this.processor = processor;
-        this.consumer = consumer;
-        this.manualCommitFactory = manualCommitFactory;
-        this.threadId = threadId;
-        this.asyncCommits = asyncCommits;
+        this.commitManager = commitManager;
     }
 
     private void setupExchangeMessage(Message message, ConsumerRecord record) {
@@ -121,9 +80,9 @@ public class KafkaRecordProcessor {
                         headerDeserializer.deserialize(header.key(), header.value())));
     }
 
-    public ProcessResult processExchange(
+    public ProcessingResult processExchange(
             Exchange exchange, TopicPartition partition, boolean partitionHasNext,
-            boolean recordHasNext, ConsumerRecord<Object, Object> record, ProcessResult lastResult,
+            boolean recordHasNext, ConsumerRecord<Object, Object> record, ProcessingResult lastResult,
             ExceptionHandler exceptionHandler) {
 
         Message message = exchange.getMessage();
@@ -139,11 +98,9 @@ public class KafkaRecordProcessor {
         }
 
         if (configuration.isAllowManualCommit()) {
-            StateRepository<String, String> offsetRepository = configuration.getOffsetRepository();
-
             // allow Camel users to access the Kafka consumer API to be able to do for example manual commits
-            KafkaManualCommit manual = manualCommitFactory.newInstance(exchange, consumer, partition.topic(), threadId,
-                    offsetRepository, partition, record.offset(), configuration.getCommitTimeoutMs(), asyncCommits);
+            KafkaManualCommit manual = commitManager.getManualCommit(exchange, partition, record);
+
             message.setHeader(KafkaConstants.MANUAL_COMMIT, manual);
             message.setHeader(KafkaConstants.LAST_POLL_RECORD, !recordHasNext && !partitionHasNext);
         }
@@ -156,10 +113,10 @@ public class KafkaRecordProcessor {
             boolean breakOnErrorExit = processException(exchange, partition, lastResult.getPartitionLastOffset(),
                     exceptionHandler);
 
-            return new ProcessResult(breakOnErrorExit, lastResult.getPartitionLastOffset());
+            return new ProcessingResult(breakOnErrorExit, lastResult.getPartitionLastOffset());
         }
 
-        return new ProcessResult(false, record.offset());
+        return new ProcessingResult(false, record.offset());
     }
 
     private boolean processException(
@@ -175,7 +132,7 @@ public class KafkaRecordProcessor {
             }
 
             // force commit, so we resume on next poll where we failed
-            commitOffset(partition, partitionLastOffset, false, true);
+            commitManager.commitOffsetForce(partition, partitionLastOffset);
 
             // continue to next partition
             return true;
@@ -187,104 +144,8 @@ public class KafkaRecordProcessor {
         return false;
     }
 
-    public void commitOffset(
-            TopicPartition partition, long partitionLastOffset, boolean stopping, boolean forceCommit) {
-        commitOffset(configuration, consumer, partition, partitionLastOffset, stopping, forceCommit, threadId);
-    }
-
-    public static void commitOffset(
-            KafkaConfiguration configuration, Consumer<?, ?> consumer, TopicPartition partition, long partitionLastOffset,
-            boolean stopping, boolean forceCommit, String threadId) {
-
-        if (partitionLastOffset == START_OFFSET) {
-            return;
-        }
-
-        StateRepository<String, String> offsetRepository = configuration.getOffsetRepository();
-
-        if (!configuration.isAllowManualCommit() && offsetRepository != null) {
-            saveStateToOffsetRepository(partition, partitionLastOffset, threadId, offsetRepository);
-        } else if (stopping) {
-            // if we are stopping then react according to the configured option
-            if ("async".equals(configuration.getAutoCommitOnStop())) {
-                commitAsync(consumer, partition, partitionLastOffset, threadId);
-            } else if ("sync".equals(configuration.getAutoCommitOnStop())) {
-                commitSync(configuration, consumer, partition, partitionLastOffset, threadId);
-
-            } else if ("none".equals(configuration.getAutoCommitOnStop())) {
-                noCommit(partition, threadId);
-            }
-        } else if (forceCommit) {
-            forceSyncCommit(configuration, consumer, partition, partitionLastOffset, threadId);
-        }
-    }
-
-    private static void commitOffset(
-            KafkaConfiguration configuration, Consumer<?, ?> consumer, TopicPartition partition,
-            long partitionLastOffset) {
-        long timeout = configuration.getCommitTimeoutMs();
-        consumer.commitSync(
-                Collections.singletonMap(partition, new OffsetAndMetadata(partitionLastOffset + 1)),
-                Duration.ofMillis(timeout));
-    }
-
-    private static void forceSyncCommit(
-            KafkaConfiguration configuration, Consumer<?, ?> consumer, TopicPartition partition, long partitionLastOffset,
-            String threadId) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Forcing commitSync {} [topic: {} partition: {} offset: {}]", threadId, partition.topic(),
-                    partition.partition(), partitionLastOffset);
-        }
-
-        commitOffset(configuration, consumer, partition, partitionLastOffset);
-    }
-
-    private static void noCommit(TopicPartition partition, String threadId) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Auto commit on stop {} from topic {} is disabled (none)", threadId, partition.topic());
-        }
-    }
-
-    private static void commitSync(
-            KafkaConfiguration configuration, Consumer<?, ?> consumer, TopicPartition partition, long partitionLastOffset,
-            String threadId) {
-
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Auto commitSync on stop {} from topic {}", threadId, partition.topic());
-        }
-
-        commitOffset(configuration, consumer, partition, partitionLastOffset);
-    }
-
-    private static void commitAsync(
-            Consumer<?, ?> consumer, TopicPartition partition, long partitionLastOffset, String threadId) {
-
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Auto commitAsync on stop {} from topic {}", threadId, partition.topic());
-        }
-
-        consumer.commitAsync(
-                Collections.singletonMap(partition, new OffsetAndMetadata(partitionLastOffset + 1)), null);
-    }
-
-    private static void saveStateToOffsetRepository(
-            TopicPartition partition, long partitionLastOffset, String threadId,
-            StateRepository<String, String> offsetRepository) {
-
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Saving offset repository state {} [topic: {} partition: {} offset: {}]", threadId, partition.topic(),
-                    partition.partition(),
-                    partitionLastOffset);
-        }
-        offsetRepository.setState(serializeOffsetKey(partition), serializeOffsetValue(partitionLastOffset));
-    }
-
     public static String serializeOffsetKey(TopicPartition topicPartition) {
         return topicPartition.topic() + '/' + topicPartition.partition();
-    }
-
-    public static String serializeOffsetValue(long offset) {
-        return String.valueOf(offset);
     }
 
     public static long deserializeOffsetValue(String offset) {

@@ -48,7 +48,7 @@ xref:components::quartz-component.adoc[Quartz] component).
 
 == SuspendableService
 
-If you want to dynamic suspend/resume routes as the then it is advised to
+If you want to dynamic suspend/resume routes then it is advised to
 use `SuspendableService` as it allows for fine-grained
 suspend and resume operations.
 
@@ -159,7 +159,7 @@ There is API on `CamelContext` to add a factory, as shown below
 context.addRoutePolicyFactory(new MyRoutePolicyFactory());
 ----------------------------------------------------------
 
-And from XML DSL you just define a `<bean>` with the factory, and Camel wil automatic detect this factory:
+And from XML DSL you just define a `<bean>` with the factory, and Camel will automatically detect this factory:
 
 [source,xml]
 ----------------------------------------------------------------------

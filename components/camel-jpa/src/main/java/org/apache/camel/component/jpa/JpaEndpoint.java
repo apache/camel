@@ -570,6 +570,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
 
     protected Expression createProducerExpression() {
         return new ExpressionAdapter() {
+            @Override
             public Object evaluate(Exchange exchange) {
                 Object answer;
 

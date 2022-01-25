@@ -43,4 +43,8 @@ public abstract class Aws2SQSBaseTest extends CamelTestSupport {
         sqs.getConfiguration().setAmazonSQSClient(AWSSDKClientUtils.newSQSClient());
         return context;
     }
+
+    protected CamelContext createCamelContextWithoutClient() throws Exception {
+        return super.createCamelContext();
+    }
 }

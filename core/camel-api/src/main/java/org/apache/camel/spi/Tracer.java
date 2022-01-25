@@ -38,7 +38,7 @@ public interface Tracer extends StaticService {
     /**
      * Trace before the route (eg input to route)
      *
-     * @param route    the route
+     * @param route    the route EIP
      * @param exchange the exchange
      */
     void traceBeforeRoute(NamedRoute route, Exchange exchange);
@@ -62,9 +62,19 @@ public interface Tracer extends StaticService {
     /**
      * Trace after the route (eg output from route)
      *
-     * @param route    the route
+     * @param route    the route EIP
      * @param exchange the exchange
      */
+    void traceAfterRoute(NamedRoute route, Exchange exchange);
+
+    /**
+     * Trace after the route (eg output from route)
+     *
+     * @param      route    the route
+     * @param      exchange the exchange
+     * @deprecated          use {@link #traceAfterRoute(NamedRoute, Exchange)}
+     */
+    @Deprecated
     void traceAfterRoute(Route route, Exchange exchange);
 
     /**

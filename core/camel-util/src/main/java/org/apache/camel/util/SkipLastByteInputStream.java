@@ -85,6 +85,7 @@ public class SkipLastByteInputStream extends BufferedInputStream {
         return count;
     }
 
+    @Override
     public boolean markSupported() {
         /* we do not want callers to mess with mark() and reset() because we use it ourselves */
         return false;

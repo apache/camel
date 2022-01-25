@@ -53,6 +53,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private int consumerTemplateCacheSize = 1000;
     private boolean loadTypeConverters;
     private boolean loadHealthChecks;
+    private boolean devConsoleEnabled;
     private int logDebugMaxChars;
     private boolean streamCachingEnabled;
     private String streamCachingSpoolDirectory;
@@ -69,6 +70,9 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean tracing;
     private boolean tracingStandby;
     private String tracingPattern;
+    @Metadata(defaultValue = "%-4.4s [%-12.12s] [%-33.33s]")
+    private String tracingLoggingFormat;
+    private boolean sourceLocationEnabled;
     private boolean messageHistory;
     private boolean logMask;
     private boolean logExhaustedMessageBody;
@@ -376,6 +380,19 @@ public abstract class DefaultConfigurationProperties<T> {
         this.loadHealthChecks = loadHealthChecks;
     }
 
+    public boolean isDevConsoleEnabled() {
+        return devConsoleEnabled;
+    }
+
+    /**
+     * Whether to enable developer console (requires camel-console on classpath).
+     *
+     * The developer console is only for assisting during development. This is NOT for production usage.
+     */
+    public void setDevConsoleEnabled(boolean devConsoleEnabled) {
+        this.devConsoleEnabled = devConsoleEnabled;
+    }
+
     public int getLogDebugMaxChars() {
         return logDebugMaxChars;
     }
@@ -549,6 +566,19 @@ public abstract class DefaultConfigurationProperties<T> {
         this.tracingPattern = tracingPattern;
     }
 
+    public String getTracingLoggingFormat() {
+        return tracingLoggingFormat;
+    }
+
+    /**
+     * To use a custom tracing logging format.
+     *
+     * The default format (arrow, routeId, label) is: %-4.4s [%-12.12s] [%-33.33s]
+     */
+    public void setTracingLoggingFormat(String format) {
+        tracingLoggingFormat = format;
+    }
+
     public boolean isDebugging() {
         return debugging;
     }
@@ -586,6 +616,21 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setMessageHistory(boolean messageHistory) {
         this.messageHistory = messageHistory;
+    }
+
+    public boolean isSourceLocationEnabled() {
+        return sourceLocationEnabled;
+    }
+
+    /**
+     * Whether to capture precise source location:line-number for all EIPs in Camel routes.
+     *
+     * Enabling this will impact parsing Java based routes (also Groovy, Kotlin, etc.) on startup as this uses JDK
+     * StackTraceElement to calculate the location from the Camel route, which comes with a performance cost. This only
+     * impact startup, not the performance of the routes at runtime.
+     */
+    public void setSourceLocationEnabled(boolean sourceLocationEnabled) {
+        this.sourceLocationEnabled = sourceLocationEnabled;
     }
 
     public boolean isLogMask() {
@@ -1585,6 +1630,16 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
+     * Whether to enable developer console (requires camel-console on classpath).
+     *
+     * The developer console is only for assisting during development. This is NOT for production usage.
+     */
+    public T withDevConsoleEnabled(boolean devConsoleEnabled) {
+        this.devConsoleEnabled = devConsoleEnabled;
+        return (T) this;
+    }
+
+    /**
      * Is used to limit the maximum length of the logging Camel message bodies. If the message body is longer than the
      * limit, the log message is clipped. Use -1 to have unlimited length. Use for example 1000 to log at most 1000
      * characters.
@@ -1725,6 +1780,18 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withMessageHistory(boolean messageHistory) {
         this.messageHistory = messageHistory;
+        return (T) this;
+    }
+
+    /**
+     * Whether to capture precise source location:line-number for all EIPs in Camel routes.
+     *
+     * Enabling this will impact parsing Java based routes (also Groovy, Kotlin, etc.) on startup as this uses JDK
+     * StackTraceElement to calculate the location from the Camel route, which comes with a performance cost. This only
+     * impact startup, not the performance of the routes at runtime.
+     */
+    public T withSourceLocationEnabled(boolean sourceLocationEnabled) {
+        this.sourceLocationEnabled = sourceLocationEnabled;
         return (T) this;
     }
 
@@ -1974,6 +2041,16 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withTracingPattern(String tracingPattern) {
         this.tracingPattern = tracingPattern;
+        return (T) this;
+    }
+
+    /**
+     * To use a custom tracing logging format.
+     *
+     * The default format (arrow, routeId, label) is: %-4.4s [%-12.12s] [%-33.33s]
+     */
+    public T withTracingLoggingFormat(String format) {
+        this.tracingLoggingFormat = format;
         return (T) this;
     }
 

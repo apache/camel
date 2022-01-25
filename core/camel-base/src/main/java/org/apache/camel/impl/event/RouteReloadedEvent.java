@@ -44,6 +44,6 @@ public class RouteReloadedEvent extends AbstractRouteEvent implements CamelEvent
 
     @Override
     public String toString() {
-        return "Reloaded route: " + getRoute().getId();
+        return "Route reloaded: " + getRoute().getId();
     }
 }

@@ -651,6 +651,33 @@ public interface ActivemqComponentBuilderFactory {
             return this;
         }
         /**
+         * The consumer type of the reply consumer (when doing request/reply),
+         * which can be one of: Simple, Default, or Custom. The consumer type
+         * determines which Spring JMS listener to use. Default will use
+         * org.springframework.jms.listener.DefaultMessageListenerContainer,
+         * Simple will use
+         * org.springframework.jms.listener.SimpleMessageListenerContainer. When
+         * Custom is specified, the MessageListenerContainerFactory defined by
+         * the messageListenerContainerFactory option will determine what
+         * org.springframework.jms.listener.AbstractMessageListenerContainer to
+         * use.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.jms.ConsumerType&lt;/code&gt;
+         * type.
+         * 
+         * Default: Default
+         * Group: consumer (advanced)
+         * 
+         * @param replyToConsumerType the value to set
+         * @return the dsl builder
+         */
+        default ActivemqComponentBuilder replyToConsumerType(
+                org.apache.camel.component.jms.ConsumerType replyToConsumerType) {
+            doSetProperty("replyToConsumerType", replyToConsumerType);
+            return this;
+        }
+        /**
          * Whether a JMS consumer is allowed to send a reply message to the same
          * destination that the consumer is using to consume from. This prevents
          * an endless loop by consuming and sending back the same message to
@@ -2065,6 +2092,7 @@ public interface ActivemqComponentBuilderFactory {
             case "eagerLoadingOfProperties": getOrCreateConfiguration((ActiveMQComponent) component).setEagerLoadingOfProperties((boolean) value); return true;
             case "eagerPoisonBody": getOrCreateConfiguration((ActiveMQComponent) component).setEagerPoisonBody((java.lang.String) value); return true;
             case "exposeListenerSession": getOrCreateConfiguration((ActiveMQComponent) component).setExposeListenerSession((boolean) value); return true;
+            case "replyToConsumerType": getOrCreateConfiguration((ActiveMQComponent) component).setReplyToConsumerType((org.apache.camel.component.jms.ConsumerType) value); return true;
             case "replyToSameDestinationAllowed": getOrCreateConfiguration((ActiveMQComponent) component).setReplyToSameDestinationAllowed((boolean) value); return true;
             case "taskExecutor": getOrCreateConfiguration((ActiveMQComponent) component).setTaskExecutor((org.springframework.core.task.TaskExecutor) value); return true;
             case "deliveryDelay": getOrCreateConfiguration((ActiveMQComponent) component).setDeliveryDelay((long) value); return true;

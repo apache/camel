@@ -89,6 +89,8 @@ public abstract class AbstractApiComponent<E extends Enum<E> & ApiName, T, S ext
             // configure endpoint properties and initialize state
             setProperties(endpoint, parameters);
 
+            afterPropertiesSet(endpointConfiguration);
+
             return endpoint;
         } catch (InvocationTargetException e) {
             if (e.getCause() instanceof IllegalArgumentException) {
@@ -98,6 +100,10 @@ public abstract class AbstractApiComponent<E extends Enum<E> & ApiName, T, S ext
             }
             throw e;
         }
+    }
+
+    protected void afterPropertiesSet(T endpointConfiguration) {
+        // NO-OP
     }
 
     protected abstract E getApiName(String apiNameStr);

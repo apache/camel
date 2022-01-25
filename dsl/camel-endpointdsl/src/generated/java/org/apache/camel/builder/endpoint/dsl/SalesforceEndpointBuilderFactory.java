@@ -602,7 +602,8 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Notify for create operation, defaults to false (API version = 29.0).
+         * Notify for create operation, defaults to false (API version
+         * &amp;amp;gt;= 29.0).
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
@@ -617,7 +618,8 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Notify for create operation, defaults to false (API version = 29.0).
+         * Notify for create operation, defaults to false (API version
+         * &amp;amp;gt;= 29.0).
          * 
          * The option will be converted to a
          * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
@@ -633,7 +635,8 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Notify for delete operation, defaults to false (API version = 29.0).
+         * Notify for delete operation, defaults to false (API version
+         * &amp;amp;gt;= 29.0).
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
@@ -648,7 +651,8 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Notify for delete operation, defaults to false (API version = 29.0).
+         * Notify for delete operation, defaults to false (API version
+         * &amp;amp;gt;= 29.0).
          * 
          * The option will be converted to a
          * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
@@ -665,7 +669,7 @@ public interface SalesforceEndpointBuilderFactory {
         }
         /**
          * Notify for operations, options are ALL, CREATE, EXTENDED, UPDATE (API
-         * version 29.0).
+         * version &amp;amp;lt; 29.0).
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum&lt;/code&gt; type.
@@ -682,7 +686,7 @@ public interface SalesforceEndpointBuilderFactory {
         }
         /**
          * Notify for operations, options are ALL, CREATE, EXTENDED, UPDATE (API
-         * version 29.0).
+         * version &amp;amp;lt; 29.0).
          * 
          * The option will be converted to a
          * &lt;code&gt;org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum&lt;/code&gt; type.
@@ -698,8 +702,8 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Notify for un-delete operation, defaults to false (API version =
-         * 29.0).
+         * Notify for un-delete operation, defaults to false (API version
+         * &amp;amp;gt;= 29.0).
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
@@ -714,8 +718,8 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Notify for un-delete operation, defaults to false (API version =
-         * 29.0).
+         * Notify for un-delete operation, defaults to false (API version
+         * &amp;amp;gt;= 29.0).
          * 
          * The option will be converted to a
          * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
@@ -731,7 +735,8 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Notify for update operation, defaults to false (API version = 29.0).
+         * Notify for update operation, defaults to false (API version
+         * &amp;amp;gt;= 29.0).
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
@@ -746,7 +751,8 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Notify for update operation, defaults to false (API version = 29.0).
+         * Notify for update operation, defaults to false (API version
+         * &amp;amp;gt;= 29.0).
          * 
          * The option will be converted to a
          * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
@@ -1901,7 +1907,8 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Notify for create operation, defaults to false (API version = 29.0).
+         * Notify for create operation, defaults to false (API version
+         * &amp;amp;gt;= 29.0).
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
@@ -1916,7 +1923,8 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Notify for create operation, defaults to false (API version = 29.0).
+         * Notify for create operation, defaults to false (API version
+         * &amp;amp;gt;= 29.0).
          * 
          * The option will be converted to a
          * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
@@ -1932,7 +1940,8 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Notify for delete operation, defaults to false (API version = 29.0).
+         * Notify for delete operation, defaults to false (API version
+         * &amp;amp;gt;= 29.0).
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
@@ -1947,7 +1956,8 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Notify for delete operation, defaults to false (API version = 29.0).
+         * Notify for delete operation, defaults to false (API version
+         * &amp;amp;gt;= 29.0).
          * 
          * The option will be converted to a
          * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
@@ -1964,7 +1974,7 @@ public interface SalesforceEndpointBuilderFactory {
         }
         /**
          * Notify for operations, options are ALL, CREATE, EXTENDED, UPDATE (API
-         * version 29.0).
+         * version &amp;amp;lt; 29.0).
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum&lt;/code&gt; type.
@@ -1981,7 +1991,7 @@ public interface SalesforceEndpointBuilderFactory {
         }
         /**
          * Notify for operations, options are ALL, CREATE, EXTENDED, UPDATE (API
-         * version 29.0).
+         * version &amp;amp;lt; 29.0).
          * 
          * The option will be converted to a
          * &lt;code&gt;org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum&lt;/code&gt; type.
@@ -1997,8 +2007,8 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Notify for un-delete operation, defaults to false (API version =
-         * 29.0).
+         * Notify for un-delete operation, defaults to false (API version
+         * &amp;amp;gt;= 29.0).
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
@@ -2013,8 +2023,8 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Notify for un-delete operation, defaults to false (API version =
-         * 29.0).
+         * Notify for un-delete operation, defaults to false (API version
+         * &amp;amp;gt;= 29.0).
          * 
          * The option will be converted to a
          * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
@@ -2030,7 +2040,8 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Notify for update operation, defaults to false (API version = 29.0).
+         * Notify for update operation, defaults to false (API version
+         * &amp;amp;gt;= 29.0).
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
@@ -2045,7 +2056,8 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Notify for update operation, defaults to false (API version = 29.0).
+         * Notify for update operation, defaults to false (API version
+         * &amp;amp;gt;= 29.0).
          * 
          * The option will be converted to a
          * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
@@ -3222,7 +3234,8 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Notify for create operation, defaults to false (API version = 29.0).
+         * Notify for create operation, defaults to false (API version
+         * &amp;amp;gt;= 29.0).
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
@@ -3237,7 +3250,8 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Notify for create operation, defaults to false (API version = 29.0).
+         * Notify for create operation, defaults to false (API version
+         * &amp;amp;gt;= 29.0).
          * 
          * The option will be converted to a
          * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
@@ -3253,7 +3267,8 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Notify for delete operation, defaults to false (API version = 29.0).
+         * Notify for delete operation, defaults to false (API version
+         * &amp;amp;gt;= 29.0).
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
@@ -3268,7 +3283,8 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Notify for delete operation, defaults to false (API version = 29.0).
+         * Notify for delete operation, defaults to false (API version
+         * &amp;amp;gt;= 29.0).
          * 
          * The option will be converted to a
          * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
@@ -3285,7 +3301,7 @@ public interface SalesforceEndpointBuilderFactory {
         }
         /**
          * Notify for operations, options are ALL, CREATE, EXTENDED, UPDATE (API
-         * version 29.0).
+         * version &amp;amp;lt; 29.0).
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum&lt;/code&gt; type.
@@ -3302,7 +3318,7 @@ public interface SalesforceEndpointBuilderFactory {
         }
         /**
          * Notify for operations, options are ALL, CREATE, EXTENDED, UPDATE (API
-         * version 29.0).
+         * version &amp;amp;lt; 29.0).
          * 
          * The option will be converted to a
          * &lt;code&gt;org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum&lt;/code&gt; type.
@@ -3318,8 +3334,8 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Notify for un-delete operation, defaults to false (API version =
-         * 29.0).
+         * Notify for un-delete operation, defaults to false (API version
+         * &amp;amp;gt;= 29.0).
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
@@ -3334,8 +3350,8 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Notify for un-delete operation, defaults to false (API version =
-         * 29.0).
+         * Notify for un-delete operation, defaults to false (API version
+         * &amp;amp;gt;= 29.0).
          * 
          * The option will be converted to a
          * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
@@ -3351,7 +3367,8 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Notify for update operation, defaults to false (API version = 29.0).
+         * Notify for update operation, defaults to false (API version
+         * &amp;amp;gt;= 29.0).
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
@@ -3366,7 +3383,8 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Notify for update operation, defaults to false (API version = 29.0).
+         * Notify for update operation, defaults to false (API version
+         * &amp;amp;gt;= 29.0).
          * 
          * The option will be converted to a
          * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.

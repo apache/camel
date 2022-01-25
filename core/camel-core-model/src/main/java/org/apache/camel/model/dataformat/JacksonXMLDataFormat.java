@@ -28,8 +28,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Unmarshal a XML payloads to POJOs and back using XMLMapper extension of Jackson.
  */
-@Metadata(firstVersion = "2.16.0", label = "dataformat,transformation,xml", title = "JacksonXML")
-@XmlRootElement(name = "jacksonxml")
+@Metadata(firstVersion = "2.16.0", label = "dataformat,transformation,xml", title = "Jackson XML")
+@XmlRootElement(name = "jacksonXml")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JacksonXMLDataFormat extends DataFormatDefinition implements ContentTypeHeaderAware {
     @XmlAttribute
@@ -78,7 +78,7 @@ public class JacksonXMLDataFormat extends DataFormatDefinition implements Conten
     private String contentTypeHeader;
 
     public JacksonXMLDataFormat() {
-        super("jacksonxml");
+        super("jacksonXml");
     }
 
     public String getXmlMapper() {

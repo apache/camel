@@ -33,6 +33,7 @@ import org.apache.http.util.EntityUtils;
 
 public class BasicValidationHandler implements HttpRequestHandler {
 
+    protected String expectedUri;
     protected String expectedMethod;
     protected String expectedQuery;
     protected Object expectedContent;
@@ -46,11 +47,25 @@ public class BasicValidationHandler implements HttpRequestHandler {
         this.responseContent = responseContent;
     }
 
+    public BasicValidationHandler(String expectedUri, String expectedMethod, String expectedQuery,
+                                  Object expectedContent, String responseContent) {
+        this.expectedUri = expectedUri;
+        this.expectedMethod = expectedMethod;
+        this.expectedQuery = expectedQuery;
+        this.expectedContent = expectedContent;
+        this.responseContent = responseContent;
+    }
+
     @Override
     public void handle(
             final HttpRequest request, final HttpResponse response,
             final HttpContext context)
             throws HttpException, IOException {
+
+        if (expectedUri != null && !expectedUri.equals(request.getRequestLine().getUri())) {
+            response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
+            return;
+        }
 
         if (expectedMethod != null && !expectedMethod.equals(request.getRequestLine().getMethod())) {
             response.setStatusCode(HttpStatus.SC_METHOD_FAILURE);

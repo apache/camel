@@ -1323,6 +1323,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * @param path resourceName
          * @return the dsl builder
          */
+        @Deprecated
         default AtomixSetEndpointBuilder atomixSet(String path) {
             return AtomixSetEndpointBuilderFactory.endpointBuilder("atomix-set", path);
         }
@@ -1344,12 +1345,14 @@ public interface AtomixSetEndpointBuilderFactory {
          * @param path resourceName
          * @return the dsl builder
          */
+        @Deprecated
         default AtomixSetEndpointBuilder atomixSet(
                 String componentName,
                 String path) {
             return AtomixSetEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
+    @Deprecated
     static AtomixSetEndpointBuilder endpointBuilder(
             String componentName,
             String path) {

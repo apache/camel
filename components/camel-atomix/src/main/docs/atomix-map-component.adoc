@@ -1,10 +1,11 @@
-= Atomix Map Component
+= Atomix Map Component (deprecated)
 :doctitle: Atomix Map
 :shortname: atomix-map
 :artifactid: camel-atomix
 :description: Access Atomix's distributed map.
 :since: 2.20
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :camel-spring-boot-name: atomix

@@ -109,6 +109,12 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         this.library = library;
     }
 
+    @Override
+    public String getDataFormatName() {
+        // json data format is special as the name can be from different bundles
+        return library.getDataFormatName();
+    }
+
     public String getContentTypeHeader() {
         return contentTypeHeader;
     }
@@ -406,12 +412,6 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
      */
     public void setDropRootNode(String dropRootNode) {
         this.dropRootNode = dropRootNode;
-    }
-
-    @Override
-    public String getDataFormatName() {
-        // json data format is special as the name can be from different bundles
-        return "json-" + library.name().toLowerCase();
     }
 
     /**

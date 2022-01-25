@@ -198,7 +198,7 @@ public final class DispositionNotificationContentUtils {
                     }
 
                     String dispositionTypeString = elements[1].getValue();
-                    int slash = dispositionTypeString.indexOf('/');
+                    int slash = dispositionTypeString.indexOf("/");
                     if (slash == -1) {
                         dispositionType = AS2DispositionType.parseDispositionType(dispositionTypeString);
                     } else {

@@ -844,7 +844,7 @@ public final class EventHelper {
         }
 
         if (((ExtendedExchange) exchange).isNotifyEvent()) {
-            // do not generate events for an notify event
+            // do not generate events for notify event
             return false;
         }
 

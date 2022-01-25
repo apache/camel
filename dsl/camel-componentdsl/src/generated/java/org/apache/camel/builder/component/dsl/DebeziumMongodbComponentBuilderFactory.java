@@ -302,6 +302,27 @@ public interface DebeziumMongodbComponentBuilderFactory {
             return this;
         }
         /**
+         * The method used to capture changes from MongoDB server. Options
+         * include: 'oplog' to capture changes from the oplog; 'change_streams'
+         * to capture changes via MongoDB Change Streams, update events do not
+         * contain full documents; 'change_streams_update_full' (the default) to
+         * capture changes via MongoDB Change Streams, update events contain
+         * full documents.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: change_streams_update_full
+         * Group: mongodb
+         * 
+         * @param captureMode the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbComponentBuilder captureMode(
+                java.lang.String captureMode) {
+            doSetProperty("captureMode", captureMode);
+            return this;
+        }
+        /**
          * A comma-separated list of regular expressions that match the
          * collection names for which changes are to be excluded.
          * 
@@ -1065,6 +1086,24 @@ public interface DebeziumMongodbComponentBuilderFactory {
             doSetProperty("tombstonesOnDelete", tombstonesOnDelete);
             return this;
         }
+        /**
+         * The name of the transaction metadata topic. The placeholder
+         * ${database.server.name} can be used for referring to the connector's
+         * logical name; defaults to ${database.server.name}.transaction.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: ${database.server.name}.transaction
+         * Group: mongodb
+         * 
+         * @param transactionTopic the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbComponentBuilder transactionTopic(
+                java.lang.String transactionTopic) {
+            doSetProperty("transactionTopic", transactionTopic);
+            return this;
+        }
     }
 
     class DebeziumMongodbComponentBuilderImpl
@@ -1103,6 +1142,7 @@ public interface DebeziumMongodbComponentBuilderFactory {
             case "offsetStorageReplicationFactor": getOrCreateConfiguration((DebeziumMongodbComponent) component).setOffsetStorageReplicationFactor((int) value); return true;
             case "offsetStorageTopic": getOrCreateConfiguration((DebeziumMongodbComponent) component).setOffsetStorageTopic((java.lang.String) value); return true;
             case "autowiredEnabled": ((DebeziumMongodbComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "captureMode": getOrCreateConfiguration((DebeziumMongodbComponent) component).setCaptureMode((java.lang.String) value); return true;
             case "collectionExcludeList": getOrCreateConfiguration((DebeziumMongodbComponent) component).setCollectionExcludeList((java.lang.String) value); return true;
             case "collectionIncludeList": getOrCreateConfiguration((DebeziumMongodbComponent) component).setCollectionIncludeList((java.lang.String) value); return true;
             case "connectBackoffInitialDelayMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setConnectBackoffInitialDelayMs((long) value); return true;
@@ -1148,6 +1188,7 @@ public interface DebeziumMongodbComponentBuilderFactory {
             case "snapshotMode": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSnapshotMode((java.lang.String) value); return true;
             case "sourceStructVersion": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSourceStructVersion((java.lang.String) value); return true;
             case "tombstonesOnDelete": getOrCreateConfiguration((DebeziumMongodbComponent) component).setTombstonesOnDelete((boolean) value); return true;
+            case "transactionTopic": getOrCreateConfiguration((DebeziumMongodbComponent) component).setTransactionTopic((java.lang.String) value); return true;
             default: return false;
             }
         }

@@ -19,15 +19,15 @@ package org.apache.camel.cdi;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import javax.enterprise.inject.Any;
 import javax.enterprise.inject.CreationException;
+import javax.enterprise.inject.Default;
 import javax.enterprise.inject.Vetoed;
 import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.Bean;
@@ -45,7 +45,6 @@ import org.apache.camel.cdi.xml.RouteConfigurationContextDefinition;
 import org.apache.camel.cdi.xml.RouteContextDefinition;
 import org.apache.camel.cdi.xml.RouteTemplateContextDefinition;
 import org.apache.camel.core.xml.AbstractCamelFactoryBean;
-import org.apache.camel.core.xml.CamelServiceExporterDefinition;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
@@ -54,6 +53,7 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,15 +61,13 @@ import static java.lang.String.format;
 import static java.util.Collections.*;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toSet;
-import static org.apache.camel.cdi.AnyLiteral.ANY;
 import static org.apache.camel.cdi.ApplicationScopedLiteral.APPLICATION_SCOPED;
 import static org.apache.camel.cdi.CdiSpiHelper.createCamelContextWithTCCL;
-import static org.apache.camel.cdi.DefaultLiteral.DEFAULT;
 import static org.apache.camel.cdi.ResourceHelper.getResource;
-import static org.apache.camel.cdi.Startup.Literal.STARTUP;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 @Vetoed
+@Deprecated
 final class XmlCdiBeanFactory {
 
     private final Logger logger = LoggerFactory.getLogger(XmlCdiBeanFactory.class);
@@ -165,11 +163,11 @@ final class XmlCdiBeanFactory {
 
     private SyntheticBean<?> camelContextBean(CamelContextFactoryBean factory, URL url, AnnotatedType annotatedType) {
         Set<Annotation> annotations = new HashSet<>();
-        annotations.add(ANY);
+        annotations.add(Any.Literal.INSTANCE);
         if (hasId(factory)) {
             addAll(annotations, NamedLiteral.of(factory.getId()));
         } else {
-            annotations.add(DEFAULT);
+            annotations.add(Default.Literal.INSTANCE);
             factory.setImplicitId(true);
             factory.setId(new CdiCamelContextNameStrategy().getNextName());
         }
@@ -230,12 +228,6 @@ final class XmlCdiBeanFactory {
                     .forEach(beans::add);
         }
 
-        if (factory.getExports() != null) {
-            factory.getExports().stream()
-                    .map(export -> serviceExporterBean(context, export, url))
-                    .forEach(beans::add);
-        }
-
         // TODO: define in beans
         if (factory.getRedeliveryPolicies() != null) {
             factory.getRedeliveryPolicies().stream()
@@ -253,8 +245,8 @@ final class XmlCdiBeanFactory {
         }
 
         Set<Annotation> annotations = new HashSet<>();
-        annotations.add(ANY);
-        annotations.add(hasId(factory) ? NamedLiteral.of(factory.getId()) : DEFAULT);
+        annotations.add(Any.Literal.INSTANCE);
+        annotations.add(hasId(factory) ? NamedLiteral.of(factory.getId()) : Default.Literal.INSTANCE);
 
         // TODO: should that be @Singleton to enable injection points with bean instance type?
         if (factory.isSingleton()) {
@@ -274,44 +266,6 @@ final class XmlCdiBeanFactory {
                         + "with qualifiers " + bean.getQualifiers());
     }
 
-    private SyntheticBean<?> serviceExporterBean(Bean<?> context, CamelServiceExporterDefinition exporter, URL url) {
-        // TODO: replace with CreationException
-        requireNonNull(exporter.getServiceRef(),
-                () -> format("Missing [%s] attribute for imported bean [%s] from resource [%s]",
-                        "serviceRef", Objects.toString(exporter.getId(), "export"), url));
-
-        Class<?> type;
-        if (exporter.getServiceInterface() != null) {
-            type = exporter.getServiceInterface();
-        } else {
-            Bean<?> bean = manager.resolve(manager.getBeans(exporter.getServiceRef()));
-            if (bean != null) {
-                type = bean.getBeanClass();
-            } else {
-                requireNonNull(exporter.getServiceInterface(),
-                        () -> format("Missing [%s] attribute for imported bean [%s] from resource [%s]",
-                                "serviceInterface", Objects.toString(exporter.getId(), "export"), url));
-                type = exporter.getServiceInterface();
-            }
-        }
-
-        Set<Type> types = new HashSet<>(manager.createAnnotatedType(type).getTypeClosure());
-        // Weld does not add Object.class for interfaces as they do not extend Object.class.
-        // Though let's add it so that it's possible to lookup by bean type Object.class
-        // beans whose bean class is an interface (for startup beans).
-        types.add(Object.class);
-
-        return new XmlServiceExporterBean<>(
-                manager,
-                new SyntheticAnnotated(
-                        type, types, APPLICATION_SCOPED, ANY, STARTUP,
-                        hasId(exporter) ? NamedLiteral.of(exporter.getId()) : DEFAULT),
-                type, bean -> "imported bean [" + Objects.toString(exporter.getId(), "export") + "] "
-                              + "from resource [" + url + "] "
-                              + "with qualifiers " + bean.getQualifiers(),
-                context, exporter);
-    }
-
     private SyntheticBean<?> restContextBean(RestContextDefinition definition, URL url) {
         requireNonNull(definition.getId(),
                 () -> format("Missing [%s] attribute for imported bean [%s] from resource [%s]",
@@ -323,7 +277,7 @@ final class XmlCdiBeanFactory {
                         List.class,
                         Stream.of(List.class, new ListParameterizedType(RestDefinition.class))
                                 .collect(toSet()),
-                        ANY, NamedLiteral.of(definition.getId())),
+                        Any.Literal.INSTANCE, NamedLiteral.of(definition.getId())),
                 List.class,
                 new SyntheticInjectionTarget<>(definition::getRests), bean -> "imported rest context with "
                                                                               + "id [" + definition.getId() + "] "
@@ -342,7 +296,7 @@ final class XmlCdiBeanFactory {
                         List.class,
                         Stream.of(List.class, new ListParameterizedType(RouteTemplateDefinition.class))
                                 .collect(toSet()),
-                        ANY, NamedLiteral.of(definition.getId())),
+                        Any.Literal.INSTANCE, NamedLiteral.of(definition.getId())),
                 List.class,
                 new SyntheticInjectionTarget<>(definition::getRouteTemplates), bean -> "imported route template context with "
                                                                                        + "id [" + definition.getId() + "] "
@@ -362,7 +316,7 @@ final class XmlCdiBeanFactory {
                         List.class,
                         Stream.of(List.class, new ListParameterizedType(RouteConfigurationDefinition.class))
                                 .collect(toSet()),
-                        ANY, NamedLiteral.of(definition.getId())),
+                        Any.Literal.INSTANCE, NamedLiteral.of(definition.getId())),
                 List.class,
                 new SyntheticInjectionTarget<>(definition::getRouteConfigurations),
                 bean -> "imported route configuration context with "
@@ -383,7 +337,7 @@ final class XmlCdiBeanFactory {
                         List.class,
                         Stream.of(List.class, new ListParameterizedType(RouteDefinition.class))
                                 .collect(toSet()),
-                        ANY, NamedLiteral.of(definition.getId())),
+                        Any.Literal.INSTANCE, NamedLiteral.of(definition.getId())),
                 List.class,
                 new SyntheticInjectionTarget<>(definition::getRoutes), bean -> "imported route context with "
                                                                                + "id [" + definition.getId() + "] "
@@ -398,7 +352,7 @@ final class XmlCdiBeanFactory {
                 new SyntheticAnnotated(
                         RoutesDefinition.class,
                         manager.createAnnotatedType(RoutesDefinition.class).getTypeClosure(),
-                        ANY, DEFAULT),
+                        Any.Literal.INSTANCE, Default.Literal.INSTANCE),
                 RoutesDefinition.class,
                 new SyntheticInjectionTarget<>(() -> definition), bean -> "imported routes definition "
                                                                           + (hasId(definition)
@@ -476,16 +430,19 @@ final class XmlCdiBeanFactory {
             throw attributeNotSupported("executorServiceRef", type, definition.getId());
         }
 
+        String fqn = type.getTypeAsClass();
+        final Class<?> clazz = ObjectHelper.loadClass(fqn);
+
         return new XmlErrorHandlerFactoryBean(
                 manager,
                 new SyntheticAnnotated(
-                        type.getTypeAsClass(),
-                        manager.createAnnotatedType(type.getTypeAsClass()).getTypeClosure(),
-                        ANY, NamedLiteral.of(definition.getId())),
-                type.getTypeAsClass(), bean -> "imported error handler with "
-                                               + "id [" + definition.getId() + "] "
-                                               + "from resource [" + url + "] "
-                                               + "with qualifiers " + bean.getQualifiers(),
+                        clazz,
+                        manager.createAnnotatedType(clazz).getTypeClosure(),
+                        Any.Literal.INSTANCE, NamedLiteral.of(definition.getId())),
+                clazz, bean -> "imported error handler with "
+                               + "id [" + definition.getId() + "] "
+                               + "from resource [" + url + "] "
+                               + "with qualifiers " + bean.getQualifiers(),
                 definition);
     }
 

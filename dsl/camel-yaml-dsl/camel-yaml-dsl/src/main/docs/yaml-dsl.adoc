@@ -1,11 +1,10 @@
-= Yaml Dsl Component
-//TODO there is no .json file for this doc page, so it is not updated automatically by UpdateReadmeMojo.
-//Header attributes written by hand.
-:doctitle: Yaml Dsl
+= YAML DSL Component
+:doctitle: YAML DSL
+:shortname: yaml-dsl
 :artifactid: camel-yaml-dsl
 :description: Camel DSL with YAML
 :since: 3.9
-:supportlevel: Preview
+:supportlevel: Stable
 //Manually maintained attributes
 :group: DSL
 
@@ -89,21 +88,9 @@ filter:
 
 - *Data Format Aware Steps*
 +
-The EIP `marshal` and `unmarshal` supports the definition of data formats through the `data-format-type` field:
+The EIP `marshal` and `unmarshal` supports the definition of data formats:
 +
 [source,yaml]
-.Explicit Data Format field
-----
-marshal:
-    data-format-type:
-      json:
-        library: Gson
-----
-+
-To make the DSL less verbose, the `data-format` field can be omitted:
-+
-[source,yaml]
-.Implicit Data Format field
 ----
 marshal:
     json:

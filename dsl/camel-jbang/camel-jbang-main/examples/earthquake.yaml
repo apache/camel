@@ -15,8 +15,7 @@
 ## limitations under the License.
 ## ---------------------------------------------------------------------------
 - route:
-    from: "kamelet:earthquake-source"
-    steps:
-      - unmarshal:
-          json: {}
-      - log: "Earthquake with magnitude ${body[properties][mag]} at ${body[properties][place]}"
+    from:
+      uri: "kamelet:earthquake-source"
+      steps:
+        - log: "${body}"

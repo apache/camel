@@ -93,9 +93,11 @@ class KameletLoaderTest extends YamlTestSupport {
 
                 with(route) {
                     input.endpointUri == 'kamelet:source'
+                    input.lineNumber == 35
                     outputs.size() == 1
                     with (outputs[0], ToDefinition) {
                         endpointUri ==~ /aws2-s3:.*/
+                        lineNumber == 38
                     }
                 }
             }

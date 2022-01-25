@@ -28,7 +28,7 @@ import org.apache.camel.spi.Metadata;
  * Compression and decompress streams using java.util.zip.Zip*Stream.
  */
 @Metadata(firstVersion = "2.11.0", label = "dataformat,transformation,file", title = "Zip File")
-@XmlRootElement(name = "zipfile")
+@XmlRootElement(name = "zipFile")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ZipFileDataFormat extends DataFormatDefinition {
     @XmlAttribute
@@ -45,7 +45,7 @@ public class ZipFileDataFormat extends DataFormatDefinition {
     private String maxDecompressedSize;
 
     public ZipFileDataFormat() {
-        super("zipfile");
+        super("zipFile");
     }
 
     public String getUsingIterator() {

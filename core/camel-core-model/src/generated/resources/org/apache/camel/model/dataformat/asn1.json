@@ -8,6 +8,7 @@
     "firstVersion": "2.20.0",
     "label": "dataformat,transformation,file",
     "javaType": "org.apache.camel.model.dataformat.ASN1DataFormat",
+    "abstract": false,
     "input": false,
     "output": false
   },

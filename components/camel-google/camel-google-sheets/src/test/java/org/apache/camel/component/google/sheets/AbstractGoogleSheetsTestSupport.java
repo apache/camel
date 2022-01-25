@@ -24,9 +24,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.model.Sheet;
 import com.google.api.services.sheets.v4.model.SheetProperties;
 import com.google.api.services.sheets.v4.model.Spreadsheet;
@@ -34,6 +31,7 @@ import com.google.api.services.sheets.v4.model.SpreadsheetProperties;
 import com.google.api.services.sheets.v4.model.ValueRange;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.google.sheets.internal.GoogleSheetsConstants;
 import org.apache.camel.component.google.sheets.server.GoogleSheetsApiTestServer;
 import org.apache.camel.component.google.sheets.server.GoogleSheetsApiTestServerRule;
@@ -56,6 +54,29 @@ public class AbstractGoogleSheetsTestSupport extends CamelTestSupport {
             = new GoogleSheetsApiTestServerRule(TEST_OPTIONS_PROPERTIES);
 
     private Spreadsheet spreadsheet;
+
+    private static Properties loadProperties() {
+        // read GoogleMail component configuration from TEST_OPTIONS_PROPERTIES
+        final Properties properties = new Properties();
+        try {
+            properties.load(AbstractGoogleSheetsTestSupport.class.getResourceAsStream(TEST_OPTIONS_PROPERTIES));
+        } catch (Exception e) {
+            throw new RuntimeCamelException(
+                    String.format("%s could not be loaded: %s", TEST_OPTIONS_PROPERTIES, e.getMessage()), e);
+        }
+        return properties;
+    }
+
+    // Used by JUnit to determine whether or not to run the integration tests
+    @SuppressWarnings("unused")
+    private static boolean hasCredentials() {
+        Properties properties = loadProperties();
+
+        return !properties.getProperty("clientId", "").isEmpty()
+                && !properties.getProperty("clientSecret", "").isEmpty()
+                && !properties.getProperty("accessToken", "").isEmpty()
+                || !properties.getProperty("keyResource", "").isEmpty();
+    }
 
     /**
      * Create test spreadsheet that is used throughout all tests.
@@ -105,23 +126,18 @@ public class AbstractGoogleSheetsTestSupport extends CamelTestSupport {
 
         final CamelContext context = super.createCamelContext();
 
+        final Properties properties = loadProperties();
+
+        Map<String, Object> options = new HashMap<>();
+        for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+            options.put(entry.getKey().toString(), entry.getValue());
+        }
+
         final GoogleSheetsConfiguration configuration = new GoogleSheetsConfiguration();
-        PropertyBindingSupport.bindProperties(context, configuration, getTestOptions());
+        PropertyBindingSupport.bindProperties(context, configuration, options);
 
         // add GoogleSheetsComponent to Camel context and use localhost url
         final GoogleSheetsComponent component = new GoogleSheetsComponent(context);
-        component.setClientFactory(new BatchGoogleSheetsClientFactory(
-                new NetHttpTransport.Builder()
-                        .trustCertificatesFromJavaKeyStore(
-                                getClass().getResourceAsStream("/" + GoogleSheetsApiTestServerRule.SERVER_KEYSTORE),
-                                GoogleSheetsApiTestServerRule.SERVER_KEYSTORE_PASSWORD)
-                        .build(),
-                new JacksonFactory()) {
-            @Override
-            protected void configure(Sheets.Builder clientBuilder) {
-                clientBuilder.setRootUrl(String.format("https://localhost:%s/", googleSheetsApiTestServerRule.getServerPort()));
-            }
-        });
         component.setConfiguration(configuration);
         context.addComponent("google-sheets", component);
 

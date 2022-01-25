@@ -114,8 +114,11 @@
         <module>camel-cassandraql</module>
         <module>camel-cbor</module>
         <module>camel-cdi</module>
+        <module>camel-cdi-main</module>
+        <module>camel-cdi-jta</module>
         <module>camel-chatscript</module>
         <module>camel-chunk</module>
+        <module>camel-cloudevents</module>
         <module>camel-cm-sms</module>
         <module>camel-cmis</module>
         <module>camel-coap</module>
@@ -137,7 +140,8 @@
         <module>camel-docker</module>
         <module>camel-dozer</module>
         <module>camel-drill</module>
-        <module>camel-dropbox</module>
+	    <module>camel-dropbox</module>
+	    <module>camel-dynamic-router</module>
         <module>camel-ehcache</module>
         <module>camel-elasticsearch-rest</module>
         <module>camel-elsql</module>
@@ -215,6 +219,7 @@
         <module>camel-jta</module>
         <module>camel-kafka</module>
         <module>camel-kamelet</module>
+        <module>camel-knative</module>
         <module>camel-kubernetes</module>
         <module>camel-kudu</module>
         <module>camel-ldap</module>
@@ -303,7 +308,6 @@
         <module>camel-splunk-hec</module>
         <module>camel-spring-batch</module>
         <module>camel-spring-integration</module>
-        <module>camel-spring-javaconfig</module>
         <module>camel-spring-jdbc</module>
         <module>camel-spring-ldap</module>
         <module>camel-spring-rabbitmq</module>
@@ -380,7 +384,7 @@
                     </executions>
                     <configuration>
                         <reuseForks>true</reuseForks>
-                        <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
+                        <forkedProcessTimeoutInSeconds>${camel.failsafe.forkTimeout}</forkedProcessTimeoutInSeconds>
                         <redirectTestOutputToFile>false</redirectTestOutputToFile>
                         <systemPropertyVariables>
                             <visibleassertions.silence>true</visibleassertions.silence>

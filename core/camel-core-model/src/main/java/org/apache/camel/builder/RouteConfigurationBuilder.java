@@ -37,6 +37,7 @@ public abstract class RouteConfigurationBuilder extends RouteBuilder implements 
         // noop
     }
 
+    @Override
     public abstract void configuration() throws Exception;
 
     public RouteConfigurationsDefinition getRouteConfigurationCollection() {

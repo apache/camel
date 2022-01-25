@@ -55,6 +55,7 @@ public class DevMojo extends RunMojo {
         System.setProperty("camel.main.routesReloadEnabled", "true");
         System.setProperty("camel.main.routesReloadDirectory", dir);
         System.setProperty("camel.main.routesReloadDirectoryRecursive", "true");
+        System.setProperty("camel.main.sourceLocationEnabled", "true");
         System.setProperty("camel.main.durationMaxAction", "stop");
         System.setProperty("camel.main.routesReloadPattern",
                 "*.xml,*.yaml,*.java");

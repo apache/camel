@@ -33,6 +33,9 @@
     <description>The Camel Endpoint DSL</description>
 
     <properties>
+        <firstVersion>3.0.0</firstVersion>
+        <title>Java Endpoint DSL</title>
+        <label>dsl</label>
         <camel.osgi.import>
             javax.xml.bind*;version="[2.2,3.0)",
             *
@@ -58,6 +61,10 @@
                 <exclusion>
                     <groupId>org.apache.camel</groupId>
                     <artifactId>camel-threadpoolfactory-vertx</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.camel</groupId>
+                    <artifactId>camel-microprofile-config</artifactId>
                 </exclusion>
                 <!-- exclude javax.annotation packages as they cause javadoc WARN on java8 vs java11 -->
                 <exclusion>

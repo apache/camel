@@ -34,6 +34,8 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Default;
 import javax.enterprise.inject.spi.Annotated;
 import javax.enterprise.inject.spi.AnnotatedConstructor;
 import javax.enterprise.inject.spi.AnnotatedField;
@@ -53,8 +55,6 @@ import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toSet;
-import static org.apache.camel.cdi.AnyLiteral.ANY;
-import static org.apache.camel.cdi.DefaultLiteral.DEFAULT;
 
 @Vetoed
 final class CdiSpiHelper {
@@ -132,9 +132,9 @@ final class CdiSpiHelper {
                 .collect(collectingAndThen(toSet(),
                         qualifiers -> {
                             if (qualifiers.isEmpty()) {
-                                qualifiers.add(DEFAULT);
+                                qualifiers.add(Default.Literal.INSTANCE);
                             }
-                            qualifiers.add(ANY);
+                            qualifiers.add(Any.Literal.INSTANCE);
                             return qualifiers;
                         }));
     }

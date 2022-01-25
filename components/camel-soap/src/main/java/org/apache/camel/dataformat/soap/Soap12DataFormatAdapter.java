@@ -55,16 +55,16 @@ public class Soap12DataFormatAdapter implements SoapDataFormatAdapter {
     private static final String SOAP_PACKAGE_NAME = Envelope.class.getPackage().getName();
     private static final QName FAULT_CODE_SERVER = new QName("http://www.w3.org/2003/05/soap-envelope", "Receiver");
 
-    private final SoapJaxbDataFormat dataFormat;
+    private final SoapDataFormat dataFormat;
     private final ObjectFactory objectFactory;
 
-    public Soap12DataFormatAdapter(SoapJaxbDataFormat dataFormat) {
+    public Soap12DataFormatAdapter(SoapDataFormat dataFormat) {
         this.dataFormat = dataFormat;
         this.objectFactory = new ObjectFactory();
     }
 
     @Override
-    public SoapJaxbDataFormat getDataFormat() {
+    public SoapDataFormat getDataFormat() {
         return dataFormat;
     }
 
@@ -86,7 +86,7 @@ public class Soap12DataFormatAdapter implements SoapDataFormatAdapter {
         } else {
             if (!dataFormat.isIgnoreUnmarshalledHeaders()) {
                 List<Object> inboundSoapHeaders
-                        = (List<Object>) exchange.getIn().getHeader(SoapJaxbDataFormat.SOAP_UNMARSHALLED_HEADER_LIST);
+                        = (List<Object>) exchange.getIn().getHeader(SoapDataFormat.SOAP_UNMARSHALLED_HEADER_LIST);
                 if (null != inboundSoapHeaders) {
                     headerContent.addAll(inboundSoapHeaders);
                 }
@@ -172,7 +172,7 @@ public class Soap12DataFormatAdapter implements SoapDataFormatAdapter {
                 } else {
                     returnHeaders = anyHeaderElements;
                 }
-                exchange.getOut().setHeader(SoapJaxbDataFormat.SOAP_UNMARSHALLED_HEADER_LIST, returnHeaders);
+                exchange.getOut().setHeader(SoapDataFormat.SOAP_UNMARSHALLED_HEADER_LIST, returnHeaders);
             }
         }
 

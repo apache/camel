@@ -30,6 +30,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(firstVersion = "2.10.0", label = "dataformat,transformation,csv", title = "BeanIO")
 @XmlRootElement(name = "beanio")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Deprecated
 public class BeanioDataFormat extends DataFormatDefinition {
 
     @XmlAttribute(required = true)

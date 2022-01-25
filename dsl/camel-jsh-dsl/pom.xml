@@ -35,6 +35,8 @@
 
     <properties>
         <firstVersion>3.15.0</firstVersion>
+        <title>JavaShell DSL</title>
+        <label>dsl</label>
         <supportLevel>Experimental</supportLevel>
         <sourcecheckExcludes>
             **/resources/**/My*.java

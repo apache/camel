@@ -4,7 +4,7 @@
     "name": "atomix-map",
     "title": "Atomix Map",
     "description": "Access Atomix's distributed map.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.20.0",
     "label": "clustering",
     "javaType": "org.apache.camel.component.atomix.client.map.AtomixMapComponent",

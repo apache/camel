@@ -1241,6 +1241,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * @param path resourceName
          * @return the dsl builder
          */
+        @Deprecated
         default AtomixQueueEndpointBuilder atomixQueue(String path) {
             return AtomixQueueEndpointBuilderFactory.endpointBuilder("atomix-queue", path);
         }
@@ -1262,12 +1263,14 @@ public interface AtomixQueueEndpointBuilderFactory {
          * @param path resourceName
          * @return the dsl builder
          */
+        @Deprecated
         default AtomixQueueEndpointBuilder atomixQueue(
                 String componentName,
                 String path) {
             return AtomixQueueEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
+    @Deprecated
     static AtomixQueueEndpointBuilder endpointBuilder(
             String componentName,
             String path) {

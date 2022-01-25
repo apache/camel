@@ -35,6 +35,8 @@
 
     <properties>
         <firstVersion>3.9.0</firstVersion>
+        <title>JavaScript DSL</title>
+        <label>dsl</label>
         <supportLevel>Experimental</supportLevel>
         <sourcecheckExcludes>
             **/resources/**/My*.java

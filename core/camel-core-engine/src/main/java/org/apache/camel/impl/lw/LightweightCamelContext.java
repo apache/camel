@@ -54,6 +54,7 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.ValueHolder;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.catalog.RuntimeCamelCatalog;
+import org.apache.camel.console.DevConsoleResolver;
 import org.apache.camel.health.HealthCheckResolver;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.DataFormatDefinition;
@@ -900,6 +901,26 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     @Override
+    public Boolean isSourceLocationEnabled() {
+        return delegate.isSourceLocationEnabled();
+    }
+
+    @Override
+    public void setSourceLocationEnabled(Boolean sourceLocationEnabled) {
+        delegate.setSourceLocationEnabled(sourceLocationEnabled);
+    }
+
+    @Override
+    public Boolean isDevConsole() {
+        return delegate.isDevConsole();
+    }
+
+    @Override
+    public void setDevConsole(Boolean loadDevConsoles) {
+        delegate.setDevConsole(loadDevConsoles);
+    }
+
+    @Override
     public Boolean isDumpRoutes() {
         return delegate.isDumpRoutes();
     }
@@ -1017,6 +1038,16 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     @Override
     public void setTracingPattern(String tracePattern) {
         delegate.setTracingPattern(tracePattern);
+    }
+
+    @Override
+    public String getTracingLoggingFormat() {
+        return delegate.getTracingLoggingFormat();
+    }
+
+    @Override
+    public void setTracingLoggingFormat(String format) {
+        delegate.setTracingLoggingFormat(format);
     }
 
     @Override
@@ -1218,6 +1249,11 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     @Override
+    public void setBeanPostProcessor(CamelBeanPostProcessor beanPostProcessor) {
+        getExtendedCamelContext().setBeanPostProcessor(beanPostProcessor);
+    }
+
+    @Override
     public ManagementMBeanAssembler getManagementMBeanAssembler() {
         return getExtendedCamelContext().getManagementMBeanAssembler();
     }
@@ -1290,6 +1326,16 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     @Override
     public void setHealthCheckResolver(HealthCheckResolver healthCheckResolver) {
         getExtendedCamelContext().setHealthCheckResolver(healthCheckResolver);
+    }
+
+    @Override
+    public DevConsoleResolver getDevConsoleResolver() {
+        return getExtendedCamelContext().getDevConsoleResolver();
+    }
+
+    @Override
+    public void setDevConsoleResolver(DevConsoleResolver devConsoleResolver) {
+        getExtendedCamelContext().setDevConsoleResolver(devConsoleResolver);
     }
 
     @Override

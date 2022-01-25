@@ -59,9 +59,11 @@ class KameletBindingLoaderTest extends YamlTestSupport {
             with (context.routeDefinitions[0]) {
                 routeId == 'timer-event-source'
                 input.endpointUri == 'kamelet:timer-source?message=Hello+world%21'
+                input.lineNumber == 7
                 outputs.size() == 1
                 with (outputs[0], ToDefinition) {
                     endpointUri == 'kamelet:log-sink'
+                    lineNumber == 14
                 }
             }
     }
@@ -158,15 +160,19 @@ class KameletBindingLoaderTest extends YamlTestSupport {
         with (context.routeDefinitions[0]) {
             routeId == 'steps-binding'
             input.endpointUri == 'kamelet:timer-source?message=Camel'
+            input.lineNumber == 7
             outputs.size() == 3
             with (outputs[0], KameletDefinition) {
                 name == 'prefix-action?prefix=Apache'
+                lineNumber == 14
             }
             with (outputs[1], KameletDefinition) {
                 name == 'prefix-action?prefix=Hello'
+                lineNumber == 20
             }
             with (outputs[2], ToDefinition) {
                 endpointUri == 'log:info'
+                lineNumber == 27
             }
         }
     }
@@ -324,7 +330,7 @@ class KameletBindingLoaderTest extends YamlTestSupport {
                       apiVersion: camel.apache.org/v1alpha1
                       name: log-sink
                   errorHandler:
-                    dead-letter-channel:
+                    sink:
                       endpoint:
                         ref:
                           kind: Kamelet
@@ -390,7 +396,7 @@ class KameletBindingLoaderTest extends YamlTestSupport {
                       apiVersion: camel.apache.org/v1alpha1
                       name: log-sink
                   errorHandler:
-                    dead-letter-channel:
+                    sink:
                       endpoint:
                         uri: mock:dead
                       parameters:
@@ -503,6 +509,45 @@ class KameletBindingLoaderTest extends YamlTestSupport {
             outputs.size() == 1
             with (outputs[0], ToDefinition) {
                 endpointUri == 'kamelet:log-sink'
+            }
+        }
+    }
+
+    def "kamelet binding from kamelet to knative"() {
+        when:
+
+        // stub knative for testing as it requires to setup connection to a real knative broker
+        context.removeComponent("knative")
+        context.addComponent("knative", context.getComponent("stub"))
+
+        loadBindings('''
+                apiVersion: camel.apache.org/v1alpha1
+                kind: KameletBinding
+                metadata:
+                  name: timer-event-source                  
+                spec:
+                  source:
+                    ref:
+                      kind: Kamelet
+                      apiVersion: camel.apache.org/v1
+                      name: timer-source
+                    properties:
+                      message: "Hello world!"
+                  sink:
+                    ref:
+                      kind: InMemoryChannel
+                      apiVersion: messaging.knative.dev/v1
+                      name: my-messages
+            ''')
+        then:
+        context.routeDefinitions.size() == 2
+
+        with (context.routeDefinitions[0]) {
+            routeId == 'timer-event-source'
+            input.endpointUri == 'kamelet:timer-source?message=Hello+world%21'
+            outputs.size() == 1
+            with (outputs[0], ToDefinition) {
+                endpointUri == 'knative:channel/my-messages'
             }
         }
     }

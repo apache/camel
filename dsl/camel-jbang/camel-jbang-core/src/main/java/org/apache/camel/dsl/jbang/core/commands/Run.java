@@ -70,6 +70,9 @@ class Run implements Callable<Integer> {
     @Option(names = { "--reload" }, description = "Enables live reload when source file is changed (saved)")
     private boolean reload;
 
+    @Option(names = { "--trace" }, description = "Enables trace logging of the routed messages")
+    private boolean trace;
+
     @Option(names = { "--properties" },
             description = "Load properties file for route placeholders (ex. /path/to/file.properties")
     private String propertiesFiles;
@@ -78,12 +81,23 @@ class Run implements Callable<Integer> {
             description = "Whether to create a temporary file lock, which upon deleting triggers this process to terminate")
     private boolean fileLock = true;
 
+    @Option(names = { "--jfr" },
+            description = "Enables Java Flight Recorder saving recording to disk on exit")
+    private boolean jfr;
+
+    @Option(names = { "--jfr-profile" },
+            description = "Java Flight Recorder profile to use (such as default or profile)")
+    private String jfrProfile;
+
     @Option(names = { "--local-kamelet-dir" },
             description = "Local directory to load Kamelets from (take precedence))")
     private String localKameletDir;
 
     @Option(names = { "--port" }, description = "Embeds a local HTTP server on this port")
     private int port;
+
+    @Option(names = { "--console" }, description = "Developer console at /dev on local HTTP server (port 8080 by default)")
+    private boolean console;
 
     @Override
     public Integer call() throws Exception {
@@ -127,8 +141,9 @@ class Run implements Callable<Integer> {
         main.addInitialProperty("camel.main.shutdownTimeout", "5");
         // turn off lightweight if we have routes reload enabled
         main.addInitialProperty("camel.main.routesReloadEnabled", reload ? "true" : "false");
+        main.addInitialProperty("camel.main.sourceLocationEnabled", "true");
+        main.addInitialProperty("camel.main.tracing", trace ? "true" : "false");
 
-        // durations
         if (maxMessages > 0) {
             main.addInitialProperty("camel.main.durationMaxMessages", String.valueOf(maxMessages));
         }
@@ -140,6 +155,18 @@ class Run implements Callable<Integer> {
         }
         if (port > 0) {
             main.addInitialProperty("camel.jbang.platform-http.port", String.valueOf(port));
+        }
+        if (console) {
+            main.addInitialProperty("camel.jbang.console", "true");
+        }
+
+        if (jfr) {
+            main.addInitialProperty("camel.jbang.jfr", "jfr");
+        }
+        if (jfrProfile != null) {
+            // turn on jfr if a profile was specified
+            main.addInitialProperty("camel.jbang.jfr", "jfr");
+            main.addInitialProperty("camel.jbang.jfr-profile", jfrProfile);
         }
 
         if (fileLock) {

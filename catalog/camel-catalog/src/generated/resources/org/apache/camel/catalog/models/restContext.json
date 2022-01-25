@@ -7,6 +7,7 @@
     "deprecated": false,
     "label": "spring,configuration,rest",
     "javaType": "org.apache.camel.spring.xml.CamelRestContextFactoryBean",
+    "abstract": false,
     "input": false,
     "output": false
   },

@@ -61,18 +61,18 @@ The exchange pool can be configured with the following options:
 |===
 |Option |Description | Default
 | exchange-factory | Whether to use pooling or not. Possible values are prototype or pooled | prototype
-| exchange-factory-capacity | Maximum number of elemenets in the pool | 100
+| exchange-factory-capacity | Maximum number of elements in the pool | 100
 | exchange-factory-statistics-enabled | Whether to capture usage statistics | false
 |===
 
 == Management
 
-If object pooling is enabled, then Camel provides a JMX MBean which allows to introspect the pools and its usage
+If object pooling is enabled, then Camel provides a JMX MBean which allows to introspect the pools and their usage
 via JMX. This requires to add `camel-management` JAR to the classpath.
 
 == Examples
 
 We have provided a few examples which we are using for performance profiling.
-For example the basic https://github.com/apache/camel-performance-tests/tree/master/profiling/timer-log[timer-log] example.
+For example the basic https://github.com/apache/camel-performance-tests/tree/main/profiling/timer-log[timer-log] example.
 
 

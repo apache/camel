@@ -172,7 +172,7 @@ class KotlinRoutesBuilderLoaderTest {
 
         ctx.routesLoader.loadRoutes(res)
 
-        val jackson = ctx.resolveDataFormat("json-jackson") as JacksonDataFormat
+        val jackson = ctx.resolveDataFormat("jackson") as JacksonDataFormat
         assertThat(jackson.unmarshalType).isEqualTo(Map::class.java)
         assertThat(jackson.isPrettyPrint).isTrue()
 

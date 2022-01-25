@@ -120,6 +120,20 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
             return this;
         }
         /**
+         * Delegate for wide-domain service account.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param delegate the value to set
+         * @return the dsl builder
+         */
+        default GoogleSheetsStreamEndpointBuilder delegate(String delegate) {
+            doSetProperty("delegate", delegate);
+            return this;
+        }
+        /**
          * True if grid data should be returned.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -847,6 +861,20 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
         default GoogleSheetsStreamEndpointBuilder clientSecret(
                 String clientSecret) {
             doSetProperty("clientSecret", clientSecret);
+            return this;
+        }
+        /**
+         * Sets .json file with credentials for Service account.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param keyResource the value to set
+         * @return the dsl builder
+         */
+        default GoogleSheetsStreamEndpointBuilder keyResource(String keyResource) {
+            doSetProperty("keyResource", keyResource);
             return this;
         }
         /**

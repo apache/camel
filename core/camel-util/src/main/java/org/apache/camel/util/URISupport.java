@@ -43,7 +43,7 @@ public final class URISupport {
     // "passphrase" or "password" or secret key (case-insensitive).
     // First capture group is the key, second is the value.
     private static final Pattern SECRETS = Pattern.compile(
-            "([?&][^=]*(?:passphrase|password|secretKey|accessToken|clientSecret|authorizationToken|saslJaasConfig)[^=]*)=(RAW[({].*[)}]|[^&]*)",
+            "([?&][^=]*(?:passphrase|password|secretKey|accessToken|clientSecret|authorizationToken|saslJaasConfig)[^=]*)=(RAW(([{][^}]*[}])|([(][^)]*[)]))|[^&]*)",
             Pattern.CASE_INSENSITIVE);
 
     // Match the user password in the URI as second capture group
@@ -507,7 +507,7 @@ public final class URISupport {
         if (raw != null) {
             // do not encode RAW parameters unless it has %
             // need to replace % with %25 to avoid losing "%" when decoding
-            String s = StringHelper.replaceAll(value, "%", "%25");
+            String s = value.replace("%", "%25");
             rc.append(s);
         } else {
             if (encode) {
@@ -631,7 +631,7 @@ public final class URISupport {
             String after = path.substring(max);
 
             // replace the @ with %40
-            before = StringHelper.replaceAll(before, "@", "%40");
+            before = before.replace("@", "%40");
             path = before + after;
         }
 

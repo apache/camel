@@ -8,6 +8,7 @@
     "firstVersion": "2.9.0",
     "label": "dataformat,transformation,security",
     "javaType": "org.apache.camel.model.dataformat.PGPDataFormat",
+    "abstract": false,
     "input": false,
     "output": false
   },

@@ -31,6 +31,7 @@ import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.MessageHistory;
+import org.apache.camel.Route;
 import org.apache.camel.StreamCache;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.spi.ExchangeFormatter;
@@ -48,8 +49,8 @@ import org.slf4j.Logger;
 @EagerClassloaded
 public final class MessageHelper {
 
-    private static final String MESSAGE_HISTORY_HEADER = "%-20s %-20s %-80s %-12s";
-    private static final String MESSAGE_HISTORY_OUTPUT = "[%-18.18s] [%-18.18s] [%-78.78s] [%10.10s]";
+    private static final String MESSAGE_HISTORY_HEADER = "%-40s %-30s %-50s %-12s";
+    private static final String MESSAGE_HISTORY_OUTPUT = "%-40.40s %-30.30s %-50.50s %12.12s";
 
     /**
      * Utility classes should not have a public constructor.
@@ -555,35 +556,47 @@ public final class MessageHelper {
     @SuppressWarnings("unchecked")
     private static String doDumpMessageHistoryStacktrace(
             Exchange exchange, ExchangeFormatter exchangeFormatter, boolean logStackTrace) {
+
+        // add incoming origin of message on the top
+        String routeId = exchange.getFromRouteId();
+        Route route = exchange.getContext().getRoute(routeId);
+        String loc = route != null ? route.getSourceLocation() : null;
+        if (loc == null) {
+            loc = "";
+        }
+        String id = routeId;
+        String label = "";
+        if (exchange.getFromEndpoint() != null) {
+            label = "from[" + URISupport.sanitizeUri(StringHelper.limitLength(exchange.getFromEndpoint().getEndpointUri(), 100))
+                    + "]";
+        }
+        long elapsed = new StopWatch(exchange.getCreated()).taken();
+
         List<MessageHistory> list = exchange.getProperty(ExchangePropertyKey.MESSAGE_HISTORY, List.class);
         boolean enabled = list != null;
+        boolean source = !loc.isEmpty();
 
         StringBuilder sb = new StringBuilder();
         sb.append("\n");
         sb.append("Message History");
-        if (!enabled) {
+        if (!source && !enabled) {
+            sb.append(" (source location and message history is disabled)");
+        } else if (!source) {
+            sb.append(" (source location is disabled)");
+        } else if (!enabled) {
             sb.append(" (complete message history is disabled)");
         }
         sb.append("\n");
         sb.append(
                 "---------------------------------------------------------------------------------------------------------------------------------------\n");
         String goMessageHistoryHeader = exchange.getContext().getGlobalOption(Exchange.MESSAGE_HISTORY_HEADER_FORMAT);
-        sb.append(String.format(goMessageHistoryHeader == null ? MESSAGE_HISTORY_HEADER : goMessageHistoryHeader, "RouteId",
-                "ProcessorId", "Processor", "Elapsed (ms)"));
+        sb.append(String.format(goMessageHistoryHeader == null ? MESSAGE_HISTORY_HEADER : goMessageHistoryHeader,
+                "Source", "ID", "Processor", "Elapsed (ms)"));
         sb.append("\n");
-
-        // add incoming origin of message on the top
-        String routeId = exchange.getFromRouteId();
-        String id = routeId;
-        String label = "";
-        if (exchange.getFromEndpoint() != null) {
-            label = "from[" + URISupport.sanitizeUri(exchange.getFromEndpoint().getEndpointUri() + "]");
-        }
-        long elapsed = new StopWatch(exchange.getCreated()).taken();
 
         String goMessageHistoryOutput = exchange.getContext().getGlobalOption(Exchange.MESSAGE_HISTORY_OUTPUT_FORMAT);
         goMessageHistoryOutput = goMessageHistoryOutput == null ? MESSAGE_HISTORY_OUTPUT : goMessageHistoryOutput;
-        sb.append(String.format(goMessageHistoryOutput, routeId, id, label, elapsed));
+        sb.append(String.format(goMessageHistoryOutput, loc, routeId + "/" + id, label, elapsed));
         sb.append("\n");
 
         if (list == null || list.isEmpty()) {
@@ -591,7 +604,10 @@ public final class MessageHelper {
             // instead
             id = exchange.adapt(ExtendedExchange.class).getHistoryNodeId();
             if (id != null) {
-                // compute route id
+                loc = exchange.adapt(ExtendedExchange.class).getHistoryNodeSource();
+                if (loc == null) {
+                    loc = "";
+                }
                 String rid = ExchangeHelper.getAtRouteId(exchange);
                 if (rid != null) {
                     routeId = rid;
@@ -608,12 +624,16 @@ public final class MessageHelper {
                 // we do not have elapsed time
                 elapsed = 0;
                 sb.append("\t...\n");
-                sb.append(String.format(goMessageHistoryOutput, routeId, id, label, elapsed));
+                sb.append(String.format(goMessageHistoryOutput, loc, routeId + "/" + id, label, elapsed));
                 sb.append("\n");
             }
         } else {
             for (MessageHistory history : list) {
                 // and then each history
+                loc = LoggerHelper.getLineNumberLoggerName(history.getNode());
+                if (loc == null) {
+                    loc = "";
+                }
                 routeId = history.getRouteId() != null ? history.getRouteId() : "";
                 id = history.getNode().getId();
                 // we need to avoid leak the sensible information here
@@ -626,7 +646,7 @@ public final class MessageHelper {
                 label = URISupport.sanitizeUri(StringHelper.limitLength(history.getNode().getLabel(), 100));
                 elapsed = history.getElapsed();
 
-                sb.append(String.format(goMessageHistoryOutput, routeId, id, label, elapsed));
+                sb.append(String.format(goMessageHistoryOutput, loc, routeId + "/" + id, label, elapsed));
                 sb.append("\n");
             }
         }
@@ -642,7 +662,7 @@ public final class MessageHelper {
         if (logStackTrace) {
             sb.append("\nStacktrace\n");
             sb.append(
-                    "---------------------------------------------------------------------------------------------------------------------------------------\n");
+                    "---------------------------------------------------------------------------------------------------------------------------------------");
         }
         return sb.toString();
     }

@@ -37,6 +37,8 @@
     <description>Camel JBang Core</description>
 
     <properties>
+        <firstVersion>3.12.0</firstVersion>
+        <label>jbang</label>
         <supportLevel>Experimental</supportLevel>
     </properties>
 

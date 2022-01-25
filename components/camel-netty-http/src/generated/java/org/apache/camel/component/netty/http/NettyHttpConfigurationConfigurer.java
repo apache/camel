@@ -117,10 +117,10 @@ public class NettyHttpConfigurationConfigurer extends org.apache.camel.support.c
         case "Port": target.setPort(property(camelContext, int.class, value)); return true;
         case "producerpoolenabled":
         case "ProducerPoolEnabled": target.setProducerPoolEnabled(property(camelContext, boolean.class, value)); return true;
-        case "producerpoolmaxactive":
-        case "ProducerPoolMaxActive": target.setProducerPoolMaxActive(property(camelContext, int.class, value)); return true;
         case "producerpoolmaxidle":
         case "ProducerPoolMaxIdle": target.setProducerPoolMaxIdle(property(camelContext, int.class, value)); return true;
+        case "producerpoolmaxtotal":
+        case "ProducerPoolMaxTotal": target.setProducerPoolMaxTotal(property(camelContext, int.class, value)); return true;
         case "producerpoolminevictableidle":
         case "ProducerPoolMinEvictableIdle": target.setProducerPoolMinEvictableIdle(property(camelContext, long.class, value)); return true;
         case "producerpoolminidle":
@@ -300,10 +300,10 @@ public class NettyHttpConfigurationConfigurer extends org.apache.camel.support.c
         case "Port": return int.class;
         case "producerpoolenabled":
         case "ProducerPoolEnabled": return boolean.class;
-        case "producerpoolmaxactive":
-        case "ProducerPoolMaxActive": return int.class;
         case "producerpoolmaxidle":
         case "ProducerPoolMaxIdle": return int.class;
+        case "producerpoolmaxtotal":
+        case "ProducerPoolMaxTotal": return int.class;
         case "producerpoolminevictableidle":
         case "ProducerPoolMinEvictableIdle": return long.class;
         case "producerpoolminidle":
@@ -484,10 +484,10 @@ public class NettyHttpConfigurationConfigurer extends org.apache.camel.support.c
         case "Port": return target.getPort();
         case "producerpoolenabled":
         case "ProducerPoolEnabled": return target.isProducerPoolEnabled();
-        case "producerpoolmaxactive":
-        case "ProducerPoolMaxActive": return target.getProducerPoolMaxActive();
         case "producerpoolmaxidle":
         case "ProducerPoolMaxIdle": return target.getProducerPoolMaxIdle();
+        case "producerpoolmaxtotal":
+        case "ProducerPoolMaxTotal": return target.getProducerPoolMaxTotal();
         case "producerpoolminevictableidle":
         case "ProducerPoolMinEvictableIdle": return target.getProducerPoolMinEvictableIdle();
         case "producerpoolminidle":

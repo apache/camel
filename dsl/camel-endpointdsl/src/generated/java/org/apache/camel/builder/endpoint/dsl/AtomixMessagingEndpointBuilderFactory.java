@@ -1436,6 +1436,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * @param path resourceName
          * @return the dsl builder
          */
+        @Deprecated
         default AtomixMessagingEndpointBuilder atomixMessaging(String path) {
             return AtomixMessagingEndpointBuilderFactory.endpointBuilder("atomix-messaging", path);
         }
@@ -1457,12 +1458,14 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * @param path resourceName
          * @return the dsl builder
          */
+        @Deprecated
         default AtomixMessagingEndpointBuilder atomixMessaging(
                 String componentName,
                 String path) {
             return AtomixMessagingEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
+    @Deprecated
     static AtomixMessagingEndpointBuilder endpointBuilder(
             String componentName,
             String path) {

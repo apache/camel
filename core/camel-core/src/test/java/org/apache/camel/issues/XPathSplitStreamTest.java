@@ -48,7 +48,7 @@ public class XPathSplitStreamTest extends ContextTestSupport {
 
     @Test
     public void testXPathSplitStream() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:splitted");
+        MockEndpoint mock = getMockEndpoint("mock:split");
         mock.expectedMessageCount(size);
         mock.expectsNoDuplicates().body();
 
@@ -66,7 +66,7 @@ public class XPathSplitStreamTest extends ContextTestSupport {
                 from(fileUri("?initialDelay=0&delay=10"))
                         // set documentType to org.xml.sax.InputSource then Camel
                         // will use SAX to split the file
-                        .split(personXPath).streaming().to("mock:splitted");
+                        .split(personXPath).streaming().to("mock:split");
                 // END SNIPPET: e1
             }
         };

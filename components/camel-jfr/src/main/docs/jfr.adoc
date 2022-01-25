@@ -1,5 +1,5 @@
-= Jfr Component
-:doctitle: Jfr
+= JFR Component
+:doctitle: JFR
 :shortname: jfr
 :artifactid: camel-jfr
 :description: Diagnose Camel applications with Java Flight Recorder
@@ -17,19 +17,17 @@ This allows to monitor and troubleshoot your Camel applications with JFR.
 The camel-jfr component emits lifecycle events for startup to JFR.
 This can for example be used to pin-point which Camel routes may be slow to startup.
 
-[[jfr-Options]]
-
 See the __startupRecorder__ options from xref:components:others:main.adoc[Camel Main]
 
-[[jfr-Example]]
 == Example
 
 To enable you just need to add `camel-jfr` to the classpath, and enable JFR recording.
 
 JFR recordings can be started either at:
+
 - When running the JVM using JVM arguments
 - When starting Camel by setting `camel.main.startup-recorder-recording=true`.
 
-See the `camel-example-flight-recorder` from the Camel Examples.
+See the `flight-recorder` from the Camel Examples.
 
 include::spring-boot:partial$starter.adoc[]

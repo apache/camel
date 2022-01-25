@@ -221,11 +221,7 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
                 // process OK so get the reply body if we are InOut and has a body
                 // If the ppl don't want to send the message back, he should use the InOnly
                 if (sendReply && exchange.getPattern().isOutCapable()) {
-                    if (exchange.hasOut()) {
-                        body = exchange.getOut();
-                    } else {
-                        body = exchange.getIn();
-                    }
+                    body = exchange.getMessage();
                     cause = null;
                 }
             }

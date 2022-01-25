@@ -251,11 +251,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         // endpoint options
         findClassProperties(componentModel, classElement, new HashSet<>(), "", null, null, false);
 
-        String excludedEndpointProperties = "";
-        Metadata endpointMetadata = classElement.getAnnotation(Metadata.class);
-        if (endpointMetadata != null) {
-            excludedEndpointProperties = endpointMetadata.excludeProperties();
-        }
+        String excludedEndpointProperties = getExcludedEnd(classElement.getAnnotation(Metadata.class));
 
         // enhance and generate
         enhanceComponentModel(componentModel, parentData, excludedEndpointProperties, excludedComponentProperties);
@@ -285,6 +281,15 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         return componentModel;
     }
 
+    private String getExcludedEnd(Metadata classElement) {
+        String excludedEndpointProperties = "";
+        Metadata endpointMetadata = classElement;
+        if (endpointMetadata != null) {
+            excludedEndpointProperties = endpointMetadata.excludeProperties();
+        }
+        return excludedEndpointProperties;
+    }
+
     /**
      * Used for enhancing the component model with apiProperties for API based components (such as twilio, olingo and
      * others)
@@ -305,6 +310,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         }
     }
 
+    @Override
     protected boolean updateResource(Path dir, String file, String data) {
         resources.put(file, data);
         return super.updateResource(dir, file, data);
@@ -875,11 +881,8 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                 }
             }
 
-            String excludedProperties = "";
-            Metadata metadata = classElement.getAnnotation(Metadata.class);
-            if (metadata != null) {
-                excludedProperties = metadata.excludeProperties();
-            }
+            String excludedProperties = getExcludedEnd(classElement.getAnnotation(Metadata.class));
+            Metadata metadata;
 
             final UriEndpoint uriEndpoint = classElement.getAnnotation(UriEndpoint.class);
             if (uriEndpoint != null) {
@@ -1393,42 +1396,38 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
 
         if (builderPattern) {
             if (name != null && !name.equals(fieldName)) {
-                for (MethodSource<JavaClassSource> builder : source.getMethods()) {
-                    if (builder.getParameters().size() == 1 && builder.getName().equals(name)) {
-                        String doc = getJavaDocText(loadJavaSource(classElement.getName()), builder);
-                        if (!Strings.isNullOrEmpty(doc)) {
-                            return doc;
-                        }
-                    }
-                }
-                for (MethodSource<JavaClassSource> builder : source.getMethods()) {
-                    if (builder.getParameters().isEmpty() && builder.getName().equals(name)) {
-                        String doc = getJavaDocText(loadJavaSource(classElement.getName()), builder);
-                        if (!Strings.isNullOrEmpty(doc)) {
-                            return doc;
-                        }
-                    }
+                String doc = getJavaDoc(source, name, classElement.getName());
+                if (doc != null) {
+                    return doc;
                 }
             }
-            for (MethodSource<JavaClassSource> builder : source.getMethods()) {
-                if (builder.getParameters().size() == 1 && builder.getName().equals(fieldName)) {
-                    String doc = getJavaDocText(loadJavaSource(classElement.getName()), builder);
-                    if (!Strings.isNullOrEmpty(doc)) {
-                        return doc;
-                    }
-                }
-            }
-            for (MethodSource<JavaClassSource> builder : source.getMethods()) {
-                if (builder.getParameters().isEmpty() && builder.getName().equals(fieldName)) {
-                    String doc = getJavaDocText(loadJavaSource(classElement.getName()), builder);
-                    if (!Strings.isNullOrEmpty(doc)) {
-                        return doc;
-                    }
-                }
+            String doc = getJavaDoc(source, fieldName, classElement.getName());
+            if (doc != null) {
+                return doc;
             }
         }
 
         return "";
+    }
+
+    private String getJavaDoc(JavaClassSource source, String fieldName, String classElement) {
+        for (MethodSource<JavaClassSource> builder : source.getMethods()) {
+            if (builder.getParameters().size() == 1 && builder.getName().equals(fieldName)) {
+                String doc = getJavaDocText(loadJavaSource(classElement), builder);
+                if (!Strings.isNullOrEmpty(doc)) {
+                    return doc;
+                }
+            }
+        }
+        for (MethodSource<JavaClassSource> builder : source.getMethods()) {
+            if (builder.getParameters().isEmpty() && builder.getName().equals(fieldName)) {
+                String doc = getJavaDocText(loadJavaSource(classElement), builder);
+                if (!Strings.isNullOrEmpty(doc)) {
+                    return doc;
+                }
+            }
+        }
+        return null;
     }
 
     static String getJavaDocText(String source, JavaDocCapable<?> member) {

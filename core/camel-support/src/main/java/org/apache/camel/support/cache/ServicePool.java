@@ -51,6 +51,8 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
     private final ConcurrentMap<Endpoint, Pool<S>> singlePoolEvicted = new ConcurrentHashMap<>();
     private int capacity;
     private Map<S, S> cache;
+    // synchronizes access only to cache
+    private final Object cacheLock;
 
     private interface Pool<S> {
         S acquire() throws Exception;
@@ -71,6 +73,7 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
         this.getEndpoint = getEndpoint;
         this.capacity = capacity;
         this.cache = capacity > 0 ? LRUCacheFactory.newLRUCache(capacity, this::onEvict) : null;
+        this.cacheLock = capacity > 0 ? new Object() : null;
     }
 
     /**
@@ -108,7 +111,15 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
         }
         S s = getOrCreatePool(endpoint).acquire();
         if (s != null && cache != null) {
-            cache.putIfAbsent(s, s);
+            if (isStoppingOrStopped()) {
+                // during stopping then access to the cache is synchronized
+                synchronized (cacheLock) {
+                    cache.putIfAbsent(s, s);
+                }
+            } else {
+                // optimize for normal operation
+                cache.putIfAbsent(s, s);
+            }
         }
         return s;
     }
@@ -127,7 +138,7 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
     }
 
     private Pool<S> getOrCreatePool(Endpoint endpoint) {
-        // its a pool so we have a lot more hits, so use regular get, and then fallback to computeIfAbsent
+        // it is a pool, so we have a lot more hits, so use regular get, and then fallback to computeIfAbsent
         Pool<S> answer = pool.get(endpoint);
         if (answer == null) {
             boolean singleton = endpoint.isSingletonProducer();
@@ -178,8 +189,10 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
         pool.values().forEach(Pool::stop);
         pool.clear();
         if (cache != null) {
-            cache.values().forEach(ServicePool::stop);
-            cache.clear();
+            synchronized (cacheLock) {
+                cache.values().forEach(ServicePool::stop);
+                cache.clear();
+            }
         }
         singlePoolEvicted.values().forEach(Pool::stop);
         singlePoolEvicted.clear();

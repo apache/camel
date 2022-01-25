@@ -117,8 +117,6 @@ public abstract class YamlRoutesBuilderLoaderSupport extends RouteBuilderLoaderS
             throw new FileNotFoundException("Resource not found: " + resource.getLocation());
         }
 
-        deserializationContext.setResource(resource);
-
         try (InputStream is = resource.getInputStream()) {
             final StreamReader reader = new StreamReader(settings, new YamlUnicodeReader(is));
             final Parser parser = new ParserImpl(settings, reader);

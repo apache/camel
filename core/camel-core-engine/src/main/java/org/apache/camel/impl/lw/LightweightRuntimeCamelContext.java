@@ -62,6 +62,7 @@ import org.apache.camel.StartupSummaryLevel;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.ValueHolder;
 import org.apache.camel.catalog.RuntimeCamelCatalog;
+import org.apache.camel.console.DevConsoleResolver;
 import org.apache.camel.health.HealthCheckResolver;
 import org.apache.camel.impl.converter.CoreTypeConverterRegistry;
 import org.apache.camel.impl.engine.DefaultComponentResolver;
@@ -167,12 +168,14 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     private final LanguageResolver languageResolver;
     private final DataFormatResolver dataFormatResolver;
     private final HealthCheckResolver healthCheckResolver;
+    private final DevConsoleResolver devConsoleResolver;
     private final UuidGenerator uuidGenerator;
     private final EndpointRegistry<? extends ValueHolder<String>> endpoints;
     private final Map<String, Component> components;
     private final Map<String, Language> languages;
     private final PropertiesComponent propertiesComponent;
     private final BeanIntrospection beanIntrospection;
+    private final CamelBeanPostProcessor beanPostProcessor;
     private final HeadersMapFactory headersMapFactory;
     private final ExchangeFactory exchangeFactory;
     private final ExchangeFactoryManager exchangeFactoryManager;
@@ -217,11 +220,13 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
         languageResolver = context.adapt(ExtendedCamelContext.class).getLanguageResolver();
         dataFormatResolver = context.adapt(ExtendedCamelContext.class).getDataFormatResolver();
         healthCheckResolver = context.adapt(ExtendedCamelContext.class).getHealthCheckResolver();
+        devConsoleResolver = context.adapt(ExtendedCamelContext.class).getDevConsoleResolver();
         endpoints = context.getEndpointRegistry();
         components = context.getComponentNames().stream().collect(Collectors.toMap(s -> s, context::hasComponent));
         languages = context.getLanguageNames().stream().collect(Collectors.toMap(s -> s, context::resolveLanguage));
         propertiesComponent = context.getPropertiesComponent();
         beanIntrospection = context.adapt(ExtendedCamelContext.class).getBeanIntrospection();
+        beanPostProcessor = context.adapt(ExtendedCamelContext.class).getBeanPostProcessor();
         headersMapFactory = context.adapt(ExtendedCamelContext.class).getHeadersMapFactory();
         exchangeFactory = context.adapt(ExtendedCamelContext.class).getExchangeFactory();
         exchangeFactoryManager = context.adapt(ExtendedCamelContext.class).getExchangeFactoryManager();
@@ -397,6 +402,16 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
+    public String getTracingLoggingFormat() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setTracingLoggingFormat(String format) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public Boolean isBacklogTracing() {
         throw new UnsupportedOperationException();
     }
@@ -567,6 +582,16 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
 
     @Override
     public void setHealthCheckResolver(HealthCheckResolver healthCheckResolver) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public DevConsoleResolver getDevConsoleResolver() {
+        return devConsoleResolver;
+    }
+
+    @Override
+    public void setDevConsoleResolver(DevConsoleResolver devConsoleResolver) {
         throw new UnsupportedOperationException();
     }
 
@@ -1188,7 +1213,27 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
+    public Boolean isDevConsole() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setDevConsole(Boolean loadDevConsoles) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public void setLoadHealthChecks(Boolean loadHealthChecks) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Boolean isSourceLocationEnabled() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setSourceLocationEnabled(Boolean sourceLocationEnabled) {
         throw new UnsupportedOperationException();
     }
 
@@ -1385,10 +1430,6 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
         }
     }
 
-    //
-    // CatalogCamelContext
-    //
-
     @Override
     public List<RouteStartupOrder> getRouteStartupOrder() {
         throw new UnsupportedOperationException();
@@ -1396,6 +1437,11 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
 
     @Override
     public CamelBeanPostProcessor getBeanPostProcessor() {
+        return beanPostProcessor;
+    }
+
+    @Override
+    public void setBeanPostProcessor(CamelBeanPostProcessor beanPostProcessor) {
         throw new UnsupportedOperationException();
     }
 

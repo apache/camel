@@ -68,6 +68,7 @@ public class ServiceCallServiceDiscoveryConfiguration extends ServiceCallConfigu
     //
     // *************************************************************************
 
+    @Override
     public ServiceCallServiceDiscoveryConfiguration property(String key, String value) {
         return (ServiceCallServiceDiscoveryConfiguration) super.property(key, value);
     }

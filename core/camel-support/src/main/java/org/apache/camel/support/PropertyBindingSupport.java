@@ -38,6 +38,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.PropertyBindingException;
 import org.apache.camel.spi.BeanIntrospection;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.StringHelper;
@@ -84,6 +85,17 @@ import static org.apache.camel.util.StringHelper.startsWithIgnoreCase;
  * </pre>
  * <p>
  * Where foo is mandatory, and bar is optional.
+ *
+ * <p>
+ * Values can be marked as optional property placeholder if the values name starts with a question mark, such as:
+ *
+ * <pre>
+ * username={{?clientUserName}}
+ * </pre>
+ * <p>
+ * Where the username property will only be set if the property placeholder <tt>clientUserName</tt> exists, otherwise
+ * the username is not affected.
+ * </p>
  */
 public final class PropertyBindingSupport {
 
@@ -151,6 +163,7 @@ public final class PropertyBindingSupport {
      * @param  removeParameter    whether to remove bound parameters
      * @param  flattenProperties  whether properties should be flattened (when properties is a map of maps)
      * @param  mandatory          whether all parameters must be bound
+     * @param  optional           whether parameters can be optional such as configuring endpoints that are lenient
      * @param  nesting            whether nesting is in use
      * @param  deepNesting        whether deep nesting is in use, where Camel will attempt to walk as deep as possible
      *                            by creating new objects in the OGNL graph if a property has a setter and the object
@@ -166,7 +179,8 @@ public final class PropertyBindingSupport {
      */
     private static boolean doBindProperties(
             CamelContext camelContext, Object target, Map<String, Object> properties,
-            String optionPrefix, boolean ignoreCase, boolean removeParameter, boolean flattenProperties, boolean mandatory,
+            String optionPrefix, boolean ignoreCase, boolean removeParameter, boolean flattenProperties,
+            boolean mandatory, boolean optional,
             boolean nesting, boolean deepNesting, boolean fluentBuilder, boolean allowPrivateSetter,
             boolean reference, boolean placeholder,
             boolean reflection, PropertyConfigurer configurer) {
@@ -208,7 +222,7 @@ public final class PropertyBindingSupport {
 
             // attempt to bind the property
             boolean hit = doBuildPropertyOgnlPath(camelContext, target, key, value, deepNesting, fluentBuilder,
-                    allowPrivateSetter, ignoreCase, reference, placeholder, mandatory, reflection, configurer);
+                    allowPrivateSetter, ignoreCase, reference, placeholder, mandatory, optional, reflection, configurer);
             if (hit && removeParameter) {
                 properties.remove(key);
             }
@@ -221,12 +235,13 @@ public final class PropertyBindingSupport {
     private static boolean doBuildPropertyOgnlPath(
             final CamelContext camelContext, final Object originalTarget, String name, final Object value,
             boolean deepNesting, boolean fluentBuilder, boolean allowPrivateSetter,
-            boolean ignoreCase, boolean reference, boolean placeholder, boolean mandatory,
+            boolean ignoreCase, boolean reference, boolean placeholder, boolean mandatory, boolean optional,
             boolean reflection, PropertyConfigurer configurer) {
 
-        boolean optional = name.startsWith("?");
-        if (optional) {
+        if (name.startsWith("?")) {
+            // the name marks the option as optional
             name = name.substring(1);
+            optional = true;
         }
 
         Object newTarget = originalTarget;
@@ -420,7 +435,12 @@ public final class PropertyBindingSupport {
             key = camelContext.resolvePropertyPlaceholders(key);
             if (text instanceof String) {
                 // resolve property placeholders
-                text = camelContext.resolvePropertyPlaceholders(text.toString());
+                String s = text.toString();
+                text = camelContext.resolvePropertyPlaceholders(s);
+                if (text == null && s.startsWith(PropertiesComponent.PREFIX_TOKEN + "?")) {
+                    // it was an optional value, so we should not try to set the property but regard it as a "hit"
+                    return true;
+                }
             }
         }
 
@@ -450,7 +470,8 @@ public final class PropertyBindingSupport {
                 }
                 if (!bound && reflection) {
                     // fallback to reflection based
-                    bound = setPropertyCollectionViaReflection(camelContext, target, key, value, ignoreCase, reference);
+                    bound = setPropertyCollectionViaReflection(camelContext, target, key, value, ignoreCase, reference,
+                            optional);
                 }
             } else {
                 // regular key
@@ -489,7 +510,7 @@ public final class PropertyBindingSupport {
 
     private static boolean setPropertyCollectionViaReflection(
             CamelContext context, Object target, String name, Object value,
-            boolean ignoreCase, boolean reference)
+            boolean ignoreCase, boolean reference, boolean optional)
             throws Exception {
 
         BeanIntrospection bi = context.adapt(ExtendedCamelContext.class).getBeanIntrospection();
@@ -520,6 +541,9 @@ public final class PropertyBindingSupport {
             }
             boolean hit = bi.setProperty(context, target, key, obj);
             if (!hit) {
+                if (optional) {
+                    return false;
+                }
                 throw new IllegalArgumentException(
                         "Cannot set property: " + name + " as a Map because target bean has no setter method for the Map");
             }
@@ -1607,6 +1631,7 @@ public final class PropertyBindingSupport {
         private boolean removeParameters = true;
         private boolean flattenProperties;
         private boolean mandatory;
+        private boolean optional;
         private boolean nesting = true;
         private boolean deepNesting = true;
         private boolean reference = true;
@@ -1681,6 +1706,14 @@ public final class PropertyBindingSupport {
          */
         public Builder withMandatory(boolean mandatory) {
             this.mandatory = mandatory;
+            return this;
+        }
+
+        /**
+         * Whether parameters can be optional such as configuring endpoints that are lenient
+         */
+        public Builder withOptional(boolean optional) {
+            this.optional = optional;
             return this;
         }
 
@@ -1782,7 +1815,7 @@ public final class PropertyBindingSupport {
             }
 
             return doBindProperties(camelContext, target, removeParameters ? properties : new HashMap<>(properties),
-                    optionPrefix, ignoreCase, removeParameters, flattenProperties, mandatory,
+                    optionPrefix, ignoreCase, removeParameters, flattenProperties, mandatory, optional,
                     nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder, reflection, configurer);
         }
 
@@ -1800,7 +1833,7 @@ public final class PropertyBindingSupport {
             Map<String, Object> prop = properties != null ? properties : this.properties;
 
             return doBindProperties(context, obj, removeParameters ? prop : new HashMap<>(prop),
-                    optionPrefix, ignoreCase, removeParameters, flattenProperties, mandatory,
+                    optionPrefix, ignoreCase, removeParameters, flattenProperties, mandatory, optional,
                     nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder, reflection, configurer);
         }
 
@@ -1818,6 +1851,7 @@ public final class PropertyBindingSupport {
             properties.put(key, value);
 
             return doBindProperties(camelContext, target, properties, optionPrefix, ignoreCase, true, false, mandatory,
+                    optional,
                     nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder, reflection, configurer);
         }
 

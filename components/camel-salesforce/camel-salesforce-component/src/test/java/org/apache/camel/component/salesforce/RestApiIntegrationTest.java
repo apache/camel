@@ -22,6 +22,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -36,7 +37,6 @@ import org.apache.camel.component.salesforce.api.SalesforceMultipleChoicesExcept
 import org.apache.camel.component.salesforce.api.dto.AbstractDTOBase;
 import org.apache.camel.component.salesforce.api.dto.CreateSObjectResult;
 import org.apache.camel.component.salesforce.api.dto.GlobalObjects;
-import org.apache.camel.component.salesforce.api.dto.RestResources;
 import org.apache.camel.component.salesforce.api.dto.SObjectBasicInfo;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
 import org.apache.camel.component.salesforce.api.dto.UpsertSObjectResult;
@@ -450,8 +450,10 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
 
     @Test
     public void testGetResources() throws Exception {
-        final RestResources resources = template().requestBody("direct:getResources", null, RestResources.class);
+        @SuppressWarnings("unchecked")
+        final Map<String, String> resources = (Map<String, String>) template().requestBody("direct:getResources", "");
         assertNotNull(resources);
+        assertTrue(resources.containsKey("metadata"));
     }
 
     @Test

@@ -224,6 +224,14 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
         configuration.setConsumerType(consumerType);
     }
 
+    public ConsumerType getReplyToConsumerType() {
+        return configuration.getReplyToConsumerType();
+    }
+
+    public void setReplyToConsumerType(ConsumerType replyToConsumerType) {
+        configuration.setReplyToConsumerType(replyToConsumerType);
+    }
+
     public ConnectionFactory getConnectionFactory() {
         return configuration.getConnectionFactory();
     }

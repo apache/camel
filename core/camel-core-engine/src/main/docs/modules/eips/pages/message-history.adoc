@@ -92,6 +92,41 @@ And in XML:
 </route>
 ----
 
+=== Enabling source location information
+
+Camel is capable of gathering precise source file:line-number for each EIPs in the routes.
+When enabled, then the message history will output this information in the route stack-trace.
+
+To enable source location:
+
+[source,java]
+----
+camelContext.setSourceLocationEnabled(true);
+----
+
+Or in XML
+
+[source,xml]
+----
+<camelContext sourceLocationEnabled="true">
+
+</camelContext>
+----
+
+Or when using Spring Boot or Quarkus, you can enable this in the configuration file:
+
+[source,properties]
+----
+camel.springboot.source-location-enabled = true
+----
+
+And in Quarkus:
+
+[source,properties]
+----
+camel.quarkus.source-location-enabled = true
+----
+
 == Route stack-trace in exceptions logged by error handler
 
 If Message History is enabled, then Camel will include this information,
@@ -102,82 +137,81 @@ And example is provided below:
 
 [source,text]
 ----
-2020-01-15 11:58:34,834 [read #3 - Delay] ERROR DefaultErrorHandler            - Failed delivery for (MessageId: ID-davsclaus-pro-local-1579085914402-0-2 on ExchangeId: ID-davsclaus-pro-local-1579085914402-0-3). Exhausted after delivery attempt: 1 caught: java.lang.IllegalArgumentException: Forced to dump message history
+2022-01-06 12:13:06.721 ERROR 67729 --- [ - timer://java] o.a.c.p.e.DefaultErrorHandler            : Failed delivery for (MessageId: B4365D4CED3E5E1-0000000000000004 on ExchangeId: B4365D4CED3E5E1-0000000000000004). Exhausted after delivery attempt: 1 caught: java.lang.IllegalArgumentException: The number is too low
 
-Message History
+Message History (source location is disabled)
 ---------------------------------------------------------------------------------------------------------------------------------------
-RouteId              ProcessorId          Processor                                                                        Elapsed (ms)
-[route1            ] [route1            ] [from[seda://start]                                                            ] [       432]
-[route1            ] [to1               ] [log:foo                                                                       ] [         5]
-[route1            ] [to2               ] [direct:bar                                                                    ] [       111]
-[route2            ] [to5               ] [log:bar                                                                       ] [         0]
-[route2            ] [delay2            ] [delay[100]                                                                    ] [       110]
-[route2            ] [to6               ] [mock:bar                                                                      ] [         0]
-[route1            ] [delay1            ] [delay[300]                                                                    ] [       305]
-[route1            ] [to3               ] [log:baz                                                                       ] [         2]
-[route1            ] [process1          ] [Processor@0x5e600dd5                                                          ] [         0]
+Source                                   ID                             Processor                                          Elapsed (ms)
+                                         route1/route1                  from[timer://java?period=2s]                                  2
+                                         route1/setBody1                setBody[bean[MyJavaRouteBuilder method:randomNumbe            0
+                                         route1/log1                    log                                                           1
+                                         route1/filter1                 filter[simple{${body} < 30}]                                  0
+                                         route1/throwException1         throwException[java.lang.IllegalArgumentException]            0
 
 Stacktrace
 ---------------------------------------------------------------------------------------------------------------------------------------
-java.lang.IllegalArgumentException: Forced to dump message history
-	at org.apache.camel.processor.MessageHistoryDumpRoutingTest$1$1.process(MessageHistoryDumpRoutingTest.java:52) ~[test-classes/:?]
-	at org.apache.camel.support.processor.DelegateSyncProcessor.process(DelegateSyncProcessor.java:64) ~[classes/:?]
-	at org.apache.camel.processor.errorhandler.RedeliveryErrorHandler$RedeliveryState.run(RedeliveryErrorHandler.java:477) ~[classes/:?]
-	at org.apache.camel.impl.engine.DefaultReactiveExecutor$Worker.schedule(DefaultReactiveExecutor.java:186) ~[classes/:?]
-	at org.apache.camel.impl.engine.DefaultReactiveExecutor.schedule(DefaultReactiveExecutor.java:56) ~[classes/:?]
-	at org.apache.camel.processor.errorhandler.RedeliveryErrorHandler$RedeliveryState.lambda$run$1(RedeliveryErrorHandler.java:481) ~[classes/:?]
-	at org.apache.camel.processor.DelayProcessorSupport$ProcessCall$1.done(DelayProcessorSupport.java:77) [classes/:?]
-	at org.apache.camel.support.AsyncProcessorConverterHelper$ProcessorToAsyncProcessorBridge.process(AsyncProcessorConverterHelper.java:63) [classes/:?]
-	at org.apache.camel.processor.DelayProcessorSupport$ProcessCall.run(DelayProcessorSupport.java:70) [classes/:?]
-	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_201]
-	at java.util.concurrent.FutureTask.run(FutureTask.java:266) [?:1.8.0_201]
-	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$201(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_201]
-	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:293) [?:1.8.0_201]
-	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_201]
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_201]
-	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_201]
+
+java.lang.IllegalArgumentException: The number is too low
+	at sample.camel.MyJavaRouteBuilder.configure(MyJavaRouteBuilder.java:34) ~[classes/:na]
+	at org.apache.camel.builder.RouteBuilder.checkInitialized(RouteBuilder.java:607) ~[camel-core-model-3.15.0-SNAPSHOT.jar:3.15.0-SNAPSHOT]
+	at org.apache.camel.builder.RouteBuilder.configureRoutes(RouteBuilder.java:553) ~[camel-core-model-3.15.0-SNAPSHOT.jar:3.15.0-SNAPSHOT]
 ----
 
 When Message History is enabled then the full history is logged as shown above. Here we can see the full path
-the message has been routed, where it started from route1, called route2 and returned to route1 again, and so on.
+the message has been routed.
 
 When Message History is disabled (by default) then the error handler logs a brief history with the last node
 where the exception occurred as shown below:
 
 [source,text]
 ----
-2020-01-15 11:59:33,238 [read #3 - Delay] ERROR DefaultErrorHandler            - Failed delivery for (MessageId: ID-davsclaus-pro-local-1579085972821-0-2 on ExchangeId: ID-davsclaus-pro-local-1579085972821-0-3). Exhausted after delivery attempt: 1 caught: java.lang.IllegalArgumentException: Forced to dump message history
+2022-01-06 12:12:32.072 ERROR 67704 --- [ - timer://java] o.a.c.p.e.DefaultErrorHandler            : Failed delivery for (MessageId: CD6D1B185A3706F-0000000000000004 on ExchangeId: CD6D1B185A3706F-0000000000000004). Exhausted after delivery attempt: 1 caught: java.lang.IllegalArgumentException: The number is too low
 
-Message History (complete message history is disabled)
+Message History (source location and message history is disabled)
 ---------------------------------------------------------------------------------------------------------------------------------------
-RouteId              ProcessorId          Processor                                                                        Elapsed (ms)
-[route1            ] [route1            ] [from[seda://start]                                                            ] [       419]
+Source                                   ID                             Processor                                          Elapsed (ms)
+                                         route1/route1                  from[timer://java?period=2s]                                  2
 	...
-[route1            ] [process1          ] [Processor@0x229c6181                                                          ] [         0]
+                                         route1/throwException1         throwException[java.lang.IllegalArgumentException]            0
 
 Stacktrace
 ---------------------------------------------------------------------------------------------------------------------------------------
-java.lang.IllegalArgumentException: Forced to dump message history
-	at org.apache.camel.processor.MessageHistoryDumpRoutingTest$1$1.process(MessageHistoryDumpRoutingTest.java:52) ~[test-classes/:?]
-	at org.apache.camel.support.processor.DelegateSyncProcessor.process(DelegateSyncProcessor.java:64) ~[classes/:?]
-	at org.apache.camel.processor.errorhandler.RedeliveryErrorHandler$RedeliveryState.run(RedeliveryErrorHandler.java:477) ~[classes/:?]
-	at org.apache.camel.impl.engine.DefaultReactiveExecutor$Worker.schedule(DefaultReactiveExecutor.java:186) ~[classes/:?]
-	at org.apache.camel.impl.engine.DefaultReactiveExecutor.schedule(DefaultReactiveExecutor.java:56) ~[classes/:?]
-	at org.apache.camel.processor.errorhandler.RedeliveryErrorHandler$RedeliveryState.lambda$run$1(RedeliveryErrorHandler.java:481) ~[classes/:?]
-	at org.apache.camel.processor.DelayProcessorSupport$ProcessCall$1.done(DelayProcessorSupport.java:77) [classes/:?]
-	at org.apache.camel.support.AsyncProcessorConverterHelper$ProcessorToAsyncProcessorBridge.process(AsyncProcessorConverterHelper.java:63) [classes/:?]
-	at org.apache.camel.processor.DelayProcessorSupport$ProcessCall.run(DelayProcessorSupport.java:70) [classes/:?]
-	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_201]
-	at java.util.concurrent.FutureTask.run(FutureTask.java:266) [?:1.8.0_201]
-	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$201(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_201]
-	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:293) [?:1.8.0_201]
-	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_201]
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_201]
-	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_201]
+
+java.lang.IllegalArgumentException: The number is too low
+	at sample.camel.MyJavaRouteBuilder.configure(MyJavaRouteBuilder.java:34) ~[classes/:na]
+	at org.apache.camel.builder.RouteBuilder.checkInitialized(RouteBuilder.java:607) ~[camel-core-model-3.15.0-SNAPSHOT.jar:3.15.0-SNAPSHOT]
+	at org.apache.camel.builder.RouteBuilder.configureRoutes(RouteBuilder.java:553) ~[camel-core-model-3.15.0-SNAPSHOT.jar:3.15.0-SNAPSHOT]
 ----
 
 Here you can see the Message History only outputs the input (route1) and the last step
-where the exception occurred (process1).
+where the exception occurred (throwException1).
+
+Notice that the source column is empty, because source location is not enabled.
+When enabled then, you can see exactly which source file and line number the message routed:
+
+[source,text]
+----
+2022-01-06 12:19:01.277 ERROR 67870 --- [ - timer://java] o.a.c.p.e.DefaultErrorHandler            : Failed delivery for (MessageId: 37412D6F722F679-0000000000000003 on ExchangeId: 37412D6F722F679-0000000000000003). Exhausted after delivery attempt: 1 caught: java.lang.IllegalArgumentException: The number is too low
+
+Message History
+---------------------------------------------------------------------------------------------------------------------------------------
+Source                                   ID                             Processor                                          Elapsed (ms)
+MyJavaRouteBuilder:29                    route1/route1                  from[timer://java?period=2s]                                 10
+MyJavaRouteBuilder:32                    route1/setBody1                setBody[bean[MyJavaRouteBuilder method:randomNumbe            1
+MyJavaRouteBuilder:33                    route1/log1                    log                                                           1
+MyJavaRouteBuilder:34                    route1/filter1                 filter[simple{${body} < 30}]                                  0
+MyJavaRouteBuilder:35                    route1/throwException1         throwException[java.lang.IllegalArgumentException]            0
+
+Stacktrace
+---------------------------------------------------------------------------------------------------------------------------------------
+
+java.lang.IllegalArgumentException: The number is too low
+	at sample.camel.MyJavaRouteBuilder.configure(MyJavaRouteBuilder.java:34) ~[classes/:na]
+	at org.apache.camel.builder.RouteBuilder.checkInitialized(RouteBuilder.java:607) ~[camel-core-model-3.15.0-SNAPSHOT.jar:3.15.0-SNAPSHOT]
+	at org.apache.camel.builder.RouteBuilder.configureRoutes(RouteBuilder.java:553) ~[camel-core-model-3.15.0-SNAPSHOT.jar:3.15.0-SNAPSHOT]
+----
+
+In this case we can see its the `MyJavaRouteBuilder` class on line 35 that is the problem.
 
 === Configuring route stack-trace from error handler
 

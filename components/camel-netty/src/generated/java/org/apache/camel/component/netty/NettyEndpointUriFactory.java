@@ -19,6 +19,7 @@ public class NettyEndpointUriFactory extends org.apache.camel.support.component.
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(74);
         props.add("usingExecutorService");
@@ -54,6 +55,7 @@ public class NettyEndpointUriFactory extends org.apache.camel.support.component.
         props.add("lazyStartProducer");
         props.add("backlog");
         props.add("port");
+        props.add("producerPoolMaxTotal");
         props.add("networkInterface");
         props.add("allowDefaultCodec");
         props.add("passphrase");
@@ -82,7 +84,6 @@ public class NettyEndpointUriFactory extends org.apache.camel.support.component.
         props.add("requestTimeout");
         props.add("receiveBufferSizePredictor");
         props.add("keepAlive");
-        props.add("producerPoolMaxActive");
         props.add("clientInitializerFactory");
         props.add("sendBufferSize");
         props.add("exchangePattern");
@@ -99,6 +100,9 @@ public class NettyEndpointUriFactory extends org.apache.camel.support.component.
         Set<String> secretProps = new HashSet<>(1);
         secretProps.add("passphrase");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
+        Set<String> prefixes = new HashSet<>(1);
+        prefixes.add("option.");
+        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
     }
 
     @Override
@@ -128,6 +132,11 @@ public class NettyEndpointUriFactory extends org.apache.camel.support.component.
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

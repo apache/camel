@@ -211,6 +211,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.AtomixMapComponentBuilderFactory.AtomixMapComponentBuilder atomixMap() {
         return org.apache.camel.builder.component.dsl.AtomixMapComponentBuilderFactory.atomixMap();
     }
@@ -224,6 +225,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.AtomixMessagingComponentBuilderFactory.AtomixMessagingComponentBuilder atomixMessaging() {
         return org.apache.camel.builder.component.dsl.AtomixMessagingComponentBuilderFactory.atomixMessaging();
     }
@@ -237,6 +239,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.AtomixMultimapComponentBuilderFactory.AtomixMultimapComponentBuilder atomixMultimap() {
         return org.apache.camel.builder.component.dsl.AtomixMultimapComponentBuilderFactory.atomixMultimap();
     }
@@ -250,6 +253,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.AtomixQueueComponentBuilderFactory.AtomixQueueComponentBuilder atomixQueue() {
         return org.apache.camel.builder.component.dsl.AtomixQueueComponentBuilderFactory.atomixQueue();
     }
@@ -263,6 +267,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.AtomixSetComponentBuilderFactory.AtomixSetComponentBuilder atomixSet() {
         return org.apache.camel.builder.component.dsl.AtomixSetComponentBuilderFactory.atomixSet();
     }
@@ -276,6 +281,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.AtomixValueComponentBuilderFactory.AtomixValueComponentBuilder atomixValue() {
         return org.apache.camel.builder.component.dsl.AtomixValueComponentBuilderFactory.atomixValue();
     }
@@ -1304,6 +1310,20 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.DropboxComponentBuilderFactory.DropboxComponentBuilder dropbox() {
         return org.apache.camel.builder.component.dsl.DropboxComponentBuilderFactory.dropbox();
+    }
+    /**
+     * Dynamic Router (camel-dynamic-router)
+     * The Dynamic Router component routes exchanges to recipients, and the
+     * recipients (and their rules) may change at runtime.
+     * 
+     * Category: endpoint,java
+     * Since: 3.15
+     * Maven coordinates: org.apache.camel:camel-dynamic-router
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.DynamicRouterComponentBuilderFactory.DynamicRouterComponentBuilder dynamicRouter() {
+        return org.apache.camel.builder.component.dsl.DynamicRouterComponentBuilderFactory.dynamicRouter();
     }
     /**
      * Ehcache (camel-ehcache)
@@ -2620,6 +2640,19 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.KameletComponentBuilderFactory.KameletComponentBuilder kamelet() {
         return org.apache.camel.builder.component.dsl.KameletComponentBuilderFactory.kamelet();
+    }
+    /**
+     * Knative (camel-knative)
+     * Send and receive events from Knative.
+     * 
+     * Category: cloud
+     * Since: 3.15
+     * Maven coordinates: org.apache.camel:camel-knative
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.KnativeComponentBuilderFactory.KnativeComponentBuilder knative() {
+        return org.apache.camel.builder.component.dsl.KnativeComponentBuilderFactory.knative();
     }
     /**
      * Kubernetes ConfigMap (camel-kubernetes)

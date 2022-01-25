@@ -8,6 +8,7 @@
     "firstVersion": "3.0.0",
     "label": "dataformat,transformation,json",
     "javaType": "org.apache.camel.model.dataformat.CBORDataFormat",
+    "abstract": false,
     "input": false,
     "output": false
   },

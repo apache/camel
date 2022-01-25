@@ -58,7 +58,7 @@ import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Dataformat("mime-multipart")
+@Dataformat("mimeMultipart")
 public class MimeMultipartDataFormat extends DefaultDataFormat {
     private static final Logger LOG = LoggerFactory.getLogger(MimeMultipartDataFormat.class);
     private static final String MIME_VERSION = "MIME-Version";
@@ -69,7 +69,8 @@ public class MimeMultipartDataFormat extends DefaultDataFormat {
     private String multipartSubType = "mixed";
     private boolean multipartWithoutAttachment;
     private boolean headersInline;
-    private Pattern includeHeaders;
+    private String includeHeaders;
+    private Pattern includeHeadersPattern;
     private boolean binaryContent;
 
     public void setBinaryContent(boolean binaryContent) {
@@ -81,7 +82,7 @@ public class MimeMultipartDataFormat extends DefaultDataFormat {
     }
 
     public void setIncludeHeaders(String includeHeaders) {
-        this.includeHeaders = Pattern.compile(includeHeaders, Pattern.CASE_INSENSITIVE);
+        this.includeHeaders = includeHeaders;
     }
 
     public void setMultipartWithoutAttachment(boolean multipartWithoutAttachment) {
@@ -140,9 +141,9 @@ public class MimeMultipartDataFormat extends DefaultDataFormat {
             mm.setContent(mp);
             // copy headers if required and if the content can be converted into
             // a String
-            if (headersInline && includeHeaders != null) {
+            if (headersInline && includeHeadersPattern != null) {
                 for (Map.Entry<String, Object> entry : exchange.getIn().getHeaders().entrySet()) {
-                    if (includeHeaders.matcher(entry.getKey()).matches()) {
+                    if (includeHeadersPattern.matcher(entry.getKey()).matches()) {
                         String headerStr = ExchangeHelper.convertToType(exchange, String.class, entry.getValue());
                         if (headerStr != null) {
                             mm.setHeader(entry.getKey(), headerStr);
@@ -313,8 +314,16 @@ public class MimeMultipartDataFormat extends DefaultDataFormat {
         }
         // or a generated content id
         if (key == null) {
-            key = UUID.randomUUID().toString() + "@camel.apache.org";
+            key = UUID.randomUUID() + "@camel.apache.org";
         }
         return MimeUtility.decodeText(key);
     }
+
+    @Override
+    protected void doInit() throws Exception {
+        if (includeHeaders != null) {
+            this.includeHeadersPattern = Pattern.compile(includeHeaders, Pattern.CASE_INSENSITIVE);
+        }
+    }
+
 }

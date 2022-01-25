@@ -197,8 +197,7 @@ public class RestOpenApiReader {
         verbs.sort(new VerbOrdering(camelContext));
 
         // we need to group the operations within the same tag, so use the path as default if not configured
-        String opPath = OpenApiHelper.buildUrl(buildBasePath(camelContext, rest), getValue(camelContext, rest.getPath()));
-        String pathAsTag = getValue(camelContext, rest.getTag() != null ? rest.getTag() : opPath);
+        String pathAsTag = getValue(camelContext, rest.getTag() != null ? rest.getTag() : rest.getPath());
         if (openApi instanceof Oas20Document) {
             parseOas20(camelContext, (Oas20Document) openApi, rest, pathAsTag);
         } else if (openApi instanceof Oas30Document) {
@@ -475,17 +474,6 @@ public class RestOpenApiReader {
     private String buildBasePath(CamelContext camelContext, RestDefinition rest) {
         // used during gathering of apis
         String basePath = FileUtil.stripLeadingSeparator(getValue(camelContext, rest.getPath()));
-
-        // is there any context-path which we must use in base path for each rest service
-        String cp = camelContext.getRestConfiguration() != null ? camelContext.getRestConfiguration().getContextPath() : null;
-        if (cp != null) {
-            cp = FileUtil.stripLeadingSeparator(cp);
-            if (basePath != null) {
-                basePath = cp + "/" + basePath;
-            } else {
-                basePath = cp;
-            }
-        }
         // must start with leading slash
         if (basePath != null && !basePath.startsWith("/")) {
             basePath = "/" + basePath;

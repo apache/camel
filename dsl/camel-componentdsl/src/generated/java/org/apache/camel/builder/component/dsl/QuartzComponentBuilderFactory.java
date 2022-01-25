@@ -262,21 +262,6 @@ public interface QuartzComponentBuilderFactory {
             doSetProperty("interruptJobsOnShutdown", interruptJobsOnShutdown);
             return this;
         }
-        /**
-         * Seconds to wait before starting the quartz scheduler.
-         * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Group: scheduler
-         * 
-         * @param startDelayedSeconds the value to set
-         * @return the dsl builder
-         */
-        default QuartzComponentBuilder startDelayedSeconds(
-                int startDelayedSeconds) {
-            doSetProperty("startDelayedSeconds", startDelayedSeconds);
-            return this;
-        }
     }
 
     class QuartzComponentBuilderImpl
@@ -306,7 +291,6 @@ public interface QuartzComponentBuilderFactory {
             case "schedulerFactory": ((QuartzComponent) component).setSchedulerFactory((org.quartz.SchedulerFactory) value); return true;
             case "autoStartScheduler": ((QuartzComponent) component).setAutoStartScheduler((boolean) value); return true;
             case "interruptJobsOnShutdown": ((QuartzComponent) component).setInterruptJobsOnShutdown((boolean) value); return true;
-            case "startDelayedSeconds": ((QuartzComponent) component).setStartDelayedSeconds((int) value); return true;
             default: return false;
             }
         }

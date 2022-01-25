@@ -161,7 +161,6 @@ public class MulticastProcessor extends AsyncProcessorSupport
     private final boolean parallelProcessing;
     private final boolean streaming;
     private final boolean parallelAggregate;
-    private final boolean stopOnAggregateException;
     private final boolean stopOnException;
     private final ExecutorService executorService;
     private final boolean shutdownExecutorService;
@@ -182,21 +181,11 @@ public class MulticastProcessor extends AsyncProcessorSupport
     }
 
     public MulticastProcessor(CamelContext camelContext, Route route, Collection<Processor> processors,
-                              AggregationStrategy aggregationStrategy, boolean parallelProcessing,
-                              ExecutorService executorService, boolean shutdownExecutorService, boolean streaming,
-                              boolean stopOnException, long timeout, Processor onPrepare,
-                              boolean shareUnitOfWork, boolean parallelAggregate) {
-        this(camelContext, route, processors, aggregationStrategy, parallelProcessing, executorService, shutdownExecutorService,
-             streaming, stopOnException, timeout, onPrepare,
-             shareUnitOfWork, parallelAggregate, false);
-    }
-
-    public MulticastProcessor(CamelContext camelContext, Route route, Collection<Processor> processors,
                               AggregationStrategy aggregationStrategy,
                               boolean parallelProcessing, ExecutorService executorService, boolean shutdownExecutorService,
                               boolean streaming,
                               boolean stopOnException, long timeout, Processor onPrepare, boolean shareUnitOfWork,
-                              boolean parallelAggregate, boolean stopOnAggregateException) {
+                              boolean parallelAggregate) {
         notNull(camelContext, "camelContext");
         this.camelContext = camelContext;
         this.internalProcessorFactory = camelContext.adapt(ExtendedCamelContext.class).getInternalProcessorFactory();
@@ -214,7 +203,6 @@ public class MulticastProcessor extends AsyncProcessorSupport
         this.onPrepare = onPrepare;
         this.shareUnitOfWork = shareUnitOfWork;
         this.parallelAggregate = parallelAggregate;
-        this.stopOnAggregateException = stopOnAggregateException;
         this.processorExchangeFactory = camelContext.adapt(ExtendedCamelContext.class)
                 .getProcessorExchangeFactory().newProcessorExchangeFactory(this);
     }
@@ -1253,10 +1241,6 @@ public class MulticastProcessor extends AsyncProcessorSupport
 
     public boolean isParallelAggregate() {
         return parallelAggregate;
-    }
-
-    public boolean isStopOnAggregateException() {
-        return stopOnAggregateException;
     }
 
     public boolean isShareUnitOfWork() {

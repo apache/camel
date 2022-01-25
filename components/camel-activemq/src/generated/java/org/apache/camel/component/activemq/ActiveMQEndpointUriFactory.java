@@ -19,8 +19,9 @@ public class ActiveMQEndpointUriFactory extends org.apache.camel.support.compone
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(98);
+        Set<String> props = new HashSet<>(99);
         props.add("includeSentJMSMessageID");
         props.add("asyncConsumer");
         props.add("mapJmsMessage");
@@ -85,6 +86,7 @@ public class ActiveMQEndpointUriFactory extends org.apache.camel.support.compone
         props.add("acceptMessagesWhileStopping");
         props.add("consumerType");
         props.add("lazyStartProducer");
+        props.add("replyToConsumerType");
         props.add("subscriptionDurable");
         props.add("destinationResolver");
         props.add("exceptionHandler");
@@ -124,6 +126,9 @@ public class ActiveMQEndpointUriFactory extends org.apache.camel.support.compone
         secretProps.add("password");
         secretProps.add("username");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
+        Set<String> prefixes = new HashSet<>(1);
+        prefixes.add("destination.");
+        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
     }
 
     @Override
@@ -152,6 +157,11 @@ public class ActiveMQEndpointUriFactory extends org.apache.camel.support.compone
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

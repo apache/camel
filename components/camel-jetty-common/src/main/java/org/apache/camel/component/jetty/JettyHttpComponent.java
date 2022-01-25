@@ -1270,6 +1270,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
         } else {
             //need an error handler that won't leak information about the exception back to the client.
             ErrorHandler eh = new ErrorHandler() {
+                @Override
                 public void handle(
                         String target, Request baseRequest,
                         HttpServletRequest request, HttpServletResponse response)
@@ -1279,6 +1280,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
                     super.handle(target, baseRequest, request, response);
                 }
 
+                @Override
                 protected void writeErrorPage(
                         HttpServletRequest request, Writer writer, int code,
                         String message, boolean showStacks)

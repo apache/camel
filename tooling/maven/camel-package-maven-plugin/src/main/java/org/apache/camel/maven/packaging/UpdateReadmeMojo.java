@@ -303,8 +303,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
     private static String asComponentName(String name) {
         // special for some components which share the same readme file
-        if (name.equals("imap") || name.equals("imaps") || name.equals("pop3") || name.equals("pop3s") || name.equals("smtp")
-                || name.equals("smtps")) {
+        if (isMailComponent(name)) {
             return "mail";
         }
 
@@ -413,12 +412,16 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
     private static String asComponentTitle(String name, String title) {
         // special for some components which share the same readme file
-        if (name.equals("imap") || name.equals("imaps") || name.equals("pop3") || name.equals("pop3s") || name.equals("smtp")
-                || name.equals("smtps")) {
+        if (isMailComponent(name)) {
             return "Mail";
         }
 
         return title;
+    }
+
+    private static boolean isMailComponent(String name) {
+        return name.equals("imap") || name.equals("imaps") || name.equals("pop3") || name.equals("pop3s") || name.equals("smtp")
+                || name.equals("smtps");
     }
 
     private static String asDataFormatName(String name) {
@@ -709,13 +712,9 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
     private static String loadJsonFrom(Set<File> jsonFiles, String kind, String name) {
         for (File file : jsonFiles) {
             if (file.getName().equals(name + PackageHelper.JSON_SUFIX)) {
-                try {
-                    String json = PackageHelper.loadText(file);
-                    if (Objects.equals(kind, PackageHelper.getSchemaKind(json))) {
-                        return json;
-                    }
-                } catch (IOException ignored) {
-                    // ignored
+                String json = doLoad(file, kind);
+                if (json != null) {
+                    return json;
                 }
             }
         }
@@ -725,16 +724,24 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
     private static String loadJsonFrom(File file, String kind) {
         if (file.getName().endsWith(PackageHelper.JSON_SUFIX)) {
-            try {
-                String json = PackageHelper.loadText(file);
-                if (Objects.equals(kind, PackageHelper.getSchemaKind(json))) {
-                    return json;
-                }
-            } catch (IOException ignored) {
-                // ignored
+            String json = doLoad(file, kind);
+            if (json != null) {
+                return json;
             }
         }
 
+        return null;
+    }
+
+    private static String doLoad(File file, String kind) {
+        try {
+            String json = PackageHelper.loadText(file);
+            if (Objects.equals(kind, PackageHelper.getSchemaKind(json))) {
+                return json;
+            }
+        } catch (IOException ignored) {
+            // ignored
+        }
         return null;
     }
 

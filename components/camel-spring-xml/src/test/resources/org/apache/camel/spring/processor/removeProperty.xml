@@ -31,7 +31,7 @@
         <constant>bar</constant>
       </setProperty>
       <to uri="mock:mid"/>
-      <removeProperty propertyName="foo"/>
+      <removeProperty name="foo"/>
       <to uri="mock:end"/>     
     </route>
   </camelContext>

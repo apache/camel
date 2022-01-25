@@ -127,7 +127,7 @@ public class LuceneIndexer {
 
                 if (files != null) {
                     for (String child : files) {
-                        add(new File(file.getAbsolutePath() + "/" + child));
+                        add(new File(file.getAbsolutePath(), child));
                     }
                 }
             } else {
@@ -167,7 +167,6 @@ public class LuceneIndexer {
 
     private static FieldType createFieldType(boolean tokenized) {
         FieldType answer = new FieldType();
-        //answer.setIndexed(true);
         answer.setStored(true);
         answer.setTokenized(tokenized);
 

@@ -88,7 +88,7 @@ public class CxfRsProducerHeaderTest {
                 inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_USING_HTTP_API, Boolean.TRUE);
                 inMessage.setHeader(Exchange.HTTP_METHOD, "GET");
                 inMessage.setHeader(Exchange.HTTP_PATH, "/CxfRsProducerHeaderTest/customerservice/customers/123");
-                inMessage.setHeader(Exchange.ACCEPT_CONTENT_TYPE, "application/json");
+                inMessage.setHeader("Accept", "application/json");
                 inMessage.setHeader("my-user-defined-header", "my-value");
                 inMessage.setBody(null);
             }

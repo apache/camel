@@ -19,9 +19,12 @@ package org.apache.camel.component.smpp;
 import java.time.Duration;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.support.service.BaseService;
 import org.apache.camel.support.task.BlockingTask;
 import org.apache.camel.support.task.Tasks;
@@ -34,9 +37,10 @@ import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.SMPPSession;
 import org.jsmpp.util.AbsoluteTimeFormatter;
 import org.jsmpp.util.TimeFormatter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class SmppUtils {
-
     /**
      * See http://unicode.org/Public/MAPPINGS/ETSI/GSM0338.TXT
      */
@@ -67,6 +71,7 @@ public final class SmppUtils {
             { 60, 91 }, { 61, 126 }, { 62, 93 }, { 64, 124 }, { 101, 164 }
     };
 
+    private static final Logger LOG = LoggerFactory.getLogger(SmppUtils.class);
     private static final TimeFormatter TIME_FORMATTER = new AbsoluteTimeFormatter();
 
     private SmppUtils() {
@@ -281,21 +286,37 @@ public final class SmppUtils {
         return session == null || session.getSessionState().equals(SessionState.CLOSED);
     }
 
-    public static BlockingTask newReconnectTask(
-            BaseService source, Endpoint endpoint, long initialReconnectDelay,
-            int maxReconnect) {
-        final String taskName = "smpp-reconnect";
-        ScheduledExecutorService service = endpoint.getCamelContext().getExecutorServiceManager()
-                .newSingleThreadScheduledExecutor(source, taskName);
+    public static ScheduledExecutorService createExecutor(BaseService service, Endpoint endpoint, String taskName) {
+        if (endpoint.getCamelContext() != null && endpoint.getCamelContext().getExecutorServiceManager() != null) {
+            ExecutorServiceManager manager = endpoint.getCamelContext().getExecutorServiceManager();
+            return manager.newSingleThreadScheduledExecutor(service, taskName);
+        } else {
+            LOG.warn("Not using the Camel scheduled thread executor");
+            return Executors.newSingleThreadScheduledExecutor();
+        }
+    }
 
+    public static BlockingTask newReconnectTask(
+            ScheduledExecutorService service, String taskName, long initialReconnectDelay,
+            long reconnectDelay, int maxReconnect) {
         return Tasks.backgroundTask()
                 .withBudget(Budgets.iterationTimeBudget()
                         .withInitialDelay(Duration.ofMillis(initialReconnectDelay))
                         .withMaxIterations(maxReconnect)
                         .withUnlimitedDuration()
+                        .withInterval(Duration.ofMillis(reconnectDelay))
                         .build())
                 .withScheduledExecutor(service)
                 .withName(taskName)
                 .build();
+    }
+
+    public static void shutdownReconnectService(ScheduledExecutorService service) throws InterruptedException {
+        service.shutdown();
+        if (!service.awaitTermination(1, TimeUnit.SECONDS)) {
+            LOG.warn("The reconnect service did not finish executing within the timeout");
+
+            service.shutdownNow();
+        }
     }
 }

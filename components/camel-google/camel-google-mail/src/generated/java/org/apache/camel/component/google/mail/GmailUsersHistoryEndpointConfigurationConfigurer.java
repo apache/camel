@@ -25,8 +25,11 @@ public class GmailUsersHistoryEndpointConfigurationConfigurer extends org.apache
         map.put("ApplicationName", java.lang.String.class);
         map.put("ClientId", java.lang.String.class);
         map.put("ClientSecret", java.lang.String.class);
+        map.put("Delegate", java.lang.String.class);
+        map.put("KeyResource", java.lang.String.class);
         map.put("MethodName", java.lang.String.class);
         map.put("RefreshToken", java.lang.String.class);
+        map.put("Scopes", java.util.Collection.class);
         map.put("UserId", java.lang.String.class);
         ALL_OPTIONS = map;
     }
@@ -45,10 +48,16 @@ public class GmailUsersHistoryEndpointConfigurationConfigurer extends org.apache
         case "ClientId": target.setClientId(property(camelContext, java.lang.String.class, value)); return true;
         case "clientsecret":
         case "ClientSecret": target.setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
+        case "delegate":
+        case "Delegate": target.setDelegate(property(camelContext, java.lang.String.class, value)); return true;
+        case "keyresource":
+        case "KeyResource": target.setKeyResource(property(camelContext, java.lang.String.class, value)); return true;
         case "methodname":
         case "MethodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
         case "refreshtoken":
         case "RefreshToken": target.setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "scopes":
+        case "Scopes": target.setScopes(property(camelContext, java.util.Collection.class, value)); return true;
         case "userid":
         case "UserId": target.setUserId(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -73,10 +82,16 @@ public class GmailUsersHistoryEndpointConfigurationConfigurer extends org.apache
         case "ClientId": return java.lang.String.class;
         case "clientsecret":
         case "ClientSecret": return java.lang.String.class;
+        case "delegate":
+        case "Delegate": return java.lang.String.class;
+        case "keyresource":
+        case "KeyResource": return java.lang.String.class;
         case "methodname":
         case "MethodName": return java.lang.String.class;
         case "refreshtoken":
         case "RefreshToken": return java.lang.String.class;
+        case "scopes":
+        case "Scopes": return java.util.Collection.class;
         case "userid":
         case "UserId": return java.lang.String.class;
         default: return null;
@@ -97,12 +112,27 @@ public class GmailUsersHistoryEndpointConfigurationConfigurer extends org.apache
         case "ClientId": return target.getClientId();
         case "clientsecret":
         case "ClientSecret": return target.getClientSecret();
+        case "delegate":
+        case "Delegate": return target.getDelegate();
+        case "keyresource":
+        case "KeyResource": return target.getKeyResource();
         case "methodname":
         case "MethodName": return target.getMethodName();
         case "refreshtoken":
         case "RefreshToken": return target.getRefreshToken();
+        case "scopes":
+        case "Scopes": return target.getScopes();
         case "userid":
         case "UserId": return target.getUserId();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "scopes":
+        case "Scopes": return java.lang.String.class;
         default: return null;
         }
     }

@@ -163,7 +163,7 @@ If we only want to spool to disk if we run low on memory then we can set:
 
 then we do not use the `spoolThreshold` rule, and only the heap memory based is in use.
 
-By default, the upper limit of the used heap memory is based on the maximum heap size. Though you can also configure to use the committed heap size as the upper limit, this is done using the `spoolUsedHeapMemoryThreshold` option as shown below:
+By default, the upper limit of the used heap memory is based on the maximum heap size. Though you can also configure to use the committed heap size as the upper limit, this is done using the `spoolUsedHeapMemoryLimit` option as shown below:
 
 [source,xml]
 ----

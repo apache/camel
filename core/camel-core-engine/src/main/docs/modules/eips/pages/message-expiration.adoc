@@ -22,7 +22,7 @@ A message should expire after 5 seconds:
 [source,java]
 ----
 from("direct:cheese")
-  .to("jms:queueu:cheese?timeToLive=5000");
+  .to("jms:queue:cheese?timeToLive=5000");
 ----
 
 And in XML

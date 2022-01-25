@@ -293,7 +293,7 @@ public class RestProducer extends DefaultAsyncProducer {
                         "JsonDataFormat name: " + name + " must not be an existing bean instance from the registry");
             }
         } else {
-            name = "json-jackson";
+            name = "jackson";
         }
         // this will create a new instance as the name was not already pre-created
         DataFormat json = camelContext.createDataFormat(name);

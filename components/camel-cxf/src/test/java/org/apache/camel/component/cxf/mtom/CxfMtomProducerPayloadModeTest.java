@@ -139,11 +139,11 @@ public class CxfMtomProducerPayloadModeTest {
                 XPathConstants.NODE);
         String imageId = ele.getAttribute("href").substring(4); // skip "cid:"
 
-        DataHandler dr = exchange.getOut(AttachmentMessage.class).getAttachment(decodingReference(photoId));
+        DataHandler dr = exchange.getMessage(AttachmentMessage.class).getAttachment(decodingReference(photoId));
         assertEquals("application/octet-stream", dr.getContentType());
         assertArrayEquals(MtomTestHelper.RESP_PHOTO_DATA, IOUtils.readBytesFromStream(dr.getInputStream()));
 
-        dr = exchange.getOut(AttachmentMessage.class).getAttachment(decodingReference(imageId));
+        dr = exchange.getMessage(AttachmentMessage.class).getAttachment(decodingReference(imageId));
         assertEquals("image/jpeg", dr.getContentType());
 
         BufferedImage image = ImageIO.read(dr.getInputStream());

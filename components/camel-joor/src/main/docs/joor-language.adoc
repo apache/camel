@@ -112,7 +112,7 @@ public class MyEchoBean {
 }
 ----
 
-And this bean is registered with the name `myBean` in the Camel registry.
+And this bean is registered with the name `myEcho` in the Camel registry.
 
 The jOOR script can then inject this bean directly in the script where the bean is in use:
 
@@ -123,9 +123,9 @@ from("direct:start")
     .to("mock:result");
 ----
 
-Now this code may seem a bit magically, but what happens is that the `myEcho` bean is injected via a constructor, and then called directly in the script so its as fast as possible.
+Now this code may seem a bit magically, but what happens is that the `myEcho` bean is injected via a constructor, and then called directly in the script, so it is as fast as possible.
 
-Under the hod Camel jOOR generates the following source code that is compiled once:
+Under the hood, Camel jOOR generates the following source code that is compiled once:
 
 [source,java]
 ----
@@ -153,7 +153,7 @@ from("direct:start")
     .to("mock:result");
 ----
 
-Notice how we declare the bean as if its a local variable via `var bean = #bean:myEcho`.
+Notice how we declare the bean as if it is a local variable via `var bean = #bean:myEcho`.
 When doing this we must use a different name as `myEcho` is the variable used by the dependency injection and therefore we use _bean_ as name in the script.
 
 == Auto imports

@@ -8,6 +8,7 @@
     "firstVersion": "2.1.0",
     "label": "dataformat,transformation,csv",
     "javaType": "org.apache.camel.model.dataformat.FlatpackDataFormat",
+    "abstract": false,
     "input": false,
     "output": false
   },

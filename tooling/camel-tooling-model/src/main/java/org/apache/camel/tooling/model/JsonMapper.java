@@ -68,7 +68,7 @@ public final class JsonMapper {
         } else if (obj.containsKey("model")) {
             return generateEipModel(obj);
         } else {
-            throw new IllegalArgumentException("Unsupported JSON");
+            return null;
         }
     }
 
@@ -271,6 +271,7 @@ public final class JsonMapper {
         JsonObject mobj = (JsonObject) obj.get("model");
         EipModel model = new EipModel();
         parseModel(mobj, model);
+        model.setAbstractModel(mobj.getBooleanOrDefault("abstract", false));
         model.setInput(mobj.getBooleanOrDefault("input", false));
         model.setOutput(mobj.getBooleanOrDefault("output", false));
         JsonObject mprp = (JsonObject) obj.get("properties");
@@ -291,6 +292,7 @@ public final class JsonMapper {
     public static JsonObject asJsonObject(EipModel model) {
         JsonObject obj = new JsonObject();
         baseToJson(model, obj);
+        obj.put("abstract", model.isAbstractModel());
         obj.put("input", model.isInput());
         obj.put("output", model.isOutput());
         obj.entrySet().removeIf(e -> e.getValue() == null);

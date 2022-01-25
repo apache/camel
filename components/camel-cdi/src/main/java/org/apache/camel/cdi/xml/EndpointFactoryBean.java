@@ -31,6 +31,7 @@ import org.apache.camel.core.xml.AbstractCamelEndpointFactoryBean;
  */
 @XmlRootElement(name = "endpoint")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Deprecated
 public class EndpointFactoryBean extends AbstractCamelEndpointFactoryBean implements BeanManagerAware {
 
     @XmlTransient

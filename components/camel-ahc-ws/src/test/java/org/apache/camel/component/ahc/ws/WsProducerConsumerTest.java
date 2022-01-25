@@ -17,6 +17,7 @@
 package org.apache.camel.component.ahc.ws;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -40,6 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class WsProducerConsumerTest extends CamelTestSupport {
 
     protected static final String TEST_MESSAGE = "Hello World!";
+    protected static final String TEST_CONNECTED_MESSAGE = "Connected!";
     protected static final int PORT = AvailablePortFinder.getNextAvailable();
 
     private static final Logger LOG = LoggerFactory.getLogger(WsProducerConsumerTest.class);
@@ -105,8 +107,9 @@ public class WsProducerConsumerTest extends CamelTestSupport {
         resetMocks();
 
         LOG.info("Restarting bar route");
-        context.getRouteController().stopRoute("bar");
-        Thread.sleep(500);
+
+        boolean stopped = context.getRouteController().stopRoute("bar", 500, TimeUnit.MILLISECONDS, true);
+        assertTrue(stopped, "The route should have stopped within the specified time");
         context.getRouteController().startRoute("bar");
 
         mock.expectedBodiesReceived(TEST_MESSAGE);
@@ -128,8 +131,10 @@ public class WsProducerConsumerTest extends CamelTestSupport {
         resetMocks();
 
         LOG.info("Restarting foo route");
-        context.getRouteController().stopRoute("foo");
-        Thread.sleep(500);
+
+        boolean stopped = context.getRouteController().stopRoute("foo", 500, TimeUnit.MILLISECONDS, true);
+        assertTrue(stopped, "The route should have stopped within the specified time");
+
         context.getRouteController().startRoute("foo");
 
         mock.expectedBodiesReceived(TEST_MESSAGE);
@@ -139,9 +144,27 @@ public class WsProducerConsumerTest extends CamelTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Test
+    public void testRestartServer() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:restart-result");
+        mock.expectedBodiesReceived(TEST_CONNECTED_MESSAGE);
+
+        mock.assertIsSatisfied();
+
+        LOG.info("Restarting Test Server");
+        stopTestServer();
+        startTestServer();
+
+        resetMocks();
+
+        mock.expectedBodiesReceived(TEST_CONNECTED_MESSAGE);
+
+        mock.assertIsSatisfied();
+    }
+
     @Override
     protected RouteBuilder[] createRouteBuilders() throws Exception {
-        RouteBuilder[] rbs = new RouteBuilder[2];
+        RouteBuilder[] rbs = new RouteBuilder[3];
         rbs[0] = new RouteBuilder() {
             public void configure() {
                 from("direct:input").routeId("foo")
@@ -152,6 +175,12 @@ public class WsProducerConsumerTest extends CamelTestSupport {
             public void configure() {
                 from("ahc-ws://localhost:" + PORT).routeId("bar")
                         .to("mock:result");
+            }
+        };
+        rbs[2] = new RouteBuilder() {
+            public void configure() {
+                from("ahc-ws://localhost:" + PORT + "/restart").routeId("restart")
+                        .to("mock:restart-result");
             }
         };
         return rbs;

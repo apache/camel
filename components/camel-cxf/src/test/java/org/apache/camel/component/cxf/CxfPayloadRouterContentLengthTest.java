@@ -23,11 +23,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -48,14 +46,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.support.AbstractXmlApplicationContext;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class CxfPayloadRouterContentLengthTest extends CamelTestSupport {
+public class CxfPayloadRouterContentLengthTest extends CamelSpringTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfPayloadRouterContentLengthTest.class);
 
@@ -81,16 +79,10 @@ public class CxfPayloadRouterContentLengthTest extends CamelTestSupport {
     // The Camel-Test with CXF will re-use jetty instances, so the ports1 to 6 are already blocked
     private static final int JETTY_PORT = AvailablePortFinder.getNextAvailable();
 
-    private AbstractXmlApplicationContext applicationContext;
     private Server server;
 
     static {
         System.setProperty("CXFTestSupport.jettyPort", Integer.toString(JETTY_PORT));
-    }
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        return SpringCamelContext.springCamelContext(applicationContext, true);
     }
 
     @Override
@@ -127,10 +119,7 @@ public class CxfPayloadRouterContentLengthTest extends CamelTestSupport {
         server.start();
         // Load the CXF endpoints for the route
         LOG.info("Start Routing Scenario at port {}", CXFTestSupport.getPort1());
-        applicationContext
-                = new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/CxfPayloadRouterContentLengthBeans.xml");
         super.setUp();
-        assertNotNull(applicationContext, "Should have created a valid spring context");
     }
 
     @Override
@@ -193,5 +182,10 @@ public class CxfPayloadRouterContentLengthTest extends CamelTestSupport {
         // Content-Length was wrong
         assertTrue(receivedContent.matches(".*\\</.*:Envelope\\>"),
                 "[" + receivedContent + "] does not contain the closing Envelope tag.");
+    }
+
+    @Override
+    protected AbstractApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/CxfPayloadRouterContentLengthBeans.xml");
     }
 }

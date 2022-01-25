@@ -40,6 +40,7 @@ public interface AtomixMapComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static AtomixMapComponentBuilder atomixMap() {
         return new AtomixMapComponentBuilderImpl();
     }

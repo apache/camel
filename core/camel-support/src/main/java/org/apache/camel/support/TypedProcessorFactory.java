@@ -17,6 +17,7 @@
 package org.apache.camel.support;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.LineNumberAware;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
@@ -32,7 +33,13 @@ public class TypedProcessorFactory<T extends NamedNode> implements ProcessorFact
     @Override
     public Processor createChildProcessor(Route route, NamedNode definition, boolean mandatory) throws Exception {
         if (type.isInstance(definition)) {
-            return doCreateChildProcessor(route, type.cast(definition), mandatory);
+            Processor processor = doCreateChildProcessor(route, type.cast(definition), mandatory);
+            if (processor instanceof LineNumberAware) {
+                LineNumberAware lna = (LineNumberAware) processor;
+                lna.setLineNumber(definition.getLineNumber());
+                lna.setLocation(definition.getLocation());
+            }
+            return processor;
         }
 
         return null;
@@ -41,7 +48,13 @@ public class TypedProcessorFactory<T extends NamedNode> implements ProcessorFact
     @Override
     public Processor createProcessor(Route route, NamedNode definition) throws Exception {
         if (type.isInstance(definition)) {
-            return doCreateProcessor(route, type.cast(definition));
+            Processor processor = doCreateProcessor(route, type.cast(definition));
+            if (processor instanceof LineNumberAware) {
+                LineNumberAware lna = (LineNumberAware) processor;
+                lna.setLineNumber(definition.getLineNumber());
+                lna.setLocation(definition.getLocation());
+            }
+            return processor;
         }
 
         return null;

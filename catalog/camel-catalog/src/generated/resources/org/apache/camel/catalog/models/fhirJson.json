@@ -8,6 +8,7 @@
     "firstVersion": "2.21.0",
     "label": "dataformat,transformation,hl7,json",
     "javaType": "org.apache.camel.model.dataformat.FhirJsonDataFormat",
+    "abstract": false,
     "input": false,
     "output": false
   },

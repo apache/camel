@@ -59,11 +59,11 @@ public final class StringQuoteHelper {
      * Though this method does not support double quoting values. A quoted value must start with the same start and
      * ending quote, which is either a single quote or double quote value.
      * <p/>
-     * Will <i>trim</i> each splitted value by default.
+     * Will <i>trim</i> each split value by default.
      *
      * @param  input     the input
      * @param  separator the separator char to split the input, for example a comma.
-     * @return           the input splitted, or <tt>null</tt> if the input is null.
+     * @return           the input split, or <tt>null</tt> if the input is null.
      */
     public static String[] splitSafeQuote(String input, char separator) {
         return splitSafeQuote(input, separator, true);
@@ -77,8 +77,8 @@ public final class StringQuoteHelper {
      * 
      * @param  input     the input
      * @param  separator the separator char to split the input, for example a comma.
-     * @param  trim      whether to trim each splitted value
-     * @return           the input splitted, or <tt>null</tt> if the input is null.
+     * @param  trim      whether to trim each split value
+     * @return           the input split, or <tt>null</tt> if the input is null.
      */
     public static String[] splitSafeQuote(String input, char separator, boolean trim) {
         if (input == null) {

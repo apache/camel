@@ -55,6 +55,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "ConsumerTemplateCacheSize": target.setConsumerTemplateCacheSize(property(camelContext, int.class, value)); return true;
         case "debugging":
         case "Debugging": target.setDebugging(property(camelContext, boolean.class, value)); return true;
+        case "devconsoleenabled":
+        case "DevConsoleEnabled": target.setDevConsoleEnabled(property(camelContext, boolean.class, value)); return true;
         case "dumproutes":
         case "DumpRoutes": target.setDumpRoutes(property(camelContext, boolean.class, value)); return true;
         case "durationhitexitcode":
@@ -179,6 +181,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "ShutdownSuppressLoggingOnTimeout": target.setShutdownSuppressLoggingOnTimeout(property(camelContext, boolean.class, value)); return true;
         case "shutdowntimeout":
         case "ShutdownTimeout": target.setShutdownTimeout(property(camelContext, int.class, value)); return true;
+        case "sourcelocationenabled":
+        case "SourceLocationEnabled": target.setSourceLocationEnabled(property(camelContext, boolean.class, value)); return true;
         case "startuprecorder":
         case "StartupRecorder": target.setStartupRecorder(property(camelContext, java.lang.String.class, value)); return true;
         case "startuprecorderdir":
@@ -217,6 +221,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "ThreadNamePattern": target.setThreadNamePattern(property(camelContext, java.lang.String.class, value)); return true;
         case "tracing":
         case "Tracing": target.setTracing(property(camelContext, boolean.class, value)); return true;
+        case "tracingloggingformat":
+        case "TracingLoggingFormat": target.setTracingLoggingFormat(property(camelContext, java.lang.String.class, value)); return true;
         case "tracingpattern":
         case "TracingPattern": target.setTracingPattern(property(camelContext, java.lang.String.class, value)); return true;
         case "tracingstandby":
@@ -270,6 +276,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "ConsumerTemplateCacheSize": return int.class;
         case "debugging":
         case "Debugging": return boolean.class;
+        case "devconsoleenabled":
+        case "DevConsoleEnabled": return boolean.class;
         case "dumproutes":
         case "DumpRoutes": return boolean.class;
         case "durationhitexitcode":
@@ -394,6 +402,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "ShutdownSuppressLoggingOnTimeout": return boolean.class;
         case "shutdowntimeout":
         case "ShutdownTimeout": return int.class;
+        case "sourcelocationenabled":
+        case "SourceLocationEnabled": return boolean.class;
         case "startuprecorder":
         case "StartupRecorder": return java.lang.String.class;
         case "startuprecorderdir":
@@ -432,6 +442,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "ThreadNamePattern": return java.lang.String.class;
         case "tracing":
         case "Tracing": return boolean.class;
+        case "tracingloggingformat":
+        case "TracingLoggingFormat": return java.lang.String.class;
         case "tracingpattern":
         case "TracingPattern": return java.lang.String.class;
         case "tracingstandby":
@@ -486,6 +498,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "ConsumerTemplateCacheSize": return target.getConsumerTemplateCacheSize();
         case "debugging":
         case "Debugging": return target.isDebugging();
+        case "devconsoleenabled":
+        case "DevConsoleEnabled": return target.isDevConsoleEnabled();
         case "dumproutes":
         case "DumpRoutes": return target.isDumpRoutes();
         case "durationhitexitcode":
@@ -610,6 +624,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "ShutdownSuppressLoggingOnTimeout": return target.isShutdownSuppressLoggingOnTimeout();
         case "shutdowntimeout":
         case "ShutdownTimeout": return target.getShutdownTimeout();
+        case "sourcelocationenabled":
+        case "SourceLocationEnabled": return target.isSourceLocationEnabled();
         case "startuprecorder":
         case "StartupRecorder": return target.getStartupRecorder();
         case "startuprecorderdir":
@@ -648,6 +664,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "ThreadNamePattern": return target.getThreadNamePattern();
         case "tracing":
         case "Tracing": return target.isTracing();
+        case "tracingloggingformat":
+        case "TracingLoggingFormat": return target.getTracingLoggingFormat();
         case "tracingpattern":
         case "TracingPattern": return target.getTracingPattern();
         case "tracingstandby":

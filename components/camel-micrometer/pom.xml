@@ -31,9 +31,6 @@
     <name>Camel :: Micrometer</name>
     <description>Camel Micrometer based monitoring component</description>
 
-    <properties>
-    </properties>
-
     <dependencies>
 
         <dependency>
@@ -70,11 +67,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-spring-xml</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-spring-javaconfig</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

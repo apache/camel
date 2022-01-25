@@ -21,7 +21,8 @@ import org.apache.camel.component.google.drive.DriveFilesEndpointConfiguration;
 import org.apache.camel.component.google.drive.DriveParentsEndpointConfiguration;
 import org.apache.camel.component.google.drive.DrivePermissionsEndpointConfiguration;
 import org.apache.camel.component.google.drive.DrivePropertiesEndpointConfiguration;
-import org.apache.camel.component.google.drive.DriveRealtimeEndpointConfiguration;
+import org.apache.camel.component.google.drive.DriveDrivesEndpointConfiguration;
+import org.apache.camel.component.google.drive.DriveTeamdrivesEndpointConfiguration;
 import org.apache.camel.component.google.drive.DriveRepliesEndpointConfiguration;
 import org.apache.camel.component.google.drive.DriveRevisionsEndpointConfiguration;
 
@@ -95,8 +96,13 @@ public final class GoogleDriveApiCollection extends ApiCollection<GoogleDriveApi
 
         aliases.clear();
         nullableArgs = Arrays.asList();
-        apiHelpers.put(GoogleDriveApiName.DRIVE_REALTIME, new ApiMethodHelper<DriveRealtimeApiMethod>(DriveRealtimeApiMethod.class, aliases, nullableArgs));
-        apiMethods.put(DriveRealtimeApiMethod.class, GoogleDriveApiName.DRIVE_REALTIME);
+        apiHelpers.put(GoogleDriveApiName.DRIVE_DRIVES, new ApiMethodHelper<DriveDrivesApiMethod>(DriveDrivesApiMethod.class, aliases, nullableArgs));
+        apiMethods.put(DriveDrivesApiMethod.class, GoogleDriveApiName.DRIVE_DRIVES);
+
+        aliases.clear();
+        nullableArgs = Arrays.asList();
+        apiHelpers.put(GoogleDriveApiName.DRIVE_TEAMDRIVES, new ApiMethodHelper<DriveTeamdrivesApiMethod>(DriveTeamdrivesApiMethod.class, aliases, nullableArgs));
+        apiMethods.put(DriveTeamdrivesApiMethod.class, GoogleDriveApiName.DRIVE_TEAMDRIVES);
 
         aliases.clear();
         nullableArgs = Arrays.asList();
@@ -145,8 +151,11 @@ public final class GoogleDriveApiCollection extends ApiCollection<GoogleDriveApi
             case DRIVE_PROPERTIES:
                 result = new DrivePropertiesEndpointConfiguration();
                 break;
-            case DRIVE_REALTIME:
-                result = new DriveRealtimeEndpointConfiguration();
+            case DRIVE_DRIVES:
+                result = new DriveDrivesEndpointConfiguration();
+                break;
+            case DRIVE_TEAMDRIVES:
+                result = new DriveTeamdrivesEndpointConfiguration();
                 break;
             case DRIVE_REPLIES:
                 result = new DriveRepliesEndpointConfiguration();

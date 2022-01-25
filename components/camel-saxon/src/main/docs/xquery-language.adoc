@@ -139,7 +139,7 @@ in the line with `xmlns:foo="http://example.com/person"`:
 </beans>
 ---------------------------------------------------------------------------------------------------------------
 
-This namespace uses `foo` as prefix, so the `<xquery>` expression uses `/foo:` to use this namespace.
+This namespace uses `foo` as prefix, so the `<xquery>` expression uses `foo:` to use this namespace.
 
 == Using XQuery as transformation
 
@@ -193,7 +193,7 @@ XQuery is a very powerful language for querying, searching, sorting and
 returning XML. For help learning XQuery try these tutorials
 
 * Mike Kay's http://www.stylusstudio.com/xquery_primer.html[XQuery Primer]
-* The W3Schools http://www.w3schools.com/xquery/default.asp[XQuery Tutorial]
+* The W3Schools http://www.w3schools.com/xml/xquery_intro.asp[XQuery Tutorial]
 
 == Dependencies
 

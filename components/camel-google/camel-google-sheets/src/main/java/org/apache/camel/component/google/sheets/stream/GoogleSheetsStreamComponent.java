@@ -49,13 +49,19 @@ public class GoogleSheetsStreamComponent extends DefaultComponent {
         this.configuration = new GoogleSheetsStreamConfiguration();
     }
 
-    public Sheets getClient(GoogleSheetsStreamConfiguration endpointConfiguration) {
+    public Sheets getClient(GoogleSheetsStreamConfiguration config) {
         if (client == null) {
-            client = getClientFactory().makeClient(endpointConfiguration.getClientId(),
-                    endpointConfiguration.getClientSecret(),
-                    endpointConfiguration.getApplicationName(),
-                    endpointConfiguration.getRefreshToken(),
-                    endpointConfiguration.getAccessToken());
+            if (config.getClientId() != null && config.getClientSecret() != null) {
+                client = getClientFactory().makeClient(config.getClientId(),
+                        config.getClientSecret(), config.getScopes(),
+                        config.getApplicationName(), config.getRefreshToken(), config.getAccessToken());
+            } else if (config.getKeyResource() != null) {
+                client = getClientFactory().makeClient(getCamelContext(), config.getKeyResource(),
+                        config.getScopes(), config.getApplicationName(), config.getDelegate());
+            } else {
+                throw new IllegalArgumentException(
+                        "(clientId and clientSecret) or keyResource are required to create Gmail client");
+            }
         }
         return client;
     }

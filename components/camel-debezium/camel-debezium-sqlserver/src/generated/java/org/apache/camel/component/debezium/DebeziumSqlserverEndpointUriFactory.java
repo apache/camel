@@ -19,8 +19,9 @@ public class DebeziumSqlserverEndpointUriFactory extends org.apache.camel.suppor
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(74);
+        Set<String> props = new HashSet<>(80);
         props.add("maxBatchSize");
         props.add("internalKeyConverter");
         props.add("snapshotDelayMs");
@@ -54,6 +55,7 @@ public class DebeziumSqlserverEndpointUriFactory extends org.apache.camel.suppor
         props.add("additionalProperties");
         props.add("offsetStorageReplicationFactor");
         props.add("databaseNames");
+        props.add("heartbeatActionQuery");
         props.add("exceptionHandler");
         props.add("sourceTimestampMode");
         props.add("databasePort");
@@ -63,6 +65,7 @@ public class DebeziumSqlserverEndpointUriFactory extends org.apache.camel.suppor
         props.add("databaseHistory");
         props.add("columnPropagateSourceType");
         props.add("databaseHistoryStoreOnlyCapturedTablesDdl");
+        props.add("transactionTopic");
         props.add("offsetStorage");
         props.add("includeSchemaChanges");
         props.add("internalValueConverter");
@@ -80,8 +83,10 @@ public class DebeziumSqlserverEndpointUriFactory extends org.apache.camel.suppor
         props.add("tableIgnoreBuiltin");
         props.add("signalDataCollection");
         props.add("exchangePattern");
+        props.add("incrementalSnapshotAllowSchemaChanges");
         props.add("databaseInstance");
         props.add("databaseServerName");
+        props.add("incrementalSnapshotOptionRecompile");
         props.add("tableBlacklist");
         props.add("queryFetchSize");
         props.add("snapshotMode");
@@ -90,13 +95,18 @@ public class DebeziumSqlserverEndpointUriFactory extends org.apache.camel.suppor
         props.add("tableExcludeList");
         props.add("offsetCommitPolicy");
         props.add("tableIncludeList");
+        props.add("incrementalSnapshotChunkSize");
         props.add("columnExcludeList");
         props.add("columnIncludeList");
         props.add("databasePassword");
         props.add("databaseDbname");
         props.add("databaseHistoryKafkaRecoveryAttempts");
+        props.add("includeSchemaComments");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
+        Set<String> prefixes = new HashSet<>(1);
+        prefixes.add("additionalProperties.");
+        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
     }
 
     @Override
@@ -124,6 +134,11 @@ public class DebeziumSqlserverEndpointUriFactory extends org.apache.camel.suppor
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

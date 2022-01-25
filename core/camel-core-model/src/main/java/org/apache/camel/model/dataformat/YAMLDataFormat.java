@@ -75,14 +75,20 @@ public class YAMLDataFormat extends DataFormatDefinition {
     }
 
     public YAMLDataFormat(YAMLLibrary library) {
-        super("yaml-" + library.name().toLowerCase());
+        super(library.getDataFormatName());
         this.library = library;
     }
 
     public YAMLDataFormat(YAMLLibrary library, Class<?> unmarshalType) {
-        super("yaml-" + library.name().toLowerCase());
+        super(library.getDataFormatName());
         this.library = library;
         this.unmarshalType = unmarshalType;
+    }
+
+    @Override
+    public String getDataFormatName() {
+        // yaml data format is special as the name can be from different bundles
+        return this.library != null ? this.library.getDataFormatName() : "snakeYaml";
     }
 
     public YAMLLibrary getLibrary() {

@@ -1,10 +1,11 @@
-= BeanIO DataFormat
+= BeanIO DataFormat (deprecated)
 :doctitle: BeanIO
 :shortname: beanio
 :artifactid: camel-beanio
 :description: Marshal and unmarshal Java beans to and from flat files (such as CSV, delimited, or fixed length formats).
 :since: 2.10
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 //Manually maintained attributes
 :camel-spring-boot-name: beanio
 

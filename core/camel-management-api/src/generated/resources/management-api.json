@@ -1,0 +1,14 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "management-api",
+    "title": "Management Api",
+    "description": "The Camel Management API",
+    "deprecated": false,
+    "firstVersion": "3.0.0",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-management-api",
+    "version": "3.15.0-SNAPSHOT"
+  }
+}

@@ -48,6 +48,7 @@ import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RouteError;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.RoutePolicy;
+import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
@@ -68,6 +69,7 @@ public class DefaultRoute extends ServiceSupport implements Route {
     private final String routeId;
     private final String routeDescription;
     private final Resource sourceResource;
+    private final String sourceLocation;
     private final List<Processor> eventDrivenProcessors = new ArrayList<>();
     private final List<InterceptStrategy> interceptStrategies = new ArrayList<>(0);
     private ManagementInterceptStrategy managementInterceptStrategy;
@@ -109,6 +111,7 @@ public class DefaultRoute extends ServiceSupport implements Route {
         this.routeDescription = routeDescription;
         this.endpoint = endpoint;
         this.sourceResource = resource;
+        this.sourceLocation = LoggerHelper.getLineNumberLoggerName(route);
     }
 
     @Override
@@ -173,6 +176,11 @@ public class DefaultRoute extends ServiceSupport implements Route {
     @Override
     public Resource getSourceResource() {
         return sourceResource;
+    }
+
+    @Override
+    public String getSourceLocation() {
+        return sourceLocation;
     }
 
     @Override

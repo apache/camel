@@ -40,6 +40,7 @@ public interface AtomixValueComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static AtomixValueComponentBuilder atomixValue() {
         return new AtomixValueComponentBuilderImpl();
     }

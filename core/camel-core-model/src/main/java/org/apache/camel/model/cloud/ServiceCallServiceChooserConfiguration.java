@@ -66,6 +66,7 @@ public class ServiceCallServiceChooserConfiguration extends ServiceCallConfigura
     //
     // *************************************************************************
 
+    @Override
     public ServiceCallServiceChooserConfiguration property(String key, String value) {
         return (ServiceCallServiceChooserConfiguration) super.property(key, value);
     }

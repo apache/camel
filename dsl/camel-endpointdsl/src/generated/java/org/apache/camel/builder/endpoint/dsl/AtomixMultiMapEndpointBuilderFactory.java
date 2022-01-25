@@ -498,6 +498,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * @param path resourceName
          * @return the dsl builder
          */
+        @Deprecated
         default AtomixMultiMapEndpointBuilder atomixMultimap(String path) {
             return AtomixMultiMapEndpointBuilderFactory.endpointBuilder("atomix-multimap", path);
         }
@@ -519,12 +520,14 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * @param path resourceName
          * @return the dsl builder
          */
+        @Deprecated
         default AtomixMultiMapEndpointBuilder atomixMultimap(
                 String componentName,
                 String path) {
             return AtomixMultiMapEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
+    @Deprecated
     static AtomixMultiMapEndpointBuilder endpointBuilder(
             String componentName,
             String path) {

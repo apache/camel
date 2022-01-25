@@ -52,14 +52,15 @@ public class CxfConsumerResponseTest extends CamelTestSupport {
 
     protected final String simpleEndpointURI = "cxf://" + simpleEndpointAddress
                                                + "?serviceClass=org.apache.camel.component.cxf.HelloService"
-                                               + "&publishedEndpointUrl=http://www.simple.com/services/test";
+                                               + "&publishedEndpointUrl=http://www.simple.com/services/test"
+                                               + "&exchangePattern=InOnly";
 
     // START SNIPPET: example
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(simpleEndpointURI).inOnly("log:test")
+                from(simpleEndpointURI)
                         .choice().when(header(CxfConstants.OPERATION_NAME).isEqualTo(ECHO_OPERATION)).process(new Processor() {
                             public void process(final Exchange exchange) {
                                 assertEquals(DataFormat.POJO,

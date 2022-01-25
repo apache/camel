@@ -149,7 +149,7 @@ public class KafkaConsumer extends DefaultConsumer {
             }
 
             if (!executor.isTerminated()) {
-                tasks.forEach(KafkaFetchRecords::shutdown);
+                tasks.forEach(KafkaFetchRecords::stop);
                 executor.shutdownNow();
             }
         }

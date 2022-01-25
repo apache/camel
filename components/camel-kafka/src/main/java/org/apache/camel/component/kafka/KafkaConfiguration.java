@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.kafka.consumer.KafkaManualCommit;
 import org.apache.camel.component.kafka.consumer.support.KafkaConsumerResumeStrategy;
 import org.apache.camel.component.kafka.serde.DefaultKafkaHeaderDeserializer;
 import org.apache.camel.component.kafka.serde.DefaultKafkaHeaderSerializer;
@@ -134,7 +135,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
 
     // Consumer configuration properties
     @UriParam(label = "consumer", defaultValue = "true")
-    private Boolean autoCommitEnable = true;
+    private boolean autoCommitEnable = true;
     @UriParam(label = "consumer")
     private boolean allowManualCommit;
     @UriParam(label = "consumer", defaultValue = "sync", enums = "sync,async,none")
@@ -659,7 +660,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
         return offsetRepository == null ? autoCommitEnable : false;
     }
 
-    public Boolean getAutoCommitEnable() {
+    public boolean getAutoCommitEnable() {
         return autoCommitEnable;
     }
 
@@ -667,7 +668,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      * If true, periodically commit to ZooKeeper the offset of messages already fetched by the consumer. This committed
      * offset will be used when the process fails as the position from which the new consumer will begin.
      */
-    public void setAutoCommitEnable(Boolean autoCommitEnable) {
+    public void setAutoCommitEnable(boolean autoCommitEnable) {
         this.autoCommitEnable = autoCommitEnable;
     }
 

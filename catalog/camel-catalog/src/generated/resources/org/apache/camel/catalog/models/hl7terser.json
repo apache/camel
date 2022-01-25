@@ -8,6 +8,7 @@
     "firstVersion": "2.11.0",
     "label": "language,hl7",
     "javaType": "org.apache.camel.model.language.Hl7TerserExpression",
+    "abstract": false,
     "input": false,
     "output": false
   },

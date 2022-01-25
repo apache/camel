@@ -19,19 +19,14 @@ package org.apache.camel.component.cxf;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.http.common.HttpOperationFailedException;
-import org.apache.camel.spring.SpringCamelContext;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.http.base.HttpOperationFailedException;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.hello_world_soap_http.Greeter;
 import org.apache.hello_world_soap_http.NoSuchCodeLitFault;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.AbstractXmlApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -39,8 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public abstract class AbstractCXFGreeterRouterTest extends CamelTestSupport {
-    protected AbstractXmlApplicationContext applicationContext;
+public abstract class AbstractCXFGreeterRouterTest extends CamelSpringTestSupport {
 
     private final QName serviceName = new QName(
             "http://apache.org/hello_world_soap_http",
@@ -60,16 +54,6 @@ public abstract class AbstractCXFGreeterRouterTest extends CamelTestSupport {
 
     public static int getPort2() {
         return CXFTestSupport.getPort2();
-    }
-
-    protected abstract ClassPathXmlApplicationContext createApplicationContext();
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        applicationContext = createApplicationContext();
-        super.setUp();
-        assertNotNull(applicationContext, "Should have created a valid spring context");
     }
 
     @Override
@@ -130,11 +114,6 @@ public abstract class AbstractCXFGreeterRouterTest extends CamelTestSupport {
                                                + getClass().getSimpleName() + "?wsdl",
                 null, String.class);
         assertTrue(response.indexOf("http://www.simple.com/services/test") > 0, "Can't find the right service location.");
-    }
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        return SpringCamelContext.springCamelContext(applicationContext, true);
     }
 
 }

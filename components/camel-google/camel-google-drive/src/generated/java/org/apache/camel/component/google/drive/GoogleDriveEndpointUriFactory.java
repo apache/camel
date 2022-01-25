@@ -19,60 +19,69 @@ public class GoogleDriveEndpointUriFactory extends org.apache.camel.support.comp
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(46);
-        props.add("backoffMultiplier");
+        Set<String> props = new HashSet<>(51);
         props.add("permissionId");
         props.add("apiName");
-        props.add("clientFactory");
         props.add("initialDelay");
         props.add("changeId");
         props.add("mimeType");
-        props.add("content");
-        props.add("scheduler");
         props.add("bridgeErrorHandler");
-        props.add("useFixedDelay");
         props.add("mediaContent");
-        props.add("runLoggingLevel");
-        props.add("backoffErrorThreshold");
         props.add("appId");
         props.add("replyId");
         props.add("greedy");
         props.add("clientSecret");
         props.add("scheduledExecutorService");
-        props.add("applicationName");
-        props.add("email");
         props.add("repeatCount");
-        props.add("timeUnit");
         props.add("propertyKey");
-        props.add("clientId");
         props.add("sendEmptyMessageWhenIdle");
         props.add("schedulerProperties");
-        props.add("exchangePattern");
-        props.add("methodName");
         props.add("accessToken");
         props.add("childId");
         props.add("backoffIdleThreshold");
         props.add("folderId");
-        props.add("parentId");
-        props.add("revisionId");
         props.add("lazyStartProducer");
-        props.add("contentChannel");
         props.add("delay");
-        props.add("pollStrategy");
+        props.add("driveId");
         props.add("startScheduler");
         props.add("commentId");
-        props.add("scopes");
         props.add("inBody");
         props.add("exceptionHandler");
-        props.add("refreshToken");
         props.add("fileId");
+        props.add("teamDriveId");
+        props.add("backoffMultiplier");
+        props.add("clientFactory");
+        props.add("content");
+        props.add("delegate");
+        props.add("scheduler");
+        props.add("useFixedDelay");
+        props.add("runLoggingLevel");
+        props.add("backoffErrorThreshold");
+        props.add("requestId");
+        props.add("applicationName");
+        props.add("email");
+        props.add("timeUnit");
+        props.add("clientId");
+        props.add("keyResource");
+        props.add("exchangePattern");
+        props.add("methodName");
+        props.add("parentId");
+        props.add("revisionId");
+        props.add("contentChannel");
+        props.add("pollStrategy");
+        props.add("scopes");
+        props.add("refreshToken");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(3);
         secretProps.add("clientSecret");
         secretProps.add("accessToken");
         secretProps.add("refreshToken");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
+        Set<String> prefixes = new HashSet<>(1);
+        prefixes.add("scheduler.");
+        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
     }
 
     @Override
@@ -101,6 +110,11 @@ public class GoogleDriveEndpointUriFactory extends org.apache.camel.support.comp
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

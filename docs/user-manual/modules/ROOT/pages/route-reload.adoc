@@ -22,7 +22,7 @@ CamelContext context = ...
 
 RouteWatcherReloadStrategy reload = new RouteWatcherReloadStrategy();
 reload.setFolder("myfolder/routes");
-reload.setPatrern("*.xml");
+reload.setPattern("*.xml");
 
 context.addService(reload);
 ----
@@ -59,7 +59,7 @@ You can configure the `RouteWatcherReloadStrategy` using the following options:
 |=======================================================================
 | Name | Description | Default | Type
 | routesReloadDirectory | Directory to scan for route changes. Camel cannot scan the classpath, so this must be configured to a file directory. Development with Maven as build tool, you can configure the directory to be src/main/resources to scan for Camel routes in XML or YAML files. | src/main/resources/camel | String
-| routesReloadDirectoryRecursive | Whether the directory to scan should include sub directories. Depending on the number of sub directories, then this can cause the JVM to startup slower as Camel uses the JDK file-watch service to scan for file changes. | false | boolean
+| routesReloadDirectoryRecursive | Whether the directory to scan should include sub-directories. Depending on the number of sub-directories, then this can cause the JVM to startup slower as Camel uses the JDK file-watch service to scan for file changes. | false | boolean
 | routesReloadEnabled | Used for enabling automatic routes reloading. If enabled then Camel will watch for file changes in the given reload directory, and trigger reloading routes if files are changed. | false | boolean
 | routesReloadPattern | Used for inclusive filtering of routes from directories. Typical used for specifying to accept routes in XML or YAML files. The default pattern is .yaml,.xml Multiple patterns can be specified separated by comma. | | String
 | routesReloadRemoveAllRoutes | When reloading routes should all existing routes be stopped and removed. By default, Camel will stop and remove all existing routes before reloading routes. This ensures that only the reloaded routes will be active. If disabled then only routes with the same route id is updated, and any existing routes are continued to run. | true | boolean
@@ -69,7 +69,7 @@ You can configure the `RouteWatcherReloadStrategy` using the following options:
 === Must use route id's
 
 When using route reload then it is recommended to assign id's to your routes, so Camel
-know exactly which routes have been updated. This is necessary because Camel
+knows exactly which routes have been updated. This is necessary because Camel
 must stop the existing routes from running, before they can be updated.
 
 And adding new routes is therefore possible as they would have a new unique route id specified.
@@ -78,5 +78,5 @@ And adding new routes is therefore possible as they would have a new unique rout
 
 See the following examples that comes with live reloading enabled:
 
-- https://github.com/apache/camel-examples/tree/master/examples/main-xml[camel-example-main-xml]
-- https://github.com/apache/camel-examples/tree/master/examples/main-yaml[camel-example-main-yaml]
+- https://github.com/apache/camel-examples/tree/main/examples/main-xml[camel-examples/examples/main-xml]
+- https://github.com/apache/camel-examples/tree/main/examples/main-yaml[camel-examples/examples/main-yaml]

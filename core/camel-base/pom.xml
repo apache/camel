@@ -32,6 +32,10 @@
     <name>Camel :: Base</name>
     <description>The Base Camel Framework</description>
 
+    <properties>
+        <firstVersion>3.0.0</firstVersion>
+    </properties>
+
     <dependencies>
 
         <!-- required dependencies by camel-base -->

@@ -92,7 +92,7 @@ public class JacksonMarshalContentTypeHeaderTest extends CamelTestSupport {
                 JacksonXMLDataFormat format = new JacksonXMLDataFormat();
                 from("direct:yes").marshal(format);
 
-                from("direct:yes2").marshal().jacksonxml();
+                from("direct:yes2").marshal().jacksonXml();
 
                 JacksonXMLDataFormat formatNoHeader = new JacksonXMLDataFormat();
                 formatNoHeader.setContentTypeHeader(false);

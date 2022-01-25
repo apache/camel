@@ -21,6 +21,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.health.HealthCheck;
 import org.apache.camel.support.ScheduledPollConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +32,12 @@ public class SchedulerConsumer extends ScheduledPollConsumer {
 
     public SchedulerConsumer(SchedulerEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
+    }
+
+    @Override
+    protected HealthCheck.State initialHealthCheckState() {
+        // the scheduler should be regarded as healthy on startup
+        return HealthCheck.State.UP;
     }
 
     @Override

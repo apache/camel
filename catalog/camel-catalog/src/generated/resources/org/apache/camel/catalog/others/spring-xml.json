@@ -2,7 +2,7 @@
   "other": {
     "kind": "other",
     "name": "spring-xml",
-    "title": "Spring Xml",
+    "title": "Spring XML",
     "description": "Camel Spring with XML DSL",
     "deprecated": false,
     "firstVersion": "3.9.0",

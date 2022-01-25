@@ -29,7 +29,7 @@ the words "Apache Camel".
 
 == Examples
 
-Browse the https://github.com/apache/camel-examples/tree/master/examples#welcome-to-the-apache-camel-examples[camel-examples]
+Browse the https://github.com/apache/camel-examples/tree/main/examples#welcome-to-the-apache-camel-examples[camel-examples]
 from github where each example is documented with instructions how to run, and are up-to-date.
 
 

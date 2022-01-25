@@ -16,8 +16,10 @@
  */
 package org.apache.camel.dsl.yaml;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.api.management.ManagedResource;
@@ -27,12 +29,16 @@ import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.NoErrorHandlerBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.RouteConfigurationBuilder;
+import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerSupport;
 import org.apache.camel.dsl.yaml.deserializers.OutputAwareFromDefinition;
+import org.apache.camel.model.KameletDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
+import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
+import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.errorhandler.DefaultErrorHandlerProperties;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
@@ -53,6 +59,7 @@ import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asMapping
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asSequenceNode;
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asText;
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.nodeAt;
+import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.setDeserializationContext;
 
 @ManagedResource(description = "Managed YAML RoutesBuilderLoader")
 @RoutesLoader(YamlRoutesBuilderLoader.EXTENSION)
@@ -65,16 +72,27 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
     private static final String INTEGRATION_VERSION = "camel.apache.org/v1";
     private static final String BINDING_VERSION = "camel.apache.org/v1";
     private static final String STRIMZI_VERSION = "kafka.strimzi.io/v1";
+    private static final String KNATIVE_VERSION = "messaging.knative.dev/v1";
 
     public YamlRoutesBuilderLoader() {
         super(EXTENSION);
     }
 
-    protected RouteBuilder builder(Node root, Resource resource) {
+    protected RouteBuilder builder(final Node root, final Resource resource) {
+
+        // we need to keep track of already configured items as the yaml-dsl returns a
+        // RouteConfigurationBuilder that is capable of both route and route configurations
+        // which can lead to the same items being processed twice
+        final Set<Integer> indexes = new HashSet<>();
+
         return new RouteConfigurationBuilder() {
             @Override
             public void configure() throws Exception {
-                Object target = preConfigureNode(root);
+                YamlDeserializationContext ctx = getDeserializationContext();
+                ctx.setResource(resource);
+                setDeserializationContext(root, ctx);
+
+                Object target = preConfigureNode(root, ctx);
                 if (target == null) {
                     return;
                 }
@@ -82,15 +100,24 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                 if (target instanceof Node) {
                     SequenceNode seq = asSequenceNode((Node) target);
                     for (Node node : seq.getValue()) {
-                        Object item = getDeserializationContext().mandatoryResolve(node).construct(node);
-                        doConfigure(item);
+                        int idx = -1;
+                        if (node.getStartMark().isPresent()) {
+                            idx = node.getStartMark().get().getIndex();
+                        }
+                        if (idx == -1 || !indexes.contains(idx)) {
+                            Object item = ctx.mandatoryResolve(node).construct(node);
+                            boolean accepted = doConfigure(item);
+                            if (accepted && idx != -1) {
+                                indexes.add(idx);
+                            }
+                        }
                     }
                 } else {
                     doConfigure(target);
                 }
             }
 
-            private void doConfigure(Object item) throws Exception {
+            private boolean doConfigure(Object item) throws Exception {
                 if (item instanceof OutputAwareFromDefinition) {
                     RouteDefinition route = new RouteDefinition();
                     route.setInput(((OutputAwareFromDefinition) item).getDelegate());
@@ -98,11 +125,14 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
 
                     CamelContextAware.trySetCamelContext(getRouteCollection(), getCamelContext());
                     getRouteCollection().route(route);
+                    return true;
                 } else if (item instanceof RouteDefinition) {
                     CamelContextAware.trySetCamelContext(getRouteCollection(), getCamelContext());
                     getRouteCollection().route((RouteDefinition) item);
+                    return true;
                 } else if (item instanceof CamelContextCustomizer) {
                     ((CamelContextCustomizer) item).configure(getCamelContext());
+                    return true;
                 } else if (item instanceof OnExceptionDefinition) {
                     if (!getRouteCollection().getRoutes().isEmpty()) {
                         throw new IllegalArgumentException(
@@ -110,15 +140,18 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                     }
                     CamelContextAware.trySetCamelContext(getRouteCollection(), getCamelContext());
                     getRouteCollection().getOnExceptions().add((OnExceptionDefinition) item);
+                    return true;
                 } else if (item instanceof ErrorHandlerBuilder) {
                     if (!getRouteCollection().getRoutes().isEmpty()) {
                         throw new IllegalArgumentException(
                                 "errorHandler must be defined before any routes in the RouteBuilder");
                     }
                     errorHandler((ErrorHandlerBuilder) item);
+                    return true;
                 } else if (item instanceof RouteTemplateDefinition) {
                     CamelContextAware.trySetCamelContext(getRouteTemplateCollection(), getCamelContext());
                     getRouteTemplateCollection().routeTemplate((RouteTemplateDefinition) item);
+                    return true;
                 } else if (item instanceof RestDefinition) {
                     RestDefinition definition = (RestDefinition) item;
                     for (VerbDefinition verb : definition.getVerbs()) {
@@ -126,16 +159,24 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                     }
                     CamelContextAware.trySetCamelContext(getRestCollection(), getCamelContext());
                     getRestCollection().rest(definition);
+                    return true;
                 } else if (item instanceof RestConfigurationDefinition) {
                     ((RestConfigurationDefinition) item).asRestConfiguration(
                             getCamelContext(),
                             getCamelContext().getRestConfiguration());
+                    return true;
                 }
+
+                return false;
             }
 
             @Override
             public void configuration() throws Exception {
-                Object target = preConfigureNode(root);
+                YamlDeserializationContext ctx = getDeserializationContext();
+                ctx.setResource(resource);
+                setDeserializationContext(root, ctx);
+
+                Object target = preConfigureNode(root, ctx);
                 if (target == null) {
                     return;
                 }
@@ -143,24 +184,35 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                 if (target instanceof Node) {
                     SequenceNode seq = asSequenceNode((Node) target);
                     for (Node node : seq.getValue()) {
-                        Object item = getDeserializationContext().mandatoryResolve(node).construct(node);
-                        doConfiguration(item);
+                        int idx = -1;
+                        if (node.getStartMark().isPresent()) {
+                            idx = node.getStartMark().get().getIndex();
+                        }
+                        if (idx == -1 || !indexes.contains(idx)) {
+                            Object item = ctx.mandatoryResolve(node).construct(node);
+                            boolean accepted = doConfiguration(item);
+                            if (accepted && idx != -1) {
+                                indexes.add(idx);
+                            }
+                        }
                     }
                 } else {
                     doConfiguration(target);
                 }
             }
 
-            private void doConfiguration(Object item) {
+            private boolean doConfiguration(Object item) {
                 if (item instanceof RouteConfigurationDefinition) {
                     CamelContextAware.trySetCamelContext(getRouteConfigurationCollection(), getCamelContext());
                     getRouteConfigurationCollection().routeConfiguration((RouteConfigurationDefinition) item);
+                    return true;
                 }
+                return false;
             }
         };
     }
 
-    private Object preConfigureNode(Node root) throws Exception {
+    private Object preConfigureNode(Node root, YamlDeserializationContext ctx) throws Exception {
         Object target = root;
 
         // check if the yaml is a camel-k yaml with embedded binding/routes (called flow(s))
@@ -173,9 +225,9 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
             boolean binding = anyTupleMatches(mn.getValue(), "apiVersion", v -> v.startsWith(BINDING_VERSION)) &&
                     anyTupleMatches(mn.getValue(), "kind", "KameletBinding");
             if (integration) {
-                target = preConfigureIntegration(root, target);
+                target = preConfigureIntegration(root, ctx, target);
             } else if (binding) {
-                target = preConfigureKameletBinding(root, target);
+                target = preConfigureKameletBinding(root, ctx, target);
             }
         }
 
@@ -185,7 +237,7 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
     /**
      * Camel K Integration file
      */
-    private Object preConfigureIntegration(Node root, Object target) {
+    private Object preConfigureIntegration(Node root, YamlDeserializationContext ctx, Object target) {
         Node routes = nodeAt(root, "/spec/flows");
         if (routes == null) {
             routes = nodeAt(root, "/spec/flow");
@@ -199,7 +251,8 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
     /**
      * Camel K Kamelet Binding file
      */
-    private Object preConfigureKameletBinding(Node root, Object target) throws Exception {
+    private Object preConfigureKameletBinding(Node root, YamlDeserializationContext ctx, Object target) throws Exception {
+        // start with a route
         final RouteDefinition route = new RouteDefinition();
         String routeId = asText(nodeAt(root, "/metadata/name"));
         if (routeId != null) {
@@ -211,9 +264,22 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
         MappingNode source = asMappingNode(nodeAt(root, "/spec/source"));
         MappingNode sink = asMappingNode(nodeAt(root, "/spec/sink"));
         if (source != null && sink != null) {
+            int line = -1;
+            if (source.getStartMark().isPresent()) {
+                line = source.getStartMark().get().getLine();
+            }
+
             // source at the beginning (mandatory)
-            String from = extractCamelEndpointUri(source);
-            route.from(from);
+            String uri = extractCamelEndpointUri(source);
+            route.from(uri);
+
+            // enrich model with line number
+            if (line != -1) {
+                route.getInput().setLineNumber(line);
+                if (ctx != null) {
+                    route.getInput().setLocation(ctx.getResource().getLocation());
+                }
+            }
 
             // steps in the middle (optional)
             Node steps = nodeAt(root, "/spec/steps");
@@ -221,23 +287,50 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                 SequenceNode sn = asSequenceNode(steps);
                 for (Node node : sn.getValue()) {
                     MappingNode step = asMappingNode(node);
-                    String uri = extractCamelEndpointUri(step);
+                    uri = extractCamelEndpointUri(step);
                     if (uri != null) {
+                        line = -1;
+                        if (node.getStartMark().isPresent()) {
+                            line = node.getStartMark().get().getLine();
+                        }
+
+                        ProcessorDefinition<?> out;
                         // if kamelet then use kamelet eip instead of to
                         boolean kamelet = uri.startsWith("kamelet:");
                         if (kamelet) {
                             uri = uri.substring(8);
-                            route.kamelet(uri);
+                            out = new KameletDefinition(uri);
                         } else {
-                            route.to(uri);
+                            out = new ToDefinition(uri);
+                        }
+                        route.addOutput(out);
+                        // enrich model with line number
+                        if (line != -1) {
+                            out.setLineNumber(line);
+                            if (ctx != null) {
+                                out.setLocation(ctx.getResource().getLocation());
+                            }
                         }
                     }
                 }
             }
 
             // sink is at the end (mandatory)
-            String to = extractCamelEndpointUri(sink);
-            route.to(to);
+            line = -1;
+            if (sink.getStartMark().isPresent()) {
+                line = sink.getStartMark().get().getLine();
+            }
+            uri = extractCamelEndpointUri(sink);
+            ToDefinition to = new ToDefinition(uri);
+            route.addOutput(to);
+
+            // enrich model with line number
+            if (line != -1) {
+                to.setLineNumber(line);
+                if (ctx != null) {
+                    to.setLocation(ctx.getResource().getLocation());
+                }
+            }
 
             // is there any error handler?
             MappingNode errorHandler = asMappingNode(nodeAt(root, "/spec/errorHandler"));
@@ -247,9 +340,9 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                 String ehName = asText(nt.getKeyNode());
 
                 DefaultErrorHandlerProperties ehb = null;
-                if ("dead-letter-channel".equals(ehName)) {
+                if ("sink".equals(ehName)) {
+                    // a sink is a dead letter queue
                     DeadLetterChannelBuilder dlch = new DeadLetterChannelBuilder();
-                    // endpoint
                     MappingNode endpoint = asMappingNode(nodeAt(nt.getValueNode(), "/endpoint"));
                     String dlq = extractCamelEndpointUri(endpoint);
                     dlch.setDeadLetterUri(dlq);
@@ -259,10 +352,6 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                     ehb = new DefaultErrorHandlerBuilder();
                 } else if ("none".equals(ehName)) {
                     route.errorHandler(new NoErrorHandlerBuilder());
-                } else if ("bean".equals(ehName)) {
-                    throw new IllegalArgumentException("Bean error handler is not supported");
-                } else if ("ref".equals(ehName)) {
-                    throw new IllegalArgumentException("Ref error handler is not supported");
                 }
 
                 // some error handlers support additional parameters
@@ -302,8 +391,11 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
         boolean strimzi
                 = !kamelet && mn != null && anyTupleMatches(mn.getValue(), "apiVersion", v -> v.startsWith(STRIMZI_VERSION))
                         && anyTupleMatches(mn.getValue(), "kind", "KafkaTopic");
+        boolean knative
+                = !kamelet && !strimzi && mn != null
+                        && anyTupleMatches(mn.getValue(), "apiVersion", v -> v.startsWith(KNATIVE_VERSION));
         String uri;
-        if (kamelet || strimzi) {
+        if (kamelet || strimzi || knative) {
             uri = extractTupleValue(mn.getValue(), "name");
         } else {
             uri = extractTupleValue(node.getValue(), "uri");
@@ -321,6 +413,8 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
             return "kamelet:" + uri;
         } else if (strimzi) {
             return "kafka:" + uri;
+        } else if (knative) {
+            return "knative:channel/" + uri;
         } else {
             return uri;
         }

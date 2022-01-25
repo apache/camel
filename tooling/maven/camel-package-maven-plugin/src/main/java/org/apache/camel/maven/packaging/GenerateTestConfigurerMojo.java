@@ -27,7 +27,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
 /**
- * Generate configurer classes from @Configuer annotated classes for test sources.
+ * Generate configurer classes from @Configurer annotated classes for test sources.
  */
 @Mojo(name = "generate-test-configurer", threadSafe = true, defaultPhase = LifecyclePhase.PROCESS_CLASSES,
       requiresDependencyCollection = ResolutionScope.COMPILE,

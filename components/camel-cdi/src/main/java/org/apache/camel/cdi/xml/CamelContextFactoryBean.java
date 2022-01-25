@@ -42,7 +42,6 @@ import org.apache.camel.core.xml.AbstractCamelFactoryBean;
 import org.apache.camel.core.xml.CamelJMXAgentDefinition;
 import org.apache.camel.core.xml.CamelPropertyPlaceholderDefinition;
 import org.apache.camel.core.xml.CamelRouteControllerDefinition;
-import org.apache.camel.core.xml.CamelServiceExporterDefinition;
 import org.apache.camel.core.xml.CamelStreamCachingStrategyDefinition;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.ContextScanDefinition;
@@ -76,6 +75,7 @@ import org.apache.camel.spi.PackageScanFilter;
 
 @XmlRootElement(name = "camelContext")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Deprecated
 public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<DefaultCamelContext> implements BeanManagerAware {
 
     @XmlAttribute(name = "depends-on")
@@ -95,10 +95,16 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
     private String tracePattern;
 
     @XmlAttribute
+    private String traceLoggingFormat;
+
+    @XmlAttribute
     private String debug;
 
     @XmlAttribute
     private String messageHistory;
+
+    @XmlAttribute
+    private String sourceLocationEnabled;
 
     @XmlAttribute
     private String logMask;
@@ -242,9 +248,6 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
 
     @XmlElement(name = "errorHandler", type = ErrorHandlerDefinition.class)
     private List<ErrorHandlerDefinition> errorHandlers;
-
-    @XmlElement(name = "export", type = CamelServiceExporterDefinition.class)
-    private List<CamelServiceExporterDefinition> exports;
 
     @XmlElement(name = "routeConfigurationContextRef")
     private List<RouteConfigurationContextRefDefinition> routeConfigurationRefs = new ArrayList<>();
@@ -710,6 +713,15 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
     }
 
     @Override
+    public String getTraceLoggingFormat() {
+        return traceLoggingFormat;
+    }
+
+    public void setTraceLoggingFormat(String traceLoggingFormat) {
+        this.traceLoggingFormat = traceLoggingFormat;
+    }
+
+    @Override
     public String getDebug() {
         return debug;
     }
@@ -728,6 +740,15 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
 
     public void setMessageHistory(String messageHistory) {
         this.messageHistory = messageHistory;
+    }
+
+    @Override
+    public String getSourceLocationEnabled() {
+        return sourceLocationEnabled;
+    }
+
+    public void setSourceLocationEnabled(String sourceLocationEnabled) {
+        this.sourceLocationEnabled = sourceLocationEnabled;
     }
 
     @Override
@@ -1078,14 +1099,6 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
 
     public void setDependsOn(String dependsOn) {
         this.dependsOn = dependsOn;
-    }
-
-    public List<CamelServiceExporterDefinition> getExports() {
-        return exports;
-    }
-
-    public void setExports(List<CamelServiceExporterDefinition> exports) {
-        this.exports = exports;
     }
 
     public boolean isImplicitId() {

@@ -31,7 +31,6 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.StringHelper;
 
 /**
  * Default {@link ExchangeFormatter} that have fine grained options to configure what to include in the output.
@@ -167,8 +166,8 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
                 sb.append(SEPARATOR);
             }
             String body = getBodyAsString(in);
-            if (skipBodyLineSeparator) {
-                body = StringHelper.replaceAll(body, LS, "");
+            if (skipBodyLineSeparator && body != null) {
+                body = body.replace(LS, "");
             }
             style(sb, "Body").append(body);
         }

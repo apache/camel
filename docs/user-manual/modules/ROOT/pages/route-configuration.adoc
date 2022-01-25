@@ -20,7 +20,7 @@ In the route configuration you can setup common strategies for:
 == Route Configuration Builder in Java DSL
 
 With Java DSL you can use `RouteConfigurationBuilder` to specify the configuration as shown below.
-The builder is similar to `RouteBuilder` so it's use is familiar.
+The builder is similar to `RouteBuilder` so its use is familiar.
 
 [source,java]
 ----
@@ -80,18 +80,18 @@ Multiple configurations can be assigned (separated by comma), such as:
 
 The route configurations supports matching by:
 
-- match by exact ID name. This is the sample we have seen above.
-- match by wildcard
-- match by regular expression.
+- exact ID name. This is the sample we have seen above.
+- wildcard
+- regular expression.
 
-Wildcards are text ending with a *; they are matched when the configuration ID starts with the specified text followed by any characters. For instance you can do:
+Wildcards are text ending with a *; they are matched when the configuration ID starts with the specified text followed by any characters. For instance, you can do:
 
 [source,java]
 ----
 .routeConfigurationId("java*,myAudit")
 ----
 
-Here we use wildcard in _java*_ which means any configuration that starts with java is a match.
+Here we use wildcard in _java*_ which means any configuration whose ID starts with java is a match.
 
 Match by regular expression is just like match by wildcard but using regex instead.
 
@@ -100,7 +100,7 @@ Match by regular expression is just like match by wildcard but using regex inste
 .routeConfigurationId(".*error.*")
 ----
 
-Here we want to match any routes that has _error_ in the name.
+Here we want to match any configuration whose ID contains _error_.
 
 === Adding route configurations to CamelContext
 
@@ -119,7 +119,7 @@ context.addRoutes(new MyJavaRouteBuilder());
 If you use Spring Boot, then your Camel routes and route configurations can be auto-discovered
 by the spring boot component scanning. This requires adding the `@Component` annotation to the class.
 
-See the example https://github.com/apache/camel-spring-boot-examples/tree/main/routes-configuration[camel-example-spring-boot-routes-configuration].
+See the example https://github.com/apache/camel-spring-boot-examples/tree/main/routes-configuration[camel-spring-boot-examples/routes-configuration].
 
 
 === Route configuration with Endpoint DSL
@@ -169,8 +169,8 @@ And the following two routes:
 In the example above, the _cheese_ route has no route configurations assigned, so the route
 will use the default configuration, which in case of an exception will log a warning.
 
-The _beer_ route on the other hand has route configuration _retryError_ assigned, and this
-configuration will in case of an exception retry again up till 5 times and then if still an error
+The _beer_ route on the other hand has the route configuration _retryError_ assigned, and this
+configuration will in case of an exception retry up to 5 times and then if still an error
 then fail and rollback.
 
 If you add more routes, then those routes can also be assigned the _retryError_ configuration
@@ -249,14 +249,14 @@ In this example the route is assigned the _yamlError_ route configuration by the
 
 == Mixing DSLs
 
-Routes and route configuration are not required to use the same language. For example you can code
+Routes and route configuration are not required to use the same language. For example, you can code
 route configurations in Java, and then use XML DSL for the routes, and they would work together.
 
 == Route Configuration in classic Spring/Blueprint XML
 
 When using XML DSL with `camel-spring-xml` or `camel-blueprint`
 then you can code your route configurations in `<routeConfigurationContext>` snippets
-in sepearte XML files as shown below:
+in separate XML files as shown below:
 
 [source,xml]
 ----
@@ -286,7 +286,7 @@ Then from `<camelContext>` you can refer to these XML snippets by their ids:
         <log message="I am XML"/>
         <throwException exceptionType="java.lang.Exception" message="Some kind of XML error"/>
     </route>
-</route>
+</camelContext>
 ----
 
 In this example the route is assigned the _xmlError_ route configuration by the exact ID.
@@ -327,6 +327,6 @@ camel.main.startup-summary-level = verbose
 
 See these examples:
 
-- https://github.com/apache/camel-examples/tree/main/examples/routes-configuration[camel-example-routes-configuration]
-- https://github.com/apache/camel-spring-boot-examples/tree/main/routes-configuration[camel-example-spring-boot-routes-configuration]
+- https://github.com/apache/camel-examples/tree/main/examples/routes-configuration[camel-examples/examples/routes-configuration]
+- https://github.com/apache/camel-spring-boot-examples/tree/main/routes-configuration[camel-spring-boot-examples/routes-configuration/]
 

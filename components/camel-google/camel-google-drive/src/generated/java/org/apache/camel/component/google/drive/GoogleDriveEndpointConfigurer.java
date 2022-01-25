@@ -25,6 +25,7 @@ public class GoogleDriveEndpointConfigurer extends PropertyConfigurerSupport imp
         map.put("applicationName", java.lang.String.class);
         map.put("clientFactory", org.apache.camel.component.google.drive.GoogleDriveClientFactory.class);
         map.put("clientId", java.lang.String.class);
+        map.put("delegate", java.lang.String.class);
         map.put("inBody", java.lang.String.class);
         map.put("scopes", java.util.List.class);
         map.put("bridgeErrorHandler", boolean.class);
@@ -49,6 +50,7 @@ public class GoogleDriveEndpointConfigurer extends PropertyConfigurerSupport imp
         map.put("useFixedDelay", boolean.class);
         map.put("accessToken", java.lang.String.class);
         map.put("clientSecret", java.lang.String.class);
+        map.put("keyResource", java.lang.String.class);
         map.put("refreshToken", java.lang.String.class);
         ALL_OPTIONS = map;
     }
@@ -76,6 +78,7 @@ public class GoogleDriveEndpointConfigurer extends PropertyConfigurerSupport imp
         case "clientsecret":
         case "clientSecret": target.getConfiguration().setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
+        case "delegate": target.getConfiguration().setDelegate(property(camelContext, java.lang.String.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
@@ -85,6 +88,8 @@ public class GoogleDriveEndpointConfigurer extends PropertyConfigurerSupport imp
         case "inBody": target.setInBody(property(camelContext, java.lang.String.class, value)); return true;
         case "initialdelay":
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
+        case "keyresource":
+        case "keyResource": target.getConfiguration().setKeyResource(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "pollstrategy":
@@ -140,6 +145,7 @@ public class GoogleDriveEndpointConfigurer extends PropertyConfigurerSupport imp
         case "clientsecret":
         case "clientSecret": return java.lang.String.class;
         case "delay": return long.class;
+        case "delegate": return java.lang.String.class;
         case "exceptionhandler":
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
@@ -149,6 +155,8 @@ public class GoogleDriveEndpointConfigurer extends PropertyConfigurerSupport imp
         case "inBody": return java.lang.String.class;
         case "initialdelay":
         case "initialDelay": return long.class;
+        case "keyresource":
+        case "keyResource": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "pollstrategy":
@@ -200,6 +208,7 @@ public class GoogleDriveEndpointConfigurer extends PropertyConfigurerSupport imp
         case "clientsecret":
         case "clientSecret": return target.getConfiguration().getClientSecret();
         case "delay": return target.getDelay();
+        case "delegate": return target.getConfiguration().getDelegate();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
@@ -209,6 +218,8 @@ public class GoogleDriveEndpointConfigurer extends PropertyConfigurerSupport imp
         case "inBody": return target.getInBody();
         case "initialdelay":
         case "initialDelay": return target.getInitialDelay();
+        case "keyresource":
+        case "keyResource": return target.getConfiguration().getKeyResource();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "pollstrategy":

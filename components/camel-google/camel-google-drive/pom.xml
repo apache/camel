@@ -50,6 +50,17 @@
             <artifactId>camel-file</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.google.apis</groupId>
+            <artifactId>google-api-services-drive</artifactId>
+            <version>${google-api-services-drive-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.api-client</groupId>
+                    <artifactId>google-api-client</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
             <groupId>com.google.api-client</groupId>
             <artifactId>google-api-client</artifactId>
             <version>${google-api-client-version}</version>
@@ -58,7 +69,16 @@
                     <groupId>com.google.code.findbugs</groupId>
                     <artifactId>jsr305</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>com.google.oauth-client</groupId>
+                    <artifactId>google-oauth-client</artifactId>
+                </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.google.oauth-client</groupId>
+            <artifactId>google-oauth-client</artifactId>
+            <version>${google-api-client-version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.oauth-client</groupId>
@@ -76,11 +96,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <dependency>
-            <groupId>com.google.apis</groupId>
-            <artifactId>google-api-services-drive</artifactId>
-            <version>${google-api-services-drive-version}</version>
-        </dependency>
+
 
         <!-- logging -->
         <dependency>
@@ -165,8 +181,13 @@
                                     <fromJavasource />
                                 </api>
                                 <api>
-                                    <apiName>drive-realtime</apiName>
-                                    <proxyClass>com.google.api.services.drive.Drive$Realtime</proxyClass>
+                                    <apiName>drive-drives</apiName>
+                                    <proxyClass>com.google.api.services.drive.Drive$Drives</proxyClass>
+                                    <fromJavasource />
+                                </api>
+                                <api>
+                                    <apiName>drive-teamdrives</apiName>
+                                    <proxyClass>com.google.api.services.drive.Drive$Teamdrives</proxyClass>
                                     <fromJavasource />
                                 </api>
                                 <api>

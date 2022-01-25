@@ -92,8 +92,8 @@ BeanPostProcessor to post process beans.
   <xs:element name="beanio" type="tns:beanioDataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-Marshal and unmarshal Java beans to and from flat files (such as CSV, delimited,
-or fixed length formats).
+Deprecated: Marshal and unmarshal Java beans to and from flat files (such as
+CSV, delimited, or fixed length formats).
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -253,7 +253,7 @@ Handle CSV (Comma Separated Values) payloads.
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="customDataFormat" type="tns:customDataFormat">
+  <xs:element name="custom" type="tns:customDataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 Delegate to a custom org.apache.camel.spi.DataFormat implementation via Camel
@@ -406,15 +406,6 @@ Gets a property from the Exchange.
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="export" type="tns:camelServiceExporterDefinition">
-    <xs:annotation>
-      <xs:documentation xml:lang="en"><![CDATA[
-Used for export a service using Spring Remoting to hide the network call using
-an interface.
-      ]]></xs:documentation>
-    </xs:annotation>
-  </xs:element>
-
   <xs:element name="expression" type="tns:expressionSubElementDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
@@ -532,7 +523,7 @@ Evaluates a Groovy script.
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="gzipdeflater" type="tns:gzipDataFormat">
+  <xs:element name="gzipDeflater" type="tns:gzipDeflaterDataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 Compress and decompress messages using java.util.zip.GZIPStream.
@@ -662,7 +653,7 @@ Intercepts messages being sent to an endpoint
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="jacksonxml" type="tns:jacksonXMLDataFormat">
+  <xs:element name="jacksonXml" type="tns:jacksonXMLDataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 Unmarshal a XML payloads to POJOs and back using XMLMapper extension of Jackson.
@@ -807,7 +798,7 @@ Calls a Java bean method.
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="mime-multipart" type="tns:mimeMultipartDataFormat">
+  <xs:element name="mimeMultipart" type="tns:mimeMultipartDataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 Marshal Camel messages with attachments into MIME-Multipart messages and back.
@@ -1392,14 +1383,6 @@ Cryptographically strong random number generator
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="secureXML" type="tns:xmlSecurityDataFormat">
-    <xs:annotation>
-      <xs:documentation xml:lang="en"><![CDATA[
-Encrypt and decrypt XML payloads using Apache Santuario.
-      ]]></xs:documentation>
-    </xs:annotation>
-  </xs:element>
-
   <xs:element name="security" type="tns:securityDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
@@ -1512,7 +1495,7 @@ Evaluates a Camel simple expression.
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="soapjaxb" type="tns:soapJaxbDataFormat">
+  <xs:element name="soap" type="tns:soapDataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 Marshal Java objects to SOAP messages and back.
@@ -1610,7 +1593,7 @@ Marshall SyslogMessages to RFC3164 and RFC5424 messages and back.
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="tarfile" type="tns:tarFileDataFormat">
+  <xs:element name="tarFile" type="tns:tarFileDataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 Archive files into tarballs or extract files from tarballs.
@@ -1771,7 +1754,7 @@ null
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="univocity-csv" type="tns:uniVocityCsvDataFormat">
+  <xs:element name="univocityCsv" type="tns:uniVocityCsvDataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 Marshal and unmarshal Java objects from and to CSV (Comma Separated Values)
@@ -1780,7 +1763,7 @@ using UniVocity Parsers.
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="univocity-fixed" type="tns:uniVocityFixedWidthDataFormat">
+  <xs:element name="univocityFixed" type="tns:uniVocityFixedDataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 Marshal and unmarshal Java objects from and to fixed length records using
@@ -1789,7 +1772,7 @@ UniVocity Parsers.
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="univocity-header" type="tns:uniVocityHeader">
+  <xs:element name="univocityHeader" type="tns:uniVocityHeader">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 To configure headers for UniVocity data formats.
@@ -1797,7 +1780,7 @@ To configure headers for UniVocity data formats.
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="univocity-tsv" type="tns:uniVocityTsvDataFormat">
+  <xs:element name="univocityTsv" type="tns:uniVocityTsvDataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 Marshal and unmarshal Java objects from and to TSV (Tab-Separated Values)
@@ -1864,10 +1847,10 @@ while continue routing the original message.
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="xmlrpc" type="tns:xmlRpcDataFormat">
+  <xs:element name="xmlSecurity" type="tns:xmlSecurityDataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-Marshal and unmarshal XML RPC protocol requests or responses.
+Encrypt and decrypt XML payloads using Apache Santuario.
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -1912,7 +1895,7 @@ Marshal and unmarshal Java objects to and from YAML.
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="zipdeflater" type="tns:zipDeflaterDataFormat">
+  <xs:element name="zipDeflater" type="tns:zipDeflaterDataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 Compress and decompress streams using java.util.zip.Deflater and
@@ -1921,7 +1904,7 @@ java.util.zip.Inflater.
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="zipfile" type="tns:zipFileDataFormat">
+  <xs:element name="zipFile" type="tns:zipFileDataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 Compression and decompress streams using java.util.zip.ZipStream.
@@ -2652,50 +2635,6 @@ this and can report the Camel application as DOWN. Default value: false
             <xs:documentation xml:lang="en"><![CDATA[
 Sets the logging level used for logging route activity (such as starting and
 stopping routes). The default logging level is DEBUG. Default value: DEBUG
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:complexType name="camelServiceExporterDefinition">
-    <xs:complexContent>
-      <xs:extension base="tns:identifiedType">
-        <xs:sequence/>
-        <xs:attribute name="uri" type="xs:string" use="required">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Camel endpoint uri to use a remote transport when calling the service.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="serviceRef" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Reference to the service name to lookup in the registry.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="method" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Name of method to invoke on service.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="serviceInterface" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Java interfaces to use as facade for the service to be exported.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="camelContextId" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-The id of the CamelContext to use, if there is multiple CamelContext in the same
-JVM.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -4428,9 +4367,9 @@ References to a custom thread pool to use when bulkhead is enabled.
         <xs:attribute name="operation" type="xs:string" use="required">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-The claim check operation to use. The following operations is supported: Get -
+The claim check operation to use. The following operations are supported: Get -
 Gets (does not remove) the claim check by the given key. GetAndRemove - Gets and
-remove the claim check by the given key. Set - Sets a new (will override if key
+removes the claim check by the given key. Set - Sets a new (will override if key
 already exists) claim check with the given key. Push - Sets a new claim check on
 the stack (does not use key). Pop - Gets the latest claim check from the stack
 (does not use key).
@@ -4448,20 +4387,20 @@ syntax as the key).
         <xs:attribute name="filter" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Specified a filter to control what data gets merging data back from the claim
-check repository. The following syntax is supported: body - to aggregate the
-message body attachments - to aggregate all the message attachments headers - to
+Specify a filter to control what data gets merged data back from the claim check
+repository. The following syntax is supported: body - to aggregate the message
+body attachments - to aggregate all the message attachments headers - to
 aggregate all the message headers header:pattern - to aggregate all the message
-headers that matches the pattern. The pattern uses the following rules are
-applied in this order: exact match, returns true wildcard match (pattern ends
-with a and the name starts with the pattern), returns true regular expression
-match, returns true otherwise returns false You can specify multiple rules
-separated by comma. For example to include the message body and all headers
-starting with foo body,header:foo. The syntax supports the following prefixes
+headers that matches the pattern. The following pattern rules are applied in
+this order: exact match, returns true wildcard match (pattern ends with a and
+the name starts with the pattern), returns true regular expression match,
+returns true otherwise returns false You can specify multiple rules separated by
+comma. For example, the following includes the message body and all headers
+starting with foo: body,header:foo. The syntax supports the following prefixes
 which can be used to specify include,exclude, or remove - to include (which is
 the default mode) - - to exclude (exclude takes precedence over include) -- - to
 remove (remove takes precedence) For example to exclude a header name foo, and
-remove all headers starting with bar -header:foo,--headers:bar Note you cannot
+remove all headers starting with bar, -header:foo,--headers:bar Note you cannot
 have both include and exclude header:pattern at the same time.
             ]]></xs:documentation>
           </xs:annotation>
@@ -4911,6 +4850,14 @@ org.apache.camel.spi.SendDynamicAware . Default value: true
             <xs:element ref="tns:serviceCall"/>
           </xs:choice>
         </xs:sequence>
+        <xs:attribute name="statusPropertyName" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Name of exchange property to use for storing the status of the filtering.
+Setting this allows to know if the filter predicate evaluated as true or false.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -5925,37 +5872,36 @@ it reaches the end when Camel is shut down. Default value: false
             <xs:element ref="tns:cbor"/>
             <xs:element ref="tns:crypto"/>
             <xs:element ref="tns:csv"/>
-            <xs:element name="custom" type="tns:customDataFormat"/>
+            <xs:element ref="tns:custom"/>
             <xs:element ref="tns:fhirJson"/>
             <xs:element ref="tns:fhirXml"/>
             <xs:element ref="tns:flatpack"/>
             <xs:element ref="tns:grok"/>
-            <xs:element name="gzip" type="tns:gzipDataFormat"/>
+            <xs:element ref="tns:gzipDeflater"/>
             <xs:element ref="tns:hl7"/>
             <xs:element ref="tns:ical"/>
-            <xs:element ref="tns:jacksonxml"/>
+            <xs:element ref="tns:jacksonXml"/>
             <xs:element ref="tns:jaxb"/>
             <xs:element ref="tns:json"/>
             <xs:element ref="tns:jsonApi"/>
             <xs:element ref="tns:lzf"/>
-            <xs:element name="mimeMultipart" type="tns:mimeMultipartDataFormat"/>
+            <xs:element ref="tns:mimeMultipart"/>
             <xs:element ref="tns:protobuf"/>
             <xs:element ref="tns:rss"/>
-            <xs:element ref="tns:secureXML"/>
-            <xs:element ref="tns:soapjaxb"/>
+            <xs:element ref="tns:soap"/>
             <xs:element ref="tns:syslog"/>
-            <xs:element ref="tns:tarfile"/>
+            <xs:element ref="tns:tarFile"/>
             <xs:element ref="tns:thrift"/>
             <xs:element ref="tns:tidyMarkup"/>
-            <xs:element ref="tns:univocity-csv"/>
-            <xs:element ref="tns:univocity-fixed"/>
-            <xs:element ref="tns:univocity-tsv"/>
-            <xs:element ref="tns:xmlrpc"/>
+            <xs:element ref="tns:univocityCsv"/>
+            <xs:element ref="tns:univocityFixed"/>
+            <xs:element ref="tns:univocityTsv"/>
+            <xs:element ref="tns:xmlSecurity"/>
             <xs:element ref="tns:xstream"/>
             <xs:element ref="tns:pgp"/>
             <xs:element ref="tns:yaml"/>
-            <xs:element name="zip" type="tns:zipDeflaterDataFormat"/>
-            <xs:element ref="tns:zipfile"/>
+            <xs:element ref="tns:zipDeflater"/>
+            <xs:element ref="tns:zipFile"/>
           </xs:choice>
         </xs:sequence>
       </xs:extension>
@@ -7081,7 +7027,7 @@ Default value: false
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:complexType name="gzipDataFormat">
+  <xs:complexType name="gzipDeflaterDataFormat">
     <xs:complexContent>
       <xs:extension base="tns:dataFormat">
         <xs:sequence/>
@@ -7922,126 +7868,7 @@ Default value: true
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:complexType name="xmlSecurityDataFormat">
-    <xs:complexContent>
-      <xs:extension base="tns:dataFormat">
-        <xs:sequence/>
-        <xs:attribute name="xmlCipherAlgorithm" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-The cipher algorithm to be used for encryption/decryption of the XML message
-content. The available choices are: XMLCipher.TRIPLEDES XMLCipher.AES_128
-XMLCipher.AES_128_GCM XMLCipher.AES_192 XMLCipher.AES_192_GCM XMLCipher.AES_256
-XMLCipher.AES_256_GCM XMLCipher.SEED_128 XMLCipher.CAMELLIA_128
-XMLCipher.CAMELLIA_192 XMLCipher.CAMELLIA_256 The default value is
-XMLCipher.AES_256_GCM. Default value: AES-256-GCM
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="passPhrase" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-A String used as passPhrase to encrypt/decrypt content. The passPhrase has to be
-provided. The passPhrase needs to be put together in conjunction with the
-appropriate encryption algorithm. For example using TRIPLEDES the passPhase can
-be a Only another 24 Byte key.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="passPhraseByte" type="xs:base64Binary">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-A byte used as passPhrase to encrypt/decrypt content. The passPhrase has to be
-provided. The passPhrase needs to be put together in conjunction with the
-appropriate encryption algorithm. For example using TRIPLEDES the passPhase can
-be a Only another 24 Byte key.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="secureTag" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-The XPath reference to the XML Element selected for encryption/decryption. If no
-tag is specified, the entire payload is encrypted/decrypted.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="secureTagContents" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-A boolean value to specify whether the XML Element is to be encrypted or the
-contents of the XML Element false = Element Level true = Element Content Level.
-Default value: false
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="keyCipherAlgorithm" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-The cipher algorithm to be used for encryption/decryption of the asymmetric key.
-The available choices are: XMLCipher.RSA_v1dot5 XMLCipher.RSA_OAEP
-XMLCipher.RSA_OAEP_11 The default value is XMLCipher.RSA_OAEP. Default value:
-RSA_OAEP
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="recipientKeyAlias" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-The key alias to be used when retrieving the recipient's public or private key
-from a KeyStore when performing asymmetric key encryption or decryption.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="keyOrTrustStoreParametersRef" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Refers to a KeyStore instance to lookup in the registry, which is used for
-configuration options for creating and loading a KeyStore instance that
-represents the sender's trustStore or recipient's keyStore.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="keyPassword" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-The password to be used for retrieving the private key from the KeyStore. This
-key is used for asymmetric decryption.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="digestAlgorithm" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-The digest algorithm to use with the RSA OAEP algorithm. The available choices
-are: XMLCipher.SHA1 XMLCipher.SHA256 XMLCipher.SHA512 The default value is
-XMLCipher.SHA1. Default value: SHA1
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="mgfAlgorithm" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-The MGF Algorithm to use with the RSA OAEP algorithm. The available choices are:
-EncryptionConstants.MGF1_SHA1 EncryptionConstants.MGF1_SHA256
-EncryptionConstants.MGF1_SHA512 The default value is
-EncryptionConstants.MGF1_SHA1. Default value: MGF1_SHA1
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="addKeyValueForEncryptedKey" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Whether to add the public key used to encrypt the session key as a KeyValue in
-the EncryptedKey structure or not. Default value: true
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:complexType name="soapJaxbDataFormat">
+  <xs:complexType name="soapDataFormat">
     <xs:complexContent>
       <xs:extension base="tns:dataFormat">
         <xs:sequence/>
@@ -8260,7 +8087,7 @@ The delimiter of values. Default value: ,
     <xs:complexContent>
       <xs:extension base="tns:dataFormat">
         <xs:sequence>
-          <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:univocity-header"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:univocityHeader"/>
         </xs:sequence>
         <xs:attribute name="nullValue" type="xs:string">
           <xs:annotation>
@@ -8383,7 +8210,7 @@ Header length.
     </xs:simpleContent>
   </xs:complexType>
 
-  <xs:complexType name="uniVocityFixedWidthDataFormat">
+  <xs:complexType name="uniVocityFixedDataFormat">
     <xs:complexContent>
       <xs:extension base="tns:uniVocityAbstractDataFormat">
         <xs:sequence/>
@@ -8429,15 +8256,118 @@ The escape character. Default value: \
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:complexType name="xmlRpcDataFormat">
+  <xs:complexType name="xmlSecurityDataFormat">
     <xs:complexContent>
       <xs:extension base="tns:dataFormat">
         <xs:sequence/>
-        <xs:attribute name="request" type="xs:string">
+        <xs:attribute name="xmlCipherAlgorithm" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Whether to marshal/unmarshal request or response Is by default false. Default
-value: false
+The cipher algorithm to be used for encryption/decryption of the XML message
+content. The available choices are: XMLCipher.TRIPLEDES XMLCipher.AES_128
+XMLCipher.AES_128_GCM XMLCipher.AES_192 XMLCipher.AES_192_GCM XMLCipher.AES_256
+XMLCipher.AES_256_GCM XMLCipher.SEED_128 XMLCipher.CAMELLIA_128
+XMLCipher.CAMELLIA_192 XMLCipher.CAMELLIA_256 The default value is
+XMLCipher.AES_256_GCM. Default value: AES-256-GCM
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="passPhrase" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+A String used as passPhrase to encrypt/decrypt content. The passPhrase has to be
+provided. The passPhrase needs to be put together in conjunction with the
+appropriate encryption algorithm. For example using TRIPLEDES the passPhase can
+be a Only another 24 Byte key.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="passPhraseByte" type="xs:base64Binary">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+A byte used as passPhrase to encrypt/decrypt content. The passPhrase has to be
+provided. The passPhrase needs to be put together in conjunction with the
+appropriate encryption algorithm. For example using TRIPLEDES the passPhase can
+be a Only another 24 Byte key.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="secureTag" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+The XPath reference to the XML Element selected for encryption/decryption. If no
+tag is specified, the entire payload is encrypted/decrypted.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="secureTagContents" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+A boolean value to specify whether the XML Element is to be encrypted or the
+contents of the XML Element false = Element Level true = Element Content Level.
+Default value: false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="keyCipherAlgorithm" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+The cipher algorithm to be used for encryption/decryption of the asymmetric key.
+The available choices are: XMLCipher.RSA_v1dot5 XMLCipher.RSA_OAEP
+XMLCipher.RSA_OAEP_11 The default value is XMLCipher.RSA_OAEP. Default value:
+RSA_OAEP
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="recipientKeyAlias" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+The key alias to be used when retrieving the recipient's public or private key
+from a KeyStore when performing asymmetric key encryption or decryption.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="keyOrTrustStoreParametersRef" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Refers to a KeyStore instance to lookup in the registry, which is used for
+configuration options for creating and loading a KeyStore instance that
+represents the sender's trustStore or recipient's keyStore.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="keyPassword" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+The password to be used for retrieving the private key from the KeyStore. This
+key is used for asymmetric decryption.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="digestAlgorithm" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+The digest algorithm to use with the RSA OAEP algorithm. The available choices
+are: XMLCipher.SHA1 XMLCipher.SHA256 XMLCipher.SHA512 The default value is
+XMLCipher.SHA1. Default value: SHA1
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="mgfAlgorithm" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+The MGF Algorithm to use with the RSA OAEP algorithm. The available choices are:
+EncryptionConstants.MGF1_SHA1 EncryptionConstants.MGF1_SHA256
+EncryptionConstants.MGF1_SHA512 The default value is
+EncryptionConstants.MGF1_SHA1. Default value: MGF1_SHA1
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="addKeyValueForEncryptedKey" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Whether to add the public key used to encrypt the session key as a KeyValue in
+the EncryptedKey structure or not. Default value: true
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -8795,7 +8725,7 @@ Whether to filter by class type or regular expression.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 To specify a specific compression between 0-9. -1 is default compression, 0 is
-no compression, and 9 is best compression. Default value: -1
+no compression, and 9 is the best compression. Default value: -1
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -9040,11 +8970,9 @@ AggregationStrategy is implemented as thread-safe. Default value: false
         <xs:attribute name="stopOnAggregateException" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-If enabled, unwind exceptions occurring at aggregation time to the error handler
-when parallelProcessing is used. Currently, aggregation time exceptions do not
-stop the route processing when parallelProcessing is used. Enabling this option
-allows to work around this behavior. The default value is false for the sake of
-backward compatibility. Default value: false
+Deprecated: If enabled, unwind exceptions occurring at aggregation time to the
+error handler when parallelProcessing is used. The default value is false for
+the sake of backward compatibility. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -9354,7 +9282,7 @@ seda. When messages is passed via external endpoints such as JMS or HTTP then
 the consumer will create a new unit of work, with the message it received as
 input as the original input. Also some EIP patterns such as splitter, multicast,
 will create a new unit of work boundary for the messages in their sub-route (eg
-the splitted message); however these EIPs have an option named shareUnitOfWork
+the split message); however these EIPs have an option named shareUnitOfWork
 which allows to combine with the parent unit of work in regard to error handling
 and therefore use the parent original message. By default this feature is off.
 Default value: false
@@ -9388,7 +9316,7 @@ seda. When messages is passed via external endpoints such as JMS or HTTP then
 the consumer will create a new unit of work, with the message it received as
 input as the original input. Also some EIP patterns such as splitter, multicast,
 will create a new unit of work boundary for the messages in their sub-route (eg
-the splitted message); however these EIPs have an option named shareUnitOfWork
+the split message); however these EIPs have an option named shareUnitOfWork
 which allows to combine with the parent unit of work in regard to error handling
 and therefore use the parent original message. By default this feature is off.
 Default value: false
@@ -10016,7 +9944,11 @@ endpoint.
         <xs:attribute name="ref" type="xs:string" use="required">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Reference to the Processor to lookup in the registry to use.
+Reference to the Processor to lookup in the registry to use. Can also be used
+for creating new beans by their class name by prefixing with #class, eg
+#class:com.foo.MyClassType. And it is also possible to refer to singleton beans
+by their type in the registry by prefixing with #type: syntax, eg
+#type:com.foo.MyClassType.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -10210,11 +10142,9 @@ AggregationStrategy is implemented as thread-safe. Default value: false
         <xs:attribute name="stopOnAggregateException" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-If enabled, unwind exceptions occurring at aggregation time to the error handler
-when parallelProcessing is used. Currently, aggregation time exceptions do not
-stop the route processing when parallelProcessing is used. Enabling this option
-allows to work around this behavior. The default value is false for the sake of
-backward compatibility. Default value: false
+Deprecated: If enabled, unwind exceptions occurring at aggregation time to the
+error handler when parallelProcessing is used. The default value is false for
+the sake of backward compatibility. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -10294,13 +10224,6 @@ in-sensitive).
     <xs:complexContent>
       <xs:extension base="tns:noOutputDefinition">
         <xs:sequence/>
-        <xs:attribute name="propertyName" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Deprecated: Name of property to remove.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
         <xs:attribute name="name" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
@@ -11492,7 +11415,7 @@ The default value is ,. Default value: ,
         <xs:attribute name="parallelProcessing" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-If enabled then processing each splitted messages occurs concurrently. Note the
+If enabled then processing each split messages occurs concurrently. Note the
 caller thread will still wait until all messages has been fully processed,
 before it continues. Its only processing the sub messages from the splitter
 which happens concurrently. Default value: false
@@ -11503,7 +11426,7 @@ which happens concurrently. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Sets a reference to the AggregationStrategy to be used to assemble the replies
-from the splitted messages, into a single outgoing message from the Splitter. By
+from the split messages, into a single outgoing message from the Splitter. By
 default Camel will use the original incoming message to the splitter (leave it
 unchanged). You can also use a POJO as the AggregationStrategy.
             ]]></xs:documentation>
@@ -11540,17 +11463,17 @@ have to enable that option as well.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 When in streaming mode, then the splitter splits the original message on-demand,
-and each splitted message is processed one by one. This reduces memory usage as
-the splitter do not split all the messages first, but then we do not know the
-total size, and therefore the org.apache.camel.Exchange#SPLIT_SIZE is empty. In
+and each split message is processed one by one. This reduces memory usage as the
+splitter do not split all the messages first, but then we do not know the total
+size, and therefore the org.apache.camel.Exchange#SPLIT_SIZE is empty. In
 non-streaming mode (default) the splitter will split each message first, to know
 the total size, and then process each message one by one. This requires to keep
-all the splitted messages in memory and therefore requires more memory. The
-total size is provided in the org.apache.camel.Exchange#SPLIT_SIZE header. The
+all the split messages in memory and therefore requires more memory. The total
+size is provided in the org.apache.camel.Exchange#SPLIT_SIZE header. The
 streaming mode also affects the aggregation behavior. If enabled then Camel will
 process replies out-of-order, eg in the order they come back. If disabled, Camel
-will process replies in the same order as the messages was splitted. Default
-value: false
+will process replies in the same order as the messages was split. Default value:
+false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -11596,8 +11519,8 @@ needed before the exchange is send.
             <xs:documentation xml:lang="en"><![CDATA[
 Shares the org.apache.camel.spi.UnitOfWork with the parent and each of the sub
 messages. Splitter will by default not share unit of work between the parent
-exchange and each splitted exchange. This means each splitted exchange has its
-own individual unit of work. Default value: false
+exchange and each split exchange. This means each split exchange has its own
+individual unit of work. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -11616,11 +11539,9 @@ AggregationStrategy is implemented as thread-safe. Default value: false
         <xs:attribute name="stopOnAggregateException" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-If enabled, unwind exceptions occurring at aggregation time to the error handler
-when parallelProcessing is used. Currently, aggregation time exceptions do not
-stop the route processing when parallelProcessing is used. Enabling this option
-allows to work around this behavior. The default value is false for the sake of
-backward compatibility. Default value: false
+Deprecated: If enabled, unwind exceptions occurring at aggregation time to the
+error handler when parallelProcessing is used. The default value is false for
+the sake of backward compatibility. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -12255,37 +12176,36 @@ Sets a reference to use for lookup the policy in the registry.
             <xs:element ref="tns:cbor"/>
             <xs:element ref="tns:crypto"/>
             <xs:element ref="tns:csv"/>
-            <xs:element name="custom" type="tns:customDataFormat"/>
+            <xs:element ref="tns:custom"/>
             <xs:element ref="tns:fhirJson"/>
             <xs:element ref="tns:fhirXml"/>
             <xs:element ref="tns:flatpack"/>
             <xs:element ref="tns:grok"/>
-            <xs:element name="gzip" type="tns:gzipDataFormat"/>
+            <xs:element ref="tns:gzipDeflater"/>
             <xs:element ref="tns:hl7"/>
             <xs:element ref="tns:ical"/>
-            <xs:element ref="tns:jacksonxml"/>
+            <xs:element ref="tns:jacksonXml"/>
             <xs:element ref="tns:jaxb"/>
             <xs:element ref="tns:json"/>
             <xs:element ref="tns:jsonApi"/>
             <xs:element ref="tns:lzf"/>
-            <xs:element name="mimeMultipart" type="tns:mimeMultipartDataFormat"/>
+            <xs:element ref="tns:mimeMultipart"/>
             <xs:element ref="tns:protobuf"/>
             <xs:element ref="tns:rss"/>
-            <xs:element ref="tns:secureXML"/>
-            <xs:element ref="tns:soapjaxb"/>
+            <xs:element ref="tns:soap"/>
             <xs:element ref="tns:syslog"/>
-            <xs:element ref="tns:tarfile"/>
+            <xs:element ref="tns:tarFile"/>
             <xs:element ref="tns:thrift"/>
             <xs:element ref="tns:tidyMarkup"/>
-            <xs:element ref="tns:univocity-csv"/>
-            <xs:element ref="tns:univocity-fixed"/>
-            <xs:element ref="tns:univocity-tsv"/>
-            <xs:element ref="tns:xmlrpc"/>
+            <xs:element ref="tns:univocityCsv"/>
+            <xs:element ref="tns:univocityFixed"/>
+            <xs:element ref="tns:univocityTsv"/>
+            <xs:element ref="tns:xmlSecurity"/>
             <xs:element ref="tns:xstream"/>
             <xs:element ref="tns:pgp"/>
             <xs:element ref="tns:yaml"/>
-            <xs:element name="zip" type="tns:zipDeflaterDataFormat"/>
-            <xs:element ref="tns:zipfile"/>
+            <xs:element ref="tns:zipDeflater"/>
+            <xs:element ref="tns:zipFile"/>
           </xs:choice>
         </xs:sequence>
       </xs:extension>
@@ -12318,6 +12238,16 @@ Sets a reference to use for lookup the policy in the registry.
           <xs:element ref="tns:xpath"/>
           <xs:element ref="tns:xquery"/>
         </xs:choice>
+        <xs:attribute name="predicateExceptionFactory" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+The bean id of custom PredicateExceptionFactory to use for creating the
+exception when the validation fails. By default, Camel will throw
+PredicateValidationException. By using a custom factory you can control which
+exception to throw instead.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -13235,37 +13165,36 @@ Set a reference to a custom Expression to use.
         <xs:element ref="tns:cbor"/>
         <xs:element ref="tns:crypto"/>
         <xs:element ref="tns:csv"/>
-        <xs:element name="custom" type="tns:customDataFormat"/>
+        <xs:element ref="tns:custom"/>
         <xs:element ref="tns:fhirJson"/>
         <xs:element ref="tns:fhirXml"/>
         <xs:element ref="tns:flatpack"/>
         <xs:element ref="tns:grok"/>
-        <xs:element name="gzip" type="tns:gzipDataFormat"/>
+        <xs:element ref="tns:gzipDeflater"/>
         <xs:element ref="tns:hl7"/>
         <xs:element ref="tns:ical"/>
-        <xs:element ref="tns:jacksonxml"/>
+        <xs:element ref="tns:jacksonXml"/>
         <xs:element ref="tns:jaxb"/>
         <xs:element ref="tns:json"/>
         <xs:element ref="tns:jsonApi"/>
         <xs:element ref="tns:lzf"/>
-        <xs:element name="mimeMultipart" type="tns:mimeMultipartDataFormat"/>
+        <xs:element ref="tns:mimeMultipart"/>
         <xs:element ref="tns:protobuf"/>
         <xs:element ref="tns:rss"/>
-        <xs:element ref="tns:secureXML"/>
-        <xs:element ref="tns:soapjaxb"/>
+        <xs:element ref="tns:soap"/>
         <xs:element ref="tns:syslog"/>
-        <xs:element ref="tns:tarfile"/>
+        <xs:element ref="tns:tarFile"/>
         <xs:element ref="tns:thrift"/>
         <xs:element ref="tns:tidyMarkup"/>
-        <xs:element ref="tns:univocity-csv"/>
-        <xs:element ref="tns:univocity-fixed"/>
-        <xs:element ref="tns:univocity-tsv"/>
-        <xs:element ref="tns:xmlrpc"/>
+        <xs:element ref="tns:univocityCsv"/>
+        <xs:element ref="tns:univocityFixed"/>
+        <xs:element ref="tns:univocityTsv"/>
+        <xs:element ref="tns:xmlSecurity"/>
         <xs:element ref="tns:xstream"/>
         <xs:element ref="tns:pgp"/>
         <xs:element ref="tns:yaml"/>
-        <xs:element name="zip" type="tns:zipDeflaterDataFormat"/>
-        <xs:element ref="tns:zipfile"/>
+        <xs:element ref="tns:zipDeflater"/>
+        <xs:element ref="tns:zipFile"/>
       </xs:choice>
     </xs:sequence>
   </xs:complexType>
@@ -14520,7 +14449,7 @@ Default value: false
     <xs:attribute name="jsonDataFormat" type="xs:string">
       <xs:annotation>
         <xs:documentation xml:lang="en"><![CDATA[
-Name of specific json data format to use. By default json-jackson will be used.
+Name of specific json data format to use. By default jackson will be used.
 Important: This option is only for setting a custom name of the data format, not
 to refer to an existing data format instance.
         ]]></xs:documentation>
@@ -14846,37 +14775,36 @@ OpenId Connect URL to discover OAuth2 configuration values.
             <xs:element ref="tns:cbor"/>
             <xs:element ref="tns:crypto"/>
             <xs:element ref="tns:csv"/>
-            <xs:element name="custom" type="tns:customDataFormat"/>
+            <xs:element ref="tns:custom"/>
             <xs:element ref="tns:fhirJson"/>
             <xs:element ref="tns:fhirXml"/>
             <xs:element ref="tns:flatpack"/>
             <xs:element ref="tns:grok"/>
-            <xs:element name="gzip" type="tns:gzipDataFormat"/>
+            <xs:element ref="tns:gzipDeflater"/>
             <xs:element ref="tns:hl7"/>
             <xs:element ref="tns:ical"/>
-            <xs:element ref="tns:jacksonxml"/>
+            <xs:element ref="tns:jacksonXml"/>
             <xs:element ref="tns:jaxb"/>
             <xs:element ref="tns:json"/>
             <xs:element ref="tns:jsonApi"/>
             <xs:element ref="tns:lzf"/>
-            <xs:element name="mimeMultipart" type="tns:mimeMultipartDataFormat"/>
+            <xs:element ref="tns:mimeMultipart"/>
             <xs:element ref="tns:protobuf"/>
             <xs:element ref="tns:rss"/>
-            <xs:element ref="tns:secureXML"/>
-            <xs:element ref="tns:soapjaxb"/>
+            <xs:element ref="tns:soap"/>
             <xs:element ref="tns:syslog"/>
-            <xs:element ref="tns:tarfile"/>
+            <xs:element ref="tns:tarFile"/>
             <xs:element ref="tns:thrift"/>
             <xs:element ref="tns:tidyMarkup"/>
-            <xs:element ref="tns:univocity-csv"/>
-            <xs:element ref="tns:univocity-fixed"/>
-            <xs:element ref="tns:univocity-tsv"/>
-            <xs:element ref="tns:xmlrpc"/>
+            <xs:element ref="tns:univocityCsv"/>
+            <xs:element ref="tns:univocityFixed"/>
+            <xs:element ref="tns:univocityTsv"/>
+            <xs:element ref="tns:xmlSecurity"/>
             <xs:element ref="tns:xstream"/>
             <xs:element ref="tns:pgp"/>
             <xs:element ref="tns:yaml"/>
-            <xs:element name="zip" type="tns:zipDeflaterDataFormat"/>
-            <xs:element ref="tns:zipfile"/>
+            <xs:element ref="tns:zipDeflater"/>
+            <xs:element ref="tns:zipFile"/>
           </xs:choice>
         </xs:sequence>
         <xs:attribute name="ref" type="xs:string"/>
@@ -15111,6 +15039,14 @@ can be separated by comma.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="traceLoggingFormat" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+To use a custom tracing logging format. The default format (arrow, routeId,
+label) is: %-4.4s %-12.12s %-33.33s.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="debug" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
@@ -15123,6 +15059,18 @@ enabled on startup to be installed in the CamelContext.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Sets whether message history is enabled or not. Default value: false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="sourceLocationEnabled" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Whether to capture precise source location:line-number for all EIPs in Camel
+routes. Enabling this will impact parsing Java based routes (also Groovy,
+Kotlin, etc.) on startup as this uses JDK StackTraceElement to calculate the
+location from the Camel route, which comes with a performance cost. This only
+impact startup, not the performance of the routes at runtime. Default value:
+false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -15882,12 +15830,12 @@ multiple certificates.
 
   <xs:simpleType name="jsonLibrary">
     <xs:restriction base="xs:string">
-      <xs:enumeration value="XStream"/>
+      <xs:enumeration value="Fastjson"/>
+      <xs:enumeration value="Gson"/>
       <xs:enumeration value="Jackson"/>
       <xs:enumeration value="Johnzon"/>
-      <xs:enumeration value="Gson"/>
-      <xs:enumeration value="Fastjson"/>
       <xs:enumeration value="Jsonb"/>
+      <xs:enumeration value="XStream"/>
     </xs:restriction>
   </xs:simpleType>
 

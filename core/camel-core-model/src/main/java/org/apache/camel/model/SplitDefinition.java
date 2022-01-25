@@ -77,7 +77,8 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
     @Metadata(javaType = "java.lang.Boolean")
     private String parallelAggregate;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean", deprecationNote = "Has no effect in Camel 3.x")
+    @Deprecated
     private String stopOnAggregateException;
 
     public SplitDefinition() {
@@ -123,9 +124,9 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
     }
 
     /**
-     * Sets the AggregationStrategy to be used to assemble the replies from the splitted messages, into a single
-     * outgoing message from the Splitter. By default Camel will use the original incoming message to the splitter
-     * (leave it unchanged). You can also use a POJO as the AggregationStrategy
+     * Sets the AggregationStrategy to be used to assemble the replies from the split messages, into a single outgoing
+     * message from the Splitter. By default Camel will use the original incoming message to the splitter (leave it
+     * unchanged). You can also use a POJO as the AggregationStrategy
      */
     public SplitDefinition aggregationStrategy(AggregationStrategy aggregationStrategy) {
         setAggregationStrategy(aggregationStrategy);
@@ -133,9 +134,9 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
     }
 
     /**
-     * Sets the AggregationStrategy to be used to assemble the replies from the splitted messages, into a single
-     * outgoing message from the Splitter. By default Camel will use the original incoming message to the splitter
-     * (leave it unchanged). You can also use a POJO as the AggregationStrategy
+     * Sets the AggregationStrategy to be used to assemble the replies from the split messages, into a single outgoing
+     * message from the Splitter. By default Camel will use the original incoming message to the splitter (leave it
+     * unchanged). You can also use a POJO as the AggregationStrategy
      */
     public SplitDefinition aggregationStrategy(Supplier<AggregationStrategy> aggregationStrategy) {
         setAggregationStrategy(aggregationStrategy.get());
@@ -143,7 +144,7 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
     }
 
     /**
-     * Sets a reference to the AggregationStrategy to be used to assemble the replies from the splitted messages, into a
+     * Sets a reference to the AggregationStrategy to be used to assemble the replies from the split messages, into a
      * single outgoing message from the Splitter. By default Camel will use the original incoming message to the
      * splitter (leave it unchanged). You can also use a POJO as the AggregationStrategy
      * <p/>
@@ -213,8 +214,8 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
     }
 
     /**
-     * If enabled then processing each splitted messages occurs concurrently. Note the caller thread will still wait
-     * until all messages has been fully processed, before it continues. Its only processing the sub messages from the
+     * If enabled then processing each split messages occurs concurrently. Note the caller thread will still wait until
+     * all messages has been fully processed, before it continues. Its only processing the sub messages from the
      * splitter which happens concurrently.
      *
      * @return the builder
@@ -224,8 +225,8 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
     }
 
     /**
-     * If enabled then processing each splitted messages occurs concurrently. Note the caller thread will still wait
-     * until all messages has been fully processed, before it continues. Its only processing the sub messages from the
+     * If enabled then processing each split messages occurs concurrently. Note the caller thread will still wait until
+     * all messages has been fully processed, before it continues. Its only processing the sub messages from the
      * splitter which happens concurrently.
      *
      * @return the builder
@@ -235,8 +236,8 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
     }
 
     /**
-     * If enabled then processing each splitted messages occurs concurrently. Note the caller thread will still wait
-     * until all messages has been fully processed, before it continues. Its only processing the sub messages from the
+     * If enabled then processing each split messages occurs concurrently. Note the caller thread will still wait until
+     * all messages has been fully processed, before it continues. Its only processing the sub messages from the
      * splitter which happens concurrently.
      *
      * @return the builder
@@ -285,24 +286,28 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
 
     /**
      * If enabled, unwind exceptions occurring at aggregation time to the error handler when parallelProcessing is used.
-     * Currently, aggregation time exceptions do not stop the route processing when parallelProcessing is used. Enabling
-     * this option allows to work around this behavior. The default value is <code>false</code> for the sake of backward
-     * compatibility.
+     * The default value is <code>false</code> for the sake of backward compatibility.
+     * 
+     * @deprecated Since Camel 3.0 exceptions from the aggregate strategy are always propagated to the error handler,
+     *             whether or not this option is enabled.
      *
-     * @return the builder
+     * @return     the builder
      */
+    @Deprecated
     public SplitDefinition stopOnAggregateException() {
         return stopOnAggregateException(true);
     }
 
     /**
      * If enabled, unwind exceptions occurring at aggregation time to the error handler when parallelProcessing is used.
-     * Currently, aggregation time exceptions do not stop the route processing when parallelProcessing is used. Enabling
-     * this option allows to work around this behavior. The default value is <code>false</code> for the sake of backward
-     * compatibility.
+     * The default value is <code>false</code> for the sake of backward compatibility.
+     * 
+     * @deprecated Since Camel 3.0 exceptions from the aggregate strategy are always propagated to the error handler,
+     *             whether or not this option is enabled.
      *
-     * @return the builder
+     * @return     the builder
      */
+    @Deprecated
     public SplitDefinition stopOnAggregateException(boolean stopOnAggregateException) {
         return stopOnAggregateException(Boolean.toString(stopOnAggregateException));
     }
@@ -321,17 +326,17 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
     }
 
     /**
-     * When in streaming mode, then the splitter splits the original message on-demand, and each splitted message is
+     * When in streaming mode, then the splitter splits the original message on-demand, and each split message is
      * processed one by one. This reduces memory usage as the splitter do not split all the messages first, but then we
      * do not know the total size, and therefore the {@link org.apache.camel.Exchange#SPLIT_SIZE} is empty.
      * <p/>
      * In non-streaming mode (default) the splitter will split each message first, to know the total size, and then
-     * process each message one by one. This requires to keep all the splitted messages in memory and therefore requires
+     * process each message one by one. This requires to keep all the split messages in memory and therefore requires
      * more memory. The total size is provided in the {@link org.apache.camel.Exchange#SPLIT_SIZE} header.
      * <p/>
      * The streaming mode also affects the aggregation behavior. If enabled then Camel will process replies
      * out-of-order, eg in the order they come back. If disabled, Camel will process replies in the same order as the
-     * messages was splitted.
+     * messages was split.
      *
      * @return the builder
      */
@@ -340,17 +345,17 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
     }
 
     /**
-     * When in streaming mode, then the splitter splits the original message on-demand, and each splitted message is
+     * When in streaming mode, then the splitter splits the original message on-demand, and each split message is
      * processed one by one. This reduces memory usage as the splitter do not split all the messages first, but then we
      * do not know the total size, and therefore the {@link org.apache.camel.Exchange#SPLIT_SIZE} is empty.
      * <p/>
      * In non-streaming mode (default) the splitter will split each message first, to know the total size, and then
-     * process each message one by one. This requires to keep all the splitted messages in memory and therefore requires
+     * process each message one by one. This requires to keep all the split messages in memory and therefore requires
      * more memory. The total size is provided in the {@link org.apache.camel.Exchange#SPLIT_SIZE} header.
      * <p/>
      * The streaming mode also affects the aggregation behavior. If enabled then Camel will process replies
      * out-of-order, eg in the order they come back. If disabled, Camel will process replies in the same order as the
-     * messages was splitted.
+     * messages was split.
      *
      * @return the builder
      */
@@ -359,17 +364,17 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
     }
 
     /**
-     * When in streaming mode, then the splitter splits the original message on-demand, and each splitted message is
+     * When in streaming mode, then the splitter splits the original message on-demand, and each split message is
      * processed one by one. This reduces memory usage as the splitter do not split all the messages first, but then we
      * do not know the total size, and therefore the {@link org.apache.camel.Exchange#SPLIT_SIZE} is empty.
      * <p/>
      * In non-streaming mode (default) the splitter will split each message first, to know the total size, and then
-     * process each message one by one. This requires to keep all the splitted messages in memory and therefore requires
+     * process each message one by one. This requires to keep all the split messages in memory and therefore requires
      * more memory. The total size is provided in the {@link org.apache.camel.Exchange#SPLIT_SIZE} header.
      * <p/>
      * The streaming mode also affects the aggregation behavior. If enabled then Camel will process replies
      * out-of-order, eg in the order they come back. If disabled, Camel will process replies in the same order as the
-     * messages was splitted.
+     * messages was split.
      *
      * @return the builder
      */
@@ -504,7 +509,7 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
 
     /**
      * Shares the {@link org.apache.camel.spi.UnitOfWork} with the parent and each of the sub messages. Splitter will by
-     * default not share unit of work between the parent exchange and each splitted exchange. This means each splitted
+     * default not share unit of work between the parent exchange and each split exchange. This means each split
      * exchange has its own individual unit of work.
      *
      * @return the builder.
@@ -515,7 +520,7 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
 
     /**
      * Shares the {@link org.apache.camel.spi.UnitOfWork} with the parent and each of the sub messages. Splitter will by
-     * default not share unit of work between the parent exchange and each splitted exchange. This means each splitted
+     * default not share unit of work between the parent exchange and each split exchange. This means each split
      * exchange has its own individual unit of work.
      *
      * @return the builder.
@@ -526,7 +531,7 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
 
     /**
      * Shares the {@link org.apache.camel.spi.UnitOfWork} with the parent and each of the sub messages. Splitter will by
-     * default not share unit of work between the parent exchange and each splitted exchange. This means each splitted
+     * default not share unit of work between the parent exchange and each split exchange. This means each split
      * exchange has its own individual unit of work.
      *
      * @return the builder.
@@ -561,9 +566,9 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
     }
 
     /**
-     * Sets the AggregationStrategy to be used to assemble the replies from the splitted messages, into a single
-     * outgoing message from the Splitter. By default Camel will use the original incoming message to the splitter
-     * (leave it unchanged). You can also use a POJO as the AggregationStrategy
+     * Sets the AggregationStrategy to be used to assemble the replies from the split messages, into a single outgoing
+     * message from the Splitter. By default Camel will use the original incoming message to the splitter (leave it
+     * unchanged). You can also use a POJO as the AggregationStrategy
      */
     public void setAggregationStrategy(AggregationStrategy aggregationStrategy) {
         this.aggregationStrategy = aggregationStrategy;
@@ -593,10 +598,12 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
         this.parallelAggregate = parallelAggregate;
     }
 
+    @Deprecated
     public String getStopOnAggregateException() {
         return this.stopOnAggregateException;
     }
 
+    @Deprecated
     public void setStopOnAggregateException(String stopOnAggregateException) {
         this.stopOnAggregateException = stopOnAggregateException;
     }
@@ -624,7 +631,7 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
     }
 
     /**
-     * Sets a reference to the AggregationStrategy to be used to assemble the replies from the splitted messages, into a
+     * Sets a reference to the AggregationStrategy to be used to assemble the replies from the split messages, into a
      * single outgoing message from the Splitter. By default Camel will use the original incoming message to the
      * splitter (leave it unchanged). You can also use a POJO as the AggregationStrategy
      */

@@ -47,7 +47,8 @@ public class ExchangeConstantProvider {
         map.put("DISABLE_HTTP_STREAM_CACHE", "CamelDisableHttpStreamCache");
         map.put("DOCUMENT_BUILDER_FACTORY", "CamelDocumentBuilderFactory");
         map.put("DUPLICATE_MESSAGE", "CamelDuplicateMessage");
-        map.put("ERRORHANDLER_CIRCUIT_DETECTED", "CamelFErrorHandlerCircuitDetected");
+        map.put("ERRORHANDLER_BRIDGE", "CamelErrorHandlerBridge");
+        map.put("ERRORHANDLER_CIRCUIT_DETECTED", "CamelErrorHandlerCircuitDetected");
         map.put("ERRORHANDLER_HANDLED", "CamelErrorHandlerHandled");
         map.put("EVALUATE_EXPRESSION_RESULT", "CamelEvaluateExpressionResult");
         map.put("EXCEPTION_CAUGHT", "CamelExceptionCaught");
@@ -158,7 +159,6 @@ public class ExchangeConstantProvider {
         map.put("TRANSFER_ENCODING", "Transfer-Encoding");
         map.put("TRY_ROUTE_BLOCK", "TryRouteBlock");
         map.put("UNIT_OF_WORK_EXHAUSTED", "CamelUnitOfWorkExhausted");
-        map.put("UNIT_OF_WORK_PROCESS_SYNC", "CamelUnitOfWorkProcessSync");
         map.put("XSLT_ERROR", "CamelXsltError");
         map.put("XSLT_FATAL_ERROR", "CamelXsltFatalError");
         map.put("XSLT_FILE_NAME", "CamelXsltFileName");

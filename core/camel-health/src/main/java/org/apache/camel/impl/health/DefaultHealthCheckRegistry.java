@@ -59,7 +59,6 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
     public DefaultHealthCheckRegistry(CamelContext camelContext) {
         this.checks = new CopyOnWriteArraySet<>();
         this.repositories = new CopyOnWriteArraySet<>();
-        this.repositories.add(new HealthCheckRegistryRepository());
 
         setCamelContext(camelContext);
     }
@@ -87,6 +86,14 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
     @Override
     protected void doInit() throws Exception {
         super.doInit();
+
+        Optional<HealthCheckRepository> hcr = repositories.stream()
+                .filter(repository -> repository instanceof HealthCheckRegistryRepository)
+                .findFirst();
+
+        if (!hcr.isPresent()) {
+            register(new HealthCheckRegistryRepository());
+        }
 
         for (HealthCheck check : checks) {
             CamelContextAware.trySetCamelContext(check, camelContext);
@@ -233,11 +240,10 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
 
         if (!loadHealthChecksDone) {
             loadHealthChecksDone = true;
-
             DefaultHealthChecksLoader loader = new DefaultHealthChecksLoader(camelContext);
             Collection<HealthCheck> col = loader.loadHealthChecks();
-
-            // report how many health checks we have loaded
+            // register loaded health-checks
+            col.forEach(this::register);
             if (col.size() > 0) {
                 String time = TimeUtils.printDuration(watch.taken());
                 LOG.info("Health checks (scanned: {}) loaded in {}", col.size(), time);

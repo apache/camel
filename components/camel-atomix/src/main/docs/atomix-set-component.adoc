@@ -1,10 +1,11 @@
-= Atomix Set Component
+= Atomix Set Component (deprecated)
 :doctitle: Atomix Set
 :shortname: atomix-set
 :artifactid: camel-atomix
 :description: Access Atomix's distributed set.
 :since: 2.20
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :camel-spring-boot-name: atomix

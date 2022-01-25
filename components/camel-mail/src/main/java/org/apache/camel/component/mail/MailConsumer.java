@@ -242,10 +242,12 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
 
             // add on completion to handle after work when the exchange is done
             exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
+                @Override
                 public void onComplete(Exchange exchange) {
                     processCommit(mail, exchange);
                 }
 
+                @Override
                 public void onFailure(Exchange exchange) {
                     processRollback(mail, exchange);
                 }

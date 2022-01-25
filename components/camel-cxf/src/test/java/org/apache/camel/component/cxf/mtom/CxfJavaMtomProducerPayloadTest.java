@@ -17,6 +17,7 @@
 package org.apache.camel.component.cxf.mtom;
 
 import java.awt.*;
+import java.util.List;
 
 import javax.xml.ws.Holder;
 
@@ -31,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CxfJavaMtomProducerPayloadTest extends CxfMtomConsumerTest {
-    protected static final String MTOM_ENDPOINT_URI_MTOM_ENABLE = MTOM_ENDPOINT_URI + "&properties.mtom-enabled=true"
+    protected static final String MTOM_ENDPOINT_URI_MTOM_ENABLE = MTOM_ENDPOINT_URI
                                                                   + "&defaultOperationName=Detail";
     private static final Logger LOG = LoggerFactory.getLogger(CxfJavaMtomProducerPayloadTest.class);
 
@@ -56,18 +57,19 @@ public class CxfJavaMtomProducerPayloadTest extends CxfMtomConsumerTest {
 
         });
 
-        // Make sure we don't put the attachement into out message
-        assertEquals(0, exchange.getOut(AttachmentMessage.class).getAttachments().size(), "The attachement size should be 0");
+        AttachmentMessage out = exchange.getMessage(AttachmentMessage.class);
+        assertEquals(2, out.getAttachments().size(), "We should get 2 attachements here.");
+        assertEquals("application/xop+xml", out.getHeader("Content-Type"), "Get a wrong Content-Type header");
+        // Get the parameter list
+        List<?> parameter = out.getBody(List.class);
+        // Get the operation name
+        final Holder<byte[]> responsePhoto = (Holder<byte[]>) parameter.get(1);
+        assertNotNull(responsePhoto.value, "The photo should not be null");
+        assertEquals(new String(responsePhoto.value, "UTF-8"),
+                "ResponseFromCamel", "Should get the right response");
 
-        Object[] result = exchange.getMessage().getBody(Object[].class);
-
-        Holder<byte[]> photo1 = (Holder<byte[]>) result[1];
-
-        Holder<Image> image1 = (Holder<Image>) result[2];
-
-        assertEquals("ResponseFromCamel", new String(photo1.value, "UTF-8"));
-        assertNotNull(image1.value);
-
+        final Holder<Image> responseImage = (Holder<Image>) parameter.get(2);
+        assertNotNull(responseImage.value, "We should get the image here");
     }
 
 }

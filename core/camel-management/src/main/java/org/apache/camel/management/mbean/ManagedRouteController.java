@@ -41,6 +41,7 @@ public class ManagedRouteController extends ManagedService implements ManagedRou
         return controller;
     }
 
+    @Override
     public void init(ManagementStrategy strategy) {
         // do nothing
     }

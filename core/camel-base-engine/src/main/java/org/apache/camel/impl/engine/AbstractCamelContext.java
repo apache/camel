@@ -80,6 +80,8 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.apache.camel.catalog.RuntimeCamelCatalog;
+import org.apache.camel.console.DevConsoleRegistry;
+import org.apache.camel.console.DevConsoleResolver;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckResolver;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
@@ -253,6 +255,7 @@ public abstract class AbstractCamelContext extends BaseService
     private Boolean trace = Boolean.FALSE;
     private Boolean traceStandby = Boolean.FALSE;
     private String tracePattern;
+    private String tracingLoggingFormat;
     private Boolean debug = Boolean.FALSE;
     private Boolean messageHistory = Boolean.FALSE;
     private Boolean logMask = Boolean.FALSE;
@@ -261,6 +264,8 @@ public abstract class AbstractCamelContext extends BaseService
     private Boolean disableJMX = Boolean.FALSE;
     private Boolean loadTypeConverters = Boolean.FALSE;
     private Boolean loadHealthChecks = Boolean.FALSE;
+    private Boolean devConsole = Boolean.FALSE;
+    private Boolean sourceLocationEnabled = Boolean.FALSE;
     private Boolean typeConverterStatisticsEnabled = Boolean.FALSE;
     private Boolean dumpRoutes = Boolean.FALSE;
     private Boolean useMDCLogging = Boolean.FALSE;
@@ -294,6 +299,7 @@ public abstract class AbstractCamelContext extends BaseService
     private volatile UriFactoryResolver uriFactoryResolver;
     private volatile DataFormatResolver dataFormatResolver;
     private volatile HealthCheckResolver healthCheckResolver;
+    private volatile DevConsoleResolver devConsoleResolver;
     private volatile ManagementStrategy managementStrategy;
     private volatile ManagementMBeanAssembler managementMBeanAssembler;
     private volatile RestRegistryFactory restRegistryFactory;
@@ -1964,6 +1970,7 @@ public abstract class AbstractCamelContext extends BaseService
         return beanPostProcessor;
     }
 
+    @Override
     public void setBeanPostProcessor(CamelBeanPostProcessor beanPostProcessor) {
         this.beanPostProcessor = doAddService(beanPostProcessor);
     }
@@ -2203,6 +2210,16 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     public void setTracingPattern(String tracePattern) {
         this.tracePattern = tracePattern;
+    }
+
+    @Override
+    public String getTracingLoggingFormat() {
+        return tracingLoggingFormat;
+    }
+
+    @Override
+    public void setTracingLoggingFormat(String format) {
+        this.tracingLoggingFormat = format;
     }
 
     @Override
@@ -2685,6 +2702,19 @@ public abstract class AbstractCamelContext extends BaseService
             startupStepRecorder.endStep(step4);
         }
 
+        // setup dev-console registry as its needed this early phase for 3rd party to register custom consoles
+        DevConsoleRegistry dcr = getExtension(DevConsoleRegistry.class);
+        if (dcr == null) {
+            StartupStep step5 = startupStepRecorder.beginStep(CamelContext.class, null, "Setup DevConsoleRegistry");
+            dcr = createDevConsoleRegistry();
+            if (dcr != null) {
+                // install dev-console registry if it was discovered from classpath (camel-console)
+                dcr.setCamelContext(this);
+                setExtension(DevConsoleRegistry.class, dcr);
+            }
+            startupStepRecorder.endStep(step5);
+        }
+
         // Call all registered trackers with this context
         // Note, this may use a partially constructed object
         CamelContextTracker.notifyContextCreated(this);
@@ -2751,6 +2781,15 @@ public abstract class AbstractCamelContext extends BaseService
                 hcr.loadHealthChecks();
             }
             startupStepRecorder.endStep(step3);
+        }
+        // ensure additional dev consoles is loaded
+        if (devConsole) {
+            StartupStep step4 = startupStepRecorder.beginStep(CamelContext.class, null, "Scan DevConsoles");
+            DevConsoleRegistry dcr = getExtension(DevConsoleRegistry.class);
+            if (dcr != null) {
+                dcr.loadDevConsoles();
+            }
+            startupStepRecorder.endStep(step4);
         }
 
         // custom properties may use property placeholders so resolve those
@@ -4202,9 +4241,28 @@ public abstract class AbstractCamelContext extends BaseService
         this.loadHealthChecks = loadHealthChecks;
     }
 
+    public Boolean isDevConsole() {
+        return devConsole != null && devConsole;
+    }
+
+    @Override
+    public void setDevConsole(Boolean loadDevConsoles) {
+        this.devConsole = loadDevConsoles;
+    }
+
     @Override
     public Boolean isTypeConverterStatisticsEnabled() {
         return typeConverterStatisticsEnabled != null && typeConverterStatisticsEnabled;
+    }
+
+    @Override
+    public Boolean isSourceLocationEnabled() {
+        return sourceLocationEnabled;
+    }
+
+    @Override
+    public void setSourceLocationEnabled(Boolean sourceLocationEnabled) {
+        this.sourceLocationEnabled = sourceLocationEnabled;
     }
 
     @Override
@@ -4364,6 +4422,21 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     public void setHealthCheckResolver(HealthCheckResolver healthCheckResolver) {
         this.healthCheckResolver = doAddService(healthCheckResolver);
+    }
+
+    public DevConsoleResolver getDevConsoleResolver() {
+        if (devConsoleResolver == null) {
+            synchronized (lock) {
+                if (devConsoleResolver == null) {
+                    setDevConsoleResolver(createDevConsoleResolver());
+                }
+            }
+        }
+        return devConsoleResolver;
+    }
+
+    public void setDevConsoleResolver(DevConsoleResolver devConsoleResolver) {
+        this.devConsoleResolver = doAddService(devConsoleResolver);
     }
 
     @Override
@@ -5023,6 +5096,8 @@ public abstract class AbstractCamelContext extends BaseService
 
     protected abstract HealthCheckRegistry createHealthCheckRegistry();
 
+    protected abstract DevConsoleRegistry createDevConsoleRegistry();
+
     protected abstract ReactiveExecutor createReactiveExecutor();
 
     protected abstract StreamCachingStrategy createStreamCachingStrategy();
@@ -5064,6 +5139,8 @@ public abstract class AbstractCamelContext extends BaseService
     protected abstract DataFormatResolver createDataFormatResolver();
 
     protected abstract HealthCheckResolver createHealthCheckResolver();
+
+    protected abstract DevConsoleResolver createDevConsoleResolver();
 
     protected abstract MessageHistoryFactory createMessageHistoryFactory();
 

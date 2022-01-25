@@ -21,12 +21,13 @@ import javax.json.JsonObject;
 
 import io.smallrye.health.SmallRyeHealth;
 import org.apache.camel.RoutesBuilder;
+import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.eclipse.microprofile.health.HealthCheckResponse.Status;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.microprofile.health.CamelMicroProfileHealthCheckRegistry.CONSUMERS_CHECK_NAME;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CamelMicroProfileHealthConsumerTest extends CamelMicroProfileHealthTestSupport {
@@ -38,10 +39,6 @@ public class CamelMicroProfileHealthConsumerTest extends CamelMicroProfileHealth
         Object hc = healthCheckRegistry.resolveById("consumers");
         healthCheckRegistry.register(hc);
 
-        CamelMicroProfileReadinessCheck readinessCheck = new CamelMicroProfileReadinessCheck();
-        readinessCheck.setCamelContext(context);
-        reporter.addHealthCheck(readinessCheck);
-
         SmallRyeHealth health = reporter.getHealth();
 
         JsonObject healthObject = getHealthJson(health);
@@ -50,14 +47,7 @@ public class CamelMicroProfileHealthConsumerTest extends CamelMicroProfileHealth
         JsonArray checks = healthObject.getJsonArray("checks");
         assertEquals(1, checks.size());
 
-        Assertions.assertNotNull(checks.getJsonObject(0).getJsonObject("data"));
-        Assertions.assertEquals("healthyRoute", checks.getJsonObject(0).getJsonObject("data").getString("route.id"));
-
-        assertHealthCheckOutput("camel-readiness-checks", Status.UP, checks.getJsonObject(0), jsonObject -> {
-            assertEquals(Status.UP.name(), jsonObject.getString("consumer:healthyRoute"));
-            assertEquals("healthyRoute", jsonObject.getString("route.id"));
-            assertEquals("Started", jsonObject.getString("route.status"));
-        });
+        assertHealthCheckOutput(CONSUMERS_CHECK_NAME, Status.UP, checks.getJsonObject(0));
     }
 
     @Test
@@ -66,10 +56,6 @@ public class CamelMicroProfileHealthConsumerTest extends CamelMicroProfileHealth
         // enable consumers health check
         Object hc = healthCheckRegistry.resolveById("consumers");
         healthCheckRegistry.register(hc);
-
-        CamelMicroProfileReadinessCheck readinessCheck = new CamelMicroProfileReadinessCheck();
-        readinessCheck.setCamelContext(context);
-        reporter.addHealthCheck(readinessCheck);
 
         context.getRouteController().stopRoute("healthyRoute");
 
@@ -81,11 +67,37 @@ public class CamelMicroProfileHealthConsumerTest extends CamelMicroProfileHealth
         JsonArray checks = healthObject.getJsonArray("checks");
         assertEquals(1, checks.size());
 
-        assertHealthCheckOutput("camel-readiness-checks", Status.DOWN, checks.getJsonObject(0), jsonObject -> {
-            assertEquals(Status.DOWN.name(), jsonObject.getString("consumer:healthyRoute"));
+        assertHealthCheckOutput(CONSUMERS_CHECK_NAME, Status.DOWN, checks.getJsonObject(0), jsonObject -> {
             assertEquals("healthyRoute", jsonObject.getString("route.id"));
-            assertEquals("Stopped", jsonObject.getString("route.status"));
+            assertEquals(ServiceStatus.Stopped.name(), jsonObject.getString("route.status"));
         });
+    }
+
+    @Test
+    public void testRoutesRepositoryUnregister() {
+        HealthCheckRegistry healthCheckRegistry = HealthCheckRegistry.get(context);
+        Object hc = healthCheckRegistry.resolveById("consumers");
+        healthCheckRegistry.register(hc);
+
+        SmallRyeHealth health = reporter.getHealth();
+
+        JsonObject healthObject = getHealthJson(health);
+        assertEquals(Status.UP.name(), healthObject.getString("status"));
+
+        JsonArray checks = healthObject.getJsonArray("checks");
+        assertEquals(1, checks.size());
+
+        assertHealthCheckOutput(CONSUMERS_CHECK_NAME, Status.UP, checks.getJsonObject(0));
+
+        healthCheckRegistry.unregister(hc);
+
+        health = reporter.getHealth();
+
+        healthObject = getHealthJson(health);
+        assertEquals(Status.UP.name(), healthObject.getString("status"));
+
+        checks = healthObject.getJsonArray("checks");
+        assertEquals(0, checks.size());
     }
 
     @Override

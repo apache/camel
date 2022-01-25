@@ -8,6 +8,7 @@
     "firstVersion": "2.1.0",
     "label": "dataformat,transformation",
     "javaType": "org.apache.camel.model.dataformat.RssDataFormat",
+    "abstract": false,
     "input": false,
     "output": false
   },

@@ -75,6 +75,7 @@ class AbstractExchange implements ExtendedExchange {
     Boolean externalRedelivered;
     String historyNodeId;
     String historyNodeLabel;
+    String historyNodeSource;
     boolean transacted;
     boolean routeStop;
     boolean rollbackOnly;
@@ -795,6 +796,16 @@ class AbstractExchange implements ExtendedExchange {
     @Override
     public void setHistoryNodeLabel(String historyNodeLabel) {
         this.historyNodeLabel = historyNodeLabel;
+    }
+
+    @Override
+    public String getHistoryNodeSource() {
+        return historyNodeSource;
+    }
+
+    @Override
+    public void setHistoryNodeSource(String historyNodeSource) {
+        this.historyNodeSource = historyNodeSource;
     }
 
     @Override
