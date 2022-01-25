@@ -74,11 +74,7 @@ public class DefaultProcessorFactory implements ProcessorFactory, BootstrapClose
             if (object instanceof ProcessorFactory) {
                 ProcessorFactory pc = (ProcessorFactory) object;
                 Processor processor = pc.createChildProcessor(route, definition, mandatory);
-                if (processor instanceof LineNumberAware) {
-                    LineNumberAware lna = (LineNumberAware) processor;
-                    lna.setLineNumber(definition.getLineNumber());
-                    lna.setLocation(definition.getLocation());
-                }
+                LineNumberAware.trySetLineNumberAware(processor, definition);
                 return processor;
             }
         } catch (NoFactoryAvailableException e) {
@@ -98,14 +94,9 @@ public class DefaultProcessorFactory implements ProcessorFactory, BootstrapClose
         ProcessorFactory pc = finder.newInstance(name, ProcessorFactory.class).orElse(null);
         if (pc != null) {
             Processor processor = pc.createProcessor(route, definition);
-            if (processor instanceof LineNumberAware) {
-                LineNumberAware lna = (LineNumberAware) processor;
-                lna.setLineNumber(definition.getLineNumber());
-                lna.setLocation(definition.getLocation());
-            }
+            LineNumberAware.trySetLineNumberAware(processor, definition);
             return processor;
         }
-
         return null;
     }
 
