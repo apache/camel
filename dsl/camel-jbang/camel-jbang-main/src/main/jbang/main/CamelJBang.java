@@ -20,8 +20,8 @@
 //REPOS mavencentral,apache=https://repository.apache.org/snapshots
 //DEPS org.apache.camel:camel-bom:${camel.jbang.version:3.14.0}@pom
 //DEPS org.apache.camel:camel-jbang-core:${camel.jbang.version:3.14.0}
-//DEPS org.apache.camel.kamelets:camel-kamelets:${camel-kamelets.version:0.6.0}
-//DEPS org.apache.camel.kamelets:camel-kamelets-utils:${camel-kamelets.version:0.6.0}
+//DEPS org.apache.camel.kamelets:camel-kamelets:${camel-kamelets.version:0.7.0}
+//DEPS org.apache.camel.kamelets:camel-kamelets-utils:${camel-kamelets.version:0.7.0}
 
 package main;
 
