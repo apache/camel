@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.google.calendar;
 
+import java.util.List;
+
 import com.google.api.services.calendar.CalendarScopes;
 import org.apache.camel.component.google.calendar.internal.GoogleCalendarApiName;
 import org.apache.camel.spi.Configurer;
@@ -38,7 +40,7 @@ public class GoogleCalendarConfiguration {
     @Metadata(required = true)
     private String methodName;
     @UriParam(defaultValue = CalendarScopes.CALENDAR)
-    private String scopes = CalendarScopes.CALENDAR;
+    private List<String> scopes;
     @UriParam
     private String clientId;
     @UriParam
@@ -55,6 +57,11 @@ public class GoogleCalendarConfiguration {
     private String p12FileName;
     @UriParam(label = "security", secret = true)
     private String user;
+    /* Service account */
+    @UriParam(label = "security")
+    private String keyResource;
+    @UriParam
+    private String delegate;
 
     public GoogleCalendarApiName getApiName() {
         return apiName;
@@ -145,7 +152,7 @@ public class GoogleCalendarConfiguration {
         this.applicationName = applicationName;
     }
 
-    public String getScopes() {
+    public List<String> getScopes() {
         return scopes;
     }
 
@@ -153,7 +160,7 @@ public class GoogleCalendarConfiguration {
      * Specifies the level of permissions you want a calendar application to have to a user account. You can separate
      * multiple scopes by comma. See https://developers.google.com/google-apps/calendar/auth for more info.
      */
-    public void setScopes(String scopes) {
+    public void setScopes(List<String> scopes) {
         this.scopes = scopes;
     }
 
@@ -179,4 +186,27 @@ public class GoogleCalendarConfiguration {
         this.user = user;
     }
 
+    public String getKeyResource() {
+        return keyResource;
+    }
+
+    /**
+     * Sets "*.json" file with credentials for Service account
+     * 
+     * @param keyResource String file, classpath, or http url
+     */
+    public void setKeyResource(String keyResource) {
+        this.keyResource = keyResource;
+    }
+
+    public String getDelegate() {
+        return delegate;
+    }
+
+    /**
+     * Delegate for wide-domain service account
+     */
+    public void setDelegate(String delegate) {
+        this.delegate = delegate;
+    }
 }

@@ -518,7 +518,11 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                 .filter(mi -> mi.parameters().size() == 1)
                 .filter(mi -> PRIMITIVE_CLASSES.contains(mi.parameters().get(0).name().toString()))
                 .filter(mi -> mi.returnType().kind() == Type.Kind.VOID)
+                .filter(mi -> acceptErrorHandlerBuilderMethod(info, mi))
                 .collect(Collectors.toList());
+
+            // error handler is special so we need to filter out specific methods which we should not include
+
 
             for (MethodInfo method : methods) {
                 if (generateSetValue(setProperty, method, properties)) {
@@ -680,6 +684,17 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
         builder.addAnnotation(yamlTypeAnnotation.build());
 
         return new TypeSpecHolder(builder.build(), attributes);
+    }
+
+    private boolean acceptErrorHandlerBuilderMethod(ClassInfo ci, MethodInfo mi) {
+        String name = mi.name();
+        if ("supportTransacted".equals(name)) {
+            return false;
+        } else if (name.toLowerCase(Locale.ROOT).contains("deadletter")) {
+            String cn = ci.simpleName();
+            return "DeadLetterChannelBuilder".equals(cn);
+        }
+        return true;
     }
 
     @SuppressWarnings("MethodLength")
@@ -1115,6 +1130,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                     cb.addStatement("String val = asText(node)");
                     cb.addStatement("target.$L(val)", method.name());
                     cb.addStatement("break");
+                    annotations.add(yamlProperty(name, "string"));
                     break;
                 case "java.lang.Class":
                     cb.addStatement("java.lang.Class<?> val = asClass(node)");

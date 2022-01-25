@@ -21,13 +21,14 @@ public class GoogleCalendarEndpointUriFactory extends org.apache.camel.support.c
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(40);
+        Set<String> props = new HashSet<>(42);
         props.add("backoffMultiplier");
         props.add("apiName");
         props.add("destination");
         props.add("initialDelay");
         props.add("content");
         props.add("setting");
+        props.add("delegate");
         props.add("scheduler");
         props.add("emailAddress");
         props.add("bridgeErrorHandler");
@@ -45,6 +46,7 @@ public class GoogleCalendarEndpointUriFactory extends org.apache.camel.support.c
         props.add("eventId");
         props.add("p12FileName");
         props.add("clientId");
+        props.add("keyResource");
         props.add("sendEmptyMessageWhenIdle");
         props.add("schedulerProperties");
         props.add("exchangePattern");

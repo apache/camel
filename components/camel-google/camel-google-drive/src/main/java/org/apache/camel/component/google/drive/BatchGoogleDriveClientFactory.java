@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.google.drive;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
@@ -27,7 +28,9 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.drive.Drive;
+import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.support.ResourceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,6 +85,37 @@ public class BatchGoogleDriveClientFactory implements GoogleDriveClientFactory {
                 .setJsonFactory(jsonFactory)
                 .setTransport(transport)
                 .setClientSecrets(clientId, clientSecret)
+                .setServiceAccountScopes(scopes)
                 .build();
+    }
+
+    @Override
+    public Drive makeClient(
+            CamelContext camelContext, String keyResource, Collection<String> scopes, String applicationName, String delegate) {
+        if (keyResource == null) {
+            throw new IllegalArgumentException("keyResource is required to create Gmail client.");
+        }
+        try {
+            Credential credential = authorizeServiceAccount(camelContext, keyResource, delegate, scopes);
+            return new Drive.Builder(transport, jsonFactory, credential).setApplicationName(applicationName).build();
+        } catch (Exception e) {
+            throw new RuntimeCamelException("Could not create Gmail client.", e);
+        }
+    }
+
+    private Credential authorizeServiceAccount(
+            CamelContext camelContext, String keyResource, String delegate, Collection<String> scopes) {
+        // authorize
+        try {
+            GoogleCredential cred = GoogleCredential
+                    .fromStream(ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, keyResource), transport,
+                            jsonFactory)
+                    .createScoped(scopes != null && scopes.size() != 0 ? scopes : null)
+                    .createDelegated(delegate);
+            cred.refreshToken();
+            return cred;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

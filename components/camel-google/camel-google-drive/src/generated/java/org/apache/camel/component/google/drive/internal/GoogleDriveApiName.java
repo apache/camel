@@ -31,6 +31,10 @@ public enum GoogleDriveApiName implements ApiName {
 
     DRIVE_PROPERTIES("drive-properties"),
 
+    DRIVE_DRIVES("drive-drives"),
+
+    DRIVE_TEAMDRIVES("drive-teamdrives"),
+
     DRIVE_REPLIES("drive-replies"),
 
     DRIVE_REVISIONS("drive-revisions");

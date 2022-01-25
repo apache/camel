@@ -1323,6 +1323,60 @@ public interface ActiveMQEndpointBuilderFactory {
             return this;
         }
         /**
+         * The consumer type of the reply consumer (when doing request/reply),
+         * which can be one of: Simple, Default, or Custom. The consumer type
+         * determines which Spring JMS listener to use. Default will use
+         * org.springframework.jms.listener.DefaultMessageListenerContainer,
+         * Simple will use
+         * org.springframework.jms.listener.SimpleMessageListenerContainer. When
+         * Custom is specified, the MessageListenerContainerFactory defined by
+         * the messageListenerContainerFactory option will determine what
+         * org.springframework.jms.listener.AbstractMessageListenerContainer to
+         * use.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.jms.ConsumerType&lt;/code&gt;
+         * type.
+         * 
+         * Default: Default
+         * Group: consumer (advanced)
+         * 
+         * @param replyToConsumerType the value to set
+         * @return the dsl builder
+         */
+        default AdvancedActiveMQEndpointConsumerBuilder replyToConsumerType(
+                org.apache.camel.component.jms.ConsumerType replyToConsumerType) {
+            doSetProperty("replyToConsumerType", replyToConsumerType);
+            return this;
+        }
+        /**
+         * The consumer type of the reply consumer (when doing request/reply),
+         * which can be one of: Simple, Default, or Custom. The consumer type
+         * determines which Spring JMS listener to use. Default will use
+         * org.springframework.jms.listener.DefaultMessageListenerContainer,
+         * Simple will use
+         * org.springframework.jms.listener.SimpleMessageListenerContainer. When
+         * Custom is specified, the MessageListenerContainerFactory defined by
+         * the messageListenerContainerFactory option will determine what
+         * org.springframework.jms.listener.AbstractMessageListenerContainer to
+         * use.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.jms.ConsumerType&lt;/code&gt;
+         * type.
+         * 
+         * Default: Default
+         * Group: consumer (advanced)
+         * 
+         * @param replyToConsumerType the value to set
+         * @return the dsl builder
+         */
+        default AdvancedActiveMQEndpointConsumerBuilder replyToConsumerType(
+                String replyToConsumerType) {
+            doSetProperty("replyToConsumerType", replyToConsumerType);
+            return this;
+        }
+        /**
          * Whether a JMS consumer is allowed to send a reply message to the same
          * destination that the consumer is using to consume from. This prevents
          * an endless loop by consuming and sending back the same message to

@@ -307,6 +307,24 @@
             "dead-letter-handle-new-exception" : {
               "type" : "boolean"
             },
+            "dead-letter-uri" : {
+              "type" : "string"
+            },
+            "executor-service-ref" : {
+              "type" : "string"
+            },
+            "on-exception-occurred-ref" : {
+              "type" : "string"
+            },
+            "on-prepare-failure-ref" : {
+              "type" : "string"
+            },
+            "on-redelivery-ref" : {
+              "type" : "string"
+            },
+            "retry-while-ref" : {
+              "type" : "string"
+            },
             "use-original-body" : {
               "type" : "boolean"
             },
@@ -322,8 +340,20 @@
           "async-delayed-redelivery" : {
             "type" : "boolean"
           },
-          "dead-letter-handle-new-exception" : {
-            "type" : "boolean"
+          "executor-service-ref" : {
+            "type" : "string"
+          },
+          "on-exception-occurred-ref" : {
+            "type" : "string"
+          },
+          "on-prepare-failure-ref" : {
+            "type" : "string"
+          },
+          "on-redelivery-ref" : {
+            "type" : "string"
+          },
+          "retry-while-ref" : {
+            "type" : "string"
           },
           "use-original-body" : {
             "type" : "boolean"
@@ -2322,12 +2352,16 @@
         }
       },
       "org.apache.camel.model.RestContextRefDefinition" : {
-        "type" : "object",
-        "properties" : {
-          "ref" : {
-            "type" : "string"
+        "oneOf" : [ {
+          "type" : "string"
+        }, {
+          "type" : "object",
+          "properties" : {
+            "ref" : {
+              "type" : "string"
+            }
           }
-        },
+        } ],
         "required" : [ "ref" ]
       },
       "org.apache.camel.model.RollbackDefinition" : {
@@ -2374,12 +2408,16 @@
         "required" : [ "ref" ]
       },
       "org.apache.camel.model.RouteConfigurationContextRefDefinition" : {
-        "type" : "object",
-        "properties" : {
-          "ref" : {
-            "type" : "string"
+        "oneOf" : [ {
+          "type" : "string"
+        }, {
+          "type" : "object",
+          "properties" : {
+            "ref" : {
+              "type" : "string"
+            }
           }
-        },
+        } ],
         "required" : [ "ref" ]
       },
       "org.apache.camel.model.RouteConfigurationDefinition" : {
@@ -2425,12 +2463,16 @@
         } ]
       },
       "org.apache.camel.model.RouteContextRefDefinition" : {
-        "type" : "object",
-        "properties" : {
-          "ref" : {
-            "type" : "string"
+        "oneOf" : [ {
+          "type" : "string"
+        }, {
+          "type" : "object",
+          "properties" : {
+            "ref" : {
+              "type" : "string"
+            }
           }
-        },
+        } ],
         "required" : [ "ref" ]
       },
       "org.apache.camel.model.RouteDefinition" : {
@@ -2455,34 +2497,30 @@
         "required" : [ "from" ]
       },
       "org.apache.camel.model.RouteTemplateBeanDefinition" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
+        "type" : "object",
+        "properties" : {
+          "bean-type" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          },
           "properties" : {
-            "bean-type" : {
-              "type" : "string"
-            },
-            "name" : {
-              "type" : "string"
-            },
-            "properties" : {
-              "type" : "object"
-            },
-            "property" : {
-              "type" : "array",
-              "items" : {
-                "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
-              }
-            },
-            "script" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.RouteTemplateScriptDefinition"
-            },
-            "type" : {
-              "type" : "string"
+            "type" : "object"
+          },
+          "property" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
             }
+          },
+          "script" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.RouteTemplateScriptDefinition"
+          },
+          "type" : {
+            "type" : "string"
           }
-        } ],
+        },
         "required" : [ "name", "type" ]
       },
       "org.apache.camel.model.RouteTemplateDefinition" : {

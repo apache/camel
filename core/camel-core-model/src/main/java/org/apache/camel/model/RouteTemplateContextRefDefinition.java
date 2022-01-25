@@ -39,6 +39,10 @@ public class RouteTemplateContextRefDefinition {
     public RouteTemplateContextRefDefinition() {
     }
 
+    public RouteTemplateContextRefDefinition(String ref) {
+        this.ref = ref;
+    }
+
     @Override
     public String toString() {
         return "RouteTemplateContextRef[" + getRef() + "]";

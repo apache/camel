@@ -43,6 +43,9 @@ public class GoogleMailStreamComponentConfigurer extends PropertyConfigurerSuppo
         case "clientsecret":
         case "clientSecret": getOrCreateConfiguration(target).setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.google.mail.stream.GoogleMailStreamConfiguration.class, value)); return true;
+        case "delegate": getOrCreateConfiguration(target).setDelegate(property(camelContext, java.lang.String.class, value)); return true;
+        case "keyresource":
+        case "keyResource": getOrCreateConfiguration(target).setKeyResource(property(camelContext, java.lang.String.class, value)); return true;
         case "labels": getOrCreateConfiguration(target).setLabels(property(camelContext, java.lang.String.class, value)); return true;
         case "markasread":
         case "markAsRead": getOrCreateConfiguration(target).setMarkAsRead(property(camelContext, boolean.class, value)); return true;
@@ -51,6 +54,7 @@ public class GoogleMailStreamComponentConfigurer extends PropertyConfigurerSuppo
         case "query": getOrCreateConfiguration(target).setQuery(property(camelContext, java.lang.String.class, value)); return true;
         case "refreshtoken":
         case "refreshToken": getOrCreateConfiguration(target).setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "scopes": getOrCreateConfiguration(target).setScopes(property(camelContext, java.util.List.class, value)); return true;
         default: return false;
         }
     }
@@ -73,6 +77,9 @@ public class GoogleMailStreamComponentConfigurer extends PropertyConfigurerSuppo
         case "clientsecret":
         case "clientSecret": return java.lang.String.class;
         case "configuration": return org.apache.camel.component.google.mail.stream.GoogleMailStreamConfiguration.class;
+        case "delegate": return java.lang.String.class;
+        case "keyresource":
+        case "keyResource": return java.lang.String.class;
         case "labels": return java.lang.String.class;
         case "markasread":
         case "markAsRead": return boolean.class;
@@ -81,6 +88,7 @@ public class GoogleMailStreamComponentConfigurer extends PropertyConfigurerSuppo
         case "query": return java.lang.String.class;
         case "refreshtoken":
         case "refreshToken": return java.lang.String.class;
+        case "scopes": return java.util.List.class;
         default: return null;
         }
     }
@@ -104,6 +112,9 @@ public class GoogleMailStreamComponentConfigurer extends PropertyConfigurerSuppo
         case "clientsecret":
         case "clientSecret": return getOrCreateConfiguration(target).getClientSecret();
         case "configuration": return target.getConfiguration();
+        case "delegate": return getOrCreateConfiguration(target).getDelegate();
+        case "keyresource":
+        case "keyResource": return getOrCreateConfiguration(target).getKeyResource();
         case "labels": return getOrCreateConfiguration(target).getLabels();
         case "markasread":
         case "markAsRead": return getOrCreateConfiguration(target).isMarkAsRead();
@@ -112,6 +123,15 @@ public class GoogleMailStreamComponentConfigurer extends PropertyConfigurerSuppo
         case "query": return getOrCreateConfiguration(target).getQuery();
         case "refreshtoken":
         case "refreshToken": return getOrCreateConfiguration(target).getRefreshToken();
+        case "scopes": return getOrCreateConfiguration(target).getScopes();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "scopes": return java.lang.String.class;
         default: return null;
         }
     }

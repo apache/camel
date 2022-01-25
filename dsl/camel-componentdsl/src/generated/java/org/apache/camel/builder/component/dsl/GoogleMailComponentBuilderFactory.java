@@ -113,7 +113,7 @@ public interface GoogleMailComponentBuilderFactory {
          * GMail scopes.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.Collection&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -121,7 +121,7 @@ public interface GoogleMailComponentBuilderFactory {
          * @return the dsl builder
          */
         default GoogleMailComponentBuilder scopes(
-                java.util.List<java.lang.String> scopes) {
+                java.util.Collection<java.lang.String> scopes) {
             doSetProperty("scopes", scopes);
             return this;
         }
@@ -300,7 +300,7 @@ public interface GoogleMailComponentBuilderFactory {
             case "clientId": getOrCreateConfiguration((GoogleMailComponent) component).setClientId((java.lang.String) value); return true;
             case "configuration": ((GoogleMailComponent) component).setConfiguration((org.apache.camel.component.google.mail.GoogleMailConfiguration) value); return true;
             case "delegate": getOrCreateConfiguration((GoogleMailComponent) component).setDelegate((java.lang.String) value); return true;
-            case "scopes": getOrCreateConfiguration((GoogleMailComponent) component).setScopes((java.util.List) value); return true;
+            case "scopes": getOrCreateConfiguration((GoogleMailComponent) component).setScopes((java.util.Collection) value); return true;
             case "bridgeErrorHandler": ((GoogleMailComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((GoogleMailComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((GoogleMailComponent) component).setAutowiredEnabled((boolean) value); return true;

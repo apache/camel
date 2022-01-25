@@ -169,6 +169,21 @@ public interface GoogleCalendarStreamComponentBuilderFactory {
             return this;
         }
         /**
+         * Delegate for wide-domain service account.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param delegate the value to set
+         * @return the dsl builder
+         */
+        default GoogleCalendarStreamComponentBuilder delegate(
+                java.lang.String delegate) {
+            doSetProperty("delegate", delegate);
+            return this;
+        }
+        /**
          * Max results to be returned.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
@@ -316,6 +331,21 @@ public interface GoogleCalendarStreamComponentBuilderFactory {
             return this;
         }
         /**
+         * Sets .json file with credentials for Service account.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param keyResource the value to set
+         * @return the dsl builder
+         */
+        default GoogleCalendarStreamComponentBuilder keyResource(
+                java.lang.String keyResource) {
+            doSetProperty("keyResource", keyResource);
+            return this;
+        }
+        /**
          * The name of the p12 file which has the private key to use with the
          * Google Service Account.
          * 
@@ -394,6 +424,7 @@ public interface GoogleCalendarStreamComponentBuilderFactory {
             case "configuration": ((GoogleCalendarStreamComponent) component).setConfiguration((org.apache.camel.component.google.calendar.stream.GoogleCalendarStreamConfiguration) value); return true;
             case "considerLastUpdate": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setConsiderLastUpdate((boolean) value); return true;
             case "consumeFromNow": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setConsumeFromNow((boolean) value); return true;
+            case "delegate": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setDelegate((java.lang.String) value); return true;
             case "maxResults": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setMaxResults((int) value); return true;
             case "query": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setQuery((java.lang.String) value); return true;
             case "scopes": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setScopes((java.util.List) value); return true;
@@ -403,6 +434,7 @@ public interface GoogleCalendarStreamComponentBuilderFactory {
             case "accessToken": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setAccessToken((java.lang.String) value); return true;
             case "clientSecret": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setClientSecret((java.lang.String) value); return true;
             case "emailAddress": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setEmailAddress((java.lang.String) value); return true;
+            case "keyResource": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setKeyResource((java.lang.String) value); return true;
             case "p12FileName": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setP12FileName((java.lang.String) value); return true;
             case "refreshToken": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setRefreshToken((java.lang.String) value); return true;
             case "user": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setUser((java.lang.String) value); return true;

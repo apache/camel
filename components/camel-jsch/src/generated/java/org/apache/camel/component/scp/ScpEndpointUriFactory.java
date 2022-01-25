@@ -21,14 +21,13 @@ public class ScpEndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(26);
+        Set<String> props = new HashSet<>(25);
         props.add("useUserKnownHostsFile");
         props.add("disconnect");
         props.add("disconnectOnBatchComplete");
         props.add("moveExistingFileStrategy");
         props.add("fileName");
         props.add("strictHostKeyChecking");
-        props.add("synchronous");
         props.add("timeout");
         props.add("flatten");
         props.add("password");

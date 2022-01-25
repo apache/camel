@@ -513,4 +513,43 @@ class KameletBindingLoaderTest extends YamlTestSupport {
         }
     }
 
+    def "kamelet binding from kamelet to knative"() {
+        when:
+
+        // stub knative for testing as it requires to setup connection to a real knative broker
+        context.removeComponent("knative")
+        context.addComponent("knative", context.getComponent("stub"))
+
+        loadBindings('''
+                apiVersion: camel.apache.org/v1alpha1
+                kind: KameletBinding
+                metadata:
+                  name: timer-event-source                  
+                spec:
+                  source:
+                    ref:
+                      kind: Kamelet
+                      apiVersion: camel.apache.org/v1
+                      name: timer-source
+                    properties:
+                      message: "Hello world!"
+                  sink:
+                    ref:
+                      kind: InMemoryChannel
+                      apiVersion: messaging.knative.dev/v1
+                      name: my-messages
+            ''')
+        then:
+        context.routeDefinitions.size() == 2
+
+        with (context.routeDefinitions[0]) {
+            routeId == 'timer-event-source'
+            input.endpointUri == 'kamelet:timer-source?message=Hello+world%21'
+            outputs.size() == 1
+            with (outputs[0], ToDefinition) {
+                endpointUri == 'knative:channel/my-messages'
+            }
+        }
+    }
+
 }

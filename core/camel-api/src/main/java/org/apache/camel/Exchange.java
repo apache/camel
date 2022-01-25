@@ -219,9 +219,11 @@ public interface Exchange {
     String REUSE_SCRIPT_ENGINE = "CamelReuseScripteEngine";
     String COMPILE_SCRIPT = "CamelCompileScript";
 
+    @Deprecated
     String SAXPARSER_FACTORY = "CamelSAXParserFactory";
 
     String SCHEDULER_POLLED_MESSAGES = "CamelSchedulerPolledMessages";
+    @Deprecated
     String SOAP_ACTION = "CamelSoapAction";
     String SKIP_GZIP_ENCODING = "CamelSkipGzipEncoding";
     String SKIP_WWW_FORM_URLENCODED = "CamelSkipWwwFormUrlEncoding";
@@ -242,18 +244,14 @@ public interface Exchange {
     String TRACE_EVENT_NODE_ID = "CamelTraceEventNodeId";
     String TRACE_EVENT_TIMESTAMP = "CamelTraceEventTimestamp";
     String TRACE_EVENT_EXCHANGE = "CamelTraceEventExchange";
+    @Deprecated
     String TRACING_HEADER_FORMAT = "CamelTracingHeaderFormat";
+    @Deprecated
     String TRACING_OUTPUT_FORMAT = "CamelTracingOutputFormat";
     String TRY_ROUTE_BLOCK = "TryRouteBlock";
     String TRANSFER_ENCODING = "Transfer-Encoding";
 
     String UNIT_OF_WORK_EXHAUSTED = "CamelUnitOfWorkExhausted";
-
-    /**
-     * @deprecated UNIT_OF_WORK_PROCESS_SYNC is not in use and will be removed in future Camel release
-     */
-    @Deprecated
-    String UNIT_OF_WORK_PROCESS_SYNC = "CamelUnitOfWorkProcessSync";
 
     String XSLT_FILE_NAME = "CamelXsltFileName";
     String XSLT_ERROR = "CamelXsltError";

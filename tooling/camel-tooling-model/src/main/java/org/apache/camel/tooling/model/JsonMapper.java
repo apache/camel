@@ -68,7 +68,7 @@ public final class JsonMapper {
         } else if (obj.containsKey("model")) {
             return generateEipModel(obj);
         } else {
-            throw new IllegalArgumentException("Unsupported JSON");
+            return null;
         }
     }
 

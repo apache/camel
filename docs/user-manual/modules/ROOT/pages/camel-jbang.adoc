@@ -13,7 +13,7 @@ It is not necessary to install Camel JBang. However, if you prefer to do so, JBa
 jbang app install camel@apache/camel
 ----
 
-*Note*: up to Camel 3.14, the app was named `CamelJBang`. From 3.15 and newer, the app is named `camel`. It is still possible to use the older name by installing it using `CamelJBang@apache/camel` but this approach is deprecated and should not be used in the future.
+NOTE: Up to Camel 3.14, the app was named `CamelJBang`. From 3.15 and newer, the app is named `camel`. It is still possible to use the older name by installing it using `CamelJBang@apache/camel` but this approach is deprecated and should not be used in the future.
 
 == Using Camel JBang
 
@@ -24,11 +24,11 @@ The CamelJBang supports multiple commands. Running the command below, will print
 jbang camel@apache/camel [command]
 ----
 
-*Note*: the first time you run this command, it may cause dependencies to be cached, therefore taking a few extra seconds to run.
+TIP: The first time you run this command, it may cause dependencies to be cached, therefore taking a few extra seconds to run.
 
 All the commands support the `--help` and will display the appropriate help if that flag is provided.
 
-However if you have installed CamelJBang with `jbang app install` then you can use `CamelJBang` instead of `jbang camel@apache/camel`
+However, if you have installed CamelJBang with `jbang app install` then you can use `CamelJBang` instead of `jbang camel@apache/camel`
 
 === Troubleshooting
 
@@ -77,7 +77,7 @@ Execute the following command to run this route:
 
 [source,bash]
 ----
-CamelJBang run jms-amqp-10-sink-binding.yaml
+camel run jms-amqp-10-sink-binding.yaml
 ----
 
 NOTE: it is necessary to have a AMQP 1.0 broker, such as Apache Artemis, running locally and listening on port 61616. Adjust the route accordingly if using a different address for the broker.
@@ -88,28 +88,28 @@ You can run more than 1 file, for example to run two YAML files you can do:
 
 [source,bash]
 ----
-CamelJBang run one.yaml two.yaml
+camel run one.yaml two.yaml
 ----
 
 You can also mix different xref:dsl.adoc[DSLs] such as yaml and Java:
 
 [source,bash]
 ----
-CamelJBang run one.yaml hello.java
+camel run one.yaml hello.java
 ----
 
 You can also use wildcards (i.e. `*`) to match multiple files, such as running all the yaml files:
 
 [source,bash]
 ----
-CamelJBang run *.yaml
+camel run *.yaml
 ----
 
 Or you can run all files starting with foo*
 
 [source,bash]
 ----
-CamelJBang run foo*
+camel run foo*
 ----
 
 TIP: The run goal can also detect files that are `properties`.
@@ -121,7 +121,7 @@ using the `--reload` options as shown:
 
 [source,bash]
 ----
-CamelJBang run jms-amqp-10-sink-binding.yaml --reload
+camel run jms-amqp-10-sink-binding.yaml --reload
 ----
 
 Then while the Camel application is running, you can update the YAML route and update when saving.
@@ -137,7 +137,29 @@ For example to run one of the Camel K examples you can do:
 
 [source,bash]
 ----
-CamelJBang run run github:apache:camel-k:examples/languages/routes.yaml
+camel run run github:apache:camel-k:examples/languages/routes.yaml
+----
+
+You can also use the `https` URL for GitHub. For example, you can browse the examples from a web-browser and
+then copy the URL from the browser window and run the example with Camel JBang:
+
+[source,bash]
+----
+camel run https://github.com/apache/camel-k/blob/main/examples/languages/routes.yaml
+----
+
+You can also use wildcards (i.e. `*`) to match multiple files, such as running all the groovy files:
+
+[source,bash]
+----
+camel run https://github.com/apache/camel-k/tree/main/examples/languages/*.groovy
+----
+
+Or you can run all files starting with rou*
+
+[source,bash]
+----
+camel run https://github.com/apache/camel-k/tree/main/examples/languages/rou*
 ----
 
 === Running local Kamelets
@@ -146,7 +168,7 @@ You can also use Camel JBang to try local Kamelets, without the need to publish 
 
 [source,bash]
 ----
-CamelJBang run --local-kamelet-dir=/path/to/local/kamelets earthquake.yaml
+camel run --local-kamelet-dir=/path/to/local/kamelets earthquake.yaml
 ----
 
 === Running Camel K integrations or bindings
@@ -179,11 +201,11 @@ spec:
       show-headers: false
 ----
 
-Can be run with CamelJBang:
+Can be run with camel:
 
 [source,bash]
 ----
-CamelJBang run joke.yaml
+camel run joke.yaml
 ----
 
 === Using platform-http component

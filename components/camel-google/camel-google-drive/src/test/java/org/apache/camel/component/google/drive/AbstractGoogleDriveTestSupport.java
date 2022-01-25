@@ -59,7 +59,8 @@ public abstract class AbstractGoogleDriveTestSupport extends CamelTestSupport {
         Properties properties = loadProperties();
 
         return !properties.getProperty("clientId", "").isEmpty()
-                && !properties.getProperty("clientSecret").isEmpty();
+                && !properties.getProperty("clientSecret").isEmpty()
+                || !properties.getProperty("keyResource", "").isEmpty();
     }
 
     private static Properties loadProperties() {

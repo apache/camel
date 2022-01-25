@@ -35,6 +35,8 @@
 
     <properties>
         <firstVersion>3.9.0</firstVersion>
+        <title>XML DSL</title>
+        <label>dsl</label>
     </properties>
 
     <dependencies>

@@ -39,6 +39,10 @@ public class RouteContextRefDefinition {
     public RouteContextRefDefinition() {
     }
 
+    public RouteContextRefDefinition(String ref) {
+        this.ref = ref;
+    }
+
     @Override
     public String toString() {
         return "RouteContextRef[" + getRef() + "]";

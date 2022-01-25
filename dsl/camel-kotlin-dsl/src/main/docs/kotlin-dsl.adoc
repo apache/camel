@@ -1,12 +1,13 @@
-= Kotlin Dsl Component
-//TODO there is no .json file for this doc page, so it is not updated automatically by UpdateReadmeMojo.
-//Header attributes written by hand.
-:doctitle: Kotlin Dsl
+= Kotlin DSL Component
+:doctitle: Kotlin DSL
+:shortname: kotlin-dsl
 :artifactid: camel-kotlin-dsl
 :description: Camel DSL with Kotlin
-:supportlevel: Experimental/Preview
-:since: 3
+:since: 3.9
+:supportlevel: Experimental
 //Manually maintained attributes
 :group: DSL
+
+*Since Camel {since}*
 
 See xref:manual:ROOT:dsl.adoc[DSL]

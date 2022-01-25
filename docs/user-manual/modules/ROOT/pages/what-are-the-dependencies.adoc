@@ -7,7 +7,7 @@
 
 == Camel JAR Dependencies
 
-Camel core itself is lightweight, and only requires the `sl4j-api` logging API jar.
+Camel core itself is lightweight, and only requires the `slf4j-api` logging API jar.
 
 == Components
 

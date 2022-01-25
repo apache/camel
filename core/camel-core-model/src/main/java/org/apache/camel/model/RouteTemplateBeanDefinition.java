@@ -55,14 +55,7 @@ public class RouteTemplateBeanDefinition {
     @XmlTransient
     private RouteTemplateContext.BeanSupplier<Object> beanSupplier;
 
-    public RouteTemplateBeanDefinition() {
-    }
-
-    public RouteTemplateBeanDefinition(String name) {
-        this.name = name;
-    }
-
-    public RouteTemplateBeanDefinition(RouteTemplateDefinition parent) {
+    void setParent(RouteTemplateDefinition parent) {
         this.parent = parent;
     }
 

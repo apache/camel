@@ -73,6 +73,7 @@
                         <id>generate-postcompile</id>
                         <goals>
                             <goal>generate-postcompile</goal>
+                            <goal>generate-others-list</goal>
                         </goals>
                         <phase>prepare-package</phase>
                     </execution>

@@ -65,7 +65,7 @@ public class GoogleMailStreamComponentVerifierExtension extends DefaultComponent
             GoogleMailConfiguration configuration = setProperties(new GoogleMailConfiguration(), parameters);
             GoogleMailClientFactory clientFactory = new BatchGoogleMailClientFactory();
             Gmail client = clientFactory.makeClient(configuration.getClientId(), configuration.getClientSecret(),
-                    configuration.getApplicationName(),
+                    configuration.getScopes(), configuration.getApplicationName(),
                     configuration.getRefreshToken(), configuration.getAccessToken());
             client.users().getProfile((String) parameters.get("userId")).execute();
         } catch (Exception e) {

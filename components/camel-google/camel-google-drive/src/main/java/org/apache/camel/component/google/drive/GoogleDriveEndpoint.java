@@ -109,6 +109,9 @@ public class GoogleDriveEndpoint extends AbstractApiEndpoint<GoogleDriveApiName,
             case DRIVE_PROPERTIES:
                 apiProxy = getClient().properties();
                 break;
+            case DRIVE_DRIVES:
+                apiProxy = getClient().drives();
+                break;
             case DRIVE_REPLIES:
                 apiProxy = getClient().replies();
                 break;
@@ -120,6 +123,9 @@ public class GoogleDriveEndpoint extends AbstractApiEndpoint<GoogleDriveApiName,
                 break;
             case DRIVE_PARENTS:
                 apiProxy = getClient().parents();
+                break;
+            case DRIVE_TEAMDRIVES:
+                apiProxy = getClient().teamdrives();
                 break;
             default:
                 throw new IllegalArgumentException("Invalid API name " + apiName);

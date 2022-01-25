@@ -21,7 +21,7 @@ public class GoogleSheetsEndpointUriFactory extends org.apache.camel.support.com
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(40);
+        Set<String> props = new HashSet<>(43);
         props.add("backoffMultiplier");
         props.add("apiName");
         props.add("batchClearValuesRequest");
@@ -31,6 +31,7 @@ public class GoogleSheetsEndpointUriFactory extends org.apache.camel.support.com
         props.add("splitResult");
         props.add("initialDelay");
         props.add("content");
+        props.add("delegate");
         props.add("scheduler");
         props.add("bridgeErrorHandler");
         props.add("useFixedDelay");
@@ -45,6 +46,7 @@ public class GoogleSheetsEndpointUriFactory extends org.apache.camel.support.com
         props.add("repeatCount");
         props.add("timeUnit");
         props.add("clientId");
+        props.add("keyResource");
         props.add("batchUpdateSpreadsheetRequest");
         props.add("sendEmptyMessageWhenIdle");
         props.add("schedulerProperties");
@@ -59,6 +61,7 @@ public class GoogleSheetsEndpointUriFactory extends org.apache.camel.support.com
         props.add("delay");
         props.add("pollStrategy");
         props.add("startScheduler");
+        props.add("scopes");
         props.add("inBody");
         props.add("exceptionHandler");
         props.add("refreshToken");

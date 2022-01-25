@@ -157,6 +157,11 @@ public class JmsEndpoint extends DefaultEndpoint
         return configuration.createMessageListenerContainer(this);
     }
 
+    public AbstractMessageListenerContainer createReplyToMessageListenerContainer() throws Exception {
+        // only choose as the reply manager will configure the listener
+        return configuration.chooseMessageListenerContainerImplementation(this, configuration.getReplyToConsumerType());
+    }
+
     public void configureListenerContainer(AbstractMessageListenerContainer listenerContainer, JmsConsumer consumer) {
         if (destinationName != null) {
             String target = destinationName;

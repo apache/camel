@@ -51,17 +51,19 @@ public class GoogleMailComponent
         return getCamelContext().getTypeConverter().convertTo(GoogleMailApiName.class, apiNameStr);
     }
 
-    public Gmail getClient(GoogleMailConfiguration googleMailConfiguration) {
+    public Gmail getClient(GoogleMailConfiguration config) {
         if (client == null) {
-            if (googleMailConfiguration.getClientSecret() != null) {
-                client = getClientFactory().makeClient(googleMailConfiguration.getClientId(),
-                        googleMailConfiguration.getClientSecret(),
-                        googleMailConfiguration.getApplicationName(),
-                        googleMailConfiguration.getRefreshToken(), googleMailConfiguration.getAccessToken());
-            } else if (googleMailConfiguration.getKeyResource() != null) {
-                client = getClientFactory().makeClient(getCamelContext(), googleMailConfiguration.getKeyResource(),
-                        googleMailConfiguration.getApplicationName(), googleMailConfiguration.getDelegate(),
-                        googleMailConfiguration.getScopes());
+            if (config.getClientId() != null && !config.getClientId().isBlank()
+                    && config.getClientSecret() != null && !config.getClientSecret().isBlank()) {
+                client = getClientFactory().makeClient(config.getClientId(),
+                        config.getClientSecret(), config.getScopes(),
+                        config.getApplicationName(), config.getRefreshToken(), config.getAccessToken());
+            } else if (config.getKeyResource() != null && !config.getKeyResource().isBlank()) {
+                client = getClientFactory().makeClient(getCamelContext(), config.getKeyResource(),
+                        config.getScopes(), config.getApplicationName(), config.getDelegate());
+            } else {
+                throw new IllegalArgumentException(
+                        "(clientId and clientSecret) or keyResource are required to create Gmail client");
             }
         }
         return client;

@@ -33,6 +33,7 @@
     <description>The Core Camel Framework</description>
 
     <properties>
+        <firstVersion>1.0.0</firstVersion>
         <camel.surefire.forkTimeout>3000</camel.surefire.forkTimeout>
         <camel.surefire.parallel.strategy>custom</camel.surefire.parallel.strategy>
     </properties>

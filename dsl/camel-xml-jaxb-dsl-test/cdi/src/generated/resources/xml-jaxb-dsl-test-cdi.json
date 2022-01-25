@@ -1,0 +1,14 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "xml-jaxb-dsl-test-cdi",
+    "title": "Xml Jaxb Dsl Test Cdi",
+    "description": "Camel XML DSL Tests with Jaxb and CDI",
+    "deprecated": false,
+    "firstVersion": "3.9.0",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-xml-jaxb-dsl-test-cdi",
+    "version": "3.15.0-SNAPSHOT"
+  }
+}

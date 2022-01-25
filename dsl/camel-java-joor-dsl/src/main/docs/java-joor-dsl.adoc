@@ -1,12 +1,13 @@
-= Java DSL based on Joor Component
-//TODO there is no .json file for this doc page, so it is not updated automatically by UpdateReadmeMojo.
-//Header attributes written by hand.
-:doctitle: Java Joor Dsl
+= Java DSL (runtime compiled) Component
+:doctitle: Java DSL (runtime compiled)
+:shortname: java-joor-dsl
 :artifactid: camel-java-joor-dsl
-:description: Camel DSL with YAML
-:supportlevel: Stable/Preview
-:since: 3
+:description: Camel Java DSL with jOOR
+:since: 3.9
+:supportlevel: Stable
 //Manually maintained attributes
 :group: DSL
+
+*Since Camel {since}*
 
 See xref:manual:ROOT:dsl.adoc[DSL]

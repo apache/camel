@@ -28,8 +28,11 @@ import javax.jms.TemporaryQueue;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.jms.ConsumerType;
 import org.apache.camel.component.jms.DefaultJmsMessageListenerContainer;
 import org.apache.camel.component.jms.DefaultSpringErrorHandler;
+import org.apache.camel.component.jms.MessageListenerContainerFactory;
+import org.apache.camel.component.jms.SimpleJmsMessageListenerContainer;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
 import org.springframework.jms.support.destination.DestinationResolver;
@@ -97,6 +100,21 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
 
     @Override
     protected AbstractMessageListenerContainer createListenerContainer() throws Exception {
+        if (endpoint.getConfiguration().getReplyToConsumerType() == ConsumerType.Default) {
+            return createDefaultListenerContainer();
+        } else if (endpoint.getConfiguration().getReplyToConsumerType() == ConsumerType.Simple) {
+            return createSimpleListenerContainer();
+        } else {
+            MessageListenerContainerFactory factory = endpoint.getConfiguration().getMessageListenerContainerFactory();
+            if (factory != null) {
+                return factory.createMessageListenerContainer(endpoint);
+            }
+            throw new IllegalArgumentException(
+                    "ReplyToConsumerType.Custom requires that a MessageListenerContainerFactory has been configured");
+        }
+    }
+
+    protected AbstractMessageListenerContainer createDefaultListenerContainer() throws Exception {
         // Use DefaultMessageListenerContainer as it supports reconnects (see CAMEL-3193)
         DefaultMessageListenerContainer answer
                 = new DefaultJmsMessageListenerContainer(endpoint, endpoint.isAllowReplyManagerQuickStop());
@@ -169,6 +187,55 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
             // log that we are using concurrent consumers
             log.info("Using {}-{} concurrent consumers on {}",
                     answer.getConcurrentConsumers(), answer.getMaxConcurrentConsumers(), name);
+        }
+        return answer;
+    }
+
+    private AbstractMessageListenerContainer createSimpleListenerContainer() {
+        SimpleJmsMessageListenerContainer answer = new SimpleJmsMessageListenerContainer(endpoint);
+        answer.setDestinationName("temporary");
+        answer.setDestinationResolver(destResolver);
+        answer.setAutoStartup(true);
+        answer.setMessageListener(this);
+        answer.setPubSubDomain(false);
+        answer.setSubscriptionDurable(false);
+        answer.setConcurrentConsumers(endpoint.getReplyToConcurrentConsumers());
+        answer.setConnectionFactory(endpoint.getConfiguration().getOrCreateConnectionFactory());
+        String clientId = endpoint.getClientId();
+        if (clientId != null) {
+            clientId += ".CamelReplyManager";
+            answer.setClientId(clientId);
+        }
+
+        // we cannot do request-reply over JMS with transaction
+        answer.setSessionTransacted(false);
+
+        // other optional properties
+        answer.setExceptionListener(new TemporaryReplyQueueExceptionListener(destResolver, endpoint.getExceptionListener()));
+
+        if (endpoint.getErrorHandler() != null) {
+            answer.setErrorHandler(endpoint.getErrorHandler());
+        } else {
+            answer.setErrorHandler(new DefaultSpringErrorHandler(
+                    endpoint.getCamelContext(), TemporaryQueueReplyManager.class,
+                    endpoint.getErrorHandlerLoggingLevel(), endpoint.isErrorHandlerLogStackTrace()));
+        }
+        if (endpoint.getTaskExecutor() != null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Using custom TaskExecutor: {} on listener container: {}", endpoint.getTaskExecutor(), answer);
+            }
+            answer.setTaskExecutor(endpoint.getTaskExecutor());
+        }
+
+        // setup a bean name which is used by Spring JMS as the thread name
+        // use the name of the request destination
+        String name = "TemporaryQueueReplyManager[" + endpoint.getDestinationName() + "]";
+        answer.setBeanName(name);
+
+        if (endpoint.getReplyToConcurrentConsumers() > 1) {
+            // log that we are using concurrent consumers
+            log.info("Using {} concurrent consumers on {}",
+                    endpoint.getReplyToConcurrentConsumers(), name);
         }
         return answer;
     }

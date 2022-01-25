@@ -1,11 +1,10 @@
-= Yaml Dsl Component
-//TODO there is no .json file for this doc page, so it is not updated automatically by UpdateReadmeMojo.
-//Header attributes written by hand.
-:doctitle: Yaml Dsl
+= YAML DSL Component
+:doctitle: YAML DSL
+:shortname: yaml-dsl
 :artifactid: camel-yaml-dsl
 :description: Camel DSL with YAML
 :since: 3.9
-:supportlevel: Preview
+:supportlevel: Stable
 //Manually maintained attributes
 :group: DSL
 

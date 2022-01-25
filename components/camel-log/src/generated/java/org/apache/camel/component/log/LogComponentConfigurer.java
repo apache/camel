@@ -27,6 +27,8 @@ public class LogComponentConfigurer extends PropertyConfigurerSupport implements
         case "exchangeFormatter": target.setExchangeFormatter(property(camelContext, org.apache.camel.spi.ExchangeFormatter.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "sourcelocationloggername":
+        case "sourceLocationLoggerName": target.setSourceLocationLoggerName(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -45,6 +47,8 @@ public class LogComponentConfigurer extends PropertyConfigurerSupport implements
         case "exchangeFormatter": return org.apache.camel.spi.ExchangeFormatter.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "sourcelocationloggername":
+        case "sourceLocationLoggerName": return boolean.class;
         default: return null;
         }
     }
@@ -59,6 +63,8 @@ public class LogComponentConfigurer extends PropertyConfigurerSupport implements
         case "exchangeFormatter": return target.getExchangeFormatter();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "sourcelocationloggername":
+        case "sourceLocationLoggerName": return target.isSourceLocationLoggerName();
         default: return null;
         }
     }

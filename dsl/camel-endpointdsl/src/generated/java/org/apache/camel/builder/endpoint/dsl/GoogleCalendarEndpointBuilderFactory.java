@@ -75,6 +75,20 @@ public interface GoogleCalendarEndpointBuilderFactory {
             return this;
         }
         /**
+         * Delegate for wide-domain service account.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param delegate the value to set
+         * @return the dsl builder
+         */
+        default GoogleCalendarEndpointConsumerBuilder delegate(String delegate) {
+            doSetProperty("delegate", delegate);
+            return this;
+        }
+        /**
          * Sets the name of a parameter to be passed in the exchange In Body.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -94,7 +108,28 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * See https://developers.google.com/google-apps/calendar/auth for more
          * info.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * 
+         * Default: https://www.googleapis.com/auth/calendar
+         * Group: common
+         * 
+         * @param scopes the value to set
+         * @return the dsl builder
+         */
+        default GoogleCalendarEndpointConsumerBuilder scopes(
+                List<java.lang.String> scopes) {
+            doSetProperty("scopes", scopes);
+            return this;
+        }
+        /**
+         * Specifies the level of permissions you want a calendar application to
+         * have to a user account. You can separate multiple scopes by comma.
+         * See https://developers.google.com/google-apps/calendar/auth for more
+         * info.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Default: https://www.googleapis.com/auth/calendar
          * Group: common
@@ -715,6 +750,21 @@ public interface GoogleCalendarEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets .json file with credentials for Service account.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param keyResource the value to set
+         * @return the dsl builder
+         */
+        default GoogleCalendarEndpointConsumerBuilder keyResource(
+                String keyResource) {
+            doSetProperty("keyResource", keyResource);
+            return this;
+        }
+        /**
          * The name of the p12 file which has the private key to use with the
          * Google Service Account.
          * 
@@ -924,6 +974,20 @@ public interface GoogleCalendarEndpointBuilderFactory {
             return this;
         }
         /**
+         * Delegate for wide-domain service account.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param delegate the value to set
+         * @return the dsl builder
+         */
+        default GoogleCalendarEndpointProducerBuilder delegate(String delegate) {
+            doSetProperty("delegate", delegate);
+            return this;
+        }
+        /**
          * Sets the name of a parameter to be passed in the exchange In Body.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -943,7 +1007,28 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * See https://developers.google.com/google-apps/calendar/auth for more
          * info.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * 
+         * Default: https://www.googleapis.com/auth/calendar
+         * Group: common
+         * 
+         * @param scopes the value to set
+         * @return the dsl builder
+         */
+        default GoogleCalendarEndpointProducerBuilder scopes(
+                List<java.lang.String> scopes) {
+            doSetProperty("scopes", scopes);
+            return this;
+        }
+        /**
+         * Specifies the level of permissions you want a calendar application to
+         * have to a user account. You can separate multiple scopes by comma.
+         * See https://developers.google.com/google-apps/calendar/auth for more
+         * info.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Default: https://www.googleapis.com/auth/calendar
          * Group: common
@@ -1051,6 +1136,21 @@ public interface GoogleCalendarEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets .json file with credentials for Service account.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param keyResource the value to set
+         * @return the dsl builder
+         */
+        default GoogleCalendarEndpointProducerBuilder keyResource(
+                String keyResource) {
+            doSetProperty("keyResource", keyResource);
+            return this;
+        }
+        /**
          * The name of the p12 file which has the private key to use with the
          * Google Service Account.
          * 
@@ -1153,6 +1253,20 @@ public interface GoogleCalendarEndpointBuilderFactory {
             return this;
         }
         /**
+         * Delegate for wide-domain service account.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param delegate the value to set
+         * @return the dsl builder
+         */
+        default GoogleCalendarEndpointBuilder delegate(String delegate) {
+            doSetProperty("delegate", delegate);
+            return this;
+        }
+        /**
          * Sets the name of a parameter to be passed in the exchange In Body.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -1172,7 +1286,28 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * See https://developers.google.com/google-apps/calendar/auth for more
          * info.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * 
+         * Default: https://www.googleapis.com/auth/calendar
+         * Group: common
+         * 
+         * @param scopes the value to set
+         * @return the dsl builder
+         */
+        default GoogleCalendarEndpointBuilder scopes(
+                List<java.lang.String> scopes) {
+            doSetProperty("scopes", scopes);
+            return this;
+        }
+        /**
+         * Specifies the level of permissions you want a calendar application to
+         * have to a user account. You can separate multiple scopes by comma.
+         * See https://developers.google.com/google-apps/calendar/auth for more
+         * info.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Default: https://www.googleapis.com/auth/calendar
          * Group: common
@@ -1225,6 +1360,20 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default GoogleCalendarEndpointBuilder emailAddress(String emailAddress) {
             doSetProperty("emailAddress", emailAddress);
+            return this;
+        }
+        /**
+         * Sets .json file with credentials for Service account.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param keyResource the value to set
+         * @return the dsl builder
+         */
+        default GoogleCalendarEndpointBuilder keyResource(String keyResource) {
+            doSetProperty("keyResource", keyResource);
             return this;
         }
         /**

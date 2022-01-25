@@ -3685,6 +3685,12 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "async-delayed-redelivery", type = "boolean"),
                     @YamlProperty(name = "dead-letter-handle-new-exception", type = "boolean"),
+                    @YamlProperty(name = "dead-letter-uri", type = "string"),
+                    @YamlProperty(name = "executor-service-ref", type = "string"),
+                    @YamlProperty(name = "on-exception-occurred-ref", type = "string"),
+                    @YamlProperty(name = "on-prepare-failure-ref", type = "string"),
+                    @YamlProperty(name = "on-redelivery-ref", type = "string"),
+                    @YamlProperty(name = "retry-while-ref", type = "string"),
                     @YamlProperty(name = "use-original-body", type = "boolean"),
                     @YamlProperty(name = "use-original-message", type = "boolean")
             }
@@ -3771,7 +3777,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
                     @YamlProperty(name = "async-delayed-redelivery", type = "boolean"),
-                    @YamlProperty(name = "dead-letter-handle-new-exception", type = "boolean"),
+                    @YamlProperty(name = "executor-service-ref", type = "string"),
+                    @YamlProperty(name = "on-exception-occurred-ref", type = "string"),
+                    @YamlProperty(name = "on-prepare-failure-ref", type = "string"),
+                    @YamlProperty(name = "on-redelivery-ref", type = "string"),
+                    @YamlProperty(name = "retry-while-ref", type = "string"),
                     @YamlProperty(name = "use-original-body", type = "boolean"),
                     @YamlProperty(name = "use-original-message", type = "boolean")
             }
@@ -3793,16 +3803,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "async-delayed-redelivery": {
                     boolean val = asBoolean(node);
                     target.setAsyncDelayedRedelivery(val);
-                    break;
-                }
-                case "dead-letter-handle-new-exception": {
-                    boolean val = asBoolean(node);
-                    target.setDeadLetterHandleNewException(val);
-                    break;
-                }
-                case "dead-letter-uri": {
-                    String val = asText(node);
-                    target.setDeadLetterUri(val);
                     break;
                 }
                 case "executor-service-ref": {
@@ -4544,7 +4544,10 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             inline = true,
             types = org.apache.camel.builder.ErrorHandlerBuilderRef.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            properties = @YamlProperty(name = "support-transacted", type = "boolean")
+            properties = {
+                    @YamlProperty(name = "ref", type = "string"),
+                    @YamlProperty(name = "support-transacted", type = "boolean")
+            }
     )
     public static class ErrorHandlerBuilderRefDeserializer extends YamlDeserializerBase<ErrorHandlerBuilderRef> {
         public ErrorHandlerBuilderRefDeserializer() {
@@ -11766,6 +11769,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
+            inline = true,
             types = org.apache.camel.model.RestContextRefDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = {
@@ -11782,6 +11786,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected RestContextRefDefinition newInstance() {
             return new RestContextRefDefinition();
+        }
+
+        @Override
+        protected RestContextRefDefinition newInstance(String value) {
+            return new RestContextRefDefinition(value);
         }
 
         @Override
@@ -13003,6 +13012,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
+            inline = true,
             types = org.apache.camel.model.RouteConfigurationContextRefDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = {
@@ -13019,6 +13029,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected RouteConfigurationContextRefDefinition newInstance() {
             return new RouteConfigurationContextRefDefinition();
+        }
+
+        @Override
+        protected RouteConfigurationContextRefDefinition newInstance(String value) {
+            return new RouteConfigurationContextRefDefinition(value);
         }
 
         @Override
@@ -13039,6 +13054,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
+            inline = true,
             types = org.apache.camel.model.RouteContextRefDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = {
@@ -13055,6 +13071,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected RouteContextRefDefinition newInstance() {
             return new RouteContextRefDefinition();
+        }
+
+        @Override
+        protected RouteContextRefDefinition newInstance(String value) {
+            return new RouteContextRefDefinition(value);
         }
 
         @Override

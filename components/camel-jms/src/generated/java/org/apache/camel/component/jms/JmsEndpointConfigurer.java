@@ -151,6 +151,8 @@ public class JmsEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "replyToCacheLevelName": target.getConfiguration().setReplyToCacheLevelName(property(camelContext, java.lang.String.class, value)); return true;
         case "replytoconcurrentconsumers":
         case "replyToConcurrentConsumers": target.getConfiguration().setReplyToConcurrentConsumers(property(camelContext, int.class, value)); return true;
+        case "replytoconsumertype":
+        case "replyToConsumerType": target.getConfiguration().setReplyToConsumerType(property(camelContext, org.apache.camel.component.jms.ConsumerType.class, value)); return true;
         case "replytodeliverypersistent":
         case "replyToDeliveryPersistent": target.getConfiguration().setReplyToDeliveryPersistent(property(camelContext, boolean.class, value)); return true;
         case "replytodestinationselectorname":
@@ -342,6 +344,8 @@ public class JmsEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "replyToCacheLevelName": return java.lang.String.class;
         case "replytoconcurrentconsumers":
         case "replyToConcurrentConsumers": return int.class;
+        case "replytoconsumertype":
+        case "replyToConsumerType": return org.apache.camel.component.jms.ConsumerType.class;
         case "replytodeliverypersistent":
         case "replyToDeliveryPersistent": return boolean.class;
         case "replytodestinationselectorname":
@@ -534,6 +538,8 @@ public class JmsEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "replyToCacheLevelName": return target.getConfiguration().getReplyToCacheLevelName();
         case "replytoconcurrentconsumers":
         case "replyToConcurrentConsumers": return target.getConfiguration().getReplyToConcurrentConsumers();
+        case "replytoconsumertype":
+        case "replyToConsumerType": return target.getConfiguration().getReplyToConsumerType();
         case "replytodeliverypersistent":
         case "replyToDeliveryPersistent": return target.getConfiguration().isReplyToDeliveryPersistent();
         case "replytodestinationselectorname":

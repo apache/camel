@@ -17,6 +17,7 @@
 package org.apache.camel.component.google.calendar;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
 
 import com.google.api.client.auth.oauth2.Credential;
@@ -26,7 +27,9 @@ import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.calendar.Calendar;
+import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.support.ResourceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,11 +46,12 @@ public class BatchGoogleCalendarClientFactory implements GoogleCalendarClientFac
 
     @Override
     public Calendar makeClient(
-            String clientId, String clientSecret,
-            Collection<String> scopes, String applicationName, String refreshToken,
-            String accessToken, String emailAddress, String p12FileName, String user) {
+            String clientId, String clientSecret, Collection<String> scopes, String applicationName, String refreshToken,
+            String accessToken,
+            String emailAddress, String p12FileName, String user) {
         boolean serviceAccount = false;
-        // if emailAddress and p12FileName values are present, assume Google Service Account
+        // if emailAddress and p12FileName values are present, assume Google
+        // Service Account
         if (null != emailAddress && !"".equals(emailAddress) && null != p12FileName && !"".equals(p12FileName)) {
             serviceAccount = true;
         }
@@ -84,6 +88,7 @@ public class BatchGoogleCalendarClientFactory implements GoogleCalendarClientFac
                 .build();
     }
 
+    // authorize with P12-Certificate file
     private Credential authorizeServiceAccount(String emailAddress, String p12FileName, Collection<String> scopes, String user)
             throws Exception {
         HttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
@@ -97,5 +102,35 @@ public class BatchGoogleCalendarClientFactory implements GoogleCalendarClientFac
                 .setServiceAccountUser(user)
                 .build();
         return credential;
+    }
+
+    @Override
+    public Calendar makeClient(
+            CamelContext camelContext, String keyResource, Collection<String> scopes, String applicationName, String delegate) {
+        if (keyResource == null) {
+            throw new IllegalArgumentException("keyResource is required to create Google Calendar client.");
+        }
+        try {
+            Credential credential = authorizeServiceAccount(camelContext, keyResource, delegate, scopes);
+            return new Calendar.Builder(transport, jsonFactory, credential).setApplicationName(applicationName).build();
+        } catch (Exception e) {
+            throw new RuntimeCamelException("Could not create Google Calendar client.", e);
+        }
+    }
+
+    // authorize with JSON-Credentials
+    private Credential authorizeServiceAccount(
+            CamelContext camelContext, String keyResource, String delegate, Collection<String> scopes) {
+        // authorize
+        try {
+            GoogleCredential cred = GoogleCredential
+                    .fromStream(ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, keyResource), transport,
+                            jsonFactory)
+                    .createScoped(scopes != null && scopes.size() != 0 ? scopes : null).createDelegated(delegate);
+            cred.refreshToken();
+            return cred;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

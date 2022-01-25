@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
                               + "readLockIdempotentReleaseDelay,readLockIdempotentReleaseExecutorService,"
                               + "directoryMustExist,extendedAttributes,probeContentType,startingDirectoryMustExist,"
                               + "startingDirectoryMustHaveAccess,chmodDirectory,forceWrites,copyAndDeleteOnRenameFail,"
-                              + "renameUsingCopy")
+                              + "renameUsingCopy,synchronous")
 @ManagedResource(description = "Managed FtpEndpoint")
 public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> {
 

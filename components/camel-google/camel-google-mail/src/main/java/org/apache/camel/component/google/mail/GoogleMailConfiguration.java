@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.google.mail;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.apache.camel.component.google.mail.internal.GoogleMailApiName;
 import org.apache.camel.spi.Configurer;
@@ -53,7 +53,7 @@ public class GoogleMailConfiguration {
     @UriParam
     private String delegate;
     @UriParam
-    private List<String> scopes;
+    private Collection<String> scopes;
 
     public GoogleMailApiName getApiName() {
         return apiName;
@@ -157,7 +157,7 @@ public class GoogleMailConfiguration {
         this.delegate = delegate;
     }
 
-    public List<String> getScopes() {
+    public Collection<String> getScopes() {
         return scopes;
     }
 
@@ -166,7 +166,7 @@ public class GoogleMailConfiguration {
      * 
      * @see com.google.api.services.gmail.GmailScopes
      */
-    public void setScopes(List<String> scopes) {
+    public void setScopes(Collection<String> scopes) {
         this.scopes = scopes;
     }
 }

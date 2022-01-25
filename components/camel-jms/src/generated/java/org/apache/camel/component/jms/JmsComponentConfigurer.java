@@ -163,6 +163,8 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         case "replyToCacheLevelName": getOrCreateConfiguration(target).setReplyToCacheLevelName(property(camelContext, java.lang.String.class, value)); return true;
         case "replytoconcurrentconsumers":
         case "replyToConcurrentConsumers": getOrCreateConfiguration(target).setReplyToConcurrentConsumers(property(camelContext, int.class, value)); return true;
+        case "replytoconsumertype":
+        case "replyToConsumerType": getOrCreateConfiguration(target).setReplyToConsumerType(property(camelContext, org.apache.camel.component.jms.ConsumerType.class, value)); return true;
         case "replytodeliverypersistent":
         case "replyToDeliveryPersistent": getOrCreateConfiguration(target).setReplyToDeliveryPersistent(property(camelContext, boolean.class, value)); return true;
         case "replytodestinationselectorname":
@@ -359,6 +361,8 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         case "replyToCacheLevelName": return java.lang.String.class;
         case "replytoconcurrentconsumers":
         case "replyToConcurrentConsumers": return int.class;
+        case "replytoconsumertype":
+        case "replyToConsumerType": return org.apache.camel.component.jms.ConsumerType.class;
         case "replytodeliverypersistent":
         case "replyToDeliveryPersistent": return boolean.class;
         case "replytodestinationselectorname":
@@ -556,6 +560,8 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         case "replyToCacheLevelName": return getOrCreateConfiguration(target).getReplyToCacheLevelName();
         case "replytoconcurrentconsumers":
         case "replyToConcurrentConsumers": return getOrCreateConfiguration(target).getReplyToConcurrentConsumers();
+        case "replytoconsumertype":
+        case "replyToConsumerType": return getOrCreateConfiguration(target).getReplyToConsumerType();
         case "replytodeliverypersistent":
         case "replyToDeliveryPersistent": return getOrCreateConfiguration(target).isReplyToDeliveryPersistent();
         case "replytodestinationselectorname":

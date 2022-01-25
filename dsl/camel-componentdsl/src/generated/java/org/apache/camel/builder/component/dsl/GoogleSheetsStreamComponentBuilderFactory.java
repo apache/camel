@@ -120,6 +120,21 @@ public interface GoogleSheetsStreamComponentBuilderFactory {
             return this;
         }
         /**
+         * Delegate for wide-domain service account.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param delegate the value to set
+         * @return the dsl builder
+         */
+        default GoogleSheetsStreamComponentBuilder delegate(
+                java.lang.String delegate) {
+            doSetProperty("delegate", delegate);
+            return this;
+        }
+        /**
          * True if grid data should be returned.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -305,6 +320,21 @@ public interface GoogleSheetsStreamComponentBuilderFactory {
             return this;
         }
         /**
+         * Sets .json file with credentials for Service account.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param keyResource the value to set
+         * @return the dsl builder
+         */
+        default GoogleSheetsStreamComponentBuilder keyResource(
+                java.lang.String keyResource) {
+            doSetProperty("keyResource", keyResource);
+            return this;
+        }
+        /**
          * OAuth 2 refresh token. Using this, the Google Calendar component can
          * obtain a new accessToken whenever the current one expires - a
          * necessity if the application is long-lived.
@@ -349,6 +379,7 @@ public interface GoogleSheetsStreamComponentBuilderFactory {
             case "bridgeErrorHandler": ((GoogleSheetsStreamComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "clientId": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setClientId((java.lang.String) value); return true;
             case "configuration": ((GoogleSheetsStreamComponent) component).setConfiguration((org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamConfiguration) value); return true;
+            case "delegate": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setDelegate((java.lang.String) value); return true;
             case "includeGridData": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setIncludeGridData((boolean) value); return true;
             case "majorDimension": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setMajorDimension((java.lang.String) value); return true;
             case "maxResults": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setMaxResults((int) value); return true;
@@ -360,6 +391,7 @@ public interface GoogleSheetsStreamComponentBuilderFactory {
             case "clientFactory": ((GoogleSheetsStreamComponent) component).setClientFactory((org.apache.camel.component.google.sheets.GoogleSheetsClientFactory) value); return true;
             case "accessToken": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setAccessToken((java.lang.String) value); return true;
             case "clientSecret": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setClientSecret((java.lang.String) value); return true;
+            case "keyResource": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setKeyResource((java.lang.String) value); return true;
             case "refreshToken": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setRefreshToken((java.lang.String) value); return true;
             default: return false;
             }
