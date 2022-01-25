@@ -11769,6 +11769,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
+            inline = true,
             types = org.apache.camel.model.RestContextRefDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = {
@@ -11785,6 +11786,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected RestContextRefDefinition newInstance() {
             return new RestContextRefDefinition();
+        }
+
+        @Override
+        protected RestContextRefDefinition newInstance(String value) {
+            return new RestContextRefDefinition(value);
         }
 
         @Override
@@ -13006,6 +13012,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
+            inline = true,
             types = org.apache.camel.model.RouteConfigurationContextRefDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = {
@@ -13022,6 +13029,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected RouteConfigurationContextRefDefinition newInstance() {
             return new RouteConfigurationContextRefDefinition();
+        }
+
+        @Override
+        protected RouteConfigurationContextRefDefinition newInstance(String value) {
+            return new RouteConfigurationContextRefDefinition(value);
         }
 
         @Override
@@ -13042,6 +13054,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
+            inline = true,
             types = org.apache.camel.model.RouteContextRefDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = {
@@ -13058,6 +13071,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected RouteContextRefDefinition newInstance() {
             return new RouteContextRefDefinition();
+        }
+
+        @Override
+        protected RouteContextRefDefinition newInstance(String value) {
+            return new RouteContextRefDefinition(value);
         }
 
         @Override
