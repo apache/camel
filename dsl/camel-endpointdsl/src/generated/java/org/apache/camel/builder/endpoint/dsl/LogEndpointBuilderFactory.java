@@ -302,6 +302,45 @@ public interface LogEndpointBuilderFactory {
             return this;
         }
         /**
+         * If enabled then the source location of where the log endpoint is used
+         * in Camel routes, would be used as logger name, instead of the given
+         * name. However, if the source location is disabled or not possible to
+         * resolve then the existing logger name will be used.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param sourceLocationLoggerName the value to set
+         * @return the dsl builder
+         */
+        default LogEndpointBuilder sourceLocationLoggerName(
+                boolean sourceLocationLoggerName) {
+            doSetProperty("sourceLocationLoggerName", sourceLocationLoggerName);
+            return this;
+        }
+        /**
+         * If enabled then the source location of where the log endpoint is used
+         * in Camel routes, would be used as logger name, instead of the given
+         * name. However, if the source location is disabled or not possible to
+         * resolve then the existing logger name will be used.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param sourceLocationLoggerName the value to set
+         * @return the dsl builder
+         */
+        default LogEndpointBuilder sourceLocationLoggerName(
+                String sourceLocationLoggerName) {
+            doSetProperty("sourceLocationLoggerName", sourceLocationLoggerName);
+            return this;
+        }
+        /**
          * Limits the number of characters logged per line.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
