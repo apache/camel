@@ -40,6 +40,10 @@ public class RestContextRefDefinition {
     public RestContextRefDefinition() {
     }
 
+    public RestContextRefDefinition(String ref) {
+        this.ref = ref;
+    }
+
     @Override
     public String toString() {
         return "RestContextRef[" + getRef() + "]";
