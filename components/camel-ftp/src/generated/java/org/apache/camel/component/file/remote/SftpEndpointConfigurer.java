@@ -224,7 +224,6 @@ public class SftpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "streamDownload": target.getConfiguration().setStreamDownload(property(camelContext, boolean.class, value)); return true;
         case "stricthostkeychecking":
         case "strictHostKeyChecking": target.getConfiguration().setStrictHostKeyChecking(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "tempfilename":
         case "tempFileName": target.setTempFileName(property(camelContext, java.lang.String.class, value)); return true;
         case "tempprefix":
@@ -451,7 +450,6 @@ public class SftpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "streamDownload": return boolean.class;
         case "stricthostkeychecking":
         case "strictHostKeyChecking": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         case "tempfilename":
         case "tempFileName": return java.lang.String.class;
         case "tempprefix":
@@ -679,7 +677,6 @@ public class SftpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "streamDownload": return target.getConfiguration().isStreamDownload();
         case "stricthostkeychecking":
         case "strictHostKeyChecking": return target.getConfiguration().getStrictHostKeyChecking();
-        case "synchronous": return target.isSynchronous();
         case "tempfilename":
         case "tempFileName": return target.getTempFileName();
         case "tempprefix":

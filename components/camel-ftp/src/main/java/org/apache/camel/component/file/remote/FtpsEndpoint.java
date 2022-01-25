@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
                               + "readLockIdempotentReleaseDelay,readLockIdempotentReleaseExecutorService,"
                               + "directoryMustExist,extendedAttributes,probeContentType,startingDirectoryMustExist,"
                               + "startingDirectoryMustHaveAccess,chmodDirectory,forceWrites,copyAndDeleteOnRenameFail,"
-                              + "renameUsingCopy")
+                              + "renameUsingCopy,synchronous")
 @ManagedResource(description = "Managed FtpsEndpoint")
 public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
     private static final Logger LOG = LoggerFactory.getLogger(FtpsEndpoint.class);
