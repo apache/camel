@@ -332,7 +332,8 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
         if (templateBeans == null) {
             templateBeans = new ArrayList<>();
         }
-        RouteTemplateBeanDefinition def = new RouteTemplateBeanDefinition(this);
+        RouteTemplateBeanDefinition def = new RouteTemplateBeanDefinition();
+        def.setParent(this);
         def.setName(name);
         templateBeans.add(def);
         return def;
