@@ -2352,12 +2352,16 @@
         }
       },
       "org.apache.camel.model.RestContextRefDefinition" : {
-        "type" : "object",
-        "properties" : {
-          "ref" : {
-            "type" : "string"
+        "oneOf" : [ {
+          "type" : "string"
+        }, {
+          "type" : "object",
+          "properties" : {
+            "ref" : {
+              "type" : "string"
+            }
           }
-        },
+        } ],
         "required" : [ "ref" ]
       },
       "org.apache.camel.model.RollbackDefinition" : {
@@ -2404,12 +2408,16 @@
         "required" : [ "ref" ]
       },
       "org.apache.camel.model.RouteConfigurationContextRefDefinition" : {
-        "type" : "object",
-        "properties" : {
-          "ref" : {
-            "type" : "string"
+        "oneOf" : [ {
+          "type" : "string"
+        }, {
+          "type" : "object",
+          "properties" : {
+            "ref" : {
+              "type" : "string"
+            }
           }
-        },
+        } ],
         "required" : [ "ref" ]
       },
       "org.apache.camel.model.RouteConfigurationDefinition" : {
@@ -2455,12 +2463,16 @@
         } ]
       },
       "org.apache.camel.model.RouteContextRefDefinition" : {
-        "type" : "object",
-        "properties" : {
-          "ref" : {
-            "type" : "string"
+        "oneOf" : [ {
+          "type" : "string"
+        }, {
+          "type" : "object",
+          "properties" : {
+            "ref" : {
+              "type" : "string"
+            }
           }
-        },
+        } ],
         "required" : [ "ref" ]
       },
       "org.apache.camel.model.RouteDefinition" : {
