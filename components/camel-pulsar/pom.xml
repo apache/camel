@@ -92,6 +92,9 @@
                     <forkCount>1</forkCount>
                     <reuseForks>true</reuseForks>
                     <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
+                    <systemProperties>
+                        <pulsar.container>apachepulsar/pulsar:${pulsar-version}</pulsar.container>
+                    </systemProperties>
                 </configuration>
             </plugin>
         </plugins>
