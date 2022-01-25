@@ -23,6 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.LineNumberAware;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
@@ -77,6 +78,7 @@ public class WireTapReifier extends ToDynamicReifier<WireTapDefinition<?>> {
         } else {
             // static so we can use a plain send processor
             Endpoint endpoint = CamelContextHelper.resolveEndpoint(camelContext, uri, null);
+            LineNumberAware.trySetLineNumberAware(endpoint, definition);
             sendProcessor = new SendProcessor(endpoint);
         }
 
