@@ -35,7 +35,7 @@ import org.apache.camel.spi.UriParam;
 @Metadata(excludeProperties = "appendChars,bufferSize,siteCommand,"
                               + "directoryMustExist,extendedAttributes,probeContentType,startingDirectoryMustExist,"
                               + "startingDirectoryMustHaveAccess,forceWrites,copyAndDeleteOnRenameFail,"
-                              + "renameUsingCopy")
+                              + "renameUsingCopy,synchronous")
 public class SftpEndpoint extends RemoteFileEndpoint<SftpRemoteFile> {
 
     @UriParam
