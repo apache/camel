@@ -96,7 +96,7 @@ The message body if is not `null` (in case of tombstones), it contains the state
 Here is a very simple route that you can use in order to listen to Debezium events from MySQL connector.
 [source,java]
 ----
-from("debezium-mysql:dbz-test-1?offsetStorageFileName=/usr/offset-file-1.dat&databaseHostName=localhost&databaseUser=debezium&databasePassword=dbz&databaseServerName=my-app-connector&databaseHistoryFileFilename=/usr/history-file-1.dat")
+from("debezium-mysql:dbz-test-1?offsetStorageFileName=/usr/offset-file-1.dat&databaseHostname=localhost&databaseUser=debezium&databasePassword=dbz&databaseServerName=my-app-connector&databaseHistoryFileFilename=/usr/history-file-1.dat")
     .log("Event received from Debezium : ${body}")
     .log("    with this identifier ${headers.CamelDebeziumIdentifier}")
     .log("    with these source metadata ${headers.CamelDebeziumSourceMetadata}")
