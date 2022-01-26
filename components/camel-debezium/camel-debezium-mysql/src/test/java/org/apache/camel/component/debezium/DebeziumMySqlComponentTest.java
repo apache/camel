@@ -43,7 +43,7 @@ public class DebeziumMySqlComponentTest {
         final String remaining = "test_name";
         final String uri = "debezium:mysql?name=test_name&offsetStorageFileName=/test&"
                            + "databaseHostName=localhost&databaseServerId=1234&databaseUser=dbz&databasePassword=pwd&"
-                           + "databaseServerName=test&databaseHistoryFileName=/test";
+                           + "databaseServerName=test&databaseHistoryFileFilename=/test";
 
         try (final DebeziumComponent debeziumComponent = new DebeziumMySqlComponent(new DefaultCamelContext())) {
             debeziumComponent.start();

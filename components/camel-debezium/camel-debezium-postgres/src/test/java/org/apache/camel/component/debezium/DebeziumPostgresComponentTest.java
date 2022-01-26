@@ -43,7 +43,7 @@ public class DebeziumPostgresComponentTest {
         final String remaining = "test_name";
         final String uri = "debezium?name=test_name&offsetStorageFileName=/test&"
                            + "databaseHostName=localhost&databaseServerId=1234&databaseUser=dbz&databasePassword=pwd&"
-                           + "databaseServerName=test&databaseHistoryFileName=/test";
+                           + "databaseServerName=test&databaseHistoryFileFilename=/test";
 
         try (final DebeziumComponent debeziumComponent = new DebeziumPostgresComponent(new DefaultCamelContext())) {
             debeziumComponent.start();
