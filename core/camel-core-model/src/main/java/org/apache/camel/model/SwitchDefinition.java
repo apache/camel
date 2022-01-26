@@ -16,49 +16,29 @@
  */
 package org.apache.camel.model;
 
-import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.spi.Metadata;
 
 /**
- * Route to be executed when all other choices evaluate to false
+ * Route messages based on a series of predicates (optimized during startup to select one predicate that will always be
+ * used)
  */
 @Metadata(label = "eip,routing")
-@XmlRootElement(name = "otherwise")
+@XmlRootElement(name = "doSwitch")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class OtherwiseDefinition extends OutputDefinition<OtherwiseDefinition> {
-
-    public OtherwiseDefinition() {
-    }
-
-    @Override
-    public List<ProcessorDefinition<?>> getOutputs() {
-        return outputs;
-    }
-
-    @XmlElementRef
-    @Override
-    public void setOutputs(List<ProcessorDefinition<?>> outputs) {
-        super.setOutputs(outputs);
-    }
+public class SwitchDefinition extends ChoiceDefinition {
 
     @Override
     public String toString() {
-        return "Otherwise[" + getOutputs() + "]";
+        return "Switch[" + getWhenClauses() + (getOtherwise() != null ? " " + getOtherwise() : "") + "]";
     }
 
     @Override
     public String getShortName() {
-        return "otherwise";
+        return "switch";
     }
 
-    @Override
-    public String getLabel() {
-        return "otherwise";
-    }
 }
