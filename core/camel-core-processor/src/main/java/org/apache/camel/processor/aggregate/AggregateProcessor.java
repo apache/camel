@@ -17,8 +17,6 @@
 package org.apache.camel.processor.aggregate;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -101,7 +99,6 @@ public class AggregateProcessor extends AsyncProcessorSupport
     public static final String COMPLETED_BY_FORCE = "force";
 
     private static final Logger LOG = LoggerFactory.getLogger(AggregateProcessor.class);
-
     private volatile Lock lock;
     private final AtomicBoolean aggregateRepositoryWarned = new AtomicBoolean();
     private final CamelContext camelContext;
@@ -127,7 +124,8 @@ public class AggregateProcessor extends AsyncProcessorSupport
     private AggregationRepository aggregationRepository;
     private Map<String, String> closedCorrelationKeys;
     private final Set<String> batchConsumerCorrelationKeys = new ConcurrentSkipListSet<>();
-    private final Set<String> inProgressCompleteExchanges = Collections.newSetFromMap(new ConcurrentHashMap<>());
+    private final Set<String> inProgressCompleteExchanges = ConcurrentHashMap.newKeySet();
+    private final Set<String> inProgressCompleteExchangesForRecoveryTask = ConcurrentHashMap.newKeySet();
     private final Map<String, RedeliveryData> redeliveryState = new ConcurrentHashMap<>();
 
     private final AggregateProcessorStatistics statistics = new Statistics();
@@ -141,6 +139,7 @@ public class AggregateProcessor extends AsyncProcessorSupport
     private final AtomicLong completedByBatchConsumer = new AtomicLong();
     private final AtomicLong completedByForce = new AtomicLong();
     private final AtomicLong discarded = new AtomicLong();
+    private final AtomicBoolean recoveryInProgress = new AtomicBoolean(false);
 
     // keep booking about redelivery
     private static class RedeliveryData {
@@ -327,7 +326,7 @@ public class AggregateProcessor extends AsyncProcessorSupport
             totalIn.incrementAndGet();
         }
 
-        //check for the special header to force completion of all groups (and ignore the exchange otherwise)
+        // check for the special header to force completion of all groups (and ignore the exchange otherwise)
         if (isCompleteAllGroups(exchange)) {
             removeFlagCompleteAllGroups(exchange);
             forceCompletionOfAllGroups();
@@ -834,7 +833,9 @@ public class AggregateProcessor extends AsyncProcessorSupport
 
         // add this as in progress before we submit the task
         inProgressCompleteExchanges.add(exchange.getExchangeId());
-
+        if (recoveryInProgress.get()) {
+            inProgressCompleteExchangesForRecoveryTask.add(exchange.getExchangeId());
+        }
         // invoke the on completion callback
         aggregationStrategy.onCompletion(exchange);
 
@@ -877,6 +878,7 @@ public class AggregateProcessor extends AsyncProcessorSupport
 
         // send this exchange
         executorService.execute(() -> {
+
             Runnable task = () -> processor.process(exchange, done -> {
                 // log exception if there was a problem
                 if (exchange.getException() != null) {
@@ -1369,9 +1371,10 @@ public class AggregateProcessor extends AsyncProcessorSupport
             LOG.trace("Starting recover check");
 
             // copy the current in progress before doing scan
-            final Set<String> copyOfInProgress = new LinkedHashSet<>(inProgressCompleteExchanges);
-
-            Set<String> exchangeIds = recoverable.scan(camelContext);
+            recoveryInProgress.set(true);
+            inProgressCompleteExchangesForRecoveryTask.clear();
+            inProgressCompleteExchangesForRecoveryTask.addAll(inProgressCompleteExchanges);
+            final Set<String> exchangeIds = recoverable.scan(camelContext);
             for (String exchangeId : exchangeIds) {
 
                 // we may shutdown while doing recovery
@@ -1383,8 +1386,7 @@ public class AggregateProcessor extends AsyncProcessorSupport
                 try {
                     // consider in progress if it was in progress before we did the scan, or currently after we did the scan
                     // its safer to consider it in progress than risk duplicates due both in progress + recovered
-                    boolean inProgress
-                            = copyOfInProgress.contains(exchangeId) || inProgressCompleteExchanges.contains(exchangeId);
+                    final boolean inProgress = inProgressCompleteExchangesForRecoveryTask.contains(exchangeId);
                     if (inProgress) {
                         LOG.trace("Aggregated exchange with id: {} is already in progress.", exchangeId);
                     } else {
@@ -1456,7 +1458,8 @@ public class AggregateProcessor extends AsyncProcessorSupport
                     lock.unlock();
                 }
             }
-
+            recoveryInProgress.set(false);
+            inProgressCompleteExchangesForRecoveryTask.clear();
             LOG.trace("Recover check complete");
         }
     }
