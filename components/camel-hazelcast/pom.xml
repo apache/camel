@@ -96,6 +96,7 @@
                             <value>slf4j</value>
                         </property>
                     </systemProperties>
+                    <argLine>--add-opens java.base/sun.nio.ch=ALL-UNNAMED</argLine>
                 </configuration>
             </plugin>
         </plugins>

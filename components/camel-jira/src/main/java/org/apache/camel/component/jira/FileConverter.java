@@ -38,6 +38,9 @@ public final class FileConverter {
         if (body instanceof byte[]) {
             byte[] bos = (byte[]) body;
             String destDir = System.getProperty("java.io.tmpdir");
+            if (destDir != null && !destDir.endsWith(File.separator)) {
+                destDir += File.separator;
+            }
             file = new File(destDir, genericFile.getFileName());
             if (!file.getCanonicalPath().startsWith(destDir)) {
                 throw new IOException("File is not jailed to the destination directory");
