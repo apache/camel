@@ -77,7 +77,7 @@ public class HazelcastSetProducer extends HazelcastDefaultProducer {
 
             default:
                 throw new IllegalArgumentException(
-                        String.format("The value '%s' is not allowed for parameter '%s' on the LIST cache.", operation,
+                        String.format("The value '%s' is not allowed for parameter '%s' on the SET cache.", operation,
                                 HazelcastConstants.OPERATION));
         }
 
