@@ -1367,99 +1367,100 @@ public class AggregateProcessor extends AsyncProcessorSupport
                 LOG.trace("Recover check cannot start due CamelContext({}) has not been started yet", camelContext.getName());
                 return;
             }
-
             LOG.trace("Starting recover check");
+            try {
+                // copy the current in progress before doing scan
+                recoveryInProgress.set(true);
+                inProgressCompleteExchangesForRecoveryTask.clear();
+                inProgressCompleteExchangesForRecoveryTask.addAll(inProgressCompleteExchanges);
+                final Set<String> exchangeIds = recoverable.scan(camelContext);
+                for (String exchangeId : exchangeIds) {
 
-            // copy the current in progress before doing scan
-            recoveryInProgress.set(true);
-            inProgressCompleteExchangesForRecoveryTask.clear();
-            inProgressCompleteExchangesForRecoveryTask.addAll(inProgressCompleteExchanges);
-            final Set<String> exchangeIds = recoverable.scan(camelContext);
-            for (String exchangeId : exchangeIds) {
+                    // we may shutdown while doing recovery
+                    if (!isRunAllowed()) {
+                        LOG.info("We are shutting down so stop recovering");
+                        return;
+                    }
+                    lock.lock();
+                    try {
+                        // consider in progress if it was in progress before we did the scan, or currently after we did the scan
+                        // its safer to consider it in progress than risk duplicates due both in progress + recovered
+                        final boolean inProgress = inProgressCompleteExchangesForRecoveryTask.contains(exchangeId);
+                        if (inProgress) {
+                            LOG.trace("Aggregated exchange with id: {} is already in progress.", exchangeId);
+                        } else {
+                            LOG.debug("Loading aggregated exchange with id: {} to be recovered.", exchangeId);
+                            Exchange exchange = recoverable.recover(camelContext, exchangeId);
+                            if (exchange != null) {
+                                // get the correlation key
+                                String key = exchange.getProperty(ExchangePropertyKey.AGGREGATED_CORRELATION_KEY, String.class);
+                                // and mark it as redelivered
+                                exchange.getIn().setHeader(Exchange.REDELIVERED, Boolean.TRUE);
 
-                // we may shutdown while doing recovery
-                if (!isRunAllowed()) {
-                    LOG.info("We are shutting down so stop recovering");
-                    return;
-                }
-                lock.lock();
-                try {
-                    // consider in progress if it was in progress before we did the scan, or currently after we did the scan
-                    // its safer to consider it in progress than risk duplicates due both in progress + recovered
-                    final boolean inProgress = inProgressCompleteExchangesForRecoveryTask.contains(exchangeId);
-                    if (inProgress) {
-                        LOG.trace("Aggregated exchange with id: {} is already in progress.", exchangeId);
-                    } else {
-                        LOG.debug("Loading aggregated exchange with id: {} to be recovered.", exchangeId);
-                        Exchange exchange = recoverable.recover(camelContext, exchangeId);
-                        if (exchange != null) {
-                            // get the correlation key
-                            String key = exchange.getProperty(ExchangePropertyKey.AGGREGATED_CORRELATION_KEY, String.class);
-                            // and mark it as redelivered
-                            exchange.getIn().setHeader(Exchange.REDELIVERED, Boolean.TRUE);
+                                // get the current redelivery data
+                                RedeliveryData data = redeliveryState.get(exchange.getExchangeId());
 
-                            // get the current redelivery data
-                            RedeliveryData data = redeliveryState.get(exchange.getExchangeId());
+                                // if we are exhausted, then move to dead letter channel
+                                if (data != null && recoverable.getMaximumRedeliveries() > 0
+                                        && data.redeliveryCounter >= recoverable.getMaximumRedeliveries()) {
+                                    LOG.warn("The recovered exchange is exhausted after {} attempts, will now be moved to "
+                                             + "dead letter channel: {}",
+                                            recoverable.getMaximumRedeliveries(), recoverable.getDeadLetterUri());
 
-                            // if we are exhausted, then move to dead letter channel
-                            if (data != null && recoverable.getMaximumRedeliveries() > 0
-                                    && data.redeliveryCounter >= recoverable.getMaximumRedeliveries()) {
-                                LOG.warn("The recovered exchange is exhausted after {} attempts, will now be moved to "
-                                         + "dead letter channel: {}",
-                                        recoverable.getMaximumRedeliveries(), recoverable.getDeadLetterUri());
+                                    // send to DLC
+                                    try {
+                                        // set redelivery counter
+                                        exchange.getIn().setHeader(Exchange.REDELIVERY_COUNTER, data.redeliveryCounter);
+                                        // and prepare for sending to DLC
+                                        exchange.adapt(ExtendedExchange.class).setRedeliveryExhausted(false);
+                                        exchange.adapt(ExtendedExchange.class).setRollbackOnly(false);
+                                        deadLetterProducerTemplate.send(recoverable.getDeadLetterUri(), exchange);
+                                    } catch (Throwable e) {
+                                        exchange.setException(e);
+                                    }
 
-                                // send to DLC
-                                try {
+                                    // handle if failed
+                                    if (exchange.getException() != null) {
+                                        getExceptionHandler()
+                                                .handleException("Failed to move recovered Exchange to dead letter channel: "
+                                                                 + recoverable.getDeadLetterUri(),
+                                                        exchange.getException());
+                                    } else {
+                                        // it was ok, so confirm after it has been moved to dead letter channel, so we wont recover it again
+                                        recoverable.confirm(camelContext, exchangeId);
+                                    }
+                                } else {
+                                    // update current redelivery state
+                                    if (data == null) {
+                                        // create new data
+                                        data = new RedeliveryData();
+                                        redeliveryState.put(exchange.getExchangeId(), data);
+                                    }
+                                    data.redeliveryCounter++;
+
                                     // set redelivery counter
                                     exchange.getIn().setHeader(Exchange.REDELIVERY_COUNTER, data.redeliveryCounter);
-                                    // and prepare for sending to DLC
-                                    exchange.adapt(ExtendedExchange.class).setRedeliveryExhausted(false);
-                                    exchange.adapt(ExtendedExchange.class).setRollbackOnly(false);
-                                    deadLetterProducerTemplate.send(recoverable.getDeadLetterUri(), exchange);
-                                } catch (Throwable e) {
-                                    exchange.setException(e);
-                                }
+                                    if (recoverable.getMaximumRedeliveries() > 0) {
+                                        exchange.getIn().setHeader(Exchange.REDELIVERY_MAX_COUNTER,
+                                                recoverable.getMaximumRedeliveries());
+                                    }
 
-                                // handle if failed
-                                if (exchange.getException() != null) {
-                                    getExceptionHandler()
-                                            .handleException("Failed to move recovered Exchange to dead letter channel: "
-                                                             + recoverable.getDeadLetterUri(),
-                                                    exchange.getException());
-                                } else {
-                                    // it was ok, so confirm after it has been moved to dead letter channel, so we wont recover it again
-                                    recoverable.confirm(camelContext, exchangeId);
-                                }
-                            } else {
-                                // update current redelivery state
-                                if (data == null) {
-                                    // create new data
-                                    data = new RedeliveryData();
-                                    redeliveryState.put(exchange.getExchangeId(), data);
-                                }
-                                data.redeliveryCounter++;
+                                    LOG.debug("Delivery attempt: {} to recover aggregated exchange with id: {}",
+                                            data.redeliveryCounter, exchangeId);
 
-                                // set redelivery counter
-                                exchange.getIn().setHeader(Exchange.REDELIVERY_COUNTER, data.redeliveryCounter);
-                                if (recoverable.getMaximumRedeliveries() > 0) {
-                                    exchange.getIn().setHeader(Exchange.REDELIVERY_MAX_COUNTER,
-                                            recoverable.getMaximumRedeliveries());
+                                    // not exhaust so resubmit the recovered exchange
+                                    onSubmitCompletion(key, exchange);
                                 }
-
-                                LOG.debug("Delivery attempt: {} to recover aggregated exchange with id: {}",
-                                        data.redeliveryCounter, exchangeId);
-
-                                // not exhaust so resubmit the recovered exchange
-                                onSubmitCompletion(key, exchange);
                             }
                         }
+                    } finally {
+                        lock.unlock();
                     }
-                } finally {
-                    lock.unlock();
                 }
+            } finally {
+                recoveryInProgress.set(false);
+                inProgressCompleteExchangesForRecoveryTask.clear();
             }
-            recoveryInProgress.set(false);
-            inProgressCompleteExchangesForRecoveryTask.clear();
             LOG.trace("Recover check complete");
         }
     }
