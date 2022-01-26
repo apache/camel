@@ -91,7 +91,7 @@ public class RouteTemplateSwitchTest extends ContextTestSupport {
                 routeTemplate("myTemplate")
                         .templateOptionalParameter("red")
                         .templateOptionalParameter("blue")
-                    .from("direct:start")
+                        .from("direct:start")
                         .doSwitch()
                             .when(simple("{{?red}}")).to("mock:red")
                             .when(simple("{{?blue}}")).to("mock:blue")
