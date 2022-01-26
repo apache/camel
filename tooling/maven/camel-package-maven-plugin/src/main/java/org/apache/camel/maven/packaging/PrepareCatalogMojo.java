@@ -224,7 +224,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
             allPropertiesFiles = new TreeSet<>();
 
             Stream<Path> paths
-                    = Stream.of(list(coreDir.toPath()), list(componentsDir.toPath()), list(dslDir.toPath())).flatMap(s -> s);
+                    = Stream.of(list(coreDir.toPath()), list(componentsDir.toPath())).flatMap(s -> s);
             Stream.concat(paths,
                     Stream.of(languagesDir.toPath(), springDir.toPath()))
                     .filter(dir -> !"target".equals(dir.getFileName().toString()))
@@ -238,6 +238,16 @@ public class PrepareCatalogMojo extends AbstractMojo {
                         } else if (f.equals("component.properties") || f.equals("dataformat.properties")
                                 || f.equals("language.properties") || f.equals("other.properties")) {
                             allPropertiesFiles.add(p);
+                        }
+                    });
+
+            // special for dsl-dir as its built after camel-catalog, so we can only look inside src/generated
+            Stream.of(list(dslDir.toPath())).flatMap(s -> s)
+                    .filter(dir -> Files.isDirectory(dir.resolve("src/generated/resources")))
+                    .flatMap(PackageHelper::walk).forEach(p -> {
+                        String f = p.getFileName().toString();
+                        if (f.endsWith(PackageHelper.JSON_SUFIX)) {
+                            allJsonFiles.add(p);
                         }
                     });
 
@@ -583,7 +593,9 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 case "camel-xml-jaxb":
                 case "camel-xml-jaxp":
                 // and some from dsl
+                case "dsl-support":
                 case "camel-dsl-support":
+                case "endpointdsl-support":
                 case "camel-endpointdsl-support":
                 // and components with middle folders
                 case "camel-as2":
