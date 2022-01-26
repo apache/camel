@@ -52,6 +52,7 @@ public class SesComponentConfigurationTest extends CamelTestSupport {
         assertNull(endpoint.getConfiguration().getSubject());
         assertNull(endpoint.getConfiguration().getReturnPath());
         assertNull(endpoint.getConfiguration().getReplyToAddresses());
+        assertNull(endpoint.getConfiguration().getConfigurationSet());
     }
 
     @Test
@@ -68,6 +69,7 @@ public class SesComponentConfigurationTest extends CamelTestSupport {
         assertNull(endpoint.getConfiguration().getSubject());
         assertNull(endpoint.getConfiguration().getReturnPath());
         assertNull(endpoint.getConfiguration().getReplyToAddresses());
+        assertNull(endpoint.getConfiguration().getConfigurationSet());
     }
 
     @Test
@@ -88,6 +90,7 @@ public class SesComponentConfigurationTest extends CamelTestSupport {
         assertNull(endpoint.getConfiguration().getSubject());
         assertNull(endpoint.getConfiguration().getReturnPath());
         assertNull(endpoint.getConfiguration().getReplyToAddresses());
+        assertNull(endpoint.getConfiguration().getConfigurationSet());
     }
 
     @Test
@@ -105,7 +108,8 @@ public class SesComponentConfigurationTest extends CamelTestSupport {
         Ses2Endpoint endpoint = (Ses2Endpoint) component
                 .createEndpoint("aws2-ses://from@example.com?amazonSESClient=#amazonSESClient&accessKey=xxx"
                                 + "&secretKey=yyy&to=to1@example.com,to2@example.com&subject=Subject"
-                                + "&returnPath=bounce@example.com&replyToAddresses=replyTo1@example.com,replyTo2@example.com");
+                                + "&returnPath=bounce@example.com&replyToAddresses=replyTo1@example.com,replyTo2@example.com"
+                                + "&configurationSet=development-set");
 
         assertEquals("from@example.com", endpoint.getConfiguration().getFrom());
         assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
@@ -117,6 +121,7 @@ public class SesComponentConfigurationTest extends CamelTestSupport {
         assertEquals("bounce@example.com", endpoint.getConfiguration().getReturnPath());
         assertTrue(endpoint.getConfiguration().getReplyToAddresses().contains("replyTo1@example.com"));
         assertTrue(endpoint.getConfiguration().getReplyToAddresses().contains("replyTo2@example.com"));
+        assertEquals("development-set", endpoint.getConfiguration().getConfigurationSet());
     }
 
     @Test

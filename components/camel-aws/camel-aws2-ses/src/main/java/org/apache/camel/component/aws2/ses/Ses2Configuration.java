@@ -61,6 +61,8 @@ public class Ses2Configuration implements Cloneable {
     private String uriEndpointOverride;
     @UriParam(defaultValue = "false")
     private boolean useDefaultCredentialsProvider;
+    @UriParam
+    private String configurationSet;
 
     public String getAccessKey() {
         return accessKey;
@@ -237,6 +239,20 @@ public class Ses2Configuration implements Cloneable {
      */
     public void setUseDefaultCredentialsProvider(Boolean useDefaultCredentialsProvider) {
         this.useDefaultCredentialsProvider = useDefaultCredentialsProvider;
+    }
+
+    /**
+     * The configuration set to send with every request
+     */
+    public String getConfigurationSet() {
+        return configurationSet;
+    }
+
+    /**
+     * Set the configuration set to send with every request. Override it with 'CamelAwsSesConfigurationSet' header.
+     */
+    public void setConfigurationSet(String configurationSet) {
+        this.configurationSet = configurationSet;
     }
 
     public Boolean isUseDefaultCredentialsProvider() {
