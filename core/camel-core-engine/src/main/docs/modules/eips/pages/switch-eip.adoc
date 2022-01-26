@@ -2,7 +2,7 @@
 :doctitle: Switch
 :shortname: doSwitch
 :description: Route messages based on a series of predicates
-:since: 3.15.0
+:since:
 :supportlevel: Stable
 
 The Switch EIP is an optimized http://www.enterpriseintegrationpatterns.com/ContentBasedRouter.html[Content
@@ -64,8 +64,28 @@ And the same example using XML DSL:
         <otherwise>
             <to uri="direct:other"/>
         </otherwise>
-    </choice>
+    </doSwitch>
 </route>
+----
+
+And in YAML DS:
+
+[source,yaml]
+----
+- from:
+    uri: "direct:a"
+    steps:
+      - doSwitch:
+          when:
+            - simple: "{{?foo}}"
+              steps:
+                - to: "direct:foo"
+            - simple: "{{?bar}}"
+              steps:
+                - to: "direct:bar"
+          otherwise:
+            steps:
+              - to: "direct:other"
 ----
 
 TIP: Otherwise, is optional, and if none of the predicates would match, then no branches is selected.
