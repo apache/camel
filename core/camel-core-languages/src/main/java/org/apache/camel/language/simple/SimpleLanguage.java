@@ -152,8 +152,11 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
     @Override
     public Predicate createPredicate(String expression, Object[] properties) {
         boolean trim = property(boolean.class, properties, 1, true);
-        if (trim) {
+        if (trim && expression != null) {
             expression = expression.trim();
+        }
+        if (expression == null) {
+            expression = "${null}";
         }
         return createPredicate(expression);
     }
@@ -162,8 +165,11 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
     public Expression createExpression(String expression, Object[] properties) {
         Class<?> resultType = property(Class.class, properties, 0, null);
         boolean trim = property(boolean.class, properties, 1, true);
-        if (trim) {
+        if (trim && expression != null) {
             expression = expression.trim();
+        }
+        if (expression == null) {
+            expression = "${null}";
         }
         return createExpression(expression, resultType);
     }

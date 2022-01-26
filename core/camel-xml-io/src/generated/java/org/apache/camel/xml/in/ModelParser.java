@@ -220,16 +220,19 @@ public class ModelParser extends BaseParser {
         return doParse(new WhenDefinition(),
             processorDefinitionAttributeHandler(), outputExpressionNodeElementHandler(), noValueHandler());
     }
-    protected ChoiceDefinition doParseChoiceDefinition() throws IOException, XmlPullParserException {
-        return doParse(new ChoiceDefinition(),
-            processorDefinitionAttributeHandler(), (def, key) -> {
+    protected <T extends ChoiceDefinition> ElementHandler<T> choiceDefinitionElementHandler() {
+        return (def, key) -> {
             switch (key) {
                 case "when": doAdd(doParseWhenDefinition(), def.getWhenClauses(), def::setWhenClauses); break;
                 case "otherwise": def.setOtherwise(doParseOtherwiseDefinition()); break;
                 default: return optionalIdentifiedDefinitionElementHandler().accept(def, key);
             }
             return true;
-        }, noValueHandler());
+        };
+    }
+    protected ChoiceDefinition doParseChoiceDefinition() throws IOException, XmlPullParserException {
+        return doParse(new ChoiceDefinition(), 
+            processorDefinitionAttributeHandler(), choiceDefinitionElementHandler(), noValueHandler());
     }
     protected OtherwiseDefinition doParseOtherwiseDefinition() throws IOException, XmlPullParserException {
         return doParse(new OtherwiseDefinition(),
@@ -1354,6 +1357,10 @@ public class ModelParser extends BaseParser {
     protected StopDefinition doParseStopDefinition() throws IOException, XmlPullParserException {
         return doParse(new StopDefinition(),
             processorDefinitionAttributeHandler(), optionalIdentifiedDefinitionElementHandler(), noValueHandler());
+    }
+    protected SwitchDefinition doParseSwitchDefinition() throws IOException, XmlPullParserException {
+        return doParse(new SwitchDefinition(),
+            processorDefinitionAttributeHandler(), choiceDefinitionElementHandler(), noValueHandler());
     }
     protected ThreadPoolProfileDefinition doParseThreadPoolProfileDefinition() throws IOException, XmlPullParserException {
         return doParse(new ThreadPoolProfileDefinition(), (def, key, val) -> {
@@ -3214,6 +3221,7 @@ public class ModelParser extends BaseParser {
             case "split": return doParseSplitDefinition();
             case "step": return doParseStepDefinition();
             case "stop": return doParseStopDefinition();
+            case "doSwitch": return doParseSwitchDefinition();
             case "threads": return doParseThreadsDefinition();
             case "throttle": return doParseThrottleDefinition();
             case "throwException": return doParseThrowExceptionDefinition();
