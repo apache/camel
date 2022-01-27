@@ -1,1 +1,1 @@
-class=org.apache.camel.dynamicrouter.DynamicRouterComponent
+class=org.apache.camel.dynamicrouter.main.DynamicRouterComponent
