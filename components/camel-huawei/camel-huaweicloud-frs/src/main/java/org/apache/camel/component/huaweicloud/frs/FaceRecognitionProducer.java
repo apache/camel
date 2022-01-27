@@ -17,6 +17,7 @@
 package org.apache.camel.component.huaweicloud.frs;
 
 import java.io.*;
+
 import com.huaweicloud.sdk.core.SdkResponse;
 import com.huaweicloud.sdk.core.auth.BasicCredentials;
 import com.huaweicloud.sdk.core.http.HttpConfig;
@@ -49,14 +50,15 @@ import org.apache.camel.support.DefaultProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 public class FaceRecognitionProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(FaceRecognitionProducer.class);
 
     private FrsClient frsClient;
 
-    private org.apache.camel.component.huaweicloud.frs.FaceRecognitionEndpoint endpoint;
+    private FaceRecognitionEndpoint endpoint;
 
-    public FaceRecognitionProducer(org.apache.camel.component.huaweicloud.frs.FaceRecognitionEndpoint endpoint) {
+    public FaceRecognitionProducer(FaceRecognitionEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
     }
@@ -97,11 +99,10 @@ public class FaceRecognitionProducer extends DefaultProducer {
     /**
      * initialize clientConfigurations
      *
-     * @param  endpoint FrsEndpoint
-     * @return          ClientConfigurations
+     * @param endpoint FrsEndpoint
+     * @return ClientConfigurations
      */
-    private ClientConfigurations initializeConfigurations(
-            org.apache.camel.component.huaweicloud.frs.FaceRecognitionEndpoint endpoint) {
+    private ClientConfigurations initializeConfigurations(FaceRecognitionEndpoint endpoint) {
         ClientConfigurations clientConfigurations = new ClientConfigurations();
         clientConfigurations.setAccessKey(getAccessKey(endpoint));
         clientConfigurations.setSecretKey(getSecretKey(endpoint));
@@ -130,9 +131,7 @@ public class FaceRecognitionProducer extends DefaultProducer {
      * @param endpoint             camel frs endpoint
      * @param clientConfigurations FrsClient configurations
      */
-    private void initializeSdkClient(
-            org.apache.camel.component.huaweicloud.frs.FaceRecognitionEndpoint endpoint,
-            ClientConfigurations clientConfigurations) {
+    private void initializeSdkClient(FaceRecognitionEndpoint endpoint, ClientConfigurations clientConfigurations) {
         if (endpoint.getFrsClient() != null) {
             LOG.info(
                     "Instance of FrsClient was set on the endpoint. Skip creation of FrsClient from endpoint parameters");
@@ -423,7 +422,7 @@ public class FaceRecognitionProducer extends DefaultProducer {
 
     }
 
-    private String getAccessKey(org.apache.camel.component.huaweicloud.frs.FaceRecognitionEndpoint endpoint) {
+    private String getAccessKey(FaceRecognitionEndpoint endpoint) {
         if (!StringUtils.isEmpty(endpoint.getAccessKey())) {
             return endpoint.getAccessKey();
         } else if (endpoint.getServiceKeys() != null
@@ -434,7 +433,7 @@ public class FaceRecognitionProducer extends DefaultProducer {
         }
     }
 
-    private String getSecretKey(org.apache.camel.component.huaweicloud.frs.FaceRecognitionEndpoint endpoint) {
+    private String getSecretKey(FaceRecognitionEndpoint endpoint) {
         if (!StringUtils.isEmpty(endpoint.getSecretKey())) {
             return endpoint.getSecretKey();
         } else if (endpoint.getServiceKeys() != null
@@ -445,14 +444,14 @@ public class FaceRecognitionProducer extends DefaultProducer {
         }
     }
 
-    private String getProjectId(org.apache.camel.component.huaweicloud.frs.FaceRecognitionEndpoint endpoint) {
+    private String getProjectId(FaceRecognitionEndpoint endpoint) {
         if (StringUtils.isEmpty(endpoint.getProjectId())) {
             throw new IllegalArgumentException("Project id not found");
         }
         return endpoint.getProjectId();
     }
 
-    private String getEndpoint(org.apache.camel.component.huaweicloud.frs.FaceRecognitionEndpoint endpoint) {
+    private String getEndpoint(FaceRecognitionEndpoint endpoint) {
         if (!StringUtils.isEmpty(endpoint.getEndpoint())) {
             return endpoint.getEndpoint();
         }

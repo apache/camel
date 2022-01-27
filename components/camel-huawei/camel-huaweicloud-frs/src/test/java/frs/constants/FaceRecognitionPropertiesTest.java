@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package frs.constants;
 
 import org.apache.camel.component.huaweicloud.frs.constants.FaceRecognitionProperties;
