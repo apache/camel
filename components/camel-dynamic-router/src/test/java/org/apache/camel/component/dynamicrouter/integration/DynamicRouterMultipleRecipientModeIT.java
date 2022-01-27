@@ -23,10 +23,8 @@ import java.util.stream.IntStream;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
-import org.apache.camel.Predicate;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.builder.Builder;
 import org.apache.camel.component.dynamicrouter.DynamicRouterControlMessage;
 import org.apache.camel.component.dynamicrouter.DynamicRouterControlMessage.SubscribeMessageBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -47,7 +45,7 @@ import static org.apache.camel.component.dynamicrouter.DynamicRouterConstants.CO
 @CamelSpringTest
 @ContextConfiguration
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
-public class DynamicRouterSingleRouteTwoParticipantsIT {
+public class DynamicRouterMultipleRecipientModeIT {
 
     @Autowired
     CamelContext camelContext;
@@ -107,39 +105,20 @@ public class DynamicRouterSingleRouteTwoParticipantsIT {
     }
 
     /**
-     * This test demonstrates how a stream of incoming exchanges will be routed to different subscribers based on their
-     * rules. Notice the use of {@link Builder#body()} to create the participant routing rule {@link Predicate}s.
+     * This test shows what happens when there are multiple participants that might have overlapping rules. When the
+     * dynamic router is in "allMatch" mode, then every participant should receive all exchanges that match their filter
+     * predicate.
      *
      * @throws InterruptedException if interrupted while waiting for mocks to be satisfied
      */
     @Test
-    void testConsumersWithNonConflictingRules() throws InterruptedException {
+    void testMultipleMatchingParticipants() throws InterruptedException {
         mockOne.expectedBodiesReceived(0, 2, 4, 6, 8, 10);
         mockTwo.expectedBodiesReceived(1, 3, 5, 7, 9);
-        mockThree.setExpectedCount(0);
-
-        // Subscribe for even and odd numeric message content so that all messages
-        // are received, and neither participant has conflicting rules with each other
-        subscribe(Arrays.asList(evenSubscribeMsg, oddSubscribeMsg));
-        sendMessagesAndAssert();
-    }
-
-    /**
-     * This test shows what happens when there are conflicting rules. The first matching subscriber wins. When two
-     * subscribers have registered at the same priority level, and the predicates match for both, then it is not clearly
-     * determined which subscriber will receive the exchange.
-     *
-     * @throws InterruptedException if interrupted while waiting for mocks to be satisfied
-     */
-    @Test
-    void testConsumersWithConflictingRules() throws InterruptedException {
-        mockOne.setExpectedCount(0);
-        mockTwo.setExpectedCount(0);
         mockThree.expectedBodiesReceived(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
 
-        // Subscribe for all numeric message content, and odd numeric message content so that
-        // the participant that wants all message content conflicts with everyone else.  Since
-        // that subscription has the highest priority (lowest number), it will receive all
+        // Subscribe for all numeric message content to verify that in "allMatch" mode,
+        // every participant receives all messages that pertain to them
         subscribe(Arrays.asList(allSubscribeMsg, evenSubscribeMsg, oddSubscribeMsg));
         sendMessagesAndAssert();
     }

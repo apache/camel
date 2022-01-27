@@ -20,32 +20,28 @@ import org.apache.camel.component.dynamicrouter.support.DynamicRouterTestSupport
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import static org.mockito.Mockito.when;
 
-class DynamicRouterProducerTest extends DynamicRouterTestSupport {
+class DynamicRouterControlProducerTest extends DynamicRouterTestSupport {
 
     @BeforeEach
     void localSetup() throws Exception {
         super.setup();
-        // Remove the interactions defined in the superclass because
-        // this test class needs custom behavior
-        Mockito.reset(component);
-        producer = new DynamicRouterProducer(endpoint);
+        controlProducer = new DynamicRouterControlProducer(endpoint);
     }
 
     @Test
     void testProcessSynchronous() {
         when(endpoint.getConfiguration().isSynchronous()).thenReturn(true);
-        boolean result = producer.process(exchange, asyncCallback);
+        boolean result = controlProducer.process(exchange, asyncCallback);
         Assertions.assertTrue(result);
     }
 
     @Test
     void testProcessAynchronous() {
         when(endpoint.getConfiguration().isSynchronous()).thenReturn(false);
-        boolean result = producer.process(exchange, asyncCallback);
+        boolean result = controlProducer.process(exchange, asyncCallback);
         Assertions.assertTrue(result);
     }
 }

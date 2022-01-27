@@ -14,11 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.dynamicrouter.processor;
+package org.apache.camel.component.dynamicrouter;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutorService;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
@@ -28,14 +32,15 @@ import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.Traceable;
 import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.component.dynamicrouter.message.DynamicRouterControlMessage;
-import org.apache.camel.component.dynamicrouter.processor.PrioritizedFilterProcessor.PrioritizedFilterProcessorFactory;
+import org.apache.camel.component.dynamicrouter.PrioritizedFilterProcessor.PrioritizedFilterProcessorFactory;
 import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.builder.PredicateBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.component.dynamicrouter.DynamicRouterConstants.MODE_FIRST_MATCH;
 
 /**
  * Implements a <a href="http://camel.apache.org/dynamic-router.html">Dynamic Router</a> pattern where the destinations
@@ -51,10 +56,9 @@ public class DynamicRouterProcessor extends AsyncProcessorSupport implements Tra
     private static final Logger LOG = LoggerFactory.getLogger(DynamicRouterProcessor.class);
 
     /**
-     * Template for a logging endpoint at the TRACE level, showing all, and multiline. There are placeholders for the
-     * logger name, with one segment, a dot, and the trailing segment.
+     * Template for a logging endpoint, showing all, and multiline.
      */
-    private static final String LOG_ENDPOINT = "log:%s.%s?level=DEBUG&showAll=true&multiline=true";
+    private static final String LOG_ENDPOINT = "log:%s.%s?level=%s&showAll=true&multiline=true";
 
     /**
      * {@link FilterProcessor}s to determine if the incoming exchange should be routed, based on the content.
@@ -67,6 +71,14 @@ public class DynamicRouterProcessor extends AsyncProcessorSupport implements Tra
     private final CamelContext camelContext;
 
     /**
+     * Indicates the behavior of the Dynamic Router when routing participants are selected to receive an incoming
+     * exchange. If the mode is "firstMatch", then the exchange is routed only to the first participant that has a
+     * matching predicate. If the mode is "allMatch", then the exchange is routed to all participants that have a
+     * matching predicate.
+     */
+    private final String recipientMode;
+
+    /**
      * The tempate for sending messages.
      */
     private final ProducerTemplate producerTemplate;
@@ -75,6 +87,11 @@ public class DynamicRouterProcessor extends AsyncProcessorSupport implements Tra
      * The default processor to use if there are no matching processors to process the exchange.
      */
     private final PrioritizedFilterProcessor defaultProcessor;
+
+    /**
+     * The {@link ExecutorService} for multicasting messages.
+     */
+    private final ExecutorService executorService;
 
     /**
      * The {@link FilterProcessor} factory.
@@ -91,16 +108,23 @@ public class DynamicRouterProcessor extends AsyncProcessorSupport implements Tra
      *
      * @param id                             the id of the processor
      * @param camelContext                   the camel context
+     * @param recipientMode                  the recipient mode
+     * @param warnDroppedMessage             flag to warn if messages are dropped
      * @param filterProcessorFactorySupplier creates the {@link PrioritizedFilterProcessor}
      */
-    public DynamicRouterProcessor(final String id, final CamelContext camelContext, final boolean warnDroppedMessage,
+    public DynamicRouterProcessor(final String id, final CamelContext camelContext, final String recipientMode,
+                                  final boolean warnDroppedMessage,
                                   final Supplier<PrioritizedFilterProcessorFactory> filterProcessorFactorySupplier) {
         this.id = id;
         this.filters = new ArrayList<>();
         this.camelContext = camelContext;
+        this.recipientMode = recipientMode;
         this.producerTemplate = camelContext.createProducerTemplate();
         this.filterProcessorFactorySupplier = filterProcessorFactorySupplier;
-        final String message = String.format(LOG_ENDPOINT, this.getClass().getCanonicalName(), getId());
+        this.executorService = camelContext.getExecutorServiceManager()
+                .newDefaultThreadPool(this, "dynamicRouterMulticastPool");
+        final String message = String.format(LOG_ENDPOINT, this.getClass().getCanonicalName(), getId(),
+                warnDroppedMessage ? "WARN" : "DEBUG");
         this.defaultProcessor = filterProcessorFactorySupplier.get().getInstance(
                 "defaultProcessor",
                 Integer.MAX_VALUE, camelContext, PredicateBuilder.constant(true),
@@ -129,8 +153,9 @@ public class DynamicRouterProcessor extends AsyncProcessorSupport implements Tra
     PrioritizedFilterProcessor createFilter(final DynamicRouterControlMessage controlMessage) {
         final String id = controlMessage.getId();
         final int priority = controlMessage.getPriority();
+        final String endpoint = controlMessage.getEndpoint();
         final Predicate predicate = controlMessage.getPredicate();
-        final Processor processor = exchange -> producerTemplate.send(controlMessage.getEndpoint(), exchange);
+        final Processor processor = exchange -> producerTemplate.send(endpoint, exchange);
         return filterProcessorFactorySupplier.get().getInstance(id, priority, camelContext, predicate, processor);
     }
 
@@ -195,17 +220,17 @@ public class DynamicRouterProcessor extends AsyncProcessorSupport implements Tra
      * Match the exchange against all {@link #filters} to determine if any of them are suitable to handle the exchange.
      *
      * @param  exchange the message exchange
-     * @return          the filter that matches for the exchange
+     * @return          list of filters that match for the exchange; if "firstMatch" mode, it is a singleton list of
+     *                  that filter
      */
-    PrioritizedFilterProcessor matchFilters(final Exchange exchange) {
-        PrioritizedFilterProcessor processor = defaultProcessor;
-        for (final PrioritizedFilterProcessor filter : filters) {
-            if (filter.matches(exchange)) {
-                processor = filter;
-                break;
-            }
-        }
-        return processor;
+    List<PrioritizedFilterProcessor> matchFilters(final Exchange exchange) {
+        return Optional.of(
+                filters.stream()
+                        .filter(f -> f.matches(exchange))
+                        .limit(MODE_FIRST_MATCH.equals(recipientMode) ? 1 : Integer.MAX_VALUE)
+                        .collect(Collectors.toList()))
+                .filter(list -> !list.isEmpty())
+                .orElse(Collections.singletonList(defaultProcessor));
     }
 
     /**
@@ -219,13 +244,19 @@ public class DynamicRouterProcessor extends AsyncProcessorSupport implements Tra
      * @param  callback the {@link AsyncCallback} will be invoked when the processing of the exchange is completed. If
      *                  the exchange is completed synchronously, then the callback is also invoked synchronously. The
      *                  callback should therefore be careful of starting recursive loop.
-     * @return          (doneSync) <tt>true</tt> to continue execute synchronously, <tt>false</tt> to continue being
-     *                  executed asynchronously
+     * @return          (doneSync) <tt>true</tt> to continue to execute synchronously, <tt>false</tt> to continue
+     *                  execution asynchronously
      */
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
-        return matchFilters(exchange)
-                .process(exchange, callback);
+        try {
+            for (PrioritizedFilterProcessor filterProcessor : matchFilters(exchange)) {
+                filterProcessor.process(exchange, callback);
+            }
+        } catch (Exception e) {
+            exchange.setException(e);
+        }
+        return false;
     }
 
     /**
@@ -278,15 +309,19 @@ public class DynamicRouterProcessor extends AsyncProcessorSupport implements Tra
          *
          * @param id                             the id of the processor
          * @param camelContext                   the camel context
+         * @param recipientMode                  the mode for sending exchanges to matching participants
          * @param warnDroppedMessage             warn if no filters match an exchange
          * @param filterProcessorFactorySupplier creates the {@link PrioritizedFilterProcessor}
          */
         public DynamicRouterProcessor getInstance(
                 final String id,
                 final CamelContext camelContext,
+                final String recipientMode,
                 final boolean warnDroppedMessage,
                 final Supplier<PrioritizedFilterProcessorFactory> filterProcessorFactorySupplier) {
-            return new DynamicRouterProcessor(id, camelContext, warnDroppedMessage, filterProcessorFactorySupplier);
+            return new DynamicRouterProcessor(
+                    id, camelContext, recipientMode, warnDroppedMessage,
+                    filterProcessorFactorySupplier);
         }
     }
 }
