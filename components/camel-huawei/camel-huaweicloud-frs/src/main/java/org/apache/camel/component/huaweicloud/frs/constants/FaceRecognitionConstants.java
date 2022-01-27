@@ -17,7 +17,7 @@
 
 package org.apache.camel.component.huaweicloud.frs.constants;
 
-public interface FrsConstants {
+public interface FaceRecognitionConstants {
 
     String OPERATION_FACE_DETECTION = "faceDetection";
 

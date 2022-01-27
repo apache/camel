@@ -20,7 +20,7 @@ import com.huaweicloud.sdk.frs.v2.model.CompareFaceByBase64Response;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.huaweicloud.frs.constants.FrsProperties;
+import org.apache.camel.component.huaweicloud.frs.constants.FaceRecognitionProperties;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -38,9 +38,9 @@ public class FaceVerificationWithImageBae64AndMockClientTest extends CamelTestSu
         return new RouteBuilder() {
             public void configure() {
                 from("direct:trigger_route")
-                        .setProperty(FrsProperties.FACE_IMAGE_BASE64,
+                        .setProperty(FaceRecognitionProperties.FACE_IMAGE_BASE64,
                                 constant(testConfiguration.getProperty("imageBase64")))
-                        .setProperty(FrsProperties.ANOTHER_FACE_IMAGE_BASE64,
+                        .setProperty(FaceRecognitionProperties.ANOTHER_FACE_IMAGE_BASE64,
                                 constant(testConfiguration.getProperty("anotherImageBase64")))
                         .to("hwcloud-frs:faceVerification?"
                             + "accessKey=" + testConfiguration.getProperty("accessKey")

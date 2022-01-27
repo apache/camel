@@ -19,7 +19,7 @@ package frs;
 import com.huaweicloud.sdk.frs.v2.model.DetectFaceByBase64Response;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.huaweicloud.frs.constants.FrsProperties;
+import org.apache.camel.component.huaweicloud.frs.constants.FaceRecognitionProperties;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
@@ -34,7 +34,7 @@ public class FaceDetectionWithImageBae64Test extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:trigger_route")
-                        .setProperty(FrsProperties.FACE_IMAGE_BASE64,
+                        .setProperty(FaceRecognitionProperties.FACE_IMAGE_BASE64,
                                 constant(testConfiguration.getProperty("imageBase64")))
                         .to("hwcloud-frs:faceDetection?"
                             + "accessKey=" + testConfiguration.getProperty("accessKey")

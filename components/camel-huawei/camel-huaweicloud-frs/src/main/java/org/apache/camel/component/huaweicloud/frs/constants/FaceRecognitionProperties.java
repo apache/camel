@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.huaweicloud.frs.constants;
 
-public interface FrsProperties {
+public interface FaceRecognitionProperties {
     String FACE_IMAGE_BASE64 = "CamelHwCloudFrsImageBase64";
 
     String FACE_IMAGE_URL = "CamelHwCloudFrsImageUrl";

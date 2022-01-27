@@ -20,7 +20,7 @@ import com.huaweicloud.sdk.frs.v2.model.DetectLiveByFileResponse;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.huaweicloud.frs.constants.FrsProperties;
+import org.apache.camel.component.huaweicloud.frs.constants.FaceRecognitionProperties;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -38,7 +38,7 @@ public class LiveDetectionWithVideoFileAndMockClientTest extends CamelTestSuppor
         return new RouteBuilder() {
             public void configure() {
                 from("direct:trigger_route")
-                        .setProperty(FrsProperties.FACE_VIDEO_FILE_PATH,
+                        .setProperty(FaceRecognitionProperties.FACE_VIDEO_FILE_PATH,
                                 constant(testConfiguration.getProperty("videoFilePath")))
                         .to("hwcloud-frs:faceLiveDetection?"
                             + "accessKey=" + testConfiguration.getProperty("accessKey")
