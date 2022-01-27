@@ -16,7 +16,8 @@
  */
 package org.apache.camel.component.huaweicloud.frs;
 
-import java.util.*;
+import java.util.Map;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.support.DefaultComponent;
 
