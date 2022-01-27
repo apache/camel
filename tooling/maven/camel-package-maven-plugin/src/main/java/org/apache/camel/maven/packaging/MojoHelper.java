@@ -94,6 +94,10 @@ public final class MojoHelper {
                         dir.resolve("camel-huaweicloud-obs"));
             case "camel-knative":
                 return Collections.singletonList(dir.resolve("camel-knative-component"));
+            case "camel-groovy-dsl":
+                return Collections.singletonList(dir.resolve("camel-groovy-dsl"));
+            case "camel-yaml-dsl":
+                return Collections.singletonList(dir.resolve("camel-yaml-dsl"));
             default:
                 return Collections.singletonList(dir);
         }
