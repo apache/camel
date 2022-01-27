@@ -120,6 +120,7 @@
                         <id>generate-component-dsl</id>
                         <goals>
                             <goal>generate-component-dsl</goal>
+                            <goal>generate-others-list</goal>
                         </goals>
                         <phase>generate-sources</phase>
                     </execution>

@@ -124,6 +124,7 @@
                         <id>generate-endpoint-dsl</id>
                         <goals>
                             <goal>generate-endpoint-dsl</goal>
+                            <goal>generate-others-list</goal>
                         </goals>
                         <phase>generate-sources</phase>
                     </execution>
