@@ -35,6 +35,8 @@ public class Ses2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws2.ses.Ses2Configuration.class, value)); return true;
+        case "configurationset":
+        case "configurationSet": getOrCreateConfiguration(target).setConfigurationSet(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "overrideendpoint":
@@ -79,6 +81,8 @@ public class Ses2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "configuration": return org.apache.camel.component.aws2.ses.Ses2Configuration.class;
+        case "configurationset":
+        case "configurationSet": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "overrideendpoint":
@@ -119,6 +123,8 @@ public class Ses2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "configuration": return target.getConfiguration();
+        case "configurationset":
+        case "configurationSet": return getOrCreateConfiguration(target).getConfigurationSet();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "overrideendpoint":

@@ -82,7 +82,7 @@ public class Ses2Producer extends DefaultProducer {
         request.returnPath(determineReturnPath(exchange));
         request.replyToAddresses(determineReplyToAddresses(exchange));
         request.message(createMessage(exchange));
-
+        request.configurationSetName(determineConfigurationSet(exchange));
         return request.build();
     }
 
@@ -91,6 +91,7 @@ public class Ses2Producer extends DefaultProducer {
         request.source(determineFrom(exchange));
         request.destinations(determineRawTo(exchange));
         request.rawMessage(createRawMessage(exchange));
+        request.configurationSetName(determineConfigurationSet(exchange));
         return request.build();
     }
 
@@ -186,6 +187,14 @@ public class Ses2Producer extends DefaultProducer {
             subject = getConfiguration().getSubject();
         }
         return subject;
+    }
+
+    private String determineConfigurationSet(Exchange exchange) {
+        String configuration = exchange.getIn().getHeader(Ses2Constants.CONFIGURATION_SET, String.class);
+        if (configuration == null) {
+            configuration = getConfiguration().getConfigurationSet();
+        }
+        return configuration;
     }
 
     protected Ses2Configuration getConfiguration() {
