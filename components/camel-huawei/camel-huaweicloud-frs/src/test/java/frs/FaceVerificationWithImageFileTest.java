@@ -19,7 +19,7 @@ package frs;
 import com.huaweicloud.sdk.frs.v2.model.CompareFaceByFileResponse;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.huaweicloud.frs.constants.FrsProperties;
+import org.apache.camel.component.huaweicloud.frs.constants.FaceRecognitionProperties;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
@@ -34,9 +34,9 @@ public class FaceVerificationWithImageFileTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:trigger_route")
-                        .setProperty(FrsProperties.FACE_IMAGE_FILE_PATH,
+                        .setProperty(FaceRecognitionProperties.FACE_IMAGE_FILE_PATH,
                                 constant(testConfiguration.getProperty("imageFilePath")))
-                        .setProperty(FrsProperties.ANOTHER_FACE_IMAGE_FILE_PATH,
+                        .setProperty(FaceRecognitionProperties.ANOTHER_FACE_IMAGE_FILE_PATH,
                                 constant(testConfiguration.getProperty("anotherImageFilePath")))
                         .to("hwcloud-frs:faceVerification?"
                             + "accessKey=" + testConfiguration.getProperty("accessKey")

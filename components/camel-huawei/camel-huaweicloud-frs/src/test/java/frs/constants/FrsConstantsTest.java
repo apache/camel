@@ -17,7 +17,7 @@
 
 package frs.constants;
 
-import org.apache.camel.component.huaweicloud.frs.constants.FrsConstants;
+import org.apache.camel.component.huaweicloud.frs.constants.FaceRecognitionConstants;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,8 +25,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class FrsConstantsTest {
     @Test
     public void testConstants() {
-        assertEquals("faceDetection", FrsConstants.OPERATION_FACE_DETECTION);
-        assertEquals("faceVerification", FrsConstants.OPERATION_FACE_VERIFICATION);
-        assertEquals("faceLiveDetection", FrsConstants.OPERATION_FACE_LIVE_DETECT);
+        assertEquals("faceDetection", FaceRecognitionConstants.OPERATION_FACE_DETECTION);
+        assertEquals("faceVerification", FaceRecognitionConstants.OPERATION_FACE_VERIFICATION);
+        assertEquals("faceLiveDetection", FaceRecognitionConstants.OPERATION_FACE_LIVE_DETECT);
     }
 }

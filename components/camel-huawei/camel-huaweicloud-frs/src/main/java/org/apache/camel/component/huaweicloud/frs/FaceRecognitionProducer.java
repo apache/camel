@@ -42,21 +42,21 @@ import com.huaweicloud.sdk.frs.v2.model.LiveDetectBase64Req;
 import com.huaweicloud.sdk.frs.v2.model.LiveDetectUrlReq;
 import com.huaweicloud.sdk.frs.v2.region.FrsRegion;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.huaweicloud.frs.constants.FrsConstants;
-import org.apache.camel.component.huaweicloud.frs.constants.FrsProperties;
+import org.apache.camel.component.huaweicloud.frs.constants.FaceRecognitionConstants;
+import org.apache.camel.component.huaweicloud.frs.constants.FaceRecognitionProperties;
 import org.apache.camel.component.huaweicloud.frs.models.ClientConfigurations;
 import org.apache.camel.support.DefaultProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FrsProducer extends DefaultProducer {
-    private static final Logger LOG = LoggerFactory.getLogger(FrsProducer.class);
+public class FaceRecognitionProducer extends DefaultProducer {
+    private static final Logger LOG = LoggerFactory.getLogger(FaceRecognitionProducer.class);
 
     private FrsClient frsClient;
 
-    private FrsEndpoint endpoint;
+    private org.apache.camel.component.huaweicloud.frs.FaceRecognitionEndpoint endpoint;
 
-    public FrsProducer(FrsEndpoint endpoint) {
+    public FaceRecognitionProducer(org.apache.camel.component.huaweicloud.frs.FaceRecognitionEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
     }
@@ -66,24 +66,50 @@ public class FrsProducer extends DefaultProducer {
         super.doStart();
     }
 
+    public void process(Exchange exchange) {
+        ClientConfigurations clientConfigurations = initializeConfigurations(endpoint);
+        if (frsClient == null) {
+            initializeSdkClient(endpoint, clientConfigurations);
+        }
+        String operation = endpoint.getOperation();
+        if (StringUtils.isEmpty(operation)) {
+            throw new IllegalStateException("operation cannot be empty");
+        }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Performing frs operation: {}", operation);
+        }
+        switch (operation) {
+            case FaceRecognitionConstants.OPERATION_FACE_DETECTION:
+                performFaceDetectionOperation(exchange, clientConfigurations);
+                break;
+            case FaceRecognitionConstants.OPERATION_FACE_VERIFICATION:
+                performFaceVerificationOperation(exchange, clientConfigurations);
+                break;
+            case FaceRecognitionConstants.OPERATION_FACE_LIVE_DETECT:
+                performLiveDetectOperation(exchange, clientConfigurations);
+                break;
+            default:
+                throw new UnsupportedOperationException(
+                        "operation needs to be faceDetection, faceVerification or faceLiveDetection");
+        }
+    }
+
     /**
-     * initialize ClientConfigurations
+     * initialize clientConfigurations
      *
-     * @param  endpoint ImageRecognitionEndpoint
+     * @param  endpoint FrsEndpoint
      * @return          ClientConfigurations
      */
-    private ClientConfigurations initializeConfigurations(FrsEndpoint endpoint) {
+    private ClientConfigurations initializeConfigurations(
+            org.apache.camel.component.huaweicloud.frs.FaceRecognitionEndpoint endpoint) {
         ClientConfigurations clientConfigurations = new ClientConfigurations();
-
         clientConfigurations.setAccessKey(getAccessKey(endpoint));
         clientConfigurations.setSecretKey(getSecretKey(endpoint));
         clientConfigurations.setProjectId(getProjectId(endpoint));
         clientConfigurations.setEndpoint(getEndpoint(endpoint));
 
-        if (StringUtils.isEmpty(endpoint.getImageBase64()) && StringUtils.isEmpty(endpoint.getImageUrl())) {
-            if (StringUtils.isEmpty(endpoint.getRegion())) {
-                throw new IllegalArgumentException("either image or url must be set");
-            }
+        if (StringUtils.isEmpty(endpoint.getOperation())) {
+            throw new IllegalArgumentException("operation needs to be set");
         }
         clientConfigurations.setIgnoreSslVerification(endpoint.isIgnoreSslVerification());
         if (clientConfigurations.isIgnoreSslVerification()) {
@@ -104,10 +130,12 @@ public class FrsProducer extends DefaultProducer {
      * @param endpoint             camel frs endpoint
      * @param clientConfigurations FrsClient configurations
      */
-    private void initializeSdkClient(FrsEndpoint endpoint, ClientConfigurations clientConfigurations) {
+    private void initializeSdkClient(
+            org.apache.camel.component.huaweicloud.frs.FaceRecognitionEndpoint endpoint,
+            ClientConfigurations clientConfigurations) {
         if (endpoint.getFrsClient() != null) {
             LOG.info(
-                    "Instance of FrsClient was set on the endpoint. Skipping creation of FrsClient from endpoint parameters");
+                    "Instance of FrsClient was set on the endpoint. Skip creation of FrsClient from endpoint parameters");
             this.frsClient = endpoint.getFrsClient();
             return;
         }
@@ -121,7 +149,6 @@ public class FrsProducer extends DefaultProducer {
                 httpConfig.setProxyPassword(clientConfigurations.getProxyPassword());
             }
         }
-
         BasicCredentials credentials = new BasicCredentials().withAk(clientConfigurations.getAccessKey())
                 .withSk(clientConfigurations.getSecretKey())
                 .withProjectId(clientConfigurations.getProjectId());
@@ -134,36 +161,6 @@ public class FrsProducer extends DefaultProducer {
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Successfully initialized FRS client");
-        }
-    }
-
-    public void process(Exchange exchange) {
-        ClientConfigurations clientConfigurations = initializeConfigurations(endpoint);
-
-        if (frsClient == null) {
-            initializeSdkClient(endpoint, clientConfigurations);
-        }
-
-        String operation = endpoint.getOperation();
-        if (StringUtils.isEmpty(operation)) {
-            throw new IllegalStateException("operation name cannot be empty");
-        }
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Performing frs operation: {}", operation);
-        }
-        switch (operation) {
-            case FrsConstants.OPERATION_FACE_DETECTION:
-                performFaceDetectionOperation(exchange, clientConfigurations);
-                break;
-            case FrsConstants.OPERATION_FACE_VERIFICATION:
-                performFaceVerificationOperation(exchange, clientConfigurations);
-                break;
-            case FrsConstants.OPERATION_FACE_LIVE_DETECT:
-                performLiveDetectOperation(exchange, clientConfigurations);
-                break;
-            default:
-                throw new UnsupportedOperationException(
-                        "operation must be faceDetection, faceVerification or faceLiveDetection");
         }
     }
 
@@ -240,7 +237,6 @@ public class FrsProducer extends DefaultProducer {
      */
     private void performLiveDetectOperation(Exchange exchange, ClientConfigurations clientConfigurations) {
         updateClientConfigurations(exchange, clientConfigurations);
-
         SdkResponse result;
         if (!StringUtils.isEmpty(clientConfigurations.getVideoBase64())) {
             LiveDetectBase64Req reqBody = new LiveDetectBase64Req().withVideoBase64(clientConfigurations.getVideoBase64())
@@ -259,7 +255,7 @@ public class FrsProducer extends DefaultProducer {
             } catch (FileNotFoundException e) {
                 LOG.error("Video file not found: ", e);
                 throw new IllegalArgumentException(
-                        String.format("Image file not found: %s", clientConfigurations.getImageFilePath()));
+                        String.format("Video file not found: %s", clientConfigurations.getImageFilePath()));
             }
             result = this.frsClient.detectLiveByFile(new DetectLiveByFileRequest().withBody(reqBody));
         }
@@ -283,11 +279,11 @@ public class FrsProducer extends DefaultProducer {
      * @param clientConfigurations frs client configurations
      */
     private void updateClientConfigurations(Exchange exchange, ClientConfigurations clientConfigurations) {
-        if (FrsConstants.OPERATION_FACE_DETECTION.equals(endpoint.getOperation())) {
+        if (FaceRecognitionConstants.OPERATION_FACE_DETECTION.equals(endpoint.getOperation())) {
             updateFaceDetectionConfigurations(exchange, clientConfigurations);
-        } else if (FrsConstants.OPERATION_FACE_VERIFICATION.equals(endpoint.getOperation())) {
+        } else if (FaceRecognitionConstants.OPERATION_FACE_VERIFICATION.equals(endpoint.getOperation())) {
             updateFaceVerificationConfigurations(exchange, clientConfigurations);
-        } else if (FrsConstants.OPERATION_FACE_LIVE_DETECT.equals(endpoint.getOperation())) {
+        } else if (FaceRecognitionConstants.OPERATION_FACE_LIVE_DETECT.equals(endpoint.getOperation())) {
             updateLiveDetectConfigurations(exchange, clientConfigurations);
         }
     }
@@ -297,7 +293,7 @@ public class FrsProducer extends DefaultProducer {
         boolean isImageUrlSet = true;
         boolean isImageFilePathSet = true;
 
-        String imageBase64 = exchange.getProperty(FrsProperties.FACE_IMAGE_BASE64, String.class);
+        String imageBase64 = exchange.getProperty(FaceRecognitionProperties.FACE_IMAGE_BASE64, String.class);
         if (!StringUtils.isEmpty(imageBase64)) {
             clientConfigurations.setImageBase64(imageBase64);
         } else if (!StringUtils.isEmpty(this.endpoint.getImageBase64())) {
@@ -306,7 +302,7 @@ public class FrsProducer extends DefaultProducer {
             isImageBase64Set = false;
         }
 
-        String imageUrl = exchange.getProperty(FrsProperties.FACE_IMAGE_URL, String.class);
+        String imageUrl = exchange.getProperty(FaceRecognitionProperties.FACE_IMAGE_URL, String.class);
         if (!StringUtils.isEmpty(imageUrl)) {
             clientConfigurations.setImageUrl(imageUrl);
         } else if (!StringUtils.isEmpty(this.endpoint.getImageUrl())) {
@@ -315,7 +311,7 @@ public class FrsProducer extends DefaultProducer {
             isImageUrlSet = false;
         }
 
-        String imageFilePath = exchange.getProperty(FrsProperties.FACE_IMAGE_FILE_PATH, String.class);
+        String imageFilePath = exchange.getProperty(FaceRecognitionProperties.FACE_IMAGE_FILE_PATH, String.class);
         if (!StringUtils.isEmpty(imageFilePath)) {
             clientConfigurations.setImageFilePath(imageFilePath);
         } else if (!StringUtils.isEmpty(this.endpoint.getImageFilePath())) {
@@ -323,9 +319,8 @@ public class FrsProducer extends DefaultProducer {
         } else {
             isImageFilePathSet = false;
         }
-
         if (!isImageBase64Set && !isImageUrlSet && !isImageFilePathSet) {
-            throw new IllegalArgumentException("any one of image base64, url and filePath must be set");
+            throw new IllegalArgumentException("any one of image base64, url and filePath needs to be set");
         }
     }
 
@@ -334,8 +329,8 @@ public class FrsProducer extends DefaultProducer {
         boolean isImageUrlSet = true;
         boolean isImageFilePathSet = true;
 
-        String image1Base64 = exchange.getProperty(FrsProperties.FACE_IMAGE_BASE64, String.class);
-        String image2Base64 = exchange.getProperty(FrsProperties.ANOTHER_FACE_IMAGE_BASE64, String.class);
+        String image1Base64 = exchange.getProperty(FaceRecognitionProperties.FACE_IMAGE_BASE64, String.class);
+        String image2Base64 = exchange.getProperty(FaceRecognitionProperties.ANOTHER_FACE_IMAGE_BASE64, String.class);
         if (!StringUtils.isEmpty(image1Base64) && !StringUtils.isEmpty(image2Base64)) {
             clientConfigurations.setImageBase64(image1Base64);
             clientConfigurations.setAnotherImageBase64(image2Base64);
@@ -347,8 +342,8 @@ public class FrsProducer extends DefaultProducer {
             isImageBase64Set = false;
         }
 
-        String image1Url = exchange.getProperty(FrsProperties.FACE_IMAGE_URL, String.class);
-        String image2Url = exchange.getProperty(FrsProperties.ANOTHER_FACE_IMAGE_URL, String.class);
+        String image1Url = exchange.getProperty(FaceRecognitionProperties.FACE_IMAGE_URL, String.class);
+        String image2Url = exchange.getProperty(FaceRecognitionProperties.ANOTHER_FACE_IMAGE_URL, String.class);
         if (!StringUtils.isEmpty(image1Url) && !StringUtils.isEmpty(image2Url)) {
             clientConfigurations.setImageUrl(image1Url);
             clientConfigurations.setAnotherImageUrl(image2Url);
@@ -360,8 +355,8 @@ public class FrsProducer extends DefaultProducer {
             isImageUrlSet = false;
         }
 
-        String image1FilePath = exchange.getProperty(FrsProperties.FACE_IMAGE_FILE_PATH, String.class);
-        String image2FilePath = exchange.getProperty(FrsProperties.ANOTHER_FACE_IMAGE_FILE_PATH, String.class);
+        String image1FilePath = exchange.getProperty(FaceRecognitionProperties.FACE_IMAGE_FILE_PATH, String.class);
+        String image2FilePath = exchange.getProperty(FaceRecognitionProperties.ANOTHER_FACE_IMAGE_FILE_PATH, String.class);
         if (!StringUtils.isEmpty(image1FilePath) && !StringUtils.isEmpty(image2FilePath)) {
             clientConfigurations.setImageFilePath(image1FilePath);
             clientConfigurations.setAnotherImageFilePath(image2FilePath);
@@ -374,7 +369,7 @@ public class FrsProducer extends DefaultProducer {
         }
 
         if (!isImageBase64Set && !isImageUrlSet && !isImageFilePathSet) {
-            throw new IllegalArgumentException("any one of image base64, url and filePath must be set");
+            throw new IllegalArgumentException("any one of image base64, url and filePath needs to be set");
         }
     }
 
@@ -383,7 +378,7 @@ public class FrsProducer extends DefaultProducer {
         boolean isVideoUrlSet = true;
         boolean isVideoFilePathSet = true;
 
-        String videoBase64 = exchange.getProperty(FrsProperties.FACE_VIDEO_BASE64, String.class);
+        String videoBase64 = exchange.getProperty(FaceRecognitionProperties.FACE_VIDEO_BASE64, String.class);
         if (!StringUtils.isEmpty(videoBase64)) {
             clientConfigurations.setVideoBase64(videoBase64);
         } else if (!StringUtils.isEmpty(this.endpoint.getVideoBase64())) {
@@ -392,7 +387,7 @@ public class FrsProducer extends DefaultProducer {
             isVideoBase64Set = false;
         }
 
-        String videoUrl = exchange.getProperty(FrsProperties.FACE_VIDEO_URL, String.class);
+        String videoUrl = exchange.getProperty(FaceRecognitionProperties.FACE_VIDEO_URL, String.class);
         if (!StringUtils.isEmpty(videoUrl)) {
             clientConfigurations.setVideoUrl(videoUrl);
         } else if (!StringUtils.isEmpty(this.endpoint.getVideoUrl())) {
@@ -401,7 +396,7 @@ public class FrsProducer extends DefaultProducer {
             isVideoUrlSet = false;
         }
 
-        String videoFilePath = exchange.getProperty(FrsProperties.FACE_VIDEO_FILE_PATH, String.class);
+        String videoFilePath = exchange.getProperty(FaceRecognitionProperties.FACE_VIDEO_FILE_PATH, String.class);
         if (!StringUtils.isEmpty(videoFilePath)) {
             clientConfigurations.setVideoFilePath(videoFilePath);
         } else if (!StringUtils.isEmpty(this.endpoint.getVideoFilePath())) {
@@ -411,58 +406,58 @@ public class FrsProducer extends DefaultProducer {
         }
 
         if (!isVideoBase64Set && !isVideoUrlSet && !isVideoFilePathSet) {
-            throw new IllegalArgumentException("any one of video base64, url and filePath must be set");
+            throw new IllegalArgumentException("any one of video base64, url and filePath needs to be set");
         }
-        String actions = exchange.getProperty(FrsProperties.FACE_VIDEO_ACTIONS, String.class);
+        String actions = exchange.getProperty(FaceRecognitionProperties.FACE_VIDEO_ACTIONS, String.class);
         if (!StringUtils.isEmpty(actions)) {
             clientConfigurations.setActions(actions);
         } else if (!StringUtils.isEmpty(this.endpoint.getActions())) {
             clientConfigurations.setActions(this.endpoint.getActions());
         } else {
-            throw new IllegalArgumentException("actions must be set");
+            throw new IllegalArgumentException("actions needs to be set");
         }
 
-        String actionTimes = exchange.getProperty(FrsProperties.FACE_VIDEO_ACTION_TIMES, String.class);
+        String actionTimes = exchange.getProperty(FaceRecognitionProperties.FACE_VIDEO_ACTION_TIMES, String.class);
         clientConfigurations.setActionTimes(
                 StringUtils.isEmpty(actionTimes) ? this.endpoint.getActionTimes() : actionTimes);
 
     }
 
-    private String getAccessKey(FrsEndpoint endpoint) {
+    private String getAccessKey(org.apache.camel.component.huaweicloud.frs.FaceRecognitionEndpoint endpoint) {
         if (!StringUtils.isEmpty(endpoint.getAccessKey())) {
             return endpoint.getAccessKey();
         } else if (endpoint.getServiceKeys() != null
                 && !StringUtils.isEmpty(endpoint.getServiceKeys().getAccessKey())) {
             return endpoint.getServiceKeys().getAccessKey();
         } else {
-            throw new IllegalArgumentException("authentication parameter 'access key (AK)' not found");
+            throw new IllegalArgumentException("authentication parameter access key (AK) not found");
         }
     }
 
-    private String getSecretKey(FrsEndpoint endpoint) {
+    private String getSecretKey(org.apache.camel.component.huaweicloud.frs.FaceRecognitionEndpoint endpoint) {
         if (!StringUtils.isEmpty(endpoint.getSecretKey())) {
             return endpoint.getSecretKey();
         } else if (endpoint.getServiceKeys() != null
                 && !StringUtils.isEmpty(endpoint.getServiceKeys().getSecretKey())) {
             return endpoint.getServiceKeys().getSecretKey();
         } else {
-            throw new IllegalArgumentException("authentication parameter 'secret key (SK)' not found");
+            throw new IllegalArgumentException("authentication parameter secret key (SK) not found");
         }
     }
 
-    private String getProjectId(FrsEndpoint endpoint) {
+    private String getProjectId(org.apache.camel.component.huaweicloud.frs.FaceRecognitionEndpoint endpoint) {
         if (StringUtils.isEmpty(endpoint.getProjectId())) {
             throw new IllegalArgumentException("Project id not found");
         }
         return endpoint.getProjectId();
     }
 
-    private String getEndpoint(FrsEndpoint endpoint) {
+    private String getEndpoint(org.apache.camel.component.huaweicloud.frs.FaceRecognitionEndpoint endpoint) {
         if (!StringUtils.isEmpty(endpoint.getEndpoint())) {
             return endpoint.getEndpoint();
         }
         if (StringUtils.isEmpty(endpoint.getRegion())) {
-            throw new IllegalArgumentException("either endpoint or region must be set");
+            throw new IllegalArgumentException("either endpoint or region needs to be set");
         }
         return FrsRegion.valueOf(endpoint.getRegion()).getEndpoint();
     }
