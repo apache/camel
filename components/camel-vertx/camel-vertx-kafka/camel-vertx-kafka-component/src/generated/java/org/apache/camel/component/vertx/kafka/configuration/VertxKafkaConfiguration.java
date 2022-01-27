@@ -28,7 +28,7 @@ public class VertxKafkaConfiguration
     @UriParam(label = "common")
     private String bootstrapServers;
     // client.dns.lookup
-    @UriParam(label = "common", defaultValue = "use_all_dns_ips", enums = "default,use_all_dns_ips,resolve_canonical_bootstrap_servers_only")
+    @UriParam(label = "common", defaultValue = "use_all_dns_ips", enums = "use_all_dns_ips,resolve_canonical_bootstrap_servers_only")
     private String clientDnsLookup = "use_all_dns_ips";
     // metadata.max.age.ms
     @UriParam(label = "common", defaultValue = "5m", javaType = "java.time.Duration")
@@ -183,6 +183,48 @@ public class VertxKafkaConfiguration
     // sasl.login.class
     @UriParam(label = "common,security")
     private String saslLoginClass;
+    // sasl.login.connect.timeout.ms
+    @UriParam(label = "common,security", javaType = "java.time.Duration")
+    private Integer saslLoginConnectTimeoutMs;
+    // sasl.login.read.timeout.ms
+    @UriParam(label = "common,security", javaType = "java.time.Duration")
+    private Integer saslLoginReadTimeoutMs;
+    // sasl.login.retry.backoff.max.ms
+    @UriParam(label = "common,security", defaultValue = "10s", javaType = "java.time.Duration")
+    private long saslLoginRetryBackoffMaxMs = 10000;
+    // sasl.login.retry.backoff.ms
+    @UriParam(label = "common,security", defaultValue = "100ms", javaType = "java.time.Duration")
+    private long saslLoginRetryBackoffMs = 100;
+    // sasl.oauthbearer.scope.claim.name
+    @UriParam(label = "common,security", defaultValue = "scope")
+    private String saslOauthbearerScopeClaimName = "scope";
+    // sasl.oauthbearer.sub.claim.name
+    @UriParam(label = "common,security", defaultValue = "sub")
+    private String saslOauthbearerSubClaimName = "sub";
+    // sasl.oauthbearer.token.endpoint.url
+    @UriParam(label = "common,security")
+    private String saslOauthbearerTokenEndpointUrl;
+    // sasl.oauthbearer.jwks.endpoint.url
+    @UriParam(label = "common,security")
+    private String saslOauthbearerJwksEndpointUrl;
+    // sasl.oauthbearer.jwks.endpoint.refresh.ms
+    @UriParam(label = "common,security", defaultValue = "1h", javaType = "java.time.Duration")
+    private long saslOauthbearerJwksEndpointRefreshMs = 3600000;
+    // sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms
+    @UriParam(label = "common,security", defaultValue = "10s", javaType = "java.time.Duration")
+    private long saslOauthbearerJwksEndpointRetryBackoffMaxMs = 10000;
+    // sasl.oauthbearer.jwks.endpoint.retry.backoff.ms
+    @UriParam(label = "common,security", defaultValue = "100ms", javaType = "java.time.Duration")
+    private long saslOauthbearerJwksEndpointRetryBackoffMs = 100;
+    // sasl.oauthbearer.clock.skew.seconds
+    @UriParam(label = "common,security", defaultValue = "30")
+    private int saslOauthbearerClockSkewSeconds = 30;
+    // sasl.oauthbearer.expected.audience
+    @UriParam(label = "common,security")
+    private String saslOauthbearerExpectedAudience;
+    // sasl.oauthbearer.expected.issuer
+    @UriParam(label = "common,security")
+    private String saslOauthbearerExpectedIssuer;
     // Additional properties
     @UriParam(label = "common", prefix = "additionalProperties.", multiValue = true)
     private Map<String, Object> additionalProperties = new HashMap<>();
@@ -199,14 +241,14 @@ public class VertxKafkaConfiguration
     @UriParam(label = "consumer")
     private String groupInstanceId;
     // session.timeout.ms
-    @UriParam(label = "consumer", defaultValue = "10s", javaType = "java.time.Duration")
-    private int sessionTimeoutMs = 10000;
+    @UriParam(label = "consumer", defaultValue = "45s", javaType = "java.time.Duration")
+    private int sessionTimeoutMs = 45000;
     // heartbeat.interval.ms
     @UriParam(label = "consumer", defaultValue = "3s", javaType = "java.time.Duration")
     private int heartbeatIntervalMs = 3000;
     // partition.assignment.strategy
-    @UriParam(label = "consumer", defaultValue = "org.apache.kafka.clients.consumer.RangeAssignor")
-    private String partitionAssignmentStrategy = "org.apache.kafka.clients.consumer.RangeAssignor";
+    @UriParam(label = "consumer", defaultValue = "org.apache.kafka.clients.consumer.RangeAssignor,org.apache.kafka.clients.consumer.CooperativeStickyAssignor")
+    private String partitionAssignmentStrategy = "org.apache.kafka.clients.consumer.RangeAssignor,org.apache.kafka.clients.consumer.CooperativeStickyAssignor";
     // enable.auto.commit
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean enableAutoCommit = true;
@@ -265,8 +307,8 @@ public class VertxKafkaConfiguration
     @UriParam(label = "producer", defaultValue = "2147483647")
     private int retries = 2147483647;
     // acks
-    @UriParam(label = "producer", defaultValue = "1", enums = "all,-1,0,1")
-    private String acks = "1";
+    @UriParam(label = "producer", defaultValue = "all", enums = "all,-1,0,1")
+    private String acks = "all";
     // compression.type
     @UriParam(label = "producer", defaultValue = "none")
     private String compressionType = "none";
@@ -301,8 +343,8 @@ public class VertxKafkaConfiguration
     @UriParam(label = "producer", defaultValue = "org.apache.kafka.clients.producer.internals.DefaultPartitioner")
     private String partitionerClass = "org.apache.kafka.clients.producer.internals.DefaultPartitioner";
     // enable.idempotence
-    @UriParam(label = "producer", defaultValue = "false")
-    private boolean enableIdempotence = false;
+    @UriParam(label = "producer", defaultValue = "true")
+    private boolean enableIdempotence = true;
     // transaction.timeout.ms
     @UriParam(label = "producer", defaultValue = "1m", javaType = "java.time.Duration")
     private int transactionTimeoutMs = 60000;
@@ -366,10 +408,7 @@ public class VertxKafkaConfiguration
      * OS cache DNS name lookups, however). If set to
      * <code>resolve_canonical_bootstrap_servers_only</code>, resolve each
      * bootstrap address into a list of canonical names. After the bootstrap
-     * phase, this behaves the same as <code>use_all_dns_ips</code>. If set to
-     * <code>default</code> (deprecated), attempt to connect to the first IP
-     * address returned by the lookup, even if the lookup returns multiple IP
-     * addresses.
+     * phase, this behaves the same as <code>use_all_dns_ips</code>.
      */
     public void setClientDnsLookup(String clientDnsLookup) {
         this.clientDnsLookup = clientDnsLookup;
@@ -1067,6 +1106,233 @@ public class VertxKafkaConfiguration
     }
 
     /**
+     * The (optional) value in milliseconds for the external authentication
+     * provider connection timeout. Currently applies only to OAUTHBEARER.
+     */
+    public void setSaslLoginConnectTimeoutMs(Integer saslLoginConnectTimeoutMs) {
+        this.saslLoginConnectTimeoutMs = saslLoginConnectTimeoutMs;
+    }
+
+    public Integer getSaslLoginConnectTimeoutMs() {
+        return saslLoginConnectTimeoutMs;
+    }
+
+    /**
+     * The (optional) value in milliseconds for the external authentication
+     * provider read timeout. Currently applies only to OAUTHBEARER.
+     */
+    public void setSaslLoginReadTimeoutMs(Integer saslLoginReadTimeoutMs) {
+        this.saslLoginReadTimeoutMs = saslLoginReadTimeoutMs;
+    }
+
+    public Integer getSaslLoginReadTimeoutMs() {
+        return saslLoginReadTimeoutMs;
+    }
+
+    /**
+     * The (optional) value in milliseconds for the maximum wait between login
+     * attempts to the external authentication provider. Login uses an
+     * exponential backoff algorithm with an initial wait based on the
+     * sasl.login.retry.backoff.ms setting and will double in wait length
+     * between attempts up to a maximum wait length specified by the
+     * sasl.login.retry.backoff.max.ms setting. Currently applies only to
+     * OAUTHBEARER.
+     */
+    public void setSaslLoginRetryBackoffMaxMs(long saslLoginRetryBackoffMaxMs) {
+        this.saslLoginRetryBackoffMaxMs = saslLoginRetryBackoffMaxMs;
+    }
+
+    public long getSaslLoginRetryBackoffMaxMs() {
+        return saslLoginRetryBackoffMaxMs;
+    }
+
+    /**
+     * The (optional) value in milliseconds for the initial wait between login
+     * attempts to the external authentication provider. Login uses an
+     * exponential backoff algorithm with an initial wait based on the
+     * sasl.login.retry.backoff.ms setting and will double in wait length
+     * between attempts up to a maximum wait length specified by the
+     * sasl.login.retry.backoff.max.ms setting. Currently applies only to
+     * OAUTHBEARER.
+     */
+    public void setSaslLoginRetryBackoffMs(long saslLoginRetryBackoffMs) {
+        this.saslLoginRetryBackoffMs = saslLoginRetryBackoffMs;
+    }
+
+    public long getSaslLoginRetryBackoffMs() {
+        return saslLoginRetryBackoffMs;
+    }
+
+    /**
+     * The OAuth claim for the scope is often named "scope", but this (optional)
+     * setting can provide a different name to use for the scope included in the
+     * JWT payload's claims if the OAuth/OIDC provider uses a different name for
+     * that claim.
+     */
+    public void setSaslOauthbearerScopeClaimName(
+            String saslOauthbearerScopeClaimName) {
+        this.saslOauthbearerScopeClaimName = saslOauthbearerScopeClaimName;
+    }
+
+    public String getSaslOauthbearerScopeClaimName() {
+        return saslOauthbearerScopeClaimName;
+    }
+
+    /**
+     * The OAuth claim for the subject is often named "sub", but this (optional)
+     * setting can provide a different name to use for the subject included in
+     * the JWT payload's claims if the OAuth/OIDC provider uses a different name
+     * for that claim.
+     */
+    public void setSaslOauthbearerSubClaimName(
+            String saslOauthbearerSubClaimName) {
+        this.saslOauthbearerSubClaimName = saslOauthbearerSubClaimName;
+    }
+
+    public String getSaslOauthbearerSubClaimName() {
+        return saslOauthbearerSubClaimName;
+    }
+
+    /**
+     * The URL for the OAuth/OIDC identity provider. If the URL is
+     * HTTP(S)-based, it is the issuer's token endpoint URL to which requests
+     * will be made to login based on the configuration in sasl.jaas.config. If
+     * the URL is file-based, it specifies a file containing an access token (in
+     * JWT serialized form) issued by the OAuth/OIDC identity provider to use
+     * for authorization.
+     */
+    public void setSaslOauthbearerTokenEndpointUrl(
+            String saslOauthbearerTokenEndpointUrl) {
+        this.saslOauthbearerTokenEndpointUrl = saslOauthbearerTokenEndpointUrl;
+    }
+
+    public String getSaslOauthbearerTokenEndpointUrl() {
+        return saslOauthbearerTokenEndpointUrl;
+    }
+
+    /**
+     * The OAuth/OIDC provider URL from which the provider's <a
+     * href="https://datatracker.ietf.org/doc/html/rfc7517#section-5">JWKS (JSON
+     * Web Key Set)</a> can be retrieved. The URL can be HTTP(S)-based or
+     * file-based. If the URL is HTTP(S)-based, the JWKS data will be retrieved
+     * from the OAuth/OIDC provider via the configured URL on broker startup.
+     * All then-current keys will be cached on the broker for incoming requests.
+     * If an authentication request is received for a JWT that includes a "kid"
+     * header claim value that isn't yet in the cache, the JWKS endpoint will be
+     * queried again on demand. However, the broker polls the URL every
+     * sasl.oauthbearer.jwks.endpoint.refresh.ms milliseconds to refresh the
+     * cache with any forthcoming keys before any JWT requests that include them
+     * are received. If the URL is file-based, the broker will load the JWKS
+     * file from a configured location on startup. In the event that the JWT
+     * includes a "kid" header value that isn't in the JWKS file, the broker
+     * will reject the JWT and authentication will fail.
+     */
+    public void setSaslOauthbearerJwksEndpointUrl(
+            String saslOauthbearerJwksEndpointUrl) {
+        this.saslOauthbearerJwksEndpointUrl = saslOauthbearerJwksEndpointUrl;
+    }
+
+    public String getSaslOauthbearerJwksEndpointUrl() {
+        return saslOauthbearerJwksEndpointUrl;
+    }
+
+    /**
+     * The (optional) value in milliseconds for the broker to wait between
+     * refreshing its JWKS (JSON Web Key Set) cache that contains the keys to
+     * verify the signature of the JWT.
+     */
+    public void setSaslOauthbearerJwksEndpointRefreshMs(
+            long saslOauthbearerJwksEndpointRefreshMs) {
+        this.saslOauthbearerJwksEndpointRefreshMs = saslOauthbearerJwksEndpointRefreshMs;
+    }
+
+    public long getSaslOauthbearerJwksEndpointRefreshMs() {
+        return saslOauthbearerJwksEndpointRefreshMs;
+    }
+
+    /**
+     * The (optional) value in milliseconds for the maximum wait between
+     * attempts to retrieve the JWKS (JSON Web Key Set) from the external
+     * authentication provider. JWKS retrieval uses an exponential backoff
+     * algorithm with an initial wait based on the
+     * sasl.oauthbearer.jwks.endpoint.retry.backoff.ms setting and will double
+     * in wait length between attempts up to a maximum wait length specified by
+     * the sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms setting.
+     */
+    public void setSaslOauthbearerJwksEndpointRetryBackoffMaxMs(
+            long saslOauthbearerJwksEndpointRetryBackoffMaxMs) {
+        this.saslOauthbearerJwksEndpointRetryBackoffMaxMs = saslOauthbearerJwksEndpointRetryBackoffMaxMs;
+    }
+
+    public long getSaslOauthbearerJwksEndpointRetryBackoffMaxMs() {
+        return saslOauthbearerJwksEndpointRetryBackoffMaxMs;
+    }
+
+    /**
+     * The (optional) value in milliseconds for the initial wait between JWKS
+     * (JSON Web Key Set) retrieval attempts from the external authentication
+     * provider. JWKS retrieval uses an exponential backoff algorithm with an
+     * initial wait based on the sasl.oauthbearer.jwks.endpoint.retry.backoff.ms
+     * setting and will double in wait length between attempts up to a maximum
+     * wait length specified by the
+     * sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms setting.
+     */
+    public void setSaslOauthbearerJwksEndpointRetryBackoffMs(
+            long saslOauthbearerJwksEndpointRetryBackoffMs) {
+        this.saslOauthbearerJwksEndpointRetryBackoffMs = saslOauthbearerJwksEndpointRetryBackoffMs;
+    }
+
+    public long getSaslOauthbearerJwksEndpointRetryBackoffMs() {
+        return saslOauthbearerJwksEndpointRetryBackoffMs;
+    }
+
+    /**
+     * The (optional) value in seconds to allow for differences between the time
+     * of the OAuth/OIDC identity provider and the broker.
+     */
+    public void setSaslOauthbearerClockSkewSeconds(
+            int saslOauthbearerClockSkewSeconds) {
+        this.saslOauthbearerClockSkewSeconds = saslOauthbearerClockSkewSeconds;
+    }
+
+    public int getSaslOauthbearerClockSkewSeconds() {
+        return saslOauthbearerClockSkewSeconds;
+    }
+
+    /**
+     * The (optional) comma-delimited setting for the broker to use to verify
+     * that the JWT was issued for one of the expected audiences. The JWT will
+     * be inspected for the standard OAuth "aud" claim and if this value is set,
+     * the broker will match the value from JWT's "aud" claim  to see if there
+     * is an exact match. If there is no match, the broker will reject the JWT
+     * and authentication will fail.
+     */
+    public void setSaslOauthbearerExpectedAudience(
+            String saslOauthbearerExpectedAudience) {
+        this.saslOauthbearerExpectedAudience = saslOauthbearerExpectedAudience;
+    }
+
+    public String getSaslOauthbearerExpectedAudience() {
+        return saslOauthbearerExpectedAudience;
+    }
+
+    /**
+     * The (optional) setting for the broker to use to verify that the JWT was
+     * created by the expected issuer. The JWT will be inspected for the
+     * standard OAuth "iss" claim and if this value is set, the broker will
+     * match it exactly against what is in the JWT's "iss" claim. If there is no
+     * match, the broker will reject the JWT and authentication will fail.
+     */
+    public void setSaslOauthbearerExpectedIssuer(
+            String saslOauthbearerExpectedIssuer) {
+        this.saslOauthbearerExpectedIssuer = saslOauthbearerExpectedIssuer;
+    }
+
+    public String getSaslOauthbearerExpectedIssuer() {
+        return saslOauthbearerExpectedIssuer;
+    }
+
+    /**
      * Sets additional properties for either kafka consumer or kafka producer in
      * case they can't be set directly on the camel configurations (e.g: new
      * Kafka properties that are not reflected yet in Camel configurations), the
@@ -1178,8 +1444,8 @@ public class VertxKafkaConfiguration
      * partition ownership amongst consumer instances when group management is
      * used. Available options
      * are:<ul><li><code>org.apache.kafka.clients.consumer.RangeAssignor</code>:
-     * The default assignor, which works on a per-topic
-     * basis.</li><li><code>org.apache.kafka.clients.consumer.RoundRobinAssignor</code>: Assigns partitions to consumers in a round-robin fashion.</li><li><code>org.apache.kafka.clients.consumer.StickyAssignor</code>: Guarantees an assignment that is maximally balanced while preserving as many existing partition assignments as possible.</li><li><code>org.apache.kafka.clients.consumer.CooperativeStickyAssignor</code>: Follows the same StickyAssignor logic, but allows for cooperative rebalancing.</li></ul><p>Implementing the <code>org.apache.kafka.clients.consumer.ConsumerPartitionAssignor</code> interface allows you to plug in a custom assignment strategy.
+     * Assigns partitions on a per-topic
+     * basis.</li><li><code>org.apache.kafka.clients.consumer.RoundRobinAssignor</code>: Assigns partitions to consumers in a round-robin fashion.</li><li><code>org.apache.kafka.clients.consumer.StickyAssignor</code>: Guarantees an assignment that is maximally balanced while preserving as many existing partition assignments as possible.</li><li><code>org.apache.kafka.clients.consumer.CooperativeStickyAssignor</code>: Follows the same StickyAssignor logic, but allows for cooperative rebalancing.</li></ul><p>The default assignor is [RangeAssignor, CooperativeStickyAssignor], which will use the RangeAssignor by default, but allows upgrading to the CooperativeStickyAssignor with just a single rolling bounce that removes the RangeAssignor from the list.</p><p>Implementing the <code>org.apache.kafka.clients.consumer.ConsumerPartitionAssignor</code> interface allows you to plug in a custom assignment strategy.</p>
      */
     public void setPartitionAssignmentStrategy(
             String partitionAssignmentStrategy) {
@@ -1554,7 +1820,12 @@ public class VertxKafkaConfiguration
      * reduce throughput (a batch size of zero will disable batching entirely).
      * A very large batch size may use memory a bit more wastefully as we will
      * always allocate a buffer of the specified batch size in anticipation of
-     * additional records.
+     * additional records.<p>Note: This setting gives the upper bound of the
+     * batch size to be sent. If we have fewer than this many bytes accumulated
+     * for this partition, we will 'linger' for the <code>linger.ms</code> time
+     * waiting for more records to show up. This <code>linger.ms</code> setting
+     * defaults to 0, which means we'll immediately send out a record even the
+     * accumulated batch size is under this <code>batch.size</code> setting.
      */
     public void setBatchSize(int batchSize) {
         this.batchSize = batchSize;
@@ -1571,7 +1842,7 @@ public class VertxKafkaConfiguration
      * in some circumstances the client may want to reduce the number of
      * requests even under moderate load. This setting accomplishes this by
      * adding a small amount of artificial delay&mdash;that is, rather than
-     * immediately sending out a record the producer will wait for up to the
+     * immediately sending out a record, the producer will wait for up to the
      * given delay to allow other records to be sent so that the sends can be
      * batched together. This can be thought of as analogous to Nagle's
      * algorithm in TCP. This setting gives the upper bound on the delay for
@@ -1665,9 +1936,10 @@ public class VertxKafkaConfiguration
 
     /**
      * The maximum number of unacknowledged requests the client will send on a
-     * single connection before blocking. Note that if this setting is set to be
-     * greater than 1 and there are failed sends, there is a risk of message
-     * re-ordering due to retries (i.e., if retries are enabled).
+     * single connection before blocking. Note that if this config is set to be
+     * greater than 1 and <code>enable.idempotence</code> is set to false, there
+     * is a risk of message re-ordering after a failed send due to retries
+     * (i.e., if retries are enabled).
      */
     public void setMaxInFlightRequestsPerConnection(
             int maxInFlightRequestsPerConnection) {
@@ -1703,8 +1975,9 @@ public class VertxKafkaConfiguration
     }
 
     /**
-     * Partitioner class that implements the
-     * <code>org.apache.kafka.clients.producer.Partitioner</code> interface.
+     * A class to use to determine which partition to be send to when produce
+     * the records. Available options
+     * are:<ul><li><code>org.apache.kafka.clients.producer.internals.DefaultPartitioner</code>: The default partitioner. This strategy will try sticking to a partition until the batch is full, or <code>linger.ms</code> is up. It works with the strategy:<ul><li>If no partition is specified but a key is present, choose a partition based on a hash of the key</li><li>If no partition or key is present, choose the sticky partition that changes when the batch is full, or <code>linger.ms</code> is up.</li></ul></li><li><code>org.apache.kafka.clients.producer.RoundRobinPartitioner</code>: This partitioning strategy is that each record in a series of consecutive records will be sent to a different partition(no matter if the 'key' is provided or not), until we run out of partitions and start over again. Note: There's a known issue that will cause uneven distribution when new batch is created. Please check KAFKA-9965 for more detail.</li><li><code>org.apache.kafka.clients.producer.UniformStickyPartitioner</code>: This partitioning strategy will try sticking to a partition(no matter if the 'key' is provided or not) until the batch is full, or <code>linger.ms</code> is up.</li></ul><p>Implementing the <code>org.apache.kafka.clients.producer.Partitioner</code> interface allows you to plug in a custom partitioner.
      */
     public void setPartitionerClass(String partitionerClass) {
         this.partitionerClass = partitionerClass;
@@ -1720,10 +1993,11 @@ public class VertxKafkaConfiguration
      * to broker failures, etc., may write duplicates of the retried message in
      * the stream. Note that enabling idempotence requires
      * <code>max.in.flight.requests.per.connection</code> to be less than or
-     * equal to 5, <code>retries</code> to be greater than 0 and
-     * <code>acks</code> must be 'all'. If these values are not explicitly set
-     * by the user, suitable values will be chosen. If incompatible values are
-     * set, a <code>ConfigException</code> will be thrown.
+     * equal to 5 (with message ordering preserved for any allowable value),
+     * <code>retries</code> to be greater than 0, and <code>acks</code> must be
+     * 'all'. If these values are not explicitly set by the user, suitable
+     * values will be chosen. If incompatible values are set, a
+     * <code>ConfigException</code> will be thrown.
      */
     public void setEnableIdempotence(boolean enableIdempotence) {
         this.enableIdempotence = enableIdempotence;
@@ -1827,6 +2101,20 @@ public class VertxKafkaConfiguration
         addPropertyIfNotNull(props, "sasl.client.callback.handler.class", saslClientCallbackHandlerClass);
         addPropertyIfNotNull(props, "sasl.login.callback.handler.class", saslLoginCallbackHandlerClass);
         addPropertyIfNotNull(props, "sasl.login.class", saslLoginClass);
+        addPropertyIfNotNull(props, "sasl.login.connect.timeout.ms", saslLoginConnectTimeoutMs);
+        addPropertyIfNotNull(props, "sasl.login.read.timeout.ms", saslLoginReadTimeoutMs);
+        addPropertyIfNotNull(props, "sasl.login.retry.backoff.max.ms", saslLoginRetryBackoffMaxMs);
+        addPropertyIfNotNull(props, "sasl.login.retry.backoff.ms", saslLoginRetryBackoffMs);
+        addPropertyIfNotNull(props, "sasl.oauthbearer.scope.claim.name", saslOauthbearerScopeClaimName);
+        addPropertyIfNotNull(props, "sasl.oauthbearer.sub.claim.name", saslOauthbearerSubClaimName);
+        addPropertyIfNotNull(props, "sasl.oauthbearer.token.endpoint.url", saslOauthbearerTokenEndpointUrl);
+        addPropertyIfNotNull(props, "sasl.oauthbearer.jwks.endpoint.url", saslOauthbearerJwksEndpointUrl);
+        addPropertyIfNotNull(props, "sasl.oauthbearer.jwks.endpoint.refresh.ms", saslOauthbearerJwksEndpointRefreshMs);
+        addPropertyIfNotNull(props, "sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms", saslOauthbearerJwksEndpointRetryBackoffMaxMs);
+        addPropertyIfNotNull(props, "sasl.oauthbearer.jwks.endpoint.retry.backoff.ms", saslOauthbearerJwksEndpointRetryBackoffMs);
+        addPropertyIfNotNull(props, "sasl.oauthbearer.clock.skew.seconds", saslOauthbearerClockSkewSeconds);
+        addPropertyIfNotNull(props, "sasl.oauthbearer.expected.audience", saslOauthbearerExpectedAudience);
+        addPropertyIfNotNull(props, "sasl.oauthbearer.expected.issuer", saslOauthbearerExpectedIssuer);
         addPropertyIfNotNull(props, "seek.to.offset", seekToOffset);
         addPropertyIfNotNull(props, "seek.to.position", seekToPosition);
         addPropertyIfNotNull(props, "group.id", groupId);
@@ -1912,6 +2200,20 @@ public class VertxKafkaConfiguration
         addPropertyIfNotNull(props, "sasl.client.callback.handler.class", saslClientCallbackHandlerClass);
         addPropertyIfNotNull(props, "sasl.login.callback.handler.class", saslLoginCallbackHandlerClass);
         addPropertyIfNotNull(props, "sasl.login.class", saslLoginClass);
+        addPropertyIfNotNull(props, "sasl.login.connect.timeout.ms", saslLoginConnectTimeoutMs);
+        addPropertyIfNotNull(props, "sasl.login.read.timeout.ms", saslLoginReadTimeoutMs);
+        addPropertyIfNotNull(props, "sasl.login.retry.backoff.max.ms", saslLoginRetryBackoffMaxMs);
+        addPropertyIfNotNull(props, "sasl.login.retry.backoff.ms", saslLoginRetryBackoffMs);
+        addPropertyIfNotNull(props, "sasl.oauthbearer.scope.claim.name", saslOauthbearerScopeClaimName);
+        addPropertyIfNotNull(props, "sasl.oauthbearer.sub.claim.name", saslOauthbearerSubClaimName);
+        addPropertyIfNotNull(props, "sasl.oauthbearer.token.endpoint.url", saslOauthbearerTokenEndpointUrl);
+        addPropertyIfNotNull(props, "sasl.oauthbearer.jwks.endpoint.url", saslOauthbearerJwksEndpointUrl);
+        addPropertyIfNotNull(props, "sasl.oauthbearer.jwks.endpoint.refresh.ms", saslOauthbearerJwksEndpointRefreshMs);
+        addPropertyIfNotNull(props, "sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms", saslOauthbearerJwksEndpointRetryBackoffMaxMs);
+        addPropertyIfNotNull(props, "sasl.oauthbearer.jwks.endpoint.retry.backoff.ms", saslOauthbearerJwksEndpointRetryBackoffMs);
+        addPropertyIfNotNull(props, "sasl.oauthbearer.clock.skew.seconds", saslOauthbearerClockSkewSeconds);
+        addPropertyIfNotNull(props, "sasl.oauthbearer.expected.audience", saslOauthbearerExpectedAudience);
+        addPropertyIfNotNull(props, "sasl.oauthbearer.expected.issuer", saslOauthbearerExpectedIssuer);
         addPropertyIfNotNull(props, "buffer.memory", bufferMemory);
         addPropertyIfNotNull(props, "retries", retries);
         addPropertyIfNotNull(props, "acks", acks);

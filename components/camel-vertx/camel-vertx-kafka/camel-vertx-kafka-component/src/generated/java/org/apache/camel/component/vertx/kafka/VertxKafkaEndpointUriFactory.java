@@ -21,12 +21,14 @@ public class VertxKafkaEndpointUriFactory extends org.apache.camel.support.compo
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(103);
+        Set<String> props = new HashSet<>(117);
         props.add("allowManualCommit");
         props.add("receiveBufferBytes");
         props.add("saslLoginRefreshWindowFactor");
         props.add("socketConnectionSetupTimeoutMs");
         props.add("reconnectBackoffMaxMs");
+        props.add("saslOauthbearerClockSkewSeconds");
+        props.add("saslOauthbearerJwksEndpointUrl");
         props.add("valueDeserializer");
         props.add("metricReporters");
         props.add("sslTruststoreType");
@@ -40,6 +42,7 @@ public class VertxKafkaEndpointUriFactory extends org.apache.camel.support.compo
         props.add("securityProviders");
         props.add("retries");
         props.add("enableAutoCommit");
+        props.add("saslOauthbearerExpectedAudience");
         props.add("isolationLevel");
         props.add("maxPollRecords");
         props.add("additionalProperties");
@@ -58,7 +61,9 @@ public class VertxKafkaEndpointUriFactory extends org.apache.camel.support.compo
         props.add("saslLoginCallbackHandlerClass");
         props.add("headerFilterStrategy");
         props.add("sslTruststorePassword");
+        props.add("saslOauthbearerJwksEndpointRetryBackoffMs");
         props.add("sessionTimeoutMs");
+        props.add("saslOauthbearerJwksEndpointRetryBackoffMaxMs");
         props.add("clientDnsLookup");
         props.add("sslTruststoreLocation");
         props.add("connectionsMaxIdleMs");
@@ -73,6 +78,7 @@ public class VertxKafkaEndpointUriFactory extends org.apache.camel.support.compo
         props.add("seekToPosition");
         props.add("saslKerberosMinTimeBeforeRelogin");
         props.add("sslKeystoreCertificateChain");
+        props.add("saslOauthbearerJwksEndpointRefreshMs");
         props.add("maxPollIntervalMs");
         props.add("reconnectBackoffMs");
         props.add("groupId");
@@ -81,9 +87,12 @@ public class VertxKafkaEndpointUriFactory extends org.apache.camel.support.compo
         props.add("metricsRecordingLevel");
         props.add("compressionType");
         props.add("saslKerberosServiceName");
+        props.add("saslLoginConnectTimeoutMs");
         props.add("bridgeErrorHandler");
         props.add("saslLoginRefreshBufferSeconds");
         props.add("saslMechanism");
+        props.add("saslOauthbearerTokenEndpointUrl");
+        props.add("saslLoginRetryBackoffMs");
         props.add("deliveryTimeoutMs");
         props.add("lazyStartProducer");
         props.add("sslKeystorePassword");
@@ -109,12 +118,16 @@ public class VertxKafkaEndpointUriFactory extends org.apache.camel.support.compo
         props.add("autoCommitIntervalMs");
         props.add("saslLoginRefreshWindowJitter");
         props.add("bootstrapServers");
+        props.add("saslOauthbearerSubClaimName");
         props.add("sslEnabledProtocols");
         props.add("sslKeystoreLocation");
         props.add("defaultApiTimeoutMs");
         props.add("metricsNumSamples");
+        props.add("saslOauthbearerExpectedIssuer");
         props.add("exchangePattern");
         props.add("valueSerializer");
+        props.add("saslLoginRetryBackoffMaxMs");
+        props.add("saslOauthbearerScopeClaimName");
         props.add("autoOffsetReset");
         props.add("bufferMemory");
         props.add("requestTimeoutMs");
@@ -122,6 +135,7 @@ public class VertxKafkaEndpointUriFactory extends org.apache.camel.support.compo
         props.add("clientRack");
         props.add("transactionTimeoutMs");
         props.add("fetchMaxBytes");
+        props.add("saslLoginReadTimeoutMs");
         props.add("batchSize");
         props.add("sslSecureRandomImplementation");
         props.add("checkCrcs");

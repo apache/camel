@@ -107,9 +107,7 @@ public interface VertxKafkaComponentBuilderFactory {
          * lookups, however). If set to
          * resolve_canonical_bootstrap_servers_only, resolve each bootstrap
          * address into a list of canonical names. After the bootstrap phase,
-         * this behaves the same as use_all_dns_ips. If set to default
-         * (deprecated), attempt to connect to the first IP address returned by
-         * the lookup, even if the lookup returns multiple IP addresses.
+         * this behaves the same as use_all_dns_ips.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -898,8 +896,8 @@ public interface VertxKafkaComponentBuilderFactory {
          * supported partition assignment strategies that the client will use to
          * distribute partition ownership amongst consumer instances when group
          * management is used. Available options
-         * are:org.apache.kafka.clients.consumer.RangeAssignor: The default
-         * assignor, which works on a per-topic
+         * are:org.apache.kafka.clients.consumer.RangeAssignor: Assigns
+         * partitions on a per-topic
          * basis.org.apache.kafka.clients.consumer.RoundRobinAssignor: Assigns
          * partitions to consumers in a round-robin
          * fashion.org.apache.kafka.clients.consumer.StickyAssignor: Guarantees
@@ -907,13 +905,18 @@ public interface VertxKafkaComponentBuilderFactory {
          * existing partition assignments as
          * possible.org.apache.kafka.clients.consumer.CooperativeStickyAssignor:
          * Follows the same StickyAssignor logic, but allows for cooperative
-         * rebalancing.Implementing the
+         * rebalancing.The default assignor is RangeAssignor,
+         * CooperativeStickyAssignor, which will use the RangeAssignor by
+         * default, but allows upgrading to the CooperativeStickyAssignor with
+         * just a single rolling bounce that removes the RangeAssignor from the
+         * list.Implementing the
          * org.apache.kafka.clients.consumer.ConsumerPartitionAssignor interface
          * allows you to plug in a custom assignment strategy.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Default: org.apache.kafka.clients.consumer.RangeAssignor
+         * Default:
+         * org.apache.kafka.clients.consumer.RangeAssignor,org.apache.kafka.clients.consumer.CooperativeStickyAssignor
          * Group: consumer
          * 
          * @param partitionAssignmentStrategy the value to set
@@ -968,7 +971,7 @@ public interface VertxKafkaComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
-         * Default: 10s
+         * Default: 45s
          * Group: consumer
          * 
          * @param sessionTimeoutMs the value to set
@@ -1040,7 +1043,7 @@ public interface VertxKafkaComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Default: 1
+         * Default: all
          * Group: producer
          * 
          * @param acks the value to set
@@ -1061,7 +1064,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * less common and may reduce throughput (a batch size of zero will
          * disable batching entirely). A very large batch size may use memory a
          * bit more wastefully as we will always allocate a buffer of the
-         * specified batch size in anticipation of additional records.
+         * specified batch size in anticipation of additional records.Note: This
+         * setting gives the upper bound of the batch size to be sent. If we
+         * have fewer than this many bytes accumulated for this partition, we
+         * will 'linger' for the linger.ms time waiting for more records to show
+         * up. This linger.ms setting defaults to 0, which means we'll
+         * immediately send out a record even the accumulated batch size is
+         * under this batch.size setting.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -1148,14 +1157,15 @@ public interface VertxKafkaComponentBuilderFactory {
          * each message is written in the stream. If 'false', producer retries
          * due to broker failures, etc., may write duplicates of the retried
          * message in the stream. Note that enabling idempotence requires
-         * max.in.flight.requests.per.connection to be less than or equal to 5,
-         * retries to be greater than 0 and acks must be 'all'. If these values
-         * are not explicitly set by the user, suitable values will be chosen.
-         * If incompatible values are set, a ConfigException will be thrown.
+         * max.in.flight.requests.per.connection to be less than or equal to 5
+         * (with message ordering preserved for any allowable value), retries to
+         * be greater than 0, and acks must be 'all'. If these values are not
+         * explicitly set by the user, suitable values will be chosen. If
+         * incompatible values are set, a ConfigException will be thrown.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: producer
          * 
          * @param enableIdempotence the value to set
@@ -1215,7 +1225,7 @@ public interface VertxKafkaComponentBuilderFactory {
          * the number of requests even under moderate load. This setting
          * accomplishes this by adding a small amount of artificial
          * delay&amp;amp;mdash;that is, rather than immediately sending out a
-         * record the producer will wait for up to the given delay to allow
+         * record, the producer will wait for up to the given delay to allow
          * other records to be sent so that the sends can be batched together.
          * This can be thought of as analogous to Nagle's algorithm in TCP. This
          * setting gives the upper bound on the delay for batching: once we get
@@ -1266,9 +1276,10 @@ public interface VertxKafkaComponentBuilderFactory {
         }
         /**
          * The maximum number of unacknowledged requests the client will send on
-         * a single connection before blocking. Note that if this setting is set
-         * to be greater than 1 and there are failed sends, there is a risk of
-         * message re-ordering due to retries (i.e., if retries are enabled).
+         * a single connection before blocking. Note that if this config is set
+         * to be greater than 1 and enable.idempotence is set to false, there is
+         * a risk of message re-ordering after a failed send due to retries
+         * (i.e., if retries are enabled).
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -1323,8 +1334,28 @@ public interface VertxKafkaComponentBuilderFactory {
             return this;
         }
         /**
-         * Partitioner class that implements the
-         * org.apache.kafka.clients.producer.Partitioner interface.
+         * A class to use to determine which partition to be send to when
+         * produce the records. Available options
+         * are:org.apache.kafka.clients.producer.internals.DefaultPartitioner:
+         * The default partitioner. This strategy will try sticking to a
+         * partition until the batch is full, or linger.ms is up. It works with
+         * the strategy:If no partition is specified but a key is present,
+         * choose a partition based on a hash of the keyIf no partition or key
+         * is present, choose the sticky partition that changes when the batch
+         * is full, or linger.ms is
+         * up.org.apache.kafka.clients.producer.RoundRobinPartitioner: This
+         * partitioning strategy is that each record in a series of consecutive
+         * records will be sent to a different partition(no matter if the 'key'
+         * is provided or not), until we run out of partitions and start over
+         * again. Note: There's a known issue that will cause uneven
+         * distribution when new batch is created. Please check KAFKA-9965 for
+         * more
+         * detail.org.apache.kafka.clients.producer.UniformStickyPartitioner:
+         * This partitioning strategy will try sticking to a partition(no matter
+         * if the 'key' is provided or not) until the batch is full, or
+         * linger.ms is up.Implementing the
+         * org.apache.kafka.clients.producer.Partitioner interface allows you to
+         * plug in a custom partitioner.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1659,6 +1690,38 @@ public interface VertxKafkaComponentBuilderFactory {
             return this;
         }
         /**
+         * The (optional) value in milliseconds for the external authentication
+         * provider connection timeout. Currently applies only to OAUTHBEARER.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param saslLoginConnectTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default VertxKafkaComponentBuilder saslLoginConnectTimeoutMs(
+                java.lang.Integer saslLoginConnectTimeoutMs) {
+            doSetProperty("saslLoginConnectTimeoutMs", saslLoginConnectTimeoutMs);
+            return this;
+        }
+        /**
+         * The (optional) value in milliseconds for the external authentication
+         * provider read timeout. Currently applies only to OAUTHBEARER.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param saslLoginReadTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default VertxKafkaComponentBuilder saslLoginReadTimeoutMs(
+                java.lang.Integer saslLoginReadTimeoutMs) {
+            doSetProperty("saslLoginReadTimeoutMs", saslLoginReadTimeoutMs);
+            return this;
+        }
+        /**
          * The amount of buffer time before credential expiration to maintain
          * when refreshing a credential, in seconds. If a refresh would
          * otherwise occur closer to expiration than the number of buffer
@@ -1744,6 +1807,50 @@ public interface VertxKafkaComponentBuilderFactory {
             return this;
         }
         /**
+         * The (optional) value in milliseconds for the maximum wait between
+         * login attempts to the external authentication provider. Login uses an
+         * exponential backoff algorithm with an initial wait based on the
+         * sasl.login.retry.backoff.ms setting and will double in wait length
+         * between attempts up to a maximum wait length specified by the
+         * sasl.login.retry.backoff.max.ms setting. Currently applies only to
+         * OAUTHBEARER.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 10s
+         * Group: security
+         * 
+         * @param saslLoginRetryBackoffMaxMs the value to set
+         * @return the dsl builder
+         */
+        default VertxKafkaComponentBuilder saslLoginRetryBackoffMaxMs(
+                long saslLoginRetryBackoffMaxMs) {
+            doSetProperty("saslLoginRetryBackoffMaxMs", saslLoginRetryBackoffMaxMs);
+            return this;
+        }
+        /**
+         * The (optional) value in milliseconds for the initial wait between
+         * login attempts to the external authentication provider. Login uses an
+         * exponential backoff algorithm with an initial wait based on the
+         * sasl.login.retry.backoff.ms setting and will double in wait length
+         * between attempts up to a maximum wait length specified by the
+         * sasl.login.retry.backoff.max.ms setting. Currently applies only to
+         * OAUTHBEARER.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 100ms
+         * Group: security
+         * 
+         * @param saslLoginRetryBackoffMs the value to set
+         * @return the dsl builder
+         */
+        default VertxKafkaComponentBuilder saslLoginRetryBackoffMs(
+                long saslLoginRetryBackoffMs) {
+            doSetProperty("saslLoginRetryBackoffMs", saslLoginRetryBackoffMs);
+            return this;
+        }
+        /**
          * SASL mechanism used for client connections. This may be any mechanism
          * for which a security provider is available. GSSAPI is the default
          * mechanism.
@@ -1759,6 +1866,214 @@ public interface VertxKafkaComponentBuilderFactory {
         default VertxKafkaComponentBuilder saslMechanism(
                 java.lang.String saslMechanism) {
             doSetProperty("saslMechanism", saslMechanism);
+            return this;
+        }
+        /**
+         * The (optional) value in seconds to allow for differences between the
+         * time of the OAuth/OIDC identity provider and the broker.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 30
+         * Group: security
+         * 
+         * @param saslOauthbearerClockSkewSeconds the value to set
+         * @return the dsl builder
+         */
+        default VertxKafkaComponentBuilder saslOauthbearerClockSkewSeconds(
+                int saslOauthbearerClockSkewSeconds) {
+            doSetProperty("saslOauthbearerClockSkewSeconds", saslOauthbearerClockSkewSeconds);
+            return this;
+        }
+        /**
+         * The (optional) comma-delimited setting for the broker to use to
+         * verify that the JWT was issued for one of the expected audiences. The
+         * JWT will be inspected for the standard OAuth aud claim and if this
+         * value is set, the broker will match the value from JWT's aud claim to
+         * see if there is an exact match. If there is no match, the broker will
+         * reject the JWT and authentication will fail.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param saslOauthbearerExpectedAudience the value to set
+         * @return the dsl builder
+         */
+        default VertxKafkaComponentBuilder saslOauthbearerExpectedAudience(
+                java.lang.String saslOauthbearerExpectedAudience) {
+            doSetProperty("saslOauthbearerExpectedAudience", saslOauthbearerExpectedAudience);
+            return this;
+        }
+        /**
+         * The (optional) setting for the broker to use to verify that the JWT
+         * was created by the expected issuer. The JWT will be inspected for the
+         * standard OAuth iss claim and if this value is set, the broker will
+         * match it exactly against what is in the JWT's iss claim. If there is
+         * no match, the broker will reject the JWT and authentication will
+         * fail.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param saslOauthbearerExpectedIssuer the value to set
+         * @return the dsl builder
+         */
+        default VertxKafkaComponentBuilder saslOauthbearerExpectedIssuer(
+                java.lang.String saslOauthbearerExpectedIssuer) {
+            doSetProperty("saslOauthbearerExpectedIssuer", saslOauthbearerExpectedIssuer);
+            return this;
+        }
+        /**
+         * The (optional) value in milliseconds for the broker to wait between
+         * refreshing its JWKS (JSON Web Key Set) cache that contains the keys
+         * to verify the signature of the JWT.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 1h
+         * Group: security
+         * 
+         * @param saslOauthbearerJwksEndpointRefreshMs the value to set
+         * @return the dsl builder
+         */
+        default VertxKafkaComponentBuilder saslOauthbearerJwksEndpointRefreshMs(
+                long saslOauthbearerJwksEndpointRefreshMs) {
+            doSetProperty("saslOauthbearerJwksEndpointRefreshMs", saslOauthbearerJwksEndpointRefreshMs);
+            return this;
+        }
+        /**
+         * The (optional) value in milliseconds for the maximum wait between
+         * attempts to retrieve the JWKS (JSON Web Key Set) from the external
+         * authentication provider. JWKS retrieval uses an exponential backoff
+         * algorithm with an initial wait based on the
+         * sasl.oauthbearer.jwks.endpoint.retry.backoff.ms setting and will
+         * double in wait length between attempts up to a maximum wait length
+         * specified by the sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms
+         * setting.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 10s
+         * Group: security
+         * 
+         * @param saslOauthbearerJwksEndpointRetryBackoffMaxMs the value to set
+         * @return the dsl builder
+         */
+        default VertxKafkaComponentBuilder saslOauthbearerJwksEndpointRetryBackoffMaxMs(
+                long saslOauthbearerJwksEndpointRetryBackoffMaxMs) {
+            doSetProperty("saslOauthbearerJwksEndpointRetryBackoffMaxMs", saslOauthbearerJwksEndpointRetryBackoffMaxMs);
+            return this;
+        }
+        /**
+         * The (optional) value in milliseconds for the initial wait between
+         * JWKS (JSON Web Key Set) retrieval attempts from the external
+         * authentication provider. JWKS retrieval uses an exponential backoff
+         * algorithm with an initial wait based on the
+         * sasl.oauthbearer.jwks.endpoint.retry.backoff.ms setting and will
+         * double in wait length between attempts up to a maximum wait length
+         * specified by the sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms
+         * setting.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 100ms
+         * Group: security
+         * 
+         * @param saslOauthbearerJwksEndpointRetryBackoffMs the value to set
+         * @return the dsl builder
+         */
+        default VertxKafkaComponentBuilder saslOauthbearerJwksEndpointRetryBackoffMs(
+                long saslOauthbearerJwksEndpointRetryBackoffMs) {
+            doSetProperty("saslOauthbearerJwksEndpointRetryBackoffMs", saslOauthbearerJwksEndpointRetryBackoffMs);
+            return this;
+        }
+        /**
+         * The OAuth/OIDC provider URL from which the provider's JWKS (JSON Web
+         * Key Set) can be retrieved. The URL can be HTTP(S)-based or
+         * file-based. If the URL is HTTP(S)-based, the JWKS data will be
+         * retrieved from the OAuth/OIDC provider via the configured URL on
+         * broker startup. All then-current keys will be cached on the broker
+         * for incoming requests. If an authentication request is received for a
+         * JWT that includes a kid header claim value that isn't yet in the
+         * cache, the JWKS endpoint will be queried again on demand. However,
+         * the broker polls the URL every
+         * sasl.oauthbearer.jwks.endpoint.refresh.ms milliseconds to refresh the
+         * cache with any forthcoming keys before any JWT requests that include
+         * them are received. If the URL is file-based, the broker will load the
+         * JWKS file from a configured location on startup. In the event that
+         * the JWT includes a kid header value that isn't in the JWKS file, the
+         * broker will reject the JWT and authentication will fail.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param saslOauthbearerJwksEndpointUrl the value to set
+         * @return the dsl builder
+         */
+        default VertxKafkaComponentBuilder saslOauthbearerJwksEndpointUrl(
+                java.lang.String saslOauthbearerJwksEndpointUrl) {
+            doSetProperty("saslOauthbearerJwksEndpointUrl", saslOauthbearerJwksEndpointUrl);
+            return this;
+        }
+        /**
+         * The OAuth claim for the scope is often named scope, but this
+         * (optional) setting can provide a different name to use for the scope
+         * included in the JWT payload's claims if the OAuth/OIDC provider uses
+         * a different name for that claim.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: scope
+         * Group: security
+         * 
+         * @param saslOauthbearerScopeClaimName the value to set
+         * @return the dsl builder
+         */
+        default VertxKafkaComponentBuilder saslOauthbearerScopeClaimName(
+                java.lang.String saslOauthbearerScopeClaimName) {
+            doSetProperty("saslOauthbearerScopeClaimName", saslOauthbearerScopeClaimName);
+            return this;
+        }
+        /**
+         * The OAuth claim for the subject is often named sub, but this
+         * (optional) setting can provide a different name to use for the
+         * subject included in the JWT payload's claims if the OAuth/OIDC
+         * provider uses a different name for that claim.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: sub
+         * Group: security
+         * 
+         * @param saslOauthbearerSubClaimName the value to set
+         * @return the dsl builder
+         */
+        default VertxKafkaComponentBuilder saslOauthbearerSubClaimName(
+                java.lang.String saslOauthbearerSubClaimName) {
+            doSetProperty("saslOauthbearerSubClaimName", saslOauthbearerSubClaimName);
+            return this;
+        }
+        /**
+         * The URL for the OAuth/OIDC identity provider. If the URL is
+         * HTTP(S)-based, it is the issuer's token endpoint URL to which
+         * requests will be made to login based on the configuration in
+         * sasl.jaas.config. If the URL is file-based, it specifies a file
+         * containing an access token (in JWT serialized form) issued by the
+         * OAuth/OIDC identity provider to use for authorization.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param saslOauthbearerTokenEndpointUrl the value to set
+         * @return the dsl builder
+         */
+        default VertxKafkaComponentBuilder saslOauthbearerTokenEndpointUrl(
+                java.lang.String saslOauthbearerTokenEndpointUrl) {
+            doSetProperty("saslOauthbearerTokenEndpointUrl", saslOauthbearerTokenEndpointUrl);
             return this;
         }
         /**
@@ -2237,11 +2552,25 @@ public interface VertxKafkaComponentBuilderFactory {
             case "saslKerberosTicketRenewWindowFactor": getOrCreateConfiguration((VertxKafkaComponent) component).setSaslKerberosTicketRenewWindowFactor((double) value); return true;
             case "saslLoginCallbackHandlerClass": getOrCreateConfiguration((VertxKafkaComponent) component).setSaslLoginCallbackHandlerClass((java.lang.String) value); return true;
             case "saslLoginClass": getOrCreateConfiguration((VertxKafkaComponent) component).setSaslLoginClass((java.lang.String) value); return true;
+            case "saslLoginConnectTimeoutMs": getOrCreateConfiguration((VertxKafkaComponent) component).setSaslLoginConnectTimeoutMs((java.lang.Integer) value); return true;
+            case "saslLoginReadTimeoutMs": getOrCreateConfiguration((VertxKafkaComponent) component).setSaslLoginReadTimeoutMs((java.lang.Integer) value); return true;
             case "saslLoginRefreshBufferSeconds": getOrCreateConfiguration((VertxKafkaComponent) component).setSaslLoginRefreshBufferSeconds((short) value); return true;
             case "saslLoginRefreshMinPeriodSeconds": getOrCreateConfiguration((VertxKafkaComponent) component).setSaslLoginRefreshMinPeriodSeconds((short) value); return true;
             case "saslLoginRefreshWindowFactor": getOrCreateConfiguration((VertxKafkaComponent) component).setSaslLoginRefreshWindowFactor((double) value); return true;
             case "saslLoginRefreshWindowJitter": getOrCreateConfiguration((VertxKafkaComponent) component).setSaslLoginRefreshWindowJitter((double) value); return true;
+            case "saslLoginRetryBackoffMaxMs": getOrCreateConfiguration((VertxKafkaComponent) component).setSaslLoginRetryBackoffMaxMs((long) value); return true;
+            case "saslLoginRetryBackoffMs": getOrCreateConfiguration((VertxKafkaComponent) component).setSaslLoginRetryBackoffMs((long) value); return true;
             case "saslMechanism": getOrCreateConfiguration((VertxKafkaComponent) component).setSaslMechanism((java.lang.String) value); return true;
+            case "saslOauthbearerClockSkewSeconds": getOrCreateConfiguration((VertxKafkaComponent) component).setSaslOauthbearerClockSkewSeconds((int) value); return true;
+            case "saslOauthbearerExpectedAudience": getOrCreateConfiguration((VertxKafkaComponent) component).setSaslOauthbearerExpectedAudience((java.lang.String) value); return true;
+            case "saslOauthbearerExpectedIssuer": getOrCreateConfiguration((VertxKafkaComponent) component).setSaslOauthbearerExpectedIssuer((java.lang.String) value); return true;
+            case "saslOauthbearerJwksEndpointRefreshMs": getOrCreateConfiguration((VertxKafkaComponent) component).setSaslOauthbearerJwksEndpointRefreshMs((long) value); return true;
+            case "saslOauthbearerJwksEndpointRetryBackoffMaxMs": getOrCreateConfiguration((VertxKafkaComponent) component).setSaslOauthbearerJwksEndpointRetryBackoffMaxMs((long) value); return true;
+            case "saslOauthbearerJwksEndpointRetryBackoffMs": getOrCreateConfiguration((VertxKafkaComponent) component).setSaslOauthbearerJwksEndpointRetryBackoffMs((long) value); return true;
+            case "saslOauthbearerJwksEndpointUrl": getOrCreateConfiguration((VertxKafkaComponent) component).setSaslOauthbearerJwksEndpointUrl((java.lang.String) value); return true;
+            case "saslOauthbearerScopeClaimName": getOrCreateConfiguration((VertxKafkaComponent) component).setSaslOauthbearerScopeClaimName((java.lang.String) value); return true;
+            case "saslOauthbearerSubClaimName": getOrCreateConfiguration((VertxKafkaComponent) component).setSaslOauthbearerSubClaimName((java.lang.String) value); return true;
+            case "saslOauthbearerTokenEndpointUrl": getOrCreateConfiguration((VertxKafkaComponent) component).setSaslOauthbearerTokenEndpointUrl((java.lang.String) value); return true;
             case "securityProtocol": getOrCreateConfiguration((VertxKafkaComponent) component).setSecurityProtocol((java.lang.String) value); return true;
             case "securityProviders": getOrCreateConfiguration((VertxKafkaComponent) component).setSecurityProviders((java.lang.String) value); return true;
             case "sslCipherSuites": getOrCreateConfiguration((VertxKafkaComponent) component).setSslCipherSuites((java.lang.String) value); return true;
