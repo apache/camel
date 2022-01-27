@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.dynamicrouter;
 
+import java.util.regex.Pattern;
+
 /**
  * Contains constants that are used within this component.
  */
@@ -27,7 +29,7 @@ public abstract class DynamicRouterConstants {
     public static final String FIRST_VERSION = "3.15.0";
 
     /**
-     * The component name/scheme for the {@link DynamicRouterComponent}.
+     * The component name/scheme for the {@link DynamicRouterEndpoint}.
      */
     public static final String COMPONENT_SCHEME = "dynamic-router";
 
@@ -47,7 +49,64 @@ public abstract class DynamicRouterConstants {
     public static final String TITLE = "Dynamic Router";
 
     /**
+     * The mode for sending an exchange to recipients: send only to the first match.
+     */
+    public static final String MODE_FIRST_MATCH = "firstMatch";
+
+    /**
+     * The mode for sending an exchange to recipients: send to all matching.
+     */
+    public static final String MODE_ALL_MATCH = "allMatch";
+
+    /**
      * The syntax, for the auto-generated documentation.
      */
     public static final String SYNTAX = COMPONENT_SCHEME + ":channel";
+
+    /**
+     * Name of the control action parameter.
+     */
+    public static final String CONTROL_ACTION_PARAM = "controlAction";
+
+    /**
+     * Name of the channel parameter.
+     */
+    public static final String SUBSCRIPTION_CHANNEL_PARAM = "subscribeChannel";
+
+    /**
+     * The alternate control-channel syntax.
+     */
+    public static final String CONTROL_SYNTAX
+            = SYNTAX + "/" + CONTROL_ACTION_PARAM + "/" + SUBSCRIPTION_CHANNEL_PARAM;
+
+    /**
+     * Subscribe control channel action.
+     */
+    public static final String CONTROL_ACTION_SUBSCRIBE = "subscribe";
+
+    /**
+     * Unsubscribe control channel action.
+     */
+    public static final String CONTROL_ACTION_UNSUBSCRIBE = "unsubscribe";
+
+    /**
+     * The name for the regex capture group that captures the channel name.
+     */
+    public static final String CHANNEL_GROUP = "channel";
+
+    /**
+     * The name for the regex capture group that captures the control channel action.
+     */
+    public static final String ACTION_GROUP = "action";
+
+    /**
+     * The name for the regex capture group that captures the channel name for the subscription.
+     */
+    public static final String SUBSCRIBE_GROUP = "subscribe";
+
+    /**
+     * Regular expression to parse URI path parameters.
+     */
+    public static final Pattern PATH_PARAMS_PATTERN = Pattern.compile(
+            String.format("(?<%s>[^/]+)(/(?<%s>[^/]+)/(?<%s>[^/]+))?", CHANNEL_GROUP, ACTION_GROUP, SUBSCRIBE_GROUP));
 }

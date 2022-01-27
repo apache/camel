@@ -2121,10 +2121,11 @@
     "scheme": "dynamic-router",
     "extendsScheme": "",
     "syntax": "dynamic-router:channel",
+    "alternativeSyntax": "dynamic-router:channel\/controlAction\/subscribeChannel",
     "async": false,
     "api": false,
     "consumerOnly": false,
-    "producerOnly": false,
+    "producerOnly": true,
     "lenientProperties": false
   },
   "EhcacheComponentBuilderFactory": {

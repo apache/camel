@@ -143,6 +143,7 @@
                         <id>generate-spi</id>
                         <goals>
                             <goal>generate-spi</goal>
+                            <goal>generate-others-list</goal>
                         </goals>
                     </execution>
                 </executions>

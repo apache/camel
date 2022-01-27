@@ -4321,6 +4321,13 @@ public class StaticEndpointBuilders {
      * Path parameter: channel (required)
      * Channel of the Dynamic Router
      * 
+     * Path parameter: controlAction
+     * Control channel action: subscribe or unsubscribe
+     * There are 2 enums and the value can be one of: subscribe, unsubscribe
+     * 
+     * Path parameter: subscribeChannel
+     * The channel to subscribe to
+     * 
      * @param path channel
      * @return the dsl builder
      */
@@ -4341,6 +4348,13 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: channel (required)
      * Channel of the Dynamic Router
+     * 
+     * Path parameter: controlAction
+     * Control channel action: subscribe or unsubscribe
+     * There are 2 enums and the value can be one of: subscribe, unsubscribe
+     * 
+     * Path parameter: subscribeChannel
+     * The channel to subscribe to
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
