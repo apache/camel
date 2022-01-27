@@ -81,6 +81,22 @@ public interface Aws2SesComponentBuilderFactory {
             return this;
         }
         /**
+         * Set the configuration set to send with every request. Override it
+         * with 'CamelAwsSesConfigurationSet' header.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param configurationSet the value to set
+         * @return the dsl builder
+         */
+        default Aws2SesComponentBuilder configurationSet(
+                java.lang.String configurationSet) {
+            doSetProperty("configurationSet", configurationSet);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -370,6 +386,7 @@ public interface Aws2SesComponentBuilderFactory {
             switch (name) {
             case "amazonSESClient": getOrCreateConfiguration((Ses2Component) component).setAmazonSESClient((software.amazon.awssdk.services.ses.SesClient) value); return true;
             case "configuration": ((Ses2Component) component).setConfiguration((org.apache.camel.component.aws2.ses.Ses2Configuration) value); return true;
+            case "configurationSet": getOrCreateConfiguration((Ses2Component) component).setConfigurationSet((java.lang.String) value); return true;
             case "lazyStartProducer": ((Ses2Component) component).setLazyStartProducer((boolean) value); return true;
             case "overrideEndpoint": getOrCreateConfiguration((Ses2Component) component).setOverrideEndpoint((boolean) value); return true;
             case "proxyHost": getOrCreateConfiguration((Ses2Component) component).setProxyHost((java.lang.String) value); return true;
