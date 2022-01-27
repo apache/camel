@@ -250,6 +250,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
             // special for dsl-dir as its built after camel-catalog, so we can only look inside src/generated
             Stream.of(list(dslDir.toPath())).flatMap(s -> s)
+                    .flatMap(p -> getComponentPath(p).stream())
                     .filter(dir -> Files.isDirectory(dir.resolve("src/generated/resources")))
                     .flatMap(PackageHelper::walk).forEach(p -> {
                         String f = p.getFileName().toString();
