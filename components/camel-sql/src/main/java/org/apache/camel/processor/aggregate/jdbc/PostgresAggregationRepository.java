@@ -51,8 +51,10 @@ public class PostgresAggregationRepository extends JdbcAggregationRepository {
      * @param exchange       the aggregated exchange
      * @param repositoryName The name of the table
      */
+    @Override
     protected void insert(
-            final CamelContext camelContext, final String correlationId, final Exchange exchange, String repositoryName)
+            final CamelContext camelContext, final String correlationId, final Exchange exchange, String repositoryName,
+            final Long version)
             throws Exception {
         // The default totalParameterIndex is 2 for ID and Exchange. Depending on logic this will be increased
         int totalParameterIndex = 2;

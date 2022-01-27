@@ -19,6 +19,7 @@ package org.apache.camel.component.log;
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.LineNumberAware;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -37,6 +38,8 @@ import org.apache.camel.support.processor.ThroughputLogger;
 import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.Logger;
 
+import static org.apache.camel.support.LoggerHelper.getLineNumberLoggerName;
+
 /**
  * Log messages to the underlying logging mechanism.
  *
@@ -44,11 +47,13 @@ import org.slf4j.Logger;
  */
 @UriEndpoint(firstVersion = "1.1.0", scheme = "log", title = "Log",
              syntax = "log:loggerName", producerOnly = true, category = { Category.CORE, Category.MONITORING })
-public class LogEndpoint extends ProcessorEndpoint {
+public class LogEndpoint extends ProcessorEndpoint implements LineNumberAware {
 
     private volatile Processor logger;
     private Logger providedLogger;
     private ExchangeFormatter localFormatter;
+    private int lineNumber;
+    private String location;
 
     @UriPath(description = "Name of the logging category to use")
     @Metadata(required = true)
@@ -120,6 +125,9 @@ public class LogEndpoint extends ProcessorEndpoint {
     private DefaultExchangeFormatter.OutputStyle style = DefaultExchangeFormatter.OutputStyle.Default;
     @UriParam(defaultValue = "false", description = "If enabled only the body will be printed out")
     private boolean plain;
+    @UriParam(description = "If enabled then the source location of where the log endpoint is used in Camel routes, would be used as logger name, instead"
+                            + " of the given name. However, if the source location is disabled or not possible to resolve then the existing logger name will be used.")
+    private boolean sourceLocationLoggerName;
 
     public LogEndpoint() {
     }
@@ -194,6 +202,26 @@ public class LogEndpoint extends ProcessorEndpoint {
         ServiceHelper.stopService(logger);
     }
 
+    @Override
+    public int getLineNumber() {
+        return lineNumber;
+    }
+
+    @Override
+    public void setLineNumber(int lineNumber) {
+        this.lineNumber = lineNumber;
+    }
+
+    @Override
+    public String getLocation() {
+        return location;
+    }
+
+    @Override
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
     public void setLogger(Processor logger) {
         this.logger = logger;
         // the logger is the processor
@@ -236,7 +264,14 @@ public class LogEndpoint extends ProcessorEndpoint {
             loggingLevel = LoggingLevel.valueOf(level);
         }
         if (providedLogger == null) {
-            camelLogger = new CamelLogger(loggerName, loggingLevel, getMarker());
+            String name = loggerName;
+            if (sourceLocationLoggerName) {
+                name = getLineNumberLoggerName(this);
+                if (name == null) {
+                    loggerName = name;
+                }
+            }
+            camelLogger = new CamelLogger(name, loggingLevel, getMarker());
         } else {
             camelLogger = new CamelLogger(providedLogger, loggingLevel, getMarker());
         }
@@ -552,5 +587,13 @@ public class LogEndpoint extends ProcessorEndpoint {
 
     public void setPlain(boolean plain) {
         this.plain = plain;
+    }
+
+    public boolean isSourceLocationLoggerName() {
+        return sourceLocationLoggerName;
+    }
+
+    public void setSourceLocationLoggerName(boolean sourceLocationLoggerName) {
+        this.sourceLocationLoggerName = sourceLocationLoggerName;
     }
 }

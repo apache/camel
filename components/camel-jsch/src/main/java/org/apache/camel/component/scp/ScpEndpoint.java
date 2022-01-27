@@ -38,7 +38,7 @@ import org.apache.camel.spi.UriParam;
                               + ",maximumReconnectAttempts,reconnectDelay,autoCreate,bufferSize,siteCommand,stepwise,throwExceptionOnConnectFailed"
                               + ",transferLoggingIntervalSeconds,transferLoggingLevel,transferLoggingVerbose,resumeDownload"
                               + ",handleDirectoryParserAbsoluteResult,activePortRange,ftpClient,ftpClientConfig"
-                              + ",ftpClientConfigParameters,ftpClientParameters,account")
+                              + ",ftpClientConfigParameters,ftpClientParameters,account,synchronous")
 public class ScpEndpoint extends RemoteFileEndpoint<ScpFile> {
 
     @UriParam

@@ -40,12 +40,7 @@ public class ProcessReifier extends ProcessorReifier<ProcessDefinition> {
             ObjectHelper.notNull(definition.getRef(), "ref", definition);
             answer = mandatoryLookup(definition.getRef(), Processor.class);
         }
-
-        if (answer instanceof LineNumberAware) {
-            LineNumberAware lna = (LineNumberAware) answer;
-            lna.setLineNumber(definition.getLineNumber());
-            lna.setLocation(definition.getLocation());
-        }
+        LineNumberAware.trySetLineNumberAware(answer, definition);
 
         // ensure its wrapped in a Service so we can manage it from eg. JMX
         // (a Processor must be a Service to be enlisted in JMX)

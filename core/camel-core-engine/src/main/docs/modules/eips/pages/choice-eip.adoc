@@ -143,3 +143,7 @@ component.
 There can be some combinations of xref:eips:enterprise-integration-patterns.adoc[EIP]s
 that can hit limits in how far we can take the fluent builder DSL with
 generics you can do in Java programming language.
+
+== See Also
+
+See xref:switch-eip.adoc[Switch EIP].

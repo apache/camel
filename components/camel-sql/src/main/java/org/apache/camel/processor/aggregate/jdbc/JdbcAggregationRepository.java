@@ -69,31 +69,32 @@ public class JdbcAggregationRepository extends ServiceSupport
     protected static final String BODY = "body";
 
     // optimistic locking: version identifier needed to avoid the lost update problem
-    private static final String VERSION = "version";
-    private static final String VERSION_PROPERTY = "CamelOptimisticLockVersion";
+    protected static final String VERSION = "version";
+    protected static final String VERSION_PROPERTY = "CamelOptimisticLockVersion";
 
     private static final Logger LOG = LoggerFactory.getLogger(JdbcAggregationRepository.class);
     private static final Constants PROPAGATION_CONSTANTS = new Constants(TransactionDefinition.class);
+
+    protected JdbcCamelCodec codec = new JdbcCamelCodec();
+    protected JdbcTemplate jdbcTemplate;
+    protected TransactionTemplate transactionTemplate;
+    protected TransactionTemplate transactionTemplateReadOnly;
+    protected boolean allowSerializedHeaders;
 
     private JdbcOptimisticLockingExceptionMapper jdbcOptimisticLockingExceptionMapper
             = new DefaultJdbcOptimisticLockingExceptionMapper();
     private PlatformTransactionManager transactionManager;
     private DataSource dataSource;
-    private TransactionTemplate transactionTemplate;
-    private TransactionTemplate transactionTemplateReadOnly;
     private int propagationBehavior = TransactionDefinition.PROPAGATION_REQUIRED;
-    private JdbcTemplate jdbcTemplate;
     private LobHandler lobHandler = new DefaultLobHandler();
     private String repositoryName;
     private boolean returnOldExchange;
-    private JdbcCamelCodec codec = new JdbcCamelCodec();
     private long recoveryInterval = 5000;
     private boolean useRecovery = true;
     private int maximumRedeliveries;
     private String deadLetterUri;
     private List<String> headersToStoreAsText;
     private boolean storeBodyAsText;
-    private boolean allowSerializedHeaders;
 
     /**
      * Creates an aggregation repository
@@ -402,9 +403,12 @@ public class JdbcAggregationRepository extends ServiceSupport
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 LOG.debug("Confirming exchangeId {}", exchangeId);
                 final String confirmKey = exchangeId;
-
-                jdbcTemplate.update("DELETE FROM " + getRepositoryNameCompleted() + " WHERE " + ID + " = ?",
-                        confirmKey);
+                final int mustBeOne = jdbcTemplate
+                        .update("DELETE FROM " + getRepositoryNameCompleted() + " WHERE " + ID + " = ?", confirmKey);
+                if (mustBeOne != 1) {
+                    LOG.error("problem removing row " + confirmKey + " from " + getRepositoryNameCompleted()
+                              + " - DELETE statement did not return 1 but " + mustBeOne);
+                }
 
             }
         });

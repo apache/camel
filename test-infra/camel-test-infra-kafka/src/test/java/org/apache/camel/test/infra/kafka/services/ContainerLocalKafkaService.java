@@ -72,7 +72,7 @@ public class ContainerLocalKafkaService implements KafkaService, ContainerServic
     }
 
     public static ContainerLocalKafkaService kafka3Container() {
-        KafkaContainer container = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.0.0"));
+        KafkaContainer container = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.0.1"));
         container = container.withEmbeddedZookeeper();
 
         return new ContainerLocalKafkaService(container);

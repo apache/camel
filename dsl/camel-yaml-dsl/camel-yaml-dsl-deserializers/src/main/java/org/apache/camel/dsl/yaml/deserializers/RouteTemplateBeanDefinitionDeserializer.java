@@ -27,7 +27,7 @@ import org.apache.camel.spi.annotations.YamlType;
 import org.snakeyaml.engine.v2.nodes.Node;
 
 @YamlType(
-          inline = true,
+          inline = false,
           types = org.apache.camel.model.RouteTemplateBeanDefinition.class,
           order = YamlDeserializerResolver.ORDER_DEFAULT,
           nodes = { "template-bean", "templateBean" },
@@ -51,7 +51,9 @@ public class RouteTemplateBeanDefinitionDeserializer extends YamlDeserializerBas
 
     @Override
     protected RouteTemplateBeanDefinition newInstance(String value) {
-        return new RouteTemplateBeanDefinition(value);
+        RouteTemplateBeanDefinition answer = new RouteTemplateBeanDefinition();
+        answer.setName(value);
+        return answer;
     }
 
     @Override

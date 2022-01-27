@@ -233,6 +233,12 @@
           "stop" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.StopDefinition"
           },
+          "do-switch" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.SwitchDefinition"
+          },
+          "doSwitch" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.SwitchDefinition"
+          },
           "threads" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.ThreadsDefinition"
           },
@@ -2352,12 +2358,16 @@
         }
       },
       "org.apache.camel.model.RestContextRefDefinition" : {
-        "type" : "object",
-        "properties" : {
-          "ref" : {
-            "type" : "string"
+        "oneOf" : [ {
+          "type" : "string"
+        }, {
+          "type" : "object",
+          "properties" : {
+            "ref" : {
+              "type" : "string"
+            }
           }
-        },
+        } ],
         "required" : [ "ref" ]
       },
       "org.apache.camel.model.RollbackDefinition" : {
@@ -2404,12 +2414,16 @@
         "required" : [ "ref" ]
       },
       "org.apache.camel.model.RouteConfigurationContextRefDefinition" : {
-        "type" : "object",
-        "properties" : {
-          "ref" : {
-            "type" : "string"
+        "oneOf" : [ {
+          "type" : "string"
+        }, {
+          "type" : "object",
+          "properties" : {
+            "ref" : {
+              "type" : "string"
+            }
           }
-        },
+        } ],
         "required" : [ "ref" ]
       },
       "org.apache.camel.model.RouteConfigurationDefinition" : {
@@ -2455,12 +2469,16 @@
         } ]
       },
       "org.apache.camel.model.RouteContextRefDefinition" : {
-        "type" : "object",
-        "properties" : {
-          "ref" : {
-            "type" : "string"
+        "oneOf" : [ {
+          "type" : "string"
+        }, {
+          "type" : "object",
+          "properties" : {
+            "ref" : {
+              "type" : "string"
+            }
           }
-        },
+        } ],
         "required" : [ "ref" ]
       },
       "org.apache.camel.model.RouteDefinition" : {
@@ -2485,34 +2503,30 @@
         "required" : [ "from" ]
       },
       "org.apache.camel.model.RouteTemplateBeanDefinition" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
+        "type" : "object",
+        "properties" : {
+          "bean-type" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          },
           "properties" : {
-            "bean-type" : {
-              "type" : "string"
-            },
-            "name" : {
-              "type" : "string"
-            },
-            "properties" : {
-              "type" : "object"
-            },
-            "property" : {
-              "type" : "array",
-              "items" : {
-                "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
-              }
-            },
-            "script" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.RouteTemplateScriptDefinition"
-            },
-            "type" : {
-              "type" : "string"
+            "type" : "object"
+          },
+          "property" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
             }
+          },
+          "script" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.RouteTemplateScriptDefinition"
+          },
+          "type" : {
+            "type" : "string"
           }
-        } ],
+        },
         "required" : [ "name", "type" ]
       },
       "org.apache.camel.model.RouteTemplateDefinition" : {
@@ -2941,6 +2955,35 @@
           },
           "inherit-error-handler" : {
             "type" : "boolean"
+          }
+        }
+      },
+      "org.apache.camel.model.SwitchDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "inherit-error-handler" : {
+            "type" : "boolean"
+          },
+          "otherwise" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.OtherwiseDefinition"
+          },
+          "steps" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.ProcessorDefinition"
+            }
+          },
+          "when" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.WhenDefinition"
+            }
           }
         }
       },

@@ -34,14 +34,9 @@ public class TypedProcessorFactory<T extends NamedNode> implements ProcessorFact
     public Processor createChildProcessor(Route route, NamedNode definition, boolean mandatory) throws Exception {
         if (type.isInstance(definition)) {
             Processor processor = doCreateChildProcessor(route, type.cast(definition), mandatory);
-            if (processor instanceof LineNumberAware) {
-                LineNumberAware lna = (LineNumberAware) processor;
-                lna.setLineNumber(definition.getLineNumber());
-                lna.setLocation(definition.getLocation());
-            }
+            LineNumberAware.trySetLineNumberAware(processor, definition);
             return processor;
         }
-
         return null;
     }
 
@@ -49,14 +44,9 @@ public class TypedProcessorFactory<T extends NamedNode> implements ProcessorFact
     public Processor createProcessor(Route route, NamedNode definition) throws Exception {
         if (type.isInstance(definition)) {
             Processor processor = doCreateProcessor(route, type.cast(definition));
-            if (processor instanceof LineNumberAware) {
-                LineNumberAware lna = (LineNumberAware) processor;
-                lna.setLineNumber(definition.getLineNumber());
-                lna.setLocation(definition.getLocation());
-            }
+            LineNumberAware.trySetLineNumberAware(processor, definition);
             return processor;
         }
-
         return null;
     }
 

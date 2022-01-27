@@ -89,6 +89,7 @@ SortDefinition
 SplitDefinition
 StepDefinition
 StopDefinition
+SwitchDefinition
 ThreadPoolProfileDefinition
 ThreadsDefinition
 ThrottleDefinition

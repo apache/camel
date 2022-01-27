@@ -41,7 +41,7 @@ for this component.
 debezium-mysql:name[?options]
 ---------------------------
 
-*Note:* Due to licensing issues, you will need to add the dependency for `mysql-conenctor-java` if you are using MySQL connector, just add the following to your POM file:
+*Note:* Due to licensing issues, you will need to add the dependency for `mysql-connector-java` if you are using MySQL connector, just add the following to your POM file:
 [source,xml]
 ----
 <dependency>

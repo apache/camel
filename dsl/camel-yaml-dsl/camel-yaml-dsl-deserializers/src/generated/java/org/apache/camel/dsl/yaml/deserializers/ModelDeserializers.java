@@ -88,6 +88,7 @@ import org.apache.camel.model.SortDefinition;
 import org.apache.camel.model.SplitDefinition;
 import org.apache.camel.model.StepDefinition;
 import org.apache.camel.model.StopDefinition;
+import org.apache.camel.model.SwitchDefinition;
 import org.apache.camel.model.ThreadPoolProfileDefinition;
 import org.apache.camel.model.ThreadsDefinition;
 import org.apache.camel.model.ThrottleDefinition;
@@ -11769,6 +11770,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
+            inline = true,
             types = org.apache.camel.model.RestContextRefDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = {
@@ -11785,6 +11787,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected RestContextRefDefinition newInstance() {
             return new RestContextRefDefinition();
+        }
+
+        @Override
+        protected RestContextRefDefinition newInstance(String value) {
+            return new RestContextRefDefinition(value);
         }
 
         @Override
@@ -13006,6 +13013,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
+            inline = true,
             types = org.apache.camel.model.RouteConfigurationContextRefDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = {
@@ -13022,6 +13030,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected RouteConfigurationContextRefDefinition newInstance() {
             return new RouteConfigurationContextRefDefinition();
+        }
+
+        @Override
+        protected RouteConfigurationContextRefDefinition newInstance(String value) {
+            return new RouteConfigurationContextRefDefinition(value);
         }
 
         @Override
@@ -13042,6 +13055,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
+            inline = true,
             types = org.apache.camel.model.RouteContextRefDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = {
@@ -13058,6 +13072,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected RouteContextRefDefinition newInstance() {
             return new RouteContextRefDefinition();
+        }
+
+        @Override
+        protected RouteContextRefDefinition newInstance(String value) {
+            return new RouteContextRefDefinition(value);
         }
 
         @Override
@@ -15348,6 +15367,73 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "timeout": {
                     String val = asText(node);
                     target.setTimeout(val);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            types = org.apache.camel.model.SwitchDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            nodes = {
+                    "do-switch",
+                    "doSwitch"
+            },
+            properties = {
+                    @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "id", type = "string"),
+                    @YamlProperty(name = "inherit-error-handler", type = "boolean"),
+                    @YamlProperty(name = "otherwise", type = "object:org.apache.camel.model.OtherwiseDefinition"),
+                    @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition"),
+                    @YamlProperty(name = "when", type = "array:org.apache.camel.model.WhenDefinition")
+            }
+    )
+    public static class SwitchDefinitionDeserializer extends YamlDeserializerBase<SwitchDefinition> {
+        public SwitchDefinitionDeserializer() {
+            super(SwitchDefinition.class);
+        }
+
+        @Override
+        protected SwitchDefinition newInstance() {
+            return new SwitchDefinition();
+        }
+
+        @Override
+        protected boolean setProperty(SwitchDefinition target, String propertyKey,
+                String propertyName, Node node) {
+            switch(propertyKey) {
+                case "inherit-error-handler": {
+                    String val = asText(node);
+                    target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
+                    break;
+                }
+                case "otherwise": {
+                    org.apache.camel.model.OtherwiseDefinition val = asType(node, org.apache.camel.model.OtherwiseDefinition.class);
+                    target.setOtherwise(val);
+                    break;
+                }
+                case "when": {
+                    java.util.List<org.apache.camel.model.WhenDefinition> val = asFlatList(node, org.apache.camel.model.WhenDefinition.class);
+                    target.setWhenClauses(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "description": {
+                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    target.setDescription(val);
+                    break;
+                }
+                case "steps": {
+                    setSteps(target, node);
                     break;
                 }
                 default: {

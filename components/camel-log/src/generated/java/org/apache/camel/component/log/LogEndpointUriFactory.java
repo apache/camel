@@ -21,11 +21,12 @@ public class LogEndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(29);
+        Set<String> props = new HashSet<>(30);
         props.add("showProperties");
         props.add("showStreams");
         props.add("showHeaders");
         props.add("showException");
+        props.add("sourceLocationLoggerName");
         props.add("showExchangeId");
         props.add("logMask");
         props.add("groupActiveOnly");
