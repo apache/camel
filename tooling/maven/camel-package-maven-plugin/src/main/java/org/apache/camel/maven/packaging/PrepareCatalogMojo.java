@@ -241,6 +241,13 @@ public class PrepareCatalogMojo extends AbstractMojo {
                         }
                     });
 
+            for (Path p : allJsonFiles) {
+                var m = JsonMapper.generateModel(p);
+                if (m != null) {
+                    allModels.put(p, m);
+                }
+            }
+
             // special for dsl-dir as its built after camel-catalog, so we can only look inside src/generated
             Stream.of(list(dslDir.toPath())).flatMap(s -> s)
                     .filter(dir -> Files.isDirectory(dir.resolve("src/generated/resources")))
@@ -248,15 +255,25 @@ public class PrepareCatalogMojo extends AbstractMojo {
                         String f = p.getFileName().toString();
                         if (f.endsWith(PackageHelper.JSON_SUFIX)) {
                             allJsonFiles.add(p);
+                            var m = JsonMapper.generateModel(p);
+                            if (m instanceof OtherModel) {
+                                OtherModel om = (OtherModel) m;
+                                if (!project.getVersion().equals(om.getVersion())) {
+                                    // update version in model and file because we prepare catalog before we build DSL
+                                    // so their previous generated model files may use previous version (eg 3.15.0-SNAPSHOT -> 3.15.0)
+                                    try {
+                                        String s = Files.readString(p);
+                                        s = s.replaceAll(om.getVersion(), project.getVersion());
+                                        FileUtil.updateFile(p, s);
+                                    } catch (IOException e) {
+                                        // ignore
+                                    }
+                                    om.setVersion(project.getVersion());
+                                }
+                                allModels.put(p, m);
+                            }
                         }
                     });
-
-            for (Path p : allJsonFiles) {
-                var m = JsonMapper.generateModel(p);
-                if (m != null) {
-                    allModels.put(p, m);
-                }
-            }
 
             executeModel();
             Set<String> components = executeComponents();
@@ -592,12 +609,12 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 case "camel-xml-io-util":
                 case "camel-xml-jaxb":
                 case "camel-xml-jaxp":
-                // and some from dsl
+                    // and some from dsl
                 case "dsl-support":
                 case "camel-dsl-support":
                 case "endpointdsl-support":
                 case "camel-endpointdsl-support":
-                // and components with middle folders
+                    // and components with middle folders
                 case "camel-as2":
                 case "camel-avro-rpc":
                 case "camel-aws":
@@ -704,10 +721,10 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
         // find all camel maven modules
         Stream.concat(
-                list(componentsDir.toPath())
-                        .filter(dir -> !dir.getFileName().startsWith(".") && !"target".equals(dir.getFileName().toString()))
-                        .flatMap(p -> getComponentPath(p).stream()),
-                Stream.of(coreDir.toPath(), languagesDir.toPath()))
+                        list(componentsDir.toPath())
+                                .filter(dir -> !dir.getFileName().startsWith(".") && !"target".equals(dir.getFileName().toString()))
+                                .flatMap(p -> getComponentPath(p).stream()),
+                        Stream.of(coreDir.toPath(), languagesDir.toPath()))
                 .forEach(dir -> {
                     List<Path> l = PackageHelper.walk(dir.resolve("src/main/docs"))
                             .filter(f -> f.getFileName().toString().endsWith(".adoc"))
