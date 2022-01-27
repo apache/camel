@@ -192,7 +192,7 @@ The signature for `KafkaManualCommitFactory` and its classes has been adjusted t
 
 The `camel-endpointdsl` and `camel-componentdsl` is no longer supported on Apache Karaf.
 
-The `camel-osg-activator`, `camel-google-mail`, and `camel-jooq` has been removed.
+The `camel-osg-activator`, `camel-google-calendar`, `camel-google-drive`, `camel-google-mail`, `camel-google-sheets`, and `camel-jooq` has been removed.
 
 === camel-netty / camel-netty-http
 
