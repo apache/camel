@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.dynamicrouter.support;
 
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import java.util.function.Supplier;
 
 import org.apache.camel.AsyncCallback;
@@ -42,6 +45,7 @@ import org.apache.camel.component.dynamicrouter.PrioritizedFilterProcessor;
 import org.apache.camel.component.dynamicrouter.PrioritizedFilterProcessor.PrioritizedFilterProcessorFactory;
 import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.spi.ExchangeFactory;
+import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.support.builder.PredicateBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
@@ -74,6 +78,15 @@ public class DynamicRouterTestSupport extends CamelTestSupport {
 
     @Mock
     protected ExchangeFactory exchangeFactory;
+
+    @Mock
+    protected ExecutorServiceManager executorServiceManager;
+
+    @Mock
+    protected ExecutorService executorService;
+
+    @Mock
+    protected Future<?> booleanFuture;
 
     @Mock
     protected DynamicRouterConfiguration configuration;
@@ -159,6 +172,12 @@ public class DynamicRouterTestSupport extends CamelTestSupport {
         lenient().when(context.adapt(ExtendedCamelContext.class)).thenReturn(context);
         lenient().when(context.getExchangeFactory()).thenReturn(exchangeFactory);
         lenient().when(context.resolveLanguage("simple")).thenReturn(simpleLanguage);
+        lenient().when(context.getExecutorServiceManager()).thenReturn(executorServiceManager);
+
+        lenient().when(executorServiceManager.newDefaultThreadPool(any(DynamicRouterProcessor.class), anyString()))
+                .thenReturn(executorService);
+
+        lenient().when(executorService.submit(any(Callable.class))).thenReturn(booleanFuture);
 
         lenient().when(predicate.toString()).thenReturn(TEST_PREDICATE);
 

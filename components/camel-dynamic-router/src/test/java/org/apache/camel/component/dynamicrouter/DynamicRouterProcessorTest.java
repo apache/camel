@@ -84,7 +84,7 @@ class DynamicRouterProcessorTest extends DynamicRouterTestSupport {
         addFilterAsFilterProcessor();
         when(filterProcessor.matches(exchange)).thenReturn(true);
         lenient().when(filterProcessor.process(any(Exchange.class), any(AsyncCallback.class))).thenReturn(true);
-        Assertions.assertTrue(processor.process(exchange, asyncCallback));
+        Assertions.assertFalse(processor.process(exchange, asyncCallback));
     }
 
     @Test

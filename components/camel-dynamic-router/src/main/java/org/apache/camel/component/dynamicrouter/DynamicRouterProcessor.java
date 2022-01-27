@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutorService;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -88,6 +89,11 @@ public class DynamicRouterProcessor extends AsyncProcessorSupport implements Tra
     private final PrioritizedFilterProcessor defaultProcessor;
 
     /**
+     * The {@link ExecutorService} for multicasting messages.
+     */
+    private final ExecutorService executorService;
+
+    /**
      * The {@link FilterProcessor} factory.
      */
     private final Supplier<PrioritizedFilterProcessorFactory> filterProcessorFactorySupplier;
@@ -115,6 +121,8 @@ public class DynamicRouterProcessor extends AsyncProcessorSupport implements Tra
         this.recipientMode = recipientMode;
         this.producerTemplate = camelContext.createProducerTemplate();
         this.filterProcessorFactorySupplier = filterProcessorFactorySupplier;
+        this.executorService = camelContext.getExecutorServiceManager()
+                .newDefaultThreadPool(this, "dynamicRouterMulticastPool");
         final String message = String.format(LOG_ENDPOINT, this.getClass().getCanonicalName(), getId(),
                 warnDroppedMessage ? "WARN" : "DEBUG");
         this.defaultProcessor = filterProcessorFactorySupplier.get().getInstance(
@@ -145,8 +153,9 @@ public class DynamicRouterProcessor extends AsyncProcessorSupport implements Tra
     PrioritizedFilterProcessor createFilter(final DynamicRouterControlMessage controlMessage) {
         final String id = controlMessage.getId();
         final int priority = controlMessage.getPriority();
+        final String endpoint = controlMessage.getEndpoint();
         final Predicate predicate = controlMessage.getPredicate();
-        final Processor processor = exchange -> producerTemplate.send(controlMessage.getEndpoint(), exchange);
+        final Processor processor = exchange -> producerTemplate.send(endpoint, exchange);
         return filterProcessorFactorySupplier.get().getInstance(id, priority, camelContext, predicate, processor);
     }
 
@@ -235,15 +244,19 @@ public class DynamicRouterProcessor extends AsyncProcessorSupport implements Tra
      * @param  callback the {@link AsyncCallback} will be invoked when the processing of the exchange is completed. If
      *                  the exchange is completed synchronously, then the callback is also invoked synchronously. The
      *                  callback should therefore be careful of starting recursive loop.
-     * @return          (doneSync) <tt>true</tt> to continue execute synchronously, <tt>false</tt> to continue being
-     *                  executed asynchronously
+     * @return          (doneSync) <tt>true</tt> to continue to execute synchronously, <tt>false</tt> to continue
+     *                  execution asynchronously
      */
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
-        return matchFilters(exchange)
-                .parallelStream()
-                .map(filter -> filter.process(exchange, callback))
-                .reduce(true, (a, b) -> a && b);
+        try {
+            for (PrioritizedFilterProcessor filterProcessor : matchFilters(exchange)) {
+                filterProcessor.process(exchange, callback);
+            }
+        } catch (Exception e) {
+            exchange.setException(e);
+        }
+        return false;
     }
 
     /**
