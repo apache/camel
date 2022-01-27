@@ -25,7 +25,7 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
 public class ConsulLocalContainerService implements ConsulService, ContainerService<GenericContainer> {
-    public static final String CONTAINER_IMAGE = "consul:1.8.3";
+    public static final String CONTAINER_IMAGE = "consul:1.11.2";
     public static final String CONTAINER_NAME = "consul";
 
     private static final Logger LOG = LoggerFactory.getLogger(ConsulLocalContainerService.class);
