@@ -219,6 +219,7 @@ public final class VertxHttpServer {
                 if (up) {
                     sb.append("    \"status\": \"UP\"\n");
                 } else {
+                    // when we are DOWN then grab the first one to show
                     Optional<HealthCheck.Result> down
                             = res.stream().filter(r -> r.getState().equals(HealthCheck.State.DOWN)).findFirst();
                     sb.append("    \"status\": \"DOWN\"");
