@@ -41,8 +41,6 @@ import org.apache.camel.support.SimpleEventNotifierSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.health.HealthCheckHelper.invoke;
-
 /**
  * To setup vertx http server in the running Camel application
  */
@@ -147,6 +145,8 @@ public final class VertxHttpServer {
         dev.handler(new Handler<RoutingContext>() {
             @Override
             public void handle(RoutingContext ctx) {
+                ctx.response().putHeader("content-type", "text/plain");
+
                 DevConsoleRegistry dcr = context.getExtension(DevConsoleRegistry.class);
                 if (dcr != null && dcr.isEnabled()) {
                     StringBuilder sb = new StringBuilder();
@@ -194,6 +194,8 @@ public final class VertxHttpServer {
         Handler<RoutingContext> handler = new Handler<RoutingContext>() {
             @Override
             public void handle(RoutingContext ctx) {
+                ctx.response().putHeader("content-type", "application/json");
+
                 boolean all = ctx.currentRoute() == health;
                 boolean liv = ctx.currentRoute() == live;
 
