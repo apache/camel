@@ -45,6 +45,7 @@ public class LiveDetectionWithVideoBae64AndMockClientTest extends CamelTestSuppo
                             + "&secretKey=" + testConfiguration.getProperty("secretKey")
                             + "&projectId=" + testConfiguration.getProperty("projectId")
                             + "&region=" + testConfiguration.getProperty("region")
+                            + "&actions=1"
                             + "&ignoreSslVerification=true"
                             + "&frsClient=#frsClient")
                         .log("perform faceLiveDetection successful")

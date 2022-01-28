@@ -39,7 +39,7 @@ public class FaceDetectionWithImageBae64AndMockClientTest extends CamelTestSuppo
             public void configure() {
                 from("direct:trigger_route")
                         .setProperty(FaceRecognitionProperties.FACE_IMAGE_BASE64,
-                                constant(testConfiguration.getProperty("imageContent")))
+                                constant(testConfiguration.getProperty("imageBase64")))
                         .to("hwcloud-frs:faceDetection?"
                             + "accessKey=" + testConfiguration.getProperty("accessKey")
                             + "&secretKey=" + testConfiguration.getProperty("secretKey")
