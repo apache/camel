@@ -252,7 +252,10 @@ public class PrepareCatalogMojo extends AbstractMojo {
             Stream.of(list(dslDir.toPath())).flatMap(s -> s)
                     .flatMap(p -> getComponentPath(p).stream())
                     .filter(dir -> Files.isDirectory(dir.resolve("src/generated/resources")))
-                    .flatMap(PackageHelper::walk).forEach(p -> {
+                    .map(p -> p.resolve("src/generated/resources"))
+                    .flatMap(PackageHelper::walk)
+                    .filter(Files::isRegularFile)
+                    .forEach(p -> {
                         String f = p.getFileName().toString();
                         if (f.endsWith(PackageHelper.JSON_SUFIX)) {
                             allJsonFiles.add(p);
