@@ -18,7 +18,10 @@ package org.apache.camel.main;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Optional;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.vertx.core.Handler;
@@ -216,7 +219,45 @@ public final class VertxHttpServer {
                 if (up) {
                     sb.append("    \"status\": \"UP\"\n");
                 } else {
-                    sb.append("    \"status\": \"DOWN\"\n");
+                    Optional<HealthCheck.Result> down
+                            = res.stream().filter(r -> r.getState().equals(HealthCheck.State.DOWN)).findFirst();
+                    sb.append("    \"status\": \"DOWN\"");
+                    if (down.isPresent()) {
+                        sb.append(",\n");
+                        HealthCheck.Result d = down.get();
+                        sb.append("    \"checks\": [\n");
+                        sb.append("        {\n");
+                        sb.append("            \"name\": \"").append(d.getCheck().getId()).append("\",\n");
+                        sb.append("            \"status\": \"").append(d.getState()).append("\",\n");
+                        if (d.getError().isPresent()) {
+                            String msg = d.getError().get().getMessage();
+                            sb.append("            \"error-message\": \"").append(msg)
+                                    .append("\",\n");
+                        }
+                        if (d.getMessage().isPresent()) {
+                            sb.append("            \"message\": \"").append(d.getMessage().get()).append("\",\n");
+                        }
+                        if (d.getDetails() != null && !d.getDetails().isEmpty()) {
+                            // lets use sorted keys
+                            Iterator<String> it = new TreeSet<>(d.getDetails().keySet()).iterator();
+                            sb.append("            \"data\": {\n");
+                            while (it.hasNext()) {
+                                String k = it.next();
+                                Object v = d.getDetails().get(k);
+                                boolean last = !it.hasNext();
+                                sb.append("                 \"").append(k).append("\": \"").append(v).append("\"");
+                                if (!last) {
+                                    sb.append(",");
+                                }
+                                sb.append("\n");
+                            }
+                            sb.append("            }\n");
+                        }
+                        sb.append("        }\n");
+                        sb.append("    ]\n");
+                    } else {
+                        sb.append("\n");
+                    }
                 }
                 sb.append("}\n");
 
