@@ -31,17 +31,16 @@
     <packaging>pom</packaging>
     <name>Camel :: Huawei Cloud :: Parent</name>
     <description>Camel Huawei Cloud parent</description>
-
     
     <modules>
-	    <module>camel-huaweicloud-common</module>
-	    <module>camel-huaweicloud-dms</module>
+        <module>camel-huaweicloud-common</module>
+        <module>camel-huaweicloud-dms</module>
+        <module>camel-huaweicloud-frs</module>
         <module>camel-huaweicloud-functiongraph</module>
         <module>camel-huaweicloud-iam</module>
         <module>camel-huaweicloud-imagerecognition</module>
-	    <module>camel-huaweicloud-obs</module>
+        <module>camel-huaweicloud-obs</module>
         <module>camel-huaweicloud-smn</module>
-        <module>camel-huaweicloud-frs</module>
     </modules>
 
 </project>
