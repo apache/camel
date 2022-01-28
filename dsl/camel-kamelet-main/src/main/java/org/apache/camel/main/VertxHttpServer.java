@@ -16,6 +16,7 @@
  */
 package org.apache.camel.main;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -33,10 +34,14 @@ import org.apache.camel.component.platform.http.vertx.VertxPlatformHttpServer;
 import org.apache.camel.component.platform.http.vertx.VertxPlatformHttpServerConfiguration;
 import org.apache.camel.console.DevConsole;
 import org.apache.camel.console.DevConsoleRegistry;
+import org.apache.camel.health.HealthCheck;
+import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.SimpleEventNotifierSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.health.HealthCheckHelper.invoke;
 
 /**
  * To setup vertx http server in the running Camel application
@@ -50,6 +55,7 @@ public final class VertxHttpServer {
     private static final Logger LOG = LoggerFactory.getLogger(VertxHttpServer.class);
     private static final AtomicBoolean REGISTERED = new AtomicBoolean();
     private static final AtomicBoolean CONSOLE = new AtomicBoolean();
+    private static final AtomicBoolean HEALTH_CHECK = new AtomicBoolean();
 
     private VertxHttpServer() {
     }
@@ -137,7 +143,6 @@ public final class VertxHttpServer {
     private static void doRegisterConsole(CamelContext context) {
         Route dev = router.route("/dev");
         dev.method(HttpMethod.GET);
-        dev.handler(router.bodyHandler());
         dev.produces("text/plain");
         dev.handler(new Handler<RoutingContext>() {
             @Override
@@ -167,6 +172,60 @@ public final class VertxHttpServer {
             }
         });
         phc.addHttpEndpoint("/dev");
+    }
+
+    public static void registerHealthCheck(CamelContext camelContext) {
+        if (HEALTH_CHECK.compareAndSet(false, true)) {
+            doRegisterHealthCheck(camelContext);
+        }
+    }
+
+    private static void doRegisterHealthCheck(CamelContext context) {
+        final Route health = router.route("/health");
+        health.method(HttpMethod.GET);
+        health.produces("application/json");
+        final Route live = router.route("/health/live");
+        live.method(HttpMethod.GET);
+        live.produces("application/json");
+        final Route ready = router.route("/health/ready");
+        ready.method(HttpMethod.GET);
+        ready.produces("application/json");
+
+        Handler<RoutingContext> handler = new Handler<RoutingContext>() {
+            @Override
+            public void handle(RoutingContext ctx) {
+                boolean all = ctx.currentRoute() == health;
+                boolean liv = ctx.currentRoute() == live;
+
+                StringBuilder sb = new StringBuilder();
+                sb.append("{\n");
+
+                Collection<HealthCheck.Result> res;
+                if (all) {
+                    res = HealthCheckHelper.invoke(context);
+                } else if (liv) {
+                    res = HealthCheckHelper.invokeLiveness(context);
+                } else {
+                    res = HealthCheckHelper.invokeReadiness(context);
+                }
+
+                // we just want a brief summary or either UP or DOWN
+                boolean up = res.stream().noneMatch(r -> r.getState().equals(HealthCheck.State.DOWN));
+                if (up) {
+                    sb.append("    \"status\": \"UP\"\n");
+                } else {
+                    sb.append("    \"status\": \"DOWN\"\n");
+                }
+                sb.append("}\n");
+
+                ctx.end(sb.toString());
+            }
+        };
+        health.handler(handler);
+        live.handler(handler);
+        ready.handler(handler);
+
+        phc.addHttpEndpoint("/health");
     }
 
 }
