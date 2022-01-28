@@ -41,6 +41,7 @@
         <module>camel-huaweicloud-imagerecognition</module>
 	    <module>camel-huaweicloud-obs</module>
         <module>camel-huaweicloud-smn</module>
+        <module>camel-huaweicloud-frs</module>
     </modules>
 
 </project>
