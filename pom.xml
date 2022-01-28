@@ -353,6 +353,7 @@
                             <exclude>**/MySecondBarConfigurer.java</exclude>
                             <exclude>**/stockquote-response.xml</exclude>
                             <exclude>**/org.apache.camel.dsl.kotlin.KotlinDSL.classname</exclude>
+                            <exclude>**/quarkus-pom.ftl</exclude>
                             <!-- Maven Wrapper -->
                             <exclude>.mvn/**/*</exclude>
                         </excludes>
