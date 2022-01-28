@@ -114,6 +114,7 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.EventHubsEndpointBuilderFactory.EventHubsBuilders,
             org.apache.camel.builder.endpoint.dsl.EventbridgeEndpointBuilderFactory.EventbridgeBuilders,
             org.apache.camel.builder.endpoint.dsl.ExecEndpointBuilderFactory.ExecBuilders,
+            org.apache.camel.builder.endpoint.dsl.FaceRecognitionEndpointBuilderFactory.FaceRecognitionBuilders,
             org.apache.camel.builder.endpoint.dsl.FacebookEndpointBuilderFactory.FacebookBuilders,
             org.apache.camel.builder.endpoint.dsl.FhirEndpointBuilderFactory.FhirBuilders,
             org.apache.camel.builder.endpoint.dsl.FileEndpointBuilderFactory.FileBuilders,

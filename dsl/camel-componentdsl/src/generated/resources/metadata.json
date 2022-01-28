@@ -3327,6 +3327,28 @@
     "producerOnly": true,
     "lenientProperties": false
   },
+  "HwcloudFrsComponentBuilderFactory": {
+    "kind": "component",
+    "name": "hwcloud-frs",
+    "title": "Huawei Cloud Face Recognition Service",
+    "description": "Face Recognition Service (FRS) is an intelligent service that uses computers to process, analyze, and understand facial images based on human facial features.",
+    "deprecated": false,
+    "firstVersion": "3.15.0",
+    "label": "cloud,messaging",
+    "javaType": "org.apache.camel.component.huaweicloud.frs.FaceRecognitionComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-huaweicloud-frs",
+    "version": "3.15.0-SNAPSHOT",
+    "scheme": "hwcloud-frs",
+    "extendsScheme": "",
+    "syntax": "hwcloud-frs:operation",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false
+  },
   "HwcloudFunctiongraphComponentBuilderFactory": {
     "kind": "component",
     "name": "hwcloud-functiongraph",

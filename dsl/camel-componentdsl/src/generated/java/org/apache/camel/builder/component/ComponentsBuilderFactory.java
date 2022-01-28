@@ -2043,6 +2043,21 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.HwcloudDmsComponentBuilderFactory.hwcloudDms();
     }
     /**
+     * Huawei Cloud Face Recognition Service (camel-huaweicloud-frs)
+     * Face Recognition Service (FRS) is an intelligent service that uses
+     * computers to process, analyze, and understand facial images based on
+     * human facial features.
+     * 
+     * Category: cloud,messaging
+     * Since: 3.15
+     * Maven coordinates: org.apache.camel:camel-huaweicloud-frs
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.HwcloudFrsComponentBuilderFactory.HwcloudFrsComponentBuilder hwcloudFrs() {
+        return org.apache.camel.builder.component.dsl.HwcloudFrsComponentBuilderFactory.hwcloudFrs();
+    }
+    /**
      * Huawei FunctionGraph (camel-huaweicloud-functiongraph)
      * To call serverless functions on Huawei Cloud
      * 

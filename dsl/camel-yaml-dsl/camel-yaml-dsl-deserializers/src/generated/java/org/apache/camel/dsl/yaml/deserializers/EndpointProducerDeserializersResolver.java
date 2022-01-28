@@ -152,6 +152,7 @@ public final class EndpointProducerDeserializersResolver implements YamlDeserial
             case "http":
             case "https":
             case "hwcloud-dms":
+            case "hwcloud-frs":
             case "hwcloud-functiongraph":
             case "hwcloud-iam":
             case "hwcloud-imagerecognition":
