@@ -151,10 +151,6 @@ public class VertxKafkaEndpointConfigurer extends PropertyConfigurerSupport impl
         case "saslLoginCallbackHandlerClass": target.getConfiguration().setSaslLoginCallbackHandlerClass(property(camelContext, java.lang.String.class, value)); return true;
         case "saslloginclass":
         case "saslLoginClass": target.getConfiguration().setSaslLoginClass(property(camelContext, java.lang.String.class, value)); return true;
-        case "saslloginconnecttimeoutms":
-        case "saslLoginConnectTimeoutMs": target.getConfiguration().setSaslLoginConnectTimeoutMs(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "saslloginreadtimeoutms":
-        case "saslLoginReadTimeoutMs": target.getConfiguration().setSaslLoginReadTimeoutMs(property(camelContext, java.lang.Integer.class, value)); return true;
         case "saslloginrefreshbufferseconds":
         case "saslLoginRefreshBufferSeconds": target.getConfiguration().setSaslLoginRefreshBufferSeconds(property(camelContext, short.class, value)); return true;
         case "saslloginrefreshminperiodseconds":
@@ -163,32 +159,8 @@ public class VertxKafkaEndpointConfigurer extends PropertyConfigurerSupport impl
         case "saslLoginRefreshWindowFactor": target.getConfiguration().setSaslLoginRefreshWindowFactor(property(camelContext, double.class, value)); return true;
         case "saslloginrefreshwindowjitter":
         case "saslLoginRefreshWindowJitter": target.getConfiguration().setSaslLoginRefreshWindowJitter(property(camelContext, double.class, value)); return true;
-        case "saslloginretrybackoffmaxms":
-        case "saslLoginRetryBackoffMaxMs": target.getConfiguration().setSaslLoginRetryBackoffMaxMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
-        case "saslloginretrybackoffms":
-        case "saslLoginRetryBackoffMs": target.getConfiguration().setSaslLoginRetryBackoffMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "saslmechanism":
         case "saslMechanism": target.getConfiguration().setSaslMechanism(property(camelContext, java.lang.String.class, value)); return true;
-        case "sasloauthbearerclockskewseconds":
-        case "saslOauthbearerClockSkewSeconds": target.getConfiguration().setSaslOauthbearerClockSkewSeconds(property(camelContext, int.class, value)); return true;
-        case "sasloauthbearerexpectedaudience":
-        case "saslOauthbearerExpectedAudience": target.getConfiguration().setSaslOauthbearerExpectedAudience(property(camelContext, java.lang.String.class, value)); return true;
-        case "sasloauthbearerexpectedissuer":
-        case "saslOauthbearerExpectedIssuer": target.getConfiguration().setSaslOauthbearerExpectedIssuer(property(camelContext, java.lang.String.class, value)); return true;
-        case "sasloauthbearerjwksendpointrefreshms":
-        case "saslOauthbearerJwksEndpointRefreshMs": target.getConfiguration().setSaslOauthbearerJwksEndpointRefreshMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
-        case "sasloauthbearerjwksendpointretrybackoffmaxms":
-        case "saslOauthbearerJwksEndpointRetryBackoffMaxMs": target.getConfiguration().setSaslOauthbearerJwksEndpointRetryBackoffMaxMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
-        case "sasloauthbearerjwksendpointretrybackoffms":
-        case "saslOauthbearerJwksEndpointRetryBackoffMs": target.getConfiguration().setSaslOauthbearerJwksEndpointRetryBackoffMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
-        case "sasloauthbearerjwksendpointurl":
-        case "saslOauthbearerJwksEndpointUrl": target.getConfiguration().setSaslOauthbearerJwksEndpointUrl(property(camelContext, java.lang.String.class, value)); return true;
-        case "sasloauthbearerscopeclaimname":
-        case "saslOauthbearerScopeClaimName": target.getConfiguration().setSaslOauthbearerScopeClaimName(property(camelContext, java.lang.String.class, value)); return true;
-        case "sasloauthbearersubclaimname":
-        case "saslOauthbearerSubClaimName": target.getConfiguration().setSaslOauthbearerSubClaimName(property(camelContext, java.lang.String.class, value)); return true;
-        case "sasloauthbearertokenendpointurl":
-        case "saslOauthbearerTokenEndpointUrl": target.getConfiguration().setSaslOauthbearerTokenEndpointUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "securityprotocol":
         case "securityProtocol": target.getConfiguration().setSecurityProtocol(property(camelContext, java.lang.String.class, value)); return true;
         case "securityproviders":
@@ -388,10 +360,6 @@ public class VertxKafkaEndpointConfigurer extends PropertyConfigurerSupport impl
         case "saslLoginCallbackHandlerClass": return java.lang.String.class;
         case "saslloginclass":
         case "saslLoginClass": return java.lang.String.class;
-        case "saslloginconnecttimeoutms":
-        case "saslLoginConnectTimeoutMs": return java.lang.Integer.class;
-        case "saslloginreadtimeoutms":
-        case "saslLoginReadTimeoutMs": return java.lang.Integer.class;
         case "saslloginrefreshbufferseconds":
         case "saslLoginRefreshBufferSeconds": return short.class;
         case "saslloginrefreshminperiodseconds":
@@ -400,32 +368,8 @@ public class VertxKafkaEndpointConfigurer extends PropertyConfigurerSupport impl
         case "saslLoginRefreshWindowFactor": return double.class;
         case "saslloginrefreshwindowjitter":
         case "saslLoginRefreshWindowJitter": return double.class;
-        case "saslloginretrybackoffmaxms":
-        case "saslLoginRetryBackoffMaxMs": return long.class;
-        case "saslloginretrybackoffms":
-        case "saslLoginRetryBackoffMs": return long.class;
         case "saslmechanism":
         case "saslMechanism": return java.lang.String.class;
-        case "sasloauthbearerclockskewseconds":
-        case "saslOauthbearerClockSkewSeconds": return int.class;
-        case "sasloauthbearerexpectedaudience":
-        case "saslOauthbearerExpectedAudience": return java.lang.String.class;
-        case "sasloauthbearerexpectedissuer":
-        case "saslOauthbearerExpectedIssuer": return java.lang.String.class;
-        case "sasloauthbearerjwksendpointrefreshms":
-        case "saslOauthbearerJwksEndpointRefreshMs": return long.class;
-        case "sasloauthbearerjwksendpointretrybackoffmaxms":
-        case "saslOauthbearerJwksEndpointRetryBackoffMaxMs": return long.class;
-        case "sasloauthbearerjwksendpointretrybackoffms":
-        case "saslOauthbearerJwksEndpointRetryBackoffMs": return long.class;
-        case "sasloauthbearerjwksendpointurl":
-        case "saslOauthbearerJwksEndpointUrl": return java.lang.String.class;
-        case "sasloauthbearerscopeclaimname":
-        case "saslOauthbearerScopeClaimName": return java.lang.String.class;
-        case "sasloauthbearersubclaimname":
-        case "saslOauthbearerSubClaimName": return java.lang.String.class;
-        case "sasloauthbearertokenendpointurl":
-        case "saslOauthbearerTokenEndpointUrl": return java.lang.String.class;
         case "securityprotocol":
         case "securityProtocol": return java.lang.String.class;
         case "securityproviders":
@@ -626,10 +570,6 @@ public class VertxKafkaEndpointConfigurer extends PropertyConfigurerSupport impl
         case "saslLoginCallbackHandlerClass": return target.getConfiguration().getSaslLoginCallbackHandlerClass();
         case "saslloginclass":
         case "saslLoginClass": return target.getConfiguration().getSaslLoginClass();
-        case "saslloginconnecttimeoutms":
-        case "saslLoginConnectTimeoutMs": return target.getConfiguration().getSaslLoginConnectTimeoutMs();
-        case "saslloginreadtimeoutms":
-        case "saslLoginReadTimeoutMs": return target.getConfiguration().getSaslLoginReadTimeoutMs();
         case "saslloginrefreshbufferseconds":
         case "saslLoginRefreshBufferSeconds": return target.getConfiguration().getSaslLoginRefreshBufferSeconds();
         case "saslloginrefreshminperiodseconds":
@@ -638,32 +578,8 @@ public class VertxKafkaEndpointConfigurer extends PropertyConfigurerSupport impl
         case "saslLoginRefreshWindowFactor": return target.getConfiguration().getSaslLoginRefreshWindowFactor();
         case "saslloginrefreshwindowjitter":
         case "saslLoginRefreshWindowJitter": return target.getConfiguration().getSaslLoginRefreshWindowJitter();
-        case "saslloginretrybackoffmaxms":
-        case "saslLoginRetryBackoffMaxMs": return target.getConfiguration().getSaslLoginRetryBackoffMaxMs();
-        case "saslloginretrybackoffms":
-        case "saslLoginRetryBackoffMs": return target.getConfiguration().getSaslLoginRetryBackoffMs();
         case "saslmechanism":
         case "saslMechanism": return target.getConfiguration().getSaslMechanism();
-        case "sasloauthbearerclockskewseconds":
-        case "saslOauthbearerClockSkewSeconds": return target.getConfiguration().getSaslOauthbearerClockSkewSeconds();
-        case "sasloauthbearerexpectedaudience":
-        case "saslOauthbearerExpectedAudience": return target.getConfiguration().getSaslOauthbearerExpectedAudience();
-        case "sasloauthbearerexpectedissuer":
-        case "saslOauthbearerExpectedIssuer": return target.getConfiguration().getSaslOauthbearerExpectedIssuer();
-        case "sasloauthbearerjwksendpointrefreshms":
-        case "saslOauthbearerJwksEndpointRefreshMs": return target.getConfiguration().getSaslOauthbearerJwksEndpointRefreshMs();
-        case "sasloauthbearerjwksendpointretrybackoffmaxms":
-        case "saslOauthbearerJwksEndpointRetryBackoffMaxMs": return target.getConfiguration().getSaslOauthbearerJwksEndpointRetryBackoffMaxMs();
-        case "sasloauthbearerjwksendpointretrybackoffms":
-        case "saslOauthbearerJwksEndpointRetryBackoffMs": return target.getConfiguration().getSaslOauthbearerJwksEndpointRetryBackoffMs();
-        case "sasloauthbearerjwksendpointurl":
-        case "saslOauthbearerJwksEndpointUrl": return target.getConfiguration().getSaslOauthbearerJwksEndpointUrl();
-        case "sasloauthbearerscopeclaimname":
-        case "saslOauthbearerScopeClaimName": return target.getConfiguration().getSaslOauthbearerScopeClaimName();
-        case "sasloauthbearersubclaimname":
-        case "saslOauthbearerSubClaimName": return target.getConfiguration().getSaslOauthbearerSubClaimName();
-        case "sasloauthbearertokenendpointurl":
-        case "saslOauthbearerTokenEndpointUrl": return target.getConfiguration().getSaslOauthbearerTokenEndpointUrl();
         case "securityprotocol":
         case "securityProtocol": return target.getConfiguration().getSecurityProtocol();
         case "securityproviders":
