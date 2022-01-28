@@ -45,6 +45,7 @@ import org.slf4j.LoggerFactory;
  * if the {@link Exchange} sends messages, then we track them using the {@link org.apache.camel.spi.EventNotifier}.
  */
 @ManagedResource(description = "OpenTracingTracer")
+@Deprecated
 public class OpenTracingTracer extends org.apache.camel.tracing.Tracer {
 
     private static final Logger LOG = LoggerFactory.getLogger(OpenTracingTracer.class);

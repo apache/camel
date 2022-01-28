@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A processor which gets a baggage item from the active {@link Span} and sets it as a Header
  */
+@Deprecated
 public class GetBaggageProcessor extends AsyncProcessorSupport implements Traceable, IdAware, RouteIdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(GetBaggageProcessor.class);

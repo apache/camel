@@ -21,6 +21,7 @@ import java.util.*;
 import io.opentracing.propagation.TextMap;
 import org.apache.camel.tracing.InjectAdapter;
 
+@Deprecated
 public class OpenTracingInjectAdapter implements TextMap {
     private final InjectAdapter adapter;
 

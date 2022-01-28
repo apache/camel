@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A processor which adds a tag on the active {@link io.opentracing.Span} with an {@link org.apache.camel.Expression}
  */
+@Deprecated
 public class TagProcessor extends AsyncProcessorSupport implements Traceable, IdAware, RouteIdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(TagProcessor.class);

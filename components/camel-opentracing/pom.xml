@@ -29,7 +29,7 @@
 
     <artifactId>camel-opentracing</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: OpenTracing</name>
+    <name>Camel :: OpenTracing (deprecated)</name>
     <description>Distributed tracing using OpenTracing</description>
 
     <properties>
