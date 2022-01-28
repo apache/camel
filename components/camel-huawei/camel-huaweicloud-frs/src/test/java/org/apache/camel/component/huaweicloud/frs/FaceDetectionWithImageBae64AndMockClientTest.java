@@ -41,12 +41,12 @@ public class FaceDetectionWithImageBae64AndMockClientTest extends CamelTestSuppo
                         .setProperty(FaceRecognitionProperties.FACE_IMAGE_BASE64,
                                 constant(testConfiguration.getProperty("imageContent")))
                         .to("hwcloud-frs:faceDetection?"
-                                + "accessKey=" + testConfiguration.getProperty("accessKey")
-                                + "&secretKey=" + testConfiguration.getProperty("secretKey")
-                                + "&projectId=" + testConfiguration.getProperty("projectId")
-                                + "&region=" + testConfiguration.getProperty("region")
-                                + "&ignoreSslVerification=true"
-                                + "&frsClient=#frsClient")
+                            + "accessKey=" + testConfiguration.getProperty("accessKey")
+                            + "&secretKey=" + testConfiguration.getProperty("secretKey")
+                            + "&projectId=" + testConfiguration.getProperty("projectId")
+                            + "&region=" + testConfiguration.getProperty("region")
+                            + "&ignoreSslVerification=true"
+                            + "&frsClient=#frsClient")
                         .log("perform faceDetection successful")
                         .to("mock:perform_face_detection_result");
             }
