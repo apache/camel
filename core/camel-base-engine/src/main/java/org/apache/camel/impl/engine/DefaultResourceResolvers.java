@@ -32,6 +32,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.zip.GZIPInputStream;
 
+import javax.net.ssl.HttpsURLConnection;
+
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.ResourceResolver;
@@ -146,6 +148,63 @@ public final class DefaultResourceResolvers {
                         // leaking gaps in case of an exception
                         if (con instanceof HttpURLConnection) {
                             ((HttpURLConnection) con).disconnect();
+                        }
+                        throw e;
+                    }
+                }
+            };
+        }
+    }
+
+    /**
+     * An implementation of the {@link ResourceResolver} that resolves a {@link Resource} from https.
+     */
+    @ResourceResolver(HttpsResolver.SCHEME)
+    public static class HttpsResolver extends ResourceResolverSupport {
+        public static final String SCHEME = "https";
+
+        public HttpsResolver() {
+            super(SCHEME);
+        }
+
+        @Override
+        public Resource createResource(String location, String remaining) {
+            return new ResourceSupport(SCHEME, location) {
+                @Override
+                public boolean exists() {
+                    URLConnection connection = null;
+
+                    try {
+                        connection = new URL(location).openConnection();
+
+                        if (connection instanceof HttpsURLConnection) {
+                            return ((HttpsURLConnection) connection).getResponseCode() == HttpURLConnection.HTTP_OK;
+                        }
+
+                        return connection.getContentLengthLong() > 0;
+                    } catch (IOException e) {
+                        throw new IllegalArgumentException(e);
+                    } finally {
+                        // close the http connection to avoid
+                        // leaking gaps in case of an exception
+                        if (connection instanceof HttpsURLConnection) {
+                            ((HttpsURLConnection) connection).disconnect();
+                        }
+                    }
+                }
+
+                @Override
+                public InputStream getInputStream() throws IOException {
+                    URLConnection con = new URL(location).openConnection();
+                    con.setUseCaches(false);
+
+                    try {
+                        return con.getInputStream();
+                    } catch (IOException e) {
+                        // close the http connection to avoid
+                        // leaking gaps in case of an exception
+                        if (con instanceof HttpsURLConnection) {
+                            ((HttpsURLConnection) con).disconnect();
                         }
                         throw e;
                     }
