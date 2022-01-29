@@ -34,7 +34,7 @@ public class MyRouteTemplates extends RouteBuilder {
 }
 ----
 
-And in XML DSL
+And in Spring XML DSL
 
 [source,xml]
 ----
@@ -50,6 +50,24 @@ And in XML DSL
     </route>
   </routeTemplate>
 </camelContext>
+----
+
+And in XML DSL
+
+[source,xml]
+----
+<routeTemplates xmlns="http://camel.apache.org/schema/spring">
+    <routeTemplate id="myTemplate">
+        <templateParameter name="name"/>
+        <templateParameter name="greeting"/>
+        <templateParameter name="myPeriod" defaultValue="3s"/>
+        <route>
+            <from uri="timer:{{name}}?period={{myPeriod}}"/>
+            <setBody><simple>{{greeting}} ${body}</simple></setBody>
+            <log message="${body}"/>
+        </route>
+    </routeTemplate>
+</routeTemplates>
 ----
 
 In the examples above there was one route template, but you can define as many as you want.
