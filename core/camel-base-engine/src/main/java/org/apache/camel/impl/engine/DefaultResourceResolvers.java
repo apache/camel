@@ -169,7 +169,7 @@ public final class DefaultResourceResolvers {
 
         @Override
         public Resource createResource(String location, String remaining) {
-            return new ResourceSupport(SCHEME, location) {
+            return new ResourceSupport(SCHEME) {
                 @Override
                 public boolean exists() {
                     URLConnection connection = null;
