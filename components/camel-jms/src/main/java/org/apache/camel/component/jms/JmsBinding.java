@@ -698,8 +698,9 @@ public class JmsBinding {
                 StreamMessage message = session.createStreamMessage();
                 if (body != null) {
                     long size = 0;
+                    InputStream is = null;
                     try {
-                        InputStream is = context.getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
+                        is = context.getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
                         LOG.trace("Writing payload in StreamMessage");
                         // assume streaming is bigger payload so use same buffer size as the file component
                         byte[] buffer = new byte[FileUtil.BUFFER_SIZE];
@@ -720,7 +721,10 @@ public class JmsBinding {
                         JMSException cause = new MessageFormatException(e.getMessage());
                         cause.initCause(e);
                         throw cause;
+                    } finally {
+                        IOHelper.close(is);
                     }
+
                 }
                 return message;
             }
