@@ -57,7 +57,7 @@
         <apache-any23-version>2.6</apache-any23-version>
         <apache-drill-version>1.19.0</apache-drill-version>
         <apache-gora-version>0.9</apache-gora-version>
-        <arangodb-java-version>6.15.0</arangodb-java-version>
+        <arangodb-java-version>6.16.0</arangodb-java-version>
         <aries-blueprint-api-version>1.0.1</aries-blueprint-api-version>
         <aries-blueprint-cm-version>1.3.0</aries-blueprint-cm-version>
         <aries-blueprint-core-version>1.10.0</aries-blueprint-core-version>
@@ -81,7 +81,7 @@
         <avro-ipc-jetty-version>1.11.0</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.11.0</avro-ipc-netty-version>
         <awaitility-version>4.1.1</awaitility-version>
-        <aws-java-sdk2-version>2.17.118</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.17.120</aws-java-sdk2-version>
         <aws-xray-version>2.6.1</aws-xray-version>
         <axiom-version>1.2.14</axiom-version>
         <azure-jackson2-version>2.13.1</azure-jackson2-version>
@@ -202,7 +202,7 @@
         <geronimo-jsonb-spec-version>1.0</geronimo-jsonb-spec-version>
         <geronimo-jta-spec-version>1.1.1</geronimo-jta-spec-version>
         <geronimo-ws-metadata-spec-version>1.1.3</geronimo-ws-metadata-spec-version>
-        <gmavenplus-plugin-version>1.12.0</gmavenplus-plugin-version>
+        <gmavenplus-plugin-version>1.13.1</gmavenplus-plugin-version>
         <gmetric4j-version>1.0.10</gmetric4j-version>
         <google-guava-version>20.0</google-guava-version>
         <google-api-client-version>1.32.1</google-api-client-version>
@@ -217,7 +217,7 @@
         <graaljs-version>21.3.0</graaljs-version>
         <graphql-java-version>14.0</graphql-java-version>
         <grizzly-websockets-version>2.4.4</grizzly-websockets-version>
-        <grpc-version>1.42.1</grpc-version>
+        <grpc-version>1.43.2</grpc-version>
         <!-- keep grpc-google-auth-library-version in sync with that used by grpc-auth -->
         <grpc-google-auth-library-version>0.22.2</grpc-google-auth-library-version>
         <grpc-guava-version>28.2-jre</grpc-guava-version>
@@ -239,7 +239,7 @@
         <hibernate-validator-version>6.2.0.Final</hibernate-validator-version>
         <hibernate-version>5.4.32.Final</hibernate-version>
         <hk2-version>2.6.1</hk2-version>
-        <hsqldb-version>2.5.1</hsqldb-version>
+        <hsqldb-version>2.6.1</hsqldb-version>
         <htrace-version>3.1.0-incubating</htrace-version>
         <httpunit-version>1.7</httpunit-version>
         <httpcore4-version>4.4.15</httpcore4-version>
@@ -327,7 +327,7 @@
         <jota-version>1.0.0-beta9</jota-version>
         <jolt-version>0.1.5</jolt-version>
         <jool-version>0.9.14</jool-version>
-        <jooq-version>3.16.2</jooq-version>
+        <jooq-version>3.16.3</jooq-version>
         <joor-version>0.9.14</joor-version>
         <johnzon-version>1.2.15</johnzon-version>
         <jose4j-version>0.6.4</jose4j-version>
@@ -351,7 +351,8 @@
         <jython-version>2.7.2</jython-version>
         <jython-standalone-version>2.7.2</jython-standalone-version>
         <jzlib-version>1.1.3</jzlib-version>
-        <kafka-version>2.8.1</kafka-version>
+        <kafka-version>3.1.0</kafka-version>
+        <kafka-vertx-version>2.8.1</kafka-vertx-version>
         <kotlin-version>1.6.10</kotlin-version>
         <kubernetes-client-version>5.12.0</kubernetes-client-version>
         <kubernetes-model-version>5.12.0</kubernetes-model-version>
@@ -428,7 +429,7 @@
         <ognl-version>3.1.12</ognl-version>
         <openjpa-version>3.2.0</openjpa-version>
         <openstack4j-version>3.8</openstack4j-version>
-        <opentelemetry-version>1.9.1</opentelemetry-version>
+        <opentelemetry-version>1.10.1</opentelemetry-version>
         <opentelemetry-alpha-version>${opentelemetry-version}-alpha</opentelemetry-alpha-version>
         <opentracing-version>0.33.0</opentracing-version>
         <opentracing-tracerresolver-version>0.1.8</opentracing-tracerresolver-version>
@@ -443,7 +444,7 @@
         <picocli-version>4.6.2</picocli-version>
         <powermock-version>2.0.7</powermock-version>
         <properties-maven-plugin-version>1.0-alpha-2</properties-maven-plugin-version>
-        <protobuf-version>3.17.3</protobuf-version>
+        <protobuf-version>3.19.3</protobuf-version>
         <protobuf-maven-plugin-version>0.6.1</protobuf-maven-plugin-version>
         <protonpack-version>1.8</protonpack-version>
         <protostream-version>4.4.1.Final</protostream-version>
@@ -458,7 +459,7 @@
         <rdf4j-rio-version>3.7.4</rdf4j-rio-version>
         <rdf4j-model-version>3.7.4</rdf4j-model-version>
         <reactive-streams-version>1.0.3</reactive-streams-version>
-        <reactor-version>3.4.5</reactor-version>
+        <reactor-version>3.4.14</reactor-version>
         <reactor-netty-version>1.0.2</reactor-netty-version>
         <redisson-version>3.16.3</redisson-version>
         <resilience4j-version>1.7.1</resilience4j-version>

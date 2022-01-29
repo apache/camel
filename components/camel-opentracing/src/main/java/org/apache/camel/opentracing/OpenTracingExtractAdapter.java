@@ -21,6 +21,7 @@ import java.util.*;
 import io.opentracing.propagation.TextMap;
 import org.apache.camel.tracing.ExtractAdapter;
 
+@Deprecated
 public class OpenTracingExtractAdapter implements TextMap {
     ExtractAdapter adapter;
 

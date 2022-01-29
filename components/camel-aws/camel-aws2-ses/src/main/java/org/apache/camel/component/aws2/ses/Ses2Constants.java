@@ -28,4 +28,5 @@ public interface Ses2Constants {
     String SUBJECT = "CamelAwsSesSubject";
     String TO = "CamelAwsSesTo";
     String HTML_EMAIL = "CamelAwsSesHtmlEmail";
+    String CONFIGURATION_SET = "CamelAwsSesConfigurationSet";
 }

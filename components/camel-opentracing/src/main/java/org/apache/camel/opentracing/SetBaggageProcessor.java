@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A processor which adds a baggage item on the active {@link Span} with an {@link Expression}
  */
+@Deprecated
 public class SetBaggageProcessor extends AsyncProcessorSupport implements Traceable, IdAware, RouteIdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(SetBaggageProcessor.class);

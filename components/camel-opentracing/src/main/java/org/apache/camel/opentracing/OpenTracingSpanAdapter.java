@@ -24,6 +24,7 @@ import io.opentracing.tag.Tags;
 import org.apache.camel.tracing.SpanAdapter;
 import org.apache.camel.tracing.Tag;
 
+@Deprecated
 public class OpenTracingSpanAdapter implements SpanAdapter {
 
     static EnumMap<Tag, AbstractTag> tagMap = new EnumMap<>(Tag.class);

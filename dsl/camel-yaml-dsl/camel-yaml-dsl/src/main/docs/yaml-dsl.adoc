@@ -144,16 +144,6 @@ To define an endpoint with the YAML dsl you have three options:
           authorizationToken: "XXX"
 ----
 
-[WARNING]
-====
-Support for the Endpoint DSL with YAML is experimental and subject to changes.
-====
-
-[NOTE]
-====
-Support for Endpoint DSL auto completion https://github.com/apache/camel-k-runtime/issues/485[is not yet available].
-====
-
 == Defining beans
 
 In addition to the general support for creating beans provided by xref:others:main.adoc#_specifying_custom_beans[Camel Main], the YAML DSL provide a convenient syntax to define and configure them:
@@ -202,7 +192,7 @@ The `beans` elements can only be used as root element
 
 == Configuring options on languages
 
-Some of the xref:components:languages:index.adoc[Languages] have additional configurations
+Some xref:components:languages:index.adoc[Languages] have additional configurations
 you may need to use.
 
 For example the xref:components:languages:jsonpath-language.adoc[JSONPath]
@@ -252,7 +242,7 @@ does not have a `middlename` field. To remedy this we have suppressed the except
 
 == External examples
 
-You can find a set of examples using `camel-yaml-dsl` in https://github.com/apache/camel-examples[Camel Examples]
+You can find a set of examples using `main-yaml` in https://github.com/apache/camel-examples[Camel Examples]
 which demonstrate creating Camel Routes with YAML.
 
 Another way to find examples of YAML DSL is to look in https://github.com/apache/camel-kamelets[Camel Kamelets]
@@ -283,7 +273,7 @@ spec:
 
 === Loading Camel K bindings
 
-A Camel K binding (in CRD format (Custom Resource Definition in Kubernetes))
+A Camel K binding (in CRD format; Custom Resource Definition in Kubernetes)
 can be loaded by `camel-yaml-dsl` and run as routes:
 
 [source,yaml]
