@@ -235,9 +235,9 @@ Notice this is *only* possible in the `batch` mode of the Resequencer.
 == Stream Resequencing
 
 In streaming mode then the Resequencer will send out messages as soon as possible when
-a message with the next expected sequence number arrived.
+a message with the next exepcted sequence number arrived.
 
-The streaming mode requires the messages to be re-ordered based on a intergral numeric values
+The streaming mode requires the messages to be re-ordered based on a integral numeric values
 that are ordered 1,2,3...N.
 
 The following example uses the header seqnum for the ordering:
