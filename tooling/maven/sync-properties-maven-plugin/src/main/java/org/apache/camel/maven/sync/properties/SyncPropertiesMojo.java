@@ -21,6 +21,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.InputStream;
 import java.util.Properties;
 import java.util.TreeMap;
 
@@ -52,10 +53,7 @@ public class SyncPropertiesMojo extends AbstractMojo {
     @Parameter(defaultValue = "${basedir}/../../../parent/pom.xml")
     protected File sourcePom;
 
-    /**
-     * The destination POM file to which the required source properties should be copied.
-     */
-    @Parameter(defaultValue = "${basedir}/../../../camel-dependencies/pom.xml")
+    @Parameter(defaultValue = "target/camel-dependencies-pom.xml")
     protected File targetPom;
 
     /**
@@ -87,10 +85,11 @@ public class SyncPropertiesMojo extends AbstractMojo {
                 generatedVersion = sourceProject.getVersion();
             }
 
-            getLog().info("Reading target file " + targetPom.toPath());
-            try (FileReader reader = new FileReader(targetPom)) {
+            InputStream is = null;
+            try {
+                is = SyncPropertiesMojo.class.getResourceAsStream("/camel-dependencies-template.xml");
                 MavenXpp3Reader mavenReader = new MavenXpp3Reader();
-                Model model = mavenReader.read(reader);
+                Model model = mavenReader.read(is);
 
                 // lets sort the properties
                 OrderedProperties op = new OrderedProperties();
@@ -98,13 +97,14 @@ public class SyncPropertiesMojo extends AbstractMojo {
 
                 MavenProject targetProject = new MavenProject(model);
                 targetProject.getModel().setProperties(op);
-                artifactId = targetProject.getModel().getArtifactId();
 
                 getLog().info("Set version of target pom to " + generatedVersion);
                 targetProject.setVersion(generatedVersion);
 
                 MavenXpp3Writer mavenWriter = new MavenXpp3Writer();
                 mavenWriter.write(new FileWriter(targetPom), model);
+            } finally {
+                IOHelper.close(is);
             }
 
             // add license header in top
