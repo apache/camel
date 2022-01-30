@@ -114,8 +114,8 @@ public class DynamicRouterSingleRouteTwoParticipantsIT {
      */
     @Test
     void testConsumersWithNonConflictingRules() throws InterruptedException {
-        mockOne.expectedBodiesReceived(0, 2, 4, 6, 8, 10);
-        mockTwo.expectedBodiesReceived(1, 3, 5, 7, 9);
+        mockOne.expectedBodiesReceivedInAnyOrder(0, 2, 4, 6, 8, 10);
+        mockTwo.expectedBodiesReceivedInAnyOrder(1, 3, 5, 7, 9);
         mockThree.setExpectedCount(0);
 
         // Subscribe for even and odd numeric message content so that all messages
@@ -135,12 +135,13 @@ public class DynamicRouterSingleRouteTwoParticipantsIT {
     void testConsumersWithConflictingRules() throws InterruptedException {
         mockOne.setExpectedCount(0);
         mockTwo.setExpectedCount(0);
-        mockThree.expectedBodiesReceived(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+        mockThree.expectedBodiesReceivedInAnyOrder(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
 
         // Subscribe for all numeric message content, and odd numeric message content so that
         // the participant that wants all message content conflicts with everyone else.  Since
         // that subscription has the highest priority (lowest number), it will receive all
         subscribe(Arrays.asList(allSubscribeMsg, evenSubscribeMsg, oddSubscribeMsg));
+
         sendMessagesAndAssert();
     }
 

@@ -25,7 +25,9 @@
 
     <bean id="dynamic-router" class="org.apache.camel.component.dynamicrouter.DynamicRouterComponent"/>
 
-    <camelContext id="camelContext" xmlns="http://camel.apache.org/schema/spring">
+    <bean id="noErrorHandler" class="org.apache.camel.builder.NoErrorHandlerBuilder"/>
+
+    <camelContext id="camelContext" errorHandlerRef="noErrorHandler" xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="direct:start"/>
             <to uri="dynamic-router:test?recipientMode=allMatch"/>

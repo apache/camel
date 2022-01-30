@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
@@ -35,11 +36,14 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.dynamicrouter.PrioritizedFilterProcessor.PrioritizedFilterProcessorFactory;
 import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.support.AsyncProcessorSupport;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.builder.PredicateBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.dynamicrouter.DynamicRouterConstants.MODE_ALL_MATCH;
 import static org.apache.camel.component.dynamicrouter.DynamicRouterConstants.MODE_FIRST_MATCH;
 
 /**
@@ -86,17 +90,27 @@ public class DynamicRouterProcessor extends AsyncProcessorSupport implements Tra
     /**
      * The default processor to use if there are no matching processors to process the exchange.
      */
-    private final PrioritizedFilterProcessor defaultProcessor;
+    private PrioritizedFilterProcessor defaultProcessor;
 
     /**
      * The {@link ExecutorService} for multicasting messages.
      */
-    private final ExecutorService executorService;
+    private ExecutorService executorService;
+
+    /**
+     * The {@link ReactiveExecutor} for scheduling message sending.
+     */
+    private ReactiveExecutor reactiveExecutor;
 
     /**
      * The {@link FilterProcessor} factory.
      */
     private final Supplier<PrioritizedFilterProcessorFactory> filterProcessorFactorySupplier;
+
+    /**
+     * Flag to log a warning if a message is dropped due to no matching filters.
+     */
+    private final boolean warnDroppedMessage;
 
     /**
      * The id of this dynamic router processor.
@@ -121,6 +135,15 @@ public class DynamicRouterProcessor extends AsyncProcessorSupport implements Tra
         this.recipientMode = recipientMode;
         this.producerTemplate = camelContext.createProducerTemplate();
         this.filterProcessorFactorySupplier = filterProcessorFactorySupplier;
+        this.warnDroppedMessage = warnDroppedMessage;
+        LOG.debug("Created Dynamic Router Processor");
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+        final ExtendedCamelContext extendedCamelContext = camelContext.adapt(ExtendedCamelContext.class);
+        this.reactiveExecutor = extendedCamelContext.getReactiveExecutor();
         this.executorService = camelContext.getExecutorServiceManager()
                 .newDefaultThreadPool(this, "dynamicRouterMulticastPool");
         final String message = String.format(LOG_ENDPOINT, this.getClass().getCanonicalName(), getId(),
@@ -139,7 +162,6 @@ public class DynamicRouterProcessor extends AsyncProcessorSupport implements Tra
                     }
                     producerTemplate.send(message, exchange);
                 });
-        LOG.debug("Created Dynamic Router Processor");
     }
 
     /**
@@ -249,9 +271,18 @@ public class DynamicRouterProcessor extends AsyncProcessorSupport implements Tra
      */
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
+        final List<PrioritizedFilterProcessor> matchingFilters = matchFilters(exchange);
         try {
-            for (PrioritizedFilterProcessor filterProcessor : matchFilters(exchange)) {
-                filterProcessor.process(exchange, callback);
+            if (MODE_ALL_MATCH.equals(recipientMode)) {
+                for (PrioritizedFilterProcessor processor : matchingFilters) {
+                    Exchange copy = ExchangeHelper.createCopy(exchange, true);
+                    executorService
+                            .submit(() -> reactiveExecutor.schedule(() -> processor.process(copy, callback)));
+                }
+            } else {
+                matchingFilters.stream()
+                        .findFirst()
+                        .ifPresent(p -> p.process(exchange, callback));
             }
         } catch (Exception e) {
             exchange.setException(e);

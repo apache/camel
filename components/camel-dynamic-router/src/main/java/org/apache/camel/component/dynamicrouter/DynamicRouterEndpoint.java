@@ -30,6 +30,7 @@ import org.apache.camel.component.dynamicrouter.PrioritizedFilterProcessor.Prior
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -158,6 +159,7 @@ public class DynamicRouterEndpoint extends DefaultEndpoint {
                     .getInstance("dynamicRouterProcessor-" + configuration.getChannel(), getCamelContext(),
                             configuration.getRecipientMode(), configuration.isWarnDroppedMessage(),
                             filterProcessorFactorySupplier);
+            ServiceHelper.startService(processor);
             component.addRoutingProcessor(configuration.getChannel(), processor);
         }
     }
