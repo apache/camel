@@ -12,3 +12,12 @@ The option `camel.main.packageScanRouteBuilders` has been renamed to `camel.main
 
 Using configuration classes must now implement the interface `org.apache.camel.main.CamelConfiguration`
 and the `configure` method now takes a `CamelContext` as argument.
+
+=== camel-core
+
+Change the default from `Override` to `Ignore` in the `TypeConverterExists` option,
+and the TypeConverterExistsLoggingLevel from `WARN` to `DEBUG`.
+
+Previously when Camel detected a duplicate type converter during startup, Camel would
+override the existing converter and log a WARN. A more correct behaviour would be
+to keep the existing and ignore the duplicate.
