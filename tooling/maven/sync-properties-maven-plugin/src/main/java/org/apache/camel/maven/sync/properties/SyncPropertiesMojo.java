@@ -27,9 +27,6 @@ import java.util.TreeMap;
 
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.OrderedProperties;
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.DefaultArtifact;
-import org.apache.maven.artifact.handler.DefaultArtifactHandler;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
@@ -50,10 +47,10 @@ public class SyncPropertiesMojo extends AbstractMojo {
     /**
      * The source POM file from which the required properties should be copied.
      */
-    @Parameter(defaultValue = "${basedir}/../../../parent/pom.xml")
+    @Parameter(defaultValue = "${basedir}/../../parent/pom.xml")
     protected File sourcePom;
 
-    @Parameter(defaultValue = "target/camel-dependencies-pom.xml")
+    @Parameter(defaultValue = "${basedir}/../../camel-dependencies/pom.xml")
     protected File targetPom;
 
     /**
@@ -126,22 +123,6 @@ public class SyncPropertiesMojo extends AbstractMojo {
                 byte[] strToBytes = out.getBytes();
                 outputStream.write(strToBytes);
             }
-
-            // attach the modified pom to the build
-            getLog().info("Attaching BOM artifact ...");
-            getLog().info("Artifact: " + project.getGroupId() + ":" + artifactId + ":" + project.getVersion());
-            DefaultArtifactHandler artifactHandler = new DefaultArtifactHandler("pom");
-            Artifact artifact = new DefaultArtifact(
-                    project.getGroupId(),
-                    artifactId,
-                    project.getVersion(),
-                    "provided",
-                    "pom",
-                    null,
-                    artifactHandler);
-            artifact.setFile(targetPom);
-
-            project.addAttachedArtifact(artifact);
 
             getLog().info("Finished.");
         } catch (Exception ex) {
