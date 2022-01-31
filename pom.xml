@@ -751,6 +751,8 @@
                         <configuration>
                             <source>8</source>
                             <additionalOptions>${javadoc.opts}</additionalOptions>
+                            <!-- disable Javadoc linting for buildung the release with Java 11 -->
+                            <doclint>none</doclint>
                         </configuration>
                     </plugin>
                     <!-- We want to sign the artifact, the POM, and all attached artifacts -->
