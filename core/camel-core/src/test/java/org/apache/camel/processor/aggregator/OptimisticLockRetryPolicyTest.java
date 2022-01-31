@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class OptimisticLockRetryPolicyTest {
 
-    private static long precision = 100L; // give or take 100ms
+    private static long precision = 150L; // give or take 150ms
 
     @Test
     public void testRandomBackOff() throws Exception {

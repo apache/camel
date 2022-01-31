@@ -19,18 +19,21 @@
 -->
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
   <modelVersion>4.0.0</modelVersion>
+
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel</artifactId>
     <version>3.15.0-SNAPSHOT</version>
   </parent>
-  <groupId>org.apache.camel</groupId>
+
   <artifactId>camel-dependencies-generator</artifactId>
   <version>3.15.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Camel :: Dependencies :: Generator</name>
   <description>Camel Dependencies Generator</description>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -38,31 +41,9 @@
       <version>${project.version}</version>
     </dependency>
   </dependencies>
+
   <build>
     <plugins>
-      <plugin>
-        <artifactId>maven-resources-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>copy-camel-dependency-pom</id>
-            <phase>process-resources</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${basedir}/target</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>${basedir}</directory>
-                  <includes>
-                    <include>camel-dependencies-pom-template.xml</include>
-                  </includes>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>sync-properties-maven-plugin</artifactId>
@@ -77,7 +58,6 @@
         </executions>
         <configuration>
           <sourcePom>${basedir}/../parent/pom.xml</sourcePom>
-          <targetPom>${basedir}/../camel-dependencies/target/camel-dependencies-pom-template.xml</targetPom>
           <licenseHeader>${basedir}/../etc/apache-header.xml</licenseHeader>
         </configuration>
       </plugin>
