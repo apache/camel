@@ -10,3 +10,5 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 
 The option `camel.main.packageScanRouteBuilders` has been renamed to `camel.main.basePackageScan`.
 
+Using configuration classes must now implement the interface `org.apache.camel.main.CamelConfiguration`
+and the `configure` method now takes a `CamelContext` as argument.
