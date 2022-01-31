@@ -67,12 +67,6 @@ public class MetricsStatsCounter implements StatsCounter {
     }
 
     @Override
-    @Deprecated
-    public void recordEviction() {
-        recordEviction(1, RemovalCause.EXPLICIT);
-    }
-
-    @Override
     public void recordEviction(int weight, RemovalCause removalCause) {
         evictionCount.inc();
         evictionWeight.inc(weight);
