@@ -33,7 +33,7 @@ import org.apache.camel.spi.Metadata;
  *
  * @see org.apache.camel.processor.Enricher
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "eip,transformation")
 @XmlRootElement(name = "pollEnrich")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PollEnrichDefinition extends ExpressionNode {

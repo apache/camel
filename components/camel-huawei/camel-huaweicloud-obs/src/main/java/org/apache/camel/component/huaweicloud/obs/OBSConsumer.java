@@ -136,7 +136,7 @@ public class OBSConsumer extends ScheduledBatchPollingConsumer {
 
             // if there was a marker set in previous poll, then use it to continue from where last poll finished
             if (marker != null) {
-                LOG.trace("Resuming from marker: " + marker);
+                LOG.trace("Resuming from marker: {}", marker);
                 request.setMarker(marker);
             }
 
