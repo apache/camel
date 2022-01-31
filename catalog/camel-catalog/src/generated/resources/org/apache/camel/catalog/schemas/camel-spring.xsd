@@ -15361,7 +15361,7 @@ overhead when enabled.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 What should happen when attempting to add a duplicate type converter. The
-default behavior is to override the existing. Default value: Override
+default behavior is to ignore the duplicate. Default value: Ignore
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -15369,8 +15369,8 @@ default behavior is to override the existing. Default value: Override
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 The logging level to use when logging that a type converter already exists when
-attempting to add a duplicate type converter. The default logging level is WARN.
-Default value: WARN
+attempting to add a duplicate type converter. The default logging level is
+DEBUG. Default value: DEBUG
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
