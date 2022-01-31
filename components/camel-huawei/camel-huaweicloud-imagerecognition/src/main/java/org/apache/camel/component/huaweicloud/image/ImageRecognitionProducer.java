@@ -66,11 +66,6 @@ public class ImageRecognitionProducer extends DefaultProducer {
         clientConfigurations.setProjectId(getProjectId(endpoint));
         clientConfigurations.setEndpoint(getEndpoint(endpoint));
 
-        if (StringUtils.isEmpty(endpoint.getImageContent()) && StringUtils.isEmpty(endpoint.getImageUrl())) {
-            if (StringUtils.isEmpty(endpoint.getRegion())) {
-                throw new IllegalArgumentException("either image or url should be set");
-            }
-        }
         clientConfigurations.setIgnoreSslVerification(endpoint.isIgnoreSslVerification());
         if (clientConfigurations.isIgnoreSslVerification()) {
             LOG.warn("SSL verification is ignored. This is unsafe in production environment");
