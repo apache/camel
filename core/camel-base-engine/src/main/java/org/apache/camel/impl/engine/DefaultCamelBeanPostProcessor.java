@@ -121,6 +121,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
 
         if (enabled) {
             // do bean binding on simple types first, and then afterwards on complex types
+            injectCamelContextPass(bean, beanName);
             injectFirstPass(bean, beanName, type -> !isComplexUserType(type));
             injectSecondPass(bean, beanName, type -> isComplexUserType(type));
         }
@@ -192,6 +193,11 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
         }
 
         return true;
+    }
+
+    protected void injectCamelContextPass(Object bean, String beanName) {
+        // initial pass to inject CamelContext
+        injectFields(bean, beanName, type -> type.isAssignableFrom(CamelContext.class));
     }
 
     protected void injectFirstPass(Object bean, String beanName, Function<Class, Boolean> filter) {

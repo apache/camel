@@ -43,7 +43,7 @@ public class ContextEventsTest {
         assertEquals(1, config.onStop.get());
     }
 
-    public static class MyConfig {
+    public static class MyConfig implements CamelConfiguration {
         final AtomicInteger onInitializing = new AtomicInteger();
         final AtomicInteger onInitialized = new AtomicInteger();
         final AtomicInteger onStart = new AtomicInteger();

@@ -275,6 +275,7 @@ public abstract class AbstractCamelContext extends BaseService
     private Boolean allowUseOriginalMessage = Boolean.FALSE;
     private Boolean caseInsensitiveHeaders = Boolean.TRUE;
     private Boolean autowiredEnabled = Boolean.TRUE;
+    private String basePackageScan;
     private boolean lightweight;
     private Long delay;
     private ErrorHandlerFactory errorHandlerFactory;
@@ -2766,8 +2767,9 @@ public abstract class AbstractCamelContext extends BaseService
         // optimize - before starting routes lets check if event notifications is possible
         eventNotificationApplicable = EventHelper.eventsApplicable(this);
 
-        // ensure additional type converters is loaded
-        if (loadTypeConverters && typeConverter instanceof AnnotationScanTypeConverters) {
+        // ensure additional type converters is loaded (either if enabled or we should use package scanning from the base)
+        boolean load = loadTypeConverters || getBasePackageScan() != null;
+        if (load && typeConverter instanceof AnnotationScanTypeConverters) {
             StartupStep step2 = startupStepRecorder.beginStep(CamelContext.class, null, "Scan TypeConverters");
             ((AnnotationScanTypeConverters) typeConverter).scanTypeConverters();
             startupStepRecorder.endStep(step2);
@@ -4268,6 +4270,16 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     public void setTypeConverterStatisticsEnabled(Boolean typeConverterStatisticsEnabled) {
         this.typeConverterStatisticsEnabled = typeConverterStatisticsEnabled;
+    }
+
+    @Override
+    public String getBasePackageScan() {
+        return basePackageScan;
+    }
+
+    @Override
+    public void setBasePackageScan(String basePackageScan) {
+        this.basePackageScan = basePackageScan;
     }
 
     @Override

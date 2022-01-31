@@ -31,11 +31,33 @@ public class Main extends MainCommandLineSupport {
     protected static Main instance;
     protected final MainRegistry registry = new MainRegistry();
 
+    /**
+     * Camel main application
+     *
+     * It is recommended to use {@link Main#Main(Class)} to specify the main class.
+     */
     public Main() {
     }
 
-    public Main(Class<?>... configurationClass) {
-        super(configurationClass);
+    /**
+     * Camel main application
+     *
+     * @param mainClass the main class
+     */
+    public Main(Class<?> mainClass) {
+        configure().withBasePackageScan(mainClass.getPackageName());
+    }
+
+    /**
+     * Camel main application
+     *
+     * @param mainClass            the main class
+     * @param configurationClasses additional camel configuration classes
+     */
+    @SafeVarargs
+    public Main(Class<?> mainClass, Class<CamelConfiguration>... configurationClasses) {
+        super(configurationClasses);
+        configure().withBasePackageScan(mainClass.getPackageName());
     }
 
     public static void main(String... args) throws Exception {

@@ -42,7 +42,7 @@ public class RoutesConfigurer {
     private RoutesCollector routesCollector;
     private CamelBeanPostProcessor beanPostProcessor;
     private List<RoutesBuilder> routesBuilders;
-    private String packageScanRouteBuilders;
+    private String basePackageScan;
     private String routesBuilderClasses;
     private String javaRoutesExcludePattern;
     private String javaRoutesIncludePattern;
@@ -57,12 +57,12 @@ public class RoutesConfigurer {
         this.routesBuilders = routesBuilders;
     }
 
-    public String getPackageScanRouteBuilders() {
-        return packageScanRouteBuilders;
+    public String getBasePackageScan() {
+        return basePackageScan;
     }
 
-    public void setPackageScanRouteBuilders(String packageScanRouteBuilders) {
-        this.packageScanRouteBuilders = packageScanRouteBuilders;
+    public void setBasePackageScan(String basePackageScan) {
+        this.basePackageScan = basePackageScan;
     }
 
     public String getRoutesBuilderClasses() {
@@ -148,8 +148,8 @@ public class RoutesConfigurer {
             }
         }
 
-        if (getPackageScanRouteBuilders() != null) {
-            String[] pkgs = getPackageScanRouteBuilders().split(",");
+        if (getBasePackageScan() != null) {
+            String[] pkgs = getBasePackageScan().split(",");
             Set<Class<?>> set = camelContext.adapt(ExtendedCamelContext.class)
                     .getPackageScanClassResolver()
                     .findImplementations(RoutesBuilder.class, pkgs);

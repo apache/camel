@@ -52,6 +52,7 @@ import org.apache.camel.spi.AutowiredLifecycleStrategy;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.RouteTemplateParameterSource;
 import org.apache.camel.spi.StartupStepRecorder;
@@ -302,13 +303,40 @@ public abstract class BaseMainSupport extends BaseService {
             postProcessor.postProcessAfterInitialization(configuration, configuration.getClass().getName());
         }
 
+        // auto-detect camel configurations via base package scanning
+        String basePackage = camelContext.adapt(ExtendedCamelContext.class).getBasePackageScan();
+        if (basePackage != null) {
+            PackageScanClassResolver pscr = camelContext.adapt(ExtendedCamelContext.class).getPackageScanClassResolver();
+            Set<Class<?>> found = pscr.findImplementations(CamelConfiguration.class, basePackage);
+            for (Class<?> clazz : found) {
+                // lets use Camel's injector so the class has some support for dependency injection
+                Object config = camelContext.getInjector().newInstance(clazz);
+                if (config instanceof CamelConfiguration) {
+                    LOG.debug("Discovered CamelConfiguration class: {}", clazz);
+                    CamelConfiguration cc = (CamelConfiguration) config;
+                    mainConfigurationProperties.addConfiguration(cc);
+                }
+            }
+        }
+
         if (mainConfigurationProperties.getConfigurationClasses() != null) {
             String[] configClasses = mainConfigurationProperties.getConfigurationClasses().split(",");
             for (String configClass : configClasses) {
-                Class<?> configClazz = camelContext.getClassResolver().resolveClass(configClass);
-                // lets use Camel's injector so the class has some support for dependency injection
-                Object config = camelContext.getInjector().newInstance(configClazz);
-                mainConfigurationProperties.addConfiguration(config);
+                Class<CamelConfiguration> configClazz
+                        = camelContext.getClassResolver().resolveClass(configClass, CamelConfiguration.class);
+                // skip main classes
+                boolean mainClass = false;
+                try {
+                    configClazz.getDeclaredMethod("main", String[].class);
+                    mainClass = true;
+                } catch (NoSuchMethodException e) {
+                    // ignore
+                }
+                if (!mainClass) {
+                    // lets use Camel's injector so the class has some support for dependency injection
+                    CamelConfiguration config = camelContext.getInjector().newInstance(configClazz);
+                    mainConfigurationProperties.addConfiguration(config);
+                }
             }
         }
 
@@ -493,6 +521,16 @@ public abstract class BaseMainSupport extends BaseService {
         }
     }
 
+    protected void configurePackageScan(CamelContext camelContext) {
+        if (mainConfigurationProperties.isBasePackageScanEnabled()) {
+            // only set the base package if enabled
+            camelContext.adapt(ExtendedCamelContext.class).setBasePackageScan(mainConfigurationProperties.getBasePackageScan());
+            if (mainConfigurationProperties.getBasePackageScan() != null) {
+                LOG.info("Classpath scanning enabled from base package: {}", mainConfigurationProperties.getBasePackageScan());
+            }
+        }
+    }
+
     protected void configureRoutes(CamelContext camelContext) throws Exception {
         // then configure and add the routes
         RoutesConfigurer configurer = new RoutesConfigurer();
@@ -504,7 +542,10 @@ public abstract class BaseMainSupport extends BaseService {
         configurer.setBeanPostProcessor(camelContext.adapt(ExtendedCamelContext.class).getBeanPostProcessor());
         configurer.setRoutesBuilders(mainConfigurationProperties.getRoutesBuilders());
         configurer.setRoutesBuilderClasses(mainConfigurationProperties.getRoutesBuilderClasses());
-        configurer.setPackageScanRouteBuilders(mainConfigurationProperties.getPackageScanRouteBuilders());
+        if (mainConfigurationProperties.isBasePackageScanEnabled()) {
+            // only set the base package if enabled
+            configurer.setBasePackageScan(mainConfigurationProperties.getBasePackageScan());
+        }
         configurer.setJavaRoutesExcludePattern(mainConfigurationProperties.getJavaRoutesExcludePattern());
         configurer.setJavaRoutesIncludePattern(mainConfigurationProperties.getJavaRoutesIncludePattern());
         configurer.setRoutesExcludePattern(mainConfigurationProperties.getRoutesExcludePattern());
@@ -521,6 +562,8 @@ public abstract class BaseMainSupport extends BaseService {
         configurePropertiesService(camelContext);
         // setup startup recorder before building context
         configureStartupRecorder(camelContext);
+        // setup package scan
+        configurePackageScan(camelContext);
 
         // ensure camel context is build
         camelContext.build();

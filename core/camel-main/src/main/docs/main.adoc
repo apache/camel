@@ -18,7 +18,7 @@ The following tables lists all the options:
 
 // main options: START
 === Camel Main configurations
-The camel.main supports 107 options, which are listed below.
+The camel.main supports 108 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -32,6 +32,8 @@ The camel.main supports 107 options, which are listed below.
 | *camel.main.autoStartup* | Sets whether the object should automatically start when Camel starts. Important: Currently only routes can be disabled, as CamelContext's are always started. Note: When setting auto startup false on CamelContext then that takes precedence and no routes are started. You would need to start CamelContext explicit using the org.apache.camel.CamelContext.start() method, to start the context, and then you would need to start the routes manually using CamelContext.getRouteController().startRoute(String). Default is true to always start up. | true | boolean
 | *camel.main.autowiredEnabled* | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. Default is true. | true | boolean
 | *camel.main.backlogTracing* | Sets whether backlog tracing is enabled or not. Default is false. | false | boolean
+| *camel.main.basePackageScan* | Package name to use as base (offset) for classpath scanning of RouteBuilder , and org.apache.camel.TypeConverter classes. If you are using Spring Boot then it is instead recommended to use Spring Boots component scanning and annotate your route builder classes with Component. In other words only use this for Camel Main in standalone mode. |  | String
+| *camel.main.basePackageScan{zwsp}Enabled* | Whether base package scan is enabled. | true | boolean
 | *camel.main.beanIntrospection{zwsp}ExtendedStatistics* | Sets whether bean introspection uses extended statistics. The default is false. | false | boolean
 | *camel.main.beanIntrospection{zwsp}LoggingLevel* | Sets the logging level used by bean introspection, logging activity of its usage. The default is TRACE. |  | LoggingLevel
 | *camel.main.beanPostProcessor{zwsp}Enabled* | Can be used to turn off bean post processing. Be careful to turn this off, as this means that beans that use Camel annotations such as org.apache.camel.EndpointInject , org.apache.camel.ProducerTemplate , org.apache.camel.Produce , org.apache.camel.Consume etc will not be injected and in use. Turning this off should only be done if you are sure you do not use any of these Camel features. Not all runtimes allow turning this off (such as camel-blueprint or camel-cdi with XML). The default value is true (enabled). | true | boolean
@@ -71,7 +73,6 @@ The camel.main supports 107 options, which are listed below.
 | *camel.main.mdcLoggingKeys{zwsp}Pattern* | Sets the pattern used for determine which custom MDC keys to propagate during message routing when the routing engine continues routing asynchronously for the given message. Setting this pattern to will propagate all custom keys. Or setting the pattern to foo,bar will propagate any keys starting with either foo or bar. Notice that a set of standard Camel MDC keys are always propagated which starts with camel. as key name. The match rules are applied in this order (case insensitive): 1. exact match, returns true 2. wildcard match (pattern ends with a and the name starts with the pattern), returns true 3. regular expression match, returns true 4. otherwise returns false |  | String
 | *camel.main.messageHistory* | Sets whether message history is enabled or not. Default is false. | false | boolean
 | *camel.main.name* | Sets the name of the CamelContext. |  | String
-| *camel.main.packageScanRoute{zwsp}Builders* | Sets package names for scanning for org.apache.camel.builder.RouteBuilder classes as candidates to be included. If you are using Spring Boot then its instead recommended to use Spring Boots component scanning and annotate your route builder classes with Component. In other words only use this for Camel Main in standalone mode. |  | String
 | *camel.main.producerTemplate{zwsp}CacheSize* | Producer template endpoints cache size. | 1000 | int
 | *camel.main.routeControllerBack{zwsp}OffDelay* | Backoff delay in millis when restarting a route that failed to startup. |  | long
 | *camel.main.routeControllerBack{zwsp}OffMaxAttempts* | Backoff maximum number of attempts to restart a route that failed to startup. When this threshold has been exceeded then the controller will give up attempting to restart the route, and the route will remain as stopped. |  | long
@@ -297,6 +298,77 @@ The camel.lra supports 4 options, which are listed below.
 | *camel.lra.localParticipantUrl* | The URL for the local participant |  | String
 |===
 // main options: END
+
+== Package Scanning
+
+*Available since Camel 3.16*
+
+When running Camel standalone via `camel-main` JAR, then Camel will use package scanning to discover:
+
+- Camel routes by discovering `RouteBuilder` classes
+- Camel configuration classes by discovering `CamelConfiguration` classes
+- Camel type converters by discovering classes annotated with `@Converter`
+
+To use package scanning then Camel needs to know the base package to use as _offset_. This
+can be specified either with the `camel.main.basePackage` option or via `Main` class as shown below:
+
+[source,java]
+----
+package com.foo.acme;
+
+public class MyCoolApplication {
+
+    public static void main(String[] args) {
+        Main main = new Main(MyCoolApplication.class);
+        main.run();
+    }
+
+}
+----
+
+In the example above, then we use `com.foo.acme` as the base package, which is done
+by passing in the class in the `Main` constructor. This is similar with how Spring Boot does this.
+
+Camel will then scan from the base package and the sub packages.
+
+=== Disabling Package Scanning
+
+Package scanning can be turned off by setting `camel.main.basePackageScanEnabled=false`.
+
+There is a little overhead when using package scanning as Camel performs this scan during startup.
+
+== Configuring Camel Main applications
+
+You can use _configuration_ classes to configure Camel Main applications from Java.
+
+IMPORTANT: In *Camel 3.16* onwards the configuration classes must implement the interface `org.apache.camel.main.CamelConfiguration`.
+In previous versions this was not required.
+
+For example to configure a Camel application by creating custom beans you can do:
+
+[source,java]
+----
+public class MyConfiguration implements CamelConfiguration {
+
+    public void configure(CamelContext camelContext) throws Exception {
+        // this method is optional and can be omitted
+        // do any kind of configuration here if needed
+    }
+
+    @BindToRegistry
+    public MyBean myAwesomeBean() {
+        MyBean bean = new MyBean();
+        // do something on bean
+        return bean;
+    }
+}
+----
+
+In the configuration class you can also have custom methods that creates beans, such as the `myAwesomeBean` method
+that creates the `MyBean` and registers it with the name `myAwesomeBean` (defaults to method name).
+
+This is similar to Spring Boot where you can also do this with the Spring Boot `@Bean` annotations,
+or in Quarkus/CDI with the `@Produces` annotation.
 
 == Specifying custom beans
 

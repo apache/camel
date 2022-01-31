@@ -38,7 +38,7 @@ public class MainIoCTest {
         // use configuration class
         Main main = new Main();
         // add the configuration
-        main.configure().addConfigurationClass(MyConfiguration.class);
+        main.configure().withConfigurations(MyConfiguration.class);
         // add as class so we get IoC
         main.configure().addRoutesBuilder(MyRouteBuilder.class);
         // manually bind
@@ -101,7 +101,7 @@ public class MainIoCTest {
         // noop
     }
 
-    public static class MyConfiguration {
+    public static class MyConfiguration implements CamelConfiguration {
 
         @BeanInject
         private CamelContext camel;

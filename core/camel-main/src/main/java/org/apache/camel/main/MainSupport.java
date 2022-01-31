@@ -48,9 +48,12 @@ public abstract class MainSupport extends BaseMainSupport {
     private int durationHitExitCode;
     private String durationMaxAction = "shutdown";
 
-    protected MainSupport(Class<?>... configurationClasses) {
+    @SafeVarargs
+    protected MainSupport(Class<? extends CamelConfiguration>... configurationClasses) {
         this();
-        configure().addConfigurationClass(configurationClasses);
+        for (Class<? extends CamelConfiguration> clazz : configurationClasses) {
+            configure().addConfiguration(clazz);
+        }
     }
 
     protected MainSupport() {

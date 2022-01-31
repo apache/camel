@@ -32,7 +32,7 @@ public class MainCustomizerTest {
         Main main = new Main();
 
         try {
-            main.configure().addConfigurationClass(MyConfiguration.class);
+            main.configure().addConfiguration(MyConfiguration.class);
             main.start();
 
             LogComponent component = main.getCamelContext().getComponent("log", LogComponent.class);
@@ -48,7 +48,7 @@ public class MainCustomizerTest {
 
         try {
             main.bind("my-filter", ComponentCustomizer.Policy.none());
-            main.configure().addConfigurationClass(MyConfiguration.class);
+            main.configure().addConfiguration(MyConfiguration.class);
             main.start();
 
             LogComponent component = main.getCamelContext().getComponent("log", LogComponent.class);
@@ -65,7 +65,7 @@ public class MainCustomizerTest {
         try {
             main.addInitialProperty("camel.customizer.component.log.enabled", "false");
             main.bind("my-filter", ComponentCustomizer.Policy.any());
-            main.configure().addConfigurationClass(MyConfiguration.class);
+            main.configure().addConfiguration(MyConfiguration.class);
             main.start();
 
             LogComponent component = main.getCamelContext().getComponent("log", LogComponent.class);
@@ -81,7 +81,7 @@ public class MainCustomizerTest {
     //
     // ****************************
 
-    public static class MyConfiguration {
+    public static class MyConfiguration implements CamelConfiguration {
         @BindToRegistry
         public ComponentCustomizer logCustomizer() {
             return ComponentCustomizer.builder(LogComponent.class)

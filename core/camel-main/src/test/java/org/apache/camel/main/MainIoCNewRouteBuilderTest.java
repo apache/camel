@@ -54,7 +54,7 @@ public class MainIoCNewRouteBuilderTest {
         main.stop();
     }
 
-    public static class MyConfiguration {
+    public static class MyConfiguration implements CamelConfiguration {
 
         @BeanInject
         private CamelContext camel;

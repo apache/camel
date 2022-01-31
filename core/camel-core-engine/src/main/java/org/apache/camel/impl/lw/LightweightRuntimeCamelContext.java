@@ -200,6 +200,7 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     private final boolean dumpRoutes;
     private final String mdcLoggingKeysPattern;
     private final boolean useMDCLogging;
+    private final String basePackageScan;
     private final List<Route> routes;
     private final boolean messageHistory;
     private final boolean allowUseOriginalMessage;
@@ -251,6 +252,7 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
         dumpRoutes = context.isDumpRoutes();
         mdcLoggingKeysPattern = context.getMDCLoggingKeysPattern();
         useMDCLogging = context.isUseMDCLogging();
+        basePackageScan = context.adapt(ExtendedCamelContext.class).getBasePackageScan();
         messageHistory = context.isMessageHistory();
         allowUseOriginalMessage = context.isAllowUseOriginalMessage();
         logExhaustedMessageBody = context.isLogExhaustedMessageBody();
@@ -1244,6 +1246,16 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
 
     @Override
     public void setTypeConverterStatisticsEnabled(Boolean typeConverterStatisticsEnabled) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String getBasePackageScan() {
+        return basePackageScan;
+    }
+
+    @Override
+    public void setBasePackageScan(String basePackageScan) {
         throw new UnsupportedOperationException();
     }
 

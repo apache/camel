@@ -931,6 +931,16 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     @Override
+    public String getBasePackageScan() {
+        return getExtendedCamelContext().getBasePackageScan();
+    }
+
+    @Override
+    public void setBasePackageScan(String basePackageScan) {
+        getExtendedCamelContext().setBasePackageScan(basePackageScan);
+    }
+
+    @Override
     public Boolean isUseMDCLogging() {
         return delegate.isUseMDCLogging();
     }

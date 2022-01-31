@@ -14,21 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spi;
+package org.apache.camel.main.scan;
 
-/**
- * A {@link org.apache.camel.TypeConverter} which is capable of annotation scanning for
- * {@link org.apache.camel.Converter} classes and add these as type converters.
- * <p/>
- * This is using Camel 2.x style, and it is recommended to migrate to @Converter(loader = true) for fast type converter
- * mode.
- */
-public interface AnnotationScanTypeConverters {
+import org.apache.camel.CamelContext;
+import org.apache.camel.main.CamelConfiguration;
+import org.junit.jupiter.api.Assertions;
 
-    /**
-     * Scan for {@link org.apache.camel.Converter} classes and add those as type converters.
-     *
-     * @throws Exception is thrown if error happened
-     */
-    void scanTypeConverters() throws Exception;
+public class MyScanConfiguration implements CamelConfiguration {
+
+    @Override
+    public void configure(CamelContext camelContext) throws Exception {
+        Assertions.assertNotNull(camelContext);
+        camelContext.getGlobalOptions().put("scanConfigured", "true");
+    }
+
 }

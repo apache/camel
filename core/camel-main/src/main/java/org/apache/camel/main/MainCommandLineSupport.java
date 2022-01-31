@@ -29,7 +29,8 @@ public abstract class MainCommandLineSupport extends MainSupport {
     protected final List<Option> options = new ArrayList<>();
     private volatile boolean initOptionsDone;
 
-    public MainCommandLineSupport(Class... configurationClasses) {
+    @SafeVarargs
+    public MainCommandLineSupport(Class<CamelConfiguration>... configurationClasses) {
         super(configurationClasses);
     }
 
