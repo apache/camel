@@ -21,7 +21,6 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.StaticService;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.TypeConverterExists;
-import org.apache.camel.TypeConverters;
 
 /**
  * Registry for type converters.
@@ -106,12 +105,12 @@ public interface TypeConverterRegistry extends StaticService, CamelContextAware 
     boolean removeTypeConverter(Class<?> toType, Class<?> fromType);
 
     /**
-     * Registers all the type converters from the class, each converter must be implemented as a method and annotated
+     * Registers all the type converters from the instance, each converter must be implemented as a method and annotated
      * with {@link org.apache.camel.Converter}.
      *
-     * @param typeConverters class which implements the type converters
+     * @param typeConverters instance which implements the type converters
      */
-    void addTypeConverters(TypeConverters typeConverters);
+    void addTypeConverters(Object typeConverters);
 
     /**
      * Registers a new fallback type converter

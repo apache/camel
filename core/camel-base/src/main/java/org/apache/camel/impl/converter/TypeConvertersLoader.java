@@ -26,14 +26,14 @@ import org.apache.camel.TypeConverters;
  */
 public class TypeConvertersLoader extends AnnotationTypeConverterLoader {
 
-    private final TypeConverters typeConverters;
+    private final Object typeConverters;
 
     /**
      * Creates the loader
      *
      * @param typeConverters The implementation that has the type converters
      */
-    public TypeConvertersLoader(TypeConverters typeConverters) {
+    public TypeConvertersLoader(Object typeConverters) {
         super(new TypeConvertersPackageScanClassResolver(typeConverters.getClass()));
         this.typeConverters = typeConverters;
     }

@@ -33,7 +33,6 @@ import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.TypeConverterExists;
 import org.apache.camel.TypeConverterExistsException;
-import org.apache.camel.TypeConverters;
 import org.apache.camel.converter.ObjectConverter;
 import org.apache.camel.spi.BulkTypeConverters;
 import org.apache.camel.spi.CamelLogger;
@@ -619,7 +618,7 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
     }
 
     @Override
-    public void addTypeConverters(TypeConverters typeConverters) {
+    public void addTypeConverters(Object typeConverters) {
         throw new UnsupportedOperationException();
     }
 
