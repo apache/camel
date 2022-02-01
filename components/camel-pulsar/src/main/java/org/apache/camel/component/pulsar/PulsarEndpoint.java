@@ -20,6 +20,8 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.Suspendable;
+import org.apache.camel.SuspendableService;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -34,7 +36,7 @@ import org.apache.pulsar.client.api.PulsarClient;
  */
 @UriEndpoint(scheme = "pulsar", firstVersion = "2.24.0", title = "Pulsar",
              syntax = "pulsar:persistence://tenant/namespace/topic", category = { Category.MESSAGING })
-public class PulsarEndpoint extends DefaultEndpoint {
+public class PulsarEndpoint extends DefaultEndpoint implements Suspendable, SuspendableService {
 
     private PulsarClient pulsarClient;
     private String uri; // TODO this field is reported unread

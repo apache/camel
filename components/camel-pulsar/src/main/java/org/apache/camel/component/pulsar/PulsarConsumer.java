@@ -23,6 +23,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
 import org.apache.camel.Processor;
+import org.apache.camel.Suspendable;
+import org.apache.camel.SuspendableService;
 import org.apache.camel.component.pulsar.utils.consumers.ConsumerCreationStrategy;
 import org.apache.camel.component.pulsar.utils.consumers.ConsumerCreationStrategyFactory;
 import org.apache.camel.support.DefaultConsumer;
@@ -33,9 +35,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.pulsar.utils.PulsarUtils.stopConsumers;
+import static org.apache.camel.component.pulsar.utils.PulsarUtils.pauseConsumers;
+import static org.apache.camel.component.pulsar.utils.PulsarUtils.resumeConsumers;
 import static org.apache.camel.component.pulsar.utils.PulsarUtils.stopExecutors;
 
-public class PulsarConsumer extends DefaultConsumer {
+public class PulsarConsumer extends DefaultConsumer implements Suspendable, SuspendableService {
     private static final Logger LOGGER = LoggerFactory.getLogger(PulsarConsumer.class);
 
     private final PulsarEndpoint pulsarEndpoint;
@@ -70,14 +74,13 @@ public class PulsarConsumer extends DefaultConsumer {
     }
 
     @Override
-    protected void doSuspend() throws PulsarClientException {
-        executors = stopExecutors(pulsarEndpoint.getCamelContext().getExecutorServiceManager(), executors);
-        pulsarConsumers = stopConsumers(pulsarConsumers);
+    protected void doSuspend() {
+        pauseConsumers(pulsarConsumers);
     }
 
     @Override
     protected void doResume() throws Exception {
-        doStart();
+        resumeConsumers(pulsarConsumers);
     }
 
     private Collection<Consumer<byte[]>> createConsumers(

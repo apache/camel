@@ -58,4 +58,12 @@ public final class PulsarUtils {
 
         return new ConcurrentLinkedQueue<>();
     }
+
+    public static void pauseConsumers(final Queue<Consumer<byte[]>> consumers) {
+        consumers.forEach(Consumer::pause);
+    }
+
+    public static void resumeConsumers(final Queue<Consumer<byte[]>> consumers) {
+        consumers.forEach(Consumer::resume);
+    }
 }
