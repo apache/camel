@@ -16,8 +16,6 @@
  */
 package org.apache.camel.spi;
 
-import java.util.function.Supplier;
-
 /**
  * A factory which performs the task from Camel dependency injection annotations on a field, property or method
  * parameter of a specified type.
