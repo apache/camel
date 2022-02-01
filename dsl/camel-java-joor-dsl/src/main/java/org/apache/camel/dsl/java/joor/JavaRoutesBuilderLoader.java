@@ -16,13 +16,18 @@
  */
 package org.apache.camel.dsl.java.joor;
 
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.camel.BindToRegistry;
+import org.apache.camel.Converter;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.dsl.support.RouteBuilderLoaderSupport;
+import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.RoutesLoader;
 import org.apache.camel.support.ResourceHelper;
@@ -44,10 +49,34 @@ public class JavaRoutesBuilderLoader extends RouteBuilderLoaderSupport {
     @Override
     public RouteBuilder doLoadRouteBuilder(Resource resource) throws Exception {
         try (InputStream is = resource.getInputStream()) {
+            if (is == null) {
+                throw new FileNotFoundException(resource.getLocation());
+            }
             final String content = IOHelper.loadText(is);
             final String name = determineName(resource, content);
 
-            return Reflect.compile(name, content).create().get();
+            Object obj = Reflect.compile(name, content).create().get();
+            if (obj instanceof RouteBuilder) {
+                return (RouteBuilder) obj;
+            } else if (obj != null) {
+                Converter tc = obj.getClass().getAnnotation(Converter.class);
+                if (tc != null) {
+                    // add type converters from annotations
+                    return null;
+                }
+                // is the bean a custom bean
+                BindToRegistry bir = obj.getClass().getAnnotation(BindToRegistry.class);
+                if (bir != null) {
+                    // this class is a bean service which needs to be post processed and registered which happens
+                    // automatic by the bean post processor
+                    CamelBeanPostProcessor bpp = getCamelContext().adapt(ExtendedCamelContext.class).getBeanPostProcessor();
+                    bpp.postProcessBeforeInitialization(obj, name);
+                    bpp.postProcessAfterInitialization(obj, name);
+                    return null;
+                }
+                // TODO: CamelConfiguration 
+            }
+            return null;
         }
     }
 
