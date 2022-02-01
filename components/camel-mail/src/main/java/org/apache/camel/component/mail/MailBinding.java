@@ -368,11 +368,16 @@ public class MailBinding {
                         }
                         map.put(fileName, camelAttachment);
                     } else {
-                        LOG.warn("Cannot extract duplicate file attachment: {}.", fileName);
+                        handleDuplicateAttachmentFilename(fileName);
                     }
                 }
             }
         }
+    }
+
+    protected void handleDuplicateAttachmentFilename(String fileName) throws MessagingException {
+        LOG.error("Cannot extract duplicate file attachment: {}.", fileName);
+        throw new MessagingException("Cannot extract duplicate file attachment: " + fileName);
     }
 
     private boolean validDisposition(String disposition, String fileName) {
