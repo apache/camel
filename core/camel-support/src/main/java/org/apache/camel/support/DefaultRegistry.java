@@ -188,6 +188,12 @@ public class DefaultRegistry extends ServiceSupport implements Registry, LocalBe
     }
 
     @Override
+    public void unbind(String id) {
+        supplierRegistry.unbind(id);
+        fallbackRegistry.unbind(id);
+    }
+
+    @Override
     public Object lookupByName(String name) {
         Object answer;
         try {

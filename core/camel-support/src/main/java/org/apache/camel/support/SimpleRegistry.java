@@ -117,6 +117,11 @@ public class SimpleRegistry extends LinkedHashMap<String, Map<Class<?>, Object>>
     }
 
     @Override
+    public void unbind(String id) {
+        remove(id);
+    }
+
+    @Override
     public void close() throws IOException {
         clear();
     }
