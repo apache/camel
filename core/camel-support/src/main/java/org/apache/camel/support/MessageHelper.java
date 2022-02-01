@@ -33,6 +33,7 @@ import org.apache.camel.Message;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.StreamCache;
 import org.apache.camel.WrappedFile;
+import org.apache.camel.spi.DataTypeAware;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.annotations.EagerClassloaded;
@@ -490,6 +491,26 @@ public final class MessageHelper {
         sb.append(prefix);
         sb.append("</message>");
         return sb.toString();
+    }
+
+    /**
+     * Copies the body of the source message to the body of the target message while preserving the data type if the
+     * messages are both of type {@link DataTypeAware}. .
+     *
+     * @param source the source message from which the body must be extracted.
+     * @param target the target message that will receive the body.
+     */
+    public static void copyBody(Message source, Message target) {
+        // Preserve the DataType if both messages are DataTypeAware
+        if (source instanceof DataTypeAware && target instanceof DataTypeAware) {
+            final DataTypeAware dataTypeAwareSource = (DataTypeAware) source;
+            if (dataTypeAwareSource.hasDataType()) {
+                final DataTypeAware dataTypeAwareTarget = (DataTypeAware) target;
+                dataTypeAwareTarget.setBody(source.getBody(), dataTypeAwareSource.getDataType());
+                return;
+            }
+        }
+        target.setBody(source.getBody());
     }
 
     /**
