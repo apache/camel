@@ -59,6 +59,7 @@ import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelContextNameStrategy;
+import org.apache.camel.spi.CamelDependencyInjectionAnnotationFactory;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.ComponentNameResolver;
 import org.apache.camel.spi.ComponentResolver;
@@ -1235,6 +1236,16 @@ class AbstractExchangeTest {
 
         @Override
         public void setBeanPostProcessor(CamelBeanPostProcessor beanPostProcessor) {
+
+        }
+
+        @Override
+        public CamelDependencyInjectionAnnotationFactory getDependencyInjectionAnnotationFactory() {
+            return null;
+        }
+
+        @Override
+        public void setDependencyInjectionAnnotationFactory(CamelDependencyInjectionAnnotationFactory factory) {
 
         }
 
