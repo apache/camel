@@ -24,6 +24,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import org.apache.camel.BeanConfigInject;
 import org.apache.camel.BeanInject;
@@ -35,7 +36,6 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Produce;
 import org.apache.camel.PropertyInject;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.Registry;
@@ -474,18 +474,11 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
             // no bean so then create an instance from its type
             bean = getOrLookupCamelContext().getInjector().newInstance(clazz);
         }
-        if (beanPostProcess) {
-            try {
-                getOrLookupCamelContext().adapt(ExtendedCamelContext.class).getBeanPostProcessor()
-                        .postProcessBeforeInitialization(bean, beanName);
-                getOrLookupCamelContext().adapt(ExtendedCamelContext.class).getBeanPostProcessor()
-                        .postProcessAfterInitialization(bean, beanName);
-            } catch (Exception e) {
-                throw RuntimeCamelException.wrapRuntimeException(e);
-            }
-        }
-        CamelContextAware.trySetCamelContext(bean, getOrLookupCamelContext());
-        getOrLookupCamelContext().getRegistry().bind(name, bean);
+
+        // use dependency injection factory to perform the task of binding the bean to registry
+        Supplier<Void> task = getOrLookupCamelContext().adapt(ExtendedCamelContext.class)
+                .getDependencyInjectionAnnotationFactory().createBindToRegistryFactory(name, bean, beanName, beanPostProcess);
+        task.get();
     }
 
     private void bindToRegistry(Field field, String name, Object bean, String beanName, boolean beanPostProcess) {
@@ -493,19 +486,13 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
             name = field.getName();
         }
         Object value = ReflectionHelper.getField(field, bean);
+
+        // use dependency injection factory to perform the task of binding the bean to registry
         if (value != null) {
-            if (beanPostProcess) {
-                try {
-                    getOrLookupCamelContext().adapt(ExtendedCamelContext.class).getBeanPostProcessor()
-                            .postProcessBeforeInitialization(value, beanName);
-                    getOrLookupCamelContext().adapt(ExtendedCamelContext.class).getBeanPostProcessor()
-                            .postProcessAfterInitialization(value, beanName);
-                } catch (Exception e) {
-                    throw RuntimeCamelException.wrapRuntimeException(e);
-                }
-            }
-            CamelContextAware.trySetCamelContext(value, getOrLookupCamelContext());
-            getOrLookupCamelContext().getRegistry().bind(name, value);
+            Supplier<Void> task = getOrLookupCamelContext().adapt(ExtendedCamelContext.class)
+                    .getDependencyInjectionAnnotationFactory()
+                    .createBindToRegistryFactory(name, value, beanName, beanPostProcess);
+            task.get();
         }
     }
 
@@ -527,19 +514,12 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
         } else {
             value = invokeMethod(method, bean);
         }
+        // use dependency injection factory to perform the task of binding the bean to registry
         if (value != null) {
-            if (beanPostProcess) {
-                try {
-                    getOrLookupCamelContext().adapt(ExtendedCamelContext.class).getBeanPostProcessor()
-                            .postProcessBeforeInitialization(value, beanName);
-                    getOrLookupCamelContext().adapt(ExtendedCamelContext.class).getBeanPostProcessor()
-                            .postProcessAfterInitialization(value, beanName);
-                } catch (Exception e) {
-                    throw RuntimeCamelException.wrapRuntimeException(e);
-                }
-            }
-            CamelContextAware.trySetCamelContext(value, getOrLookupCamelContext());
-            getOrLookupCamelContext().getRegistry().bind(name, value);
+            Supplier<Void> task = getOrLookupCamelContext().adapt(ExtendedCamelContext.class)
+                    .getDependencyInjectionAnnotationFactory()
+                    .createBindToRegistryFactory(name, value, beanName, beanPostProcess);
+            task.get();
         }
     }
 

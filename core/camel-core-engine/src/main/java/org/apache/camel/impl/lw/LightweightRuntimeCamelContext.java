@@ -76,6 +76,7 @@ import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelContextNameStrategy;
+import org.apache.camel.spi.CamelDependencyInjectionAnnotationFactory;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.ComponentNameResolver;
 import org.apache.camel.spi.ComponentResolver;
@@ -176,6 +177,7 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     private final PropertiesComponent propertiesComponent;
     private final BeanIntrospection beanIntrospection;
     private final CamelBeanPostProcessor beanPostProcessor;
+    private final CamelDependencyInjectionAnnotationFactory dependencyInjectionAnnotationFactory;
     private final HeadersMapFactory headersMapFactory;
     private final ExchangeFactory exchangeFactory;
     private final ExchangeFactoryManager exchangeFactoryManager;
@@ -228,6 +230,8 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
         propertiesComponent = context.getPropertiesComponent();
         beanIntrospection = context.adapt(ExtendedCamelContext.class).getBeanIntrospection();
         beanPostProcessor = context.adapt(ExtendedCamelContext.class).getBeanPostProcessor();
+        dependencyInjectionAnnotationFactory
+                = context.adapt(ExtendedCamelContext.class).getDependencyInjectionAnnotationFactory();
         headersMapFactory = context.adapt(ExtendedCamelContext.class).getHeadersMapFactory();
         exchangeFactory = context.adapt(ExtendedCamelContext.class).getExchangeFactory();
         exchangeFactoryManager = context.adapt(ExtendedCamelContext.class).getExchangeFactoryManager();
@@ -1454,6 +1458,16 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
 
     @Override
     public void setBeanPostProcessor(CamelBeanPostProcessor beanPostProcessor) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public CamelDependencyInjectionAnnotationFactory getDependencyInjectionAnnotationFactory() {
+        return dependencyInjectionAnnotationFactory;
+    }
+
+    @Override
+    public void setDependencyInjectionAnnotationFactory(CamelDependencyInjectionAnnotationFactory factory) {
         throw new UnsupportedOperationException();
     }
 

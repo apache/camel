@@ -94,6 +94,7 @@ import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.CamelContextTracker;
+import org.apache.camel.spi.CamelDependencyInjectionAnnotationFactory;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.ComponentNameResolver;
@@ -293,6 +294,7 @@ public abstract class AbstractCamelContext extends BaseService
     private volatile TypeConverterRegistry typeConverterRegistry;
     private volatile Injector injector;
     private volatile CamelBeanPostProcessor beanPostProcessor;
+    private volatile CamelDependencyInjectionAnnotationFactory dependencyInjectionAnnotationFactory;
     private volatile ComponentResolver componentResolver;
     private volatile ComponentNameResolver componentNameResolver;
     private volatile LanguageResolver languageResolver;
@@ -1974,6 +1976,24 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     public void setBeanPostProcessor(CamelBeanPostProcessor beanPostProcessor) {
         this.beanPostProcessor = doAddService(beanPostProcessor);
+    }
+
+    @Override
+    public CamelDependencyInjectionAnnotationFactory getDependencyInjectionAnnotationFactory() {
+        if (dependencyInjectionAnnotationFactory == null) {
+            synchronized (lock) {
+                if (dependencyInjectionAnnotationFactory == null) {
+                    setDependencyInjectionAnnotationFactory(createDependencyInjectionAnnotationFactory());
+                }
+            }
+        }
+        return dependencyInjectionAnnotationFactory;
+    }
+
+    @Override
+    public void setDependencyInjectionAnnotationFactory(
+            CamelDependencyInjectionAnnotationFactory dependencyInjectionAnnotationFactory) {
+        this.dependencyInjectionAnnotationFactory = dependencyInjectionAnnotationFactory;
     }
 
     @Override
@@ -5123,6 +5143,8 @@ public abstract class AbstractCamelContext extends BaseService
     protected abstract PropertiesComponent createPropertiesComponent();
 
     protected abstract CamelBeanPostProcessor createBeanPostProcessor();
+
+    protected abstract CamelDependencyInjectionAnnotationFactory createDependencyInjectionAnnotationFactory();
 
     protected abstract ComponentResolver createComponentResolver();
 

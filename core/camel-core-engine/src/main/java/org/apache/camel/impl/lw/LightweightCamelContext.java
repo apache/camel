@@ -81,6 +81,7 @@ import org.apache.camel.spi.BeanRepository;
 import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelContextNameStrategy;
+import org.apache.camel.spi.CamelDependencyInjectionAnnotationFactory;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.ComponentNameResolver;
 import org.apache.camel.spi.ComponentResolver;
@@ -1261,6 +1262,16 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     @Override
     public void setBeanPostProcessor(CamelBeanPostProcessor beanPostProcessor) {
         getExtendedCamelContext().setBeanPostProcessor(beanPostProcessor);
+    }
+
+    @Override
+    public CamelDependencyInjectionAnnotationFactory getDependencyInjectionAnnotationFactory() {
+        return getExtendedCamelContext().getDependencyInjectionAnnotationFactory();
+    }
+
+    @Override
+    public void setDependencyInjectionAnnotationFactory(CamelDependencyInjectionAnnotationFactory factory) {
+        getExtendedCamelContext().setDependencyInjectionAnnotationFactory(factory);
     }
 
     @Override
