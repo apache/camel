@@ -156,6 +156,20 @@ public class TransformerRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    void shouldKeepDataTypeAcrossRoutes() throws Exception {
+        MockEndpoint customDataTypeResult = getMockEndpoint("mock:testDataType");
+        customDataTypeResult.expectedMessageCount(1);
+
+        Exchange answerCustomDataType = template.send("direct:testDataType",
+                ex -> ((DataTypeAware) ex.getIn()).setBody("my fake content", new DataType("myDataType")));
+        if (answerCustomDataType.getException() != null) {
+            throw answerCustomDataType.getException();
+        }
+        assertIsInstanceOf(MyDataType.class, answerCustomDataType.getIn().getBody());
+        assertMockEndpointsSatisfied();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -192,6 +206,12 @@ public class TransformerRouteTest extends ContextTestSupport {
                         .withJava(XOrderResponseToOtherTransformer.class);
                 from("direct:custom").inputType("other:OtherXOrder").outputType("other:OtherXOrderResponse")
                         .to(ExchangePattern.InOut, "direct:xyz");
+                transformer().scheme("myDataType").withDataFormat(new MyDataFormatDefinition());
+                from("direct:testDataType").inputTypeWithValidate("myDataType")
+                        .to("direct:testDataTypeStep2");
+                from("direct:testDataTypeStep2").inputType(MyDataType.class)
+                        .to("mock:testDataType");
+                validator().type("myDataType").withExpression(bodyAs(String.class).contains("fake"));
             }
         };
     }
@@ -219,6 +239,25 @@ public class TransformerRouteTest extends ContextTestSupport {
         public AOrderResponse toAOrderResponse(XOrderResponse xres) {
             LOG.info("TypeConverter: XOrderResponse -> AOrderResponse");
             return new AOrderResponse();
+        }
+    }
+
+    public static class MyDataType {
+    }
+
+    public static class MyDataFormatDefinition extends DataFormatDefinition {
+        public MyDataFormatDefinition() {
+            super(new DefaultDataFormat() {
+                @Override
+                public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
+                    throw new UnsupportedOperationException();
+                }
+
+                @Override
+                public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
+                    return new MyDataType();
+                }
+            });
         }
     }
 
