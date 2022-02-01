@@ -42,6 +42,8 @@ import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.ObjectHelper;
 
+import static org.apache.camel.support.MessageHelper.copyBody;
+
 /**
  * Base class for the two official and only implementations of {@link Exchange}, the {@link DefaultExchange} and
  * {@link DefaultPooledExchange}.
@@ -132,13 +134,13 @@ class AbstractExchange implements ExtendedExchange {
         DefaultExchange exchange = new DefaultExchange(this);
 
         exchange.setIn(getIn().copy());
-        exchange.getIn().setBody(getIn().getBody());
+        copyBody(getIn(), exchange.getIn());
         if (getIn().hasHeaders()) {
             exchange.getIn().setHeaders(safeCopyHeaders(getIn().getHeaders()));
         }
         if (hasOut()) {
             exchange.setOut(getOut().copy());
-            exchange.getOut().setBody(getOut().getBody());
+            copyBody(getOut(), exchange.getOut());
             if (getOut().hasHeaders()) {
                 exchange.getOut().setHeaders(safeCopyHeaders(getOut().getHeaders()));
             }
