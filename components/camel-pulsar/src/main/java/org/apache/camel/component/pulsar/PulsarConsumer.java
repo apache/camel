@@ -34,9 +34,9 @@ import org.apache.pulsar.client.api.PulsarClientException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.pulsar.utils.PulsarUtils.stopConsumers;
 import static org.apache.camel.component.pulsar.utils.PulsarUtils.pauseConsumers;
 import static org.apache.camel.component.pulsar.utils.PulsarUtils.resumeConsumers;
+import static org.apache.camel.component.pulsar.utils.PulsarUtils.stopConsumers;
 import static org.apache.camel.component.pulsar.utils.PulsarUtils.stopExecutors;
 
 public class PulsarConsumer extends DefaultConsumer implements Suspendable, SuspendableService {
