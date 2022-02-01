@@ -54,7 +54,7 @@ public class ScheduledPollConsumerHealthCheck implements HealthCheck {
         builder.detail(FAILURE_ENDPOINT_URI, sanitizedUri);
 
         long ec = consumer.getErrorCounter();
-        boolean first = consumer.isFirstPoolDone();
+        boolean first = consumer.isFirstPollDone();
         Throwable cause = consumer.getLastError();
 
         // can only be healthy if we have at least one poll done and there are no errors
