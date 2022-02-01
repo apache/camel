@@ -35,6 +35,8 @@ import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.joor.Reflect;
 
+import static org.apache.camel.util.ObjectHelper.isEmpty;
+
 @ManagedResource(description = "Managed JavaRoutesBuilderLoader")
 @RoutesLoader(JavaRoutesBuilderLoader.EXTENSION)
 public class JavaRoutesBuilderLoader extends RouteBuilderLoaderSupport {
@@ -70,6 +72,13 @@ public class JavaRoutesBuilderLoader extends RouteBuilderLoaderSupport {
                 // is the bean a custom bean
                 BindToRegistry bir = obj.getClass().getAnnotation(BindToRegistry.class);
                 if (bir != null) {
+                    // need to unbind the old bean first because this bean is from a new classloader
+                    String id = bir.value();
+                    if (isEmpty(id)) {
+                        id = clazz.getSimpleName();
+                    }
+                    getCamelContext().getRegistry().unbind(id);
+
                     // this class is a bean service which needs to be post processed and registered which happens
                     // automatic by the bean post processor
                     CamelBeanPostProcessor bpp = getCamelContext().adapt(ExtendedCamelContext.class).getBeanPostProcessor();
