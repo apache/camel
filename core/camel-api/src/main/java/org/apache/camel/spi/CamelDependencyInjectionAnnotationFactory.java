@@ -25,11 +25,11 @@ public interface CamelDependencyInjectionAnnotationFactory {
     /**
      * The task for binding the bean to the registry (eg {@link org.apache.camel.BindToRegistry annotation}
      *
-     * @param id              the bean id
-     * @param bean            the bean instance
-     * @param beanName        the bean name
-     * @param beanPostProcess whether bean post processor should be performed
-     * @return the created task to use for binding the bean
+     * @param  id              the bean id
+     * @param  bean            the bean instance
+     * @param  beanName        the bean name
+     * @param  beanPostProcess whether bean post processor should be performed
+     * @return                 the created task to use for binding the bean
      */
     Runnable createBindToRegistryFactory(String id, Object bean, String beanName, boolean beanPostProcess);
 

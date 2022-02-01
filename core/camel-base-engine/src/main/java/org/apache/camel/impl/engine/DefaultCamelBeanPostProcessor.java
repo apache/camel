@@ -68,6 +68,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
     protected CamelPostProcessorHelper camelPostProcessorHelper;
     protected CamelContext camelContext;
     protected boolean enabled = true;
+    protected boolean unbindEnabled;
 
     public DefaultCamelBeanPostProcessor() {
     }
@@ -94,6 +95,14 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
     @Override
     public boolean isEnabled() {
         return enabled;
+    }
+
+    public boolean isUnbindEnabled() {
+        return unbindEnabled;
+    }
+
+    public void setUnbindEnabled(boolean unbindEnabled) {
+        this.unbindEnabled = unbindEnabled;
     }
 
     @Override
@@ -474,6 +483,9 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
             bean = getOrLookupCamelContext().getInjector().newInstance(clazz);
         }
 
+        if (unbindEnabled) {
+            getOrLookupCamelContext().getRegistry().unbind(name);
+        }
         // use dependency injection factory to perform the task of binding the bean to registry
         Runnable task = getOrLookupCamelContext().adapt(ExtendedCamelContext.class)
                 .getDependencyInjectionAnnotationFactory().createBindToRegistryFactory(name, bean, beanName, beanPostProcess);
@@ -488,6 +500,10 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
 
         // use dependency injection factory to perform the task of binding the bean to registry
         if (value != null) {
+
+            if (unbindEnabled) {
+                getOrLookupCamelContext().getRegistry().unbind(name);
+            }
             Runnable task = getOrLookupCamelContext().adapt(ExtendedCamelContext.class)
                     .getDependencyInjectionAnnotationFactory()
                     .createBindToRegistryFactory(name, value, beanName, beanPostProcess);
@@ -515,6 +531,10 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
         }
         // use dependency injection factory to perform the task of binding the bean to registry
         if (value != null) {
+
+            if (unbindEnabled) {
+                getOrLookupCamelContext().getRegistry().unbind(name);
+            }
             Runnable task = getOrLookupCamelContext().adapt(ExtendedCamelContext.class)
                     .getDependencyInjectionAnnotationFactory()
                     .createBindToRegistryFactory(name, value, beanName, beanPostProcess);

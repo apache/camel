@@ -38,8 +38,6 @@ import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.joor.Reflect;
 
-import static org.apache.camel.util.ObjectHelper.isEmpty;
-
 @ManagedResource(description = "Managed JavaRoutesBuilderLoader")
 @RoutesLoader(JavaRoutesBuilderLoader.EXTENSION)
 public class JavaRoutesBuilderLoader extends RouteBuilderLoaderSupport {
@@ -83,27 +81,23 @@ public class JavaRoutesBuilderLoader extends RouteBuilderLoaderSupport {
             if (obj instanceof RouteBuilder) {
                 return (RouteBuilder) obj;
             } else if (obj != null) {
-                // is the bean a custom bean
                 BindToRegistry bir = obj.getClass().getAnnotation(BindToRegistry.class);
                 if (bir != null) {
-                    // need to unbind the old bean first because this bean is from a new classloader
-                    String id = bir.value();
-                    if (isEmpty(id)) {
-                        id = clazz.getSimpleName();
-                    }
-                    getCamelContext().getRegistry().unbind(id);
-
-                    // TODO: Special CamelBeanPostProcessor that can unbind/bind for BindToRegistry to force reload
-                    // or we have a BindToRegistry annotation factory that allows us to hook and do special code
-
-                    // this class is a bean service which needs to be post processed and registered which happens
-                    // automatic by the bean post processor
                     CamelBeanPostProcessor bpp = getCamelContext().adapt(ExtendedCamelContext.class).getBeanPostProcessor();
-                    bpp.postProcessBeforeInitialization(obj, name);
-                    bpp.postProcessAfterInitialization(obj, name);
+
+                    // to support hot reloading of beans then we need to enable unbind mode in bean post processor
+                    bpp.setUnbindEnabled(true);
+                    try {
+                        // this class is a bean service which needs to be post processed and registered which happens
+                        // automatic by the bean post processor
+                        bpp.postProcessBeforeInitialization(obj, name);
+                        bpp.postProcessAfterInitialization(obj, name);
+                    } finally {
+                        bpp.setUnbindEnabled(false);
+                    }
                     return null;
                 }
-                // TODO: CamelConfiguration 
+                // TODO: CamelConfiguration
             }
             return null;
         }
