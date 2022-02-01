@@ -24,11 +24,14 @@ import java.util.regex.Pattern;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Converter;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.LoggingLevel;
+import org.apache.camel.TypeConverterExists;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.dsl.support.RouteBuilderLoaderSupport;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.Resource;
+import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spi.annotations.RoutesLoader;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.FileUtil;
@@ -61,7 +64,18 @@ public class JavaRoutesBuilderLoader extends RouteBuilderLoaderSupport {
             Class<?> clazz = ref.type();
 
             if (clazz.getAnnotation(Converter.class) != null) {
-                getCamelContext().getTypeConverterRegistry().addTypeConverters(clazz);
+                TypeConverterRegistry tcr = getCamelContext().getTypeConverterRegistry();
+                TypeConverterExists exists = tcr.getTypeConverterExists();
+                LoggingLevel level = tcr.getTypeConverterExistsLoggingLevel();
+                // force type converter to override as we could be re-loading
+                tcr.setTypeConverterExists(TypeConverterExists.Override);
+                tcr.setTypeConverterExistsLoggingLevel(LoggingLevel.OFF);
+                try {
+                    tcr.addTypeConverters(clazz);
+                } finally {
+                    tcr.setTypeConverterExists(exists);
+                    tcr.setTypeConverterExistsLoggingLevel(level);
+                }
                 return null;
             }
 
@@ -78,6 +92,9 @@ public class JavaRoutesBuilderLoader extends RouteBuilderLoaderSupport {
                         id = clazz.getSimpleName();
                     }
                     getCamelContext().getRegistry().unbind(id);
+
+                    // TODO: Special CamelBeanPostProcessor that can unbind/bind for BindToRegistry to force reload
+                    // or we have a BindToRegistry annotation factory that allows us to hook and do special code
 
                     // this class is a bean service which needs to be post processed and registered which happens
                     // automatic by the bean post processor
