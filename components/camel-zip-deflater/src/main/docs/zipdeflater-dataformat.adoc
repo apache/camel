@@ -60,8 +60,21 @@ unmarshalling to avoid errors.
 
 [source,java]
 ----
-from("activemq:queue:MY_QUEUE").unmarshal().zipDeflater().process(new UnZippedMessageProcessor()); 
+from("activemq:queue:MY_QUEUE").unmarshal().zipDeflater().process(new UnZippedMessageProcessor());
 ----
 
+== Dependencies
+
+Maven users will need to add the following dependency to their pom.xml for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-zip-deflater</artifactId>
+    <!-- use the same version as your Camel core version -->
+    <version>x.x.x</version>
+</dependency>
+----
 
 include::spring-boot:partial$starter.adoc[]
