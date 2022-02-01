@@ -55,15 +55,18 @@ public class JavaRoutesBuilderLoader extends RouteBuilderLoaderSupport {
             final String content = IOHelper.loadText(is);
             final String name = determineName(resource, content);
 
-            Object obj = Reflect.compile(name, content).create().get();
+            Reflect ref = Reflect.compile(name, content).create();
+            Class<?> clazz = ref.type();
+
+            if (clazz.getAnnotation(Converter.class) != null) {
+                getCamelContext().getTypeConverterRegistry().addTypeConverters(clazz);
+                return null;
+            }
+
+            Object obj = ref.get();
             if (obj instanceof RouteBuilder) {
                 return (RouteBuilder) obj;
             } else if (obj != null) {
-                Converter tc = obj.getClass().getAnnotation(Converter.class);
-                if (tc != null) {
-                    getCamelContext().getTypeConverterRegistry().addTypeConverters(obj);
-                    return null;
-                }
                 // is the bean a custom bean
                 BindToRegistry bir = obj.getClass().getAnnotation(BindToRegistry.class);
                 if (bir != null) {
