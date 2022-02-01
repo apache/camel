@@ -16,8 +16,6 @@
  */
 package org.apache.camel.impl.engine;
 
-import java.util.function.Supplier;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.ExtendedCamelContext;
@@ -47,7 +45,7 @@ public class DefaultDependencyInjectionAnnotationFactory
     }
 
     @Override
-    public Supplier<Void> createBindToRegistryFactory(String id, Object bean, String beanName, boolean beanPostProcess) {
+    public Runnable createBindToRegistryFactory(String id, Object bean, String beanName, boolean beanPostProcess) {
         return () -> {
             if (beanPostProcess) {
                 try {
@@ -61,7 +59,6 @@ public class DefaultDependencyInjectionAnnotationFactory
             }
             CamelContextAware.trySetCamelContext(bean, camelContext);
             camelContext.getRegistry().bind(id, bean);
-            return null;
         };
     }
 }
