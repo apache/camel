@@ -61,7 +61,7 @@ public class JavaRoutesBuilderLoader extends RouteBuilderLoaderSupport {
             } else if (obj != null) {
                 Converter tc = obj.getClass().getAnnotation(Converter.class);
                 if (tc != null) {
-                    // add type converters from annotations
+                    getCamelContext().getTypeConverterRegistry().addTypeConverters(obj);
                     return null;
                 }
                 // is the bean a custom bean

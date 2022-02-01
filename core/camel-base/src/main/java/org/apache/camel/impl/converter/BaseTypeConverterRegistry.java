@@ -89,7 +89,12 @@ public abstract class BaseTypeConverterRegistry extends CoreTypeConverterRegistr
         LOG.trace("Adding type converters: {}", typeConverters);
         try {
             // scan the class for @Converter and load them into this registry
-            TypeConvertersLoader loader = new TypeConvertersLoader(typeConverters);
+            TypeConvertersLoader loader;
+            if (typeConverters instanceof Class) {
+                loader = new TypeConvertersLoader((Class<?>) typeConverters);
+            } else {
+                loader = new TypeConvertersLoader(typeConverters);
+            }
             CamelContextAware.trySetCamelContext(loader, getCamelContext());
             loader.load(this);
         } catch (TypeConverterLoaderException e) {
