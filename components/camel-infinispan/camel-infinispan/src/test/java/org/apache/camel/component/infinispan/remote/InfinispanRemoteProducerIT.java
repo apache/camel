@@ -27,12 +27,9 @@ import org.infinispan.client.hotrod.ServerStatistics;
 import org.infinispan.commons.api.BasicCache;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledOnOs;
-import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@DisabledOnOs(OS.MAC)
 public class InfinispanRemoteProducerIT extends InfinispanRemoteTestSupport implements InfinispanProducerTestSupport {
 
     @BindToRegistry("mappingFunction")
