@@ -27,7 +27,7 @@ import org.apache.kafka.clients.consumer.Consumer;
  * the component is set up to use more than one of them. As such, implementations are responsible for ensuring the
  * thread-safety of the operations within the resume method.
  */
-public interface KafkaConsumerResumeStrategy extends ResumeStrategy<KafkaResumable> {
+public interface KafkaConsumerResumeStrategy extends ResumeStrategy {
     void setConsumer(Consumer<?, ?> consumer);
 
     default void resume(KafkaResumable resumable) {

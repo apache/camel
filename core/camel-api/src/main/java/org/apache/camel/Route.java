@@ -373,4 +373,9 @@ public interface Route extends RuntimeConfiguration {
      */
     void addErrorHandlerFactoryReference(ErrorHandlerFactory source, ErrorHandlerFactory target);
 
+    /**
+     * Sets the resume strategy for the route
+     */
+    void setResumeStrategy(ResumeStrategy resumeStrategy);
+
 }

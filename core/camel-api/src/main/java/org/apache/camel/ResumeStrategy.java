@@ -21,7 +21,7 @@ package org.apache.camel;
  * Defines a strategy for handling resume operations. Implementations can define different ways to handle how to resume
  * processing records.
  */
-public interface ResumeStrategy<T> {
+public interface ResumeStrategy {
 
     /**
      * A consumer, iterator or value class that can be used to set the index position from which to resume from. The
@@ -29,4 +29,11 @@ public interface ResumeStrategy<T> {
      *
      */
     void resume();
+
+    /**
+     * Starts the resume strategy
+     * 
+     * @throws Exception
+     */
+    void start() throws Exception;
 }
