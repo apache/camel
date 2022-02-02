@@ -1368,6 +1368,14 @@ Enables Sagas on the route
     </xs:annotation>
   </xs:element>
 
+  <xs:element name="sagaOption" type="tns:sagaOptionDefinition">
+    <xs:annotation>
+      <xs:documentation xml:lang="en"><![CDATA[
+Allows declaring options on Sagas
+      ]]></xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
   <xs:element name="sample" type="tns:samplingDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
@@ -3019,6 +3027,7 @@ will fallback to use the fixed value if the Expression result was null or 0.
             <xs:element ref="tns:route"/>
             <xs:element ref="tns:routingSlip"/>
             <xs:element ref="tns:saga"/>
+            <xs:element ref="tns:sagaOption"/>
             <xs:element ref="tns:sample"/>
             <xs:element ref="tns:script"/>
             <xs:element ref="tns:setBody"/>
@@ -3499,6 +3508,7 @@ should be intercepted by this exception type or not.
             <xs:element ref="tns:route"/>
             <xs:element ref="tns:routingSlip"/>
             <xs:element ref="tns:saga"/>
+            <xs:element ref="tns:sagaOption"/>
             <xs:element ref="tns:sample"/>
             <xs:element ref="tns:script"/>
             <xs:element ref="tns:setBody"/>
@@ -3599,6 +3609,7 @@ should be intercepted by this exception type or not.
             <xs:element ref="tns:route"/>
             <xs:element ref="tns:routingSlip"/>
             <xs:element ref="tns:saga"/>
+            <xs:element ref="tns:sagaOption"/>
             <xs:element ref="tns:sample"/>
             <xs:element ref="tns:script"/>
             <xs:element ref="tns:setBody"/>
@@ -3687,6 +3698,7 @@ should be intercepted by this exception type or not.
             <xs:element ref="tns:route"/>
             <xs:element ref="tns:routingSlip"/>
             <xs:element ref="tns:saga"/>
+            <xs:element ref="tns:sagaOption"/>
             <xs:element ref="tns:sample"/>
             <xs:element ref="tns:script"/>
             <xs:element ref="tns:setBody"/>
@@ -3767,6 +3779,7 @@ should be intercepted by this exception type or not.
             <xs:element ref="tns:route"/>
             <xs:element ref="tns:routingSlip"/>
             <xs:element ref="tns:saga"/>
+            <xs:element ref="tns:sagaOption"/>
             <xs:element ref="tns:sample"/>
             <xs:element ref="tns:script"/>
             <xs:element ref="tns:setBody"/>
@@ -4840,6 +4853,7 @@ org.apache.camel.spi.SendDynamicAware . Default value: true
             <xs:element ref="tns:route"/>
             <xs:element ref="tns:routingSlip"/>
             <xs:element ref="tns:saga"/>
+            <xs:element ref="tns:sagaOption"/>
             <xs:element ref="tns:sample"/>
             <xs:element ref="tns:script"/>
             <xs:element ref="tns:setBody"/>
@@ -4925,6 +4939,7 @@ Setting this allows to know if the filter predicate evaluated as true or false.
             <xs:element ref="tns:route"/>
             <xs:element ref="tns:routingSlip"/>
             <xs:element ref="tns:saga"/>
+            <xs:element ref="tns:sagaOption"/>
             <xs:element ref="tns:sample"/>
             <xs:element ref="tns:script"/>
             <xs:element ref="tns:setBody"/>
@@ -5064,6 +5079,7 @@ Global option value.
             <xs:element ref="tns:route"/>
             <xs:element ref="tns:routingSlip"/>
             <xs:element ref="tns:saga"/>
+            <xs:element ref="tns:sagaOption"/>
             <xs:element ref="tns:sample"/>
             <xs:element ref="tns:script"/>
             <xs:element ref="tns:setBody"/>
@@ -5243,6 +5259,7 @@ Set if validation is required for this input type. Default value: false
             <xs:element ref="tns:route"/>
             <xs:element ref="tns:routingSlip"/>
             <xs:element ref="tns:saga"/>
+            <xs:element ref="tns:sagaOption"/>
             <xs:element ref="tns:sample"/>
             <xs:element ref="tns:script"/>
             <xs:element ref="tns:setBody"/>
@@ -5336,6 +5353,7 @@ configured, then all incoming messages is intercepted.
             <xs:element ref="tns:route"/>
             <xs:element ref="tns:routingSlip"/>
             <xs:element ref="tns:saga"/>
+            <xs:element ref="tns:sagaOption"/>
             <xs:element ref="tns:sample"/>
             <xs:element ref="tns:script"/>
             <xs:element ref="tns:setBody"/>
@@ -5436,6 +5454,7 @@ process its result.
             <xs:element ref="tns:route"/>
             <xs:element ref="tns:routingSlip"/>
             <xs:element ref="tns:saga"/>
+            <xs:element ref="tns:sagaOption"/>
             <xs:element ref="tns:sample"/>
             <xs:element ref="tns:script"/>
             <xs:element ref="tns:setBody"/>
@@ -5530,6 +5549,7 @@ specified using uri syntax, eg mynamecount=4&type=gold.
             <xs:element ref="tns:route"/>
             <xs:element ref="tns:routingSlip"/>
             <xs:element ref="tns:saga"/>
+            <xs:element ref="tns:sagaOption"/>
             <xs:element ref="tns:sample"/>
             <xs:element ref="tns:script"/>
             <xs:element ref="tns:setBody"/>
@@ -5824,6 +5844,7 @@ To refer to a custom logger instance to lookup from the registry.
             <xs:element ref="tns:route"/>
             <xs:element ref="tns:routingSlip"/>
             <xs:element ref="tns:saga"/>
+            <xs:element ref="tns:sagaOption"/>
             <xs:element ref="tns:sample"/>
             <xs:element ref="tns:script"/>
             <xs:element ref="tns:setBody"/>
@@ -8850,6 +8871,7 @@ decompressed size. Default value: 1073741824
             <xs:element ref="tns:route"/>
             <xs:element ref="tns:routingSlip"/>
             <xs:element ref="tns:saga"/>
+            <xs:element ref="tns:sagaOption"/>
             <xs:element ref="tns:sample"/>
             <xs:element ref="tns:script"/>
             <xs:element ref="tns:setBody"/>
@@ -9060,6 +9082,7 @@ should be invoked or not.
             <xs:element ref="tns:route"/>
             <xs:element ref="tns:routingSlip"/>
             <xs:element ref="tns:saga"/>
+            <xs:element ref="tns:sagaOption"/>
             <xs:element ref="tns:sample"/>
             <xs:element ref="tns:script"/>
             <xs:element ref="tns:setBody"/>
@@ -9228,6 +9251,7 @@ failure. If this option is enabled then its considered handled as well.
             <xs:element ref="tns:route"/>
             <xs:element ref="tns:routingSlip"/>
             <xs:element ref="tns:saga"/>
+            <xs:element ref="tns:sagaOption"/>
             <xs:element ref="tns:sample"/>
             <xs:element ref="tns:script"/>
             <xs:element ref="tns:setBody"/>
@@ -9590,6 +9614,7 @@ generate the log message from exchange.
             <xs:element ref="tns:route"/>
             <xs:element ref="tns:routingSlip"/>
             <xs:element ref="tns:saga"/>
+            <xs:element ref="tns:sagaOption"/>
             <xs:element ref="tns:sample"/>
             <xs:element ref="tns:script"/>
             <xs:element ref="tns:setBody"/>
@@ -9727,6 +9752,7 @@ Include finding route builder from these java package names.
             <xs:element ref="tns:route"/>
             <xs:element ref="tns:routingSlip"/>
             <xs:element ref="tns:saga"/>
+            <xs:element ref="tns:sagaOption"/>
             <xs:element ref="tns:sample"/>
             <xs:element ref="tns:script"/>
             <xs:element ref="tns:setBody"/>
@@ -9804,6 +9830,7 @@ Include finding route builder from these java package names.
             <xs:element ref="tns:route"/>
             <xs:element ref="tns:routingSlip"/>
             <xs:element ref="tns:saga"/>
+            <xs:element ref="tns:sagaOption"/>
             <xs:element ref="tns:sample"/>
             <xs:element ref="tns:script"/>
             <xs:element ref="tns:setBody"/>
@@ -10338,6 +10365,7 @@ Name of property to remove.
             <xs:element ref="tns:route"/>
             <xs:element ref="tns:routingSlip"/>
             <xs:element ref="tns:saga"/>
+            <xs:element ref="tns:sagaOption"/>
             <xs:element ref="tns:sample"/>
             <xs:element ref="tns:script"/>
             <xs:element ref="tns:setBody"/>
@@ -10620,6 +10648,7 @@ Reference to the routes in the xml dsl.
             <xs:element ref="tns:route"/>
             <xs:element ref="tns:routingSlip"/>
             <xs:element ref="tns:saga"/>
+            <xs:element ref="tns:sagaOption"/>
             <xs:element ref="tns:sample"/>
             <xs:element ref="tns:script"/>
             <xs:element ref="tns:setBody"/>
@@ -10961,17 +10990,7 @@ the saga service may call again the completion URI to retry.
               ]]></xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="option" type="tns:sagaOptionDefinition">
-            <xs:annotation>
-              <xs:documentation xml:lang="en"><![CDATA[
-Allows to save properties of the current exchange in order to re-use them in a
-compensation/completion callback route. Options are usually helpful e.g. to
-store and retrieve identifiers of objects that should be deleted in compensating
-actions. Option values will be transformed into input headers of the
-compensation/completion exchange.
-              ]]></xs:documentation>
-            </xs:annotation>
-          </xs:element>
+          <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:sagaOption"/>
           <xs:choice maxOccurs="unbounded" minOccurs="0">
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
@@ -11016,6 +11035,7 @@ compensation/completion exchange.
             <xs:element ref="tns:route"/>
             <xs:element ref="tns:routingSlip"/>
             <xs:element ref="tns:saga"/>
+            <xs:element ref="tns:sagaOption"/>
             <xs:element ref="tns:sample"/>
             <xs:element ref="tns:script"/>
             <xs:element ref="tns:setBody"/>
@@ -11082,30 +11102,42 @@ use.
   </xs:complexType>
 
   <xs:complexType name="sagaOptionDefinition">
-    <xs:choice>
-      <xs:element ref="tns:expressionDefinition"/>
-      <xs:element ref="tns:csimple"/>
-      <xs:element ref="tns:constant"/>
-      <xs:element ref="tns:datasonnet"/>
-      <xs:element ref="tns:exchangeProperty"/>
-      <xs:element ref="tns:groovy"/>
-      <xs:element ref="tns:header"/>
-      <xs:element ref="tns:hl7terser"/>
-      <xs:element ref="tns:joor"/>
-      <xs:element ref="tns:jsonpath"/>
-      <xs:element ref="tns:language"/>
-      <xs:element ref="tns:method"/>
-      <xs:element ref="tns:mvel"/>
-      <xs:element ref="tns:ognl"/>
-      <xs:element ref="tns:ref"/>
-      <xs:element ref="tns:simple"/>
-      <xs:element ref="tns:spel"/>
-      <xs:element ref="tns:tokenize"/>
-      <xs:element ref="tns:xtokenize"/>
-      <xs:element ref="tns:xpath"/>
-      <xs:element ref="tns:xquery"/>
-    </xs:choice>
-    <xs:attribute name="optionName" type="xs:string" use="required"/>
+    <xs:complexContent>
+      <xs:extension base="tns:processorDefinition">
+        <xs:choice>
+          <xs:element ref="tns:expressionDefinition"/>
+          <xs:element ref="tns:csimple"/>
+          <xs:element ref="tns:constant"/>
+          <xs:element ref="tns:datasonnet"/>
+          <xs:element ref="tns:exchangeProperty"/>
+          <xs:element ref="tns:groovy"/>
+          <xs:element ref="tns:header"/>
+          <xs:element ref="tns:hl7terser"/>
+          <xs:element ref="tns:joor"/>
+          <xs:element ref="tns:jsonpath"/>
+          <xs:element ref="tns:language"/>
+          <xs:element ref="tns:method"/>
+          <xs:element ref="tns:mvel"/>
+          <xs:element ref="tns:ognl"/>
+          <xs:element ref="tns:ref"/>
+          <xs:element ref="tns:simple"/>
+          <xs:element ref="tns:spel"/>
+          <xs:element ref="tns:tokenize"/>
+          <xs:element ref="tns:xtokenize"/>
+          <xs:element ref="tns:xpath"/>
+          <xs:element ref="tns:xquery"/>
+        </xs:choice>
+        <xs:attribute name="name" type="xs:string" use="required">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Name of the option. It identifies the name of the header where the value of the
+expression will be stored when the compensation or completion routes will be
+called.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="samplingDefinition">
@@ -11402,6 +11434,7 @@ Sets a reference to lookup for the comparator to use for sorting.
             <xs:element ref="tns:route"/>
             <xs:element ref="tns:routingSlip"/>
             <xs:element ref="tns:saga"/>
+            <xs:element ref="tns:sagaOption"/>
             <xs:element ref="tns:sample"/>
             <xs:element ref="tns:script"/>
             <xs:element ref="tns:setBody"/>
@@ -11620,6 +11653,7 @@ the sake of backward compatibility. Default value: false
             <xs:element ref="tns:route"/>
             <xs:element ref="tns:routingSlip"/>
             <xs:element ref="tns:saga"/>
+            <xs:element ref="tns:sagaOption"/>
             <xs:element ref="tns:sample"/>
             <xs:element ref="tns:script"/>
             <xs:element ref="tns:setBody"/>
@@ -12052,6 +12086,7 @@ Whether to auto startup components when toD is starting up. Default value: true
             <xs:element ref="tns:route"/>
             <xs:element ref="tns:routingSlip"/>
             <xs:element ref="tns:saga"/>
+            <xs:element ref="tns:sagaOption"/>
             <xs:element ref="tns:sample"/>
             <xs:element ref="tns:script"/>
             <xs:element ref="tns:setBody"/>
@@ -12166,6 +12201,7 @@ Sets a reference to use for lookup the policy in the registry.
             <xs:element ref="tns:route"/>
             <xs:element ref="tns:routingSlip"/>
             <xs:element ref="tns:saga"/>
+            <xs:element ref="tns:sagaOption"/>
             <xs:element ref="tns:sample"/>
             <xs:element ref="tns:script"/>
             <xs:element ref="tns:setBody"/>
