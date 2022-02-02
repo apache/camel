@@ -1198,6 +1198,11 @@ class AbstractExchangeTest {
         }
 
         @Override
+        public void setBeanPostProcessor(CamelBeanPostProcessor beanPostProcessor) {
+            
+        }
+
+        @Override
         public ManagementMBeanAssembler getManagementMBeanAssembler() {
             return null;
         }
