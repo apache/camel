@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.pulsar.PulsarComponent;
@@ -49,7 +48,6 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PulsarSuspendRouteIT extends PulsarITSupport {
@@ -171,32 +169,6 @@ public class PulsarSuspendRouteIT extends PulsarITSupport {
         // Confirm that acknowledging the exchange did not raise an exception
         Exception e = to.getReceivedExchanges().get(0).getException();
         assertNull(e);
-    }
-
-    @Test
-    public void cantAcknowledgeMessageAfterRouteIsStopped() throws Exception {
-        // Demonstrate that closed consumers fail to communicate with broker, for example to ack a message
-        int consumerQueueSize = 1;
-        from = context.getEndpoint("pulsar:" + topicName + "?numberOfConsumers=1&subscriptionType=Exclusive"
-                                   + "&subscriptionName=camel-subscription&consumerQueueSize=" + consumerQueueSize
-                                   + "&consumerName=camel-consumer&allowManualAcknowledgement=true");
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() {
-                from(from).routeId(ROUTE_ID).to(to);
-            }
-        });
-
-        to.setExpectedMessageCount(1);
-        producer.send("a message");
-        assertMockEndpointsSatisfied();
-
-        context.getRouteController().stopRoute(ROUTE_ID);
-
-        Exchange e = to.getReceivedExchanges().get(0);
-        PulsarMessageReceipt receipt = (PulsarMessageReceipt) e.getIn().getHeader(PulsarMessageHeaders.MESSAGE_RECEIPT);
-
-        assertThrows(PulsarClientException.class, receipt::acknowledge);
     }
 
     @Test
