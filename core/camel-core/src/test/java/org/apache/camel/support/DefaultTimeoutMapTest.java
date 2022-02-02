@@ -148,7 +148,7 @@ public class DefaultTimeoutMapTest {
         // is not expired
         map.put("F", 6, 800);
 
-        await().atMost(Duration.ofSeconds(1))
+        await().atMost(Duration.ofSeconds(2))
                 .untilAsserted(() -> assertEquals("D", keys.get(0)));
 
         assertEquals(4, values.get(0).intValue());
