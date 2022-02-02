@@ -89,6 +89,8 @@ public class EventHubsConsumer extends DefaultConsumer {
             long ts = eventContext.getEventData().getEnqueuedTime().getEpochSecond() * 1000;
             message.setHeader(Exchange.MESSAGE_TIMESTAMP, ts);
         }
+        System.err.println(eventContext.getEventData().getProperties().toString());
+        message.setHeader("Metadata", eventContext.getEventData().getProperties());
 
         return exchange;
     }
