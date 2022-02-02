@@ -16,17 +16,13 @@
  */
 package org.apache.camel.component.pulsar.integration;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -51,7 +47,9 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PulsarSuspendRouteIT extends PulsarITSupport {
@@ -111,8 +109,8 @@ public class PulsarSuspendRouteIT extends PulsarITSupport {
     public void suspendRouteWithManualAck() throws Exception {
         int consumerQueueSize = 1;
         from = context.getEndpoint("pulsar:" + topicName + "?numberOfConsumers=1&subscriptionType=Exclusive"
-                + "&subscriptionName=camel-subscription&consumerQueueSize=" + consumerQueueSize
-                + "&consumerName=camel-consumer&allowManualAcknowledgement=true");
+                                   + "&subscriptionName=camel-subscription&consumerQueueSize=" + consumerQueueSize
+                                   + "&consumerName=camel-consumer&allowManualAcknowledgement=true");
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
@@ -147,8 +145,8 @@ public class PulsarSuspendRouteIT extends PulsarITSupport {
         // suspending the route while an exchange is in-flight should raise no exceptions
         int consumerQueueSize = 1;
         from = context.getEndpoint("pulsar:" + topicName + "?numberOfConsumers=1&subscriptionType=Exclusive"
-                + "&subscriptionName=camel-subscription&consumerQueueSize=" + consumerQueueSize
-                + "&consumerName=camel-consumer&allowManualAcknowledgement=false");
+                                   + "&subscriptionName=camel-subscription&consumerQueueSize=" + consumerQueueSize
+                                   + "&consumerName=camel-consumer&allowManualAcknowledgement=false");
 
         CountDownLatch waitForRouteSuspension = new CountDownLatch(1);
 
@@ -180,8 +178,8 @@ public class PulsarSuspendRouteIT extends PulsarITSupport {
         // Demonstrate that closed consumers fail to communicate with broker, for example to ack a message
         int consumerQueueSize = 1;
         from = context.getEndpoint("pulsar:" + topicName + "?numberOfConsumers=1&subscriptionType=Exclusive"
-                + "&subscriptionName=camel-subscription&consumerQueueSize=" + consumerQueueSize
-                + "&consumerName=camel-consumer&allowManualAcknowledgement=true");
+                                   + "&subscriptionName=camel-subscription&consumerQueueSize=" + consumerQueueSize
+                                   + "&consumerName=camel-consumer&allowManualAcknowledgement=true");
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
@@ -205,8 +203,8 @@ public class PulsarSuspendRouteIT extends PulsarITSupport {
     public void suspendAndResumeRoute() throws Exception {
         int consumerQueueSize = 1;
         from = context.getEndpoint("pulsar:" + topicName + "?numberOfConsumers=1&subscriptionType=Exclusive"
-                + "&subscriptionName=camel-subscription&consumerQueueSize=" + consumerQueueSize
-                + "&consumerName=camel-consumer&allowManualAcknowledgement=false");
+                                   + "&subscriptionName=camel-subscription&consumerQueueSize=" + consumerQueueSize
+                                   + "&consumerName=camel-consumer&allowManualAcknowledgement=false");
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
@@ -250,8 +248,8 @@ public class PulsarSuspendRouteIT extends PulsarITSupport {
     public void routeWithNoConsumerQueueReceivesNoMessagesAfterSuspension() throws Exception {
         int consumerQueueSize = 0;
         from = context.getEndpoint("pulsar:" + topicName + "?numberOfConsumers=1&subscriptionType=Exclusive"
-                + "&subscriptionName=camel-subscription&consumerQueueSize=" + consumerQueueSize
-                + "&consumerName=camel-consumer&allowManualAcknowledgement=false");
+                                   + "&subscriptionName=camel-subscription&consumerQueueSize=" + consumerQueueSize
+                                   + "&consumerName=camel-consumer&allowManualAcknowledgement=false");
 
         context.addRoutes(new RouteBuilder() {
             @Override
