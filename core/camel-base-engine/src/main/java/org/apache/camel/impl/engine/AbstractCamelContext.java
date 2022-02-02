@@ -248,7 +248,6 @@ public abstract class AbstractCamelContext extends BaseService
     private List<RoutePolicyFactory> routePolicyFactories = new ArrayList<>();
     // special flags to control the first startup which can are special
     private volatile boolean firstStartDone;
-    private volatile boolean firstStopDone;
     private volatile boolean doNotStartRoutesOnFirstStart;
     private Initialization initialization = Initialization.Default;
     private Boolean autoStartup = Boolean.TRUE;

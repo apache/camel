@@ -16,16 +16,16 @@
  */
 package org.apache.camel.main.scan;
 
-import org.apache.camel.CamelConfiguration;
-import org.apache.camel.CamelContext;
-import org.junit.jupiter.api.Assertions;
+import org.apache.camel.BindToRegistry;
+import org.apache.camel.Configuration;
+import org.apache.camel.main.MyAddress;
 
-public class MyScanConfiguration implements CamelConfiguration {
+@Configuration
+public class MyScanConfigurationAnnotation {
 
-    @Override
-    public void configure(CamelContext camelContext) throws Exception {
-        Assertions.assertNotNull(camelContext);
-        camelContext.getGlobalOptions().put("scanConfigured", "true");
+    @BindToRegistry
+    public MyAddress address() {
+        return new MyAddress(4444, "Somestreet 123");
     }
 
 }

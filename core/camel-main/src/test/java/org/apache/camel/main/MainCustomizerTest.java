@@ -17,6 +17,7 @@
 package org.apache.camel.main;
 
 import org.apache.camel.BindToRegistry;
+import org.apache.camel.CamelConfiguration;
 import org.apache.camel.component.log.LogComponent;
 import org.apache.camel.spi.ComponentCustomizer;
 import org.apache.camel.support.CustomizersSupport;

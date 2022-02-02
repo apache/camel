@@ -14,18 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.main.scan;
+package org.apache.camel;
 
-import org.apache.camel.CamelConfiguration;
-import org.apache.camel.CamelContext;
-import org.junit.jupiter.api.Assertions;
+/**
+ * Configuration class for Camel applications.
+ *
+ * This class allows doing custom configuration during Camel startup such as setting up custom beans using the
+ * {@link BindToRegistry} annotation.
+ */
+public interface CamelConfiguration {
 
-public class MyScanConfiguration implements CamelConfiguration {
-
-    @Override
-    public void configure(CamelContext camelContext) throws Exception {
-        Assertions.assertNotNull(camelContext);
-        camelContext.getGlobalOptions().put("scanConfigured", "true");
+    /**
+     * Method that allows to do custom configuration during Camel startup.
+     *
+     * @param camelContext the context
+     */
+    default void configure(CamelContext camelContext) throws Exception {
     }
 
 }

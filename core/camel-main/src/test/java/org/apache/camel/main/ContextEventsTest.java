@@ -19,6 +19,7 @@ package org.apache.camel.main;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.BindToRegistry;
+import org.apache.camel.CamelConfiguration;
 import org.apache.camel.spi.OnCamelContextInitialized;
 import org.apache.camel.spi.OnCamelContextInitializing;
 import org.apache.camel.spi.OnCamelContextStart;

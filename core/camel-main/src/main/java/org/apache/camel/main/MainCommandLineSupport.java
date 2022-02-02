@@ -21,6 +21,8 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.camel.CamelConfiguration;
+
 /**
  * Support for command line arguments to Camel main.
  */

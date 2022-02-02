@@ -692,7 +692,7 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "configurations":
-        case "Configurations": return org.apache.camel.main.CamelConfiguration.class;
+        case "Configurations": return org.apache.camel.CamelConfiguration.class;
         case "globaloptions":
         case "GlobalOptions": return java.lang.String.class;
         case "routesbuilders":

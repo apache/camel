@@ -14,18 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.main.scan;
+package org.apache.camel.dsl.java.joor;
 
-import org.apache.camel.CamelConfiguration;
 import org.apache.camel.CamelContext;
-import org.junit.jupiter.api.Assertions;
+import org.apache.camel.main.Main;
+import org.junit.jupiter.api.Test;
 
-public class MyScanConfiguration implements CamelConfiguration {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-    @Override
-    public void configure(CamelContext camelContext) throws Exception {
-        Assertions.assertNotNull(camelContext);
-        camelContext.getGlobalOptions().put("scanConfigured", "true");
+public class JavaMainConfigurationTest {
+
+    @Test
+    public void testMainConfiguration() throws Exception {
+        Main main = new Main();
+        main.configure().withRoutesIncludePattern("routes/MyConfigurationRoute.java,routes/MyConfiguration.java");
+        main.start();
+
+        CamelContext camelContext = main.getCamelContext();
+        assertNotNull(camelContext);
+
+        String out = main.getCamelTemplate().requestBody("direct:start", "Hello", String.class);
+        assertEquals("Hello Donald", out);
+
+        main.stop();
     }
 
 }

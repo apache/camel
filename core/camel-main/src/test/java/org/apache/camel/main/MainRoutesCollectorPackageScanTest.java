@@ -53,6 +53,9 @@ public class MainRoutesCollectorPackageScanTest {
 
         // camel configuration should be scanned
         Assertions.assertEquals("true", camelContext.getGlobalOption("scanConfigured"));
+        MyAddress adr = camelContext.getRegistry().lookupByNameAndType("address", MyAddress.class);
+        Assertions.assertEquals(4444, adr.getZip());
+        Assertions.assertEquals("Somestreet 123", adr.getStreet());
 
         // custom type converter should be scanned
         MyFoo foo = camelContext.getTypeConverter().convertTo(MyFoo.class, "Donald");

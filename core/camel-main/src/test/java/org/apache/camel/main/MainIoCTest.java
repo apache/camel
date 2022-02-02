@@ -18,6 +18,7 @@ package org.apache.camel.main;
 
 import org.apache.camel.BeanInject;
 import org.apache.camel.BindToRegistry;
+import org.apache.camel.CamelConfiguration;
 import org.apache.camel.CamelContext;
 import org.apache.camel.PropertyInject;
 import org.apache.camel.builder.RouteBuilder;
@@ -146,7 +147,8 @@ public class MainIoCTest {
             return cool.getName();
         }
 
-        public void configure() {
+        @Override
+        public void configure(CamelContext context) {
             camel.getGlobalOptions().put("foo", "123");
         }
     }

@@ -19,7 +19,6 @@ package org.apache.camel.main;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -35,8 +34,10 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import org.apache.camel.CamelConfiguration;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
+import org.apache.camel.Configuration;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.RuntimeCamelException;
@@ -75,8 +76,6 @@ import static org.apache.camel.main.MainHelper.computeProperties;
 import static org.apache.camel.main.MainHelper.optionKey;
 import static org.apache.camel.main.MainHelper.setPropertiesOnTarget;
 import static org.apache.camel.main.MainHelper.validateOptionAndValue;
-import static org.apache.camel.support.ObjectHelper.invokeMethod;
-import static org.apache.camel.util.ReflectionHelper.findMethod;
 import static org.apache.camel.util.StringHelper.matches;
 
 /**
@@ -295,19 +294,15 @@ public abstract class BaseMainSupport extends BaseService {
     }
 
     protected void loadConfigurations(CamelContext camelContext) throws Exception {
-        // lets use Camel's bean post processor on any existing configuration classes
-        // so the instance has some support for dependency injection
-        CamelBeanPostProcessor postProcessor = camelContext.adapt(ExtendedCamelContext.class).getBeanPostProcessor();
-        for (Object configuration : mainConfigurationProperties.getConfigurations()) {
-            postProcessor.postProcessBeforeInitialization(configuration, configuration.getClass().getName());
-            postProcessor.postProcessAfterInitialization(configuration, configuration.getClass().getName());
-        }
-
         // auto-detect camel configurations via base package scanning
         String basePackage = camelContext.adapt(ExtendedCamelContext.class).getBasePackageScan();
         if (basePackage != null) {
             PackageScanClassResolver pscr = camelContext.adapt(ExtendedCamelContext.class).getPackageScanClassResolver();
-            Set<Class<?>> found = pscr.findImplementations(CamelConfiguration.class, basePackage);
+            Set<Class<?>> found1 = pscr.findImplementations(CamelConfiguration.class, basePackage);
+            Set<Class<?>> found2 = pscr.findAnnotated(Configuration.class, basePackage);
+            Set<Class<?>> found = new LinkedHashSet<>();
+            found.addAll(found1);
+            found.addAll(found2);
             for (Class<?> clazz : found) {
                 // lets use Camel's injector so the class has some support for dependency injection
                 Object config = camelContext.getInjector().newInstance(clazz);
@@ -340,24 +335,30 @@ public abstract class BaseMainSupport extends BaseService {
             }
         }
 
-        for (Object config : mainConfigurationProperties.getConfigurations()) {
-            // invoke configure method if exists
-            Method method = findMethod(config.getClass(), "configure");
-            if (method != null) {
-                LOG.info("Calling configure method on configuration class: {}", config.getClass().getName());
-                invokeMethod(method, config);
-            } else {
-                Object arg = camelContext;
-                method = findMethod(config.getClass(), "configure", CamelContext.class);
-                if (method == null) {
-                    method = findMethod(config.getClass(), "configure", Main.class);
-                    arg = this;
-                }
-                if (method != null) {
-                    LOG.info("Calling configure method on configuration class: {}", config.getClass().getName());
-                    invokeMethod(method, config, arg);
-                }
-            }
+        // lets use Camel's bean post processor on any existing configuration classes
+        // so the instance has some support for dependency injection
+        CamelBeanPostProcessor postProcessor = camelContext.adapt(ExtendedCamelContext.class).getBeanPostProcessor();
+
+        // discover configurations from the registry
+        Set<CamelConfiguration> registryConfigurations = camelContext.getRegistry().findByType(CamelConfiguration.class);
+        for (CamelConfiguration configuration : registryConfigurations) {
+            postProcessor.postProcessBeforeInitialization(configuration, configuration.getClass().getName());
+            postProcessor.postProcessAfterInitialization(configuration, configuration.getClass().getName());
+        }
+
+        // prepare the directly configured instances (from registry should have been post processed already)
+        for (Object configuration : mainConfigurationProperties.getConfigurations()) {
+            postProcessor.postProcessBeforeInitialization(configuration, configuration.getClass().getName());
+            postProcessor.postProcessAfterInitialization(configuration, configuration.getClass().getName());
+        }
+
+        // invoke configure on configurations
+        for (CamelConfiguration config : mainConfigurationProperties.getConfigurations()) {
+            config.configure(camelContext);
+        }
+        // invoke configure on configurations that are from registry
+        for (CamelConfiguration config : registryConfigurations) {
+            config.configure(camelContext);
         }
     }
 

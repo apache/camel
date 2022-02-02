@@ -19,6 +19,7 @@ package org.apache.camel.main;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.CamelConfiguration;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.LambdaRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;

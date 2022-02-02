@@ -14,18 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.main.scan;
+package org.apache.camel;
 
-import org.apache.camel.CamelConfiguration;
-import org.apache.camel.CamelContext;
-import org.junit.jupiter.api.Assertions;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-public class MyScanConfiguration implements CamelConfiguration {
+/**
+ * Marks the class as a {@link CamelConfiguration} class.
+ *
+ * This allows runtimes such as Camel Main to do package scan and automatic discover Camel configuration classes.
+ */
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Target({ ElementType.TYPE })
+public @interface Configuration {
 
-    @Override
-    public void configure(CamelContext camelContext) throws Exception {
-        Assertions.assertNotNull(camelContext);
-        camelContext.getGlobalOptions().put("scanConfigured", "true");
-    }
+    /**
+     * The name of the configuration bean
+     */
+    String value() default "";
 
 }
