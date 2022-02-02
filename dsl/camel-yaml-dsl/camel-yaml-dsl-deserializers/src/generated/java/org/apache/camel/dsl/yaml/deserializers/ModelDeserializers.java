@@ -13462,8 +13462,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "propagation", type = "string"),
                     @YamlProperty(name = "saga-service-ref", type = "string"),
                     @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition"),
-                    @YamlProperty(name = "timeout", type = "string"),
-                    @YamlProperty(name = "timeout-in-milliseconds", type = "number")
+                    @YamlProperty(name = "timeout", type = "string")
             }
     )
     public static class SagaDefinitionDeserializer extends YamlDeserializerBase<SagaDefinition> {
@@ -13518,11 +13517,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "timeout": {
                     String val = asText(node);
                     target.setTimeout(val);
-                    break;
-                }
-                case "timeout-in-milliseconds": {
-                    String val = asText(node);
-                    target.setTimeoutInMilliseconds(val);
                     break;
                 }
                 case "id": {
