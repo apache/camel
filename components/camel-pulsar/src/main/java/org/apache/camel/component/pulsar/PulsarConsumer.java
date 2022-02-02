@@ -72,6 +72,12 @@ public class PulsarConsumer extends DefaultConsumer implements Suspendable {
         pulsarConsumers = stopConsumers(pulsarConsumers);
     }
 
+    /**
+     * Pauses the Pulsar consumers.
+     *
+     * Once paused, a Pulsar consumer does not request any more messages from the broker. However, it will still receive
+     * as many messages as it had already requested, which is equal to at most `consumerQueueSize`.
+     */
     @Override
     protected void doSuspend() {
         pauseConsumers(pulsarConsumers);
