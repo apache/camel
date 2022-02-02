@@ -22,6 +22,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.BindToRegistry;
+import org.apache.camel.CamelConfiguration;
 import org.apache.camel.Configuration;
 import org.apache.camel.Converter;
 import org.apache.camel.ExtendedCamelContext;
@@ -84,28 +85,14 @@ public class JavaRoutesBuilderLoader extends RouteBuilderLoaderSupport {
                 return (RouteBuilder) obj;
             } else if (obj != null) {
                 BindToRegistry bir = obj.getClass().getAnnotation(BindToRegistry.class);
-                if (bir != null) {
-                    CamelBeanPostProcessor bpp = getCamelContext().adapt(ExtendedCamelContext.class).getBeanPostProcessor();
-                    if (ObjectHelper.isNotEmpty(bir.value())) {
-                        name = bir.value();
-                    }
-
-                    // to support hot reloading of beans then we need to enable unbind mode in bean post processor
-                    bpp.setUnbindEnabled(true);
-                    try {
-                        // this class is a bean service which needs to be post processed and registered which happens
-                        // automatic by the bean post processor
-                        bpp.postProcessBeforeInitialization(obj, name);
-                        bpp.postProcessAfterInitialization(obj, name);
-                    } finally {
-                        bpp.setUnbindEnabled(false);
-                    }
-                    return null;
-                }
                 Configuration cfg = obj.getClass().getAnnotation(Configuration.class);
-                if (cfg != null) {
+                if (bir != null || cfg != null || obj instanceof CamelConfiguration) {
                     CamelBeanPostProcessor bpp = getCamelContext().adapt(ExtendedCamelContext.class).getBeanPostProcessor();
-
+                    if (bir != null && ObjectHelper.isNotEmpty(bir.value())) {
+                        name = bir.value();
+                    } else if (cfg != null && ObjectHelper.isNotEmpty(cfg.value())) {
+                        name = cfg.value();
+                    }
                     // to support hot reloading of beans then we need to enable unbind mode in bean post processor
                     bpp.setUnbindEnabled(true);
                     try {
@@ -115,6 +102,9 @@ public class JavaRoutesBuilderLoader extends RouteBuilderLoaderSupport {
                         bpp.postProcessAfterInitialization(obj, name);
                     } finally {
                         bpp.setUnbindEnabled(false);
+                    }
+                    if (obj instanceof CamelConfiguration) {
+                        ((CamelConfiguration) obj).configure(getCamelContext());
                     }
                     return null;
                 }
