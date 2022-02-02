@@ -17,12 +17,14 @@
 package ${package};
 
 import org.apache.camel.BindToRegistry;
+import org.apache.camel.CamelContext;
 import org.apache.camel.PropertyInject;
+import org.apache.camel.main.CamelConfiguration;
 
 /**
  * Class to configure the Camel application.
  */
-public class MyConfiguration {
+public class MyConfiguration implements CamelConfiguration {
 
     @BindToRegistry
     public MyBean myBean(@PropertyInject("hi") String hi, @PropertyInject("bye") String bye) {
@@ -30,7 +32,7 @@ public class MyConfiguration {
         return new MyBean(hi, bye);
     }
 
-    public void configure() {
+    public void configure(CamelContext camelContext) {
         // this method is optional and can be removed if no additional configuration is needed.
     }
 
