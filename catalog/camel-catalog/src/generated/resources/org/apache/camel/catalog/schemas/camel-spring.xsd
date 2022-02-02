@@ -5983,7 +5983,7 @@ RDF4JMODEL
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="baseURI" type="xs:string">
+        <xs:attribute name="baseUri" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 The URI to use as base for building RDF entities if only relative paths are
