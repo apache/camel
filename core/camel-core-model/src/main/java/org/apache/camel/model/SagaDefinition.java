@@ -53,11 +53,6 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
     private String completionMode;
 
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Long", deprecationNote = "Use timeout instead")
-    @Deprecated
-    private String timeoutInMilliseconds;
-
-    @XmlAttribute
     @Metadata(javaType = "java.time.Duration")
     private String timeout;
 
@@ -214,18 +209,6 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
      */
     public void setTimeout(String timeout) {
         this.timeout = timeout;
-    }
-
-    public String getTimeoutInMilliseconds() {
-        return timeoutInMilliseconds;
-    }
-
-    /**
-     * Set the maximum amount of time for the Saga. After the timeout is expired, the saga will be compensated
-     * automatically (unless a different decision has been taken in the meantime).
-     */
-    public void setTimeoutInMilliseconds(String timeoutInMilliseconds) {
-        this.timeoutInMilliseconds = timeoutInMilliseconds;
     }
 
     private void addOption(String option, Expression expression) {
