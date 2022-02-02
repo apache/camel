@@ -306,7 +306,7 @@ The camel.lra supports 4 options, which are listed below.
 When running Camel standalone via `camel-main` JAR, then Camel will use package scanning to discover:
 
 - Camel routes by discovering `RouteBuilder` classes
-- Camel configuration classes by discovering `CamelConfiguration` classes
+- Camel configuration classes by discovering `CamelConfiguration` classes or classes annotated with `@Configuration`.
 - Camel type converters by discovering classes annotated with `@Converter`
 
 To use package scanning then Camel needs to know the base package to use as _offset_. This
@@ -341,8 +341,8 @@ There is a little overhead when using package scanning as Camel performs this sc
 
 You can use _configuration_ classes to configure Camel Main applications from Java.
 
-IMPORTANT: In *Camel 3.16* onwards the configuration classes must implement the interface `org.apache.camel.main.CamelConfiguration`.
-In previous versions this was not required.
+IMPORTANT: In *Camel 3.16* onwards the configuration classes must either implement the interface `org.apache.camel.CamelConfiguration`,
+or be annotated with `@Configuration` (or both). In previous versions this was not required.
 
 For example to configure a Camel application by creating custom beans you can do:
 
@@ -350,10 +350,35 @@ For example to configure a Camel application by creating custom beans you can do
 ----
 public class MyConfiguration implements CamelConfiguration {
 
+    @BindToRegistry
+    public MyBean myAwesomeBean() {
+        MyBean bean = new MyBean();
+        // do something on bean
+        return bean;
+    }
+
     public void configure(CamelContext camelContext) throws Exception {
         // this method is optional and can be omitted
         // do any kind of configuration here if needed
     }
+
+}
+----
+
+In the configuration class you can also have custom methods that creates beans, such as the `myAwesomeBean` method
+that creates the `MyBean` and registers it with the name `myAwesomeBean` (defaults to method name).
+
+This is similar to Spring Boot where you can also do this with the Spring Boot `@Bean` annotations,
+or in Quarkus/CDI with the `@Produces` annotation.
+
+=== Using annotation based configuration classes
+
+Instead of configuration classes that implements `CamelConfiguration`, you can annotate the class with `org.apache.camel.@Configuration` as shown:
+
+[source,java]
+----
+@Configuration
+public class MyConfiguration {
 
     @BindToRegistry
     public MyBean myAwesomeBean() {
@@ -363,12 +388,6 @@ public class MyConfiguration implements CamelConfiguration {
     }
 }
 ----
-
-In the configuration class you can also have custom methods that creates beans, such as the `myAwesomeBean` method
-that creates the `MyBean` and registers it with the name `myAwesomeBean` (defaults to method name).
-
-This is similar to Spring Boot where you can also do this with the Spring Boot `@Bean` annotations,
-or in Quarkus/CDI with the `@Produces` annotation.
 
 == Specifying custom beans
 
