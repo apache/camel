@@ -541,7 +541,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             switch(propertyKey) {
                 case "base-uri": {
                     String val = asText(node);
-                    target.setBaseURI(val);
+                    target.setBaseUri(val);
                     break;
                 }
                 case "configuration": {

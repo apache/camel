@@ -1845,7 +1845,7 @@ public class ModelParser extends BaseParser {
     protected Any23DataFormat doParseAny23DataFormat() throws IOException, XmlPullParserException {
         return doParse(new Any23DataFormat(), (def, key, val) -> {
             switch (key) {
-                case "baseURI": def.setBaseURI(val); break;
+                case "baseUri": def.setBaseUri(val); break;
                 case "outputFormat": def.setOutputFormat(val); break;
                 default: return identifiedTypeAttributeHandler().accept(def, key, val);
             }

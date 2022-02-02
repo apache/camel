@@ -51,7 +51,7 @@ public class Any23DataFormat extends DataFormatDefinition {
     @XmlElement
     private List<String> extractors;
     @XmlAttribute
-    private String baseURI;
+    private String baseUri;
 
     public Any23DataFormat() {
         super("any23");
@@ -59,7 +59,7 @@ public class Any23DataFormat extends DataFormatDefinition {
 
     public Any23DataFormat(String baseuri) {
         this();
-        this.baseURI = baseuri;
+        this.baseUri = baseuri;
     }
 
     public Any23DataFormat(String baseuri, Any23Type outputFormat) {
@@ -143,15 +143,15 @@ public class Any23DataFormat extends DataFormatDefinition {
         this.extractors = extractors;
     }
 
-    public String getBaseURI() {
-        return baseURI;
+    public String getBaseUri() {
+        return baseUri;
     }
 
     /**
      * The URI to use as base for building RDF entities if only relative paths are provided.
      */
-    public void setBaseURI(String baseURI) {
-        this.baseURI = baseURI;
+    public void setBaseUri(String baseUri) {
+        this.baseUri = baseUri;
     }
 
 }

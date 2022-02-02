@@ -41,7 +41,6 @@
       <artifactId>camel-support</artifactId>
     </dependency>
 
-
     <dependency>
       <groupId>org.apache.any23</groupId>
       <artifactId>apache-any23-core</artifactId>

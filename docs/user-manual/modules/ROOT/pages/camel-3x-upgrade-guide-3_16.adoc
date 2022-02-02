@@ -57,3 +57,8 @@ To:
     </sagaOption>
 </saga>
 ----
+
+=== camel-any23
+
+The option `baseURI` is renamed to `baseUri`.
+
