@@ -1199,7 +1199,7 @@ class AbstractExchangeTest {
 
         @Override
         public void setBeanPostProcessor(CamelBeanPostProcessor beanPostProcessor) {
-            
+
         }
 
         @Override
