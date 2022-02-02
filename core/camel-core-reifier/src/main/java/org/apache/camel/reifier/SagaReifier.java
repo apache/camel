@@ -54,7 +54,7 @@ public class SagaReifier extends ProcessorReifier<SagaDefinition> {
         Map<String, Expression> optionsMap = new TreeMap<>();
         if (definition.getOptions() != null) {
             for (SagaOptionDefinition optionDef : definition.getOptions()) {
-                String optionName = optionDef.getOptionName();
+                String optionName = optionDef.getName();
                 Expression expr = optionDef.getExpression();
                 optionsMap.put(optionName, expr);
             }

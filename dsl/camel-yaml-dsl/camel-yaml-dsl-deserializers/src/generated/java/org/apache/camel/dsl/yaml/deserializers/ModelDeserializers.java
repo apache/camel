@@ -13458,8 +13458,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "description", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
-                    @YamlProperty(name = "option", type = "array:org.apache.camel.model.SagaOptionDefinition"),
                     @YamlProperty(name = "propagation", type = "string"),
+                    @YamlProperty(name = "saga-option", type = "array:org.apache.camel.model.SagaOptionDefinition"),
                     @YamlProperty(name = "saga-service-ref", type = "string"),
                     @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition"),
                     @YamlProperty(name = "timeout", type = "string")
@@ -13499,7 +13499,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
                     break;
                 }
-                case "option": {
+                case "saga-option": {
                     java.util.List<org.apache.camel.model.SagaOptionDefinition> val = asFlatList(node, org.apache.camel.model.SagaOptionDefinition.class);
                     target.setOptions(val);
                     break;
@@ -13544,10 +13544,17 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     @YamlType(
             types = org.apache.camel.model.SagaOptionDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            nodes = {
+                    "saga-option",
+                    "sagaOption"
+            },
             properties = {
                     @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
+                    @YamlProperty(name = "description", type = "string"),
                     @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
-                    @YamlProperty(name = "option-name", type = "string", required = true)
+                    @YamlProperty(name = "id", type = "string"),
+                    @YamlProperty(name = "inherit-error-handler", type = "boolean"),
+                    @YamlProperty(name = "name", type = "string", required = true)
             }
     )
     public static class SagaOptionDefinitionDeserializer extends YamlDeserializerBase<SagaOptionDefinition> {
@@ -13569,9 +13576,24 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setExpression(val);
                     break;
                 }
-                case "option-name": {
+                case "inherit-error-handler": {
                     String val = asText(node);
-                    target.setOptionName(val);
+                    target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
+                    break;
+                }
+                case "name": {
+                    String val = asText(node);
+                    target.setName(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "description": {
+                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    target.setDescription(val);
                     break;
                 }
                 default: {

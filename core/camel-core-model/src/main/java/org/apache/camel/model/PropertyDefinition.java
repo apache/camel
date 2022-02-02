@@ -31,9 +31,9 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PropertyDefinition {
     @XmlAttribute(required = true)
-    String key;
+    private String key;
     @XmlAttribute(required = true)
-    String value;
+    private String value;
 
     public PropertyDefinition() {
     }

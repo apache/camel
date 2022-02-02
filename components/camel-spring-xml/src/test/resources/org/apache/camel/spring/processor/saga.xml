@@ -33,12 +33,12 @@
       <saga>
         <compensation uri="mock:compensation" />
         <completion uri="mock:completion" />
-        <option optionName="myOptionKey">
+        <sagaOption name="myOptionKey">
           <constant>myOptionValue</constant>
-        </option>
-        <option optionName="myOptionKey2">
+        </sagaOption>
+        <sagaOption name="myOptionKey2">
           <constant>myOptionValue2</constant>
-        </option>
+        </sagaOption>
       </saga>
       <choice>
         <when>
@@ -48,8 +48,6 @@
       </choice>
       <to uri="mock:end"/>
     </route>
-
-
 
   </camelContext>
   <!-- END SNIPPET: example -->

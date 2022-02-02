@@ -49,14 +49,14 @@ class SagaTest extends YamlTestSupport {
                     endpointUri == 'direct:something'
                 }
                 with(options[0], SagaOptionDefinition) {
-                    optionName == 'o1'
+                    name == 'o1'
                     with(expression, ExpressionDefinition) {
                         language == 'simple'
                         expression == '${body}'
                     }
                 }
                 with(options[1], SagaOptionDefinition) {
-                    optionName == 'o2'
+                    name == 'o2'
                     with(expression, ExpressionDefinition) {
                         language == 'simple'
                         expression == '${body}'
@@ -71,17 +71,17 @@ class SagaTest extends YamlTestSupport {
                         steps:    
                           - saga:  
                              propagation: "MANDATORY"
-                             completion-mode: "MANUAL"
+                             completionMode: "MANUAL"
                              compensation: 
                                  uri: "direct:compensation"
                              completion:
                                  uri: "direct:completion"
                              steps:
                                - to: "direct:something"
-                             option:
-                               - option-name: o1
+                             sagaOption:
+                               - name: o1
                                  simple: "${body}" 
-                               - option-name: o2
+                               - name: o2
                                  expression:
                                    simple: "${body}"        
                           - to: "mock:result"
@@ -92,7 +92,7 @@ class SagaTest extends YamlTestSupport {
                         steps:    
                           - saga:  
                              propagation: "MANDATORY"
-                             completion-mode: "MANUAL"
+                             completionMode: "MANUAL"
                              compensation: 
                                  uri: "direct"
                                  parameters:
@@ -101,10 +101,10 @@ class SagaTest extends YamlTestSupport {
                                  uri: "direct:completion"
                              steps:
                                - to: "direct:something"
-                             option:
-                               - option-name: o1
+                             sagaOption:
+                               - name: o1
                                  simple: "${body}" 
-                               - option-name: o2
+                               - name: o2
                                  expression:
                                    simple: "${body}"        
                           - to: "mock:result"
@@ -115,7 +115,7 @@ class SagaTest extends YamlTestSupport {
                         steps:    
                           - saga:  
                              propagation: "MANDATORY"
-                             completion-mode: "MANUAL"
+                             completionMode: "MANUAL"
                              compensation: 
                                  parameters:
                                    name: compensation
@@ -124,10 +124,10 @@ class SagaTest extends YamlTestSupport {
                                  uri: "direct:completion"
                              steps:
                                - to: "direct:something"
-                             option:
-                               - option-name: o1
+                             sagaOption:
+                               - name: o1
                                  simple: "${body}" 
-                               - option-name: o2
+                               - name: o2
                                  expression:
                                    simple: "${body}"        
                           - to: "mock:result"
@@ -138,15 +138,15 @@ class SagaTest extends YamlTestSupport {
                         steps:    
                           - saga: 
                              propagation: "MANDATORY"
-                             completion-mode: "MANUAL"
+                             completionMode: "MANUAL"
                              compensation: "direct:compensation"
                              completion: "direct:completion"
                              steps:
                                - to: "direct:something"    
-                             option:
-                               - option-name: o1
+                             sagaOption:
+                               - name: o1
                                  simple: "${body}" 
-                               - option-name: o2
+                               - name: o2
                                  expression:
                                    simple: "${body}"        
                           - to: "mock:result"
@@ -157,7 +157,7 @@ class SagaTest extends YamlTestSupport {
                         steps:    
                           - saga: 
                              propagation: "MANDATORY"
-                             completion-mode: "MANUAL"
+                             completionMode: "MANUAL"
                              compensation: 
                                direct:
                                  name: "compensation"
@@ -166,10 +166,10 @@ class SagaTest extends YamlTestSupport {
                                  name: "completion"
                              steps:
                                - to: "direct:something"  
-                             option:
-                               - option-name: o1
+                             sagaOption:
+                               - name: o1
                                  simple: "${body}" 
-                               - option-name: o2
+                               - name: o2
                                  expression:
                                    simple: "${body}"          
                           - to: "mock:result"

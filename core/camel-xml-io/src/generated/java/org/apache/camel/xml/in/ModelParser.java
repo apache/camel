@@ -1247,7 +1247,7 @@ public class ModelParser extends BaseParser {
             switch (key) {
                 case "compensation": def.setCompensation(doParseSagaActionUriDefinition()); break;
                 case "completion": def.setCompletion(doParseSagaActionUriDefinition()); break;
-                case "option": doAdd(doParseSagaOptionDefinition(), def.getOptions(), def::setOptions); break;
+                case "sagaOption": doAdd(doParseSagaOptionDefinition(), def.getOptions(), def::setOptions); break;
                 default: return outputDefinitionElementHandler().accept(def, key);
             }
             return true;
@@ -1259,19 +1259,12 @@ public class ModelParser extends BaseParser {
     }
     protected SagaOptionDefinition doParseSagaOptionDefinition() throws IOException, XmlPullParserException {
         return doParse(new SagaOptionDefinition(), (def, key, val) -> {
-            if ("optionName".equals(key)) {
-                def.setOptionName(val);
+            if ("name".equals(key)) {
+                def.setName(val);
                 return true;
             }
-            return false;
-        }, (def, key) -> {
-            ExpressionDefinition v = doParseExpressionDefinitionRef(key);
-            if (v != null) { 
-                def.setExpression(v);
-                return true;
-            }
-            return false;
-        }, noValueHandler());
+            return processorDefinitionAttributeHandler().accept(def, key, val);
+        }, expressionNodeElementHandler(), noValueHandler());
     }
     protected SamplingDefinition doParseSamplingDefinition() throws IOException, XmlPullParserException {
         return doParse(new SamplingDefinition(), (def, key, val) -> {
@@ -3210,6 +3203,7 @@ public class ModelParser extends BaseParser {
             case "route": return doParseRouteDefinition();
             case "routingSlip": return doParseRoutingSlipDefinition();
             case "saga": return doParseSagaDefinition();
+            case "sagaOption": return doParseSagaOptionDefinition();
             case "sample": return doParseSamplingDefinition();
             case "script": return doParseScriptDefinition();
             case "setBody": return doParseSetBodyDefinition();

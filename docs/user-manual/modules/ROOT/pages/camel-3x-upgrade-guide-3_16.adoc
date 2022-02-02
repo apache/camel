@@ -21,3 +21,39 @@ and the TypeConverterExistsLoggingLevel from `WARN` to `DEBUG`.
 Previously when Camel detected a duplicate type converter during startup, Camel would
 override the existing converter and log a WARN. A more correct behaviour would be
 to keep the existing and ignore the duplicate.
+
+=== Saga EIP
+
+Removed the deprecated `timeoutInMilliseconds` option, use `timeout` instead.
+
+Renamed `<option>` to `<sagaOption>` and `optionName` to `name`. When using XML DSL then this is affected as follows:
+
+[source,xml]
+----
+<saga sagaServiceRef="mySagaService">
+    <compensation uri="mock:compensation"/>
+    <completion uri="mock:completion"/>
+    <option optionName="myOptionKey">
+        <constant>myOptionValue</constant>
+    </option>
+    <option optionName="myOptionKey2">
+        <constant>myOptionValue2</constant>
+    </option>
+</saga>
+----
+
+To:
+
+[source,xml]
+----
+<saga sagaServiceRef="mySagaService">
+    <compensation uri="mock:compensation"/>
+    <completion uri="mock:completion"/>
+    <sagaOption name="myOptionKey">
+        <constant>myOptionValue</constant>
+    </sagaOption>
+    <sagaOption name="myOptionKey2">
+        <constant>myOptionValue2</constant>
+    </sagaOption>
+</saga>
+----

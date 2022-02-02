@@ -128,6 +128,9 @@
           "saga" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.SagaDefinition"
           },
+          "sagaOption" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.SagaOptionDefinition"
+          },
           "sample" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.SamplingDefinition"
           },
@@ -2563,14 +2566,14 @@
           "inheritErrorHandler" : {
             "type" : "boolean"
           },
-          "option" : {
+          "propagation" : {
+            "type" : "string"
+          },
+          "sagaOption" : {
             "type" : "array",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.SagaOptionDefinition"
             }
-          },
-          "propagation" : {
-            "type" : "string"
           },
           "sagaServiceRef" : {
             "type" : "string"
@@ -2592,14 +2595,23 @@
           "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
         } ],
         "properties" : {
+          "description" : {
+            "type" : "string"
+          },
           "expression" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
           },
-          "optionName" : {
+          "id" : {
+            "type" : "string"
+          },
+          "inheritErrorHandler" : {
+            "type" : "boolean"
+          },
+          "name" : {
             "type" : "string"
           }
         },
-        "required" : [ "optionName" ]
+        "required" : [ "name" ]
       },
       "org.apache.camel.model.SamplingDefinition" : {
         "type" : "object",

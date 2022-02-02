@@ -387,6 +387,8 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.SagaActionUriDefinition": return new ModelDeserializers.SagaActionUriDefinitionDeserializer();
             case "saga": return new ModelDeserializers.SagaDefinitionDeserializer();
             case "org.apache.camel.model.SagaDefinition": return new ModelDeserializers.SagaDefinitionDeserializer();
+            case "saga-option": return new ModelDeserializers.SagaOptionDefinitionDeserializer();
+            case "sagaOption": return new ModelDeserializers.SagaOptionDefinitionDeserializer();
             case "org.apache.camel.model.SagaOptionDefinition": return new ModelDeserializers.SagaOptionDefinitionDeserializer();
             case "sample": return new ModelDeserializers.SamplingDefinitionDeserializer();
             case "org.apache.camel.model.SamplingDefinition": return new ModelDeserializers.SamplingDefinitionDeserializer();

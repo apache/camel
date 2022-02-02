@@ -62,7 +62,7 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
     @XmlElement
     private SagaActionUriDefinition completion;
 
-    @XmlElement(name = "option")
+    @XmlElement(name = "sagaOption")
     private List<SagaOptionDefinition> options;
 
     @XmlAttribute

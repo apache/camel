@@ -19,7 +19,7 @@ package org.apache.camel.model;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Expression;
 import org.apache.camel.model.language.ExpressionDefinition;
@@ -29,49 +29,36 @@ import org.apache.camel.spi.Metadata;
  * Allows declaring options on Sagas
  */
 @Metadata(label = "configuration")
+@XmlRootElement(name = "sagaOption")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SagaOptionDefinition implements HasExpressionType {
+public class SagaOptionDefinition extends ExpressionNode {
 
     @XmlAttribute(required = true)
-    private String optionName;
-
-    @XmlElementRef
-    private ExpressionDefinition expression;
+    private String name;
 
     public SagaOptionDefinition() {
     }
 
-    public SagaOptionDefinition(String optionName, Expression expression) {
-        setOptionName(optionName);
+    public SagaOptionDefinition(String name, Expression expression) {
+        setName(name);
         setExpression(ExpressionNodeHelper.toExpressionDefinition(expression));
     }
 
     @Override
     public String toString() {
-        return "option:" + getOptionName() + "=" + getExpression();
+        return "option:" + getName() + "=" + getExpression();
     }
 
     /**
      * Name of the option. It identifies the name of the header where the value of the expression will be stored when
      * the compensation or completion routes will be called.
      */
-    public void setOptionName(String optionName) {
-        this.optionName = optionName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getOptionName() {
-        return optionName;
-    }
-
-    public ExpressionDefinition getExpression() {
-        return expression;
-    }
-
-    /**
-     * The expression to be used to determine the value of the option.
-     */
-    public void setExpression(ExpressionDefinition expression) {
-        this.expression = expression;
+    public String getName() {
+        return name;
     }
 
     @Override
@@ -82,5 +69,10 @@ public class SagaOptionDefinition implements HasExpressionType {
     @Override
     public void setExpressionType(ExpressionDefinition expressionType) {
         setExpression(expressionType);
+    }
+
+    @Override
+    public String getShortName() {
+        return "sagaOption";
     }
 }
