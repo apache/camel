@@ -19,6 +19,7 @@ package org.apache.camel.component.azure.eventhubs.operations;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import com.azure.messaging.eventhubs.EventData;
 import com.azure.messaging.eventhubs.EventHubProducerAsyncClient;
@@ -106,14 +107,15 @@ public class EventHubsProducerOperations {
         // check if our exchange is list or contain some values
         if (exchange.getIn().getBody() instanceof Iterable) {
             return createEventDataFromIterable((Iterable<Object>) exchange.getIn().getBody(),
-                    exchange.getContext().getTypeConverter());
+                    exchange.getContext().getTypeConverter(), exchange.getIn().getHeaders());
         }
 
         // we have only a single event here
         return Collections.singletonList(createEventDataFromExchange(exchange));
     }
 
-    private Iterable<EventData> createEventDataFromIterable(final Iterable<Object> inputData, final TypeConverter converter) {
+    private Iterable<EventData> createEventDataFromIterable(
+            final Iterable<Object> inputData, final TypeConverter converter, Map<String, Object> headers) {
         final List<EventData> finalEventData = new LinkedList<>();
 
         inputData.forEach(data -> {
@@ -122,7 +124,7 @@ public class EventHubsProducerOperations {
             } else if (data instanceof Message) {
                 finalEventData.add(createEventDataFromMessage((Message) data));
             } else {
-                finalEventData.add(createEventDataFromObject(data, converter));
+                finalEventData.add(createEventDataFromObject(data, converter, headers));
             }
         });
 
@@ -134,10 +136,12 @@ public class EventHubsProducerOperations {
     }
 
     private EventData createEventDataFromMessage(final Message message) {
-        return createEventDataFromObject(message.getBody(), message.getExchange().getContext().getTypeConverter());
+        return createEventDataFromObject(message.getBody(), message.getExchange().getContext().getTypeConverter(),
+                message.getHeaders());
     }
 
-    private EventData createEventDataFromObject(final Object inputData, final TypeConverter converter) {
+    private EventData createEventDataFromObject(
+            final Object inputData, final TypeConverter converter, Map<String, Object> headers) {
         final byte[] data = converter.convertTo(byte[].class, inputData);
 
         if (ObjectHelper.isEmpty(data)) {
@@ -147,6 +151,9 @@ public class EventHubsProducerOperations {
                             inputData));
         }
 
-        return new EventData(data);
+        EventData eventData = new EventData(data);
+        eventData.getProperties().putAll(headers);
+
+        return eventData;
     }
 }
