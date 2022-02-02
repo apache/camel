@@ -78,6 +78,11 @@ public class KafkaConsumerWithResumeStrategyIT extends BaseEmbeddedKafkaTestSupp
         public boolean isConsumerIsNull() {
             return consumerIsNull;
         }
+
+        @Override
+        public void start() throws Exception {
+
+        }
     }
 
     @Override

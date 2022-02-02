@@ -73,4 +73,9 @@ public class OffsetKafkaConsumerResumeStrategy implements KafkaConsumerResumeStr
     public void resume(KafkaResumable resumable) {
         resume();
     }
+
+    @Override
+    public void start() throws Exception {
+
+    }
 }

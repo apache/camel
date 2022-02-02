@@ -3774,6 +3774,19 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         return (Type) this;
     }
 
+    /**
+     * This defines the route as resumable, which allows the route to work with the endpoints and components to manage
+     * the state of consumers and resume upon restart
+     * 
+     * @return The expression to create the Resumable
+     */
+    public ExpressionClause<ResumableDefinition> resumable() {
+        ResumableDefinition answer = new ResumableDefinition();
+
+        addOutput(answer);
+        return createAndSetExpression(answer);
+    }
+
     // Properties
     // -------------------------------------------------------------------------
 

@@ -17,6 +17,7 @@
 
 package org.apache.camel.processor.resume.kafka;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,6 +31,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import org.apache.camel.Resumable;
+import org.apache.camel.Service;
 import org.apache.camel.UpdatableConsumerResumeStrategy;
 import org.apache.camel.util.StringHelper;
 import org.apache.kafka.clients.consumer.Consumer;
@@ -49,7 +51,9 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractKafkaResumeStrategy<K, V> implements UpdatableConsumerResumeStrategy<K, V, Resumable<K, V>> {
+public abstract class AbstractKafkaResumeStrategy<K, V>
+        implements UpdatableConsumerResumeStrategy<K, V, Resumable<K, V>>, Service {
+    public static final int UNLIMITED = -1;
     private static final Logger LOG = LoggerFactory.getLogger(AbstractKafkaResumeStrategy.class);
 
     private final String topic;
@@ -71,18 +75,11 @@ public abstract class AbstractKafkaResumeStrategy<K, V> implements UpdatableCons
         this.consumerConfig = createConsumer(bootstrapServers);
     }
 
-    public AbstractKafkaResumeStrategy(String bootstrapServers, String topic, Properties producerConfig,
+    public AbstractKafkaResumeStrategy(String topic, Properties producerConfig,
                                        Properties consumerConfig) {
         this.topic = topic;
         this.producerConfig = producerConfig;
         this.consumerConfig = consumerConfig;
-    }
-
-    public void start() throws Exception {
-        consumer = new KafkaConsumer<>(consumerConfig);
-        producer = new KafkaProducer<>(producerConfig);
-
-        loadProcessedItems(processedItems);
     }
 
     private Properties createProducer(String bootstrapServers) {
@@ -157,7 +154,7 @@ public abstract class AbstractKafkaResumeStrategy<K, V> implements UpdatableCons
     }
 
     protected void loadProcessedItems(Map<K, List<V>> processed) throws Exception {
-        loadProcessedItems(processed, -1);
+        loadProcessedItems(processed, UNLIMITED);
     }
 
     protected void loadProcessedItems(Map<K, List<V>> processed, int limit) throws Exception {
@@ -181,7 +178,7 @@ public abstract class AbstractKafkaResumeStrategy<K, V> implements UpdatableCons
                 var entries = processed.computeIfAbsent(record.key(), k -> new ArrayList<>());
                 entries.add(record.value());
 
-                if (processed.size() >= limit) {
+                if (limit != UNLIMITED && processed.size() >= limit) {
                     break;
                 }
             }
@@ -278,4 +275,43 @@ public abstract class AbstractKafkaResumeStrategy<K, V> implements UpdatableCons
         return Collections.unmodifiableList(sentItems);
     }
 
+    @Override
+    public void build() {
+        Service.super.build();
+    }
+
+    @Override
+    public void init() {
+        Service.super.init();
+
+        LOG.debug("Initializing the Kafka resume strategy");
+        if (consumer == null) {
+            consumer = new KafkaConsumer<>(consumerConfig);
+        }
+
+        if (producer == null) {
+            producer = new KafkaProducer<>(producerConfig);
+        }
+    }
+
+    @Override
+    public void stop() {
+
+    }
+
+    @Override
+    public void close() throws IOException {
+        Service.super.close();
+    }
+
+    @Override
+    public void start() {
+        LOG.info("Starting the kafka resume strategy");
+
+        try {
+            loadProcessedItems(processedItems);
+        } catch (Exception e) {
+            LOG.error("Failed to load already processed items: {}", e.getMessage(), e);
+        }
+    }
 }

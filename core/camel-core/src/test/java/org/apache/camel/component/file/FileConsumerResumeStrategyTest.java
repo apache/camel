@@ -47,6 +47,11 @@ public class FileConsumerResumeStrategyTest extends ContextTestSupport {
                 resumeSet.resumeEach(f -> !processedFiles.contains(f.getName()));
             }
         }
+
+        @Override
+        public void start() throws Exception {
+
+        }
     }
 
     @Test

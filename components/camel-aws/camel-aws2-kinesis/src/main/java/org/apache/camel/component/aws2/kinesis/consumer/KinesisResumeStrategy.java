@@ -20,7 +20,7 @@ package org.apache.camel.component.aws2.kinesis.consumer;
 import org.apache.camel.ResumeStrategy;
 import software.amazon.awssdk.services.kinesis.model.GetShardIteratorRequest;
 
-public interface KinesisResumeStrategy extends ResumeStrategy<GetShardIteratorRequest.Builder> {
+public interface KinesisResumeStrategy extends ResumeStrategy {
 
     void setRequestBuilder(GetShardIteratorRequest.Builder builder);
 }

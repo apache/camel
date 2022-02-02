@@ -28,6 +28,7 @@ import java.util.regex.Pattern;
 
 import org.apache.camel.component.kafka.consumer.CommitManager;
 import org.apache.camel.component.kafka.consumer.CommitManagers;
+import org.apache.camel.component.kafka.consumer.support.KafkaConsumerResumeStrategy;
 import org.apache.camel.component.kafka.consumer.support.KafkaRecordProcessorFacade;
 import org.apache.camel.component.kafka.consumer.support.PartitionAssignmentListener;
 import org.apache.camel.component.kafka.consumer.support.ProcessingResult;
@@ -136,9 +137,12 @@ class KafkaFetchRecords implements Runnable {
     }
 
     private void subscribe() {
+        KafkaConsumerResumeStrategy userProvidedStrategy
+                = kafkaConsumer.getEndpoint().getCamelContext().hasService(KafkaConsumerResumeStrategy.class);
+
         PartitionAssignmentListener listener = new PartitionAssignmentListener(
                 threadId, kafkaConsumer.getEndpoint().getConfiguration(), consumer, lastProcessedOffset,
-                this::isRunnable, commitManager);
+                this::isRunnable, commitManager, userProvidedStrategy);
 
         if (LOG.isInfoEnabled()) {
             LOG.info("Subscribing {} to {}", threadId, getPrintableTopic());

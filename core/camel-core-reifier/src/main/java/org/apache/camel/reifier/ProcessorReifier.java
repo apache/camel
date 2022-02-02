@@ -78,6 +78,7 @@ import org.apache.camel.model.RemoveHeadersDefinition;
 import org.apache.camel.model.RemovePropertiesDefinition;
 import org.apache.camel.model.RemovePropertyDefinition;
 import org.apache.camel.model.ResequenceDefinition;
+import org.apache.camel.model.ResumableDefinition;
 import org.apache.camel.model.RollbackDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteDefinitionHelper;
@@ -313,6 +314,8 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
             return new WhenSkipSendToEndpointReifier(route, definition);
         } else if (definition instanceof WhenDefinition) {
             return new WhenReifier(route, definition);
+        } else if (definition instanceof ResumableDefinition) {
+            return new ResumableReifier(route, definition);
         }
         return null;
     }

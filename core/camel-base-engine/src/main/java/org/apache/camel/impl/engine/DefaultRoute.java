@@ -33,6 +33,8 @@ import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
+import org.apache.camel.ResumeAware;
+import org.apache.camel.ResumeStrategy;
 import org.apache.camel.Route;
 import org.apache.camel.RouteAware;
 import org.apache.camel.Service;
@@ -87,6 +89,7 @@ public class DefaultRoute extends ServiceSupport implements Route {
     private ShutdownRunningTask shutdownRunningTask;
     private final Map<String, Processor> onCompletions = new HashMap<>();
     private final Map<String, Processor> onExceptions = new HashMap<>();
+    private ResumeStrategy resumeStrategy;
 
     // camel-core-model
     private ErrorHandlerFactory errorHandlerFactory;
@@ -626,6 +629,10 @@ public class DefaultRoute extends ServiceSupport implements Route {
             if (consumer instanceof RouteIdAware) {
                 ((RouteIdAware) consumer).setRouteId(this.getId());
             }
+
+            if (consumer instanceof ResumeAware) {
+                ((ResumeAware) consumer).setResumeStrategy(resumeStrategy);
+            }
         }
         if (processor instanceof Service) {
             services.add((Service) processor);
@@ -699,4 +706,8 @@ public class DefaultRoute extends ServiceSupport implements Route {
         return consumer instanceof Suspendable && consumer instanceof SuspendableService;
     }
 
+    @Override
+    public void setResumeStrategy(ResumeStrategy resumeStrategy) {
+        this.resumeStrategy = resumeStrategy;
+    }
 }

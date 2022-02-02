@@ -44,6 +44,11 @@ public class FileConsumerResumeFromOffsetStrategyTest extends ContextTestSupport
         public void resume() {
             // NO-OP
         }
+
+        @Override
+        public void start() throws Exception {
+
+        }
     }
 
     @DisplayName("Tests whether we can resume from an offset")

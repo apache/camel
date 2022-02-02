@@ -40,6 +40,11 @@ public final class ResumeStrategyFactory {
         public void resume() {
 
         }
+
+        @Override
+        public void start() throws Exception {
+
+        }
     }
 
     private static final NoOpKafkaConsumerResumeStrategy NO_OP_RESUME_STRATEGY = new NoOpKafkaConsumerResumeStrategy();

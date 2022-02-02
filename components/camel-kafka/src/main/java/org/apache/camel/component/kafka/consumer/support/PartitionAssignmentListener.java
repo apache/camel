@@ -38,7 +38,6 @@ public class PartitionAssignmentListener implements ConsumerRebalanceListener {
 
     private final String threadId;
     private final KafkaConfiguration configuration;
-    private final Consumer consumer;
     private final Map<String, Long> lastProcessedOffset;
     private final KafkaConsumerResumeStrategy resumeStrategy;
     private final CommitManager commitManager;
@@ -46,15 +45,21 @@ public class PartitionAssignmentListener implements ConsumerRebalanceListener {
 
     public PartitionAssignmentListener(String threadId, KafkaConfiguration configuration,
                                        Consumer consumer, Map<String, Long> lastProcessedOffset,
-                                       Supplier<Boolean> stopStateSupplier, CommitManager commitManager) {
+                                       Supplier<Boolean> stopStateSupplier, CommitManager commitManager,
+                                       KafkaConsumerResumeStrategy resumeStrategy) {
         this.threadId = threadId;
         this.configuration = configuration;
-        this.consumer = consumer;
         this.lastProcessedOffset = lastProcessedOffset;
         this.commitManager = commitManager;
         this.stopStateSupplier = stopStateSupplier;
 
-        this.resumeStrategy = ResumeStrategyFactory.newResumeStrategy(configuration);
+        if (resumeStrategy == null) {
+            LOG.info("No resume strategy was provided ... checking for builtins ...");
+            this.resumeStrategy = ResumeStrategyFactory.newResumeStrategy(configuration);
+        } else {
+            LOG.info("Using user-provided strategy");
+            this.resumeStrategy = resumeStrategy;
+        }
         resumeStrategy.setConsumer(consumer);
     }
 
