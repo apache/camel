@@ -114,6 +114,12 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
         }
     }
 
+    @Override
+    protected void doShutdown() throws Exception {
+        // cleanup workers
+        workers.remove();
+    }
+
     private static class Worker {
 
         private final int number;
