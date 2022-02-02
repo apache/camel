@@ -11060,15 +11060,6 @@ saga:compensate endpoints. Default value: AUTO
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="timeoutInMilliseconds" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Deprecated: Set the maximum amount of time for the Saga. After the timeout is
-expired, the saga will be compensated automatically (unless a different decision
-has been taken in the meantime).
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
         <xs:attribute name="timeout" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
