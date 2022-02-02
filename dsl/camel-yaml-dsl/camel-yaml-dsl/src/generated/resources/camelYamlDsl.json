@@ -2583,9 +2583,6 @@
           },
           "timeout" : {
             "type" : "string"
-          },
-          "timeoutInMilliseconds" : {
-            "type" : "number"
           }
         }
       },
