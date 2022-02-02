@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.Processor;
 import org.apache.camel.Suspendable;
-import org.apache.camel.SuspendableService;
 import org.apache.camel.component.pulsar.utils.consumers.ConsumerCreationStrategy;
 import org.apache.camel.component.pulsar.utils.consumers.ConsumerCreationStrategyFactory;
 import org.apache.camel.support.DefaultConsumer;
@@ -39,7 +38,7 @@ import static org.apache.camel.component.pulsar.utils.PulsarUtils.resumeConsumer
 import static org.apache.camel.component.pulsar.utils.PulsarUtils.stopConsumers;
 import static org.apache.camel.component.pulsar.utils.PulsarUtils.stopExecutors;
 
-public class PulsarConsumer extends DefaultConsumer implements Suspendable, SuspendableService {
+public class PulsarConsumer extends DefaultConsumer implements Suspendable {
     private static final Logger LOGGER = LoggerFactory.getLogger(PulsarConsumer.class);
 
     private final PulsarEndpoint pulsarEndpoint;
