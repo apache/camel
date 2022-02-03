@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-moduleName=camel-k-loader-groovy
+moduleName=camel-groovy-dsl
 moduleVersion=1.0.0
 extensionClasses=\
   org.apache.camel.dsl.groovy.common.extensions.ExpressionClauseExtensions,\
