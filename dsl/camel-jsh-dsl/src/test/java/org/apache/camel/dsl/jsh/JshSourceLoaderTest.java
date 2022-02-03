@@ -44,7 +44,7 @@ public class JshSourceLoaderTest {
             assertThat(builders).hasSize(1);
 
             RouteBuilder builder = (RouteBuilder) builders.iterator().next();
-            builder.setContext(context);
+            builder.setCamelContext(context);
             builder.configure();
 
             Assertions.assertThat(builder.getRouteCollection().getRoutes())
