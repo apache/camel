@@ -37,57 +37,57 @@
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-			<version>4.8.2</version>
+			<version>5.8.2</version>
 			<scope>test</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
-			<version>5.2.1.RELEASE</version>
+			<version>5.3.15.RELEASE</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
-			<version>5.2.1.RELEASE</version>
+			<version>5.3.15.RELEASE</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-web</artifactId>
-			<version>5.2.1.RELEASE</version>
+			<version>5.3.15.RELEASEq</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-core</artifactId>
-			<version>3.0.0-SNAPSHOT</version>
+			<version>3.15.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-http</artifactId>
-			<version>3.0.0-SNAPSHOT</version>
+			<version>3.15.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-test</artifactId>
-			<version>3.0.0-SNAPSHOT</version>
+			<version>3.15.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-jackson</artifactId>
-			<version>3.0.0-SNAPSHOT</version>
+			<version>3.15.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-spring-xml</artifactId>
-			<version>3.0.0-SNAPSHOT</version>
+			<version>3.15.0-SNAPSHOT</version>
 		</dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.3.2</version>
+            <version>3.12.0</version>
         </dependency>
 	</dependencies>
 
@@ -97,12 +97,11 @@
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
+					<source>11</source>
+					<target>11</target>
 				</configuration>
 			</plugin>
 		</plugins>
 	</build>
-
 
 </project>
