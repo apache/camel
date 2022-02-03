@@ -7898,9 +7898,6 @@
       "routeTemplate" : {
         "$ref" : "#/items/definitions/org.apache.camel.model.RouteTemplateDefinition"
       },
-      "template" : {
-        "$ref" : "#/items/definitions/org.apache.camel.model.RouteTemplateDefinition"
-      },
       "rest" : {
         "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestDefinition"
       }
