@@ -33,7 +33,7 @@ The maven plugin *run* goal supports the following options which can be configur
 | durationIdle | -1 | Sets the idle time duration (seconds) duration that the application can be idle before terminating. A value <= 0 will run forever.
 | durationMaxMessages | -1 | Sets the duration of maximum number of messages that the application will process before terminating.
 | logClasspath | false | Whether to log the classpath when starting
-| logLevel | OFF | Whether to use built-in console logging (uses log4j), which does not require to add any logging dependency to your project. However, the logging is fixed to log to the console, with a color style that is similar to Spring Boot. You can change the root logging level to: FATAL, ERROR, WARN, INFO, DEBUG, TRACE, OFF
+| loggingLevel | OFF | Whether to use built-in console logging (uses log4j), which does not require to add any logging dependency to your project. However, the logging is fixed to log to the console, with a color style that is similar to Spring Boot. You can change the root logging level to: FATAL, ERROR, WARN, INFO, DEBUG, TRACE, OFF
 |===
 
 
