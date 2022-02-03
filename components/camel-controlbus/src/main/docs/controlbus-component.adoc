@@ -96,8 +96,8 @@ String status = template.requestBody("controlbus:route?routeId=foo&action=status
 == Getting performance statistics
 
 This requires JMX to be enabled (is by default) then you can get the
-performance statics per route, or for the
-CamelContext. For example to get the statics for
+performance statistics per route, or for the
+CamelContext. For example to get the statistics for
 a route named foo, we can do:
 
 [source,java]
@@ -105,11 +105,11 @@ a route named foo, we can do:
 String xml = template.requestBody("controlbus:route?routeId=foo&action=stats", null, String.class);
 ----
 
-The returned statics is in XML format. Its the same data you can get
+The returned statistics is in XML format. Its the same data you can get
 from JMX with the `dumpRouteStatsAsXml` operation on the
 `ManagedRouteMBean`.
 
-To get statics for the entire CamelContext you
+To get statistics for the entire CamelContext you
 just omit the routeId parameter as shown below:
 
 [source,java]
