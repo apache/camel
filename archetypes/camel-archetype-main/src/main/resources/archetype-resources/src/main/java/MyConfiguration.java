@@ -17,9 +17,9 @@
 package ${package};
 
 import org.apache.camel.BindToRegistry;
+import org.apache.camel.CamelConfiguration;
 import org.apache.camel.CamelContext;
 import org.apache.camel.PropertyInject;
-import org.apache.camel.main.CamelConfiguration;
 
 /**
  * Class to configure the Camel application.
@@ -32,7 +32,8 @@ public class MyConfiguration implements CamelConfiguration {
         return new MyBean(hi, bye);
     }
 
-    public void configure(CamelContext camelContext) {
+    @Override
+    public void configure(CamelContext camelContext) throws Exception {
         // this method is optional and can be removed if no additional configuration is needed.
     }
 
