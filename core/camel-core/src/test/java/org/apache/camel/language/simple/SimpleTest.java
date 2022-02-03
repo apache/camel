@@ -1957,6 +1957,12 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${messageTimestamp}", 1234L);
     }
 
+    @Test
+    public void testReplaceAll() throws Exception {
+        exchange.getIn().setBody("Bik (Ru)");
+        assertExpression("${body.replaceAll(\"Bik \\(Ru\\)\",\"bik_ru\").replaceAll(\"b\",\"c\")}", "cik_ru");
+    }
+
     @Override
     protected String getLanguageName() {
         return "simple";
