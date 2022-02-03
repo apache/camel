@@ -40,7 +40,7 @@
     <apache-drill-version>1.19.0</apache-drill-version>
     <apache-gora-version>0.9</apache-gora-version>
     <apacheds-version>2.0.0.AM26</apacheds-version>
-    <apicurio-version>1.1.16</apicurio-version>
+    <apicurio-version>1.1.20</apicurio-version>
     <arangodb-java-version>6.16.0</arangodb-java-version>
     <aries-blueprint-api-version>1.0.1</aries-blueprint-api-version>
     <aries-blueprint-cm-version>1.3.0</aries-blueprint-cm-version>
@@ -531,7 +531,7 @@
     <stompjms-version>1.19</stompjms-version>
     <stringtemplate-version>4.3.1</stringtemplate-version>
     <swagger-java-guava-version>27.1-jre</swagger-java-guava-version>
-    <swagger-java-parser-version>1.0.51</swagger-java-parser-version>
+    <swagger-java-parser-version>1.0.56</swagger-java-parser-version>
     <swagger-java-version>1.6.2</swagger-java-version>
     <swagger-openapi3-version>2.1.11</swagger-openapi3-version>
     <tagsoup-version>1.2.1</tagsoup-version>
@@ -554,7 +554,7 @@
     <weld-junit5-version>2.0.2.Final</weld-junit5-version>
     <weld3-version>3.1.8.Final</weld3-version>
     <wildfly-elytron>1.11.4.Final</wildfly-elytron>
-    <wiremock-version>2.27.2</wiremock-version>
+    <wiremock-version>2.32.0</wiremock-version>
     <woodstox-core-version>6.1.1</woodstox-core-version>
     <woodstox-version>4.4.1</woodstox-version>
     <xalan-version>2.7.2</xalan-version>
