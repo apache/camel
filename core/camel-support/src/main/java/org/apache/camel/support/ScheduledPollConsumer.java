@@ -577,6 +577,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
     protected void doStart() throws Exception {
         super.doStart();
 
+        boolean newScheduler = false;
         if (scheduler == null) {
             DefaultScheduledPollConsumerScheduler scheduler
                     = new DefaultScheduledPollConsumerScheduler(scheduledExecutorService);
@@ -585,6 +586,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
             scheduler.setTimeUnit(timeUnit);
             scheduler.setUseFixedDelay(useFixedDelay);
             this.scheduler = scheduler;
+            newScheduler = true;
         }
         ObjectHelper.notNull(scheduler, "scheduler", this);
         scheduler.setCamelContext(getEndpoint().getCamelContext());
@@ -608,6 +610,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
                                        + " Unknown parameters=[" + copy + "]");
             }
         }
+        afterConfigureScheduler(scheduler, newScheduler);
 
         scheduler.onInit(this);
 
@@ -619,6 +622,17 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
                 startScheduler();
             }
         }
+    }
+
+    /**
+     * After the scheduler has been configured
+     *
+     * @param scheduler    the scheduler
+     * @param newScheduler true if this consumer created a new scheduler, or false if an existing (shared) scheduler is
+     *                     being used
+     */
+    protected void afterConfigureScheduler(ScheduledPollConsumerScheduler scheduler, boolean newScheduler) {
+        // noop
     }
 
     /**
