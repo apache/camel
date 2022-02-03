@@ -541,7 +541,7 @@
         <weld3-version>3.1.8.Final</weld3-version>
         <weld-junit5-version>2.0.2.Final</weld-junit5-version>
         <wildfly-elytron>1.11.4.Final</wildfly-elytron>
-        <wiremock-version>2.27.2</wiremock-version>
+        <wiremock-version>2.32.0</wiremock-version>
         <woodstox-version>4.4.1</woodstox-version>
         <woodstox-core-version>6.1.1</woodstox-core-version>
         <xalan-version>2.7.2</xalan-version>
