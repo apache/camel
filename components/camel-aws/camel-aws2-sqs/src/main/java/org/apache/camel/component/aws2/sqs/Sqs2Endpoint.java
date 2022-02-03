@@ -33,7 +33,6 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.support.DefaultScheduledPollConsumerScheduler;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.FileUtil;
@@ -101,17 +100,10 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        Sqs2Consumer sqsConsumer = new Sqs2Consumer(this, processor);
-        configureConsumer(sqsConsumer);
-        sqsConsumer.setMaxMessagesPerPoll(maxMessagesPerPoll);
-        DefaultScheduledPollConsumerScheduler scheduler = new DefaultScheduledPollConsumerScheduler();
-        scheduler.setDelay(sqsConsumer.getDelay());
-        scheduler.setUseFixedDelay(sqsConsumer.isUseFixedDelay());
-        scheduler.setInitialDelay(sqsConsumer.getInitialDelay());
-        scheduler.setTimeUnit(sqsConsumer.getTimeUnit());
-        scheduler.setConcurrentConsumers(configuration.getConcurrentConsumers());
-        sqsConsumer.setScheduler(scheduler);
-        return sqsConsumer;
+        Sqs2Consumer consumer = new Sqs2Consumer(this, processor);
+        configureConsumer(consumer);
+        consumer.setMaxMessagesPerPoll(maxMessagesPerPoll);
+        return consumer;
     }
 
     private boolean isDefaultAwsHost() {

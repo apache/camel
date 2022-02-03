@@ -35,7 +35,9 @@ import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spi.ScheduledPollConsumerScheduler;
 import org.apache.camel.spi.Synchronization;
+import org.apache.camel.support.DefaultScheduledPollConsumerScheduler;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
@@ -338,6 +340,17 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
             sqsConsumerToString = "SqsConsumer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return sqsConsumerToString;
+    }
+
+    @Override
+    protected void afterConfigureScheduler(ScheduledPollConsumerScheduler scheduler, boolean newScheduler) {
+        if (newScheduler && scheduler instanceof DefaultScheduledPollConsumerScheduler) {
+            DefaultScheduledPollConsumerScheduler ds = (DefaultScheduledPollConsumerScheduler) scheduler;
+            ds.setConcurrentConsumers(getConfiguration().getConcurrentConsumers());
+            // if using concurrent consumers then resize pool to be at least same size
+            int ps = Math.max(ds.getPoolSize(), getConfiguration().getConcurrentConsumers());
+            ds.setPoolSize(ps);
+        }
     }
 
     @Override
