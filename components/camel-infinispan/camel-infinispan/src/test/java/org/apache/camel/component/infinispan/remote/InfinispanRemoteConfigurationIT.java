@@ -23,15 +23,13 @@ import org.infinispan.commons.api.BasicCache;
 import org.infinispan.configuration.cache.CacheMode;
 import org.jgroups.util.UUID;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledOnOs;
-import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.testcontainers.shaded.org.apache.commons.lang.SystemUtils;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@DisabledOnOs(OS.MAC)
 public class InfinispanRemoteConfigurationIT {
     @RegisterExtension
     static InfinispanService service = InfinispanServiceFactory.createService();
@@ -46,6 +44,10 @@ public class InfinispanRemoteConfigurationIT {
         configuration.setSecurityServerName("infinispan");
         configuration.setSaslMechanism("DIGEST-MD5");
         configuration.setSecurityRealm("default");
+        if (SystemUtils.IS_OS_MAC) {
+            configuration.addConfigurationProperty(
+                    "infinispan.client.hotrod.client_intelligence", "BASIC");
+        }
 
         try (InfinispanRemoteManager manager = new InfinispanRemoteManager(configuration)) {
             manager.start();
@@ -76,7 +78,11 @@ public class InfinispanRemoteConfigurationIT {
         configuration.setSecurityServerName("infinispan");
         configuration.setSaslMechanism("DIGEST-MD5");
         configuration.setSecurityRealm("default");
-        configuration.setConfigurationUri("infinispan/client.properties");
+        if (SystemUtils.IS_OS_MAC) {
+            configuration.setConfigurationUri("infinispan/client-mac.properties");
+        } else {
+            configuration.setConfigurationUri("infinispan/client.properties");
+        }
 
         try (InfinispanRemoteManager manager = new InfinispanRemoteManager(configuration)) {
             manager.start();
