@@ -1152,6 +1152,24 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
+     * Ends the current block and returns back to the {@link CatchDefinition doCatch()} DSL.
+     *
+     * @return the builder
+     */
+    public CatchDefinition endDoCatch() {
+        ProcessorDefinition<?> def = this;
+
+        // are we already a doCatch?
+        if (def instanceof CatchDefinition) {
+            return (CatchDefinition) def;
+        }
+
+        // okay end this and get back to the try
+        def = end();
+        return (CatchDefinition) def;
+    }
+
+    /**
      * Ends the current block and returns back to the {@link CircuitBreakerDefinition circuitBreaker()} DSL.
      *
      * @return the builder
