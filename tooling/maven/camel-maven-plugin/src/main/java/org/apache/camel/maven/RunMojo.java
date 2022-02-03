@@ -119,8 +119,8 @@ public class RunMojo extends AbstractExecMojo {
      *
      * You can change the root logging level to: FATAL, ERROR, WARN, INFO, DEBUG, TRACE, OFF
      */
-    @Parameter(property = "camel.logLevel", defaultValue = "OFF")
-    protected String logLevel;
+    @Parameter(property = "camel.loggingLevel", defaultValue = "OFF")
+    protected String loggingLevel;
 
     /**
      * Whether to use CDI when running, instead of Spring
@@ -668,12 +668,12 @@ public class RunMojo extends AbstractExecMojo {
         // and plugin classpath last
         this.addRelevantPluginDependenciesToClasspath(classpathURLs);
 
-        if (!logLevel.equals("OFF")) {
-            getLog().info("Using built-in logging level: " + logLevel);
+        if (!loggingLevel.equals("OFF")) {
+            getLog().info("Using built-in logging level: " + loggingLevel);
             // and extra plugin classpath
             this.addConsoleLogDependenciesToClasspath(classpathURLs);
             // setup logging
-            LoggingUtil.configureLog(logLevel);
+            LoggingUtil.configureLog(loggingLevel);
         }
 
         if (logClasspath) {
