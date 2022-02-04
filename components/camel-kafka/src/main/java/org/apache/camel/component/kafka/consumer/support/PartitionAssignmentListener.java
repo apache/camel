@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.component.kafka.KafkaConfiguration;
 import org.apache.camel.component.kafka.consumer.CommitManager;
-import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRebalanceListener;
 import org.apache.kafka.common.TopicPartition;
 import org.slf4j.Logger;
@@ -41,10 +40,10 @@ public class PartitionAssignmentListener implements ConsumerRebalanceListener {
     private final Map<String, Long> lastProcessedOffset;
     private final KafkaConsumerResumeStrategy resumeStrategy;
     private final CommitManager commitManager;
-    private Supplier<Boolean> stopStateSupplier;
+    private final Supplier<Boolean> stopStateSupplier;
 
     public PartitionAssignmentListener(String threadId, KafkaConfiguration configuration,
-                                       Consumer consumer, Map<String, Long> lastProcessedOffset,
+                                       Map<String, Long> lastProcessedOffset,
                                        Supplier<Boolean> stopStateSupplier, CommitManager commitManager,
                                        KafkaConsumerResumeStrategy resumeStrategy) {
         this.threadId = threadId;
@@ -52,15 +51,8 @@ public class PartitionAssignmentListener implements ConsumerRebalanceListener {
         this.lastProcessedOffset = lastProcessedOffset;
         this.commitManager = commitManager;
         this.stopStateSupplier = stopStateSupplier;
+        this.resumeStrategy = resumeStrategy;
 
-        if (resumeStrategy == null) {
-            LOG.info("No resume strategy was provided ... checking for builtins ...");
-            this.resumeStrategy = ResumeStrategyFactory.newResumeStrategy(configuration);
-        } else {
-            LOG.info("Using user-provided strategy");
-            this.resumeStrategy = resumeStrategy;
-        }
-        resumeStrategy.setConsumer(consumer);
     }
 
     @Override
