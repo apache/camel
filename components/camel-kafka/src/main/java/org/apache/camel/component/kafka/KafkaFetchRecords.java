@@ -32,6 +32,7 @@ import org.apache.camel.component.kafka.consumer.support.KafkaConsumerResumeStra
 import org.apache.camel.component.kafka.consumer.support.KafkaRecordProcessorFacade;
 import org.apache.camel.component.kafka.consumer.support.PartitionAssignmentListener;
 import org.apache.camel.component.kafka.consumer.support.ProcessingResult;
+import org.apache.camel.component.kafka.consumer.support.ResumeStrategyFactory;
 import org.apache.camel.support.BridgeExceptionHandlerToErrorHandler;
 import org.apache.camel.util.IOHelper;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -137,12 +138,13 @@ class KafkaFetchRecords implements Runnable {
     }
 
     private void subscribe() {
-        KafkaConsumerResumeStrategy userProvidedStrategy
-                = kafkaConsumer.getEndpoint().getCamelContext().hasService(KafkaConsumerResumeStrategy.class);
+
+        KafkaConsumerResumeStrategy resumeStrategy = ResumeStrategyFactory.newResumeStrategy(kafkaConsumer);
+        resumeStrategy.setConsumer(consumer);
 
         PartitionAssignmentListener listener = new PartitionAssignmentListener(
-                threadId, kafkaConsumer.getEndpoint().getConfiguration(), consumer, lastProcessedOffset,
-                this::isRunnable, commitManager, userProvidedStrategy);
+                threadId, kafkaConsumer.getEndpoint().getConfiguration(), lastProcessedOffset,
+                this::isRunnable, commitManager, resumeStrategy);
 
         if (LOG.isInfoEnabled()) {
             LOG.info("Subscribing {} to {}", threadId, getPrintableTopic());
