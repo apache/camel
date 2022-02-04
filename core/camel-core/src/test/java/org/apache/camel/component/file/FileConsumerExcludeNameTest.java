@@ -28,13 +28,13 @@ import org.junit.jupiter.api.Test;
 public class FileConsumerExcludeNameTest extends ContextTestSupport {
 
     @Test
-    public void testExludePreAndPostfixes() throws Exception {
-        prepareFiles();
-
+    public void testExcludePreAndPostfixes() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("Reports1", "Reports2", "Reports3");
-        mock.expectedMessageCount(3);
-        mock.assertIsSatisfied();
+
+        prepareFiles();
+
+        assertMockEndpointsSatisfied();
     }
 
     private void prepareFiles() throws Exception {
