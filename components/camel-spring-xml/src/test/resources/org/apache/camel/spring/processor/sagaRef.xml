@@ -34,12 +34,12 @@
             <saga sagaServiceRef="mySagaService">
                 <compensation uri="mock:compensation"/>
                 <completion uri="mock:completion"/>
-                <sagaOption name="myOptionKey">
+                <option key="myOptionKey">
                     <constant>myOptionValue</constant>
-                </sagaOption>
-                <sagaOption name="myOptionKey2">
+                </option>
+                <option key="myOptionKey2">
                     <constant>myOptionValue2</constant>
-                </sagaOption>
+                </option>
             </saga>
             <choice>
                 <when>

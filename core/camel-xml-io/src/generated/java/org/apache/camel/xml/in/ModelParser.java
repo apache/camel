@@ -811,6 +811,22 @@ public class ModelParser extends BaseParser {
             return false;
         }, noValueHandler());
     }
+    protected PropertyExpressionDefinition doParsePropertyExpressionDefinition() throws IOException, XmlPullParserException {
+        return doParse(new PropertyExpressionDefinition(), (def, key, val) -> {
+            if ("key".equals(key)) {
+                def.setKey(val);
+                return true;
+            }
+            return false;
+        }, (def, key) -> {
+            ExpressionDefinition v = doParseExpressionDefinitionRef(key);
+            if (v != null) { 
+                def.setExpression(v);
+                return true;
+            }
+            return false;
+        }, noValueHandler());
+    }
     protected RecipientListDefinition doParseRecipientListDefinition() throws IOException, XmlPullParserException {
         return doParse(new RecipientListDefinition(), (def, key, val) -> {
             switch (key) {
@@ -1247,7 +1263,7 @@ public class ModelParser extends BaseParser {
             switch (key) {
                 case "compensation": def.setCompensation(doParseSagaActionUriDefinition()); break;
                 case "completion": def.setCompletion(doParseSagaActionUriDefinition()); break;
-                case "sagaOption": doAdd(doParseSagaOptionDefinition(), def.getOptions(), def::setOptions); break;
+                case "option": doAdd(doParsePropertyExpressionDefinition(), def.getOptions(), def::setOptions); break;
                 default: return outputDefinitionElementHandler().accept(def, key);
             }
             return true;
@@ -1256,15 +1272,6 @@ public class ModelParser extends BaseParser {
     protected SagaActionUriDefinition doParseSagaActionUriDefinition() throws IOException, XmlPullParserException {
         return doParse(new SagaActionUriDefinition(),
             sendDefinitionAttributeHandler(), optionalIdentifiedDefinitionElementHandler(), noValueHandler());
-    }
-    protected SagaOptionDefinition doParseSagaOptionDefinition() throws IOException, XmlPullParserException {
-        return doParse(new SagaOptionDefinition(), (def, key, val) -> {
-            if ("name".equals(key)) {
-                def.setName(val);
-                return true;
-            }
-            return processorDefinitionAttributeHandler().accept(def, key, val);
-        }, expressionNodeElementHandler(), noValueHandler());
     }
     protected SamplingDefinition doParseSamplingDefinition() throws IOException, XmlPullParserException {
         return doParse(new SamplingDefinition(), (def, key, val) -> {
@@ -3203,7 +3210,6 @@ public class ModelParser extends BaseParser {
             case "route": return doParseRouteDefinition();
             case "routingSlip": return doParseRoutingSlipDefinition();
             case "saga": return doParseSagaDefinition();
-            case "sagaOption": return doParseSagaOptionDefinition();
             case "sample": return doParseSamplingDefinition();
             case "script": return doParseScriptDefinition();
             case "setBody": return doParseSetBodyDefinition();

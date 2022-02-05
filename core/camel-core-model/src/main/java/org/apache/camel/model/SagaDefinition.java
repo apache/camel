@@ -62,8 +62,8 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
     @XmlElement
     private SagaActionUriDefinition completion;
 
-    @XmlElement(name = "sagaOption")
-    private List<SagaOptionDefinition> options;
+    @XmlElement(name = "option")
+    private List<PropertyExpressionDefinition> options;
 
     @XmlAttribute
     private String sagaServiceRef;
@@ -185,7 +185,7 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
         this.sagaServiceRef = sagaServiceRef;
     }
 
-    public List<SagaOptionDefinition> getOptions() {
+    public List<PropertyExpressionDefinition> getOptions() {
         return options;
     }
 
@@ -195,7 +195,7 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
      * compensating actions. Option values will be transformed into input headers of the compensation/completion
      * exchange.
      */
-    public void setOptions(List<SagaOptionDefinition> options) {
+    public void setOptions(List<PropertyExpressionDefinition> options) {
         this.options = options;
     }
 
@@ -215,7 +215,7 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
         if (this.options == null) {
             this.options = new ArrayList<>();
         }
-        this.options.add(new SagaOptionDefinition(option, expression));
+        this.options.add(new PropertyExpressionDefinition(option, expression));
     }
 
     // Builders

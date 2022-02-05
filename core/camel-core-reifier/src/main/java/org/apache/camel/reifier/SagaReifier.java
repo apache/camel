@@ -26,9 +26,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.PropertyExpressionDefinition;
 import org.apache.camel.model.SagaActionUriDefinition;
 import org.apache.camel.model.SagaDefinition;
-import org.apache.camel.model.SagaOptionDefinition;
 import org.apache.camel.processor.saga.SagaCompletionMode;
 import org.apache.camel.processor.saga.SagaProcessorBuilder;
 import org.apache.camel.processor.saga.SagaPropagation;
@@ -53,9 +53,9 @@ public class SagaReifier extends ProcessorReifier<SagaDefinition> {
 
         Map<String, Expression> optionsMap = new TreeMap<>();
         if (definition.getOptions() != null) {
-            for (SagaOptionDefinition optionDef : definition.getOptions()) {
-                String optionName = optionDef.getName();
-                Expression expr = optionDef.getExpression();
+            for (PropertyExpressionDefinition def : definition.getOptions()) {
+                String optionName = def.getKey();
+                Expression expr = createExpression(def.getExpression());
                 optionsMap.put(optionName, expr);
             }
         }

@@ -4,7 +4,7 @@
     "name": "sagaOption",
     "title": "Saga Option",
     "description": "Allows declaring options on Sagas",
-    "deprecated": false,
+    "deprecated": true,
     "label": "configuration",
     "javaType": "org.apache.camel.model.SagaOptionDefinition",
     "abstract": false,

@@ -52,6 +52,7 @@ PollEnrichDefinition
 ProcessDefinition
 PropertyDefinition
 PropertyDefinitions
+PropertyExpressionDefinition
 RecipientListDefinition
 RedeliveryPolicyDefinition
 RemoveHeaderDefinition
@@ -78,7 +79,6 @@ RoutesDefinition
 RoutingSlipDefinition
 SagaCompletionMode
 SagaDefinition
-SagaOptionDefinition
 SagaPropagation
 SamplingDefinition
 ScriptDefinition

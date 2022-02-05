@@ -24,7 +24,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Metadata;
 
 /**
- * A key value pair
+ * A key value pair where the value is a literal value
+ *
+ * @see PropertyExpressionDefinition
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "property")

@@ -26,7 +26,7 @@ to keep the existing and ignore the duplicate.
 
 Removed the deprecated `timeoutInMilliseconds` option, use `timeout` instead.
 
-Renamed `<option>` to `<sagaOption>` and `optionName` to `name`. When using XML DSL then this is affected as follows:
+In the `<option>` the `optionName` is renamed to `key`. When using XML DSL then this is affected as follows:
 
 [source,xml]
 ----
@@ -49,12 +49,12 @@ To:
 <saga sagaServiceRef="mySagaService">
     <compensation uri="mock:compensation"/>
     <completion uri="mock:completion"/>
-    <sagaOption name="myOptionKey">
+    <option key="myOptionKey">
         <constant>myOptionValue</constant>
-    </sagaOption>
-    <sagaOption name="myOptionKey2">
+    </option>
+    <option key="myOptionKey2">
         <constant>myOptionValue2</constant>
-    </sagaOption>
+    </option>
 </saga>
 ----
 
