@@ -17,9 +17,9 @@
 package org.apache.camel.dsl.yaml
 
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
+import org.apache.camel.model.PropertyExpressionDefinition
 import org.apache.camel.model.SagaActionUriDefinition
 import org.apache.camel.model.SagaDefinition
-import org.apache.camel.model.SagaOptionDefinition
 import org.apache.camel.model.ToDefinition
 import org.apache.camel.model.language.ExpressionDefinition
 import org.apache.camel.spi.Resource
@@ -48,20 +48,6 @@ class SagaTest extends YamlTestSupport {
                 with(outputs[1], ToDefinition) {
                     endpointUri == 'direct:something'
                 }
-                with(options[0], SagaOptionDefinition) {
-                    name == 'o1'
-                    with(expression, ExpressionDefinition) {
-                        language == 'simple'
-                        expression == '${body}'
-                    }
-                }
-                with(options[1], SagaOptionDefinition) {
-                    name == 'o2'
-                    with(expression, ExpressionDefinition) {
-                        language == 'simple'
-                        expression == '${body}'
-                    }
-                }
             }
         where:
             resource << [
@@ -78,10 +64,10 @@ class SagaTest extends YamlTestSupport {
                                  uri: "direct:completion"
                              steps:
                                - to: "direct:something"
-                             sagaOption:
-                               - name: o1
+                             option:
+                               - key: o1
                                  simple: "${body}" 
-                               - name: o2
+                               - key: o2
                                  expression:
                                    simple: "${body}"        
                           - to: "mock:result"
@@ -101,10 +87,10 @@ class SagaTest extends YamlTestSupport {
                                  uri: "direct:completion"
                              steps:
                                - to: "direct:something"
-                             sagaOption:
-                               - name: o1
+                             option:
+                               - key: o1
                                  simple: "${body}" 
-                               - name: o2
+                               - key: o2
                                  expression:
                                    simple: "${body}"        
                           - to: "mock:result"
@@ -124,10 +110,10 @@ class SagaTest extends YamlTestSupport {
                                  uri: "direct:completion"
                              steps:
                                - to: "direct:something"
-                             sagaOption:
-                               - name: o1
+                             option:
+                               - key: o1
                                  simple: "${body}" 
-                               - name: o2
+                               - key: o2
                                  expression:
                                    simple: "${body}"        
                           - to: "mock:result"
@@ -143,10 +129,10 @@ class SagaTest extends YamlTestSupport {
                              completion: "direct:completion"
                              steps:
                                - to: "direct:something"    
-                             sagaOption:
-                               - name: o1
+                             option:
+                               - key: o1
                                  simple: "${body}" 
-                               - name: o2
+                               - key: o2
                                  expression:
                                    simple: "${body}"        
                           - to: "mock:result"
@@ -166,10 +152,10 @@ class SagaTest extends YamlTestSupport {
                                  name: "completion"
                              steps:
                                - to: "direct:something"  
-                             sagaOption:
-                               - name: o1
+                             option:
+                               - key: o1
                                  simple: "${body}" 
-                               - name: o2
+                               - key: o2
                                  expression:
                                    simple: "${body}"          
                           - to: "mock:result"

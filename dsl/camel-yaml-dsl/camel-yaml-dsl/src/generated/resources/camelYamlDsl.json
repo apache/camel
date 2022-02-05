@@ -128,9 +128,6 @@
           "saga" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.SagaDefinition"
           },
-          "sagaOption" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.SagaOptionDefinition"
-          },
           "sample" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.SamplingDefinition"
           },
@@ -1949,6 +1946,18 @@
         },
         "required" : [ "key", "value" ]
       },
+      "org.apache.camel.model.PropertyExpressionDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "expression" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+          },
+          "key" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "key" ]
+      },
       "org.apache.camel.model.RecipientListDefinition" : {
         "type" : "object",
         "anyOf" : [ {
@@ -2566,14 +2575,14 @@
           "inheritErrorHandler" : {
             "type" : "boolean"
           },
-          "propagation" : {
-            "type" : "string"
-          },
-          "sagaOption" : {
+          "option" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.SagaOptionDefinition"
+              "$ref" : "#/items/definitions/org.apache.camel.model.PropertyExpressionDefinition"
             }
+          },
+          "propagation" : {
+            "type" : "string"
           },
           "sagaServiceRef" : {
             "type" : "string"
@@ -2588,30 +2597,6 @@
             "type" : "string"
           }
         }
-      },
-      "org.apache.camel.model.SagaOptionDefinition" : {
-        "type" : "object",
-        "anyOf" : [ {
-          "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
-        } ],
-        "properties" : {
-          "description" : {
-            "type" : "string"
-          },
-          "expression" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
-          },
-          "id" : {
-            "type" : "string"
-          },
-          "inheritErrorHandler" : {
-            "type" : "boolean"
-          },
-          "name" : {
-            "type" : "string"
-          }
-        },
-        "required" : [ "name" ]
       },
       "org.apache.camel.model.SamplingDefinition" : {
         "type" : "object",
