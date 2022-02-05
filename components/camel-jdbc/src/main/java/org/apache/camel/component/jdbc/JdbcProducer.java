@@ -35,6 +35,7 @@ import org.apache.camel.ExtendedExchange;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.PropertyBindingSupport;
+import org.apache.camel.support.SynchronizationAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -198,7 +199,14 @@ public class JdbcProducer extends DefaultProducer {
         try {
             // We might need to leave it open to allow post-processing of the result set. This is why we
             // are not using try-with-resources here.
-            Statement stmt = conn.createStatement();
+            final Statement stmt = conn.createStatement();
+            // ensure statement is closed (to not leak) when exchange is done
+            exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
+                @Override
+                public void onDone(Exchange exchange) {
+                    closeQuietly(stmt);
+                }
+            });
 
             if (parameters != null && !parameters.isEmpty()) {
                 Map<String, Object> copy = new HashMap<>(parameters);
