@@ -1958,9 +1958,15 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     @Test
-    public void testReplaceAll() throws Exception {
+    public void testParenthesisReplaceAll() throws Exception {
         exchange.getIn().setBody("Bik (Ru)");
         assertExpression("${body.replaceAll(\"Bik \\(Ru\\)\",\"bik_ru\").replaceAll(\"b\",\"c\")}", "cik_ru");
+    }
+
+    @Test
+    public void testParenthesisReplace() throws Exception {
+        exchange.getIn().setBody("Hello (( World (((( Again");
+        assertExpression("${body.replace(\"((\", \"--\").replace(\"((((\", \"----\")}", "Hello -- World ---- Again");
     }
 
     @Override
