@@ -61,9 +61,7 @@ jobs:
     #    uses a compiled language
 
     - run: |
-        mvn process-classes compile -DskipTests
-    #   make bootstrap
-    #   make release
+        mvn -V -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 --no-transfer-progress -Pfastinstall -Dcheckstyle.skip=true -DskipTests  install
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1
