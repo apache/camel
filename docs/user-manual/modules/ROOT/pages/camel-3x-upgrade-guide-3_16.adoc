@@ -6,13 +6,6 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 
 == Upgrading Camel 3.15 to 3.16
 
-=== camel-main
-
-The option `camel.main.packageScanRouteBuilders` has been renamed to `camel.main.basePackageScan`.
-
-Using configuration classes must now implement the interface `org.apache.camel.main.CamelConfiguration`
-and the `configure` method now takes a `CamelContext` as argument.
-
 === camel-core
 
 Change the default from `Override` to `Ignore` in the `TypeConverterExists` option,
@@ -22,7 +15,7 @@ Previously when Camel detected a duplicate type converter during startup, Camel 
 override the existing converter and log a WARN. A more correct behaviour would be
 to keep the existing and ignore the duplicate.
 
-=== Saga EIP
+==== Saga EIP
 
 Removed the deprecated `timeoutInMilliseconds` option, use `timeout` instead.
 
@@ -57,6 +50,25 @@ To:
     </option>
 </saga>
 ----
+
+=== camel-health
+
+The `HealthCheck` API has been simplified and removed the following configurations:
+
+- interval
+- success threshold
+- failure threshold
+
+These options would complicate health checks as they affect the outcome of health checks.
+It is better the checks always execute and the responsibility of the monitoring systems
+how to deal with interval between checks and thresholds.
+
+=== camel-main
+
+The option `camel.main.packageScanRouteBuilders` has been renamed to `camel.main.basePackageScan`.
+
+Using configuration classes must now implement the interface `org.apache.camel.main.CamelConfiguration`
+and the `configure` method now takes a `CamelContext` as argument.
 
 === camel-any23
 

@@ -17,7 +17,7 @@
 package org.apache.camel.health;
 
 /**
- * Health check filter definition.
+ * Health check filter.
  */
 @FunctionalInterface
 public interface HealthCheckFilter {

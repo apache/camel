@@ -16,22 +16,17 @@
  */
 package org.apache.camel.health;
 
-import java.time.Duration;
-
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.TimeUtils;
 
 /**
  * Configuration for {@link HealthCheck}.
  */
 public class HealthCheckConfiguration implements Cloneable {
 
+    // TODO: Can we avoid this as there are no configuration: only enabled true|false
+
     private String parent;
     private boolean enabled = true;
-    private long interval;
-    private int failureThreshold;
-    private int successThreshold;
 
     // *************************************************
     // Properties
@@ -61,39 +56,6 @@ public class HealthCheckConfiguration implements Cloneable {
         this.enabled = enabled;
     }
 
-    public long getInterval() {
-        return interval;
-    }
-
-    /**
-     * Set the check interval in milli seconds.
-     */
-    public void setInterval(long interval) {
-        this.interval = interval;
-    }
-
-    public int getFailureThreshold() {
-        return failureThreshold;
-    }
-
-    /**
-     * Set the number of failure before reporting the service as un-healthy.
-     */
-    public void setFailureThreshold(int failureThreshold) {
-        this.failureThreshold = failureThreshold;
-    }
-
-    public int getSuccessThreshold() {
-        return successThreshold;
-    }
-
-    /**
-     * Set the number of success before reporting the service as healthy.
-     */
-    public void setSuccessThreshold(int successThreshold) {
-        this.successThreshold = successThreshold;
-    }
-
     public HealthCheckConfiguration copy() {
         try {
             return (HealthCheckConfiguration) super.clone();
@@ -113,9 +75,6 @@ public class HealthCheckConfiguration implements Cloneable {
     public static final class Builder implements org.apache.camel.Builder<HealthCheckConfiguration> {
         private String parent;
         private Boolean enabled;
-        private Long interval;
-        private Integer failureThreshold;
-        private Integer successThreshold;
 
         private Builder() {
         }
@@ -127,15 +86,6 @@ public class HealthCheckConfiguration implements Cloneable {
                 }
                 if (this.enabled == null) {
                     this.enabled = template.enabled;
-                }
-                if (this.interval == null) {
-                    this.interval = template.interval;
-                }
-                if (this.failureThreshold == null) {
-                    this.failureThreshold = template.failureThreshold;
-                }
-                if (this.successThreshold == null) {
-                    this.successThreshold = template.successThreshold;
                 }
             }
 
@@ -152,32 +102,6 @@ public class HealthCheckConfiguration implements Cloneable {
             return this;
         }
 
-        public Builder interval(Duration interval) {
-            this.interval = interval.toMillis();
-            return this;
-        }
-
-        public Builder interval(String interval) {
-            return ObjectHelper.isNotEmpty(interval)
-                    ? interval(TimeUtils.toMilliSeconds(interval))
-                    : this;
-        }
-
-        public Builder interval(long interval) {
-            this.interval = interval;
-            return this;
-        }
-
-        public Builder failureThreshold(int failureThreshold) {
-            this.failureThreshold = failureThreshold;
-            return this;
-        }
-
-        public Builder successThreshold(int successThreshold) {
-            this.successThreshold = successThreshold;
-            return this;
-        }
-
         @Override
         public HealthCheckConfiguration build() {
             HealthCheckConfiguration conf = new HealthCheckConfiguration();
@@ -186,15 +110,6 @@ public class HealthCheckConfiguration implements Cloneable {
             }
             if (enabled != null) {
                 conf.setEnabled(enabled);
-            }
-            if (interval != null) {
-                conf.setInterval(interval);
-            }
-            if (failureThreshold != null) {
-                conf.setFailureThreshold(failureThreshold);
-            }
-            if (successThreshold != null) {
-                conf.setSuccessThreshold(successThreshold);
             }
             return conf;
         }
