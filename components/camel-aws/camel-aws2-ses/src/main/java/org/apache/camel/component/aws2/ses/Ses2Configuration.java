@@ -42,6 +42,10 @@ public class Ses2Configuration implements Cloneable {
     @UriParam
     private String to;
     @UriParam
+    private String cc;
+    @UriParam
+    private String bcc;
+    @UriParam
     private String returnPath;
     @UriParam
     private String replyToAddresses;
@@ -106,6 +110,29 @@ public class Ses2Configuration implements Cloneable {
      */
     public void setTo(String to) {
         this.to = to;
+    }
+
+    public String getCc() {
+        return cc;
+    }
+
+    /**
+     * List of comma separated destination carbon copy (cc) email address. Can be overriden with 'CamelAwsSesCc' header.
+     */
+    public void setCc(String cc) {
+        this.cc = cc;
+    }
+
+    public String getBcc() {
+        return bcc;
+    }
+
+    /**
+     * List of comma separated destination blind carbon copy (bcc) email address. Can be overriden with 'CamelAwsSesBcc'
+     * header.
+     */
+    public void setBcc(String bcc) {
+        this.bcc = bcc;
     }
 
     public String getSecretKey() {
