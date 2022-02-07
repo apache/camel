@@ -157,7 +157,7 @@ public class Ses2Producer extends DefaultProducer {
 
     private List<String> determineRawCc(Exchange exchange) {
         String cc = exchange.getIn().getHeader(Ses2Constants.CC, String.class);
-        if (cc == null) {
+        if (ObjectHelper.isEmpty(cc)) {
             cc = getConfiguration().getCc();
         }
         if (ObjectHelper.isNotEmpty(cc)) {
@@ -171,7 +171,7 @@ public class Ses2Producer extends DefaultProducer {
 
     private List<String> determineRawBcc(Exchange exchange) {
         String bcc = exchange.getIn().getHeader(Ses2Constants.BCC, String.class);
-        if (bcc == null) {
+        if (ObjectHelper.isEmpty(bcc)) {
             bcc = getConfiguration().getBcc();
         }
         if (ObjectHelper.isNotEmpty(bcc)) {
