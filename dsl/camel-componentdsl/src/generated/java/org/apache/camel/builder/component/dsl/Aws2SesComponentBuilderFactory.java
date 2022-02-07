@@ -65,6 +65,36 @@ public interface Aws2SesComponentBuilderFactory {
             return this;
         }
         /**
+         * List of comma separated destination blind carbon copy (bcc) email
+         * address. Can be overriden with 'CamelAwsSesBcc' header.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param bcc the value to set
+         * @return the dsl builder
+         */
+        default Aws2SesComponentBuilder bcc(java.lang.String bcc) {
+            doSetProperty("bcc", bcc);
+            return this;
+        }
+        /**
+         * List of comma separated destination carbon copy (cc) email address.
+         * Can be overriden with 'CamelAwsSesCc' header.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param cc the value to set
+         * @return the dsl builder
+         */
+        default Aws2SesComponentBuilder cc(java.lang.String cc) {
+            doSetProperty("cc", cc);
+            return this;
+        }
+        /**
          * component configuration.
          * 
          * The option is a:
@@ -385,6 +415,8 @@ public interface Aws2SesComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "amazonSESClient": getOrCreateConfiguration((Ses2Component) component).setAmazonSESClient((software.amazon.awssdk.services.ses.SesClient) value); return true;
+            case "bcc": getOrCreateConfiguration((Ses2Component) component).setBcc((java.lang.String) value); return true;
+            case "cc": getOrCreateConfiguration((Ses2Component) component).setCc((java.lang.String) value); return true;
             case "configuration": ((Ses2Component) component).setConfiguration((org.apache.camel.component.aws2.ses.Ses2Configuration) value); return true;
             case "configurationSet": getOrCreateConfiguration((Ses2Component) component).setConfigurationSet((java.lang.String) value); return true;
             case "lazyStartProducer": ((Ses2Component) component).setLazyStartProducer((boolean) value); return true;
