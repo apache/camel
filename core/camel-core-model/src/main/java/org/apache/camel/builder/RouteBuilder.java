@@ -385,6 +385,16 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     }
 
     /**
+     * Refers to the property placeholder
+     *
+     * @param  key the property key
+     * @return     the reference to the property using syntax {{key}}
+     */
+    public String property(String key) {
+        return PropertiesComponent.PREFIX_TOKEN + key + PropertiesComponent.SUFFIX_TOKEN;
+    }
+
+    /**
      * Adds a route for an interceptor that intercepts every processing step.
      *
      * @return the builder
