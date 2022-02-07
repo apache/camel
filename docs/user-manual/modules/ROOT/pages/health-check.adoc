@@ -13,7 +13,7 @@ Camel provides support to probe the state of an integration via a pluggable Heal
 Camel provides the following health checks out of the box:
 
 - _context_ - A `HealthCheck` which performs check whether the `CamelContext` is started. This can be used for readiness checks; to know when Camel is fully started and ready to handle traffic.
-- routes - A `HealthCheckRegistry` which discovers all the available routes in `CamelContext` and checks whether they are all started.
+- _routes_ - A `HealthCheckRegistry` which discovers all the available routes in `CamelContext` and checks whether they are all started.
   This can be used for readiness checks; to know when Camel is fully started and ready to handle traffic.
   Combining with the supervised `RouteController` this allows to perform readiness check for routes that are under supervising,
   such as troublesome routes that may not start up the first time, and are retried to be started in the background with backoff delays.
@@ -59,10 +59,12 @@ The `HealthCheckConfiguration` has the following options:
 |====
 | Name | Default | Description
 | enabled | true | Set if the check associated to this configuration is enabled or not.
-| interval | | Set the check interval in milliseconds.
-| successThreshold | | Set the number of success before reporting the service as healthy.
-| failureThreshold | | Set the number of failure before reporting the service as un-healthy.
+| interval | | *Deprecated:* Set the check interval in milliseconds.
+| successThreshold | | *Deprecated:* Set the number of success before reporting the service as healthy.
+| failureThreshold | | *Deprecated:* Set the number of failure before reporting the service as un-healthy.
 |====
+
+=== Deprecated configurations
 
 The `interval`, `successThreshold`, and `failureThreshold` are used for configuring health checks to deal with flaky checks.
 For example assume you do not want to regard a check as immediately DOWN when a check for the first time returns a response as DOWN.
@@ -116,8 +118,6 @@ camel.health.config[kafka*].parent=routes
 camel.health.config[kafka*].enabled=false
 camel.health.config[*].parent=routes
 camel.health.config[*].enabled=true
-camel.health.config[*].success-threshold=3
-camel.health.config[*].failure-threshold=10
 ----
 
 === Turning off consumer level health-checks
