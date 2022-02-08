@@ -20,7 +20,7 @@ package org.apache.camel;
  * A tagging interface to mark this class implements type converters using the {@link Converter} annotations.
  * <p/>
  * This can be used to provide custom type converters that can be manually added to the {@link CamelContext} using
- * {@link org.apache.camel.spi.TypeConverterRegistry#addTypeConverters(TypeConverters)}.
+ * {@link org.apache.camel.spi.TypeConverterRegistry#addTypeConverters(Object)}.
  */
 public interface TypeConverters {
 }

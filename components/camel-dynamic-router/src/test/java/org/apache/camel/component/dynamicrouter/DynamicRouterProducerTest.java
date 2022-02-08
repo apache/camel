@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.dynamicrouter;
 
-import org.apache.camel.component.dynamicrouter.support.CamelDynamicRouterTestSupport;
+import org.apache.camel.component.dynamicrouter.support.DynamicRouterTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,7 +24,7 @@ import org.mockito.Mockito;
 
 import static org.mockito.Mockito.when;
 
-class DynamicRouterProducerTest extends CamelDynamicRouterTestSupport {
+class DynamicRouterProducerTest extends DynamicRouterTestSupport {
 
     @BeforeEach
     void localSetup() throws Exception {
@@ -36,60 +36,15 @@ class DynamicRouterProducerTest extends CamelDynamicRouterTestSupport {
     }
 
     @Test
-    void testCheckConsumer() throws Exception {
-        when(component.getConsumer(DYNAMIC_ROUTER_CHANNEL, true, TIMEOUT))
-                .thenReturn(consumer);
-        boolean result = producer.checkConsumer(exchange);
-        Assertions.assertTrue(result);
-    }
-
-    @Test
-    void testCheckConsumerNull() throws Exception {
-        when(component.getConsumer(DYNAMIC_ROUTER_CHANNEL, true, TIMEOUT))
-                .thenReturn(null);
-        boolean result = producer.checkConsumer(exchange);
-        Assertions.assertFalse(result);
-    }
-
-    @Test
-    void testCheckConsumerInitiallyNullAndFailIfNoConsumers() {
-        when(component.getConsumer(DYNAMIC_ROUTER_CHANNEL))
-                .thenReturn(null);
-        when(endpoint.isFailIfNoConsumers()).thenReturn(true);
-        Assertions.assertThrows(
-                DynamicRouterConsumerNotAvailableException.class,
-                () -> producer.checkConsumer(exchange));
-    }
-
-    @Test
-    void testCheckConsumerExceptionIgnored() throws Exception {
-        when(component.getConsumer(DYNAMIC_ROUTER_CHANNEL, true, TIMEOUT))
-                .thenThrow(new InterruptedException("test"));
-        boolean result = producer.checkConsumer(exchange);
-        Assertions.assertFalse(result);
-    }
-
-    @Test
-    void testProcess() throws Exception {
-        when(component.getConsumer(DYNAMIC_ROUTER_CHANNEL))
-                .thenReturn(consumer);
-        when(component.getConsumer(DYNAMIC_ROUTER_CHANNEL, true, TIMEOUT))
-                .thenReturn(consumer);
-        Assertions.assertDoesNotThrow(() -> producer.process(exchange));
-    }
-
-    @Test
-    void testProcessSynchronous() throws Exception {
-        when(component.getConsumer(DYNAMIC_ROUTER_CHANNEL, true, TIMEOUT))
-                .thenReturn(consumer);
-        when(endpoint.isSynchronous()).thenReturn(true);
+    void testProcessSynchronous() {
+        when(endpoint.getConfiguration().isSynchronous()).thenReturn(true);
         boolean result = producer.process(exchange, asyncCallback);
         Assertions.assertTrue(result);
     }
 
     @Test
     void testProcessAynchronous() {
-        when(endpoint.isSynchronous()).thenReturn(false);
+        when(endpoint.getConfiguration().isSynchronous()).thenReturn(false);
         boolean result = producer.process(exchange, asyncCallback);
         Assertions.assertTrue(result);
     }

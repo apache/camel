@@ -28,7 +28,7 @@
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
 
     <dataFormats>
-      <any23 id="any23" baseURI ="http://mock.foo/bar" outputFormat="TURTLE" > 
+      <any23 id="any23" baseUri="http://mock.foo/bar" outputFormat="TURTLE" >
         <configuration key="any23.extraction.metadata.nesting" value="off"/>
         <extractors>html-head-title</extractors>
       </any23>

@@ -462,9 +462,9 @@ is, condition).
 
 A _route_ is the step-by-step movement of a `Message` from an input
 queue, through arbitrary types of decision making (such as filters and
-routers) to a destination queue (if any). Camel provides two ways for an
-application developer to specify routes. One way is to specify route
-information in an XML file. A discussion of that approach is outside the
+routers) to a destination queue (if any). Camel provides three ways for an
+application developer to specify routes. First two ways is to specify route
+information in an XML or YAML file. A discussion of that approach is outside the
 scope of this document. The other way is through what Camel calls a Java
 _DSL_ (domain-specific language).
 

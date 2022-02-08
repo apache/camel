@@ -52,6 +52,7 @@ PollEnrichDefinition
 ProcessDefinition
 PropertyDefinition
 PropertyDefinitions
+PropertyExpressionDefinition
 RecipientListDefinition
 RedeliveryPolicyDefinition
 RemoveHeaderDefinition
@@ -89,6 +90,7 @@ SortDefinition
 SplitDefinition
 StepDefinition
 StopDefinition
+SwitchDefinition
 ThreadPoolProfileDefinition
 ThreadsDefinition
 ThrottleDefinition

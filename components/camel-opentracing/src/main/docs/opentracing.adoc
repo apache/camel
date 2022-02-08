@@ -1,10 +1,11 @@
-= OpenTracing Component
+= OpenTracing Component (deprecated)
 :doctitle: OpenTracing
 :shortname: opentracing
 :artifactid: camel-opentracing
 :description: Distributed tracing using OpenTracing
 :since: 2.19
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 //Manually maintained attributes
 :camel-spring-boot-name: opentracing
 

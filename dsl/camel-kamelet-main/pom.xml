@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>dsl</artifactId>
-        <version>3.15.0-SNAPSHOT</version>
+        <version>3.16.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-kamelet-main</artifactId>
@@ -125,5 +125,22 @@
         </dependency>
 
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-package-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>generate</id>
+                        <goals>
+                            <goal>generate-others-list</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

@@ -108,6 +108,9 @@ class Run implements Callable<Integer> {
     @Option(names = { "--console" }, description = "Developer console at /dev on local HTTP server (port 8080 by default)")
     private boolean console;
 
+    @Option(names = { "--health" }, description = "Health check at /health on local HTTP server (port 8080 by default)")
+    private boolean health;
+
     @Override
     public Integer call() throws Exception {
         if (stopRequested) {
@@ -167,6 +170,9 @@ class Run implements Callable<Integer> {
         }
         if (console) {
             main.addInitialProperty("camel.jbang.console", "true");
+        }
+        if (health) {
+            main.addInitialProperty("camel.jbang.health", "true");
         }
 
         if (jfr) {

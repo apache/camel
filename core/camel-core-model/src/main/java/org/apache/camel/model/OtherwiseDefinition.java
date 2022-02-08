@@ -17,7 +17,6 @@
 package org.apache.camel.model;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -60,7 +59,6 @@ public class OtherwiseDefinition extends OutputDefinition<OtherwiseDefinition> {
 
     @Override
     public String getLabel() {
-        return getOutputs().stream().map(ProcessorDefinition::getLabel)
-                .collect(Collectors.joining(",", getShortName() + "[", "]"));
+        return "otherwise";
     }
 }

@@ -32,12 +32,12 @@ class LanguagesConfiguration {
             throw new IllegalArgumentException("Unable to find a language with name: ${name}")
         }
 
-        // Just make sure the closure context is belong to component
+        // Just make sure the closure context is belong to language
         callable.resolveStrategy = Closure.DELEGATE_ONLY
         callable.delegate = new BeanConfiguration(context, target)
         callable.call()
 
-        // let's the camel context be aware of the new dataformat
+        // let's the camel context be aware of the new language
         context.registry.bind(name, Language.class, target)
     }
 
@@ -50,17 +50,16 @@ class LanguagesConfiguration {
         // multiple instances of the same language but with different setup
         if (target == null) {
             target = context.injector.newInstance(type)
-
             bind = true
         }
 
-        // Just make sure the closure context is belong to dataformat
+        // Just make sure the closure context is belong to language
         callable.resolveStrategy = Closure.DELEGATE_ONLY
         callable.delegate = new BeanConfiguration(context, target)
         callable.call()
 
         if (bind) {
-            // let's the camel context be aware of the new dataformat
+            // let's the camel context be aware of the new language
             context.registry.bind(name, type, target)
         }
     }

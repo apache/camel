@@ -33,7 +33,6 @@ import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.TypeConverterExists;
 import org.apache.camel.TypeConverterExistsException;
-import org.apache.camel.TypeConverters;
 import org.apache.camel.converter.ObjectConverter;
 import org.apache.camel.spi.BulkTypeConverters;
 import org.apache.camel.spi.CamelLogger;
@@ -74,8 +73,8 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
     protected final LongAdder hitCounter = new LongAdder();
     protected final LongAdder failedCounter = new LongAdder();
 
-    protected TypeConverterExists typeConverterExists = TypeConverterExists.Override;
-    protected LoggingLevel typeConverterExistsLoggingLevel = LoggingLevel.WARN;
+    protected TypeConverterExists typeConverterExists = TypeConverterExists.Ignore;
+    protected LoggingLevel typeConverterExistsLoggingLevel = LoggingLevel.DEBUG;
 
     // to keep track of number of converters in the bulked classes
     private int sumBulkTypeConverters;
@@ -578,9 +577,15 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
     public void addTypeConverter(Class<?> toType, Class<?> fromType, TypeConverter typeConverter) {
         LOG.trace("Adding type converter: {}", typeConverter);
         TypeConverter converter = typeMappings.get(toType, fromType);
+
+        if (converter == MISS_CONVERTER) {
+            // we have previously attempted to convert but missed so add this converter
+            typeMappings.put(toType, fromType, typeConverter);
+            return;
+        }
+
         // only override it if its different
         // as race conditions can lead to many threads trying to promote the same fallback converter
-
         if (typeConverter != converter) {
 
             // add the converter unless we should ignore
@@ -613,7 +618,7 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
     }
 
     @Override
-    public void addTypeConverters(TypeConverters typeConverters) {
+    public void addTypeConverters(Object typeConverters) {
         throw new UnsupportedOperationException();
     }
 

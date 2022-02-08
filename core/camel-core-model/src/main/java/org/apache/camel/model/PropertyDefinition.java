@@ -24,16 +24,18 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Metadata;
 
 /**
- * A key value pair
+ * A key value pair where the value is a literal value
+ *
+ * @see PropertyExpressionDefinition
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "property")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PropertyDefinition {
     @XmlAttribute(required = true)
-    String key;
+    private String key;
     @XmlAttribute(required = true)
-    String value;
+    private String value;
 
     public PropertyDefinition() {
     }

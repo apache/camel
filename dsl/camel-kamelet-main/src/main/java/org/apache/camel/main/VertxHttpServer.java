@@ -16,8 +16,12 @@
  */
 package org.apache.camel.main;
 
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Optional;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.vertx.core.Handler;
@@ -33,6 +37,8 @@ import org.apache.camel.component.platform.http.vertx.VertxPlatformHttpServer;
 import org.apache.camel.component.platform.http.vertx.VertxPlatformHttpServerConfiguration;
 import org.apache.camel.console.DevConsole;
 import org.apache.camel.console.DevConsoleRegistry;
+import org.apache.camel.health.HealthCheck;
+import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.SimpleEventNotifierSupport;
 import org.slf4j.Logger;
@@ -50,6 +56,7 @@ public final class VertxHttpServer {
     private static final Logger LOG = LoggerFactory.getLogger(VertxHttpServer.class);
     private static final AtomicBoolean REGISTERED = new AtomicBoolean();
     private static final AtomicBoolean CONSOLE = new AtomicBoolean();
+    private static final AtomicBoolean HEALTH_CHECK = new AtomicBoolean();
 
     private VertxHttpServer() {
     }
@@ -137,11 +144,12 @@ public final class VertxHttpServer {
     private static void doRegisterConsole(CamelContext context) {
         Route dev = router.route("/dev");
         dev.method(HttpMethod.GET);
-        dev.handler(router.bodyHandler());
         dev.produces("text/plain");
         dev.handler(new Handler<RoutingContext>() {
             @Override
             public void handle(RoutingContext ctx) {
+                ctx.response().putHeader("content-type", "text/plain");
+
                 DevConsoleRegistry dcr = context.getExtension(DevConsoleRegistry.class);
                 if (dcr != null && dcr.isEnabled()) {
                     StringBuilder sb = new StringBuilder();
@@ -167,6 +175,101 @@ public final class VertxHttpServer {
             }
         });
         phc.addHttpEndpoint("/dev");
+    }
+
+    public static void registerHealthCheck(CamelContext camelContext) {
+        if (HEALTH_CHECK.compareAndSet(false, true)) {
+            doRegisterHealthCheck(camelContext);
+        }
+    }
+
+    private static void doRegisterHealthCheck(CamelContext context) {
+        final Route health = router.route("/health");
+        health.method(HttpMethod.GET);
+        health.produces("application/json");
+        final Route live = router.route("/health/live");
+        live.method(HttpMethod.GET);
+        live.produces("application/json");
+        final Route ready = router.route("/health/ready");
+        ready.method(HttpMethod.GET);
+        ready.produces("application/json");
+
+        Handler<RoutingContext> handler = new Handler<RoutingContext>() {
+            @Override
+            public void handle(RoutingContext ctx) {
+                ctx.response().putHeader("content-type", "application/json");
+
+                boolean all = ctx.currentRoute() == health;
+                boolean liv = ctx.currentRoute() == live;
+
+                StringBuilder sb = new StringBuilder();
+                sb.append("{\n");
+
+                Collection<HealthCheck.Result> res;
+                if (all) {
+                    res = HealthCheckHelper.invoke(context);
+                } else if (liv) {
+                    res = HealthCheckHelper.invokeLiveness(context);
+                } else {
+                    res = HealthCheckHelper.invokeReadiness(context);
+                }
+
+                // we just want a brief summary or either UP or DOWN
+                boolean up = res.stream().noneMatch(r -> r.getState().equals(HealthCheck.State.DOWN));
+                if (up) {
+                    sb.append("    \"status\": \"UP\"\n");
+                } else {
+                    // when we are DOWN then grab the first one to show
+                    Optional<HealthCheck.Result> down
+                            = res.stream().filter(r -> r.getState().equals(HealthCheck.State.DOWN)).findFirst();
+                    sb.append("    \"status\": \"DOWN\"");
+                    if (down.isPresent()) {
+                        sb.append(",\n");
+                        HealthCheck.Result d = down.get();
+                        sb.append("    \"checks\": [\n");
+                        sb.append("        {\n");
+                        sb.append("            \"name\": \"").append(d.getCheck().getId()).append("\",\n");
+                        sb.append("            \"status\": \"").append(d.getState()).append("\",\n");
+                        if (d.getError().isPresent()) {
+                            String msg = d.getError().get().getMessage();
+                            sb.append("            \"error-message\": \"").append(msg)
+                                    .append("\",\n");
+                        }
+                        if (d.getMessage().isPresent()) {
+                            sb.append("            \"message\": \"").append(d.getMessage().get()).append("\",\n");
+                        }
+                        if (d.getDetails() != null && !d.getDetails().isEmpty()) {
+                            // lets use sorted keys
+                            Iterator<String> it = new TreeSet<>(d.getDetails().keySet()).iterator();
+                            sb.append("            \"data\": {\n");
+                            while (it.hasNext()) {
+                                String k = it.next();
+                                Object v = d.getDetails().get(k);
+                                boolean last = !it.hasNext();
+                                sb.append("                 \"").append(k).append("\": \"").append(v).append("\"");
+                                if (!last) {
+                                    sb.append(",");
+                                }
+                                sb.append("\n");
+                            }
+                            sb.append("            }\n");
+                        }
+                        sb.append("        }\n");
+                        sb.append("    ]\n");
+                    } else {
+                        sb.append("\n");
+                    }
+                }
+                sb.append("}\n");
+
+                ctx.end(sb.toString());
+            }
+        };
+        health.handler(handler);
+        live.handler(handler);
+        ready.handler(handler);
+
+        phc.addHttpEndpoint("/health");
     }
 
 }

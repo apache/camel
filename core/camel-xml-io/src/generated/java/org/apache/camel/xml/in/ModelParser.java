@@ -220,16 +220,19 @@ public class ModelParser extends BaseParser {
         return doParse(new WhenDefinition(),
             processorDefinitionAttributeHandler(), outputExpressionNodeElementHandler(), noValueHandler());
     }
-    protected ChoiceDefinition doParseChoiceDefinition() throws IOException, XmlPullParserException {
-        return doParse(new ChoiceDefinition(),
-            processorDefinitionAttributeHandler(), (def, key) -> {
+    protected <T extends ChoiceDefinition> ElementHandler<T> choiceDefinitionElementHandler() {
+        return (def, key) -> {
             switch (key) {
                 case "when": doAdd(doParseWhenDefinition(), def.getWhenClauses(), def::setWhenClauses); break;
                 case "otherwise": def.setOtherwise(doParseOtherwiseDefinition()); break;
                 default: return optionalIdentifiedDefinitionElementHandler().accept(def, key);
             }
             return true;
-        }, noValueHandler());
+        };
+    }
+    protected ChoiceDefinition doParseChoiceDefinition() throws IOException, XmlPullParserException {
+        return doParse(new ChoiceDefinition(), 
+            processorDefinitionAttributeHandler(), choiceDefinitionElementHandler(), noValueHandler());
     }
     protected OtherwiseDefinition doParseOtherwiseDefinition() throws IOException, XmlPullParserException {
         return doParse(new OtherwiseDefinition(),
@@ -808,6 +811,22 @@ public class ModelParser extends BaseParser {
             return false;
         }, noValueHandler());
     }
+    protected PropertyExpressionDefinition doParsePropertyExpressionDefinition() throws IOException, XmlPullParserException {
+        return doParse(new PropertyExpressionDefinition(), (def, key, val) -> {
+            if ("key".equals(key)) {
+                def.setKey(val);
+                return true;
+            }
+            return false;
+        }, (def, key) -> {
+            ExpressionDefinition v = doParseExpressionDefinitionRef(key);
+            if (v != null) { 
+                def.setExpression(v);
+                return true;
+            }
+            return false;
+        }, noValueHandler());
+    }
     protected RecipientListDefinition doParseRecipientListDefinition() throws IOException, XmlPullParserException {
         return doParse(new RecipientListDefinition(), (def, key, val) -> {
             switch (key) {
@@ -1237,7 +1256,6 @@ public class ModelParser extends BaseParser {
                 case "propagation": def.setPropagation(val); break;
                 case "sagaServiceRef": def.setSagaServiceRef(val); break;
                 case "timeout": def.setTimeout(val); break;
-                case "timeoutInMilliseconds": def.setTimeoutInMilliseconds(val); break;
                 default: return processorDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;
@@ -1245,7 +1263,7 @@ public class ModelParser extends BaseParser {
             switch (key) {
                 case "compensation": def.setCompensation(doParseSagaActionUriDefinition()); break;
                 case "completion": def.setCompletion(doParseSagaActionUriDefinition()); break;
-                case "option": doAdd(doParseSagaOptionDefinition(), def.getOptions(), def::setOptions); break;
+                case "option": doAdd(doParsePropertyExpressionDefinition(), def.getOptions(), def::setOptions); break;
                 default: return outputDefinitionElementHandler().accept(def, key);
             }
             return true;
@@ -1254,22 +1272,6 @@ public class ModelParser extends BaseParser {
     protected SagaActionUriDefinition doParseSagaActionUriDefinition() throws IOException, XmlPullParserException {
         return doParse(new SagaActionUriDefinition(),
             sendDefinitionAttributeHandler(), optionalIdentifiedDefinitionElementHandler(), noValueHandler());
-    }
-    protected SagaOptionDefinition doParseSagaOptionDefinition() throws IOException, XmlPullParserException {
-        return doParse(new SagaOptionDefinition(), (def, key, val) -> {
-            if ("optionName".equals(key)) {
-                def.setOptionName(val);
-                return true;
-            }
-            return false;
-        }, (def, key) -> {
-            ExpressionDefinition v = doParseExpressionDefinitionRef(key);
-            if (v != null) { 
-                def.setExpression(v);
-                return true;
-            }
-            return false;
-        }, noValueHandler());
     }
     protected SamplingDefinition doParseSamplingDefinition() throws IOException, XmlPullParserException {
         return doParse(new SamplingDefinition(), (def, key, val) -> {
@@ -1354,6 +1356,10 @@ public class ModelParser extends BaseParser {
     protected StopDefinition doParseStopDefinition() throws IOException, XmlPullParserException {
         return doParse(new StopDefinition(),
             processorDefinitionAttributeHandler(), optionalIdentifiedDefinitionElementHandler(), noValueHandler());
+    }
+    protected SwitchDefinition doParseSwitchDefinition() throws IOException, XmlPullParserException {
+        return doParse(new SwitchDefinition(),
+            processorDefinitionAttributeHandler(), choiceDefinitionElementHandler(), noValueHandler());
     }
     protected ThreadPoolProfileDefinition doParseThreadPoolProfileDefinition() throws IOException, XmlPullParserException {
         return doParse(new ThreadPoolProfileDefinition(), (def, key, val) -> {
@@ -1846,7 +1852,7 @@ public class ModelParser extends BaseParser {
     protected Any23DataFormat doParseAny23DataFormat() throws IOException, XmlPullParserException {
         return doParse(new Any23DataFormat(), (def, key, val) -> {
             switch (key) {
-                case "baseURI": def.setBaseURI(val); break;
+                case "baseUri": def.setBaseUri(val); break;
                 case "outputFormat": def.setOutputFormat(val); break;
                 default: return identifiedTypeAttributeHandler().accept(def, key, val);
             }
@@ -3214,6 +3220,7 @@ public class ModelParser extends BaseParser {
             case "split": return doParseSplitDefinition();
             case "step": return doParseStepDefinition();
             case "stop": return doParseStopDefinition();
+            case "doSwitch": return doParseSwitchDefinition();
             case "threads": return doParseThreadsDefinition();
             case "throttle": return doParseThrottleDefinition();
             case "throwException": return doParseThrowExceptionDefinition();

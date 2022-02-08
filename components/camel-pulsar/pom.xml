@@ -24,7 +24,7 @@
     <parent>
         <artifactId>components</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>3.15.0-SNAPSHOT</version>
+        <version>3.16.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-pulsar</artifactId>
@@ -95,6 +95,13 @@
                     <systemProperties>
                         <pulsar.container>apachepulsar/pulsar:${pulsar-version}</pulsar.container>
                     </systemProperties>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <configuration>
+                    <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
                 </configuration>
             </plugin>
         </plugins>

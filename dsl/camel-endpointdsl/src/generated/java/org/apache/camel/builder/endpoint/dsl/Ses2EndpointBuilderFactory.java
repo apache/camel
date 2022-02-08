@@ -70,6 +70,51 @@ public interface Ses2EndpointBuilderFactory {
             return this;
         }
         /**
+         * List of comma separated destination blind carbon copy (bcc) email
+         * address. Can be overriden with 'CamelAwsSesBcc' header.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param bcc the value to set
+         * @return the dsl builder
+         */
+        default Ses2EndpointBuilder bcc(String bcc) {
+            doSetProperty("bcc", bcc);
+            return this;
+        }
+        /**
+         * List of comma separated destination carbon copy (cc) email address.
+         * Can be overriden with 'CamelAwsSesCc' header.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param cc the value to set
+         * @return the dsl builder
+         */
+        default Ses2EndpointBuilder cc(String cc) {
+            doSetProperty("cc", cc);
+            return this;
+        }
+        /**
+         * Set the configuration set to send with every request. Override it
+         * with 'CamelAwsSesConfigurationSet' header.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param configurationSet the value to set
+         * @return the dsl builder
+         */
+        default Ses2EndpointBuilder configurationSet(String configurationSet) {
+            doSetProperty("configurationSet", configurationSet);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during

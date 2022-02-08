@@ -42,6 +42,10 @@ public class Ses2Configuration implements Cloneable {
     @UriParam
     private String to;
     @UriParam
+    private String cc;
+    @UriParam
+    private String bcc;
+    @UriParam
     private String returnPath;
     @UriParam
     private String replyToAddresses;
@@ -61,6 +65,8 @@ public class Ses2Configuration implements Cloneable {
     private String uriEndpointOverride;
     @UriParam(defaultValue = "false")
     private boolean useDefaultCredentialsProvider;
+    @UriParam
+    private String configurationSet;
 
     public String getAccessKey() {
         return accessKey;
@@ -104,6 +110,29 @@ public class Ses2Configuration implements Cloneable {
      */
     public void setTo(String to) {
         this.to = to;
+    }
+
+    public String getCc() {
+        return cc;
+    }
+
+    /**
+     * List of comma separated destination carbon copy (cc) email address. Can be overriden with 'CamelAwsSesCc' header.
+     */
+    public void setCc(String cc) {
+        this.cc = cc;
+    }
+
+    public String getBcc() {
+        return bcc;
+    }
+
+    /**
+     * List of comma separated destination blind carbon copy (bcc) email address. Can be overriden with 'CamelAwsSesBcc'
+     * header.
+     */
+    public void setBcc(String bcc) {
+        this.bcc = bcc;
     }
 
     public String getSecretKey() {
@@ -237,6 +266,20 @@ public class Ses2Configuration implements Cloneable {
      */
     public void setUseDefaultCredentialsProvider(Boolean useDefaultCredentialsProvider) {
         this.useDefaultCredentialsProvider = useDefaultCredentialsProvider;
+    }
+
+    /**
+     * The configuration set to send with every request
+     */
+    public String getConfigurationSet() {
+        return configurationSet;
+    }
+
+    /**
+     * Set the configuration set to send with every request. Override it with 'CamelAwsSesConfigurationSet' header.
+     */
+    public void setConfigurationSet(String configurationSet) {
+        this.configurationSet = configurationSet;
     }
 
     public Boolean isUseDefaultCredentialsProvider() {

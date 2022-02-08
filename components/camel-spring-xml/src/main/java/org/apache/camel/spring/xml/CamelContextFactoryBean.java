@@ -191,10 +191,10 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     @XmlAttribute
     private String inflightRepositoryBrowseEnabled;
     @XmlAttribute
-    @Metadata(defaultValue = "Override")
+    @Metadata(defaultValue = "Ignore")
     private TypeConverterExists typeConverterExists;
     @XmlAttribute
-    @Metadata(defaultValue = "WARN")
+    @Metadata(defaultValue = "DEBUG")
     private LoggingLevel typeConverterExistsLoggingLevel;
     @XmlElement(name = "globalOptions")
     private GlobalOptionsDefinition globalOptions;
@@ -1234,7 +1234,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     /**
      * What should happen when attempting to add a duplicate type converter.
      * <p/>
-     * The default behavior is to override the existing.
+     * The default behavior is to ignore the duplicate.
      */
     public void setTypeConverterExists(TypeConverterExists typeConverterExists) {
         this.typeConverterExists = typeConverterExists;
@@ -1249,7 +1249,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
      * The logging level to use when logging that a type converter already exists when attempting to add a duplicate
      * type converter.
      * <p/>
-     * The default logging level is <tt>WARN</tt>
+     * The default logging level is <tt>DEBUG</tt>
      */
     public void setTypeConverterExistsLoggingLevel(LoggingLevel typeConverterExistsLoggingLevel) {
         this.typeConverterExistsLoggingLevel = typeConverterExistsLoggingLevel;

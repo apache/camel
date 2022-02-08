@@ -45,14 +45,10 @@ public class TelegramConsumerHealthCheckErrorDisabledConsumerTest extends Telegr
         // enabling routes health check is a bit cumbersome via low-level Java code
         HealthCheckRegistry hcr = context.getExtension(HealthCheckRegistry.class);
         HealthCheckRepository repo = hcr.getRepository("routes").orElse((HealthCheckRepository) hcr.resolveById("routes"));
-        // add some slack so the check should fail 5 times in a row to be DOWN
-        repo.addConfiguration("*", HealthCheckConfiguration.builder().failureThreshold(5).build());
         repo.setEnabled(true);
         hcr.register(repo);
         // enabling consumers health check is a bit cumbersome via low-level Java code
         repo = hcr.getRepository("consumers").orElse((HealthCheckRepository) hcr.resolveById("consumers"));
-        // add some slack so the check should fail 5 times in a row to be DOWN
-        repo.addConfiguration("consumer:telegram", HealthCheckConfiguration.builder().failureThreshold(5).build());
         // turn off all consumer health checks
         repo.addConfiguration("consumer:*", HealthCheckConfiguration.builder().enabled(false).build());
         repo.setEnabled(true);

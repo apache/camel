@@ -19,6 +19,7 @@ package org.apache.camel.main;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.CamelConfiguration;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ProducerTemplate;
@@ -48,9 +49,12 @@ public abstract class MainSupport extends BaseMainSupport {
     private int durationHitExitCode;
     private String durationMaxAction = "shutdown";
 
-    protected MainSupport(Class<?>... configurationClasses) {
+    @SafeVarargs
+    protected MainSupport(Class<? extends CamelConfiguration>... configurationClasses) {
         this();
-        configure().addConfigurationClass(configurationClasses);
+        for (Class<? extends CamelConfiguration> clazz : configurationClasses) {
+            configure().addConfiguration(clazz);
+        }
     }
 
     protected MainSupport() {

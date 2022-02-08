@@ -49,9 +49,12 @@ public class SesComponentConfigurationTest extends CamelTestSupport {
         assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
         assertNotNull(endpoint.getConfiguration().getAmazonSESClient());
         assertNull(endpoint.getConfiguration().getTo());
+        assertNull(endpoint.getConfiguration().getCc());
+        assertNull(endpoint.getConfiguration().getBcc());
         assertNull(endpoint.getConfiguration().getSubject());
         assertNull(endpoint.getConfiguration().getReturnPath());
         assertNull(endpoint.getConfiguration().getReplyToAddresses());
+        assertNull(endpoint.getConfiguration().getConfigurationSet());
     }
 
     @Test
@@ -65,9 +68,12 @@ public class SesComponentConfigurationTest extends CamelTestSupport {
         assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
         assertNull(endpoint.getConfiguration().getAmazonSESClient());
         assertNull(endpoint.getConfiguration().getTo());
+        assertNull(endpoint.getConfiguration().getCc());
+        assertNull(endpoint.getConfiguration().getBcc());
         assertNull(endpoint.getConfiguration().getSubject());
         assertNull(endpoint.getConfiguration().getReturnPath());
         assertNull(endpoint.getConfiguration().getReplyToAddresses());
+        assertNull(endpoint.getConfiguration().getConfigurationSet());
     }
 
     @Test
@@ -85,9 +91,12 @@ public class SesComponentConfigurationTest extends CamelTestSupport {
         assertNull(endpoint.getConfiguration().getSecretKey());
         assertSame(mock, endpoint.getConfiguration().getAmazonSESClient());
         assertNull(endpoint.getConfiguration().getTo());
+        assertNull(endpoint.getConfiguration().getCc());
+        assertNull(endpoint.getConfiguration().getBcc());
         assertNull(endpoint.getConfiguration().getSubject());
         assertNull(endpoint.getConfiguration().getReturnPath());
         assertNull(endpoint.getConfiguration().getReplyToAddresses());
+        assertNull(endpoint.getConfiguration().getConfigurationSet());
     }
 
     @Test
@@ -105,7 +114,9 @@ public class SesComponentConfigurationTest extends CamelTestSupport {
         Ses2Endpoint endpoint = (Ses2Endpoint) component
                 .createEndpoint("aws2-ses://from@example.com?amazonSESClient=#amazonSESClient&accessKey=xxx"
                                 + "&secretKey=yyy&to=to1@example.com,to2@example.com&subject=Subject"
-                                + "&returnPath=bounce@example.com&replyToAddresses=replyTo1@example.com,replyTo2@example.com");
+                                + "&cc=cc1@example.com,cc2@example.com&bcc=bcc1@example.com,bcc2@example.com"
+                                + "&returnPath=bounce@example.com&replyToAddresses=replyTo1@example.com,replyTo2@example.com"
+                                + "&configurationSet=development-set");
 
         assertEquals("from@example.com", endpoint.getConfiguration().getFrom());
         assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
@@ -113,10 +124,15 @@ public class SesComponentConfigurationTest extends CamelTestSupport {
         assertNotNull(endpoint.getConfiguration().getAmazonSESClient());
         assertTrue(endpoint.getConfiguration().getTo().contains("to1@example.com"));
         assertTrue(endpoint.getConfiguration().getTo().contains("to2@example.com"));
+        assertTrue(endpoint.getConfiguration().getCc().contains("cc1@example.com"));
+        assertTrue(endpoint.getConfiguration().getCc().contains("cc2@example.com"));
+        assertTrue(endpoint.getConfiguration().getBcc().contains("bcc1@example.com"));
+        assertTrue(endpoint.getConfiguration().getBcc().contains("bcc2@example.com"));
         assertEquals("Subject", endpoint.getConfiguration().getSubject());
         assertEquals("bounce@example.com", endpoint.getConfiguration().getReturnPath());
         assertTrue(endpoint.getConfiguration().getReplyToAddresses().contains("replyTo1@example.com"));
         assertTrue(endpoint.getConfiguration().getReplyToAddresses().contains("replyTo2@example.com"));
+        assertEquals("development-set", endpoint.getConfiguration().getConfigurationSet());
     }
 
     @Test
@@ -219,6 +235,8 @@ public class SesComponentConfigurationTest extends CamelTestSupport {
         assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
         assertNull(endpoint.getConfiguration().getAmazonSESClient());
         assertNull(endpoint.getConfiguration().getTo());
+        assertNull(endpoint.getConfiguration().getCc());
+        assertNull(endpoint.getConfiguration().getBcc());
         assertNull(endpoint.getConfiguration().getSubject());
         assertNull(endpoint.getConfiguration().getReturnPath());
         assertNull(endpoint.getConfiguration().getReplyToAddresses());

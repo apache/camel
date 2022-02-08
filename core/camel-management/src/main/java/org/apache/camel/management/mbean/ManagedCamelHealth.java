@@ -132,10 +132,7 @@ public class ManagedCamelHealth implements ManagedCamelHealthMBean {
                                 "failureCount",
                                 "failureStackTrace",
                                 "readiness",
-                                "liveness",
-                                "interval",
-                                "successThreshold",
-                                "failureThreshold"
+                                "liveness"
                         },
                         new Object[] {
                                 result.getCheck().getId(),
@@ -147,10 +144,7 @@ public class ManagedCamelHealth implements ManagedCamelHealthMBean {
                                 failureCount,
                                 stacktrace,
                                 result.getCheck().isReadiness(),
-                                result.getCheck().isLiveness(),
-                                result.getCheck().getConfiguration().getInterval(),
-                                result.getCheck().getConfiguration().getSuccessThreshold(),
-                                result.getCheck().getConfiguration().getFailureThreshold()
+                                result.getCheck().isLiveness()
                         });
 
                 answer.put(data);

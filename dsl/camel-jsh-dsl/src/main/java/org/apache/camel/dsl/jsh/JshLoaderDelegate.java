@@ -63,8 +63,7 @@ final class JshLoaderDelegate implements LoaderDelegate {
     }
 
     @Override
-    public void addToClasspath(String cp)
-            throws ExecutionControl.EngineTerminationException, ExecutionControl.InternalException {
+    public void addToClasspath(String cp) {
         throw new UnsupportedOperationException("Not implemented");
     }
 

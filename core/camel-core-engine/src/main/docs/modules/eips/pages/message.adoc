@@ -13,7 +13,7 @@ of the xref:manual::exchange.adoc[Exchange].
 
 The message contains the following information:
 
-- _body_ - the message body (i.e. payload
+- _body_ - the message body (i.e. payload)
 - _headers_ - headers with additional information
 - _messageId_ - Unique id of the message.
   By default, the message uses the same id as `Exchange.getExchangeId` as messages are associated with the

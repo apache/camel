@@ -34,7 +34,11 @@ public class Ses2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "amazonSESClient": getOrCreateConfiguration(target).setAmazonSESClient(property(camelContext, software.amazon.awssdk.services.ses.SesClient.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
+        case "bcc": getOrCreateConfiguration(target).setBcc(property(camelContext, java.lang.String.class, value)); return true;
+        case "cc": getOrCreateConfiguration(target).setCc(property(camelContext, java.lang.String.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws2.ses.Ses2Configuration.class, value)); return true;
+        case "configurationset":
+        case "configurationSet": getOrCreateConfiguration(target).setConfigurationSet(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "overrideendpoint":
@@ -78,7 +82,11 @@ public class Ses2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "amazonSESClient": return software.amazon.awssdk.services.ses.SesClient.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
+        case "bcc": return java.lang.String.class;
+        case "cc": return java.lang.String.class;
         case "configuration": return org.apache.camel.component.aws2.ses.Ses2Configuration.class;
+        case "configurationset":
+        case "configurationSet": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "overrideendpoint":
@@ -118,7 +126,11 @@ public class Ses2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "amazonSESClient": return getOrCreateConfiguration(target).getAmazonSESClient();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
+        case "bcc": return getOrCreateConfiguration(target).getBcc();
+        case "cc": return getOrCreateConfiguration(target).getCc();
         case "configuration": return target.getConfiguration();
+        case "configurationset":
+        case "configurationSet": return getOrCreateConfiguration(target).getConfigurationSet();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "overrideendpoint":

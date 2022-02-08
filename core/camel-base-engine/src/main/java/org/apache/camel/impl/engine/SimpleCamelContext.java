@@ -38,6 +38,7 @@ import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelContextNameStrategy;
+import org.apache.camel.spi.CamelDependencyInjectionAnnotationFactory;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.ComponentNameResolver;
 import org.apache.camel.spi.ComponentResolver;
@@ -190,6 +191,11 @@ public class SimpleCamelContext extends AbstractCamelContext {
     @Override
     protected CamelBeanPostProcessor createBeanPostProcessor() {
         return new DefaultCamelBeanPostProcessor(getCamelContextReference());
+    }
+
+    @Override
+    protected CamelDependencyInjectionAnnotationFactory createDependencyInjectionAnnotationFactory() {
+        return new DefaultDependencyInjectionAnnotationFactory(getCamelContextReference());
     }
 
     @Override

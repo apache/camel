@@ -86,8 +86,6 @@ public class MainHealthCheckConfigTest {
         main.configure().addRoutesBuilder(new Routes());
         main.addInitialProperty("camel.health.config[custom].parent", "registry-health-check-repository");
         main.addInitialProperty("camel.health.config[custom].enabled", "false");
-        main.addInitialProperty("camel.health.config[custom].interval", "20s");
-        main.addInitialProperty("camel.health.config[custom].failure-threshold", "10");
 
         main.start();
         try {
@@ -103,8 +101,6 @@ public class MainHealthCheckConfigTest {
 
             // This configuration will be overridden by the camel-main config properties
             healthCheck.getConfiguration().setEnabled(true);
-            healthCheck.getConfiguration().setInterval(10);
-            healthCheck.getConfiguration().setFailureThreshold(5);
             camelContext.getRegistry().bind("custom", healthCheck);
 
             HealthCheckRegistry healthCheckRegistry = camelContext.getExtension(HealthCheckRegistry.class);
@@ -123,8 +119,6 @@ public class MainHealthCheckConfigTest {
             HealthCheckConfiguration configuration = myCustomCheck.getConfiguration();
             assertNotNull(configuration);
             assertFalse(configuration.isEnabled());
-            assertEquals(20000, configuration.getInterval());
-            assertEquals(10, configuration.getFailureThreshold());
         } finally {
             main.stop();
         }

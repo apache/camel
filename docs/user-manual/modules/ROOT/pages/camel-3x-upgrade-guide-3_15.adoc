@@ -12,6 +12,10 @@ IMPORTANT: Java 8 is no longer supported. Camel 3.15 onwards requires Java 11 or
 
 The `camel-kamelet-reify` and `camel-spring-javaconfig` has been removed.
 
+=== Removed Maven Archetypes
+
+The `camel-archetype-endpointdsl` has been removed.
+
 === API changes
 
 Added `getScheme` method to `org.apache.camel.spi.Resource`.
@@ -99,10 +103,12 @@ The message history output has changed to include source column, which refers to
 from the DSL the message was at the given time. (line precise error reporting).
 
 This default formatting are (Source, ID, Processor, Elapsed):
-```
-    MESSAGE_HISTORY_HEADER = "%-40s %-30s %-50s %-12s";
-    MESSAGE_HISTORY_OUTPUT = "%-40.40s %-30.30s %-50.50s %12.12s";
-```
+
+[source,properties]
+----
+MESSAGE_HISTORY_HEADER = "%-40s %-30s %-50s %-12s";
+MESSAGE_HISTORY_OUTPUT = "%-40.40s %-30.30s %-50.50s %12.12s";
+----
 
 If you are using custom sizes then you need to adjust accordingly.
 
@@ -178,13 +184,13 @@ The `org.apache.camel.cdi.Main` class has moved from `camel-cdi` to `camel-cdi-m
 
 The following classes were moved from `org.apache.camel.component.kafka` to `org.apache.camel.component.kafka.consumer`:
 
-* DefaultKafkaManualAsyncCommit
-* DefaultKafkaManualAsyncCommitFactory
-* DefaultKafkaManualSyncCommit
-* DefaultKafkaManualSyncCommitFactory
-* KafkaAsyncManualCommit
-* KafkaManualCommit
-* KafkaManualCommitFactory
+* `DefaultKafkaManualAsyncCommit`
+* `DefaultKafkaManualAsyncCommitFactory`
+* `DefaultKafkaManualSyncCommit`
+* `DefaultKafkaManualSyncCommitFactory`
+* `KafkaAsyncManualCommit`
+* `KafkaManualCommit`
+* `KafkaManualCommitFactory`
 
 The signature for `KafkaManualCommitFactory` and its classes has been adjusted to abstract some runtime parameters. The old signature is still available but will be removed in 3.16.0.
 
@@ -192,7 +198,7 @@ The signature for `KafkaManualCommitFactory` and its classes has been adjusted t
 
 The `camel-endpointdsl` and `camel-componentdsl` is no longer supported on Apache Karaf.
 
-The `camel-osg-activator`, `camel-google-mail`, and `camel-jooq` has been removed.
+The `camel-osg-activator`, `camel-google-calendar`, `camel-google-drive`, `camel-google-mail`, `camel-google-sheets`, and `camel-jooq` has been removed.
 
 === camel-netty / camel-netty-http
 

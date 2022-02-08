@@ -29,15 +29,13 @@ import org.apache.hadoop.fs.Path;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledOnOs;
-import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testcontainers.shaded.org.apache.commons.lang.SystemUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@DisabledOnOs(value = OS.MAC, disabledReason = "Temporarily disabled due to CAMEL-16387")
 public class HdfsAppendIT extends CamelTestSupport {
     @RegisterExtension
     public static HDFSService service = HDFSServiceFactory.createService();
@@ -57,7 +55,11 @@ public class HdfsAppendIT extends CamelTestSupport {
         super.setUp();
 
         Configuration conf = new Configuration();
-        conf.addResource("hdfs-test.xml");
+        if (SystemUtils.IS_OS_MAC) {
+            conf.addResource("hdfs-mac-test.xml");
+        } else {
+            conf.addResource("hdfs-test.xml");
+        }
         String path = String.format("hdfs://%s:%d/tmp/test/test-camel-simple-write-file1", service.getHDFSHost(),
                 service.getPort());
 

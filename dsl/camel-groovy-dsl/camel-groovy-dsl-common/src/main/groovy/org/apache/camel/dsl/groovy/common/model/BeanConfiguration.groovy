@@ -30,7 +30,7 @@ class BeanConfiguration {
     }
 
     def methodMissing(String name, arguments) {
-        Object value = null
+        Object value
         final Object[] args = arguments as Object[]
 
         if (args == null) {
@@ -45,7 +45,6 @@ class BeanConfiguration {
             def m = this.target.metaClass.getMetaMethod(name, Closure.class)
             if (m) {
                 m.invoke(target, args)
-
                 // done
                 return
             }

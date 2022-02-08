@@ -169,7 +169,7 @@ public class ResequencerEngineTest extends TestSupport {
         runner.start();
 
         // wait for runner to run
-        await().atMost(1, TimeUnit.SECONDS).until(runner::isRunning);
+        await().atMost(3, TimeUnit.SECONDS).until(runner::isRunning);
     }
 
 }

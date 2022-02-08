@@ -18,6 +18,7 @@ package org.apache.camel.main;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -28,7 +29,7 @@ public class MainRoutesCollectorPackageScanTest {
     @Test
     public void testMainRoutesCollector() throws Exception {
         Main main = new Main();
-        main.configure().withPackageScanRouteBuilders("org.apache.camel.main.scan");
+        main.configure().withBasePackageScan("org.apache.camel.main.scan");
         main.start();
 
         CamelContext camelContext = main.getCamelContext();
@@ -49,6 +50,16 @@ public class MainRoutesCollectorPackageScanTest {
         endpoint.assertIsSatisfied();
         endpoint2.assertIsSatisfied();
         endpoint3.assertIsSatisfied();
+
+        // camel configuration should be scanned
+        Assertions.assertEquals("true", camelContext.getGlobalOption("scanConfigured"));
+        MyAddress adr = camelContext.getRegistry().lookupByNameAndType("address", MyAddress.class);
+        Assertions.assertEquals(4444, adr.getZip());
+        Assertions.assertEquals("Somestreet 123", adr.getStreet());
+
+        // custom type converter should be scanned
+        MyFoo foo = camelContext.getTypeConverter().convertTo(MyFoo.class, "Donald");
+        assertEquals("Donald", foo.getName());
 
         main.stop();
     }

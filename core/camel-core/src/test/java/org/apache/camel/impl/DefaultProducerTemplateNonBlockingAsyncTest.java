@@ -39,6 +39,12 @@ public class DefaultProducerTemplateNonBlockingAsyncTest extends DefaultProducer
     }
 
     @Test
+    @Override
+    public void testSendAsyncProcessor() throws Exception {
+        // noop
+    }
+
+    @Test
     public void testRunningInSameThread() throws ExecutionException, InterruptedException {
         Thread originalThread = Thread.currentThread();
         CompletableFuture<Exchange> future = template.asyncSend("direct:echo", e -> {

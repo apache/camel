@@ -23,6 +23,7 @@ import software.amazon.awssdk.services.kinesis.model.ShardIteratorType;
 
 public class KinesisUserConfigurationResumeStrategy implements KinesisResumeStrategy {
     private final Kinesis2Configuration configuration;
+    private GetShardIteratorRequest.Builder resumable;
 
     public KinesisUserConfigurationResumeStrategy(Kinesis2Configuration configuration) {
         this.configuration = configuration;
@@ -35,7 +36,12 @@ public class KinesisUserConfigurationResumeStrategy implements KinesisResumeStra
     }
 
     @Override
-    public void resume(GetShardIteratorRequest.Builder resumable) {
+    public void setRequestBuilder(GetShardIteratorRequest.Builder resumable) {
+        this.resumable = resumable;
+    }
+
+    @Override
+    public void resume() {
         if (hasSequenceNumber()) {
             resumable.startingSequenceNumber(configuration.getSequenceNumber());
         }

@@ -25,6 +25,7 @@ public final class EventHubsConstants {
     public static final String OFFSET = HEADER_PREFIX + "Offset";
     public static final String ENQUEUED_TIME = HEADER_PREFIX + "EnqueuedTime";
     public static final String SEQUENCE_NUMBER = HEADER_PREFIX + "SequenceNumber";
+    public static final String METADATA = HEADER_PREFIX + "Metadata";
 
     private EventHubsConstants() {
     }

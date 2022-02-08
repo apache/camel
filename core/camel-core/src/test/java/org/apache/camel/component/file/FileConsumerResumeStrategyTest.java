@@ -16,36 +16,36 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.file.consumer.FileConsumerResumeStrategy;
 import org.apache.camel.component.file.consumer.FileResumeSet;
+import org.apache.camel.component.file.consumer.FileSetResumeStrategy;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class FileConsumerResumeStrategyTest extends ContextTestSupport {
 
-    private static class TestResumeStrategy implements FileConsumerResumeStrategy {
-        private static final Logger LOG = LoggerFactory.getLogger(TestResumeStrategy.class);
-
-        @Override
-        public long lastOffset(File file) {
-            return IOHelper.INITIAL_OFFSET;
-        }
+    private static class TestResumeStrategy implements FileSetResumeStrategy {
+        private List<String> processedFiles = Arrays.asList("0.txt", "1.txt", "2.txt");
+        private FileResumeSet resumeSet;
 
         @Override
         public void resume(FileResumeSet resumeSet) {
-            List<String> processedFiles = Arrays.asList("0.txt", "1.txt", "2.txt");
+            this.resumeSet = Objects.requireNonNull(resumeSet);
 
-            resumeSet.resumeEach(f -> !processedFiles.contains(f.getName()));
+            resume();
+        }
+
+        @Override
+        public void resume() {
+            if (resumeSet != null) {
+                resumeSet.resumeEach(f -> !processedFiles.contains(f.getName()));
+            }
         }
     }
 
@@ -75,7 +75,8 @@ public class FileConsumerResumeStrategyTest extends ContextTestSupport {
                 bindToRegistry("testResumeStrategy", new TestResumeStrategy());
 
                 from(fileUri("resume?noop=true&recursive=true&resumeStrategy=#testResumeStrategy"))
-                        .convertBodyTo(String.class).to("mock:result");
+                        .convertBodyTo(String.class)
+                        .to("mock:result");
             }
         };
     }

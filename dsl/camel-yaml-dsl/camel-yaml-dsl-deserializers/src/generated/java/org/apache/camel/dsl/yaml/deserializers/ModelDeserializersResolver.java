@@ -276,6 +276,9 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.ProcessDefinition": return new ModelDeserializers.ProcessDefinitionDeserializer();
             case "property": return new ModelDeserializers.PropertyDefinitionDeserializer();
             case "org.apache.camel.model.PropertyDefinition": return new ModelDeserializers.PropertyDefinitionDeserializer();
+            case "property-expression": return new ModelDeserializers.PropertyExpressionDefinitionDeserializer();
+            case "propertyExpression": return new ModelDeserializers.PropertyExpressionDefinitionDeserializer();
+            case "org.apache.camel.model.PropertyExpressionDefinition": return new ModelDeserializers.PropertyExpressionDefinitionDeserializer();
             case "protobuf": return new ModelDeserializers.ProtobufDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.ProtobufDataFormat": return new ModelDeserializers.ProtobufDataFormatDeserializer();
             case "put": return new ModelDeserializers.PutVerbDefinitionDeserializer();
@@ -387,7 +390,6 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.SagaActionUriDefinition": return new ModelDeserializers.SagaActionUriDefinitionDeserializer();
             case "saga": return new ModelDeserializers.SagaDefinitionDeserializer();
             case "org.apache.camel.model.SagaDefinition": return new ModelDeserializers.SagaDefinitionDeserializer();
-            case "org.apache.camel.model.SagaOptionDefinition": return new ModelDeserializers.SagaOptionDefinitionDeserializer();
             case "sample": return new ModelDeserializers.SamplingDefinitionDeserializer();
             case "org.apache.camel.model.SamplingDefinition": return new ModelDeserializers.SamplingDefinitionDeserializer();
             case "script": return new ModelDeserializers.ScriptDefinitionDeserializer();
@@ -448,6 +450,9 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.StopDefinition": return new ModelDeserializers.StopDefinitionDeserializer();
             case "stream-config": return new ModelDeserializers.StreamResequencerConfigDeserializer();
             case "org.apache.camel.model.config.StreamResequencerConfig": return new ModelDeserializers.StreamResequencerConfigDeserializer();
+            case "do-switch": return new ModelDeserializers.SwitchDefinitionDeserializer();
+            case "doSwitch": return new ModelDeserializers.SwitchDefinitionDeserializer();
+            case "org.apache.camel.model.SwitchDefinition": return new ModelDeserializers.SwitchDefinitionDeserializer();
             case "syslog": return new ModelDeserializers.SyslogDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.SyslogDataFormat": return new ModelDeserializers.SyslogDataFormatDeserializer();
             case "tar-file": return new ModelDeserializers.TarFileDataFormatDeserializer();

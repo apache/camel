@@ -94,6 +94,7 @@ import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.CamelContextTracker;
+import org.apache.camel.spi.CamelDependencyInjectionAnnotationFactory;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.ComponentNameResolver;
@@ -247,7 +248,6 @@ public abstract class AbstractCamelContext extends BaseService
     private List<RoutePolicyFactory> routePolicyFactories = new ArrayList<>();
     // special flags to control the first startup which can are special
     private volatile boolean firstStartDone;
-    private volatile boolean firstStopDone;
     private volatile boolean doNotStartRoutesOnFirstStart;
     private Initialization initialization = Initialization.Default;
     private Boolean autoStartup = Boolean.TRUE;
@@ -275,6 +275,7 @@ public abstract class AbstractCamelContext extends BaseService
     private Boolean allowUseOriginalMessage = Boolean.FALSE;
     private Boolean caseInsensitiveHeaders = Boolean.TRUE;
     private Boolean autowiredEnabled = Boolean.TRUE;
+    private String basePackageScan;
     private boolean lightweight;
     private Long delay;
     private ErrorHandlerFactory errorHandlerFactory;
@@ -292,6 +293,7 @@ public abstract class AbstractCamelContext extends BaseService
     private volatile TypeConverterRegistry typeConverterRegistry;
     private volatile Injector injector;
     private volatile CamelBeanPostProcessor beanPostProcessor;
+    private volatile CamelDependencyInjectionAnnotationFactory dependencyInjectionAnnotationFactory;
     private volatile ComponentResolver componentResolver;
     private volatile ComponentNameResolver componentNameResolver;
     private volatile LanguageResolver languageResolver;
@@ -1976,6 +1978,24 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     @Override
+    public CamelDependencyInjectionAnnotationFactory getDependencyInjectionAnnotationFactory() {
+        if (dependencyInjectionAnnotationFactory == null) {
+            synchronized (lock) {
+                if (dependencyInjectionAnnotationFactory == null) {
+                    setDependencyInjectionAnnotationFactory(createDependencyInjectionAnnotationFactory());
+                }
+            }
+        }
+        return dependencyInjectionAnnotationFactory;
+    }
+
+    @Override
+    public void setDependencyInjectionAnnotationFactory(
+            CamelDependencyInjectionAnnotationFactory dependencyInjectionAnnotationFactory) {
+        this.dependencyInjectionAnnotationFactory = dependencyInjectionAnnotationFactory;
+    }
+
+    @Override
     public ManagementMBeanAssembler getManagementMBeanAssembler() {
         return managementMBeanAssembler;
     }
@@ -2766,8 +2786,9 @@ public abstract class AbstractCamelContext extends BaseService
         // optimize - before starting routes lets check if event notifications is possible
         eventNotificationApplicable = EventHelper.eventsApplicable(this);
 
-        // ensure additional type converters is loaded
-        if (loadTypeConverters && typeConverter instanceof AnnotationScanTypeConverters) {
+        // ensure additional type converters is loaded (either if enabled or we should use package scanning from the base)
+        boolean load = loadTypeConverters || getBasePackageScan() != null;
+        if (load && typeConverter instanceof AnnotationScanTypeConverters) {
             StartupStep step2 = startupStepRecorder.beginStep(CamelContext.class, null, "Scan TypeConverters");
             ((AnnotationScanTypeConverters) typeConverter).scanTypeConverters();
             startupStepRecorder.endStep(step2);
@@ -4271,6 +4292,16 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     @Override
+    public String getBasePackageScan() {
+        return basePackageScan;
+    }
+
+    @Override
+    public void setBasePackageScan(String basePackageScan) {
+        this.basePackageScan = basePackageScan;
+    }
+
+    @Override
     public Boolean isDumpRoutes() {
         return dumpRoutes;
     }
@@ -5111,6 +5142,8 @@ public abstract class AbstractCamelContext extends BaseService
     protected abstract PropertiesComponent createPropertiesComponent();
 
     protected abstract CamelBeanPostProcessor createBeanPostProcessor();
+
+    protected abstract CamelDependencyInjectionAnnotationFactory createDependencyInjectionAnnotationFactory();
 
     protected abstract ComponentResolver createComponentResolver();
 

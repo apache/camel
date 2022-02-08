@@ -18,20 +18,19 @@ package org.apache.camel.component.kafka.consumer.support;
 
 import org.apache.camel.ResumeStrategy;
 import org.apache.kafka.clients.consumer.Consumer;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
 
 /**
  * Defines a strategy for handling resume operations. Implementations can define different ways to handle how to resume
  * processing records.
+ *
+ * The resume runs in the scope of the Kafka Consumer thread and may run concurrently with other consumer instances when
+ * the component is set up to use more than one of them. As such, implementations are responsible for ensuring the
+ * thread-safety of the operations within the resume method.
  */
-public interface KafkaConsumerResumeStrategy extends ResumeStrategy<Consumer<?, ?>> {
+public interface KafkaConsumerResumeStrategy extends ResumeStrategy<KafkaResumable> {
+    void setConsumer(Consumer<?, ?> consumer);
 
-    /**
-     * Perform the resume operation. This runs in the scope of the Kafka Consumer thread and may run concurrently with
-     * other consumer instances when the component is set up to use more than one of them. As such, implementations are
-     * responsible for ensuring the thread-safety of the operations within the resume method.
-     *
-     * @param consumer an instance of the KafkaConsumer which is resuming the operation
-     */
-    void resume(Consumer<?, ?> consumer);
+    default void resume(KafkaResumable resumable) {
+
+    }
 }

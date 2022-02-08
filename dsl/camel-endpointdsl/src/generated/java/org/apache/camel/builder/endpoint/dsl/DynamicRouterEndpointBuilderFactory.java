@@ -36,248 +36,88 @@ public interface DynamicRouterEndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint consumers for the Dynamic Router component.
+     * Builder for endpoint for the Dynamic Router component.
      */
-    public interface DynamicRouterEndpointConsumerBuilder
-            extends
-                EndpointConsumerBuilder {
-        default AdvancedDynamicRouterEndpointConsumerBuilder advanced() {
-            return (AdvancedDynamicRouterEndpointConsumerBuilder) this;
-        }
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: consumer
-         * 
-         * @param bridgeErrorHandler the value to set
-         * @return the dsl builder
-         */
-        default DynamicRouterEndpointConsumerBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: consumer
-         * 
-         * @param bridgeErrorHandler the value to set
-         * @return the dsl builder
-         */
-        default DynamicRouterEndpointConsumerBuilder bridgeErrorHandler(
-                String bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint consumers for the Dynamic Router component.
-     */
-    public interface AdvancedDynamicRouterEndpointConsumerBuilder
-            extends
-                EndpointConsumerBuilder {
-        default DynamicRouterEndpointConsumerBuilder basic() {
-            return (DynamicRouterEndpointConsumerBuilder) this;
-        }
-        /**
-         * To let the consumer use a custom ExceptionHandler. Notice if the
-         * option bridgeErrorHandler is enabled then this option is not in use.
-         * By default the consumer will deal with exceptions, that will be
-         * logged at WARN or ERROR level and ignored.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param exceptionHandler the value to set
-         * @return the dsl builder
-         */
-        default AdvancedDynamicRouterEndpointConsumerBuilder exceptionHandler(
-                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
-            doSetProperty("exceptionHandler", exceptionHandler);
-            return this;
-        }
-        /**
-         * To let the consumer use a custom ExceptionHandler. Notice if the
-         * option bridgeErrorHandler is enabled then this option is not in use.
-         * By default the consumer will deal with exceptions, that will be
-         * logged at WARN or ERROR level and ignored.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param exceptionHandler the value to set
-         * @return the dsl builder
-         */
-        default AdvancedDynamicRouterEndpointConsumerBuilder exceptionHandler(
-                String exceptionHandler) {
-            doSetProperty("exceptionHandler", exceptionHandler);
-            return this;
-        }
-        /**
-         * Sets the exchange pattern when the consumer creates an exchange.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param exchangePattern the value to set
-         * @return the dsl builder
-         */
-        default AdvancedDynamicRouterEndpointConsumerBuilder exchangePattern(
-                org.apache.camel.ExchangePattern exchangePattern) {
-            doSetProperty("exchangePattern", exchangePattern);
-            return this;
-        }
-        /**
-         * Sets the exchange pattern when the consumer creates an exchange.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param exchangePattern the value to set
-         * @return the dsl builder
-         */
-        default AdvancedDynamicRouterEndpointConsumerBuilder exchangePattern(
-                String exchangePattern) {
-            doSetProperty("exchangePattern", exchangePattern);
-            return this;
-        }
-        /**
-         * Flag to ensure synchronous processing.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedDynamicRouterEndpointConsumerBuilder synchronous(
-                boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Flag to ensure synchronous processing.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedDynamicRouterEndpointConsumerBuilder synchronous(
-                String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
-    /**
-     * Builder for endpoint producers for the Dynamic Router component.
-     */
-    public interface DynamicRouterEndpointProducerBuilder
+    public interface DynamicRouterEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        default AdvancedDynamicRouterEndpointProducerBuilder advanced() {
-            return (AdvancedDynamicRouterEndpointProducerBuilder) this;
-        }
         /**
-         * Flag that determines if the producer should block while waiting for a
-         * consumer.
+         * Recipient mode: firstMatch or allMatch.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Default: true
-         * Group: producer
+         * Default: firstMatch
+         * Group: common
          * 
-         * @param block the value to set
+         * @param recipientMode the value to set
          * @return the dsl builder
          */
-        default DynamicRouterEndpointProducerBuilder block(boolean block) {
-            doSetProperty("block", block);
+        default DynamicRouterEndpointBuilder recipientMode(String recipientMode) {
+            doSetProperty("recipientMode", recipientMode);
             return this;
         }
         /**
-         * Flag that determines if the producer should block while waiting for a
-         * consumer.
+         * Flag to ensure synchronous processing.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
+         */
+        default DynamicRouterEndpointBuilder synchronous(boolean synchronous) {
+            doSetProperty("synchronous", synchronous);
+            return this;
+        }
+        /**
+         * Flag to ensure synchronous processing.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
          * 
-         * Default: true
-         * Group: producer
+         * Default: false
+         * Group: common
          * 
-         * @param block the value to set
+         * @param synchronous the value to set
          * @return the dsl builder
          */
-        default DynamicRouterEndpointProducerBuilder block(String block) {
-            doSetProperty("block", block);
+        default DynamicRouterEndpointBuilder synchronous(String synchronous) {
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
-         * Flag to fail if there are no consumers.
+         * Flag to log a warning if no predicates match for an exchange.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: true
-         * Group: producer
+         * Default: false
+         * Group: common
          * 
-         * @param failIfNoConsumers the value to set
+         * @param warnDroppedMessage the value to set
          * @return the dsl builder
          */
-        default DynamicRouterEndpointProducerBuilder failIfNoConsumers(
-                boolean failIfNoConsumers) {
-            doSetProperty("failIfNoConsumers", failIfNoConsumers);
+        default DynamicRouterEndpointBuilder warnDroppedMessage(
+                boolean warnDroppedMessage) {
+            doSetProperty("warnDroppedMessage", warnDroppedMessage);
             return this;
         }
         /**
-         * Flag to fail if there are no consumers.
+         * Flag to log a warning if no predicates match for an exchange.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
          * 
-         * Default: true
-         * Group: producer
+         * Default: false
+         * Group: common
          * 
-         * @param failIfNoConsumers the value to set
+         * @param warnDroppedMessage the value to set
          * @return the dsl builder
          */
-        default DynamicRouterEndpointProducerBuilder failIfNoConsumers(
-                String failIfNoConsumers) {
-            doSetProperty("failIfNoConsumers", failIfNoConsumers);
+        default DynamicRouterEndpointBuilder warnDroppedMessage(
+                String warnDroppedMessage) {
+            doSetProperty("warnDroppedMessage", warnDroppedMessage);
             return this;
         }
         /**
@@ -299,7 +139,7 @@ public interface DynamicRouterEndpointBuilderFactory {
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default DynamicRouterEndpointProducerBuilder lazyStartProducer(
+        default DynamicRouterEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -324,175 +164,130 @@ public interface DynamicRouterEndpointBuilderFactory {
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default DynamicRouterEndpointProducerBuilder lazyStartProducer(
+        default DynamicRouterEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
-         * The time limit, in milliseconds, if/when the producer blocks while
-         * waiting for a consumer.
+         * The destination URI for exchanges that match.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Default: 30000
-         * Group: producer
+         * Group: control
          * 
-         * @param timeout the value to set
+         * @param destinationUri the value to set
          * @return the dsl builder
          */
-        default DynamicRouterEndpointProducerBuilder timeout(long timeout) {
-            doSetProperty("timeout", timeout);
+        default DynamicRouterEndpointBuilder destinationUri(
+                String destinationUri) {
+            doSetProperty("destinationUri", destinationUri);
             return this;
         }
         /**
-         * The time limit, in milliseconds, if/when the producer blocks while
-         * waiting for a consumer.
+         * The subscription predicate language.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Default: 30000
-         * Group: producer
+         * Default: simple
+         * Group: control
          * 
-         * @param timeout the value to set
+         * @param expressionLanguage the value to set
          * @return the dsl builder
          */
-        default DynamicRouterEndpointProducerBuilder timeout(String timeout) {
-            doSetProperty("timeout", timeout);
+        default DynamicRouterEndpointBuilder expressionLanguage(
+                String expressionLanguage) {
+            doSetProperty("expressionLanguage", expressionLanguage);
             return this;
         }
         /**
-         * Flag to log a warning if no predicates match for an exchange.
+         * The subscription predicate.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Default: false
-         * Group: producer
+         * Group: control
          * 
-         * @param warnDroppedMessage the value to set
+         * @param predicate the value to set
          * @return the dsl builder
          */
-        default DynamicRouterEndpointProducerBuilder warnDroppedMessage(
-                boolean warnDroppedMessage) {
-            doSetProperty("warnDroppedMessage", warnDroppedMessage);
+        default DynamicRouterEndpointBuilder predicate(String predicate) {
+            doSetProperty("predicate", predicate);
             return this;
         }
         /**
-         * Flag to log a warning if no predicates match for an exchange.
+         * A Predicate instance in the registry.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * The option is a: &lt;code&gt;org.apache.camel.Predicate&lt;/code&gt;
          * type.
          * 
-         * Default: false
-         * Group: producer
+         * Group: control
          * 
-         * @param warnDroppedMessage the value to set
+         * @param predicateBean the value to set
          * @return the dsl builder
          */
-        default DynamicRouterEndpointProducerBuilder warnDroppedMessage(
-                String warnDroppedMessage) {
-            doSetProperty("warnDroppedMessage", warnDroppedMessage);
-            return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint producers for the Dynamic Router component.
-     */
-    public interface AdvancedDynamicRouterEndpointProducerBuilder
-            extends
-                EndpointProducerBuilder {
-        default DynamicRouterEndpointProducerBuilder basic() {
-            return (DynamicRouterEndpointProducerBuilder) this;
-        }
-        /**
-         * Flag to ensure synchronous processing.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedDynamicRouterEndpointProducerBuilder synchronous(
-                boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
+        default DynamicRouterEndpointBuilder predicateBean(
+                org.apache.camel.Predicate predicateBean) {
+            doSetProperty("predicateBean", predicateBean);
             return this;
         }
         /**
-         * Flag to ensure synchronous processing.
+         * A Predicate instance in the registry.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.Predicate&lt;/code&gt; type.
          * 
-         * Default: false
-         * Group: advanced
+         * Group: control
          * 
-         * @param synchronous the value to set
+         * @param predicateBean the value to set
          * @return the dsl builder
          */
-        default AdvancedDynamicRouterEndpointProducerBuilder synchronous(
-                String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
-    /**
-     * Builder for endpoint for the Dynamic Router component.
-     */
-    public interface DynamicRouterEndpointBuilder
-            extends
-                DynamicRouterEndpointConsumerBuilder,
-                DynamicRouterEndpointProducerBuilder {
-        default AdvancedDynamicRouterEndpointBuilder advanced() {
-            return (AdvancedDynamicRouterEndpointBuilder) this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint for the Dynamic Router component.
-     */
-    public interface AdvancedDynamicRouterEndpointBuilder
-            extends
-                AdvancedDynamicRouterEndpointConsumerBuilder,
-                AdvancedDynamicRouterEndpointProducerBuilder {
-        default DynamicRouterEndpointBuilder basic() {
-            return (DynamicRouterEndpointBuilder) this;
-        }
-        /**
-         * Flag to ensure synchronous processing.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedDynamicRouterEndpointBuilder synchronous(
-                boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
+        default DynamicRouterEndpointBuilder predicateBean(String predicateBean) {
+            doSetProperty("predicateBean", predicateBean);
             return this;
         }
         /**
-         * Flag to ensure synchronous processing.
+         * The subscription priority.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
-         * Default: false
-         * Group: advanced
+         * Group: control
          * 
-         * @param synchronous the value to set
+         * @param priority the value to set
          * @return the dsl builder
          */
-        default AdvancedDynamicRouterEndpointBuilder synchronous(
-                String synchronous) {
-            doSetProperty("synchronous", synchronous);
+        default DynamicRouterEndpointBuilder priority(Integer priority) {
+            doSetProperty("priority", priority);
+            return this;
+        }
+        /**
+         * The subscription priority.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: control
+         * 
+         * @param priority the value to set
+         * @return the dsl builder
+         */
+        default DynamicRouterEndpointBuilder priority(String priority) {
+            doSetProperty("priority", priority);
+            return this;
+        }
+        /**
+         * The subscription ID; if unspecified, one will be assigned and
+         * returned.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: control
+         * 
+         * @param subscriptionId the value to set
+         * @return the dsl builder
+         */
+        default DynamicRouterEndpointBuilder subscriptionId(
+                String subscriptionId) {
+            doSetProperty("subscriptionId", subscriptionId);
             return this;
         }
     }
@@ -511,6 +306,13 @@ public interface DynamicRouterEndpointBuilderFactory {
          * 
          * Path parameter: channel (required)
          * Channel of the Dynamic Router
+         * 
+         * Path parameter: controlAction
+         * Control channel action: subscribe or unsubscribe
+         * There are 2 enums and the value can be one of: subscribe, unsubscribe
+         * 
+         * Path parameter: subscribeChannel
+         * The channel to subscribe to
          * 
          * @param path channel
          * @return the dsl builder
@@ -532,6 +334,13 @@ public interface DynamicRouterEndpointBuilderFactory {
          * Path parameter: channel (required)
          * Channel of the Dynamic Router
          * 
+         * Path parameter: controlAction
+         * Control channel action: subscribe or unsubscribe
+         * There are 2 enums and the value can be one of: subscribe, unsubscribe
+         * 
+         * Path parameter: subscribeChannel
+         * The channel to subscribe to
+         * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path channel
@@ -546,7 +355,7 @@ public interface DynamicRouterEndpointBuilderFactory {
     static DynamicRouterEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class DynamicRouterEndpointBuilderImpl extends AbstractEndpointBuilder implements DynamicRouterEndpointBuilder, AdvancedDynamicRouterEndpointBuilder {
+        class DynamicRouterEndpointBuilderImpl extends AbstractEndpointBuilder implements DynamicRouterEndpointBuilder {
             public DynamicRouterEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

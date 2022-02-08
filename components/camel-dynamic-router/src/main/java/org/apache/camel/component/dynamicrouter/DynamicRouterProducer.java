@@ -35,10 +35,9 @@ public class DynamicRouterProducer extends DefaultAsyncProducer {
     private final DynamicRouterEndpoint endpoint;
 
     /**
-     * The channel of the Dynamic Router. For example, if the Dynamic Router URI is "dynamic-router://test", then the
-     * channel is "test".
+     * The configuration for the Dynamic Router.
      */
-    private final String channel;
+    private final DynamicRouterConfiguration configuration;
 
     /**
      * Create the {@link org.apache.camel.Producer} for the Dynamic Router with the supplied
@@ -49,37 +48,8 @@ public class DynamicRouterProducer extends DefaultAsyncProducer {
     public DynamicRouterProducer(final DynamicRouterEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
-        this.channel = endpoint.getChannel();
-        LOG.debug("Created producer for endpoint '{}', channel '{}'", endpoint.getEndpointUri(), channel);
-    }
-
-    /**
-     * Check that the {@link org.apache.camel.Consumer} instance is not null. If it is null, and if the
-     * {@link org.apache.camel.Endpoint} is set to fail if there are no consumers, then a
-     * {@link DynamicRouterConsumerNotAvailableException} is thrown. If this {@link org.apache.camel.Producer} is not
-     * set to fail if there are no consumers, then the message is dropped and a warning is logged.
-     *
-     * @param  exchange                                   the exchange being processed
-     * @return                                            true if the consumer is not null, otherwise false
-     * @throws DynamicRouterConsumerNotAvailableException if there are no consumers and the producer is set to fail if
-     *                                                    there are no consumers
-     */
-    boolean checkConsumer(final Exchange exchange) throws DynamicRouterConsumerNotAvailableException {
-        DynamicRouterConsumer consumer = null;
-        try {
-            consumer = getConsumer(endpoint.getTimeout());
-        } catch (Exception ignored) {
-            // No-op -- the next block will handle null consumer
-        }
-        if (consumer == null) {
-            if (endpoint.isFailIfNoConsumers()) {
-                throw new DynamicRouterConsumerNotAvailableException(
-                        "No consumers available on endpoint: " + endpoint, exchange);
-            } else {
-                LOG.warn("Message ignored -- no consumers available on endpoint: {}", endpoint.getEndpointUri());
-            }
-        }
-        return consumer != null;
+        this.configuration = endpoint.getConfiguration();
+        LOG.debug("Created producer for endpoint '{}', channel '{}'", endpoint.getEndpointUri(), configuration.getChannel());
     }
 
     /**
@@ -92,28 +62,6 @@ public class DynamicRouterProducer extends DefaultAsyncProducer {
     }
 
     /**
-     * Get the {@link DynamicRouterConsumer}.
-     *
-     * @return the {@link DynamicRouterConsumer}
-     */
-    private DynamicRouterConsumer getConsumer() {
-        return getComponent().getConsumer(channel);
-    }
-
-    /**
-     * Get the {@link DynamicRouterConsumer}, and wait a maximum of the supplied timeout (milliseconds) if the consumer
-     * is not yet available.
-     *
-     * @param  timeout              time, in milliseconds, to wait if the consumer is not yet available
-     * @return                      the {@link DynamicRouterConsumer}
-     *
-     * @throws InterruptedException if interrupted while waiting for the {@link DynamicRouterConsumer}
-     */
-    private DynamicRouterConsumer getConsumer(final long timeout) throws InterruptedException {
-        return getComponent().getConsumer(channel, endpoint.isBlock(), timeout);
-    }
-
-    /**
      * Process the exchange.
      *
      * @param  exchange  the exchange to process
@@ -121,9 +69,9 @@ public class DynamicRouterProducer extends DefaultAsyncProducer {
      */
     @Override
     public void process(final Exchange exchange) throws Exception {
-        if (checkConsumer(exchange)) {
-            getConsumer().getProcessor().process(exchange);
-        }
+        getComponent()
+                .getRoutingProcessor(configuration.getChannel())
+                .process(exchange);
     }
 
     /**
@@ -137,10 +85,12 @@ public class DynamicRouterProducer extends DefaultAsyncProducer {
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         try {
             // we may be forced synchronous
-            if (endpoint.isSynchronous()) {
+            if (configuration.isSynchronous()) {
                 process(exchange);
             } else {
-                return getConsumer().getAsyncProcessor().process(exchange, callback);
+                return getComponent()
+                        .getRoutingProcessor(configuration.getChannel())
+                        .process(exchange, callback);
             }
         } catch (Exception e) {
             exchange.setException(e);

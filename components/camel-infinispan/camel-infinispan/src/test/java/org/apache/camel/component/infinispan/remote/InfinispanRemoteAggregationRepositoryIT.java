@@ -19,10 +19,7 @@ package org.apache.camel.component.infinispan.remote;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledOnOs;
-import org.junit.jupiter.api.condition.OS;
 
-@DisabledOnOs(OS.MAC)
 public class InfinispanRemoteAggregationRepositoryIT extends InfinispanRemoteTestSupport {
     public static final int COMPLETION_SIZE = 4;
     public static final String CORRELATOR_HEADER = "CORRELATOR_HEADER";

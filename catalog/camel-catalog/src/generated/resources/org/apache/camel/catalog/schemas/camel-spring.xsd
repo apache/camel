@@ -350,6 +350,15 @@ Path traversed when a try, catch, finally block exits
     </xs:annotation>
   </xs:element>
 
+  <xs:element name="doSwitch" type="tns:switchDefinition">
+    <xs:annotation>
+      <xs:documentation xml:lang="en"><![CDATA[
+Route messages based on a series of predicates (optimized during startup to
+select one predicate that will always be used)
+      ]]></xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
   <xs:element name="doTry" type="tns:tryDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
@@ -1009,7 +1018,15 @@ Properties to use with properties placeholder
   <xs:element name="property" type="tns:propertyDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-A key value pair
+A key value pair where the value is a literal value
+      ]]></xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="propertyExpression" type="tns:propertyExpressionDefinition">
+    <xs:annotation>
+      <xs:documentation xml:lang="en"><![CDATA[
+A key value pair where the value is an expression.
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -3020,6 +3037,7 @@ will fallback to use the fixed value if the Expression result was null or 0.
             <xs:element ref="tns:split"/>
             <xs:element ref="tns:step"/>
             <xs:element ref="tns:stop"/>
+            <xs:element ref="tns:doSwitch"/>
             <xs:element ref="tns:threads"/>
             <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:throwException"/>
@@ -3499,6 +3517,7 @@ should be intercepted by this exception type or not.
             <xs:element ref="tns:split"/>
             <xs:element ref="tns:step"/>
             <xs:element ref="tns:stop"/>
+            <xs:element ref="tns:doSwitch"/>
             <xs:element ref="tns:threads"/>
             <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:throwException"/>
@@ -3598,6 +3617,7 @@ should be intercepted by this exception type or not.
             <xs:element ref="tns:split"/>
             <xs:element ref="tns:step"/>
             <xs:element ref="tns:stop"/>
+            <xs:element ref="tns:doSwitch"/>
             <xs:element ref="tns:threads"/>
             <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:throwException"/>
@@ -3685,6 +3705,7 @@ should be intercepted by this exception type or not.
             <xs:element ref="tns:split"/>
             <xs:element ref="tns:step"/>
             <xs:element ref="tns:stop"/>
+            <xs:element ref="tns:doSwitch"/>
             <xs:element ref="tns:threads"/>
             <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:throwException"/>
@@ -3764,6 +3785,7 @@ should be intercepted by this exception type or not.
             <xs:element ref="tns:split"/>
             <xs:element ref="tns:step"/>
             <xs:element ref="tns:stop"/>
+            <xs:element ref="tns:doSwitch"/>
             <xs:element ref="tns:threads"/>
             <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:throwException"/>
@@ -4836,6 +4858,7 @@ org.apache.camel.spi.SendDynamicAware . Default value: true
             <xs:element ref="tns:split"/>
             <xs:element ref="tns:step"/>
             <xs:element ref="tns:stop"/>
+            <xs:element ref="tns:doSwitch"/>
             <xs:element ref="tns:threads"/>
             <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:throwException"/>
@@ -4920,6 +4943,7 @@ Setting this allows to know if the filter predicate evaluated as true or false.
             <xs:element ref="tns:split"/>
             <xs:element ref="tns:step"/>
             <xs:element ref="tns:stop"/>
+            <xs:element ref="tns:doSwitch"/>
             <xs:element ref="tns:threads"/>
             <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:throwException"/>
@@ -5058,6 +5082,7 @@ Global option value.
             <xs:element ref="tns:split"/>
             <xs:element ref="tns:step"/>
             <xs:element ref="tns:stop"/>
+            <xs:element ref="tns:doSwitch"/>
             <xs:element ref="tns:threads"/>
             <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:throwException"/>
@@ -5236,6 +5261,7 @@ Set if validation is required for this input type. Default value: false
             <xs:element ref="tns:split"/>
             <xs:element ref="tns:step"/>
             <xs:element ref="tns:stop"/>
+            <xs:element ref="tns:doSwitch"/>
             <xs:element ref="tns:threads"/>
             <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:throwException"/>
@@ -5328,6 +5354,7 @@ configured, then all incoming messages is intercepted.
             <xs:element ref="tns:split"/>
             <xs:element ref="tns:step"/>
             <xs:element ref="tns:stop"/>
+            <xs:element ref="tns:doSwitch"/>
             <xs:element ref="tns:threads"/>
             <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:throwException"/>
@@ -5427,6 +5454,7 @@ process its result.
             <xs:element ref="tns:split"/>
             <xs:element ref="tns:step"/>
             <xs:element ref="tns:stop"/>
+            <xs:element ref="tns:doSwitch"/>
             <xs:element ref="tns:threads"/>
             <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:throwException"/>
@@ -5520,6 +5548,7 @@ specified using uri syntax, eg mynamecount=4&type=gold.
             <xs:element ref="tns:split"/>
             <xs:element ref="tns:step"/>
             <xs:element ref="tns:stop"/>
+            <xs:element ref="tns:doSwitch"/>
             <xs:element ref="tns:threads"/>
             <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:throwException"/>
@@ -5813,6 +5842,7 @@ To refer to a custom logger instance to lookup from the registry.
             <xs:element ref="tns:split"/>
             <xs:element ref="tns:step"/>
             <xs:element ref="tns:stop"/>
+            <xs:element ref="tns:doSwitch"/>
             <xs:element ref="tns:threads"/>
             <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:throwException"/>
@@ -5940,7 +5970,7 @@ RDF4JMODEL
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="baseURI" type="xs:string">
+        <xs:attribute name="baseUri" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 The URI to use as base for building RDF entities if only relative paths are
@@ -8838,6 +8868,7 @@ decompressed size. Default value: 1073741824
             <xs:element ref="tns:split"/>
             <xs:element ref="tns:step"/>
             <xs:element ref="tns:stop"/>
+            <xs:element ref="tns:doSwitch"/>
             <xs:element ref="tns:threads"/>
             <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:throwException"/>
@@ -9047,6 +9078,7 @@ should be invoked or not.
             <xs:element ref="tns:split"/>
             <xs:element ref="tns:step"/>
             <xs:element ref="tns:stop"/>
+            <xs:element ref="tns:doSwitch"/>
             <xs:element ref="tns:threads"/>
             <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:throwException"/>
@@ -9214,6 +9246,7 @@ failure. If this option is enabled then its considered handled as well.
             <xs:element ref="tns:split"/>
             <xs:element ref="tns:step"/>
             <xs:element ref="tns:stop"/>
+            <xs:element ref="tns:doSwitch"/>
             <xs:element ref="tns:threads"/>
             <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:throwException"/>
@@ -9575,6 +9608,7 @@ generate the log message from exchange.
             <xs:element ref="tns:split"/>
             <xs:element ref="tns:step"/>
             <xs:element ref="tns:stop"/>
+            <xs:element ref="tns:doSwitch"/>
             <xs:element ref="tns:threads"/>
             <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:throwException"/>
@@ -9711,6 +9745,7 @@ Include finding route builder from these java package names.
             <xs:element ref="tns:split"/>
             <xs:element ref="tns:step"/>
             <xs:element ref="tns:stop"/>
+            <xs:element ref="tns:doSwitch"/>
             <xs:element ref="tns:threads"/>
             <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:throwException"/>
@@ -9787,6 +9822,7 @@ Include finding route builder from these java package names.
             <xs:element ref="tns:split"/>
             <xs:element ref="tns:step"/>
             <xs:element ref="tns:stop"/>
+            <xs:element ref="tns:doSwitch"/>
             <xs:element ref="tns:threads"/>
             <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:throwException"/>
@@ -9960,6 +9996,39 @@ by their type in the registry by prefixing with #type: syntax, eg
     <xs:sequence>
       <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:property"/>
     </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="propertyExpressionDefinition">
+    <xs:choice>
+      <xs:element ref="tns:expressionDefinition"/>
+      <xs:element ref="tns:csimple"/>
+      <xs:element ref="tns:constant"/>
+      <xs:element ref="tns:datasonnet"/>
+      <xs:element ref="tns:exchangeProperty"/>
+      <xs:element ref="tns:groovy"/>
+      <xs:element ref="tns:header"/>
+      <xs:element ref="tns:hl7terser"/>
+      <xs:element ref="tns:joor"/>
+      <xs:element ref="tns:jsonpath"/>
+      <xs:element ref="tns:language"/>
+      <xs:element ref="tns:method"/>
+      <xs:element ref="tns:mvel"/>
+      <xs:element ref="tns:ognl"/>
+      <xs:element ref="tns:ref"/>
+      <xs:element ref="tns:simple"/>
+      <xs:element ref="tns:spel"/>
+      <xs:element ref="tns:tokenize"/>
+      <xs:element ref="tns:xtokenize"/>
+      <xs:element ref="tns:xpath"/>
+      <xs:element ref="tns:xquery"/>
+    </xs:choice>
+    <xs:attribute name="key" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en"><![CDATA[
+Property key.
+        ]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
   </xs:complexType>
 
   <xs:complexType name="recipientListDefinition">
@@ -10320,6 +10389,7 @@ Name of property to remove.
             <xs:element ref="tns:split"/>
             <xs:element ref="tns:step"/>
             <xs:element ref="tns:stop"/>
+            <xs:element ref="tns:doSwitch"/>
             <xs:element ref="tns:threads"/>
             <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:throwException"/>
@@ -10601,6 +10671,7 @@ Reference to the routes in the xml dsl.
             <xs:element ref="tns:split"/>
             <xs:element ref="tns:step"/>
             <xs:element ref="tns:stop"/>
+            <xs:element ref="tns:doSwitch"/>
             <xs:element ref="tns:threads"/>
             <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:throwException"/>
@@ -10931,7 +11002,7 @@ the saga service may call again the completion URI to retry.
               ]]></xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="option" type="tns:sagaOptionDefinition">
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="option" type="tns:propertyExpressionDefinition">
             <xs:annotation>
               <xs:documentation xml:lang="en"><![CDATA[
 Allows to save properties of the current exchange in order to re-use them in a
@@ -10996,6 +11067,7 @@ compensation/completion exchange.
             <xs:element ref="tns:split"/>
             <xs:element ref="tns:step"/>
             <xs:element ref="tns:stop"/>
+            <xs:element ref="tns:doSwitch"/>
             <xs:element ref="tns:threads"/>
             <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:throwException"/>
@@ -11029,15 +11101,6 @@ saga:compensate endpoints. Default value: AUTO
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="timeoutInMilliseconds" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Deprecated: Set the maximum amount of time for the Saga. After the timeout is
-expired, the saga will be compensated automatically (unless a different decision
-has been taken in the meantime).
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
         <xs:attribute name="timeout" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
@@ -11057,33 +11120,6 @@ use.
         </xs:attribute>
       </xs:extension>
     </xs:complexContent>
-  </xs:complexType>
-
-  <xs:complexType name="sagaOptionDefinition">
-    <xs:choice>
-      <xs:element ref="tns:expressionDefinition"/>
-      <xs:element ref="tns:csimple"/>
-      <xs:element ref="tns:constant"/>
-      <xs:element ref="tns:datasonnet"/>
-      <xs:element ref="tns:exchangeProperty"/>
-      <xs:element ref="tns:groovy"/>
-      <xs:element ref="tns:header"/>
-      <xs:element ref="tns:hl7terser"/>
-      <xs:element ref="tns:joor"/>
-      <xs:element ref="tns:jsonpath"/>
-      <xs:element ref="tns:language"/>
-      <xs:element ref="tns:method"/>
-      <xs:element ref="tns:mvel"/>
-      <xs:element ref="tns:ognl"/>
-      <xs:element ref="tns:ref"/>
-      <xs:element ref="tns:simple"/>
-      <xs:element ref="tns:spel"/>
-      <xs:element ref="tns:tokenize"/>
-      <xs:element ref="tns:xtokenize"/>
-      <xs:element ref="tns:xpath"/>
-      <xs:element ref="tns:xquery"/>
-    </xs:choice>
-    <xs:attribute name="optionName" type="xs:string" use="required"/>
   </xs:complexType>
 
   <xs:complexType name="samplingDefinition">
@@ -11390,6 +11426,7 @@ Sets a reference to lookup for the comparator to use for sorting.
             <xs:element ref="tns:split"/>
             <xs:element ref="tns:step"/>
             <xs:element ref="tns:stop"/>
+            <xs:element ref="tns:doSwitch"/>
             <xs:element ref="tns:threads"/>
             <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:throwException"/>
@@ -11607,6 +11644,7 @@ the sake of backward compatibility. Default value: false
             <xs:element ref="tns:split"/>
             <xs:element ref="tns:step"/>
             <xs:element ref="tns:stop"/>
+            <xs:element ref="tns:doSwitch"/>
             <xs:element ref="tns:threads"/>
             <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:throwException"/>
@@ -11628,6 +11666,14 @@ the sake of backward compatibility. Default value: false
   <xs:complexType name="stopDefinition">
     <xs:complexContent>
       <xs:extension base="tns:noOutputDefinition">
+        <xs:sequence/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="switchDefinition">
+    <xs:complexContent>
+      <xs:extension base="tns:choiceDefinition">
         <xs:sequence/>
       </xs:extension>
     </xs:complexContent>
@@ -12030,6 +12076,7 @@ Whether to auto startup components when toD is starting up. Default value: true
             <xs:element ref="tns:split"/>
             <xs:element ref="tns:step"/>
             <xs:element ref="tns:stop"/>
+            <xs:element ref="tns:doSwitch"/>
             <xs:element ref="tns:threads"/>
             <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:throwException"/>
@@ -12143,6 +12190,7 @@ Sets a reference to use for lookup the policy in the registry.
             <xs:element ref="tns:split"/>
             <xs:element ref="tns:step"/>
             <xs:element ref="tns:stop"/>
+            <xs:element ref="tns:doSwitch"/>
             <xs:element ref="tns:threads"/>
             <xs:element ref="tns:throttle"/>
             <xs:element ref="tns:throwException"/>
@@ -15318,7 +15366,7 @@ overhead when enabled.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 What should happen when attempting to add a duplicate type converter. The
-default behavior is to override the existing. Default value: Override
+default behavior is to ignore the duplicate. Default value: Ignore
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -15326,8 +15374,8 @@ default behavior is to override the existing. Default value: Override
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 The logging level to use when logging that a type converter already exists when
-attempting to add a duplicate type converter. The default logging level is WARN.
-Default value: WARN
+attempting to add a duplicate type converter. The default logging level is
+DEBUG. Default value: DEBUG
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>

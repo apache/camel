@@ -86,14 +86,19 @@ public final class MojoHelper {
                         dir.resolve("camel-vertx-kafka").resolve("camel-vertx-kafka-component"),
                         dir.resolve("camel-vertx-websocket"));
             case "camel-huawei":
-                return Arrays.asList(dir.resolve("camel-huaweicloud-functiongraph"),
-                        dir.resolve("camel-huaweicloud-smn"),
-                        dir.resolve("camel-huaweicloud-iam"),
+                return Arrays.asList(dir.resolve("camel-huaweicloud-frs"),
                         dir.resolve("camel-huaweicloud-dms"),
+                        dir.resolve("camel-huaweicloud-functiongraph"),
+                        dir.resolve("camel-huaweicloud-iam"),
                         dir.resolve("camel-huaweicloud-imagerecognition"),
-                        dir.resolve("camel-huaweicloud-obs"));
+                        dir.resolve("camel-huaweicloud-obs"),
+                        dir.resolve("camel-huaweicloud-smn"));
             case "camel-knative":
                 return Collections.singletonList(dir.resolve("camel-knative-component"));
+            case "camel-groovy-dsl":
+                return Collections.singletonList(dir.resolve("camel-groovy-dsl"));
+            case "camel-yaml-dsl":
+                return Collections.singletonList(dir.resolve("camel-yaml-dsl"));
             default:
                 return Collections.singletonList(dir);
         }

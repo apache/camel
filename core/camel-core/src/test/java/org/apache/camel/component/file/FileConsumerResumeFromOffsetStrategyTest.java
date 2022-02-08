@@ -22,30 +22,26 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.file.consumer.FileConsumerResumeStrategy;
-import org.apache.camel.component.file.consumer.FileResumeSet;
+import org.apache.camel.component.file.consumer.GenericFileResumable;
+import org.apache.camel.component.file.consumer.GenericFileResumeStrategy;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class FileConsumerResumeFromOffsetStrategyTest extends ContextTestSupport {
 
-    private static class TestResumeStrategy implements FileConsumerResumeStrategy {
-        private static final Logger LOG = LoggerFactory.getLogger(TestResumeStrategy.class);
-
+    private static class TestResumeStrategy implements GenericFileResumeStrategy<File> {
         @Override
-        public long lastOffset(File file) {
-            if (!file.getName().startsWith("resume-from-offset")) {
+        public void resume(GenericFileResumable<File> resumable) {
+            if (!resumable.getAddressable().getName().startsWith("resume-from-offset")) {
                 throw new RuntimeCamelException("Invalid file - resume strategy should not have been called!");
             }
 
-            return 3;
+            resumable.updateLastOffset(3L);
         }
 
         @Override
-        public void resume(FileResumeSet resumeSet) {
+        public void resume() {
             // NO-OP
         }
     }

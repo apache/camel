@@ -4321,6 +4321,13 @@ public class StaticEndpointBuilders {
      * Path parameter: channel (required)
      * Channel of the Dynamic Router
      * 
+     * Path parameter: controlAction
+     * Control channel action: subscribe or unsubscribe
+     * There are 2 enums and the value can be one of: subscribe, unsubscribe
+     * 
+     * Path parameter: subscribeChannel
+     * The channel to subscribe to
+     * 
      * @param path channel
      * @return the dsl builder
      */
@@ -4341,6 +4348,13 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: channel (required)
      * Channel of the Dynamic Router
+     * 
+     * Path parameter: controlAction
+     * Control channel action: subscribe or unsubscribe
+     * There are 2 enums and the value can be one of: subscribe, unsubscribe
+     * 
+     * Path parameter: subscribeChannel
+     * The channel to subscribe to
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -6888,6 +6902,55 @@ public class StaticEndpointBuilders {
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.DMSEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * Huawei Cloud Face Recognition Service (camel-huaweicloud-frs)
+     * Face Recognition Service (FRS) is an intelligent service that uses
+     * computers to process, analyze, and understand facial images based on
+     * human facial features.
+     * 
+     * Category: cloud,messaging
+     * Since: 3.15
+     * Maven coordinates: org.apache.camel:camel-huaweicloud-frs
+     * 
+     * Syntax: <code>hwcloud-frs:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * Name of Face Recognition operation to perform, including faceDetection,
+     * faceVerification and faceLiveDetection
+     * 
+     * @param path operation
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.FaceRecognitionEndpointBuilderFactory.FaceRecognitionEndpointBuilder hwcloudFrs(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.FaceRecognitionEndpointBuilderFactory.endpointBuilder("hwcloud-frs", path);
+    }
+    /**
+     * Huawei Cloud Face Recognition Service (camel-huaweicloud-frs)
+     * Face Recognition Service (FRS) is an intelligent service that uses
+     * computers to process, analyze, and understand facial images based on
+     * human facial features.
+     * 
+     * Category: cloud,messaging
+     * Since: 3.15
+     * Maven coordinates: org.apache.camel:camel-huaweicloud-frs
+     * 
+     * Syntax: <code>hwcloud-frs:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * Name of Face Recognition operation to perform, including faceDetection,
+     * faceVerification and faceLiveDetection
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path operation
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.FaceRecognitionEndpointBuilderFactory.FaceRecognitionEndpointBuilder hwcloudFrs(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.FaceRecognitionEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Huawei FunctionGraph (camel-huaweicloud-functiongraph)

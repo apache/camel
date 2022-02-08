@@ -40,8 +40,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.Timeout;
-import org.junit.jupiter.api.condition.DisabledOnOs;
-import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +50,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@DisabledOnOs(OS.MAC)
 public class AbstractInfinispanRemoteClusteredIT {
     @RegisterExtension
     public static InfinispanService service = InfinispanServiceFactory.createService();
@@ -149,7 +146,6 @@ public class AbstractInfinispanRemoteClusteredIT {
     }
 
     @Nested
-    @DisabledOnOs(OS.MAC)
     class InfinispanRemoteClusteredMasterTestNested {
         public RouteBuilder getRouteBuilder(RunnerEnv runnerEnv) {
             return new RouteBuilder() {
@@ -171,7 +167,6 @@ public class AbstractInfinispanRemoteClusteredIT {
     }
 
     @Nested
-    @DisabledOnOs(OS.MAC)
     class InfinispanRemoteClusteredRoutePolicyFactoryTestNested {
         public RouteBuilder getRouteBuilder(RunnerEnv runnerEnv) {
             return new RouteBuilder() {
@@ -195,7 +190,6 @@ public class AbstractInfinispanRemoteClusteredIT {
     }
 
     @Nested
-    @DisabledOnOs(OS.MAC)
     class InfinispanRemoteClusteredRoutePolicyTestNested {
         public RouteBuilder getRouteBuilder(RunnerEnv runnerEnv) {
             return new RouteBuilder() {

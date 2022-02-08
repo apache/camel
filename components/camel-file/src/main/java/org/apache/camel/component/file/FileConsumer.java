@@ -33,6 +33,8 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.file.consumer.FileConsumerResumeStrategy;
 import org.apache.camel.component.file.consumer.FileResumeSet;
+import org.apache.camel.component.file.consumer.FileSetResumeStrategy;
+import org.apache.camel.component.file.consumer.GenericFileResumeStrategy;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -102,9 +104,8 @@ public class FileConsumer extends GenericFileConsumer<File> {
             GenericFile<File> gf
                     = asGenericFile(endpointPath, file, getEndpoint().getCharset(), getEndpoint().isProbeContentType());
 
-            if (resumeStrategy != null) {
-                long offset = resumeStrategy.lastOffset(file);
-                gf.setLastOffset(offset);
+            if (resumeStrategy != null && resumeStrategy instanceof GenericFileResumeStrategy) {
+                resumeStrategy.resume(gf);
             }
 
             if (file.isDirectory()) {
@@ -171,11 +172,11 @@ public class FileConsumer extends GenericFileConsumer<File> {
             }
         }
 
-        if (resumeStrategy != null) {
+        if (resumeStrategy != null && resumeStrategy instanceof FileSetResumeStrategy) {
             FileResumeSet resumeSet = new FileResumeSet(dirFiles);
             resumeStrategy.resume(resumeSet);
 
-            return resumeSet.hasResumables() ? resumeSet.resumedFiles() : dirFiles;
+            return resumeSet.hasResumables() ? resumeSet.resumed() : dirFiles;
         }
 
         return dirFiles;

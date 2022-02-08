@@ -35,13 +35,10 @@ import org.infinispan.query.remote.client.ProtobufMetadataManagerConstants;
 import org.infinispan.query.remote.client.impl.MarshallerRegistration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledOnOs;
-import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@DisabledOnOs(OS.MAC)
 public class InfinispanRemoteQueryConsumerIT extends InfinispanRemoteQueryTestSupport {
     @BindToRegistry("continuousQueryBuilder")
     public static final InfinispanQueryBuilder CONTINUOUS_QUERY_BUILDER

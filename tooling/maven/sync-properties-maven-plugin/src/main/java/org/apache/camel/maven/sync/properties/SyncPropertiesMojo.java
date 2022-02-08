@@ -18,17 +18,17 @@ package org.apache.camel.maven.sync.properties;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 import java.util.TreeMap;
 
+import org.apache.camel.tooling.util.FileUtil;
+import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.OrderedProperties;
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.DefaultArtifact;
-import org.apache.maven.artifact.handler.DefaultArtifactHandler;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
@@ -47,22 +47,10 @@ import org.apache.maven.project.MavenProject;
 public class SyncPropertiesMojo extends AbstractMojo {
 
     /**
-     * The source POM file from which the required properties should be copied.
+     * The base directory
      */
-    @Parameter(defaultValue = "${basedir}/../../../parent/pom.xml")
-    protected File sourcePom;
-
-    /**
-     * The destination POM file to which the required source properties should be copied.
-     */
-    @Parameter(defaultValue = "${basedir}/../../../camel-dependencies/pom.xml")
-    protected File targetPom;
-
-    /**
-     * The license header file that should be inserted at the top of the destination POM file.
-     */
-    @Parameter(defaultValue = "${basedir}/../../etc/apache-header.xml")
-    protected File licenseHeader;
+    @Parameter(defaultValue = "${project.basedir}")
+    protected File baseDir;
 
     /**
      * The Maven project.
@@ -72,12 +60,18 @@ public class SyncPropertiesMojo extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+        File dir = PackageHelper.findCamelDirectory(baseDir, "parent");
+        File sourcePom = new File(dir, "pom.xml");
+        dir = PackageHelper.findCamelDirectory(baseDir, "camel-dependencies");
+        File targetPom = new File(dir, "pom.xml");
+        dir = PackageHelper.findCamelDirectory(baseDir, "etc");
+        File licenseHeader = new File(dir, "apache-header.xml");
+
         try {
             Properties parentProp;
             String generatedVersion;
-            String artifactId = "camel-dependencies";
 
-            getLog().info("Reading source file " + sourcePom.toPath());
+            getLog().debug("Reading source file " + sourcePom.toPath());
             try (FileReader reader = new FileReader(sourcePom)) {
                 MavenXpp3Reader mavenReader = new MavenXpp3Reader();
                 Model model = mavenReader.read(reader);
@@ -87,63 +81,47 @@ public class SyncPropertiesMojo extends AbstractMojo {
                 generatedVersion = sourceProject.getVersion();
             }
 
-            getLog().info("Reading target file " + targetPom.toPath());
-            try (FileReader reader = new FileReader(targetPom)) {
+            InputStream is = null;
+            try {
+                is = SyncPropertiesMojo.class.getResourceAsStream("/camel-dependencies-template.xml");
                 MavenXpp3Reader mavenReader = new MavenXpp3Reader();
-                Model model = mavenReader.read(reader);
+                Model model = mavenReader.read(is);
 
-                // lets sort the properties
+                // sort the properties
                 OrderedProperties op = new OrderedProperties();
                 op.putAll(new TreeMap<>(parentProp));
 
                 MavenProject targetProject = new MavenProject(model);
                 targetProject.getModel().setProperties(op);
-                artifactId = targetProject.getModel().getArtifactId();
 
-                getLog().info("Set version of target pom to " + generatedVersion);
+                getLog().debug("Set version of target pom to " + generatedVersion);
                 targetProject.setVersion(generatedVersion);
 
                 MavenXpp3Writer mavenWriter = new MavenXpp3Writer();
                 mavenWriter.write(new FileWriter(targetPom), model);
+            } finally {
+                IOHelper.close(is);
             }
 
             // add license header in top
-            getLog().info("Add license header...");
+            getLog().debug("Add license header...");
             String text = IOHelper.loadText(new FileInputStream(targetPom));
             String text2 = IOHelper.loadText(new FileInputStream(licenseHeader));
-            StringBuffer sb = new StringBuffer(text);
+            StringBuilder sb = new StringBuilder(text);
             int pos = sb.indexOf("<project");
             sb.insert(pos, text2);
 
             // avoid annoying http -> https change when rebuilding
-            getLog().info("Replacing xsd location ...");
+            getLog().debug("Replacing xsd location ...");
             String out = sb.toString();
             out = out.replace("https://maven.apache.org/xsd/maven-4.0.0.xsd", "http://maven.apache.org/xsd/maven-4.0.0.xsd");
 
             // write lines
-            getLog().info("Writing lines to " + targetPom.toPath());
-            try (FileOutputStream outputStream = new FileOutputStream(targetPom)) {
-                byte[] strToBytes = out.getBytes();
-                outputStream.write(strToBytes);
+            boolean updated = FileUtil.updateFile(targetPom.toPath(), out, StandardCharsets.UTF_8);
+            if (updated) {
+                getLog().info("Updated: " + targetPom);
             }
-
-            // attach the modified pom to the build
-            getLog().info("Attaching BOM artifact ...");
-            getLog().info("Artifact: " + project.getGroupId() + ":" + artifactId + ":" + project.getVersion());
-            DefaultArtifactHandler artifactHandler = new DefaultArtifactHandler("pom");
-            Artifact artifact = new DefaultArtifact(
-                    project.getGroupId(),
-                    artifactId,
-                    project.getVersion(),
-                    "provided",
-                    "pom",
-                    null,
-                    artifactHandler);
-            artifact.setFile(targetPom);
-
-            project.addAttachedArtifact(artifact);
-
-            getLog().info("Finished.");
+            getLog().debug("Finished.");
         } catch (Exception ex) {
             throw new MojoExecutionException("Cannot copy the properties between POMs", ex);
         }

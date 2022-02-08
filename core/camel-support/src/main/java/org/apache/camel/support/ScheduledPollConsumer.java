@@ -78,7 +78,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
     private volatile Throwable lastError;
     private volatile Map<String, Object> lastErrorDetails;
     private final AtomicLong counter = new AtomicLong();
-    private volatile boolean firstPoolDone;
+    private volatile boolean firstPollDone;
 
     public ScheduledPollConsumer(Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -213,6 +213,9 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
                                 done = false;
                                 retryCounter = -1;
                                 LOG.trace("Greedy polling after processing {} messages", polledMessages);
+
+                                // setting firstPollDone to true if greedy polling is enabled
+                                firstPollDone = true;
                             }
                         } else {
                             LOG.debug("Cannot begin polling as pollStrategy returned false: {}", pollStrategy);
@@ -276,7 +279,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
         }
 
         // now first pool is done after the poll is complete
-        firstPoolDone = true;
+        firstPollDone = true;
 
         LOG.trace("doRun() done with idleCounter={}, successCounter={}, errorCounter={}", idleCounter, successCounter,
                 errorCounter);
@@ -478,8 +481,8 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
     /**
      * Whether a first pool attempt has been done (also if the consumer has been restarted)
      */
-    protected boolean isFirstPoolDone() {
-        return firstPoolDone;
+    protected boolean isFirstPollDone() {
+        return firstPollDone;
     }
 
     /**
@@ -574,6 +577,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
     protected void doStart() throws Exception {
         super.doStart();
 
+        boolean newScheduler = false;
         if (scheduler == null) {
             DefaultScheduledPollConsumerScheduler scheduler
                     = new DefaultScheduledPollConsumerScheduler(scheduledExecutorService);
@@ -582,6 +586,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
             scheduler.setTimeUnit(timeUnit);
             scheduler.setUseFixedDelay(useFixedDelay);
             this.scheduler = scheduler;
+            newScheduler = true;
         }
         ObjectHelper.notNull(scheduler, "scheduler", this);
         scheduler.setCamelContext(getEndpoint().getCamelContext());
@@ -605,6 +610,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
                                        + " Unknown parameters=[" + copy + "]");
             }
         }
+        afterConfigureScheduler(scheduler, newScheduler);
 
         scheduler.onInit(this);
 
@@ -616,6 +622,17 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
                 startScheduler();
             }
         }
+    }
+
+    /**
+     * After the scheduler has been configured
+     *
+     * @param scheduler    the scheduler
+     * @param newScheduler true if this consumer created a new scheduler, or false if an existing (shared) scheduler is
+     *                     being used
+     */
+    protected void afterConfigureScheduler(ScheduledPollConsumerScheduler scheduler, boolean newScheduler) {
+        // noop
     }
 
     /**
@@ -640,7 +657,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
         errorCounter = 0;
         successCounter = 0;
         counter.set(0);
-        firstPoolDone = false;
+        firstPollDone = false;
 
         super.doStop();
     }

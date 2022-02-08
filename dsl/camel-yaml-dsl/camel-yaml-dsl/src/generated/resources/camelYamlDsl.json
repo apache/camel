@@ -158,6 +158,9 @@
           "stop" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.StopDefinition"
           },
+          "doSwitch" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.SwitchDefinition"
+          },
           "threads" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.ThreadsDefinition"
           },
@@ -1943,6 +1946,18 @@
         },
         "required" : [ "key", "value" ]
       },
+      "org.apache.camel.model.PropertyExpressionDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "expression" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+          },
+          "key" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "key" ]
+      },
       "org.apache.camel.model.RecipientListDefinition" : {
         "type" : "object",
         "anyOf" : [ {
@@ -2563,7 +2578,7 @@
           "option" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.SagaOptionDefinition"
+              "$ref" : "#/items/definitions/org.apache.camel.model.PropertyExpressionDefinition"
             }
           },
           "propagation" : {
@@ -2580,26 +2595,8 @@
           },
           "timeout" : {
             "type" : "string"
-          },
-          "timeoutInMilliseconds" : {
-            "type" : "number"
           }
         }
-      },
-      "org.apache.camel.model.SagaOptionDefinition" : {
-        "type" : "object",
-        "anyOf" : [ {
-          "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
-        } ],
-        "properties" : {
-          "expression" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
-          },
-          "optionName" : {
-            "type" : "string"
-          }
-        },
-        "required" : [ "optionName" ]
       },
       "org.apache.camel.model.SamplingDefinition" : {
         "type" : "object",
@@ -2853,6 +2850,35 @@
           },
           "inheritErrorHandler" : {
             "type" : "boolean"
+          }
+        }
+      },
+      "org.apache.camel.model.SwitchDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "inheritErrorHandler" : {
+            "type" : "boolean"
+          },
+          "otherwise" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.OtherwiseDefinition"
+          },
+          "steps" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.ProcessorDefinition"
+            }
+          },
+          "when" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.WhenDefinition"
+            }
           }
         }
       },
@@ -7741,9 +7767,6 @@
         "$ref" : "#/items/definitions/org.apache.camel.model.RouteDefinition"
       },
       "routeTemplate" : {
-        "$ref" : "#/items/definitions/org.apache.camel.model.RouteTemplateDefinition"
-      },
-      "template" : {
         "$ref" : "#/items/definitions/org.apache.camel.model.RouteTemplateDefinition"
       },
       "rest" : {

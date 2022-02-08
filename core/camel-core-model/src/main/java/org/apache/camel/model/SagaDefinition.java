@@ -53,11 +53,6 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
     private String completionMode;
 
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Long", deprecationNote = "Use timeout instead")
-    @Deprecated
-    private String timeoutInMilliseconds;
-
-    @XmlAttribute
     @Metadata(javaType = "java.time.Duration")
     private String timeout;
 
@@ -68,7 +63,7 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
     private SagaActionUriDefinition completion;
 
     @XmlElement(name = "option")
-    private List<SagaOptionDefinition> options;
+    private List<PropertyExpressionDefinition> options;
 
     @XmlAttribute
     private String sagaServiceRef;
@@ -190,7 +185,7 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
         this.sagaServiceRef = sagaServiceRef;
     }
 
-    public List<SagaOptionDefinition> getOptions() {
+    public List<PropertyExpressionDefinition> getOptions() {
         return options;
     }
 
@@ -200,7 +195,7 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
      * compensating actions. Option values will be transformed into input headers of the compensation/completion
      * exchange.
      */
-    public void setOptions(List<SagaOptionDefinition> options) {
+    public void setOptions(List<PropertyExpressionDefinition> options) {
         this.options = options;
     }
 
@@ -216,23 +211,11 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
         this.timeout = timeout;
     }
 
-    public String getTimeoutInMilliseconds() {
-        return timeoutInMilliseconds;
-    }
-
-    /**
-     * Set the maximum amount of time for the Saga. After the timeout is expired, the saga will be compensated
-     * automatically (unless a different decision has been taken in the meantime).
-     */
-    public void setTimeoutInMilliseconds(String timeoutInMilliseconds) {
-        this.timeoutInMilliseconds = timeoutInMilliseconds;
-    }
-
     private void addOption(String option, Expression expression) {
         if (this.options == null) {
             this.options = new ArrayList<>();
         }
-        this.options.add(new SagaOptionDefinition(option, expression));
+        this.options.add(new PropertyExpressionDefinition(option, expression));
     }
 
     // Builders

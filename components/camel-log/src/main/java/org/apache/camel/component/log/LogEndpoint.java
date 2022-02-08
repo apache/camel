@@ -268,7 +268,7 @@ public class LogEndpoint extends ProcessorEndpoint implements LineNumberAware {
             if (sourceLocationLoggerName) {
                 name = getLineNumberLoggerName(this);
                 if (name == null) {
-                    loggerName = name;
+                    name = loggerName;
                 }
             }
             camelLogger = new CamelLogger(name, loggingLevel, getMarker());

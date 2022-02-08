@@ -58,4 +58,18 @@ public final class PulsarUtils {
 
         return new ConcurrentLinkedQueue<>();
     }
+
+    /**
+     * Pauses the Pulsar consumers.
+     *
+     * Once paused, a Pulsar consumer does not request any more messages from the broker. However, it will still receive
+     * as many messages as it had already requested, which is equal to at most `consumerQueueSize`.
+     */
+    public static void pauseConsumers(final Queue<Consumer<byte[]>> consumers) {
+        consumers.forEach(Consumer::pause);
+    }
+
+    public static void resumeConsumers(final Queue<Consumer<byte[]>> consumers) {
+        consumers.forEach(Consumer::resume);
+    }
 }

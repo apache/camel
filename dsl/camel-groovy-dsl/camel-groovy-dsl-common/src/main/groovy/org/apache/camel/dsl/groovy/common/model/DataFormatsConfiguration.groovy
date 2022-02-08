@@ -32,7 +32,7 @@ class DataFormatsConfiguration {
             throw new IllegalArgumentException("Unable to find a dataformat with name: ${name}")
         }
 
-        // Just make sure the closure context is belong to component
+        // Just make sure the closure context is belong to dataformat
         callable.resolveStrategy = Closure.DELEGATE_ONLY
         callable.delegate = new BeanConfiguration(context, target)
         callable.call()

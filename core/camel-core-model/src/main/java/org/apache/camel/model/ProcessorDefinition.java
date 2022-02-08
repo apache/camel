@@ -1152,6 +1152,24 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
+     * Ends the current block and returns back to the {@link CatchDefinition doCatch()} DSL.
+     *
+     * @return the builder
+     */
+    public CatchDefinition endDoCatch() {
+        ProcessorDefinition<?> def = this;
+
+        // are we already a doCatch?
+        if (def instanceof CatchDefinition) {
+            return (CatchDefinition) def;
+        }
+
+        // okay end this and get back to the try
+        def = end();
+        return (CatchDefinition) def;
+    }
+
+    /**
      * Ends the current block and returns back to the {@link CircuitBreakerDefinition circuitBreaker()} DSL.
      *
      * @return the builder
@@ -1451,6 +1469,18 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public ChoiceDefinition choice() {
         ChoiceDefinition answer = new ChoiceDefinition();
+        addOutput(answer);
+        return answer;
+    }
+
+    /**
+     * An optimized <a href="http://camel.apache.org/content-based-router.html">Content Based Router EIP:</a> Optimized
+     * during startup to select one predicate that will always be used.
+     *
+     * @return the builder for a switch expression
+     */
+    public SwitchDefinition doSwitch() {
+        SwitchDefinition answer = new SwitchDefinition();
         addOutput(answer);
         return answer;
     }

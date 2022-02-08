@@ -23,11 +23,17 @@ import org.apache.camel.component.couchdb.CouchDbClientWrapper;
  * A resume strategy that resumes from the last update sequence
  */
 public final class LatestUpdateSequenceResumeStrategy implements CouchDbResumeStrategy {
+    private CouchDbResumable resumable;
 
     @Override
-    public void resume(CouchDbResumable resumable) {
+    public void setResumable(CouchDbResumable resumable) {
+        this.resumable = resumable;
+    }
+
+    @Override
+    public void resume() {
         CouchDbClientWrapper clientWrapper = resumable.getClientWrapper();
 
-        resumable.setLastOffset(clientWrapper.getLatestUpdateSequence());
+        resumable.updateLastOffset(clientWrapper.getLatestUpdateSequence());
     }
 }

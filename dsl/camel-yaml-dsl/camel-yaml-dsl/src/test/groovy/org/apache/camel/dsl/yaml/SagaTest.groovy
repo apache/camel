@@ -17,9 +17,9 @@
 package org.apache.camel.dsl.yaml
 
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
+import org.apache.camel.model.PropertyExpressionDefinition
 import org.apache.camel.model.SagaActionUriDefinition
 import org.apache.camel.model.SagaDefinition
-import org.apache.camel.model.SagaOptionDefinition
 import org.apache.camel.model.ToDefinition
 import org.apache.camel.model.language.ExpressionDefinition
 import org.apache.camel.spi.Resource
@@ -48,20 +48,6 @@ class SagaTest extends YamlTestSupport {
                 with(outputs[1], ToDefinition) {
                     endpointUri == 'direct:something'
                 }
-                with(options[0], SagaOptionDefinition) {
-                    optionName == 'o1'
-                    with(expression, ExpressionDefinition) {
-                        language == 'simple'
-                        expression == '${body}'
-                    }
-                }
-                with(options[1], SagaOptionDefinition) {
-                    optionName == 'o2'
-                    with(expression, ExpressionDefinition) {
-                        language == 'simple'
-                        expression == '${body}'
-                    }
-                }
             }
         where:
             resource << [
@@ -71,7 +57,7 @@ class SagaTest extends YamlTestSupport {
                         steps:    
                           - saga:  
                              propagation: "MANDATORY"
-                             completion-mode: "MANUAL"
+                             completionMode: "MANUAL"
                              compensation: 
                                  uri: "direct:compensation"
                              completion:
@@ -79,9 +65,9 @@ class SagaTest extends YamlTestSupport {
                              steps:
                                - to: "direct:something"
                              option:
-                               - option-name: o1
+                               - key: o1
                                  simple: "${body}" 
-                               - option-name: o2
+                               - key: o2
                                  expression:
                                    simple: "${body}"        
                           - to: "mock:result"
@@ -92,7 +78,7 @@ class SagaTest extends YamlTestSupport {
                         steps:    
                           - saga:  
                              propagation: "MANDATORY"
-                             completion-mode: "MANUAL"
+                             completionMode: "MANUAL"
                              compensation: 
                                  uri: "direct"
                                  parameters:
@@ -102,9 +88,9 @@ class SagaTest extends YamlTestSupport {
                              steps:
                                - to: "direct:something"
                              option:
-                               - option-name: o1
+                               - key: o1
                                  simple: "${body}" 
-                               - option-name: o2
+                               - key: o2
                                  expression:
                                    simple: "${body}"        
                           - to: "mock:result"
@@ -115,7 +101,7 @@ class SagaTest extends YamlTestSupport {
                         steps:    
                           - saga:  
                              propagation: "MANDATORY"
-                             completion-mode: "MANUAL"
+                             completionMode: "MANUAL"
                              compensation: 
                                  parameters:
                                    name: compensation
@@ -125,9 +111,9 @@ class SagaTest extends YamlTestSupport {
                              steps:
                                - to: "direct:something"
                              option:
-                               - option-name: o1
+                               - key: o1
                                  simple: "${body}" 
-                               - option-name: o2
+                               - key: o2
                                  expression:
                                    simple: "${body}"        
                           - to: "mock:result"
@@ -138,15 +124,15 @@ class SagaTest extends YamlTestSupport {
                         steps:    
                           - saga: 
                              propagation: "MANDATORY"
-                             completion-mode: "MANUAL"
+                             completionMode: "MANUAL"
                              compensation: "direct:compensation"
                              completion: "direct:completion"
                              steps:
                                - to: "direct:something"    
                              option:
-                               - option-name: o1
+                               - key: o1
                                  simple: "${body}" 
-                               - option-name: o2
+                               - key: o2
                                  expression:
                                    simple: "${body}"        
                           - to: "mock:result"
@@ -157,7 +143,7 @@ class SagaTest extends YamlTestSupport {
                         steps:    
                           - saga: 
                              propagation: "MANDATORY"
-                             completion-mode: "MANUAL"
+                             completionMode: "MANUAL"
                              compensation: 
                                direct:
                                  name: "compensation"
@@ -167,9 +153,9 @@ class SagaTest extends YamlTestSupport {
                              steps:
                                - to: "direct:something"  
                              option:
-                               - option-name: o1
+                               - key: o1
                                  simple: "${body}" 
-                               - option-name: o2
+                               - key: o2
                                  expression:
                                    simple: "${body}"          
                           - to: "mock:result"

@@ -19,64 +19,48 @@ package org.apache.camel.component.dynamicrouter;
 import java.util.Collections;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.component.dynamicrouter.support.CamelDynamicRouterTestSupport;
-import org.junit.jupiter.api.Assertions;
+import org.apache.camel.component.dynamicrouter.support.DynamicRouterTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class DynamicRouterComponentTest extends CamelDynamicRouterTestSupport {
+public class DynamicRouterComponentTest extends DynamicRouterTestSupport {
 
     @BeforeEach
     void localSetup() throws Exception {
         super.setup();
         component = new DynamicRouterComponent(
                 () -> endpointFactory, () -> processorFactory, () -> controlChannelProcessorFactory, () -> producerFactory,
-                () -> consumerFactory, () -> filterProcessorFactory);
+                () -> controlProducerFactory, () -> filterProcessorFactory);
     }
 
     @Test
-    void createEndpoint() throws Exception {
+    void testCreateEndpoint() throws Exception {
         component.setCamelContext(context);
-        Endpoint actualEndpoint = component.createEndpoint("testname", "remaining", Collections.emptyMap());
+        Endpoint actualEndpoint = component.createEndpoint("dynamic-router:testname", "remaining", Collections.emptyMap());
         assertEquals(endpoint, actualEndpoint);
     }
 
     @Test
-    void addConsumer() {
-        component.addConsumer(DYNAMIC_ROUTER_CHANNEL, consumer);
-        assertEquals(consumer, component.getConsumer(DYNAMIC_ROUTER_CHANNEL));
+    void testCreateEndpointWithEmptyRemainingError() {
+        component.setCamelContext(context);
+        assertThrows(IllegalArgumentException.class,
+                () -> component.createEndpoint("dynamic-router:testname", "", Collections.emptyMap()));
     }
 
     @Test
-    void getConsumer() {
-        addConsumer();
-        final DynamicRouterConsumer result = component.getConsumer(DYNAMIC_ROUTER_CHANNEL);
-        Assertions.assertEquals(consumer, result);
+    void testAddRoutingProcessor() {
+        component.addRoutingProcessor(DYNAMIC_ROUTER_CHANNEL, processor);
+        assertEquals(processor, component.getRoutingProcessor(DYNAMIC_ROUTER_CHANNEL));
     }
 
     @Test
-    void getConsumerBlock() throws InterruptedException {
-        addConsumer();
-        final DynamicRouterConsumer result = component.getConsumer(DYNAMIC_ROUTER_CHANNEL, true, endpoint.getTimeout());
-        Assertions.assertEquals(consumer, result);
-    }
+    void testAddRoutingProcessorWithSecondProcessorForChannelError() {
+        component.addRoutingProcessor(DYNAMIC_ROUTER_CHANNEL, processor);
+        assertEquals(processor, component.getRoutingProcessor(DYNAMIC_ROUTER_CHANNEL));
+        assertThrows(IllegalArgumentException.class, () -> component.addRoutingProcessor(DYNAMIC_ROUTER_CHANNEL, processor));
 
-    @Test
-    void addDuplicateConsumer() {
-        component.addConsumer(DYNAMIC_ROUTER_CHANNEL, consumer);
-        assertEquals(consumer, component.getConsumer(DYNAMIC_ROUTER_CHANNEL));
-        assertThrows(IllegalArgumentException.class, () -> component.addConsumer(DYNAMIC_ROUTER_CHANNEL, consumer));
-    }
-
-    @Test
-    void removeConsumer() {
-        component.addConsumer(DYNAMIC_ROUTER_CHANNEL, consumer);
-        assertEquals(consumer, component.getConsumer(DYNAMIC_ROUTER_CHANNEL));
-        component.removeConsumer(DYNAMIC_ROUTER_CHANNEL, consumer);
-        assertNull(component.getConsumer(DYNAMIC_ROUTER_CHANNEL));
     }
 }

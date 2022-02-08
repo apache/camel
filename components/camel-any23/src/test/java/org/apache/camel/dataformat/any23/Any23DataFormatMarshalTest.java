@@ -51,7 +51,10 @@ public class Any23DataFormatMarshalTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                Any23DataFormat df = new Any23DataFormat().setBaseURI(baseURI).setOutputFormat(Any23OutputFormat.RDF4JMODEL);
+                Any23DataFormat df = new Any23DataFormat();
+                df.setBaseUri(baseURI);
+                df.setOutputFormat(Any23OutputFormat.RDF4JMODEL);
+
                 from("direct:start").unmarshal(df).to("direct:r1");
                 from("direct:r1").marshal(df).to("direct:r2");
                 from("direct:r2").unmarshal(df).to("mock:result");

@@ -40,43 +40,40 @@ import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.Rio;
 
-/**
- * Dataformat for any23 .. This dataformat is intended to convert HTML from a site (or file) into rdf.
- */
 @Dataformat("any23")
 public class Any23DataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
     private Any23 any23;
 
-    private Map<String, String> configurations;
+    private Map<String, String> configuration;
     private List<String> extractors;
     private Any23OutputFormat outputFormat;
-    private String baseURI;
+    private String baseUri;
 
     public Any23DataFormat() {
     }
 
     public Any23DataFormat(String baseURI) {
-        this.baseURI = baseURI;
+        this.baseUri = baseURI;
     }
 
     public Any23DataFormat(Any23OutputFormat outputFormat, String baseURI) {
         this.outputFormat = outputFormat;
-        this.baseURI = baseURI;
+        this.baseUri = baseURI;
     }
 
-    public Any23DataFormat(Map<String, String> configurations, Any23OutputFormat outputFormat, String baseURI) {
-        this.configurations = configurations;
+    public Any23DataFormat(Map<String, String> configuration, Any23OutputFormat outputFormat, String baseURI) {
+        this.configuration = configuration;
         this.outputFormat = outputFormat;
-        this.baseURI = baseURI;
+        this.baseUri = baseURI;
     }
 
-    public Any23DataFormat(Map<String, String> configurations, List<String> extractors, Any23OutputFormat outputFormat,
+    public Any23DataFormat(Map<String, String> configuration, List<String> extractors, Any23OutputFormat outputFormat,
                            String baseURI) {
-        this.configurations = configurations;
+        this.configuration = configuration;
         this.extractors = extractors;
         this.outputFormat = outputFormat;
-        this.baseURI = baseURI;
+        this.baseUri = baseURI;
     }
 
     @Override
@@ -103,7 +100,7 @@ public class Any23DataFormat extends ServiceSupport implements DataFormat, DataF
      * Unmarshal the data
      */
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
-        ByteArrayDocumentSource source = new ByteArrayDocumentSource(inputStream, this.baseURI, null);
+        ByteArrayDocumentSource source = new ByteArrayDocumentSource(inputStream, this.baseUri, null);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         TripleHandler handler = Any23Utils.obtainHandler(outputFormat, out);
         any23.extract(source, handler);
@@ -128,9 +125,9 @@ public class Any23DataFormat extends ServiceSupport implements DataFormat, DataF
             extrArray = new String[extractors.size()];
             extrArray = extractors.toArray(extrArray);
         }
-        if (configurations != null && !configurations.isEmpty()) {
+        if (configuration != null && !configuration.isEmpty()) {
             conf = DefaultConfiguration.copy();
-            for (Entry<String, String> entry : configurations.entrySet()) {
+            for (Entry<String, String> entry : configuration.entrySet()) {
                 conf.setProperty(entry.getKey(), entry.getValue());
             }
         }
@@ -158,45 +155,40 @@ public class Any23DataFormat extends ServiceSupport implements DataFormat, DataF
         return any23;
     }
 
-    public Any23DataFormat setAny23(Any23 any23) {
+    public void setAny23(Any23 any23) {
         this.any23 = any23;
-        return this;
     }
 
-    public Map<String, String> getConfigurations() {
-        return configurations;
+    public Map<String, String> getConfiguration() {
+        return configuration;
     }
 
-    public Any23DataFormat setConfigurations(Map<String, String> configurations) {
-        this.configurations = configurations;
-        return this;
+    public void setConfiguration(Map<String, String> configuration) {
+        this.configuration = configuration;
     }
 
     public List<String> getExtractors() {
         return extractors;
     }
 
-    public Any23DataFormat setExtractors(List<String> extractors) {
+    public void setExtractors(List<String> extractors) {
         this.extractors = extractors;
-        return this;
     }
 
     public Any23OutputFormat getOutputFormat() {
         return outputFormat;
     }
 
-    public Any23DataFormat setOutputFormat(Any23OutputFormat outputFormat) {
+    public void setOutputFormat(Any23OutputFormat outputFormat) {
         this.outputFormat = outputFormat;
-        return this;
     }
 
-    public String getBaseURI() {
-        return baseURI;
+    public String getBaseUri() {
+        return baseUri;
     }
 
-    public Any23DataFormat setBaseURI(String baseURI) {
-        this.baseURI = baseURI;
-        return this;
+    public void setBaseUri(String baseUri) {
+        this.baseUri = baseUri;
     }
 
 }
