@@ -50,6 +50,9 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
                         .parseRouteTemplatesDefinition()
                         .ifPresent(this::setRouteTemplateCollection);
                 new ModelParser(resource, NAMESPACE)
+                        .parseTemplatedRoutesDefinition()
+                        .ifPresent(this::setTemplatedRouteCollection);
+                new ModelParser(resource, NAMESPACE)
                         .parseRestsDefinition()
                         .ifPresent(this::setRestCollection);
                 new ModelParser(resource, NAMESPACE)

@@ -19,39 +19,15 @@ package org.apache.camel.model;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlValue;
 
 import org.apache.camel.spi.Metadata;
 
 /**
- * A route template script (local bean) when using scripting languages such as groovy
+ * A bean as input of a route template (local bean)
  */
 @Metadata(label = "configuration")
-@XmlRootElement(name = "templateScript")
+@XmlRootElement(name = "templatedRouteBean")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RouteTemplateScriptDefinition {
-    @XmlValue
-    private String script;
-
-    public RouteTemplateScriptDefinition() {
-    }
-
-    public RouteTemplateScriptDefinition(String script) {
-        this.script = script;
-    }
-
-    public String getScript() {
-        return script;
-    }
-
-    /**
-     * The script to execute that creates the bean when using scripting languages.
-     *
-     * If the script use the prefix <tt>resource:</tt> such as <tt>resource:classpath:com/foo/myscript.groovy</tt>,
-     * <tt>resource:file:/var/myscript.groovy</tt>, then its loaded from the external resource.
-     */
-    public void setScript(String script) {
-        this.script = script;
-    }
-
+public class TemplatedRouteBeanDefinition
+        extends BeanFactoryDefinition<TemplatedRouteBeanDefinition, TemplatedRouteDefinition> {
 }

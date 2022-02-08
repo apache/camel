@@ -25,6 +25,7 @@ import org.apache.camel.dsl.support.RouteBuilderLoaderSupport;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.model.TemplatedRoutesDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.RoutesLoader;
@@ -32,6 +33,7 @@ import org.apache.camel.spi.annotations.RoutesLoader;
 import static org.apache.camel.xml.jaxb.JaxbHelper.loadRestsDefinition;
 import static org.apache.camel.xml.jaxb.JaxbHelper.loadRouteTemplatesDefinition;
 import static org.apache.camel.xml.jaxb.JaxbHelper.loadRoutesDefinition;
+import static org.apache.camel.xml.jaxb.JaxbHelper.loadTemplatedRoutesDefinition;
 
 @ManagedResource(description = "Managed JAXB XML RoutesBuilderLoader")
 @RoutesLoader(JaxbXmlRoutesBuilderLoader.EXTENSION)
@@ -52,6 +54,13 @@ public class JaxbXmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
                     RouteTemplatesDefinition templates = loadRouteTemplatesDefinition(getCamelContext(), is);
                     if (templates != null) {
                         setRouteTemplateCollection(templates);
+                    }
+                }
+
+                try (InputStream is = resource.getInputStream()) {
+                    TemplatedRoutesDefinition templates = loadTemplatedRoutesDefinition(getCamelContext(), is);
+                    if (templates != null) {
+                        setTemplatedRouteCollection(templates);
                     }
                 }
 

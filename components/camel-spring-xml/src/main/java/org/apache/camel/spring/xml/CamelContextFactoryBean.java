@@ -63,6 +63,7 @@ import org.apache.camel.model.RouteContextRefDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateContextRefDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
+import org.apache.camel.model.TemplatedRouteDefinition;
 import org.apache.camel.model.ThreadPoolProfileDefinition;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
@@ -279,6 +280,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     private List<RouteConfigurationDefinition> routeConfigurations = new ArrayList<>();
     @XmlElement(name = "routeTemplate")
     private List<RouteTemplateDefinition> routeTemplates = new ArrayList<>();
+    @XmlElement(name = "templatedRoute")
+    private List<TemplatedRouteDefinition> templatedRoutes = new ArrayList<>();
     @XmlElement(name = "route")
     private List<RouteDefinition> routes = new ArrayList<>();
     @XmlTransient
@@ -596,6 +599,19 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     @Override
     public void setRouteTemplates(List<RouteTemplateDefinition> routeTemplates) {
         this.routeTemplates = routeTemplates;
+    }
+
+    @Override
+    public List<TemplatedRouteDefinition> getTemplatedRoutes() {
+        return templatedRoutes;
+    }
+
+    /**
+     * Contains the Camel templated routes
+     */
+    @Override
+    public void setTemplatedRoutes(List<TemplatedRouteDefinition> templatedRoutes) {
+        this.templatedRoutes = templatedRoutes;
     }
 
     @Override

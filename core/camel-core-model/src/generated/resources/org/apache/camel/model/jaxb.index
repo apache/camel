@@ -73,7 +73,6 @@ RouteTemplateBeanDefinition
 RouteTemplateContextRefDefinition
 RouteTemplateDefinition
 RouteTemplateParameterDefinition
-RouteTemplateScriptDefinition
 RouteTemplatesDefinition
 RoutesDefinition
 RoutingSlipDefinition
@@ -91,6 +90,10 @@ SplitDefinition
 StepDefinition
 StopDefinition
 SwitchDefinition
+TemplatedRouteBeanDefinition
+TemplatedRouteDefinition
+TemplatedRouteParameterDefinition
+TemplatedRoutesDefinition
 ThreadPoolProfileDefinition
 ThreadsDefinition
 ThrottleDefinition

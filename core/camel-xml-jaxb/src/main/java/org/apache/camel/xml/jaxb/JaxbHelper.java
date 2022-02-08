@@ -47,6 +47,8 @@ import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.SendDefinition;
+import org.apache.camel.model.TemplatedRouteDefinition;
+import org.apache.camel.model.TemplatedRoutesDefinition;
 import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.rest.RestDefinition;
@@ -314,6 +316,50 @@ public final class JaxbHelper {
             for (RouteTemplateDefinition route : answer.getRouteTemplates()) {
                 applyNamespaces(route.getRoute(), namespaces);
             }
+        } else {
+            // ignore not supported type
+            return null;
+        }
+
+        return answer;
+    }
+
+    /**
+     * Un-marshals the content of the input stream to an instance of {@link TemplatedRoutesDefinition}.
+     * 
+     * @param  context     the Camel context from which the JAXBContext is extracted
+     * @param  inputStream the input stream to unmarshal
+     * @return             the content unmarshalled as a {@link TemplatedRoutesDefinition}.
+     * @throws Exception   if an exception occurs while unmarshalling
+     */
+    public static TemplatedRoutesDefinition loadTemplatedRoutesDefinition(CamelContext context, InputStream inputStream)
+            throws Exception {
+        XmlConverter xmlConverter = newXmlConverter(context);
+        Document dom = xmlConverter.toDOMDocument(inputStream, null);
+
+        JAXBContext jaxbContext = getJAXBContext(context);
+
+        Map<String, String> namespaces = new LinkedHashMap<>();
+        extractNamespaces(dom, namespaces);
+        if (!namespaces.containsValue(CAMEL_NS)) {
+            addNamespaceToDom(dom);
+        }
+
+        Binder<Node> binder = jaxbContext.createBinder();
+        Object result = binder.unmarshal(dom);
+
+        if (result == null) {
+            throw new JAXBException("Cannot unmarshal to TemplatedRoutesDefinition using JAXB");
+        }
+
+        // can either be routes or a single route
+        TemplatedRoutesDefinition answer;
+        if (result instanceof TemplatedRouteDefinition) {
+            TemplatedRouteDefinition templatedRoute = (TemplatedRouteDefinition) result;
+            answer = new TemplatedRoutesDefinition();
+            answer.getTemplatedRoutes().add(templatedRoute);
+        } else if (result instanceof TemplatedRoutesDefinition) {
+            answer = (TemplatedRoutesDefinition) result;
         } else {
             // ignore not supported type
             return null;

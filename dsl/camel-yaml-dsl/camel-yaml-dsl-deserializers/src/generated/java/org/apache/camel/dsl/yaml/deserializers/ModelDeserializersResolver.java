@@ -379,9 +379,6 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "template-parameter": return new ModelDeserializers.RouteTemplateParameterDefinitionDeserializer();
             case "templateParameter": return new ModelDeserializers.RouteTemplateParameterDefinitionDeserializer();
             case "org.apache.camel.model.RouteTemplateParameterDefinition": return new ModelDeserializers.RouteTemplateParameterDefinitionDeserializer();
-            case "template-script": return new ModelDeserializers.RouteTemplateScriptDefinitionDeserializer();
-            case "templateScript": return new ModelDeserializers.RouteTemplateScriptDefinitionDeserializer();
-            case "org.apache.camel.model.RouteTemplateScriptDefinition": return new ModelDeserializers.RouteTemplateScriptDefinitionDeserializer();
             case "routing-slip": return new ModelDeserializers.RoutingSlipDefinitionDeserializer();
             case "routingSlip": return new ModelDeserializers.RoutingSlipDefinitionDeserializer();
             case "org.apache.camel.model.RoutingSlipDefinition": return new ModelDeserializers.RoutingSlipDefinitionDeserializer();
@@ -458,6 +455,9 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "tar-file": return new ModelDeserializers.TarFileDataFormatDeserializer();
             case "tarFile": return new ModelDeserializers.TarFileDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.TarFileDataFormat": return new ModelDeserializers.TarFileDataFormatDeserializer();
+            case "templated-route-parameter": return new ModelDeserializers.TemplatedRouteParameterDefinitionDeserializer();
+            case "templatedRouteParameter": return new ModelDeserializers.TemplatedRouteParameterDefinitionDeserializer();
+            case "org.apache.camel.model.TemplatedRouteParameterDefinition": return new ModelDeserializers.TemplatedRouteParameterDefinitionDeserializer();
             case "thread-pool-profile": return new ModelDeserializers.ThreadPoolProfileDefinitionDeserializer();
             case "threadPoolProfile": return new ModelDeserializers.ThreadPoolProfileDefinitionDeserializer();
             case "org.apache.camel.model.ThreadPoolProfileDefinition": return new ModelDeserializers.ThreadPoolProfileDefinitionDeserializer();

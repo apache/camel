@@ -43,6 +43,8 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.model.TemplatedRouteDefinition;
+import org.apache.camel.model.TemplatedRoutesDefinition;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
@@ -75,6 +77,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     private RestConfigurationDefinition restConfiguration;
     private RoutesDefinition routeCollection = new RoutesDefinition();
     private RouteTemplatesDefinition routeTemplateCollection = new RouteTemplatesDefinition();
+    private TemplatedRoutesDefinition templatedRouteCollection = new TemplatedRoutesDefinition();
 
     public RouteBuilder() {
         this(null);
@@ -237,6 +240,18 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         getRouteTemplateCollection().setCamelContext(getContext());
         RouteTemplateDefinition answer = getRouteTemplateCollection().routeTemplate(id);
         configureRouteTemplate(answer);
+        return answer;
+    }
+
+    /**
+     * Creates a new templated route
+     *
+     * @return the builder
+     */
+    public TemplatedRouteDefinition templatedRoute(String routeTemplateId) {
+        getTemplatedRouteCollection().setCamelContext(getContext());
+        TemplatedRouteDefinition answer = getTemplatedRouteCollection().templatedRoute(routeTemplateId);
+        configureTemplatedRoute(answer);
         return answer;
     }
 
@@ -505,6 +520,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         populateTransformers();
         populateValidators();
         populateRouteTemplates();
+        populateTemplatedRoutes();
 
         // ensure routes are prepared before being populated
         for (RouteDefinition route : routeCollection.getRoutes()) {
@@ -630,29 +646,38 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         }
     }
 
-    protected void populateRouteTemplates() throws Exception {
+    protected void populateTemplatedRoutes() throws Exception {
+        CamelContext camelContext = notNullCamelContext();
+        getTemplatedRouteCollection().setCamelContext(camelContext);
+        camelContext.getExtension(Model.class).addRouteFromTemplatedRoutes(getTemplatedRouteCollection().getTemplatedRoutes());
+    }
+
+    /**
+     * @return                          the current context if it is not {@code null}
+     * @throws IllegalArgumentException if the {@code CamelContext} has not been set.
+     */
+    private CamelContext notNullCamelContext() {
         CamelContext camelContext = getContext();
         if (camelContext == null) {
             throw new IllegalArgumentException("CamelContext has not been injected!");
         }
+        return camelContext;
+    }
+
+    protected void populateRouteTemplates() throws Exception {
+        CamelContext camelContext = notNullCamelContext();
         getRouteTemplateCollection().setCamelContext(camelContext);
         camelContext.getExtension(Model.class).addRouteTemplateDefinitions(getRouteTemplateCollection().getRouteTemplates());
     }
 
     protected void populateRoutes() throws Exception {
-        CamelContext camelContext = getContext();
-        if (camelContext == null) {
-            throw new IllegalArgumentException("CamelContext has not been injected!");
-        }
+        CamelContext camelContext = notNullCamelContext();
         getRouteCollection().setCamelContext(camelContext);
         camelContext.getExtension(Model.class).addRouteDefinitions(getRouteCollection().getRoutes());
     }
 
     protected void populateOrUpdateRoutes() throws Exception {
-        CamelContext camelContext = getContext();
-        if (camelContext == null) {
-            throw new IllegalArgumentException("CamelContext has not been injected!");
-        }
+        CamelContext camelContext = notNullCamelContext();
         getRouteCollection().setCamelContext(camelContext);
         // must stop and remove existing running routes
         for (RouteDefinition route : getRouteCollection().getRoutes()) {
@@ -663,10 +688,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     }
 
     protected void populateRests() throws Exception {
-        CamelContext camelContext = getContext();
-        if (camelContext == null) {
-            throw new IllegalArgumentException("CamelContext has not been injected!");
-        }
+        CamelContext camelContext = notNullCamelContext();
         getRestCollection().setCamelContext(camelContext);
 
         // setup rest configuration before adding the rests
@@ -708,20 +730,14 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     }
 
     protected void populateTransformers() {
-        CamelContext camelContext = getContext();
-        if (camelContext == null) {
-            throw new IllegalArgumentException("CamelContext has not been injected!");
-        }
+        CamelContext camelContext = notNullCamelContext();
         for (TransformerBuilder tdb : transformerBuilders) {
             tdb.configure(camelContext);
         }
     }
 
     protected void populateValidators() {
-        CamelContext camelContext = getContext();
-        if (camelContext == null) {
-            throw new IllegalArgumentException("CamelContext has not been injected!");
-        }
+        CamelContext camelContext = notNullCamelContext();
         for (ValidatorBuilder vb : validatorBuilders) {
             vb.configure(camelContext);
         }
@@ -755,6 +771,14 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         this.routeTemplateCollection = routeTemplateCollection;
     }
 
+    public TemplatedRoutesDefinition getTemplatedRouteCollection() {
+        return templatedRouteCollection;
+    }
+
+    public void setTemplatedRouteCollection(TemplatedRoutesDefinition templatedRouteCollection) {
+        this.templatedRouteCollection = templatedRouteCollection;
+    }
+
     protected void configureRest(RestDefinition rest) {
         CamelContextAware.trySetCamelContext(rest, getContext());
     }
@@ -765,6 +789,10 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
 
     protected void configureRouteTemplate(RouteTemplateDefinition routeTemplate) {
         CamelContextAware.trySetCamelContext(routeTemplate, getContext());
+    }
+
+    protected void configureTemplatedRoute(CamelContextAware templatedRoute) {
+        CamelContextAware.trySetCamelContext(templatedRoute, getContext());
     }
 
     protected void configureRouteConfiguration(RouteConfigurationDefinition routesConfiguration) {
