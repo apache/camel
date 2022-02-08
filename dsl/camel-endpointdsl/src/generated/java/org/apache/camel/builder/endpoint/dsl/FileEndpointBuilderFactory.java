@@ -2393,44 +2393,6 @@ public interface FileEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set a resume strategy for files. This makes it possible to define a
-         * strategy for resuming reading files after the last point before
-         * stopping the application. See the FileConsumerResumeStrategy for
-         * implementation details.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.file.consumer.FileConsumerResumeStrategy&lt;/code&gt; type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param resumeStrategy the value to set
-         * @return the dsl builder
-         */
-        default AdvancedFileEndpointConsumerBuilder resumeStrategy(
-                org.apache.camel.component.file.consumer.FileConsumerResumeStrategy resumeStrategy) {
-            doSetProperty("resumeStrategy", resumeStrategy);
-            return this;
-        }
-        /**
-         * Set a resume strategy for files. This makes it possible to define a
-         * strategy for resuming reading files after the last point before
-         * stopping the application. See the FileConsumerResumeStrategy for
-         * implementation details.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.file.consumer.FileConsumerResumeStrategy&lt;/code&gt; type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param resumeStrategy the value to set
-         * @return the dsl builder
-         */
-        default AdvancedFileEndpointConsumerBuilder resumeStrategy(
-                String resumeStrategy) {
-            doSetProperty("resumeStrategy", resumeStrategy);
-            return this;
-        }
-        /**
          * Whether the starting directory must exist. Mind that the autoCreate
          * option is default enabled, which means the starting directory is
          * normally auto created if it doesn't exist. You can disable autoCreate

@@ -18,6 +18,7 @@ package org.apache.camel.component.file;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import org.apache.camel.ContextTestSupport;
@@ -26,6 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.consumer.FileResumeSet;
 import org.apache.camel.component.file.consumer.FileSetResumeStrategy;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.resume.Resumables;
 import org.junit.jupiter.api.Test;
 
 public class FileConsumerResumeStrategyTest extends ContextTestSupport {
@@ -54,18 +56,25 @@ public class FileConsumerResumeStrategyTest extends ContextTestSupport {
         }
     }
 
+    private static Map<String, Object> headerFor(int num) {
+        String name = num + ".txt";
+
+        return Map.of(Exchange.FILE_NAME, name, "id", Resumables.of(name, num));
+    }
+
     @Test
     public void testResume() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("3", "4", "5", "6");
 
-        template.sendBodyAndHeader(fileUri("resume"), "0", Exchange.FILE_NAME, "0.txt");
-        template.sendBodyAndHeader(fileUri("resume"), "1", Exchange.FILE_NAME, "1.txt");
-        template.sendBodyAndHeader(fileUri("resume"), "2", Exchange.FILE_NAME, "2.txt");
-        template.sendBodyAndHeader(fileUri("resume"), "3", Exchange.FILE_NAME, "3.txt");
-        template.sendBodyAndHeader(fileUri("resume"), "4", Exchange.FILE_NAME, "4.txt");
-        template.sendBodyAndHeader(fileUri("resume"), "5", Exchange.FILE_NAME, "5.txt");
-        template.sendBodyAndHeader(fileUri("resume"), "6", Exchange.FILE_NAME, "6.txt");
+
+        template.sendBodyAndHeaders(fileUri("resume"), "0", headerFor(0));
+        template.sendBodyAndHeaders(fileUri("resume"), "1", headerFor(1));
+        template.sendBodyAndHeaders(fileUri("resume"), "2", headerFor(2));
+        template.sendBodyAndHeaders(fileUri("resume"), "3", headerFor(3));
+        template.sendBodyAndHeaders(fileUri("resume"), "4", headerFor(4));
+        template.sendBodyAndHeaders(fileUri("resume"), "5", headerFor(5));
+        template.sendBodyAndHeaders(fileUri("resume"), "6", headerFor(6));
 
         // only expect 4 of the 6 sent
         assertMockEndpointsSatisfied();
@@ -79,7 +88,8 @@ public class FileConsumerResumeStrategyTest extends ContextTestSupport {
 
                 bindToRegistry("testResumeStrategy", new TestResumeStrategy());
 
-                from(fileUri("resume?noop=true&recursive=true&resumeStrategy=#testResumeStrategy"))
+                from(fileUri("resume?noop=true&recursive=true"))
+                        .resumable().header("id").resumableStrategyRef("testResumeStrategy")
                         .convertBodyTo(String.class)
                         .to("mock:result");
             }

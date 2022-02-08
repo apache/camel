@@ -21,7 +21,7 @@ public class FileEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(95);
+        Set<String> props = new HashSet<>(94);
         props.add("renameUsingCopy");
         props.add("moveExistingFileStrategy");
         props.add("fileName");
@@ -58,7 +58,6 @@ public class FileEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("lazyStartProducer");
         props.add("delay");
         props.add("startScheduler");
-        props.add("resumeStrategy");
         props.add("readLockMarkerFile");
         props.add("readLockTimeout");
         props.add("exceptionHandler");

@@ -17,6 +17,8 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -25,6 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.consumer.GenericFileResumable;
 import org.apache.camel.component.file.consumer.GenericFileResumeStrategy;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.resume.Resumables;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -42,6 +45,7 @@ public class FileConsumerResumeFromOffsetStrategyTest extends ContextTestSupport
 
         @Override
         public void resume() {
+            throw new UnsupportedOperationException("Unsupported operation");
             // NO-OP
         }
 
@@ -57,7 +61,11 @@ public class FileConsumerResumeFromOffsetStrategyTest extends ContextTestSupport
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("34567890");
 
-        template.sendBodyAndHeader(fileUri("resumeOff"), "01234567890", Exchange.FILE_NAME, "resume-from-offset.txt");
+        Map<String, Object> headers = new HashMap<>();
+        headers.put(Exchange.FILE_NAME, "resume-from-offset.txt");
+        headers.put("CamelOffset", Resumables.of("resume-from-offset.txt", 3L));
+
+        template.sendBodyAndHeaders(fileUri("resumeOff"), "01234567890", headers);
 
         // only expect 4 of the 6 sent
         assertMockEndpointsSatisfied();
@@ -79,11 +87,13 @@ public class FileConsumerResumeFromOffsetStrategyTest extends ContextTestSupport
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
 
-                bindToRegistry("testResumeStrategy", new TestResumeStrategy());
+                bindToRegistry("resumeStrategy", new TestResumeStrategy());
 
-                from(fileUri("resumeOff?noop=true&recursive=true&resumeStrategy=#testResumeStrategy"))
+                from(fileUri("resumeOff?noop=true&recursive=true"))
+                        .resumable().header("CamelOffset").resumableStrategyRef("resumeStrategy")
+                        .log("${body}")
                         .convertBodyTo(String.class).to("mock:result");
 
                 from(fileUri("resumeNone?noop=true&recursive=true"))

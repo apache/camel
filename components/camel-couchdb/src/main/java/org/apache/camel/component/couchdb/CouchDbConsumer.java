@@ -21,19 +21,31 @@ import java.util.concurrent.ExecutorService;
 import com.google.gson.JsonObject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.ResumeAware;
+import org.apache.camel.component.couchdb.consumer.CouchDbResumeStrategy;
 import org.apache.camel.support.DefaultConsumer;
 
-public class CouchDbConsumer extends DefaultConsumer {
+public class CouchDbConsumer extends DefaultConsumer implements ResumeAware<CouchDbResumeStrategy> {
 
     private final CouchDbClientWrapper couchClient;
     private final CouchDbEndpoint endpoint;
     private ExecutorService executor;
     private CouchDbChangesetTracker task;
+    private CouchDbResumeStrategy resumeStrategy;
 
     public CouchDbConsumer(CouchDbEndpoint endpoint, CouchDbClientWrapper couchClient, Processor processor) {
         super(endpoint, processor);
         this.couchClient = couchClient;
         this.endpoint = endpoint;
+    }
+
+    @Override
+    public void setResumeStrategy(CouchDbResumeStrategy resumeStrategy) {
+        this.resumeStrategy = resumeStrategy;
+    }
+
+    public CouchDbResumeStrategy getResumeStrategy() {
+        return resumeStrategy;
     }
 
     public Exchange createExchange(String seq, String id, JsonObject obj, boolean deleted) {

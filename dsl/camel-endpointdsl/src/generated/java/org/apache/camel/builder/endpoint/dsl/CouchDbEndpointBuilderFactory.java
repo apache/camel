@@ -184,42 +184,6 @@ public interface CouchDbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets a custom resume strategy for tracking changes from CouchDB. It
-         * allows tracking from a specific point (i.e.: since the given update
-         * sequence, the latest sequence, etc).
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.couchdb.consumer.CouchDbResumeStrategy&lt;/code&gt; type.
-         * 
-         * Group: consumer
-         * 
-         * @param resumeStrategy the value to set
-         * @return the dsl builder
-         */
-        default CouchDbEndpointConsumerBuilder resumeStrategy(
-                org.apache.camel.component.couchdb.consumer.CouchDbResumeStrategy resumeStrategy) {
-            doSetProperty("resumeStrategy", resumeStrategy);
-            return this;
-        }
-        /**
-         * Sets a custom resume strategy for tracking changes from CouchDB. It
-         * allows tracking from a specific point (i.e.: since the given update
-         * sequence, the latest sequence, etc).
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.couchdb.consumer.CouchDbResumeStrategy&lt;/code&gt; type.
-         * 
-         * Group: consumer
-         * 
-         * @param resumeStrategy the value to set
-         * @return the dsl builder
-         */
-        default CouchDbEndpointConsumerBuilder resumeStrategy(
-                String resumeStrategy) {
-            doSetProperty("resumeStrategy", resumeStrategy);
-            return this;
-        }
-        /**
          * Specifies how many revisions are returned in the changes array. The
          * default, main_only, will only return the current winning revision;
          * all_docs will return all leaf revisions (including conflicts and

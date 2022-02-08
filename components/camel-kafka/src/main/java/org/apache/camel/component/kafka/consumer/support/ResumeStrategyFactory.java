@@ -65,11 +65,6 @@ public final class ResumeStrategyFactory {
 
         KafkaConfiguration configuration = kafkaConsumer.getEndpoint().getConfiguration();
 
-        if (configuration.getResumeStrategy() != null) {
-            LOG.info("Using user-provided strategy");
-            return configuration.getResumeStrategy();
-        }
-
         return builtinResumeStrategies(configuration);
     }
 
