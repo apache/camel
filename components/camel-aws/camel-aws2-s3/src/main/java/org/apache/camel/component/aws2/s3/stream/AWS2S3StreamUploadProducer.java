@@ -136,7 +136,7 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
 
         buffer.write(IoUtils.toByteArray(is));
 
-        final String keyName = getConfiguration().getKeyName();
+        final String keyName = AWS2S3Utils.determineKey(exchange, getConfiguration());
         final String fileName = AWS2S3Utils.determineFileName(keyName);
         final String extension = AWS2S3Utils.determineFileExtension(keyName);
         if (index.get() == 1 && getConfiguration().getNamingStrategy().equals(AWSS3NamingStrategyEnum.random)) {
