@@ -436,42 +436,6 @@ public interface Kinesis2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Defines a resume strategy for AWS Kinesis. The default strategy reads
-         * the sequenceNumber if provided.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.aws2.kinesis.consumer.KinesisResumeStrategy&lt;/code&gt; type.
-         * 
-         * Default: KinesisUserConfigurationResumeStrategy
-         * Group: consumer
-         * 
-         * @param resumeStrategy the value to set
-         * @return the dsl builder
-         */
-        default Kinesis2EndpointConsumerBuilder resumeStrategy(
-                org.apache.camel.component.aws2.kinesis.consumer.KinesisResumeStrategy resumeStrategy) {
-            doSetProperty("resumeStrategy", resumeStrategy);
-            return this;
-        }
-        /**
-         * Defines a resume strategy for AWS Kinesis. The default strategy reads
-         * the sequenceNumber if provided.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.aws2.kinesis.consumer.KinesisResumeStrategy&lt;/code&gt; type.
-         * 
-         * Default: KinesisUserConfigurationResumeStrategy
-         * Group: consumer
-         * 
-         * @param resumeStrategy the value to set
-         * @return the dsl builder
-         */
-        default Kinesis2EndpointConsumerBuilder resumeStrategy(
-                String resumeStrategy) {
-            doSetProperty("resumeStrategy", resumeStrategy);
-            return this;
-        }
-        /**
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 

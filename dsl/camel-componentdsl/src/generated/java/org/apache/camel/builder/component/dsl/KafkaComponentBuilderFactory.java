@@ -673,30 +673,6 @@ public interface KafkaComponentBuilderFactory {
             return this;
         }
         /**
-         * This option allows the user to set a custom resume strategy. The
-         * resume strategy is executed when partitions are assigned (i.e.: when
-         * connecting or reconnecting). It allows implementations to customize
-         * how to resume operations and serve as more flexible alternative to
-         * the seekTo and the offsetRepository mechanisms. See the
-         * KafkaConsumerResumeStrategy for implementation details. This option
-         * does not affect the auto commit setting. It is likely that
-         * implementations using this setting will also want to evaluate using
-         * the manual commit option along with this.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.kafka.consumer.support.KafkaConsumerResumeStrategy&lt;/code&gt; type.
-         * 
-         * Group: consumer
-         * 
-         * @param resumeStrategy the value to set
-         * @return the dsl builder
-         */
-        default KafkaComponentBuilder resumeStrategy(
-                org.apache.camel.component.kafka.consumer.support.KafkaConsumerResumeStrategy resumeStrategy) {
-            doSetProperty("resumeStrategy", resumeStrategy);
-            return this;
-        }
-        /**
          * Set if KafkaConsumer will read from beginning or end on startup:
          * beginning : read from beginning end : read from end This is replacing
          * the earlier property seekToBeginning.
@@ -2040,7 +2016,6 @@ public interface KafkaComponentBuilderFactory {
             case "partitionAssignor": getOrCreateConfiguration((KafkaComponent) component).setPartitionAssignor((java.lang.String) value); return true;
             case "pollOnError": getOrCreateConfiguration((KafkaComponent) component).setPollOnError((org.apache.camel.component.kafka.PollOnError) value); return true;
             case "pollTimeoutMs": getOrCreateConfiguration((KafkaComponent) component).setPollTimeoutMs((java.lang.Long) value); return true;
-            case "resumeStrategy": getOrCreateConfiguration((KafkaComponent) component).setResumeStrategy((org.apache.camel.component.kafka.consumer.support.KafkaConsumerResumeStrategy) value); return true;
             case "seekTo": getOrCreateConfiguration((KafkaComponent) component).setSeekTo((java.lang.String) value); return true;
             case "sessionTimeoutMs": getOrCreateConfiguration((KafkaComponent) component).setSessionTimeoutMs((java.lang.Integer) value); return true;
             case "specificAvroReader": getOrCreateConfiguration((KafkaComponent) component).setSpecificAvroReader((boolean) value); return true;

@@ -171,11 +171,10 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer {
     }
 
     private void resume(GetShardIteratorRequest.Builder req) {
-        KinesisResumeStrategy resumeStrategy;
-        if (getEndpoint().getConfiguration().getResumeStrategy() == null) {
+        KinesisResumeStrategy resumeStrategy = getEndpoint().getCamelContext().hasService(KinesisResumeStrategy.class);
+
+        if (resumeStrategy == null) {
             resumeStrategy = new KinesisUserConfigurationResumeStrategy(getEndpoint().getConfiguration());
-        } else {
-            resumeStrategy = getEndpoint().getConfiguration().getResumeStrategy();
         }
 
         resumeStrategy.setRequestBuilder(req);

@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.kafka.consumer.KafkaManualCommit;
-import org.apache.camel.component.kafka.consumer.support.KafkaConsumerResumeStrategy;
 import org.apache.camel.component.kafka.serde.DefaultKafkaHeaderDeserializer;
 import org.apache.camel.component.kafka.serde.DefaultKafkaHeaderSerializer;
 import org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer;
@@ -148,9 +147,6 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     private PollOnError pollOnError = PollOnError.ERROR_HANDLER;
     @UriParam(label = "consumer", defaultValue = "5000", javaType = "java.time.Duration")
     private Long commitTimeoutMs = 5000L;
-
-    @UriParam(label = "consumer")
-    private KafkaConsumerResumeStrategy resumeStrategy;
 
     // Producer configuration properties
     @UriParam(label = "producer", defaultValue = KafkaConstants.KAFKA_DEFAULT_PARTITIONER)
@@ -800,26 +796,6 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      */
     public void setBreakOnFirstError(boolean breakOnFirstError) {
         this.breakOnFirstError = breakOnFirstError;
-    }
-
-    public KafkaConsumerResumeStrategy getResumeStrategy() {
-        return resumeStrategy;
-    }
-
-    /**
-     * This option allows the user to set a custom resume strategy. The resume strategy is executed when partitions are
-     * assigned (i.e.: when connecting or reconnecting). It allows implementations to customize how to resume operations
-     * and serve as more flexible alternative to the seekTo and the offsetRepository mechanisms.
-     *
-     * See the {@link KafkaConsumerResumeStrategy} for implementation details.
-     *
-     * This option does not affect the auto commit setting. It is likely that implementations using this setting will
-     * also want to evaluate using the manual commit option along with this.
-     *
-     * @param resumeStrategy An instance of the resume strategy
-     */
-    public void setResumeStrategy(KafkaConsumerResumeStrategy resumeStrategy) {
-        this.resumeStrategy = resumeStrategy;
     }
 
     public String getBrokers() {

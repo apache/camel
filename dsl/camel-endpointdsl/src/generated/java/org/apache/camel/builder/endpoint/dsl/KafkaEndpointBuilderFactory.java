@@ -1137,54 +1137,6 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * This option allows the user to set a custom resume strategy. The
-         * resume strategy is executed when partitions are assigned (i.e.: when
-         * connecting or reconnecting). It allows implementations to customize
-         * how to resume operations and serve as more flexible alternative to
-         * the seekTo and the offsetRepository mechanisms. See the
-         * KafkaConsumerResumeStrategy for implementation details. This option
-         * does not affect the auto commit setting. It is likely that
-         * implementations using this setting will also want to evaluate using
-         * the manual commit option along with this.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.kafka.consumer.support.KafkaConsumerResumeStrategy&lt;/code&gt; type.
-         * 
-         * Group: consumer
-         * 
-         * @param resumeStrategy the value to set
-         * @return the dsl builder
-         */
-        default KafkaEndpointConsumerBuilder resumeStrategy(
-                org.apache.camel.component.kafka.consumer.support.KafkaConsumerResumeStrategy resumeStrategy) {
-            doSetProperty("resumeStrategy", resumeStrategy);
-            return this;
-        }
-        /**
-         * This option allows the user to set a custom resume strategy. The
-         * resume strategy is executed when partitions are assigned (i.e.: when
-         * connecting or reconnecting). It allows implementations to customize
-         * how to resume operations and serve as more flexible alternative to
-         * the seekTo and the offsetRepository mechanisms. See the
-         * KafkaConsumerResumeStrategy for implementation details. This option
-         * does not affect the auto commit setting. It is likely that
-         * implementations using this setting will also want to evaluate using
-         * the manual commit option along with this.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.kafka.consumer.support.KafkaConsumerResumeStrategy&lt;/code&gt; type.
-         * 
-         * Group: consumer
-         * 
-         * @param resumeStrategy the value to set
-         * @return the dsl builder
-         */
-        default KafkaEndpointConsumerBuilder resumeStrategy(
-                String resumeStrategy) {
-            doSetProperty("resumeStrategy", resumeStrategy);
-            return this;
-        }
-        /**
          * Set if KafkaConsumer will read from beginning or end on startup:
          * beginning : read from beginning end : read from end This is replacing
          * the earlier property seekToBeginning.

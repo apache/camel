@@ -22,7 +22,7 @@ import com.google.gson.JsonObject;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.couchdb.consumer.CouchDbResumable;
 import org.apache.camel.component.couchdb.consumer.CouchDbResumeStrategy;
-import org.apache.camel.component.couchdb.consumer.CouchDdResumeStrategyFactory;
+import org.apache.camel.component.couchdb.consumer.CouchDbResumeStrategyFactory;
 import org.apache.camel.support.task.BlockingTask;
 import org.apache.camel.support.task.Tasks;
 import org.apache.camel.support.task.budget.Budgets;
@@ -53,7 +53,7 @@ public class CouchDbChangesetTracker implements Runnable {
         CouchDbResumable resumable = new CouchDbResumable(couchClient, sequence);
 
         if (sequence == null) {
-            CouchDbResumeStrategy resumeStrategy = CouchDdResumeStrategyFactory.newResumeStrategy(this.endpoint);
+            CouchDbResumeStrategy resumeStrategy = CouchDbResumeStrategyFactory.newResumeStrategy(this.consumer);
 
             resumeStrategy.setResumable(resumable);
             resumeStrategy.resume();

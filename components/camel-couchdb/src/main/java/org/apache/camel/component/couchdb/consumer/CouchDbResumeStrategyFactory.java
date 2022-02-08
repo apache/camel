@@ -17,14 +17,14 @@
 
 package org.apache.camel.component.couchdb.consumer;
 
-import org.apache.camel.component.couchdb.CouchDbEndpoint;
+import org.apache.camel.component.couchdb.CouchDbConsumer;
 
-public final class CouchDdResumeStrategyFactory {
-    private CouchDdResumeStrategyFactory() {
+public final class CouchDbResumeStrategyFactory {
+    private CouchDbResumeStrategyFactory() {
     }
 
-    public static CouchDbResumeStrategy newResumeStrategy(CouchDbEndpoint endpoint) {
-        CouchDbResumeStrategy resumeStrategy = endpoint.getResumeStrategy();
+    public static CouchDbResumeStrategy newResumeStrategy(CouchDbConsumer consumer) {
+        CouchDbResumeStrategy resumeStrategy = consumer.getResumeStrategy();
 
         if (resumeStrategy == null) {
             resumeStrategy = new LatestUpdateSequenceResumeStrategy();

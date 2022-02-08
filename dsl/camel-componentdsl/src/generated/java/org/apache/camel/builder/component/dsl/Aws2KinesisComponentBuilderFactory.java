@@ -286,24 +286,6 @@ public interface Aws2KinesisComponentBuilderFactory {
             return this;
         }
         /**
-         * Defines a resume strategy for AWS Kinesis. The default strategy reads
-         * the sequenceNumber if provided.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.aws2.kinesis.consumer.KinesisResumeStrategy&lt;/code&gt; type.
-         * 
-         * Default: KinesisUserConfigurationResumeStrategy
-         * Group: consumer
-         * 
-         * @param resumeStrategy the value to set
-         * @return the dsl builder
-         */
-        default Aws2KinesisComponentBuilder resumeStrategy(
-                org.apache.camel.component.aws2.kinesis.consumer.KinesisResumeStrategy resumeStrategy) {
-            doSetProperty("resumeStrategy", resumeStrategy);
-            return this;
-        }
-        /**
          * The sequence number to start polling from. Required if iteratorType
          * is set to AFTER_SEQUENCE_NUMBER or AT_SEQUENCE_NUMBER.
          * 
@@ -466,7 +448,6 @@ public interface Aws2KinesisComponentBuilderFactory {
             case "bridgeErrorHandler": ((Kinesis2Component) component).setBridgeErrorHandler((boolean) value); return true;
             case "iteratorType": getOrCreateConfiguration((Kinesis2Component) component).setIteratorType((software.amazon.awssdk.services.kinesis.model.ShardIteratorType) value); return true;
             case "maxResultsPerRequest": getOrCreateConfiguration((Kinesis2Component) component).setMaxResultsPerRequest((int) value); return true;
-            case "resumeStrategy": getOrCreateConfiguration((Kinesis2Component) component).setResumeStrategy((org.apache.camel.component.aws2.kinesis.consumer.KinesisResumeStrategy) value); return true;
             case "sequenceNumber": getOrCreateConfiguration((Kinesis2Component) component).setSequenceNumber((java.lang.String) value); return true;
             case "shardClosed": getOrCreateConfiguration((Kinesis2Component) component).setShardClosed((org.apache.camel.component.aws2.kinesis.Kinesis2ShardClosedStrategyEnum) value); return true;
             case "shardId": getOrCreateConfiguration((Kinesis2Component) component).setShardId((java.lang.String) value); return true;
