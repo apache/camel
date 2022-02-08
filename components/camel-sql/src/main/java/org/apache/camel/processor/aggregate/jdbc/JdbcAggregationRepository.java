@@ -636,13 +636,17 @@ public class JdbcAggregationRepository extends ServiceSupport
         transactionTemplateReadOnly.setReadOnly(true);
     }
 
+    private int rowCount(final String repository) {
+        return jdbcTemplate.queryForObject("SELECT COUNT(1) FROM " + repository, Integer.class);
+    }
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
 
         // log number of existing exchanges
-        int current = getKeys().size();
-        int completed = scan(null).size();
+        final int current = rowCount(getRepositoryName());
+        final int completed = rowCount(getRepositoryNameCompleted());
 
         if (current > 0) {
             LOG.info("On startup there are {} aggregate exchanges (not completed) in repository: {}", current,
