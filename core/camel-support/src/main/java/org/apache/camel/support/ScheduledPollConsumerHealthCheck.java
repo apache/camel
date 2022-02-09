@@ -19,7 +19,6 @@ package org.apache.camel.support;
 import java.util.Map;
 
 import org.apache.camel.health.HealthCheck;
-import org.apache.camel.health.HealthCheckConfiguration;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.util.URISupport;
 
@@ -32,6 +31,7 @@ public class ScheduledPollConsumerHealthCheck implements HealthCheck {
     private final String id;
     private final String sanitizedBaseUri;
     private final String sanitizedUri;
+    private boolean enabled = true;
     private boolean downBeforeFirstPoll = true;
 
     public ScheduledPollConsumerHealthCheck(ScheduledPollConsumer consumer, String id) {
@@ -42,8 +42,13 @@ public class ScheduledPollConsumerHealthCheck implements HealthCheck {
     }
 
     @Override
-    public HealthCheckConfiguration getConfiguration() {
-        throw new UnsupportedOperationException("Configuration is not in use for this kind of health-check");
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     @Override
@@ -53,6 +58,12 @@ public class ScheduledPollConsumerHealthCheck implements HealthCheck {
         // ensure to sanitize uri, so we do not show sensitive information such as passwords
         builder.detail(ENDPOINT_URI, sanitizedUri);
         builder.detail(FAILURE_ENDPOINT_URI, sanitizedUri);
+
+        if (!isEnabled()) {
+            builder.message("Disabled");
+            builder.detail(CHECK_ENABLED, false);
+            return builder.unknown().build();
+        }
 
         long ec = consumer.getErrorCounter();
         boolean first = consumer.isFirstPollDone();

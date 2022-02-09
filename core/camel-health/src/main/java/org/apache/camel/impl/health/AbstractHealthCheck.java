@@ -26,7 +26,6 @@ import java.util.concurrent.ConcurrentMap;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.health.HealthCheck;
-import org.apache.camel.health.HealthCheckConfiguration;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -40,11 +39,11 @@ public abstract class AbstractHealthCheck implements HealthCheck, CamelContextAw
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractHealthCheck.class);
 
     private CamelContext camelContext;
+    private boolean enabled = true;
     private final Object lock;
     private final String group;
     private final String id;
     private final ConcurrentMap<String, Object> meta;
-    private HealthCheckConfiguration configuration;
 
     protected AbstractHealthCheck(String id) {
         this(null, id, null);
@@ -58,7 +57,6 @@ public abstract class AbstractHealthCheck implements HealthCheck, CamelContextAw
         this.lock = new Object();
         this.group = group;
         this.id = ObjectHelper.notNull(id, "HealthCheck ID");
-        this.configuration = new HealthCheckConfiguration();
         this.meta = new ConcurrentHashMap<>();
 
         if (meta != null) {
@@ -92,17 +90,18 @@ public abstract class AbstractHealthCheck implements HealthCheck, CamelContextAw
     }
 
     @Override
-    public Map<String, Object> getMetaData() {
-        return Collections.unmodifiableMap(this.meta);
+    public boolean isEnabled() {
+        return enabled;
     }
 
     @Override
-    public HealthCheckConfiguration getConfiguration() {
-        return this.configuration;
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
-    public void setConfiguration(HealthCheckConfiguration configuration) {
-        this.configuration = configuration;
+    @Override
+    public Map<String, Object> getMetaData() {
+        return Collections.unmodifiableMap(this.meta);
     }
 
     @Override
@@ -113,9 +112,7 @@ public abstract class AbstractHealthCheck implements HealthCheck, CamelContextAw
     @Override
     public Result call(Map<String, Object> options) {
         synchronized (lock) {
-            final HealthCheckConfiguration conf = getConfiguration();
             final HealthCheckResultBuilder builder = HealthCheckResultBuilder.on(this);
-            final boolean enabled = conf.isEnabled();
 
             // Extract relevant information from meta data.
             int invocationCount = (Integer) meta.getOrDefault(INVOCATION_COUNT, 0);
@@ -127,8 +124,8 @@ public abstract class AbstractHealthCheck implements HealthCheck, CamelContextAw
             // Set common meta-data
             meta.put(INVOCATION_ATTEMPT_TIME, invocationTime);
 
-            if (!enabled) {
-                LOGGER.debug("health-check {}/{} won't be invoked as not enabled", getGroup(), getId());
+            if (!isEnabled()) {
+                LOGGER.debug("health-check {}/{} disabled", getGroup(), getId());
 
                 builder.message("Disabled");
                 builder.detail(CHECK_ENABLED, false);

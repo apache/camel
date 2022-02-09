@@ -118,7 +118,7 @@ public final class HealthCheckHelper {
                     .entrySet().stream()
                     .map(Map.Entry::getValue)
                     .flatMap(Collection::stream)
-                    .filter(check -> !filter.test(check))
+                    .filter(check -> !registry.isExcluded(check) && !filter.test(check))
                     .sorted(Comparator.comparingInt(HealthCheck::getOrder))
                     .distinct()
                     .map(check -> check.call(optionsSupplier.apply(check)))

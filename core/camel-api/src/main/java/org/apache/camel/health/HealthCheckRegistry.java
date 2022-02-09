@@ -121,4 +121,21 @@ public interface HealthCheckRegistry extends CamelContextAware, StaticService, I
      */
     void loadHealthChecks();
 
+    /**
+     * Pattern to exclude health checks from being invoked by Camel when checking healths. Multiple patterns can be
+     * separated by comma.
+     */
+    String getExcludePattern();
+
+    /**
+     * Pattern to exclude health checks from being invoked by Camel when checking healths. Multiple patterns can be
+     * separated by comma.
+     */
+    void setExcludePattern(String excludePattern);
+
+    /**
+     * Whether the given health check has been excluded
+     */
+    boolean isExcluded(HealthCheck healthCheck);
+
 }

@@ -51,17 +51,6 @@ public boolean isReadiness() {
 }
 ----
 
-== Health Check configuration
-
-The `HealthCheckConfiguration` has the following options:
-
-[%header,cols=3*]
-|====
-| Name | Default | Description
-| parent |  | The parent group this health check belongs to, such as context, routes, or consumers.
-| enabled | true | Set if the check associated to this configuration is enabled or not.
-|====
-
 == Configuring health-check
 
 Camel supports via `camel-main` to configure health-checks from configuration files. This is possible for runtimes that leverage `camel-main`
@@ -83,28 +72,22 @@ camel.health.consumersEnabled=false
 camel.health.registryEnabled=false
 ----
 
-=== Configuring routes health-check
+=== Excluding health-checks
 
-The `routes` health check supports filtering by route id, or endpoint uri using a pattern style (* as wildcard, and regexp supported).
-For example to turn off all routes that are from kafka, you can do:
+By default, all enabled health-checks are invoked by Camel when check the health status.
 
-NOTE: Notice the syntax is a map `[]` where the key is the route id pattern. It's important to set the `parent`
-option to refer to what health-check this configuration applies for such as `routes` or `registry`.
+It is possible to specify checks that should be excluded, for example a specific route by the route-id.
 
 [source,properties]
 ----
-camel.health.config[kafka*].parent=routes
-camel.health.config[kafka*].enabled=false
+camel.health.exclude-pattern = myroute
 ----
 
-It's possible to set a default fallback configuration using `[*]` as the route id:
+You can specify multiple patterns (and use wildcards) such as:
 
 [source,properties]
 ----
-camel.health.config[kafka*].parent=routes
-camel.health.config[kafka*].enabled=false
-camel.health.config[*].parent=routes
-camel.health.config[*].enabled=true
+camel.health.exclude-pattern = myroute,foo,bar*
 ----
 
 === Turning off consumer level health-checks
@@ -119,16 +102,14 @@ The consumer checks can be turned off, to only use the route level checks (statu
 camel.health.consumersEnabled=false
 ----
 
-You can also turn off individual consumers by prefixing the ID with `consumer:` such as:
+You can also turn off individual consumers by prefixing the ID with `consumer:` and the route id:
 
 [source,properties]
 ----
-camel.health.config[consumer:kafka*].parent=consumers
-camel.health.config[consumer:kafka*].enabled=false
+camel.health.exclude-pattern = consumer:myroute*
 ----
 
-which will turn off checks for all consumers on routes that starts with `kafka` in the route ID.
-
+which will turn off checks for all consumers on routes that starts with `myroute` in the route ID.
 
 == JMX management
 

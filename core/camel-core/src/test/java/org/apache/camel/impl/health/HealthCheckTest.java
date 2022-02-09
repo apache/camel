@@ -33,7 +33,7 @@ public class HealthCheckTest {
         MyHealthCheck check = new MyHealthCheck();
         check.setState(HealthCheck.State.UP);
         // disable
-        check.getConfiguration().setEnabled(false);
+        check.setEnabled(false);
 
         HealthCheck.Result result;
 
@@ -44,7 +44,7 @@ public class HealthCheckTest {
         assertEquals("Disabled", result.getMessage().get());
         assertEquals(false, result.getDetails().get(AbstractHealthCheck.CHECK_ENABLED));
 
-        check.getConfiguration().setEnabled(true);
+        check.setEnabled(true);
 
         result = check.call();
 

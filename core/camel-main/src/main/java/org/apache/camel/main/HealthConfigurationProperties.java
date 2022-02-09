@@ -16,9 +16,6 @@
  */
 package org.apache.camel.main;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
@@ -41,7 +38,8 @@ public class HealthConfigurationProperties implements BootstrapCloseable {
     private Boolean consumersEnabled;
     @Metadata(defaultValue = "true")
     private Boolean registryEnabled;
-    private Map<String, HealthCheckConfigurationProperties> config = new HashMap<>();
+    @Metadata
+    private String excludePattern;
 
     public HealthConfigurationProperties(MainConfigurationProperties parent) {
         this.parent = parent;
@@ -53,8 +51,6 @@ public class HealthConfigurationProperties implements BootstrapCloseable {
 
     @Override
     public void close() {
-        config.clear();
-        config = null;
         parent = null;
     }
 
@@ -113,15 +109,16 @@ public class HealthConfigurationProperties implements BootstrapCloseable {
         this.registryEnabled = registryEnabled;
     }
 
-    public Map<String, HealthCheckConfigurationProperties> getConfig() {
-        return config;
+    public String getExcludePattern() {
+        return excludePattern;
     }
 
     /**
-     * Set additional {@link HealthConfigurationProperties} for fine grained configuration of health checks.
+     * Pattern to exclude health checks from being invoked by Camel when checking healths. Multiple patterns can be
+     * separated by comma.
      */
-    public void setConfig(Map<String, HealthCheckConfigurationProperties> config) {
-        this.config = config;
+    public void setExcludePattern(String excludePattern) {
+        this.excludePattern = excludePattern;
     }
 
     /**
@@ -157,10 +154,11 @@ public class HealthConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * Additional {@link HealthConfigurationProperties} for fine grained configuration of health checks.
+     * Pattern to exclude health checks from being invoked by Camel when checking healths. Multiple patterns can be
+     * separated by comma.
      */
-    public HealthConfigurationProperties addConfig(String id, HealthCheckConfigurationProperties config) {
-        this.config.put(id, config);
+    public HealthConfigurationProperties withExcludePattern(String excludePattern) {
+        this.excludePattern = excludePattern;
         return this;
     }
 

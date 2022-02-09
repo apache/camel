@@ -17,9 +17,7 @@
 package org.apache.camel.microprofile.health;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Stream;
 
 import javax.json.JsonArray;
@@ -30,7 +28,6 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.health.HealthCheck;
-import org.apache.camel.health.HealthCheckConfiguration;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
 import org.eclipse.microprofile.health.HealthCheckResponse.Status;
@@ -116,21 +113,6 @@ public class CamelMicroProfileHealthCheckRepositoryTest extends CamelMicroProfil
 
             @Override
             public void setEnabled(boolean enabled) {
-                // Noop
-            }
-
-            @Override
-            public void setConfigurations(Map<String, HealthCheckConfiguration> configurations) {
-                // Noop
-            }
-
-            @Override
-            public Map<String, HealthCheckConfiguration> getConfigurations() {
-                return Collections.emptyMap();
-            }
-
-            @Override
-            public void addConfiguration(String id, HealthCheckConfiguration configuration) {
                 // Noop
             }
 

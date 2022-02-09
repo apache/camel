@@ -104,7 +104,7 @@ public class CamelMicroProfileHealthTestSupport extends CamelTestSupport {
                 return false;
             }
         };
-        livenessCheck.getConfiguration().setEnabled(enabled);
+        livenessCheck.setEnabled(enabled);
         return livenessCheck;
     }
 
@@ -120,9 +120,8 @@ public class CamelMicroProfileHealthTestSupport extends CamelTestSupport {
                 return false;
             }
         };
-        readinessCheck.getConfiguration().setEnabled(enabled);
+        readinessCheck.setEnabled(enabled);
         return readinessCheck;
-
     }
 
     /**

@@ -26,7 +26,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.telegram.util.TelegramMockRoutes;
 import org.apache.camel.component.telegram.util.TelegramTestSupport;
 import org.apache.camel.health.HealthCheck;
-import org.apache.camel.health.HealthCheckConfiguration;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
 import org.awaitility.Awaitility;
@@ -50,7 +49,6 @@ public class TelegramConsumerHealthCheckErrorDisabledConsumerTest extends Telegr
         // enabling consumers health check is a bit cumbersome via low-level Java code
         repo = hcr.getRepository("consumers").orElse((HealthCheckRepository) hcr.resolveById("consumers"));
         // turn off all consumer health checks
-        repo.addConfiguration("consumer:*", HealthCheckConfiguration.builder().enabled(false).build());
         repo.setEnabled(true);
         hcr.register(repo);
 

@@ -30,6 +30,8 @@ import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.health.HealthCheckResolver;
+import org.apache.camel.support.PatternHelper;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
@@ -50,6 +52,7 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
     private final Set<HealthCheckRepository> repositories;
     private CamelContext camelContext;
     private boolean enabled = true;
+    private String excludePattern;
     private volatile boolean loadHealthChecksDone;
 
     public DefaultHealthCheckRegistry() {
@@ -84,6 +87,16 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
     }
 
     @Override
+    public String getExcludePattern() {
+        return excludePattern;
+    }
+
+    @Override
+    public void setExcludePattern(String excludePattern) {
+        this.excludePattern = excludePattern;
+    }
+
+    @Override
     protected void doInit() throws Exception {
         super.doInit();
 
@@ -102,6 +115,18 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
         for (HealthCheckRepository repository : repositories) {
             CamelContextAware.trySetCamelContext(repository, camelContext);
         }
+
+        ServiceHelper.initService(repositories, checks);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        ServiceHelper.startService(repositories, checks);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        ServiceHelper.stopService(repositories, checks);
     }
 
     // ************************************
@@ -249,6 +274,23 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
                 LOG.info("Health checks (scanned: {}) loaded in {}", col.size(), time);
             }
         }
+    }
+
+    @Override
+    public boolean isExcluded(HealthCheck healthCheck) {
+        if (excludePattern != null) {
+            String[] s = excludePattern.split(",");
+            String id = healthCheck.getId();
+            String id2 = null;
+            // special for route and consumer health checks
+            if (id.startsWith("route:")) {
+                id2 = id.substring(6);
+            } else if (id.startsWith("consumer:")) {
+                id2 = id.substring(9);
+            }
+            return PatternHelper.matchPatterns(id, s) || (id2 != null && PatternHelper.matchPatterns(id2, s));
+        }
+        return false;
     }
 
     private void checkIfAccepted(Object obj) {

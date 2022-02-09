@@ -19,12 +19,13 @@ package org.apache.camel.main;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.health.HealthCheck;
-import org.apache.camel.health.HealthCheckConfiguration;
+import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.health.HealthCheckResultBuilder;
@@ -38,17 +39,14 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MainHealthCheckConfigTest {
+public class MainHealthCheckExcludedPatternTest {
 
     @Test
-    public void testMainRoutesHealthCheckConfiguration() {
+    public void testMainRoutesHealthCheckExcluded() {
         Main main = new Main();
         main.configure().addRoutesBuilder(new Routes());
-        main.addInitialProperty("camel.health.config[direct].parent", "routes");
-        main.addInitialProperty("camel.health.config[direct].enabled", "true");
-        main.addInitialProperty("camel.health.config[seda].parent", "routes");
-        main.addInitialProperty("camel.health.config[seda].enabled", "false");
         main.addInitialProperty("camel.health.routes-enabled", "true");
+        main.addInitialProperty("camel.health.exclude-pattern", "myseda");
 
         main.start();
         try {
@@ -64,43 +62,38 @@ public class MainHealthCheckConfigTest {
             RoutesHealthCheckRepository routesRepository = (RoutesHealthCheckRepository) routes.get();
             assertTrue(routesRepository.isEnabled());
 
-            Map<String, HealthCheckConfiguration> configurations = routesRepository.getConfigurations();
-            assertNotNull(configurations);
-            assertEquals(2, configurations.size());
+            HealthCheck hc = healthCheckRegistry.getCheck("mydirect").get();
+            assertTrue(hc.isEnabled());
+            assertFalse(healthCheckRegistry.isExcluded(hc));
 
-            HealthCheckConfiguration direct = configurations.get("direct");
-            assertNotNull(direct);
-            assertTrue(direct.isEnabled());
-
-            HealthCheckConfiguration seda = configurations.get("seda");
-            assertNotNull(seda);
-            assertFalse(seda.isEnabled());
+            hc = healthCheckRegistry.getCheck("myseda").get();
+            assertTrue(hc.isEnabled());
+            assertTrue(healthCheckRegistry.isExcluded(hc));
         } finally {
             main.stop();
         }
     }
 
     @Test
-    public void testMainBasicHealthCheckConfiguration() {
+    public void testMainBasicHealthCheckRegistry() {
         Main main = new Main();
         main.configure().addRoutesBuilder(new Routes());
-        main.addInitialProperty("camel.health.config[custom].parent", "registry-health-check-repository");
-        main.addInitialProperty("camel.health.config[custom].enabled", "false");
+        main.addInitialProperty("camel.health.exclude-pattern", "custom");
 
         main.start();
         try {
             CamelContext camelContext = main.getCamelContext();
             assertNotNull(camelContext);
 
+            final AtomicBoolean invoked = new AtomicBoolean();
             HealthCheck healthCheck = new AbstractHealthCheck("custom") {
                 @Override
                 protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
-                    // Noop
+                    invoked.set(true);
                 }
             };
 
-            // This configuration will be overridden by the camel-main config properties
-            healthCheck.getConfiguration().setEnabled(true);
+            // register custom health check
             camelContext.getRegistry().bind("custom", healthCheck);
 
             HealthCheckRegistry healthCheckRegistry = camelContext.getExtension(HealthCheckRegistry.class);
@@ -115,10 +108,54 @@ public class MainHealthCheckConfigTest {
             List<HealthCheck> healthChecks = registryRepository.stream().collect(Collectors.toList());
             assertEquals(1, healthChecks.size());
 
-            HealthCheck myCustomCheck = healthChecks.get(0);
-            HealthCheckConfiguration configuration = myCustomCheck.getConfiguration();
-            assertNotNull(configuration);
-            assertFalse(configuration.isEnabled());
+            assertTrue(healthCheckRegistry.getCheck("custom").isPresent());
+
+            // custom is excluded
+            HealthCheckHelper.invoke(camelContext);
+            assertFalse(invoked.get());
+        } finally {
+            main.stop();
+        }
+    }
+
+    @Test
+    public void testMainBasicHealthCheckAdded() {
+        Main main = new Main();
+        main.configure().addRoutesBuilder(new Routes());
+        main.addInitialProperty("camel.health.exclude-pattern", "custom");
+
+        main.start();
+        try {
+            CamelContext camelContext = main.getCamelContext();
+            assertNotNull(camelContext);
+
+            final AtomicBoolean invoked = new AtomicBoolean();
+            HealthCheck healthCheck = new AbstractHealthCheck("custom") {
+                @Override
+                protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
+                    invoked.set(true);
+                }
+            };
+
+            HealthCheckRegistry healthCheckRegistry = camelContext.getExtension(HealthCheckRegistry.class);
+            assertNotNull(healthCheckRegistry);
+
+            List<HealthCheck> healthChecks = healthCheckRegistry.stream().collect(Collectors.toList());
+            int before = healthChecks.size();
+
+            // register custom health check which should be excluded
+            boolean added = healthCheckRegistry.register(healthCheck);
+            assertTrue(added);
+
+            healthChecks = healthCheckRegistry.stream().collect(Collectors.toList());
+            int after = healthChecks.size();
+            assertEquals(before + 1, after);
+
+            assertTrue(healthCheckRegistry.getCheck("custom").isPresent());
+
+            // custom is excluded
+            HealthCheckHelper.invoke(camelContext);
+            assertFalse(invoked.get());
         } finally {
             main.stop();
         }
@@ -128,8 +165,11 @@ public class MainHealthCheckConfigTest {
 
         @Override
         public void configure() throws Exception {
-            from("direct:start").to("log:direct");
-            from("seda:start").to("log:seda");
+            from("direct:start").routeId("mydirect")
+                    .to("log:direct");
+
+            from("seda:start").routeId("myseda")
+                    .to("log:seda");
         }
     }
 }

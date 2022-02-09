@@ -21,7 +21,6 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -45,7 +44,6 @@ import org.apache.camel.StartupStep;
 import org.apache.camel.console.DevConsole;
 import org.apache.camel.console.DevConsoleRegistry;
 import org.apache.camel.health.HealthCheck;
-import org.apache.camel.health.HealthCheckConfiguration;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.saga.CamelSagaService;
@@ -994,44 +992,28 @@ public abstract class BaseMainSupport extends BaseService {
 
         HealthConfigurationProperties health = mainConfigurationProperties.health();
 
-        // extract all config to know their parent ids so we can set the values afterwards
-        Map<String, Object> hcConfig = PropertiesHelper.extractProperties(healthCheckProperties, "config", false);
-        Map<String, HealthCheckConfigurationProperties> hcConfigs = new HashMap<>();
-        // build set of configuration objects
-        for (Map.Entry<String, Object> entry : hcConfig.entrySet()) {
-            String parent = StringHelper.between(entry.getKey(), "[", "]");
-            if (parent != null) {
-                HealthCheckConfigurationProperties hcp = hcConfigs.get(parent);
-                if (hcp == null) {
-                    hcp = new HealthCheckConfigurationProperties();
-                    hcConfigs.put(parent, hcp);
-                }
-            }
-        }
-        if (health.getConfig() != null) {
-            health.getConfig().putAll(hcConfigs);
-        } else {
-            health.setConfig(hcConfigs);
-        }
-
         setPropertiesOnTarget(camelContext, health, healthCheckProperties, "camel.health.",
                 mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
 
         if (health.getEnabled() != null) {
             hcr.setEnabled(health.getEnabled());
         }
+        if (health.getExcludePattern() != null) {
+            hcr.setExcludePattern(health.getExcludePattern());
+        }
+
         // context is enabled by default
-        if (hcr.isEnabled() && (!health.getConfig().containsKey("context") || health.getContextEnabled() != null)) {
+        if (hcr.isEnabled()) {
             HealthCheck hc = (HealthCheck) hcr.resolveById("context");
             if (hc != null) {
                 if (health.getContextEnabled() != null) {
-                    hc.getConfiguration().setEnabled(health.getContextEnabled());
+                    hc.setEnabled(health.getContextEnabled());
                 }
                 hcr.register(hc);
             }
         }
         // routes are enabled by default
-        if (hcr.isEnabled() && (!health.getConfig().containsKey("routes") || health.getRoutesEnabled() != null)) {
+        if (hcr.isEnabled()) {
             HealthCheckRepository hc = hcr.getRepository("routes").orElse((HealthCheckRepository) hcr.resolveById("routes"));
             if (hc != null) {
                 if (health.getRoutesEnabled() != null) {
@@ -1041,7 +1023,7 @@ public abstract class BaseMainSupport extends BaseService {
             }
         }
         // consumers are enabled by default
-        if (hcr.isEnabled() && (!health.getConfig().containsKey("consumers") || health.getRegistryEnabled() != null)) {
+        if (hcr.isEnabled()) {
             HealthCheckRepository hc
                     = hcr.getRepository("consumers").orElse((HealthCheckRepository) hcr.resolveById("consumers"));
             if (hc != null) {
@@ -1052,7 +1034,7 @@ public abstract class BaseMainSupport extends BaseService {
             }
         }
         // registry are enabled by default
-        if (hcr.isEnabled() && (!health.getConfig().containsKey("registry") || health.getRegistryEnabled() != null)) {
+        if (hcr.isEnabled()) {
             HealthCheckRepository hc
                     = hcr.getRepository("registry").orElse((HealthCheckRepository) hcr.resolveById("registry"));
             if (hc != null) {
@@ -1060,31 +1042,6 @@ public abstract class BaseMainSupport extends BaseService {
                     hc.setEnabled(health.getRegistryEnabled());
                 }
                 hcr.register(hc);
-            }
-        }
-
-        // configure health checks configurations
-        for (String id : health.getConfig().keySet()) {
-            HealthCheckConfiguration hcc = health.getConfig().get(id);
-            String parent = hcc.getParent();
-            if (parent == null) {
-                throw new IllegalArgumentException("HealthCheck with id: " + id + " must have parent configured");
-            }
-            // lookup health check by id
-            Object hc = hcr.getCheck(parent).orElse(null);
-            if (hc == null) {
-                hc = hcr.resolveById(parent);
-                if (hc == null) {
-                    LOG.warn("Cannot resolve HealthCheck with id: {} from classpath.", parent);
-                    continue;
-                }
-                hcr.register(hc);
-                if (hc instanceof HealthCheck) {
-                    ((HealthCheck) hc).getConfiguration().setParent(hcc.getParent());
-                    ((HealthCheck) hc).getConfiguration().setEnabled(hcc.isEnabled());
-                } else if (hc instanceof HealthCheckRepository) {
-                    ((HealthCheckRepository) hc).addConfiguration(id, hcc);
-                }
             }
         }
     }

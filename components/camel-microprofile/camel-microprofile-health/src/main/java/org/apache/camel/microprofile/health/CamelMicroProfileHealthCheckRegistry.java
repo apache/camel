@@ -64,7 +64,7 @@ public class CamelMicroProfileHealthCheckRegistry extends DefaultHealthCheckRegi
         boolean registered = super.register(obj);
         if (obj instanceof HealthCheck) {
             HealthCheck check = (HealthCheck) obj;
-            if (check.getConfiguration().isEnabled()) {
+            if (check.isEnabled()) {
                 registerMicroProfileHealthCheck(check);
             }
         } else {
@@ -134,7 +134,7 @@ public class CamelMicroProfileHealthCheckRegistry extends DefaultHealthCheckRegi
                 getReadinessRegistry().register(repository.getId(), repositoryHealthCheck);
             } else {
                 repository.stream()
-                        .filter(healthCheck -> healthCheck.getConfiguration().isEnabled())
+                        .filter(healthCheck -> healthCheck.isEnabled())
                         .forEach(this::registerMicroProfileHealthCheck);
             }
         }

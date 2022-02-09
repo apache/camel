@@ -63,6 +63,34 @@ These options would complicate health checks as they affect the outcome of healt
 It is better the checks always execute and the responsibility of the monitoring systems
 how to deal with interval between checks and thresholds.
 
+==== Disabling health checks
+
+The configuration for disabling individual health-checks has changed
+
+Before each health-check could be configured and set `enabled=false`. For example
+to disable health-checks for route with id `netty` you would do:
+
+[source,properties]
+----
+camel.health.config[netty].check = routes
+camel.health.config[netty].enabled = false
+----
+
+With Camel 3.16 onwards you instead specify pattern(s) for health checks to be excluded
+from being invoked, which is done in a single configuration:
+
+[source,properties]
+----
+camel.health.exclude-pattern = netty
+----
+
+You can specify multiple patterns (and use wildcards) such as:
+
+[source,properties]
+----
+camel.health.exclude-pattern = netty,foo,bar*
+----
+
 === camel-main
 
 The option `camel.main.packageScanRouteBuilders` has been renamed to `camel.main.basePackageScan`.
