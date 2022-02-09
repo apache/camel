@@ -37,7 +37,7 @@ and have the console started and accessible from `http://localhost:8080/dev`
 
 [source,bash]
 ----
-$ jbang CamelJBang@apache/camel run foo.yaml myapp.properties --console
+$ jbang camel@apache/camel run foo.yaml myapp.properties --console
 ----
 
 == Writing Custom Dev Consoles
