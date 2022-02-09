@@ -11181,10 +11181,6 @@ Default value: SECONDS
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:simpleType name="scriptBeanFactoryDefinition">
-    <xs:restriction base="xs:string"/>
-  </xs:simpleType>
-
   <xs:complexType name="scriptDefinition">
     <xs:complexContent>
       <xs:extension base="tns:processorDefinition">
