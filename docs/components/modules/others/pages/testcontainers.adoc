@@ -1,1 +1,0 @@
-../../../../../components/camel-test/camel-testcontainers/src/main/docs/testcontainers.adoc

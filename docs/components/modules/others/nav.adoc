@@ -60,7 +60,6 @@
 ** xref:test-junit5.adoc[Test JUnit5]
 ** xref:test-spring.adoc[Test Spring]
 ** xref:test-spring-junit5.adoc[Test Spring JUnit5]
-** xref:testcontainers.adoc[Testcontainers]
 ** xref:threadpoolfactory-vertx.adoc[ThreadPoolFactory Vert.x]
 ** xref:tracing.adoc[Tracing]
 ** xref:undertow-spring-security.adoc[Undertow Spring Security]
