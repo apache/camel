@@ -31,8 +31,10 @@ class for all your configuration and routing without.
 |xref:components:others:test-spring-junit5.adoc[camel-test-spring-junit5] | *JUnit 5*: Used for testing Camel with Spring / Spring Boot
 |xref:components:others:test-cdi.adoc[camel-test-cdi] | Used for testing Camel on xref:components:others:cdi.adoc[CDI]
 
-|xref:components:others:testcontainers-junit5.adoc[camel-testcontainers-junit5] | *JUnit 5*: Camel Testcontainers extends standard camel test support providing a way to create and interact with containerized applications.
-|xref:components:others:testcontainers-spring-junit5.adoc[camel-testcontainers-spring-junit5] | *JUnit 5*: Camel Testcontainers extends standard camel Spring test support providing a way to create and interact with containerized applications.
+|xref:test-infra.adoc[camel-test-infra] | *Camel Test Infra*: Camel Test Infra is a set of modules that leverage Test Containers and abstract the provisioning and execution of test infrastructure. It is the successor of the camel-testcontainers components.
+
+|xref:components:others:testcontainers-junit5.adoc[camel-testcontainers-junit5] | *JUnit 5 (deprecated)*: Camel Testcontainers extends standard camel test support providing a way to create and interact with containerized applications.
+|xref:components:others:testcontainers-spring-junit5.adoc[camel-testcontainers-spring-junit5] | *JUnit 5 (deprecated)*: Camel Testcontainers extends standard camel Spring test support providing a way to create and interact with containerized applications.
 
 |=======================================================================
 
