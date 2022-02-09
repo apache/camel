@@ -41,7 +41,7 @@ jobs:
       with:
         languages: ${{ matrix.language }}
     - run: |
-        mvn -B -V -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 --no-transfer-progress -Pfastinstall -Dcheckstyle.skip=true -DskipTests  install
+        mvn -T 1C -B -V -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 --no-transfer-progress -Pfastinstall -Dcheckstyle.skip=true -DskipTests  install
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1
