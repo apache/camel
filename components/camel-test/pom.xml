@@ -41,7 +41,6 @@
         <module>camel-testcontainers</module>
         <module>camel-testcontainers-spring</module>
         <module>camel-testcontainers-junit5</module>
-        <module>camel-testcontainers-spring-junit5</module>
     </modules>
 
 </project>
