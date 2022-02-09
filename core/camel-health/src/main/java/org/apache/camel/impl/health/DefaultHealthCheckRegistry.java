@@ -280,16 +280,21 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
     public boolean isExcluded(HealthCheck healthCheck) {
         if (excludePattern != null) {
             String[] s = excludePattern.split(",");
+
             String id = healthCheck.getId();
-            String id2 = null;
+            if (PatternHelper.matchPatterns(id, s)) {
+                return true;
+            }
             // special for route and consumer health checks
             if (id.startsWith("route:")) {
-                id2 = id.substring(6);
+                id = id.substring(6);
+                return PatternHelper.matchPatterns(id, s);
             } else if (id.startsWith("consumer:")) {
-                id2 = id.substring(9);
+                id = id.substring(9);
+                return PatternHelper.matchPatterns(id, s);
             }
-            return PatternHelper.matchPatterns(id, s) || (id2 != null && PatternHelper.matchPatterns(id2, s));
         }
+
         return false;
     }
 
