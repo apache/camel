@@ -425,6 +425,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                 builder.addPropertyValue("rests", factoryBean.getRests());
                 builder.addPropertyValue("routeConfigurations", factoryBean.getRouteConfigurations());
                 builder.addPropertyValue("routeTemplates", factoryBean.getRouteTemplates());
+                builder.addPropertyValue("templatedRoutes", factoryBean.getTemplatedRoutes());
                 builder.addPropertyValue("routes", factoryBean.getRoutes());
                 builder.addPropertyValue("intercepts", factoryBean.getIntercepts());
                 builder.addPropertyValue("interceptFroms", factoryBean.getInterceptFroms());

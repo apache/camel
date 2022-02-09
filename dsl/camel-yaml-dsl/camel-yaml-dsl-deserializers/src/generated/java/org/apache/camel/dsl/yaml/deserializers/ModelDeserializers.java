@@ -74,7 +74,6 @@ import org.apache.camel.model.RouteConfigurationContextRefDefinition;
 import org.apache.camel.model.RouteContextRefDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateParameterDefinition;
-import org.apache.camel.model.RouteTemplateScriptDefinition;
 import org.apache.camel.model.RoutingSlipDefinition;
 import org.apache.camel.model.SagaActionUriDefinition;
 import org.apache.camel.model.SagaDefinition;
@@ -89,6 +88,7 @@ import org.apache.camel.model.SplitDefinition;
 import org.apache.camel.model.StepDefinition;
 import org.apache.camel.model.StopDefinition;
 import org.apache.camel.model.SwitchDefinition;
+import org.apache.camel.model.TemplatedRouteParameterDefinition;
 import org.apache.camel.model.ThreadPoolProfileDefinition;
 import org.apache.camel.model.ThreadsDefinition;
 import org.apache.camel.model.ThrottleDefinition;
@@ -13256,48 +13256,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
 
     @YamlType(
             inline = true,
-            types = org.apache.camel.model.RouteTemplateScriptDefinition.class,
-            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            nodes = {
-                    "template-script",
-                    "templateScript"
-            },
-            properties = @YamlProperty(name = "script", type = "string")
-    )
-    public static class RouteTemplateScriptDefinitionDeserializer extends YamlDeserializerBase<RouteTemplateScriptDefinition> {
-        public RouteTemplateScriptDefinitionDeserializer() {
-            super(RouteTemplateScriptDefinition.class);
-        }
-
-        @Override
-        protected RouteTemplateScriptDefinition newInstance() {
-            return new RouteTemplateScriptDefinition();
-        }
-
-        @Override
-        protected RouteTemplateScriptDefinition newInstance(String value) {
-            return new RouteTemplateScriptDefinition(value);
-        }
-
-        @Override
-        protected boolean setProperty(RouteTemplateScriptDefinition target, String propertyKey,
-                String propertyName, Node node) {
-            switch(propertyKey) {
-                case "script": {
-                    String val = asText(node);
-                    target.setScript(val);
-                    break;
-                }
-                default: {
-                    return false;
-                }
-            }
-            return true;
-        }
-    }
-
-    @YamlType(
-            inline = true,
             types = org.apache.camel.model.RoutingSlipDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = {
@@ -15517,6 +15475,50 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "using-iterator": {
                     String val = asText(node);
                     target.setUsingIterator(val);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            types = org.apache.camel.model.TemplatedRouteParameterDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            nodes = {
+                    "templated-route-parameter",
+                    "templatedRouteParameter"
+            },
+            properties = {
+                    @YamlProperty(name = "name", type = "string", required = true),
+                    @YamlProperty(name = "value", type = "string", required = true)
+            }
+    )
+    public static class TemplatedRouteParameterDefinitionDeserializer extends YamlDeserializerBase<TemplatedRouteParameterDefinition> {
+        public TemplatedRouteParameterDefinitionDeserializer() {
+            super(TemplatedRouteParameterDefinition.class);
+        }
+
+        @Override
+        protected TemplatedRouteParameterDefinition newInstance() {
+            return new TemplatedRouteParameterDefinition();
+        }
+
+        @Override
+        protected boolean setProperty(TemplatedRouteParameterDefinition target, String propertyKey,
+                String propertyName, Node node) {
+            switch(propertyKey) {
+                case "name": {
+                    String val = asText(node);
+                    target.setName(val);
+                    break;
+                }
+                case "value": {
+                    String val = asText(node);
+                    target.setValue(val);
                     break;
                 }
                 default: {

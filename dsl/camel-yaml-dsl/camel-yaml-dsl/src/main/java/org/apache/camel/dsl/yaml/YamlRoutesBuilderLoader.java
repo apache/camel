@@ -38,6 +38,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
+import org.apache.camel.model.TemplatedRouteDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.errorhandler.DefaultErrorHandlerProperties;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
@@ -151,6 +152,10 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                 } else if (item instanceof RouteTemplateDefinition) {
                     CamelContextAware.trySetCamelContext(getRouteTemplateCollection(), getCamelContext());
                     getRouteTemplateCollection().routeTemplate((RouteTemplateDefinition) item);
+                    return true;
+                } else if (item instanceof TemplatedRouteDefinition) {
+                    CamelContextAware.trySetCamelContext(getTemplatedRouteCollection(), getCamelContext());
+                    getTemplatedRouteCollection().templatedRoute((TemplatedRouteDefinition) item);
                     return true;
                 } else if (item instanceof RestDefinition) {
                     RestDefinition definition = (RestDefinition) item;

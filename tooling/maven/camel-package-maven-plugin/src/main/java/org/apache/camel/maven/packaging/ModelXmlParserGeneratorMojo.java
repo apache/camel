@@ -102,6 +102,7 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
     private Class<?> routesDefinitionClass;
     private Class<?> routeConfigurationsDefinitionClass;
     private Class<?> routeTemplatesDefinitionClass;
+    private Class<?> templatedRoutesDefinitionClass;
     private Class<?> restsDefinitionClass;
     private Class<?> processorDefinitionClass;
     private Class<?> dataFormatDefinitionClass;
@@ -136,6 +137,7 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
         routesDefinitionClass = loadClass(classLoader, MODEL_PACKAGE + ".RoutesDefinition");
         routeConfigurationsDefinitionClass = loadClass(classLoader, MODEL_PACKAGE + ".RouteConfigurationsDefinition");
         routeTemplatesDefinitionClass = loadClass(classLoader, MODEL_PACKAGE + ".RouteTemplatesDefinition");
+        templatedRoutesDefinitionClass = loadClass(classLoader, MODEL_PACKAGE + ".TemplatedRoutesDefinition");
         dataFormatDefinitionClass = loadClass(classLoader, MODEL_PACKAGE + ".DataFormatDefinition");
         processorDefinitionClass = loadClass(classLoader, MODEL_PACKAGE + ".ProcessorDefinition");
         restsDefinitionClass = loadClass(classLoader, MODEL_PACKAGE + ".rest.RestsDefinition");
@@ -484,7 +486,7 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
                 }
                 return " noValueHandler()";
             });
-            if (clazz == routesDefinitionClass || clazz == routeTemplatesDefinitionClass || clazz == restsDefinitionClass || clazz == routeConfigurationsDefinitionClass) {
+            if (clazz == routesDefinitionClass || clazz == routeTemplatesDefinitionClass || clazz == templatedRoutesDefinitionClass || clazz == restsDefinitionClass || clazz == routeConfigurationsDefinitionClass) {
 
                 // for routes/rests/routeTemplates we want to support single-mode as well, this means
                 // we check that the tag name is either plural or singular and parse accordingly

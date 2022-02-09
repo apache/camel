@@ -29,6 +29,7 @@ import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
 import org.apache.camel.spi.ModelReifierFactory;
 import org.apache.camel.support.PatternHelper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Model interface
@@ -217,6 +218,29 @@ public interface Model {
      */
     String addRouteFromTemplate(String routeId, String routeTemplateId, RouteTemplateContext routeTemplateContext)
             throws Exception;
+
+    /**
+     * Adds a new route from a given templated route definition
+     *
+     * @param  templatedRouteDefinition the templated route definition to add as a route (mandatory)
+     * @throws Exception                is thrown if error creating and adding the new route
+     */
+    void addRouteFromTemplatedRoute(TemplatedRouteDefinition templatedRouteDefinition) throws Exception;
+
+    /**
+     * Adds new routes from a given templated route definitions
+     *
+     * @param  templatedRouteDefinitions the templated route definitions to add as a route (mandatory)
+     * @throws Exception                 is thrown if error creating and adding the new route
+     */
+    default void addRouteFromTemplatedRoutes(
+            Collection<TemplatedRouteDefinition> templatedRouteDefinitions)
+            throws Exception {
+        ObjectHelper.notNull(templatedRouteDefinitions, "templatedRouteDefinitions");
+        for (TemplatedRouteDefinition templatedRouteDefinition : templatedRouteDefinitions) {
+            addRouteFromTemplatedRoute(templatedRouteDefinition);
+        }
+    }
 
     /**
      * Returns a list of the current REST definitions

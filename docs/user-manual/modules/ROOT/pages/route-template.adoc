@@ -113,6 +113,75 @@ TemplatedRouteBuilder.builder(context, "myTemplate")
     .add();
 ----
 
+And in Java DSL
+
+[source,java]
+----
+templatedRoute("myTemplate")
+        .parameter("name", "one")
+        .parameter("greeting", "Hello");
+templatedRoute("myTemplate")
+        .parameter("name", "two")
+        .parameter("greeting", "Bonjour")
+        .parameter("myPeriod", "5s");
+----
+
+And in Spring XML DSL
+
+[source,xml]
+----
+<camelContext>
+  <templatedRoute routeTemplateRef="myTemplate">
+    <parameter name="name" value="one"/>
+    <parameter name="greeting" value="Hello"/>
+  </templatedRoute>
+  <templatedRoute routeTemplateRef="myTemplate">
+    <parameter name="name" value="two"/>
+    <parameter name="greeting" value="Bonjour"/>
+    <parameter name="myPeriod" value="5s"/>
+  </templatedRoute>
+</camelContext>
+----
+
+And in XML DSL
+
+[source,xml]
+----
+<templatedRoutes xmlns="http://camel.apache.org/schema/spring">
+  <templatedRoute routeTemplateRef="myTemplate">
+    <parameter name="name" value="one"/>
+    <parameter name="greeting" value="Hello"/>
+  </templatedRoute>
+  <templatedRoute routeTemplateRef="myTemplate">
+    <parameter name="name" value="two"/>
+    <parameter name="greeting" value="Bonjour"/>
+    <parameter name="myPeriod" value="5s"/>
+  </templatedRoute>
+</templatedRoutes>
+----
+
+And in YAML DSL
+
+[source,yaml]
+----
+- templated-route:
+    route-template-ref: "myTemplate"
+    parameters:
+      - name: "name"
+        value: "one"
+      - name: "greeting"
+        value: "Hello"
+- templated-route:
+    route-template-ref: "myTemplate"
+    parameters:
+      - name: "name"
+        value: "two"
+      - name: "greeting"
+        value: "Bonjour"
+      - name: "myPeriod"
+        value: "5s"
+----
+
 The returned value from `add` is the route id of the new route that was added.
 However `null` is returned if the route is not yet created and added, which can happen if `CamelContext` is
 not started yet.
@@ -132,6 +201,58 @@ TemplatedRouteBuilder.builder(context, "myTemplate")
     .add();
 ----
 
+And in Java DSL
+
+[source,java]
+----
+templatedRoute("myTemplate")
+        .routeId("myCoolRoute")
+        .parameter("name", "one")
+        .parameter("greeting", "hello")
+        .parameter("myPeriod", "5s");
+----
+
+And in Spring XML DSL
+
+[source,xml]
+----
+<camelContext>
+  <templatedRoute routeTemplateRef="myTemplate" routeId="myCoolRoute">
+    <parameter name="name" value="one"/>
+    <parameter name="greeting" value="hello"/>
+    <parameter name="myPeriod" value="5s"/>
+  </templatedRoute>
+</camelContext>
+----
+
+And in XML DSL
+
+[source,xml]
+----
+<templatedRoutes xmlns="http://camel.apache.org/schema/spring">
+  <templatedRoute routeTemplateRef="myTemplate" routeId="myCoolRoute">
+    <parameter name="name" value="one"/>
+    <parameter name="greeting" value="hello"/>
+    <parameter name="myPeriod" value="5s"/>
+  </templatedRoute>
+</templatedRoutes>
+----
+
+And in YAML DSL
+
+[source,yaml]
+----
+- templated-route:
+    route-template-ref: "myTemplate"
+    route-id: "myCoolRoute"
+    parameters:
+      - name: "name"
+        value: "one"
+      - name: "greeting"
+        value: "hello"
+      - name: "myPeriod"
+        value: "5s"
+----
 
 == Binding beans to route template
 
@@ -212,6 +333,86 @@ TemplatedRouteBuilder.builder(context, "s3template")
 
 As you can see the binding is similar to when using `templateBean` directly in the route template.
 
+And in Java DSL
+
+[source,java]
+----
+templatedRoute("s3template")
+        .parameter("region", "US-EAST-1")
+        .parameter("bucket", "myBucket")
+        .bean("myClient", S3Client.class,
+                rtc -> S3Client.builder() // <1>
+                    .region(rtc.getProperty("region", Region.class))
+                    .build())
+        .routeId("mys3route");
+----
+<1> Note that the third parameter of the `bean` method is not directly the bean but rather a factory method that will be used to create the bean, here we use a lambda expression as factory method.
+
+And in Spring XML DSL
+
+[source,xml]
+----
+<camelContext>
+  <templatedRoute routeTemplateRef="s3template" routeId="mys3route">
+    <parameter name="region" value="US-EAST-1"/>
+    <parameter name="bucket" value="myBucket"/>
+    <bean name="myClient" type="groovy"> <!--1-->
+        <script>
+            import software.amazon.awssdk.services.s3.S3Client
+            S3Client.builder()
+                .region(rtc.getProperty("region", Region.class))
+                .build()
+        </script>
+    </bean>
+  </templatedRoute>
+</camelContext>
+----
+<1> For non-Java DSL, in case of a complex bean factory, you can still rely on a language like `groovy` to define your bean factory inside a `script` element.
+
+And in XML DSL
+
+[source,xml]
+----
+<templatedRoutes xmlns="http://camel.apache.org/schema/spring">
+  <templatedRoute routeTemplateRef="s3template" routeId="mys3route">
+    <parameter name="region" value="US-EAST-1"/>
+    <parameter name="bucket" value="myBucket"/>
+    <bean name="myClient" type="groovy"> <!--1-->
+        <script>
+            import software.amazon.awssdk.services.s3.S3Client
+            S3Client.builder()
+                .region(rtc.getProperty("region", Region.class))
+                .build()
+        </script>
+    </bean>
+  </templatedRoute>
+</templatedRoutes>
+----
+<1> For non-Java DSL, in case of a complex bean factory, you can still rely on a language like `groovy` to define your bean factory inside a `script` element.
+
+And in YAML DSL
+
+[source,yaml]
+----
+- templated-route:
+    route-template-ref: "s3template"
+    route-id: "mys3route"
+    parameters:
+      - name: "region"
+        value: "US-EAST-1"
+      - name: "bucket"
+        value: "myBucket"
+    beans:
+      - name: "myClient"
+        type: "groovy"
+        script: | # <1>
+            import software.amazon.awssdk.services.s3.S3Client
+            S3Client.builder()
+                .region(rtc.getProperty("region", Region.class))
+                .build()
+----
+<1> For non-Java DSL, in case of a complex bean factory, you can still rely on a language like `groovy` to define your bean factory as value of the `script` key.
+
 Instead of binding the beans from the template builder, you could also create the bean outside the template,
 and bind it by reference.
 
@@ -228,9 +429,20 @@ TemplatedRouteBuilder.builder(context, "s3template")
     .add();
 ----
 
+And in Java DSL
+
+[source,java]
+----
+templatedRoute("s3template")
+        .parameter("region", "US-EAST-1")
+        .parameter("bucket", "myBucket")
+        .bean("myClient", S3Client.class, rtc -> myClient)
+        .routeId("mys3route");
+----
+
 You should prefer to create the local beans directly from within the template (if possible) because this
-ensures the route template has this out of the box. Otherwise the bean must be created or provided every time
-a new route is created from the route template. However the latter gives freedom to create the bean in any other custom way.
+ensures the route template has this out of the box. Otherwise, the bean must be created or provided every time
+a new route is created from the route template. However, the latter gives freedom to create the bean in any other custom way.
 
 === Binding beans to route templates using bean types
 
@@ -276,11 +488,11 @@ With Java DSL you can also refer to the bean class using type safe way:
 
 [source,java]
 ----
-    .templateBean("myBar")
-        .typeClass(MyBar.class)
-        .property("name", "{{bar}}")
-        .property("address", "{{street}}")
-    .end()
+.templateBean("myBar")
+    .typeClass(MyBar.class)
+    .property("name", "{{bar}}")
+    .property("address", "{{street}}")
+.end()
 ----
 
 In XML DSL you would do:

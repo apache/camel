@@ -31,6 +31,7 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.SetBodyDefinition;
+import org.apache.camel.model.TemplatedRoutesDefinition;
 import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.junit.jupiter.api.Assertions;
@@ -44,6 +45,7 @@ public class ModelParserTest {
     public static final String NAMESPACE = "http://camel.apache.org/schema/spring";
     private static final List<String> REST_XMLS = Arrays.asList("barRest.xml", "simpleRest.xml", "simpleRestToD.xml");
     private static final List<String> TEMPLATE_XMLS = Arrays.asList("barTemplate.xml");
+    private static final List<String> TEMPLATED_ROUTE_XMLS = Arrays.asList("barTemplatedRoute.xml");
 
     @Test
     public void testNoNamespace() throws Exception {
@@ -64,6 +66,15 @@ public class ModelParserTest {
     }
 
     @Test
+    public void testSingleTemplatedRouteNoNamespace() throws Exception {
+        Path dir = getResourceFolder();
+        Path path = new File(dir.toFile(), "nonamespace/singleTemplatedRouteNoNamespace.xml").toPath();
+        ModelParser parser = new ModelParser(Files.newInputStream(path));
+        TemplatedRoutesDefinition templatedRoutes = parser.parseTemplatedRoutesDefinition().orElse(null);
+        assertNotNull(templatedRoutes);
+    }
+
+    @Test
     public void testFiles() throws Exception {
         Path dir = getResourceFolder();
         List<Path> files = Files.list(dir).sorted().filter(Files::isRegularFile).collect(Collectors.toList());
@@ -71,12 +82,16 @@ public class ModelParserTest {
             ModelParser parser = new ModelParser(Files.newInputStream(path), NAMESPACE);
             boolean isRest = REST_XMLS.contains(path.getFileName().toString());
             boolean isTemplate = TEMPLATE_XMLS.contains(path.getFileName().toString());
+            boolean isTemplatedRoute = TEMPLATED_ROUTE_XMLS.contains(path.getFileName().toString());
             if (isRest) {
                 RestsDefinition rests = parser.parseRestsDefinition().orElse(null);
                 assertNotNull(rests);
             } else if (isTemplate) {
                 RouteTemplatesDefinition templates = parser.parseRouteTemplatesDefinition().orElse(null);
                 assertNotNull(templates);
+            } else if (isTemplatedRoute) {
+                TemplatedRoutesDefinition templatedRoutes = parser.parseTemplatedRoutesDefinition().orElse(null);
+                assertNotNull(templatedRoutes);
             } else {
                 RoutesDefinition routes = parser.parseRoutesDefinition().orElse(null);
                 assertNotNull(routes);
