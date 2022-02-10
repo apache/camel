@@ -135,7 +135,7 @@ public interface HealthCheck extends HasGroup, HasId, Ordered {
         /**
          * A key/value combination of details.
          *
-         * @return a non null details map
+         * @return a non null details map (empty if no details)
          */
         Map<String, Object> getDetails();
     }

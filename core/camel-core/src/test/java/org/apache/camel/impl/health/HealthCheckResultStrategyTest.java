@@ -24,8 +24,8 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.HealthCheckRegistry;
-import org.apache.camel.health.HealthCheckResultStrategy;
 import org.apache.camel.health.HealthCheckResultBuilder;
+import org.apache.camel.health.HealthCheckResultStrategy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
