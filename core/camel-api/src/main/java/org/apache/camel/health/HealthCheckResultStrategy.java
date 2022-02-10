@@ -16,17 +16,21 @@
  */
 package org.apache.camel.health;
 
+import java.util.Map;
+
 /**
- * Health check filter.
+ * A strategy that allows SPI to process {@link HealthCheck} results and enrich and manipulate the result.
  */
-@FunctionalInterface
-public interface HealthCheckFilter {
+public interface HealthCheckResultStrategy {
 
     /**
-     * Determine if the given {@link HealthCheck} has to be filtered out.
+     * Processes and allows manipulation of the result from the {@link HealthCheck} invocation.
      *
-     * @param  check the check to evaluate.
-     * @return       true if the given <dode>check</dode> has to be filtered out.
+     * @param check   the invoked health check
+     * @param options optional options when invoked the health check
+     * @param builder the result builder that builds the health check response, which can be enriched and manipulated by
+     *                this strategy.
      */
-    boolean test(HealthCheck check);
+    void processResult(HealthCheck check, Map<String, Object> options, HealthCheckResultBuilder builder);
+
 }

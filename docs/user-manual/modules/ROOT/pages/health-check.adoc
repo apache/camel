@@ -128,6 +128,18 @@ the readiness or liveness checks.
 
 The health checks can also be invoked from JMX.
 
+== Enriching and controlling health check responses
+
+Each health check that is invoked will gather details about the result using `HealthCheckResultBuilder`.
+
+To allow enriching and manipulating the result, then you can use `HealthCheckResultStrategy` to
+plug in a custom bean that can process the result, and change state, add information, remove unwanted information,
+etc. on the result builder.
+
+The custom bean should be registered to the Camel xref:registry.adoc[Registry] to be discovered
+by `camel-health`. Only one instance of the bean is allowed.
+
+
 == Writing a custom health check
 
 There are a limited number of health checks provided by Camel out of the box,
@@ -169,7 +181,7 @@ public final class MyHealthCheck extends AbstractHealthCheck {
 You can now make _MyHealthCheck_ available to Camel by adding an instance to (for example Spring application context)
 or directly to the Camel xref:registry.adoc[Registry].
 
-=== Loading custom health checks
+== Loading custom health checks
 
 Camel can discover and load custom health checks from classpath scanning. This requires
 to annotate the custom health checks with `@HealthCheck` annotation on the class (see above).
@@ -211,7 +223,7 @@ context.setLoadHealthChecks(true);
 
 TIP: The example `main-health` has a custom health check which is loadable.
 
-==== Loading custom health checks in Camel Quarkus
+=== Loading custom health checks in Camel Quarkus
 
 If you use Camel Quarkus then you can write custom health checks with
 xref:components:others:microprofile-health.adoc[MicroProfile Health], which
@@ -222,7 +234,7 @@ Using Camel's own health check APIs does however allow building health checks
 that are usable anywhere you use Camel whether its standalone, spring boot, quarkus,
 or something else.
 
-=== Writing custom Health Check for Camel components
+== Writing custom Health Check for Camel components
 
 You can implement custom health checks in Camel components (currently only for consumers).
 

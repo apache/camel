@@ -104,7 +104,7 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
                 .filter(repository -> repository instanceof HealthCheckRegistryRepository)
                 .findFirst();
 
-        if (!hcr.isPresent()) {
+        if (hcr.isEmpty()) {
             register(new HealthCheckRegistryRepository());
         }
 
@@ -184,6 +184,9 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
 
         checkIfAccepted(obj);
 
+        // inject context
+        CamelContextAware.trySetCamelContext(obj, camelContext);
+
         if (obj instanceof HealthCheck) {
             HealthCheck healthCheck = (HealthCheck) obj;
             // do we have this already
@@ -208,6 +211,11 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
             }
         }
 
+        // ensure the check is started if we are already started (such as added later)
+        if (isStarted()) {
+            ServiceHelper.startService(obj);
+        }
+
         return result;
     }
 
@@ -229,6 +237,10 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
             if (result) {
                 LOG.debug("HealthCheckRepository with id {} successfully un-registered", repository.getId());
             }
+        }
+
+        if (result) {
+            ServiceHelper.stopService(obj);
         }
 
         return result;

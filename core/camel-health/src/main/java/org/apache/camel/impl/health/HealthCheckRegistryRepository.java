@@ -66,7 +66,8 @@ public class HealthCheckRegistryRepository extends ServiceSupport
     public Stream<HealthCheck> stream() {
         if (context != null && enabled) {
             Set<HealthCheck> set = this.context.getRegistry().findByType(HealthCheck.class);
-            return set.stream().map(this::toHealthCheck);
+            return set.stream()
+                    .map(this::toHealthCheck);
         } else {
             return Stream.empty();
         }

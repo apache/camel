@@ -22,37 +22,24 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Helper for invoking {@link HealthCheck}'s.
  *
- * The helper will lookup the {@link HealthCheckRegistry} from {@link CamelContext} and gather all the registered
- * {@link HealthCheck}s and invoke them and gather their responses.
+ * The helper will look up the {@link HealthCheckRegistry} from {@link CamelContext} and gather all the registered
+ * {@link HealthCheck}s and invoke them and gather their results.
  *
- * The helper allows filtering out unwanted health checks using {@link HealthCheckFilter} or to invoke only readiness or
- * liveness checks.
+ * The helper allows filtering out unwanted health checks using {@link Predicate<HealthCheck>} or to invoke only
+ * readiness or liveness checks.
  */
 public final class HealthCheckHelper {
 
-    private static final Logger LOG = LoggerFactory.getLogger(HealthCheckHelper.class);
-
     private HealthCheckHelper() {
-    }
-
-    /**
-     * Get the group of the given check or an empty string if the group is not set.
-     *
-     * @param  check the health check
-     * @return       the {@link HealthCheck#getGroup()} or an empty string if it is <code>null</code>
-     */
-    public static String getGroup(HealthCheck check) {
-        return ObjectHelper.supplyIfEmpty(check.getGroup(), () -> "");
     }
 
     /**
@@ -91,7 +78,7 @@ public final class HealthCheckHelper {
      */
     public static Collection<HealthCheck.Result> invoke(
             CamelContext camelContext,
-            HealthCheckFilter filter) {
+            Predicate<HealthCheck> filter) {
 
         return invoke(camelContext, check -> Collections.emptyMap(), filter);
     }
@@ -106,7 +93,7 @@ public final class HealthCheckHelper {
     public static Collection<HealthCheck.Result> invoke(
             CamelContext camelContext,
             Function<HealthCheck, Map<String, Object>> optionsSupplier,
-            HealthCheckFilter filter) {
+            Predicate<HealthCheck> filter) {
 
         final HealthCheckRegistry registry = HealthCheckRegistry.get(camelContext);
 
@@ -115,40 +102,16 @@ public final class HealthCheckHelper {
             // check one by one.
             return registry.stream()
                     .collect(Collectors.groupingBy(HealthCheckHelper::getGroup))
-                    .entrySet().stream()
-                    .map(Map.Entry::getValue)
+                    .values().stream()
                     .flatMap(Collection::stream)
                     .filter(check -> !registry.isExcluded(check) && !filter.test(check))
                     .sorted(Comparator.comparingInt(HealthCheck::getOrder))
                     .distinct()
                     .map(check -> check.call(optionsSupplier.apply(check)))
                     .collect(Collectors.toList());
-        } else {
-            LOG.debug("No health check source found");
         }
 
         return Collections.emptyList();
-    }
-
-    /**
-     * Query the status of a check by id. Note that this may result in an effective invocation of the
-     * {@link HealthCheck}.
-     *
-     * @param  camelContext the camel context.
-     * @param  id           the check id.
-     * @param  options      the check options.
-     * @return              an optional {@link HealthCheck.Result}.
-     */
-    public static Optional<HealthCheck.Result> query(CamelContext camelContext, String id, Map<String, Object> options) {
-        final HealthCheckRegistry registry = HealthCheckRegistry.get(camelContext);
-
-        if (registry != null) {
-            return registry.getCheck(id).map(check -> check.call(options));
-        } else {
-            LOG.debug("No health check source found");
-        }
-
-        return Optional.empty();
     }
 
     /**
@@ -164,10 +127,18 @@ public final class HealthCheckHelper {
 
         if (registry != null) {
             return registry.getCheck(id).map(check -> check.call(options));
-        } else {
-            LOG.debug("No health check source found");
         }
 
         return Optional.empty();
+    }
+
+    /**
+     * Get the group of the given check or an empty string if the group is not set.
+     *
+     * @param  check the health check
+     * @return       the {@link HealthCheck#getGroup()} or an empty string if it is <code>null</code>
+     */
+    private static String getGroup(HealthCheck check) {
+        return ObjectHelper.supplyIfEmpty(check.getGroup(), () -> "");
     }
 }

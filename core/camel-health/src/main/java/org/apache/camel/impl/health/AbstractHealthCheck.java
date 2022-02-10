@@ -20,12 +20,14 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.health.HealthCheck;
+import org.apache.camel.health.HealthCheckResultStrategy;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -36,7 +38,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractHealthCheck implements HealthCheck, CamelContextAware {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractHealthCheck.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractHealthCheck.class);
 
     private CamelContext camelContext;
     private boolean enabled = true;
@@ -111,56 +113,68 @@ public abstract class AbstractHealthCheck implements HealthCheck, CamelContextAw
 
     @Override
     public Result call(Map<String, Object> options) {
+        HealthCheckResultBuilder builder;
         synchronized (lock) {
-            final HealthCheckResultBuilder builder = HealthCheckResultBuilder.on(this);
-
-            // Extract relevant information from meta data.
-            int invocationCount = (Integer) meta.getOrDefault(INVOCATION_COUNT, 0);
-            int failureCount = (Integer) meta.getOrDefault(FAILURE_COUNT, 0);
-            int successCount = (Integer) meta.getOrDefault(SUCCESS_COUNT, 0);
-
-            String invocationTime = ZonedDateTime.now().format(DateTimeFormatter.ISO_ZONED_DATE_TIME);
-
-            // Set common meta-data
-            meta.put(INVOCATION_ATTEMPT_TIME, invocationTime);
-
-            if (!isEnabled()) {
-                LOGGER.debug("health-check {}/{} disabled", getGroup(), getId());
-
-                builder.message("Disabled");
-                builder.detail(CHECK_ENABLED, false);
-
-                return builder.unknown().build();
-            }
-
-            LOGGER.debug("Invoke health-check {}/{}", getGroup(), getId());
-            doCall(builder, options);
-
-            // State should be set here
-            ObjectHelper.notNull(builder.state(), "Response State");
-
-            if (builder.state() == State.DOWN) {
-                // reset success since it failed
-                successCount = 0;
-            } else if (builder.state() == State.UP) {
-                // reset failure since it ok
-                failureCount = 0;
-            }
-
-            meta.put(INVOCATION_TIME, invocationTime);
-            meta.put(INVOCATION_COUNT, ++invocationCount);
-            meta.put(FAILURE_COUNT, failureCount);
-            meta.put(SUCCESS_COUNT, successCount);
-
-            // Copy some meta-data bits to the response attributes so the
-            // response caches the health-check state at the time of the invocation.
-            builder.detail(INVOCATION_TIME, meta.get(INVOCATION_TIME));
-            builder.detail(INVOCATION_COUNT, meta.get(INVOCATION_COUNT));
-            builder.detail(FAILURE_COUNT, meta.get(FAILURE_COUNT));
-            builder.detail(SUCCESS_COUNT, meta.get(SUCCESS_COUNT));
-
-            return builder.build();
+            builder = doCall(options);
         }
+
+        HealthCheckResultStrategy strategy = customHealthCheckResponseStrategy();
+        if (strategy != null) {
+            strategy.processResult(this, options, builder);
+        }
+
+        return builder.build();
+    }
+
+    protected HealthCheckResultBuilder doCall(Map<String, Object> options) {
+        final HealthCheckResultBuilder builder = HealthCheckResultBuilder.on(this);
+
+        // Extract relevant information from meta data.
+        int invocationCount = (Integer) meta.getOrDefault(INVOCATION_COUNT, 0);
+        int failureCount = (Integer) meta.getOrDefault(FAILURE_COUNT, 0);
+        int successCount = (Integer) meta.getOrDefault(SUCCESS_COUNT, 0);
+
+        String invocationTime = ZonedDateTime.now().format(DateTimeFormatter.ISO_ZONED_DATE_TIME);
+
+        // Set common meta-data
+        meta.put(INVOCATION_ATTEMPT_TIME, invocationTime);
+
+        if (!isEnabled()) {
+            LOG.debug("health-check {}/{} disabled", getGroup(), getId());
+            builder.message("Disabled");
+            builder.detail(CHECK_ENABLED, false);
+            builder.unknown();
+            return builder;
+        }
+
+        LOG.debug("Invoke health-check {}/{}", getGroup(), getId());
+        doCall(builder, options);
+
+        if (builder.state() == null) {
+            builder.unknown();
+        }
+
+        if (builder.state() == State.DOWN) {
+            // reset success since it failed
+            successCount = 0;
+        } else if (builder.state() == State.UP) {
+            // reset failure since it ok
+            failureCount = 0;
+        }
+
+        meta.put(INVOCATION_TIME, invocationTime);
+        meta.put(INVOCATION_COUNT, ++invocationCount);
+        meta.put(FAILURE_COUNT, failureCount);
+        meta.put(SUCCESS_COUNT, successCount);
+
+        // Copy some meta-data bits to the response attributes so the
+        // response caches the health-check state at the time of the invocation.
+        builder.detail(INVOCATION_TIME, meta.get(INVOCATION_TIME));
+        builder.detail(INVOCATION_COUNT, meta.get(INVOCATION_COUNT));
+        builder.detail(FAILURE_COUNT, meta.get(FAILURE_COUNT));
+        builder.detail(SUCCESS_COUNT, meta.get(SUCCESS_COUNT));
+
+        return builder;
     }
 
     @Override
@@ -192,4 +206,13 @@ public abstract class AbstractHealthCheck implements HealthCheck, CamelContextAw
      * @see HealthCheck#call(Map)
      */
     protected abstract void doCall(HealthCheckResultBuilder builder, Map<String, Object> options);
+
+    private HealthCheckResultStrategy customHealthCheckResponseStrategy() {
+        Set<HealthCheckResultStrategy> set = camelContext.getRegistry().findByType(HealthCheckResultStrategy.class);
+        if (set.size() == 1) {
+            return set.iterator().next();
+        }
+        return null;
+    }
+
 }

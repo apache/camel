@@ -202,8 +202,6 @@ public class DefaultHealthCheckRegistryTest {
 
     private static class MyHealthCheck extends AbstractHealthCheck implements CamelContextAware {
 
-        private CamelContext context;
-
         protected MyHealthCheck(String group, String id) {
             super(group, id);
         }
@@ -213,14 +211,5 @@ public class DefaultHealthCheckRegistryTest {
             builder.up();
         }
 
-        @Override
-        public void setCamelContext(CamelContext camelContext) {
-            this.context = camelContext;
-        }
-
-        @Override
-        public CamelContext getCamelContext() {
-            return context;
-        }
     }
 }
