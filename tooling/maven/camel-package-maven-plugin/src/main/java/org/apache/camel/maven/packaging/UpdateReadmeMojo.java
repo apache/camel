@@ -447,7 +447,6 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
             String kind)
             throws MojoExecutionException {
         getLog().debug("updateHeader " + file);
-        final String linkSuffix = "-" + kind;
         if (model == null || !file.exists()) {
             return false;
         }
@@ -895,10 +894,4 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
     private boolean isFailFast() {
         return failFast != null && failFast;
     }
-
-    private String wrapEnumValues(List<String> enumValues) {
-        // comma to space so we can wrap words (which uses space)
-        return String.join(", ", enumValues);
-    }
-
 }
