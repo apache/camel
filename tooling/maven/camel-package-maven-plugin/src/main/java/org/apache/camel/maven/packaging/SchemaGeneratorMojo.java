@@ -179,8 +179,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
         }
     }
 
-    private void processModelClass(ClassInfo element, Set<String> propertyPlaceholderDefinitions)
-            throws MojoExecutionException {
+    private void processModelClass(ClassInfo element, Set<String> propertyPlaceholderDefinitions) {
         // skip abstract classes
         if (Modifier.isAbstract(element.flags())) {
             return;

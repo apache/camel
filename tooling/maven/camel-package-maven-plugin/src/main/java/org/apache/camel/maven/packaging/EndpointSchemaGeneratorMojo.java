@@ -149,15 +149,8 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             }
         }
         // make sure we sort the classes in case one inherit from the other
-        classes.sort((c1, c2) -> {
-            if (c1.isAssignableFrom(c2)) {
-                return -1;
-            } else if (c2.isAssignableFrom(c1)) {
-                return +1;
-            } else {
-                return c1.getName().compareTo(c2.getName());
-            }
-        });
+        classes.sort((c1, c2) -> compareClasses(c1, c2));
+
         Map<Class, ComponentModel> models = new HashMap<>();
         for (Class<?> classElement : classes) {
             UriEndpoint uriEndpoint = classElement.getAnnotation(UriEndpoint.class);
@@ -181,39 +174,54 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             String[] schemes = scheme.split(",");
             String[] titles = title.split(",");
             String[] extendsSchemes = extendsScheme.split(",");
-            for (int i = 0; i < schemes.length; i++) {
-                final String alias = schemes[i];
-                final String extendsAlias = i < extendsSchemes.length ? extendsSchemes[i] : extendsSchemes[0];
-                String aTitle = i < titles.length ? titles[i] : titles[0];
 
-                // some components offer a secure alternative which we need
-                // to amend the title accordingly
-                if (secureAlias(schemes[0], alias)) {
-                    aTitle += " (Secure)";
-                }
-                final String aliasTitle = aTitle;
+            processSchemas(models, classElement, uriEndpoint, label, schemes, titles, extendsSchemes);
+        }
+    }
 
-                ComponentModel parentData = null;
-                Class<?> superclass = classElement.getSuperclass();
-                if (superclass != null) {
-                    parentData = models.get(superclass);
-                    if (parentData == null) {
-                        UriEndpoint parentUriEndpoint = superclass.getAnnotation(UriEndpoint.class);
-                        if (parentUriEndpoint != null) {
-                            String parentScheme = parentUriEndpoint.scheme().split(",")[0];
-                            String superClassName = superclass.getName();
-                            String packageName = superClassName.substring(0, superClassName.lastIndexOf('.'));
-                            String fileName = packageName.replace('.', '/') + "/" + parentScheme + ".json";
-                            String json = loadResource(fileName);
-                            parentData = JsonMapper.generateComponentModel(json);
-                        }
+    private void processSchemas(Map<Class, ComponentModel> models, Class<?> classElement, UriEndpoint uriEndpoint, String label, String[] schemes, String[] titles, String[] extendsSchemes) {
+        for (int i = 0; i < schemes.length; i++) {
+            final String alias = schemes[i];
+            final String extendsAlias = i < extendsSchemes.length ? extendsSchemes[i] : extendsSchemes[0];
+            String aTitle = i < titles.length ? titles[i] : titles[0];
+
+            // some components offer a secure alternative which we need
+            // to amend the title accordingly
+            if (secureAlias(schemes[0], alias)) {
+                aTitle += " (Secure)";
+            }
+            final String aliasTitle = aTitle;
+
+            ComponentModel parentData = null;
+            Class<?> superclass = classElement.getSuperclass();
+            if (superclass != null) {
+                parentData = models.get(superclass);
+                if (parentData == null) {
+                    UriEndpoint parentUriEndpoint = superclass.getAnnotation(UriEndpoint.class);
+                    if (parentUriEndpoint != null) {
+                        String parentScheme = parentUriEndpoint.scheme().split(",")[0];
+                        String superClassName = superclass.getName();
+                        String packageName = superClassName.substring(0, superClassName.lastIndexOf('.'));
+                        String fileName = packageName.replace('.', '/') + "/" + parentScheme + ".json";
+                        String json = loadResource(fileName);
+                        parentData = JsonMapper.generateComponentModel(json);
                     }
                 }
-
-                ComponentModel model = writeJSonSchemeAndPropertyConfigurer(classElement, uriEndpoint, aliasTitle, alias,
-                        extendsAlias, label, schemes, parentData);
-                models.put(classElement, model);
             }
+
+            ComponentModel model = writeJSonSchemeAndPropertyConfigurer(classElement, uriEndpoint, aliasTitle, alias,
+                    extendsAlias, label, schemes, parentData);
+            models.put(classElement, model);
+        }
+    }
+
+    private int compareClasses(Class<?> c1, Class<?> c2) {
+        if (c1.isAssignableFrom(c2)) {
+            return -1;
+        } else if (c2.isAssignableFrom(c1)) {
+            return +1;
+        } else {
+            return c1.getName().compareTo(c2.getName());
         }
     }
 
@@ -615,42 +623,9 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         final Class<?> orgClassElement = classElement;
         Set<String> excludes = new HashSet<>();
         while (true) {
-            Metadata componentAnnotation = classElement.getAnnotation(Metadata.class);
-            if (componentAnnotation != null) {
-                if (Objects.equals("verifiers", componentAnnotation.label())) {
-                    componentModel.setVerifiers(componentAnnotation.enums());
-                }
-                Collections.addAll(excludes, componentAnnotation.excludeProperties().split(","));
-            }
+            processMetadataClassAnnotation(componentModel, classElement, excludes);
 
-            List<Method> methods = Stream.of(classElement.getDeclaredMethods()).filter(method -> {
-                Metadata metadata = method.getAnnotation(Metadata.class);
-                String methodName = method.getName();
-                if (metadata != null && metadata.skip()) {
-                    return false;
-                }
-                if (method.isSynthetic() || !Modifier.isPublic(method.getModifiers())) {
-                    return false;
-                }
-                // must be the setter
-                boolean isSetter = methodName.startsWith("set")
-                        && method.getParameters().length == 1
-                        && method.getReturnType() == Void.TYPE;
-                if (!isSetter) {
-                    return false;
-                }
-
-                // skip unwanted methods as they are inherited from default
-                // component and are not intended for end users to configure
-                if ("setEndpointClass".equals(methodName) || "setCamelContext".equals(methodName)
-                        || "setEndpointHeaderFilterStrategy".equals(methodName) || "setApplicationContext".equals(methodName)) {
-                    return false;
-                }
-                if (isGroovyMetaClassProperty(method)) {
-                    return false;
-                }
-                return true;
-            }).collect(Collectors.toList());
+            List<Method> methods = findCandidateClassMethods(classElement);
 
             // if the component has options with annotations then we only want to generate options that are annotated
             // as ideally components should favour doing this, so we can control what is an option and what is not
@@ -676,12 +651,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                 // field instead of the setter, so try to use it if its there
                 String fieldName = methodName.substring(3);
                 fieldName = fieldName.substring(0, 1).toLowerCase() + fieldName.substring(1);
-                Field fieldElement;
-                try {
-                    fieldElement = classElement.getDeclaredField(fieldName);
-                } catch (NoSuchFieldException e) {
-                    fieldElement = null;
-                }
+                Field fieldElement = getFieldElement(classElement, fieldName);
                 if (fieldElement != null && metadata == null) {
                     metadata = fieldElement.getAnnotation(Metadata.class);
                 }
@@ -861,6 +831,58 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         }
     }
 
+    private Field getFieldElement(Class<?> classElement, String fieldName) {
+        Field fieldElement;
+        try {
+            fieldElement = classElement.getDeclaredField(fieldName);
+        } catch (NoSuchFieldException e) {
+            fieldElement = null;
+        }
+        return fieldElement;
+    }
+
+    private List<Method> findCandidateClassMethods(Class<?> classElement) {
+        List<Method> methods = Stream.of(classElement.getDeclaredMethods()).filter(method -> {
+            Metadata metadata = method.getAnnotation(Metadata.class);
+            String methodName = method.getName();
+            if (metadata != null && metadata.skip()) {
+                return false;
+            }
+            if (method.isSynthetic() || !Modifier.isPublic(method.getModifiers())) {
+                return false;
+            }
+            // must be the setter
+            boolean isSetter = methodName.startsWith("set")
+                    && method.getParameters().length == 1
+                    && method.getReturnType() == Void.TYPE;
+            if (!isSetter) {
+                return false;
+            }
+
+            // skip unwanted methods as they are inherited from default
+            // component and are not intended for end users to configure
+            if ("setEndpointClass".equals(methodName) || "setCamelContext".equals(methodName)
+                    || "setEndpointHeaderFilterStrategy".equals(methodName) || "setApplicationContext".equals(methodName)) {
+                return false;
+            }
+            if (isGroovyMetaClassProperty(method)) {
+                return false;
+            }
+            return true;
+        }).collect(Collectors.toList());
+        return methods;
+    }
+
+    private void processMetadataClassAnnotation(ComponentModel componentModel, Class<?> classElement, Set<String> excludes) {
+        Metadata componentAnnotation = classElement.getAnnotation(Metadata.class);
+        if (componentAnnotation != null) {
+            if (Objects.equals("verifiers", componentAnnotation.label())) {
+                componentModel.setVerifiers(componentAnnotation.enums());
+            }
+            Collections.addAll(excludes, componentAnnotation.excludeProperties().split(","));
+        }
+    }
+
     // CHECKSTYLE:OFF
     protected void findClassProperties(
             ComponentModel componentModel, Class<?> classElement,
@@ -940,20 +962,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                     }
 
                     // gather enums
-                    List<String> enums = null;
-
-                    if (!Strings.isNullOrEmpty(path.enums())) {
-                        String[] values = path.enums().split(",");
-                        enums = Stream.of(values).map(String::trim).collect(Collectors.toList());
-                    } else if (fieldTypeElement.isEnum()) {
-                        enums = new ArrayList<>();
-                        for (Object val : fieldTypeElement.getEnumConstants()) {
-                            String str = val.toString();
-                            if (!enums.contains(str)) {
-                                enums.add(str);
-                            }
-                        }
-                    }
+                    List<String> enums = gatherEnums(path, fieldTypeElement);
 
                     // the field type may be overloaded by another type
                     boolean isDuration = false;
@@ -1087,20 +1096,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                         }
 
                         // gather enums
-                        List<String> enums = null;
-
-                        if (!Strings.isNullOrEmpty(param.enums())) {
-                            String[] values = param.enums().split(",");
-                            enums = Stream.of(values).map(String::trim).collect(Collectors.toList());
-                        } else if (fieldTypeElement.isEnum()) {
-                            enums = new ArrayList<>();
-                            for (Object val : fieldTypeElement.getEnumConstants()) {
-                                String str = val.toString();
-                                if (!enums.contains(str)) {
-                                    enums.add(str);
-                                }
-                            }
-                        }
+                        List<String> enums = gatherEnums(param, fieldTypeElement);
 
                         // the field type may be overloaded by another type
                         boolean isDuration = false;
@@ -1259,6 +1255,41 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                 break;
             }
         }
+    }
+
+    private static List<String> doGatherFromEnum(Class<?> fieldTypeElement) {
+        final List<String> enums = new ArrayList<>();
+
+        for (Object val : fieldTypeElement.getEnumConstants()) {
+            String str = val.toString();
+            if (!enums.contains(str)) {
+                enums.add(str);
+            }
+        }
+
+        return enums;
+    }
+
+    private static List<String> gatherEnums(UriParam param, Class<?> fieldTypeElement) {
+        if (!Strings.isNullOrEmpty(param.enums())) {
+            String[] values = param.enums().split(",");
+            return Stream.of(values).map(String::trim).collect(Collectors.toList());
+        } else if (fieldTypeElement.isEnum()) {
+            return doGatherFromEnum(fieldTypeElement);
+        }
+
+        return null;
+    }
+
+    private static List<String> gatherEnums(UriPath path, Class<?> fieldTypeElement) {
+        if (!Strings.isNullOrEmpty(path.enums())) {
+            String[] values = path.enums().split(",");
+            return Stream.of(values).map(String::trim).collect(Collectors.toList());
+        } else if (fieldTypeElement.isEnum()) {
+            return doGatherFromEnum(fieldTypeElement);
+        }
+
+        return null;
     }
     // CHECKSTYLE:ON
 
