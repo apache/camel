@@ -891,10 +891,10 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
     private static String camelCaseLower(String s) {
         int i;
         while (s != null && (i = s.indexOf('-')) > 0) {
-            s = s.substring(0, i) + s.substring(i + 1, i + 2).toUpperCase() + s.substring(i + 2);
+            s = camelCaseAtIndex(s, i);
         }
         while (s != null && (i = s.indexOf('+')) > 0) {
-            s = s.substring(0, i) + s.substring(i + 1, i + 2).toUpperCase() + s.substring(i + 2);
+            s = camelCaseAtIndex(s, i);
         }
         if (s != null) {
             s = s.substring(0, 1).toLowerCase() + s.substring(1);
@@ -913,6 +913,10 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
             }
         }
         return s;
+    }
+
+    private static String camelCaseAtIndex(String s, int i) {
+        return s.substring(0, i) + s.substring(i + 1, i + 2).toUpperCase() + s.substring(i + 2);
     }
 
     private String getMainDescription(ComponentModel model) {
