@@ -5,12 +5,12 @@
 One of the first steps when implementing a new test, is to identify how to simulate infrastructure required for it to 
 run. The test-infra module provides a reusable library of infrastructure that can be used for that purpose. 
 
-In general, the integration test leverages the features provided by the project [TestContainers](https://www.testcontainers.org/)
+In general, the integration test leverages the features provided by the project https://www.testcontainers.org/[TestContainers]
 and uses container images to simulate the environments. Additionally, it may also support running the tests against remote 
 environments as well as, when available, embeddable components. This varies by each component, and it is recommended to 
 check the code for additional details.
 
-== Implementing New Test Infrastructure Module
+== Writing A New Test Infrastructure Module
 
 The test code abstracts the provisioning of test environments behind service classes (i.e.: JMSService, JDBCService,
 etc). The purpose of the service class is to abstract the both the type service (i.e.: Kafka, Strimzi, etc) and
@@ -31,7 +31,7 @@ whenever possible.
 It is also possible to use embeddable components when required, although this usually lead to more code and higher 
 maintenance.
 
-=== Recommended Structure for Test Infrastructure Module
+=== Recommended Structure for Test Infrastructure Modules
 
 The service should provide an interface, named after the infrastructure being implemented, and this interface should 
 extend the https://github.com/apache/camel/blob/main/test-infra/camel-test-infra-common/src/test/java/org/apache/camel/test/infra/common/services/TestService.java[TestService]
@@ -173,8 +173,8 @@ Camel component:
 
 == Converting Camel TestContainers Code To The New Test Infrastructure
 
-Using the camel-nats as an example, we can compare how the base test class for nats changed between [3.6.x](https://github.com/apache/camel/blob/camel-3.6.0/components/camel-nats/src/test/java/org/apache/camel/component/nats/NatsTestSupport.java)
-and [3.7.x](https://github.com/apache/camel/blob/camel-3.7.0/components/camel-nats/src/test/java/org/apache/camel/component/nats/NatsTestSupport.java).
+Using the camel-nats as an example, we can compare how the base test class for nats changed between https://github.com/apache/camel/blob/camel-3.6.0/components/camel-nats/src/test/java/org/apache/camel/component/nats/NatsTestSupport.java[3.6.x]
+and https://github.com/apache/camel/blob/camel-3.7.0/components/camel-nats/src/test/java/org/apache/camel/component/nats/NatsTestSupport.java[3.7.x].
 
 The first conversion step is to remove the https://github.com/apache/camel/blob/camel-3.6.0/components/camel-nats/pom.xml#L59-L63[camel-testcontainer dependencies]
 and replace them with the ones from the https://github.com/apache/camel/blob/camel-3.7.0/components/camel-nats/pom.xml#L61-L75[test-infra module].
@@ -201,7 +201,7 @@ but this may be very specific to the test scenario.
 
 == Running With Podman
 
-Most of the test infrastructure in this module is based on containers. Therefore, they will require a container runtime to run. Although the tests have been written and tested using Docker, they should also work with [Podman](https://podman.io/) (another popular container runtime on Linux operating systems). 
+Most of the test infrastructure in this module is based on containers. Therefore, they will require a container runtime to run. Although the tests have been written and tested using Docker, they should also work with https://podman.io/[Podman] (another popular container runtime on Linux operating systems).
 
 Assuming Podman is properly installed and configured to behave like docker (i.e.: short name resolution, resolving docker.io registry, etc), the only requirement for using Podman is to export the DOCKER_HOST variable before running the tests.
 
