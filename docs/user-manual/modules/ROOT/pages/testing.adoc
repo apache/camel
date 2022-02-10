@@ -33,8 +33,6 @@ class for all your configuration and routing without.
 
 |xref:test-infra.adoc[camel-test-infra] | *Camel Test Infra*: Camel Test Infra is a set of modules that leverage Test Containers and abstract the provisioning and execution of test infrastructure. It is the successor of the camel-testcontainers components.
 
-|xref:components:others:testcontainers-junit5.adoc[camel-testcontainers-junit5] | *JUnit 5 (deprecated)*: Camel Testcontainers extends standard camel test support providing a way to create and interact with containerized applications.
-
 |=======================================================================
 
 NOTE: If you are using Camel Quarkus then you can find information in
