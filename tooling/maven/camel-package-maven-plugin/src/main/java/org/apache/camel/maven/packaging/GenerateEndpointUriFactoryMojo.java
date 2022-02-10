@@ -126,7 +126,7 @@ public class GenerateEndpointUriFactoryMojo extends AbstractGeneratorMojo {
         getLog().debug("Generating endpoint-uri-factory: " + model.getScheme());
 
         String fqn = model.getJavaType();
-        generateEndpointUriFactory(fqn, fqn, model, sourcesOutputDir);
+        generateEndpointUriFactory(fqn, model, sourcesOutputDir);
 
         int pos = fqn.lastIndexOf('.');
         String pn = fqn.substring(0, pos);
@@ -153,8 +153,7 @@ public class GenerateEndpointUriFactoryMojo extends AbstractGeneratorMojo {
     }
 
     @Deprecated
-    private void generateEndpointUriFactory(
-            String fqn, String targetFqn, ComponentModel model, File outputDir) {
+    private void generateEndpointUriFactory(String targetFqn, ComponentModel model, File outputDir) {
 
         int pos = targetFqn.lastIndexOf('.');
         String pn = targetFqn.substring(0, pos);
