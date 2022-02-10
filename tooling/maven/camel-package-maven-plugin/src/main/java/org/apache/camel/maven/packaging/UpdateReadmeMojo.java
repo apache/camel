@@ -177,8 +177,8 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
                     boolean updated = updateHeader(componentName, file, model, " Component", kind);
 
-                    checkComponentHeader(file, model);
-                    checkSince(file, model);
+                    checkComponentHeader(file);
+                    checkSince(file);
 
                     updated |= updateOptionsIn(file, "component-configure", "");
                     String options = evaluateTemplate("component-options.mvel", model);
@@ -224,7 +224,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
                     boolean exists = file.exists();
 
                     boolean updated = updateHeader(componentName, file, model, " Component", kind);
-                    checkSince(file, model);
+                    checkSince(file);
 
                     if (updated) {
                         getLog().info("Updated doc file: " + file);
@@ -274,7 +274,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
                     boolean exists = file.exists();
                     boolean updated = updateHeader(dataFormatName, file, model, " DataFormat", kind);
-                    checkSince(file, model);
+                    checkSince(file);
 
                     String options = evaluateTemplate("dataformat-options.mvel", model);
                     updated |= updateOptionsIn(file, kind, options);
@@ -334,7 +334,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
                     LanguageModel model = JsonMapper.generateLanguageModel(json);
 
                     boolean updated = updateHeader(languageName, file, model, " Language", kind);
-                    checkSince(file, model);
+                    checkSince(file);
 
                     String options = evaluateTemplate("language-options.mvel", model);
                     updated |= updateOptionsIn(file, kind, options);
@@ -567,7 +567,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
         return updated;
     }
 
-    private void checkComponentHeader(final File file, final ComponentModel model) throws MojoExecutionException {
+    private void checkComponentHeader(final File file) throws MojoExecutionException {
         if (!file.exists()) {
             return;
         }
@@ -586,7 +586,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
         }
     }
 
-    private void checkSince(final File file, final ArtifactModel<?> model) throws MojoExecutionException {
+    private void checkSince(final File file) throws MojoExecutionException {
         if (!file.exists()) {
             return;
         }
