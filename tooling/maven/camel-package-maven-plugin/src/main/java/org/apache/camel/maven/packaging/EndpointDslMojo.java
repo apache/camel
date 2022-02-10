@@ -17,6 +17,7 @@
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.LineNumberReader;
@@ -204,7 +205,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
 
         // Update components metadata
         getLog().debug("Load components EndpointFactories");
-        List<File> endpointFactories = loadAllComponentsDslEndpointFactoriesAsFile();
+        final List<File> endpointFactories = loadAllComponentsDslEndpointFactoriesAsFile();
 
         getLog().debug("Regenerate EndpointBuilderFactory");
         // make sure EndpointBuilderFactory is synced
@@ -830,15 +831,15 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
     private List<File> loadAllComponentsDslEndpointFactoriesAsFile() {
         final File allComponentsDslEndpointFactory
                 = new File(sourcesOutputDir, componentsFactoriesPackageName.replace('.', '/'));
-        final File[] files = allComponentsDslEndpointFactory.listFiles();
+        FileFilter fileFilter = file -> file.isFile() && file.getName().endsWith(".java");
+        final File[] files = allComponentsDslEndpointFactory.listFiles(fileFilter);
 
         if (files == null) {
             return Collections.emptyList();
         }
 
         // load components
-        return Arrays.stream(files).filter(file -> file.isFile() && file.getName().endsWith(".java") && file.exists()).sorted()
-                .collect(Collectors.toList());
+        return Arrays.stream(files).sorted().collect(Collectors.toUnmodifiableList());
     }
 
     private static String camelCaseLower(String s) {
