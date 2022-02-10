@@ -708,7 +708,7 @@ public final class GenericsUtil {
             Type[] typeArguments = resolveTypeArguments(directSubclass, actualType);
             Type directSubtype = new OwbParametrizedTypeImpl(directSubclass.getDeclaringClass(), directSubclass, typeArguments);
             return resolveTypeVariable(variable, directSubtype, seen);
-        } else { // if (declaringClass.isAssignableFrom(actualClass))
+        } else {
             Type genericSuperclass = getGenericSuperclass(actualClass, declaringClass);
             if (genericSuperclass == null) {
                 return variable;
