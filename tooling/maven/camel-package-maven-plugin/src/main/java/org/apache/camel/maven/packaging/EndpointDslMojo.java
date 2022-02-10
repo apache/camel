@@ -332,7 +332,8 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
 
         javaClass.addAnnotation(Generated.class).setStringValue("value", EndpointDslMojo.class.getName());
 
-        processEndpoints(model, consumerClass, advancedConsumerClass, producerClass, advancedProducerClass, builderClass, advancedBuilderClass);
+        processEndpoints(model, consumerClass, advancedConsumerClass, producerClass, advancedProducerClass, builderClass,
+                advancedBuilderClass);
 
         javaClass.removeImport("T");
 
@@ -363,7 +364,9 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                 false);
     }
 
-    private void processMasterScheme(List<ComponentModel> aliases, List<Method> staticBuilders, JavaClass javaClass, JavaClass builderClass, JavaClass dslClass) {
+    private void processMasterScheme(
+            List<ComponentModel> aliases, List<Method> staticBuilders, JavaClass javaClass, JavaClass builderClass,
+            JavaClass dslClass) {
         Method method;
         // we only want the first alias (master scheme) as static builders
         boolean firstAlias = true;
@@ -429,7 +432,9 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         }
     }
 
-    private void processAliases(ComponentModel model, List<Method> staticBuilders, JavaClass javaClass, JavaClass builderClass, JavaClass dslClass) {
+    private void processAliases(
+            ComponentModel model, List<Method> staticBuilders, JavaClass javaClass, JavaClass builderClass,
+            JavaClass dslClass) {
         Method method;
         String desc = getMainDescription(model);
         String methodName = camelCaseLower(model.getScheme());
@@ -478,7 +483,9 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         staticBuilders.add(method);
     }
 
-    private void processEndpoints(ComponentModel model, JavaClass consumerClass, JavaClass advancedConsumerClass, JavaClass producerClass, JavaClass advancedProducerClass, JavaClass builderClass, JavaClass advancedBuilderClass) {
+    private void processEndpoints(
+            ComponentModel model, JavaClass consumerClass, JavaClass advancedConsumerClass, JavaClass producerClass,
+            JavaClass advancedProducerClass, JavaClass builderClass, JavaClass advancedBuilderClass) {
         for (EndpointOptionModel option : model.getEndpointOptions()) {
 
             // skip all @UriPath parameters as the endpoint DSL is for query
@@ -487,7 +494,8 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                 continue;
             }
 
-            List<JavaClass> targets = evalTargetsToProcess(consumerClass, advancedConsumerClass, producerClass, advancedProducerClass, builderClass, advancedBuilderClass, option);
+            List<JavaClass> targets = evalTargetsToProcess(consumerClass, advancedConsumerClass, producerClass,
+                    advancedProducerClass, builderClass, advancedBuilderClass, option);
 
             for (JavaClass target : targets) {
                 processTarget(option, target);
@@ -501,10 +509,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         }
 
         // basic description
-        String baseDesc = option.getDescription();
-        if (!Strings.isEmpty(baseDesc)) {
-            baseDesc = createBaseDesc(option, baseDesc);
-        }
+        final String baseDesc = createBaseDescription(option);
 
         boolean multiValued = option.isMultiValue();
         if (multiValued) {
@@ -529,10 +534,11 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         if (option.isDeprecated()) {
             fluent.addAnnotation(Deprecated.class);
         }
-        String text = desc;
-        text += "\n\n@param " + option.getName() + " the value to set";
-        text += "\n@return the dsl builder\n";
-        fluent.getJavaDoc().setText(text);
+
+        final StringBuilder textBuilder = new StringBuilder(desc);
+        textBuilder.append("\n\n@param ").append(option.getName()).append(" the value to set");
+        textBuilder.append("\n@return the dsl builder\n");
+        fluent.getJavaDoc().setText(textBuilder.toString());
 
         if (!"String".equals(optionJavaType(option))) {
             // regular option by String parameter variant
@@ -551,10 +557,11 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
             if (option.isDeprecated()) {
                 fluent.addAnnotation(Deprecated.class);
             }
-            text = desc;
-            text += "\n\n@param " + option.getName() + " the value to set";
-            text += "\n@return the dsl builder\n";
-            fluent.getJavaDoc().setText(text);
+
+            final StringBuilder optionTextSb = new StringBuilder(desc);
+            optionTextSb.append("\n\n@param ").append(option.getName()).append(" the value to set");
+            optionTextSb.append("\n@return the dsl builder\n");
+            fluent.getJavaDoc().setText(optionTextSb.toString());
         }
     }
 
@@ -576,11 +583,11 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
             fluent.addAnnotation(Deprecated.class);
         }
 
-        String text = desc;
-        text += "\n\n@param key the option key";
-        text += "\n@param value the option value";
-        text += "\n@return the dsl builder\n";
-        fluent.getJavaDoc().setText(text);
+        final StringBuilder textBuilder = new StringBuilder(desc);
+        textBuilder.append("\n\n@param key the option key");
+        textBuilder.append("\n@param value the option value");
+        textBuilder.append("\n@return the dsl builder\n");
+        fluent.getJavaDoc().setText(textBuilder.toString());
         // add multi value method that takes a Map
         fluent = target.addMethod().setDefault().setName(option.getName())
                 .setReturnType(new GenericType(loadClass(target.getCanonicalName())))
@@ -591,44 +598,57 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         if (option.isDeprecated()) {
             fluent.addAnnotation(Deprecated.class);
         }
-        text = desc;
-        text += "\n\n@param values the values";
-        text += "\n@return the dsl builder\n";
-        fluent.getJavaDoc().setText(text);
+
+        final StringBuilder sb = new StringBuilder(desc);
+
+        sb.append("\n\n@param values the values");
+        sb.append("\n@return the dsl builder\n");
+        fluent.getJavaDoc().setText(sb.toString());
     }
 
-    private String createBaseDesc(EndpointOptionModel option, String baseDesc) {
+    private String createBaseDescription(EndpointOptionModel option) {
+        String baseDesc = option.getDescription();
+        if (Strings.isEmpty(baseDesc)) {
+            return baseDesc;
+
+        }
+
         // must xml encode description as in some rare cases it contains & chars which is invalid javadoc
         baseDesc = JavadocHelper.xmlEncode(baseDesc);
 
+        StringBuilder baseDescBuilder = new StringBuilder(baseDesc);
         if (!baseDesc.endsWith(".")) {
-            baseDesc += ".";
+            baseDescBuilder.append(".");
         }
-        baseDesc += "\n";
-        baseDesc += "@@REPLACE_ME@@";
+        baseDescBuilder.append("\n");
+        baseDescBuilder.append("@@REPLACE_ME@@");
         if (option.isMultiValue()) {
-            baseDesc += "\nThe option is multivalued, and you can use the " + option.getName()
-                        + "(String, Object) method to add a value (call the method multiple times to set more values).";
+            baseDescBuilder.append("\nThe option is multivalued, and you can use the ")
+                    .append(option.getName())
+                    .append("(String, Object) method to add a value (call the method multiple times to set more values).");
         }
-        baseDesc += "\n";
+        baseDescBuilder.append("\n");
         // the Endpoint DSL currently requires to provide the entire
         // context-path and not as individual options
         // so lets only mark query parameters that are required as
         // required
         if ("parameter".equals(option.getKind()) && option.isRequired()) {
-            baseDesc += "\nRequired: true";
+            baseDescBuilder.append("\nRequired: true");
         }
         // include default value (if any)
         if (option.getDefaultValue() != null) {
             // must xml encode default value so its valid as javadoc
             String value = JavadocHelper.xmlEncode(option.getDefaultValue().toString());
-            baseDesc += "\nDefault: " + value;
+            baseDescBuilder.append("\nDefault: ").append(value);
         }
-        baseDesc += "\nGroup: " + option.getGroup();
-        return baseDesc;
+        baseDescBuilder.append("\nGroup: ").append(option.getGroup());
+
+        return baseDescBuilder.toString();
     }
 
-    private List<JavaClass> evalTargetsToProcess(JavaClass consumerClass, JavaClass advancedConsumerClass, JavaClass producerClass, JavaClass advancedProducerClass, JavaClass builderClass, JavaClass advancedBuilderClass, EndpointOptionModel option) {
+    private List<JavaClass> evalTargetsToProcess(
+            JavaClass consumerClass, JavaClass advancedConsumerClass, JavaClass producerClass, JavaClass advancedProducerClass,
+            JavaClass builderClass, JavaClass advancedBuilderClass, EndpointOptionModel option) {
         List<JavaClass> targets = new ArrayList<>();
         String label = option.getLabel() != null ? option.getLabel() : "";
         if (label != null) {
