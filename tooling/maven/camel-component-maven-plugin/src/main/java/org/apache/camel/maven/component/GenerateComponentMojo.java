@@ -23,6 +23,8 @@ import java.util.Map;
 import org.apache.camel.maven.packaging.AbstractGenerateMojo;
 import org.apache.camel.maven.packaging.EndpointSchemaGeneratorMojo;
 import org.apache.camel.maven.packaging.GenerateConfigurerMojo;
+import org.apache.camel.maven.packaging.GenerateEndpointUriFactoryMojo;
+import org.apache.camel.maven.packaging.GenerateInvokeOnHeaderMojo;
 import org.apache.camel.maven.packaging.PackageJandexMojo;
 import org.apache.camel.maven.packaging.PrepareComponentMojo;
 import org.apache.camel.maven.packaging.SpiGeneratorMojo;
@@ -98,6 +100,10 @@ public class GenerateComponentMojo extends AbstractGenerateMojo {
         invoke(GenerateConfigurerMojo.class, parameters);
         // generate-endpoint-schema
         invoke(EndpointSchemaGeneratorMojo.class, parameters);
+        // generate endpoint-uri-factory
+        invoke(GenerateEndpointUriFactoryMojo.class);
+        // generate invoke-on-header
+        invoke(GenerateInvokeOnHeaderMojo.class);
         // prepare-components
         invoke(PrepareComponentMojo.class, parameters);
         // validate-components
