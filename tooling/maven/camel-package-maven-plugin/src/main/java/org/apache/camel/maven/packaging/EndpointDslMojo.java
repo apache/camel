@@ -869,38 +869,42 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
     }
 
     private String getMainDescription(ComponentModel model) {
-        String desc = model.getTitle() + " (" + model.getArtifactId() + ")";
-        desc += "\n" + model.getDescription();
-        desc += "\n";
-        desc += "\nCategory: " + model.getLabel();
-        desc += "\nSince: " + model.getFirstVersionShort();
-        desc += "\nMaven coordinates: " + model.getGroupId() + ":" + model.getArtifactId();
+        StringBuilder descSb = new StringBuilder();
+
+        descSb.append(model.getTitle()).append(" (").append(model.getArtifactId()).append(")");
+        descSb.append("\n").append(model.getDescription());
+        descSb.append("\n");
+        descSb.append("\nCategory: ").append(model.getLabel());
+        descSb.append("\nSince: ").append(model.getFirstVersionShort());
+        descSb.append("\nMaven coordinates: ").append(model.getGroupId()).append(":").append(model.getArtifactId());
 
         // include javadoc for all path parameters and mark which are required
-        desc += "\n";
-        desc += "\nSyntax: <code>" + model.getSyntax() + "</code>";
+        descSb.append("\n");
+        descSb.append("\nSyntax: <code>").append(model.getSyntax()).append("</code>");
         for (EndpointOptionModel option : model.getEndpointOptions()) {
             if ("path".equals(option.getKind())) {
-                desc += "\n";
-                desc += "\nPath parameter: " + option.getName();
+                descSb.append("\n");
+                descSb.append("\nPath parameter: ").append(option.getName());
                 if (option.isRequired()) {
-                    desc += " (required)";
+                    descSb.append(" (required)");
                 }
                 if (option.isDeprecated()) {
-                    desc += " <strong>deprecated</strong>";
+                    descSb.append(" <strong>deprecated</strong>");
                 }
-                desc += "\n" + option.getDescription();
+                descSb.append("\n" + option.getDescription());
                 if (option.getDefaultValue() != null) {
-                    desc += "\nDefault value: " + option.getDefaultValue();
+                    descSb.append("\nDefault value: ").append(option.getDefaultValue());
                 }
                 // TODO: default value note ?
                 if (option.getEnums() != null && !option.getEnums().isEmpty()) {
-                    desc += "\nThere are " + option.getEnums().size() + " enums and the value can be one of: "
-                            + wrapEnumValues(option.getEnums());
+                    descSb.append("\nThere are ").append(option.getEnums().size())
+                            .append(" enums and the value can be one of: ")
+                            .append(wrapEnumValues(option.getEnums()));
                 }
             }
         }
-        return desc;
+
+        return descSb.toString();
     }
 
     private String wrapEnumValues(List<String> enumValues) {
