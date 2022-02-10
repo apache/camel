@@ -18,6 +18,7 @@
 ** xref:error-handler.adoc[Error handler]
 ** xref:using-propertyplaceholder.adoc[How to use Camel property placeholders]
 ** xref:testing.adoc[Testing]
+*** xref:test-infra.adoc[Test Infra]
 *** xref:notify-builder.adoc[NotifyBuilder]
 *** xref:advice-with.adoc[AdviceWith]
 ** xref:rest-dsl.adoc[Working with REST and Rest DSL]
