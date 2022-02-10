@@ -1009,9 +1009,6 @@ public abstract class BaseMainSupport extends BaseService {
         if (hcr.isEnabled()) {
             HealthCheck hc = (HealthCheck) hcr.resolveById("context");
             if (hc != null) {
-                if (health.getContextEnabled() != null) {
-                    hc.setEnabled(health.getContextEnabled());
-                }
                 hcr.register(hc);
             }
         }

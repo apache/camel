@@ -31,8 +31,6 @@ public class HealthConfigurationProperties implements BootstrapCloseable {
     @Metadata(defaultValue = "true")
     private Boolean enabled;
     @Metadata(defaultValue = "true")
-    private Boolean contextEnabled;
-    @Metadata(defaultValue = "true")
     private Boolean routesEnabled;
     @Metadata(defaultValue = "true")
     private Boolean consumersEnabled;
@@ -65,17 +63,6 @@ public class HealthConfigurationProperties implements BootstrapCloseable {
      */
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
-    }
-
-    public Boolean getContextEnabled() {
-        return contextEnabled;
-    }
-
-    /**
-     * Whether context health check is enabled
-     */
-    public void setContextEnabled(Boolean contextEnabled) {
-        this.contextEnabled = contextEnabled;
     }
 
     public Boolean getRoutesEnabled() {
@@ -147,14 +134,6 @@ public class HealthConfigurationProperties implements BootstrapCloseable {
      */
     public HealthConfigurationProperties withEnabled(boolean enabled) {
         this.enabled = enabled;
-        return this;
-    }
-
-    /**
-     * Whether context health check is enabled
-     */
-    public HealthConfigurationProperties withContextEnabled(boolean contextEnabled) {
-        this.contextEnabled = contextEnabled;
         return this;
     }
 

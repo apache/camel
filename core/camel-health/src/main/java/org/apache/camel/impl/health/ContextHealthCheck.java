@@ -19,6 +19,7 @@ package org.apache.camel.impl.health;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Ordered;
 import org.apache.camel.health.HealthCheckResultBuilder;
 
 /**
@@ -30,6 +31,12 @@ public final class ContextHealthCheck extends AbstractHealthCheck {
 
     public ContextHealthCheck() {
         super("camel", "context");
+    }
+
+    @Override
+    public int getOrder() {
+        // context should always be first
+        return Ordered.HIGHEST;
     }
 
     @Override

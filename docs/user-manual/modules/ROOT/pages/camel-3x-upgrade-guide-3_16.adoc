@@ -63,6 +63,8 @@ These options would complicate health checks as they affect the outcome of healt
 It is better the checks always execute and the responsibility of the monitoring systems
 how to deal with interval between checks and thresholds.
 
+Removed the option to disable context health check as it should always be enabled.
+
 ==== Disabling health checks
 
 The configuration for disabling individual health-checks has changed
