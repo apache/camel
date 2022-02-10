@@ -26,17 +26,16 @@
         <version>3.16.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>camel-test-cdi</artifactId>
+    <artifactId>camel-test-cdi-junit5</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: Test :: CDI (deprecated)</name>
-    <description>Camel unit testing with CDI</description>
+    <name>Camel :: Test :: CDI:: JUnit5</name>
+    <description>Camel unit testing with CDI and JUnit5</description>
 
     <properties>
-        <firstVersion>2.17.0</firstVersion>
+        <firstVersion>3.16.0</firstVersion>
         <label>testing,java</label>
-        <title>Test CDI</title>
-
+        <title>Test CDI JUnit5</title>
     </properties>
 
     <dependencies>
@@ -45,7 +44,7 @@
 
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test</artifactId>
+            <artifactId>camel-test-junit5</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -63,6 +62,10 @@
             <artifactId>log4j-slf4j-impl</artifactId>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>

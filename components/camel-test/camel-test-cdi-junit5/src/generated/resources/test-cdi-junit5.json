@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "test-cdi-junit5",
+    "title": "Test CDI JUnit5",
+    "description": "Camel unit testing with CDI and JUnit5",
+    "deprecated": false,
+    "firstVersion": "3.16.0",
+    "label": "testing,java",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-test-cdi-junit5",
+    "version": "3.16.0-SNAPSHOT"
+  }
+}
