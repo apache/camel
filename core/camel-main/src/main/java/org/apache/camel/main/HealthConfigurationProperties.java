@@ -40,6 +40,8 @@ public class HealthConfigurationProperties implements BootstrapCloseable {
     private Boolean registryEnabled;
     @Metadata
     private String excludePattern;
+    @Metadata(enums = "full,default,oneline", defaultValue = "default")
+    private String exposureLevel;
 
     public HealthConfigurationProperties(MainConfigurationProperties parent) {
         this.parent = parent;
@@ -121,6 +123,25 @@ public class HealthConfigurationProperties implements BootstrapCloseable {
         this.excludePattern = excludePattern;
     }
 
+    public String getExposureLevel() {
+        return exposureLevel;
+    }
+
+    /**
+     * Sets the level of details to exposure as result of invoking health checks. There are the following levels: full,
+     * default, oneline
+     *
+     * The full level will include all details and status from all the invoked health checks.
+     *
+     * The default level will report UP if everything is okay, and only include detailed information for health checks
+     * that was DOWN.
+     *
+     * The oneline level will only report either UP or DOWN.
+     */
+    public void setExposureLevel(String exposureLevel) {
+        this.exposureLevel = exposureLevel;
+    }
+
     /**
      * Whether health check is enabled globally
      */
@@ -159,6 +180,22 @@ public class HealthConfigurationProperties implements BootstrapCloseable {
      */
     public HealthConfigurationProperties withExcludePattern(String excludePattern) {
         this.excludePattern = excludePattern;
+        return this;
+    }
+
+    /**
+     * Sets the level of details to exposure as result of invoking health checks. There are the following levels: full,
+     * default, oneline
+     *
+     * The full level will include all details and status from all the invoked health checks.
+     *
+     * The default level will report UP if everything is okay, and only include detailed information for health checks
+     * that was DOWN.
+     *
+     * The oneline level will only report either UP or DOWN.
+     */
+    public HealthConfigurationProperties withExposureLevel(String exposureLevel) {
+        this.exposureLevel = exposureLevel;
         return this;
     }
 

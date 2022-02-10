@@ -29,6 +29,8 @@ public class HealthConfigurationPropertiesConfigurer extends org.apache.camel.su
         case "Enabled": target.setEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "excludepattern":
         case "ExcludePattern": target.setExcludePattern(property(camelContext, java.lang.String.class, value)); return true;
+        case "exposurelevel":
+        case "ExposureLevel": target.setExposureLevel(property(camelContext, java.lang.String.class, value)); return true;
         case "registryenabled":
         case "RegistryEnabled": target.setRegistryEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "routesenabled":
@@ -48,6 +50,8 @@ public class HealthConfigurationPropertiesConfigurer extends org.apache.camel.su
         case "Enabled": return java.lang.Boolean.class;
         case "excludepattern":
         case "ExcludePattern": return java.lang.String.class;
+        case "exposurelevel":
+        case "ExposureLevel": return java.lang.String.class;
         case "registryenabled":
         case "RegistryEnabled": return java.lang.Boolean.class;
         case "routesenabled":
@@ -68,6 +72,8 @@ public class HealthConfigurationPropertiesConfigurer extends org.apache.camel.su
         case "Enabled": return target.getEnabled();
         case "excludepattern":
         case "ExcludePattern": return target.getExcludePattern();
+        case "exposurelevel":
+        case "ExposureLevel": return target.getExposureLevel();
         case "registryenabled":
         case "RegistryEnabled": return target.getRegistryEnabled();
         case "routesenabled":

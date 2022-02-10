@@ -150,7 +150,7 @@ The camel.threadpool supports 8 options, which are listed below.
 |===
 
 === Camel Health Check configurations
-The camel.health supports 6 options, which are listed below.
+The camel.health supports 7 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -159,6 +159,7 @@ The camel.health supports 6 options, which are listed below.
 | *camel.health.contextEnabled* | Whether context health check is enabled | true | Boolean
 | *camel.health.enabled* | Whether health check is enabled globally | true | Boolean
 | *camel.health.excludePattern* | Pattern to exclude health checks from being invoked by Camel when checking healths. Multiple patterns can be separated by comma. |  | String
+| *camel.health.exposureLevel* | Sets the level of details to exposure as result of invoking health checks. There are the following levels: full, default, oneline The full level will include all details and status from all the invoked health checks. The default level will report UP if everything is okay, and only include detailed information for health checks that was DOWN. The oneline level will only report either UP or DOWN. | default | String
 | *camel.health.registryEnabled* | Whether registry health check is enabled | true | Boolean
 | *camel.health.routesEnabled* | Whether routes health check is enabled | true | Boolean
 |===

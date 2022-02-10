@@ -16,6 +16,7 @@
  */
 package org.apache.camel.health;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -98,9 +99,7 @@ public final class HealthCheckHelper {
         final HealthCheckRegistry registry = HealthCheckRegistry.get(camelContext);
 
         if (registry != null) {
-            // If no health check service is defined, this endpoint invokes the
-            // check one by one.
-            return registry.stream()
+            Collection<HealthCheck.Result> result = registry.stream()
                     .collect(Collectors.groupingBy(HealthCheckHelper::getGroup))
                     .values().stream()
                     .flatMap(Collection::stream)
@@ -109,6 +108,34 @@ public final class HealthCheckHelper {
                     .distinct()
                     .map(check -> check.call(optionsSupplier.apply(check)))
                     .collect(Collectors.toList());
+
+            if (result.isEmpty()) {
+                return Collections.emptyList();
+            }
+
+            // the result includes all the details
+            if ("full".equals(registry.getExposureLevel())) {
+                return result;
+            } else {
+                // are there any downs?
+                Collection<HealthCheck.Result> downs = result.stream().filter(r -> r.getState().equals(HealthCheck.State.DOWN))
+                        .collect(Collectors.toCollection(ArrayList::new));
+
+                // default mode is to either be just UP or include all DOWNs
+                // oneline mode is either UP or DOWN
+                if (!downs.isEmpty()) {
+                    if ("oneline".equals(registry.getExposureLevel())) {
+                        // grab first down
+                        return Collections.singleton(downs.iterator().next());
+                    } else {
+                        return downs;
+                    }
+                } else {
+                    // all up so grab first
+                    HealthCheck.Result up = result.iterator().next();
+                    return Collections.singleton(up);
+                }
+            }
         }
 
         return Collections.emptyList();

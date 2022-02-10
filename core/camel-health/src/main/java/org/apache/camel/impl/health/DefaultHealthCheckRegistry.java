@@ -53,6 +53,7 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
     private CamelContext camelContext;
     private boolean enabled = true;
     private String excludePattern;
+    private String exposureLevel = "default";
     private volatile boolean loadHealthChecksDone;
 
     public DefaultHealthCheckRegistry() {
@@ -94,6 +95,16 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
     @Override
     public void setExcludePattern(String excludePattern) {
         this.excludePattern = excludePattern;
+    }
+
+    @Override
+    public String getExposureLevel() {
+        return exposureLevel;
+    }
+
+    @Override
+    public void setExposureLevel(String exposureLevel) {
+        this.exposureLevel = exposureLevel;
     }
 
     @Override

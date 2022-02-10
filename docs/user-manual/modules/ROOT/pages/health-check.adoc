@@ -120,15 +120,26 @@ This MBean allows at runtime to manage health-checks where you can enable and di
 As well have the latest status whether the overall health check is healthy or not.
 The MBean also allows invoking health checks based on IDs (or all of them).
 
-== Invoking health checks
+=== Configuring level of details in the health check responses
 
-You can invoke the health checks from Java by using the `org.apache.camel.health.HealthCheckHelper` which has APIs
-to easily invoke all the health checks and gather their results, or filter out unwanted checks, or invoke only
-the readiness or liveness checks.
+The option `exposureLevel` sets the level of details to exposure as result of invoking health checks.
 
-The health checks can also be invoked from JMX.
+There are the following levels:
 
-== Enriching and controlling health check responses
+- _full_ - The full level will include all details and status from all the invoked health checks.
+- _default_ - The default level will report UP if everything is okay, and only include detailed information for health check that was DOWN.
+- _oneline_ - The oneline level will only report either UP or DOWN.
+
+You can specify multiple patterns (and use wildcards) such as:
+
+For example to only report either as UP or DOWN then use:
+
+[source,properties]
+----
+camel.health.exposure-level = oneline
+----
+
+=== Enriching and controlling health check responses
 
 Each health check that is invoked will gather details about the result using `HealthCheckResultBuilder`.
 
@@ -139,6 +150,13 @@ etc. on the result builder.
 The custom bean should be registered to the Camel xref:registry.adoc[Registry] to be discovered
 by `camel-health`. Only one instance of the bean is allowed.
 
+== Invoking health checks
+
+You can invoke the health checks from Java by using the `org.apache.camel.health.HealthCheckHelper` which has APIs
+to easily invoke all the health checks and gather their results, or filter out unwanted checks, or invoke only
+the readiness or liveness checks.
+
+The health checks can also be invoked from JMX.
 
 == Writing a custom health check
 

@@ -1001,6 +1001,9 @@ public abstract class BaseMainSupport extends BaseService {
         if (health.getExcludePattern() != null) {
             hcr.setExcludePattern(health.getExcludePattern());
         }
+        if (health.getExposureLevel() != null) {
+            hcr.setExposureLevel(health.getExposureLevel());
+        }
 
         // context is enabled by default
         if (hcr.isEnabled()) {

@@ -138,4 +138,22 @@ public interface HealthCheckRegistry extends CamelContextAware, StaticService, I
      */
     boolean isExcluded(HealthCheck healthCheck);
 
+    /**
+     * Sets the level of details to exposure as result of invoking health checks. There are the following levels: full,
+     * default, oneline
+     *
+     * The full level will include all details and status from all the invoked health checks.
+     *
+     * The default level will report UP if everything is okay, and only include detailed information for health checks
+     * that was DOWN.
+     *
+     * The oneline level will only report either UP or DOWN.
+     */
+    void setExposureLevel(String exposureLevel);
+
+    /**
+     * The exposure level
+     */
+    String getExposureLevel();
+
 }
