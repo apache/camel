@@ -208,9 +208,11 @@ public abstract class AbstractHealthCheck implements HealthCheck, CamelContextAw
     protected abstract void doCall(HealthCheckResultBuilder builder, Map<String, Object> options);
 
     private HealthCheckResultStrategy customHealthCheckResponseStrategy() {
-        Set<HealthCheckResultStrategy> set = camelContext.getRegistry().findByType(HealthCheckResultStrategy.class);
-        if (set.size() == 1) {
-            return set.iterator().next();
+        if (camelContext != null) {
+            Set<HealthCheckResultStrategy> set = camelContext.getRegistry().findByType(HealthCheckResultStrategy.class);
+            if (set.size() == 1) {
+                return set.iterator().next();
+            }
         }
         return null;
     }
