@@ -84,7 +84,7 @@ public class PrepareAssemblyMojo extends AbstractMojo {
     }
 
     protected void updatePomAndCommonBin(File allComponentsPom, String groupId, String token)
-            throws MojoExecutionException, MojoFailureException {
+            throws MojoExecutionException {
         SortedSet<String> artifactIds = new TreeSet<>();
 
         final String pomText;

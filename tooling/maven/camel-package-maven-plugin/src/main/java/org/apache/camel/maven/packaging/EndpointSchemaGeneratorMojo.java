@@ -136,7 +136,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         executeUriEndpoint();
     }
 
-    private void executeUriEndpoint() throws MojoExecutionException, MojoFailureException {
+    private void executeUriEndpoint() {
         List<Class<?>> classes = new ArrayList<>();
         for (AnnotationInstance ai : getIndex().getAnnotations(URI_ENDPOINT)) {
             Class<?> classElement = loadClass(ai.target().asClass().name().toString());

@@ -73,7 +73,7 @@ public class PackageComponentMojo extends AbstractGeneratorMojo {
         prepareComponent();
     }
 
-    public int prepareComponent() throws MojoExecutionException {
+    public int prepareComponent() {
         Log log = getLog();
 
         File camelMetaDir = new File(componentOutDir, "META-INF/services/org/apache/camel/");

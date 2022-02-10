@@ -89,7 +89,7 @@ public class GenerateEndpointUriFactoryMojo extends AbstractGeneratorMojo {
         executeComponent(files);
     }
 
-    private void executeComponent(Map<File, Supplier<String>> jsonFiles) throws MojoExecutionException, MojoFailureException {
+    private void executeComponent(Map<File, Supplier<String>> jsonFiles) throws MojoExecutionException {
         // find the component names
         Set<String> componentNames = new TreeSet<>();
         findComponentNames(buildDir, componentNames);
@@ -155,8 +155,7 @@ public class GenerateEndpointUriFactoryMojo extends AbstractGeneratorMojo {
 
     @Deprecated
     private void generateEndpointUriFactory(
-            String fqn, String targetFqn, ComponentModel model, File outputDir)
-            throws IOException {
+            String fqn, String targetFqn, ComponentModel model, File outputDir) {
 
         int pos = targetFqn.lastIndexOf('.');
         String pn = targetFqn.substring(0, pos);
