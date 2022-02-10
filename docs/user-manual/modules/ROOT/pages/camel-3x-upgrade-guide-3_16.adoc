@@ -104,3 +104,18 @@ and the `configure` method now takes a `CamelContext` as argument.
 
 The option `baseURI` is renamed to `baseUri`.
 
+=== camel-testcontainers
+
+This component was deprecated. Users should migrate to xref:test-infra.adoc[camel-test-infra].
+
+=== camel-testcontainers-junit5
+
+This component was deprecated. Users should migrate to xref:test-infra.adoc[camel-test-infra].
+
+=== camel-testcontainers-spring
+
+This component was deprecated. Users should migrate to xref:test-infra.adoc[camel-test-infra].
+
+=== camel-testcontainers-spring-junit5
+
+This component was deprecated. Users should migrate to xref:test-infra.adoc[camel-test-infra].
