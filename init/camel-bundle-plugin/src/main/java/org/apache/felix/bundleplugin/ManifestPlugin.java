@@ -422,10 +422,11 @@ public class ManifestPlugin extends BundlePlugin {
         if (outputFile.exists() && properties.containsKey("Merge-Headers")) {
             Manifest analyzerManifest = manifest;
             manifest = new Manifest();
-            InputStream inputStream = new FileInputStream(outputFile);
-            try {
+
+            try(InputStream inputStream = new FileInputStream(outputFile)) {
                 manifest.read(inputStream);
             }
+
             Instructions instructions = new Instructions(ExtList.from(analyzer.getProperty("Merge-Headers")));
             mergeManifest(instructions, manifest, analyzerManifest);
         } else {
