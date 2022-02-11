@@ -106,6 +106,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
     protected final boolean customExchangeFormatter;
     protected final Processor onPrepareProcessor;
     protected final Processor onExceptionProcessor;
+    protected final boolean forceSynchronousExecution;
 
     public RedeliveryErrorHandler(CamelContext camelContext, Processor output, CamelLogger logger,
                                   Processor redeliveryProcessor, RedeliveryPolicy redeliveryPolicy, Processor deadLetter,
@@ -113,6 +114,18 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                                   boolean useOriginalBodyPolicy,
                                   Predicate retryWhile, ScheduledExecutorService executorService, Processor onPrepareProcessor,
                                   Processor onExceptionProcessor) {
+        this(camelContext, output, logger,
+             redeliveryProcessor, redeliveryPolicy, deadLetter,
+             deadLetterUri, deadLetterHandleNewException, useOriginalMessagePolicy, useOriginalBodyPolicy,
+             retryWhile, executorService, onPrepareProcessor, onExceptionProcessor, false);
+    }
+
+    public RedeliveryErrorHandler(CamelContext camelContext, Processor output, CamelLogger logger,
+                                  Processor redeliveryProcessor, RedeliveryPolicy redeliveryPolicy, Processor deadLetter,
+                                  String deadLetterUri, boolean deadLetterHandleNewException, boolean useOriginalMessagePolicy,
+                                  boolean useOriginalBodyPolicy,
+                                  Predicate retryWhile, ScheduledExecutorService executorService, Processor onPrepareProcessor,
+                                  Processor onExceptionProcessor, boolean forceSynchronousExecution) {
 
         ObjectHelper.notNull(camelContext, "CamelContext", this);
         ObjectHelper.notNull(redeliveryPolicy, "RedeliveryPolicy", this);
@@ -135,6 +148,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
         this.executorService = executorService;
         this.onPrepareProcessor = onPrepareProcessor;
         this.onExceptionProcessor = onExceptionProcessor;
+        this.forceSynchronousExecution = forceSynchronousExecution;
 
         if (ObjectHelper.isNotEmpty(redeliveryPolicy.getExchangeFormatterRef())) {
             ExchangeFormatter formatter = camelContext.getRegistry()
@@ -189,6 +203,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
         customExchangeFormatter = false;
         onPrepareProcessor = null;
         onExceptionProcessor = null;
+        forceSynchronousExecution = false;
         log.trace("Loaded {}", RedeliveryErrorHandler.class.getName());
     }
 
@@ -211,7 +226,11 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
 
         // Run it
         if (exchange.isTransacted()) {
-            reactiveExecutor.scheduleQueue(task);
+            if (forceSynchronousExecution) {
+                reactiveExecutor.scheduleSync(task);
+            } else {
+                reactiveExecutor.scheduleQueue(task);
+            }
         } else {
             reactiveExecutor.scheduleMain(task);
         }

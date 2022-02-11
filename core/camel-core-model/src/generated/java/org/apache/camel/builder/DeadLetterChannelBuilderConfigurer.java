@@ -31,6 +31,8 @@ public class DeadLetterChannelBuilderConfigurer extends org.apache.camel.support
         case "ExecutorService": target.setExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
         case "executorserviceref":
         case "ExecutorServiceRef": target.setExecutorServiceRef(property(camelContext, java.lang.String.class, value)); return true;
+        case "forcesynchronousexecution":
+        case "ForceSynchronousExecution": target.setForceSynchronousExecution(property(camelContext, boolean.class, value)); return true;
         case "logger":
         case "Logger": target.setLogger(property(camelContext, org.apache.camel.spi.CamelLogger.class, value)); return true;
         case "onexceptionoccurred":
@@ -72,6 +74,8 @@ public class DeadLetterChannelBuilderConfigurer extends org.apache.camel.support
         case "ExecutorService": return java.util.concurrent.ScheduledExecutorService.class;
         case "executorserviceref":
         case "ExecutorServiceRef": return java.lang.String.class;
+        case "forcesynchronousexecution":
+        case "ForceSynchronousExecution": return boolean.class;
         case "logger":
         case "Logger": return org.apache.camel.spi.CamelLogger.class;
         case "onexceptionoccurred":
@@ -114,6 +118,8 @@ public class DeadLetterChannelBuilderConfigurer extends org.apache.camel.support
         case "ExecutorService": return target.getExecutorService();
         case "executorserviceref":
         case "ExecutorServiceRef": return target.getExecutorServiceRef();
+        case "forcesynchronousexecution":
+        case "ForceSynchronousExecution": return target.isForceSynchronousExecution();
         case "logger":
         case "Logger": return target.getLogger();
         case "onexceptionoccurred":

@@ -45,6 +45,7 @@ public class DefaultErrorHandlerConfiguration implements DefaultErrorHandlerProp
     private String onPrepareFailureRef;
     private Processor onExceptionOccurred;
     private String onExceptionOccurredRef;
+    private boolean forceSynchronousExecution;
 
     @Override
     public boolean hasLogger() {
@@ -195,5 +196,13 @@ public class DefaultErrorHandlerConfiguration implements DefaultErrorHandlerProp
 
     public void setOnExceptionOccurredRef(String onExceptionOccurredRef) {
         this.onExceptionOccurredRef = onExceptionOccurredRef;
+    }
+
+    public boolean isForceSynchronousExecution() {
+        return forceSynchronousExecution;
+    }
+
+    public void setForceSynchronousExecution(boolean forceSynchronousExecution) {
+        this.forceSynchronousExecution = forceSynchronousExecution;
     }
 }

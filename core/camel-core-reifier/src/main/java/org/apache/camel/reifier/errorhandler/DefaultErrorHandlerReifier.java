@@ -48,7 +48,8 @@ public class DefaultErrorHandlerReifier<T extends DefaultErrorHandlerProperties>
                 getPredicate(definition.getRetryWhile(), definition.getRetryWhileRef()),
                 getExecutorService(definition.getExecutorService(), definition.getExecutorServiceRef()),
                 getProcessor(definition.getOnPrepareFailure(), definition.getOnPrepareFailureRef()),
-                getProcessor(definition.getOnExceptionOccurred(), definition.getOnExceptionOccurredRef()));
+                getProcessor(definition.getOnExceptionOccurred(), definition.getOnExceptionOccurredRef()),
+                definition.isForceSynchronousExecution());
         // configure error handler before we can use it
         configure(answer);
         return answer;

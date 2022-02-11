@@ -114,7 +114,8 @@ public class JtaTransactionErrorHandlerReifier extends ErrorHandlerReifier<JtaTr
                 definition.getRetryWhilePolicy(camelContext),
                 getExecutorService(),
                 rollbackLoggingLevel,
-                definition.getOnExceptionOccurred());
+                definition.getOnExceptionOccurred(),
+                definition.isForceSynchronousExecution());
 
         // configure error handler before we can use it
         configure(answer);

@@ -52,16 +52,27 @@ public class DefaultErrorHandler extends RedeliveryErrorHandler {
      *                                     {@link org.apache.camel.Exchange} before handled by the failure processor /
      *                                     dead letter channel.
      * @param onExceptionOccurredProcessor a custom {@link org.apache.camel.Processor} to process the
-     *                                     {@link org.apache.camel.Exchange} just after an exception was thrown.
+     *                                     {@link org.apache.camel.Exchange} just after an exception was thrown
+     * @param forceSynchronousExecution    flag to execute tasks synchronously. See `process` method in
+     *                                     {@link org.apache.camel.processor.errorhandler.RedeliveryErrorHandler}
      */
+    public DefaultErrorHandler(CamelContext camelContext, Processor output, CamelLogger logger, Processor redeliveryProcessor,
+                               RedeliveryPolicy redeliveryPolicy, Predicate retryWhile,
+                               ScheduledExecutorService executorService, Processor onPrepareProcessor,
+                               Processor onExceptionOccurredProcessor, boolean forceSynchronousExecution) {
+
+        super(camelContext, output, logger != null ? logger : DEFAULT_LOGGER, redeliveryProcessor, redeliveryPolicy, null, null,
+              true, false, false, retryWhile,
+              executorService, onPrepareProcessor, onExceptionOccurredProcessor, forceSynchronousExecution);
+    }
+
     public DefaultErrorHandler(CamelContext camelContext, Processor output, CamelLogger logger, Processor redeliveryProcessor,
                                RedeliveryPolicy redeliveryPolicy, Predicate retryWhile,
                                ScheduledExecutorService executorService, Processor onPrepareProcessor,
                                Processor onExceptionOccurredProcessor) {
 
-        super(camelContext, output, logger != null ? logger : DEFAULT_LOGGER, redeliveryProcessor, redeliveryPolicy, null, null,
-              true, false, false, retryWhile,
-              executorService, onPrepareProcessor, onExceptionOccurredProcessor);
+        this(camelContext, output, logger, redeliveryProcessor, redeliveryPolicy, retryWhile, executorService,
+             onPrepareProcessor, onExceptionOccurredProcessor, false);
     }
 
     private DefaultErrorHandler(Logger log) {
@@ -82,7 +93,7 @@ public class DefaultErrorHandler extends RedeliveryErrorHandler {
     public ErrorHandler clone(Processor output) {
         DefaultErrorHandler answer = new DefaultErrorHandler(
                 camelContext, output, logger, redeliveryProcessor, redeliveryPolicy, retryWhilePolicy, executorService,
-                onPrepareProcessor, onExceptionProcessor);
+                onPrepareProcessor, onExceptionProcessor, forceSynchronousExecution);
         // shallow clone is okay as we do not mutate these
         if (exceptionPolicies != null) {
             answer.exceptionPolicies = exceptionPolicies;

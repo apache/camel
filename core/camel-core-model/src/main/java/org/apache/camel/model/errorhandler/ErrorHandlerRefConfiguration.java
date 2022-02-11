@@ -23,6 +23,7 @@ public class ErrorHandlerRefConfiguration implements ErrorHandlerRefProperties {
 
     private String ref;
     private boolean supportTransacted;
+    private boolean forceSynchronousExecution;
 
     @Override
     public String getRef() {
@@ -42,5 +43,13 @@ public class ErrorHandlerRefConfiguration implements ErrorHandlerRefProperties {
     @Override
     public void setSupportTransacted(boolean supportTransacted) {
         this.supportTransacted = supportTransacted;
+    }
+
+    public boolean isForceSynchronousExecution() {
+        return forceSynchronousExecution;
+    }
+
+    public void setForceSynchronousExecution(boolean forceSynchronousExecution) {
+        this.forceSynchronousExecution = forceSynchronousExecution;
     }
 }

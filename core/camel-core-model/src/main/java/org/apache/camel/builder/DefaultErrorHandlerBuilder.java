@@ -80,6 +80,7 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport imple
         other.setUseOriginalBody(configuration.isUseOriginalBody());
         other.setAsyncDelayedRedelivery(configuration.isAsyncDelayedRedelivery());
         other.setExecutorServiceRef(configuration.getExecutorServiceRef());
+        other.setForceSynchronousExecution(configuration.isForceSynchronousExecution());
     }
 
     // Builder methods
@@ -648,6 +649,14 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport imple
 
     public void setOnExceptionOccurredRef(String onExceptionOccurredRef) {
         configuration.setOnExceptionOccurredRef(onExceptionOccurredRef);
+    }
+
+    public boolean isForceSynchronousExecution() {
+        return configuration.isForceSynchronousExecution();
+    }
+
+    public void setForceSynchronousExecution(boolean forceSynchronousExecution) {
+        configuration.setForceSynchronousExecution(forceSynchronousExecution);
     }
 
     protected RedeliveryPolicy createRedeliveryPolicy() {

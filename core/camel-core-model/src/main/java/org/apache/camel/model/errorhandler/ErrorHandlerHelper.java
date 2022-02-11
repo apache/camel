@@ -20,6 +20,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Route;
+import org.apache.camel.builder.DefaultErrorHandlerBuilder;
+import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.support.CamelContextHelper;
 
@@ -70,6 +72,10 @@ public final class ErrorHandlerHelper {
                     // createErrorHandler method)
                     answer = camelContext.adapt(ModelCamelContext.class).getModelReifierFactory().createDefaultErrorHandler();
                 }
+
+                //for jts transactions - route can have a flagt to use synchronous execution
+                ((DefaultErrorHandlerBuilder) answer).setForceSynchronousExecution(
+                        ((ErrorHandlerBuilderRef) route.getErrorHandlerFactory()).isForceSynchronousExecution());
                 // inherit the error handlers from the other as they are to be
                 // shared
                 // this is needed by camel-spring when none error handler has

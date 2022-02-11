@@ -70,6 +70,14 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport implement
         configuration.setSupportTransacted(supportTransacted);
     }
 
+    public boolean isForceSynchronousExecution() {
+        return configuration.isForceSynchronousExecution();
+    }
+
+    public void setForceSynchronousExecution(boolean forceSynchronousExecution) {
+        configuration.setForceSynchronousExecution(forceSynchronousExecution);
+    }
+
     @Override
     public String toString() {
         return "ErrorHandlerBuilderRef[" + configuration.getRef() + "]";

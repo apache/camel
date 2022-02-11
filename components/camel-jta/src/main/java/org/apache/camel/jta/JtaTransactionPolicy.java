@@ -51,6 +51,11 @@ public abstract class JtaTransactionPolicy implements TransactedPolicy {
         // because we inherit it on our own but only in case of a
         // non-transactional error handler)
         ((ProcessorDefinition<?>) definition).setInheritErrorHandler(false);
+
+        // force route to use synchronous executions, JTA requires them
+        if (route.getErrorHandlerFactory() instanceof ErrorHandlerBuilderRef) {
+            ((ErrorHandlerBuilderRef) route.getErrorHandlerFactory()).setForceSynchronousExecution(true);
+        }
     }
 
     public abstract void run(Runnable runnable) throws Throwable;
@@ -102,6 +107,7 @@ public abstract class JtaTransactionPolicy implements TransactedPolicy {
         }
 
         txBuilder.setTransactionPolicy(this);
+        txBuilder.setForceSynchronousExecution(true);
 
         // use error handlers from the configured builder
         if (builder != null) {

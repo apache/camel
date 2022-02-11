@@ -42,12 +42,12 @@ public class JtaTransactionErrorHandler extends RedeliveryErrorHandler {
                                       JtaTransactionPolicy transactionPolicy,
                                       Predicate retryWhile, ScheduledExecutorService executorService,
                                       LoggingLevel rollbackLoggingLevel,
-                                      Processor onExceptionOccurredProcessor) {
+                                      Processor onExceptionOccurredProcessor, boolean forceSychronousExecution) {
         super(camelContext,
               new TransactionErrorHandler(camelContext, output, transactionPolicy, rollbackLoggingLevel),
               logger, redeliveryProcessor, redeliveryPolicy,
               null, null, false, false, false,
-              retryWhile, executorService, null, onExceptionOccurredProcessor);
+              retryWhile, executorService, null, onExceptionOccurredProcessor, forceSychronousExecution);
         this.transactionPolicy = transactionPolicy;
         this.rollbackLoggingLevel = rollbackLoggingLevel;
     }
@@ -56,8 +56,7 @@ public class JtaTransactionErrorHandler extends RedeliveryErrorHandler {
     public ErrorHandler clone(Processor output) {
         JtaTransactionErrorHandler answer = new JtaTransactionErrorHandler(
                 camelContext, output, logger, redeliveryProcessor, redeliveryPolicy, transactionPolicy, retryWhilePolicy,
-                executorService, rollbackLoggingLevel, onExceptionProcessor);
-        // shallow clone is okay as we do not mutate these
+                executorService, rollbackLoggingLevel, onExceptionProcessor, forceSynchronousExecution);
         if (exceptionPolicies != null) {
             answer.exceptionPolicies = exceptionPolicies;
         }

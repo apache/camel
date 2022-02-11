@@ -99,4 +99,8 @@ public interface DefaultErrorHandlerProperties extends ErrorHandlerFactory {
     String getOnExceptionOccurredRef();
 
     void setOnExceptionOccurredRef(String onExceptionOccurredRef);
+
+    boolean isForceSynchronousExecution();
+
+    void setForceSynchronousExecution(boolean forceSynchronousExecution);
 }
