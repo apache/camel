@@ -32,8 +32,7 @@ import org.apache.camel.spi.annotations.YamlType;
           properties = {
                   @YamlProperty(name = "bean-type", type = "string"),
                   @YamlProperty(name = "name", type = "string", required = true),
-                  @YamlProperty(name = "property", type = "array:org.apache.camel.model.PropertyDefinition"),
-                  @YamlProperty(name = "properties", type = "object"),
+                  @YamlProperty(name = "properties", type = "array:org.apache.camel.model.PropertyDefinition"),
                   @YamlProperty(name = "script", type = "string"),
                   @YamlProperty(name = "type", type = "string", required = true)
           })

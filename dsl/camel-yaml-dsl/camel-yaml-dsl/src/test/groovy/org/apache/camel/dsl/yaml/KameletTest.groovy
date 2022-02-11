@@ -289,41 +289,6 @@ class KameletTest extends YamlTestSupport {
                       - name: "myProcessor"
                         type: "#class:${MySetBody.class.name}"
                         properties:
-                          payload: "test-payload"
-                    from:
-                      uri: "kamelet:source"
-                      steps:
-                        - process:
-                            ref: "{{myProcessor}}"
-                - from:
-                    uri: "direct:start"
-                    steps:
-                      - to: "kamelet:myTemplate"
-                      - to: "mock:result"
-            """
-
-            withMock('mock:result') {
-                expectedMessageCount 1
-                expectedBodiesReceived 'test-payload'
-            }
-        when:
-            withTemplate {
-                to('direct:start').withBody('hello').send()
-            }
-
-        then:
-            MockEndpoint.assertIsSatisfied(context)
-    }
-
-    def "kamelet (definition with local bean and property)"() {
-        setup:
-            loadRoutes """
-                - template:
-                    id: "myTemplate"
-                    beans:
-                      - name: "myProcessor"
-                        type: "#class:${MySetBody.class.name}"
-                        property:
                           - key: "payload"
                             value: "test-payload"
                     from:

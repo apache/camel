@@ -21,6 +21,7 @@ import org.apache.camel.Processor
 
 class MySetBody implements Processor {
     private String payload
+    private String prefix = "";
 
     String getPayload() {
         return payload
@@ -30,8 +31,16 @@ class MySetBody implements Processor {
         this.payload = payload
     }
 
+    String getPrefix() {
+        return prefix
+    }
+
+    void setPrefix(String prefix) {
+        this.prefix = prefix
+    }
+
     @Override
     void process(Exchange exchange) throws Exception {
-        exchange.in.body = payload
+        exchange.in.body = prefix + payload
     }
 }

@@ -2425,9 +2425,6 @@
             "type" : "string"
           },
           "properties" : {
-            "type" : "object"
-          },
-          "property" : {
             "type" : "array",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
@@ -2880,9 +2877,6 @@
             "type" : "string"
           },
           "properties" : {
-            "type" : "object"
-          },
-          "property" : {
             "type" : "array",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
