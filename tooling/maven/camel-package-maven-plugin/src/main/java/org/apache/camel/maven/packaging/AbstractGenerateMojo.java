@@ -43,6 +43,7 @@ import org.apache.maven.project.MavenProjectHelper;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
 public abstract class AbstractGenerateMojo extends AbstractMojo {
+    private static final String INCREMENTAL_DATA = "";
 
     @Parameter(property = "project", required = true, readonly = true)
     protected MavenProject project;
@@ -116,14 +117,8 @@ public abstract class AbstractGenerateMojo extends AbstractMojo {
     private boolean isUpToDate(MavenProject project) throws MojoExecutionException {
         try {
             Path cacheData = getIncrementalDataPath(project);
-            String prvdata;
-            if (Files.isRegularFile(cacheData)) {
-                prvdata = new String(Files.readAllBytes(cacheData), StandardCharsets.UTF_8);
-            } else {
-                prvdata = null;
-            }
-            String curdata = getIncrementalData();
-            if (curdata.equals(prvdata)) {
+            final String prvdata = getPreviousRunData(cacheData);
+            if (prvdata.isEmpty()) {
                 long lastmod = Files.getLastModifiedTime(cacheData).toMillis();
                 Set<String> stale = Stream.concat(Stream.concat(
                         project.getCompileSourceRoots().stream().map(File::new),

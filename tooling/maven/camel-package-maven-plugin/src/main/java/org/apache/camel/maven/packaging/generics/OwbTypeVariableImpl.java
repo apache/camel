@@ -41,7 +41,8 @@ public class OwbTypeVariableImpl {
      * @return the typeVariable with the defined bounds.
      */
     public static TypeVariable createTypeVariable(TypeVariable typeVariable, Type... bounds) {
-        TypeVariable tv = (TypeVariable)Proxy.newProxyInstance(OwbTypeVariableImpl.class.getClassLoader(), TYPE_VARIABLE_TYPES,
+
+        return (TypeVariable)Proxy.newProxyInstance(OwbTypeVariableImpl.class.getClassLoader(), TYPE_VARIABLE_TYPES,
                                                                new OwbTypeVariableInvocationHandler(typeVariable, bounds));
 
         return tv;
