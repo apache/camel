@@ -117,7 +117,7 @@ public abstract class AbstractGenerateMojo extends AbstractMojo {
         try {
             Path cacheData = getIncrementalDataPath(project);
             final String prvdata = getPreviousRunData(cacheData);
-            if (prvdata.isEmpty()) {
+            if (INCREMENTAL_DATA.equals(prvdata)) {
                 long lastmod = Files.getLastModifiedTime(cacheData).toMillis();
                 Set<String> stale = Stream.concat(Stream.concat(
                         project.getCompileSourceRoots().stream().map(File::new),

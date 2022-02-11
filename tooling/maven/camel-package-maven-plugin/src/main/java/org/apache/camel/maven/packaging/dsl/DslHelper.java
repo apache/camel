@@ -80,7 +80,6 @@ public final class DslHelper {
         return desc;
     }
 
-
     public static String generateComponentBuilderClassName(final ComponentModel componentModel, final String suffix) {
         return StringUtils.capitalize(toCamelCaseLower(componentModel.getScheme()))
                + "Component" + suffix;
