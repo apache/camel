@@ -325,13 +325,8 @@ public class ManifestPlugin extends BundlePlugin {
     private boolean isUpToDate(MavenProject project) throws MojoExecutionException {
         try {
             Path cacheData = getIncrementalDataPath(project);
-            String prvdata;
-            if (Files.isRegularFile(cacheData)) {
-                prvdata = new String(Files.readAllBytes(cacheData), StandardCharsets.UTF_8);
-            } else {
-                prvdata = null;
-            }
-            String curdata = getIncrementalData();
+            final String prvdata = getPreviousRunData(cacheData);
+            final String curdata = getIncrementalData();
             if (curdata.equals(prvdata)) {
                 long lastmod = Files.getLastModifiedTime(cacheData).toMillis();
                 Set<String> stale = Stream
@@ -361,6 +356,16 @@ public class ManifestPlugin extends BundlePlugin {
             throw new MojoExecutionException("Error checking manifest uptodate status", e);
         }
         return false;
+    }
+
+    private String getPreviousRunData(Path cacheData) throws IOException {
+        String prvdata;
+        if (Files.isRegularFile(cacheData)) {
+            prvdata = new String(Files.readAllBytes(cacheData), StandardCharsets.UTF_8);
+        } else {
+            prvdata = null;
+        }
+        return prvdata;
     }
 
     private String getIncrementalData() {
@@ -420,8 +425,6 @@ public class ManifestPlugin extends BundlePlugin {
             InputStream inputStream = new FileInputStream(outputFile);
             try {
                 manifest.read(inputStream);
-            } finally {
-                inputStream.close();
             }
             Instructions instructions = new Instructions(ExtList.from(analyzer.getProperty("Merge-Headers")));
             mergeManifest(instructions, manifest, analyzerManifest);
@@ -441,17 +444,14 @@ public class ManifestPlugin extends BundlePlugin {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {
             ManifestWriter.outputManifest(manifest, baos, niceManifest);
-        } finally {
-            try {
-                baos.close();
-            } catch (IOException e) {
-                // nothing we can do here
-            }
-        }
 
-        log.debug("Write manifest to " + outputFile.getPath());
-        if (updateFile(outputFile.toPath(), baos.toByteArray())) {
-            buildContext.refresh(outputFile);
+            if (log.isDebugEnabled()) {
+                log.debug("Write manifest to " + outputFile.getPath());
+            }
+
+            if (updateFile(outputFile.toPath(), baos.toByteArray())) {
+                buildContext.refresh(outputFile);
+            }
         }
     }
 
