@@ -952,7 +952,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                 if (option.isDeprecated()) {
                     descSb.append(" <strong>deprecated</strong>");
                 }
-                descSb.append("\n" + option.getDescription());
+                descSb.append("\n").append(option.getDescription());
                 if (option.getDefaultValue() != null) {
                     descSb.append("\nDefault value: ").append(option.getDefaultValue());
                 }

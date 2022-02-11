@@ -136,7 +136,7 @@ public final class ComponentDslInnerImplBuilderGenerator {
         StringBuilder sb = new StringBuilder();
         String line1 = String.format("if (component.%s() == null) {\n", getter);
         String line2 = String.format("    component.%s(new %s());\n", setter, configurationClass);
-        String line3 = String.format("}\n");
+        String line3 = "}\n";
         String line4 = String.format("return component.%s();\n", getter);
 
         sb.append(line1).append(line2).append(line3).append(line4);
