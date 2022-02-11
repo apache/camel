@@ -20,6 +20,8 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import io.smallrye.health.api.HealthRegistry;
+import io.smallrye.health.api.HealthType;
+import io.smallrye.health.registry.HealthRegistries;
 import org.apache.camel.CamelContext;
 import org.apache.camel.StartupListener;
 import org.apache.camel.health.HealthCheck;
@@ -41,8 +43,6 @@ public class CamelMicroProfileHealthCheckRegistry extends DefaultHealthCheckRegi
     public static final String ROUTES_CHECK_NAME = "camel-routes";
     private static final Logger LOG = LoggerFactory.getLogger(CamelMicroProfileHealthCheckRegistry.class);
     private final Set<HealthCheckRepository> repositories = new CopyOnWriteArraySet<>();
-    private HealthRegistry livenessRegistry;
-    private HealthRegistry readinessRegistry;
 
     public CamelMicroProfileHealthCheckRegistry() {
         this(null);
@@ -119,7 +119,7 @@ public class CamelMicroProfileHealthCheckRegistry extends DefaultHealthCheckRegi
         }
     }
 
-    private void registerRepositoryChecks(HealthCheckRepository repository) {
+    protected void registerRepositoryChecks(HealthCheckRepository repository) {
         if (repository.isEnabled()) {
             // Since the number of potential checks for consumers / routes is non-deterministic
             // avoid registering each one with SmallRye health and instead aggregate the results so
@@ -140,7 +140,7 @@ public class CamelMicroProfileHealthCheckRegistry extends DefaultHealthCheckRegi
         }
     }
 
-    private void registerMicroProfileHealthCheck(HealthCheck camelHealthCheck) {
+    protected void registerMicroProfileHealthCheck(HealthCheck camelHealthCheck) {
         org.eclipse.microprofile.health.HealthCheck microProfileHealthCheck
                 = new CamelMicroProfileHealthCheck(camelHealthCheck);
 
@@ -153,7 +153,7 @@ public class CamelMicroProfileHealthCheckRegistry extends DefaultHealthCheckRegi
         }
     }
 
-    private void removeMicroProfileHealthCheck(HealthCheck camelHealthCheck) {
+    protected void removeMicroProfileHealthCheck(HealthCheck camelHealthCheck) {
         if (camelHealthCheck.isReadiness()) {
             try {
                 getReadinessRegistry().remove(camelHealthCheck.getId());
@@ -175,21 +175,11 @@ public class CamelMicroProfileHealthCheckRegistry extends DefaultHealthCheckRegi
         }
     }
 
-    private HealthRegistry getLivenessRegistry() {
-        synchronized (this) {
-            if (livenessRegistry == null) {
-                livenessRegistry = CamelMicroProfileHealthHelper.getLivenessRegistry();
-            }
-        }
-        return livenessRegistry;
+    protected HealthRegistry getLivenessRegistry() {
+        return HealthRegistries.getRegistry(HealthType.LIVENESS);
     }
 
-    private HealthRegistry getReadinessRegistry() {
-        synchronized (this) {
-            if (readinessRegistry == null) {
-                readinessRegistry = CamelMicroProfileHealthHelper.getReadinessRegistry();
-            }
-        }
-        return readinessRegistry;
+    protected HealthRegistry getReadinessRegistry() {
+        return HealthRegistries.getRegistry(HealthType.READINESS);
     }
 }

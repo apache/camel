@@ -443,7 +443,7 @@
     <openjpa-version>3.2.1</openjpa-version>
     <openstack4j-version>3.10</openstack4j-version>
     <opentelemetry-alpha-version>${opentelemetry-version}-alpha</opentelemetry-alpha-version>
-    <opentelemetry-version>1.10.1</opentelemetry-version>
+    <opentelemetry-version>1.11.0</opentelemetry-version>
     <opentracing-tracerresolver-version>0.1.8</opentracing-tracerresolver-version>
     <opentracing-version>0.33.0</opentracing-version>
     <optaplanner-version>8.16.1.Final</optaplanner-version>
@@ -500,8 +500,8 @@
     <slf4j-version>1.7.35</slf4j-version>
     <smack-version>4.3.5</smack-version>
     <smallrye-config-version>2.8.2</smallrye-config-version>
-    <smallrye-fault-tolerance-version>5.2.1</smallrye-fault-tolerance-version>
-    <smallrye-health-version>3.1.2</smallrye-health-version>
+    <smallrye-fault-tolerance-version>5.3.0</smallrye-fault-tolerance-version>
+    <smallrye-health-version>3.2.0</smallrye-health-version>
     <smallrye-metrics-version>3.0.4</smallrye-metrics-version>
     <snakeyaml-engine-version>2.3</snakeyaml-engine-version>
     <snakeyaml-version>1.30</snakeyaml-version>
@@ -550,7 +550,6 @@
     <vysper-version>0.7</vysper-version>
     <web3j-quorum-version>0.8.0</web3j-quorum-version>
     <web3j-version>3.6.0</web3j-version>
-    <weld-junit5-version>2.0.2.Final</weld-junit5-version>
     <weld3-version>3.1.8.Final</weld3-version>
     <wildfly-elytron>1.11.4.Final</wildfly-elytron>
     <wiremock-version>2.32.0</wiremock-version>
