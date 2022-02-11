@@ -407,7 +407,7 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
 
     private boolean filterSetter(Method setter) {
         // special for some
-        if ("setBindingMode".equals(setter.getName())) {
+        if ("setBindingMode".equals(setter.getName()) || "setHostNameResolver".equals(setter.getName())) {
             // we only want the string setter
             return setter.getParameterTypes()[0] == String.class;
         } else if ("setHostNameResolver".equals(setter.getName())) {

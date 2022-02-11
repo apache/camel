@@ -757,8 +757,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
     }
 
     private ComponentModel generateComponentModel(String json) {
-        ComponentModel component = JsonMapper.generateComponentModel(json);
-        return component;
+        return JsonMapper.generateComponentModel(json);
     }
 
     private OtherModel generateOtherModel(String json) {
@@ -767,8 +766,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
     }
 
     private DataFormatModel generateDataFormatModel(String json) {
-        DataFormatModel model = JsonMapper.generateDataFormatModel(json);
-        return model;
+        return JsonMapper.generateDataFormatModel(json);
     }
 
     private AnnotationModel generateAnnotationModel(Class<?> annotation) {
