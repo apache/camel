@@ -57,6 +57,7 @@
 ** xref:swagger-java.adoc[Swagger Java]
 ** xref:test.adoc[Test]
 ** xref:test-cdi.adoc[Test CDI]
+** xref:test-cdi-junit5.adoc[Test CDI JUnit5]
 ** xref:test-junit5.adoc[Test JUnit5]
 ** xref:test-spring.adoc[Test Spring]
 ** xref:test-spring-junit5.adoc[Test Spring JUnit5]

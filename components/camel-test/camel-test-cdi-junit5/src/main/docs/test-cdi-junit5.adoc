@@ -1,11 +1,10 @@
-= Test CDI Component (deprecated)
-:doctitle: Test CDI
-:shortname: test-cdi
-:artifactid: camel-test-cdi
-:description: Camel unit testing with CDI
-:since: 2.17
-:supportlevel: Stable-deprecated
-:deprecated: *deprecated*
+= Test CDI JUnit5 Component
+:doctitle: Test CDI JUnit5
+:shortname: test-cdi-junit5
+:artifactid: camel-test-cdi-junit5
+:description: Camel unit testing with CDI for JUnit5
+:since: 3.16
+:supportlevel: Stable
 
 *Since Camel {since}*
 
@@ -19,17 +18,17 @@ You can use CDI for IoC and the Camel testing endpoints like
 and `NotifyBuilder` to create sophisticated integration/unit tests that
 are easy to run and debug inside your IDE.
 
-There are a number of supported approaches for testing with CDI in
+There are a number of supported approaches gqfor testing with CDI in
 Camel:
 
 [width="100%",cols="1,1,4",options="header",]
 |=======================================================================
 |Name |Testing Frameworks Supported |Description
 |<<CDITesting-CamelCDITest>>[Camel CDI Test] a|
-* JUnit 4
+* JUnit 5
 
  a|
-The Camel CDI test module (`camel-test-cdi`) provides a JUnit runner
+The Camel CDI test module (`camel-test-cdi-junit5`) provides a JUnit extension
 that bootstraps a test environment using CDI so that you don't have to
 be familiar with any CDI testing frameworks and can concentrate on the
 testing logic of your Camel CDI applications.
@@ -73,8 +72,8 @@ containers].
 [[CDITesting-CamelCDITest]]
 == Camel CDI Test
 
-With this approach, your test classes use the JUnit runner provided in
-Camel CDI test. This runner manages the lifecycle of a standalone CDI
+With this approach, your test classes use the JUnit extension provided in
+Camel CDI test. This extension manages the lifecycle of a standalone CDI
 container and automatically assemble and deploy the System Under Test
 (SUT) based on the _classpath_ into the container.
 
@@ -88,18 +87,18 @@ their `pom.xml` for this component:
 ----
 <dependency>
     <groupId>org.apache.camel</groupId>
-    <artifactId>camel-test-cdi</artifactId>
+    <artifactId>camel-test-cdi-junit5</artifactId>
     <scope>test</scope>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
 ----
 
-Here is a simple unit test using the `CamelCdiRunner`:
+Here is a simple unit test using the `CamelCdiExtension`:
 
 [source,java]
 ----
-@RunWith(CamelCdiRunner.class)
+@ExtendWith(CamelCdiExtension.class)
 public class CamelCdiTest {
 
     @Inject
@@ -118,7 +117,7 @@ CDI injection is also available for test method parameters, e.g.:
 
 [source,java]
 ----
-@RunWith(CamelCdiRunner.class)
+@ExtendWith(CamelCdiExtension.class)
 public class CamelCdiTest {
 
     @Test
@@ -128,12 +127,16 @@ public class CamelCdiTest {
 }
 ----
 
-Camel CDI test provides the `@Order` annotation that you can use to
+JUnit 5 provides out of the box the `@Order` annotation that you can use to
 execute the test methods in a particular sequence, e.g.:
 
 [source,java]
 ----
-@RunWith(CamelCdiRunner.class)
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+
+@ExtendWith(CamelCdiExtension.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class CamelCdiTest {
 
     @Test
@@ -152,7 +155,7 @@ One CDI container is bootstrapped for the entire execution of the test
 class.
 
 Besides, the test class is deployed as a CDI bean, so that you can
-control how the runner instantiate the test class, either one test class
+control how the extension instantiates the test class, either one test class
 instance for each test method (the default, depending on the _built-in_
 default `@Dependent` CDI scope), or one test class instance for the
 entire test class execution using the `@ApplicationScoped` scope, e.g.:
@@ -160,7 +163,7 @@ entire test class execution using the `@ApplicationScoped` scope, e.g.:
 [source,java]
 ----
 @ApplicationScoped
-@RunWith(CamelCdiRunner.class)
+@ExtendWith(CamelCdiExtension.class)
 public class CamelCdiTest {
 
     int counter;
@@ -199,7 +202,7 @@ And add it with the `@Beans` annotation, e.g.:
 
 [source,java]
 ----
-@RunWith(CamelCdiRunner.class)
+@ExtendWith(CamelCdiExtension.class)
 @Beans(classes = TestRoute.class)
 public class CamelCdiTest {
 
@@ -453,7 +456,7 @@ test class as you would normally do in your application code, e.g.:
 
 [source,java]
 ----
-@RunWith(CamelCdiRunner.class)
+@ExtendWith(CamelCdiExtension.class)
 public class CamelCdiTest {
 
     // Declare a RouteBuilder bean for testing purpose
@@ -484,7 +487,7 @@ CDI bean, e.g.:
 
 [source,java]
 ----
-@RunWith(CamelCdiRunner.class)
+@ExtendWith(CamelCdiExtension.class)
 @Beans(classes = TestRoute.class)
 public class CamelCdiTest {
 
@@ -545,19 +548,19 @@ public class AlternativeBean {
 ----
 
 And you need to activate (a.k.a. _select_ in CDI terminology) this
-alternative bean in your tests. If your using the `CamelCdiRunner` JUnit
-runner, you can do that with the `@Beans` annotation provided by the
+alternative bean in your tests. If you use the `CamelCdiExtension` JUnit
+extension, you can do that with the `@Beans` annotation provided by the
 Camel CDI test module, e.g.:
 
 [source,java]
 ----
-@RunWith(CamelCdiRunner.class)
+@ExtendWith(CamelCdiExtension.class)
 @Beans(alternatives = AlternativeBean.class)
 public class CamelCdiTest {
 
     @Test
     public void testAlternativeBean(@Uri("direct:in") ProducerTemplate producer
-                                    @Uri("mock:out") MockEndpoint mock) throws InterruptedException {
+                                    @Uri("mock:out") MockEndpoint mock) throws Exception {
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("test with alternative bean!");
 
@@ -615,7 +618,7 @@ class, e.g.:
 
 [source,java]
 ----
-@RunWith(CamelCdiRunner.class)
+@ExtendWith(CamelCdiExtension.class)
 public class CamelCdiTest {
 
     @Default
@@ -635,104 +638,33 @@ In that example, the custom Camel context bean declared in the test
 class will be used during the test execution instead of the default
 Camel context bean provided by the Camel CDI component.
 
-[[CDITesting-RoutesadvisingwithadviceWith]]
-== Routes advising with `adviceWith`
+[[CDITesting-RoutesadvisingwithAdviceRoute]]
+== Routes advising with `@AdviceRoute`
 
-`AdviceWith` is used for testing Camel routes where you
-can _advice_ an existing route before its being tested. It allows to
-add http://camel.apache.org/intercept.html[Intercept] or _weave_ routes
-for testing purpose, for example using
+The annotation `@AdviceRoute` can be used to _advice_ an existing route
+before its being tested. It allows adding http://camel.apache.org/intercept.html[Intercept]
+or _weave_ routes for testing purpose, for example using
 the xref:ROOT:mock-component.adoc[Mock] component.
 
-It is recommended to only advice routes which are not started already.
-To meet that requirement, you can use the `CamelContextStartingEvent`
-event by declaring an observer method in which you use `adviceWith` to
-add a `mock` endpoint at the end of your Camel route, e.g.:
+The extension detects automatically all classes of type `AdviceWithRouteBuilder` annotated with
+`@AdviceRoute`, instantiates them and delays the Camel context start-up to ensure that the target
+routes are advised properly.
+
+In the next example, the `AdviceWithRouteBuilder` of type `ReplaceDirectWithMockBuilder` advises the
+ route whose identifier is `main-route`.
 
 [source,java]
 ----
-@RunWith(CamelCdiRunner.class)
+@ExtendWith(CamelCdiExtension.class)
 public class CamelCdiTest {
 
-    void advice(@Observes CamelContextStartingEvent event,
-                @Uri("mock:test") MockEndpoint messages,
-                ModelCamelContext context) throws Exception {
+    @AdviceRoute("main-route")
+    public class ReplaceDirectWithMockBuilder extends AdviceWithRouteBuilder {
 
-        context.getRouteDefinition("route")
-            .adviceWith(context, new AdviceWithRouteBuilder() {
-                @Override
-                public void configure() {
-                    weaveAddLast().to("mock:test");
-                }
-            });
+        @Override
+        public void configure() throws Exception {
+            weaveByToUri("direct:out").replace().to("mock:test");
+        }
     }
-}
-----
-
-[[CDITesting-JUnitrules]]
-== JUnit rules
-
-Camel CDI test starts the CDI container after all the JUnit class rules
-have executed.
-
-That way, you can use JUnit class rules to initialize (resp. clean-up)
-resources that your test classes would require during their execution
-before the container initializes (resp. after the container has
-shutdown). For example, you could use an embedded JMS broker
-like https://activemq.apache.org/artemis/[ActiveMQ Artemis] to test your
-Camel JMS application, e.g.:
-
-[source,java]
-----
-import org.apache.activemq.artemis.jms.server.embedded.EmbeddedJMS;
-
-@RunWith(CamelCdiRunner.class)
-public class CamelCdiTest {
-
-    @ClassRule
-    public static final ExternalResource resources = new ExternalResource() {
-
-        private final EmbeddedJMS jms = new EmbeddedJMS();
-
-        @Override
-        protected void before() throws Exception {
-            jms.start();
-        }
-
-        @Override
-        protected void after() throws Exception {
-            jms.stop();
-        }
-    };
-
-    @Inject
-    @Uri("jms:destination")
-    private ProducerTemplate producer;
-
-    @Test
-    public void sendMessage() {
-        producer.sendBody("message");
-    }
-}
-----
-
-Another use case is to assert the behavior of your application after it
-has shutdown. In that case, you can use the `Verifier` rule, e.g.:
-
-[source,java]
-----
-import org.junit.rules.Verifier;
-
-@RunWith(CamelCdiRunner.class)
-public class CamelCdiTest {
-
-    @ClassRule
-    public static Verifier verifier = new Verifier() {
-
-        @Override
-        protected void verify() {
-            // Executes after the CDI container has shutdown
-        }
-    };
 }
 ----
