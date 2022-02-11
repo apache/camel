@@ -397,7 +397,7 @@ public class ManifestPlugin extends BundlePlugin {
                         try (ZipFile zf = new ZipFile(file)) {
                             return zf.stream().filter(ze -> !ze.isDirectory())
                                     .filter(ze -> ze.getLastModifiedTime().toMillis() > lastmod)
-                                    .map(ze -> file.toString() + "!" + ze.getName()).collect(Collectors.toList())
+                                    .map(ze -> file + "!" + ze.getName()).collect(Collectors.toList())
                                     .stream();
                         }
                     } else {
