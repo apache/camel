@@ -1,0 +1,21 @@
+name: 'install-mvnd'
+description: 'Install the maven daemon'
+inputs:
+  version:
+    description: 'The version of the maven daemon to install'
+    required: true
+    default: '0.7.1'
+outputs:
+  mvnd-dir:
+    description: "The directory where the command mvnd is located"
+    value: ${{ steps.mvnd-location.outputs.mvnd-dir }}
+runs:
+  using: "composite"
+  steps:
+    - run: curl -fsSL -o mvnd.zip https://github.com/apache/maven-mvnd/releases/download/${{ inputs.version }}/mvnd-${{ inputs.version }}-linux-amd64.zip
+      shell: bash
+    - run: unzip mvnd.zip -d /tmp/
+      shell: bash
+    - id: mvnd-location
+      run: echo "::set-output name=mvnd-dir::/tmp/mvnd-${{ inputs.version }}-linux-amd64/bin"
+      shell: bash

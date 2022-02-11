@@ -29,6 +29,8 @@ jobs:
     - uses: actions/checkout@v2
       with:
         persist-credentials: false
+    - id: install-mvnd
+      uses: ./.github/actions/install-mvnd
     - name: Set up JDK
       uses: actions/setup-java@v2
       with:
@@ -36,7 +38,7 @@ jobs:
         java-version: 11
         cache: 'maven'
     - name: mvn checkstyle
-      run: ./mvnw -V -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 --no-transfer-progress  -Dcheckstyle.failOnViolation=true checkstyle:checkstyle
+      run: ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd -Dmvnd.threads=2 -V -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 --no-transfer-progress  -Dcheckstyle.failOnViolation=true checkstyle:checkstyle
   build:
     runs-on: ubuntu-latest
     strategy:
@@ -47,6 +49,8 @@ jobs:
         with:
           persist-credentials: false
           fetch-depth: 0
+      - id: install-mvnd
+        uses: ./.github/actions/install-mvnd
       - name: Set up JDK ${{ matrix.java }}
         uses: actions/setup-java@v2
         with:
@@ -54,4 +58,4 @@ jobs:
           java-version: ${{ matrix.java }}
           cache: 'maven'
       - name: maven build
-        run: ./mvnw -V -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 --no-transfer-progress -Pfastinstall -Dcheckstyle.skip=true -DskipTests install
+        run: ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd -Dmvnd.threads=2 -V -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 --no-transfer-progress -Pfastinstall -Dcheckstyle.skip=true -DskipTests install
