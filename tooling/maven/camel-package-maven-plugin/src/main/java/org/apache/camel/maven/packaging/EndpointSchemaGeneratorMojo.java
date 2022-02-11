@@ -428,7 +428,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             return;
         }
         // only generate this once for the first scheme
-        if (schemes != null && !schemes[0].equals(scheme)) {
+        if (isFirstScheme(scheme, schemes)) {
             return;
         }
         String pfqn;
@@ -465,6 +465,13 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                 options, componentModel);
     }
 
+    private boolean isFirstScheme(String scheme, String[] schemes) {
+        if (schemes != null && !schemes[0].equals(scheme)) {
+            return true;
+        }
+        return false;
+    }
+
     private void generateEndpointConfigurer(
             Class<?> classElement, UriEndpoint uriEndpoint, String scheme, String[] schemes,
             ComponentModel componentModel, ComponentModel parentData) {
@@ -472,7 +479,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             return;
         }
         // only generate this once for the first scheme
-        if (schemes != null && !schemes[0].equals(scheme)) {
+        if (isFirstScheme(scheme, schemes)) {
             return;
         }
         String pfqn;
