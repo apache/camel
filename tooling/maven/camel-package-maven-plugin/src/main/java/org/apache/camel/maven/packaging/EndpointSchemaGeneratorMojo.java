@@ -339,7 +339,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             }
             data = PackageHelper.loadText(is);
         } catch (Exception e) {
-            throw new RuntimeException("Error while loading " + fileName + ": " + e.toString(), e);
+            throw new RuntimeException("Error while loading " + fileName + ": " + e, e);
         }
         resources.put(fileName, data);
         return data;
