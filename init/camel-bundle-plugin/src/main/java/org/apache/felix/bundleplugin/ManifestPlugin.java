@@ -415,8 +415,8 @@ public class ManifestPlugin extends BundlePlugin {
 
     public static void writeManifest(Manifest manifest, File outputFile, boolean niceManifest,
             BuildContext buildContext, Log log) throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try {
+
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             ManifestWriter.outputManifest(manifest, baos, niceManifest);
 
             if (log.isDebugEnabled()) {
