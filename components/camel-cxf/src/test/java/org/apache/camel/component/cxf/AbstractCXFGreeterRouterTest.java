@@ -26,6 +26,7 @@ import org.apache.camel.util.IOHelper;
 import org.apache.hello_world_soap_http.Greeter;
 import org.apache.hello_world_soap_http.NoSuchCodeLitFault;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -65,6 +66,7 @@ public abstract class AbstractCXFGreeterRouterTest extends CamelSpringTestSuppor
     }
 
     @Test
+    @Disabled
     public void testInvokingServiceFromCXFClient() throws Exception {
         Service service = Service.create(serviceName);
         service.addPort(routerPortName, "http://schemas.xmlsoap.org/soap/",
