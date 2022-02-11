@@ -151,7 +151,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             }
         }
         // make sure we sort the classes in case one inherit from the other
-        classes.sort((c1, c2) -> compareClasses(c1, c2));
+        classes.sort(this::compareClasses);
 
         Map<Class, ComponentModel> models = new HashMap<>();
         for (Class<?> classElement : classes) {

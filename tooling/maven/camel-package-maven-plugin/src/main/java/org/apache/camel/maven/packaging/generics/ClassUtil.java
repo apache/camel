@@ -211,7 +211,7 @@ public final class ClassUtil {
     public static boolean hasAnnotation(String fqAnnotationName, Class<?> cl) {
         return Stream.of(cl.getAnnotations())
                 .map(annotation -> annotation.annotationType().getName())
-                .filter(className -> fqAnnotationName.equals(className))
+                .filter(fqAnnotationName::equals)
                 .findFirst().isPresent();
     }
 }
