@@ -111,7 +111,7 @@ public final class EndpointUriFactoryGenerator {
         w.append("\n");
         w.append("    @Override\n");
         w.append("    public boolean isLenientProperties() {\n");
-        w.append("        return " + model.isLenientProperties() + ";\n");
+        w.append("        return ").append(model.isLenientProperties()).append(";\n");
         w.append("    }\n");
         w.append("}\n");
         w.append("\n");

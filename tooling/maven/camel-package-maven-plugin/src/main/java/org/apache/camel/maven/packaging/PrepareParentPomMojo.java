@@ -96,8 +96,8 @@ public class PrepareParentPomMojo extends AbstractMojo {
         StringBuilder sb = new StringBuilder();
         for (String aid : artifactIds) {
             sb.append("      <dependency>\n");
-            sb.append("        <groupId>" + groupId + "</groupId>\n");
-            sb.append("        <artifactId>" + aid + "</artifactId>\n");
+            sb.append("        <groupId>").append(groupId).append("</groupId>\n");
+            sb.append("        <artifactId>").append(aid).append("</artifactId>\n");
             sb.append("        <version>${project.version}</version>\n");
             sb.append("      </dependency>\n");
         }

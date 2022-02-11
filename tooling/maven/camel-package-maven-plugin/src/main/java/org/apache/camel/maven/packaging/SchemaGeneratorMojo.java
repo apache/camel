@@ -380,7 +380,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
 
         // we want to skip inheritErrorHandler which is only applicable for
         // the load-balancer
-        boolean loadBalancer = "LoadBalanceDefinition".equals(originalClassType.getSimpleName().toString());
+        boolean loadBalancer = "LoadBalanceDefinition".equals(originalClassType.getSimpleName());
         if (!loadBalancer && "inheritErrorHandler".equals(name)) {
             return true;
         }

@@ -22,7 +22,6 @@ import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -222,8 +221,9 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
                                 .collect(Collectors.toSet());
                         List<DataFormatOptionModel> options = parseConfigurationSource(project, javaType);
                         options.removeIf(o -> !names.contains(o.getName()));
-                        names.removeAll(options.stream().map(DataFormatOptionModel::getName).collect(Collectors.toList()));
-                        names.removeAll(Arrays.asList("id"));
+                        options.stream().map(DataFormatOptionModel::getName).collect(Collectors.toList())
+                                .forEach(names::remove);
+                        names.removeAll(List.of("id"));
                         if (!names.isEmpty()) {
                             log.warn("Unmapped options: " + String.join(",", names));
                         }

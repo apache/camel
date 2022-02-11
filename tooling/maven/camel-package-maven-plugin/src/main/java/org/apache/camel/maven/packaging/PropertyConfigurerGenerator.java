@@ -403,9 +403,9 @@ public final class PropertyConfigurerGenerator {
         String line1 = String.format("    private %s %s(%s target) {\n", configurationClass, methodName, targetClass);
         String line2 = String.format("        if (target.%s() == null) {\n", getter);
         String line3 = String.format("            target.%s(new %s());\n", setter, configurationClass);
-        String line4 = String.format("        }\n");
+        String line4 = "        }\n";
         String line5 = String.format("        return target.%s();\n", getter);
-        String line6 = String.format("    }\n");
+        String line6 = "    }\n";
 
         sb.append(line1).append(line2).append(line3).append(line4).append(line5).append(line6);
         return sb.toString();
