@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Generated;
 
+import org.apache.camel.maven.packaging.dsl.DslHelper;
 import org.apache.camel.tooling.model.BaseModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.ComponentModel.EndpointOptionModel;
@@ -919,19 +920,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         }
         if (s != null) {
             s = s.substring(0, 1).toLowerCase() + s.substring(1);
-            switch (s) {
-                case "class":
-                    s = "clas";
-                    break;
-                case "package":
-                    s = "packag";
-                    break;
-                case "rest":
-                    s = "restEndpoint";
-                    break;
-                default:
-                    break;
-            }
+            s = DslHelper.sanitizeText(s);
         }
         return s;
     }

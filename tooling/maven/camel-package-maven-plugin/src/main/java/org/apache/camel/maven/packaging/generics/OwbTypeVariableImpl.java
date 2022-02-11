@@ -44,8 +44,6 @@ public class OwbTypeVariableImpl {
 
         return (TypeVariable)Proxy.newProxyInstance(OwbTypeVariableImpl.class.getClassLoader(), TYPE_VARIABLE_TYPES,
                                                                new OwbTypeVariableInvocationHandler(typeVariable, bounds));
-
-        return tv;
     }
 
     public static class OwbTypeVariableInvocationHandler implements InvocationHandler {

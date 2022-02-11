@@ -104,10 +104,9 @@ public abstract class AbstractGenerateMojo extends AbstractMojo {
     private void writeIncrementalInfo(MavenProject project) throws MojoExecutionException {
         try {
             Path cacheData = getIncrementalDataPath(project);
-            String curdata = getIncrementalData();
             Files.createDirectories(cacheData.getParent());
             try (Writer w = Files.newBufferedWriter(cacheData)) {
-                w.append(curdata);
+                w.append(INCREMENTAL_DATA);
             }
         } catch (IOException e) {
             throw new MojoExecutionException("Error checking manifest uptodate status", e);
@@ -148,6 +147,14 @@ public abstract class AbstractGenerateMojo extends AbstractMojo {
             throw new MojoExecutionException("Error checking uptodate status", e);
         }
         return false;
+    }
+
+    private String getPreviousRunData(Path cacheData) throws IOException {
+        if (Files.isRegularFile(cacheData)) {
+            return new String(Files.readAllBytes(cacheData), StandardCharsets.UTF_8);
+        } else {
+            return null;
+        }
     }
 
     private String getIncrementalData() {

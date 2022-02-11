@@ -52,19 +52,24 @@ public final class DslHelper {
     public static String toCamelCaseLower(final String schema) {
         String convertedText = CaseUtils.toCamelCase(schema, false, '-', '+');
         if (convertedText != null) {
-            switch (convertedText) {
-                case "class":
-                    convertedText = "clas";
-                    break;
-                case "package":
-                    convertedText = "packag";
-                    break;
-                case "rest":
-                    convertedText = "restEndpoint";
-                    break;
-                default:
-                    break;
-            }
+            convertedText = sanitizeText(convertedText);
+        }
+        return convertedText;
+    }
+
+    public static String sanitizeText(String convertedText) {
+        switch (convertedText) {
+            case "class":
+                convertedText = "clas";
+                break;
+            case "package":
+                convertedText = "packag";
+                break;
+            case "rest":
+                convertedText = "restEndpoint";
+                break;
+            default:
+                break;
         }
         return convertedText;
     }

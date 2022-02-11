@@ -410,9 +410,6 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
         if ("setBindingMode".equals(setter.getName()) || "setHostNameResolver".equals(setter.getName())) {
             // we only want the string setter
             return setter.getParameterTypes()[0] == String.class;
-        } else if ("setHostNameResolver".equals(setter.getName())) {
-            // we only want the string setter
-            return setter.getParameterTypes()[0] == String.class;
         }
 
         Metadata meta = setter.getAnnotation(Metadata.class);
