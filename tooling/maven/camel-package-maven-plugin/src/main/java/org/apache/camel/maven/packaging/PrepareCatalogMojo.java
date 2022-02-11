@@ -825,7 +825,6 @@ public class PrepareCatalogMojo extends AbstractMojo {
         missing.clear();
 
         for (String other : others) {
-            String name = other;
 
             if (!docs.contains(other)) {
                 missing.add(other);

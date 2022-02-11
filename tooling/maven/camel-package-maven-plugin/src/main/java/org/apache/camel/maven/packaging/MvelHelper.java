@@ -39,7 +39,6 @@ public final class MvelHelper {
         }
 
         final String escapedCurlyBrackets = CURLY_BRACKET_ESCAPE.matcher(raw).replaceAll("\\\\$1\\}");
-        final String escapedUrls = URL_ESCAPE.matcher(escapedCurlyBrackets).replaceAll("\\\\$1");
 
         return URL_ESCAPE.matcher(escapedCurlyBrackets).replaceAll("\\\\$1");
     }

@@ -295,9 +295,8 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
 
     private String getExcludedEnd(Metadata classElement) {
         String excludedEndpointProperties = "";
-        Metadata endpointMetadata = classElement;
-        if (endpointMetadata != null) {
-            excludedEndpointProperties = endpointMetadata.excludeProperties();
+        if (classElement != null) {
+            excludedEndpointProperties = classElement.excludeProperties();
         }
         return excludedEndpointProperties;
     }
