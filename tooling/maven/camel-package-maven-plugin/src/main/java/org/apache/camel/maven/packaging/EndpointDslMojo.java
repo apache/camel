@@ -846,7 +846,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         javaClass.addAnnotation(Generated.class).setStringValue("value", EndpointDslMojo.class.getName());
 
         // sort methods
-        Collections.sort(methods, (m1, m2) -> m1.getName().compareToIgnoreCase(m2.getName()));
+        methods.sort((m1, m2) -> m1.getName().compareToIgnoreCase(m2.getName()));
         // create method
         for (Method method : methods) {
             javaClass.addMethod(method);

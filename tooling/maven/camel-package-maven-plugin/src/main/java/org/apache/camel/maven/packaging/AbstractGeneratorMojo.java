@@ -151,7 +151,7 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
     }
 
     protected static <T> Supplier<T> cache(Supplier<T> supplier) {
-        return new Supplier<T>() {
+        return new Supplier<>() {
             T value;
 
             @Override
