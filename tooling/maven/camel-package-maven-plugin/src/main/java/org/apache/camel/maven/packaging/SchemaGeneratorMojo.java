@@ -506,12 +506,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
 
             Metadata metadata = fieldElement.getAnnotation(Metadata.class);
 
-            String kind = "element";
-            String name = element.name();
-            if (Strings.isNullOrEmpty(name) || "##default".equals(name)) {
-                name = fieldName;
-            }
-            name = prefix + name;
+            String name = fetchName(element.name(), fieldName, prefix);
             Class<?> fieldTypeElement = fieldElement.getType();
             String fieldTypeName = getTypeName(GenericsUtil.resolveType(originalClassType, fieldElement));
             boolean isDuration = false;
@@ -558,6 +553,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                 }
             }
 
+            String kind = "element";
             // gather oneOf expression/predicates which uses language
             Set<String> oneOfTypes = new TreeSet<>();
             boolean isOneOf = ONE_OF_TYPE_NAME.equals(fieldTypeName);
@@ -594,7 +590,6 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
             Set<EipOptionModel> eipOptions, String prefix) {
         String fieldName = fieldElement.getName();
         if (elements != null) {
-            String kind = "element";
             String name = fieldName;
             name = prefix + name;
 
@@ -624,6 +619,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                 deprecationNote = metadata.deprecationNote();
             }
 
+            final String kind = "element";
             EipOptionModel ep = createOption(name, displayName, kind, fieldTypeName, required, defaultValue, docComment,
                     deprecated, deprecationNote, false, null, oneOfTypes,
                     false, false);
@@ -815,12 +811,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
             Field fieldElement, String fieldName, Set<EipOptionModel> eipOptions, String prefix) {
 
         if ("outputs".equals(fieldName) && supportOutputs(originalClassType)) {
-            String kind = "element";
-            String name = elementRef.name();
-            if (Strings.isNullOrEmpty(name) || "##default".equals(name)) {
-                name = fieldName;
-            }
-            name = prefix + name;
+            String name = fetchName(elementRef.name(), fieldName, prefix);
             String fieldTypeName = getTypeName(GenericsUtil.resolveType(originalClassType, fieldElement));
 
             // gather oneOf which extends any of the output base classes
@@ -839,6 +830,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                 deprecationNote = metadata.deprecationNote();
             }
 
+            String kind = "element";
             EipOptionModel ep = createOption(name, displayName, kind, fieldTypeName, true, "", "", deprecated, deprecationNote,
                     false, null, oneOfTypes, false, false);
             eipOptions.add(ep);
@@ -853,12 +845,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
             String fieldName, Set<EipOptionModel> eipOptions, String prefix) {
 
         if ("verbs".equals(fieldName) && supportOutputs(originalClassType)) {
-            String kind = "element";
-            String name = elementRef.name();
-            if (Strings.isNullOrEmpty(name) || "##default".equals(name)) {
-                name = fieldName;
-            }
-            name = prefix + name;
+            String name = fetchName(elementRef.name(), fieldName, prefix);
             String fieldTypeName = getTypeName(GenericsUtil.resolveType(originalClassType, fieldElement));
 
             String docComment = findJavaDoc(fieldElement, fieldName, name, originalClassType, true);
@@ -876,6 +863,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                 deprecationNote = metadata.deprecationNote();
             }
 
+            String kind = "element";
             EipOptionModel ep = createOption(name, displayName, kind, fieldTypeName, true, "", docComment, deprecated,
                     deprecationNote, false, null, oneOfTypes, false, false);
             eipOptions.add(ep);
@@ -891,12 +879,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
             String fieldName, Set<EipOptionModel> eipOptions, String prefix) {
 
         if ("expression".equals(fieldName)) {
-            String kind = "expression";
-            String name = elementRef.name();
-            if (Strings.isNullOrEmpty(name) || "##default".equals(name)) {
-                name = fieldName;
-            }
-            name = prefix + name;
+            String name = fetchName(elementRef.name(), fieldName, prefix);
             String fieldTypeName = getTypeName(GenericsUtil.resolveType(originalClassType, fieldElement));
 
             // find javadoc from original class as it will override the
@@ -928,6 +911,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                 deprecationNote = metadata.deprecationNote();
             }
 
+            final String kind = "expression";
             EipOptionModel ep = createOption(name, displayName, kind, fieldTypeName, true, "", docComment, deprecated,
                     deprecationNote, false, null, oneOfTypes, asPredicate, false);
             eipOptions.add(ep);
@@ -957,12 +941,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
             Field fieldElement, String fieldName,
             Set<EipOptionModel> eipOptions, String prefix) {
         if ("whenClauses".equals(fieldName)) {
-            String kind = "element";
-            String name = elementRef.name();
-            if (Strings.isNullOrEmpty(name) || "##default".equals(name)) {
-                name = fieldName;
-            }
-            name = prefix + name;
+            String name = fetchName(elementRef.name(), fieldName, prefix);
             String fieldTypeName = getTypeName(GenericsUtil.resolveType(originalClassType, fieldElement));
 
             // find javadoc from original class as it will override the
@@ -988,11 +967,21 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                 deprecationNote = metadata.deprecationNote();
             }
 
+            final String kind = "element";
             EipOptionModel ep = createOption(name, displayName, kind, fieldTypeName, false, "", docComment, deprecated,
                     deprecationNote, false, null, oneOfTypes,
                     asPredicate, false);
             eipOptions.add(ep);
         }
+    }
+
+    private String fetchName(String elementRef, String fieldName, String prefix) {
+        String name = elementRef;
+        if (Strings.isNullOrEmpty(name) || "##default".equals(name)) {
+            name = fieldName;
+        }
+        name = prefix + name;
+        return name;
     }
 
     /**
@@ -1142,42 +1131,38 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
 
         if (builderPattern) {
             if (name != null && !name.equals(fieldName)) {
-                for (MethodSource<JavaClassSource> builder : source.getMethods()) {
-                    if (builder.getParameters().size() == 1 && builder.getName().equals(name)) {
-                        String doc = builder.getJavaDoc().getFullText();
-                        if (!Strings.isNullOrEmpty(doc)) {
-                            return doc;
-                        }
-                    }
-                }
-                for (MethodSource<JavaClassSource> builder : source.getMethods()) {
-                    if (builder.getParameters().isEmpty() && builder.getName().equals(name)) {
-                        String doc = builder.getJavaDoc().getFullText();
-                        if (!Strings.isNullOrEmpty(doc)) {
-                            return doc;
-                        }
-                    }
+                String doc = getDoc(source, name);
+                if (doc != null) {
+                    return doc;
                 }
             }
-            for (MethodSource<JavaClassSource> builder : source.getMethods()) {
-                if (builder.getParameters().size() == 1 && builder.getName().equals(fieldName)) {
-                    String doc = builder.getJavaDoc().getFullText();
-                    if (!Strings.isNullOrEmpty(doc)) {
-                        return doc;
-                    }
-                }
-            }
-            for (MethodSource<JavaClassSource> builder : source.getMethods()) {
-                if (builder.getParameters().isEmpty() && builder.getName().equals(fieldName)) {
-                    String doc = builder.getJavaDoc().getFullText();
-                    if (!Strings.isNullOrEmpty(doc)) {
-                        return doc;
-                    }
-                }
+            String doc = getDoc(source, fieldName);
+            if (doc != null) {
+                return doc;
             }
         }
 
         return "";
+    }
+
+    private String getDoc(JavaClassSource source, String name) {
+        for (MethodSource<JavaClassSource> builder : source.getMethods()) {
+            if (builder.getParameters().size() == 1 && builder.getName().equals(name)) {
+                String doc = builder.getJavaDoc().getFullText();
+                if (!Strings.isNullOrEmpty(doc)) {
+                    return doc;
+                }
+            }
+        }
+        for (MethodSource<JavaClassSource> builder : source.getMethods()) {
+            if (builder.getParameters().isEmpty() && builder.getName().equals(name)) {
+                String doc = builder.getJavaDoc().getFullText();
+                if (!Strings.isNullOrEmpty(doc)) {
+                    return doc;
+                }
+            }
+        }
+        return null;
     }
 
     private String getDocComment(Class<?> classElement) {
