@@ -2,9 +2,9 @@
 :doctitle: Test CDI JUnit5
 :shortname: test-cdi-junit5
 :artifactid: camel-test-cdi-junit5
-:description: Camel unit testing with CDI for JUnit5
+:description: Camel unit testing with CDI and JUnit5
 :since: 3.16
-:supportlevel: Stable
+:supportlevel: Preview
 
 *Since Camel {since}*
 
