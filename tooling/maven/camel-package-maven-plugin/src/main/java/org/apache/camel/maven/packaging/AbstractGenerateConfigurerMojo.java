@@ -61,6 +61,7 @@ import org.jboss.jandex.DotName;
 import org.jboss.jandex.Index;
 import org.jboss.jandex.IndexReader;
 
+import static org.apache.camel.maven.packaging.generics.PackagePluginUtils.readJandexIndex;
 import static org.apache.camel.tooling.util.ReflectionHelper.doWithMethods;
 import static org.apache.camel.tooling.util.Strings.between;
 
@@ -160,13 +161,7 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
 
         // additional classes
         if (classes != null && !classes.isEmpty()) {
-            Path output = Paths.get(project.getBuild().getOutputDirectory());
-            Index index;
-            try (InputStream is = Files.newInputStream(output.resolve("META-INF/jandex.idx"))) {
-                index = new IndexReader(is).read();
-            } catch (IOException e) {
-                throw new MojoExecutionException("IOException: " + e.getMessage(), e);
-            }
+            Index index = readJandexIndex(project);
             for (String clazz : classes) {
                 ClassInfo ci = index.getClassByName(DotName.createSimple(clazz));
                 AnnotationInstance ai = ci != null ? ci.classAnnotation(CONFIGURER) : null;
@@ -191,6 +186,8 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
             processClass(fqn, sourcesOutputDir, true, true, resourcesOutputDir);
         }
     }
+
+
 
     private void addToSets(
             AnnotationInstance annotation, Set<String> bootstrapAndExtendedSet, String currentClass, Set<String> bootstrapSet,
