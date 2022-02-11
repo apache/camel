@@ -64,7 +64,7 @@ public abstract class AbstractGenerateMojo extends AbstractMojo {
                 writeIncrementalInfo(project);
             }
         } catch (Exception e) {
-            throw new MojoFailureException("Error generating data " + e.toString(), e);
+            throw new MojoFailureException("Error generating data " + e, e);
         }
     }
 
@@ -178,7 +178,7 @@ public abstract class AbstractGenerateMojo extends AbstractMojo {
                         try (ZipFile zf = new ZipFile(file)) {
                             return zf.stream().filter(ze -> !ze.isDirectory())
                                     .filter(ze -> ze.getLastModifiedTime().toMillis() > lastmod)
-                                    .map(ze -> file.toString() + "!" + ze.getName()).collect(Collectors.toList()).stream();
+                                    .map(ze -> file + "!" + ze.getName()).collect(Collectors.toList()).stream();
                         } catch (IOException e) {
                             throw new IOException("Error reading zip file: " + file, e);
                         }

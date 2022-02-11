@@ -116,7 +116,7 @@ public class XRefCheckMojo extends AbstractMojo {
                                         .filter(Files::isRegularFile)
                                         .forEach(page -> {
                                             Path rel = pagesDir.relativize(page);
-                                            pages.put(component + ":" + m + ":" + rel.toString(), page);
+                                            pages.put(component + ":" + m + ":" + rel, page);
                                         });
                             });
                 }

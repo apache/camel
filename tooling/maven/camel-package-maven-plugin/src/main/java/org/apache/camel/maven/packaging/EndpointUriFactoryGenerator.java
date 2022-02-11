@@ -213,7 +213,7 @@ public final class EndpointUriFactoryGenerator {
             for (String alt : alts) {
                 sj.add("\"" + alt + "\"");
             }
-            sb.append(sj.toString());
+            sb.append(sj);
             sb.append("}");
         }
         if (sb.length() == 0) {
