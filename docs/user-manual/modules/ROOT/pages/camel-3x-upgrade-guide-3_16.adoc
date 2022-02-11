@@ -100,6 +100,47 @@ The option `camel.main.packageScanRouteBuilders` has been renamed to `camel.main
 Using configuration classes must now implement the interface `org.apache.camel.main.CamelConfiguration`
 and the `configure` method now takes a `CamelContext` as argument.
 
+=== camel-yaml-dsl
+
+The route template local beans have renamed bean `property` to `properties`, eg:
+For example a local datasource in a route template as follows:
+
+[source,yaml]
+----
+  template:
+    beans:
+      - name: dsBean
+        type: "#class:org.apache.commons.dbcp2.BasicDataSource"
+        property:
+          - key: username
+            value: '{{username}}'
+          - key: password
+            value: '{{password}}'
+          - key: url
+            value: 'jdbc:postgresql://{{serverName}}:{{serverPort}}/{{databaseName}}'
+          - key: driverClassName
+            value: 'org.postgresql.Driver'
+----
+
+Should have `property` renamed to `properties` as shown:
+
+[source,yaml]
+----
+  template:
+    beans:
+      - name: dsBean
+        type: "#class:org.apache.commons.dbcp2.BasicDataSource"
+        properties:
+          - key: username
+            value: '{{username}}'
+          - key: password
+            value: '{{password}}'
+          - key: url
+            value: 'jdbc:postgresql://{{serverName}}:{{serverPort}}/{{databaseName}}'
+          - key: driverClassName
+            value: 'org.postgresql.Driver'
+----
+
 === camel-any23
 
 The option `baseURI` is renamed to `baseUri`.
