@@ -47,7 +47,7 @@ public abstract class BeanFactoryDefinition<
     private String type;
     @XmlAttribute
     private String beanType;
-    @XmlElement
+    @XmlElement(name = "property")
     private List<PropertyDefinition> properties;
     @XmlElement(name = "script")
     private String script;
