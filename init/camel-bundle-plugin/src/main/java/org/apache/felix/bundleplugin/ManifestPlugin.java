@@ -32,7 +32,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -166,27 +165,6 @@ public class ManifestPlugin extends BundlePlugin {
         return scanner.getIncludedFiles().length > 0;
     }
 
-    public Manifest getManifest(MavenProject project, ClassPathItem[] classpath)
-            throws IOException, MojoFailureException, MojoExecutionException, Exception {
-        return getManifest(project, new LinkedHashMap<String, String>(), classpath, buildContext);
-    }
-
-    public Manifest getManifest(MavenProject project, Map<String, String> instructions, ClassPathItem[] classpath,
-            BuildContext buildContext) throws IOException, MojoFailureException, MojoExecutionException, Exception {
-        Analyzer analyzer = getAnalyzer(project, instructions, classpath);
-
-        Jar jar = analyzer.getJar();
-        Manifest manifest = jar.getManifest();
-
-        if (exportScr) {
-            exportScr(analyzer, jar, scrLocation, buildContext, getLog());
-        }
-
-        // cleanup...
-        analyzer.close();
-
-        return manifest;
-    }
 
     private static void exportScr(Analyzer analyzer, Jar jar, File scrLocation, BuildContext buildContext, Log log)
             throws Exception {
@@ -225,11 +203,6 @@ public class ManifestPlugin extends BundlePlugin {
         } finally {
             os.close();
         }
-    }
-
-    protected Analyzer getAnalyzer(MavenProject project, ClassPathItem[] classpath)
-            throws IOException, MojoExecutionException, Exception {
-        return getAnalyzer(project, new LinkedHashMap<>(), classpath);
     }
 
     protected Analyzer getAnalyzer(MavenProject project, Map<String, String> instructions, ClassPathItem[] classpath)
