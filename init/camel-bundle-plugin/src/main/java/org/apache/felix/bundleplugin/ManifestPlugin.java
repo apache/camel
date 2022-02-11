@@ -206,7 +206,7 @@ public class ManifestPlugin extends BundlePlugin {
     }
 
     protected Analyzer getAnalyzer(MavenProject project, Map<String, String> instructions, ClassPathItem[] classpath)
-            throws IOException, MojoExecutionException, Exception {
+            throws Exception {
         if (rebuildBundle && supportedProjectTypes.contains(project.getArtifact().getType())) {
             return buildOSGiBundle(project, instructions, classpath);
         }
