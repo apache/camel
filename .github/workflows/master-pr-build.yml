@@ -18,9 +18,11 @@
 name: main pr build
 
 on:
-  pull_request:
+  push:
     branches:
       - main
+  pull_request_target:
+    types: [opened, synchronize, reopened]
 
 jobs:
   checkstyle:
@@ -53,4 +55,7 @@ jobs:
           java-version: ${{ matrix.java }}
           cache: 'maven'
       - name: maven build
+        env:
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+          SONAR_TOKEN: '${{ secrets.SONAR_TOKEN }}'
         run: ./mvnw -V -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 --no-transfer-progress -Pfastinstall -Dcheckstyle.skip=true -DskipTests install
