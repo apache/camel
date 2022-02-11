@@ -35,7 +35,7 @@ public final class ComponentDslBuilderFactoryGenerator {
 
     private final ComponentModel componentModel;
     private final String packageName;
-    private JavaClass javaClass;
+    private final JavaClass javaClass;
     private ComponentDslInnerBuilderGenerator componentDslInnerBuilderGenerator;
     private ComponentDslInnerImplBuilderGenerator componentDslInnerImplBuilderGenerator;
 

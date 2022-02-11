@@ -49,9 +49,9 @@ public class OwbTypeVariableImpl {
 
     public static class OwbTypeVariableInvocationHandler implements InvocationHandler {
 
-        private String name;
-        private GenericDeclaration genericDeclaration;
-        private Type[] bounds;
+        private final String name;
+        private final GenericDeclaration genericDeclaration;
+        private final Type[] bounds;
 
         public OwbTypeVariableInvocationHandler(TypeVariable typeVariable, Type... bounds) {
             name = typeVariable.getName();

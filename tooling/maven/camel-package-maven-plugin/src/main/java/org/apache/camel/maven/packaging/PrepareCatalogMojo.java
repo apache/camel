@@ -198,7 +198,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
     private Collection<Path> allJsonFiles;
     private Collection<Path> allPropertiesFiles;
-    private Map<Path, BaseModel<?>> allModels = new HashMap<>();
+    private final Map<Path, BaseModel<?>> allModels = new HashMap<>();
 
     private static String asComponentName(Path file) {
         String name = file.getFileName().toString();
