@@ -42,7 +42,6 @@ public final class GenericsUtil {
     private GenericsUtil() {
     }
 
-
     /**
      * 5.2.3 and 5.2.4
      */
