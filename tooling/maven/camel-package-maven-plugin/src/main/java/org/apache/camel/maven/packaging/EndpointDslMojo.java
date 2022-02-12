@@ -369,19 +369,14 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
     private void processMasterScheme(
             List<ComponentModel> aliases, List<Method> staticBuilders, JavaClass javaClass, JavaClass builderClass,
             JavaClass dslClass) {
-        Method method;
+
         // we only want the first alias (master scheme) as static builders
         boolean firstAlias = true;
 
         for (ComponentModel componentModel : aliases) {
             String desc = getMainDescription(componentModel);
             String methodName = camelCaseLower(componentModel.getScheme());
-            method = dslClass.addMethod().setStatic().setName(methodName)
-                    .addParameter(String.class, "path")
-                    .setReturnType(new GenericType(loadClass(builderClass.getCanonicalName())))
-                    .setDefault()
-                    .setBodyF("return %s.%s(%s);", javaClass.getName(), "endpointBuilder",
-                            "\"" + componentModel.getScheme() + "\", path");
+            Method method = doAddMethod(javaClass, builderClass, dslClass, componentModel, methodName);
             String javaDoc = desc;
             javaDoc += "\n\n@param path " + pathParameterJavaDoc(componentModel);
             javaDoc += "\n@return the dsl builder\n";
@@ -434,18 +429,22 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         }
     }
 
+    private Method doAddMethod(JavaClass javaClass, JavaClass builderClass, JavaClass dslClass, ComponentModel componentModel, String methodName) {
+        return dslClass.addMethod().setStatic().setName(methodName)
+                .addParameter(String.class, "path")
+                .setReturnType(new GenericType(loadClass(builderClass.getCanonicalName())))
+                .setDefault()
+                .setBodyF("return %s.%s(%s);", javaClass.getName(), "endpointBuilder",
+                        "\"" + componentModel.getScheme() + "\", path");
+    }
+
     private void processAliases(
             ComponentModel model, List<Method> staticBuilders, JavaClass javaClass, JavaClass builderClass,
             JavaClass dslClass) {
         Method method;
         String desc = getMainDescription(model);
         String methodName = camelCaseLower(model.getScheme());
-        method = dslClass.addMethod().setStatic().setName(methodName)
-                .addParameter(String.class, "path")
-                .setReturnType(new GenericType(loadClass(builderClass.getCanonicalName())))
-                .setDefault()
-                .setBodyF("return %s.%s(%s);", javaClass.getName(), "endpointBuilder",
-                        "\"" + model.getScheme() + "\", path");
+        method = doAddMethod(javaClass, builderClass, dslClass, model, methodName);
         String javaDoc = desc;
         javaDoc += "\n\n@param path " + pathParameterJavaDoc(model);
         javaDoc += "\n@return the dsl builder\n";

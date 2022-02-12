@@ -50,6 +50,7 @@ import org.jboss.jandex.MethodInfo;
 import org.jboss.jandex.Type;
 
 import static org.apache.camel.maven.packaging.SchemaHelper.dashToCamelCase;
+import static org.apache.camel.maven.packaging.generics.PackagePluginUtils.readJandexIndex;
 
 @Mojo(name = "generate-type-converter-loader", threadSafe = true,
       requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, defaultPhase = LifecyclePhase.PROCESS_CLASSES)
@@ -82,13 +83,7 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
             return;
         }
 
-        Path output = Paths.get(project.getBuild().getOutputDirectory());
-        Index index;
-        try (InputStream is = Files.newInputStream(output.resolve("META-INF/jandex.idx"))) {
-            index = new IndexReader(is).read();
-        } catch (IOException e) {
-            throw new MojoExecutionException("IOException: " + e.getMessage(), e);
-        }
+        Index index = readJandexIndex(project);
 
         Map<String, ClassConverters> converters = new TreeMap<>();
         List<MethodInfo> bulkConverters = new ArrayList<>();
