@@ -202,8 +202,17 @@ public class KameletMain extends MainCommandLineSupport {
         }
 
         if (download) {
+            // use resolvers that can auto downloaded
             try {
-                // use resolver that can auto downloaded
+                KnownDependenciesResolver known = new KnownDependenciesResolver();
+                known.loadKnownDependencies();
+
+                // property binding listener that can detect classes that will be used, and ensure their JARs are downloaded
+                DependencyDownloaderPropertyBindingListener listener
+                        = new DependencyDownloaderPropertyBindingListener(answer, known);
+                answer.getRegistry().bind(DependencyDownloaderPropertyBindingListener.class.getName(), listener);
+
+                answer.setClassResolver(new DependencyDownloaderClassResolver(answer, known));
                 answer.setComponentResolver(new DependencyDownloaderComponentResolver(answer));
                 answer.setDataFormatResolver(new DependencyDownloaderDataFormatResolver(answer));
                 answer.setLanguageResolver(new DependencyDownloaderLanguageResolver(answer));
