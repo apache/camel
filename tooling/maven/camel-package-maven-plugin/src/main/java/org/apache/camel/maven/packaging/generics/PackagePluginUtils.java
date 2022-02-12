@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.maven.packaging.generics;
 
 import java.io.IOException;
@@ -28,9 +27,9 @@ import org.apache.maven.project.MavenProject;
 import org.jboss.jandex.Index;
 import org.jboss.jandex.IndexReader;
 
-public class PackagePluginUtils {
-    private PackagePluginUtils() {
+public final class PackagePluginUtils {
 
+    private PackagePluginUtils() {
     }
 
     public static Index readJandexIndex(MavenProject project) throws MojoExecutionException {
