@@ -26,7 +26,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -508,10 +507,8 @@ public final class CSimpleHelper {
 
     private static ExchangeFormatter getOrCreateExchangeFormatter(CamelContext camelContext) {
         if (exchangeFormatter == null) {
-            Set<ExchangeFormatter> formatters = camelContext.getRegistry().findByType(ExchangeFormatter.class);
-            if (formatters != null && formatters.size() == 1) {
-                exchangeFormatter = formatters.iterator().next();
-            } else {
+            exchangeFormatter = camelContext.getRegistry().findSingleByType(ExchangeFormatter.class);
+            if (exchangeFormatter == null) {
                 // setup exchange formatter to be used for message history dump
                 DefaultExchangeFormatter def = new DefaultExchangeFormatter();
                 def.setShowExchangeId(true);

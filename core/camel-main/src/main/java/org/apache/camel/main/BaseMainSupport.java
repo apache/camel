@@ -109,17 +109,16 @@ public abstract class BaseMainSupport extends BaseService {
 
     private static CamelSagaService resolveLraSagaService(CamelContext camelContext) throws Exception {
         // lookup in service registry first
-        Set<CamelSagaService> set = camelContext.getRegistry().findByType(CamelSagaService.class);
-        if (set.size() == 1) {
-            return set.iterator().next();
-        }
-        CamelSagaService answer = camelContext.adapt(ExtendedCamelContext.class).getBootstrapFactoryFinder()
-                .newInstance("lra-saga-service", CamelSagaService.class)
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "Cannot find LRASagaService on classpath. Add camel-lra to classpath."));
+        CamelSagaService answer = camelContext.getRegistry().findSingleByType(CamelSagaService.class);
+        if (answer == null) {
+            answer = camelContext.adapt(ExtendedCamelContext.class).getBootstrapFactoryFinder()
+                    .newInstance("lra-saga-service", CamelSagaService.class)
+                    .orElseThrow(() -> new IllegalArgumentException(
+                            "Cannot find LRASagaService on classpath. Add camel-lra to classpath."));
 
-        // add as service so its discover by saga eip
-        camelContext.addService(answer, true, false);
+            // add as service so its discover by saga eip
+            camelContext.addService(answer, true, false);
+        }
         return answer;
     }
 

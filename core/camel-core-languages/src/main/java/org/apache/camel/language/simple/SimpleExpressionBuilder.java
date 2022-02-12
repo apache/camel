@@ -22,7 +22,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
@@ -98,10 +97,8 @@ public final class SimpleExpressionBuilder {
 
             private ExchangeFormatter getOrCreateExchangeFormatter(CamelContext camelContext) {
                 if (formatter == null) {
-                    Set<ExchangeFormatter> formatters = camelContext.getRegistry().findByType(ExchangeFormatter.class);
-                    if (formatters != null && formatters.size() == 1) {
-                        formatter = formatters.iterator().next();
-                    } else {
+                    formatter = camelContext.getRegistry().findSingleByType(ExchangeFormatter.class);
+                    if (formatter == null) {
                         // setup exchange formatter to be used for message history dump
                         DefaultExchangeFormatter def = new DefaultExchangeFormatter();
                         def.setShowExchangeId(true);

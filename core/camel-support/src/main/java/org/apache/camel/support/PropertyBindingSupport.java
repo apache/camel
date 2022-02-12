@@ -195,7 +195,7 @@ public final class PropertyBindingSupport {
             properties = new FlattenMap(properties);
         }
         if (listener == null && camelContext != null) {
-            listener = camelContext.getRegistry().singletonByType(PropertyBindingListener.class);
+            listener = camelContext.getRegistry().findSingleByType(PropertyBindingListener.class);
         }
 
         boolean answer = false;

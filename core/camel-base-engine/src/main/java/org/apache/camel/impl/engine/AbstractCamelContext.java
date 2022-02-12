@@ -5242,7 +5242,7 @@ public abstract class AbstractCamelContext extends BaseService
         RestConfiguration conf
                 = CamelContextHelper.lookup(this, RestConfiguration.DEFAULT_REST_CONFIGURATION_ID, RestConfiguration.class);
         if (conf == null) {
-            conf = CamelContextHelper.findByType(this, RestConfiguration.class);
+            conf = CamelContextHelper.findSingleByType(this, RestConfiguration.class);
         }
         if (conf == null) {
             conf = new RestConfiguration();

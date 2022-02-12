@@ -323,7 +323,7 @@ public class DefaultModel implements Model {
             Object location = routeTemplateContext.getParameters().get(RouteTemplateParameterSource.LOCATION);
             if (location != null) {
                 RouteTemplateLoaderListener listener
-                        = CamelContextHelper.findByType(getCamelContext(), RouteTemplateLoaderListener.class);
+                        = CamelContextHelper.findSingleByType(getCamelContext(), RouteTemplateLoaderListener.class);
                 RouteTemplateHelper.loadRouteTemplateFromLocation(getCamelContext(), listener, routeTemplateId,
                         location.toString());
             }

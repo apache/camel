@@ -162,7 +162,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
         }
 
         ExceptionPolicyStrategy customExceptionPolicy
-                = CamelContextHelper.findByType(camelContext, ExceptionPolicyStrategy.class);
+                = CamelContextHelper.findSingleByType(camelContext, ExceptionPolicyStrategy.class);
         if (customExceptionPolicy != null) {
             exceptionPolicy = customExceptionPolicy;
         }

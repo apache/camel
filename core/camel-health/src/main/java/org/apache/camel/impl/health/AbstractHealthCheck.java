@@ -20,7 +20,6 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -209,10 +208,7 @@ public abstract class AbstractHealthCheck implements HealthCheck, CamelContextAw
 
     private HealthCheckResultStrategy customHealthCheckResponseStrategy() {
         if (camelContext != null) {
-            Set<HealthCheckResultStrategy> set = camelContext.getRegistry().findByType(HealthCheckResultStrategy.class);
-            if (set.size() == 1) {
-                return set.iterator().next();
-            }
+            return camelContext.getRegistry().findSingleByType(HealthCheckResultStrategy.class);
         }
         return null;
     }

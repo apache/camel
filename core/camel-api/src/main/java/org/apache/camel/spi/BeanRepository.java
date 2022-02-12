@@ -69,7 +69,7 @@ public interface BeanRepository {
      * @param  type the type of the beans
      * @return      the single bean instance, or null if none found or there are more than one bean of the given type.
      */
-    default <T> T singletonByType(Class<T> type) {
+    default <T> T findSingleByType(Class<T> type) {
         Set<T> set = findByType(type);
         if (set.size() == 1) {
             return set.iterator().next();
