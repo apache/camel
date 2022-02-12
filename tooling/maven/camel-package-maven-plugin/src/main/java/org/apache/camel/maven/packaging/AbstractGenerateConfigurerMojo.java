@@ -187,8 +187,6 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
         }
     }
 
-
-
     private void addToSets(
             AnnotationInstance annotation, Set<String> bootstrapAndExtendedSet, String currentClass, Set<String> bootstrapSet,
             Set<String> extendedSet, Set<String> set) {

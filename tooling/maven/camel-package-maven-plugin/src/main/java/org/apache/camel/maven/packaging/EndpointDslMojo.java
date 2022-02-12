@@ -429,7 +429,8 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         }
     }
 
-    private Method doAddMethod(JavaClass javaClass, JavaClass builderClass, JavaClass dslClass, ComponentModel componentModel, String methodName) {
+    private Method doAddMethod(
+            JavaClass javaClass, JavaClass builderClass, JavaClass dslClass, ComponentModel componentModel, String methodName) {
         return dslClass.addMethod().setStatic().setName(methodName)
                 .addParameter(String.class, "path")
                 .setReturnType(new GenericType(loadClass(builderClass.getCanonicalName())))
