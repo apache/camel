@@ -16,6 +16,8 @@
  */
 package org.apache.camel.main;
 
+import org.apache.camel.CamelContext;
+
 /**
  * Maven GAV model
  */
@@ -28,12 +30,22 @@ public final class MavenGav {
     public MavenGav() {
     }
 
-    public static MavenGav parseGav(String gav) {
+    public static MavenGav parseGav(CamelContext context, String gav) {
         MavenGav answer = new MavenGav();
         // camel-k style GAV
         if (gav.startsWith("camel:")) {
             answer.setGroupId("org.apache.camel");
-            answer.setArtifactId(gav.substring(6));
+            String a = gav.substring(6);
+            if (!a.startsWith("camel-")) {
+                a = "camel-" + a;
+            }
+            answer.setArtifactId(a);
+            if (context != null) {
+                answer.setVersion(context.getVersion());
+            }
+        } else if (gav.startsWith("github:")) {
+            // TODO: currently not supported
+            return answer;
         } else {
             String[] parts = gav.startsWith("mvn:") ? gav.substring(4).split(":") : gav.split(":");
             answer.setGroupId(parts[0]);

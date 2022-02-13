@@ -52,6 +52,11 @@ public final class DownloaderHelper {
     }
 
     public static boolean alreadyOnClasspath(CamelContext camelContext, String artifactId) {
+        // if no artifact then regard this as okay
+        if (artifactId == null) {
+            return true;
+        }
+
         if (CP != null) {
             // is it already on classpath
             if (CP.contains(artifactId)) {

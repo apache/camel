@@ -16,29 +16,17 @@
  */
 package org.apache.camel.spi;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Ordered;
-
 /**
- * To apply custom configurations to {@link CamelContext} instances.
+ * Strategy when 3rd party dependencies are detected during loading routes. For example when loading YAML DSL routes for
+ * Camel K where dependencies are listed in the YAML file.
  */
 @FunctionalInterface
-public interface CamelContextCustomizer extends Ordered, Comparable<CamelContextCustomizer> {
+public interface DependencyStrategy {
 
     /**
-     * Configure the {@link CamelContext}.
+     * A dependency was detected
      *
-     * @param camelContext the camel context to configure.
+     * @param dependency the dependency such as mvn:com.foo/bar/1.2.3
      */
-    void configure(CamelContext camelContext);
-
-    @Override
-    default int getOrder() {
-        return 0;
-    }
-
-    @Override
-    default int compareTo(CamelContextCustomizer other) {
-        return Integer.compare(getOrder(), other.getOrder());
-    }
+    void onDependency(String dependency);
 }

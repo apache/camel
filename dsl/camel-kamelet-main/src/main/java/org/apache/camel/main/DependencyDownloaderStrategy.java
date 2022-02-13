@@ -16,34 +16,24 @@
  */
 package org.apache.camel.main;
 
-import org.junit.jupiter.api.Test;
+import org.apache.camel.CamelContext;
+import org.apache.camel.spi.DependencyStrategy;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+class DependencyDownloaderStrategy implements DependencyStrategy {
 
-class MavenGavTest {
+    private final CamelContext camelContext;
 
-    @Test
-    void parseCoreGav() {
-        MavenGav gav = MavenGav.parseGav(null, "camel:core");
-
-        assertEquals("org.apache.camel", gav.getGroupId());
-        assertEquals("camel-core", gav.getArtifactId());
+    public DependencyDownloaderStrategy(CamelContext camelContext) {
+        this.camelContext = camelContext;
     }
 
-    @Test
-    void parseCamelCoreGav() {
-        MavenGav gav = MavenGav.parseGav(null, "camel:camel-core");
-
-        assertEquals("org.apache.camel", gav.getGroupId());
-        assertEquals("camel-core", gav.getArtifactId());
+    @Override
+    public void onDependency(String dependency) {
+        MavenGav gav = MavenGav.parseGav(camelContext, dependency);
+        if (!DownloaderHelper.alreadyOnClasspath(camelContext, gav.getArtifactId())) {
+            DownloaderHelper.downloadDependency(camelContext, gav.getGroupId(), gav.getArtifactId(),
+                    gav.getVersion());
+        }
     }
 
-    @Test
-    void parseOtherGav() {
-        MavenGav gav = MavenGav.parseGav(null, "mvn:org.junit:junit-api:99.99");
-
-        assertEquals("org.junit", gav.getGroupId());
-        assertEquals("junit-api", gav.getArtifactId());
-        assertEquals("99.99", gav.getVersion());
-    }
 }

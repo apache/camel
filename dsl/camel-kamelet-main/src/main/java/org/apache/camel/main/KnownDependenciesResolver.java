@@ -21,11 +21,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.camel.CamelContext;
+
 public final class KnownDependenciesResolver {
 
     private final Map<String, String> mappings = new HashMap<>();
+    private final CamelContext camelContext;
 
-    public KnownDependenciesResolver() {
+    public KnownDependenciesResolver(CamelContext camelContext) {
+        this.camelContext = camelContext;
     }
 
     public void loadKnownDependencies() {
@@ -53,7 +57,7 @@ public final class KnownDependenciesResolver {
     public MavenGav mavenGavForClass(String className) {
         String gav = mappings.get(className);
         if (gav != null) {
-            return MavenGav.parseGav(gav);
+            return MavenGav.parseGav(camelContext, gav);
         }
         return null;
     }

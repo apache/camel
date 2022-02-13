@@ -435,10 +435,10 @@ public class YamlDeserializerSupport {
 
     public static <T> T enumConverter(Class<T> type, String value) {
         if (type.isEnum()) {
-            String text = value.toString();
+            String text = value;
             Class<Enum<?>> enumClass = (Class<Enum<?>>) type;
 
-            // we want to match case insensitive for enums
+            // we want to match case-insensitive for enums
             for (Enum<?> enumValue : enumClass.getEnumConstants()) {
                 if (enumValue.name().equalsIgnoreCase(text)) {
                     return type.cast(enumValue);
