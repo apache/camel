@@ -338,10 +338,8 @@ what you want.
 See also the section <<Handle and Continue Exceptions>> below.
 
 Using *`onException`* to handle known exceptions is a very powerful
-feature in Camel. However, prior to Camel 1.5, you could not mark the
-exception as being handled, so the caller would still receive the caused
-exception as a response. In Camel 1.5 you can now change this behavior
-with the new *handle* DSL. The handle is a
+feature in Camel. You can mark the exception as being handled with the *handle* DSL,
+so the caller will not receive the caused exception as a response. The handle is a
 xref:predicate.adoc[Predicate] that is overloaded to accept three types
 of parameters:
 
@@ -456,8 +454,7 @@ receive an Exchange as reply containing *`Order OK`* as the payload and
 
 If the order could *not* be processed and thus
 an *`OrderFailedException`* was thrown the caller will *not* receive
-this exception (as opposed to in Camel 1.4, where the caller received
-the *`OrderFailedException`*) but our customized response that we have
+this exception but our customized response that we have
 fabricated in the *`orderFailed`* method in our *`OrderService`*. So the
 caller receives an Exchange with the payload *`Order ERROR`* and a
 *`orderid=failed`* in a header.
