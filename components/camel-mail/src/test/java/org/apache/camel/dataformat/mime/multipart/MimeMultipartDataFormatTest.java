@@ -149,19 +149,19 @@ public class MimeMultipartDataFormatTest extends CamelTestSupport {
     @Test
     public void roundtripWithMultipleTextAttachmentsButDifferentCharsets() throws IOException {
         String att1ContentType = "text/plain; charset=ISO-8859-1";
-        String att1Text = new String("empfänger1".getBytes("ISO-8859-1"), "ISO-8859-1");
-        String att1FileName = "empfänger1";
+        String att1Text = new String("empf\u00e4nger1".getBytes("ISO-8859-1"), "ISO-8859-1");
+        String att1FileName = "empf\u00e4nger1";
         String att2ContentType = "text/plain; charset=ISO-8859-15";
-        String att2Text = new String("empfänger15".getBytes("ISO-8859-15"), "ISO-8859-15");
-        String att2FileName = "empfänger15";
+        String att2Text = new String("empf\u00e4nger15".getBytes("ISO-8859-15"), "ISO-8859-15");
+        String att2FileName = "empf\u00e4nger15";
         String att3ContentType = "text/plain; charset=UTF-8";
-        String att3Text = new String("empfänger8".getBytes("UTF-8"), "UTF-8");
-        String att3FileName = "empfänger8";
+        String att3Text = new String("empf\u00e4nger8".getBytes("UTF-8"), "UTF-8");
+        String att3FileName = "empf\u00e4nger8";
         addAttachment(att1ContentType, att1Text, att1FileName);
         addAttachment(att2ContentType, att2Text, att2FileName);
         addAttachment(att3ContentType, att3Text, att3FileName);
 
-        in.setBody(new String("empfänger15".getBytes("ISO-8859-15"), "ISO-8859-15"));
+        in.setBody(new String("empf\u00e4nger15".getBytes("ISO-8859-15"), "ISO-8859-15"));
         in.setHeader(Exchange.CONTENT_TYPE, "text/plain; charset=ISO-8859-15");
         in.setHeader(Exchange.CONTENT_ENCODING, "ISO-8859-15");
 
