@@ -137,7 +137,7 @@ public final class BacklogDebugger extends ServiceSupport {
     }
 
     public void enableDebugger() {
-        logger.log("Enabling debugger");
+        logger.log("Enabling Camel debugger");
         try {
             ServiceHelper.startService(debugger);
             enabled.set(true);
@@ -147,7 +147,7 @@ public final class BacklogDebugger extends ServiceSupport {
     }
 
     public void disableDebugger() {
-        logger.log("Disabling debugger");
+        logger.log("Disabling Camel debugger");
         try {
             enabled.set(false);
             ServiceHelper.stopService(debugger);
@@ -352,7 +352,7 @@ public final class BacklogDebugger extends ServiceSupport {
     public void stepBreakpoint(String nodeId) {
         // if we are already in single step mode, then infer stepping
         if (isSingleStepMode()) {
-            logger.log("stepBreakpoint " + nodeId + " is already in single step mode, so stepping instead.");
+            logger.log("Step breakpoint " + nodeId + " is already in single step mode, so stepping instead.");
             step();
         }
 
