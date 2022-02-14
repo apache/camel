@@ -38,6 +38,7 @@ public class ResumableReifier extends ExpressionReifier<ResumableDefinition> {
 
         ResumeStrategy resumeStrategy = resolveResumeStrategy();
         ObjectHelper.notNull(resumeStrategy, "resumeStrategy", definition);
+        resumeStrategy.start();
         route.setResumeStrategy(resumeStrategy);
 
         Expression expression = createExpression(definition.getExpression());

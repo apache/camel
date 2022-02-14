@@ -56,8 +56,7 @@ public final class ResumeStrategyFactory {
 
     public static KafkaConsumerResumeStrategy newResumeStrategy(KafkaConsumer kafkaConsumer) {
         // When using resumable routes, which register the strategy via service, it takes priority over everything else
-        KafkaConsumerResumeStrategy resumableRouteStrategy
-                = kafkaConsumer.getEndpoint().getCamelContext().hasService(KafkaConsumerResumeStrategy.class);
+        KafkaConsumerResumeStrategy resumableRouteStrategy = kafkaConsumer.getResumeStrategy();
 
         if (resumableRouteStrategy != null) {
             return resumableRouteStrategy;

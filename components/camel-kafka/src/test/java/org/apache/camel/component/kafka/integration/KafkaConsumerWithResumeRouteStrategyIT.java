@@ -48,8 +48,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class KafkaConsumerWithResumeRouteStrategyIT extends BaseEmbeddedKafkaTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(KafkaConsumerWithResumeRouteStrategyIT.class);
-
     private static final String TOPIC = "resumable-route-tp";
+    private static final int RANDOM_VALUE = ThreadLocalRandom.current().nextInt(1, 1000);
 
     @EndpointInject("mock:result")
     private MockEndpoint result;
@@ -57,7 +57,6 @@ public class KafkaConsumerWithResumeRouteStrategyIT extends BaseEmbeddedKafkaTes
     @BindToRegistry("resumeStrategy")
     private TestKafkaConsumerResumeStrategy resumeStrategy;
     private CountDownLatch messagesLatch;
-    private static final int RANDOM_VALUE = ThreadLocalRandom.current().nextInt(1, 1000);
     private KafkaProducer<Object, Object> producer;
 
     private static class TestKafkaConsumerResumeStrategy
