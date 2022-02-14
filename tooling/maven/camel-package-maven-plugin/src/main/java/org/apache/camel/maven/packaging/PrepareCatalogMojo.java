@@ -223,25 +223,27 @@ public class PrepareCatalogMojo extends AbstractMojo {
             allJsonFiles = new TreeSet<>();
             allPropertiesFiles = new TreeSet<>();
 
-            Stream<Path> paths
+            try (Stream<Path> paths
                     = Stream.of(list(coreDir.toPath()), list(componentsDir.toPath())).flatMap(s -> s);
-            Stream.concat(paths,
-                    Stream.of(languagesDir.toPath(), springDir.toPath()))
-                    .filter(dir -> !"target".equals(dir.getFileName().toString()))
-                    .flatMap(p -> getComponentPath(p).stream())
-                    .filter(dir -> Files.isDirectory(dir.resolve("src")))
-                    .map(p -> p.resolve("target/classes"))
-                    .flatMap(PackageHelper::walk)
-                    .filter(Files::isRegularFile)
-                    .forEach(p -> {
-                        String f = p.getFileName().toString();
-                        if (f.endsWith(PackageHelper.JSON_SUFIX)) {
-                            allJsonFiles.add(p);
-                        } else if (f.equals("component.properties") || f.equals("dataformat.properties")
-                                || f.equals("language.properties") || f.equals("other.properties")) {
-                            allPropertiesFiles.add(p);
-                        }
-                    });
+                 Stream<Path> stream = Stream.concat(paths,
+                         Stream.of(languagesDir.toPath(), springDir.toPath()))
+                         .filter(dir -> !"target".equals(dir.getFileName().toString()))
+                         .flatMap(p -> getComponentPath(p).stream())
+                         .filter(dir -> Files.isDirectory(dir.resolve("src")))
+                         .map(p -> p.resolve("target/classes"))
+                         .flatMap(PackageHelper::walk)
+                         .filter(Files::isRegularFile)) {
+                stream
+                        .forEach(p -> {
+                            String f = p.getFileName().toString();
+                            if (f.endsWith(PackageHelper.JSON_SUFIX)) {
+                                allJsonFiles.add(p);
+                            } else if (f.equals("component.properties") || f.equals("dataformat.properties")
+                                    || f.equals("language.properties") || f.equals("other.properties")) {
+                                allPropertiesFiles.add(p);
+                            }
+                        });
+            }
 
             for (Path p : allJsonFiles) {
                 var m = JsonMapper.generateModel(p);
@@ -251,35 +253,37 @@ public class PrepareCatalogMojo extends AbstractMojo {
             }
 
             // special for dsl-dir as its built after camel-catalog, so we can only look inside src/generated
-            Stream.of(list(dslDir.toPath())).flatMap(s -> s)
+            try (Stream<Path> stream = Stream.of(list(dslDir.toPath())).flatMap(s -> s)
                     .flatMap(p -> getComponentPath(p).stream())
                     .filter(dir -> Files.isDirectory(dir.resolve("src/generated/resources")))
                     .map(p -> p.resolve("src/generated/resources"))
                     .flatMap(PackageHelper::walk)
-                    .filter(Files::isRegularFile)
-                    .forEach(p -> {
-                        String f = p.getFileName().toString();
-                        if (f.endsWith(PackageHelper.JSON_SUFIX)) {
-                            allJsonFiles.add(p);
-                            var m = JsonMapper.generateModel(p);
-                            if (m instanceof OtherModel) {
-                                OtherModel om = (OtherModel) m;
-                                if (!project.getVersion().equals(om.getVersion())) {
-                                    // update version in model and file because we prepare catalog before we build DSL
-                                    // so their previous generated model files may use previous version (eg 3.16.0-SNAPSHOT -> 3.15.0)
-                                    try {
-                                        String s = Files.readString(p);
-                                        s = s.replaceAll(om.getVersion(), project.getVersion());
-                                        FileUtil.updateFile(p, s);
-                                    } catch (IOException e) {
-                                        // ignore
+                    .filter(Files::isRegularFile)) {
+                stream
+                        .forEach(p -> {
+                            String f = p.getFileName().toString();
+                            if (f.endsWith(PackageHelper.JSON_SUFIX)) {
+                                allJsonFiles.add(p);
+                                var m = JsonMapper.generateModel(p);
+                                if (m instanceof OtherModel) {
+                                    OtherModel om = (OtherModel) m;
+                                    if (!project.getVersion().equals(om.getVersion())) {
+                                        // update version in model and file because we prepare catalog before we build DSL
+                                        // so their previous generated model files may use previous version (eg 3.16.0-SNAPSHOT -> 3.15.0)
+                                        try {
+                                            String s = Files.readString(p);
+                                            s = s.replaceAll(om.getVersion(), project.getVersion());
+                                            FileUtil.updateFile(p, s);
+                                        } catch (IOException e) {
+                                            // ignore
+                                        }
+                                        om.setVersion(project.getVersion());
                                     }
-                                    om.setVersion(project.getVersion());
+                                    allModels.put(p, m);
                                 }
-                                allModels.put(p, m);
                             }
-                        }
-                    });
+                        });
+            }
 
             executeModel();
             Set<String> components = executeComponents();
@@ -326,7 +330,9 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
         // Copy all descriptors
         Map<Path, Path> newJsons = map(jsonFiles, p -> p, p -> modelsOutDir.resolve(p.getFileName()));
-        list(modelsOutDir).filter(p -> !newJsons.containsValue(p)).forEach(this::delete);
+        try (Stream<Path> stream = list(modelsOutDir).filter(p -> !newJsons.containsValue(p))) {
+            stream.forEach(this::delete);
+        }
         newJsons.forEach(this::copy);
 
         for (Path file : jsonFiles) {
@@ -401,7 +407,9 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
         // Copy all descriptors
         Map<Path, Path> newJsons = map(jsonFiles, p -> p, p -> componentsOutDir.resolve(p.getFileName()));
-        list(componentsOutDir).filter(p -> !newJsons.containsValue(p)).forEach(this::delete);
+        try (Stream<Path> stream = list(componentsOutDir).filter(p -> !newJsons.containsValue(p))) {
+            stream.forEach(this::delete);
+        }
         newJsons.forEach(this::copy);
 
         Set<String> alternativeSchemes = new HashSet<>();
@@ -495,7 +503,9 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
         // Copy all descriptors
         Map<Path, Path> newJsons = map(jsonFiles, p -> p, p -> dataFormatsOutDir.resolve(p.getFileName()));
-        list(dataFormatsOutDir).filter(p -> !newJsons.containsValue(p)).forEach(this::delete);
+        try (Stream<Path> stream = list(dataFormatsOutDir).filter(p -> !newJsons.containsValue(p))) {
+            stream.forEach(this::delete);
+        }
         newJsons.forEach(this::copy);
 
         for (Path file : jsonFiles) {
@@ -551,7 +561,9 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
         // Copy all descriptors
         Map<Path, Path> newJsons = map(jsonFiles, p -> p, p -> languagesOutDir.resolve(p.getFileName()));
-        list(languagesOutDir).filter(p -> !newJsons.containsValue(p)).forEach(this::delete);
+        try (Stream<Path> stream = list(languagesOutDir).filter(p -> !newJsons.containsValue(p))) {
+            stream.forEach(this::delete);
+        }
         newJsons.forEach(this::copy);
 
         for (Path file : jsonFiles) {
@@ -659,7 +671,9 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
         // Copy all descriptors
         Map<Path, Path> newJsons = map(jsonFiles, p -> p, p -> othersOutDir.resolve(p.getFileName()));
-        list(othersOutDir).filter(p -> !newJsons.containsValue(p)).forEach(this::delete);
+        try (Stream<Path> stream = list(othersOutDir).filter(p -> !newJsons.containsValue(p))) {
+            stream.forEach(this::delete);
+        }
         newJsons.forEach(this::copy);
 
         for (Path file : jsonFiles) {
@@ -725,27 +739,31 @@ public class PrepareCatalogMojo extends AbstractMojo {
         Set<Path> duplicateAdocFiles;
 
         // find all camel maven modules
-        Stream.concat(
-                        list(componentsDir.toPath())
-                                .filter(dir -> !dir.getFileName().startsWith(".") && !"target".equals(dir.getFileName().toString()))
-                                .flatMap(p -> getComponentPath(p).stream()),
-                        Stream.of(coreDir.toPath(), languagesDir.toPath()))
-                .forEach(dir -> {
-                    List<Path> l = PackageHelper.walk(dir.resolve("src/main/docs"))
-                            .filter(f -> f.getFileName().toString().endsWith(".adoc"))
-                            .collect(Collectors.toList());
+        try (Stream<Path> stream = Stream.concat(
+                list(componentsDir.toPath())
+                        .filter(dir -> !dir.getFileName().startsWith(".") && !"target".equals(dir.getFileName().toString()))
+                        .flatMap(p -> getComponentPath(p).stream()),
+                Stream.of(coreDir.toPath(), languagesDir.toPath()))) {
+            stream
+                    .forEach(dir -> {
+                        try (Stream<Path> pathStream = PackageHelper.walk(dir.resolve("src/main/docs"))
+                                .filter(f -> f.getFileName().toString().endsWith(".adoc"))) {
+                            List<Path> l = pathStream
+                                    .collect(Collectors.toList());
 
-                    if (l.isEmpty()) {
-                        String n = dir.getFileName().toString();
-                        boolean isDir = dir.toFile().isDirectory();
-                        boolean valid = isDir && !n.startsWith(".") && !n.endsWith("-base") && !n.endsWith("-common") && !n.equals("src");
-                        if (valid) {
-                            missingAdocFiles.add(dir);
+                            if (l.isEmpty()) {
+                                String n = dir.getFileName().toString();
+                                boolean isDir = dir.toFile().isDirectory();
+                                boolean valid = isDir && !n.startsWith(".") && !n.endsWith("-base") && !n.endsWith("-common") && !n.equals("src");
+                                if (valid) {
+                                    missingAdocFiles.add(dir);
+                                }
+                            } else {
+                                adocFiles.addAll(l);
+                            }
                         }
-                    } else {
-                        adocFiles.addAll(l);
-                    }
-                });
+                    });
+        }
 
         getLog().info("Found " + adocFiles.size() + " ascii document files");
 

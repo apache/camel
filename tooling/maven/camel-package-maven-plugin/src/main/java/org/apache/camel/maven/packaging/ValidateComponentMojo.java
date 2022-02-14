@@ -20,6 +20,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.tooling.util.Strings;
@@ -71,7 +72,10 @@ public class ValidateComponentMojo extends AbstractGeneratorMojo {
         if (!validate) {
             getLog().info("Validation disabled");
         } else {
-            List<Path> jsonFiles = PackageHelper.findJsonFiles(outDir.toPath()).collect(Collectors.toList());
+            List<Path> jsonFiles;
+            try (Stream<Path> stream = PackageHelper.findJsonFiles(outDir.toPath())) {
+                jsonFiles = stream.collect(Collectors.toList());
+            }
             boolean failed = false;
 
             for (Path file : jsonFiles) {

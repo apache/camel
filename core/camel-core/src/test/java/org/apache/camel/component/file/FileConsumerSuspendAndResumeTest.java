@@ -17,6 +17,8 @@
 package org.apache.camel.component.file;
 
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.stream.Stream;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
@@ -45,8 +47,10 @@ public class FileConsumerSuspendAndResumeTest extends ContextTestSupport {
         oneExchangeDone.matchesWaitTime();
 
         // the route is suspended by the policy so we should only receive one
-        long files = Files.list(testDirectory()).count();
-        assertEquals(1, files, "The file should exists");
+        try (Stream<Path> list = Files.list(testDirectory())) {
+            long files = list.count();
+            assertEquals(1, files, "The file should exists");
+        }
 
         // reset mock
         oneExchangeDone.reset();
@@ -60,8 +64,10 @@ public class FileConsumerSuspendAndResumeTest extends ContextTestSupport {
         oneExchangeDone.matchesWaitTime();
 
         // and the file is now deleted
-        files = Files.list(testDirectory()).count();
-        assertEquals(0, files, "The file should exists");
+        try (Stream<Path> list = Files.list(testDirectory())) {
+            long files = list.count();
+            assertEquals(0, files, "The file should exists");
+        }
     }
 
     @Override

@@ -70,11 +70,11 @@ public class FileIdempotentTrunkStoreTest extends ContextTestSupport {
         assertTrue(repo.contains("XXXXXXXXXX"));
 
         // check the file should only have the last 2 entries as it was trunked
-        Stream<String> fileContent = Files.lines(store.toPath());
-        List<String> fileEntries = fileContent.collect(Collectors.toList());
-        fileContent.close();
-        // expected order
-        MatcherAssert.assertThat(fileEntries, IsIterableContainingInOrder.contains("ZZZZZZZZZZ", "XXXXXXXXXX"));
+        try (Stream<String> fileContent = Files.lines(store.toPath())) {
+            List<String> fileEntries = fileContent.collect(Collectors.toList());
+            // expected order
+            MatcherAssert.assertThat(fileEntries, IsIterableContainingInOrder.contains("ZZZZZZZZZZ", "XXXXXXXXXX"));
+        }
     }
 
     protected void sendMessage(final Object messageId, final Object body) {

@@ -112,12 +112,14 @@ public class XRefCheckMojo extends AbstractMojo {
                             .forEach(module -> {
                                 String m = module.getFileName().toString();
                                 Path pagesDir = module.resolve("pages");
-                                walk(pagesDir)
-                                        .filter(Files::isRegularFile)
-                                        .forEach(page -> {
-                                            Path rel = pagesDir.relativize(page);
-                                            pages.put(component + ":" + m + ":" + rel, page);
-                                        });
+                                try (Stream<Path> pageStream = walk(pagesDir)
+                                        .filter(Files::isRegularFile)) {
+                                    pageStream
+                                            .forEach(page -> {
+                                                Path rel = pagesDir.relativize(page);
+                                                pages.put(component + ":" + m + ":" + rel, page);
+                                            });
+                                }
                             });
                 }
             }
