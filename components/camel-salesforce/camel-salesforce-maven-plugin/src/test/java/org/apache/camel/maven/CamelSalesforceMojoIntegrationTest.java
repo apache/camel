@@ -22,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.tools.JavaFileObject;
 
@@ -53,15 +54,17 @@ public class CamelSalesforceMojoIntegrationTest {
         assertThat(packagePath).as("Package directory was not created").exists();
 
         // test that the generated sources can be compiled
-        final List<JavaFileObject> sources = Files.list(packagePath).map(p -> {
-            try {
-                return JavaFileObjects.forResource(p.toUri().toURL());
-            } catch (final MalformedURLException e) {
-                throw new IllegalArgumentException(e);
-            }
-        }).collect(Collectors.toList());
-        final Compilation compilation = Compiler.javac().compile(sources);
-        assertThat(compilation.status()).isEqualTo(Status.SUCCESS);
+        try (Stream<Path> list = Files.list(packagePath)) {
+            final List<JavaFileObject> sources = list.map(p -> {
+                try {
+                    return JavaFileObjects.forResource(p.toUri().toURL());
+                } catch (final MalformedURLException e) {
+                    throw new IllegalArgumentException(e);
+                }
+            }).collect(Collectors.toList());
+            final Compilation compilation = Compiler.javac().compile(sources);
+            assertThat(compilation.status()).isEqualTo(Status.SUCCESS);
+        }
     }
 
     GenerateMojo createMojo() throws IOException {

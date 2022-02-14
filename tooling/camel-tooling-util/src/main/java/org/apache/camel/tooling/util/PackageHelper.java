@@ -111,7 +111,9 @@ public final class PackageHelper {
     }
 
     public static Set<File> findJsonFiles(File rootDir, Set<File> files) {
-        findJsonFiles(rootDir.toPath()).forEach(p -> files.add(p.toFile()));
+        try (Stream<Path> stream = findJsonFiles(rootDir.toPath())) {
+            stream.forEach(p -> files.add(p.toFile()));
+        }
         return files;
     }
 

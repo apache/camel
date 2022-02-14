@@ -116,13 +116,16 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
                 .hash("excludeConfigTypes", excludeConfigTypes)
                 .hash("extraOptions", extraOptions)
                 .toString();
-        Instant newDate = Stream.of(generatedSrcDir, generatedTestDir)
-                .map(File::toPath)
-                .flatMap(this::walk)
-                .filter(Files::isRegularFile)
-                .map(this::lastModified)
-                .max(Comparator.naturalOrder())
-                .orElse(Instant.now());
+        Instant newDate;
+        try (Stream<File> stream = Stream.of(this.generatedSrcDir, generatedTestDir)) {
+            newDate = stream
+                    .map(File::toPath)
+                    .flatMap(this::walk)
+                    .filter(Files::isRegularFile)
+                    .map(this::lastModified)
+                    .max(Comparator.naturalOrder())
+                    .orElse(Instant.now());
+        }
 
         List<String> cache = readCacheFile();
         String prevHash = cache.stream().filter(s -> s.startsWith("hash=")).findFirst()
@@ -191,13 +194,15 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
         // generate ApiName
         mergeTemplate(getApiContext(), getApiNameFile(), "/api-name-enum.vm");
 
-        newDate = Stream.of(generatedSrcDir, generatedTestDir)
-                .map(File::toPath)
-                .flatMap(this::walk)
-                .filter(Files::isRegularFile)
-                .map(this::lastModified)
-                .max(Comparator.naturalOrder())
-                .orElse(Instant.now());
+        try (Stream<File> stream = Stream.of(this.generatedSrcDir, generatedTestDir)) {
+            newDate = stream
+                    .map(File::toPath)
+                    .flatMap(this::walk)
+                    .filter(Files::isRegularFile)
+                    .map(this::lastModified)
+                    .max(Comparator.naturalOrder())
+                    .orElse(Instant.now());
+        }
         writeCacheFile(Arrays.asList(
                 "# ApiComponentGenerator cache file",
                 "hash=" + newHash,

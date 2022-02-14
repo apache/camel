@@ -26,6 +26,7 @@ import java.util.Set;
 import java.util.StringJoiner;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
@@ -74,8 +75,10 @@ public class UpdateSensitizeHelper extends AbstractGeneratorMojo {
             getLog().debug("No core/camel-util folder found, skipping execution");
             return;
         }
-
-        List<Path> jsonFiles = PackageHelper.findJsonFiles(jsonDir.toPath()).collect(Collectors.toList());
+        List<Path> jsonFiles;
+        try (Stream<Path> stream = PackageHelper.findJsonFiles(jsonDir.toPath())) {
+            jsonFiles = stream.collect(Collectors.toList());
+        }
         Set<String> secrets = new TreeSet<>();
 
         for (Path file : jsonFiles) {
