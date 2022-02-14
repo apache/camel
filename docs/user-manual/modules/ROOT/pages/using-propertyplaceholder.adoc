@@ -496,6 +496,20 @@ Where route will be the name of the secret stored in the AWS Secrets Manager Ser
 
 For the moment we are not considering the rotation function, if any will be applied, but it is in the work to be done.
 
+Another important point it is the following: you'll need to explicitly add the secretsManager dependency in your POM while using this feature.
+
+[source,xml]
+----
+<dependency>
+    <groupId>software.amazon.awssdk</groupId>
+    <artifactId>secretsmanager</artifactId>
+    <version>${aws-java-sdk2-version}</version>
+    <scope>test</scope>
+</dependency>
+----
+
+Where the 'aws-java-sdk2-version' is the version used in the camel-parent of the Camel release you're using.
+
 === Using custom property placeholder functions
 
 The xref:components::properties-component.adoc[Properties] component allow to plugin 3rd party functions which can be used during parsing of the property placeholders.
