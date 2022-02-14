@@ -16,9 +16,6 @@
  */
 package org.apache.camel.main;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
@@ -34,14 +31,15 @@ public class HealthConfigurationProperties implements BootstrapCloseable {
     @Metadata(defaultValue = "true")
     private Boolean enabled;
     @Metadata(defaultValue = "true")
-    private Boolean contextEnabled;
-    @Metadata(defaultValue = "true")
     private Boolean routesEnabled;
     @Metadata(defaultValue = "true")
     private Boolean consumersEnabled;
     @Metadata(defaultValue = "true")
     private Boolean registryEnabled;
-    private Map<String, HealthCheckConfigurationProperties> config = new HashMap<>();
+    @Metadata
+    private String excludePattern;
+    @Metadata(enums = "full,default,oneline", defaultValue = "default")
+    private String exposureLevel;
 
     public HealthConfigurationProperties(MainConfigurationProperties parent) {
         this.parent = parent;
@@ -53,8 +51,6 @@ public class HealthConfigurationProperties implements BootstrapCloseable {
 
     @Override
     public void close() {
-        config.clear();
-        config = null;
         parent = null;
     }
 
@@ -67,17 +63,6 @@ public class HealthConfigurationProperties implements BootstrapCloseable {
      */
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
-    }
-
-    public Boolean getContextEnabled() {
-        return contextEnabled;
-    }
-
-    /**
-     * Whether context health check is enabled
-     */
-    public void setContextEnabled(Boolean contextEnabled) {
-        this.contextEnabled = contextEnabled;
     }
 
     public Boolean getRoutesEnabled() {
@@ -113,15 +98,35 @@ public class HealthConfigurationProperties implements BootstrapCloseable {
         this.registryEnabled = registryEnabled;
     }
 
-    public Map<String, HealthCheckConfigurationProperties> getConfig() {
-        return config;
+    public String getExcludePattern() {
+        return excludePattern;
     }
 
     /**
-     * Set additional {@link HealthConfigurationProperties} for fine grained configuration of health checks.
+     * Pattern to exclude health checks from being invoked by Camel when checking healths. Multiple patterns can be
+     * separated by comma.
      */
-    public void setConfig(Map<String, HealthCheckConfigurationProperties> config) {
-        this.config = config;
+    public void setExcludePattern(String excludePattern) {
+        this.excludePattern = excludePattern;
+    }
+
+    public String getExposureLevel() {
+        return exposureLevel;
+    }
+
+    /**
+     * Sets the level of details to exposure as result of invoking health checks. There are the following levels: full,
+     * default, oneline
+     *
+     * The full level will include all details and status from all the invoked health checks.
+     *
+     * The default level will report UP if everything is okay, and only include detailed information for health checks
+     * that was DOWN.
+     *
+     * The oneline level will only report either UP or DOWN.
+     */
+    public void setExposureLevel(String exposureLevel) {
+        this.exposureLevel = exposureLevel;
     }
 
     /**
@@ -129,14 +134,6 @@ public class HealthConfigurationProperties implements BootstrapCloseable {
      */
     public HealthConfigurationProperties withEnabled(boolean enabled) {
         this.enabled = enabled;
-        return this;
-    }
-
-    /**
-     * Whether context health check is enabled
-     */
-    public HealthConfigurationProperties withContextEnabled(boolean contextEnabled) {
-        this.contextEnabled = contextEnabled;
         return this;
     }
 
@@ -157,10 +154,27 @@ public class HealthConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * Additional {@link HealthConfigurationProperties} for fine grained configuration of health checks.
+     * Pattern to exclude health checks from being invoked by Camel when checking healths. Multiple patterns can be
+     * separated by comma.
      */
-    public HealthConfigurationProperties addConfig(String id, HealthCheckConfigurationProperties config) {
-        this.config.put(id, config);
+    public HealthConfigurationProperties withExcludePattern(String excludePattern) {
+        this.excludePattern = excludePattern;
+        return this;
+    }
+
+    /**
+     * Sets the level of details to exposure as result of invoking health checks. There are the following levels: full,
+     * default, oneline
+     *
+     * The full level will include all details and status from all the invoked health checks.
+     *
+     * The default level will report UP if everything is okay, and only include detailed information for health checks
+     * that was DOWN.
+     *
+     * The oneline level will only report either UP or DOWN.
+     */
+    public HealthConfigurationProperties withExposureLevel(String exposureLevel) {
+        this.exposureLevel = exposureLevel;
         return this;
     }
 

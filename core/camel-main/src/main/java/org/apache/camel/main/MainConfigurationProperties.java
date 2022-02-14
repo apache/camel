@@ -19,6 +19,7 @@ package org.apache.camel.main;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.CamelConfiguration;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.LambdaRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -26,7 +27,7 @@ import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.Configurer;
 
 /**
- * Global configuration for Camel Main to setup context name, stream caching and other global configurations.
+ * Global configuration for Camel Main to configure context name, stream caching and other global configurations.
  */
 @Configurer(bootstrap = true)
 public class MainConfigurationProperties extends DefaultConfigurationProperties<MainConfigurationProperties>
@@ -38,13 +39,14 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     private boolean autoConfigurationFailFast = true;
     private boolean autoConfigurationLogSummary = true;
     private int durationHitExitCode;
-    private String packageScanRouteBuilders;
+    private String basePackageScan;
+    private boolean basePackageScanEnabled = true;
 
     private String routesBuilderClasses;
     private String configurationClasses;
 
     private List<RoutesBuilder> routesBuilders = new ArrayList<>();
-    private List<Object> configurations = new ArrayList<>();
+    private List<CamelConfiguration> configurations = new ArrayList<>();
 
     // extended configuration
     private HealthConfigurationProperties healthConfigurationProperties;
@@ -303,18 +305,30 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
         this.autoConfigurationLogSummary = autoConfigurationLogSummary;
     }
 
-    public String getPackageScanRouteBuilders() {
-        return packageScanRouteBuilders;
+    public String getBasePackageScan() {
+        return basePackageScan;
     }
 
     /**
-     * Sets package names for scanning for {@link org.apache.camel.builder.RouteBuilder} classes as candidates to be
-     * included. If you are using Spring Boot then its instead recommended to use Spring Boots component scanning and
-     * annotate your route builder classes with `@Component`. In other words only use this for Camel Main in standalone
-     * mode.
+     * Package name to use as base (offset) for classpath scanning of {@link RouteBuilder}, and
+     * {@link org.apache.camel.TypeConverter} classes.
+     *
+     * If you are using Spring Boot then it is instead recommended to use Spring Boots component scanning and annotate
+     * your route builder classes with `@Component`. In other words only use this for Camel Main in standalone mode.
      */
-    public void setPackageScanRouteBuilders(String packageScanRouteBuilders) {
-        this.packageScanRouteBuilders = packageScanRouteBuilders;
+    public void setBasePackageScan(String basePackageScan) {
+        this.basePackageScan = basePackageScan;
+    }
+
+    public boolean isBasePackageScanEnabled() {
+        return basePackageScanEnabled;
+    }
+
+    /**
+     * Whether base package scan is enabled.
+     */
+    public void setBasePackageScanEnabled(boolean basePackageScanEnabled) {
+        this.basePackageScanEnabled = basePackageScanEnabled;
     }
 
     public int getDurationHitExitCode() {
@@ -344,15 +358,16 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     }
 
     /**
-     * Add an additional configuration class to the known list of configurations classes.
+     * Adds configuration object to the known list of configurations objects.
      */
-    public void addConfigurationClass(Class<?>... configuration) {
+    @SuppressWarnings("unchecked")
+    private void addConfigurationClass(Class<? extends CamelConfiguration>... configuration) {
         String existing = configurationClasses;
         if (existing == null) {
             existing = "";
         }
         if (configuration != null) {
-            for (Class clazz : configuration) {
+            for (Class<? extends CamelConfiguration> clazz : configuration) {
                 if (!existing.isEmpty()) {
                     existing = existing + ",";
                 }
@@ -363,20 +378,27 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     }
 
     /**
-     * Add an additional configuration object to the known list of configurations objects.
+     * Adds configuration object to the known list of configurations objects.
      */
-    public void addConfiguration(Object configuration) {
+    public void addConfiguration(CamelConfiguration configuration) {
         configurations.add(configuration);
     }
 
-    public List<Object> getConfigurations() {
+    /**
+     * Adds configuration object to the known list of configurations objects.
+     */
+    public void addConfiguration(Class<? extends CamelConfiguration> configuration) {
+        addConfigurationClass(configuration);
+    }
+
+    public List<CamelConfiguration> getConfigurations() {
         return configurations;
     }
 
     /**
      * Sets the configuration objects used to configure the camel context.
      */
-    public void setConfigurations(List<Object> configurations) {
+    public void setConfigurations(List<CamelConfiguration> configurations) {
         this.configurations = configurations;
     }
 
@@ -524,13 +546,22 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     }
 
     /**
-     * Sets package names for scanning for {@link org.apache.camel.builder.RouteBuilder} classes as candidates to be
-     * included. If you are using Spring Boot then its instead recommended to use Spring Boots component scanning and
-     * annotate your route builder classes with `@Component`. In other words only use this for Camel Main in standalone
-     * mode.
+     * Package name to use as base (offset) for classpath scanning of {@link RouteBuilder}, and
+     * {@link org.apache.camel.TypeConverter} classes.
+     *
+     * If you are using Spring Boot then it is instead recommended to use Spring Boots component scanning and annotate
+     * your route builder classes with `@Component`. In other words only use this for Camel Main in standalone mode.
      */
-    public MainConfigurationProperties withPackageScanRouteBuilders(String packageScanRouteBuilders) {
-        this.packageScanRouteBuilders = packageScanRouteBuilders;
+    public MainConfigurationProperties withBasePackageScan(String basePackageScan) {
+        this.basePackageScan = basePackageScan;
+        return this;
+    }
+
+    /**
+     * Whether base package scan is enabled.
+     */
+    public MainConfigurationProperties withBasePackageScanEnabled(boolean basePackageScanEnabled) {
+        this.basePackageScanEnabled = basePackageScanEnabled;
         return this;
     }
 
@@ -538,34 +569,35 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     // --------------------------------------------------------------
 
     /**
-     * Sets classes names that will be used to configure the camel context as example by providing custom beans through
+     * Adds classes names that will be used to configure the camel context as example by providing custom beans through
      * {@link org.apache.camel.BindToRegistry} annotation.
      */
-    public MainConfigurationProperties withConfigurationClasses(String configurations) {
-        setConfigurationClasses(configurations);
+    public MainConfigurationProperties withConfigurations(String configurations) {
+        if (this.configurationClasses == null) {
+            this.configurationClasses = "";
+        }
+        if (this.configurationClasses.isEmpty()) {
+            this.configurationClasses = configurations;
+        } else {
+            this.configurationClasses = "," + configurations;
+        }
         return this;
     }
 
     /**
-     * Add an additional configuration class to the known list of configurations classes.
+     * Adds a configuration class to the known list of configurations classes.
      */
-    public MainConfigurationProperties withAdditionalConfigurationClasses(Class... configuration) {
+    @SuppressWarnings("unchecked")
+    public MainConfigurationProperties withConfigurations(
+            Class<? extends CamelConfiguration>... configuration) {
         addConfigurationClass(configuration);
-        return this;
-    }
-
-    /**
-     * Add an additional configuration object to the known list of configurations objects.
-     */
-    public MainConfigurationProperties withAdditionalConfiguration(Object configuration) {
-        addConfiguration(configuration);
         return this;
     }
 
     /**
      * Sets the configuration objects used to configure the camel context.
      */
-    public MainConfigurationProperties withConfigurations(List<Object> configurations) {
+    public MainConfigurationProperties withConfigurations(List<CamelConfiguration> configurations) {
         setConfigurations(configurations);
         return this;
     }

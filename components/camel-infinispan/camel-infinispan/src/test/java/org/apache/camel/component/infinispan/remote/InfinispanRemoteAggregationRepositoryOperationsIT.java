@@ -22,8 +22,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultExchangeHolder;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledOnOs;
-import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -31,7 +29,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@DisabledOnOs(OS.MAC)
 public class InfinispanRemoteAggregationRepositoryOperationsIT extends InfinispanRemoteTestSupport {
     private InfinispanRemoteAggregationRepository aggregationRepository;
 

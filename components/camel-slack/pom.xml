@@ -24,7 +24,7 @@
     <parent>
         <artifactId>components</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>3.15.0-SNAPSHOT</version>
+        <version>3.16.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-slack</artifactId>
@@ -52,17 +52,6 @@
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>${gson-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.googlecode.json-simple</groupId>
-            <artifactId>json-simple</artifactId>
-            <version>${json-simple-version}</version>
-            <exclusions>
-               <exclusion>
-                   <groupId>junit</groupId>
-                   <artifactId>junit</artifactId>
-               </exclusion>
-            </exclusions>
         </dependency>
 
         <!-- forcing okhttp v3.x related to https://issues.apache.org/jira/browse/CAMEL-16336 -->

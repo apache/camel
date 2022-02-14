@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.caffeine.load;
 
-import java.util.concurrent.TimeUnit;
-
-import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import org.apache.camel.Category;
@@ -27,14 +24,13 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.caffeine.CaffeineConfiguration;
-import org.apache.camel.component.caffeine.EvictionType;
+import org.apache.camel.component.caffeine.cache.CaffeineCacheEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultEndpoint;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Perform caching operations using Caffeine Cache with an attached CacheLoader.
@@ -70,23 +66,7 @@ public class CaffeineLoadCacheEndpoint extends DefaultEndpoint {
         if (cache == null) {
             if (configuration.isCreateCacheIfNotExist()) {
                 Caffeine<Object, Object> builder = Caffeine.newBuilder();
-                if (configuration.getEvictionType() == EvictionType.SIZE_BASED) {
-                    builder.initialCapacity(configuration.getInitialCapacity());
-                    builder.maximumSize(configuration.getMaximumSize());
-                } else if (configuration.getEvictionType() == EvictionType.TIME_BASED) {
-                    builder.expireAfterAccess(configuration.getExpireAfterAccessTime(), TimeUnit.SECONDS);
-                    builder.expireAfterWrite(configuration.getExpireAfterWriteTime(), TimeUnit.SECONDS);
-                }
-                if (configuration.isStatsEnabled()) {
-                    if (ObjectHelper.isEmpty(configuration.getStatsCounter())) {
-                        builder.recordStats();
-                    } else {
-                        builder.recordStats(configuration::getStatsCounter);
-                    }
-                }
-                if (ObjectHelper.isNotEmpty(configuration.getRemovalListener())) {
-                    builder.removalListener(configuration.getRemovalListener());
-                }
+                CaffeineCacheEndpoint.defineBuilder(builder, configuration);
                 cache = builder.build(configuration.getCacheLoader());
             } else {
                 throw new IllegalArgumentException(

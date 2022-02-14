@@ -17,28 +17,17 @@
 
 package org.apache.camel.component.file.consumer;
 
-import java.io.File;
-
 import org.apache.camel.ResumeStrategy;
 
 /**
  * Defines resume strategy for consumers of the file component.
  */
-public interface FileConsumerResumeStrategy extends ResumeStrategy<FileResumeSet> {
+public interface FileConsumerResumeStrategy<T> extends ResumeStrategy {
 
     /**
      * Returns the last offset read for the given file.
-     * 
-     * @param  file the file to check for the last offset
-     * @return      The last offset read or 0 (zero) if none has been read.
-     */
-    long lastOffset(File file);
-
-    /**
-     * Perform the resume operation. This runs in the scope of the FileConsumer instance thread.
      *
-     * @param resumeInfo resume information
+     * @param resumable the resumable file or resumable set to run the resume
      */
-    @Override
-    void resume(FileResumeSet resumeInfo);
+    void resume(T resumable);
 }

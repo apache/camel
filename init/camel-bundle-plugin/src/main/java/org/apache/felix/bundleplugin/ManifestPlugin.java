@@ -32,7 +32,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -166,27 +165,6 @@ public class ManifestPlugin extends BundlePlugin {
         return scanner.getIncludedFiles().length > 0;
     }
 
-    public Manifest getManifest(MavenProject project, ClassPathItem[] classpath)
-            throws IOException, MojoFailureException, MojoExecutionException, Exception {
-        return getManifest(project, new LinkedHashMap<String, String>(), classpath, buildContext);
-    }
-
-    public Manifest getManifest(MavenProject project, Map<String, String> instructions, ClassPathItem[] classpath,
-            BuildContext buildContext) throws IOException, MojoFailureException, MojoExecutionException, Exception {
-        Analyzer analyzer = getAnalyzer(project, instructions, classpath);
-
-        Jar jar = analyzer.getJar();
-        Manifest manifest = jar.getManifest();
-
-        if (exportScr) {
-            exportScr(analyzer, jar, scrLocation, buildContext, getLog());
-        }
-
-        // cleanup...
-        analyzer.close();
-
-        return manifest;
-    }
 
     private static void exportScr(Analyzer analyzer, Jar jar, File scrLocation, BuildContext buildContext, Log log)
             throws Exception {
@@ -227,13 +205,8 @@ public class ManifestPlugin extends BundlePlugin {
         }
     }
 
-    protected Analyzer getAnalyzer(MavenProject project, ClassPathItem[] classpath)
-            throws IOException, MojoExecutionException, Exception {
-        return getAnalyzer(project, new LinkedHashMap<>(), classpath);
-    }
-
     protected Analyzer getAnalyzer(MavenProject project, Map<String, String> instructions, ClassPathItem[] classpath)
-            throws IOException, MojoExecutionException, Exception {
+            throws Exception {
         if (rebuildBundle && supportedProjectTypes.contains(project.getArtifact().getType())) {
             return buildOSGiBundle(project, instructions, classpath);
         }
@@ -325,13 +298,8 @@ public class ManifestPlugin extends BundlePlugin {
     private boolean isUpToDate(MavenProject project) throws MojoExecutionException {
         try {
             Path cacheData = getIncrementalDataPath(project);
-            String prvdata;
-            if (Files.isRegularFile(cacheData)) {
-                prvdata = new String(Files.readAllBytes(cacheData), StandardCharsets.UTF_8);
-            } else {
-                prvdata = null;
-            }
-            String curdata = getIncrementalData();
+            final String prvdata = getPreviousRunData(cacheData);
+            final String curdata = getIncrementalData();
             if (curdata.equals(prvdata)) {
                 long lastmod = Files.getLastModifiedTime(cacheData).toMillis();
                 Set<String> stale = Stream
@@ -363,6 +331,16 @@ public class ManifestPlugin extends BundlePlugin {
         return false;
     }
 
+    private String getPreviousRunData(Path cacheData) throws IOException {
+        String prvdata;
+        if (Files.isRegularFile(cacheData)) {
+            prvdata = new String(Files.readAllBytes(cacheData), StandardCharsets.UTF_8);
+        } else {
+            prvdata = null;
+        }
+        return prvdata;
+    }
+
     private String getIncrementalData() {
         return getInstructions().entrySet().stream().map(e -> e.getKey() + "=" + e.getValue())
                 .collect(Collectors.joining("\n", "", "\n"));
@@ -392,7 +370,7 @@ public class ManifestPlugin extends BundlePlugin {
                         try (ZipFile zf = new ZipFile(file)) {
                             return zf.stream().filter(ze -> !ze.isDirectory())
                                     .filter(ze -> ze.getLastModifiedTime().toMillis() > lastmod)
-                                    .map(ze -> file.toString() + "!" + ze.getName()).collect(Collectors.toList())
+                                    .map(ze -> file + "!" + ze.getName()).collect(Collectors.toList())
                                     .stream();
                         }
                     } else {
@@ -417,12 +395,11 @@ public class ManifestPlugin extends BundlePlugin {
         if (outputFile.exists() && properties.containsKey("Merge-Headers")) {
             Manifest analyzerManifest = manifest;
             manifest = new Manifest();
-            InputStream inputStream = new FileInputStream(outputFile);
-            try {
+
+            try(InputStream inputStream = new FileInputStream(outputFile)) {
                 manifest.read(inputStream);
-            } finally {
-                inputStream.close();
             }
+
             Instructions instructions = new Instructions(ExtList.from(analyzer.getProperty("Merge-Headers")));
             mergeManifest(instructions, manifest, analyzerManifest);
         } else {
@@ -438,20 +415,17 @@ public class ManifestPlugin extends BundlePlugin {
 
     public static void writeManifest(Manifest manifest, File outputFile, boolean niceManifest,
             BuildContext buildContext, Log log) throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try {
-            ManifestWriter.outputManifest(manifest, baos, niceManifest);
-        } finally {
-            try {
-                baos.close();
-            } catch (IOException e) {
-                // nothing we can do here
-            }
-        }
 
-        log.debug("Write manifest to " + outputFile.getPath());
-        if (updateFile(outputFile.toPath(), baos.toByteArray())) {
-            buildContext.refresh(outputFile);
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            ManifestWriter.outputManifest(manifest, baos, niceManifest);
+
+            if (log.isDebugEnabled()) {
+                log.debug("Write manifest to " + outputFile.getPath());
+            }
+
+            if (updateFile(outputFile.toPath(), baos.toByteArray())) {
+                buildContext.refresh(outputFile);
+            }
         }
     }
 

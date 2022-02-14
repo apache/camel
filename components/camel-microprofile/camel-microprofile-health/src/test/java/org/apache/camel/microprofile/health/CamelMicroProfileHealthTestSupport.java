@@ -18,18 +18,22 @@ package org.apache.camel.microprofile.health;
 
 import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
+import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
-import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.stream.JsonParser;
 
-import io.smallrye.config.inject.ConfigExtension;
 import io.smallrye.health.SmallRyeHealth;
 import io.smallrye.health.SmallRyeHealthReporter;
+import io.smallrye.health.api.HealthType;
+import io.smallrye.health.registry.HealthRegistries;
+import io.smallrye.health.registry.HealthRegistryImpl;
+import io.smallrye.mutiny.Uni;
 import org.apache.camel.CamelContext;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckRegistry;
@@ -37,18 +41,35 @@ import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.health.AbstractHealthCheck;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.eclipse.microprofile.health.HealthCheckResponse;
-import org.jboss.weld.junit5.auto.AddExtensions;
-import org.jboss.weld.junit5.auto.EnableAutoWeld;
+import org.junit.jupiter.api.AfterEach;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@EnableAutoWeld
-@AddExtensions(ConfigExtension.class)
 public class CamelMicroProfileHealthTestSupport extends CamelTestSupport {
 
-    @Inject
-    SmallRyeHealthReporter reporter;
+    protected SmallRyeHealthReporter reporter = new SmallRyeHealthReporter();
+
+    @SuppressWarnings("unchecked")
+    @AfterEach
+    @Override
+    public void tearDown() throws Exception {
+        super.tearDown();
+        // Hack to clean up all registered checks
+        Stream.of(HealthType.LIVENESS, HealthType.READINESS)
+                .forEach(type -> {
+                    HealthRegistryImpl registry = (HealthRegistryImpl) HealthRegistries.getRegistry(type);
+                    try {
+                        Field field = registry.getClass().getDeclaredField("checks");
+                        field.setAccessible(true);
+                        Map<String, Uni<HealthCheckResponse>> checks
+                                = (Map<String, Uni<HealthCheckResponse>>) field.get(registry);
+                        checks.clear();
+                    } catch (NoSuchFieldException | IllegalAccessException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+    }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -104,7 +125,7 @@ public class CamelMicroProfileHealthTestSupport extends CamelTestSupport {
                 return false;
             }
         };
-        livenessCheck.getConfiguration().setEnabled(enabled);
+        livenessCheck.setEnabled(enabled);
         return livenessCheck;
     }
 
@@ -120,9 +141,8 @@ public class CamelMicroProfileHealthTestSupport extends CamelTestSupport {
                 return false;
             }
         };
-        readinessCheck.getConfiguration().setEnabled(enabled);
+        readinessCheck.setEnabled(enabled);
         return readinessCheck;
-
     }
 
     /**

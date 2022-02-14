@@ -17,9 +17,11 @@
 package org.apache.camel.impl.converter;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.AnnotationScanTypeConverters;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.PackageScanClassResolver;
+import org.apache.camel.spi.TypeConverterLoader;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
 import org.slf4j.Logger;
@@ -90,7 +92,7 @@ public class DefaultTypeConverter extends BaseTypeConverterRegistry implements A
             loadTypeConvertersDone = true;
 
             if (resolver != null) {
-                typeConverterLoaders.add(new AnnotationTypeConverterLoader(resolver));
+                typeConverterLoaders.add(createScanTypeConverterLoader());
             }
 
             int fast = typeMappings.size();
@@ -114,5 +116,13 @@ public class DefaultTypeConverter extends BaseTypeConverterRegistry implements A
 
         String time = TimeUtils.printDuration(watch.taken());
         LOG.debug("Scanned {} type converters in {}", typeMappings.size(), time);
+    }
+
+    /**
+     * Creates the {@link TypeConverterLoader} to use for scanning for type converters such as from the classpath.
+     */
+    protected TypeConverterLoader createScanTypeConverterLoader() {
+        String basePackages = camelContext != null ? camelContext.adapt(ExtendedCamelContext.class).getBasePackageScan() : null;
+        return new AnnotationTypeConverterLoader(resolver, basePackages);
     }
 }

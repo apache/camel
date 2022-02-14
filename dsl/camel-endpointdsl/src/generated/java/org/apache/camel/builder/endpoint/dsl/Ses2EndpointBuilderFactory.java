@@ -70,6 +70,36 @@ public interface Ses2EndpointBuilderFactory {
             return this;
         }
         /**
+         * List of comma separated destination blind carbon copy (bcc) email
+         * address. Can be overriden with 'CamelAwsSesBcc' header.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param bcc the value to set
+         * @return the dsl builder
+         */
+        default Ses2EndpointBuilder bcc(String bcc) {
+            doSetProperty("bcc", bcc);
+            return this;
+        }
+        /**
+         * List of comma separated destination carbon copy (cc) email address.
+         * Can be overriden with 'CamelAwsSesCc' header.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param cc the value to set
+         * @return the dsl builder
+         */
+        default Ses2EndpointBuilder cc(String cc) {
+            doSetProperty("cc", cc);
+            return this;
+        }
+        /**
          * Set the configuration set to send with every request. Override it
          * with 'CamelAwsSesConfigurationSet' header.
          * 

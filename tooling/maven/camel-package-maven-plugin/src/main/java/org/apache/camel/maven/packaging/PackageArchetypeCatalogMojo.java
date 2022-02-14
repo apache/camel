@@ -17,12 +17,10 @@
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.camel.tooling.util.PackageHelper;
@@ -91,12 +89,8 @@ public class PackageArchetypeCatalogMojo extends AbstractMojo {
         log.info("Scanning for Camel Maven Archetypes from directory: " + archetypes);
 
         // find all archetypes which are in the parent dir of the build dir
-        File[] dirs = archetypes.listFiles(new FileFilter() {
-            @Override
-            public boolean accept(File pathname) {
-                return pathname.getName().startsWith("camel-archetype") && pathname.isDirectory();
-            }
-        });
+        File[] dirs
+                = archetypes.listFiles(pathname -> pathname.getName().startsWith("camel-archetype") && pathname.isDirectory());
 
         List<ArchetypeModel> models = new ArrayList<>();
 
@@ -154,7 +148,7 @@ public class PackageArchetypeCatalogMojo extends AbstractMojo {
         }
 
         // sort the models by artifact id so its generated in same order
-        Collections.sort(models, (o1, o2) -> o1.getArtifactId().compareToIgnoreCase(o2.getArtifactId()));
+        models.sort((o1, o2) -> o1.getArtifactId().compareToIgnoreCase(o2.getArtifactId()));
 
         log.info("Found " + models.size() + " archetypes");
 

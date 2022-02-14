@@ -19,7 +19,6 @@ package org.apache.camel.maven.packaging;
 import java.io.File;
 import java.io.IOError;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedList;
@@ -89,7 +88,7 @@ public class GenerateEndpointUriFactoryMojo extends AbstractGeneratorMojo {
         executeComponent(files);
     }
 
-    private void executeComponent(Map<File, Supplier<String>> jsonFiles) throws MojoExecutionException, MojoFailureException {
+    private void executeComponent(Map<File, Supplier<String>> jsonFiles) throws MojoExecutionException {
         // find the component names
         Set<String> componentNames = new TreeSet<>();
         findComponentNames(buildDir, componentNames);
@@ -127,7 +126,7 @@ public class GenerateEndpointUriFactoryMojo extends AbstractGeneratorMojo {
         getLog().debug("Generating endpoint-uri-factory: " + model.getScheme());
 
         String fqn = model.getJavaType();
-        generateEndpointUriFactory(fqn, fqn, model, sourcesOutputDir);
+        generateEndpointUriFactory(fqn, model, sourcesOutputDir);
 
         int pos = fqn.lastIndexOf('.');
         String pn = fqn.substring(0, pos);
@@ -154,23 +153,17 @@ public class GenerateEndpointUriFactoryMojo extends AbstractGeneratorMojo {
     }
 
     @Deprecated
-    private void generateEndpointUriFactory(
-            String fqn, String targetFqn, ComponentModel model, File outputDir)
-            throws IOException {
+    private void generateEndpointUriFactory(String targetFqn, ComponentModel model, File outputDir) {
 
         int pos = targetFqn.lastIndexOf('.');
         String pn = targetFqn.substring(0, pos);
         String cn = targetFqn.substring(pos + 1) + "EndpointUriFactory";
         // remove component from name
         cn = cn.replace("Component", "");
-        String en = fqn;
-        String pfqn = fqn;
+
         String psn = "org.apache.camel.support.component.EndpointUriFactorySupport";
 
-        StringWriter sw = new StringWriter();
-        EndpointUriFactoryGenerator.generateEndpointUriFactory(pn, cn, en, pfqn, psn, model, sw);
-
-        String source = sw.toString();
+        String source = EndpointUriFactoryGenerator.generateEndpointUriFactory(pn, cn, psn, model);
 
         String fileName = pn.replace('.', '/') + "/" + cn + ".java";
         outputDir.mkdirs();

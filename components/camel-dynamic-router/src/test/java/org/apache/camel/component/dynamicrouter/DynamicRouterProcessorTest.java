@@ -35,6 +35,7 @@ class DynamicRouterProcessorTest extends DynamicRouterTestSupport {
     void localSetup() throws Exception {
         super.setup();
         processor = new DynamicRouterProcessor(PROCESSOR_ID, context, MODE_FIRST_MATCH, false, () -> filterProcessorFactory);
+        processor.doInit();
     }
 
     @Test

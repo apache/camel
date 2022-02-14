@@ -27,7 +27,7 @@ Processors can rely on these properties to process the message in different ways
 
 == Looping modes
 
-The Loop EIP can run in three modes: default, or copy.
+The Loop EIP can run in three modes: default, copy, or while mode.
 
 In default mode the Loop EIP uses the same `Exchange` instance throughout the looping.
 So the result from the previous iteration will be used for the next iteration.
@@ -35,7 +35,7 @@ So the result from the previous iteration will be used for the next iteration.
 In the copy mode, then the Loop EIP uses a copy of the original `Exchange` in each iteration.
 So the result from the previous iteration will *not* be used for the next iteration.
 
-In the doWhile mode, the Loop EIP
+In the while mode, then the Loop EIP will keep looping until the expression evaluates to `false` or `null`.
 
 == Example
 

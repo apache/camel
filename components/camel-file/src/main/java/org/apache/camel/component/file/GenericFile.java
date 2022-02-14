@@ -22,8 +22,10 @@ import java.nio.file.Path;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Resumable;
+import org.apache.camel.Offset;
 import org.apache.camel.WrappedFile;
+import org.apache.camel.component.file.consumer.GenericFileResumable;
+import org.apache.camel.resume.Offsets;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -33,7 +35,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Generic File. Specific implementations of a file based endpoint need to provide a File for transfer.
  */
-public class GenericFile<T> implements WrappedFile<T>, Resumable<Long> {
+public class GenericFile<T> implements WrappedFile<T>, GenericFileResumable<T> {
     private static final Logger LOG = LoggerFactory.getLogger(GenericFile.class);
 
     private final boolean probeContentType;
@@ -416,13 +418,18 @@ public class GenericFile<T> implements WrappedFile<T>, Resumable<Long> {
     }
 
     @Override
-    public void setLastOffset(Long offset) {
+    public void updateLastOffset(Long offset) {
         this.lastOffset = offset;
     }
 
     @Override
-    public Long getLastOffset() {
-        return lastOffset;
+    public Offset<Long> getLastOffset() {
+        return Offsets.of(lastOffset);
+    }
+
+    @Override
+    public T getAddressable() {
+        return file;
     }
 
     /**

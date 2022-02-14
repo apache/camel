@@ -811,6 +811,22 @@ public class ModelParser extends BaseParser {
             return false;
         }, noValueHandler());
     }
+    protected PropertyExpressionDefinition doParsePropertyExpressionDefinition() throws IOException, XmlPullParserException {
+        return doParse(new PropertyExpressionDefinition(), (def, key, val) -> {
+            if ("key".equals(key)) {
+                def.setKey(val);
+                return true;
+            }
+            return false;
+        }, (def, key) -> {
+            ExpressionDefinition v = doParseExpressionDefinitionRef(key);
+            if (v != null) { 
+                def.setExpression(v);
+                return true;
+            }
+            return false;
+        }, noValueHandler());
+    }
     protected RecipientListDefinition doParseRecipientListDefinition() throws IOException, XmlPullParserException {
         return doParse(new RecipientListDefinition(), (def, key, val) -> {
             switch (key) {
@@ -1102,7 +1118,11 @@ public class ModelParser extends BaseParser {
         }, optionalIdentifiedDefinitionElementHandler(), noValueHandler());
     }
     protected RouteTemplateBeanDefinition doParseRouteTemplateBeanDefinition() throws IOException, XmlPullParserException {
-        return doParse(new RouteTemplateBeanDefinition(), (def, key, val) -> {
+        return doParse(new RouteTemplateBeanDefinition(),
+            beanFactoryDefinitionAttributeHandler(), beanFactoryDefinitionElementHandler(), noValueHandler());
+    }
+    protected <T extends BeanFactoryDefinition> AttributeHandler<T> beanFactoryDefinitionAttributeHandler() {
+        return (def, key, val) -> {
             switch (key) {
                 case "beanType": def.setBeanType(val); break;
                 case "name": def.setName(val); break;
@@ -1110,18 +1130,17 @@ public class ModelParser extends BaseParser {
                 default: return false;
             }
             return true;
-        }, (def, key) -> {
+        };
+    }
+    protected <T extends BeanFactoryDefinition> ElementHandler<T> beanFactoryDefinitionElementHandler() {
+        return (def, key) -> {
             switch (key) {
                 case "property": doAdd(doParsePropertyDefinition(), def.getProperties(), def::setProperties); break;
-                case "script": def.setScript(doParseRouteTemplateScriptDefinition()); break;
+                case "script": def.setScript(doParseText()); break;
                 default: return false;
             }
             return true;
-        }, noValueHandler());
-    }
-    protected RouteTemplateScriptDefinition doParseRouteTemplateScriptDefinition() throws IOException, XmlPullParserException {
-        return doParse(new RouteTemplateScriptDefinition(),
-            noAttributeHandler(), noElementHandler(), (def, val) -> def.setScript(val));
+        };
     }
     protected RouteTemplateContextRefDefinition doParseRouteTemplateContextRefDefinition() throws IOException, XmlPullParserException {
         return doParse(new RouteTemplateContextRefDefinition(), (def, key, val) -> {
@@ -1240,7 +1259,6 @@ public class ModelParser extends BaseParser {
                 case "propagation": def.setPropagation(val); break;
                 case "sagaServiceRef": def.setSagaServiceRef(val); break;
                 case "timeout": def.setTimeout(val); break;
-                case "timeoutInMilliseconds": def.setTimeoutInMilliseconds(val); break;
                 default: return processorDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;
@@ -1248,7 +1266,7 @@ public class ModelParser extends BaseParser {
             switch (key) {
                 case "compensation": def.setCompensation(doParseSagaActionUriDefinition()); break;
                 case "completion": def.setCompletion(doParseSagaActionUriDefinition()); break;
-                case "option": doAdd(doParseSagaOptionDefinition(), def.getOptions(), def::setOptions); break;
+                case "option": doAdd(doParsePropertyExpressionDefinition(), def.getOptions(), def::setOptions); break;
                 default: return outputDefinitionElementHandler().accept(def, key);
             }
             return true;
@@ -1257,22 +1275,6 @@ public class ModelParser extends BaseParser {
     protected SagaActionUriDefinition doParseSagaActionUriDefinition() throws IOException, XmlPullParserException {
         return doParse(new SagaActionUriDefinition(),
             sendDefinitionAttributeHandler(), optionalIdentifiedDefinitionElementHandler(), noValueHandler());
-    }
-    protected SagaOptionDefinition doParseSagaOptionDefinition() throws IOException, XmlPullParserException {
-        return doParse(new SagaOptionDefinition(), (def, key, val) -> {
-            if ("optionName".equals(key)) {
-                def.setOptionName(val);
-                return true;
-            }
-            return false;
-        }, (def, key) -> {
-            ExpressionDefinition v = doParseExpressionDefinitionRef(key);
-            if (v != null) { 
-                def.setExpression(v);
-                return true;
-            }
-            return false;
-        }, noValueHandler());
     }
     protected SamplingDefinition doParseSamplingDefinition() throws IOException, XmlPullParserException {
         return doParse(new SamplingDefinition(), (def, key, val) -> {
@@ -1361,6 +1363,70 @@ public class ModelParser extends BaseParser {
     protected SwitchDefinition doParseSwitchDefinition() throws IOException, XmlPullParserException {
         return doParse(new SwitchDefinition(),
             processorDefinitionAttributeHandler(), choiceDefinitionElementHandler(), noValueHandler());
+    }
+    protected TemplatedRouteBeanDefinition doParseTemplatedRouteBeanDefinition() throws IOException, XmlPullParserException {
+        return doParse(new TemplatedRouteBeanDefinition(),
+            beanFactoryDefinitionAttributeHandler(), beanFactoryDefinitionElementHandler(), noValueHandler());
+    }
+    protected TemplatedRouteDefinition doParseTemplatedRouteDefinition() throws IOException, XmlPullParserException {
+        return doParse(new TemplatedRouteDefinition(), (def, key, val) -> {
+            switch (key) {
+                case "routeId": def.setRouteId(val); break;
+                case "routeTemplateRef": def.setRouteTemplateRef(val); break;
+                default: return false;
+            }
+            return true;
+        }, (def, key) -> {
+            switch (key) {
+                case "bean": doAdd(doParseTemplatedRouteBeanDefinition(), def.getBeans(), def::setBeans); break;
+                case "parameter": doAdd(doParseTemplatedRouteParameterDefinition(), def.getParameters(), def::setParameters); break;
+                default: return false;
+            }
+            return true;
+        }, noValueHandler());
+    }
+    protected TemplatedRouteParameterDefinition doParseTemplatedRouteParameterDefinition() throws IOException, XmlPullParserException {
+        return doParse(new TemplatedRouteParameterDefinition(), (def, key, val) -> {
+            switch (key) {
+                case "name": def.setName(val); break;
+                case "value": def.setValue(val); break;
+                default: return false;
+            }
+            return true;
+        }, noElementHandler(), noValueHandler());
+    }
+    public Optional<TemplatedRoutesDefinition> parseTemplatedRoutesDefinition()
+            throws IOException, XmlPullParserException {
+        String tag = getNextTag("templatedRoutes", "templatedRoute");
+        if (tag != null) {
+            switch (tag) {
+                case "templatedRoutes" : return Optional.of(doParseTemplatedRoutesDefinition());
+                case "templatedRoute" : return parseSingleTemplatedRoutesDefinition();
+            }
+        }
+        return Optional.empty();
+    }
+    private Optional<TemplatedRoutesDefinition> parseSingleTemplatedRoutesDefinition()
+            throws IOException, XmlPullParserException {
+        Optional<TemplatedRouteDefinition> single = Optional.of(doParseTemplatedRouteDefinition());
+        if (single.isPresent()) {
+            List<TemplatedRouteDefinition> list = new ArrayList<>();
+            list.add(single.get());
+            TemplatedRoutesDefinition def = new TemplatedRoutesDefinition();
+            def.setTemplatedRoutes(list);
+            return Optional.of(def);
+        }
+        return Optional.empty();
+    }
+    protected TemplatedRoutesDefinition doParseTemplatedRoutesDefinition() throws IOException, XmlPullParserException {
+        return doParse(new TemplatedRoutesDefinition(),
+            optionalIdentifiedDefinitionAttributeHandler(), (def, key) -> {
+            if ("templatedRoute".equals(key)) {
+                doAdd(doParseTemplatedRouteDefinition(), def.getTemplatedRoutes(), def::setTemplatedRoutes);
+                return true;
+            }
+            return optionalIdentifiedDefinitionElementHandler().accept(def, key);
+        }, noValueHandler());
     }
     protected ThreadPoolProfileDefinition doParseThreadPoolProfileDefinition() throws IOException, XmlPullParserException {
         return doParse(new ThreadPoolProfileDefinition(), (def, key, val) -> {
@@ -1853,7 +1919,7 @@ public class ModelParser extends BaseParser {
     protected Any23DataFormat doParseAny23DataFormat() throws IOException, XmlPullParserException {
         return doParse(new Any23DataFormat(), (def, key, val) -> {
             switch (key) {
-                case "baseURI": def.setBaseURI(val); break;
+                case "baseUri": def.setBaseUri(val); break;
                 case "outputFormat": def.setOutputFormat(val); break;
                 default: return identifiedTypeAttributeHandler().accept(def, key, val);
             }

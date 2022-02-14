@@ -31,7 +31,7 @@ import io.smallrye.faulttolerance.core.stopwatch.SystemStopwatch;
 import io.smallrye.faulttolerance.core.timeout.ScheduledExecutorTimeoutWatcher;
 import io.smallrye.faulttolerance.core.timeout.Timeout;
 import io.smallrye.faulttolerance.core.timeout.TimeoutWatcher;
-import io.smallrye.faulttolerance.core.util.SetOfThrowables;
+import io.smallrye.faulttolerance.core.util.ExceptionDecision;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -254,7 +254,7 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport
             target = new Fallback(target, "fallback", fallbackContext -> {
                 exchange.setException(fallbackContext.failure);
                 return fFallbackTask.call();
-            }, SetOfThrowables.ALL, SetOfThrowables.EMPTY);
+            }, ExceptionDecision.ALWAYS_FAILURE);
         }
 
         try {
@@ -331,8 +331,8 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport
         ObjectHelper.notNull(camelContext, "CamelContext", this);
         if (circuitBreaker == null) {
             circuitBreaker = new CircuitBreaker(
-                    invocation(), id, SetOfThrowables.ALL,
-                    SetOfThrowables.EMPTY, config.getDelay(), config.getRequestVolumeThreshold(), config.getFailureRatio(),
+                    invocation(), id, ExceptionDecision.ALWAYS_FAILURE, config.getDelay(), config.getRequestVolumeThreshold(),
+                    config.getFailureRatio(),
                     config.getSuccessThreshold(), new SystemStopwatch());
         }
 

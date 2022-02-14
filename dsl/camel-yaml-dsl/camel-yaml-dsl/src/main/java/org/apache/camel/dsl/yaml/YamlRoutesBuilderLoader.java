@@ -17,10 +17,13 @@
 package org.apache.camel.dsl.yaml;
 
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.DeadLetterChannelBuilder;
@@ -38,14 +41,17 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
+import org.apache.camel.model.TemplatedRouteDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.errorhandler.DefaultErrorHandlerProperties;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
 import org.apache.camel.spi.CamelContextCustomizer;
+import org.apache.camel.spi.DependencyStrategy;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.RoutesLoader;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.URISupport;
 import org.snakeyaml.engine.v2.nodes.MappingNode;
@@ -97,23 +103,27 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                     return;
                 }
 
-                if (target instanceof Node) {
-                    SequenceNode seq = asSequenceNode((Node) target);
-                    for (Node node : seq.getValue()) {
-                        int idx = -1;
-                        if (node.getStartMark().isPresent()) {
-                            idx = node.getStartMark().get().getIndex();
-                        }
-                        if (idx == -1 || !indexes.contains(idx)) {
-                            Object item = ctx.mandatoryResolve(node).construct(node);
-                            boolean accepted = doConfigure(item);
-                            if (accepted && idx != -1) {
-                                indexes.add(idx);
+                Iterator<?> it = ObjectHelper.createIterator(target);
+                while (it.hasNext()) {
+                    target = it.next();
+                    if (target instanceof Node) {
+                        SequenceNode seq = asSequenceNode((Node) target);
+                        for (Node node : seq.getValue()) {
+                            int idx = -1;
+                            if (node.getStartMark().isPresent()) {
+                                idx = node.getStartMark().get().getIndex();
+                            }
+                            if (idx == -1 || !indexes.contains(idx)) {
+                                Object item = ctx.mandatoryResolve(node).construct(node);
+                                boolean accepted = doConfigure(item);
+                                if (accepted && idx != -1) {
+                                    indexes.add(idx);
+                                }
                             }
                         }
+                    } else {
+                        doConfigure(target);
                     }
-                } else {
-                    doConfigure(target);
                 }
             }
 
@@ -152,6 +162,10 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                     CamelContextAware.trySetCamelContext(getRouteTemplateCollection(), getCamelContext());
                     getRouteTemplateCollection().routeTemplate((RouteTemplateDefinition) item);
                     return true;
+                } else if (item instanceof TemplatedRouteDefinition) {
+                    CamelContextAware.trySetCamelContext(getTemplatedRouteCollection(), getCamelContext());
+                    getTemplatedRouteCollection().templatedRoute((TemplatedRouteDefinition) item);
+                    return true;
                 } else if (item instanceof RestDefinition) {
                     RestDefinition definition = (RestDefinition) item;
                     for (VerbDefinition verb : definition.getVerbs()) {
@@ -181,23 +195,27 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                     return;
                 }
 
-                if (target instanceof Node) {
-                    SequenceNode seq = asSequenceNode((Node) target);
-                    for (Node node : seq.getValue()) {
-                        int idx = -1;
-                        if (node.getStartMark().isPresent()) {
-                            idx = node.getStartMark().get().getIndex();
-                        }
-                        if (idx == -1 || !indexes.contains(idx)) {
-                            Object item = ctx.mandatoryResolve(node).construct(node);
-                            boolean accepted = doConfiguration(item);
-                            if (accepted && idx != -1) {
-                                indexes.add(idx);
+                Iterator<?> it = ObjectHelper.createIterator(target);
+                while (it.hasNext()) {
+                    target = it.next();
+                    if (target instanceof Node) {
+                        SequenceNode seq = asSequenceNode((Node) target);
+                        for (Node node : seq.getValue()) {
+                            int idx = -1;
+                            if (node.getStartMark().isPresent()) {
+                                idx = node.getStartMark().get().getIndex();
+                            }
+                            if (idx == -1 || !indexes.contains(idx)) {
+                                Object item = ctx.mandatoryResolve(node).construct(node);
+                                boolean accepted = doConfiguration(item);
+                                if (accepted && idx != -1) {
+                                    indexes.add(idx);
+                                }
                             }
                         }
+                    } else {
+                        doConfiguration(target);
                     }
-                } else {
-                    doConfiguration(target);
                 }
             }
 
@@ -245,7 +263,32 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
         if (routes != null) {
             target = routes;
         }
+        // if there are dependencies then include them in the target
+        Node deps = nodeAt(root, "/spec/dependencies");
+        if (deps != null) {
+            Object dep = preConfigureDependencies(deps);
+            target = List.of(dep, target);
+        }
         return target;
+    }
+
+    private CamelContextCustomizer preConfigureDependencies(Node node) {
+        final List<String> dep = YamlDeserializerSupport.asStringList(node);
+        return new CamelContextCustomizer() {
+            @Override
+            public void configure(CamelContext camelContext) {
+                // notify the listeners about each dependency detected
+                for (DependencyStrategy ds : camelContext.getRegistry().findByType(DependencyStrategy.class)) {
+                    for (String d : dep) {
+                        try {
+                            ds.onDependency(d);
+                        } catch (Exception e) {
+                            // ignore
+                        }
+                    }
+                }
+            }
+        };
     }
 
     /**

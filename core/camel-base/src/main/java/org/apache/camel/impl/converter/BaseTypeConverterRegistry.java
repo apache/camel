@@ -36,7 +36,6 @@ import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.TypeConverterLoaderException;
-import org.apache.camel.TypeConverters;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.TypeConverterLoader;
@@ -86,11 +85,16 @@ public abstract class BaseTypeConverterRegistry extends CoreTypeConverterRegistr
     }
 
     @Override
-    public void addTypeConverters(TypeConverters typeConverters) {
+    public void addTypeConverters(Object typeConverters) {
         LOG.trace("Adding type converters: {}", typeConverters);
         try {
             // scan the class for @Converter and load them into this registry
-            TypeConvertersLoader loader = new TypeConvertersLoader(typeConverters);
+            TypeConvertersLoader loader;
+            if (typeConverters instanceof Class) {
+                loader = new TypeConvertersLoader((Class<?>) typeConverters);
+            } else {
+                loader = new TypeConvertersLoader(typeConverters);
+            }
             CamelContextAware.trySetCamelContext(loader, getCamelContext());
             loader.load(this);
         } catch (TypeConverterLoaderException e) {

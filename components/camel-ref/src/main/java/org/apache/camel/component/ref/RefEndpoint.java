@@ -77,7 +77,10 @@ public class RefEndpoint extends DefaultEndpoint implements DelegateEndpoint {
         if (endpoint == null) {
             // endpoint is mandatory
             endpoint = CamelContextHelper.mandatoryLookup(getCamelContext(), name, Endpoint.class);
-            getCamelContext().addEndpoint(getEndpoint().getEndpointUri(), endpoint);
+            if (getCamelContext().getEndpoint(getEndpoint().getEndpointUri()) == null
+                    || getCamelContext().getEndpoint(getEndpoint().getEndpointUri()) != endpoint) {
+                getCamelContext().addEndpoint(getEndpoint().getEndpointUri(), endpoint);
+            }
         }
         super.doInit();
     }

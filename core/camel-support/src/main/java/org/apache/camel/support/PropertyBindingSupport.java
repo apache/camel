@@ -175,6 +175,7 @@ public final class PropertyBindingSupport {
      * @param  placeholder        whether to use Camels property placeholder to resolve placeholders on keys and values
      * @param  reflection         whether to allow using reflection (when there is no configurer available).
      * @param  configurer         to use an optional {@link PropertyConfigurer} to configure the properties
+     * @param  listener           optional listener
      * @return                    true if one or more properties was bound
      */
     private static boolean doBindProperties(
@@ -183,7 +184,8 @@ public final class PropertyBindingSupport {
             boolean mandatory, boolean optional,
             boolean nesting, boolean deepNesting, boolean fluentBuilder, boolean allowPrivateSetter,
             boolean reference, boolean placeholder,
-            boolean reflection, PropertyConfigurer configurer) {
+            boolean reflection, PropertyConfigurer configurer,
+            PropertyBindingListener listener) {
 
         if (properties == null || properties.isEmpty()) {
             return false;
@@ -191,6 +193,9 @@ public final class PropertyBindingSupport {
 
         if (flattenProperties) {
             properties = new FlattenMap(properties);
+        }
+        if (listener == null && camelContext != null) {
+            listener = camelContext.getRegistry().findSingleByType(PropertyBindingListener.class);
         }
 
         boolean answer = false;
@@ -221,6 +226,9 @@ public final class PropertyBindingSupport {
             }
 
             // attempt to bind the property
+            if (listener != null) {
+                listener.bindProperty(target, key, value);
+            }
             boolean hit = doBuildPropertyOgnlPath(camelContext, target, key, value, deepNesting, fluentBuilder,
                     allowPrivateSetter, ignoreCase, reference, placeholder, mandatory, optional, reflection, configurer);
             if (hit && removeParameter) {
@@ -1642,6 +1650,7 @@ public final class PropertyBindingSupport {
         private String optionPrefix;
         private boolean reflection = true;
         private PropertyConfigurer configurer;
+        private PropertyBindingListener listener;
 
         /**
          * CamelContext to be used
@@ -1801,6 +1810,14 @@ public final class PropertyBindingSupport {
         }
 
         /**
+         * To use the property binding listener.
+         */
+        public Builder withListener(PropertyBindingListener listener) {
+            this.listener = listener;
+            return this;
+        }
+
+        /**
          * Binds the properties to the target object, and removes the property that was bound from properties.
          *
          * @return true if one or more properties was bound
@@ -1816,7 +1833,8 @@ public final class PropertyBindingSupport {
 
             return doBindProperties(camelContext, target, removeParameters ? properties : new HashMap<>(properties),
                     optionPrefix, ignoreCase, removeParameters, flattenProperties, mandatory, optional,
-                    nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder, reflection, configurer);
+                    nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder, reflection, configurer,
+                    listener);
         }
 
         /**
@@ -1834,7 +1852,8 @@ public final class PropertyBindingSupport {
 
             return doBindProperties(context, obj, removeParameters ? prop : new HashMap<>(prop),
                     optionPrefix, ignoreCase, removeParameters, flattenProperties, mandatory, optional,
-                    nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder, reflection, configurer);
+                    nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder, reflection, configurer,
+                    listener);
         }
 
         /**
@@ -1852,7 +1871,8 @@ public final class PropertyBindingSupport {
 
             return doBindProperties(camelContext, target, properties, optionPrefix, ignoreCase, true, false, mandatory,
                     optional,
-                    nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder, reflection, configurer);
+                    nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder, reflection, configurer,
+                    listener);
         }
 
     }

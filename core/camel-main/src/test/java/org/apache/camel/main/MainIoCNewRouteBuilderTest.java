@@ -18,6 +18,7 @@ package org.apache.camel.main;
 
 import org.apache.camel.BeanInject;
 import org.apache.camel.BindToRegistry;
+import org.apache.camel.CamelConfiguration;
 import org.apache.camel.CamelContext;
 import org.apache.camel.PropertyInject;
 import org.apache.camel.builder.RouteBuilder;
@@ -54,7 +55,7 @@ public class MainIoCNewRouteBuilderTest {
         main.stop();
     }
 
-    public static class MyConfiguration {
+    public static class MyConfiguration implements CamelConfiguration {
 
         @BeanInject
         private CamelContext camel;
@@ -73,7 +74,8 @@ public class MainIoCNewRouteBuilderTest {
             }
         }
 
-        public void configure() {
+        @Override
+        public void configure(CamelContext camel) {
             camel.getGlobalOptions().put("foo", "123");
         }
     }

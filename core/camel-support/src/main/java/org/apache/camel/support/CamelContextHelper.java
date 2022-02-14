@@ -20,7 +20,6 @@ import java.time.Duration;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
-import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -210,14 +209,20 @@ public final class CamelContextHelper {
     /**
      * Look up a bean of the give type in the {@link org.apache.camel.spi.Registry} on the {@link CamelContext}
      * returning an instance if only one bean is present,
+     *
+     * @deprecated use {@link #findSingleByType(CamelContext, Class)}
      */
+    @Deprecated
     public static <T> T findByType(CamelContext camelContext, Class<T> type) {
-        Set<T> set = camelContext.getRegistry().findByType(type);
-        if (set.size() == 1) {
-            return set.iterator().next();
-        }
+        return camelContext.getRegistry().findSingleByType(type);
+    }
 
-        return null;
+    /**
+     * Look up a bean of the give type in the {@link org.apache.camel.spi.Registry} on the {@link CamelContext}
+     * returning an instance if only one bean is present,
+     */
+    public static <T> T findSingleByType(CamelContext camelContext, Class<T> type) {
+        return camelContext.getRegistry().findSingleByType(type);
     }
 
     /**

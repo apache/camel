@@ -76,6 +76,7 @@ import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelContextNameStrategy;
+import org.apache.camel.spi.CamelDependencyInjectionAnnotationFactory;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.ComponentNameResolver;
 import org.apache.camel.spi.ComponentResolver;
@@ -176,6 +177,7 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     private final PropertiesComponent propertiesComponent;
     private final BeanIntrospection beanIntrospection;
     private final CamelBeanPostProcessor beanPostProcessor;
+    private final CamelDependencyInjectionAnnotationFactory dependencyInjectionAnnotationFactory;
     private final HeadersMapFactory headersMapFactory;
     private final ExchangeFactory exchangeFactory;
     private final ExchangeFactoryManager exchangeFactoryManager;
@@ -200,6 +202,7 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     private final boolean dumpRoutes;
     private final String mdcLoggingKeysPattern;
     private final boolean useMDCLogging;
+    private final String basePackageScan;
     private final List<Route> routes;
     private final boolean messageHistory;
     private final boolean allowUseOriginalMessage;
@@ -227,6 +230,8 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
         propertiesComponent = context.getPropertiesComponent();
         beanIntrospection = context.adapt(ExtendedCamelContext.class).getBeanIntrospection();
         beanPostProcessor = context.adapt(ExtendedCamelContext.class).getBeanPostProcessor();
+        dependencyInjectionAnnotationFactory
+                = context.adapt(ExtendedCamelContext.class).getDependencyInjectionAnnotationFactory();
         headersMapFactory = context.adapt(ExtendedCamelContext.class).getHeadersMapFactory();
         exchangeFactory = context.adapt(ExtendedCamelContext.class).getExchangeFactory();
         exchangeFactoryManager = context.adapt(ExtendedCamelContext.class).getExchangeFactoryManager();
@@ -251,6 +256,7 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
         dumpRoutes = context.isDumpRoutes();
         mdcLoggingKeysPattern = context.getMDCLoggingKeysPattern();
         useMDCLogging = context.isUseMDCLogging();
+        basePackageScan = context.adapt(ExtendedCamelContext.class).getBasePackageScan();
         messageHistory = context.isMessageHistory();
         allowUseOriginalMessage = context.isAllowUseOriginalMessage();
         logExhaustedMessageBody = context.isLogExhaustedMessageBody();
@@ -1248,6 +1254,16 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
+    public String getBasePackageScan() {
+        return basePackageScan;
+    }
+
+    @Override
+    public void setBasePackageScan(String basePackageScan) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public Boolean isDumpRoutes() {
         return dumpRoutes;
     }
@@ -1442,6 +1458,16 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
 
     @Override
     public void setBeanPostProcessor(CamelBeanPostProcessor beanPostProcessor) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public CamelDependencyInjectionAnnotationFactory getDependencyInjectionAnnotationFactory() {
+        return dependencyInjectionAnnotationFactory;
+    }
+
+    @Override
+    public void setDependencyInjectionAnnotationFactory(CamelDependencyInjectionAnnotationFactory factory) {
         throw new UnsupportedOperationException();
     }
 

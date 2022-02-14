@@ -78,7 +78,7 @@ public class Ses2Producer extends DefaultProducer {
     private SendEmailRequest createMailRequest(Exchange exchange) {
         SendEmailRequest.Builder request = SendEmailRequest.builder();
         request.source(determineFrom(exchange));
-        request.destination(determineTo(exchange));
+        request.destination(determineDestination(exchange));
         request.returnPath(determineReturnPath(exchange));
         request.replyToAddresses(determineReplyToAddresses(exchange));
         request.message(createMessage(exchange));
@@ -148,15 +148,39 @@ public class Ses2Producer extends DefaultProducer {
         return returnPath;
     }
 
-    private Destination determineTo(Exchange exchange) {
-        String to = exchange.getIn().getHeader(Ses2Constants.TO, String.class);
-        if (to == null) {
-            to = getConfiguration().getTo();
+    private Destination determineDestination(Exchange exchange) {
+        List<String> to = determineRawTo(exchange);
+        List<String> cc = determineRawCc(exchange);
+        List<String> bcc = determineRawBcc(exchange);
+        return Destination.builder().toAddresses(to).ccAddresses(cc).bccAddresses(bcc).build();
+    }
+
+    private List<String> determineRawCc(Exchange exchange) {
+        String cc = exchange.getIn().getHeader(Ses2Constants.CC, String.class);
+        if (ObjectHelper.isEmpty(cc)) {
+            cc = getConfiguration().getCc();
         }
-        List<String> destinations = Stream.of(to.split(","))
-                .map(String::trim)
-                .collect(Collectors.toList());
-        return Destination.builder().toAddresses(destinations).build();
+        if (ObjectHelper.isNotEmpty(cc)) {
+            return Stream.of(cc.split(","))
+                    .map(String::trim)
+                    .collect(Collectors.toList());
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
+    private List<String> determineRawBcc(Exchange exchange) {
+        String bcc = exchange.getIn().getHeader(Ses2Constants.BCC, String.class);
+        if (ObjectHelper.isEmpty(bcc)) {
+            bcc = getConfiguration().getBcc();
+        }
+        if (ObjectHelper.isNotEmpty(bcc)) {
+            return Stream.of(bcc.split(","))
+                    .map(String::trim)
+                    .collect(Collectors.toList());
+        } else {
+            return Collections.emptyList();
+        }
     }
 
     private List<String> determineRawTo(Exchange exchange) {

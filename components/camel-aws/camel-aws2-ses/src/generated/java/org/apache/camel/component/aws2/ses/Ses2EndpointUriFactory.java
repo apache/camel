@@ -21,7 +21,9 @@ public class Ses2EndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(18);
+        Set<String> props = new HashSet<>(20);
+        props.add("cc");
+        props.add("bcc");
         props.add("proxyProtocol");
         props.add("returnPath");
         props.add("secretKey");

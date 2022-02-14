@@ -73,7 +73,7 @@ public class XRefCheckMojo extends AbstractMojo {
         Map<String, String> attributes = (Map) ((Map) site.get("asciidoc")).get("attributes");
         if (attributes != null) {
             attributes = attributes.entrySet().stream()
-                    .collect(Collectors.toMap(e -> "{" + e.getKey() + "}", e -> e.getValue()));
+                    .collect(Collectors.toMap(e -> "{" + e.getKey() + "}", Map.Entry::getValue));
         }
         Map<String, List<Path>> componentPaths = new HashMap<>();
         Map<String, List<String>> componentNavs = new HashMap<>();
@@ -116,7 +116,7 @@ public class XRefCheckMojo extends AbstractMojo {
                                         .filter(Files::isRegularFile)
                                         .forEach(page -> {
                                             Path rel = pagesDir.relativize(page);
-                                            pages.put(component + ":" + m + ":" + rel.toString(), page);
+                                            pages.put(component + ":" + m + ":" + rel, page);
                                         });
                             });
                 }

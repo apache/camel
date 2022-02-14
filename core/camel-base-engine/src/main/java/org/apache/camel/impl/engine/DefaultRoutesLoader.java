@@ -98,7 +98,10 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
                         "Cannot find RoutesBuilderLoader in classpath supporting file extension: " + extension);
             }
 
-            answer.add(loader.loadRoutesBuilder(resource));
+            RoutesBuilder builder = loader.loadRoutesBuilder(resource);
+            if (builder != null) {
+                answer.add(builder);
+            }
         }
 
         return answer;

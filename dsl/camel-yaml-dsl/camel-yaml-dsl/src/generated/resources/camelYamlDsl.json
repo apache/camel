@@ -1946,6 +1946,18 @@
         },
         "required" : [ "key", "value" ]
       },
+      "org.apache.camel.model.PropertyExpressionDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "expression" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+          },
+          "key" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "key" ]
+      },
       "org.apache.camel.model.RecipientListDefinition" : {
         "type" : "object",
         "anyOf" : [ {
@@ -2422,7 +2434,7 @@
             }
           },
           "script" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.RouteTemplateScriptDefinition"
+            "type" : "string"
           },
           "type" : {
             "type" : "string"
@@ -2471,18 +2483,6 @@
           }
         },
         "required" : [ "name" ]
-      },
-      "org.apache.camel.model.RouteTemplateScriptDefinition" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "script" : {
-              "type" : "string"
-            }
-          }
-        } ]
       },
       "org.apache.camel.model.RoutingSlipDefinition" : {
         "oneOf" : [ {
@@ -2566,7 +2566,7 @@
           "option" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.SagaOptionDefinition"
+              "$ref" : "#/items/definitions/org.apache.camel.model.PropertyExpressionDefinition"
             }
           },
           "propagation" : {
@@ -2583,26 +2583,8 @@
           },
           "timeout" : {
             "type" : "string"
-          },
-          "timeoutInMilliseconds" : {
-            "type" : "number"
           }
         }
-      },
-      "org.apache.camel.model.SagaOptionDefinition" : {
-        "type" : "object",
-        "anyOf" : [ {
-          "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
-        } ],
-        "properties" : {
-          "expression" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
-          },
-          "optionName" : {
-            "type" : "string"
-          }
-        },
-        "required" : [ "optionName" ]
       },
       "org.apache.camel.model.SamplingDefinition" : {
         "type" : "object",
@@ -2887,6 +2869,69 @@
             }
           }
         }
+      },
+      "org.apache.camel.model.TemplatedRouteBeanDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "beanType" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "properties" : {
+            "type" : "object"
+          },
+          "property" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
+            }
+          },
+          "script" : {
+            "type" : "string"
+          },
+          "type" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "name", "type" ]
+      },
+      "org.apache.camel.model.TemplatedRouteDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "beans" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.dsl.yaml.deserializers.NamedBeanDefinition"
+            }
+          },
+          "parameters" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.TemplatedRouteParameterDefinition"
+            }
+          },
+          "routeId" : {
+            "type" : "string"
+          },
+          "routeTemplateRef" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "routeTemplateRef" ]
+      },
+      "org.apache.camel.model.TemplatedRouteParameterDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string"
+          },
+          "value" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "name", "value" ]
       },
       "org.apache.camel.model.ThreadPoolProfileDefinition" : {
         "type" : "object",
@@ -7775,8 +7820,8 @@
       "routeTemplate" : {
         "$ref" : "#/items/definitions/org.apache.camel.model.RouteTemplateDefinition"
       },
-      "template" : {
-        "$ref" : "#/items/definitions/org.apache.camel.model.RouteTemplateDefinition"
+      "templatedRoute" : {
+        "$ref" : "#/items/definitions/org.apache.camel.model.TemplatedRouteDefinition"
       },
       "rest" : {
         "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestDefinition"

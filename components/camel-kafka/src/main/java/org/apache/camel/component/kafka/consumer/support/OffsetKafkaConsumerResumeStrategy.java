@@ -35,9 +35,15 @@ public class OffsetKafkaConsumerResumeStrategy implements KafkaConsumerResumeStr
     private static final Logger LOG = LoggerFactory.getLogger(OffsetKafkaConsumerResumeStrategy.class);
 
     private final StateRepository<String, String> offsetRepository;
+    private Consumer<?, ?> consumer;
 
     public OffsetKafkaConsumerResumeStrategy(StateRepository<String, String> offsetRepository) {
         this.offsetRepository = offsetRepository;
+    }
+
+    @Override
+    public void setConsumer(Consumer<?, ?> consumer) {
+        this.consumer = consumer;
     }
 
     private void resumeFromOffset(final Consumer<?, ?> consumer, TopicPartition topicPartition, String offsetState) {
@@ -48,7 +54,7 @@ public class OffsetKafkaConsumerResumeStrategy implements KafkaConsumerResumeStr
     }
 
     @Override
-    public void resume(final Consumer<?, ?> consumer) {
+    public void resume() {
         Set<TopicPartition> assignments = consumer.assignment();
         for (TopicPartition topicPartition : assignments) {
             String offsetState = offsetRepository.getState(serializeOffsetKey(topicPartition));
@@ -56,5 +62,15 @@ public class OffsetKafkaConsumerResumeStrategy implements KafkaConsumerResumeStr
                 resumeFromOffset(consumer, topicPartition, offsetState);
             }
         }
+    }
+
+    /*
+     Note: when self-managing the offsets, we don't need to use the information on the resumable
+     instance. We can collect the assignments directly from the consumer instance as we always did.
+     */
+    @SuppressWarnings("unused")
+    @Override
+    public void resume(KafkaResumable resumable) {
+        resume();
     }
 }

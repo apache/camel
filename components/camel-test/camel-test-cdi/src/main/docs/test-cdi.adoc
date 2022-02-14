@@ -1,10 +1,11 @@
-= Test CDI Component
+= Test CDI Component (deprecated)
 :doctitle: Test CDI
 :shortname: test-cdi
 :artifactid: camel-test-cdi
 :description: Camel unit testing with CDI
 :since: 2.17
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 
 *Since Camel {since}*
 

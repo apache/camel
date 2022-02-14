@@ -58,6 +58,16 @@ public interface HealthCheck extends HasGroup, HasId, Ordered {
     }
 
     /**
+     * Whether this health check is enabled
+     */
+    boolean isEnabled();
+
+    /**
+     * Used for enabling or disabling this health check
+     */
+    void setEnabled(boolean enabled);
+
+    /**
      * Return metadata associated with this {@link HealthCheck}.
      */
     default Map<String, Object> getMetaData() {
@@ -77,11 +87,6 @@ public interface HealthCheck extends HasGroup, HasId, Ordered {
     default boolean isLiveness() {
         return true;
     }
-
-    /**
-     * Return the configuration associated with this {@link HealthCheck}.
-     */
-    HealthCheckConfiguration getConfiguration();
 
     /**
      * Invoke the check.
@@ -130,7 +135,7 @@ public interface HealthCheck extends HasGroup, HasId, Ordered {
         /**
          * A key/value combination of details.
          *
-         * @return a non null details map
+         * @return a non null details map (empty if no details)
          */
         Map<String, Object> getDetails();
     }

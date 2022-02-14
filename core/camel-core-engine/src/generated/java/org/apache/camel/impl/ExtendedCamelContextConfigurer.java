@@ -35,6 +35,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "AutowiredEnabled": target.setAutowiredEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "backlogtracing":
         case "BacklogTracing": target.setBacklogTracing(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "basepackagescan":
+        case "BasePackageScan": target.setBasePackageScan(property(camelContext, java.lang.String.class, value)); return true;
         case "beanintrospection":
         case "BeanIntrospection": target.setBeanIntrospection(property(camelContext, org.apache.camel.spi.BeanIntrospection.class, value)); return true;
         case "beanpostprocessor":
@@ -63,6 +65,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "DeferServiceFactory": target.setDeferServiceFactory(property(camelContext, org.apache.camel.spi.DeferServiceFactory.class, value)); return true;
         case "delayer":
         case "Delayer": target.setDelayer(property(camelContext, java.lang.Long.class, value)); return true;
+        case "dependencyinjectionannotationfactory":
+        case "DependencyInjectionAnnotationFactory": target.setDependencyInjectionAnnotationFactory(property(camelContext, org.apache.camel.spi.CamelDependencyInjectionAnnotationFactory.class, value)); return true;
         case "devconsole":
         case "DevConsole": target.setDevConsole(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "devconsoleresolver":
@@ -228,6 +232,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "AutowiredEnabled": return java.lang.Boolean.class;
         case "backlogtracing":
         case "BacklogTracing": return java.lang.Boolean.class;
+        case "basepackagescan":
+        case "BasePackageScan": return java.lang.String.class;
         case "beanintrospection":
         case "BeanIntrospection": return org.apache.camel.spi.BeanIntrospection.class;
         case "beanpostprocessor":
@@ -256,6 +262,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "DeferServiceFactory": return org.apache.camel.spi.DeferServiceFactory.class;
         case "delayer":
         case "Delayer": return java.lang.Long.class;
+        case "dependencyinjectionannotationfactory":
+        case "DependencyInjectionAnnotationFactory": return org.apache.camel.spi.CamelDependencyInjectionAnnotationFactory.class;
         case "devconsole":
         case "DevConsole": return java.lang.Boolean.class;
         case "devconsoleresolver":
@@ -422,6 +430,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "AutowiredEnabled": return target.isAutowiredEnabled();
         case "backlogtracing":
         case "BacklogTracing": return target.isBacklogTracing();
+        case "basepackagescan":
+        case "BasePackageScan": return target.getBasePackageScan();
         case "beanintrospection":
         case "BeanIntrospection": return target.getBeanIntrospection();
         case "beanpostprocessor":
@@ -450,6 +460,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "DeferServiceFactory": return target.getDeferServiceFactory();
         case "delayer":
         case "Delayer": return target.getDelayer();
+        case "dependencyinjectionannotationfactory":
+        case "DependencyInjectionAnnotationFactory": return target.getDependencyInjectionAnnotationFactory();
         case "devconsole":
         case "DevConsole": return target.isDevConsole();
         case "devconsoleresolver":

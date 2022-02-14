@@ -31,6 +31,7 @@ import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.CamelBeanPostProcessor;
+import org.apache.camel.spi.CamelDependencyInjectionAnnotationFactory;
 import org.apache.camel.spi.ComponentNameResolver;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.ConfigurerResolver;
@@ -261,6 +262,16 @@ public interface ExtendedCamelContext extends CamelContext {
      * Sets a custom bean post processor to use.
      */
     void setBeanPostProcessor(CamelBeanPostProcessor beanPostProcessor);
+
+    /**
+     * Returns the annotation dependency injection factory.
+     */
+    CamelDependencyInjectionAnnotationFactory getDependencyInjectionAnnotationFactory();
+
+    /**
+     * Sets a custom annotation dependency injection factory.
+     */
+    void setDependencyInjectionAnnotationFactory(CamelDependencyInjectionAnnotationFactory factory);
 
     /**
      * Returns the management mbean assembler
@@ -829,5 +840,19 @@ public interface ExtendedCamelContext extends CamelContext {
      *                                  them
      */
     String resolvePropertyPlaceholders(String text, boolean keepUnresolvedOptional);
+
+    /**
+     * Package name to use as base (offset) for classpath scanning of custom services, type converters, and the likes
+     *
+     * @return the base package name (can bre null if not configured)
+     */
+    String getBasePackageScan();
+
+    /**
+     * Package name to use as base (offset) for classpath scanning of custom services, type converters, and the likes
+     *
+     * @param basePackageScan the base package name
+     */
+    void setBasePackageScan(String basePackageScan);
 
 }

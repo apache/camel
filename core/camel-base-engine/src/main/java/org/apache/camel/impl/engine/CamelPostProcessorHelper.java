@@ -302,7 +302,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
             if (getCamelContext() != null && type.isAssignableFrom(getCamelContext().getClass())) {
                 return getCamelContext();
             }
-            Set<?> found = getCamelContext().getRegistry().findByType(type);
+            Set<?> found = getCamelContext() != null ? getCamelContext().getRegistry().findByType(type) : null;
             if (found == null || found.isEmpty()) {
                 throw new NoSuchBeanException(name, type.getName());
             } else if (found.size() > 1) {

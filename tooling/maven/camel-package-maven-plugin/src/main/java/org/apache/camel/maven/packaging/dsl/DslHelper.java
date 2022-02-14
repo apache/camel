@@ -30,11 +30,6 @@ public final class DslHelper {
     private DslHelper() {
     }
 
-    public static List<File> loadAllJavaFiles(final File dir, final String targetJavaPackageName) {
-        final File allComponentsDslEndpointFactory = new File(dir, targetJavaPackageName.replace('.', '/'));
-        return loadAllJavaFiles(allComponentsDslEndpointFactory);
-    }
-
     public static List<File> loadAllJavaFiles(final File dir) {
         final File[] files = dir.listFiles();
 
@@ -52,19 +47,24 @@ public final class DslHelper {
     public static String toCamelCaseLower(final String schema) {
         String convertedText = CaseUtils.toCamelCase(schema, false, '-', '+');
         if (convertedText != null) {
-            switch (convertedText) {
-                case "class":
-                    convertedText = "clas";
-                    break;
-                case "package":
-                    convertedText = "packag";
-                    break;
-                case "rest":
-                    convertedText = "restEndpoint";
-                    break;
-                default:
-                    break;
-            }
+            convertedText = sanitizeText(convertedText);
+        }
+        return convertedText;
+    }
+
+    public static String sanitizeText(String convertedText) {
+        switch (convertedText) {
+            case "class":
+                convertedText = "clas";
+                break;
+            case "package":
+                convertedText = "packag";
+                break;
+            case "rest":
+                convertedText = "restEndpoint";
+                break;
+            default:
+                break;
         }
         return convertedText;
     }
@@ -80,42 +80,8 @@ public final class DslHelper {
         return desc;
     }
 
-    public static String getMainDescription(final ComponentModel componentModel) {
-        String desc = getMainDescriptionWithoutPathOptions(componentModel);
-        // include javadoc for all path parameters and mark which are required
-        desc += "\n";
-        desc += "\nSyntax: <code>" + componentModel.getSyntax() + "</code>";
-
-        for (ComponentModel.EndpointOptionModel option : componentModel.getEndpointOptions()) {
-            if ("path".equals(option.getKind())) {
-                desc += "\n";
-                desc += "\nPath parameter: " + option.getName();
-                if (option.isRequired()) {
-                    desc += " (required)";
-                }
-                if (option.isDeprecated()) {
-                    desc += " <strong>deprecated</strong>";
-                }
-                desc += "\n" + option.getDescription();
-                if (option.getDefaultValue() != null) {
-                    desc += "\nDefault value: " + option.getDefaultValue();
-                }
-                if (option.getEnums() != null && !option.getEnums().isEmpty()) {
-                    desc += "\nThere are " + option.getEnums().size() + " enums and the value can be one of: "
-                            + wrapEnumValues(option.getEnums());
-                }
-            }
-        }
-        return desc;
-    }
-
     public static String generateComponentBuilderClassName(final ComponentModel componentModel, final String suffix) {
         return StringUtils.capitalize(toCamelCaseLower(componentModel.getScheme()))
                + "Component" + suffix;
-    }
-
-    private static String wrapEnumValues(List<String> enumValues) {
-        // comma to space so we can wrap words (which uses space)
-        return String.join(", ", enumValues);
     }
 }

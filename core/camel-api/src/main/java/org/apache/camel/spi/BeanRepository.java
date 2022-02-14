@@ -64,6 +64,21 @@ public interface BeanRepository {
     <T> Set<T> findByType(Class<T> type);
 
     /**
+     * Finds the bean by type, if there is exactly only one instance of the bean
+     *
+     * @param  type the type of the beans
+     * @return      the single bean instance, or null if none found or there are more than one bean of the given type.
+     */
+    default <T> T findSingleByType(Class<T> type) {
+        Set<T> set = findByType(type);
+        if (set.size() == 1) {
+            return set.iterator().next();
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Strategy to wrap the value to be stored in the registry.
      *
      * @param  value the value

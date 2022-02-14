@@ -18,13 +18,18 @@ package org.apache.camel.dsl.yaml;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
+import org.apache.camel.dsl.yaml.common.YamlDeserializerSupport;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RouteTemplateParameterDefinition;
+import org.apache.camel.spi.CamelContextCustomizer;
+import org.apache.camel.spi.DependencyStrategy;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.RoutesLoader;
 import org.snakeyaml.engine.v2.nodes.Node;
@@ -91,11 +96,42 @@ public class KameletRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
             }
         }
 
+        // if there are dependencies then we should include them
+        Node deps = nodeAt(root, "/spec/dependencies");
+        CamelContextCustomizer customizer = null;
+        if (deps != null) {
+            customizer = preConfigureDependencies(deps);
+        }
+        final CamelContextCustomizer dependencies = customizer;
+
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                if (dependencies != null) {
+                    dependencies.configure(getCamelContext());
+                }
                 getRouteTemplateCollection().routeTemplate(rtd);
             }
         };
     }
+
+    private CamelContextCustomizer preConfigureDependencies(Node node) {
+        final List<String> dep = YamlDeserializerSupport.asStringList(node);
+        return new CamelContextCustomizer() {
+            @Override
+            public void configure(CamelContext camelContext) {
+                // notify the listeners about each dependency detected
+                for (DependencyStrategy ds : camelContext.getRegistry().findByType(DependencyStrategy.class)) {
+                    for (String d : dep) {
+                        try {
+                            ds.onDependency(d);
+                        } catch (Exception e) {
+                            // ignore
+                        }
+                    }
+                }
+            }
+        };
+    }
+
 }

@@ -19,10 +19,7 @@ package org.apache.camel.component.infinispan.remote;
 import java.util.List;
 
 import org.infinispan.protostream.sampledomain.User;
-import org.junit.jupiter.api.condition.DisabledOnOs;
-import org.junit.jupiter.api.condition.OS;
 
-@DisabledOnOs(OS.MAC)
 public class InfinispanRemoteQueryTestSupport extends InfinispanRemoteTestSupport {
 
     public static final User[] USERS = new User[] {

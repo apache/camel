@@ -66,7 +66,7 @@ public class JshRoutesBuilderLoader extends RoutesBuilderLoaderSupport {
         // By default the jdk.jshell.execution.DefaultLoaderDelegate uses a
         // custom URL class-loader and does not provide any option to set the
         // parent which causes the ThreadLocal hack used to inject bindings
-        // to fail as there are two copies fo the Jsh class (one from the
+        // to fail as there are two copies of the JSH class (one from the
         // Quarkus class loader and one for the custom one).
         //
         final JshClassLoader jshcl = new JshClassLoader(tccl);

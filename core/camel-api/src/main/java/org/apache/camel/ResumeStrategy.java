@@ -27,7 +27,6 @@ public interface ResumeStrategy<T> {
      * A consumer, iterator or value class that can be used to set the index position from which to resume from. The
      * type is specific to the component.
      *
-     * @param resumable A resumable object.
      */
-    void resume(T resumable);
+    void resume();
 }

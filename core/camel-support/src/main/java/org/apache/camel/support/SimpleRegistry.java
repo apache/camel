@@ -100,7 +100,7 @@ public class SimpleRegistry extends LinkedHashMap<String, Map<Class<?>, Object>>
     }
 
     @Override
-    public void bind(String id, Class type, Object bean) {
+    public void bind(String id, Class<?> type, Object bean) {
         if (bean != null) {
             computeIfAbsent(id, k -> new LinkedHashMap<>()).put(type, wrap(bean));
         }
@@ -114,6 +114,11 @@ public class SimpleRegistry extends LinkedHashMap<String, Map<Class<?>, Object>>
     @Override
     public void bindAsPrototype(String id, Class<?> type, Supplier<Object> bean) {
         throw new UnsupportedOperationException("Use SupplierRegistry");
+    }
+
+    @Override
+    public void unbind(String id) {
+        remove(id);
     }
 
     @Override

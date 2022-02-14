@@ -40,7 +40,7 @@ public class ValidateReifier extends ExpressionReifier<ValidateDefinition> {
         if (factory == null && definition.getPredicateExceptionFactory() != null) {
             factory = lookupByNameAndType(definition.getPredicateExceptionFactory(), PredicateExceptionFactory.class);
         } else if (factory == null) {
-            factory = CamelContextHelper.findByType(camelContext, PredicateExceptionFactory.class);
+            factory = CamelContextHelper.findSingleByType(camelContext, PredicateExceptionFactory.class);
         }
         answer.setPredicateExceptionFactory(factory);
         return answer;

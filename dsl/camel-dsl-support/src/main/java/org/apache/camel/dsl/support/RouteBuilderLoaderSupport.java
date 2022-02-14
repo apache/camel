@@ -58,21 +58,23 @@ public abstract class RouteBuilderLoaderSupport extends RoutesBuilderLoaderSuppo
     @Override
     public RoutesBuilder loadRoutesBuilder(Resource resource) throws Exception {
         final RouteBuilder builder = doLoadRouteBuilder(resource);
-        CamelContextAware.trySetCamelContext(builder, getCamelContext());
-        builder.setResource(resource);
+        if (builder != null) {
+            CamelContextAware.trySetCamelContext(builder, getCamelContext());
+            builder.setResource(resource);
 
-        if (recorder != null) {
-            StartupStep step = recorder.beginStep(
-                    getClass(),
-                    resource.getLocation(),
-                    "Loading route from: " + resource.getLocation());
+            if (recorder != null) {
+                StartupStep step = recorder.beginStep(
+                        getClass(),
+                        resource.getLocation(),
+                        "Loading route from: " + resource.getLocation());
 
-            builder.addLifecycleInterceptor(new RouteBuilderLifecycleStrategy() {
-                @Override
-                public void afterConfigure(RouteBuilder builder) {
-                    step.endStep();
-                }
-            });
+                builder.addLifecycleInterceptor(new RouteBuilderLifecycleStrategy() {
+                    @Override
+                    public void afterConfigure(RouteBuilder builder) {
+                        step.endStep();
+                    }
+                });
+            }
         }
 
         return builder;

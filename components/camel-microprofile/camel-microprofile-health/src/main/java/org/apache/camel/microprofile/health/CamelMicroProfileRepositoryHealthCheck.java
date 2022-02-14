@@ -17,6 +17,7 @@
 package org.apache.camel.microprofile.health;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.camel.health.HealthCheck.Result;
@@ -49,9 +50,9 @@ final class CamelMicroProfileRepositoryHealthCheck implements HealthCheck {
 
         if (repository.isEnabled()) {
             List<Result> results = repository.stream()
-                    .filter(healthCheck -> healthCheck.getConfiguration().isEnabled())
+                    .filter(org.apache.camel.health.HealthCheck::isEnabled)
                     .map(org.apache.camel.health.HealthCheck::call)
-                    .filter(result -> result != null)
+                    .filter(Objects::nonNull)
                     .collect(Collectors.toList());
 
             // If any of the result statuses is DOWN, find the first one and report any error details

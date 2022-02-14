@@ -32,6 +32,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.camel.util.CastUtils;
+import org.apache.camel.util.IOHelper;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
@@ -68,6 +69,14 @@ import org.codehaus.mojo.exec.Property;
 @Mojo(name = "run", defaultPhase = LifecyclePhase.PREPARE_PACKAGE,
       requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
 public class RunMojo extends AbstractExecMojo {
+
+    private static final String LOG4J_TEMPLATE = ""
+                                                 + "appender.stdout.type = Console\n"
+                                                 + "appender.stdout.name = out\n"
+                                                 + "appender.stdout.layout.type = PatternLayout\n"
+                                                 + "appender.stdout.layout.pattern = %style{%d{yyyy-MM-dd HH:mm:ss.SSS}}{Dim} %highlight{%5p} %style{%pid}{Magenta} %style{---}{Dim} %style{[%15.15t]}{Dim} %style{%-40.40c}{Cyan} : %m%n\n"
+                                                 + "rootLogger.level = @@@LOGGING_LEVEL@@@\n"
+                                                 + "rootLogger.appenderRef.out.ref = out\n";
 
     // this code is based on a copy-and-paste of maven-exec-plugin
     //
@@ -119,8 +128,8 @@ public class RunMojo extends AbstractExecMojo {
      *
      * You can change the root logging level to: FATAL, ERROR, WARN, INFO, DEBUG, TRACE, OFF
      */
-    @Parameter(property = "camel.logLevel", defaultValue = "OFF")
-    protected String logLevel;
+    @Parameter(property = "camel.loggingLevel", defaultValue = "OFF")
+    protected String loggingLevel;
 
     /**
      * Whether to use CDI when running, instead of Spring
@@ -659,7 +668,7 @@ public class RunMojo extends AbstractExecMojo {
      * @return                        the classloader
      * @throws MojoExecutionException
      */
-    private ClassLoader getClassLoader() throws MojoExecutionException {
+    private ClassLoader getClassLoader() throws MojoExecutionException, MojoFailureException {
         List<URL> classpathURLs = new ArrayList<>();
         // project classpath must be first
         this.addRelevantProjectDependenciesToClasspath(classpathURLs);
@@ -668,12 +677,17 @@ public class RunMojo extends AbstractExecMojo {
         // and plugin classpath last
         this.addRelevantPluginDependenciesToClasspath(classpathURLs);
 
-        if (!logLevel.equals("OFF")) {
-            getLog().info("Using built-in logging level: " + logLevel);
+        if (!loggingLevel.equals("OFF")) {
+            getLog().info("Using built-in logging level: " + loggingLevel);
             // and extra plugin classpath
             this.addConsoleLogDependenciesToClasspath(classpathURLs);
-            // setup logging
-            LoggingUtil.configureLog(logLevel);
+            // setup logging which can only be done by copying log4j.properties to project output to be in classpath
+            try {
+                String out = LOG4J_TEMPLATE.replace("@@@LOGGING_LEVEL@@@", loggingLevel);
+                IOHelper.writeText(out, new File(project.getBuild().getOutputDirectory() + "/log4j2.properties"));
+            } catch (Exception e) {
+                throw new MojoFailureException("Error configuring loggingLevel", e);
+            }
         }
 
         if (logClasspath) {

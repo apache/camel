@@ -67,6 +67,7 @@ import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.model.RouteConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
+import org.apache.camel.model.TemplatedRouteDefinition;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.rest.RestDefinition;
@@ -81,6 +82,7 @@ import org.apache.camel.spi.BeanRepository;
 import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelContextNameStrategy;
+import org.apache.camel.spi.CamelDependencyInjectionAnnotationFactory;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.ComponentNameResolver;
 import org.apache.camel.spi.ComponentResolver;
@@ -931,6 +933,16 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     @Override
+    public String getBasePackageScan() {
+        return getExtendedCamelContext().getBasePackageScan();
+    }
+
+    @Override
+    public void setBasePackageScan(String basePackageScan) {
+        getExtendedCamelContext().setBasePackageScan(basePackageScan);
+    }
+
+    @Override
     public Boolean isUseMDCLogging() {
         return delegate.isUseMDCLogging();
     }
@@ -1251,6 +1263,16 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     @Override
     public void setBeanPostProcessor(CamelBeanPostProcessor beanPostProcessor) {
         getExtendedCamelContext().setBeanPostProcessor(beanPostProcessor);
+    }
+
+    @Override
+    public CamelDependencyInjectionAnnotationFactory getDependencyInjectionAnnotationFactory() {
+        return getExtendedCamelContext().getDependencyInjectionAnnotationFactory();
+    }
+
+    @Override
+    public void setDependencyInjectionAnnotationFactory(CamelDependencyInjectionAnnotationFactory factory) {
+        getExtendedCamelContext().setDependencyInjectionAnnotationFactory(factory);
     }
 
     @Override
@@ -1869,6 +1891,12 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     public String addRouteFromTemplate(String routeId, String routeTemplateId, RouteTemplateContext routeTemplateContext)
             throws Exception {
         return getModelCamelContext().addRouteFromTemplate(routeId, routeTemplateId, routeTemplateContext);
+    }
+
+    @Override
+    public void addRouteFromTemplatedRoute(TemplatedRouteDefinition templatedRouteDefinition)
+            throws Exception {
+        getModelCamelContext().addRouteFromTemplatedRoute(templatedRouteDefinition);
     }
 
     @Override

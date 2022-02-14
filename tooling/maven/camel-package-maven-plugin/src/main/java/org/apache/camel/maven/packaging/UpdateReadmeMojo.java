@@ -177,8 +177,8 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
                     boolean updated = updateHeader(componentName, file, model, " Component", kind);
 
-                    checkComponentHeader(file, model);
-                    checkSince(file, model);
+                    checkComponentHeader(file);
+                    checkSince(file);
 
                     updated |= updateOptionsIn(file, "component-configure", "");
                     String options = evaluateTemplate("component-options.mvel", model);
@@ -224,7 +224,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
                     boolean exists = file.exists();
 
                     boolean updated = updateHeader(componentName, file, model, " Component", kind);
-                    checkSince(file, model);
+                    checkSince(file);
 
                     if (updated) {
                         getLog().info("Updated doc file: " + file);
@@ -274,7 +274,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
                     boolean exists = file.exists();
                     boolean updated = updateHeader(dataFormatName, file, model, " DataFormat", kind);
-                    checkSince(file, model);
+                    checkSince(file);
 
                     String options = evaluateTemplate("dataformat-options.mvel", model);
                     updated |= updateOptionsIn(file, kind, options);
@@ -334,7 +334,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
                     LanguageModel model = JsonMapper.generateLanguageModel(json);
 
                     boolean updated = updateHeader(languageName, file, model, " Language", kind);
-                    checkSince(file, model);
+                    checkSince(file);
 
                     String options = evaluateTemplate("language-options.mvel", model);
                     updated |= updateOptionsIn(file, kind, options);
@@ -447,7 +447,6 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
             String kind)
             throws MojoExecutionException {
         getLog().debug("updateHeader " + file);
-        final String linkSuffix = "-" + kind;
         if (model == null || !file.exists()) {
             return false;
         }
@@ -567,7 +566,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
         return updated;
     }
 
-    private void checkComponentHeader(final File file, final ComponentModel model) throws MojoExecutionException {
+    private void checkComponentHeader(final File file) throws MojoExecutionException {
         if (!file.exists()) {
             return;
         }
@@ -586,7 +585,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
         }
     }
 
-    private void checkSince(final File file, final ArtifactModel<?> model) throws MojoExecutionException {
+    private void checkSince(final File file) throws MojoExecutionException {
         if (!file.exists()) {
             return;
         }
@@ -758,8 +757,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
     }
 
     private ComponentModel generateComponentModel(String json) {
-        ComponentModel component = JsonMapper.generateComponentModel(json);
-        return component;
+        return JsonMapper.generateComponentModel(json);
     }
 
     private OtherModel generateOtherModel(String json) {
@@ -768,8 +766,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
     }
 
     private DataFormatModel generateDataFormatModel(String json) {
-        DataFormatModel model = JsonMapper.generateDataFormatModel(json);
-        return model;
+        return JsonMapper.generateDataFormatModel(json);
     }
 
     private AnnotationModel generateAnnotationModel(Class<?> annotation) {
@@ -895,10 +892,4 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
     private boolean isFailFast() {
         return failFast != null && failFast;
     }
-
-    private String wrapEnumValues(List<String> enumValues) {
-        // comma to space so we can wrap words (which uses space)
-        return String.join(", ", enumValues);
-    }
-
 }

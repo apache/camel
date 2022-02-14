@@ -71,8 +71,6 @@ public class ReadinessAndLivenessTest {
 
     private static class MyReadyCheck extends AbstractHealthCheck implements CamelContextAware {
 
-        private CamelContext context;
-
         protected MyReadyCheck(String group, String id) {
             super(group, id);
         }
@@ -87,20 +85,9 @@ public class ReadinessAndLivenessTest {
             builder.up();
         }
 
-        @Override
-        public void setCamelContext(CamelContext camelContext) {
-            this.context = camelContext;
-        }
-
-        @Override
-        public CamelContext getCamelContext() {
-            return context;
-        }
     }
 
     private static class MyLiveCheck extends AbstractHealthCheck implements CamelContextAware {
-
-        private CamelContext context;
 
         protected MyLiveCheck(String group, String id) {
             super(group, id);
@@ -116,14 +103,5 @@ public class ReadinessAndLivenessTest {
             builder.down();
         }
 
-        @Override
-        public void setCamelContext(CamelContext camelContext) {
-            this.context = camelContext;
-        }
-
-        @Override
-        public CamelContext getCamelContext() {
-            return context;
-        }
     }
 }

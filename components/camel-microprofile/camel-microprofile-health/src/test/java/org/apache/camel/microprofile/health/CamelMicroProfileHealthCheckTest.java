@@ -178,7 +178,7 @@ public class CamelMicroProfileHealthCheckTest extends CamelMicroProfileHealthTes
 
         HealthCheck readinessCheck = createReadinessCheck("disabled-check", true, builder -> builder.up());
         healthCheckRegistry.register(readinessCheck);
-        readinessCheck.getConfiguration().setEnabled(false);
+        readinessCheck.setEnabled(false);
 
         SmallRyeHealth health = reporter.getHealth();
 

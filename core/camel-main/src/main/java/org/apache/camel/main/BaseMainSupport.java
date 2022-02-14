@@ -19,10 +19,8 @@ package org.apache.camel.main;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -35,8 +33,10 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import org.apache.camel.CamelConfiguration;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
+import org.apache.camel.Configuration;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.RuntimeCamelException;
@@ -44,7 +44,6 @@ import org.apache.camel.StartupStep;
 import org.apache.camel.console.DevConsole;
 import org.apache.camel.console.DevConsoleRegistry;
 import org.apache.camel.health.HealthCheck;
-import org.apache.camel.health.HealthCheckConfiguration;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.saga.CamelSagaService;
@@ -52,6 +51,7 @@ import org.apache.camel.spi.AutowiredLifecycleStrategy;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.RouteTemplateParameterSource;
 import org.apache.camel.spi.StartupStepRecorder;
@@ -74,8 +74,6 @@ import static org.apache.camel.main.MainHelper.computeProperties;
 import static org.apache.camel.main.MainHelper.optionKey;
 import static org.apache.camel.main.MainHelper.setPropertiesOnTarget;
 import static org.apache.camel.main.MainHelper.validateOptionAndValue;
-import static org.apache.camel.support.ObjectHelper.invokeMethod;
-import static org.apache.camel.util.ReflectionHelper.findMethod;
 import static org.apache.camel.util.StringHelper.matches;
 
 /**
@@ -111,17 +109,16 @@ public abstract class BaseMainSupport extends BaseService {
 
     private static CamelSagaService resolveLraSagaService(CamelContext camelContext) throws Exception {
         // lookup in service registry first
-        Set<CamelSagaService> set = camelContext.getRegistry().findByType(CamelSagaService.class);
-        if (set.size() == 1) {
-            return set.iterator().next();
-        }
-        CamelSagaService answer = camelContext.adapt(ExtendedCamelContext.class).getBootstrapFactoryFinder()
-                .newInstance("lra-saga-service", CamelSagaService.class)
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "Cannot find LRASagaService on classpath. Add camel-lra to classpath."));
+        CamelSagaService answer = camelContext.getRegistry().findSingleByType(CamelSagaService.class);
+        if (answer == null) {
+            answer = camelContext.adapt(ExtendedCamelContext.class).getBootstrapFactoryFinder()
+                    .newInstance("lra-saga-service", CamelSagaService.class)
+                    .orElseThrow(() -> new IllegalArgumentException(
+                            "Cannot find LRASagaService on classpath. Add camel-lra to classpath."));
 
-        // add as service so its discover by saga eip
-        camelContext.addService(answer, true, false);
+            // add as service so its discover by saga eip
+            camelContext.addService(answer, true, false);
+        }
         return answer;
     }
 
@@ -294,42 +291,71 @@ public abstract class BaseMainSupport extends BaseService {
     }
 
     protected void loadConfigurations(CamelContext camelContext) throws Exception {
-        // lets use Camel's bean post processor on any existing configuration classes
-        // so the instance has some support for dependency injection
-        CamelBeanPostProcessor postProcessor = camelContext.adapt(ExtendedCamelContext.class).getBeanPostProcessor();
-        for (Object configuration : mainConfigurationProperties.getConfigurations()) {
-            postProcessor.postProcessBeforeInitialization(configuration, configuration.getClass().getName());
-            postProcessor.postProcessAfterInitialization(configuration, configuration.getClass().getName());
+        // auto-detect camel configurations via base package scanning
+        String basePackage = camelContext.adapt(ExtendedCamelContext.class).getBasePackageScan();
+        if (basePackage != null) {
+            PackageScanClassResolver pscr = camelContext.adapt(ExtendedCamelContext.class).getPackageScanClassResolver();
+            Set<Class<?>> found1 = pscr.findImplementations(CamelConfiguration.class, basePackage);
+            Set<Class<?>> found2 = pscr.findAnnotated(Configuration.class, basePackage);
+            Set<Class<?>> found = new LinkedHashSet<>();
+            found.addAll(found1);
+            found.addAll(found2);
+            for (Class<?> clazz : found) {
+                // lets use Camel's injector so the class has some support for dependency injection
+                Object config = camelContext.getInjector().newInstance(clazz);
+                if (config instanceof CamelConfiguration) {
+                    LOG.debug("Discovered CamelConfiguration class: {}", clazz);
+                    CamelConfiguration cc = (CamelConfiguration) config;
+                    mainConfigurationProperties.addConfiguration(cc);
+                }
+            }
         }
 
         if (mainConfigurationProperties.getConfigurationClasses() != null) {
             String[] configClasses = mainConfigurationProperties.getConfigurationClasses().split(",");
             for (String configClass : configClasses) {
-                Class<?> configClazz = camelContext.getClassResolver().resolveClass(configClass);
-                // lets use Camel's injector so the class has some support for dependency injection
-                Object config = camelContext.getInjector().newInstance(configClazz);
-                mainConfigurationProperties.addConfiguration(config);
+                Class<CamelConfiguration> configClazz
+                        = camelContext.getClassResolver().resolveClass(configClass, CamelConfiguration.class);
+                // skip main classes
+                boolean mainClass = false;
+                try {
+                    configClazz.getDeclaredMethod("main", String[].class);
+                    mainClass = true;
+                } catch (NoSuchMethodException e) {
+                    // ignore
+                }
+                if (!mainClass) {
+                    // lets use Camel's injector so the class has some support for dependency injection
+                    CamelConfiguration config = camelContext.getInjector().newInstance(configClazz);
+                    mainConfigurationProperties.addConfiguration(config);
+                }
             }
         }
 
-        for (Object config : mainConfigurationProperties.getConfigurations()) {
-            // invoke configure method if exists
-            Method method = findMethod(config.getClass(), "configure");
-            if (method != null) {
-                LOG.info("Calling configure method on configuration class: {}", config.getClass().getName());
-                invokeMethod(method, config);
-            } else {
-                Object arg = camelContext;
-                method = findMethod(config.getClass(), "configure", CamelContext.class);
-                if (method == null) {
-                    method = findMethod(config.getClass(), "configure", Main.class);
-                    arg = this;
-                }
-                if (method != null) {
-                    LOG.info("Calling configure method on configuration class: {}", config.getClass().getName());
-                    invokeMethod(method, config, arg);
-                }
-            }
+        // lets use Camel's bean post processor on any existing configuration classes
+        // so the instance has some support for dependency injection
+        CamelBeanPostProcessor postProcessor = camelContext.adapt(ExtendedCamelContext.class).getBeanPostProcessor();
+
+        // discover configurations from the registry
+        Set<CamelConfiguration> registryConfigurations = camelContext.getRegistry().findByType(CamelConfiguration.class);
+        for (CamelConfiguration configuration : registryConfigurations) {
+            postProcessor.postProcessBeforeInitialization(configuration, configuration.getClass().getName());
+            postProcessor.postProcessAfterInitialization(configuration, configuration.getClass().getName());
+        }
+
+        // prepare the directly configured instances (from registry should have been post processed already)
+        for (Object configuration : mainConfigurationProperties.getConfigurations()) {
+            postProcessor.postProcessBeforeInitialization(configuration, configuration.getClass().getName());
+            postProcessor.postProcessAfterInitialization(configuration, configuration.getClass().getName());
+        }
+
+        // invoke configure on configurations
+        for (CamelConfiguration config : mainConfigurationProperties.getConfigurations()) {
+            config.configure(camelContext);
+        }
+        // invoke configure on configurations that are from registry
+        for (CamelConfiguration config : registryConfigurations) {
+            config.configure(camelContext);
         }
     }
 
@@ -493,6 +519,16 @@ public abstract class BaseMainSupport extends BaseService {
         }
     }
 
+    protected void configurePackageScan(CamelContext camelContext) {
+        if (mainConfigurationProperties.isBasePackageScanEnabled()) {
+            // only set the base package if enabled
+            camelContext.adapt(ExtendedCamelContext.class).setBasePackageScan(mainConfigurationProperties.getBasePackageScan());
+            if (mainConfigurationProperties.getBasePackageScan() != null) {
+                LOG.info("Classpath scanning enabled from base package: {}", mainConfigurationProperties.getBasePackageScan());
+            }
+        }
+    }
+
     protected void configureRoutes(CamelContext camelContext) throws Exception {
         // then configure and add the routes
         RoutesConfigurer configurer = new RoutesConfigurer();
@@ -504,7 +540,10 @@ public abstract class BaseMainSupport extends BaseService {
         configurer.setBeanPostProcessor(camelContext.adapt(ExtendedCamelContext.class).getBeanPostProcessor());
         configurer.setRoutesBuilders(mainConfigurationProperties.getRoutesBuilders());
         configurer.setRoutesBuilderClasses(mainConfigurationProperties.getRoutesBuilderClasses());
-        configurer.setPackageScanRouteBuilders(mainConfigurationProperties.getPackageScanRouteBuilders());
+        if (mainConfigurationProperties.isBasePackageScanEnabled()) {
+            // only set the base package if enabled
+            configurer.setBasePackageScan(mainConfigurationProperties.getBasePackageScan());
+        }
         configurer.setJavaRoutesExcludePattern(mainConfigurationProperties.getJavaRoutesExcludePattern());
         configurer.setJavaRoutesIncludePattern(mainConfigurationProperties.getJavaRoutesIncludePattern());
         configurer.setRoutesExcludePattern(mainConfigurationProperties.getRoutesExcludePattern());
@@ -521,6 +560,8 @@ public abstract class BaseMainSupport extends BaseService {
         configurePropertiesService(camelContext);
         // setup startup recorder before building context
         configureStartupRecorder(camelContext);
+        // setup package scan
+        configurePackageScan(camelContext);
 
         // ensure camel context is build
         camelContext.build();
@@ -950,44 +991,28 @@ public abstract class BaseMainSupport extends BaseService {
 
         HealthConfigurationProperties health = mainConfigurationProperties.health();
 
-        // extract all config to know their parent ids so we can set the values afterwards
-        Map<String, Object> hcConfig = PropertiesHelper.extractProperties(healthCheckProperties, "config", false);
-        Map<String, HealthCheckConfigurationProperties> hcConfigs = new HashMap<>();
-        // build set of configuration objects
-        for (Map.Entry<String, Object> entry : hcConfig.entrySet()) {
-            String parent = StringHelper.between(entry.getKey(), "[", "]");
-            if (parent != null) {
-                HealthCheckConfigurationProperties hcp = hcConfigs.get(parent);
-                if (hcp == null) {
-                    hcp = new HealthCheckConfigurationProperties();
-                    hcConfigs.put(parent, hcp);
-                }
-            }
-        }
-        if (health.getConfig() != null) {
-            health.getConfig().putAll(hcConfigs);
-        } else {
-            health.setConfig(hcConfigs);
-        }
-
         setPropertiesOnTarget(camelContext, health, healthCheckProperties, "camel.health.",
                 mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
 
         if (health.getEnabled() != null) {
             hcr.setEnabled(health.getEnabled());
         }
+        if (health.getExcludePattern() != null) {
+            hcr.setExcludePattern(health.getExcludePattern());
+        }
+        if (health.getExposureLevel() != null) {
+            hcr.setExposureLevel(health.getExposureLevel());
+        }
+
         // context is enabled by default
-        if (hcr.isEnabled() && (!health.getConfig().containsKey("context") || health.getContextEnabled() != null)) {
+        if (hcr.isEnabled()) {
             HealthCheck hc = (HealthCheck) hcr.resolveById("context");
             if (hc != null) {
-                if (health.getContextEnabled() != null) {
-                    hc.getConfiguration().setEnabled(health.getContextEnabled());
-                }
                 hcr.register(hc);
             }
         }
         // routes are enabled by default
-        if (hcr.isEnabled() && (!health.getConfig().containsKey("routes") || health.getRoutesEnabled() != null)) {
+        if (hcr.isEnabled()) {
             HealthCheckRepository hc = hcr.getRepository("routes").orElse((HealthCheckRepository) hcr.resolveById("routes"));
             if (hc != null) {
                 if (health.getRoutesEnabled() != null) {
@@ -997,7 +1022,7 @@ public abstract class BaseMainSupport extends BaseService {
             }
         }
         // consumers are enabled by default
-        if (hcr.isEnabled() && (!health.getConfig().containsKey("consumers") || health.getRegistryEnabled() != null)) {
+        if (hcr.isEnabled()) {
             HealthCheckRepository hc
                     = hcr.getRepository("consumers").orElse((HealthCheckRepository) hcr.resolveById("consumers"));
             if (hc != null) {
@@ -1008,7 +1033,7 @@ public abstract class BaseMainSupport extends BaseService {
             }
         }
         // registry are enabled by default
-        if (hcr.isEnabled() && (!health.getConfig().containsKey("registry") || health.getRegistryEnabled() != null)) {
+        if (hcr.isEnabled()) {
             HealthCheckRepository hc
                     = hcr.getRepository("registry").orElse((HealthCheckRepository) hcr.resolveById("registry"));
             if (hc != null) {
@@ -1016,34 +1041,6 @@ public abstract class BaseMainSupport extends BaseService {
                     hc.setEnabled(health.getRegistryEnabled());
                 }
                 hcr.register(hc);
-            }
-        }
-
-        // configure health checks configurations
-        for (String id : health.getConfig().keySet()) {
-            HealthCheckConfiguration hcc = health.getConfig().get(id);
-            String parent = hcc.getParent();
-            if (parent == null) {
-                throw new IllegalArgumentException("HealthCheck with id: " + id + " must have parent configured");
-            }
-            // lookup health check by id
-            Object hc = hcr.getCheck(parent).orElse(null);
-            if (hc == null) {
-                hc = hcr.resolveById(parent);
-                if (hc == null) {
-                    LOG.warn("Cannot resolve HealthCheck with id: {} from classpath.", parent);
-                    continue;
-                }
-                hcr.register(hc);
-                if (hc instanceof HealthCheck) {
-                    ((HealthCheck) hc).getConfiguration().setParent(hcc.getParent());
-                    ((HealthCheck) hc).getConfiguration().setEnabled(hcc.isEnabled());
-                    ((HealthCheck) hc).getConfiguration().setFailureThreshold(hcc.getFailureThreshold());
-                    ((HealthCheck) hc).getConfiguration().setSuccessThreshold(hcc.getSuccessThreshold());
-                    ((HealthCheck) hc).getConfiguration().setInterval(hcc.getInterval());
-                } else if (hc instanceof HealthCheckRepository) {
-                    ((HealthCheckRepository) hc).addConfiguration(id, hcc);
-                }
             }
         }
     }

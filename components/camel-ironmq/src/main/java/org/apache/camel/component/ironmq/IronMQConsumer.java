@@ -27,7 +27,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
+import org.apache.camel.spi.ScheduledPollConsumerScheduler;
 import org.apache.camel.spi.Synchronization;
+import org.apache.camel.support.DefaultScheduledPollConsumerScheduler;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
@@ -46,6 +48,17 @@ public class IronMQConsumer extends ScheduledBatchPollingConsumer {
 
     public IronMQConsumer(Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
+    }
+
+    @Override
+    protected void afterConfigureScheduler(ScheduledPollConsumerScheduler scheduler, boolean newScheduler) {
+        if (newScheduler && scheduler instanceof DefaultScheduledPollConsumerScheduler) {
+            DefaultScheduledPollConsumerScheduler ds = (DefaultScheduledPollConsumerScheduler) scheduler;
+            ds.setConcurrentConsumers(getEndpoint().getConfiguration().getConcurrentConsumers());
+            // if using concurrent consumers then resize pool to be at least same size
+            int ps = Math.max(ds.getPoolSize(), getEndpoint().getConfiguration().getConcurrentConsumers());
+            ds.setPoolSize(ps);
+        }
     }
 
     @Override

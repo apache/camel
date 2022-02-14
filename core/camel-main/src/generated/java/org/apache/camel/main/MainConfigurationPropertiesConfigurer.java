@@ -39,6 +39,10 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "AutowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "backlogtracing":
         case "BacklogTracing": target.setBacklogTracing(property(camelContext, boolean.class, value)); return true;
+        case "basepackagescan":
+        case "BasePackageScan": target.setBasePackageScan(property(camelContext, java.lang.String.class, value)); return true;
+        case "basepackagescanenabled":
+        case "BasePackageScanEnabled": target.setBasePackageScanEnabled(property(camelContext, boolean.class, value)); return true;
         case "beanintrospectionextendedstatistics":
         case "BeanIntrospectionExtendedStatistics": target.setBeanIntrospectionExtendedStatistics(property(camelContext, boolean.class, value)); return true;
         case "beanintrospectionlogginglevel":
@@ -117,8 +121,6 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "MessageHistory": target.setMessageHistory(property(camelContext, boolean.class, value)); return true;
         case "name":
         case "Name": target.setName(property(camelContext, java.lang.String.class, value)); return true;
-        case "packagescanroutebuilders":
-        case "PackageScanRouteBuilders": target.setPackageScanRouteBuilders(property(camelContext, java.lang.String.class, value)); return true;
         case "producertemplatecachesize":
         case "ProducerTemplateCacheSize": target.setProducerTemplateCacheSize(property(camelContext, int.class, value)); return true;
         case "routecontrollerbackoffdelay":
@@ -260,6 +262,10 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "AutowiredEnabled": return boolean.class;
         case "backlogtracing":
         case "BacklogTracing": return boolean.class;
+        case "basepackagescan":
+        case "BasePackageScan": return java.lang.String.class;
+        case "basepackagescanenabled":
+        case "BasePackageScanEnabled": return boolean.class;
         case "beanintrospectionextendedstatistics":
         case "BeanIntrospectionExtendedStatistics": return boolean.class;
         case "beanintrospectionlogginglevel":
@@ -338,8 +344,6 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "MessageHistory": return boolean.class;
         case "name":
         case "Name": return java.lang.String.class;
-        case "packagescanroutebuilders":
-        case "PackageScanRouteBuilders": return java.lang.String.class;
         case "producertemplatecachesize":
         case "ProducerTemplateCacheSize": return int.class;
         case "routecontrollerbackoffdelay":
@@ -482,6 +486,10 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "AutowiredEnabled": return target.isAutowiredEnabled();
         case "backlogtracing":
         case "BacklogTracing": return target.isBacklogTracing();
+        case "basepackagescan":
+        case "BasePackageScan": return target.getBasePackageScan();
+        case "basepackagescanenabled":
+        case "BasePackageScanEnabled": return target.isBasePackageScanEnabled();
         case "beanintrospectionextendedstatistics":
         case "BeanIntrospectionExtendedStatistics": return target.isBeanIntrospectionExtendedStatistics();
         case "beanintrospectionlogginglevel":
@@ -560,8 +568,6 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "MessageHistory": return target.isMessageHistory();
         case "name":
         case "Name": return target.getName();
-        case "packagescanroutebuilders":
-        case "PackageScanRouteBuilders": return target.getPackageScanRouteBuilders();
         case "producertemplatecachesize":
         case "ProducerTemplateCacheSize": return target.getProducerTemplateCacheSize();
         case "routecontrollerbackoffdelay":
@@ -686,7 +692,7 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "configurations":
-        case "Configurations": return java.lang.Object.class;
+        case "Configurations": return org.apache.camel.CamelConfiguration.class;
         case "globaloptions":
         case "GlobalOptions": return java.lang.String.class;
         case "routesbuilders":

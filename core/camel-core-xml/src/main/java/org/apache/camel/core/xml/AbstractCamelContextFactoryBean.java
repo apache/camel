@@ -84,6 +84,8 @@ import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.model.RouteTemplateContainer;
 import org.apache.camel.model.RouteTemplateContextRefDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
+import org.apache.camel.model.TemplatedRouteContainer;
+import org.apache.camel.model.TemplatedRouteDefinition;
 import org.apache.camel.model.ThreadPoolProfileDefinition;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
@@ -150,7 +152,8 @@ import org.slf4j.LoggerFactory;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContext> extends IdentifiedType
-        implements RouteTemplateContainer, RouteConfigurationContainer, RouteContainer, RestContainer {
+        implements RouteTemplateContainer, RouteConfigurationContainer, RouteContainer, RestContainer,
+        TemplatedRouteContainer {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCamelContextFactoryBean.class);
 
@@ -530,6 +533,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
             // and add the routes
             getContext().addRouteDefinitions(getRoutes());
+
+            // Add the templated routes
+            getContext().addRouteFromTemplatedRoutes(getTemplatedRoutes());
 
             LOG.debug("Found JAXB created routes: {}", getRoutes());
 
@@ -949,6 +955,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
     @Override
     public abstract List<RouteTemplateDefinition> getRouteTemplates();
+
+    @Override
+    public abstract List<TemplatedRouteDefinition> getTemplatedRoutes();
 
     @Override
     public abstract List<RouteConfigurationDefinition> getRouteConfigurations();

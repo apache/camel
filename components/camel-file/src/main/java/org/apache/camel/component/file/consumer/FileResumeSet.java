@@ -18,20 +18,21 @@
 package org.apache.camel.component.file.consumer;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.Predicate;
+
+import org.apache.camel.ResumableSet;
 
 /**
  * This contains the input/output file set for resume operations.
  */
-public final class FileResumeSet {
+public final class FileResumeSet implements ResumableSet<File> {
     private final File[] inputFiles;
     private File[] outputFiles;
 
     public FileResumeSet(File[] inputFiles) {
-        Objects.requireNonNull(inputFiles, "A list of input files must be provided for the resume info");
-        this.inputFiles = inputFiles;
+        this.inputFiles = Objects.requireNonNull(inputFiles,
+                "A list of input files must be provided for the resume info");
     }
 
     /**
@@ -40,18 +41,7 @@ public final class FileResumeSet {
      * @param resumableCheck a checker method that returns true if the file should be resumed or false otherwise
      */
     public void resumeEach(Predicate<File> resumableCheck) {
-        this.outputFiles = null;
-        File[] tmp = Arrays.copyOf(inputFiles, inputFiles.length);
-        int count = 0;
-
-        for (File file : inputFiles) {
-            if (resumableCheck.test(file)) {
-                tmp[count] = file;
-                count++;
-            }
-        }
-
-        this.outputFiles = Arrays.copyOf(tmp, count);
+        this.outputFiles = resumeEach(inputFiles, resumableCheck);
     }
 
     /**
@@ -59,7 +49,7 @@ public final class FileResumeSet {
      *
      * @return an array with the files that should be resumed
      */
-    public File[] resumedFiles() {
+    public File[] resumed() {
         return outputFiles;
     }
 
@@ -69,6 +59,6 @@ public final class FileResumeSet {
      * @return true if there are resumable files or false otherwise
      */
     public boolean hasResumables() {
-        return outputFiles != null && outputFiles.length > 0;
+        return outputFiles != null && outputFiles.length != inputFiles.length;
     }
 }

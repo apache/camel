@@ -23,13 +23,13 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-test-parent</artifactId>
-        <version>3.15.0-SNAPSHOT</version>
+        <version>3.16.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-test-cdi</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: Test :: CDI</name>
+    <name>Camel :: Test :: CDI (deprecated)</name>
     <description>Camel unit testing with CDI</description>
 
     <properties>

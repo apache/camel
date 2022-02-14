@@ -27,10 +27,7 @@ import org.infinispan.client.hotrod.event.ClientCacheEntryCreatedEvent;
 import org.infinispan.commons.api.BasicCache;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledOnOs;
-import org.junit.jupiter.api.condition.OS;
 
-@DisabledOnOs(OS.MAC)
 public class InfinispanRemoteCustomListenerIT extends InfinispanRemoteTestSupport implements InfinispanConsumerTestSupport {
     @Test
     public void consumerReceivedEventNotifications() throws Exception {

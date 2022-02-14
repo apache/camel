@@ -25,6 +25,8 @@ public class Ses2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "amazonsesclient":
         case "amazonSESClient": target.getConfiguration().setAmazonSESClient(property(camelContext, software.amazon.awssdk.services.ses.SesClient.class, value)); return true;
+        case "bcc": target.getConfiguration().setBcc(property(camelContext, java.lang.String.class, value)); return true;
+        case "cc": target.getConfiguration().setCc(property(camelContext, java.lang.String.class, value)); return true;
         case "configurationset":
         case "configurationSet": target.getConfiguration().setConfigurationSet(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
@@ -68,6 +70,8 @@ public class Ses2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "accessKey": return java.lang.String.class;
         case "amazonsesclient":
         case "amazonSESClient": return software.amazon.awssdk.services.ses.SesClient.class;
+        case "bcc": return java.lang.String.class;
+        case "cc": return java.lang.String.class;
         case "configurationset":
         case "configurationSet": return java.lang.String.class;
         case "lazystartproducer":
@@ -107,6 +111,8 @@ public class Ses2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "accessKey": return target.getConfiguration().getAccessKey();
         case "amazonsesclient":
         case "amazonSESClient": return target.getConfiguration().getAmazonSESClient();
+        case "bcc": return target.getConfiguration().getBcc();
+        case "cc": return target.getConfiguration().getCc();
         case "configurationset":
         case "configurationSet": return target.getConfiguration().getConfigurationSet();
         case "lazystartproducer":

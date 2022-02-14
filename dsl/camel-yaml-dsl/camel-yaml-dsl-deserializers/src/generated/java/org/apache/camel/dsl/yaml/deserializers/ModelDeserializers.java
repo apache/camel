@@ -58,6 +58,7 @@ import org.apache.camel.model.PolicyDefinition;
 import org.apache.camel.model.PollEnrichDefinition;
 import org.apache.camel.model.ProcessDefinition;
 import org.apache.camel.model.PropertyDefinition;
+import org.apache.camel.model.PropertyExpressionDefinition;
 import org.apache.camel.model.RecipientListDefinition;
 import org.apache.camel.model.RedeliveryPolicyDefinition;
 import org.apache.camel.model.RemoveHeaderDefinition;
@@ -73,11 +74,9 @@ import org.apache.camel.model.RouteConfigurationContextRefDefinition;
 import org.apache.camel.model.RouteContextRefDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateParameterDefinition;
-import org.apache.camel.model.RouteTemplateScriptDefinition;
 import org.apache.camel.model.RoutingSlipDefinition;
 import org.apache.camel.model.SagaActionUriDefinition;
 import org.apache.camel.model.SagaDefinition;
-import org.apache.camel.model.SagaOptionDefinition;
 import org.apache.camel.model.SamplingDefinition;
 import org.apache.camel.model.ScriptDefinition;
 import org.apache.camel.model.SetBodyDefinition;
@@ -89,6 +88,7 @@ import org.apache.camel.model.SplitDefinition;
 import org.apache.camel.model.StepDefinition;
 import org.apache.camel.model.StopDefinition;
 import org.apache.camel.model.SwitchDefinition;
+import org.apache.camel.model.TemplatedRouteParameterDefinition;
 import org.apache.camel.model.ThreadPoolProfileDefinition;
 import org.apache.camel.model.ThreadsDefinition;
 import org.apache.camel.model.ThrottleDefinition;
@@ -541,7 +541,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             switch(propertyKey) {
                 case "base-uri": {
                     String val = asText(node);
-                    target.setBaseURI(val);
+                    target.setBaseUri(val);
                     break;
                 }
                 case "configuration": {
@@ -10261,6 +10261,50 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
+            types = org.apache.camel.model.PropertyExpressionDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            nodes = {
+                    "property-expression",
+                    "propertyExpression"
+            },
+            properties = {
+                    @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
+                    @YamlProperty(name = "key", type = "string", required = true)
+            }
+    )
+    public static class PropertyExpressionDefinitionDeserializer extends YamlDeserializerBase<PropertyExpressionDefinition> {
+        public PropertyExpressionDefinitionDeserializer() {
+            super(PropertyExpressionDefinition.class);
+        }
+
+        @Override
+        protected PropertyExpressionDefinition newInstance() {
+            return new PropertyExpressionDefinition();
+        }
+
+        @Override
+        protected boolean setProperty(PropertyExpressionDefinition target, String propertyKey,
+                String propertyName, Node node) {
+            switch(propertyKey) {
+                case "expression": {
+                    org.apache.camel.model.language.ExpressionDefinition val = asType(node, org.apache.camel.model.language.ExpressionDefinition.class);
+                    target.setExpression(val);
+                    break;
+                }
+                case "key": {
+                    String val = asText(node);
+                    target.setKey(val);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
             inline = true,
             types = org.apache.camel.model.dataformat.ProtobufDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
@@ -13212,48 +13256,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
 
     @YamlType(
             inline = true,
-            types = org.apache.camel.model.RouteTemplateScriptDefinition.class,
-            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            nodes = {
-                    "template-script",
-                    "templateScript"
-            },
-            properties = @YamlProperty(name = "script", type = "string")
-    )
-    public static class RouteTemplateScriptDefinitionDeserializer extends YamlDeserializerBase<RouteTemplateScriptDefinition> {
-        public RouteTemplateScriptDefinitionDeserializer() {
-            super(RouteTemplateScriptDefinition.class);
-        }
-
-        @Override
-        protected RouteTemplateScriptDefinition newInstance() {
-            return new RouteTemplateScriptDefinition();
-        }
-
-        @Override
-        protected RouteTemplateScriptDefinition newInstance(String value) {
-            return new RouteTemplateScriptDefinition(value);
-        }
-
-        @Override
-        protected boolean setProperty(RouteTemplateScriptDefinition target, String propertyKey,
-                String propertyName, Node node) {
-            switch(propertyKey) {
-                case "script": {
-                    String val = asText(node);
-                    target.setScript(val);
-                    break;
-                }
-                default: {
-                    return false;
-                }
-            }
-            return true;
-        }
-    }
-
-    @YamlType(
-            inline = true,
             types = org.apache.camel.model.RoutingSlipDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = {
@@ -13458,12 +13460,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "description", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
-                    @YamlProperty(name = "option", type = "array:org.apache.camel.model.SagaOptionDefinition"),
+                    @YamlProperty(name = "option", type = "array:org.apache.camel.model.PropertyExpressionDefinition"),
                     @YamlProperty(name = "propagation", type = "string"),
                     @YamlProperty(name = "saga-service-ref", type = "string"),
                     @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition"),
-                    @YamlProperty(name = "timeout", type = "string"),
-                    @YamlProperty(name = "timeout-in-milliseconds", type = "number")
+                    @YamlProperty(name = "timeout", type = "string")
             }
     )
     public static class SagaDefinitionDeserializer extends YamlDeserializerBase<SagaDefinition> {
@@ -13501,7 +13502,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "option": {
-                    java.util.List<org.apache.camel.model.SagaOptionDefinition> val = asFlatList(node, org.apache.camel.model.SagaOptionDefinition.class);
+                    java.util.List<org.apache.camel.model.PropertyExpressionDefinition> val = asFlatList(node, org.apache.camel.model.PropertyExpressionDefinition.class);
                     target.setOptions(val);
                     break;
                 }
@@ -13520,11 +13521,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setTimeout(val);
                     break;
                 }
-                case "timeout-in-milliseconds": {
-                    String val = asText(node);
-                    target.setTimeoutInMilliseconds(val);
-                    break;
-                }
                 case "id": {
                     String val = asText(node);
                     target.setId(val);
@@ -13541,56 +13537,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 default: {
                     return false;
-                }
-            }
-            return true;
-        }
-    }
-
-    @YamlType(
-            types = org.apache.camel.model.SagaOptionDefinition.class,
-            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            properties = {
-                    @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
-                    @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
-                    @YamlProperty(name = "option-name", type = "string", required = true)
-            }
-    )
-    public static class SagaOptionDefinitionDeserializer extends YamlDeserializerBase<SagaOptionDefinition> {
-        public SagaOptionDefinitionDeserializer() {
-            super(SagaOptionDefinition.class);
-        }
-
-        @Override
-        protected SagaOptionDefinition newInstance() {
-            return new SagaOptionDefinition();
-        }
-
-        @Override
-        protected boolean setProperty(SagaOptionDefinition target, String propertyKey,
-                String propertyName, Node node) {
-            switch(propertyKey) {
-                case "expression": {
-                    org.apache.camel.model.language.ExpressionDefinition val = asType(node, org.apache.camel.model.language.ExpressionDefinition.class);
-                    target.setExpression(val);
-                    break;
-                }
-                case "option-name": {
-                    String val = asText(node);
-                    target.setOptionName(val);
-                    break;
-                }
-                default: {
-                    ExpressionDefinition ed = target.getExpressionType();
-                    if (ed != null) {
-                        throw new org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException(propertyName, "an expression has already been configured (" + ed + ")");
-                    }
-                    ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
-                    if (ed != null) {
-                        target.setExpressionType(ed);
-                    } else {
-                        return false;
-                    }
                 }
             }
             return true;
@@ -15529,6 +15475,50 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "using-iterator": {
                     String val = asText(node);
                     target.setUsingIterator(val);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            types = org.apache.camel.model.TemplatedRouteParameterDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            nodes = {
+                    "templated-route-parameter",
+                    "templatedRouteParameter"
+            },
+            properties = {
+                    @YamlProperty(name = "name", type = "string", required = true),
+                    @YamlProperty(name = "value", type = "string", required = true)
+            }
+    )
+    public static class TemplatedRouteParameterDefinitionDeserializer extends YamlDeserializerBase<TemplatedRouteParameterDefinition> {
+        public TemplatedRouteParameterDefinitionDeserializer() {
+            super(TemplatedRouteParameterDefinition.class);
+        }
+
+        @Override
+        protected TemplatedRouteParameterDefinition newInstance() {
+            return new TemplatedRouteParameterDefinition();
+        }
+
+        @Override
+        protected boolean setProperty(TemplatedRouteParameterDefinition target, String propertyKey,
+                String propertyName, Node node) {
+            switch(propertyKey) {
+                case "name": {
+                    String val = asText(node);
+                    target.setName(val);
+                    break;
+                }
+                case "value": {
+                    String val = asText(node);
+                    target.setValue(val);
                     break;
                 }
                 default: {

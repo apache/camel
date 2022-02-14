@@ -113,9 +113,9 @@ public class DynamicRouterMultipleRecipientModeIT {
      */
     @Test
     void testMultipleMatchingParticipants() throws InterruptedException {
-        mockOne.expectedBodiesReceived(0, 2, 4, 6, 8, 10);
-        mockTwo.expectedBodiesReceived(1, 3, 5, 7, 9);
-        mockThree.expectedBodiesReceived(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+        mockOne.expectedBodiesReceivedInAnyOrder(0, 2, 4, 6, 8, 10);
+        mockTwo.expectedBodiesReceivedInAnyOrder(1, 3, 5, 7, 9);
+        mockThree.expectedBodiesReceivedInAnyOrder(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
 
         // Subscribe for all numeric message content to verify that in "allMatch" mode,
         // every participant receives all messages that pertain to them

@@ -61,6 +61,7 @@ import org.jboss.jandex.DotName;
 import org.jboss.jandex.Index;
 import org.jboss.jandex.IndexReader;
 
+import static org.apache.camel.maven.packaging.generics.PackagePluginUtils.readJandexIndex;
 import static org.apache.camel.tooling.util.ReflectionHelper.doWithMethods;
 import static org.apache.camel.tooling.util.Strings.between;
 
@@ -160,13 +161,7 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
 
         // additional classes
         if (classes != null && !classes.isEmpty()) {
-            Path output = Paths.get(project.getBuild().getOutputDirectory());
-            Index index;
-            try (InputStream is = Files.newInputStream(output.resolve("META-INF/jandex.idx"))) {
-                index = new IndexReader(is).read();
-            } catch (IOException e) {
-                throw new MojoExecutionException("IOException: " + e.getMessage(), e);
-            }
+            Index index = readJandexIndex(project);
             for (String clazz : classes) {
                 ClassInfo ci = index.getClassByName(DotName.createSimple(clazz));
                 AnnotationInstance ai = ci != null ? ci.classAnnotation(CONFIGURER) : null;
@@ -284,9 +279,7 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
     private Collection<Artifact> getAllDependencies() throws MojoExecutionException {
         List<Artifact> artifacts = new ArrayList<>();
 
-        for (Iterator<?> dependencies = project.getDependencies().iterator(); dependencies.hasNext();) {
-            Dependency dependency = (Dependency) dependencies.next();
-
+        for (Dependency dependency : project.getDependencies()) {
             String groupId = dependency.getGroupId();
             String artifactId = dependency.getArtifactId();
 
@@ -407,10 +400,7 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
 
     private boolean filterSetter(Method setter) {
         // special for some
-        if ("setBindingMode".equals(setter.getName())) {
-            // we only want the string setter
-            return setter.getParameterTypes()[0] == String.class;
-        } else if ("setHostNameResolver".equals(setter.getName())) {
+        if ("setBindingMode".equals(setter.getName()) || "setHostNameResolver".equals(setter.getName())) {
             // we only want the string setter
             return setter.getParameterTypes()[0] == String.class;
         }
@@ -424,8 +414,7 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
     }
 
     private void generateConfigurer(
-            String fqn, String targetFqn, List<ConfigurerOption> options, File outputDir, boolean extended, boolean bootstrap)
-            throws IOException {
+            String fqn, String targetFqn, List<ConfigurerOption> options, File outputDir, boolean extended, boolean bootstrap) {
         int pos = targetFqn.lastIndexOf('.');
         String pn = targetFqn.substring(0, pos);
         String cn = targetFqn.substring(pos + 1) + "Configurer";
@@ -433,11 +422,8 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
         String pfqn = fqn;
         String psn = "org.apache.camel.support.component.PropertyConfigurerSupport";
 
-        StringWriter sw = new StringWriter();
-        PropertyConfigurerGenerator.generatePropertyConfigurer(pn, cn, en, pfqn, psn,
-                false, false, extended, bootstrap, options, null, sw);
-
-        String source = sw.toString();
+        String source = PropertyConfigurerGenerator.generatePropertyConfigurer(pn, cn, en, pfqn, psn,
+                false, false, extended, bootstrap, options, null);
 
         String fileName = pn.replace('.', '/') + "/" + cn + ".java";
         outputDir.mkdirs();

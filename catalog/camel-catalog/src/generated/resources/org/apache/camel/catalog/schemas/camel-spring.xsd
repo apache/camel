@@ -1018,7 +1018,15 @@ Properties to use with properties placeholder
   <xs:element name="property" type="tns:propertyDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-A key value pair
+A key value pair where the value is a literal value
+      ]]></xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="propertyExpression" type="tns:propertyExpressionDefinition">
+    <xs:annotation>
+      <xs:documentation xml:lang="en"><![CDATA[
+A key value pair where the value is an expression.
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -1634,11 +1642,34 @@ A route template parameter
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="templateScript" type="tns:routeTemplateScriptDefinition">
+  <xs:element name="templatedRoute" type="tns:templatedRouteDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-A route template script (local bean) when using scripting languages such as
-groovy
+Defines a templated route (a route built from a route template)
+      ]]></xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="templatedRouteBean" type="tns:templatedRouteBeanDefinition">
+    <xs:annotation>
+      <xs:documentation xml:lang="en"><![CDATA[
+A bean as input of a route template (local bean)
+      ]]></xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="templatedRouteParameter" type="tns:templatedRouteParameterDefinition">
+    <xs:annotation>
+      <xs:documentation xml:lang="en"><![CDATA[
+An input parameter of a route template.
+      ]]></xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="templatedRoutes" type="tns:templatedRoutesDefinition">
+    <xs:annotation>
+      <xs:documentation xml:lang="en"><![CDATA[
+A series of templated routes
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -3433,6 +3464,49 @@ implementation. Default value: Singleton
         <xs:sequence/>
       </xs:extension>
     </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType abstract="true" name="beanFactoryDefinition">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:property"/>
+      <xs:element minOccurs="0" name="script" type="xs:string">
+        <xs:annotation>
+          <xs:documentation xml:lang="en"><![CDATA[
+The script to execute that creates the bean when using scripting languages. If
+the script use the prefix resource: such as
+resource:classpath:com/foo/myscript.groovy, resource:file:/var/myscript.groovy,
+then its loaded from the external resource.
+          ]]></xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en"><![CDATA[
+Bean name.
+        ]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="type" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en"><![CDATA[
+What type to use for creating the bean. Can be one of:
+#class,#type,bean,groovy,joor,language,mvel,ognl. #class or #type then the bean
+is created via the fully qualified classname, such as #class:com.foo.MyBean The
+others are scripting languages that gives more power to create the bean with an
+inlined code in the script section, such as using groovy.
+        ]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="beanType" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en"><![CDATA[
+To set the type (fully qualified class name) of the returned bean created by the
+script. Knowing the type of the bean can be needed when dependency injection by
+type is in use, or when looking in registry via class type.
+        ]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
   </xs:complexType>
 
   <xs:complexType name="catchDefinition">
@@ -5962,7 +6036,7 @@ RDF4JMODEL
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="baseURI" type="xs:string">
+        <xs:attribute name="baseUri" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 The URI to use as base for building RDF entities if only relative paths are
@@ -9990,6 +10064,39 @@ by their type in the registry by prefixing with #type: syntax, eg
     </xs:sequence>
   </xs:complexType>
 
+  <xs:complexType name="propertyExpressionDefinition">
+    <xs:choice>
+      <xs:element ref="tns:expressionDefinition"/>
+      <xs:element ref="tns:csimple"/>
+      <xs:element ref="tns:constant"/>
+      <xs:element ref="tns:datasonnet"/>
+      <xs:element ref="tns:exchangeProperty"/>
+      <xs:element ref="tns:groovy"/>
+      <xs:element ref="tns:header"/>
+      <xs:element ref="tns:hl7terser"/>
+      <xs:element ref="tns:joor"/>
+      <xs:element ref="tns:jsonpath"/>
+      <xs:element ref="tns:language"/>
+      <xs:element ref="tns:method"/>
+      <xs:element ref="tns:mvel"/>
+      <xs:element ref="tns:ognl"/>
+      <xs:element ref="tns:ref"/>
+      <xs:element ref="tns:simple"/>
+      <xs:element ref="tns:spel"/>
+      <xs:element ref="tns:tokenize"/>
+      <xs:element ref="tns:xtokenize"/>
+      <xs:element ref="tns:xpath"/>
+      <xs:element ref="tns:xquery"/>
+    </xs:choice>
+    <xs:attribute name="key" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en"><![CDATA[
+Property key.
+        ]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
   <xs:complexType name="recipientListDefinition">
     <xs:complexContent>
       <xs:extension base="tns:processorDefinition">
@@ -10740,51 +10847,12 @@ Whether tracing is enabled on this route.
   </xs:complexType>
 
   <xs:complexType name="routeTemplateBeanDefinition">
-    <xs:sequence>
-      <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:property"/>
-      <xs:element minOccurs="0" name="script" type="tns:routeTemplateScriptDefinition">
-        <xs:annotation>
-          <xs:documentation xml:lang="en"><![CDATA[
-The script to execute that creates the bean when using scripting languages. If
-the script use the prefix resource: such as
-resource:classpath:com/foo/myscript.groovy, resource:file:/var/myscript.groovy,
-then its loaded from the external resource.
-          ]]></xs:documentation>
-        </xs:annotation>
-      </xs:element>
-    </xs:sequence>
-    <xs:attribute name="name" type="xs:string" use="required">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-Bean name.
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="type" type="xs:string" use="required">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-What type to use for creating the bean. Can be one of:
-#class,#type,bean,groovy,joor,language,mvel,ognl. #class or #type then the bean
-is created via the fully qualified classname, such as #class:com.foo.MyBean The
-others are scripting languages that gives more power to create the bean with an
-inlined code in the script section, such as using groovy.
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="beanType" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-To set the type (fully qualified class name) of the returned bean created by the
-script. Knowing the type of the bean can be needed when dependency injection by
-type is in use, or when looking in registry via class type.
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
+    <xs:complexContent>
+      <xs:extension base="tns:beanFactoryDefinition">
+        <xs:sequence/>
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
-
-  <xs:simpleType name="routeTemplateScriptDefinition">
-    <xs:restriction base="xs:string"/>
-  </xs:simpleType>
 
   <xs:complexType name="routeTemplateContextRefDefinition">
     <xs:sequence/>
@@ -10961,7 +11029,7 @@ the saga service may call again the completion URI to retry.
               ]]></xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="option" type="tns:sagaOptionDefinition">
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="option" type="tns:propertyExpressionDefinition">
             <xs:annotation>
               <xs:documentation xml:lang="en"><![CDATA[
 Allows to save properties of the current exchange in order to re-use them in a
@@ -11060,15 +11128,6 @@ saga:compensate endpoints. Default value: AUTO
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="timeoutInMilliseconds" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Deprecated: Set the maximum amount of time for the Saga. After the timeout is
-expired, the saga will be compensated automatically (unless a different decision
-has been taken in the meantime).
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
         <xs:attribute name="timeout" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
@@ -11088,33 +11147,6 @@ use.
         </xs:attribute>
       </xs:extension>
     </xs:complexContent>
-  </xs:complexType>
-
-  <xs:complexType name="sagaOptionDefinition">
-    <xs:choice>
-      <xs:element ref="tns:expressionDefinition"/>
-      <xs:element ref="tns:csimple"/>
-      <xs:element ref="tns:constant"/>
-      <xs:element ref="tns:datasonnet"/>
-      <xs:element ref="tns:exchangeProperty"/>
-      <xs:element ref="tns:groovy"/>
-      <xs:element ref="tns:header"/>
-      <xs:element ref="tns:hl7terser"/>
-      <xs:element ref="tns:joor"/>
-      <xs:element ref="tns:jsonpath"/>
-      <xs:element ref="tns:language"/>
-      <xs:element ref="tns:method"/>
-      <xs:element ref="tns:mvel"/>
-      <xs:element ref="tns:ognl"/>
-      <xs:element ref="tns:ref"/>
-      <xs:element ref="tns:simple"/>
-      <xs:element ref="tns:spel"/>
-      <xs:element ref="tns:tokenize"/>
-      <xs:element ref="tns:xtokenize"/>
-      <xs:element ref="tns:xpath"/>
-      <xs:element ref="tns:xquery"/>
-    </xs:choice>
-    <xs:attribute name="optionName" type="xs:string" use="required"/>
   </xs:complexType>
 
   <xs:complexType name="samplingDefinition">
@@ -11670,6 +11702,75 @@ the sake of backward compatibility. Default value: false
     <xs:complexContent>
       <xs:extension base="tns:choiceDefinition">
         <xs:sequence/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="templatedRouteBeanDefinition">
+    <xs:complexContent>
+      <xs:extension base="tns:beanFactoryDefinition">
+        <xs:sequence/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="templatedRouteDefinition">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="parameter" type="tns:templatedRouteParameterDefinition">
+        <xs:annotation>
+          <xs:documentation xml:lang="en"><![CDATA[
+Adds an input parameter of the template to build the route.
+          ]]></xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="bean" type="tns:templatedRouteBeanDefinition">
+        <xs:annotation>
+          <xs:documentation xml:lang="en"><![CDATA[
+Adds a local bean as input of the template to build the route.
+          ]]></xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="routeTemplateRef" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en"><![CDATA[
+Sets the id of the route template to use to build the route.
+        ]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="routeId" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en"><![CDATA[
+Sets the id of the route built from the route template.
+        ]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="templatedRouteParameterDefinition">
+    <xs:sequence/>
+    <xs:attribute name="name" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en"><![CDATA[
+The name of the parameter.
+        ]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="value" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en"><![CDATA[
+The value of the parameter.
+        ]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="templatedRoutesDefinition">
+    <xs:complexContent>
+      <xs:extension base="tns:optionalIdentifiedDefinition">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:templatedRoute"/>
+        </xs:sequence>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -15039,6 +15140,7 @@ MicroProfile Circuit Breaker EIP configurations.
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:rest"/>
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:routeConfiguration"/>
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:routeTemplate"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:templatedRoute"/>
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:route"/>
         </xs:sequence>
         <xs:attribute name="depends-on" type="xs:string">
@@ -15361,7 +15463,7 @@ overhead when enabled.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 What should happen when attempting to add a duplicate type converter. The
-default behavior is to override the existing. Default value: Override
+default behavior is to ignore the duplicate. Default value: Ignore
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -15369,8 +15471,8 @@ default behavior is to override the existing. Default value: Override
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 The logging level to use when logging that a type converter already exists when
-attempting to add a duplicate type converter. The default logging level is WARN.
-Default value: WARN
+attempting to add a duplicate type converter. The default logging level is
+DEBUG. Default value: DEBUG
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>

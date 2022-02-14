@@ -17,6 +17,7 @@
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.LineNumberReader;
@@ -31,6 +32,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Generated;
 
+import org.apache.camel.maven.packaging.dsl.DslHelper;
 import org.apache.camel.tooling.model.BaseModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.ComponentModel.EndpointOptionModel;
@@ -204,7 +206,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
 
         // Update components metadata
         getLog().debug("Load components EndpointFactories");
-        List<File> endpointFactories = loadAllComponentsDslEndpointFactoriesAsFile();
+        final List<File> endpointFactories = loadAllComponentsDslEndpointFactoriesAsFile();
 
         getLog().debug("Regenerate EndpointBuilderFactory");
         // make sure EndpointBuilderFactory is synced
@@ -229,25 +231,9 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         String componentClassName = model.getJavaType();
         String builderName = getEndpointName(componentClassName);
 
-        final JavaClass javaClass = new JavaClass(getProjectClassLoader());
-        javaClass.setPackage(componentsFactoriesPackageName);
-        javaClass.setName(builderName + "Factory");
-        javaClass.setClass(false);
-        javaClass.addImport("java.util.*");
-        javaClass.addImport("java.util.concurrent.*");
-        javaClass.addImport("java.util.function.*");
-        javaClass.addImport("java.util.stream.*");
-        javaClass.addImport("org.apache.camel.builder.EndpointConsumerBuilder");
-        javaClass.addImport("org.apache.camel.builder.EndpointProducerBuilder");
-        javaClass.addImport("org.apache.camel.builder.endpoint.AbstractEndpointBuilder");
+        final JavaClass javaClass = createJavaClass(builderName);
 
-        boolean hasAdvanced = false;
-        for (EndpointOptionModel option : model.getEndpointOptions()) {
-            if (option.getLabel() != null && option.getLabel().contains("advanced")) {
-                hasAdvanced = true;
-                break;
-            }
-        }
+        boolean hasAdvanced = hasAdvancedCheck(model);
 
         JavaClass consumerClass = null;
         JavaClass advancedConsumerClass = null;
@@ -268,9 +254,11 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                 generateDummyClass(advancedConsumerClass.getCanonicalName());
                 advancedConsumerClass.getJavaDoc()
                         .setText("Advanced builder for endpoint consumers for the " + model.getTitle() + " component.");
+
                 consumerClass.addMethod().setName("advanced").setReturnType(loadClass(advancedConsumerClass.getCanonicalName()))
                         .setDefault()
                         .setBody("return (Advanced" + consumerName + ") this;");
+
                 advancedConsumerClass.addMethod().setName("basic").setReturnType(loadClass(consumerClass.getCanonicalName()))
                         .setDefault()
                         .setBody("return (" + consumerName + ") this;");
@@ -346,162 +334,8 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
 
         javaClass.addAnnotation(Generated.class).setStringValue("value", EndpointDslMojo.class.getName());
 
-        for (EndpointOptionModel option : model.getEndpointOptions()) {
-
-            // skip all @UriPath parameters as the endpoint DSL is for query
-            // parameters
-            if ("path".equals(option.getKind())) {
-                continue;
-            }
-
-            List<JavaClass> targets = new ArrayList<>();
-            String label = option.getLabel() != null ? option.getLabel() : "";
-            if (label != null) {
-                if (label.contains("producer")) {
-                    if (label.contains("advanced")) {
-                        targets.add(advancedProducerClass != null ? advancedProducerClass : advancedBuilderClass);
-                    } else {
-                        targets.add(producerClass != null ? producerClass : builderClass);
-                    }
-                } else if (label.contains("consumer")) {
-                    if (label.contains("advanced")) {
-                        targets.add(advancedConsumerClass != null ? advancedConsumerClass : advancedBuilderClass);
-                    } else {
-                        targets.add(consumerClass != null ? consumerClass : builderClass);
-                    }
-                } else {
-                    if (label.contains("advanced")) {
-                        targets.add(advancedConsumerClass);
-                        targets.add(advancedProducerClass);
-                        targets.add(advancedBuilderClass);
-                    } else {
-                        targets.add(consumerClass);
-                        targets.add(producerClass);
-                        targets.add(builderClass);
-                    }
-                }
-            }
-
-            for (JavaClass target : targets) {
-                if (target == null) {
-                    continue;
-                }
-
-                // basic description
-                String baseDesc = option.getDescription();
-                if (!Strings.isEmpty(baseDesc)) {
-                    // must xml encode description as in some rare cases it contains & chars which is invalid javadoc
-                    baseDesc = JavadocHelper.xmlEncode(baseDesc);
-
-                    if (!baseDesc.endsWith(".")) {
-                        baseDesc += ".";
-                    }
-                    baseDesc += "\n";
-                    baseDesc += "@@REPLACE_ME@@";
-                    if (option.isMultiValue()) {
-                        baseDesc += "\nThe option is multivalued, and you can use the " + option.getName()
-                                    + "(String, Object) method to add a value (call the method multiple times to set more values).";
-                    }
-                    baseDesc += "\n";
-                    // the Endpoint DSL currently requires to provide the entire
-                    // context-path and not as individual options
-                    // so lets only mark query parameters that are required as
-                    // required
-                    if ("parameter".equals(option.getKind()) && option.isRequired()) {
-                        baseDesc += "\nRequired: true";
-                    }
-                    // include default value (if any)
-                    if (option.getDefaultValue() != null) {
-                        // must xml encode default value so its valid as javadoc
-                        String value = JavadocHelper.xmlEncode(option.getDefaultValue().toString());
-                        baseDesc += "\nDefault: " + value;
-                    }
-                    baseDesc += "\nGroup: " + option.getGroup();
-                }
-
-                boolean multiValued = option.isMultiValue();
-                if (multiValued) {
-                    // multi value option that takes one value
-                    String desc = baseDesc.replace("@@REPLACE_ME@@",
-                            "\nThe option is a: <code>" + option.getJavaType().replace("<", "&lt;").replace(">", "&gt;")
-                                                                     + "</code> type.");
-                    desc = JavadocHelper.xmlEncode(desc);
-
-                    Method fluent = target.addMethod().setDefault().setName(option.getName())
-                            .setReturnType(new GenericType(loadClass(target.getCanonicalName())))
-                            .addParameter(new GenericType(String.class), "key")
-                            .addParameter(new GenericType(Object.class), "value")
-                            .setBody("doSetMultiValueProperty(\"" + option.getName() + "\", \"" + option.getPrefix()
-                                     + "\" + key, value);",
-                                    "return this;\n");
-                    if (option.isDeprecated()) {
-                        fluent.addAnnotation(Deprecated.class);
-                    }
-
-                    String text = desc;
-                    text += "\n\n@param key the option key";
-                    text += "\n@param value the option value";
-                    text += "\n@return the dsl builder\n";
-                    fluent.getJavaDoc().setText(text);
-                    // add multi value method that takes a Map
-                    fluent = target.addMethod().setDefault().setName(option.getName())
-                            .setReturnType(new GenericType(loadClass(target.getCanonicalName())))
-                            .addParameter(new GenericType(Map.class), "values")
-                            .setBody("doSetMultiValueProperties(\"" + option.getName() + "\", \"" + option.getPrefix()
-                                     + "\", values);",
-                                    "return this;\n");
-                    if (option.isDeprecated()) {
-                        fluent.addAnnotation(Deprecated.class);
-                    }
-                    text = desc;
-                    text += "\n\n@param values the values";
-                    text += "\n@return the dsl builder\n";
-                    fluent.getJavaDoc().setText(text);
-                } else {
-                    // regular option
-                    String desc = baseDesc.replace("@@REPLACE_ME@@",
-                            "\nThe option is a: <code>" + option.getJavaType().replace("<", "&lt;").replace(">", "&gt;")
-                                                                     + "</code> type.");
-                    desc = JavadocHelper.xmlEncode(desc);
-
-                    Method fluent = target.addMethod().setDefault().setName(option.getName())
-                            .setReturnType(new GenericType(loadClass(target.getCanonicalName())))
-                            .addParameter(optionJavaType(option), option.getName())
-                            .setBody("doSetProperty(\"" + option.getName() + "\", " + option.getName() + ");",
-                                    "return this;\n");
-                    if (option.isDeprecated()) {
-                        fluent.addAnnotation(Deprecated.class);
-                    }
-                    String text = desc;
-                    text += "\n\n@param " + option.getName() + " the value to set";
-                    text += "\n@return the dsl builder\n";
-                    fluent.getJavaDoc().setText(text);
-
-                    if (!"String".equals(optionJavaType(option))) {
-                        // regular option by String parameter variant
-                        desc = baseDesc.replace("@@REPLACE_ME@@",
-                                "\nThe option will be converted to a <code>"
-                                                                  + option.getJavaType().replace("<", "&lt;").replace(">",
-                                                                          "&gt;")
-                                                                  + "</code> type.");
-                        desc = JavadocHelper.xmlEncode(desc);
-
-                        fluent = target.addMethod().setDefault().setName(option.getName())
-                                .setReturnType(new GenericType(loadClass(target.getCanonicalName())))
-                                .addParameter(new GenericType(String.class), option.getName())
-                                .setBody("doSetProperty(\"" + option.getName() + "\", " + option.getName() + ");",
-                                        "return this;\n");
-                        if (option.isDeprecated()) {
-                            fluent.addAnnotation(Deprecated.class);
-                        }
-                        text = desc;
-                        text += "\n\n@param " + option.getName() + " the value to set";
-                        text += "\n@return the dsl builder\n";
-                        fluent.getJavaDoc().setText(text);
-                    }
-                }
-            }
-        }
+        processEndpoints(model, consumerClass, advancedConsumerClass, producerClass, advancedProducerClass, builderClass,
+                advancedBuilderClass);
 
         javaClass.removeImport("T");
 
@@ -523,118 +357,353 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         }
 
         if (aliases.size() == 1) {
-            String desc = getMainDescription(model);
-            String methodName = camelCaseLower(model.getScheme());
-            method = dslClass.addMethod().setStatic().setName(methodName)
-                    .addParameter(String.class, "path")
-                    .setReturnType(new GenericType(loadClass(builderClass.getCanonicalName())))
-                    .setDefault()
-                    .setBodyF("return %s.%s(%s);", javaClass.getName(), "endpointBuilder",
-                            "\"" + model.getScheme() + "\", path");
-            String javaDoc = desc;
-            javaDoc += "\n\n@param path " + pathParameterJavaDoc(model);
-            javaDoc += "\n@return the dsl builder\n";
-            method.getJavaDoc().setText(javaDoc);
-            if (model.isDeprecated()) {
-                method.addAnnotation(Deprecated.class);
-            }
-
-            // copy method for the static builders (which allows to use the endpoint-dsl from outside EndpointRouteBuilder)
-            method = method.copy();
-            method.setPublic().setStatic();
-            method.setReturnType(builderClass.getCanonicalName().replace('$', '.'));
-            method.setBodyF("return %s.%s(%s);", javaClass.getCanonicalName(), "endpointBuilder",
-                    "\"" + model.getScheme() + "\", path");
-            staticBuilders.add(method);
-
-            method = dslClass.addMethod().setStatic().setName(methodName)
-                    .addParameter(String.class, "componentName")
-                    .addParameter(String.class, "path")
-                    .setReturnType(new GenericType(loadClass(builderClass.getCanonicalName())))
-                    .setDefault()
-                    .setBodyF("return %s.%s(%s);", javaClass.getName(), "endpointBuilder", "componentName, path");
-            javaDoc = desc;
-            javaDoc += "\n\n@param componentName to use a custom component name for the endpoint instead of the default name";
-            javaDoc += "\n@param path " + pathParameterJavaDoc(model);
-            javaDoc += "\n@return the dsl builder\n";
-            method.getJavaDoc().setText(javaDoc);
-            if (model.isDeprecated()) {
-                method.addAnnotation(Deprecated.class);
-            }
-
-            // copy method for the static builders (which allows to use the endpoint-dsl from outside EndpointRouteBuilder)
-            method = method.copy();
-            method.setPublic().setStatic();
-            method.setReturnType(builderClass.getCanonicalName().replace('$', '.'));
-            method.setBodyF("return %s.%s(%s);", javaClass.getCanonicalName(), "endpointBuilder", "componentName, path");
-            staticBuilders.add(method);
+            processAliases(model, staticBuilders, javaClass, builderClass, dslClass);
         } else {
-            // we only want the first alias (master scheme) as static builders
-            boolean firstAlias = true;
+            processMasterScheme(aliases, staticBuilders, javaClass, builderClass, dslClass);
+        }
 
-            for (ComponentModel componentModel : aliases) {
-                String desc = getMainDescription(componentModel);
-                String methodName = camelCaseLower(componentModel.getScheme());
+        return writeSourceIfChanged(javaClass, componentsFactoriesPackageName.replace('.', '/'), builderName + "Factory.java",
+                false);
+    }
+
+    private void processMasterScheme(
+            List<ComponentModel> aliases, List<Method> staticBuilders, JavaClass javaClass, JavaClass builderClass,
+            JavaClass dslClass) {
+
+        // we only want the first alias (master scheme) as static builders
+        boolean firstAlias = true;
+
+        for (ComponentModel componentModel : aliases) {
+            String desc = getMainDescription(componentModel);
+            String methodName = camelCaseLower(componentModel.getScheme());
+            Method method = doAddMethod(javaClass, builderClass, dslClass, componentModel, methodName);
+            String javaDoc = desc;
+            javaDoc += "\n\n@param path " + pathParameterJavaDoc(componentModel);
+            javaDoc += "\n@return the dsl builder\n";
+            method.getJavaDoc().setText(javaDoc);
+            if (componentModel.isDeprecated()) {
+                method.addAnnotation(Deprecated.class);
+            }
+
+            // we only want the first alias (master scheme) as static builders
+            if (firstAlias) {
+                // copy method for the static builders (which allows to use the endpoint-dsl from outside EndpointRouteBuilder)
+                method = method.copy();
+                method.setPublic().setStatic();
+                method.setReturnType(builderClass.getCanonicalName().replace('$', '.'));
+                method.setBodyF("return %s.%s(%s);", javaClass.getCanonicalName(), "endpointBuilder",
+                        "\"" + componentModel.getScheme() + "\", path");
+                staticBuilders.add(method);
+            }
+
+            // we only want first alias for variation with custom component name
+            if (firstAlias) {
                 method = dslClass.addMethod().setStatic().setName(methodName)
+                        .addParameter(String.class, "componentName")
                         .addParameter(String.class, "path")
                         .setReturnType(new GenericType(loadClass(builderClass.getCanonicalName())))
                         .setDefault()
-                        .setBodyF("return %s.%s(%s);", javaClass.getName(), "endpointBuilder",
-                                "\"" + componentModel.getScheme() + "\", path");
-                String javaDoc = desc;
-                javaDoc += "\n\n@param path " + pathParameterJavaDoc(componentModel);
+                        .setBodyF("return %s.%s(%s);", javaClass.getName(), "endpointBuilder", "componentName, path");
+                javaDoc = desc;
+                javaDoc += "\n\n@param componentName to use a custom component name for the endpoint instead of the default name";
+                javaDoc += "\n@param path " + pathParameterJavaDoc(componentModel);
                 javaDoc += "\n@return the dsl builder\n";
                 method.getJavaDoc().setText(javaDoc);
                 if (componentModel.isDeprecated()) {
                     method.addAnnotation(Deprecated.class);
                 }
+            }
 
-                // we only want the first alias (master scheme) as static builders
-                if (firstAlias) {
-                    // copy method for the static builders (which allows to use the endpoint-dsl from outside EndpointRouteBuilder)
-                    method = method.copy();
-                    method.setPublic().setStatic();
-                    method.setReturnType(builderClass.getCanonicalName().replace('$', '.'));
-                    method.setBodyF("return %s.%s(%s);", javaClass.getCanonicalName(), "endpointBuilder",
-                            "\"" + componentModel.getScheme() + "\", path");
-                    staticBuilders.add(method);
+            // we only want the first alias (master scheme) as static builders
+            if (firstAlias) {
+                // copy method for the static builders (which allows to use the endpoint-dsl from outside EndpointRouteBuilder)
+                method = method.copy();
+                method.setPublic().setStatic();
+                method.setReturnType(builderClass.getCanonicalName().replace('$', '.'));
+                method.setBodyF("return %s.%s(%s);", javaClass.getCanonicalName(), "endpointBuilder",
+                        "componentName, path");
+                staticBuilders.add(method);
+            }
+
+            firstAlias = false;
+        }
+    }
+
+    private Method doAddMethod(
+            JavaClass javaClass, JavaClass builderClass, JavaClass dslClass, ComponentModel componentModel, String methodName) {
+        return dslClass.addMethod().setStatic().setName(methodName)
+                .addParameter(String.class, "path")
+                .setReturnType(new GenericType(loadClass(builderClass.getCanonicalName())))
+                .setDefault()
+                .setBodyF("return %s.%s(%s);", javaClass.getName(), "endpointBuilder",
+                        "\"" + componentModel.getScheme() + "\", path");
+    }
+
+    private void processAliases(
+            ComponentModel model, List<Method> staticBuilders, JavaClass javaClass, JavaClass builderClass,
+            JavaClass dslClass) {
+        Method method;
+        String desc = getMainDescription(model);
+        String methodName = camelCaseLower(model.getScheme());
+        method = doAddMethod(javaClass, builderClass, dslClass, model, methodName);
+        String javaDoc = desc;
+        javaDoc += "\n\n@param path " + pathParameterJavaDoc(model);
+        javaDoc += "\n@return the dsl builder\n";
+        method.getJavaDoc().setText(javaDoc);
+        if (model.isDeprecated()) {
+            method.addAnnotation(Deprecated.class);
+        }
+
+        // copy method for the static builders (which allows to use the endpoint-dsl from outside EndpointRouteBuilder)
+        method = method.copy();
+        method.setPublic().setStatic();
+        method.setReturnType(builderClass.getCanonicalName().replace('$', '.'));
+        method.setBodyF("return %s.%s(%s);", javaClass.getCanonicalName(), "endpointBuilder",
+                "\"" + model.getScheme() + "\", path");
+        staticBuilders.add(method);
+
+        method = dslClass.addMethod().setStatic().setName(methodName)
+                .addParameter(String.class, "componentName")
+                .addParameter(String.class, "path")
+                .setReturnType(new GenericType(loadClass(builderClass.getCanonicalName())))
+                .setDefault()
+                .setBodyF("return %s.%s(%s);", javaClass.getName(), "endpointBuilder", "componentName, path");
+        javaDoc = desc;
+        javaDoc += "\n\n@param componentName to use a custom component name for the endpoint instead of the default name";
+        javaDoc += "\n@param path " + pathParameterJavaDoc(model);
+        javaDoc += "\n@return the dsl builder\n";
+        method.getJavaDoc().setText(javaDoc);
+        if (model.isDeprecated()) {
+            method.addAnnotation(Deprecated.class);
+        }
+
+        // copy method for the static builders (which allows to use the endpoint-dsl from outside EndpointRouteBuilder)
+        method = method.copy();
+        method.setPublic().setStatic();
+        method.setReturnType(builderClass.getCanonicalName().replace('$', '.'));
+        method.setBodyF("return %s.%s(%s);", javaClass.getCanonicalName(), "endpointBuilder", "componentName, path");
+        staticBuilders.add(method);
+    }
+
+    private void processEndpoints(
+            ComponentModel model, JavaClass consumerClass, JavaClass advancedConsumerClass, JavaClass producerClass,
+            JavaClass advancedProducerClass, JavaClass builderClass, JavaClass advancedBuilderClass) {
+        for (EndpointOptionModel option : model.getEndpointOptions()) {
+
+            // skip all @UriPath parameters as the endpoint DSL is for query
+            // parameters
+            if ("path".equals(option.getKind())) {
+                continue;
+            }
+
+            List<JavaClass> targets = evalTargetsToProcess(consumerClass, advancedConsumerClass, producerClass,
+                    advancedProducerClass, builderClass, advancedBuilderClass, option);
+
+            for (JavaClass target : targets) {
+                processTarget(option, target);
+            }
+        }
+    }
+
+    private void processTarget(EndpointOptionModel option, JavaClass target) {
+        if (target == null) {
+            return;
+        }
+
+        // basic description
+        final String baseDesc = createBaseDescription(option);
+
+        boolean multiValued = option.isMultiValue();
+        if (multiValued) {
+            createMultivaluedDesc(option, target, baseDesc);
+        } else {
+            // regular option
+            createRegularDesc(option, target, baseDesc);
+        }
+    }
+
+    private void createRegularDesc(EndpointOptionModel option, JavaClass target, String baseDesc) {
+        String desc = baseDesc.replace("@@REPLACE_ME@@",
+                "\nThe option is a: <code>" + option.getJavaType().replace("<", "&lt;").replace(">", "&gt;")
+                                                         + "</code> type.");
+        desc = JavadocHelper.xmlEncode(desc);
+
+        Method fluent = target.addMethod().setDefault().setName(option.getName())
+                .setReturnType(new GenericType(loadClass(target.getCanonicalName())))
+                .addParameter(optionJavaType(option), option.getName())
+                .setBody("doSetProperty(\"" + option.getName() + "\", " + option.getName() + ");",
+                        "return this;\n");
+        if (option.isDeprecated()) {
+            fluent.addAnnotation(Deprecated.class);
+        }
+
+        final StringBuilder textBuilder = new StringBuilder(desc);
+        textBuilder.append("\n\n@param ").append(option.getName()).append(" the value to set");
+        textBuilder.append("\n@return the dsl builder\n");
+        fluent.getJavaDoc().setText(textBuilder.toString());
+
+        if (!"String".equals(optionJavaType(option))) {
+            // regular option by String parameter variant
+            desc = baseDesc.replace("@@REPLACE_ME@@",
+                    "\nThe option will be converted to a <code>"
+                                                      + option.getJavaType().replace("<", "&lt;").replace(">",
+                                                              "&gt;")
+                                                      + "</code> type.");
+            desc = JavadocHelper.xmlEncode(desc);
+
+            fluent = target.addMethod().setDefault().setName(option.getName())
+                    .setReturnType(new GenericType(loadClass(target.getCanonicalName())))
+                    .addParameter(new GenericType(String.class), option.getName())
+                    .setBody("doSetProperty(\"" + option.getName() + "\", " + option.getName() + ");",
+                            "return this;\n");
+            if (option.isDeprecated()) {
+                fluent.addAnnotation(Deprecated.class);
+            }
+
+            final StringBuilder optionTextSb = new StringBuilder(desc);
+            optionTextSb.append("\n\n@param ").append(option.getName()).append(" the value to set");
+            optionTextSb.append("\n@return the dsl builder\n");
+            fluent.getJavaDoc().setText(optionTextSb.toString());
+        }
+    }
+
+    private void createMultivaluedDesc(EndpointOptionModel option, JavaClass target, String baseDesc) {
+        // multi value option that takes one value
+        String desc = baseDesc.replace("@@REPLACE_ME@@",
+                "\nThe option is a: <code>" + option.getJavaType().replace("<", "&lt;").replace(">", "&gt;")
+                                                         + "</code> type.");
+        desc = JavadocHelper.xmlEncode(desc);
+
+        Method fluent = target.addMethod().setDefault().setName(option.getName())
+                .setReturnType(new GenericType(loadClass(target.getCanonicalName())))
+                .addParameter(new GenericType(String.class), "key")
+                .addParameter(new GenericType(Object.class), "value")
+                .setBody("doSetMultiValueProperty(\"" + option.getName() + "\", \"" + option.getPrefix()
+                         + "\" + key, value);",
+                        "return this;\n");
+        if (option.isDeprecated()) {
+            fluent.addAnnotation(Deprecated.class);
+        }
+
+        final StringBuilder textBuilder = new StringBuilder(desc);
+        textBuilder.append("\n\n@param key the option key");
+        textBuilder.append("\n@param value the option value");
+        textBuilder.append("\n@return the dsl builder\n");
+        fluent.getJavaDoc().setText(textBuilder.toString());
+        // add multi value method that takes a Map
+        fluent = target.addMethod().setDefault().setName(option.getName())
+                .setReturnType(new GenericType(loadClass(target.getCanonicalName())))
+                .addParameter(new GenericType(Map.class), "values")
+                .setBody("doSetMultiValueProperties(\"" + option.getName() + "\", \"" + option.getPrefix()
+                         + "\", values);",
+                        "return this;\n");
+        if (option.isDeprecated()) {
+            fluent.addAnnotation(Deprecated.class);
+        }
+
+        final StringBuilder sb = new StringBuilder(desc);
+
+        sb.append("\n\n@param values the values");
+        sb.append("\n@return the dsl builder\n");
+        fluent.getJavaDoc().setText(sb.toString());
+    }
+
+    private String createBaseDescription(EndpointOptionModel option) {
+        String baseDesc = option.getDescription();
+        if (Strings.isEmpty(baseDesc)) {
+            return baseDesc;
+
+        }
+
+        // must xml encode description as in some rare cases it contains & chars which is invalid javadoc
+        baseDesc = JavadocHelper.xmlEncode(baseDesc);
+
+        StringBuilder baseDescBuilder = new StringBuilder(baseDesc);
+        if (!baseDesc.endsWith(".")) {
+            baseDescBuilder.append(".");
+        }
+        baseDescBuilder.append("\n");
+        baseDescBuilder.append("@@REPLACE_ME@@");
+        if (option.isMultiValue()) {
+            baseDescBuilder.append("\nThe option is multivalued, and you can use the ")
+                    .append(option.getName())
+                    .append("(String, Object) method to add a value (call the method multiple times to set more values).");
+        }
+        baseDescBuilder.append("\n");
+        // the Endpoint DSL currently requires to provide the entire
+        // context-path and not as individual options
+        // so lets only mark query parameters that are required as
+        // required
+        if ("parameter".equals(option.getKind()) && option.isRequired()) {
+            baseDescBuilder.append("\nRequired: true");
+        }
+        // include default value (if any)
+        if (option.getDefaultValue() != null) {
+            // must xml encode default value so its valid as javadoc
+            String value = JavadocHelper.xmlEncode(option.getDefaultValue().toString());
+            baseDescBuilder.append("\nDefault: ").append(value);
+        }
+        baseDescBuilder.append("\nGroup: ").append(option.getGroup());
+
+        return baseDescBuilder.toString();
+    }
+
+    private List<JavaClass> evalTargetsToProcess(
+            JavaClass consumerClass, JavaClass advancedConsumerClass, JavaClass producerClass, JavaClass advancedProducerClass,
+            JavaClass builderClass, JavaClass advancedBuilderClass, EndpointOptionModel option) {
+        List<JavaClass> targets = new ArrayList<>();
+        String label = option.getLabel() != null ? option.getLabel() : "";
+        if (label != null) {
+            if (label.contains("producer")) {
+                if (label.contains("advanced")) {
+                    targets.add(advancedProducerClass != null ? advancedProducerClass : advancedBuilderClass);
+                } else {
+                    targets.add(producerClass != null ? producerClass : builderClass);
                 }
-
-                // we only want first alias for variation with custom component name
-                if (firstAlias) {
-                    method = dslClass.addMethod().setStatic().setName(methodName)
-                            .addParameter(String.class, "componentName")
-                            .addParameter(String.class, "path")
-                            .setReturnType(new GenericType(loadClass(builderClass.getCanonicalName())))
-                            .setDefault()
-                            .setBodyF("return %s.%s(%s);", javaClass.getName(), "endpointBuilder", "componentName, path");
-                    javaDoc = desc;
-                    javaDoc += "\n\n@param componentName to use a custom component name for the endpoint instead of the default name";
-                    javaDoc += "\n@param path " + pathParameterJavaDoc(componentModel);
-                    javaDoc += "\n@return the dsl builder\n";
-                    method.getJavaDoc().setText(javaDoc);
-                    if (componentModel.isDeprecated()) {
-                        method.addAnnotation(Deprecated.class);
-                    }
+            } else if (label.contains("consumer")) {
+                if (label.contains("advanced")) {
+                    targets.add(advancedConsumerClass != null ? advancedConsumerClass : advancedBuilderClass);
+                } else {
+                    targets.add(consumerClass != null ? consumerClass : builderClass);
                 }
-
-                // we only want the first alias (master scheme) as static builders
-                if (firstAlias) {
-                    // copy method for the static builders (which allows to use the endpoint-dsl from outside EndpointRouteBuilder)
-                    method = method.copy();
-                    method.setPublic().setStatic();
-                    method.setReturnType(builderClass.getCanonicalName().replace('$', '.'));
-                    method.setBodyF("return %s.%s(%s);", javaClass.getCanonicalName(), "endpointBuilder",
-                            "componentName, path");
-                    staticBuilders.add(method);
+            } else {
+                if (label.contains("advanced")) {
+                    targets.add(advancedConsumerClass);
+                    targets.add(advancedProducerClass);
+                    targets.add(advancedBuilderClass);
+                } else {
+                    targets.add(consumerClass);
+                    targets.add(producerClass);
+                    targets.add(builderClass);
                 }
+            }
+        }
+        return targets;
+    }
 
-                firstAlias = false;
+    private boolean hasAdvancedCheck(ComponentModel model) {
+        for (EndpointOptionModel option : model.getEndpointOptions()) {
+            if (option.getLabel() != null && option.getLabel().contains("advanced")) {
+                return true;
             }
         }
 
-        return writeSourceIfChanged(javaClass, componentsFactoriesPackageName.replace('.', '/'), builderName + "Factory.java",
-                false);
+        return false;
+    }
+
+    private JavaClass createJavaClass(String builderName) {
+        final JavaClass javaClass = new JavaClass(getProjectClassLoader());
+        javaClass.setPackage(componentsFactoriesPackageName);
+        javaClass.setName(builderName + "Factory");
+        javaClass.setClass(false);
+        javaClass.addImport("java.util.*");
+        javaClass.addImport("java.util.concurrent.*");
+        javaClass.addImport("java.util.function.*");
+        javaClass.addImport("java.util.stream.*");
+        javaClass.addImport("org.apache.camel.builder.EndpointConsumerBuilder");
+        javaClass.addImport("org.apache.camel.builder.EndpointProducerBuilder");
+        javaClass.addImport("org.apache.camel.builder.endpoint.AbstractEndpointBuilder");
+        return javaClass;
     }
 
     private static String optionJavaType(EndpointOptionModel option) {
@@ -777,7 +846,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         javaClass.addAnnotation(Generated.class).setStringValue("value", EndpointDslMojo.class.getName());
 
         // sort methods
-        Collections.sort(methods, (m1, m2) -> m1.getName().compareToIgnoreCase(m2.getName()));
+        methods.sort((m1, m2) -> m1.getName().compareToIgnoreCase(m2.getName()));
         // create method
         for (Method method : methods) {
             javaClass.addMethod(method);
@@ -830,77 +899,73 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
     private List<File> loadAllComponentsDslEndpointFactoriesAsFile() {
         final File allComponentsDslEndpointFactory
                 = new File(sourcesOutputDir, componentsFactoriesPackageName.replace('.', '/'));
-        final File[] files = allComponentsDslEndpointFactory.listFiles();
+        FileFilter fileFilter = file -> file.isFile() && file.getName().endsWith(".java");
+        final File[] files = allComponentsDslEndpointFactory.listFiles(fileFilter);
 
         if (files == null) {
             return Collections.emptyList();
         }
 
         // load components
-        return Arrays.stream(files).filter(file -> file.isFile() && file.getName().endsWith(".java") && file.exists()).sorted()
-                .collect(Collectors.toList());
+        return Arrays.stream(files).sorted().collect(Collectors.toUnmodifiableList());
     }
 
     private static String camelCaseLower(String s) {
         int i;
         while (s != null && (i = s.indexOf('-')) > 0) {
-            s = s.substring(0, i) + s.substring(i + 1, i + 2).toUpperCase() + s.substring(i + 2);
+            s = camelCaseAtIndex(s, i);
         }
         while (s != null && (i = s.indexOf('+')) > 0) {
-            s = s.substring(0, i) + s.substring(i + 1, i + 2).toUpperCase() + s.substring(i + 2);
+            s = camelCaseAtIndex(s, i);
         }
         if (s != null) {
             s = s.substring(0, 1).toLowerCase() + s.substring(1);
-            switch (s) {
-                case "class":
-                    s = "clas";
-                    break;
-                case "package":
-                    s = "packag";
-                    break;
-                case "rest":
-                    s = "restEndpoint";
-                    break;
-                default:
-                    break;
-            }
+            s = DslHelper.sanitizeText(s);
         }
         return s;
     }
 
+    private static String camelCaseAtIndex(String s, int i) {
+        return s.substring(0, i) + s.substring(i + 1, i + 2).toUpperCase() + s.substring(i + 2);
+    }
+
     private String getMainDescription(ComponentModel model) {
-        String desc = model.getTitle() + " (" + model.getArtifactId() + ")";
-        desc += "\n" + model.getDescription();
-        desc += "\n";
-        desc += "\nCategory: " + model.getLabel();
-        desc += "\nSince: " + model.getFirstVersionShort();
-        desc += "\nMaven coordinates: " + model.getGroupId() + ":" + model.getArtifactId();
+        StringBuilder descSb = new StringBuilder();
+
+        descSb.append(model.getTitle()).append(" (").append(model.getArtifactId()).append(")");
+        descSb.append("\n").append(model.getDescription());
+        descSb.append("\n");
+        descSb.append("\nCategory: ").append(model.getLabel());
+        descSb.append("\nSince: ").append(model.getFirstVersionShort());
+        descSb.append("\nMaven coordinates: ").append(model.getGroupId()).append(":").append(model.getArtifactId());
 
         // include javadoc for all path parameters and mark which are required
-        desc += "\n";
-        desc += "\nSyntax: <code>" + model.getSyntax() + "</code>";
+        descSb.append("\n");
+        descSb.append("\nSyntax: <code>").append(model.getSyntax()).append("</code>");
         for (EndpointOptionModel option : model.getEndpointOptions()) {
             if ("path".equals(option.getKind())) {
-                desc += "\n";
-                desc += "\nPath parameter: " + option.getName();
+                descSb.append("\n");
+                descSb.append("\nPath parameter: ").append(option.getName());
                 if (option.isRequired()) {
-                    desc += " (required)";
+                    descSb.append(" (required)");
                 }
                 if (option.isDeprecated()) {
-                    desc += " <strong>deprecated</strong>";
+                    descSb.append(" <strong>deprecated</strong>");
                 }
-                desc += "\n" + option.getDescription();
+                descSb.append("\n").append(option.getDescription());
                 if (option.getDefaultValue() != null) {
-                    desc += "\nDefault value: " + option.getDefaultValue();
+                    descSb.append("\nDefault value: ").append(option.getDefaultValue());
                 }
                 // TODO: default value note ?
                 if (option.getEnums() != null && !option.getEnums().isEmpty()) {
-                    desc += "\nThere are " + option.getEnums().size() + " enums and the value can be one of: "
-                            + wrapEnumValues(option.getEnums());
+                    descSb.append("\nThere are ").append(option.getEnums().size())
+                            .append(" enums and the value can be one of: ")
+                            .append(wrapEnumValues(option.getEnums()));
                 }
             }
         }
-        return desc;
+
+        return descSb.toString();
     }
 
     private String wrapEnumValues(List<String> enumValues) {

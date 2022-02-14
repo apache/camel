@@ -38,7 +38,7 @@ public final class ComponentsBuilderFactoryGenerator {
 
     private final String packageName;
     private final Set<ComponentModel> componentModels;
-    private JavaClass javaClass;
+    private final JavaClass javaClass;
 
     private ComponentsBuilderFactoryGenerator(final Set<ComponentModel> componentModels, final ClassLoader classLoader,
                                               final String packageName) {

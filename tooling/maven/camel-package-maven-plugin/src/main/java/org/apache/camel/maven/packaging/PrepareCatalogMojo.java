@@ -198,7 +198,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
     private Collection<Path> allJsonFiles;
     private Collection<Path> allPropertiesFiles;
-    private Map<Path, BaseModel<?>> allModels = new HashMap<>();
+    private final Map<Path, BaseModel<?>> allModels = new HashMap<>();
 
     private static String asComponentName(Path file) {
         String name = file.getFileName().toString();
@@ -266,7 +266,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                                 OtherModel om = (OtherModel) m;
                                 if (!project.getVersion().equals(om.getVersion())) {
                                     // update version in model and file because we prepare catalog before we build DSL
-                                    // so their previous generated model files may use previous version (eg 3.15.0-SNAPSHOT -> 3.15.0)
+                                    // so their previous generated model files may use previous version (eg 3.16.0-SNAPSHOT -> 3.15.0)
                                     try {
                                         String s = Files.readString(p);
                                         s = s.replaceAll(om.getVersion(), project.getVersion());
@@ -718,7 +718,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
         copyFile(mainDir.toPath().resolve("camel-main-configuration-metadata.json"), mainOutDir.toPath());
     }
 
-    protected void executeDocuments(Set<String> components, Set<String> dataformats, Set<String> languages, Set<String> others) throws Exception {
+    protected void executeDocuments(Set<String> components, Set<String> dataformats, Set<String> languages, Set<String> others) {
         // lets use sorted set/maps
         Set<Path> adocFiles = new TreeSet<>();
         Set<Path> missingAdocFiles = new TreeSet<>();
@@ -825,10 +825,9 @@ public class PrepareCatalogMojo extends AbstractMojo {
         missing.clear();
 
         for (String other : others) {
-            String name = other;
 
-            if (!docs.contains(name)) {
-                missing.add(name);
+            if (!docs.contains(other)) {
+                missing.add(other);
             }
         }
         if (!missing.isEmpty()) {

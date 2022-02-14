@@ -132,25 +132,19 @@ public class ManagedCamelHealth implements ManagedCamelHealthMBean {
                                 "failureCount",
                                 "failureStackTrace",
                                 "readiness",
-                                "liveness",
-                                "interval",
-                                "successThreshold",
-                                "failureThreshold"
+                                "liveness"
                         },
                         new Object[] {
                                 result.getCheck().getId(),
                                 result.getCheck().getGroup(),
                                 result.getState().name(),
-                                result.getCheck().getConfiguration().isEnabled(),
+                                result.getCheck().isEnabled(),
                                 result.getMessage().orElse(""),
                                 failureUri,
                                 failureCount,
                                 stacktrace,
                                 result.getCheck().isReadiness(),
-                                result.getCheck().isLiveness(),
-                                result.getCheck().getConfiguration().getInterval(),
-                                result.getCheck().getConfiguration().getSuccessThreshold(),
-                                result.getCheck().getConfiguration().getFailureThreshold()
+                                result.getCheck().isLiveness()
                         });
 
                 answer.put(data);
@@ -173,7 +167,7 @@ public class ManagedCamelHealth implements ManagedCamelHealthMBean {
     public void enableById(String id) {
         Optional<HealthCheck> hc = healthCheckRegistry.getCheck(id);
         if (hc.isPresent()) {
-            hc.get().getConfiguration().setEnabled(true);
+            hc.get().setEnabled(true);
         } else {
             Optional<HealthCheckRepository> hcr = healthCheckRegistry.getRepository(id);
             hcr.ifPresent(repository -> repository.setEnabled(true));
@@ -184,7 +178,7 @@ public class ManagedCamelHealth implements ManagedCamelHealthMBean {
     public void disableById(String id) {
         Optional<HealthCheck> hc = healthCheckRegistry.getCheck(id);
         if (hc.isPresent()) {
-            hc.get().getConfiguration().setEnabled(false);
+            hc.get().setEnabled(false);
         } else {
             Optional<HealthCheckRepository> hcr = healthCheckRegistry.getRepository(id);
             hcr.ifPresent(repository -> repository.setEnabled(false));

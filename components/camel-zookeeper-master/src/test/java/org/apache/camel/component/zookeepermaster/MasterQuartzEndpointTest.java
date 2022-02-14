@@ -19,13 +19,16 @@ package org.apache.camel.component.zookeepermaster;
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.zookeepermaster.group.ZookeeprContainer;
 import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
 @CamelSpringTest
 @ContextConfiguration
+@ExtendWith(ZookeeprContainer.class)
 public class MasterQuartzEndpointTest {
     @Autowired
     protected CamelContext camelContext;

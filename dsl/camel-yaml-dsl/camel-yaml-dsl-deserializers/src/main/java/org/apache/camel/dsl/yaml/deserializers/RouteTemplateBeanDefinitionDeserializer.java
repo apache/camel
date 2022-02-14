@@ -16,16 +16,14 @@
  */
 package org.apache.camel.dsl.yaml.deserializers;
 
-import java.util.stream.Collectors;
-
-import org.apache.camel.dsl.yaml.common.YamlDeserializerBase;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerResolver;
-import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.model.RouteTemplateBeanDefinition;
 import org.apache.camel.spi.annotations.YamlProperty;
 import org.apache.camel.spi.annotations.YamlType;
-import org.snakeyaml.engine.v2.nodes.Node;
 
+/**
+ * The YAML deserializer for the bean factory used by the route template.
+ */
 @YamlType(
           inline = false,
           types = org.apache.camel.model.RouteTemplateBeanDefinition.class,
@@ -36,10 +34,10 @@ import org.snakeyaml.engine.v2.nodes.Node;
                   @YamlProperty(name = "name", type = "string", required = true),
                   @YamlProperty(name = "property", type = "array:org.apache.camel.model.PropertyDefinition"),
                   @YamlProperty(name = "properties", type = "object"),
-                  @YamlProperty(name = "script", type = "object:org.apache.camel.model.RouteTemplateScriptDefinition"),
+                  @YamlProperty(name = "script", type = "string"),
                   @YamlProperty(name = "type", type = "string", required = true)
           })
-public class RouteTemplateBeanDefinitionDeserializer extends YamlDeserializerBase<RouteTemplateBeanDefinition> {
+public class RouteTemplateBeanDefinitionDeserializer extends BeanFactoryDefinitionDeserializer<RouteTemplateBeanDefinition> {
     public RouteTemplateBeanDefinitionDeserializer() {
         super(RouteTemplateBeanDefinition.class);
     }
@@ -54,51 +52,5 @@ public class RouteTemplateBeanDefinitionDeserializer extends YamlDeserializerBas
         RouteTemplateBeanDefinition answer = new RouteTemplateBeanDefinition();
         answer.setName(value);
         return answer;
-    }
-
-    @Override
-    protected boolean setProperty(
-            RouteTemplateBeanDefinition target, String propertyKey,
-            String propertyName, Node node) {
-        switch (propertyKey) {
-            case "bean-type": {
-                String val = asText(node);
-                target.setBeanType(val);
-                break;
-            }
-            case "name": {
-                String val = asText(node);
-                target.setName(val);
-                break;
-            }
-            case "property": {
-                java.util.List<org.apache.camel.model.PropertyDefinition> val
-                        = asFlatList(node, org.apache.camel.model.PropertyDefinition.class);
-                target.setProperties(val);
-                break;
-            }
-            case "properties": {
-                target.setProperties(
-                        asMap(node).entrySet().stream()
-                                .map(e -> new PropertyDefinition(e.getKey(), (String) e.getValue()))
-                                .collect(Collectors.toList()));
-                break;
-            }
-            case "script": {
-                org.apache.camel.model.RouteTemplateScriptDefinition val
-                        = asType(node, org.apache.camel.model.RouteTemplateScriptDefinition.class);
-                target.setScript(val);
-                break;
-            }
-            case "type": {
-                String val = asText(node);
-                target.setType(val);
-                break;
-            }
-            default: {
-                return false;
-            }
-        }
-        return true;
     }
 }

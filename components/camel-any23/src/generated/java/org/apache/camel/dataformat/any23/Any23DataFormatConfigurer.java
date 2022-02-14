@@ -18,11 +18,12 @@ public class Any23DataFormatConfigurer extends PropertyConfigurerSupport impleme
     public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
         Any23DataFormat dataformat = (Any23DataFormat) target;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "configuration": dataformat.setConfiguration(property(camelContext, java.util.Map.class, value)); return true;
         case "extractors": dataformat.setExtractors(property(camelContext, java.util.List.class, value)); return true;
         case "outputformat":
         case "outputFormat": dataformat.setOutputFormat(property(camelContext, org.apache.camel.dataformat.any23.Any23OutputFormat.class, value)); return true;
         case "baseuri":
-        case "baseURI": dataformat.setBaseURI(property(camelContext, java.lang.String.class, value)); return true;
+        case "baseUri": dataformat.setBaseUri(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }

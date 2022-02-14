@@ -168,7 +168,7 @@ public class FaceRecognitionProducer extends DefaultProducer {
      * @param exchange camel exchange
      */
     private void performFaceDetectionOperation(Exchange exchange, ClientConfigurations clientConfigurations) {
-        updateClientConfigurations(exchange, clientConfigurations);
+        updateFaceDetectionConfigurations(exchange, clientConfigurations);
         SdkResponse result;
         if (!StringUtils.isEmpty(clientConfigurations.getImageBase64())) {
             FaceDetectBase64Req reqBody = new FaceDetectBase64Req().withImageBase64(clientConfigurations.getImageBase64());
@@ -196,7 +196,7 @@ public class FaceRecognitionProducer extends DefaultProducer {
      * @param exchange camel exchange
      */
     private void performFaceVerificationOperation(Exchange exchange, ClientConfigurations clientConfigurations) {
-        updateClientConfigurations(exchange, clientConfigurations);
+        updateFaceVerificationConfigurations(exchange, clientConfigurations);
 
         SdkResponse result;
         if (!StringUtils.isEmpty(clientConfigurations.getImageBase64())
@@ -232,7 +232,7 @@ public class FaceRecognitionProducer extends DefaultProducer {
      * @param exchange camel exchange
      */
     private void performLiveDetectOperation(Exchange exchange, ClientConfigurations clientConfigurations) {
-        updateClientConfigurations(exchange, clientConfigurations);
+        updateLiveDetectConfigurations(exchange, clientConfigurations);
         SdkResponse result;
         if (!StringUtils.isEmpty(clientConfigurations.getVideoBase64())) {
             LiveDetectBase64Req reqBody = new LiveDetectBase64Req().withVideoBase64(clientConfigurations.getVideoBase64())
@@ -263,24 +263,6 @@ public class FaceRecognitionProducer extends DefaultProducer {
             throw new IllegalArgumentException(String.format("File path is invalid: %s", file));
         }
         return file;
-    }
-
-    /**
-     * Update dynamic client configurations. Some endpoint parameters (imageContent, imageUrl, tagLanguage, tagLimit and
-     * threshold) can also be passed via exchange properties, so they can be updated between each transaction. Since
-     * they can change, we must clear the previous transaction and update these parameters with their new values
-     *
-     * @param exchange             camel exchange
-     * @param clientConfigurations frs client configurations
-     */
-    private void updateClientConfigurations(Exchange exchange, ClientConfigurations clientConfigurations) {
-        if (FaceRecognitionConstants.OPERATION_FACE_DETECTION.equals(endpoint.getOperation())) {
-            updateFaceDetectionConfigurations(exchange, clientConfigurations);
-        } else if (FaceRecognitionConstants.OPERATION_FACE_VERIFICATION.equals(endpoint.getOperation())) {
-            updateFaceVerificationConfigurations(exchange, clientConfigurations);
-        } else if (FaceRecognitionConstants.OPERATION_FACE_LIVE_DETECT.equals(endpoint.getOperation())) {
-            updateLiveDetectConfigurations(exchange, clientConfigurations);
-        }
     }
 
     private void updateFaceDetectionConfigurations(Exchange exchange, ClientConfigurations clientConfigurations) {

@@ -43,6 +43,7 @@ import org.apache.maven.project.MavenProjectHelper;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
 public abstract class AbstractGenerateMojo extends AbstractMojo {
+    private static final String INCREMENTAL_DATA = "";
 
     @Parameter(property = "project", required = true, readonly = true)
     protected MavenProject project;
@@ -63,7 +64,7 @@ public abstract class AbstractGenerateMojo extends AbstractMojo {
                 writeIncrementalInfo(project);
             }
         } catch (Exception e) {
-            throw new MojoFailureException("Error generating data " + e.toString(), e);
+            throw new MojoFailureException("Error generating data " + e, e);
         }
     }
 
@@ -103,10 +104,9 @@ public abstract class AbstractGenerateMojo extends AbstractMojo {
     private void writeIncrementalInfo(MavenProject project) throws MojoExecutionException {
         try {
             Path cacheData = getIncrementalDataPath(project);
-            String curdata = getIncrementalData();
             Files.createDirectories(cacheData.getParent());
             try (Writer w = Files.newBufferedWriter(cacheData)) {
-                w.append(curdata);
+                w.append(INCREMENTAL_DATA);
             }
         } catch (IOException e) {
             throw new MojoExecutionException("Error checking manifest uptodate status", e);
@@ -116,14 +116,8 @@ public abstract class AbstractGenerateMojo extends AbstractMojo {
     private boolean isUpToDate(MavenProject project) throws MojoExecutionException {
         try {
             Path cacheData = getIncrementalDataPath(project);
-            String prvdata;
-            if (Files.isRegularFile(cacheData)) {
-                prvdata = new String(Files.readAllBytes(cacheData), StandardCharsets.UTF_8);
-            } else {
-                prvdata = null;
-            }
-            String curdata = getIncrementalData();
-            if (curdata.equals(prvdata)) {
+            final String prvdata = getPreviousRunData(cacheData);
+            if (INCREMENTAL_DATA.equals(prvdata)) {
                 long lastmod = Files.getLastModifiedTime(cacheData).toMillis();
                 Set<String> stale = Stream.concat(Stream.concat(
                         project.getCompileSourceRoots().stream().map(File::new),
@@ -155,6 +149,14 @@ public abstract class AbstractGenerateMojo extends AbstractMojo {
         return false;
     }
 
+    private String getPreviousRunData(Path cacheData) throws IOException {
+        if (Files.isRegularFile(cacheData)) {
+            return new String(Files.readAllBytes(cacheData), StandardCharsets.UTF_8);
+        } else {
+            return null;
+        }
+    }
+
     private String getIncrementalData() {
         return "";
     }
@@ -183,7 +185,7 @@ public abstract class AbstractGenerateMojo extends AbstractMojo {
                         try (ZipFile zf = new ZipFile(file)) {
                             return zf.stream().filter(ze -> !ze.isDirectory())
                                     .filter(ze -> ze.getLastModifiedTime().toMillis() > lastmod)
-                                    .map(ze -> file.toString() + "!" + ze.getName()).collect(Collectors.toList()).stream();
+                                    .map(ze -> file + "!" + ze.getName()).collect(Collectors.toList()).stream();
                         } catch (IOException e) {
                             throw new IOException("Error reading zip file: " + file, e);
                         }

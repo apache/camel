@@ -69,23 +69,7 @@ public class CaffeineCacheEndpoint extends DefaultEndpoint {
         if (cache == null) {
             if (configuration.isCreateCacheIfNotExist()) {
                 Caffeine<?, ?> builder = Caffeine.newBuilder();
-                if (configuration.getEvictionType() == EvictionType.SIZE_BASED) {
-                    builder.initialCapacity(configuration.getInitialCapacity());
-                    builder.maximumSize(configuration.getMaximumSize());
-                } else if (configuration.getEvictionType() == EvictionType.TIME_BASED) {
-                    builder.expireAfterAccess(configuration.getExpireAfterAccessTime(), TimeUnit.SECONDS);
-                    builder.expireAfterWrite(configuration.getExpireAfterWriteTime(), TimeUnit.SECONDS);
-                }
-                if (configuration.isStatsEnabled()) {
-                    if (ObjectHelper.isEmpty(configuration.getStatsCounter())) {
-                        builder.recordStats();
-                    } else {
-                        builder.recordStats(configuration::getStatsCounter);
-                    }
-                }
-                if (ObjectHelper.isNotEmpty(configuration.getRemovalListener())) {
-                    builder.removalListener(configuration.getRemovalListener());
-                }
+                defineBuilder(builder, configuration);
                 cache = builder.build();
             } else {
                 throw new IllegalArgumentException(
@@ -93,6 +77,26 @@ public class CaffeineCacheEndpoint extends DefaultEndpoint {
             }
         }
         super.doStart();
+    }
+
+    public static void defineBuilder(Caffeine<?, ?> builder, CaffeineConfiguration configuration) {
+        if (configuration.getEvictionType() == EvictionType.SIZE_BASED) {
+            builder.initialCapacity(configuration.getInitialCapacity());
+            builder.maximumSize(configuration.getMaximumSize());
+        } else if (configuration.getEvictionType() == EvictionType.TIME_BASED) {
+            builder.expireAfterAccess(configuration.getExpireAfterAccessTime(), TimeUnit.SECONDS);
+            builder.expireAfterWrite(configuration.getExpireAfterWriteTime(), TimeUnit.SECONDS);
+        }
+        if (configuration.isStatsEnabled()) {
+            if (ObjectHelper.isEmpty(configuration.getStatsCounter())) {
+                builder.recordStats();
+            } else {
+                builder.recordStats(configuration::getStatsCounter);
+            }
+        }
+        if (ObjectHelper.isNotEmpty(configuration.getRemovalListener())) {
+            builder.removalListener(configuration.getRemovalListener());
+        }
     }
 
     @Override

@@ -19,6 +19,7 @@ package org.apache.camel.main;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.BindToRegistry;
+import org.apache.camel.CamelConfiguration;
 import org.apache.camel.spi.OnCamelContextInitialized;
 import org.apache.camel.spi.OnCamelContextInitializing;
 import org.apache.camel.spi.OnCamelContextStart;
@@ -43,7 +44,7 @@ public class ContextEventsTest {
         assertEquals(1, config.onStop.get());
     }
 
-    public static class MyConfig {
+    public static class MyConfig implements CamelConfiguration {
         final AtomicInteger onInitializing = new AtomicInteger();
         final AtomicInteger onInitialized = new AtomicInteger();
         final AtomicInteger onStart = new AtomicInteger();

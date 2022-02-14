@@ -18,30 +18,36 @@ package org.apache.camel.impl.converter;
 
 import java.io.IOException;
 
-import org.apache.camel.TypeConverters;
-
 /**
  * A type converter loader, that <b>only</b> supports scanning a {@link org.apache.camel.TypeConverters} class for
  * methods that has been annotated with {@link org.apache.camel.Converter}.
  */
 public class TypeConvertersLoader extends AnnotationTypeConverterLoader {
 
-    private final TypeConverters typeConverters;
+    private final String name;
 
     /**
      * Creates the loader
      *
      * @param typeConverters The implementation that has the type converters
      */
-    public TypeConvertersLoader(TypeConverters typeConverters) {
-        super(new TypeConvertersPackageScanClassResolver(typeConverters.getClass()));
-        this.typeConverters = typeConverters;
+    public TypeConvertersLoader(Object typeConverters) {
+        this(typeConverters.getClass());
+    }
+
+    /**
+     * Creates the loader
+     *
+     * @param clazz the class with the @Converter annotation and converter methods
+     */
+    public TypeConvertersLoader(Class<?> clazz) {
+        super(new TypeConvertersPackageScanClassResolver(clazz));
+        this.name = clazz.getPackage().getName();
     }
 
     @Override
     protected String[] findPackageNames() throws IOException {
         // this method doesn't change the behavior of the CorePackageScanClassResolver
-        String name = typeConverters.getClass().getPackage().getName();
         return new String[] { name };
     }
 

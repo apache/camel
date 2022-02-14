@@ -41,17 +41,16 @@ public class OwbTypeVariableImpl {
      * @return the typeVariable with the defined bounds.
      */
     public static TypeVariable createTypeVariable(TypeVariable typeVariable, Type... bounds) {
-        TypeVariable tv = (TypeVariable)Proxy.newProxyInstance(OwbTypeVariableImpl.class.getClassLoader(), TYPE_VARIABLE_TYPES,
-                                                               new OwbTypeVariableInvocationHandler(typeVariable, bounds));
 
-        return tv;
+        return (TypeVariable)Proxy.newProxyInstance(OwbTypeVariableImpl.class.getClassLoader(), TYPE_VARIABLE_TYPES,
+                                                               new OwbTypeVariableInvocationHandler(typeVariable, bounds));
     }
 
     public static class OwbTypeVariableInvocationHandler implements InvocationHandler {
 
-        private String name;
-        private GenericDeclaration genericDeclaration;
-        private Type[] bounds;
+        private final String name;
+        private final GenericDeclaration genericDeclaration;
+        private final Type[] bounds;
 
         public OwbTypeVariableInvocationHandler(TypeVariable typeVariable, Type... bounds) {
             name = typeVariable.getName();

@@ -18,7 +18,6 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.saga.InMemorySagaService;
@@ -61,16 +60,6 @@ public class SagaOptionsTest extends ContextTestSupport {
         compensate.assertIsSatisfied();
     }
 
-    @Test
-    public void testRouteDoesNotHangOnOptionError() throws Exception {
-        try {
-            template.sendBody("direct:wrong-expression", "Hello");
-            fail("Should throw an exception");
-        } catch (RuntimeCamelException ex) {
-            // OK
-        }
-    }
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
 
@@ -86,9 +75,6 @@ public class SagaOptionsTest extends ContextTestSupport {
                             throw new RuntimeException("forced compensate");
                         }).end().setHeader("myname", constant("TryToOverride")).setHeader("name", constant("TryToOverride"))
                         .to("mock:endpoint");
-
-                from("direct:wrong-expression").saga().option("id", simple("${10 / 0}")).to("log:info");
-
             }
         };
     }

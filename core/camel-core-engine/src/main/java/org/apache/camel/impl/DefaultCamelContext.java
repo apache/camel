@@ -61,6 +61,7 @@ import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.model.TemplatedRouteDefinition;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.rest.RestDefinition;
@@ -440,6 +441,15 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
             throw new IllegalStateException("Access to model not supported in lightweight mode");
         }
         return model.addRouteFromTemplate(routeId, routeTemplateId, routeTemplateContext);
+    }
+
+    @Override
+    public void addRouteFromTemplatedRoute(TemplatedRouteDefinition templatedRouteDefinition)
+            throws Exception {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
+        model.addRouteFromTemplatedRoute(templatedRouteDefinition);
     }
 
     @Override

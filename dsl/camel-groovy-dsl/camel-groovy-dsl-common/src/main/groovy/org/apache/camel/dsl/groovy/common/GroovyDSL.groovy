@@ -38,7 +38,6 @@ import org.apache.camel.model.RouteDefinition
 import org.apache.camel.model.rest.RestConfigurationDefinition
 import org.apache.camel.model.rest.RestDefinition
 import org.apache.camel.spi.Registry
-import org.apache.camel.support.builder.ExpressionBuilder
 
 class GroovyDSL extends BuilderSupport implements EndpointBuilderFactory {
     final Registry registry

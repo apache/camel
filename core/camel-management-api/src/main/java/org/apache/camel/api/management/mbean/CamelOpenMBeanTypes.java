@@ -236,16 +236,13 @@ public final class CamelOpenMBeanTypes {
                 "healthDetails", "Health Details",
                 new String[] {
                         "id", "group", "state", "enabled", "message", "failureUri", "failureCount", "failureStackTrace",
-                        "readiness", "liveness",
-                        "interval", "successThreshold", "failureThreshold" },
+                        "readiness", "liveness" },
                 new String[] {
                         "ID", "Group", "State", "Enabled", "Message", "Failure Uri", "Failure Count", "Failure StackTrace",
-                        "Readiness", "Liveness",
-                        "Interval", "Success Threshold", "Failure Threshold" },
+                        "Readiness", "Liveness" },
                 new OpenType[] {
                         SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.BOOLEAN, SimpleType.STRING,
-                        SimpleType.STRING, SimpleType.INTEGER, SimpleType.STRING, SimpleType.BOOLEAN, SimpleType.BOOLEAN,
-                        SimpleType.LONG, SimpleType.INTEGER, SimpleType.INTEGER });
+                        SimpleType.STRING, SimpleType.INTEGER, SimpleType.STRING, SimpleType.BOOLEAN, SimpleType.BOOLEAN });
     }
 
     public static TabularType camelHealthDetailsTabularType() throws OpenDataException {

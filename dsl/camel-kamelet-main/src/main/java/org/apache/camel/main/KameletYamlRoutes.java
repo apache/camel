@@ -104,10 +104,7 @@ class KameletYamlRoutes extends YamlRoutesBuilderLoaderSupport implements CamelC
 
         if (!gavs.isEmpty()) {
             for (String gav : gavs) {
-                MavenGav mg = MavenGav.parseGav(gav);
-                if (mg.getVersion() == null) {
-                    mg.setVersion(camelContext.getVersion());
-                }
+                MavenGav mg = MavenGav.parseGav(camelContext, gav);
                 DownloaderHelper.downloadDependency(camelContext, mg.getGroupId(), mg.getArtifactId(), mg.getVersion());
                 downloaded.add(gav);
             }
@@ -125,7 +122,7 @@ class KameletYamlRoutes extends YamlRoutesBuilderLoaderSupport implements CamelC
             return false;
         }
 
-        MavenGav mg = MavenGav.parseGav(gav);
+        MavenGav mg = MavenGav.parseGav(camelContext, gav);
         boolean exists = DownloaderHelper.alreadyOnClasspath(camelContext, mg.getArtifactId());
         // valid if not already on classpath
         return !exists;

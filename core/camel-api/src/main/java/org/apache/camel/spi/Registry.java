@@ -85,6 +85,15 @@ public interface Registry extends BeanRepository {
     void bindAsPrototype(String id, Class<?> type, Supplier<Object> bean) throws RuntimeCamelException;
 
     /**
+     * Removes the bean from the repository (if possible).
+     *
+     * @param id the id of the bean
+     */
+    default void unbind(String id) {
+        // noop
+    }
+
+    /**
      * Strategy to wrap the value to be stored in the registry.
      *
      * @param  value the value

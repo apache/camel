@@ -20,6 +20,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.CamelBeanPostProcessor;
@@ -33,10 +34,12 @@ import org.apache.camel.support.ObjectHelper;
 public class DefaultInjector implements Injector {
 
     // use the reflection injector
+    private final CamelContext camelContext;
     private final CamelBeanPostProcessor postProcessor;
 
     public DefaultInjector(CamelContext context) {
-        postProcessor = context.adapt(ExtendedCamelContext.class).getBeanPostProcessor();
+        this.camelContext = context;
+        this.postProcessor = context.adapt(ExtendedCamelContext.class).getBeanPostProcessor();
     }
 
     @Override
@@ -54,6 +57,8 @@ public class DefaultInjector implements Injector {
                 Object obj = fm.invoke(null);
                 answer = type.cast(obj);
             }
+            // inject camel context if needed
+            CamelContextAware.trySetCamelContext(answer, camelContext);
         } catch (Exception e) {
             throw new RuntimeCamelException("Error invoking factory method: " + factoryMethod + " on class: " + type, e);
         }
@@ -63,7 +68,9 @@ public class DefaultInjector implements Injector {
     @Override
     public <T> T newInstance(Class<T> type, boolean postProcessBean) {
         T answer = ObjectHelper.newInstance(type);
-        if (answer != null && postProcessBean) {
+        // inject camel context if needed
+        CamelContextAware.trySetCamelContext(answer, camelContext);
+        if (postProcessBean) {
             try {
                 postProcessor.postProcessBeforeInitialization(answer, answer.getClass().getName());
                 postProcessor.postProcessAfterInitialization(answer, answer.getClass().getName());

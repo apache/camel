@@ -26,7 +26,7 @@
 		<maven.compiler.testTarget>${r"${maven.compiler.target}"}</maven.compiler.testTarget>
 		<maven.compiler.testSource>${r"${maven.compiler.source}"}</maven.compiler.testSource>
 
-		<formatter-maven-plugin.version>2.11.0</formatter-maven-plugin.version>
+		<formatter-maven-plugin.version>2.17.1</formatter-maven-plugin.version>
 		<impsort-maven-plugin.version>1.3.2</impsort-maven-plugin.version>
 		<maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
 		<maven-jar-plugin.version>3.2.0</maven-jar-plugin.version>

@@ -36,6 +36,7 @@ import org.apache.camel.FailedToCreateRouteFromTemplateException;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.PropertyBindingException;
 import org.apache.camel.RouteTemplateContext;
+import org.apache.camel.model.BeanFactoryDefinition;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.DefaultRouteTemplateContext;
 import org.apache.camel.model.FaultToleranceConfigurationDefinition;
@@ -53,6 +54,9 @@ import org.apache.camel.model.RouteFilters;
 import org.apache.camel.model.RouteTemplateBeanDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RouteTemplateParameterDefinition;
+import org.apache.camel.model.TemplatedRouteBeanDefinition;
+import org.apache.camel.model.TemplatedRouteDefinition;
+import org.apache.camel.model.TemplatedRouteParameterDefinition;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
@@ -319,7 +323,7 @@ public class DefaultModel implements Model {
             Object location = routeTemplateContext.getParameters().get(RouteTemplateParameterSource.LOCATION);
             if (location != null) {
                 RouteTemplateLoaderListener listener
-                        = CamelContextHelper.findByType(getCamelContext(), RouteTemplateLoaderListener.class);
+                        = CamelContextHelper.findSingleByType(getCamelContext(), RouteTemplateLoaderListener.class);
                 RouteTemplateHelper.loadRouteTemplateFromLocation(getCamelContext(), listener, routeTemplateId,
                         location.toString());
             }
@@ -426,149 +430,260 @@ public class DefaultModel implements Model {
         prop.put(key, value);
     }
 
-    private void addTemplateBeans(RouteTemplateContext routeTemplateContext, RouteTemplateDefinition target) throws Exception {
+    private static void addTemplateBeans(RouteTemplateContext routeTemplateContext, RouteTemplateDefinition target)
+            throws Exception {
         for (RouteTemplateBeanDefinition b : target.getTemplateBeans()) {
-            final Map<String, Object> props = new HashMap<>();
-            if (b.getProperties() != null) {
-                b.getProperties().forEach(p -> props.put(p.getKey(), p.getValue()));
-            }
-            if (b.getBeanSupplier() != null) {
-                if (props.isEmpty()) {
-                    // bean class is optional for supplier
-                    if (b.getBeanClass() != null) {
-                        routeTemplateContext.bind(b.getName(), b.getBeanClass(), b.getBeanSupplier());
-                    } else {
-                        routeTemplateContext.bind(b.getName(), b.getBeanSupplier());
-                    }
-                }
-            } else if (b.getScript() != null) {
-                final String script = b.getScript().getScript();
-                final Language lan = camelContext.resolveLanguage(b.getType());
-                final Class<?> clazz = b.getBeanType() != null
-                        ? camelContext.getClassResolver().resolveMandatoryClass(b.getBeanType())
-                        : b.getBeanClass() != null ? b.getBeanClass() : Object.class;
-                final ScriptingLanguage slan = lan instanceof ScriptingLanguage ? (ScriptingLanguage) lan : null;
-                if (slan != null) {
-                    // scripting language should be evaluated with route template context as binding
-                    // and memorize so the script is only evaluated once and the local bean is the same
-                    // if a route template refers to the local bean multiple times
-                    routeTemplateContext.bind(b.getName(), clazz, Suppliers.memorize(() -> {
-                        Map<String, Object> bindings = new HashMap<>();
-                        // use rtx as the short-hand name, as context would imply its CamelContext
-                        bindings.put("rtc", routeTemplateContext);
-                        Object local = slan.evaluate(script, bindings, clazz);
-                        if (!props.isEmpty()) {
-                            setPropertiesOnTarget(camelContext, local, props);
-                        }
-                        return local;
-                    }));
+            bind(b, routeTemplateContext);
+        }
+    }
+
+    /**
+     * Binds the bean factory to the repository (if possible).
+     *
+     * @param  beanFactory          the bean factory to bind.
+     * @param  routeTemplateContext the context into which the bean factory should be bound.
+     * @throws Exception            if an error occurs while trying to bind the bean factory
+     */
+    private static void bind(BeanFactoryDefinition<?, ?> beanFactory, RouteTemplateContext routeTemplateContext)
+            throws Exception {
+        final Map<String, Object> props = new HashMap<>();
+        if (beanFactory.getProperties() != null) {
+            beanFactory.getProperties().forEach(p -> props.put(p.getKey(), p.getValue()));
+        }
+        if (beanFactory.getBeanSupplier() != null) {
+            if (props.isEmpty()) {
+                // bean class is optional for supplier
+                if (beanFactory.getBeanClass() != null) {
+                    routeTemplateContext.bind(beanFactory.getName(), beanFactory.getBeanClass(), beanFactory.getBeanSupplier());
                 } else {
-                    // exchange based languages needs a dummy exchange to be evaluated
-                    // and memorize so the script is only evaluated once and the local bean is the same
-                    // if a route template refers to the local bean multiple times
-                    routeTemplateContext.bind(b.getName(), clazz, Suppliers.memorize(() -> {
-                        ExchangeFactory ef = camelContext.adapt(ExtendedCamelContext.class).getExchangeFactory();
-                        Exchange dummy = ef.create(false);
-                        try {
-                            String text = ScriptHelper.resolveOptionalExternalScript(camelContext, dummy, script);
-                            if (text != null) {
-                                Expression exp = lan.createExpression(text);
-                                Object local = exp.evaluate(dummy, clazz);
-                                if (!props.isEmpty()) {
-                                    setPropertiesOnTarget(camelContext, local, props);
-                                }
-                                return local;
-                            } else {
-                                return null;
-                            }
-                        } finally {
-                            ef.release(dummy);
-                        }
-                    }));
+                    routeTemplateContext.bind(beanFactory.getName(), beanFactory.getBeanSupplier());
                 }
-            } else if (b.getBeanClass() != null || b.getType() != null && b.getType().startsWith("#class:")) {
-                // if there is a factory method then the class/bean should be created in a different way
-                String className = null;
-                String factoryMethod = null;
-                String parameters = null;
-                if (b.getType() != null) {
-                    className = b.getType().substring(7);
-                    if (className.endsWith(")") && className.indexOf('(') != -1) {
-                        parameters = StringHelper.after(className, "(");
-                        parameters = parameters.substring(0, parameters.length() - 1); // clip last )
-                        className = StringHelper.before(className, "(");
-                    }
-                    if (className != null && className.indexOf('#') != -1) {
-                        factoryMethod = StringHelper.after(className, "#");
-                        className = StringHelper.before(className, "#");
-                    }
+            }
+        } else if (beanFactory.getScript() != null) {
+            final String script = beanFactory.getScript();
+            final CamelContext camelContext = routeTemplateContext.getCamelContext();
+            final Language lan = camelContext.resolveLanguage(beanFactory.getType());
+            final Class<?> clazz;
+            if (beanFactory.getBeanType() != null) {
+                clazz = camelContext.getClassResolver().resolveMandatoryClass(beanFactory.getBeanType());
+            } else {
+                if (beanFactory.getBeanClass() != null) {
+                    clazz = beanFactory.getBeanClass();
+                } else {
+                    clazz = Object.class;
                 }
-                if (className != null && (factoryMethod != null || parameters != null)) {
-                    final Class<?> clazz = camelContext.getClassResolver().resolveMandatoryClass(className);
-                    final String fqn = className;
-                    final String fm = factoryMethod;
-                    final String fp = parameters;
-                    routeTemplateContext.bind(b.getName(), Object.class, Suppliers.memorize(() -> {
-                        try {
-                            Object local;
-                            if (fm != null) {
-                                if (fp != null) {
-                                    // special to support factory method parameters
-                                    local = PropertyBindingSupport.newInstanceFactoryParameters(camelContext, clazz, fm, fp);
-                                } else {
-                                    local = camelContext.getInjector().newInstance(clazz, fm);
-                                }
-                                if (local == null) {
-                                    throw new IllegalStateException(
-                                            "Cannot create bean instance using factory method: " + fqn + "#" + fm);
-                                }
-                            } else {
-                                // special to support constructor parameters
-                                local = PropertyBindingSupport.newInstanceConstructorParameters(camelContext, clazz, fp);
-                            }
+            }
+            final ScriptingLanguage slan = lan instanceof ScriptingLanguage ? (ScriptingLanguage) lan : null;
+            if (slan != null) {
+                // scripting language should be evaluated with route template context as binding
+                // and memorize so the script is only evaluated once and the local bean is the same
+                // if a route template refers to the local bean multiple times
+                routeTemplateContext.bind(beanFactory.getName(), clazz, Suppliers.memorize(() -> {
+                    Map<String, Object> bindings = new HashMap<>();
+                    // use rtx as the short-hand name, as context would imply its CamelContext
+                    bindings.put("rtc", routeTemplateContext);
+                    Object local = slan.evaluate(script, bindings, clazz);
+                    if (!props.isEmpty()) {
+                        setPropertiesOnTarget(camelContext, local, props);
+                    }
+                    return local;
+                }));
+            } else {
+                // exchange based languages needs a dummy exchange to be evaluated
+                // and memorize so the script is only evaluated once and the local bean is the same
+                // if a route template refers to the local bean multiple times
+                routeTemplateContext.bind(beanFactory.getName(), clazz, Suppliers.memorize(() -> {
+                    ExchangeFactory ef = camelContext.adapt(ExtendedCamelContext.class).getExchangeFactory();
+                    Exchange dummy = ef.create(false);
+                    try {
+                        String text = ScriptHelper.resolveOptionalExternalScript(camelContext, dummy, script);
+                        if (text != null) {
+                            Expression exp = lan.createExpression(text);
+                            Object local = exp.evaluate(dummy, clazz);
                             if (!props.isEmpty()) {
                                 setPropertiesOnTarget(camelContext, local, props);
                             }
                             return local;
-                        } catch (Exception e) {
-                            throw new IllegalStateException(
-                                    "Cannot create bean: " + b.getType());
+                        } else {
+                            return null;
                         }
-                    }));
-                } else {
-                    Class<?> clazz = b.getBeanClass() != null
-                            ? b.getBeanClass() : camelContext.getClassResolver().resolveMandatoryClass(className);
-                    // we only have the bean class so we use that to create a new bean via the injector
-                    // and memorize so the bean is only created once and the local bean is the same
-                    // if a route template refers to the local bean multiple times
-                    routeTemplateContext.bind(b.getName(), clazz,
-                            Suppliers.memorize(() -> {
-                                Object local = camelContext.getInjector().newInstance(clazz);
-                                if (!props.isEmpty()) {
-                                    setPropertiesOnTarget(camelContext, local, props);
-                                }
-                                return local;
-                            }));
+                    } finally {
+                        ef.release(dummy);
+                    }
+                }));
+            }
+        } else if (beanFactory.getBeanClass() != null
+                || beanFactory.getType() != null && beanFactory.getType().startsWith("#class:")) {
+            // if there is a factory method then the class/bean should be created in a different way
+            String className = null;
+            String factoryMethod = null;
+            String parameters = null;
+            if (beanFactory.getType() != null) {
+                className = beanFactory.getType().substring(7);
+                if (className.endsWith(")") && className.indexOf('(') != -1) {
+                    parameters = StringHelper.after(className, "(");
+                    parameters = parameters.substring(0, parameters.length() - 1); // clip last )
+                    className = StringHelper.before(className, "(");
                 }
-            } else if (b.getType() != null && b.getType().startsWith("#type:")) {
-                Class<?> clazz = camelContext.getClassResolver().resolveMandatoryClass(b.getType().substring(6));
-                Set<?> found = getCamelContext().getRegistry().findByType(clazz);
-                if (found == null || found.isEmpty()) {
-                    throw new NoSuchBeanException(null, clazz.getName());
-                } else if (found.size() > 1) {
-                    throw new NoSuchBeanException(
-                            "Found " + found.size() + " beans of type: " + clazz + ". Only one bean expected.");
-                } else {
-                    // do not set properties when using #type as it uses an existing shared bean
-                    routeTemplateContext.bind(b.getName(), clazz, found.iterator().next());
+                if (className != null && className.indexOf('#') != -1) {
+                    factoryMethod = StringHelper.after(className, "#");
+                    className = StringHelper.before(className, "#");
                 }
+            }
+            if (className != null && (factoryMethod != null || parameters != null)) {
+                final CamelContext camelContext = routeTemplateContext.getCamelContext();
+                final Class<?> clazz = camelContext.getClassResolver().resolveMandatoryClass(className);
+                final String fqn = className;
+                final String fm = factoryMethod;
+                final String fp = parameters;
+                routeTemplateContext.bind(beanFactory.getName(), Object.class, Suppliers.memorize(() -> {
+                    try {
+                        Object local;
+                        if (fm != null) {
+                            if (fp != null) {
+                                // special to support factory method parameters
+                                local = PropertyBindingSupport.newInstanceFactoryParameters(camelContext, clazz, fm, fp);
+                            } else {
+                                local = camelContext.getInjector().newInstance(clazz, fm);
+                            }
+                            if (local == null) {
+                                throw new IllegalStateException(
+                                        "Cannot create bean instance using factory method: " + fqn + "#" + fm);
+                            }
+                        } else {
+                            // special to support constructor parameters
+                            local = PropertyBindingSupport.newInstanceConstructorParameters(camelContext, clazz, fp);
+                        }
+                        if (!props.isEmpty()) {
+                            setPropertiesOnTarget(camelContext, local, props);
+                        }
+                        return local;
+                    } catch (Exception e) {
+                        throw new IllegalStateException(
+                                "Cannot create bean: " + beanFactory.getType());
+                    }
+                }));
             } else {
-                // invalid syntax for the local bean, so lets report an exception
-                throw new IllegalArgumentException(
-                        "Route template local bean: " + b.getName() + " has invalid type syntax: " + b.getType()
-                                                   + ". To refer to a class then prefix the value with #class such as: #class:fullyQualifiedClassName");
+                final CamelContext camelContext = routeTemplateContext.getCamelContext();
+                Class<?> clazz = beanFactory.getBeanClass() != null
+                        ? beanFactory.getBeanClass() : camelContext.getClassResolver().resolveMandatoryClass(className);
+                // we only have the bean class so we use that to create a new bean via the injector
+                // and memorize so the bean is only created once and the local bean is the same
+                // if a route template refers to the local bean multiple times
+                routeTemplateContext.bind(beanFactory.getName(), clazz,
+                        Suppliers.memorize(() -> {
+                            Object local = camelContext.getInjector().newInstance(clazz);
+                            if (!props.isEmpty()) {
+                                setPropertiesOnTarget(camelContext, local, props);
+                            }
+                            return local;
+                        }));
+            }
+        } else if (beanFactory.getType() != null && beanFactory.getType().startsWith("#type:")) {
+            final CamelContext camelContext = routeTemplateContext.getCamelContext();
+            Class<?> clazz = camelContext.getClassResolver().resolveMandatoryClass(beanFactory.getType().substring(6));
+            Set<?> found = camelContext.getRegistry().findByType(clazz);
+            if (found == null || found.isEmpty()) {
+                throw new NoSuchBeanException(null, clazz.getName());
+            } else if (found.size() > 1) {
+                throw new NoSuchBeanException(
+                        "Found " + found.size() + " beans of type: " + clazz + ". Only one bean expected.");
+            } else {
+                // do not set properties when using #type as it uses an existing shared bean
+                routeTemplateContext.bind(beanFactory.getName(), clazz, found.iterator().next());
+            }
+        } else {
+            // invalid syntax for the local bean, so lets report an exception
+            throw new IllegalArgumentException(
+                    "Route template local bean: " + beanFactory.getName() + " has invalid type syntax: " + beanFactory.getType()
+                                               + ". To refer to a class then prefix the value with #class such as: #class:fullyQualifiedClassName");
+        }
+    }
+
+    /**
+     * Sets the properties to the given target.
+     *
+     * @param context    the context into which the properties must be set.
+     * @param target     the object to which the properties must be set.
+     * @param properties the properties to set.
+     */
+    private static void setPropertiesOnTarget(CamelContext context, Object target, Map<String, Object> properties) {
+        ObjectHelper.notNull(context, "context");
+        ObjectHelper.notNull(target, "target");
+        ObjectHelper.notNull(properties, "properties");
+
+        if (target instanceof CamelContext) {
+            throw new UnsupportedOperationException("Configuring the Camel Context is not supported");
+        }
+
+        PropertyConfigurer configurer = null;
+        if (target instanceof Component) {
+            // the component needs to be initialized to have the configurer ready
+            ServiceHelper.initService(target);
+            configurer = ((Component) target).getComponentPropertyConfigurer();
+        }
+
+        if (configurer == null) {
+            // see if there is a configurer for it
+            configurer = context.adapt(ExtendedCamelContext.class)
+                    .getConfigurerResolver()
+                    .resolvePropertyConfigurer(target.getClass().getSimpleName(), context);
+        }
+
+        try {
+            PropertyBindingSupport.build()
+                    .withMandatory(true)
+                    .withRemoveParameters(false)
+                    .withConfigurer(configurer)
+                    .withIgnoreCase(true)
+                    .withFlattenProperties(true)
+                    .bind(context, target, properties);
+        } catch (PropertyBindingException e) {
+            String key = e.getOptionKey();
+            if (key == null) {
+                String prefix = e.getOptionPrefix();
+                if (prefix != null && !prefix.endsWith(".")) {
+                    prefix = "." + prefix;
+                }
+
+                key = prefix != null
+                        ? prefix + "." + e.getPropertyName()
+                        : e.getPropertyName();
+            }
+
+            // enrich the error with more precise details with option prefix and key
+            throw new PropertyBindingException(
+                    e.getTarget(),
+                    e.getPropertyName(),
+                    e.getValue(),
+                    null,
+                    key,
+                    e.getCause());
+        }
+    }
+
+    @Override
+    public void addRouteFromTemplatedRoute(TemplatedRouteDefinition templatedRouteDefinition)
+            throws Exception {
+        ObjectHelper.notNull(templatedRouteDefinition, "templatedRouteDefinition");
+        final RouteTemplateContext routeTemplateContext = new DefaultRouteTemplateContext(camelContext);
+        // Load the parameters into the context
+        final List<TemplatedRouteParameterDefinition> parameters = templatedRouteDefinition.getParameters();
+        if (parameters != null) {
+            for (TemplatedRouteParameterDefinition parameterDefinition : parameters) {
+                routeTemplateContext.setParameter(parameterDefinition.getName(), parameterDefinition.getValue());
             }
         }
+        // Bind the beans into the context
+        final List<TemplatedRouteBeanDefinition> beans = templatedRouteDefinition.getBeans();
+        if (beans != null) {
+            for (TemplatedRouteBeanDefinition beanDefinition : beans) {
+                bind(beanDefinition, routeTemplateContext);
+            }
+        }
+        // Add the route
+        addRouteFromTemplate(templatedRouteDefinition.getRouteId(), templatedRouteDefinition.getRouteTemplateRef(),
+                routeTemplateContext);
     }
 
     @Override
@@ -807,61 +922,6 @@ public class DefaultModel implements Model {
         } catch (Exception e) {
             // need to ignore not same type and return it as null
             return null;
-        }
-    }
-
-    private static void setPropertiesOnTarget(CamelContext context, Object target, Map<String, Object> properties) {
-        ObjectHelper.notNull(context, "context");
-        ObjectHelper.notNull(target, "target");
-        ObjectHelper.notNull(properties, "properties");
-
-        if (target instanceof CamelContext) {
-            throw new UnsupportedOperationException("Configuring the Camel Context is not supported");
-        }
-
-        PropertyConfigurer configurer = null;
-        if (target instanceof Component) {
-            // the component needs to be initialized to have the configurer ready
-            ServiceHelper.initService(target);
-            configurer = ((Component) target).getComponentPropertyConfigurer();
-        }
-
-        if (configurer == null) {
-            // see if there is a configurer for it
-            configurer = context.adapt(ExtendedCamelContext.class)
-                    .getConfigurerResolver()
-                    .resolvePropertyConfigurer(target.getClass().getSimpleName(), context);
-        }
-
-        try {
-            PropertyBindingSupport.build()
-                    .withMandatory(true)
-                    .withRemoveParameters(false)
-                    .withConfigurer(configurer)
-                    .withIgnoreCase(true)
-                    .withFlattenProperties(true)
-                    .bind(context, target, properties);
-        } catch (PropertyBindingException e) {
-            String key = e.getOptionKey();
-            if (key == null) {
-                String prefix = e.getOptionPrefix();
-                if (prefix != null && !prefix.endsWith(".")) {
-                    prefix = "." + prefix;
-                }
-
-                key = prefix != null
-                        ? prefix + "." + e.getPropertyName()
-                        : e.getPropertyName();
-            }
-
-            // enrich the error with more precise details with option prefix and key
-            throw new PropertyBindingException(
-                    e.getTarget(),
-                    e.getPropertyName(),
-                    e.getValue(),
-                    null,
-                    key,
-                    e.getCause());
         }
     }
 
