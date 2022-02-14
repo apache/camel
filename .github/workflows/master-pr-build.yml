@@ -18,11 +18,9 @@
 name: main pr build
 
 on:
-  push:
+  pull_request:
     branches:
       - main
-  pull_request_target:
-    types: [opened, synchronize, reopened]
 
 jobs:
   checkstyle:
@@ -56,7 +54,4 @@ jobs:
           java-version: ${{ matrix.java }}
           cache: 'maven'
       - name: maven build
-        env:
-          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
-          SONAR_TOKEN: '${{ secrets.SONAR_TOKEN }}'
-        run: ./mvnw -V -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 --no-transfer-progress -Pfastinstall -Dcheckstyle.skip=true -DskipTests -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=apache -Dsonar.java.experimental.batchModeSizeInKB=2048 -Dsonar.projectKey=apache_camel install org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
+        run: ./mvnw -V -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 --no-transfer-progress -Pfastinstall -Dcheckstyle.skip=true -DskipTests install
