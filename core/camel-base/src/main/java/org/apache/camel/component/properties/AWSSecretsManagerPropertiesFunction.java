@@ -31,16 +31,17 @@ import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueRespon
 /**
  * A {@link PropertiesFunction} that lookup the property value from AWS Secrets Manager service.
  * <p/>
- * The credentials to access Secrets Manager is defined using three environment variables representing the static credentials:
+ * The credentials to access Secrets Manager is defined using three environment variables representing the static
+ * credentials:
  * <ul>
  * <li><tt>AWS_ACCESS_KEY</tt></li>
  * <li><tt>AWS_SECRET_KEY</tt></li>
  * <li><tt>AWS_REGION</tt></li>
  * </ul>
  * <p/>
- * This implementation is to return the secret value associated with a key.
- * The properties related to this kind of Properties Function are all prefixed with <tt>aws:</tt>.
- * For example asking for <tt>aws:token</tt>, will return the secret value associated the secret named token on AWS Secrets Manager
+ * This implementation is to return the secret value associated with a key. The properties related to this kind of
+ * Properties Function are all prefixed with <tt>aws:</tt>. For example asking for <tt>aws:token</tt>, will return the
+ * secret value associated the secret named token on AWS Secrets Manager
  */
 public class AWSSecretsManagerPropertiesFunction implements PropertiesFunction {
 
