@@ -127,6 +127,7 @@ public class PropertiesComponent extends ServiceSupport
         addPropertiesFunction(new ServicePropertiesFunction());
         addPropertiesFunction(new ServiceHostPropertiesFunction());
         addPropertiesFunction(new ServicePortPropertiesFunction());
+        addPropertiesFunction(new AWSSecretsManagerPropertiesFunction());
     }
 
     /**

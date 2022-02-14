@@ -56,6 +56,14 @@
             <artifactId>camel-util</artifactId>
         </dependency>
 
+        <!-- required dependencies for AWS Secrets Manager -->
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>secretsmanager</artifactId>
+            <version>${aws-java-sdk2-version}</version>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- required logging api dependency by camel-base -->
         <dependency>
             <groupId>org.slf4j</groupId>
