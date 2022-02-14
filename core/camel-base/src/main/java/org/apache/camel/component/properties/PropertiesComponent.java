@@ -431,7 +431,7 @@ public class PropertiesComponent extends ServiceSupport
      */
     public Properties getInitialProperties() {
         if (initialProperties == null) {
-            initialProperties = new Properties();
+            initialProperties = new OrderedProperties();
         }
 
         return initialProperties;
@@ -445,12 +445,20 @@ public class PropertiesComponent extends ServiceSupport
         this.initialProperties = initialProperties;
     }
 
+    @Override
+    public void addInitialProperty(String key, String value) {
+        if (this.initialProperties == null) {
+            this.initialProperties = new OrderedProperties();
+        }
+        this.initialProperties.setProperty(key, value);
+    }
+
     /**
      * @return a list of properties that take precedence and will use first, if a property exists (can't be null).
      */
     public Properties getOverrideProperties() {
         if (overrideProperties == null) {
-            overrideProperties = new Properties();
+            overrideProperties = new OrderedProperties();
         }
 
         return overrideProperties;
@@ -462,6 +470,15 @@ public class PropertiesComponent extends ServiceSupport
     @Override
     public void setOverrideProperties(Properties overrideProperties) {
         this.overrideProperties = overrideProperties;
+    }
+
+    @Override
+    public void addOverrideProperty(String key, String value) {
+        if (this.overrideProperties == null) {
+            this.overrideProperties = new OrderedProperties();
+        }
+        this.overrideProperties.setProperty(key, value);
+
     }
 
     /**

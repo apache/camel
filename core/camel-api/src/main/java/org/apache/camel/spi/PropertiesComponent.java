@@ -175,9 +175,25 @@ public interface PropertiesComponent extends StaticService {
     void setInitialProperties(Properties initialProperties);
 
     /**
+     * Adds an initial property which will be added before any property locations are loaded.
+     *
+     * @param key   the key
+     * @param value the value
+     */
+    void addInitialProperty(String key, String value);
+
+    /**
      * Sets a special list of override properties that take precedence and will use first, if a property exist.
      */
     void setOverrideProperties(Properties overrideProperties);
+
+    /**
+     * Adds a special override property that take precedence and will use first, if a property exist.
+     *
+     * @param key   the key
+     * @param value the value
+     */
+    void addOverrideProperty(String key, String value);
 
     /**
      * Sets a special list of local properties (ie thread local) that take precedence and will use first, if a property

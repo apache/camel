@@ -111,6 +111,9 @@ class Run implements Callable<Integer> {
     @Option(names = { "--health" }, description = "Health check at /health on local HTTP server (port 8080 by default)")
     private boolean health;
 
+    @Option(names = { "--modeline" }, description = "Enables Camel-K style modeline")
+    private boolean modeline = true;
+
     @Override
     public Integer call() throws Exception {
         if (stopRequested) {
@@ -155,6 +158,7 @@ class Run implements Callable<Integer> {
         main.addInitialProperty("camel.main.routesReloadEnabled", reload ? "true" : "false");
         main.addInitialProperty("camel.main.sourceLocationEnabled", "true");
         main.addInitialProperty("camel.main.tracing", trace ? "true" : "false");
+        main.addInitialProperty("camel.main.modeLine", modeline ? "true" : "false");
 
         if (maxMessages > 0) {
             main.addInitialProperty("camel.main.durationMaxMessages", String.valueOf(maxMessages));

@@ -544,6 +544,7 @@ public abstract class BaseMainSupport extends BaseService {
             // only set the base package if enabled
             configurer.setBasePackageScan(mainConfigurationProperties.getBasePackageScan());
         }
+        configurer.setModeLine(mainConfigurationProperties.isModeLine());
         configurer.setJavaRoutesExcludePattern(mainConfigurationProperties.getJavaRoutesExcludePattern());
         configurer.setJavaRoutesIncludePattern(mainConfigurationProperties.getJavaRoutesIncludePattern());
         configurer.setRoutesExcludePattern(mainConfigurationProperties.getRoutesExcludePattern());
