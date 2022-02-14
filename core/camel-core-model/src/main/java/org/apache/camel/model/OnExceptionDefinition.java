@@ -365,7 +365,7 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     }
 
     /**
-     * Allow synchronous delayed redelivery.
+     * Allow asynchronous delayed redelivery.
      *
      * @see    RedeliveryPolicy#setAsyncDelayedRedelivery(boolean)
      * @return the builder
@@ -376,7 +376,7 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     }
 
     /**
-     * Sets the logging level to use when retries has exhausted
+     * Sets the logging level to use when retries have been exhausted
      *
      * @param  retriesExhaustedLogLevel the logging level
      * @return                          the builder
