@@ -9446,7 +9446,7 @@ Sets the initial redelivery delay.
     <xs:attribute name="asyncDelayedRedelivery" type="xs:string">
       <xs:annotation>
         <xs:documentation xml:lang="en"><![CDATA[
-Allow synchronous delayed redelivery. The route, in particular the consumer's
+Allow asynchronous delayed redelivery. The route, in particular the consumer's
 component, must support the Asynchronous Routing Engine (e.g. seda). Default
 value: false
         ]]></xs:documentation>
@@ -9490,7 +9490,7 @@ Sets the maximum delay between redelivery.
     <xs:attribute name="retriesExhaustedLogLevel" type="xs:string">
       <xs:annotation>
         <xs:documentation xml:lang="en"><![CDATA[
-Sets the logging level to use when retries has exhausted.
+Sets the logging level to use when retries have been exhausted.
         ]]></xs:documentation>
       </xs:annotation>
     </xs:attribute>
