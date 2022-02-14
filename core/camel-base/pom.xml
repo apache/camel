@@ -61,7 +61,6 @@
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>secretsmanager</artifactId>
             <version>${aws-java-sdk2-version}</version>
-            <scope>provided</scope>
         </dependency>
 
         <!-- required logging api dependency by camel-base -->
