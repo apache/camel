@@ -147,6 +147,62 @@ public class MimeMultipartDataFormatTest extends CamelTestSupport {
     }
 
     @Test
+    public void roundtripWithMultipleTextAttachmentsButDifferentCharsets() throws IOException {
+        String att1ContentType = "text/plain; charset=ISO-8859-1";
+        String att1Text = new String("empf\u00e4nger1".getBytes("ISO-8859-1"), "ISO-8859-1");
+        String att1FileName = "empf\u00e4nger1";
+        String att2ContentType = "text/plain; charset=ISO-8859-15";
+        String att2Text = new String("empf\u00e4nger15".getBytes("ISO-8859-15"), "ISO-8859-15");
+        String att2FileName = "empf\u00e4nger15";
+        String att3ContentType = "text/plain; charset=UTF-8";
+        String att3Text = new String("empf\u00e4nger8".getBytes("UTF-8"), "UTF-8");
+        String att3FileName = "empf\u00e4nger8";
+        addAttachment(att1ContentType, att1Text, att1FileName);
+        addAttachment(att2ContentType, att2Text, att2FileName);
+        addAttachment(att3ContentType, att3Text, att3FileName);
+
+        in.setBody(new String("empf\u00e4nger15".getBytes("ISO-8859-15"), "ISO-8859-15"));
+        in.setHeader(Exchange.CONTENT_TYPE, "text/plain; charset=ISO-8859-15");
+        in.setHeader(Exchange.CONTENT_ENCODING, "ISO-8859-15");
+
+        Exchange result = template.send("direct:roundtrip", exchange);
+        AttachmentMessage out = result.getMessage(AttachmentMessage.class);
+
+        assertEquals(att2Text, out.getBody(String.class));
+        assertTrue(out.getHeader(Exchange.CONTENT_TYPE, String.class).startsWith("text/plain"));
+        assertEquals("ISO-8859-15", out.getHeader(Exchange.CONTENT_ENCODING));
+        assertTrue(out.hasAttachments());
+        assertEquals(3, out.getAttachmentNames().size());
+
+        assertTrue(out.getAttachmentNames().contains(att1FileName));
+        DataHandler dh = out.getAttachment(att1FileName);
+        assertNotNull(dh);
+        assertEquals(att1ContentType, dh.getContentType());
+        InputStream is = dh.getInputStream();
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        IOHelper.copyAndCloseInput(is, os);
+        assertEquals(att1Text, new String(os.toByteArray(), "ISO-8859-1"));
+
+        assertTrue(out.getAttachmentNames().contains(att2FileName));
+        dh = out.getAttachment(att2FileName);
+        assertNotNull(dh);
+        assertEquals(att2ContentType, dh.getContentType());
+        is = dh.getInputStream();
+        os = new ByteArrayOutputStream();
+        IOHelper.copyAndCloseInput(is, os);
+        assertEquals(att2Text, new String(os.toByteArray(), "ISO-8859-15"));
+
+        assertTrue(out.getAttachmentNames().contains(att3FileName));
+        dh = out.getAttachment(att3FileName);
+        assertNotNull(dh);
+        assertEquals(att3ContentType, dh.getContentType());
+        is = dh.getInputStream();
+        os = new ByteArrayOutputStream();
+        IOHelper.copyAndCloseInput(is, os);
+        assertEquals(att3Text, new String(os.toByteArray(), "UTF-8"));
+    }
+
+    @Test
     public void roundtripWithTextAttachmentsAndBinaryContent() throws IOException {
         String attContentType = "text/plain";
         String attText = "Attachment Text";
