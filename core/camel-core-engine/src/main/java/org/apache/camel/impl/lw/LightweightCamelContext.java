@@ -114,10 +114,10 @@ import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.MessageHistoryFactory;
-import org.apache.camel.spi.ModeLineFactory;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.ModelReifierFactory;
 import org.apache.camel.spi.ModelToXMLDumper;
+import org.apache.camel.spi.ModelineFactory;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.PackageScanClassResolver;
@@ -914,13 +914,13 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     @Override
-    public Boolean isModeLine() {
-        return delegate.isModeLine();
+    public Boolean ismodeline() {
+        return delegate.ismodeline();
     }
 
     @Override
-    public void setModeLine(Boolean modeLine) {
-        delegate.setModeLine(modeLine);
+    public void setmodeline(Boolean modeline) {
+        delegate.setmodeline(modeline);
     }
 
     @Override
@@ -1447,13 +1447,13 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     @Override
-    public ModeLineFactory getModeLineFactory() {
-        return getExtendedCamelContext().getModeLineFactory();
+    public ModelineFactory getModelineFactory() {
+        return getExtendedCamelContext().getModelineFactory();
     }
 
     @Override
-    public void setModeLineFactory(ModeLineFactory modeLineFactory) {
-        getExtendedCamelContext().setModeLineFactory(modeLineFactory);
+    public void setModelineFactory(ModelineFactory modelineFactory) {
+        getExtendedCamelContext().setModelineFactory(modelineFactory);
     }
 
     @Override

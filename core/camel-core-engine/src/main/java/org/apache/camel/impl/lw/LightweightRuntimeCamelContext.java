@@ -109,9 +109,9 @@ import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.MessageHistoryFactory;
-import org.apache.camel.spi.ModeLineFactory;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.ModelToXMLDumper;
+import org.apache.camel.spi.ModelineFactory;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.PackageScanClassResolver;
@@ -183,7 +183,7 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     private final ExchangeFactory exchangeFactory;
     private final ExchangeFactoryManager exchangeFactoryManager;
     private final ProcessorExchangeFactory processorExchangeFactory;
-    private final ModeLineFactory modeLineFactory;
+    private final ModelineFactory modelineFactory;
     private final ReactiveExecutor reactiveExecutor;
     private final AsyncProcessorAwaitManager asyncProcessorAwaitManager;
     private final ExecutorServiceManager executorServiceManager;
@@ -237,7 +237,7 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
         headersMapFactory = context.adapt(ExtendedCamelContext.class).getHeadersMapFactory();
         exchangeFactory = context.adapt(ExtendedCamelContext.class).getExchangeFactory();
         exchangeFactoryManager = context.adapt(ExtendedCamelContext.class).getExchangeFactoryManager();
-        modeLineFactory = context.adapt(ExtendedCamelContext.class).getModeLineFactory();
+        modelineFactory = context.adapt(ExtendedCamelContext.class).getModelineFactory();
         processorExchangeFactory = context.adapt(ExtendedCamelContext.class).getProcessorExchangeFactory();
         reactiveExecutor = context.adapt(ExtendedCamelContext.class).getReactiveExecutor();
         asyncProcessorAwaitManager = context.adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager();
@@ -1232,12 +1232,12 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
-    public Boolean isModeLine() {
+    public Boolean ismodeline() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setModeLine(Boolean modeLine) {
+    public void setmodeline(Boolean modeline) {
         throw new UnsupportedOperationException();
     }
 
@@ -1579,12 +1579,12 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
-    public ModeLineFactory getModeLineFactory() {
-        return modeLineFactory;
+    public ModelineFactory getModelineFactory() {
+        return modelineFactory;
     }
 
     @Override
-    public void setModeLineFactory(ModeLineFactory modeLineFactory) {
+    public void setModelineFactory(ModelineFactory modelineFactory) {
         throw new UnsupportedOperationException();
     }
 

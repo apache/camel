@@ -19,7 +19,7 @@ package org.apache.camel.spi;
 /**
  * Factory for parsing camel-k modeline when running Camel standalone with DSLs.
  */
-public interface ModeLineFactory {
+public interface ModelineFactory {
 
     /**
      * Service factory key.
@@ -32,6 +32,6 @@ public interface ModeLineFactory {
      * @param  resource  the resource with Camel routes such as a yaml, xml or java source file.
      * @throws Exception is thrown if error parsing
      */
-    void parseModeLine(Resource resource) throws Exception;
+    void parseModeline(Resource resource) throws Exception;
 
 }

@@ -131,9 +131,9 @@ import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.ManagementStrategyFactory;
 import org.apache.camel.spi.MessageHistoryFactory;
-import org.apache.camel.spi.ModeLineFactory;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.ModelToXMLDumper;
+import org.apache.camel.spi.ModelineFactory;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.PackageScanClassResolver;
@@ -257,7 +257,7 @@ public abstract class AbstractCamelContext extends BaseService
     private Boolean traceStandby = Boolean.FALSE;
     private String tracePattern;
     private String tracingLoggingFormat;
-    private Boolean modeLine = Boolean.FALSE;
+    private Boolean modeline = Boolean.FALSE;
     private Boolean debug = Boolean.FALSE;
     private Boolean messageHistory = Boolean.FALSE;
     private Boolean logMask = Boolean.FALSE;
@@ -321,7 +321,7 @@ public abstract class AbstractCamelContext extends BaseService
     private volatile PackageScanClassResolver packageScanClassResolver;
     private volatile PackageScanResourceResolver packageScanResourceResolver;
     private volatile NodeIdFactory nodeIdFactory;
-    private volatile ModeLineFactory modeLineFactory;
+    private volatile ModelineFactory modelineFactory;
     private volatile ProcessorFactory processorFactory;
     private volatile InternalProcessorFactory internalProcessorFactory;
     private volatile InterceptEndpointFactory interceptEndpointFactory;
@@ -4098,20 +4098,20 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     @Override
-    public ModeLineFactory getModeLineFactory() {
-        if (modeLineFactory == null) {
+    public ModelineFactory getModelineFactory() {
+        if (modelineFactory == null) {
             synchronized (lock) {
-                if (modeLineFactory == null) {
-                    setModeLineFactory(createModeLineFactory());
+                if (modelineFactory == null) {
+                    setModelineFactory(createModelineFactory());
                 }
             }
         }
-        return modeLineFactory;
+        return modelineFactory;
     }
 
     @Override
-    public void setModeLineFactory(ModeLineFactory modeLineFactory) {
-        this.modeLineFactory = doAddService(modeLineFactory);
+    public void setModelineFactory(ModelineFactory modelineFactory) {
+        this.modelineFactory = doAddService(modelineFactory);
     }
 
     @Override
@@ -4283,13 +4283,13 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     @Override
-    public Boolean isModeLine() {
-        return modeLine != null && modeLine;
+    public Boolean ismodeline() {
+        return modeline != null && modeline;
     }
 
     @Override
-    public void setModeLine(Boolean modeLine) {
-        this.modeLine = modeLine;
+    public void setmodeline(Boolean modeline) {
+        this.modeline = modeline;
     }
 
     public Boolean isDevConsole() {
@@ -5187,7 +5187,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     protected abstract NodeIdFactory createNodeIdFactory();
 
-    protected abstract ModeLineFactory createModeLineFactory();
+    protected abstract ModelineFactory createModelineFactory();
 
     protected abstract FactoryFinderResolver createFactoryFinderResolver();
 

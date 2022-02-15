@@ -1,5 +1,5 @@
-= DSL Modeline Component
-:doctitle: DSL Modeline
+= DSL modeline Component
+:doctitle: DSL modeline
 :shortname: dsl-modeline
 :artifactid: camel-dsl-modeline
 :description: Camel DSL Camel K modeline

@@ -28,7 +28,7 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.CamelBeanPostProcessor;
-import org.apache.camel.spi.ModeLineFactory;
+import org.apache.camel.spi.ModelineFactory;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.util.StopWatch;
@@ -46,7 +46,7 @@ public class RoutesConfigurer {
     private CamelBeanPostProcessor beanPostProcessor;
     private List<RoutesBuilder> routesBuilders;
     private String basePackageScan;
-    private boolean modeLine;
+    private boolean modeline;
     private String routesBuilderClasses;
     private String javaRoutesExcludePattern;
     private String javaRoutesIncludePattern;
@@ -69,12 +69,12 @@ public class RoutesConfigurer {
         this.basePackageScan = basePackageScan;
     }
 
-    public boolean isModeLine() {
-        return modeLine;
+    public boolean ismodeline() {
+        return modeline;
     }
 
-    public void setModeLine(boolean modeLine) {
-        this.modeLine = modeLine;
+    public void setmodeline(boolean modeline) {
+        this.modeline = modeline;
     }
 
     public String getRoutesBuilderClasses() {
@@ -232,9 +232,9 @@ public class RoutesConfigurer {
         // sort routes according to ordered
         routes.sort(OrderedComparator.get());
 
-        if (modeLine) {
+        if (modeline) {
             ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
-            ModeLineFactory factory = ecc.getModeLineFactory();
+            ModelineFactory factory = ecc.getModelineFactory();
             List<Resource> resources = new ArrayList<>();
             // gather resources for modeline
             for (RoutesBuilder builder : routes) {
@@ -244,7 +244,7 @@ public class RoutesConfigurer {
             }
             for (Resource resource : resources) {
                 LOG.debug("Parsing modeline: {}", resource);
-                factory.parseModeLine(resource);
+                factory.parseModeline(resource);
             }
         }
 

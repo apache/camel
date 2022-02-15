@@ -59,9 +59,9 @@ import org.apache.camel.spi.InternalProcessorFactory;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.MessageHistoryFactory;
-import org.apache.camel.spi.ModeLineFactory;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.ModelToXMLDumper;
+import org.apache.camel.spi.ModelineFactory;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanResourceResolver;
@@ -241,18 +241,18 @@ public class SimpleCamelContext extends AbstractCamelContext {
     }
 
     @Override
-    protected ModeLineFactory createModeLineFactory() {
-        Optional<ModeLineFactory> result = ResolverHelper.resolveService(
+    protected ModelineFactory createModelineFactory() {
+        Optional<ModelineFactory> result = ResolverHelper.resolveService(
                 getCamelContextReference(),
                 getBootstrapFactoryFinder(),
-                ModeLineFactory.FACTORY,
-                ModeLineFactory.class);
+                ModelineFactory.FACTORY,
+                ModelineFactory.class);
 
         if (result.isPresent()) {
             return result.get();
         } else {
             throw new IllegalArgumentException(
-                    "Cannot find ModeLineFactory on classpath. Add camel-dsl-modeline to classpath.");
+                    "Cannot find ModelineFactory on classpath. Add camel-dsl-modeline to classpath.");
         }
     }
 

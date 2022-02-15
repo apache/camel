@@ -19,7 +19,7 @@ package org.apache.camel.dsl.modeline;
 import org.apache.camel.spi.CamelContextCustomizer;
 
 /**
- * Modeline trait
+ * modeline trait
  */
 public interface Trait {
 

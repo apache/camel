@@ -98,7 +98,7 @@ Starting CamelJBang
 2022-02-15 16:49:07.273  INFO 31844 --- [           main] org.apache.camel.main.BaseMainSupport    :     camel.main.routesReloadEnabled=false
 2022-02-15 16:49:07.273  INFO 31844 --- [           main] org.apache.camel.main.BaseMainSupport    :     camel.main.sourceLocationEnabled=true
 2022-02-15 16:49:07.273  INFO 31844 --- [           main] org.apache.camel.main.BaseMainSupport    :     camel.main.tracing=false
-2022-02-15 16:49:07.274  INFO 31844 --- [           main] org.apache.camel.main.BaseMainSupport    :     camel.main.modeLine=true
+2022-02-15 16:49:07.274  INFO 31844 --- [           main] org.apache.camel.main.BaseMainSupport    :     camel.main.modeline=true
 2022-02-15 16:49:07.274  INFO 31844 --- [           main] org.apache.camel.main.BaseMainSupport    :     camel.main.routesIncludePattern=file:../examples/aws-secrets-manager-properties.yaml
 2022-02-15 16:49:07.274  INFO 31844 --- [           main] org.apache.camel.main.BaseMainSupport    :     camel.component.kamelet.location=classpath:/kamelets,github:apache:camel-kamelets/kamelets
 2022-02-15 16:49:08.359  INFO 31844 --- [           main] org.apache.camel.main.DownloaderHelper   : Downloaded dependency: org.apache.camel:camel-aws-secrets-manager:3.16.0-SNAPSHOT took: 1s14ms

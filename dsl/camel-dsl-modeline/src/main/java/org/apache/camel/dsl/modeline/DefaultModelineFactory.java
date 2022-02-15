@@ -23,16 +23,16 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.NonManagedService;
 import org.apache.camel.StaticService;
 import org.apache.camel.spi.CamelContextCustomizer;
-import org.apache.camel.spi.ModeLineFactory;
+import org.apache.camel.spi.ModelineFactory;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.PropertiesSource;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.service.ServiceSupport;
 
-@JdkService(ModeLineFactory.FACTORY)
-public class DefaultModeLineFactory extends ServiceSupport
-        implements ModeLineFactory, CamelContextAware, NonManagedService, StaticService {
+@JdkService(ModelineFactory.FACTORY)
+public class DefaultModelineFactory extends ServiceSupport
+        implements ModelineFactory, CamelContextAware, NonManagedService, StaticService {
 
     private CamelContext camelContext;
     private ModelineParser parser;
@@ -48,7 +48,7 @@ public class DefaultModeLineFactory extends ServiceSupport
     }
 
     @Override
-    public void parseModeLine(Resource resource) throws Exception {
+    public void parseModeline(Resource resource) throws Exception {
         List<CamelContextCustomizer> customizers = parser.parse(resource);
         customizers.forEach(c -> c.configure(camelContext));
     }

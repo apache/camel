@@ -229,7 +229,7 @@ public final class DefaultConfigurationConfigurer {
         camelContext.setLoadTypeConverters(config.isLoadTypeConverters());
         camelContext.setLoadHealthChecks(config.isLoadHealthChecks());
         camelContext.setDevConsole(config.isDevConsoleEnabled());
-        camelContext.setModeLine(config.isModeLine());
+        camelContext.setmodeline(config.ismodeline());
         if (config.isRoutesReloadEnabled()) {
             RouteWatcherReloadStrategy reloader = new RouteWatcherReloadStrategy(
                     config.getRoutesReloadDirectory(), config.isRoutesReloadDirectoryRecursive());

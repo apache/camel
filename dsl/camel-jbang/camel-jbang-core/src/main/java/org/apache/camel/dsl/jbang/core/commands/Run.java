@@ -158,7 +158,7 @@ class Run implements Callable<Integer> {
         main.addInitialProperty("camel.main.routesReloadEnabled", reload ? "true" : "false");
         main.addInitialProperty("camel.main.sourceLocationEnabled", "true");
         main.addInitialProperty("camel.main.tracing", trace ? "true" : "false");
-        main.addInitialProperty("camel.main.modeLine", modeline ? "true" : "false");
+        main.addInitialProperty("camel.main.modeline", modeline ? "true" : "false");
 
         if (maxMessages > 0) {
             main.addInitialProperty("camel.main.durationMaxMessages", String.valueOf(maxMessages));

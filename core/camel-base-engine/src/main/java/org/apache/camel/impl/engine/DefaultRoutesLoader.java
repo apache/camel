@@ -30,7 +30,7 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.StaticService;
 import org.apache.camel.spi.FactoryFinder;
-import org.apache.camel.spi.ModeLineFactory;
+import org.apache.camel.spi.ModelineFactory;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RoutesBuilderLoader;
 import org.apache.camel.spi.RoutesLoader;
@@ -155,11 +155,11 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
         Set<String> answer = new LinkedHashSet<>();
         Collection<RoutesBuilder> builders = findRoutesBuilders(resources);
 
-        if (camelContext.isModeLine()) {
-            ModeLineFactory factory = camelContext.adapt(ExtendedCamelContext.class).getModeLineFactory();
+        if (camelContext.ismodeline()) {
+            ModelineFactory factory = camelContext.adapt(ExtendedCamelContext.class).getModelineFactory();
             // gather resources for modeline
             for (Resource resource : resources) {
-                factory.parseModeLine(resource);
+                factory.parseModeline(resource);
             }
         }
 

@@ -25,7 +25,7 @@ public class ModelineTest {
     @Test
     public void testModeline() throws Exception {
         Main main = new Main();
-        main.configure().withModeLine(true);
+        main.configure().withModeline(true);
         main.configure().withRoutesIncludePattern("file:src/test/resources/my-modeline.yaml");
 
         main.run();
