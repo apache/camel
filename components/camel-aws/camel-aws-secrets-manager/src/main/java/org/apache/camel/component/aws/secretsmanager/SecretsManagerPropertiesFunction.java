@@ -87,7 +87,7 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
         if (remainder.contains(":")) {
             key = StringHelper.before(remainder, ":");
         }
-        
+
         if (key != null) {
             returnValue = getSecretFromSource(key);
         }
