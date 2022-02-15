@@ -19,7 +19,6 @@ package org.apache.camel.component.properties;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -103,7 +102,7 @@ public class PropertiesComponent extends ServiceSupport
     private static final String NEGATE_PREFIX = PREFIX_TOKEN + "!";
 
     private CamelContext camelContext;
-    private final Map<String, PropertiesFunction> functions = new LinkedHashMap<>();
+    private final PropertiesFunctionResolver functionResolver = new PropertiesFunctionResolver();
     private PropertiesParser propertiesParser = new DefaultPropertiesParser(this);
     private final PropertiesLookup propertiesLookup = new DefaultPropertiesLookup(this);
     private final List<PropertiesSource> sources = new ArrayList<>();
@@ -508,22 +507,36 @@ public class PropertiesComponent extends ServiceSupport
     /**
      * Gets the functions registered in this properties component.
      */
+    @Deprecated
     public Map<String, PropertiesFunction> getFunctions() {
-        return functions;
+        return functionResolver.getFunctions();
+    }
+
+    /**
+     * Gets the function by the given name
+     *
+     * @param  name the function name
+     * @return      the function or null if no function exists
+     */
+    public PropertiesFunction getPropertiesFunction(String name) {
+        if (name == null) {
+            return null;
+        }
+        return functionResolver.resolvePropertiesFunction(name);
     }
 
     /**
      * Registers the {@link PropertiesFunction} as a function to this component.
      */
     public void addPropertiesFunction(PropertiesFunction function) {
-        this.functions.put(function.getName(), function);
+        functionResolver.addPropertiesFunction(function);
     }
 
     /**
      * Is there a {@link PropertiesFunction} with the given name?
      */
     public boolean hasFunction(String name) {
-        return functions.containsKey(name);
+        return functionResolver.hasFunction(name);
     }
 
     @ManagedAttribute(description = "System properties mode")
@@ -627,6 +640,7 @@ public class PropertiesComponent extends ServiceSupport
         super.doInit();
 
         ObjectHelper.notNull(camelContext, "CamelContext", this);
+        CamelContextAware.trySetCamelContext(functionResolver, camelContext);
 
         if (systemPropertiesMode != SYSTEM_PROPERTIES_MODE_NEVER
                 && systemPropertiesMode != SYSTEM_PROPERTIES_MODE_FALLBACK

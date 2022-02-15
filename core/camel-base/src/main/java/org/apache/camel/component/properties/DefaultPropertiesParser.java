@@ -237,24 +237,23 @@ public class DefaultPropertiesParser implements PropertiesParser {
 
             // the key may be a function, so lets check this first
             if (propertiesComponent != null) {
-                for (PropertiesFunction function : propertiesComponent.getFunctions().values()) {
-                    String token = function.getName() + ":";
-                    if (key.startsWith(token)) {
-                        String remainder = key.substring(token.length());
-                        log.debug("Property with key [{}] is applied by function [{}]", key, function.getName());
-                        String value = function.apply(remainder);
-                        if (value == null) {
-                            throw new IllegalArgumentException(
-                                    "Property with key [" + key + "] using function [" + function.getName() + "]"
-                                                               + " returned null value which is not allowed, from input: "
-                                                               + input);
-                        } else {
-                            if (log.isDebugEnabled()) {
-                                log.debug("Property with key [{}] applied by function [{}] -> {}", key, function.getName(),
-                                        value);
-                            }
-                            return value;
+                String prefix = StringHelper.before(key, ":");
+                PropertiesFunction function = propertiesComponent.getPropertiesFunction(prefix);
+                if (function != null) {
+                    String remainder = StringHelper.after(key, ":");
+                    log.debug("Property with key [{}] is applied by function [{}]", key, function.getName());
+                    String value = function.apply(remainder);
+                    if (value == null) {
+                        throw new IllegalArgumentException(
+                                "Property with key [" + key + "] using function [" + function.getName() + "]"
+                                                           + " returned null value which is not allowed, from input: "
+                                                           + input);
+                    } else {
+                        if (log.isDebugEnabled()) {
+                            log.debug("Property with key [{}] applied by function [{}] -> {}", key, function.getName(),
+                                    value);
                         }
+                        return value;
                     }
                 }
             }
