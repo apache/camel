@@ -16,13 +16,6 @@
  */
 package org.apache.camel.component.minio;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.nio.charset.StandardCharsets;
-
 import io.minio.BucketExistsArgs;
 import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
@@ -158,17 +151,6 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
         } else {
             throw new IllegalArgumentException("Endpoint must be specified");
         }
-    }
-
-    String readInputStream(InputStream minioObject) throws IOException {
-        StringBuilder textBuilder = new StringBuilder();
-        try (Reader reader = new BufferedReader(new InputStreamReader(minioObject, StandardCharsets.UTF_8))) {
-            int c;
-            while ((c = reader.read()) != -1) {
-                textBuilder.append((char) c);
-            }
-        }
-        return textBuilder.toString();
     }
 
     private boolean bucketExists(String bucketName) throws Exception {
