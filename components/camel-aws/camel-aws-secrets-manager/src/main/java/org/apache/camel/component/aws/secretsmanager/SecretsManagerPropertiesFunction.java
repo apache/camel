@@ -51,7 +51,7 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
     private static final String ACCESS_KEY = "AWS_ACCESS_KEY";
     private static final String SECRET_KEY = "AWS_SECRET_KEY";
     private static final String REGION = "AWS_REGION";
-    private SecretsManagerClient client = null;
+    private SecretsManagerClient client;
 
     @Override
     protected void doStart() throws Exception {
