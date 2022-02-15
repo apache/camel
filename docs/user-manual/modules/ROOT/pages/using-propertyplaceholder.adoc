@@ -541,6 +541,9 @@ You also need to have `camel-component-maven-plugin` as part of building the com
 then ensure that this custom properties function has necessary source code generated that makes Camel
 able to automatically discover the function.
 
+NOTE: If the custom properties function need logic to startup and shutdown, then the function can extend `ServiceSupport`
+and have this logic in `doStart` and `doStop` methods.
+
 TIP: For an example see the `camel-base64` component.
 
 == Using third party property sources

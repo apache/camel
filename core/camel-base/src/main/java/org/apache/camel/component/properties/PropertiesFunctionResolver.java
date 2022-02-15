@@ -22,15 +22,20 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.NonManagedService;
+import org.apache.camel.StaticService;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.PropertiesFunction;
+import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.support.service.ServiceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Resolver for built-in and custom {@link PropertiesFunction}.
  */
-public final class PropertiesFunctionResolver implements CamelContextAware {
+public final class PropertiesFunctionResolver extends ServiceSupport
+        implements CamelContextAware, NonManagedService, StaticService {
 
     public static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/properties-function/";
 
@@ -109,6 +114,7 @@ public final class PropertiesFunctionResolver implements CamelContextAware {
             if (PropertiesFunction.class.isAssignableFrom(type)) {
                 PropertiesFunction answer = (PropertiesFunction) context.getInjector().newInstance(type, false);
                 CamelContextAware.trySetCamelContext(answer, camelContext);
+                ServiceHelper.startService(answer);
                 return answer;
             } else {
                 throw new IllegalArgumentException("Type is not a PropertiesFunction implementation. Found: " + type.getName());
@@ -125,4 +131,23 @@ public final class PropertiesFunctionResolver implements CamelContextAware {
         return factoryFinder.findClass(name).orElse(null);
     }
 
+    @Override
+    protected void doInit() throws Exception {
+        ServiceHelper.initService(functions.values());
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        ServiceHelper.startService(functions.values());
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        ServiceHelper.stopService(functions.values());
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        ServiceHelper.stopAndShutdownService(functions.values());
+    }
 }

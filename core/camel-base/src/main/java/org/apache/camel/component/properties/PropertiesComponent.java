@@ -688,27 +688,27 @@ public class PropertiesComponent extends ServiceSupport
         }
 
         sources.sort(OrderedComparator.get());
-        ServiceHelper.initService(sources);
+        ServiceHelper.initService(sources, functionResolver);
     }
 
     @Override
     protected void doBuild() throws Exception {
-        ServiceHelper.buildService(sources);
+        ServiceHelper.buildService(sources, functionResolver);
     }
 
     @Override
     protected void doStart() throws Exception {
-        ServiceHelper.startService(sources);
+        ServiceHelper.startService(sources, functionResolver);
     }
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopService(sources);
+        ServiceHelper.stopService(sources, functionResolver);
     }
 
     @Override
     protected void doShutdown() throws Exception {
-        ServiceHelper.stopAndShutdownServices(sources);
+        ServiceHelper.stopAndShutdownServices(sources, functionResolver);
     }
 
     private void addPropertiesLocationsAsPropertiesSource(PropertiesLocation location) {
