@@ -96,9 +96,15 @@ public class GrpcConsumerSecurityTest extends CamelTestSupport {
 
     @AfterEach
     public void stopGrpcChannels() throws Exception {
-        tlsChannel.shutdown().awaitTermination(1, TimeUnit.SECONDS);
-        jwtCorrectChannel.shutdown().awaitTermination(1, TimeUnit.SECONDS);
-        jwtIncorrectChannel.shutdown().awaitTermination(1, TimeUnit.SECONDS);
+        if (tlsChannel != null) {
+            tlsChannel.shutdown().awaitTermination(1, TimeUnit.SECONDS);
+        }
+        if (jwtCorrectChannel != null) {
+            jwtCorrectChannel.shutdown().awaitTermination(1, TimeUnit.SECONDS);
+        }
+        if (jwtIncorrectChannel != null) {
+            jwtIncorrectChannel.shutdown().awaitTermination(1, TimeUnit.SECONDS);
+        }
     }
 
     @Test
