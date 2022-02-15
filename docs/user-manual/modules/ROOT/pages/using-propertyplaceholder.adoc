@@ -558,6 +558,34 @@ PropertiesComponent pc = context.getPropertiesComponent();
 pc.addFunction(new MyBeerFunction());
 ----
 
+==== Pluggable custom properties functions
+
+If you want custom properties functions to be easier to use then we recommend making them pluggable.
+For example the beer function from above, can be made pluggable simply by adding the `PropertiesFunction` annotations as shown:
+
+[source,java]
+----
+@org.apache.camel.spi.annotations.PropertiesFunction("beer")
+public class MyBeerFunction implements PropertiesFunction {
+
+    @Override
+    public String getName() {
+        return "beer";
+    }
+
+    @Override
+    public String apply(String remainder) {
+        return "mock:" + remainder.toLowerCase();
+    }
+}
+----
+
+Then by having the `camel-component-maven-plugin` as part of building the component will
+then ensure that this custom properties has necessary source code generated that makes Camel
+able to automatically discover the custom function.
+
+TIP: For an example see the `camel-base64` component.
+
 == Using third party property sources
 
 The properties component allows to plugin 3rd party sources to load and lookup properties via the `PropertySource`
