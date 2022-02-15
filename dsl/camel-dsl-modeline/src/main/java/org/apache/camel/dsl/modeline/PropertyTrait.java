@@ -16,9 +16,13 @@
  */
 package org.apache.camel.dsl.modeline;
 
+import java.io.InputStream;
+import java.util.Properties;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.CamelContextCustomizer;
 import org.apache.camel.spi.PropertiesComponent;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.StringHelper;
 
 public class PropertyTrait implements Trait {
@@ -30,13 +34,34 @@ public class PropertyTrait implements Trait {
 
     @Override
     public CamelContextCustomizer parseTrait(String trait) {
-        String key = StringHelper.before(trait, "=").trim();
-        String value = StringHelper.after(trait, "=").trim();
+        String key;
+        String value;
+        if (trait.contains("=")) {
+            key = StringHelper.before(trait, "=").trim();
+            value = StringHelper.after(trait, "=").trim();
+        } else {
+            key = null;
+            value = trait;
+        }
         return new CamelContextCustomizer() {
             @Override
             public void configure(CamelContext camelContext) {
                 PropertiesComponent pc = camelContext.getPropertiesComponent();
-                pc.addInitialProperty(key, value);
+                if (ResourceHelper.hasScheme(value)) {
+                    // it is a properties file so load resource
+                    try (InputStream is = ResourceHelper.resolveResourceAsInputStream(camelContext, value)) {
+                        Properties prop = new Properties();
+                        prop.load(is);
+                        for (String k : prop.stringPropertyNames()) {
+                            String v = prop.getProperty(k);
+                            pc.addInitialProperty(k, v);
+                        }
+                    } catch (Exception e) {
+                        // ignore
+                    }
+                } else {
+                    pc.addInitialProperty(key, value);
+                }
             }
         };
     }

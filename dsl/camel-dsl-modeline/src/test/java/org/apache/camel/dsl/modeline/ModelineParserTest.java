@@ -171,4 +171,17 @@ public class ModelineParserTest extends CamelTestSupport {
         Assertions.assertEquals("Hello", context.getPropertiesComponent().parseUri("{{hi}}"));
     }
 
+    @Test
+    public void testModelinePropertiesFile() throws Exception {
+        context.start();
+
+        String line = "// camel-k: property=classpath:myapp.properties";
+        ModelineParser parser = new ModelineParser(context);
+        List<CamelContextCustomizer> customizers = parser.parse(line);
+        customizers.forEach(c -> c.configure(context));
+
+        Assertions.assertEquals("Hej", context.getPropertiesComponent().parseUri("{{hi}}"));
+        Assertions.assertEquals("bar", context.getPropertiesComponent().parseUri("{{foo}}"));
+    }
+
 }

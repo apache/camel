@@ -31,9 +31,6 @@ import org.apache.camel.util.StringQuoteHelper;
 
 public class ModelineParser {
 
-    // TODO: log which traits was parsed and used and which is skipped
-    // TODO: add some more docs in adoc file
-
     public static final String MODELINE_START = "camel-k:";
 
     private final CamelContext camelContext;
@@ -46,8 +43,6 @@ public class ModelineParser {
         Trait trait = new DependencyTrait();
         this.traits.put(trait.getName(), trait);
         trait = new PropertyTrait();
-        this.traits.put(trait.getName(), trait);
-        trait = new BuildPropertyTrait();
         this.traits.put(trait.getName(), trait);
         trait = new NameTrait();
         this.traits.put(trait.getName(), trait);
