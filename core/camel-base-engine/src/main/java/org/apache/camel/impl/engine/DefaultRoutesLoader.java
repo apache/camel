@@ -18,8 +18,11 @@ package org.apache.camel.impl.engine;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.CamelContext;
@@ -28,6 +31,7 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.StaticService;
 import org.apache.camel.spi.FactoryFinder;
+import org.apache.camel.spi.ModeLineFactory;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RoutesBuilderLoader;
 import org.apache.camel.spi.RoutesLoader;
@@ -146,4 +150,50 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
 
         return answer;
     }
+
+    @Override
+    public Set<String> updateRoutes(Collection<Resource> resources) throws Exception {
+        Set<String> answer = new LinkedHashSet<>();
+        Collection<RoutesBuilder> builders = findRoutesBuilders(resources);
+
+        // TODO: modeline should be also for reload
+        boolean modeLine = true;
+        if (modeLine) {
+            ModeLineFactory factory = resolveModelineFactory(camelContext);
+            if (factory != null) {
+                // gather resources for modeline
+                for (Resource resource : resources) {
+                    factory.parseModeLine(resource);
+                }
+            }
+        }
+
+        for (RoutesBuilder builder : builders) {
+            // update any existing routes
+            Set<String> ids = builder.updateRoutesToCamelContext(getCamelContext());
+            answer.addAll(ids);
+        }
+
+        return answer;
+    }
+
+    private ModeLineFactory resolveModelineFactory(CamelContext camelContext) {
+        final ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
+
+        Optional<ModeLineFactory> result = ResolverHelper.resolveService(
+                ecc,
+                ecc.getBootstrapFactoryFinder(),
+                ModeLineFactory.FACTORY,
+                ModeLineFactory.class);
+
+        if (result.isPresent()) {
+            ModeLineFactory mf = result.get();
+            CamelContextAware.trySetCamelContext(mf, camelContext);
+            ServiceHelper.startService(mf);
+            return mf;
+        }
+
+        return null;
+    }
+
 }

@@ -1229,6 +1229,16 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
+    public Boolean isModeLine() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setModeLine(Boolean modeLine) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public void setLoadHealthChecks(Boolean loadHealthChecks) {
         throw new UnsupportedOperationException();
     }

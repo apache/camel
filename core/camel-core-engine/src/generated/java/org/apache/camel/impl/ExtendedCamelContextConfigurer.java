@@ -123,6 +123,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "MessageHistory": target.setMessageHistory(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "messagehistoryfactory":
         case "MessageHistoryFactory": target.setMessageHistoryFactory(property(camelContext, org.apache.camel.spi.MessageHistoryFactory.class, value)); return true;
+        case "modeline":
+        case "ModeLine": target.setModeLine(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "modeljaxbcontextfactory":
         case "ModelJAXBContextFactory": target.setModelJAXBContextFactory(property(camelContext, org.apache.camel.spi.ModelJAXBContextFactory.class, value)); return true;
         case "modeltoxmldumper":
@@ -320,6 +322,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "MessageHistory": return java.lang.Boolean.class;
         case "messagehistoryfactory":
         case "MessageHistoryFactory": return org.apache.camel.spi.MessageHistoryFactory.class;
+        case "modeline":
+        case "ModeLine": return java.lang.Boolean.class;
         case "modeljaxbcontextfactory":
         case "ModelJAXBContextFactory": return org.apache.camel.spi.ModelJAXBContextFactory.class;
         case "modeltoxmldumper":
@@ -518,6 +522,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "MessageHistory": return target.isMessageHistory();
         case "messagehistoryfactory":
         case "MessageHistoryFactory": return target.getMessageHistoryFactory();
+        case "modeline":
+        case "ModeLine": return target.isModeLine();
         case "modeljaxbcontextfactory":
         case "ModelJAXBContextFactory": return target.getModelJAXBContextFactory();
         case "modeltoxmldumper":

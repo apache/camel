@@ -913,6 +913,16 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     @Override
+    public Boolean isModeLine() {
+        return delegate.isModeLine();
+    }
+
+    @Override
+    public void setModeLine(Boolean modeLine) {
+        delegate.setModeLine(modeLine);
+    }
+
+    @Override
     public Boolean isDevConsole() {
         return delegate.isDevConsole();
     }

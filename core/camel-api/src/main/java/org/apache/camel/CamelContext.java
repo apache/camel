@@ -1204,6 +1204,18 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     void setSourceLocationEnabled(Boolean sourceLocationEnabled);
 
     /**
+     * Whether camel-k style modeline is also enabled when not using camel-k. Enabling this allows to use a camel-k like
+     * experience by being able to configure various settings using modeline directly in your route source code.
+     */
+    Boolean isModeLine();
+
+    /**
+     * Whether camel-k style modeline is also enabled when not using camel-k. Enabling this allows to use a camel-k like
+     * experience by being able to configure various settings using modeline directly in your route source code.
+     */
+    void setModeLine(Boolean modeLine);
+
+    /**
      * Whether to enable developer console (requires camel-console on classpath).
      *
      * The developer console is only for assisting during development. This is NOT for production usage.

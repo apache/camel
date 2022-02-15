@@ -22,13 +22,17 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.spi.CamelContextCustomizer;
 import org.apache.camel.spi.ModeLineFactory;
+import org.apache.camel.spi.PropertiesComponent;
+import org.apache.camel.spi.PropertiesSource;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.JdkService;
+import org.apache.camel.support.service.ServiceSupport;
 
 @JdkService(ModeLineFactory.FACTORY)
-public class DefaultModeLineFactory implements ModeLineFactory, CamelContextAware {
+public class DefaultModeLineFactory extends ServiceSupport implements ModeLineFactory, CamelContextAware {
 
     private CamelContext camelContext;
+    private ModelineParser parser;
 
     @Override
     public CamelContext getCamelContext() {
@@ -42,9 +46,27 @@ public class DefaultModeLineFactory implements ModeLineFactory, CamelContextAwar
 
     @Override
     public void parseModeLine(Resource resource) throws Exception {
-        ModelineParser parser = new ModelineParser(camelContext);
-
         List<CamelContextCustomizer> customizers = parser.parse(resource);
         customizers.forEach(c -> c.configure(camelContext));
     }
+
+    @Override
+    protected void doInit() throws Exception {
+        parser = new ModelineParser(camelContext);
+
+        // the property is both a trait and a source but we must use the same instance
+        // so we need to get the existing instance from the properties component to
+        // add to the parser as its trait
+        PropertiesComponent pc = camelContext.getPropertiesComponent();
+        PropertiesSource ps = pc.getPropertiesSource("property");
+        if (ps instanceof Trait) {
+            parser.addTrait((Trait) ps);
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "camel-dsl-modeline";
+    }
+
 }

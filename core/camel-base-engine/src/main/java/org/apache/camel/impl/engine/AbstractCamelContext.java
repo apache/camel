@@ -256,6 +256,7 @@ public abstract class AbstractCamelContext extends BaseService
     private Boolean traceStandby = Boolean.FALSE;
     private String tracePattern;
     private String tracingLoggingFormat;
+    private Boolean modeLine = Boolean.FALSE;
     private Boolean debug = Boolean.FALSE;
     private Boolean messageHistory = Boolean.FALSE;
     private Boolean logMask = Boolean.FALSE;
@@ -4260,6 +4261,16 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     public void setLoadHealthChecks(Boolean loadHealthChecks) {
         this.loadHealthChecks = loadHealthChecks;
+    }
+
+    @Override
+    public Boolean isModeLine() {
+        return modeLine != null && modeLine;
+    }
+
+    @Override
+    public void setModeLine(Boolean modeLine) {
+        this.modeLine = modeLine;
     }
 
     public Boolean isDevConsole() {

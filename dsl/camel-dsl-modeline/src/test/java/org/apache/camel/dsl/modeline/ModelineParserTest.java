@@ -18,10 +18,16 @@ package org.apache.camel.dsl.modeline;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.CamelContextCustomizer;
+import org.apache.camel.CamelContextAware;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.DependencyStrategy;
+import org.apache.camel.spi.ModeLineFactory;
+import org.apache.camel.support.ResolverHelper;
+import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -29,6 +35,25 @@ import org.junit.jupiter.api.Test;
 public class ModelineParserTest extends CamelTestSupport {
 
     private final List<String> deps = new ArrayList<>();
+
+    private ModeLineFactory resolveModelineFactory(CamelContext camelContext) {
+        final ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
+
+        Optional<ModeLineFactory> result = ResolverHelper.resolveService(
+                ecc,
+                ecc.getBootstrapFactoryFinder(),
+                ModeLineFactory.FACTORY,
+                ModeLineFactory.class);
+
+        if (result.isPresent()) {
+            ModeLineFactory mf = result.get();
+            CamelContextAware.trySetCamelContext(mf, camelContext);
+            ServiceHelper.startService(mf);
+            return mf;
+        } else {
+            throw new IllegalArgumentException("Cannot find ModeLineFactory");
+        }
+    }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -54,9 +79,8 @@ public class ModelineParserTest extends CamelTestSupport {
         Assertions.assertEquals(0, deps.size());
 
         String line = "// camel-k: dependency=mvn:org.my:application:1.0";
-        ModelineParser parser = new ModelineParser(context);
-        List<CamelContextCustomizer> customizers = parser.parse(line);
-        customizers.forEach(c -> c.configure(context));
+        ModeLineFactory factory = resolveModelineFactory(context);
+        factory.parseModeLine(ResourceHelper.fromString(null, line));
 
         Assertions.assertEquals(1, deps.size());
         Assertions.assertEquals("mvn:org.my:application:1.0", deps.get(0));
@@ -69,9 +93,8 @@ public class ModelineParserTest extends CamelTestSupport {
         Assertions.assertEquals(0, deps.size());
 
         String line = "### camel-k: dependency=mvn:org.my:application:1.0";
-        ModelineParser parser = new ModelineParser(context);
-        List<CamelContextCustomizer> customizers = parser.parse(line);
-        customizers.forEach(c -> c.configure(context));
+        ModeLineFactory factory = resolveModelineFactory(context);
+        factory.parseModeLine(ResourceHelper.fromString(null, line));
 
         Assertions.assertEquals(1, deps.size());
         Assertions.assertEquals("mvn:org.my:application:1.0", deps.get(0));
@@ -85,9 +108,8 @@ public class ModelineParserTest extends CamelTestSupport {
         Assertions.assertEquals(0, deps.size());
 
         String line = "// camel-k: dependency=mvn:org.my:application:1.0 dependency=mvn:com.foo:myapp:2.1";
-        ModelineParser parser = new ModelineParser(context);
-        List<CamelContextCustomizer> customizers = parser.parse(line);
-        customizers.forEach(c -> c.configure(context));
+        ModeLineFactory factory = resolveModelineFactory(context);
+        factory.parseModeLine(ResourceHelper.fromString(null, line));
 
         Assertions.assertEquals(2, deps.size());
         Assertions.assertEquals("mvn:org.my:application:1.0", deps.get(0));
@@ -99,9 +121,8 @@ public class ModelineParserTest extends CamelTestSupport {
         context.start();
 
         String line = "// camel-k: property=hi=Hello";
-        ModelineParser parser = new ModelineParser(context);
-        List<CamelContextCustomizer> customizers = parser.parse(line);
-        customizers.forEach(c -> c.configure(context));
+        ModeLineFactory factory = resolveModelineFactory(context);
+        factory.parseModeLine(ResourceHelper.fromString(null, line));
 
         Assertions.assertEquals("Hello", context.getPropertiesComponent().parseUri("{{hi}}"));
     }
@@ -111,9 +132,8 @@ public class ModelineParserTest extends CamelTestSupport {
         context.start();
 
         String line = "// camel-k: property=hi=Hello property=bye=Farvel";
-        ModelineParser parser = new ModelineParser(context);
-        List<CamelContextCustomizer> customizers = parser.parse(line);
-        customizers.forEach(c -> c.configure(context));
+        ModeLineFactory factory = resolveModelineFactory(context);
+        factory.parseModeLine(ResourceHelper.fromString(null, line));
 
         Assertions.assertEquals("Hello", context.getPropertiesComponent().parseUri("{{hi}}"));
         Assertions.assertEquals("Farvel", context.getPropertiesComponent().parseUri("{{bye}}"));
@@ -124,9 +144,8 @@ public class ModelineParserTest extends CamelTestSupport {
         context.start();
 
         String line = "// camel-k: property=hi='Hello World' property=bye='Farvel Verden'";
-        ModelineParser parser = new ModelineParser(context);
-        List<CamelContextCustomizer> customizers = parser.parse(line);
-        customizers.forEach(c -> c.configure(context));
+        ModeLineFactory factory = resolveModelineFactory(context);
+        factory.parseModeLine(ResourceHelper.fromString(null, line));
 
         Assertions.assertEquals("Hello World", context.getPropertiesComponent().parseUri("{{hi}}"));
         Assertions.assertEquals("Farvel Verden", context.getPropertiesComponent().parseUri("{{bye}}"));
@@ -140,9 +159,8 @@ public class ModelineParserTest extends CamelTestSupport {
         Assertions.assertEquals(0, deps.size());
 
         String line = "// camel-k: dependency=mvn:org.my:application:1.0 property=hi=Hello dependency=mvn:com.foo:myapp:2.1";
-        ModelineParser parser = new ModelineParser(context);
-        List<CamelContextCustomizer> customizers = parser.parse(line);
-        customizers.forEach(c -> c.configure(context));
+        ModeLineFactory factory = resolveModelineFactory(context);
+        factory.parseModeLine(ResourceHelper.fromString(null, line));
 
         Assertions.assertEquals(2, deps.size());
         Assertions.assertEquals("mvn:org.my:application:1.0", deps.get(0));
@@ -160,9 +178,8 @@ public class ModelineParserTest extends CamelTestSupport {
 
         String line
                 = "//    camel-k:   dependency=mvn:org.my:application:1.0    property=hi=Hello   dependency=mvn:com.foo:myapp:2.1";
-        ModelineParser parser = new ModelineParser(context);
-        List<CamelContextCustomizer> customizers = parser.parse(line);
-        customizers.forEach(c -> c.configure(context));
+        ModeLineFactory factory = resolveModelineFactory(context);
+        factory.parseModeLine(ResourceHelper.fromString(null, line));
 
         Assertions.assertEquals(2, deps.size());
         Assertions.assertEquals("mvn:org.my:application:1.0", deps.get(0));
@@ -176,9 +193,8 @@ public class ModelineParserTest extends CamelTestSupport {
         context.start();
 
         String line = "// camel-k: property=classpath:myapp.properties";
-        ModelineParser parser = new ModelineParser(context);
-        List<CamelContextCustomizer> customizers = parser.parse(line);
-        customizers.forEach(c -> c.configure(context));
+        ModeLineFactory factory = resolveModelineFactory(context);
+        factory.parseModeLine(ResourceHelper.fromString(null, line));
 
         Assertions.assertEquals("Hej", context.getPropertiesComponent().parseUri("{{hi}}"));
         Assertions.assertEquals("bar", context.getPropertiesComponent().parseUri("{{foo}}"));

@@ -790,6 +790,16 @@ class AbstractExchangeTest {
         }
 
         @Override
+        public Boolean isModeLine() {
+            return null;
+        }
+
+        @Override
+        public void setModeLine(Boolean modeLine) {
+
+        }
+
+        @Override
         public Boolean isTypeConverterStatisticsEnabled() {
             return null;
         }

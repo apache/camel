@@ -23,8 +23,6 @@ import org.apache.camel.spi.CamelContextCustomizer;
  */
 public interface Trait {
 
-    // TODO: trim spaces around first =
-
     String getName();
 
     /**

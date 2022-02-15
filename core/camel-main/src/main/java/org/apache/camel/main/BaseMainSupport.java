@@ -532,6 +532,7 @@ public abstract class BaseMainSupport extends BaseService {
     protected void configureRoutes(CamelContext camelContext) throws Exception {
         // then configure and add the routes
         RoutesConfigurer configurer = new RoutesConfigurer();
+        configurer.setModeLine(camelContext.isModeLine());
 
         if (mainConfigurationProperties.isRoutesCollectorEnabled()) {
             configurer.setRoutesCollector(routesCollector);
@@ -544,7 +545,6 @@ public abstract class BaseMainSupport extends BaseService {
             // only set the base package if enabled
             configurer.setBasePackageScan(mainConfigurationProperties.getBasePackageScan());
         }
-        configurer.setModeLine(mainConfigurationProperties.isModeLine());
         configurer.setJavaRoutesExcludePattern(mainConfigurationProperties.getJavaRoutesExcludePattern());
         configurer.setJavaRoutesIncludePattern(mainConfigurationProperties.getJavaRoutesIncludePattern());
         configurer.setRoutesExcludePattern(mainConfigurationProperties.getRoutesExcludePattern());
