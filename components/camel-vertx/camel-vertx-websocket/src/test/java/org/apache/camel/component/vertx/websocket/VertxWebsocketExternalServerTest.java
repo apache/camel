@@ -124,7 +124,7 @@ public class VertxWebsocketExternalServerTest extends VertxWebSocketTestSupport 
             try {
                 host.stop();
             } catch (Exception e) {
-                LOG.warn("Failed to stop Vert.x server {}", e);
+                LOG.warn("Failed to stop Vert.x server", e);
             }
             context.stop();
         }
