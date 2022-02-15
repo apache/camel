@@ -24,7 +24,7 @@ public interface PropertiesFunctionFactory {
     /**
      * Service factory key.
      */
-    String FACTORY = "properties-function-factory";
+    String FACTORY = "properties-function";
 
     /**
      * Creates the {@link PropertiesFunction}

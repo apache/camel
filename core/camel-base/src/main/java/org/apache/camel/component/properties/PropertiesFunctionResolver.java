@@ -80,11 +80,12 @@ public final class PropertiesFunctionResolver implements CamelContextAware {
     public PropertiesFunction resolvePropertiesFunction(String name) {
         PropertiesFunction answer = functions.get(name);
         if (answer == null) {
+            // it may be a custom function from a 3rd party JAR so use factory finder
             ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
-            FactoryFinder ff = ecc.getBootstrapFactoryFinder(PropertiesFunctionFactory.FACTORY);
+            FactoryFinder finder = ecc.getBootstrapFactoryFinder(PropertiesFunctionFactory.FACTORY);
 
             PropertiesFunctionFactory factory
-                    = ResolverHelper.resolveService(ecc, ff, name, PropertiesFunctionFactory.class).orElse(null);
+                    = ResolverHelper.resolveService(ecc, finder, name, PropertiesFunctionFactory.class).orElse(null);
             if (factory != null) {
                 answer = factory.createPropertiesFunction();
                 if (answer != null) {
