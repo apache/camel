@@ -21,7 +21,6 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -156,15 +155,11 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
         Set<String> answer = new LinkedHashSet<>();
         Collection<RoutesBuilder> builders = findRoutesBuilders(resources);
 
-        // TODO: modeline should be also for reload
-        boolean modeLine = true;
-        if (modeLine) {
-            ModeLineFactory factory = resolveModelineFactory(camelContext);
-            if (factory != null) {
-                // gather resources for modeline
-                for (Resource resource : resources) {
-                    factory.parseModeLine(resource);
-                }
+        if (camelContext.isModeLine()) {
+            ModeLineFactory factory = camelContext.adapt(ExtendedCamelContext.class).getModeLineFactory();
+            // gather resources for modeline
+            for (Resource resource : resources) {
+                factory.parseModeLine(resource);
             }
         }
 
@@ -175,25 +170,6 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
         }
 
         return answer;
-    }
-
-    private ModeLineFactory resolveModelineFactory(CamelContext camelContext) {
-        final ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
-
-        Optional<ModeLineFactory> result = ResolverHelper.resolveService(
-                ecc,
-                ecc.getBootstrapFactoryFinder(),
-                ModeLineFactory.FACTORY,
-                ModeLineFactory.class);
-
-        if (result.isPresent()) {
-            ModeLineFactory mf = result.get();
-            CamelContextAware.trySetCamelContext(mf, camelContext);
-            ServiceHelper.startService(mf);
-            return mf;
-        }
-
-        return null;
     }
 
 }

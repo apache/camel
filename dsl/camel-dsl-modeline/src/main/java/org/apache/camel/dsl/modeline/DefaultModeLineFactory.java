@@ -20,6 +20,8 @@ import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.NonManagedService;
+import org.apache.camel.StaticService;
 import org.apache.camel.spi.CamelContextCustomizer;
 import org.apache.camel.spi.ModeLineFactory;
 import org.apache.camel.spi.PropertiesComponent;
@@ -29,7 +31,8 @@ import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.service.ServiceSupport;
 
 @JdkService(ModeLineFactory.FACTORY)
-public class DefaultModeLineFactory extends ServiceSupport implements ModeLineFactory, CamelContextAware {
+public class DefaultModeLineFactory extends ServiceSupport
+        implements ModeLineFactory, CamelContextAware, NonManagedService, StaticService {
 
     private CamelContext camelContext;
     private ModelineParser parser;
