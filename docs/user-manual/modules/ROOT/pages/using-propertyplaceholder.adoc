@@ -403,7 +403,6 @@ The xref:components::properties-component.adoc[Properties] component includes th
 * `service` - A function to lookup the property from OS environment variables using the service naming idiom
 * `service.name` - A function to lookup the property from OS environment variables using the service naming idiom returning the hostname part only
 * `service.port` - A function to lookup the property from OS environment variables using the service naming idiom returning the port part only
-* `aws` - A function to lookup the property from AWS Secrets Manager service.
 
 These functions are intended to make it easy to lookup values from the environment, as shown in the example below:
 
@@ -468,33 +467,6 @@ And we can use default values if the service has not been defined, for example t
 </route>
 </camelContext>
 ----
-
-=== Using AWS Secrets Manager Property Function
-
-To use this function you'll need to provide credentials to AWS Secrets Manager Service as environment variables:
-
-[source,bash]
-----
-export $AWS_ACCESS_KEY=accessKey
-export $AWS_SECRET_KEY=secretKey
-export $AWS_REGION=region
-----
-
-At this point you'll be able to reference a property in the following way:
-
-[source,xml]
-----
-<camelContext>
-    <route>
-        <from uri="direct:start"/>
-        <to uri="{{aws:route}}"/>
-    </route>
-</camelContext>
-----
-
-Where route will be the name of the secret stored in the AWS Secrets Manager Service.
-
-For the moment we are not considering the rotation function, if any will be applied, but it is in the work to be done.
 
 === Using custom property placeholder functions
 
