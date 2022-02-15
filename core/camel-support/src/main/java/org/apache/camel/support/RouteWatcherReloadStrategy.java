@@ -51,7 +51,7 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
     /**
      * The default pattern: all XML and all YAML files
      */
-    private static final String DEFAULT_PATTERN="*.xml,*.yaml";
+    private static final String DEFAULT_PATTERN = "*.yaml,*.xml";
     /**
      * The file name pattern to watch for
      */
@@ -82,8 +82,8 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
     public void setPattern(String pattern) {
         this.pattern = pattern;
         // sanity
-        if (this.pattern==null || this.pattern.trim().length()==0){
-            this.pattern=DEFAULT_PATTERN;
+        if (this.pattern == null || this.pattern.trim().length() == 0) {
+            this.pattern = DEFAULT_PATTERN;
         }
     }
 
