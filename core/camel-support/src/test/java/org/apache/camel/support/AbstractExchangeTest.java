@@ -22,6 +22,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.CamelContext;
@@ -51,82 +53,9 @@ import org.apache.camel.ValueHolder;
 import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.console.DevConsoleResolver;
 import org.apache.camel.health.HealthCheckResolver;
-import org.apache.camel.spi.AnnotationBasedProcessorFactory;
-import org.apache.camel.spi.AsyncProcessorAwaitManager;
-import org.apache.camel.spi.BeanIntrospection;
-import org.apache.camel.spi.BeanProcessorFactory;
-import org.apache.camel.spi.BeanProxyFactory;
-import org.apache.camel.spi.BootstrapCloseable;
-import org.apache.camel.spi.CamelBeanPostProcessor;
-import org.apache.camel.spi.CamelContextNameStrategy;
-import org.apache.camel.spi.CamelDependencyInjectionAnnotationFactory;
-import org.apache.camel.spi.ClassResolver;
-import org.apache.camel.spi.ComponentNameResolver;
-import org.apache.camel.spi.ComponentResolver;
-import org.apache.camel.spi.ConfigurerResolver;
-import org.apache.camel.spi.DataFormat;
-import org.apache.camel.spi.DataFormatResolver;
-import org.apache.camel.spi.DataType;
-import org.apache.camel.spi.DataTypeAware;
-import org.apache.camel.spi.Debugger;
-import org.apache.camel.spi.DeferServiceFactory;
-import org.apache.camel.spi.EndpointRegistry;
-import org.apache.camel.spi.EndpointStrategy;
-import org.apache.camel.spi.EndpointUriFactory;
-import org.apache.camel.spi.ExchangeFactory;
-import org.apache.camel.spi.ExchangeFactoryManager;
-import org.apache.camel.spi.ExecutorServiceManager;
-import org.apache.camel.spi.FactoryFinder;
-import org.apache.camel.spi.FactoryFinderResolver;
-import org.apache.camel.spi.HeadersMapFactory;
-import org.apache.camel.spi.InflightRepository;
-import org.apache.camel.spi.Injector;
-import org.apache.camel.spi.InterceptEndpointFactory;
-import org.apache.camel.spi.InterceptStrategy;
-import org.apache.camel.spi.InternalProcessorFactory;
-import org.apache.camel.spi.Language;
-import org.apache.camel.spi.LanguageResolver;
-import org.apache.camel.spi.LifecycleStrategy;
-import org.apache.camel.spi.LogListener;
-import org.apache.camel.spi.ManagementMBeanAssembler;
-import org.apache.camel.spi.ManagementNameStrategy;
-import org.apache.camel.spi.ManagementStrategy;
-import org.apache.camel.spi.MessageHistoryFactory;
-import org.apache.camel.spi.ModelJAXBContextFactory;
-import org.apache.camel.spi.ModelToXMLDumper;
-import org.apache.camel.spi.NodeIdFactory;
-import org.apache.camel.spi.NormalizedEndpointUri;
-import org.apache.camel.spi.PackageScanClassResolver;
-import org.apache.camel.spi.PackageScanResourceResolver;
-import org.apache.camel.spi.ProcessorExchangeFactory;
-import org.apache.camel.spi.ProcessorFactory;
-import org.apache.camel.spi.PropertiesComponent;
-import org.apache.camel.spi.ReactiveExecutor;
-import org.apache.camel.spi.Registry;
-import org.apache.camel.spi.ResourceLoader;
-import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
-import org.apache.camel.spi.RestConfiguration;
-import org.apache.camel.spi.RestRegistry;
-import org.apache.camel.spi.RouteController;
-import org.apache.camel.spi.RouteFactory;
-import org.apache.camel.spi.RoutePolicyFactory;
-import org.apache.camel.spi.RouteStartupOrder;
-import org.apache.camel.spi.RoutesLoader;
-import org.apache.camel.spi.RuntimeEndpointRegistry;
-import org.apache.camel.spi.ShutdownStrategy;
-import org.apache.camel.spi.StartupStepRecorder;
-import org.apache.camel.spi.StreamCachingStrategy;
-import org.apache.camel.spi.Tracer;
-import org.apache.camel.spi.Transformer;
-import org.apache.camel.spi.TransformerRegistry;
-import org.apache.camel.spi.TypeConverterRegistry;
-import org.apache.camel.spi.UnitOfWorkFactory;
-import org.apache.camel.spi.UriFactoryResolver;
-import org.apache.camel.spi.UuidGenerator;
-import org.apache.camel.spi.Validator;
-import org.apache.camel.spi.ValidatorRegistry;
-import org.apache.camel.spi.XMLRoutesDefinitionLoader;
+import org.apache.camel.spi.*;
 import org.apache.camel.support.jsse.SSLContextParameters;
+import org.apache.logging.log4j.core.util.ExecutorServices;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -160,7 +89,170 @@ class AbstractExchangeTest {
         assertSame(type2, ((DataTypeAware) e2.getMessage()).getDataType());
     }
 
-    private static class MyCamelContext implements ExtendedCamelContext {
+    static class MyExecutorServiceManager implements ExecutorServiceManager{
+
+        @Override
+        public void start() {
+
+        }
+
+        @Override
+        public void stop() {
+
+        }
+
+        @Override
+        public void shutdown() {
+
+        }
+
+        @Override
+        public ThreadPoolFactory getThreadPoolFactory() {
+            return null;
+        }
+
+        @Override
+        public void setThreadPoolFactory(ThreadPoolFactory threadPoolFactory) {
+
+        }
+
+        @Override
+        public String resolveThreadName(String name) {
+            return null;
+        }
+
+        @Override
+        public ThreadPoolProfile getThreadPoolProfile(String id) {
+            return null;
+        }
+
+        @Override
+        public void registerThreadPoolProfile(ThreadPoolProfile profile) {
+
+        }
+
+        @Override
+        public void setDefaultThreadPoolProfile(ThreadPoolProfile defaultThreadPoolProfile) {
+
+        }
+
+        @Override
+        public ThreadPoolProfile getDefaultThreadPoolProfile() {
+            return null;
+        }
+
+        @Override
+        public void setThreadNamePattern(String pattern) throws IllegalArgumentException {
+
+        }
+
+        @Override
+        public String getThreadNamePattern() {
+            return null;
+        }
+
+        @Override
+        public void setShutdownAwaitTermination(long timeInMillis) {
+
+        }
+
+        @Override
+        public long getShutdownAwaitTermination() {
+            return 0;
+        }
+
+        @Override
+        public Thread newThread(String name, Runnable runnable) {
+            return null;
+        }
+
+        @Override
+        public ExecutorService newDefaultThreadPool(Object source, String name) {
+            return null;
+        }
+
+        @Override
+        public ScheduledExecutorService newDefaultScheduledThreadPool(Object source, String name) {
+            return null;
+        }
+
+        @Override
+        public ExecutorService newThreadPool(Object source, String name, ThreadPoolProfile profile) {
+            return null;
+        }
+
+        @Override
+        public ExecutorService newThreadPool(Object source, String name, String profileId) {
+            return null;
+        }
+
+        @Override
+        public ExecutorService newThreadPool(Object source, String name, int poolSize, int maxPoolSize) {
+            return null;
+        }
+
+        @Override
+        public ExecutorService newSingleThreadExecutor(Object source, String name) {
+            return Executors.newSingleThreadExecutor();
+        }
+
+        @Override
+        public ExecutorService newCachedThreadPool(Object source, String name) {
+            return null;
+        }
+
+        @Override
+        public ExecutorService newFixedThreadPool(Object source, String name, int poolSize) {
+            return null;
+        }
+
+        @Override
+        public ScheduledExecutorService newScheduledThreadPool(Object source, String name, int poolSize) {
+            return null;
+        }
+
+        @Override
+        public ScheduledExecutorService newSingleThreadScheduledExecutor(Object source, String name) {
+            return null;
+        }
+
+        @Override
+        public ScheduledExecutorService newScheduledThreadPool(Object source, String name, ThreadPoolProfile profile) {
+            return null;
+        }
+
+        @Override
+        public ScheduledExecutorService newScheduledThreadPool(Object source, String name, String profileId) {
+            return null;
+        }
+
+        @Override
+        public void shutdown(ExecutorService executorService) {
+
+        }
+
+        @Override
+        public void shutdownGraceful(ExecutorService executorService) {
+
+        }
+
+        @Override
+        public void shutdownGraceful(ExecutorService executorService, long shutdownAwaitTermination) {
+
+        }
+
+        @Override
+        public List<Runnable> shutdownNow(ExecutorService executorService) {
+            return null;
+        }
+
+        @Override
+        public boolean awaitTermination(ExecutorService executorService, long shutdownAwaitTermination) throws InterruptedException {
+            return false;
+        }
+    }
+
+    static class MyCamelContext implements ExtendedCamelContext {
 
         @Override
         public <T extends CamelContext> T adapt(Class<T> type) {
@@ -691,7 +783,7 @@ class AbstractExchangeTest {
 
         @Override
         public ExecutorServiceManager getExecutorServiceManager() {
-            return null;
+            return new MyExecutorServiceManager();
         }
 
         @Override

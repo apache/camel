@@ -48,6 +48,13 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
 
     private static final Logger LOG = LoggerFactory.getLogger(RouteWatcherReloadStrategy.class);
 
+    /**
+     * The default pattern: all XML and all YAML files
+     */
+    private static final String DEFAULT_PATTERN="*.xml,*.yaml";
+    /**
+     * The file name pattern to watch for
+     */
     private String pattern = "*";
     private boolean removeAllRoutes = true;
 
@@ -74,6 +81,10 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
      */
     public void setPattern(String pattern) {
         this.pattern = pattern;
+        // sanity
+        if (this.pattern==null || this.pattern.trim().length()==0){
+            this.pattern=DEFAULT_PATTERN;
+        }
     }
 
     public boolean isRemoveAllRoutes() {
@@ -106,7 +117,7 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                     // strip starting directory, so we have a relative name to the starting folder
                     String path = f.getAbsolutePath();
                     if (path.startsWith(base)) {
-                        path = path.substring(path.lastIndexOf("/"));
+                        path = FileUtil.onlyPath(path);
                     }
                     path = FileUtil.stripLeadingSeparator(path);
 
