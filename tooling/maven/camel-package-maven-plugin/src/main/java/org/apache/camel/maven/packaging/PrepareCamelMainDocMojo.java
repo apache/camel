@@ -88,7 +88,7 @@ public class PrepareCamelMainDocMojo extends AbstractGeneratorMojo {
 
         if (updated) {
             getLog().info("Updated doc file: " + file);
-        } else if (exists) {
+        } else if (exists && getLog().isDebugEnabled()) {
             getLog().debug("No changes to doc file: " + file);
         } else {
             getLog().warn("No main doc file: " + file);

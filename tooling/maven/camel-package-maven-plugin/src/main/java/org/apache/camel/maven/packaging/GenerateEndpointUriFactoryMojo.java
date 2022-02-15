@@ -95,7 +95,9 @@ public class GenerateEndpointUriFactoryMojo extends AbstractGeneratorMojo {
 
         // create auto configuration for the components
         if (!componentNames.isEmpty()) {
-            getLog().debug("Found " + componentNames.size() + " components");
+            if (getLog().isDebugEnabled()) {
+                getLog().debug("Found " + componentNames.size() + " components");
+            }
 
             List<ComponentModel> allModels = new LinkedList<>();
             for (String componentName : componentNames) {
@@ -123,7 +125,9 @@ public class GenerateEndpointUriFactoryMojo extends AbstractGeneratorMojo {
     }
 
     protected void createEndpointUriFactory(ComponentModel model) throws IOException {
-        getLog().debug("Generating endpoint-uri-factory: " + model.getScheme());
+        if (getLog().isDebugEnabled()) {
+            getLog().debug("Generating endpoint-uri-factory: " + model.getScheme());
+        }
 
         String fqn = model.getJavaType();
         generateEndpointUriFactory(fqn, model, sourcesOutputDir);

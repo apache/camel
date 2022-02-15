@@ -106,7 +106,9 @@ public class PrepareAssemblyMojo extends AbstractMojo {
             artifactIds.add(matcher.group(2));
         }
 
-        getLog().debug("ArtifactIds: " + artifactIds);
+        if (getLog().isDebugEnabled()) {
+            getLog().debug("ArtifactIds: " + artifactIds);
+        }
 
         // update pom.xml
         StringBuilder sb = new StringBuilder();
