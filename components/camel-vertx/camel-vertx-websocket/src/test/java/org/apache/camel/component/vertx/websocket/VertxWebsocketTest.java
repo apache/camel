@@ -176,6 +176,15 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
             });
         }
 
+        // Open a connection on path /test-other to ensure the 'send to all' operation
+        // only targeted peers connected on path /test
+        openWebSocketConnection("localhost", port, "/test-other", message -> {
+            synchronized (latch) {
+                results.add(message + " " + latch.getCount());
+                latch.countDown();
+            }
+        });
+
         template.sendBody("vertx-websocket:localhost:" + port + "/test?sendToAll=true", "Hello World");
 
         assertTrue(latch.await(10, TimeUnit.SECONDS));
@@ -200,6 +209,15 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
                 }
             });
         }
+
+        // Open a connection on path /test-other to ensure the 'send to all' operation
+        // only targeted peers connected on path /test
+        openWebSocketConnection("localhost", port, "/test-other", message -> {
+            synchronized (latch) {
+                results.add(message + " " + latch.getCount());
+                latch.countDown();
+            }
+        });
 
         template.sendBodyAndHeader("vertx-websocket:localhost:" + port + "/test", "Hello World",
                 VertxWebsocketConstants.SEND_TO_ALL, true);
@@ -250,6 +268,9 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
                 fromF("vertx-websocket:localhost:%d/test", port)
                         .setBody(simple("Hello ${body}"))
                         .to("mock:result");
+
+                fromF("vertx-websocket:localhost:%d/test-other", port)
+                        .setBody(simple("Hello ${body}"));
 
                 from("vertx-websocket://greeting")
                         .setBody(simple("Hello ${body}"))
