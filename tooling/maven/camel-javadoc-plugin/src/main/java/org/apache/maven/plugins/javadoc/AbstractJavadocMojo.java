@@ -2719,7 +2719,11 @@ public abstract class AbstractJavadocMojo
             for ( Dependency dependency : additionalDependencies )
             {
                 Artifact artifact = resolveDependency( dependency );
-                getLog().debug( "add additional artifact with path " + artifact.getFile() );
+
+                if (getLog().isDebugEnabled()) {
+                    getLog().debug("add additional artifact with path " + artifact.getFile());
+                }
+
                 classpathElements.add( artifact.getFile() );
             }
         }

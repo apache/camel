@@ -159,7 +159,9 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
 
     private void executeComponent(List<ComponentModel> allModels) throws MojoFailureException {
         if (!allModels.isEmpty()) {
-            getLog().debug("Found " + allModels.size() + " components");
+            if (getLog().isDebugEnabled()) {
+                getLog().debug("Found " + allModels.size() + " components");
+            }
 
             // Group the models by implementing classes
             Map<String, List<ComponentModel>> grModels
@@ -1005,7 +1007,9 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
     private boolean writeSourceIfChanged(String source, String filePath, String fileName) throws MojoFailureException {
         try {
             String code = licenseHeader + source;
-            getLog().debug("Source code generated:\n" + code);
+            if (getLog().isDebugEnabled()) {
+                getLog().debug("Source code generated:\n" + code);
+            }
 
             return updateResource(sourcesOutputDir.toPath(), filePath + "/" + fileName, code);
         } catch (Exception e) {

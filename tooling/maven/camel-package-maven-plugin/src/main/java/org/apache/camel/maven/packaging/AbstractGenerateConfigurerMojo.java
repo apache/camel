@@ -232,11 +232,17 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
 
             if (testClasspathOnly) {
                 URL testClasses = new File(project.getBuild().getTestOutputDirectory()).toURI().toURL();
-                getLog().debug("Adding to classpath : " + testClasses);
+
+                if (getLog().isDebugEnabled()) {
+                    getLog().debug("Adding to classpath : " + testClasses);
+                }
                 path.add(testClasses);
             } else {
                 URL mainClasses = new File(project.getBuild().getOutputDirectory()).toURI().toURL();
-                getLog().debug("Adding to classpath : " + mainClasses);
+
+                if (getLog().isDebugEnabled()) {
+                    getLog().debug("Adding to classpath : " + mainClasses);
+                }
                 path.add(mainClasses);
             }
 
@@ -249,8 +255,12 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
             Iterator<Artifact> iter = dependencies.iterator();
             while (iter.hasNext()) {
                 Artifact classPathElement = iter.next();
-                getLog().debug("Adding project dependency artifact: " + classPathElement.getArtifactId()
-                               + " to classpath");
+
+                if (getLog().isDebugEnabled()) {
+                    getLog().debug("Adding project dependency artifact: " + classPathElement.getArtifactId()
+                                   + " to classpath");
+                }
+
                 File file = classPathElement.getFile();
                 if (file != null) {
                     path.add(file.toURI().toURL());

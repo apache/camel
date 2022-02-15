@@ -91,7 +91,9 @@ public class PrepareParentPomMojo extends AbstractMojo {
             throw new MojoFailureException("Error due " + e.getMessage(), e);
         }
 
-        getLog().debug("ArtifactIds: " + artifactIds);
+        if (getLog().isDebugEnabled()) {
+            getLog().debug("ArtifactIds: " + artifactIds);
+        }
 
         StringBuilder sb = new StringBuilder();
         for (String aid : artifactIds) {

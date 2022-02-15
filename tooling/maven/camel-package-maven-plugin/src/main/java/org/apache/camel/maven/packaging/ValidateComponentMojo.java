@@ -82,7 +82,10 @@ public class ValidateComponentMojo extends AbstractGeneratorMojo {
                 final String name = PackageHelper.asName(file);
                 final ErrorDetail detail = new ErrorDetail();
 
-                getLog().debug("Validating file " + file);
+                if (getLog().isDebugEnabled()) {
+                    getLog().debug("Validating file " + file);
+                }
+
                 try {
                     ValidateHelper.validate(file.toFile(), detail);
                 } catch (Exception e) {
