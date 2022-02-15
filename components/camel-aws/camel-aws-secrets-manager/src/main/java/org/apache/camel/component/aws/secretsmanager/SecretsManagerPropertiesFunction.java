@@ -18,9 +18,7 @@ package org.apache.camel.component.aws.secretsmanager;
 
 import java.util.Base64;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.spi.PropertiesFunction;
-import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.StringHelper;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;

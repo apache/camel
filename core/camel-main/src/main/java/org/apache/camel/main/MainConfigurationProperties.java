@@ -41,7 +41,6 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     private int durationHitExitCode;
     private String basePackageScan;
     private boolean basePackageScanEnabled = true;
-    private boolean modeLine;
 
     private String routesBuilderClasses;
     private String configurationClasses;
@@ -332,17 +331,6 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
         this.basePackageScanEnabled = basePackageScanEnabled;
     }
 
-    public boolean isModeLine() {
-        return modeLine;
-    }
-
-    /**
-     * Whether camel-k modeline is enabled when running Camel standalone.
-     */
-    public void setModeLine(boolean modeLine) {
-        this.modeLine = modeLine;
-    }
-
     public int getDurationHitExitCode() {
         return durationHitExitCode;
     }
@@ -574,14 +562,6 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      */
     public MainConfigurationProperties withBasePackageScanEnabled(boolean basePackageScanEnabled) {
         this.basePackageScanEnabled = basePackageScanEnabled;
-        return this;
-    }
-
-    /**
-     * Whether camel-k modeline is enabled when running Camel standalone.
-     */
-    public MainConfigurationProperties withModeLine(boolean modeLine) {
-        this.modeLine = modeLine;
         return this;
     }
 

@@ -131,6 +131,7 @@ import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.ManagementStrategyFactory;
 import org.apache.camel.spi.MessageHistoryFactory;
+import org.apache.camel.spi.ModeLineFactory;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.NodeIdFactory;
@@ -256,6 +257,7 @@ public abstract class AbstractCamelContext extends BaseService
     private Boolean traceStandby = Boolean.FALSE;
     private String tracePattern;
     private String tracingLoggingFormat;
+    private Boolean modeLine = Boolean.FALSE;
     private Boolean debug = Boolean.FALSE;
     private Boolean messageHistory = Boolean.FALSE;
     private Boolean logMask = Boolean.FALSE;
@@ -319,6 +321,7 @@ public abstract class AbstractCamelContext extends BaseService
     private volatile PackageScanClassResolver packageScanClassResolver;
     private volatile PackageScanResourceResolver packageScanResourceResolver;
     private volatile NodeIdFactory nodeIdFactory;
+    private volatile ModeLineFactory modeLineFactory;
     private volatile ProcessorFactory processorFactory;
     private volatile InternalProcessorFactory internalProcessorFactory;
     private volatile InterceptEndpointFactory interceptEndpointFactory;
@@ -4095,6 +4098,23 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     @Override
+    public ModeLineFactory getModeLineFactory() {
+        if (modeLineFactory == null) {
+            synchronized (lock) {
+                if (modeLineFactory == null) {
+                    setModeLineFactory(createModeLineFactory());
+                }
+            }
+        }
+        return modeLineFactory;
+    }
+
+    @Override
+    public void setModeLineFactory(ModeLineFactory modeLineFactory) {
+        this.modeLineFactory = doAddService(modeLineFactory);
+    }
+
+    @Override
     public ManagementStrategy getManagementStrategy() {
         return managementStrategy;
     }
@@ -4260,6 +4280,16 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     public void setLoadHealthChecks(Boolean loadHealthChecks) {
         this.loadHealthChecks = loadHealthChecks;
+    }
+
+    @Override
+    public Boolean isModeLine() {
+        return modeLine != null && modeLine;
+    }
+
+    @Override
+    public void setModeLine(Boolean modeLine) {
+        this.modeLine = modeLine;
     }
 
     public Boolean isDevConsole() {
@@ -5156,6 +5186,8 @@ public abstract class AbstractCamelContext extends BaseService
     protected abstract ModelJAXBContextFactory createModelJAXBContextFactory();
 
     protected abstract NodeIdFactory createNodeIdFactory();
+
+    protected abstract ModeLineFactory createModeLineFactory();
 
     protected abstract FactoryFinderResolver createFactoryFinderResolver();
 

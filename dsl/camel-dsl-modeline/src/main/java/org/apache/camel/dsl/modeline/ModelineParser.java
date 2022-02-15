@@ -42,11 +42,14 @@ public class ModelineParser {
         // add known traits
         Trait trait = new DependencyTrait();
         this.traits.put(trait.getName(), trait);
-        trait = new PropertyTrait();
-        this.traits.put(trait.getName(), trait);
+        // property trait is added from the default mode line factory
         trait = new NameTrait();
         this.traits.put(trait.getName(), trait);
         trait = new EnvTrait();
+        this.traits.put(trait.getName(), trait);
+    }
+
+    public void addTrait(Trait trait) {
         this.traits.put(trait.getName(), trait);
     }
 

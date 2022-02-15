@@ -19,11 +19,9 @@ package org.apache.camel.main;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RouteConfigurationsBuilder;
 import org.apache.camel.RoutesBuilder;
@@ -33,8 +31,6 @@ import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.ModeLineFactory;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.support.OrderedComparator;
-import org.apache.camel.support.ResolverHelper;
-import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
 import org.slf4j.Logger;
@@ -237,19 +233,18 @@ public class RoutesConfigurer {
         routes.sort(OrderedComparator.get());
 
         if (modeLine) {
-            ModeLineFactory factory = resolveModelineFactory(camelContext);
-            if (factory != null) {
-                List<Resource> resources = new ArrayList<>();
-                // gather resources for modeline
-                for (RoutesBuilder builder : routes) {
-                    if (builder instanceof RouteBuilder) {
-                        resources.add(((RouteBuilder) builder).getResource());
-                    }
+            ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
+            ModeLineFactory factory = ecc.getModeLineFactory();
+            List<Resource> resources = new ArrayList<>();
+            // gather resources for modeline
+            for (RoutesBuilder builder : routes) {
+                if (builder instanceof RouteBuilder) {
+                    resources.add(((RouteBuilder) builder).getResource());
                 }
-                for (Resource resource : resources) {
-                    LOG.debug("Parsing modeline: {}", resource);
-                    factory.parseModeLine(resource);
-                }
+            }
+            for (Resource resource : resources) {
+                LOG.debug("Parsing modeline: {}", resource);
+                factory.parseModeLine(resource);
             }
         }
 
@@ -266,25 +261,6 @@ public class RoutesConfigurer {
             LOG.debug("Adding routes into CamelContext from RoutesBuilder: {}", builder);
             camelContext.addRoutes(builder);
         }
-    }
-
-    private ModeLineFactory resolveModelineFactory(CamelContext camelContext) {
-        final ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
-
-        Optional<ModeLineFactory> result = ResolverHelper.resolveService(
-                ecc,
-                ecc.getBootstrapFactoryFinder(),
-                ModeLineFactory.FACTORY,
-                ModeLineFactory.class);
-
-        if (result.isPresent()) {
-            ModeLineFactory mf = result.get();
-            CamelContextAware.trySetCamelContext(mf, camelContext);
-            ServiceHelper.startService(mf);
-            return mf;
-        }
-
-        return null;
     }
 
 }

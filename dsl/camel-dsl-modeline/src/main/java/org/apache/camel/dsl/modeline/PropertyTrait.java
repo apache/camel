@@ -20,12 +20,33 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.spi.CamelContextCustomizer;
-import org.apache.camel.spi.PropertiesComponent;
+import org.apache.camel.spi.PropertiesSource;
+import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.util.OrderedProperties;
 import org.apache.camel.util.StringHelper;
 
-public class PropertyTrait implements Trait {
+/**
+ * This trait is a {@link PropertiesSource} so Camel properties component will use this directly when looking for
+ * property values.
+ */
+@JdkService("properties-source-factory")
+public class PropertyTrait implements Trait, PropertiesSource, CamelContextAware {
+
+    private final Properties properties = new OrderedProperties();
+    private CamelContext camelContext;
+
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
 
     @Override
     public String getName() {
@@ -33,37 +54,38 @@ public class PropertyTrait implements Trait {
     }
 
     @Override
-    public CamelContextCustomizer parseTrait(String trait) {
-        String key;
-        String value;
-        if (trait.contains("=")) {
-            key = StringHelper.before(trait, "=").trim();
-            value = StringHelper.after(trait, "=").trim();
-        } else {
-            key = null;
-            value = trait;
-        }
-        return new CamelContextCustomizer() {
-            @Override
-            public void configure(CamelContext camelContext) {
-                PropertiesComponent pc = camelContext.getPropertiesComponent();
-                if (ResourceHelper.hasScheme(value)) {
-                    // it is a properties file so load resource
-                    try (InputStream is = ResourceHelper.resolveResourceAsInputStream(camelContext, value)) {
-                        Properties prop = new Properties();
-                        prop.load(is);
-                        for (String k : prop.stringPropertyNames()) {
-                            String v = prop.getProperty(k);
-                            pc.addInitialProperty(k, v);
-                        }
-                    } catch (Exception e) {
-                        // ignore
-                    }
-                } else {
-                    pc.addInitialProperty(key, value);
-                }
-            }
-        };
+    public String getProperty(String name) {
+        return properties.getProperty(name);
     }
 
+    @Override
+    public CamelContextCustomizer parseTrait(String trait) {
+        if (trait.contains("=")) {
+            String key = StringHelper.before(trait, "=").trim();
+            String value = StringHelper.after(trait, "=").trim();
+            properties.setProperty(key, value);
+        } else {
+            if (ResourceHelper.hasScheme(trait)) {
+                // it is a properties file so load resource
+                try (InputStream is = ResourceHelper.resolveResourceAsInputStream(camelContext, trait)) {
+                    Properties prop = new Properties();
+                    prop.load(is);
+                    for (String k : prop.stringPropertyNames()) {
+                        String v = prop.getProperty(k);
+                        String key = k.trim();
+                        String value = v.trim();
+                        properties.setProperty(key, value);
+                    }
+                } catch (Exception e) {
+                    // ignore
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public String toString() {
+        return "camel-dsl-modeline";
+    }
 }

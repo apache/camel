@@ -51,6 +51,7 @@ import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.ManagementMBeanAssembler;
+import org.apache.camel.spi.ModeLineFactory;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.NodeIdFactory;
@@ -854,5 +855,15 @@ public interface ExtendedCamelContext extends CamelContext {
      * @param basePackageScan the base package name
      */
     void setBasePackageScan(String basePackageScan);
+
+    /**
+     * Gets the {@link ModeLineFactory}.
+     */
+    ModeLineFactory getModeLineFactory();
+
+    /**
+     * Sets a custom {@link ModeLineFactory}.
+     */
+    void setModeLineFactory(ModeLineFactory modeLineFactory);
 
 }

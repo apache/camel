@@ -160,6 +160,14 @@ public interface PropertiesComponent extends StaticService {
     void addPropertiesSource(PropertiesSource propertiesSource);
 
     /**
+     * Gets the custom {@link PropertiesSource} by the name
+     *
+     * @param  name the name of the source
+     * @return      the source, or null if no source exists
+     */
+    PropertiesSource getPropertiesSource(String name);
+
+    /**
      * Registers the {@link PropertiesFunction} as a function to this component.
      */
     void addPropertiesFunction(PropertiesFunction function);

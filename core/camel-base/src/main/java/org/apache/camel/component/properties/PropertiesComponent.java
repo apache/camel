@@ -604,6 +604,16 @@ public class PropertiesComponent extends ServiceSupport
         }
     }
 
+    @Override
+    public PropertiesSource getPropertiesSource(String name) {
+        for (PropertiesSource source : sources) {
+            if (name.equals(source.getName())) {
+                return source;
+            }
+        }
+        return null;
+    }
+
     public List<PropertiesSource> getSources() {
         return sources;
     }
