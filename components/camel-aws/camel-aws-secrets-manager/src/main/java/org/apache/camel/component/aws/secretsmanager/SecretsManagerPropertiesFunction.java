@@ -14,11 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.properties;
+package org.apache.camel.component.aws.secretsmanager;
 
 import java.util.Base64;
 
 import org.apache.camel.spi.PropertiesFunction;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.StringHelper;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
@@ -43,11 +44,35 @@ import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueRespon
  * Properties Function are all prefixed with <tt>aws:</tt>. For example asking for <tt>aws:token</tt>, will return the
  * secret value associated the secret named token on AWS Secrets Manager
  */
-public class AWSSecretsManagerPropertiesFunction implements PropertiesFunction {
+
+@org.apache.camel.spi.annotations.PropertiesFunction("aws")
+public class SecretsManagerPropertiesFunction extends ServiceSupport implements PropertiesFunction {
 
     private static final String ACCESS_KEY = "AWS_ACCESS_KEY";
     private static final String SECRET_KEY = "AWS_SECRET_KEY";
     private static final String REGION = "AWS_REGION";
+    private SecretsManagerClient client = null;
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        String accessKey = System.getenv(ACCESS_KEY);
+        String secretKey = System.getenv(SECRET_KEY);
+        String region = System.getenv(REGION);
+        SecretsManagerClientBuilder clientBuilder = SecretsManagerClient.builder();
+        AwsBasicCredentials cred = AwsBasicCredentials.create(accessKey, secretKey);
+        clientBuilder = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred));
+        clientBuilder.region(Region.of(region));
+        client = clientBuilder.build();
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        if (client != null) {
+            client.close();
+        }
+        super.doStop();
+    }
 
     @Override
     public String getName() {
@@ -59,45 +84,31 @@ public class AWSSecretsManagerPropertiesFunction implements PropertiesFunction {
         String key = remainder;
         String returnValue = null;
 
-        SecretsManagerClient client = null;
-        SecretsManagerClientBuilder clientBuilder = SecretsManagerClient.builder();
-
         if (remainder.contains(":")) {
             key = StringHelper.before(remainder, ":");
         }
 
         // make sure to use upper case
         if (key != null) {
-            // a service should have both the host and port defined
-            String accessKey = System.getenv(ACCESS_KEY);
-            String secretKey = System.getenv(SECRET_KEY);
-            String region = System.getenv(REGION);
-            returnValue = getSecretFromSource(key, returnValue, clientBuilder, accessKey, secretKey, region);
+            returnValue = getSecretFromSource(key);
         }
 
         return returnValue;
     }
 
     private String getSecretFromSource(
-            String key, String returnValue, SecretsManagerClientBuilder clientBuilder, String accessKey, String secretKey,
-            String region) {
+            String key) {
+        String returnValue;
         GetSecretValueRequest request;
-        SecretsManagerClient client;
-        if (accessKey != null && secretKey != null && region != null) {
-            AwsBasicCredentials cred = AwsBasicCredentials.create(accessKey, secretKey);
-            clientBuilder = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred));
-            clientBuilder.region(Region.of(region));
-            client = clientBuilder.build();
-            GetSecretValueRequest.Builder builder = GetSecretValueRequest.builder();
-            builder.secretId(key);
-            request = builder.build();
-            GetSecretValueResponse secret = client.getSecretValue(request);
+        GetSecretValueRequest.Builder builder = GetSecretValueRequest.builder();
+        builder.secretId(key);
+        request = builder.build();
+        GetSecretValueResponse secret = client.getSecretValue(request);
+        returnValue = secret.secretString();
+        if (secret.secretString() != null) {
             returnValue = secret.secretString();
-            if (secret.secretString() != null) {
-                returnValue = secret.secretString();
-            } else {
-                returnValue = new String(Base64.getDecoder().decode(secret.secretBinary().asByteBuffer()).array());
-            }
+        } else {
+            returnValue = new String(Base64.getDecoder().decode(secret.secretBinary().asByteBuffer()).array());
         }
         return returnValue;
     }

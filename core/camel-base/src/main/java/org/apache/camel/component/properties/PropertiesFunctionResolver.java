@@ -52,8 +52,6 @@ public final class PropertiesFunctionResolver extends ServiceSupport
         addPropertiesFunction(new ServicePropertiesFunction());
         addPropertiesFunction(new ServiceHostPropertiesFunction());
         addPropertiesFunction(new ServicePortPropertiesFunction());
-        // TODO: Move AWSSecretsManagerPropertiesFunction to camel-aws-secrets-manager
-        addPropertiesFunction(new AWSSecretsManagerPropertiesFunction());
     }
 
     @Override
