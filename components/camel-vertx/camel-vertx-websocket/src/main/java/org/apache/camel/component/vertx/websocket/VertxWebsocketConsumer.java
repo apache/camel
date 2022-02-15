@@ -17,6 +17,7 @@
 package org.apache.camel.component.vertx.websocket;
 
 import io.vertx.core.net.SocketAddress;
+import io.vertx.core.net.impl.ConnectionBase;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -71,6 +72,11 @@ public class VertxWebsocketConsumer extends DefaultConsumer {
     }
 
     public void onException(String connectionKey, Throwable cause, SocketAddress remote) {
+        if (cause == ConnectionBase.CLOSED_EXCEPTION) {
+            // Ignore as VertxWebsocketHost registers a closeHandler to trap WebSocket close events
+            return;
+        }
+
         Exchange exchange = createExchange(false);
         exchange.getMessage().setHeader(VertxWebsocketConstants.REMOTE_ADDRESS, remote);
         exchange.getMessage().setHeader(VertxWebsocketConstants.CONNECTION_KEY, connectionKey);

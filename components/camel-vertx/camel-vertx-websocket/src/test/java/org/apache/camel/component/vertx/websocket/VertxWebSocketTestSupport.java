@@ -56,7 +56,7 @@ public class VertxWebSocketTestSupport extends CamelTestSupport {
                 .toCompletionStage()
                 .toCompletableFuture();
         WebSocket webSocket = future.get(5, TimeUnit.SECONDS);
-        webSocket.textMessageHandler(message -> handler.accept(message));
+        webSocket.textMessageHandler(handler::accept);
         return webSocket;
     }
 
