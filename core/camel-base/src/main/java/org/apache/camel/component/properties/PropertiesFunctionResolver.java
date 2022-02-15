@@ -24,15 +24,20 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.PropertiesFunction;
-import org.apache.camel.spi.PropertiesFunctionFactory;
-import org.apache.camel.support.ResolverHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Resolver for built-in and custom {@link PropertiesFunction}.
  */
 public final class PropertiesFunctionResolver implements CamelContextAware {
 
+    public static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/properties-function/";
+
+    private static final Logger LOG = LoggerFactory.getLogger(PropertiesFunctionResolver.class);
+
     private CamelContext camelContext;
+    private FactoryFinder factoryFinder;
     private final Map<String, PropertiesFunction> functions = new LinkedHashMap<>();
 
     public PropertiesFunctionResolver() {
@@ -80,20 +85,44 @@ public final class PropertiesFunctionResolver implements CamelContextAware {
     public PropertiesFunction resolvePropertiesFunction(String name) {
         PropertiesFunction answer = functions.get(name);
         if (answer == null) {
-            // it may be a custom function from a 3rd party JAR so use factory finder
-            ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
-            FactoryFinder finder = ecc.getBootstrapFactoryFinder(PropertiesFunctionFactory.FACTORY);
-
-            PropertiesFunctionFactory factory
-                    = ResolverHelper.resolveService(ecc, finder, name, PropertiesFunctionFactory.class).orElse(null);
-            if (factory != null) {
-                answer = factory.createPropertiesFunction();
-                if (answer != null) {
-                    functions.put(name, answer);
-                }
+            answer = resolve(camelContext, name);
+            if (answer != null) {
+                functions.put(name, answer);
             }
         }
         return answer;
+    }
+
+    private PropertiesFunction resolve(CamelContext context, String name) {
+        // use factory finder to find a custom implementations
+        Class<?> type = null;
+        try {
+            type = findFactory(name, context);
+        } catch (Exception e) {
+            // ignore
+        }
+
+        if (type != null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Found PropertiesFunction: {} via: {}{}", type.getName(), factoryFinder.getResourcePath(), name);
+            }
+            if (PropertiesFunction.class.isAssignableFrom(type)) {
+                PropertiesFunction answer = (PropertiesFunction) context.getInjector().newInstance(type, false);
+                CamelContextAware.trySetCamelContext(answer, camelContext);
+                return answer;
+            } else {
+                throw new IllegalArgumentException("Type is not a PropertiesFunction implementation. Found: " + type.getName());
+            }
+        }
+
+        return null;
+    }
+
+    private Class<?> findFactory(String name, CamelContext context) {
+        if (factoryFinder == null) {
+            factoryFinder = context.adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH);
+        }
+        return factoryFinder.findClass(name).orElse(null);
     }
 
 }

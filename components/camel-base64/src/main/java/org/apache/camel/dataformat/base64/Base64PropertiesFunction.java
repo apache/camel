@@ -14,21 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spi;
+package org.apache.camel.dataformat.base64;
 
-/**
- * Pluggable Factory for creating custom {@link PropertiesFunction}.
- */
-public interface PropertiesFunctionFactory {
+import org.apache.camel.spi.PropertiesFunction;
+import org.apache.commons.codec.binary.Base64;
 
-    /**
-     * Service factory key.
-     */
-    String FACTORY = "properties-function";
+@org.apache.camel.spi.annotations.PropertiesFunction("base64")
+public class Base64PropertiesFunction implements PropertiesFunction {
 
-    /**
-     * Creates the {@link PropertiesFunction}
-     */
-    PropertiesFunction createPropertiesFunction();
+    private final int lineLength = Base64.MIME_CHUNK_SIZE;
+    private final byte[] lineSeparator = { '\r', '\n' };
+    private final Base64 codec;
 
+    public Base64PropertiesFunction() {
+        this.codec = new Base64(lineLength, lineSeparator, true);
+    }
+
+    @Override
+    public String getName() {
+        return "base64";
+    }
+
+    @Override
+    public String apply(String remainder) {
+        byte[] arr = codec.decode(remainder);
+        return new String(arr);
+    }
 }
