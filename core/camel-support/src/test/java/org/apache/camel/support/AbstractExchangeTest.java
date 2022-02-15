@@ -89,7 +89,7 @@ class AbstractExchangeTest {
         assertSame(type2, ((DataTypeAware) e2.getMessage()).getDataType());
     }
 
-    static class MyExecutorServiceManager implements ExecutorServiceManager{
+    static class MyExecutorServiceManager implements ExecutorServiceManager {
 
         @Override
         public void start() {
