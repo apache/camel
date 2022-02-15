@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpClient;
@@ -153,23 +154,21 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Finds all WebSockets associated with a host matching this endpoint configured port
+     * Finds all WebSockets associated with a host matching this endpoint configured port and resource path
      */
     protected Map<String, ServerWebSocket> findPeersForHostPort() {
-        Map<VertxWebsocketHostKey, VertxWebsocketHost> registry = getVertxHostRegistry();
-        for (VertxWebsocketHost host : registry.values()) {
-            if (host.getPort() == getConfiguration().getPort()) {
-                return host.getConnectedPeers();
-            }
-        }
-        return null;
+        return getVertxHostRegistry()
+                .values()
+                .stream()
+                .filter(host -> host.getPort() == getConfiguration().getPort())
+                .flatMap(host -> host.getConnectedPeers().entrySet().stream())
+                .filter(entry -> entry.getValue().path().equals(getConfiguration().getPath()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     protected boolean isManagedPort() {
         return getVertxHostRegistry().values()
                 .stream()
-                .filter(host -> host.getPort() == getConfiguration().getPort())
-                .findFirst()
-                .isPresent();
+                .anyMatch(host -> host.getPort() == getConfiguration().getPort());
     }
 }
