@@ -42,7 +42,6 @@ class KameletYamlRoutes extends YamlRoutesBuilderLoaderSupport implements CamelC
 
     private static final Logger LOG = LoggerFactory.getLogger(KameletYamlRoutes.class);
     private CamelContext camelContext;
-    private final String cp = System.getProperty("java.class.path");
     private final Set<String> downloaded = new HashSet<>();
 
     public KameletYamlRoutes(String extension) {

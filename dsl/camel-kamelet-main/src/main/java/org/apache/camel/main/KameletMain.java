@@ -204,6 +204,12 @@ public class KameletMain extends MainCommandLineSupport {
         if (download) {
             // use resolvers that can auto downloaded
             try {
+                // dependencies from CLI
+                Object dependencies = getInitialProperties().get("camel.jbang.dependencies");
+                if (dependencies != null) {
+                    answer.addService(new CommandLineDependencyDownloader(dependencies.toString()));
+                }
+
                 KnownDependenciesResolver known = new KnownDependenciesResolver(answer);
                 known.loadKnownDependencies();
                 DependencyDownloaderPropertyBindingListener listener

@@ -52,6 +52,9 @@ class Run implements Callable<Integer> {
     @Parameters(description = "The Camel file(s) to run", arity = "1")
     private String[] files;
 
+    @Option(names = { "--dep", "--dependency" }, description = "Additional dependencies to add to the classpath", arity = "0")
+    private String[] dependencies;
+
     //CHECKSTYLE:OFF
     @Option(names = {"-h", "--help"}, usageHelp = true, description = "Display the help and sub-commands")
     private boolean helpRequested;
@@ -99,7 +102,7 @@ class Run implements Callable<Integer> {
     private String jfrProfile;
 
     @Option(names = { "--local-kamelet-dir" },
-            description = "Local directory to load Kamelets from (take precedence))")
+            description = "Local directory for loading Kamelets (takes precedence)")
     private String localKameletDir;
 
     @Option(names = { "--port" }, description = "Embeds a local HTTP server on this port")
@@ -187,6 +190,9 @@ class Run implements Callable<Integer> {
             // turn on jfr if a profile was specified
             main.addInitialProperty("camel.jbang.jfr", "jfr");
             main.addInitialProperty("camel.jbang.jfr-profile", jfrProfile);
+        }
+        if (dependencies != null) {
+            main.addInitialProperty("camel.jbang.dependencies", String.join(",", dependencies));
         }
 
         if (fileLock) {
