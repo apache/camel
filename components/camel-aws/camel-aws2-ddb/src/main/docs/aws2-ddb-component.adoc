@@ -266,8 +266,25 @@ URI:
 
 [source,java]
 ----------------------------------------------------
-from("direct:start")
-.to("aws2-ddb://domainName?amazonDDBClient=#client");
+public class MyRouteBuilder extends RouteBuilder {
+
+    private String accessKey = "myaccessKey";
+    private String secretKey = "secretKey";
+
+    @Override
+    public void configure() throws Exception {
+
+        DynamoDbClient client = DynamoDbClient.builder()
+        .region(Region.AP_SOUTHEAST_2)
+        .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create(accessKey, secretKey)))
+        .build();
+
+        getCamelContext().getRegistry().bind("client", client);
+
+    	from("direct:start")
+        .to("aws2-ddb://domainName?amazonDDBClient=#client");
+    }
+}
 ----------------------------------------------------
 
 The `#client` refers to a `DynamoDbClient` in the
@@ -296,15 +313,38 @@ Registry.
 
 [source,java]
 --------------------------------------------------------------------------------
+Map<String, AttributeValue> attributeMap = new HashMap<>();
+attributeMap.put("partitionKey", AttributeValue.builder().s("3000").build());
+attributeMap.put("id", AttributeValue.builder().s("1001").build());
+attributeMap.put("barcode", AttributeValue.builder().s("9002811220001").build());
+
 from("direct:start")
-  .setHeader(Ddb2Constants.OPERATION, Ddb2Operations.PutItem)
-  .setHeader(Ddb2Constants.CONSISTENT_READ, "true")
-  .setHeader(Ddb2Constants.RETURN_VALUES, "ALL_OLD")
-  .setHeader(Ddb2Constants.ITEM, attributeMap)
-  .setHeader(Ddb2Constants.ATTRIBUTE_NAMES, attributeMap.keySet());
-  .to("aws2-ddb://" + tableName + "?keyAttributeName=" + attributeName + "&keyAttributeType=" + KeyType.HASH
-  + "&keyScalarType=" + ScalarAttributeType.S
-  + "&readCapacity=1&writeCapacity=1");
+  .setHeader(Ddb2Constants.OPERATION,  constant(Ddb2Operations.PutItem))
+  .setHeader(Ddb2Constants.CONSISTENT_READ, constant("true"))
+  .setHeader(Ddb2Constants.RETURN_VALUES, constant("ALL_OLD"))
+  .setHeader(Ddb2Constants.ITEM, constant(attributeMap))
+  .setHeader(Ddb2Constants.ATTRIBUTE_NAMES, constant(attributeMap.keySet()))
+  .to("aws2-ddb://" + tableName + "?amazonDDBClient=#client");
+--------------------------------------------------------------------------------
+
+- UpdateItem: this operation will update an entry into DynamoDB
+
+[source,java]
+--------------------------------------------------------------------------------
+Map<String, AttributeValueUpdate> attributeMap = new HashMap<>();
+attributeMap.put("partitionKey", AttributeValueUpdate.builder().value(AttributeValue.builder().s("3000").build()).build());
+attributeMap.put("sortKey",  AttributeValueUpdate.builder().value(AttributeValue.builder().s("1001").build()).build());
+attributeMap.put("borcode",  AttributeValueUpdate.builder().value(AttributeValue.builder().s("900281122").build()).build());
+
+Map<String, AttributeValue> keyMap = new HashMap<>();
+keyMap.put("partitionKey", AttributeValue.builder().s("3000").build());
+keyMap.put("sortKey", AttributeValue.builder().s("1001").build());
+
+from("direct:start")
+  .setHeader(Ddb2Constants.OPERATION,  constant(Ddb2Operations.UpdateItem))
+  .setHeader(Ddb2Constants.ITEM,  constant(attributeMap))
+  .setHeader(Ddb2Constants.KEY,  constant(keyMap))
+  .to("aws2-ddb://" + tableName + "?amazonDDBClient=#client");
 --------------------------------------------------------------------------------
 
 Maven users will need to add the following dependency to their pom.xml.
