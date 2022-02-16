@@ -26,9 +26,6 @@ public class ExternalBomConflictCheckSet {
 
     private Set<ExternalBomConflictCheck> boms = new HashSet<>();
 
-    public ExternalBomConflictCheckSet() {
-    }
-
     public Set<ExternalBomConflictCheck> getBoms() {
         return boms;
     }
