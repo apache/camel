@@ -394,7 +394,7 @@ public abstract class DefaultConfigurationProperties<T> {
         this.devConsoleEnabled = devConsoleEnabled;
     }
 
-    public boolean ismodeline() {
+    public boolean isModeline() {
         return modeline;
     }
 
@@ -402,7 +402,7 @@ public abstract class DefaultConfigurationProperties<T> {
      * Whether camel-k style modeline is also enabled when not using camel-k. Enabling this allows to use a camel-k like
      * experience by being able to configure various settings using modeline directly in your route source code.
      */
-    public void setmodeline(boolean modeline) {
+    public void setModeline(boolean modeline) {
         this.modeline = modeline;
     }
 

@@ -119,6 +119,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "MdcLoggingKeysPattern": target.setMdcLoggingKeysPattern(property(camelContext, java.lang.String.class, value)); return true;
         case "messagehistory":
         case "MessageHistory": target.setMessageHistory(property(camelContext, boolean.class, value)); return true;
+        case "modeline":
+        case "Modeline": target.setModeline(property(camelContext, boolean.class, value)); return true;
         case "name":
         case "Name": target.setName(property(camelContext, java.lang.String.class, value)); return true;
         case "producertemplatecachesize":
@@ -342,6 +344,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "MdcLoggingKeysPattern": return java.lang.String.class;
         case "messagehistory":
         case "MessageHistory": return boolean.class;
+        case "modeline":
+        case "Modeline": return boolean.class;
         case "name":
         case "Name": return java.lang.String.class;
         case "producertemplatecachesize":
@@ -566,6 +570,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "MdcLoggingKeysPattern": return target.getMdcLoggingKeysPattern();
         case "messagehistory":
         case "MessageHistory": return target.isMessageHistory();
+        case "modeline":
+        case "Modeline": return target.isModeline();
         case "name":
         case "Name": return target.getName();
         case "producertemplatecachesize":
