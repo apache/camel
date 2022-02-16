@@ -18,6 +18,7 @@ package org.apache.camel.maven.packaging;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -190,9 +191,8 @@ public class PrepareExampleMojo extends AbstractMojo {
     }
 
     private String templateExamples(List<ExampleModel> models, long deprecated) throws MojoExecutionException {
-        try {
-            String template = PackageHelper
-                    .loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("readme-examples.mvel"));
+        try (InputStream templateStream = UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("readme-examples.mvel")) {
+            String template = PackageHelper.loadText(templateStream);
             Map<String, Object> map = new HashMap<>();
             map.put("examples", models);
             map.put("numberOfDeprecated", deprecated);
