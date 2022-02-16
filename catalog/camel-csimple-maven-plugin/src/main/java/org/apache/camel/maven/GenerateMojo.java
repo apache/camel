@@ -419,8 +419,7 @@ public class GenerateMojo extends AbstractExecMojo {
     }
 
     private String findInCompileSourceRoots(List<String> list, String name) {
-        for (Object obj : list) {
-            String dir = (String) obj;
+        for (String dir : list) {
             dir = asRelativeFile(dir);
             if (name.startsWith(dir)) {
                 return name.substring(dir.length() + 1);

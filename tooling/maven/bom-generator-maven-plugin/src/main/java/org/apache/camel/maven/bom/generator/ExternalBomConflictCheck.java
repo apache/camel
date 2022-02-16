@@ -27,9 +27,6 @@ public class ExternalBomConflictCheck {
 
     private String version;
 
-    public ExternalBomConflictCheck() {
-    }
-
     public String getGroupId() {
         return groupId;
     }
