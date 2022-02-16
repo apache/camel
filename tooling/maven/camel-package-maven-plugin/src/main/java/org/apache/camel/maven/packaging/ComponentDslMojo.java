@@ -41,6 +41,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
+import static org.apache.camel.maven.packaging.generics.PackagePluginUtils.joinHeaderAndSource;
 import static org.apache.camel.tooling.util.PackageHelper.findCamelDirectory;
 import static org.apache.camel.tooling.util.PackageHelper.loadText;
 
@@ -224,7 +225,7 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
         Path target = outputDir.toPath().resolve(filePath).resolve(fileName);
 
         try {
-            String code = licenseHeader + source;
+            final String code = joinHeaderAndSource(licenseHeader, source);
 
             if (getLog().isDebugEnabled()) {
                 getLog().debug("Source code generated:\n" + code);
