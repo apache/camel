@@ -26,6 +26,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
@@ -68,10 +69,12 @@ public class CsvMarshalHeaderTest extends CamelTestSupport {
         body.put("first_name", "Max");
         body.put("last_name", "Mustermann");
         producerTemplate.sendBodyAndHeader(body, Exchange.FILE_NAME, fileName);
-        List<String> lines = Files.lines(Paths.get(outputFile.toURI()))
-                .filter(l -> l.trim().length() > 0).collect(Collectors.toList());
-        // We got twice the headers... :(
-        assertEquals(4, lines.size());
+        try (Stream<String> stream = Files.lines(Paths.get(outputFile.toURI()))
+                .filter(l -> l.trim().length() > 0)) {
+            List<String> lines = stream.collect(Collectors.toList());
+            // We got twice the headers... :(
+            assertEquals(4, lines.size());
+        }
     }
 
     @Test
@@ -82,10 +85,12 @@ public class CsvMarshalHeaderTest extends CamelTestSupport {
         producerTemplate.sendBodyAndHeader(body, Exchange.FILE_NAME, fileName);
         body = Collections.singletonList(Arrays.asList("Max", "Mustermann"));
         producerTemplate.sendBodyAndHeader(body, Exchange.FILE_NAME, fileName);
-        List<String> lines = Files.lines(Paths.get(outputFile.toURI()))
-                .filter(l -> l.trim().length() > 0).collect(Collectors.toList());
-        // We got twice the headers... :(
-        assertEquals(4, lines.size());
+        try (Stream<String> stream = Files.lines(Paths.get(outputFile.toURI()))
+                .filter(l -> l.trim().length() > 0)) {
+            List<String> lines = stream.collect(Collectors.toList());
+            // We got twice the headers... :(
+            assertEquals(4, lines.size());
+        }
     }
 
     @Override

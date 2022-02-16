@@ -64,8 +64,12 @@ public class GrpcConsumerAggregationTest extends CamelTestSupport {
 
     @AfterEach
     public void stopGrpcChannels() {
-        syncRequestChannel.shutdown().shutdownNow();
-        asyncRequestChannel.shutdown().shutdownNow();
+        if (syncRequestChannel != null) {
+            syncRequestChannel.shutdown().shutdownNow();
+        }
+        if (asyncRequestChannel != null) {
+            asyncRequestChannel.shutdown().shutdownNow();
+        }
     }
 
     @Test

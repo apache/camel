@@ -119,8 +119,11 @@ public class PrepareFatJarMojo extends AbstractMojo {
             Enumeration<URL> loaderResources = getProjectClassLoader().getResources(META_INF_SERVICES_TYPE_CONVERTER_LOADER);
             while (loaderResources.hasMoreElements()) {
                 URL url = loaderResources.nextElement();
-                getLog().debug("Loading file " + META_INF_SERVICES_TYPE_CONVERTER_LOADER
-                               + " to retrieve list of type converters, from url: " + url);
+
+                if (getLog().isDebugEnabled()) {
+                    getLog().debug("Loading file " + META_INF_SERVICES_TYPE_CONVERTER_LOADER
+                                   + " to retrieve list of type converters, from url: " + url);
+                }
                 readTypeConverters(loaders, url);
             }
         } catch (Exception e) {
@@ -164,11 +167,17 @@ public class PrepareFatJarMojo extends AbstractMojo {
 
             if (testClasspathOnly) {
                 URL testClasses = new File(project.getBuild().getTestOutputDirectory()).toURI().toURL();
-                getLog().debug("Adding to classpath : " + testClasses);
+
+                if (getLog().isDebugEnabled()) {
+                    getLog().debug("Adding to classpath : " + testClasses);
+                }
                 path.add(testClasses);
             } else {
                 URL mainClasses = new File(project.getBuild().getOutputDirectory()).toURI().toURL();
-                getLog().debug("Adding to classpath : " + mainClasses);
+
+                if (getLog().isDebugEnabled()) {
+                    getLog().debug("Adding to classpath : " + mainClasses);
+                }
                 path.add(mainClasses);
             }
 
@@ -181,8 +190,11 @@ public class PrepareFatJarMojo extends AbstractMojo {
             Iterator<Artifact> iter = dependencies.iterator();
             while (iter.hasNext()) {
                 Artifact classPathElement = iter.next();
-                getLog().debug("Adding project dependency artifact: " + classPathElement.getArtifactId()
-                               + " to classpath");
+
+                if (getLog().isDebugEnabled()) {
+                    getLog().debug("Adding project dependency artifact: " + classPathElement.getArtifactId()
+                                   + " to classpath");
+                }
                 File file = classPathElement.getFile();
                 if (file != null) {
                     path.add(file.toURI().toURL());

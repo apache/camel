@@ -54,6 +54,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean loadTypeConverters;
     private boolean loadHealthChecks;
     private boolean devConsoleEnabled;
+    private boolean modeline;
     private int logDebugMaxChars;
     private boolean streamCachingEnabled;
     private String streamCachingSpoolDirectory;
@@ -391,6 +392,18 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setDevConsoleEnabled(boolean devConsoleEnabled) {
         this.devConsoleEnabled = devConsoleEnabled;
+    }
+
+    public boolean ismodeline() {
+        return modeline;
+    }
+
+    /**
+     * Whether camel-k style modeline is also enabled when not using camel-k. Enabling this allows to use a camel-k like
+     * experience by being able to configure various settings using modeline directly in your route source code.
+     */
+    public void setmodeline(boolean modeline) {
+        this.modeline = modeline;
     }
 
     public int getLogDebugMaxChars() {
@@ -1626,6 +1639,15 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withLoadHealthChecks(boolean loadHealthChecks) {
         this.loadHealthChecks = loadHealthChecks;
+        return (T) this;
+    }
+
+    /**
+     * Whether camel-k style modeline is also enabled when not using camel-k. Enabling this allows to use a camel-k like
+     * experience by being able to configure various settings using modeline directly in your route source code.
+     */
+    public T withModeline(boolean modeline) {
+        this.modeline = modeline;
         return (T) this;
     }
 

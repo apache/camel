@@ -1,0 +1,21 @@
+= DSL modeline Component
+:doctitle: DSL modeline
+:shortname: dsl-modeline
+:artifactid: camel-dsl-modeline
+:description: Camel DSL Camel K modeline
+:since: 3.16
+:supportlevel: Preview
+//Manually maintained attributes
+:group: DSL
+
+*Since Camel {since}*
+
+Support for Camel K style modeline when running Camel standalone such as with Camel JBang.
+
+The following traits is supported:
+
+- dependency
+- env
+- name
+- property
+

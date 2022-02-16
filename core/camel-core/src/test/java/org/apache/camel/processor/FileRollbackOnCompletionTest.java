@@ -18,8 +18,10 @@ package org.apache.camel.processor;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
@@ -77,8 +79,10 @@ public class FileRollbackOnCompletionTest extends ContextTestSupport {
     public void testOk() throws Exception {
         template.sendBodyAndHeader("direct:confirm", "bumper", "to", "someone@somewhere.org");
 
-        long files = Files.list(testDirectory()).count();
-        assertEquals(1, files, "There should be one file");
+        try (Stream<Path> list = Files.list(testDirectory())) {
+            long files = list.count();
+            assertEquals(1, files, "There should be one file");
+        }
     }
 
     @Test
@@ -97,8 +101,10 @@ public class FileRollbackOnCompletionTest extends ContextTestSupport {
         // deleted
         assertTrue(LATCH.await(5, TimeUnit.SECONDS), "Should countdown the latch");
 
-        long files = Files.list(testDirectory()).count();
-        assertEquals(0, files, "There should be no files");
+        try (Stream<Path> list = Files.list(testDirectory())) {
+            long files = list.count();
+            assertEquals(0, files, "There should be no files");
+        }
     }
 
     @Override

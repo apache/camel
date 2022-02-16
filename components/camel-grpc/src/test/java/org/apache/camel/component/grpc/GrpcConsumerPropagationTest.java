@@ -62,8 +62,12 @@ public class GrpcConsumerPropagationTest extends CamelTestSupport {
 
     @AfterEach
     public void stopGrpcChannels() throws Exception {
-        asyncOnNextChannel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
-        asyncOnCompletedChannel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
+        if (asyncOnNextChannel != null) {
+            asyncOnNextChannel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
+        }
+        if (asyncOnCompletedChannel != null) {
+            asyncOnCompletedChannel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
+        }
     }
 
     @Test

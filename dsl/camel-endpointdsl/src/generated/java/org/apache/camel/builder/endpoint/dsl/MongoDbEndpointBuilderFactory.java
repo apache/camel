@@ -315,6 +315,20 @@ public interface MongoDbEndpointBuilderFactory {
             return this;
         }
         /**
+         * The database name associated with the user's credentials.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param authSource the value to set
+         * @return the dsl builder
+         */
+        default MongoDbEndpointConsumerBuilder authSource(String authSource) {
+            doSetProperty("authSource", authSource);
+            return this;
+        }
+        /**
          * User password for mongodb connection.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -969,6 +983,20 @@ public interface MongoDbEndpointBuilderFactory {
             return this;
         }
         /**
+         * The database name associated with the user's credentials.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param authSource the value to set
+         * @return the dsl builder
+         */
+        default MongoDbEndpointProducerBuilder authSource(String authSource) {
+            doSetProperty("authSource", authSource);
+            return this;
+        }
+        /**
          * User password for mongodb connection.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -1372,6 +1400,20 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointBuilder outputType(String outputType) {
             doSetProperty("outputType", outputType);
+            return this;
+        }
+        /**
+         * The database name associated with the user's credentials.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param authSource the value to set
+         * @return the dsl builder
+         */
+        default MongoDbEndpointBuilder authSource(String authSource) {
+            doSetProperty("authSource", authSource);
             return this;
         }
         /**

@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplatesDefinition;
@@ -77,24 +78,26 @@ public class ModelParserTest {
     @Test
     public void testFiles() throws Exception {
         Path dir = getResourceFolder();
-        List<Path> files = Files.list(dir).sorted().filter(Files::isRegularFile).collect(Collectors.toList());
-        for (Path path : files) {
-            ModelParser parser = new ModelParser(Files.newInputStream(path), NAMESPACE);
-            boolean isRest = REST_XMLS.contains(path.getFileName().toString());
-            boolean isTemplate = TEMPLATE_XMLS.contains(path.getFileName().toString());
-            boolean isTemplatedRoute = TEMPLATED_ROUTE_XMLS.contains(path.getFileName().toString());
-            if (isRest) {
-                RestsDefinition rests = parser.parseRestsDefinition().orElse(null);
-                assertNotNull(rests);
-            } else if (isTemplate) {
-                RouteTemplatesDefinition templates = parser.parseRouteTemplatesDefinition().orElse(null);
-                assertNotNull(templates);
-            } else if (isTemplatedRoute) {
-                TemplatedRoutesDefinition templatedRoutes = parser.parseTemplatedRoutesDefinition().orElse(null);
-                assertNotNull(templatedRoutes);
-            } else {
-                RoutesDefinition routes = parser.parseRoutesDefinition().orElse(null);
-                assertNotNull(routes);
+        try (Stream<Path> list = Files.list(dir)) {
+            List<Path> files = list.sorted().filter(Files::isRegularFile).collect(Collectors.toList());
+            for (Path path : files) {
+                ModelParser parser = new ModelParser(Files.newInputStream(path), NAMESPACE);
+                boolean isRest = REST_XMLS.contains(path.getFileName().toString());
+                boolean isTemplate = TEMPLATE_XMLS.contains(path.getFileName().toString());
+                boolean isTemplatedRoute = TEMPLATED_ROUTE_XMLS.contains(path.getFileName().toString());
+                if (isRest) {
+                    RestsDefinition rests = parser.parseRestsDefinition().orElse(null);
+                    assertNotNull(rests);
+                } else if (isTemplate) {
+                    RouteTemplatesDefinition templates = parser.parseRouteTemplatesDefinition().orElse(null);
+                    assertNotNull(templates);
+                } else if (isTemplatedRoute) {
+                    TemplatedRoutesDefinition templatedRoutes = parser.parseTemplatedRoutesDefinition().orElse(null);
+                    assertNotNull(templatedRoutes);
+                } else {
+                    RoutesDefinition routes = parser.parseRoutesDefinition().orElse(null);
+                    assertNotNull(routes);
+                }
             }
         }
     }

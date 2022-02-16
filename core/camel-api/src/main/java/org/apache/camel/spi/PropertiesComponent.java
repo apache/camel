@@ -160,6 +160,14 @@ public interface PropertiesComponent extends StaticService {
     void addPropertiesSource(PropertiesSource propertiesSource);
 
     /**
+     * Gets the custom {@link PropertiesSource} by the name
+     *
+     * @param  name the name of the source
+     * @return      the source, or null if no source exists
+     */
+    PropertiesSource getPropertiesSource(String name);
+
+    /**
      * Registers the {@link PropertiesFunction} as a function to this component.
      */
     void addPropertiesFunction(PropertiesFunction function);
@@ -175,9 +183,25 @@ public interface PropertiesComponent extends StaticService {
     void setInitialProperties(Properties initialProperties);
 
     /**
+     * Adds an initial property which will be added before any property locations are loaded.
+     *
+     * @param key   the key
+     * @param value the value
+     */
+    void addInitialProperty(String key, String value);
+
+    /**
      * Sets a special list of override properties that take precedence and will use first, if a property exist.
      */
     void setOverrideProperties(Properties overrideProperties);
+
+    /**
+     * Adds a special override property that take precedence and will use first, if a property exist.
+     *
+     * @param key   the key
+     * @param value the value
+     */
+    void addOverrideProperty(String key, String value);
 
     /**
      * Sets a special list of local properties (ie thread local) that take precedence and will use first, if a property

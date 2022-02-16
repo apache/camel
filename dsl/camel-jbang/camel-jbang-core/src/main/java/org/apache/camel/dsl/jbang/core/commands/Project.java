@@ -30,6 +30,7 @@ import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -88,11 +89,14 @@ public class Project implements Callable<Integer> {
             if (!file.endsWith(".java")) {
                 Files.copy(Paths.get(file), projectPath.resolve(routesFolder).resolve(Paths.get(file).getFileName()));
             } else {
-                String packageName = Files.lines(Paths.get(file))
-                        .map(fileContent -> getPackage(fileContent))
-                        .filter(Objects::nonNull)
-                        .findFirst()
-                        .orElse("");
+                String packageName;
+                try (Stream<String> stream = Files.lines(Paths.get(file))
+                        .map(this::getPackage)
+                        .filter(Objects::nonNull)) {
+                    packageName = stream
+                            .findFirst()
+                            .orElse("");
+                }
                 try {
                     Path packageDirectory
                             = projectPath.resolve(sourcesFolder).resolve(packageName.replace(".", File.separator));

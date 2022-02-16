@@ -50,7 +50,7 @@
         <!-- dependency versions -->
         <abdera-version>1.1.3</abdera-version>
         <!-- Note that activemq dependency is only used for testing! -->
-        <activemq-version>5.16.3</activemq-version>
+        <activemq-version>5.16.4</activemq-version>
         <activemq-artemis-version>2.20.0</activemq-artemis-version>
         <ahc-version>2.12.3</ahc-version>
         <apacheds-version>2.0.0.AM26</apacheds-version>
@@ -71,7 +71,7 @@
         <asm-version>8.0.1</asm-version>
         <assertj-version>3.22.0</assertj-version>
         <asterisk-java-version>3.12.0</asterisk-java-version>
-        <atlasmap-version>2.3.1</atlasmap-version>
+        <atlasmap-version>2.3.13</atlasmap-version>
         <atlassian-fugue-version>3.0.0</atlassian-fugue-version>
         <atmos-client-version>3.2.1</atmos-client-version>
         <atmosphere-version>2.6.4</atmosphere-version>
@@ -82,7 +82,7 @@
         <avro-ipc-jetty-version>1.11.0</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.11.0</avro-ipc-netty-version>
         <awaitility-version>4.1.1</awaitility-version>
-        <aws-java-sdk2-version>2.17.128</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.17.130</aws-java-sdk2-version>
         <aws-xray-version>2.6.1</aws-xray-version>
         <axiom-version>1.2.14</axiom-version>
         <azure-jackson2-version>2.13.1</azure-jackson2-version>
@@ -330,7 +330,7 @@
         <jool-version>0.9.14</jool-version>
         <jooq-version>3.16.3</jooq-version>
         <joor-version>0.9.14</joor-version>
-        <johnzon-version>1.2.15</johnzon-version>
+        <johnzon-version>1.2.16</johnzon-version>
         <jose4j-version>0.6.4</jose4j-version>
         <jsendnsca-version>2.1.1</jsendnsca-version>
         <jslt-version>0.1.11</jslt-version>
@@ -715,6 +715,11 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-endpointdsl-support</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-dsl-modeline</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

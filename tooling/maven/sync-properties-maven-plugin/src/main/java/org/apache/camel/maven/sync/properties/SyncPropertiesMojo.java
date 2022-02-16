@@ -71,7 +71,10 @@ public class SyncPropertiesMojo extends AbstractMojo {
             Properties parentProp;
             String generatedVersion;
 
-            getLog().debug("Reading source file " + sourcePom.toPath());
+            if (getLog().isDebugEnabled()) {
+                getLog().debug("Reading source file " + sourcePom.toPath());
+            }
+
             try (FileReader reader = new FileReader(sourcePom)) {
                 MavenXpp3Reader mavenReader = new MavenXpp3Reader();
                 Model model = mavenReader.read(reader);
@@ -94,7 +97,9 @@ public class SyncPropertiesMojo extends AbstractMojo {
                 MavenProject targetProject = new MavenProject(model);
                 targetProject.getModel().setProperties(op);
 
-                getLog().debug("Set version of target pom to " + generatedVersion);
+                if (getLog().isDebugEnabled()) {
+                    getLog().debug("Set version of target pom to " + generatedVersion);
+                }
                 targetProject.setVersion(generatedVersion);
 
                 MavenXpp3Writer mavenWriter = new MavenXpp3Writer();

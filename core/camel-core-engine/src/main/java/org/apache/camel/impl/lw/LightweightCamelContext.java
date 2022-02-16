@@ -117,6 +117,7 @@ import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.ModelReifierFactory;
 import org.apache.camel.spi.ModelToXMLDumper;
+import org.apache.camel.spi.ModelineFactory;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.PackageScanClassResolver;
@@ -913,6 +914,16 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     @Override
+    public Boolean ismodeline() {
+        return delegate.ismodeline();
+    }
+
+    @Override
+    public void setmodeline(Boolean modeline) {
+        delegate.setmodeline(modeline);
+    }
+
+    @Override
     public Boolean isDevConsole() {
         return delegate.isDevConsole();
     }
@@ -1433,6 +1444,16 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     @Override
     public void setProcessorFactory(ProcessorFactory processorFactory) {
         getExtendedCamelContext().setProcessorFactory(processorFactory);
+    }
+
+    @Override
+    public ModelineFactory getModelineFactory() {
+        return getExtendedCamelContext().getModelineFactory();
+    }
+
+    @Override
+    public void setModelineFactory(ModelineFactory modelineFactory) {
+        getExtendedCamelContext().setModelineFactory(modelineFactory);
     }
 
     @Override

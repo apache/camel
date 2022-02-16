@@ -18,8 +18,10 @@ package org.apache.camel.impl.engine;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.CamelContext;
@@ -28,6 +30,7 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.StaticService;
 import org.apache.camel.spi.FactoryFinder;
+import org.apache.camel.spi.ModelineFactory;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RoutesBuilderLoader;
 import org.apache.camel.spi.RoutesLoader;
@@ -146,4 +149,27 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
 
         return answer;
     }
+
+    @Override
+    public Set<String> updateRoutes(Collection<Resource> resources) throws Exception {
+        Set<String> answer = new LinkedHashSet<>();
+        Collection<RoutesBuilder> builders = findRoutesBuilders(resources);
+
+        if (camelContext.ismodeline()) {
+            ModelineFactory factory = camelContext.adapt(ExtendedCamelContext.class).getModelineFactory();
+            // gather resources for modeline
+            for (Resource resource : resources) {
+                factory.parseModeline(resource);
+            }
+        }
+
+        for (RoutesBuilder builder : builders) {
+            // update any existing routes
+            Set<String> ids = builder.updateRoutesToCamelContext(getCamelContext());
+            answer.addAll(ids);
+        }
+
+        return answer;
+    }
+
 }

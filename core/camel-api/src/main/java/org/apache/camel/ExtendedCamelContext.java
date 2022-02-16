@@ -53,6 +53,7 @@ import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.ModelToXMLDumper;
+import org.apache.camel.spi.ModelineFactory;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.PackageScanClassResolver;
@@ -854,5 +855,15 @@ public interface ExtendedCamelContext extends CamelContext {
      * @param basePackageScan the base package name
      */
     void setBasePackageScan(String basePackageScan);
+
+    /**
+     * Gets the {@link ModelineFactory}.
+     */
+    ModelineFactory getModelineFactory();
+
+    /**
+     * Sets a custom {@link ModelineFactory}.
+     */
+    void setModelineFactory(ModelineFactory modelineFactory);
 
 }

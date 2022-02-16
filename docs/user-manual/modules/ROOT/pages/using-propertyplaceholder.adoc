@@ -474,35 +474,22 @@ The xref:components::properties-component.adoc[Properties] component allow to pl
 These functions are then able to do custom logic to resolve the placeholders, such as looking up in databases, do custom computations, or whatnot.
 The name of the function becomes the prefix used in the placeholder.
 
-This is best illustrated in the example code below with Spring XML files:
+This is best illustrated in the example route below, where we use `beer` as the prefix:
 
 [source,xml]
 ----
-<beans>
-    <bean id="beerFunction" class="MyBeerFunction"/>
-
-    <camelContext>
-      <propertyPlaceholder id="properties">
-        <propertiesFunction ref="beerFunction"/>
-      </propertyPlaceholder>
-
-      <route>
-        <from uri="direct:start"/>
-        <to uri="{{beer:FOO}}"/>
-        <to uri="{{beer:BAR}}"/>
-      </route>
-    </camelContext>
-</beans>
+<route>
+    <from uri="direct:start"/>
+    <to uri="{{beer:FOO}}"/>
+    <to uri="{{beer:BAR}}"/>
+</route>
 ----
-
-Here we have a Camel Spring XML route where we have defined the
-`<propertyPlaceholder>` to use a custom function, which we refer to be the bean id (`beerFunction`).
-As the beer function uses `"beer"` as its name, then the placeholder syntax can trigger the beer function by starting with `beer:value`.
 
 The implementation of the function is only two methods as shown below:
 
 [source,java]
 ----
+@org.apache.camel.spi.annotations.PropertiesFunction("beer")
 public class MyBeerFunction implements PropertiesFunction {
 
     @Override
@@ -522,13 +509,14 @@ The method `getName` is the name of the function (beer).
 And the `apply` method is where we implement the custom logic to do.
 As the sample code is from a unit test, it just returns a value to refer to a mock endpoint.
 
-To register a custom function from Java code is as shown below:
+You also need to have `camel-component-maven-plugin` as part of building the component will
+then ensure that this custom properties function has necessary source code generated that makes Camel
+able to automatically discover the function.
 
-[source,java]
-----
-PropertiesComponent pc = context.getPropertiesComponent();
-pc.addFunction(new MyBeerFunction());
-----
+NOTE: If the custom properties function need logic to startup and shutdown, then the function can extend `ServiceSupport`
+and have this logic in `doStart` and `doStop` methods.
+
+TIP: For an example see the `camel-base64` component.
 
 == Using third party property sources
 

@@ -171,4 +171,23 @@ public class StingQuoteHelperTest {
         assertEquals("foo bar", out[2]);
     }
 
+    @Test
+    public void testSpaceSeparator() throws Exception {
+        String[] out = StringQuoteHelper
+                .splitSafeQuote("dependency=mvn:org.my:application:1.0 dependency=mvn:com.foo:myapp:2.1", ' ');
+        assertEquals(2, out.length);
+        assertEquals("dependency=mvn:org.my:application:1.0", out[0]);
+        assertEquals("dependency=mvn:com.foo:myapp:2.1", out[1]);
+    }
+
+    @Test
+    public void testSpaceSeparatorQuote() throws Exception {
+        String[] out = StringQuoteHelper.splitSafeQuote(
+                "dependency=mvn:org.my:application:1.0 property=hi='Hello World' dependency=mvn:com.foo:myapp:2.1", ' ');
+        assertEquals(3, out.length);
+        assertEquals("dependency=mvn:org.my:application:1.0", out[0]);
+        assertEquals("property=hi=Hello World", out[1]);
+        assertEquals("dependency=mvn:com.foo:myapp:2.1", out[2]);
+    }
+
 }

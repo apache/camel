@@ -134,7 +134,7 @@ public final class StringQuoteHelper {
                 }
                 doubleQuoted = !doubleQuoted;
                 continue;
-            } else if (!isQuoting && ch == ' ') {
+            } else if (!isQuoting && separator != ' ' && ch == ' ') {
                 if (skipLeadingWhitespace) {
                     continue;
                 }

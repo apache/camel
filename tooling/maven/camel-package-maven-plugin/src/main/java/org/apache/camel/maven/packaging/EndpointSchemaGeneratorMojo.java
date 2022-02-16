@@ -32,8 +32,6 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.Duration;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -428,7 +426,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             return;
         }
         // only generate this once for the first scheme
-        if (schemes != null && !schemes[0].equals(scheme)) {
+        if (isFirstScheme(scheme, schemes)) {
             return;
         }
         String pfqn;
@@ -465,6 +463,13 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                 options, componentModel);
     }
 
+    private boolean isFirstScheme(String scheme, String[] schemes) {
+        if (schemes != null && !schemes[0].equals(scheme)) {
+            return true;
+        }
+        return false;
+    }
+
     private void generateEndpointConfigurer(
             Class<?> classElement, UriEndpoint uriEndpoint, String scheme, String[] schemes,
             ComponentModel componentModel, ComponentModel parentData) {
@@ -472,7 +477,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             return;
         }
         // only generate this once for the first scheme
-        if (schemes != null && !schemes[0].equals(scheme)) {
+        if (isFirstScheme(scheme, schemes)) {
             return;
         }
         String pfqn;
@@ -1330,18 +1335,11 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             String pfqn, String psn, String scheme, boolean hasSuper, boolean component,
             Collection<? extends BaseOptionModel> options, ComponentModel model) {
 
-        Instant start = Instant.now();
         try {
             boolean extended = model.isApi(); // if the component is api then the generated configurer should be an extended configurer
             String source = PropertyConfigurerGenerator.generatePropertyConfigurer(pn, cn, en, pfqn, psn, hasSuper, component,
                     extended, false,
                     options, model);
-
-            Instant end = Instant.now();
-
-            Duration duration = Duration.between(start, end);
-
-            getLog().info("Generated code 1 in: " + duration.toMillis());
 
             updateResource(sourcesOutputDir.toPath(), fqn.replace('.', '/') + ".java", source);
         } catch (Exception e) {

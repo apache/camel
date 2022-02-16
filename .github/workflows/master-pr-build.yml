@@ -18,11 +18,9 @@
 name: main pr build
 
 on:
-  push:
+  pull_request:
     branches:
       - main
-  pull_request_target:
-    types: [opened, synchronize, reopened]
 
 jobs:
   checkstyle:
@@ -31,6 +29,8 @@ jobs:
     - uses: actions/checkout@v2
       with:
         persist-credentials: false
+    - id: install-mvnd
+      uses: ./.github/actions/install-mvnd
     - name: Set up JDK
       uses: actions/setup-java@v2
       with:
@@ -38,7 +38,7 @@ jobs:
         java-version: 11
         cache: 'maven'
     - name: mvn checkstyle
-      run: ./mvnw -V -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 --no-transfer-progress  -Dcheckstyle.failOnViolation=true checkstyle:checkstyle
+      run: ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd -Dmvnd.threads=2 -V -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 --no-transfer-progress  -Dcheckstyle.failOnViolation=true checkstyle:checkstyle
   build:
     runs-on: ubuntu-latest
     strategy:
@@ -49,6 +49,8 @@ jobs:
         with:
           persist-credentials: false
           fetch-depth: 0
+      - id: install-mvnd
+        uses: ./.github/actions/install-mvnd
       - name: Set up JDK ${{ matrix.java }}
         uses: actions/setup-java@v2
         with:
@@ -56,7 +58,4 @@ jobs:
           java-version: ${{ matrix.java }}
           cache: 'maven'
       - name: maven build
-        env:
-          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
-          SONAR_TOKEN: '${{ secrets.SONAR_TOKEN }}'
-        run: ./mvnw -V -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 --no-transfer-progress -Pfastinstall -Dcheckstyle.skip=true -DskipTests -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=apache -Dsonar.java.experimental.batchModeSizeInKB=2048 -Dsonar.projectKey=apache_camel install org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
+        run: ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd -Dmvnd.threads=2 -V -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 --no-transfer-progress -Pfastinstall -Dcheckstyle.skip=true -DskipTests install

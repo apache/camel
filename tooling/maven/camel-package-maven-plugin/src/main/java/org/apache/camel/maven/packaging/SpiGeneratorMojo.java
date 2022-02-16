@@ -112,14 +112,7 @@ public class SpiGeneratorMojo extends AbstractGeneratorMojo {
         }
 
         //
-        // @ServiceFactory
-        // @SubServiceFactory
-        //
-        // @CloudServiceFactory
-        // @Component
-        // @Dataformat
-        // @Language
-        // @SendDynamic
+        // @ServiceFactory and children
         //
         for (AnnotationInstance sfa : index.getAnnotations(SERVICE_FACTORY)) {
             if (sfa.target().kind() != Kind.CLASS || sfa.target().asClass().nestingType() != NestingType.TOP_LEVEL) {

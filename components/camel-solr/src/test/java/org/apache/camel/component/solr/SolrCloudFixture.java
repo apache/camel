@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.apache.camel.util.IOHelper;
 import org.apache.log4j.Logger;
@@ -162,8 +163,9 @@ public class SolrCloudFixture {
     public void teardown() throws Exception {
         solrClient.close();
         miniCluster.shutdown();
-        Files.walk(TEMP_DIR).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
-
+        try (Stream<File> stream = Files.walk(TEMP_DIR).sorted(Comparator.reverseOrder()).map(Path::toFile)) {
+            stream.forEach(File::delete);
+        }
         solrClient = null;
         miniCluster = null;
     }

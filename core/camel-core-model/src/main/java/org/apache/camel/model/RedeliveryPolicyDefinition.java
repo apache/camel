@@ -111,7 +111,7 @@ public class RedeliveryPolicyDefinition {
     // -------------------------------------------------------------------------
 
     /**
-     * Allow synchronous delayed redelivery. The route, in particular the consumer's component, must support the
+     * Allow asynchronous delayed redelivery. The route, in particular the consumer's component, must support the
      * Asynchronous Routing Engine (e.g. seda).
      *
      * @return the builder
@@ -217,7 +217,7 @@ public class RedeliveryPolicyDefinition {
     }
 
     /**
-     * Sets the logging level to use when retries has exhausted
+     * Sets the logging level to use when retries have been exhausted
      *
      * @param  retriesExhaustedLogLevel the logging level
      * @return                          the builder
@@ -227,7 +227,7 @@ public class RedeliveryPolicyDefinition {
     }
 
     /**
-     * Sets the logging level to use when retries has exhausted
+     * Sets the logging level to use when retries have been exhausted
      *
      * @param  retriesExhaustedLogLevel the logging level
      * @return                          the builder

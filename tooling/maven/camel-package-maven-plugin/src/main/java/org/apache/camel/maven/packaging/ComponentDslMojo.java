@@ -142,7 +142,9 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
 
     private void executeComponent(List<ComponentModel> allModels) throws MojoFailureException {
         if (!allModels.isEmpty()) {
-            getLog().debug("Found " + allModels.size() + " components");
+            if (getLog().isDebugEnabled()) {
+                getLog().debug("Found " + allModels.size() + " components");
+            }
 
             // load license header
             try (InputStream is = getClass().getClassLoader().getResourceAsStream("license-header-java.txt")) {
@@ -223,7 +225,10 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
 
         try {
             String code = licenseHeader + source;
-            getLog().debug("Source code generated:\n" + code);
+
+            if (getLog().isDebugEnabled()) {
+                getLog().debug("Source code generated:\n" + code);
+            }
 
             return updateResource(buildContext, target, code);
         } catch (Exception e) {
