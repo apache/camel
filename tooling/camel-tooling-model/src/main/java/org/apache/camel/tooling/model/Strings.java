@@ -116,40 +116,6 @@ public final class Strings {
                     offset = next + 1;
                 }
             }
-            /*
-            while (inputLineLength - offset > watermark) {
-                if (line.charAt(offset) == ' ') {
-                    ++offset;
-                } else {
-                    int spaceToWrapAt = line.lastIndexOf(' ', watermark + offset);
-                    int spaces = 0;
-                    for (int i = offset; i < spaceToWrapAt; i++) {
-                        spaces += line.charAt(i) == ' ' ? 1 : 0;
-                    }
-                    if (spaceToWrapAt >= offset) {
-                        sb.append(line, offset, spaceToWrapAt);
-                        sb.append(newLine);
-                        offset = spaceToWrapAt + 1;
-                    } else if (wrapLongWords) {
-                        sb.append(line, offset, watermark + offset);
-                        sb.append(newLine);
-                        offset += watermark;
-                    } else {
-                        spaceToWrapAt = line.indexOf(' ', watermark + offset);
-                        if (spaceToWrapAt >= 0) {
-                            sb.append(line, offset, spaceToWrapAt);
-                            sb.append(newLine);
-                            offset = spaceToWrapAt + 1;
-                        } else {
-                            sb.append(line, offset, line.length());
-                            offset = inputLineLength;
-                        }
-                    }
-                }
-            }
-            
-            sb.append(line, offset, line.length());
-            */
             return sb.toString();
         }
     }
