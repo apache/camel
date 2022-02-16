@@ -20,6 +20,7 @@ import java.util.Properties;
 import java.util.function.Predicate;
 
 import org.apache.camel.spi.LoadablePropertiesSource;
+import org.apache.camel.spi.annotations.JdkService;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.ConfigProvider;
 
@@ -27,6 +28,7 @@ import org.eclipse.microprofile.config.ConfigProvider;
  * The microprofile-config component is used for bridging the Eclipse MicroProfile Config with Camels properties
  * component. This allows to use configuration management from MicroProfile with Camel.
  */
+@JdkService("properties-source-factory")
 public class CamelMicroProfilePropertiesSource implements LoadablePropertiesSource {
 
     @Override
