@@ -236,6 +236,8 @@ public class KameletMain extends MainCommandLineSupport {
      */
     protected void configureInitialProperties(String location) {
         addInitialProperty("camel.component.kamelet.location", location);
+        addInitialProperty("camel.component.rest.consumerComponentName", "platform-http");
+        addInitialProperty("camel.component.rest.producerComponentName", "http");
     }
 
 }
