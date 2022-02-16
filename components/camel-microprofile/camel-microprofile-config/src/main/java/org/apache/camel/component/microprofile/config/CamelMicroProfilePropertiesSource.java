@@ -69,4 +69,9 @@ public class CamelMicroProfilePropertiesSource implements LoadablePropertiesSour
     public void reloadProperties(String location) {
         // noop
     }
+
+    @Override
+    public String toString() {
+        return "camel-microprofile-config";
+    }
 }
