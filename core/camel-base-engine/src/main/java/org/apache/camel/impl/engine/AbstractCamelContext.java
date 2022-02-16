@@ -2980,9 +2980,8 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     protected void doStartContext() throws Exception {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Apache Camel {} ({}) is starting", getVersion(), getName());
-        }
+        LOG.info("Apache Camel {} ({}) is starting", getVersion(), getName());
+
         vetoed = null;
         startDate = System.currentTimeMillis();
         stopWatch.restart();

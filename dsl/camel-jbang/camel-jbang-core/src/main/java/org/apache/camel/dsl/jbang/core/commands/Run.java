@@ -150,6 +150,7 @@ class Run implements Callable<Integer> {
         } else {
             main = new KameletMain("file://" + localKameletDir);
         }
+        main.setAppName("Apache Camel (JBang)");
 
         main.addInitialProperty("camel.main.name", name);
         // shutdown quickly
@@ -308,7 +309,6 @@ class Run implements Callable<Integer> {
             main.addInitialProperty("camel.component.properties.location", loc);
         }
 
-        System.out.println("Starting CamelJBang");
         main.start();
 
         context = main.getCamelContext();

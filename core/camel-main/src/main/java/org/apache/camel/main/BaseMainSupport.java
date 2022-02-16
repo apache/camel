@@ -96,7 +96,7 @@ public abstract class BaseMainSupport extends BaseService {
     protected Properties initialProperties;
     protected Properties overrideProperties;
     protected boolean standalone = true;
-    private final MainHelper helper;
+    protected final MainHelper helper;
 
     protected BaseMainSupport() {
         helper = new MainHelper();

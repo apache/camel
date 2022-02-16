@@ -43,17 +43,21 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OrderedProperties;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.TimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class MainHelper {
     private static final Logger LOG = LoggerFactory.getLogger(MainHelper.class);
 
+    private final String version;
+    private final long startDate;
     private final Set<String> componentEnvNames = new HashSet<>();
     private final Set<String> dataformatEnvNames = new HashSet<>();
     private final Set<String> languageEnvNames = new HashSet<>();
 
     public MainHelper() {
+        startDate = System.currentTimeMillis();
         try {
             InputStream is = MainHelper.class.getResourceAsStream("/org/apache/camel/main/components.properties");
             loadLines(is, componentEnvNames, s -> "CAMEL_COMPONENT_" + s.toUpperCase(Locale.US).replace('-', '_'));
@@ -69,6 +73,20 @@ public final class MainHelper {
         } catch (Exception e) {
             throw new RuntimeException("Error loading catalog information from classpath", e);
         }
+
+        version = doGetVersion();
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public String getUptime() {
+        long delta = System.currentTimeMillis() - startDate;
+        if (delta == 0) {
+            return "";
+        }
+        return TimeUtils.printDuration(delta);
     }
 
     public void bootstrapDone() {
@@ -427,6 +445,46 @@ public final class MainHelper {
                 lines.add(func.apply(line));
             }
         }
+    }
+
+    private String doGetVersion() {
+        String version = null;
+
+        InputStream is = null;
+        // try to load from maven properties first
+        try {
+            Properties p = new Properties();
+            is = MainHelper.class
+                    .getResourceAsStream("/META-INF/maven/org.apache.camel/camel-main/pom.properties");
+            if (is != null) {
+                p.load(is);
+                version = p.getProperty("version", "");
+            }
+        } catch (Exception e) {
+            // ignore
+        } finally {
+            if (is != null) {
+                IOHelper.close(is);
+            }
+        }
+
+        // fallback to using Java API
+        if (version == null) {
+            Package aPackage = getClass().getPackage();
+            if (aPackage != null) {
+                version = aPackage.getImplementationVersion();
+                if (version == null) {
+                    version = aPackage.getSpecificationVersion();
+                }
+            }
+        }
+
+        if (version == null) {
+            // we could not compute the version so use a blank
+            version = "";
+        }
+
+        return version;
     }
 
 }

@@ -43,6 +43,7 @@ public abstract class MainSupport extends BaseMainSupport {
 
     protected volatile ProducerTemplate camelTemplate;
 
+    private String appName = "Apache Camel (Main)";
     private int durationMaxIdleSeconds;
     private int durationMaxMessages;
     private long durationMaxSeconds;
@@ -59,6 +60,13 @@ public abstract class MainSupport extends BaseMainSupport {
 
     protected MainSupport() {
         this.shutdownStrategy = new DefaultMainShutdownStrategy(this);
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        // we want this logging to be as early as possible
+        LOG.info("{} {} is starting", appName, helper.getVersion());
+        super.doInit();
     }
 
     /**
@@ -82,6 +90,7 @@ public abstract class MainSupport extends BaseMainSupport {
                 // while running then just log errors
                 LOG.error("Failed: {}", e, e);
             }
+            LOG.info("{} {} shutdown (uptime:{})", appName, helper.getVersion(), helper.getUptime());
         }
     }
 
@@ -272,6 +281,17 @@ public abstract class MainSupport extends BaseMainSupport {
      */
     public void setShutdownStrategy(MainShutdownStrategy shutdownStrategy) {
         this.shutdownStrategy = shutdownStrategy;
+    }
+
+    public String getAppName() {
+        return appName;
+    }
+
+    /**
+     * Application name (used for logging start and stop)
+     */
+    public void setAppName(String appName) {
+        this.appName = appName;
     }
 
     @Override
