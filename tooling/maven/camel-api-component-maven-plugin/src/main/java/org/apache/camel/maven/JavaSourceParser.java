@@ -69,7 +69,7 @@ public class JavaSourceParser {
     private Map<String, Map<String, String>> parameterDocs = new LinkedHashMap<>();
 
     @SuppressWarnings("unchecked")
-    public synchronized void parse(InputStream in, String innerClass) throws Exception {
+    public synchronized void parse(InputStream in, String innerClass) {
         AbstractGenericCapableJavaSource rootClazz = (AbstractGenericCapableJavaSource) Roaster.parse(in);
         AbstractGenericCapableJavaSource clazz = rootClazz;
 
@@ -287,7 +287,7 @@ public class JavaSourceParser {
                 for (Type arg : types) {
                     sj.add(resolveType(rootClazz, clazz, ms, arg));
                 }
-                answer = answer + "<" + sj.toString() + ">";
+                answer = answer + "<" + sj + ">";
             }
         }
         return answer;
