@@ -36,6 +36,8 @@ The worker pool is determined accordingly:
 - If `parallelProcessing=true` then a _default_ worker pool (is 10 worker threads by default) is created.
 However, the thread pool size and other configurations can be configured using _thread pool profiles_.
 - Otherwise, a single threaded worker pool is created.
+- In order to achieve synchronous aggregation, use an instance of `SynchronousExecutorService` for the
+`executorService` option. The aggregated output will execute in the same thread that called the aggregator.
 
 == Aggregating
 
