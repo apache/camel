@@ -123,7 +123,7 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
     protected MavenProject project;
 
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
+    public void execute() throws MojoExecutionException {
         if (pathToModelDir == null) {
             throw new MojoExecutionException("pathToModelDir parameter must not be null");
         }
