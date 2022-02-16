@@ -355,24 +355,17 @@ public final class Jsoner {
      * @see                             StringReader
      */
     public static Object deserialize(final String deserializable) throws DeserializationException {
-        Object returnable;
-        StringReader readableDeserializable = null;
-        try {
-            readableDeserializable = new StringReader(deserializable);
-            returnable = Jsoner.deserialize(readableDeserializable);
+        try (StringReader readableDeserializable = new StringReader(deserializable)) {
+
+            return Jsoner.deserialize(readableDeserializable);
         } catch (IOException | NullPointerException caught) {
             /*
              * They both have the same recovery scenario. See StringReader. If
              * deserializable is null, it should be reasonable to expect null
              * back.
              */
-            returnable = null;
-        } finally {
-            if (readableDeserializable != null) {
-                readableDeserializable.close();
-            }
+            return null;
         }
-        return returnable;
     }
 
     /**
@@ -386,21 +379,13 @@ public final class Jsoner {
      * @see                   Jsoner#deserialize(Reader)
      */
     public static JsonArray deserialize(final String deserializable, final JsonArray defaultValue) {
-        StringReader readable = null;
-        JsonArray returnable;
-        try {
-            readable = new StringReader(deserializable);
-            returnable = Jsoner.deserialize(readable, EnumSet.of(DeserializationOptions.ALLOW_JSON_ARRAYS)).<
+        try (StringReader readable = new StringReader(deserializable)) {
+            return Jsoner.deserialize(readable, EnumSet.of(DeserializationOptions.ALLOW_JSON_ARRAYS)).<
                     JsonArray> getCollection(0);
         } catch (NullPointerException | IOException | DeserializationException caught) {
             /* Don't care, just return the default value. */
-            returnable = defaultValue;
-        } finally {
-            if (readable != null) {
-                readable.close();
-            }
+            return defaultValue;
         }
-        return returnable;
     }
 
     /**
@@ -415,21 +400,13 @@ public final class Jsoner {
      * @see                   Jsoner#deserialize(Reader)
      */
     public static JsonObject deserialize(final String deserializable, final JsonObject defaultValue) {
-        StringReader readable = null;
-        JsonObject returnable;
-        try {
-            readable = new StringReader(deserializable);
-            returnable = Jsoner.deserialize(readable, EnumSet.of(DeserializationOptions.ALLOW_JSON_OBJECTS)).<
+        try (StringReader readable = new StringReader(deserializable)) {
+            return Jsoner.deserialize(readable, EnumSet.of(DeserializationOptions.ALLOW_JSON_OBJECTS)).<
                     JsonObject> getMap(0);
         } catch (NullPointerException | IOException | DeserializationException caught) {
             /* Don't care, just return the default value. */
-            returnable = defaultValue;
-        } finally {
-            if (readable != null) {
-                readable.close();
-            }
+            return defaultValue;
         }
-        return returnable;
     }
 
     /**
