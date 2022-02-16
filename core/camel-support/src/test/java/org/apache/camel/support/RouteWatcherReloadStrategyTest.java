@@ -1,20 +1,141 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.apache.camel.support;
 
-import org.apache.camel.*;
-import org.apache.camel.catalog.RuntimeCamelCatalog;
-import org.apache.camel.console.DevConsoleResolver;
-import org.apache.camel.health.HealthCheckResolver;
-import org.apache.camel.spi.*;
-import org.apache.camel.support.jsse.SSLContextParameters;
-import org.junit.jupiter.api.Test;
-
 import java.io.File;
-import java.util.*;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.apache.camel.CamelContext;
+import org.apache.camel.Component;
+import org.apache.camel.ConsumerTemplate;
+import org.apache.camel.Endpoint;
+import org.apache.camel.ErrorHandlerFactory;
+import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.FluentProducerTemplate;
+import org.apache.camel.GlobalEndpointConfiguration;
+import org.apache.camel.NoSuchLanguageException;
+import org.apache.camel.Processor;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.Route;
+import org.apache.camel.RouteConfigurationsBuilder;
+import org.apache.camel.RouteTemplateContext;
+import org.apache.camel.RoutesBuilder;
+import org.apache.camel.Service;
+import org.apache.camel.ServiceStatus;
+import org.apache.camel.ShutdownRoute;
+import org.apache.camel.ShutdownRunningTask;
+import org.apache.camel.StartupListener;
+import org.apache.camel.StartupSummaryLevel;
+import org.apache.camel.TypeConverter;
+import org.apache.camel.ValueHolder;
+import org.apache.camel.catalog.RuntimeCamelCatalog;
+import org.apache.camel.console.DevConsoleResolver;
+import org.apache.camel.health.HealthCheckResolver;
+import org.apache.camel.spi.AnnotationBasedProcessorFactory;
+import org.apache.camel.spi.AsyncProcessorAwaitManager;
+import org.apache.camel.spi.BeanIntrospection;
+import org.apache.camel.spi.BeanProcessorFactory;
+import org.apache.camel.spi.BeanProxyFactory;
+import org.apache.camel.spi.BootstrapCloseable;
+import org.apache.camel.spi.CamelBeanPostProcessor;
+import org.apache.camel.spi.CamelContextNameStrategy;
+import org.apache.camel.spi.CamelDependencyInjectionAnnotationFactory;
+import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.spi.ComponentNameResolver;
+import org.apache.camel.spi.ComponentResolver;
+import org.apache.camel.spi.ConfigurerResolver;
+import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatResolver;
+import org.apache.camel.spi.DataType;
+import org.apache.camel.spi.Debugger;
+import org.apache.camel.spi.DeferServiceFactory;
+import org.apache.camel.spi.EndpointRegistry;
+import org.apache.camel.spi.EndpointStrategy;
+import org.apache.camel.spi.EndpointUriFactory;
+import org.apache.camel.spi.ExchangeFactory;
+import org.apache.camel.spi.ExchangeFactoryManager;
+import org.apache.camel.spi.ExecutorServiceManager;
+import org.apache.camel.spi.FactoryFinder;
+import org.apache.camel.spi.FactoryFinderResolver;
+import org.apache.camel.spi.HeadersMapFactory;
+import org.apache.camel.spi.InflightRepository;
+import org.apache.camel.spi.Injector;
+import org.apache.camel.spi.InterceptEndpointFactory;
+import org.apache.camel.spi.InterceptStrategy;
+import org.apache.camel.spi.InternalProcessorFactory;
+import org.apache.camel.spi.Language;
+import org.apache.camel.spi.LanguageResolver;
+import org.apache.camel.spi.LifecycleStrategy;
+import org.apache.camel.spi.LogListener;
+import org.apache.camel.spi.ManagementMBeanAssembler;
+import org.apache.camel.spi.ManagementNameStrategy;
+import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.spi.MessageHistoryFactory;
+import org.apache.camel.spi.ModeLineFactory;
+import org.apache.camel.spi.ModelJAXBContextFactory;
+import org.apache.camel.spi.ModelToXMLDumper;
+import org.apache.camel.spi.NodeIdFactory;
+import org.apache.camel.spi.NormalizedEndpointUri;
+import org.apache.camel.spi.PackageScanClassResolver;
+import org.apache.camel.spi.PackageScanResourceResolver;
+import org.apache.camel.spi.ProcessorExchangeFactory;
+import org.apache.camel.spi.ProcessorFactory;
+import org.apache.camel.spi.PropertiesComponent;
+import org.apache.camel.spi.ReactiveExecutor;
+import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.ResourceLoader;
+import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
+import org.apache.camel.spi.RestConfiguration;
+import org.apache.camel.spi.RestRegistry;
+import org.apache.camel.spi.RouteController;
+import org.apache.camel.spi.RouteFactory;
+import org.apache.camel.spi.RoutePolicyFactory;
+import org.apache.camel.spi.RouteStartupOrder;
+import org.apache.camel.spi.RoutesLoader;
+import org.apache.camel.spi.RuntimeEndpointRegistry;
+import org.apache.camel.spi.ShutdownStrategy;
+import org.apache.camel.spi.StartupStepRecorder;
+import org.apache.camel.spi.StreamCachingStrategy;
+import org.apache.camel.spi.ThreadPoolFactory;
+import org.apache.camel.spi.ThreadPoolProfile;
+import org.apache.camel.spi.Tracer;
+import org.apache.camel.spi.Transformer;
+import org.apache.camel.spi.TransformerRegistry;
+import org.apache.camel.spi.TypeConverterRegistry;
+import org.apache.camel.spi.UnitOfWorkFactory;
+import org.apache.camel.spi.UriFactoryResolver;
+import org.apache.camel.spi.UuidGenerator;
+import org.apache.camel.spi.Validator;
+import org.apache.camel.spi.ValidatorRegistry;
+import org.apache.camel.spi.XMLRoutesDefinitionLoader;
+import org.apache.camel.support.jsse.SSLContextParameters;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit tests for {@link RouteWatcherReloadStrategy}
@@ -502,8 +623,7 @@ public class RouteWatcherReloadStrategyTest {
         }
 
         @Override
-        public String addRouteFromTemplate(String routeId, String routeTemplateId, RouteTemplateContext routeTemplateContext)
-                {
+        public String addRouteFromTemplate(String routeId, String routeTemplateId, RouteTemplateContext routeTemplateContext){
             return null;
         }
 
