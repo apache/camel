@@ -43,6 +43,9 @@ public class CamelDebuggerFactory implements DebuggerFactory {
         });
         camelContext.addService(backlog);
 
+        // to make debugging possible for tooling we need to make it possible to do remote JMX connection
+        camelContext.addService(new JmxConnectorService());
+
         // return null as we fool camel-core into using this backlog debugger as we added it as a service
         return null;
     }

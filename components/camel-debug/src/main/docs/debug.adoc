@@ -22,3 +22,16 @@ and Camel should auto-detect this on startup and log as follows:
 ----
 Detected: camel-debug JAR (enabling Camel Debugging)
 ----
+
+== JMX remote connection
+
+To make it possible for 3rd party tooling to connect to the running Camel application,
+and to perform debugging actions, then Camel will expose a JMX RMI connector port,
+that the tools can use to connect via that allows JMX remote management.
+
+The service URL to connect is:
+
+[source,text]
+----
+service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi/camel
+----
