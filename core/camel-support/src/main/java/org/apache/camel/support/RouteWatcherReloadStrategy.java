@@ -114,9 +114,8 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                     // strip starting directory, so we have a relative name to the starting folder
                     String path = f.getAbsolutePath();
                     if (path.startsWith(base)) {
-                        path = FileUtil.onlyPath(path);
+                        path = FileUtil.stripPath(path);
                     }
-                    path = FileUtil.stripLeadingSeparator(path);
 
                     boolean result = matcher.match(part, path, false);
                     LOG.trace("Accepting file pattern:{} path:{} -> {}", part, path, result);
