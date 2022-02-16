@@ -43,4 +43,12 @@ public final class PackagePluginUtils {
         return index;
     }
 
+    public static String joinHeaderAndSource(String licenseHeader, String source) {
+        StringBuilder sb = new StringBuilder(licenseHeader);
+
+        sb.append("\n");
+        sb.append(source);
+        return sb.toString();
+    }
+
 }
