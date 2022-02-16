@@ -84,7 +84,7 @@ public final class FileUtil {
             return true;
         } else {
             byte[] olddata = new byte[0];
-            if (Files.exists(path) && Files.isReadable(path)) {
+            if (Files.isReadable(path)) {
                 olddata = Files.readAllBytes(path);
             }
             if (Arrays.equals(olddata, newdata)) {
