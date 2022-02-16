@@ -272,19 +272,15 @@ public class MyRouteBuilder extends RouteBuilder {
     private String secretKey = "secretKey";
 
     @Override
-    public void setCamelContext(CamelContext camelContext) {
+    public void configure() throws Exception {
 
         DynamoDbClient client = DynamoDbClient.builder()
         .region(Region.AP_SOUTHEAST_2)
         .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create(accessKey, secretKey)))
         .build();
 
-        camelContext.getRegistry().bind("client", client);
-        super.setCamelContext(camelContext);
-    }
+        getCamelContext().getRegistry().bind("client", client);
 
-    @Override
-    public void configure() throws Exception {
     	from("direct:start")
         .to("aws2-ddb://domainName?amazonDDBClient=#client");
     }
