@@ -48,14 +48,9 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
 
     private static final Logger LOG = LoggerFactory.getLogger(RouteWatcherReloadStrategy.class);
 
-    /**
-     * The default pattern: all XML and all YAML files
-     */
     private static final String DEFAULT_PATTERN = "*.yaml,*.xml";
-    /**
-     * The file name pattern to watch for
-     */
-    private String pattern = "*";
+
+    private String pattern;
     private boolean removeAllRoutes = true;
 
     public RouteWatcherReloadStrategy() {
@@ -81,10 +76,6 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
      */
     public void setPattern(String pattern) {
         this.pattern = pattern;
-        // sanity
-        if (this.pattern == null || this.pattern.trim().length() == 0) {
-            this.pattern = DEFAULT_PATTERN;
-        }
     }
 
     public boolean isRemoveAllRoutes() {
@@ -105,6 +96,12 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
     @Override
     protected void doStart() throws Exception {
         ObjectHelper.notNull(getFolder(), "folder", this);
+
+        if (pattern == null || pattern.isBlank()) {
+            pattern = DEFAULT_PATTERN;
+        } else if ("*".equals(pattern)) {
+            pattern = "**"; // use ant style matching to match everything
+        }
 
         final String base = new File(getFolder()).getAbsolutePath();
         final AntPathMatcher matcher = new AntPathMatcher();
