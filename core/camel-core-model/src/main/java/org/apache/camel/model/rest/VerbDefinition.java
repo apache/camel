@@ -25,7 +25,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElements;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.model.Block;
@@ -41,7 +40,6 @@ import org.apache.camel.spi.Metadata;
  * Rest command
  */
 @Metadata(label = "rest")
-@XmlRootElement(name = "verb")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition> implements Block, OutputNode {
 

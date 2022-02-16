@@ -50,9 +50,8 @@ class RestTest extends YamlTestSupport {
                   - name: myRestConsumerFactory
                     type: ${MockRestConsumerFactory.name}
                 - rest:
-                    verb:
-                      - method: get
-                        uri: "/foo"
+                    get:
+                      - uri: "/foo"
                         type: ${MyFooBar.name}
                         out-type: ${MyBean.name}
                         to: "direct:bar"
@@ -86,9 +85,8 @@ class RestTest extends YamlTestSupport {
                   - name: myRestConsumerFactory
                     type: ${MockRestConsumerFactory.name}
                 - rest:
-                    verb:
-                      - method: get
-                        uri: "/foo"
+                    get:
+                     -  uri: "/foo"
                         type: ${MyFooBar.name}
                         out-type: ${MyBean.name}
                         steps:

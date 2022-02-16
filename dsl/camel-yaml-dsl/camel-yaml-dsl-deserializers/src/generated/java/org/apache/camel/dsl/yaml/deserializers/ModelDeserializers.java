@@ -221,7 +221,6 @@ import org.apache.camel.model.rest.RestSecurityOAuth2;
 import org.apache.camel.model.rest.RestSecurityOpenIdConnect;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.model.rest.SecurityDefinition;
-import org.apache.camel.model.rest.VerbDefinition;
 import org.apache.camel.model.transformer.CustomTransformerDefinition;
 import org.apache.camel.model.transformer.DataFormatTransformerDefinition;
 import org.apache.camel.model.transformer.EndpointTransformerDefinition;
@@ -11880,7 +11879,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "security-requirements", type = "object:org.apache.camel.model.rest.RestSecuritiesRequirement"),
                     @YamlProperty(name = "skip-binding-on-error-code", type = "string"),
                     @YamlProperty(name = "tag", type = "string"),
-                    @YamlProperty(name = "verb", type = "array:org.apache.camel.model.rest.VerbDefinition")
+                    @YamlProperty(name = "verbs", type = "array:org.apache.camel.model.rest.VerbDefinition")
             }
     )
     public static class RestDefinitionDeserializer extends YamlDeserializerBase<RestDefinition> {
@@ -12012,7 +12011,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setVerbs(existing);
                     break;
                 }
-                case "verb": {
+                case "verbs": {
                     java.util.List<org.apache.camel.model.rest.VerbDefinition> val = asFlatList(node, org.apache.camel.model.rest.VerbDefinition.class);
                     target.setVerbs(val);
                     break;
@@ -17475,171 +17474,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     }
                     existing.add(val);
                     target.setValidators(existing);
-                    break;
-                }
-                default: {
-                    return false;
-                }
-            }
-            return true;
-        }
-    }
-
-    @YamlType(
-            types = org.apache.camel.model.rest.VerbDefinition.class,
-            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            nodes = "verb",
-            properties = {
-                    @YamlProperty(name = "api-docs", type = "string"),
-                    @YamlProperty(name = "binding-mode", type = "string"),
-                    @YamlProperty(name = "client-request-validation", type = "string"),
-                    @YamlProperty(name = "consumes", type = "string"),
-                    @YamlProperty(name = "deprecated", type = "boolean"),
-                    @YamlProperty(name = "description", type = "string"),
-                    @YamlProperty(name = "enable-cors", type = "string"),
-                    @YamlProperty(name = "id", type = "string"),
-                    @YamlProperty(name = "method", type = "string"),
-                    @YamlProperty(name = "out-type", type = "string"),
-                    @YamlProperty(name = "param", type = "array:org.apache.camel.model.rest.RestOperationParamDefinition"),
-                    @YamlProperty(name = "produces", type = "string"),
-                    @YamlProperty(name = "response-message", type = "array:org.apache.camel.model.rest.RestOperationResponseMsgDefinition"),
-                    @YamlProperty(name = "route", type = "object:org.apache.camel.model.RouteDefinition"),
-                    @YamlProperty(name = "route-id", type = "string"),
-                    @YamlProperty(name = "security", type = "array:org.apache.camel.model.rest.SecurityDefinition"),
-                    @YamlProperty(name = "skip-binding-on-error-code", type = "string"),
-                    @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition"),
-                    @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition"),
-                    @YamlProperty(name = "to-d", type = "object:org.apache.camel.model.ToDynamicDefinition"),
-                    @YamlProperty(name = "type", type = "string"),
-                    @YamlProperty(name = "uri", type = "string")
-            }
-    )
-    public static class VerbDefinitionDeserializer extends YamlDeserializerBase<VerbDefinition> {
-        public VerbDefinitionDeserializer() {
-            super(VerbDefinition.class);
-        }
-
-        @Override
-        protected VerbDefinition newInstance() {
-            return new VerbDefinition();
-        }
-
-        @Override
-        protected boolean setProperty(VerbDefinition target, String propertyKey,
-                String propertyName, Node node) {
-            switch(propertyKey) {
-                case "api-docs": {
-                    String val = asText(node);
-                    target.setApiDocs(val);
-                    break;
-                }
-                case "binding-mode": {
-                    String val = asText(node);
-                    target.setBindingMode(val);
-                    break;
-                }
-                case "client-request-validation": {
-                    String val = asText(node);
-                    target.setClientRequestValidation(val);
-                    break;
-                }
-                case "consumes": {
-                    String val = asText(node);
-                    target.setConsumes(val);
-                    break;
-                }
-                case "deprecated": {
-                    String val = asText(node);
-                    target.setDeprecated(java.lang.Boolean.valueOf(val));
-                    break;
-                }
-                case "enable-cors": {
-                    String val = asText(node);
-                    target.setEnableCORS(val);
-                    break;
-                }
-                case "method": {
-                    String val = asText(node);
-                    target.setMethod(val);
-                    break;
-                }
-                case "out-type": {
-                    String val = asText(node);
-                    target.setOutType(val);
-                    break;
-                }
-                case "param": {
-                    java.util.List<org.apache.camel.model.rest.RestOperationParamDefinition> val = asFlatList(node, org.apache.camel.model.rest.RestOperationParamDefinition.class);
-                    target.setParams(val);
-                    break;
-                }
-                case "produces": {
-                    String val = asText(node);
-                    target.setProduces(val);
-                    break;
-                }
-                case "response-message": {
-                    java.util.List<org.apache.camel.model.rest.RestOperationResponseMsgDefinition> val = asFlatList(node, org.apache.camel.model.rest.RestOperationResponseMsgDefinition.class);
-                    target.setResponseMsgs(val);
-                    break;
-                }
-                case "route-id": {
-                    String val = asText(node);
-                    target.setRouteId(val);
-                    break;
-                }
-                case "security": {
-                    java.util.List<org.apache.camel.model.rest.SecurityDefinition> val = asFlatList(node, org.apache.camel.model.rest.SecurityDefinition.class);
-                    target.setSecurity(val);
-                    break;
-                }
-                case "skip-binding-on-error-code": {
-                    String val = asText(node);
-                    target.setSkipBindingOnErrorCode(val);
-                    break;
-                }
-                case "to-or-route": {
-                    MappingNode val = asMappingNode(node);
-                    setProperties(target, val);
-                    break;
-                }
-                case "to": {
-                    org.apache.camel.model.ToDefinition val = asType(node, org.apache.camel.model.ToDefinition.class);
-                    target.setToOrRoute(val);
-                    break;
-                }
-                case "to-d": {
-                    org.apache.camel.model.ToDynamicDefinition val = asType(node, org.apache.camel.model.ToDynamicDefinition.class);
-                    target.setToOrRoute(val);
-                    break;
-                }
-                case "route": {
-                    org.apache.camel.model.RouteDefinition val = asType(node, org.apache.camel.model.RouteDefinition.class);
-                    target.setToOrRoute(val);
-                    break;
-                }
-                case "type": {
-                    String val = asText(node);
-                    target.setType(val);
-                    break;
-                }
-                case "uri": {
-                    String val = asText(node);
-                    target.setUri(val);
-                    break;
-                }
-                case "id": {
-                    String val = asText(node);
-                    target.setId(val);
-                    break;
-                }
-                case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
-                    target.setDescription(val);
-                    break;
-                }
-                case "steps": {
-                    setSteps(target, node);
                     break;
                 }
                 default: {

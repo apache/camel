@@ -1087,7 +1087,6 @@ public class ModelParser extends BaseParser {
         }, (def, key) -> {
             switch (key) {
                 case "delete": doAdd(doParseDeleteVerbDefinition(), def.getVerbs(), def::setVerbs); break;
-                case "verb": doAdd(doParseVerbDefinition(), def.getVerbs(), def::setVerbs); break;
                 case "get": doAdd(doParseGetVerbDefinition(), def.getVerbs(), def::setVerbs); break;
                 case "head": doAdd(doParseHeadVerbDefinition(), def.getVerbs(), def::setVerbs); break;
                 case "patch": doAdd(doParsePatchVerbDefinition(), def.getVerbs(), def::setVerbs); break;
