@@ -19,8 +19,12 @@ package org.apache.camel.component.aws.secretsmanager;
 import java.util.Base64;
 import java.util.Properties;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.PropertiesFunction;
 import org.apache.camel.support.service.ServiceSupport;
@@ -95,21 +99,28 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
     @Override
     public String apply(String remainder) {
         String key = remainder;
+        String subkey = null;
         String returnValue = null;
 
         if (remainder.contains(":")) {
             key = StringHelper.before(remainder, ":");
+            subkey = StringHelper.after(remainder, ":");
         }
 
         if (key != null) {
-            returnValue = getSecretFromSource(key);
+            try {
+                returnValue = getSecretFromSource(key, subkey);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeCamelException("Something went wrong while recovering " + key + " from vault");
+            }
         }
 
         return returnValue;
     }
 
     private String getSecretFromSource(
-            String key) {
+            String key, String subkey)
+            throws JsonProcessingException {
         String returnValue;
         GetSecretValueRequest request;
         GetSecretValueRequest.Builder builder = GetSecretValueRequest.builder();
@@ -121,6 +132,16 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
             returnValue = secret.secretString();
         } else {
             returnValue = new String(Base64.getDecoder().decode(secret.secretBinary().asByteBuffer()).array());
+        }
+        if (subkey != null) {
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode actualObj = mapper.readTree(returnValue);
+            JsonNode field = actualObj.get(subkey);
+            if (ObjectHelper.isNotEmpty(field)) {
+                returnValue = field.textValue();
+            } else {
+                returnValue = null;
+            }
         }
         return returnValue;
     }

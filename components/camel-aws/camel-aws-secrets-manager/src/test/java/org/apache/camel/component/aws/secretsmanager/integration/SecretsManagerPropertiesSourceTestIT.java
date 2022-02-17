@@ -24,9 +24,9 @@ import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@EnabledIfEnvironmentVariable(named = "AWS_ACCESS_KEY", matches = ".*")
-@EnabledIfEnvironmentVariable(named = "AWS_SECRET_KEY", matches = ".*")
-@EnabledIfEnvironmentVariable(named = "AWS_REGION", matches = ".*")
+@EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_ACCESS_KEY", matches = ".*")
+@EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_SECRET_KEY", matches = ".*")
+@EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_REGION", matches = ".*")
 public class SecretsManagerPropertiesSourceTestIT extends CamelTestSupport {
 
     @Test
@@ -47,6 +47,24 @@ public class SecretsManagerPropertiesSourceTestIT extends CamelTestSupport {
     }
 
     @Test
+    public void testComplexPropertiesFunction() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:username").setBody(simple("{{aws:database_sample:username}}")).to("mock:bar");
+                from("direct:password").setBody(simple("{{aws:database_sample:password}}")).to("mock:bar");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:bar").expectedBodiesReceived("admin", "password123");
+
+        template.sendBody("direct:username", "Hello World");
+        template.sendBody("direct:password", "Hello World");
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
     public void testSecretNotFoundFunction() throws Exception {
         Exception exception = assertThrows(FailedToCreateRouteException.class, () -> {
             context.addRoutes(new RouteBuilder() {
@@ -61,6 +79,24 @@ public class SecretsManagerPropertiesSourceTestIT extends CamelTestSupport {
 
             template.sendBody("direct:start", "Hello World");
 
+            assertMockEndpointsSatisfied();
+        });
+    }
+
+    @Test
+    public void testComplexNoSubkeyPropertiesFunction() throws Exception {
+        Exception exception = assertThrows(FailedToCreateRouteException.class, () -> {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    from("direct:username").setBody(simple("{{aws:database_sample:not_existent}}")).to("mock:bar");
+                }
+            });
+            context.start();
+
+            getMockEndpoint("mock:bar").expectedBodiesReceived("admin");
+
+            template.sendBody("direct:username", "Hello World");
             assertMockEndpointsSatisfied();
         });
     }
