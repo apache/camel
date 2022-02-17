@@ -65,6 +65,24 @@ public class SecretsManagerPropertiesSourceTestIT extends CamelTestSupport {
     }
 
     @Test
+    public void testComplexCustomPropertiesFunction() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:username").setBody(simple("{{aws:normalkey:username}}")).to("mock:bar");
+                from("direct:password").setBody(simple("{{aws:normalkey:password}}")).to("mock:bar");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:bar").expectedBodiesReceived("pippo", "pippo");
+
+        template.sendBody("direct:username", "Hello World");
+        template.sendBody("direct:password", "Hello World");
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
     public void testSecretNotFoundFunction() throws Exception {
         Exception exception = assertThrows(FailedToCreateRouteException.class, () -> {
             context.addRoutes(new RouteBuilder() {
