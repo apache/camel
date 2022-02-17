@@ -6,13 +6,12 @@
     "description": "Rest GET command",
     "deprecated": false,
     "label": "rest",
-    "javaType": "org.apache.camel.model.rest.GetVerbDefinition",
+    "javaType": "org.apache.camel.model.rest.GetDefinition",
     "abstract": false,
     "input": true,
     "output": false
   },
   "properties": {
-    "method": { "kind": "attribute", "displayName": "Method", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The HTTP verb such as GET, POST, DELETE, etc." },
     "uri": { "kind": "attribute", "displayName": "Uri", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Uri template of this REST service such as \/{id}." },
     "consumes": { "kind": "attribute", "displayName": "Consumes", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "To define the content type what the REST service consumes (accept as input), such as application\/xml or application\/json. This option will override what may be configured on a parent level" },
     "produces": { "kind": "attribute", "displayName": "Produces", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "To define the content type what the REST service produces (uses for output), such as application\/xml or application\/json This option will override what may be configured on a parent level" },

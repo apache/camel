@@ -310,7 +310,7 @@ Delays processing for a specified length of time
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="delete" type="tns:deleteVerbDefinition">
+  <xs:element name="delete" type="tns:deleteDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 Rest DELETE command
@@ -490,7 +490,7 @@ Act as a message source as input to a route
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="get" type="tns:getVerbDefinition">
+  <xs:element name="get" type="tns:getDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 Rest GET command
@@ -540,7 +540,7 @@ Compress and decompress messages using java.util.zip.GZIPStream.
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="head" type="tns:headVerbDefinition">
+  <xs:element name="head" type="tns:headDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 Rest HEAD command
@@ -943,7 +943,7 @@ null
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="patch" type="tns:patchVerbDefinition">
+  <xs:element name="patch" type="tns:patchDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 Rest PATCH command
@@ -983,7 +983,7 @@ Enriches messages with data polled from a secondary resource
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="post" type="tns:postVerbDefinition">
+  <xs:element name="post" type="tns:postDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 Rest POST command
@@ -1047,7 +1047,7 @@ Serialize and deserialize Java objects using Google's Protocol buffers.
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="put" type="tns:putVerbDefinition">
+  <xs:element name="put" type="tns:putDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 Rest PUT command
@@ -1850,14 +1850,6 @@ Validates a message based on an expression
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 To configure validators.
-      ]]></xs:documentation>
-    </xs:annotation>
-  </xs:element>
-
-  <xs:element name="verb" type="tns:verbDefinition">
-    <xs:annotation>
-      <xs:documentation xml:lang="en"><![CDATA[
-Rest command
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -13837,7 +13829,7 @@ configuration, so these custom functions can be used in xquery expressions.
     </xs:simpleContent>
   </xs:complexType>
 
-  <xs:complexType name="deleteVerbDefinition">
+  <xs:complexType name="deleteDefinition">
     <xs:complexContent>
       <xs:extension base="tns:verbDefinition">
         <xs:sequence/>
@@ -13858,13 +13850,6 @@ configuration, so these custom functions can be used in xquery expressions.
             <xs:element ref="tns:route"/>
           </xs:choice>
         </xs:sequence>
-        <xs:attribute name="method" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-The HTTP verb such as GET, POST, DELETE, etc.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
         <xs:attribute name="uri" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
@@ -14208,7 +14193,7 @@ The scopes to allow (separate multiple scopes by comma).
     </xs:attribute>
   </xs:complexType>
 
-  <xs:complexType name="getVerbDefinition">
+  <xs:complexType name="getDefinition">
     <xs:complexContent>
       <xs:extension base="tns:verbDefinition">
         <xs:sequence/>
@@ -14216,7 +14201,7 @@ The scopes to allow (separate multiple scopes by comma).
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:complexType name="headVerbDefinition">
+  <xs:complexType name="headDefinition">
     <xs:complexContent>
       <xs:extension base="tns:verbDefinition">
         <xs:sequence/>
@@ -14224,7 +14209,7 @@ The scopes to allow (separate multiple scopes by comma).
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:complexType name="patchVerbDefinition">
+  <xs:complexType name="patchDefinition">
     <xs:complexContent>
       <xs:extension base="tns:verbDefinition">
         <xs:sequence/>
@@ -14232,7 +14217,7 @@ The scopes to allow (separate multiple scopes by comma).
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:complexType name="postVerbDefinition">
+  <xs:complexType name="postDefinition">
     <xs:complexContent>
       <xs:extension base="tns:verbDefinition">
         <xs:sequence/>
@@ -14240,7 +14225,7 @@ The scopes to allow (separate multiple scopes by comma).
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:complexType name="putVerbDefinition">
+  <xs:complexType name="putDefinition">
     <xs:complexContent>
       <xs:extension base="tns:verbDefinition">
         <xs:sequence/>
@@ -14599,7 +14584,6 @@ to refer to an existing data format instance.
           <xs:element minOccurs="0" ref="tns:securityDefinitions"/>
           <xs:element minOccurs="0" ref="tns:securityRequirements"/>
           <xs:choice maxOccurs="unbounded" minOccurs="0">
-            <xs:element ref="tns:verb"/>
             <xs:element ref="tns:delete"/>
             <xs:element ref="tns:get"/>
             <xs:element ref="tns:head"/>
