@@ -40,6 +40,7 @@ public interface AhcWsComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static AhcWsComponentBuilder ahcWs() {
         return new AhcWsComponentBuilderImpl();
     }

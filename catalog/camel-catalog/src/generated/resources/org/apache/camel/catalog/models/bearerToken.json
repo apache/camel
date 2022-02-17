@@ -12,8 +12,8 @@
     "output": false
   },
   "properties": {
-    "format": { "kind": "attribute", "displayName": "Format", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "A hint to the client to identify how the bearer token is formatted." },
     "key": { "kind": "attribute", "displayName": "Key", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Key used to refer to this security definition" },
+    "format": { "kind": "attribute", "displayName": "Format", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "A hint to the client to identify how the bearer token is formatted." },
     "description": { "kind": "attribute", "displayName": "Description", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "A short description for security scheme." }
   }
 }
