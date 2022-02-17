@@ -33,7 +33,7 @@ public class PackageHelperTest {
     @Test
     public void testFileToString() throws Exception {
         File file = ResourceUtils.getResourceAsFile("filecontent/a.txt");
-        assertEquals("dk19i21)@+#(OR\n", PackageHelper.loadText(file));
+        assertEquals("dk19i21)@+#(OR", PackageHelper.loadText(file));
     }
 
     @Test
