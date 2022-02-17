@@ -57,24 +57,27 @@ import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueRespon
 @org.apache.camel.spi.annotations.PropertiesFunction("aws")
 public class SecretsManagerPropertiesFunction extends ServiceSupport implements PropertiesFunction, CamelContextAware {
 
+    private static final String CAMEL_AWS_VAULT_ACCESS_KEY_ENV = "CAMEL_VAULT_AWS_ACCESS_KEY";
+    private static final String CAMEL_AWS_VAULT_SECRET_KEY_ENV = "CAMEL_VAULT_AWS_SECRET_KEY";
+    private static final String CAMEL_AWS_VAULT_REGION_ENV = "CAMEL_VAULT_AWS_REGION";
+    private static final String CAMEL_AWS_VAULT_ACCESS_KEY_PROP = "camel.aws.vault.access.key";
+    private static final String CAMEL_AWS_VAULT_SECRET_KEY_PROP = "camel.aws.vault.secret.key";
+    private static final String CAMEL_AWS_VAULT_REGION_PROP = "camel.aws.vault.region";
     private CamelContext camelContext;
-    private static final String ACCESS_KEY = "CAMEL_VAULT_AWS_ACCESS_KEY";
-    private static final String SECRET_KEY = "CAMEL_VAULT_AWS_SECRET_KEY";
-    private static final String REGION = "CAMEL_VAULT_AWS_REGION";
     private SecretsManagerClient client;
 
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        String accessKey = System.getenv(ACCESS_KEY);
-        String secretKey = System.getenv(SECRET_KEY);
-        String region = System.getenv(REGION);
+        String accessKey = System.getenv(CAMEL_AWS_VAULT_ACCESS_KEY_ENV);
+        String secretKey = System.getenv(CAMEL_AWS_VAULT_SECRET_KEY_ENV);
+        String region = System.getenv(CAMEL_AWS_VAULT_REGION_ENV);
         if (ObjectHelper.isEmpty(accessKey) && ObjectHelper.isEmpty(secretKey) && ObjectHelper.isEmpty(region)) {
             PropertiesComponent pc = getCamelContext().getPropertiesComponent();
             Properties p = pc.loadProperties();
-            accessKey = p.getProperty("camel.aws.vault.access.key");
-            secretKey = p.getProperty("camel.aws.vault.secret.key");
-            region = p.getProperty("camel.aws.vault.region");
+            accessKey = p.getProperty(CAMEL_AWS_VAULT_ACCESS_KEY_PROP);
+            secretKey = p.getProperty(CAMEL_AWS_VAULT_SECRET_KEY_PROP);
+            region = p.getProperty(CAMEL_AWS_VAULT_REGION_PROP);
         }
         SecretsManagerClientBuilder clientBuilder = SecretsManagerClient.builder();
         AwsBasicCredentials cred = AwsBasicCredentials.create(accessKey, secretKey);
