@@ -40,47 +40,34 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
 
     @XmlTransient
     private Map<String, String> defaultValues;
-
     @XmlTransient
     private Boolean requiredBody;
-
     @XmlTransient
     private Set<String> requiredHeaders;
-
     @XmlTransient
     private Set<String> requiredQueryParameters;
 
     @XmlAttribute
     private String consumes;
-
     @XmlAttribute
     private String produces;
-
     @XmlAttribute
-    @Metadata(defaultValue = "off")
+    @Metadata(defaultValue = "off", enums = "off,auto,json,xml,json_xml")
     private String bindingMode;
-
     @XmlAttribute
     private String type;
-
     @XmlTransient
     private Class<?> typeClass;
-
     @XmlAttribute
     private String outType;
-
     @XmlTransient
     private Class<?> outTypeClass;
-
     @XmlAttribute
     private String skipBindingOnErrorCode;
-
     @XmlAttribute
     private String clientRequestValidation;
-
     @XmlAttribute
     private String enableCORS;
-
     @XmlAttribute
     private String component;
 

@@ -57,38 +57,27 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
 
     @XmlAttribute
     private String path;
-
     @XmlAttribute
     private String tag;
-
     @XmlAttribute
     private String consumes;
-
     @XmlAttribute
     private String produces;
-
     @XmlAttribute
-    @Metadata(defaultValue = "auto")
+    @Metadata(defaultValue = "off", enums = "off,auto,json,xml,json_xml")
     private String bindingMode;
-
     @XmlAttribute
     private String skipBindingOnErrorCode;
-
     @XmlAttribute
     private String clientRequestValidation;
-
     @XmlAttribute
     private String enableCORS;
-
     @XmlAttribute
     private String apiDocs;
-
     @XmlElement(name = "securityDefinitions") // use the name Swagger/OpenAPI uses
     private RestSecuritiesDefinition securityDefinitions;
-
     @XmlElement(name = "securityRequirements") // use the name Swagger/OpenAPI uses
     private RestSecuritiesRequirement securityRequirements;
-
     @XmlElementRef
     private List<VerbDefinition> verbs = new ArrayList<>();
 

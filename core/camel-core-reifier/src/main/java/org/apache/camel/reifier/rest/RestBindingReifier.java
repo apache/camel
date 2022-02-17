@@ -64,7 +64,7 @@ public class RestBindingReifier extends AbstractReifier {
         Map<String, String> corsHeaders = config.getCorsHeaders();
 
         if ("off".equals(mode)) {
-            // binding mode is off, so create a off mode binding processor
+            // binding mode is off, so create off mode binding processor
             return new RestBindingAdvice(
                     camelContext, null, null, null, null,
                     parseString(definition.getConsumes()), parseString(definition.getProduces()), mode, skip, validation, cors,
