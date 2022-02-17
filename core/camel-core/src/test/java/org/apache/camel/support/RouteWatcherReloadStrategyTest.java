@@ -41,8 +41,8 @@ public class RouteWatcherReloadStrategyTest extends ContextTestSupport {
 
         File[] fs = folder.listFiles(strategy.getFileFilter());
         assertNotNull(fs);
-        assertEquals(1,fs.length);
-        assertEquals("log4j2.properties",fs[0].getName());
+        assertEquals(1, fs.length);
+        assertEquals("log4j2.properties", fs[0].getName());
     }
 
     @Test
@@ -92,7 +92,7 @@ public class RouteWatcherReloadStrategyTest extends ContextTestSupport {
 
         File[] fs = folder.listFiles(strategy.getFileFilter());
         assertNotNull(fs);
-        assertTrue(fs.length >= 40,String.valueOf(fs.length));
+        assertTrue(fs.length >= 40, String.valueOf(fs.length));
         // null goes back to default
         assertEquals("*.yaml,*.xml", strategy.getPattern());
     }
