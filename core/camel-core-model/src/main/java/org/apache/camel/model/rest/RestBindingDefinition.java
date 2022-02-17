@@ -63,10 +63,13 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
     @XmlTransient
     private Class<?> outTypeClass;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String skipBindingOnErrorCode;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String clientRequestValidation;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String enableCORS;
     @XmlAttribute
     private String component;

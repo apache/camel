@@ -67,12 +67,16 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     @Metadata(defaultValue = "off", enums = "off,auto,json,xml,json_xml")
     private String bindingMode;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String skipBindingOnErrorCode;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String clientRequestValidation;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String enableCORS;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String apiDocs;
     @XmlElement(name = "securityDefinitions") // use the name Swagger/OpenAPI uses
     private RestSecuritiesDefinition securityDefinitions;
