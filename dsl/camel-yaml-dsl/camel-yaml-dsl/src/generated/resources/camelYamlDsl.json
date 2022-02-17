@@ -6929,7 +6929,7 @@
             "type" : "string"
           },
           "clientRequestValidation" : {
-            "type" : "string"
+            "type" : "boolean"
           },
           "component" : {
             "type" : "string"
@@ -6941,7 +6941,7 @@
             "type" : "string"
           },
           "enableCors" : {
-            "type" : "string"
+            "type" : "boolean"
           },
           "id" : {
             "type" : "string"
@@ -6953,7 +6953,7 @@
             "type" : "string"
           },
           "skipBindingOnErrorCode" : {
-            "type" : "string"
+            "type" : "boolean"
           },
           "type" : {
             "type" : "string"
@@ -7073,13 +7073,13 @@
         "type" : "object",
         "properties" : {
           "apiDocs" : {
-            "type" : "string"
+            "type" : "boolean"
           },
           "bindingMode" : {
             "type" : "string"
           },
           "clientRequestValidation" : {
-            "type" : "string"
+            "type" : "boolean"
           },
           "consumes" : {
             "type" : "string"
@@ -7094,7 +7094,7 @@
             "type" : "string"
           },
           "enableCors" : {
-            "type" : "string"
+            "type" : "boolean"
           },
           "get" : {
             "type" : "array",
@@ -7142,7 +7142,7 @@
             "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestSecuritiesRequirement"
           },
           "skipBindingOnErrorCode" : {
-            "type" : "string"
+            "type" : "boolean"
           },
           "tag" : {
             "type" : "string"

@@ -11489,15 +11489,15 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             },
             properties = {
                     @YamlProperty(name = "binding-mode", type = "string"),
-                    @YamlProperty(name = "client-request-validation", type = "string"),
+                    @YamlProperty(name = "client-request-validation", type = "boolean"),
                     @YamlProperty(name = "component", type = "string"),
                     @YamlProperty(name = "consumes", type = "string"),
                     @YamlProperty(name = "description", type = "string"),
-                    @YamlProperty(name = "enable-cors", type = "string"),
+                    @YamlProperty(name = "enable-cors", type = "boolean"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "out-type", type = "string"),
                     @YamlProperty(name = "produces", type = "string"),
-                    @YamlProperty(name = "skip-binding-on-error-code", type = "string"),
+                    @YamlProperty(name = "skip-binding-on-error-code", type = "boolean"),
                     @YamlProperty(name = "type", type = "string")
             }
     )
@@ -11824,13 +11824,13 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = "rest",
             properties = {
-                    @YamlProperty(name = "api-docs", type = "string"),
+                    @YamlProperty(name = "api-docs", type = "boolean"),
                     @YamlProperty(name = "binding-mode", type = "string"),
-                    @YamlProperty(name = "client-request-validation", type = "string"),
+                    @YamlProperty(name = "client-request-validation", type = "boolean"),
                     @YamlProperty(name = "consumes", type = "string"),
                     @YamlProperty(name = "delete", type = "array:org.apache.camel.model.rest.DeleteDefinition"),
                     @YamlProperty(name = "description", type = "string"),
-                    @YamlProperty(name = "enable-cors", type = "string"),
+                    @YamlProperty(name = "enable-cors", type = "boolean"),
                     @YamlProperty(name = "get", type = "array:org.apache.camel.model.rest.GetDefinition"),
                     @YamlProperty(name = "head", type = "array:org.apache.camel.model.rest.HeadDefinition"),
                     @YamlProperty(name = "id", type = "string"),
@@ -11841,7 +11841,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "put", type = "array:org.apache.camel.model.rest.PutDefinition"),
                     @YamlProperty(name = "security-definitions", type = "object:org.apache.camel.model.rest.RestSecuritiesDefinition"),
                     @YamlProperty(name = "security-requirements", type = "object:org.apache.camel.model.rest.RestSecuritiesRequirement"),
-                    @YamlProperty(name = "skip-binding-on-error-code", type = "string"),
+                    @YamlProperty(name = "skip-binding-on-error-code", type = "boolean"),
                     @YamlProperty(name = "tag", type = "string"),
                     @YamlProperty(name = "verbs", type = "array:org.apache.camel.model.rest.VerbDefinition")
             }
