@@ -40,6 +40,7 @@ public interface AhcComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static AhcComponentBuilder ahc() {
         return new AhcComponentBuilderImpl();
     }

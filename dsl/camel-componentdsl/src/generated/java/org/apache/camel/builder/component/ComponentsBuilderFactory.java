@@ -67,6 +67,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.AhcComponentBuilderFactory.AhcComponentBuilder ahc() {
         return org.apache.camel.builder.component.dsl.AhcComponentBuilderFactory.ahc();
     }
@@ -80,6 +81,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.AhcWsComponentBuilderFactory.AhcWsComponentBuilder ahcWs() {
         return org.apache.camel.builder.component.dsl.AhcWsComponentBuilderFactory.ahcWs();
     }
@@ -93,6 +95,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.AhcWssComponentBuilderFactory.AhcWssComponentBuilder ahcWss() {
         return org.apache.camel.builder.component.dsl.AhcWssComponentBuilderFactory.ahcWss();
     }

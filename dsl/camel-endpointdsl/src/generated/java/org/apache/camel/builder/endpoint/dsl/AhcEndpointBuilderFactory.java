@@ -566,6 +566,7 @@ public interface AhcEndpointBuilderFactory {
          * @param path httpUri
          * @return the dsl builder
          */
+        @Deprecated
         default AhcEndpointBuilder ahc(String path) {
             return AhcEndpointBuilderFactory.endpointBuilder("ahc", path);
         }
@@ -587,10 +588,12 @@ public interface AhcEndpointBuilderFactory {
          * @param path httpUri
          * @return the dsl builder
          */
+        @Deprecated
         default AhcEndpointBuilder ahc(String componentName, String path) {
             return AhcEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
+    @Deprecated
     static AhcEndpointBuilder endpointBuilder(String componentName, String path) {
         class AhcEndpointBuilderImpl extends AbstractEndpointBuilder implements AhcEndpointBuilder, AdvancedAhcEndpointBuilder {
             public AhcEndpointBuilderImpl(String path) {

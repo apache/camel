@@ -5755,14 +5755,6 @@ The correlation expression to use to calculate the correlation key.
     <xs:complexContent>
       <xs:extension base="tns:loadBalancer">
         <xs:sequence/>
-        <xs:attribute name="roundRobin" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-To enable round robin mode. By default the weighted distribution mode is used.
-The default value is false.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
         <xs:attribute name="distributionRatio" type="xs:string" use="required">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
@@ -5777,6 +5769,14 @@ number of endpoints and/or processors specified in the load balancer list.
             <xs:documentation xml:lang="en"><![CDATA[
 Delimiter used to specify the distribution ratio. The default value is ,
 (comma). Default value: ,
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="roundRobin" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+To enable round robin mode. By default the weighted distribution mode is used.
+The default value is false.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -13929,26 +13929,6 @@ what may be configured on a parent level The default value is false.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="type" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Sets the class name to use for binding from input to POJO for the incoming data
-This option will override what may be configured on a parent level. The name of
-the class of the input data. Append a to the end of the name if you want the
-input to be an array type.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="outType" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Sets the class name to use for binding from POJO to output for the outgoing data
-This option will override what may be configured on a parent level The name of
-the class of the input data. Append a to the end of the name if you want the
-input to be an array type.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
         <xs:attribute name="routeId" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
@@ -13968,6 +13948,26 @@ default value is true.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Sets deprecated flag in openapi. Default value: false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="type" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Sets the class name to use for binding from input to POJO for the incoming data
+This option will override what may be configured on a parent level. The name of
+the class of the input data. Append a to the end of the name if you want the
+input to be an array type.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="outType" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Sets the class name to use for binding from POJO to output for the outgoing data
+This option will override what may be configured on a parent level The name of
+the class of the input data. Append a to the end of the name if you want the
+input to be an array type.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
