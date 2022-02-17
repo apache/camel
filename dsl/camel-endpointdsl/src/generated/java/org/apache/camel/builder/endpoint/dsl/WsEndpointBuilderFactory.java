@@ -1578,6 +1578,7 @@ public interface WsEndpointBuilderFactory {
          * @param path httpUri
          * @return the dsl builder
          */
+        @Deprecated
         default WsEndpointBuilder ahcWs(String path) {
             return WsEndpointBuilderFactory.endpointBuilder("ahc-ws", path);
         }
@@ -1600,6 +1601,7 @@ public interface WsEndpointBuilderFactory {
          * @param path httpUri
          * @return the dsl builder
          */
+        @Deprecated
         default WsEndpointBuilder ahcWs(String componentName, String path) {
             return WsEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
@@ -1620,10 +1622,12 @@ public interface WsEndpointBuilderFactory {
          * @param path httpUri
          * @return the dsl builder
          */
+        @Deprecated
         default WsEndpointBuilder ahcWss(String path) {
             return WsEndpointBuilderFactory.endpointBuilder("ahc-wss", path);
         }
     }
+    @Deprecated
     static WsEndpointBuilder endpointBuilder(String componentName, String path) {
         class WsEndpointBuilderImpl extends AbstractEndpointBuilder implements WsEndpointBuilder, AdvancedWsEndpointBuilder {
             public WsEndpointBuilderImpl(String path) {
