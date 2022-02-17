@@ -1,0 +1,120 @@
+= Test Main JUnit5 Component
+:doctitle: Test Main JUnit5
+:shortname: test-main-junit5
+:artifactid: camel-test-main-junit5
+:description: Camel unit testing with Main and JUnit 5
+:since: 3.16
+:supportlevel: Preview
+
+*Since Camel {since}*
+
+The `camel-test-main-junit5` module is used for unit testing Camel launched in Standalone mode with Camel Main.
+
+The class `org.apache.camel.test.main.junit5.CamelMainTestSupport` is the base class of all the unit test classes of a Camel Main application. It provides the ability to configure and launch Camel like a Camel Main application.
+
+Maven users will need to add the following dependency to
+their `pom.xml` for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-test-main-junit5</artifactId>
+    <scope>test</scope>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== Configure Camel as a Camel Main application
+
+A Camel Main application has access to many specific configuration properties that are not available from the base class `CamelTestSupport`. The base class `CamelMainTestSupport` provides the method `configure(MainConfigurationProperties configuration)` that can be overridden in order to configure Camel for the test like a Camel Main application.
+
+In the next example, the test class `SomeTest` add a configuration class and specify the xml routes to include.
+
+[source,java]
+----
+import org.apache.camel.main.MainConfigurationProperties;
+import org.apache.camel.test.main.junit5.CamelMainTestSupport;
+
+class SomeTest extends CamelMainTestSupport {
+
+    @Override
+    protected void configure(MainConfigurationProperties configuration) {
+        // Add a configuration class
+        configuration.addConfiguration(SomeConfiguration.class);
+        // Add all the XML routes
+        configuration.withRoutesIncludePattern("routes/*.xml");
+    }
+
+    // Rest of the test class
+}
+----
+
+== Configure a custom property placeholder location
+
+By default, the property placeholder used is `application.properties` from the default package. There are several ways to configure the location of the property placeholders, you can either provide the file name of the property placeholder or a list of locations.
+
+=== A list of property placeholder locations
+
+To provide a comma separated list of location, you can override the method `getPropertyPlaceholderLocations()` to return your custom list of locations. The order in the list matter especially in case of a property defined at several locations, the value of the property found in the first location where it is defined, is used.
+
+In the next example, the property placeholder locations configured are `extra-application.properties` and `application.properties` both available in the default package.
+
+[source,java]
+----
+class SomeTest extends CamelMainTestSupport {
+
+    @Override
+    protected String getPropertyPlaceholderLocations() {
+        return "classpath:extra-application.properties,classpath:application.properties";
+    }
+
+    // Rest of the test class
+}
+----
+
+=== The file name of the property placeholder
+
+For the sake of simplicity, in case you need only one property placeholder location, you can specify the file name of the property placeholder by overriding the method `getPropertyPlaceholderFileName()`. It can infer the location of the property placeholder as it assumes that it is located in the same package as test class.
+
+In the next example, the method `getPropertyPlaceholderFileName()` has been overridden in the test class `com.somecompany.SomeTest` to return `custom-application.properties` indicating that the actual location of the property placeholder is `classpath:com/somecompany/custom-application.properties`.
+
+[source,java]
+----
+package com.somecompany;
+
+class SomeTest extends CamelMainTestSupport {
+
+    @Override
+    protected String getPropertyPlaceholderFileName() {
+        return "custom-application.properties";
+    }
+
+    // Rest of the test class
+}
+----
+
+== Replace an existing bean
+
+In Camel Main, you have the opportunity to bind custom beans dynamically using the specific annotation `@BindToRegistry` which is very helpful but for testing purpose, you may need to replace the bean by a mock or a test implementation.
+
+To bind additional beans, you can still override the well known method `bindToRegistry(Registry registry)` but this method cannot be used to replace a bean created and bound automatically by Camel as it is called too early in the initialization process of Camel. To work around this problem, you can instead bind your beans by overriding the new method `bindToRegistryAfterInjections(Registry registry)` which is called after existing injections and automatic binding have been done.
+
+In the next example, an instance of a custom bean of type `CustomGreetings` could be created from the value of property `name` and is used to replace the bean of type `Greetings` automatically bound by Camel with the name `myGreetings`.
+
+[source,java]
+----
+class SomeTest extends CamelMainTestSupport {
+
+    @PropertyInject("name")
+    String name;
+
+    @Override
+    protected void bindToRegistryAfterInjections(Registry registry) throws Exception {
+        registry.bind("myGreetings", Greetings.class, new CustomGreetings(name));
+    }
+
+    // Rest of the test class
+}
+----

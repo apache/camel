@@ -34,17 +34,17 @@ import org.apache.camel.builder.AdviceWithRouteBuilder;
  * route whose identifier is <i>main-route</i>.
  *
  * <pre>
- * {
- *     &#64;code
- *     &#64;AdviceRoute("main-route")
- *     public class ReplaceDirectWithMockBuilder extends AdviceWithRouteBuilder {
+ * <code>
  *
- *         &#64;Override
- *         public void configure() throws Exception {
- *             weaveByToUri("direct:out").replace().to("mock:test");
- *         }
+ * &#64;AdviceRoute("main-route")
+ * public class ReplaceDirectWithMockBuilder extends AdviceWithRouteBuilder {
+ *
+ *     &#64;Override
+ *     public void configure() throws Exception {
+ *         weaveByToUri("direct:out").replace().to("mock:test");
  *     }
  * }
+ * </code>
  * </pre>
  *
  * @see AdviceWithRouteBuilder

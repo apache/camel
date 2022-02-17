@@ -59,17 +59,17 @@ import org.junit.jupiter.api.extension.TestInstanceFactoryContext;
  * start-up of the Camel context to ensure that it works as expected.
  *
  * <pre>
- * {
- *     &#64;code
- *     &#64;AdviceRoute("route")
- *     public class ExternalTestBuilder extends AdviceWithRouteBuilder {
+ * <code>
  *
- *         &#64;Override
- *         public void configure() throws Exception {
- *             weaveByToUri("direct:out").replace().to("mock:test");
- *         }
+ * &#64;AdviceRoute("route")
+ * public class ExternalTestBuilder extends AdviceWithRouteBuilder {
+ *
+ *     &#64;Override
+ *     public void configure() throws Exception {
+ *         weaveByToUri("direct:out").replace().to("mock:test");
  *     }
  * }
+ * </code>
  * </pre>
  *
  * @see AdviceRoute
