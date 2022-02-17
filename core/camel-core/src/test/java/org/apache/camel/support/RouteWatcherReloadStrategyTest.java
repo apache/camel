@@ -29,7 +29,41 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class RouteWatcherReloadStrategyTest extends ContextTestSupport {
 
     @Test
-    public void testBasePath() throws Exception {
+    public void testBasePathExact() throws Exception {
+        RouteWatcherReloadStrategy strategy = new RouteWatcherReloadStrategy("./src/test/resources");
+        strategy.setPattern("log4j2.properties");
+        strategy.setCamelContext(context);
+        strategy.doStart();
+
+        assertNotNull(strategy.getFileFilter());
+        File folder = new File("./src/test/resources");
+        assertTrue(folder.isDirectory());
+
+        File[] fs = folder.listFiles(strategy.getFileFilter());
+        assertNotNull(fs);
+        assertEquals(1,fs.length);
+        assertEquals("log4j2.properties",fs[0].getName());
+    }
+
+    @Test
+    public void testBasePathWildcardExtension() throws Exception {
+        RouteWatcherReloadStrategy strategy = new RouteWatcherReloadStrategy("./src/test/resources");
+        strategy.setPattern("*.properties");
+        strategy.setCamelContext(context);
+        strategy.doStart();
+
+        assertNotNull(strategy.getFileFilter());
+        File folder = new File("./src/test/resources");
+        assertTrue(folder.isDirectory());
+
+        File[] fs = folder.listFiles(strategy.getFileFilter());
+        assertNotNull(fs);
+        assertTrue(fs.length >= 5);
+        assertTrue(Arrays.stream(fs).anyMatch(f -> f.getName().equals("log4j2.properties")));
+    }
+
+    @Test
+    public void testBasePathFullWildcard() throws Exception {
         RouteWatcherReloadStrategy strategy = new RouteWatcherReloadStrategy("./src/test/resources");
         strategy.setPattern("*");
         strategy.setCamelContext(context);
@@ -47,18 +81,18 @@ public class RouteWatcherReloadStrategyTest extends ContextTestSupport {
 
     @Test
     public void testNullPattern() throws Exception {
-        RouteWatcherReloadStrategy strategy = new RouteWatcherReloadStrategy("./src/test/resources");
+        RouteWatcherReloadStrategy strategy = new RouteWatcherReloadStrategy("./src/test/resources/org/apache/camel/model");
         strategy.setPattern(null);
         strategy.setCamelContext(context);
         strategy.doStart();
 
         assertNotNull(strategy.getFileFilter());
-        File folder = new File("./src/test/resources");
+        File folder = new File("./src/test/resources/org/apache/camel/model");
         assertTrue(folder.isDirectory());
 
         File[] fs = folder.listFiles(strategy.getFileFilter());
         assertNotNull(fs);
-        assertEquals(0, fs.length);
+        assertTrue(fs.length >= 40,String.valueOf(fs.length));
         // null goes back to default
         assertEquals("*.yaml,*.xml", strategy.getPattern());
     }
