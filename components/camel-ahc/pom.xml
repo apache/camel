@@ -30,7 +30,7 @@
     <artifactId>camel-ahc</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: AHC</name>
+    <name>Camel :: AHC (deprecated)</name>
     <description>Camel Async Http Client support</description>
 
     <dependencies>

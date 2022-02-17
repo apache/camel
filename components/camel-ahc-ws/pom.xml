@@ -29,7 +29,7 @@
     <artifactId>camel-ahc-ws</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: AHC-WS</name>
+    <name>Camel :: AHC-WS (deprecated)</name>
     <description>Camel Websocket Client support</description>
 
     <properties>

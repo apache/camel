@@ -4,7 +4,7 @@
     "name": "ahc-wss",
     "title": "Async HTTP Client (AHC) Secure Websocket (Secure)",
     "description": "Exchange data with external Websocket servers using Async Http Client.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.14.0",
     "label": "websocket",
     "javaType": "org.apache.camel.component.ahc.ws.WsComponent",

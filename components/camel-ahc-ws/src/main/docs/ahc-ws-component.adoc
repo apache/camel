@@ -1,10 +1,11 @@
-= Async HTTP Client (AHC) Websocket Component
+= Async HTTP Client (AHC) Websocket Component (deprecated)
 :doctitle: Async HTTP Client (AHC) Websocket
 :shortname: ahc-ws
 :artifactid: camel-ahc-ws
 :description: Exchange data with external Websocket servers using Async Http Client.
 :since: 2.14
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :camel-spring-boot-name: ahc-ws
