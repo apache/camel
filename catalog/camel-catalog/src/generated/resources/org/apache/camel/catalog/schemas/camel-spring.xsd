@@ -14283,7 +14283,7 @@ want the input to be an array type.
             <xs:documentation xml:lang="en"><![CDATA[
 Whether to skip binding on output if there is a custom HTTP error code header.
 This allows to build custom error messages that do not bind to json / xml etc,
-as success messages otherwise will do.
+as success messages otherwise will do. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -14296,7 +14296,7 @@ error. 2) Accept header matches what the Rest DSL produces; returns HTTP Status
 406 if validation error. 3) Missing required data (query parameters, HTTP
 headers, body); returns HTTP Status 400 if validation error. 4) Parsing error of
 the message body (JSon, XML or Auto binding mode must be enabled); returns HTTP
-Status 400 if validation error.
+Status 400 if validation error. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -14304,6 +14304,7 @@ Status 400 if validation error.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Whether to enable CORS headers in the HTTP response. The default value is false.
+Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -14628,7 +14629,7 @@ be configured on a parent level.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Sets the binding mode to use. This option will override what may be configured
-on a parent level The default value is auto. Default value: auto
+on a parent level The default value is auto. Default value: off
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -14638,7 +14639,7 @@ on a parent level The default value is auto. Default value: auto
 Whether to skip binding on output if there is a custom HTTP error code header.
 This allows to build custom error messages that do not bind to json / xml etc,
 as success messages otherwise will do. This option will override what may be
-configured on a parent level.
+configured on a parent level. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -14651,7 +14652,7 @@ error. 2) Accept header matches what the Rest DSL produces; returns HTTP Status
 406 if validation error. 3) Missing required data (query parameters, HTTP
 headers, body); returns HTTP Status 400 if validation error. 4) Parsing error of
 the message body (JSon, XML or Auto binding mode must be enabled); returns HTTP
-Status 400 if validation error.
+Status 400 if validation error. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -14659,7 +14660,8 @@ Status 400 if validation error.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Whether to enable CORS headers in the HTTP response. This option will override
-what may be configured on a parent level The default value is false.
+what may be configured on a parent level The default value is false. Default
+value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -14668,7 +14670,7 @@ what may be configured on a parent level The default value is false.
             <xs:documentation xml:lang="en"><![CDATA[
 Whether to include or exclude the VerbDefinition in API documentation. This
 option will override what may be configured on a parent level The default value
-is true.
+is true. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
