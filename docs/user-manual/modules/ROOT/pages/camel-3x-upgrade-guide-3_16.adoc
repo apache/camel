@@ -15,6 +15,21 @@ Previously when Camel detected a duplicate type converter during startup, Camel 
 override the existing converter and log a WARN. A more correct behaviour would be
 to keep the existing and ignore the duplicate.
 
+==== Rest DSL
+
+The generic verb-based definition, where the HTTP verb can be specified as a string value
+is no longer supported for defining a REST service.
+Only the built-in verbs (get, post, put etc.) must be used.
+
+Renamed the following classes in package `org.apache.camel.model.rest`:
+
+- `DeleteVerbDefinition` to `DeleteDefinition`
+- `GetVerbDefinition` to `GetDefinition`
+- `HeadVerbDefinition` to `HeadDefinition`
+- `PatchVerbDefinition` to `PatchDefinition`
+- `PostVerbDefinition` to `PostDefinition`
+- `PutVerbDefinition` to `PutDefinition`
+
 ==== Saga EIP
 
 Removed the deprecated `timeoutInMilliseconds` option, use `timeout` instead.
@@ -103,10 +118,6 @@ The option `camel.main.packageScanRouteBuilders` has been renamed to `camel.main
 
 Using configuration classes must now implement the interface `org.apache.camel.main.CamelConfiguration`
 and the `configure` method now takes a `CamelContext` as argument.
-
-=== camel-yaml-dsl and camel-xml-dsl REST services
-The verb-based definition is no longer supported for defining a REST service in YAML or XML.
-Only the method-based definitions (get, post, etc) are supported.
 
 === camel-any23
 

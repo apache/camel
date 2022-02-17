@@ -6544,7 +6544,7 @@
         },
         "required" : [ "distribution-ratio" ]
       },
-      "org.apache.camel.model.rest.DeleteVerbDefinition" : {
+      "org.apache.camel.model.rest.DeleteDefinition" : {
         "type" : "object",
         "properties" : {
           "api-docs" : {
@@ -6569,9 +6569,6 @@
             "type" : "string"
           },
           "id" : {
-            "type" : "string"
-          },
-          "method" : {
             "type" : "string"
           },
           "out-type" : {
@@ -6627,7 +6624,7 @@
           }
         }
       },
-      "org.apache.camel.model.rest.GetVerbDefinition" : {
+      "org.apache.camel.model.rest.GetDefinition" : {
         "type" : "object",
         "properties" : {
           "api-docs" : {
@@ -6652,9 +6649,6 @@
             "type" : "string"
           },
           "id" : {
-            "type" : "string"
-          },
-          "method" : {
             "type" : "string"
           },
           "out-type" : {
@@ -6710,7 +6704,7 @@
           }
         }
       },
-      "org.apache.camel.model.rest.HeadVerbDefinition" : {
+      "org.apache.camel.model.rest.HeadDefinition" : {
         "type" : "object",
         "properties" : {
           "api-docs" : {
@@ -6735,9 +6729,6 @@
             "type" : "string"
           },
           "id" : {
-            "type" : "string"
-          },
-          "method" : {
             "type" : "string"
           },
           "out-type" : {
@@ -6793,7 +6784,7 @@
           }
         }
       },
-      "org.apache.camel.model.rest.PatchVerbDefinition" : {
+      "org.apache.camel.model.rest.PatchDefinition" : {
         "type" : "object",
         "properties" : {
           "api-docs" : {
@@ -6818,9 +6809,6 @@
             "type" : "string"
           },
           "id" : {
-            "type" : "string"
-          },
-          "method" : {
             "type" : "string"
           },
           "out-type" : {
@@ -6876,7 +6864,7 @@
           }
         }
       },
-      "org.apache.camel.model.rest.PostVerbDefinition" : {
+      "org.apache.camel.model.rest.PostDefinition" : {
         "type" : "object",
         "properties" : {
           "api-docs" : {
@@ -6901,9 +6889,6 @@
             "type" : "string"
           },
           "id" : {
-            "type" : "string"
-          },
-          "method" : {
             "type" : "string"
           },
           "out-type" : {
@@ -6959,7 +6944,7 @@
           }
         }
       },
-      "org.apache.camel.model.rest.PutVerbDefinition" : {
+      "org.apache.camel.model.rest.PutDefinition" : {
         "type" : "object",
         "properties" : {
           "api-docs" : {
@@ -6984,9 +6969,6 @@
             "type" : "string"
           },
           "id" : {
-            "type" : "string"
-          },
-          "method" : {
             "type" : "string"
           },
           "out-type" : {
@@ -7207,7 +7189,7 @@
           "delete" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.rest.DeleteVerbDefinition"
+              "$ref" : "#/items/definitions/org.apache.camel.model.rest.DeleteDefinition"
             }
           },
           "description" : {
@@ -7219,13 +7201,13 @@
           "get" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.rest.GetVerbDefinition"
+              "$ref" : "#/items/definitions/org.apache.camel.model.rest.GetDefinition"
             }
           },
           "head" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.rest.HeadVerbDefinition"
+              "$ref" : "#/items/definitions/org.apache.camel.model.rest.HeadDefinition"
             }
           },
           "id" : {
@@ -7234,7 +7216,7 @@
           "patch" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.rest.PatchVerbDefinition"
+              "$ref" : "#/items/definitions/org.apache.camel.model.rest.PatchDefinition"
             }
           },
           "path" : {
@@ -7243,7 +7225,7 @@
           "post" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.rest.PostVerbDefinition"
+              "$ref" : "#/items/definitions/org.apache.camel.model.rest.PostDefinition"
             }
           },
           "produces" : {
@@ -7252,7 +7234,7 @@
           "put" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.rest.PutVerbDefinition"
+              "$ref" : "#/items/definitions/org.apache.camel.model.rest.PutDefinition"
             }
           },
           "security-definitions" : {

@@ -27,8 +27,8 @@ import org.apache.camel.impl.engine.DefaultChannel
 import org.apache.camel.language.bean.BeanLanguage
 import org.apache.camel.model.FromDefinition
 import org.apache.camel.model.ToDefinition
-import org.apache.camel.model.rest.GetVerbDefinition
-import org.apache.camel.model.rest.PostVerbDefinition
+import org.apache.camel.model.rest.GetDefinition
+import org.apache.camel.model.rest.PostDefinition
 import org.apache.camel.processor.FatalFallbackErrorHandler
 import org.apache.camel.processor.SendProcessor
 import org.apache.camel.spi.HeaderFilterStrategy
@@ -84,7 +84,7 @@ class GroovyRouteBuilderLoaderTest extends Specification {
             with(context.restDefinitions.find {it.path == '/my/path'}) {
                 verbs.size() == 1
 
-                with(verbs.first(), GetVerbDefinition) {
+                with(verbs.first(), GetDefinition) {
                     uri == '/get'
                     consumes == 'application/json'
                     produces == 'application/json'
@@ -98,7 +98,7 @@ class GroovyRouteBuilderLoaderTest extends Specification {
             with(context.restDefinitions.find {it.path == '/post'}) {
                 verbs.size() == 1
 
-                with(verbs.first(), PostVerbDefinition) {
+                with(verbs.first(), PostDefinition) {
                     uri == null
                     consumes == 'application/json'
                     produces == 'application/json'

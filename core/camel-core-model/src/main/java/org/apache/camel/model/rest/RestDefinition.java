@@ -694,8 +694,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         } else if ("patch".equals(verb)) {
             answer = new PatchDefinition();
         } else {
-            answer = new VerbDefinition();
-            answer.setMethod(verb);
+            throw new IllegalArgumentException("Verb " + verb + " not supported");
         }
         getVerbs().add(answer);
         answer.setRest(this);

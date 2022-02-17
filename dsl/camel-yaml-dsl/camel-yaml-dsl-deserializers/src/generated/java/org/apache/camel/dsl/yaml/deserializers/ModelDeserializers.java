@@ -198,12 +198,12 @@ import org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.StickyLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.TopicLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.WeightedLoadBalancerDefinition;
-import org.apache.camel.model.rest.DeleteVerbDefinition;
-import org.apache.camel.model.rest.GetVerbDefinition;
-import org.apache.camel.model.rest.HeadVerbDefinition;
-import org.apache.camel.model.rest.PatchVerbDefinition;
-import org.apache.camel.model.rest.PostVerbDefinition;
-import org.apache.camel.model.rest.PutVerbDefinition;
+import org.apache.camel.model.rest.DeleteDefinition;
+import org.apache.camel.model.rest.GetDefinition;
+import org.apache.camel.model.rest.HeadDefinition;
+import org.apache.camel.model.rest.PatchDefinition;
+import org.apache.camel.model.rest.PostDefinition;
+import org.apache.camel.model.rest.PutDefinition;
 import org.apache.camel.model.rest.RestBindingDefinition;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
@@ -3974,7 +3974,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            types = org.apache.camel.model.rest.DeleteVerbDefinition.class,
+            types = org.apache.camel.model.rest.DeleteDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = "delete",
             properties = {
@@ -3986,7 +3986,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "description", type = "string"),
                     @YamlProperty(name = "enable-cors", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
-                    @YamlProperty(name = "method", type = "string"),
                     @YamlProperty(name = "out-type", type = "string"),
                     @YamlProperty(name = "param", type = "array:org.apache.camel.model.rest.RestOperationParamDefinition"),
                     @YamlProperty(name = "produces", type = "string"),
@@ -4002,18 +4001,18 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "uri", type = "string")
             }
     )
-    public static class DeleteVerbDefinitionDeserializer extends YamlDeserializerBase<DeleteVerbDefinition> {
-        public DeleteVerbDefinitionDeserializer() {
-            super(DeleteVerbDefinition.class);
+    public static class DeleteDefinitionDeserializer extends YamlDeserializerBase<DeleteDefinition> {
+        public DeleteDefinitionDeserializer() {
+            super(DeleteDefinition.class);
         }
 
         @Override
-        protected DeleteVerbDefinition newInstance() {
-            return new DeleteVerbDefinition();
+        protected DeleteDefinition newInstance() {
+            return new DeleteDefinition();
         }
 
         @Override
-        protected boolean setProperty(DeleteVerbDefinition target, String propertyKey,
+        protected boolean setProperty(DeleteDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
                 case "api-docs": {
@@ -4044,11 +4043,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "enable-cors": {
                     String val = asText(node);
                     target.setEnableCORS(val);
-                    break;
-                }
-                case "method": {
-                    String val = asText(node);
-                    target.setMethod(val);
                     break;
                 }
                 case "out-type": {
@@ -5351,7 +5345,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            types = org.apache.camel.model.rest.GetVerbDefinition.class,
+            types = org.apache.camel.model.rest.GetDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = "get",
             properties = {
@@ -5363,7 +5357,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "description", type = "string"),
                     @YamlProperty(name = "enable-cors", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
-                    @YamlProperty(name = "method", type = "string"),
                     @YamlProperty(name = "out-type", type = "string"),
                     @YamlProperty(name = "param", type = "array:org.apache.camel.model.rest.RestOperationParamDefinition"),
                     @YamlProperty(name = "produces", type = "string"),
@@ -5379,19 +5372,19 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "uri", type = "string")
             }
     )
-    public static class GetVerbDefinitionDeserializer extends YamlDeserializerBase<GetVerbDefinition> {
-        public GetVerbDefinitionDeserializer() {
-            super(GetVerbDefinition.class);
+    public static class GetDefinitionDeserializer extends YamlDeserializerBase<GetDefinition> {
+        public GetDefinitionDeserializer() {
+            super(GetDefinition.class);
         }
 
         @Override
-        protected GetVerbDefinition newInstance() {
-            return new GetVerbDefinition();
+        protected GetDefinition newInstance() {
+            return new GetDefinition();
         }
 
         @Override
-        protected boolean setProperty(GetVerbDefinition target, String propertyKey,
-                String propertyName, Node node) {
+        protected boolean setProperty(GetDefinition target, String propertyKey, String propertyName,
+                Node node) {
             switch(propertyKey) {
                 case "api-docs": {
                     String val = asText(node);
@@ -5421,11 +5414,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "enable-cors": {
                     String val = asText(node);
                     target.setEnableCORS(val);
-                    break;
-                }
-                case "method": {
-                    String val = asText(node);
-                    target.setMethod(val);
                     break;
                 }
                 case "out-type": {
@@ -5794,7 +5782,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            types = org.apache.camel.model.rest.HeadVerbDefinition.class,
+            types = org.apache.camel.model.rest.HeadDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = "head",
             properties = {
@@ -5806,7 +5794,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "description", type = "string"),
                     @YamlProperty(name = "enable-cors", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
-                    @YamlProperty(name = "method", type = "string"),
                     @YamlProperty(name = "out-type", type = "string"),
                     @YamlProperty(name = "param", type = "array:org.apache.camel.model.rest.RestOperationParamDefinition"),
                     @YamlProperty(name = "produces", type = "string"),
@@ -5822,18 +5809,18 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "uri", type = "string")
             }
     )
-    public static class HeadVerbDefinitionDeserializer extends YamlDeserializerBase<HeadVerbDefinition> {
-        public HeadVerbDefinitionDeserializer() {
-            super(HeadVerbDefinition.class);
+    public static class HeadDefinitionDeserializer extends YamlDeserializerBase<HeadDefinition> {
+        public HeadDefinitionDeserializer() {
+            super(HeadDefinition.class);
         }
 
         @Override
-        protected HeadVerbDefinition newInstance() {
-            return new HeadVerbDefinition();
+        protected HeadDefinition newInstance() {
+            return new HeadDefinition();
         }
 
         @Override
-        protected boolean setProperty(HeadVerbDefinition target, String propertyKey,
+        protected boolean setProperty(HeadDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
                 case "api-docs": {
@@ -5864,11 +5851,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "enable-cors": {
                     String val = asText(node);
                     target.setEnableCORS(val);
-                    break;
-                }
-                case "method": {
-                    String val = asText(node);
-                    target.setMethod(val);
                     break;
                 }
                 case "out-type": {
@@ -9578,7 +9560,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            types = org.apache.camel.model.rest.PatchVerbDefinition.class,
+            types = org.apache.camel.model.rest.PatchDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = "patch",
             properties = {
@@ -9590,7 +9572,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "description", type = "string"),
                     @YamlProperty(name = "enable-cors", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
-                    @YamlProperty(name = "method", type = "string"),
                     @YamlProperty(name = "out-type", type = "string"),
                     @YamlProperty(name = "param", type = "array:org.apache.camel.model.rest.RestOperationParamDefinition"),
                     @YamlProperty(name = "produces", type = "string"),
@@ -9606,18 +9587,18 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "uri", type = "string")
             }
     )
-    public static class PatchVerbDefinitionDeserializer extends YamlDeserializerBase<PatchVerbDefinition> {
-        public PatchVerbDefinitionDeserializer() {
-            super(PatchVerbDefinition.class);
+    public static class PatchDefinitionDeserializer extends YamlDeserializerBase<PatchDefinition> {
+        public PatchDefinitionDeserializer() {
+            super(PatchDefinition.class);
         }
 
         @Override
-        protected PatchVerbDefinition newInstance() {
-            return new PatchVerbDefinition();
+        protected PatchDefinition newInstance() {
+            return new PatchDefinition();
         }
 
         @Override
-        protected boolean setProperty(PatchVerbDefinition target, String propertyKey,
+        protected boolean setProperty(PatchDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
                 case "api-docs": {
@@ -9648,11 +9629,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "enable-cors": {
                     String val = asText(node);
                     target.setEnableCORS(val);
-                    break;
-                }
-                case "method": {
-                    String val = asText(node);
-                    target.setMethod(val);
                     break;
                 }
                 case "out-type": {
@@ -9961,7 +9937,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            types = org.apache.camel.model.rest.PostVerbDefinition.class,
+            types = org.apache.camel.model.rest.PostDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = "post",
             properties = {
@@ -9973,7 +9949,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "description", type = "string"),
                     @YamlProperty(name = "enable-cors", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
-                    @YamlProperty(name = "method", type = "string"),
                     @YamlProperty(name = "out-type", type = "string"),
                     @YamlProperty(name = "param", type = "array:org.apache.camel.model.rest.RestOperationParamDefinition"),
                     @YamlProperty(name = "produces", type = "string"),
@@ -9989,18 +9964,18 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "uri", type = "string")
             }
     )
-    public static class PostVerbDefinitionDeserializer extends YamlDeserializerBase<PostVerbDefinition> {
-        public PostVerbDefinitionDeserializer() {
-            super(PostVerbDefinition.class);
+    public static class PostDefinitionDeserializer extends YamlDeserializerBase<PostDefinition> {
+        public PostDefinitionDeserializer() {
+            super(PostDefinition.class);
         }
 
         @Override
-        protected PostVerbDefinition newInstance() {
-            return new PostVerbDefinition();
+        protected PostDefinition newInstance() {
+            return new PostDefinition();
         }
 
         @Override
-        protected boolean setProperty(PostVerbDefinition target, String propertyKey,
+        protected boolean setProperty(PostDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
                 case "api-docs": {
@@ -10031,11 +10006,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "enable-cors": {
                     String val = asText(node);
                     target.setEnableCORS(val);
-                    break;
-                }
-                case "method": {
-                    String val = asText(node);
-                    target.setMethod(val);
                     break;
                 }
                 case "out-type": {
@@ -10470,7 +10440,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            types = org.apache.camel.model.rest.PutVerbDefinition.class,
+            types = org.apache.camel.model.rest.PutDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = "put",
             properties = {
@@ -10482,7 +10452,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "description", type = "string"),
                     @YamlProperty(name = "enable-cors", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
-                    @YamlProperty(name = "method", type = "string"),
                     @YamlProperty(name = "out-type", type = "string"),
                     @YamlProperty(name = "param", type = "array:org.apache.camel.model.rest.RestOperationParamDefinition"),
                     @YamlProperty(name = "produces", type = "string"),
@@ -10498,19 +10467,19 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "uri", type = "string")
             }
     )
-    public static class PutVerbDefinitionDeserializer extends YamlDeserializerBase<PutVerbDefinition> {
-        public PutVerbDefinitionDeserializer() {
-            super(PutVerbDefinition.class);
+    public static class PutDefinitionDeserializer extends YamlDeserializerBase<PutDefinition> {
+        public PutDefinitionDeserializer() {
+            super(PutDefinition.class);
         }
 
         @Override
-        protected PutVerbDefinition newInstance() {
-            return new PutVerbDefinition();
+        protected PutDefinition newInstance() {
+            return new PutDefinition();
         }
 
         @Override
-        protected boolean setProperty(PutVerbDefinition target, String propertyKey,
-                String propertyName, Node node) {
+        protected boolean setProperty(PutDefinition target, String propertyKey, String propertyName,
+                Node node) {
             switch(propertyKey) {
                 case "api-docs": {
                     String val = asText(node);
@@ -10540,11 +10509,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "enable-cors": {
                     String val = asText(node);
                     target.setEnableCORS(val);
-                    break;
-                }
-                case "method": {
-                    String val = asText(node);
-                    target.setMethod(val);
                     break;
                 }
                 case "out-type": {
@@ -11864,17 +11828,17 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "binding-mode", type = "string"),
                     @YamlProperty(name = "client-request-validation", type = "string"),
                     @YamlProperty(name = "consumes", type = "string"),
-                    @YamlProperty(name = "delete", type = "array:org.apache.camel.model.rest.DeleteVerbDefinition"),
+                    @YamlProperty(name = "delete", type = "array:org.apache.camel.model.rest.DeleteDefinition"),
                     @YamlProperty(name = "description", type = "string"),
                     @YamlProperty(name = "enable-cors", type = "string"),
-                    @YamlProperty(name = "get", type = "array:org.apache.camel.model.rest.GetVerbDefinition"),
-                    @YamlProperty(name = "head", type = "array:org.apache.camel.model.rest.HeadVerbDefinition"),
+                    @YamlProperty(name = "get", type = "array:org.apache.camel.model.rest.GetDefinition"),
+                    @YamlProperty(name = "head", type = "array:org.apache.camel.model.rest.HeadDefinition"),
                     @YamlProperty(name = "id", type = "string"),
-                    @YamlProperty(name = "patch", type = "array:org.apache.camel.model.rest.PatchVerbDefinition"),
+                    @YamlProperty(name = "patch", type = "array:org.apache.camel.model.rest.PatchDefinition"),
                     @YamlProperty(name = "path", type = "string"),
-                    @YamlProperty(name = "post", type = "array:org.apache.camel.model.rest.PostVerbDefinition"),
+                    @YamlProperty(name = "post", type = "array:org.apache.camel.model.rest.PostDefinition"),
                     @YamlProperty(name = "produces", type = "string"),
-                    @YamlProperty(name = "put", type = "array:org.apache.camel.model.rest.PutVerbDefinition"),
+                    @YamlProperty(name = "put", type = "array:org.apache.camel.model.rest.PutDefinition"),
                     @YamlProperty(name = "security-definitions", type = "object:org.apache.camel.model.rest.RestSecuritiesDefinition"),
                     @YamlProperty(name = "security-requirements", type = "object:org.apache.camel.model.rest.RestSecuritiesRequirement"),
                     @YamlProperty(name = "skip-binding-on-error-code", type = "string"),
@@ -11956,7 +11920,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     if (existing == null) {
                         existing = new java.util.ArrayList<>();
                     }
-                    java.util.List val = asFlatList(node, org.apache.camel.model.rest.DeleteVerbDefinition.class);
+                    java.util.List val = asFlatList(node, org.apache.camel.model.rest.DeleteDefinition.class);
                     existing.addAll(val);
                     target.setVerbs(existing);
                     break;
@@ -11966,7 +11930,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     if (existing == null) {
                         existing = new java.util.ArrayList<>();
                     }
-                    java.util.List val = asFlatList(node, org.apache.camel.model.rest.GetVerbDefinition.class);
+                    java.util.List val = asFlatList(node, org.apache.camel.model.rest.GetDefinition.class);
                     existing.addAll(val);
                     target.setVerbs(existing);
                     break;
@@ -11976,7 +11940,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     if (existing == null) {
                         existing = new java.util.ArrayList<>();
                     }
-                    java.util.List val = asFlatList(node, org.apache.camel.model.rest.HeadVerbDefinition.class);
+                    java.util.List val = asFlatList(node, org.apache.camel.model.rest.HeadDefinition.class);
                     existing.addAll(val);
                     target.setVerbs(existing);
                     break;
@@ -11986,7 +11950,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     if (existing == null) {
                         existing = new java.util.ArrayList<>();
                     }
-                    java.util.List val = asFlatList(node, org.apache.camel.model.rest.PatchVerbDefinition.class);
+                    java.util.List val = asFlatList(node, org.apache.camel.model.rest.PatchDefinition.class);
                     existing.addAll(val);
                     target.setVerbs(existing);
                     break;
@@ -11996,7 +11960,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     if (existing == null) {
                         existing = new java.util.ArrayList<>();
                     }
-                    java.util.List val = asFlatList(node, org.apache.camel.model.rest.PostVerbDefinition.class);
+                    java.util.List val = asFlatList(node, org.apache.camel.model.rest.PostDefinition.class);
                     existing.addAll(val);
                     target.setVerbs(existing);
                     break;
@@ -12006,7 +11970,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     if (existing == null) {
                         existing = new java.util.ArrayList<>();
                     }
-                    java.util.List val = asFlatList(node, org.apache.camel.model.rest.PutVerbDefinition.class);
+                    java.util.List val = asFlatList(node, org.apache.camel.model.rest.PutDefinition.class);
                     existing.addAll(val);
                     target.setVerbs(existing);
                     break;

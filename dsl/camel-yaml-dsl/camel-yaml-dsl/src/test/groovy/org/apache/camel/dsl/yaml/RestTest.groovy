@@ -21,8 +21,8 @@ import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.dsl.yaml.support.model.MyBean
 import org.apache.camel.dsl.yaml.support.model.MyFooBar
 import org.apache.camel.model.ToDefinition
-import org.apache.camel.model.rest.GetVerbDefinition
-import org.apache.camel.model.rest.PostVerbDefinition
+import org.apache.camel.model.rest.GetDefinition
+import org.apache.camel.model.rest.PostDefinition
 import org.apache.camel.model.rest.RestDefinition
 import org.apache.camel.model.rest.VerbDefinition
 
@@ -142,7 +142,7 @@ class RestTest extends YamlTestSupport {
             with(context.restDefinitions[0], RestDefinition) {
                 verbs.size() == 3
 
-                with(verbs[0], PostVerbDefinition) {
+                with(verbs[0], PostDefinition) {
                     uri == '/foo'
                     type == MyFooBar.name
                     outType == MyBean.name
@@ -151,13 +151,13 @@ class RestTest extends YamlTestSupport {
                         endpointUri == 'direct:foo'
                     }
                 }
-                with(verbs[1], PostVerbDefinition) {
+                with(verbs[1], PostDefinition) {
                     uri == '/baz'
                     with(to, ToDefinition) {
                         endpointUri == 'direct:baz'
                     }
                 }
-                with(verbs[2], GetVerbDefinition) {
+                with(verbs[2], GetDefinition) {
                     uri == '/getFoo'
                     with(to, ToDefinition) {
                         endpointUri == 'direct:getFoo'

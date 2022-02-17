@@ -43,9 +43,6 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition> implements Block, OutputNode {
 
-    @XmlAttribute
-    private String method;
-
     @XmlElementRef
     private List<RestOperationParamDefinition> params = new ArrayList<>();
 
@@ -127,11 +124,7 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
 
     @Override
     public String getLabel() {
-        if (method != null) {
-            return method;
-        } else {
-            return "verb";
-        }
+        return "verb";
     }
 
     @Override
@@ -191,17 +184,6 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
      */
     public void setSecurity(List<SecurityDefinition> security) {
         this.security = security;
-    }
-
-    public String getMethod() {
-        return method;
-    }
-
-    /**
-     * The HTTP verb such as GET, POST, DELETE, etc.
-     */
-    public void setMethod(String method) {
-        this.method = method;
     }
 
     public String getUri() {
@@ -506,9 +488,8 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
             return "delete";
         } else if (this instanceof HeadDefinition) {
             return "head";
-        } else {
-            return method;
         }
+        throw new IllegalArgumentException("Verb not supported");
     }
 
     public Boolean getUsedForGeneratingNodeId() {

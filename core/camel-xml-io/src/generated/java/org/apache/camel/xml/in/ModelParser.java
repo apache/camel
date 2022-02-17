@@ -2815,7 +2815,6 @@ public class ModelParser extends BaseParser {
                 case "consumes": def.setConsumes(val); break;
                 case "deprecated": def.setDeprecated(Boolean.valueOf(val)); break;
                 case "enableCORS": def.setEnableCORS(val); break;
-                case "method": def.setMethod(val); break;
                 case "outType": def.setOutType(val); break;
                 case "produces": def.setProduces(val); break;
                 case "routeId": def.setRouteId(val); break;
