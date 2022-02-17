@@ -26,4 +26,3 @@ RestSecurityOAuth2
 RestSecurityOpenIdConnect
 RestsDefinition
 SecurityDefinition
-VerbDefinition

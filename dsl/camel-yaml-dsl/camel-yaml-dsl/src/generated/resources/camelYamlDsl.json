@@ -7165,7 +7165,7 @@
           "tag" : {
             "type" : "string"
           },
-          "verb" : {
+          "verbs" : {
             "type" : "array",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.VerbDefinition"
@@ -7460,89 +7460,6 @@
           }
         },
         "required" : [ "key" ]
-      },
-      "org.apache.camel.model.rest.VerbDefinition" : {
-        "type" : "object",
-        "properties" : {
-          "apiDocs" : {
-            "type" : "string"
-          },
-          "bindingMode" : {
-            "type" : "string"
-          },
-          "clientRequestValidation" : {
-            "type" : "string"
-          },
-          "consumes" : {
-            "type" : "string"
-          },
-          "deprecated" : {
-            "type" : "boolean"
-          },
-          "description" : {
-            "type" : "string"
-          },
-          "enableCors" : {
-            "type" : "string"
-          },
-          "id" : {
-            "type" : "string"
-          },
-          "method" : {
-            "type" : "string"
-          },
-          "outType" : {
-            "type" : "string"
-          },
-          "param" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestOperationParamDefinition"
-            }
-          },
-          "produces" : {
-            "type" : "string"
-          },
-          "responseMessage" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestOperationResponseMsgDefinition"
-            }
-          },
-          "route" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.RouteDefinition"
-          },
-          "routeId" : {
-            "type" : "string"
-          },
-          "security" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.rest.SecurityDefinition"
-            }
-          },
-          "skipBindingOnErrorCode" : {
-            "type" : "string"
-          },
-          "steps" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.ProcessorDefinition"
-            }
-          },
-          "to" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.ToDefinition"
-          },
-          "toD" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.ToDynamicDefinition"
-          },
-          "type" : {
-            "type" : "string"
-          },
-          "uri" : {
-            "type" : "string"
-          }
-        }
       },
       "org.apache.camel.model.transformer.CustomTransformerDefinition" : {
         "type" : "object",
