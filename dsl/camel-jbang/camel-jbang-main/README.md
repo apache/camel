@@ -63,19 +63,38 @@ You need to first export the credentials as enviroment variables:
 
 [source,sh]
 ----
-export AWS_REGION=<region>
-export AWS_SECRET_KEY=<secretKey>
-export AWS_ACCESS_KEY=<accessKey>
+export CAMEL_VAULT_AWS_REGION=<region>
+export CAMEL_VAULT_AWS_SECRET_KEY=<secretKey>
+export CAMEL_VAULT_AWS_ACCESS_KEY=<accessKey>
+----
+
+or you can specify them as properties in a separated file:
+
+[source,sh]
+----
+camel.aws.vault.access.key=<accessKey>
+camel.aws.vault.secret.key=<secretKey>
+camel.aws.vault.region=<region>
 ----
 
 Create the secret on AWS Secrets Manager. 
 
 Login into your AWS Account and create a secret called "finnhub_token" with the Finnhub.io token value, you retrieved from finnhub_token.
 
+If you're using the env properties approach:
+
 Then you should be able to add
 
 ```
 jbang --fresh -Dcamel.jbang.version=3.16.0-SNAPSHOT  camel@apache/camel run --modeline=true  ../examples/aws-secrets-manager-properties.yaml
+```
+
+If you're using the properties file approach:
+
+Then you should be able to add
+
+```
+jbang --fresh -Dcamel.jbang.version=3.16.0-SNAPSHOT  camel@apache/camel run --modeline=true --properties=<path>  ../examples/aws-secrets-manager-properties.yaml
 ```
 
 And you should see the following output:
