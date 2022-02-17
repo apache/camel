@@ -33,7 +33,6 @@ public class RestPropertyDefinition {
 
     @XmlAttribute(required = true)
     private String key;
-
     @XmlAttribute(required = true)
     private String value;
 

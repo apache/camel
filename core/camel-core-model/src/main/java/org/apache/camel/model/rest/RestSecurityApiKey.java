@@ -34,15 +34,12 @@ public class RestSecurityApiKey extends RestSecurityDefinition {
     @XmlAttribute(name = "name", required = true)
     @Metadata(required = true)
     private String name;
-
     @XmlAttribute(name = "inHeader")
     @Metadata(javaType = "java.lang.Boolean")
     private String inHeader;
-
     @XmlAttribute(name = "inQuery")
     @Metadata(javaType = "java.lang.Boolean")
     private String inQuery;
-
     @XmlAttribute(name = "inCookie")
     @Metadata(javaType = "java.lang.Boolean")
     private String inCookie;

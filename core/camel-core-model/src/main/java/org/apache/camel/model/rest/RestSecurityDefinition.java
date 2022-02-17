@@ -35,7 +35,6 @@ public abstract class RestSecurityDefinition {
     @XmlAttribute(required = true)
     @Metadata(required = true)
     private String key;
-
     @XmlAttribute
     private String description;
 

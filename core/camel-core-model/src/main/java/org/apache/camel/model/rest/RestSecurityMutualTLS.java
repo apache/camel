@@ -29,6 +29,7 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "mutualTLS")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RestSecurityMutualTLS extends RestSecurityDefinition {
+
     @SuppressWarnings("unused")
     public RestSecurityMutualTLS() {
     }

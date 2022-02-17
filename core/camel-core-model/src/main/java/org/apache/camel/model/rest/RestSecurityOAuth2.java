@@ -37,17 +37,13 @@ public class RestSecurityOAuth2 extends RestSecurityDefinition {
 
     @XmlAttribute
     private String authorizationUrl;
-
     @XmlAttribute
     private String tokenUrl;
-
     @XmlAttribute
     private String refreshUrl;
-
     @XmlAttribute
     @Metadata(enums = "implicit,password,application,clientCredentials,accessCode,authorizationCode")
     private String flow;
-
     @XmlElement(name = "scopes")
     private List<RestPropertyDefinition> scopes = new ArrayList<>();
 

@@ -40,12 +40,11 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "securityRequirements")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RestSecuritiesRequirement {
+
     @XmlTransient
     RestDefinition rest;
-
     @XmlTransient
     Map<String, SecurityDefinition> itemsMap = new HashMap<>();
-
     @XmlElements({ @XmlElement(name = "securityRequirement", type = SecurityDefinition.class) })
     List<SecurityDefinition> securityRequirements = new ArrayList<>();
 

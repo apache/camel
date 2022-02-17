@@ -44,30 +44,22 @@ public class RestOperationResponseHeaderDefinition {
 
     @XmlAttribute(required = true)
     private String name;
-
     @XmlAttribute
-    @Metadata(defaultValue = "")
     private String description;
-
     @XmlAttribute
     @Metadata(defaultValue = "csv")
     private CollectionFormat collectionFormat;
-
     @XmlAttribute
     @Metadata(defaultValue = "string")
     private String arrayType;
-
     @XmlAttribute
     @Metadata(defaultValue = "string")
     private String dataType;
-
     @XmlAttribute
     private String dataFormat;
-
     @XmlElementWrapper(name = "allowableValues")
     @XmlElement(name = "value")
     private List<String> allowableValues;
-
     @XmlAttribute
     private String example;
 

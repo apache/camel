@@ -43,17 +43,12 @@ public class RestOperationResponseMsgDefinition {
     @XmlAttribute
     @Metadata(defaultValue = "200")
     private String code;
-
     @XmlAttribute(required = true)
     private String message;
-
     @XmlAttribute
-    @Metadata(defaultValue = "")
     private String responseModel;
-
     @XmlElement(name = "header")
     private List<RestOperationResponseHeaderDefinition> headers;
-
     @XmlElement(name = "examples")
     private List<RestPropertyDefinition> examples;
 

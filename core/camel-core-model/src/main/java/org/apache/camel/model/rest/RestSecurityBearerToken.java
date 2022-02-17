@@ -30,6 +30,7 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "bearerToken")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RestSecurityBearerToken extends RestSecurityDefinition {
+
     @XmlAttribute
     private String format;
 

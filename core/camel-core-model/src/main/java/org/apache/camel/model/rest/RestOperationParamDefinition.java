@@ -44,42 +44,30 @@ public class RestOperationParamDefinition {
 
     @XmlAttribute(required = true)
     private String name;
-
     @XmlAttribute(required = true)
     @Metadata(defaultValue = "path")
     private RestParamType type;
-
     @XmlAttribute
-    @Metadata(defaultValue = "")
     private String description;
-
     @XmlAttribute
-    @Metadata(defaultValue = "")
     private String defaultValue;
-
     @XmlAttribute
     @Metadata(defaultValue = "true")
     private Boolean required;
-
     @XmlAttribute
     @Metadata(defaultValue = "csv")
     private CollectionFormat collectionFormat;
-
     @XmlAttribute
     @Metadata(defaultValue = "string")
     private String arrayType;
-
     @XmlAttribute
     @Metadata(defaultValue = "string")
     private String dataType;
-
     @XmlAttribute
     private String dataFormat;
-
     @XmlElementWrapper(name = "allowableValues")
     @XmlElement(name = "value")
     private List<String> allowableValues;
-
     @XmlElement(name = "examples")
     private List<RestPropertyDefinition> examples;
 

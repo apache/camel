@@ -43,102 +43,75 @@ public class RestConfigurationDefinition {
 
     @XmlAttribute
     private String component;
-
     @XmlAttribute
     @Metadata(label = "consumer")
     private String apiComponent;
-
     @XmlAttribute
     @Metadata(label = "producer")
     private String producerComponent;
-
     @XmlAttribute
     private String scheme;
-
     @XmlAttribute
     private String host;
-
     @XmlAttribute
     private String apiHost;
-
     @XmlAttribute
     @Metadata(defaultValue = "true", label = "consumer")
     private Boolean useXForwardHeaders;
-
     @XmlAttribute
     private String port;
-
     @XmlAttribute
     @Metadata(label = "producer")
     private String producerApiDoc;
-
     @XmlAttribute
     @Metadata(label = "consumer")
     private String contextPath;
-
     @XmlAttribute
     @Metadata(label = "consumer")
     private String apiContextPath;
-
     @XmlAttribute
     @Metadata(label = "consumer")
     private String apiContextRouteId;
-
     @XmlAttribute
     @Metadata(label = "consumer")
     @Deprecated
     private String apiContextIdPattern;
-
     @XmlAttribute
     @Metadata(label = "consumer")
     @Deprecated
     private Boolean apiContextListing;
-
     @XmlAttribute
     @Metadata(label = "consumer")
     private Boolean apiVendorExtension;
-
     @XmlAttribute
-    @Metadata(label = "consumer")
+    @Metadata(label = "consumer", defaultValue = "allLocalIp")
     private RestHostNameResolver hostNameResolver;
-
     @XmlAttribute
     @Metadata(defaultValue = "off")
     private RestBindingMode bindingMode;
-
     @XmlAttribute
     private Boolean skipBindingOnErrorCode;
-
     @XmlAttribute
     private Boolean clientRequestValidation;
-
     @XmlAttribute
     @Metadata(label = "consumer")
     private Boolean enableCORS;
-
     @XmlAttribute
     private String jsonDataFormat;
-
     @XmlAttribute
     private String xmlDataFormat;
-
     @XmlElement(name = "componentProperty")
     private List<RestPropertyDefinition> componentProperties = new ArrayList<>();
-
     @XmlElement(name = "endpointProperty")
     private List<RestPropertyDefinition> endpointProperties = new ArrayList<>();
-
     @XmlElement(name = "consumerProperty")
     @Metadata(label = "consumer")
     private List<RestPropertyDefinition> consumerProperties = new ArrayList<>();
-
     @XmlElement(name = "dataFormatProperty")
     private List<RestPropertyDefinition> dataFormatProperties = new ArrayList<>();
-
     @XmlElement(name = "apiProperty")
     @Metadata(label = "consumer")
     private List<RestPropertyDefinition> apiProperties = new ArrayList<>();
-
     @XmlElement(name = "corsHeaders")
     @Metadata(label = "consumer")
     private List<RestPropertyDefinition> corsHeaders = new ArrayList<>();

@@ -14517,7 +14517,7 @@ supports vendor-extensions when importing your API docs. Default value: false
       <xs:annotation>
         <xs:documentation xml:lang="en"><![CDATA[
 If no hostname has been explicit configured, then this resolver is used to
-compute the hostname the REST service will be using.
+compute the hostname the REST service will be using. Default value: allLocalIp
         ]]></xs:documentation>
       </xs:annotation>
     </xs:attribute>

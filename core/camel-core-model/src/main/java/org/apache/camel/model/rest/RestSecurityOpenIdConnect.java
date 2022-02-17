@@ -30,6 +30,7 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "openIdConnect")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RestSecurityOpenIdConnect extends RestSecurityDefinition {
+
     @XmlAttribute(required = true)
     private String url;
 
