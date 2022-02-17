@@ -17,9 +17,14 @@
 package org.apache.camel.component.aws.secretsmanager;
 
 import java.util.Base64;
+import java.util.Properties;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.PropertiesFunction;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
@@ -35,9 +40,9 @@ import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueRespon
  * The credentials to access Secrets Manager is defined using three environment variables representing the static
  * credentials:
  * <ul>
- * <li><tt>AWS_ACCESS_KEY</tt></li>
- * <li><tt>AWS_SECRET_KEY</tt></li>
- * <li><tt>AWS_REGION</tt></li>
+ * <li><tt>CAMEL_VAULT_AWS_ACCESS_KEY</tt></li>
+ * <li><tt>CAMEL_VAULT_AWS_SECRET_KEY</tt></li>
+ * <li><tt>CAMEL_VAULT_AWS_REGION</tt></li>
  * </ul>
  * <p/>
  * This implementation is to return the secret value associated with a key. The properties related to this kind of
@@ -46,11 +51,12 @@ import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueRespon
  */
 
 @org.apache.camel.spi.annotations.PropertiesFunction("aws")
-public class SecretsManagerPropertiesFunction extends ServiceSupport implements PropertiesFunction {
+public class SecretsManagerPropertiesFunction extends ServiceSupport implements PropertiesFunction, CamelContextAware {
 
-    private static final String ACCESS_KEY = "AWS_ACCESS_KEY";
-    private static final String SECRET_KEY = "AWS_SECRET_KEY";
-    private static final String REGION = "AWS_REGION";
+    private CamelContext camelContext;
+    private static final String ACCESS_KEY = "CAMEL_VAULT_AWS_ACCESS_KEY";
+    private static final String SECRET_KEY = "CAMEL_VAULT_AWS_SECRET_KEY";
+    private static final String REGION = "CAMEL_VAULT_AWS_REGION";
     private SecretsManagerClient client;
 
     @Override
@@ -59,6 +65,13 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
         String accessKey = System.getenv(ACCESS_KEY);
         String secretKey = System.getenv(SECRET_KEY);
         String region = System.getenv(REGION);
+        if (ObjectHelper.isEmpty(accessKey) && ObjectHelper.isEmpty(secretKey) && ObjectHelper.isEmpty(region)) {
+            PropertiesComponent pc = getCamelContext().getPropertiesComponent();
+            Properties p = pc.loadProperties();
+            accessKey = p.getProperty("camel.aws.vault.access.key");
+            secretKey = p.getProperty("camel.aws.vault.secret.key");
+            region = p.getProperty("camel.aws.vault.region");
+        }
         SecretsManagerClientBuilder clientBuilder = SecretsManagerClient.builder();
         AwsBasicCredentials cred = AwsBasicCredentials.create(accessKey, secretKey);
         clientBuilder = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred));
@@ -110,5 +123,15 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
             returnValue = new String(Base64.getDecoder().decode(secret.secretBinary().asByteBuffer()).array());
         }
         return returnValue;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
     }
 }
