@@ -80,6 +80,15 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     private String enableCORS;
 
     @XmlAttribute
+    private String routeId;
+
+    @XmlAttribute
+    private String apiDocs;
+
+    @XmlAttribute
+    private Boolean deprecated;
+
+    @XmlAttribute
     private String type;
 
     @XmlTransient
@@ -110,13 +119,6 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     private RouteDefinition route;
     @XmlTransient
     private RestDefinition rest;
-    @XmlAttribute
-    private String routeId;
-    @XmlAttribute
-    private String apiDocs;
-    @XmlAttribute
-    private Boolean deprecated;
-
     @XmlTransient
     private Boolean usedForGeneratingNodeId = Boolean.FALSE;
 

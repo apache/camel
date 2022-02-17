@@ -1288,6 +1288,11 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
         private int weight(EipOptionModel o) {
             String name = o.getName();
 
+            // required name/key should be in top
+            if (o.isRequired() && ("language".equals(name) || "name".equals(name) || "key".equals(name))) {
+                return 20;
+            }
+
             // these should be first
             if ("expression".equals(name)) {
                 return 10;
