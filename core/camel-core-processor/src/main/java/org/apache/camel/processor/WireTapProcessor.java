@@ -17,8 +17,6 @@
 package org.apache.camel.processor;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.LongAdder;
 
@@ -29,7 +27,6 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangePropertyKey;
-import org.apache.camel.Expression;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
@@ -72,11 +69,6 @@ public class WireTapProcessor extends AsyncProcessorSupport
     private final LongAdder taskCount = new LongAdder();
     private ProcessorExchangeFactory processorExchangeFactory;
     private PooledExchangeTaskFactory taskFactory;
-
-    // expression or processor used for populating a new exchange to send
-    // as opposed to traditional wiretap that sends a copy of the original exchange
-    private Expression newExchangeExpression;
-    private List<Processor> newExchangeProcessors;
     private Processor onPrepare;
 
     public WireTapProcessor(SendDynamicProcessor dynamicSendProcessor, Processor processor, String uri,
@@ -233,24 +225,6 @@ public class WireTapProcessor extends AsyncProcessorSupport
             answer = configureNewExchange(exchange);
         }
 
-        // prepare the exchange
-        if (newExchangeExpression != null) {
-            Object body = newExchangeExpression.evaluate(answer, Object.class);
-            if (body != null) {
-                answer.getIn().setBody(body);
-            }
-        }
-
-        if (newExchangeProcessors != null) {
-            for (Processor processor : newExchangeProcessors) {
-                try {
-                    processor.process(answer);
-                } catch (Exception e) {
-                    throw RuntimeCamelException.wrapRuntimeCamelException(e);
-                }
-            }
-        }
-
         // if the body is a stream cache we must use a copy of the stream in the wire tapped exchange
         Message msg = answer.getMessage();
         if (msg.getBody() instanceof StreamCache) {
@@ -292,29 +266,6 @@ public class WireTapProcessor extends AsyncProcessorSupport
 
     private Exchange configureNewExchange(Exchange exchange) {
         return processorExchangeFactory.create(exchange.getFromEndpoint(), ExchangePattern.InOnly);
-    }
-
-    public List<Processor> getNewExchangeProcessors() {
-        return newExchangeProcessors;
-    }
-
-    public void setNewExchangeProcessors(List<Processor> newExchangeProcessors) {
-        this.newExchangeProcessors = newExchangeProcessors;
-    }
-
-    public Expression getNewExchangeExpression() {
-        return newExchangeExpression;
-    }
-
-    public void setNewExchangeExpression(Expression newExchangeExpression) {
-        this.newExchangeExpression = newExchangeExpression;
-    }
-
-    public void addNewExchangeProcessor(Processor processor) {
-        if (newExchangeProcessors == null) {
-            newExchangeProcessors = new ArrayList<>();
-        }
-        newExchangeProcessors.add(processor);
     }
 
     public boolean isCopy() {

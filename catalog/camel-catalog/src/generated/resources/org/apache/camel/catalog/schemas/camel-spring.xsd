@@ -12399,25 +12399,7 @@ exception to throw instead.
   <xs:complexType name="wireTapDefinition">
     <xs:complexContent>
       <xs:extension base="tns:toDynamicDefinition">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="body" type="tns:expressionSubElementDefinition">
-            <xs:annotation>
-              <xs:documentation xml:lang="en"><![CDATA[
-Uses the expression for creating a new body as the message to use for wire
-tapping.
-              ]]></xs:documentation>
-            </xs:annotation>
-          </xs:element>
-          <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:setHeader"/>
-        </xs:sequence>
-        <xs:attribute name="processorRef" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Reference to a Processor to use for creating a new body as the message to use
-for wire tapping.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
+        <xs:sequence/>
         <xs:attribute name="executorServiceRef" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[

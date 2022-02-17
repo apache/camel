@@ -3530,9 +3530,6 @@
           "auto-start-components" : {
             "type" : "boolean"
           },
-          "body" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.ExpressionSubElementDefinition"
-          },
           "cache-size" : {
             "type" : "number"
           },
@@ -3565,15 +3562,6 @@
           },
           "pattern" : {
             "type" : "string"
-          },
-          "processor-ref" : {
-            "type" : "string"
-          },
-          "set-header" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.SetHeaderDefinition"
-            }
           },
           "uri" : {
             "type" : "string"

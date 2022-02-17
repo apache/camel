@@ -17852,7 +17852,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "allow-optimised-components", type = "boolean"),
                     @YamlProperty(name = "auto-start-components", type = "boolean"),
-                    @YamlProperty(name = "body", type = "object:org.apache.camel.model.ExpressionSubElementDefinition"),
                     @YamlProperty(name = "cache-size", type = "number"),
                     @YamlProperty(name = "copy", type = "boolean"),
                     @YamlProperty(name = "description", type = "string"),
@@ -17864,8 +17863,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "on-prepare-ref", type = "string"),
                     @YamlProperty(name = "parameters", type = "object"),
                     @YamlProperty(name = "pattern", type = "string"),
-                    @YamlProperty(name = "processor-ref", type = "string"),
-                    @YamlProperty(name = "set-header", type = "array:org.apache.camel.model.SetHeaderDefinition"),
                     @YamlProperty(name = "uri", type = "string", required = true)
             }
     )
@@ -17919,11 +17916,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setExecutorServiceRef(val);
                     break;
                 }
-                case "set-header": {
-                    java.util.List<org.apache.camel.model.SetHeaderDefinition> val = asFlatList(node, org.apache.camel.model.SetHeaderDefinition.class);
-                    target.setHeaders(val);
-                    break;
-                }
                 case "ignore-invalid-endpoint": {
                     String val = asText(node);
                     target.setIgnoreInvalidEndpoint(val);
@@ -17932,16 +17924,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "inherit-error-handler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
-                    break;
-                }
-                case "body": {
-                    org.apache.camel.model.ExpressionSubElementDefinition val = asType(node, org.apache.camel.model.ExpressionSubElementDefinition.class);
-                    target.setNewExchangeExpression(val);
-                    break;
-                }
-                case "processor-ref": {
-                    String val = asText(node);
-                    target.setNewExchangeProcessorRef(val);
                     break;
                 }
                 case "on-prepare-ref": {

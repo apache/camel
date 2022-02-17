@@ -1562,18 +1562,10 @@ public class ModelParser extends BaseParser {
                 case "dynamicUri": def.setDynamicUri(val); break;
                 case "executorServiceRef": def.setExecutorServiceRef(val); break;
                 case "onPrepareRef": def.setOnPrepareRef(val); break;
-                case "processorRef": def.setNewExchangeProcessorRef(val); break;
                 default: return toDynamicDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;
-        }, (def, key) -> {
-            switch (key) {
-                case "setHeader": doAdd(doParseSetHeaderDefinition(), def.getHeaders(), def::setHeaders); break;
-                case "body": def.setNewExchangeExpression(doParseExpressionSubElementDefinition()); break;
-                default: return optionalIdentifiedDefinitionElementHandler().accept(def, key);
-            }
-            return true;
-        }, noValueHandler());
+        }, optionalIdentifiedDefinitionElementHandler(), noValueHandler());
     }
     protected BlacklistServiceCallServiceFilterConfiguration doParseBlacklistServiceCallServiceFilterConfiguration() throws IOException, XmlPullParserException {
         return doParse(new BlacklistServiceCallServiceFilterConfiguration(),

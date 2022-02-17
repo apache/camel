@@ -18,12 +18,9 @@ image::eip/WireTap.gif[image]
 include::partial$eip-options.adoc[]
 // eip options: END
 
-== WireTap Nodes
+== Wire Tap
 
-Camel's Wire Tap node supports two modes when wire tapping an
-xref:manual::exchange.adoc[Exchange]:
-
-- _Default mode_: Camel will copy the original
+Camel's Wire Tap will copy the original
 xref:manual::exchange.adoc[Exchange] and set its
 xref:manual::exchange-pattern.adoc[Exchange Pattern] to *`InOnly`*, as we want
 the tapped xref:manual::exchange.adoc[Exchange] to be sent in a fire and forget
@@ -33,15 +30,11 @@ only the `Exchange` is copied - Wire Tap won't do a deep clone (unless you
 specify a custom processor via *`onPrepareRef`* which does that). So all
 copies could share objects from the original `Exchange`.
 
-- _New mode_: Camel also provides an option of sending a new
-xref:manual::exchange.adoc[Exchange] allowing you to populate it with new
-values.
-
 === Using Wire Tap
 
 In the example below the exchange is wire tapped to the direct:tap route.
 This route delays the message 1 second before continuing. This is because
-it allows you to see that the tapped message is routed independently from the original
+it allows you to see that the tapped message is routed independently of the original
 route, so that you would see log:result happens before log:tap
 
 [source,java]
@@ -100,54 +93,6 @@ And in XML:
   <wireTap uri="jms:queue:backup-${header.id}"/>
   <to uri="bean:doSomething"/>
 </route>
-----
-
-=== Wire tapping a new message
-
-In the _new mode_ then the wire tap will create a new `Exchange` that gets populated with new data, to be sent
-out from the wire tap. The idea is to allow you to construct the tapped message with information from the original
-message.
-
-The construction of the new message is done via a `Processor` where you populate the `Exchange`
-
-[source,java]
-----
-from("direct:start")
-  .wireTap("direct:tap").newExchange(exchange -> {
-        String oldBody = exchange.getMessage().getBody(String.class);
-        String newBody = "We are listening: " + oldBody;
-        exchange.getMessage().setBody(newBody);
-        exchange.getMessage().setHeader("tapId", "123");
-    })
-    .to("log:result");
-
-from("direct:tap")
-  .to("log:tap");
-----
-
-And in XML we are using `<body>` and `<setHeader`> (This is also possible in Java DSL)
-to construct the message, instead of using a `Processor`:
-
-[source,xml]
-----
-<routes>
-
-  <route>
-    <from uri="direct:start"/>
-    <wireTap uri="direct:tap">
-      <body><simple>We are listening: ${body}</simple></body>
-      <setHeader name="tapId"><constant>123</constant></setHeader>
-    </wireTap>
-    <to uri="log:result"/>
-  </route>
-
-  <route>
-    <from uri="direct:tap"/>
-    <to uri="log:log"/>
-  </route>
-
-</routes>
-
 ----
 
 

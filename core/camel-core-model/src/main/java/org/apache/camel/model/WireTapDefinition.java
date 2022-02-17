@@ -16,20 +16,15 @@
  */
 package org.apache.camel.model;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.Metadata;
 
@@ -42,14 +37,6 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends ToDynamicDefinition
         implements ExecutorServiceAwareDefinition<WireTapDefinition<Type>> {
-    @XmlTransient
-    private Processor newExchangeProcessor;
-    @XmlAttribute(name = "processorRef")
-    private String newExchangeProcessorRef;
-    @XmlElement(name = "body")
-    private ExpressionSubElementDefinition newExchangeExpression;
-    @XmlElementRef
-    private List<SetHeaderDefinition> headers = new ArrayList<>();
     @XmlTransient
     private ExecutorService executorService;
     @XmlAttribute
@@ -187,57 +174,6 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
     }
 
     /**
-     * Sends a <i>new</i> Exchange, instead of tapping an existing, using {@link ExchangePattern#InOnly}
-     *
-     * @param  expression expression that creates the new body to send
-     * @return            the builder
-     * @see               #newExchangeHeader(String, org.apache.camel.Expression)
-     */
-    public WireTapDefinition<Type> newExchangeBody(Expression expression) {
-        setNewExchangeExpression(new ExpressionSubElementDefinition(expression));
-        return this;
-    }
-
-    /**
-     * Sends a <i>new</i> Exchange, instead of tapping an existing, using {@link ExchangePattern#InOnly}
-     *
-     * @param  ref reference to the {@link Processor} to lookup in the {@link org.apache.camel.spi.Registry} to be used
-     *             for preparing the new exchange to send
-     * @return     the builder
-     */
-    public WireTapDefinition<Type> newExchangeRef(String ref) {
-        setNewExchangeProcessorRef(ref);
-        return this;
-    }
-
-    /**
-     * Sends a <i>new</i> Exchange, instead of tapping an existing, using {@link ExchangePattern#InOnly}
-     *
-     * @param  processor processor preparing the new exchange to send
-     * @return           the builder
-     * @see              #newExchangeHeader(String, org.apache.camel.Expression)
-     */
-    public WireTapDefinition<Type> newExchange(Processor processor) {
-        setNewExchangeProcessor(processor);
-        return this;
-    }
-
-    /**
-     * Sets a header on the <i>new</i> Exchange, instead of tapping an existing, using {@link ExchangePattern#InOnly}.
-     * <p/>
-     * Use this together with the {@link #newExchangeBody(org.apache.camel.Expression)} or
-     * {@link #newExchange(org.apache.camel.Processor)} methods.
-     *
-     * @param  headerName the header name
-     * @param  expression the expression setting the header value
-     * @return            the builder
-     */
-    public WireTapDefinition<Type> newExchangeHeader(String headerName, Expression expression) {
-        headers.add(new SetHeaderDefinition(headerName, expression));
-        return this;
-    }
-
-    /**
      * Uses the {@link Processor} when preparing the {@link org.apache.camel.Exchange} to be send. This can be used to
      * deep-clone messages that should be send, or any custom logic needed before the exchange is send.
      *
@@ -337,39 +273,6 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
         super.setUri(uri);
     }
 
-    public Processor getNewExchangeProcessor() {
-        return newExchangeProcessor;
-    }
-
-    /**
-     * To use a Processor for creating a new body as the message to use for wire tapping
-     */
-    public void setNewExchangeProcessor(Processor processor) {
-        this.newExchangeProcessor = processor;
-    }
-
-    public String getNewExchangeProcessorRef() {
-        return newExchangeProcessorRef;
-    }
-
-    /**
-     * Reference to a Processor to use for creating a new body as the message to use for wire tapping
-     */
-    public void setNewExchangeProcessorRef(String ref) {
-        this.newExchangeProcessorRef = ref;
-    }
-
-    public ExpressionSubElementDefinition getNewExchangeExpression() {
-        return newExchangeExpression;
-    }
-
-    /**
-     * Uses the expression for creating a new body as the message to use for wire tapping
-     */
-    public void setNewExchangeExpression(ExpressionSubElementDefinition newExchangeExpression) {
-        this.newExchangeExpression = newExchangeExpression;
-    }
-
     @Override
     public ExecutorService getExecutorService() {
         return executorService;
@@ -420,14 +323,6 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
 
     public void setOnPrepare(Processor onPrepare) {
         this.onPrepare = onPrepare;
-    }
-
-    public List<SetHeaderDefinition> getHeaders() {
-        return headers;
-    }
-
-    public void setHeaders(List<SetHeaderDefinition> headers) {
-        this.headers = headers;
     }
 
 }

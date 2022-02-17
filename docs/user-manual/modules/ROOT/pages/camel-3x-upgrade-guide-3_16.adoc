@@ -51,6 +51,10 @@ To:
 </saga>
 ----
 
+==== WireTap EIP
+
+Removed the _new message_ mode as this functionality is better done by using onPrepare processor in copy mode.
+
 === camel-health
 
 The `HealthCheck` API has been simplified and removed the following configurations:
