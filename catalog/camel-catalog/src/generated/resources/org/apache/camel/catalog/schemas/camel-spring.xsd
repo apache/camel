@@ -1854,14 +1854,6 @@ To configure validators.
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="verb" type="tns:verbDefinition">
-    <xs:annotation>
-      <xs:documentation xml:lang="en"><![CDATA[
-Rest command
-      ]]></xs:documentation>
-    </xs:annotation>
-  </xs:element>
-
   <xs:element name="weighted" type="tns:weightedLoadBalancerDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
@@ -14599,7 +14591,6 @@ to refer to an existing data format instance.
           <xs:element minOccurs="0" ref="tns:securityDefinitions"/>
           <xs:element minOccurs="0" ref="tns:securityRequirements"/>
           <xs:choice maxOccurs="unbounded" minOccurs="0">
-            <xs:element ref="tns:verb"/>
             <xs:element ref="tns:delete"/>
             <xs:element ref="tns:get"/>
             <xs:element ref="tns:head"/>
