@@ -98,6 +98,7 @@ public class StaticEndpointBuilders {
      * @param path httpUri
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.AhcEndpointBuilderFactory.AhcEndpointBuilder ahc(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.AhcEndpointBuilderFactory.endpointBuilder("ahc", path);
@@ -120,6 +121,7 @@ public class StaticEndpointBuilders {
      * @param path httpUri
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.AhcEndpointBuilderFactory.AhcEndpointBuilder ahc(
             String componentName,
             String path) {
@@ -141,6 +143,7 @@ public class StaticEndpointBuilders {
      * @param path httpUri
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.WsEndpointBuilderFactory.WsEndpointBuilder ahcWs(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.WsEndpointBuilderFactory.endpointBuilder("ahc-ws", path);
@@ -163,6 +166,7 @@ public class StaticEndpointBuilders {
      * @param path httpUri
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.WsEndpointBuilderFactory.WsEndpointBuilder ahcWs(
             String componentName,
             String path) {
