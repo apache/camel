@@ -100,6 +100,10 @@ The option `camel.main.packageScanRouteBuilders` has been renamed to `camel.main
 Using configuration classes must now implement the interface `org.apache.camel.main.CamelConfiguration`
 and the `configure` method now takes a `CamelContext` as argument.
 
+=== camel-yaml-dsl and camel-xml-dsl REST services
+The verb-based definition is no longer supported for defining a REST service in YAML or XML.
+Only the method-based definitions (get, post, etc) are supported.
+
 === camel-any23
 
 The option `baseURI` is renamed to `baseUri`.
