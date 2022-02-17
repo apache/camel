@@ -31,31 +31,10 @@ class WireTapTest extends YamlTestSupport {
                     steps:    
                       - wire-tap:
                          uri: "direct:wt"
-                         body:
-                             simple: "${body}"
-                         set-header:
-                           - name: "Header_1"
-                             simple: "${header.MyHeader1}"
-                           - name: "Header_2"
-                             constant: "test"
             '''
         then:
             with(context.routeDefinitions[0].outputs[0], WireTapDefinition) {
-                with (newExchangeExpression.expressionType, SimpleExpression) {
-                    language == 'simple'
-                    expression == '${body}'
-                }
-
-                headers?.size() == 2
-
-                with (headers[0].expression, SimpleExpression) {
-                    language == 'simple'
-                    expression == '${header.MyHeader1}'
-                }
-                with (headers[1].expression, ConstantExpression) {
-                    language == 'constant'
-                    expression == 'test'
-                }
+                uri == "direct:wt"
             }
     }
 }
