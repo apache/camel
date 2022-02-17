@@ -16,12 +16,12 @@
  */
 package org.apache.camel.support;
 
-import org.apache.camel.ContextTestSupport;
-import org.junit.jupiter.api.Test;
-
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import org.apache.camel.ContextTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
