@@ -18,7 +18,7 @@ package org.apache.camel.model;
 
 import javax.xml.bind.JAXBException;
 
-import org.apache.camel.model.rest.GetVerbDefinition;
+import org.apache.camel.model.rest.GetDefinition;
 import org.apache.camel.model.rest.RestContainer;
 import org.apache.camel.model.rest.RestDefinition;
 import org.junit.jupiter.api.Test;
@@ -33,7 +33,7 @@ public class XmlRestParseToDTest extends XmlTestSupport {
         assertEquals("/users", rest.getPath());
 
         assertEquals(1, rest.getVerbs().size());
-        GetVerbDefinition get = (GetVerbDefinition) rest.getVerbs().get(0);
+        GetDefinition get = (GetDefinition) rest.getVerbs().get(0);
         assertEquals("/view/{id}", get.getUri());
         assertEquals("bean:getUser?id=${header.id}", get.getToD().getUri());
     }

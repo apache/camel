@@ -494,17 +494,17 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
         // we do not want the jaxb model to repeat itself, by outputting <get
         // method="get">
         // so we infer the verb from the instance type
-        if (this instanceof GetVerbDefinition) {
+        if (this instanceof GetDefinition) {
             return "get";
-        } else if (this instanceof PostVerbDefinition) {
+        } else if (this instanceof PostDefinition) {
             return "post";
-        } else if (this instanceof PutVerbDefinition) {
+        } else if (this instanceof PutDefinition) {
             return "put";
-        } else if (this instanceof PatchVerbDefinition) {
+        } else if (this instanceof PatchDefinition) {
             return "patch";
-        } else if (this instanceof DeleteVerbDefinition) {
+        } else if (this instanceof DeleteDefinition) {
             return "delete";
-        } else if (this instanceof HeadVerbDefinition) {
+        } else if (this instanceof HeadDefinition) {
             return "head";
         } else {
             return method;

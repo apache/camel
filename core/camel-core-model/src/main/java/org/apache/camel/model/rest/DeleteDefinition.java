@@ -23,11 +23,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Rest HEAD command
+ * Rest DELETE command
  */
 @Metadata(label = "rest")
-@XmlRootElement(name = "head")
+@XmlRootElement(name = "delete")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class HeadVerbDefinition extends VerbDefinition {
+public class DeleteDefinition extends VerbDefinition {
 
 }

@@ -28,6 +28,6 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "rest")
 @XmlRootElement(name = "post")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class PostVerbDefinition extends VerbDefinition {
+public class PostDefinition extends VerbDefinition {
 
 }

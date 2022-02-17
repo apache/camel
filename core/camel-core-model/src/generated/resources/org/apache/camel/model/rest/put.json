@@ -6,7 +6,7 @@
     "description": "Rest PUT command",
     "deprecated": false,
     "label": "rest",
-    "javaType": "org.apache.camel.model.rest.PutVerbDefinition",
+    "javaType": "org.apache.camel.model.rest.PutDefinition",
     "abstract": false,
     "input": true,
     "output": false

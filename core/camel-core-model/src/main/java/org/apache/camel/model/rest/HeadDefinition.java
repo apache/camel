@@ -23,11 +23,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Rest PUT command
+ * Rest HEAD command
  */
 @Metadata(label = "rest")
-@XmlRootElement(name = "put")
+@XmlRootElement(name = "head")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class PutVerbDefinition extends VerbDefinition {
+public class HeadDefinition extends VerbDefinition {
 
 }

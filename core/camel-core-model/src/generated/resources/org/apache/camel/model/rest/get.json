@@ -6,7 +6,7 @@
     "description": "Rest GET command",
     "deprecated": false,
     "label": "rest",
-    "javaType": "org.apache.camel.model.rest.GetVerbDefinition",
+    "javaType": "org.apache.camel.model.rest.GetDefinition",
     "abstract": false,
     "input": true,
     "output": false

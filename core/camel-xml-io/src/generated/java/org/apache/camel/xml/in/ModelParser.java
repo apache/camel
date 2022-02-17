@@ -1086,12 +1086,12 @@ public class ModelParser extends BaseParser {
             return true;
         }, (def, key) -> {
             switch (key) {
-                case "delete": doAdd(doParseDeleteVerbDefinition(), def.getVerbs(), def::setVerbs); break;
-                case "get": doAdd(doParseGetVerbDefinition(), def.getVerbs(), def::setVerbs); break;
-                case "head": doAdd(doParseHeadVerbDefinition(), def.getVerbs(), def::setVerbs); break;
-                case "patch": doAdd(doParsePatchVerbDefinition(), def.getVerbs(), def::setVerbs); break;
-                case "post": doAdd(doParsePostVerbDefinition(), def.getVerbs(), def::setVerbs); break;
-                case "put": doAdd(doParsePutVerbDefinition(), def.getVerbs(), def::setVerbs); break;
+                case "delete": doAdd(doParseDeleteDefinition(), def.getVerbs(), def::setVerbs); break;
+                case "get": doAdd(doParseGetDefinition(), def.getVerbs(), def::setVerbs); break;
+                case "head": doAdd(doParseHeadDefinition(), def.getVerbs(), def::setVerbs); break;
+                case "patch": doAdd(doParsePatchDefinition(), def.getVerbs(), def::setVerbs); break;
+                case "post": doAdd(doParsePostDefinition(), def.getVerbs(), def::setVerbs); break;
+                case "put": doAdd(doParsePutDefinition(), def.getVerbs(), def::setVerbs); break;
                 case "securityDefinitions": def.setSecurityDefinitions(doParseRestSecuritiesDefinition()); break;
                 case "securityRequirements": def.setSecurityRequirements(doParseRestSecuritiesRequirement()); break;
                 default: return optionalIdentifiedDefinitionElementHandler().accept(def, key);
@@ -2802,8 +2802,8 @@ public class ModelParser extends BaseParser {
             return true;
         }, noElementHandler(), noValueHandler());
     }
-    protected DeleteVerbDefinition doParseDeleteVerbDefinition() throws IOException, XmlPullParserException {
-        return doParse(new DeleteVerbDefinition(),
+    protected DeleteDefinition doParseDeleteDefinition() throws IOException, XmlPullParserException {
+        return doParse(new DeleteDefinition(),
             verbDefinitionAttributeHandler(), verbDefinitionElementHandler(), noValueHandler());
     }
     protected <T extends VerbDefinition> AttributeHandler<T> verbDefinitionAttributeHandler() {
@@ -2896,24 +2896,24 @@ public class ModelParser extends BaseParser {
             return true;
         }, noElementHandler(), noValueHandler());
     }
-    protected GetVerbDefinition doParseGetVerbDefinition() throws IOException, XmlPullParserException {
-        return doParse(new GetVerbDefinition(),
+    protected GetDefinition doParseGetDefinition() throws IOException, XmlPullParserException {
+        return doParse(new GetDefinition(),
             verbDefinitionAttributeHandler(), verbDefinitionElementHandler(), noValueHandler());
     }
-    protected HeadVerbDefinition doParseHeadVerbDefinition() throws IOException, XmlPullParserException {
-        return doParse(new HeadVerbDefinition(),
+    protected HeadDefinition doParseHeadDefinition() throws IOException, XmlPullParserException {
+        return doParse(new HeadDefinition(),
             verbDefinitionAttributeHandler(), verbDefinitionElementHandler(), noValueHandler());
     }
-    protected PatchVerbDefinition doParsePatchVerbDefinition() throws IOException, XmlPullParserException {
-        return doParse(new PatchVerbDefinition(),
+    protected PatchDefinition doParsePatchDefinition() throws IOException, XmlPullParserException {
+        return doParse(new PatchDefinition(),
             verbDefinitionAttributeHandler(), verbDefinitionElementHandler(), noValueHandler());
     }
-    protected PostVerbDefinition doParsePostVerbDefinition() throws IOException, XmlPullParserException {
-        return doParse(new PostVerbDefinition(),
+    protected PostDefinition doParsePostDefinition() throws IOException, XmlPullParserException {
+        return doParse(new PostDefinition(),
             verbDefinitionAttributeHandler(), verbDefinitionElementHandler(), noValueHandler());
     }
-    protected PutVerbDefinition doParsePutVerbDefinition() throws IOException, XmlPullParserException {
-        return doParse(new PutVerbDefinition(),
+    protected PutDefinition doParsePutDefinition() throws IOException, XmlPullParserException {
+        return doParse(new PutDefinition(),
             verbDefinitionAttributeHandler(), verbDefinitionElementHandler(), noValueHandler());
     }
     protected RestConfigurationDefinition doParseRestConfigurationDefinition() throws IOException, XmlPullParserException {

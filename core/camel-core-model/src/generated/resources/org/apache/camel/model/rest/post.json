@@ -6,7 +6,7 @@
     "description": "Rest POST command",
     "deprecated": false,
     "label": "rest",
-    "javaType": "org.apache.camel.model.rest.PostVerbDefinition",
+    "javaType": "org.apache.camel.model.rest.PostDefinition",
     "abstract": false,
     "input": true,
     "output": false

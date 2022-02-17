@@ -28,6 +28,6 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "rest")
 @XmlRootElement(name = "patch")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class PatchVerbDefinition extends VerbDefinition {
+public class PatchDefinition extends VerbDefinition {
 
 }

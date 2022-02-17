@@ -682,17 +682,17 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         VerbDefinition answer;
 
         if ("get".equals(verb)) {
-            answer = new GetVerbDefinition();
+            answer = new GetDefinition();
         } else if ("post".equals(verb)) {
-            answer = new PostVerbDefinition();
+            answer = new PostDefinition();
         } else if ("delete".equals(verb)) {
-            answer = new DeleteVerbDefinition();
+            answer = new DeleteDefinition();
         } else if ("head".equals(verb)) {
-            answer = new HeadVerbDefinition();
+            answer = new HeadDefinition();
         } else if ("put".equals(verb)) {
-            answer = new PutVerbDefinition();
+            answer = new PutDefinition();
         } else if ("patch".equals(verb)) {
-            answer = new PatchVerbDefinition();
+            answer = new PatchDefinition();
         } else {
             answer = new VerbDefinition();
             answer.setMethod(verb);

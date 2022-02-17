@@ -6,7 +6,7 @@
     "description": "Rest HEAD command",
     "deprecated": false,
     "label": "rest",
-    "javaType": "org.apache.camel.model.rest.HeadVerbDefinition",
+    "javaType": "org.apache.camel.model.rest.HeadDefinition",
     "abstract": false,
     "input": true,
     "output": false

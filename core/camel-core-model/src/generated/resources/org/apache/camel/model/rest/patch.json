@@ -6,7 +6,7 @@
     "description": "Rest PATCH command",
     "deprecated": false,
     "label": "rest",
-    "javaType": "org.apache.camel.model.rest.PatchVerbDefinition",
+    "javaType": "org.apache.camel.model.rest.PatchDefinition",
     "abstract": false,
     "input": true,
     "output": false
