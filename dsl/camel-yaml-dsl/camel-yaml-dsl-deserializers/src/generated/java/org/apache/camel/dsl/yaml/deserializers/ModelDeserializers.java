@@ -3978,22 +3978,23 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = "delete",
             properties = {
-                    @YamlProperty(name = "api-docs", type = "string"),
+                    @YamlProperty(name = "api-docs", type = "boolean"),
                     @YamlProperty(name = "binding-mode", type = "string"),
-                    @YamlProperty(name = "client-request-validation", type = "string"),
+                    @YamlProperty(name = "client-request-validation", type = "boolean"),
                     @YamlProperty(name = "consumes", type = "string"),
                     @YamlProperty(name = "deprecated", type = "boolean"),
                     @YamlProperty(name = "description", type = "string"),
-                    @YamlProperty(name = "enable-cors", type = "string"),
+                    @YamlProperty(name = "enable-cors", type = "boolean"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "out-type", type = "string"),
                     @YamlProperty(name = "param", type = "array:org.apache.camel.model.rest.RestOperationParamDefinition"),
+                    @YamlProperty(name = "path", type = "string"),
                     @YamlProperty(name = "produces", type = "string"),
                     @YamlProperty(name = "response-message", type = "array:org.apache.camel.model.rest.RestOperationResponseMsgDefinition"),
                     @YamlProperty(name = "route", type = "object:org.apache.camel.model.RouteDefinition"),
                     @YamlProperty(name = "route-id", type = "string"),
                     @YamlProperty(name = "security", type = "array:org.apache.camel.model.rest.SecurityDefinition"),
-                    @YamlProperty(name = "skip-binding-on-error-code", type = "string"),
+                    @YamlProperty(name = "skip-binding-on-error-code", type = "boolean"),
                     @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition"),
                     @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition"),
                     @YamlProperty(name = "to-d", type = "object:org.apache.camel.model.ToDynamicDefinition"),
@@ -4037,7 +4038,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "deprecated": {
                     String val = asText(node);
-                    target.setDeprecated(java.lang.Boolean.valueOf(val));
+                    target.setDeprecated(val);
                     break;
                 }
                 case "enable-cors": {
@@ -4053,6 +4054,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "param": {
                     java.util.List<org.apache.camel.model.rest.RestOperationParamDefinition> val = asFlatList(node, org.apache.camel.model.rest.RestOperationParamDefinition.class);
                     target.setParams(val);
+                    break;
+                }
+                case "path": {
+                    String val = asText(node);
+                    target.setPath(val);
                     break;
                 }
                 case "produces": {
@@ -5349,22 +5355,23 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = "get",
             properties = {
-                    @YamlProperty(name = "api-docs", type = "string"),
+                    @YamlProperty(name = "api-docs", type = "boolean"),
                     @YamlProperty(name = "binding-mode", type = "string"),
-                    @YamlProperty(name = "client-request-validation", type = "string"),
+                    @YamlProperty(name = "client-request-validation", type = "boolean"),
                     @YamlProperty(name = "consumes", type = "string"),
                     @YamlProperty(name = "deprecated", type = "boolean"),
                     @YamlProperty(name = "description", type = "string"),
-                    @YamlProperty(name = "enable-cors", type = "string"),
+                    @YamlProperty(name = "enable-cors", type = "boolean"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "out-type", type = "string"),
                     @YamlProperty(name = "param", type = "array:org.apache.camel.model.rest.RestOperationParamDefinition"),
+                    @YamlProperty(name = "path", type = "string"),
                     @YamlProperty(name = "produces", type = "string"),
                     @YamlProperty(name = "response-message", type = "array:org.apache.camel.model.rest.RestOperationResponseMsgDefinition"),
                     @YamlProperty(name = "route", type = "object:org.apache.camel.model.RouteDefinition"),
                     @YamlProperty(name = "route-id", type = "string"),
                     @YamlProperty(name = "security", type = "array:org.apache.camel.model.rest.SecurityDefinition"),
-                    @YamlProperty(name = "skip-binding-on-error-code", type = "string"),
+                    @YamlProperty(name = "skip-binding-on-error-code", type = "boolean"),
                     @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition"),
                     @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition"),
                     @YamlProperty(name = "to-d", type = "object:org.apache.camel.model.ToDynamicDefinition"),
@@ -5408,7 +5415,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "deprecated": {
                     String val = asText(node);
-                    target.setDeprecated(java.lang.Boolean.valueOf(val));
+                    target.setDeprecated(val);
                     break;
                 }
                 case "enable-cors": {
@@ -5424,6 +5431,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "param": {
                     java.util.List<org.apache.camel.model.rest.RestOperationParamDefinition> val = asFlatList(node, org.apache.camel.model.rest.RestOperationParamDefinition.class);
                     target.setParams(val);
+                    break;
+                }
+                case "path": {
+                    String val = asText(node);
+                    target.setPath(val);
                     break;
                 }
                 case "produces": {
@@ -5786,22 +5798,23 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = "head",
             properties = {
-                    @YamlProperty(name = "api-docs", type = "string"),
+                    @YamlProperty(name = "api-docs", type = "boolean"),
                     @YamlProperty(name = "binding-mode", type = "string"),
-                    @YamlProperty(name = "client-request-validation", type = "string"),
+                    @YamlProperty(name = "client-request-validation", type = "boolean"),
                     @YamlProperty(name = "consumes", type = "string"),
                     @YamlProperty(name = "deprecated", type = "boolean"),
                     @YamlProperty(name = "description", type = "string"),
-                    @YamlProperty(name = "enable-cors", type = "string"),
+                    @YamlProperty(name = "enable-cors", type = "boolean"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "out-type", type = "string"),
                     @YamlProperty(name = "param", type = "array:org.apache.camel.model.rest.RestOperationParamDefinition"),
+                    @YamlProperty(name = "path", type = "string"),
                     @YamlProperty(name = "produces", type = "string"),
                     @YamlProperty(name = "response-message", type = "array:org.apache.camel.model.rest.RestOperationResponseMsgDefinition"),
                     @YamlProperty(name = "route", type = "object:org.apache.camel.model.RouteDefinition"),
                     @YamlProperty(name = "route-id", type = "string"),
                     @YamlProperty(name = "security", type = "array:org.apache.camel.model.rest.SecurityDefinition"),
-                    @YamlProperty(name = "skip-binding-on-error-code", type = "string"),
+                    @YamlProperty(name = "skip-binding-on-error-code", type = "boolean"),
                     @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition"),
                     @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition"),
                     @YamlProperty(name = "to-d", type = "object:org.apache.camel.model.ToDynamicDefinition"),
@@ -5845,7 +5858,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "deprecated": {
                     String val = asText(node);
-                    target.setDeprecated(java.lang.Boolean.valueOf(val));
+                    target.setDeprecated(val);
                     break;
                 }
                 case "enable-cors": {
@@ -5861,6 +5874,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "param": {
                     java.util.List<org.apache.camel.model.rest.RestOperationParamDefinition> val = asFlatList(node, org.apache.camel.model.rest.RestOperationParamDefinition.class);
                     target.setParams(val);
+                    break;
+                }
+                case "path": {
+                    String val = asText(node);
+                    target.setPath(val);
                     break;
                 }
                 case "produces": {
@@ -9564,22 +9582,23 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = "patch",
             properties = {
-                    @YamlProperty(name = "api-docs", type = "string"),
+                    @YamlProperty(name = "api-docs", type = "boolean"),
                     @YamlProperty(name = "binding-mode", type = "string"),
-                    @YamlProperty(name = "client-request-validation", type = "string"),
+                    @YamlProperty(name = "client-request-validation", type = "boolean"),
                     @YamlProperty(name = "consumes", type = "string"),
                     @YamlProperty(name = "deprecated", type = "boolean"),
                     @YamlProperty(name = "description", type = "string"),
-                    @YamlProperty(name = "enable-cors", type = "string"),
+                    @YamlProperty(name = "enable-cors", type = "boolean"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "out-type", type = "string"),
                     @YamlProperty(name = "param", type = "array:org.apache.camel.model.rest.RestOperationParamDefinition"),
+                    @YamlProperty(name = "path", type = "string"),
                     @YamlProperty(name = "produces", type = "string"),
                     @YamlProperty(name = "response-message", type = "array:org.apache.camel.model.rest.RestOperationResponseMsgDefinition"),
                     @YamlProperty(name = "route", type = "object:org.apache.camel.model.RouteDefinition"),
                     @YamlProperty(name = "route-id", type = "string"),
                     @YamlProperty(name = "security", type = "array:org.apache.camel.model.rest.SecurityDefinition"),
-                    @YamlProperty(name = "skip-binding-on-error-code", type = "string"),
+                    @YamlProperty(name = "skip-binding-on-error-code", type = "boolean"),
                     @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition"),
                     @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition"),
                     @YamlProperty(name = "to-d", type = "object:org.apache.camel.model.ToDynamicDefinition"),
@@ -9623,7 +9642,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "deprecated": {
                     String val = asText(node);
-                    target.setDeprecated(java.lang.Boolean.valueOf(val));
+                    target.setDeprecated(val);
                     break;
                 }
                 case "enable-cors": {
@@ -9639,6 +9658,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "param": {
                     java.util.List<org.apache.camel.model.rest.RestOperationParamDefinition> val = asFlatList(node, org.apache.camel.model.rest.RestOperationParamDefinition.class);
                     target.setParams(val);
+                    break;
+                }
+                case "path": {
+                    String val = asText(node);
+                    target.setPath(val);
                     break;
                 }
                 case "produces": {
@@ -9941,22 +9965,23 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = "post",
             properties = {
-                    @YamlProperty(name = "api-docs", type = "string"),
+                    @YamlProperty(name = "api-docs", type = "boolean"),
                     @YamlProperty(name = "binding-mode", type = "string"),
-                    @YamlProperty(name = "client-request-validation", type = "string"),
+                    @YamlProperty(name = "client-request-validation", type = "boolean"),
                     @YamlProperty(name = "consumes", type = "string"),
                     @YamlProperty(name = "deprecated", type = "boolean"),
                     @YamlProperty(name = "description", type = "string"),
-                    @YamlProperty(name = "enable-cors", type = "string"),
+                    @YamlProperty(name = "enable-cors", type = "boolean"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "out-type", type = "string"),
                     @YamlProperty(name = "param", type = "array:org.apache.camel.model.rest.RestOperationParamDefinition"),
+                    @YamlProperty(name = "path", type = "string"),
                     @YamlProperty(name = "produces", type = "string"),
                     @YamlProperty(name = "response-message", type = "array:org.apache.camel.model.rest.RestOperationResponseMsgDefinition"),
                     @YamlProperty(name = "route", type = "object:org.apache.camel.model.RouteDefinition"),
                     @YamlProperty(name = "route-id", type = "string"),
                     @YamlProperty(name = "security", type = "array:org.apache.camel.model.rest.SecurityDefinition"),
-                    @YamlProperty(name = "skip-binding-on-error-code", type = "string"),
+                    @YamlProperty(name = "skip-binding-on-error-code", type = "boolean"),
                     @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition"),
                     @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition"),
                     @YamlProperty(name = "to-d", type = "object:org.apache.camel.model.ToDynamicDefinition"),
@@ -10000,7 +10025,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "deprecated": {
                     String val = asText(node);
-                    target.setDeprecated(java.lang.Boolean.valueOf(val));
+                    target.setDeprecated(val);
                     break;
                 }
                 case "enable-cors": {
@@ -10016,6 +10041,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "param": {
                     java.util.List<org.apache.camel.model.rest.RestOperationParamDefinition> val = asFlatList(node, org.apache.camel.model.rest.RestOperationParamDefinition.class);
                     target.setParams(val);
+                    break;
+                }
+                case "path": {
+                    String val = asText(node);
+                    target.setPath(val);
                     break;
                 }
                 case "produces": {
@@ -10444,22 +10474,23 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = "put",
             properties = {
-                    @YamlProperty(name = "api-docs", type = "string"),
+                    @YamlProperty(name = "api-docs", type = "boolean"),
                     @YamlProperty(name = "binding-mode", type = "string"),
-                    @YamlProperty(name = "client-request-validation", type = "string"),
+                    @YamlProperty(name = "client-request-validation", type = "boolean"),
                     @YamlProperty(name = "consumes", type = "string"),
                     @YamlProperty(name = "deprecated", type = "boolean"),
                     @YamlProperty(name = "description", type = "string"),
-                    @YamlProperty(name = "enable-cors", type = "string"),
+                    @YamlProperty(name = "enable-cors", type = "boolean"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "out-type", type = "string"),
                     @YamlProperty(name = "param", type = "array:org.apache.camel.model.rest.RestOperationParamDefinition"),
+                    @YamlProperty(name = "path", type = "string"),
                     @YamlProperty(name = "produces", type = "string"),
                     @YamlProperty(name = "response-message", type = "array:org.apache.camel.model.rest.RestOperationResponseMsgDefinition"),
                     @YamlProperty(name = "route", type = "object:org.apache.camel.model.RouteDefinition"),
                     @YamlProperty(name = "route-id", type = "string"),
                     @YamlProperty(name = "security", type = "array:org.apache.camel.model.rest.SecurityDefinition"),
-                    @YamlProperty(name = "skip-binding-on-error-code", type = "string"),
+                    @YamlProperty(name = "skip-binding-on-error-code", type = "boolean"),
                     @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition"),
                     @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition"),
                     @YamlProperty(name = "to-d", type = "object:org.apache.camel.model.ToDynamicDefinition"),
@@ -10503,7 +10534,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "deprecated": {
                     String val = asText(node);
-                    target.setDeprecated(java.lang.Boolean.valueOf(val));
+                    target.setDeprecated(val);
                     break;
                 }
                 case "enable-cors": {
@@ -10519,6 +10550,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "param": {
                     java.util.List<org.apache.camel.model.rest.RestOperationParamDefinition> val = asFlatList(node, org.apache.camel.model.rest.RestOperationParamDefinition.class);
                     target.setParams(val);
+                    break;
+                }
+                case "path": {
+                    String val = asText(node);
+                    target.setPath(val);
                     break;
                 }
                 case "produces": {

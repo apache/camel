@@ -6446,13 +6446,13 @@
         "type" : "object",
         "properties" : {
           "apiDocs" : {
-            "type" : "string"
+            "type" : "boolean"
           },
           "bindingMode" : {
             "type" : "string"
           },
           "clientRequestValidation" : {
-            "type" : "string"
+            "type" : "boolean"
           },
           "consumes" : {
             "type" : "string"
@@ -6464,7 +6464,7 @@
             "type" : "string"
           },
           "enableCors" : {
-            "type" : "string"
+            "type" : "boolean"
           },
           "id" : {
             "type" : "string"
@@ -6477,6 +6477,9 @@
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestOperationParamDefinition"
             }
+          },
+          "path" : {
+            "type" : "string"
           },
           "produces" : {
             "type" : "string"
@@ -6500,7 +6503,7 @@
             }
           },
           "skipBindingOnErrorCode" : {
-            "type" : "string"
+            "type" : "boolean"
           },
           "steps" : {
             "type" : "array",
@@ -6526,13 +6529,13 @@
         "type" : "object",
         "properties" : {
           "apiDocs" : {
-            "type" : "string"
+            "type" : "boolean"
           },
           "bindingMode" : {
             "type" : "string"
           },
           "clientRequestValidation" : {
-            "type" : "string"
+            "type" : "boolean"
           },
           "consumes" : {
             "type" : "string"
@@ -6544,7 +6547,7 @@
             "type" : "string"
           },
           "enableCors" : {
-            "type" : "string"
+            "type" : "boolean"
           },
           "id" : {
             "type" : "string"
@@ -6557,6 +6560,9 @@
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestOperationParamDefinition"
             }
+          },
+          "path" : {
+            "type" : "string"
           },
           "produces" : {
             "type" : "string"
@@ -6580,7 +6586,7 @@
             }
           },
           "skipBindingOnErrorCode" : {
-            "type" : "string"
+            "type" : "boolean"
           },
           "steps" : {
             "type" : "array",
@@ -6606,13 +6612,13 @@
         "type" : "object",
         "properties" : {
           "apiDocs" : {
-            "type" : "string"
+            "type" : "boolean"
           },
           "bindingMode" : {
             "type" : "string"
           },
           "clientRequestValidation" : {
-            "type" : "string"
+            "type" : "boolean"
           },
           "consumes" : {
             "type" : "string"
@@ -6624,7 +6630,7 @@
             "type" : "string"
           },
           "enableCors" : {
-            "type" : "string"
+            "type" : "boolean"
           },
           "id" : {
             "type" : "string"
@@ -6637,6 +6643,9 @@
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestOperationParamDefinition"
             }
+          },
+          "path" : {
+            "type" : "string"
           },
           "produces" : {
             "type" : "string"
@@ -6660,7 +6669,7 @@
             }
           },
           "skipBindingOnErrorCode" : {
-            "type" : "string"
+            "type" : "boolean"
           },
           "steps" : {
             "type" : "array",
@@ -6686,13 +6695,13 @@
         "type" : "object",
         "properties" : {
           "apiDocs" : {
-            "type" : "string"
+            "type" : "boolean"
           },
           "bindingMode" : {
             "type" : "string"
           },
           "clientRequestValidation" : {
-            "type" : "string"
+            "type" : "boolean"
           },
           "consumes" : {
             "type" : "string"
@@ -6704,7 +6713,7 @@
             "type" : "string"
           },
           "enableCors" : {
-            "type" : "string"
+            "type" : "boolean"
           },
           "id" : {
             "type" : "string"
@@ -6717,6 +6726,9 @@
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestOperationParamDefinition"
             }
+          },
+          "path" : {
+            "type" : "string"
           },
           "produces" : {
             "type" : "string"
@@ -6740,7 +6752,7 @@
             }
           },
           "skipBindingOnErrorCode" : {
-            "type" : "string"
+            "type" : "boolean"
           },
           "steps" : {
             "type" : "array",
@@ -6766,13 +6778,13 @@
         "type" : "object",
         "properties" : {
           "apiDocs" : {
-            "type" : "string"
+            "type" : "boolean"
           },
           "bindingMode" : {
             "type" : "string"
           },
           "clientRequestValidation" : {
-            "type" : "string"
+            "type" : "boolean"
           },
           "consumes" : {
             "type" : "string"
@@ -6784,7 +6796,7 @@
             "type" : "string"
           },
           "enableCors" : {
-            "type" : "string"
+            "type" : "boolean"
           },
           "id" : {
             "type" : "string"
@@ -6797,6 +6809,9 @@
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestOperationParamDefinition"
             }
+          },
+          "path" : {
+            "type" : "string"
           },
           "produces" : {
             "type" : "string"
@@ -6820,7 +6835,7 @@
             }
           },
           "skipBindingOnErrorCode" : {
-            "type" : "string"
+            "type" : "boolean"
           },
           "steps" : {
             "type" : "array",
@@ -6846,13 +6861,13 @@
         "type" : "object",
         "properties" : {
           "apiDocs" : {
-            "type" : "string"
+            "type" : "boolean"
           },
           "bindingMode" : {
             "type" : "string"
           },
           "clientRequestValidation" : {
-            "type" : "string"
+            "type" : "boolean"
           },
           "consumes" : {
             "type" : "string"
@@ -6864,7 +6879,7 @@
             "type" : "string"
           },
           "enableCors" : {
-            "type" : "string"
+            "type" : "boolean"
           },
           "id" : {
             "type" : "string"
@@ -6877,6 +6892,9 @@
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestOperationParamDefinition"
             }
+          },
+          "path" : {
+            "type" : "string"
           },
           "produces" : {
             "type" : "string"
@@ -6900,7 +6918,7 @@
             }
           },
           "skipBindingOnErrorCode" : {
-            "type" : "string"
+            "type" : "boolean"
           },
           "steps" : {
             "type" : "array",
