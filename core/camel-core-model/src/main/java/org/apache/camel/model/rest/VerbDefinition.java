@@ -37,7 +37,7 @@ import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Rest command
+ * A rest operation (such as GET, POST etc.)
  */
 @Metadata(label = "rest")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -45,56 +45,45 @@ public abstract class VerbDefinition extends OptionalIdentifiedDefinition<VerbDe
 
     @XmlElementRef
     private List<RestOperationParamDefinition> params = new ArrayList<>();
-
     @XmlElementRef
     private List<RestOperationResponseMsgDefinition> responseMsgs = new ArrayList<>();
-
     @XmlElementRef
     private List<SecurityDefinition> security = new ArrayList<>();
 
     @XmlAttribute
     private String uri;
-
     @XmlAttribute
     private String consumes;
-
     @XmlAttribute
     private String produces;
-
     @XmlAttribute
-    @Metadata(defaultValue = "auto")
+    @Metadata(defaultValue = "off", enums = "off,auto,json,xml,json_xml")
     private String bindingMode;
-
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String skipBindingOnErrorCode;
-
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String clientRequestValidation;
-
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String enableCORS;
-
     @XmlAttribute
     private String routeId;
-
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String apiDocs;
-
     @XmlAttribute
-    private Boolean deprecated;
-
+    @Metadata(javaType = "java.lang.Boolean")
+    private String deprecated;
     @XmlAttribute
     private String type;
-
     @XmlTransient
     private Class<?> typeClass;
-
     @XmlAttribute
     private String outType;
-
     @XmlTransient
     private Class<?> outTypeClass;
-
     // used by XML DSL to either select a <to>, <toD>, or <route>
     // so we need to use the common type OptionalIdentifiedDefinition
     // must select one of them, and hence why they are all set to required =
@@ -136,21 +125,20 @@ public abstract class VerbDefinition extends OptionalIdentifiedDefinition<VerbDe
         route.addOutput(processorDefinition);
     }
 
-    public Boolean getDeprecated() {
-        // default is not to be deprecated
-        return deprecated != null ? deprecated : Boolean.FALSE;
+    public String getDeprecated() {
+        return deprecated;
     }
 
     /**
-     * Sets deprecated flag in openapi
+     * Marks this rest operation as deprecated in OpenApi documentation.
      */
-    public VerbDefinition deprecated() {
-        this.deprecated = Boolean.TRUE;
-        return this;
+    public void setDeprecated(String deprecated) {
+        this.deprecated = deprecated;
     }
 
-    public void setDeprecated(Boolean deprecated) {
-        this.deprecated = deprecated;
+    public VerbDefinition deprecated() {
+        this.deprecated = "true";
+        return this;
     }
 
     public List<RestOperationParamDefinition> getParams() {
@@ -228,7 +216,7 @@ public abstract class VerbDefinition extends OptionalIdentifiedDefinition<VerbDe
     /**
      * Sets the binding mode to use. This option will override what may be configured on a parent level
      * <p/>
-     * The default value is auto
+     * The default value is off
      */
     public void setBindingMode(String bindingMode) {
         this.bindingMode = bindingMode;
@@ -347,7 +335,7 @@ public abstract class VerbDefinition extends OptionalIdentifiedDefinition<VerbDe
     }
 
     /**
-     * Whether to include or exclude the VerbDefinition in API documentation.
+     * Whether to include or exclude this rest operation in API documentation.
      * <p/>
      * The default value is true.
      */

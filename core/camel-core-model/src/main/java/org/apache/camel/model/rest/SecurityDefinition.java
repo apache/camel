@@ -34,7 +34,6 @@ public class SecurityDefinition {
     @XmlAttribute(required = true)
     @Metadata(required = true)
     private String key;
-
     @XmlAttribute
     private String scopes;
 

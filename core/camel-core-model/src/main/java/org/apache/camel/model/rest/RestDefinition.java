@@ -235,8 +235,8 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     }
 
     /**
-     * Whether to include or exclude the VerbDefinition in API documentation. This option will override what may be
-     * configured on a parent level
+     * Whether to include or exclude this rest operation in API documentation. This option will override what may be
+     * configured on a parent level.
      * <p/>
      * The default value is true.
      */
