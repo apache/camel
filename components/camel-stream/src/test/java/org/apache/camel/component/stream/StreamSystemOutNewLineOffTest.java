@@ -23,13 +23,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.stream.StreamGroupLinesTest.LS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for System.out
  */
-public class StreamSystemOutTest extends CamelTestSupport {
+public class StreamSystemOutNewLineOffTest extends CamelTestSupport {
 
     String message = "Hello World";
 
@@ -48,7 +47,7 @@ public class StreamSystemOutTest extends CamelTestSupport {
             template.sendBody("direct:in", message);
 
             // Then
-            assertEquals(message + LS, new String(mockOut.toByteArray()));
+            assertEquals(message, new String(mockOut.toByteArray()));
         } finally {
             System.setOut(stdOut);
         }
@@ -64,7 +63,7 @@ public class StreamSystemOutTest extends CamelTestSupport {
             template.sendBody("direct:in", message.getBytes());
 
             // Then
-            assertEquals(message + LS, new String(mockOut.toByteArray()));
+            assertEquals(message, new String(mockOut.toByteArray()));
         } finally {
             System.setOut(stdOut);
         }
@@ -90,7 +89,7 @@ public class StreamSystemOutTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:in").to("stream:out");
+                from("direct:in").to("stream:out?appendNewLine=false");
             }
         };
     }

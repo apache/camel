@@ -120,6 +120,9 @@ public class StreamProducer extends DefaultProducer {
             if (bytes != null) {
                 LOG.debug("Writing as byte[]: {} to {}", bytes, outputStream);
                 outputStream.write(bytes);
+                if (endpoint.isAppendNewLine()) {
+                    outputStream.write(System.lineSeparator().getBytes());
+                }
                 return;
             }
         }
@@ -133,7 +136,9 @@ public class StreamProducer extends DefaultProducer {
             LOG.debug("Writing as text: {} to {} using encoding: {}", body, outputStream, charset);
         }
         bw.write(s);
-        bw.write(System.lineSeparator());
+        if (endpoint.isAppendNewLine()) {
+            bw.write(System.lineSeparator());
+        }
         bw.flush();
     }
 

@@ -46,7 +46,7 @@ public class StreamHeaderTest extends CamelTestSupport {
     public void testBinaryContent() {
         template.sendBody("direct:in", "Hello".getBytes());
         // StreamProducer is in binary mode so no \n is appended
-        assertEquals("Hello", sb.toString());
+        assertEquals("Hello" + LS, sb.toString());
     }
 
     @Override

@@ -69,6 +69,8 @@ public class StreamEndpoint extends DefaultEndpoint {
     private long initialPromptDelay = 2000;
     @UriParam(label = "consumer")
     private int groupLines;
+    @UriParam(label = "producer", defaultValue = "true")
+    private boolean appendNewLine = true;
     @UriParam(label = "producer")
     private int autoCloseCount;
     @UriParam(label = "consumer")
@@ -270,6 +272,17 @@ public class StreamEndpoint extends DefaultEndpoint {
      */
     public void setAutoCloseCount(int autoCloseCount) {
         this.autoCloseCount = autoCloseCount;
+    }
+
+    public boolean isAppendNewLine() {
+        return appendNewLine;
+    }
+
+    /**
+     * Whether to append a new line character at end of output.
+     */
+    public void setAppendNewLine(boolean appendNewLine) {
+        this.appendNewLine = appendNewLine;
     }
 
     public Charset getCharset() {

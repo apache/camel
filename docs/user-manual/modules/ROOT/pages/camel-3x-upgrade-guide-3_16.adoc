@@ -166,6 +166,11 @@ and the `configure` method now takes a `CamelContext` as argument.
 
 The option `baseURI` is renamed to `baseUri`.
 
+=== camel-stream
+
+The producer will now by default append new line character to end of output.
+The option `appendNewLine` can be used to turn this off.
+
 === camel-testcontainers
 
 This component was deprecated and is removed on this version. Users should migrate to xref:test-infra.adoc[camel-test-infra].
