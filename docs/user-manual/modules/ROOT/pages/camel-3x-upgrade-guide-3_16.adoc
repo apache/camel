@@ -30,6 +30,49 @@ Renamed the following classes in package `org.apache.camel.model.rest`:
 - `PostVerbDefinition` to `PostDefinition`
 - `PutVerbDefinition` to `PutDefinition`
 
+Rename `uri` to `path` on the verb classes listed above.
+When using XML or YAML DSL then migration is needed such as:
+
+[source,xml]
+----
+<rest>
+  <get uri="/hello/{name}">
+    ...
+  </get>
+</rest>
+----
+
+Should be:
+
+[source,xml]
+----
+<rest>
+  <get path="/hello/{name}">
+    ...
+  </get>
+</rest>
+----
+
+And in YAML DSL:
+
+[source,yaml]
+----
+rest:
+  get:
+    - uri: "/hello/{name}"
+      to: "direct:hello"
+----
+
+Should be:
+
+[source,yaml]
+----
+rest:
+  get:
+    - path: "/hello/{name}"
+      to: "direct:hello"
+----
+
 ==== Saga EIP
 
 Removed the deprecated `timeoutInMilliseconds` option, use `timeout` instead.
