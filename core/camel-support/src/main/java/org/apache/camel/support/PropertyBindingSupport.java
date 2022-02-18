@@ -34,7 +34,6 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
@@ -329,14 +328,8 @@ public final class PropertyBindingSupport {
                 // prepare for next iterator
                 newTarget = prop;
                 newClass = newTarget.getClass();
-                //do not ignore remaining parts, which was not traversed
-                if (parts.length > 1 && i < parts.length - 2) {
-                    newName = IntStream.range(i + 1, parts.length)
-                            .mapToObj(j -> parts[j])
-                            .collect(Collectors.joining("."));
-                } else {
-                    newName = parts[i + 1];
-                }
+                // do not ignore remaining parts, which was not traversed
+                newName = Arrays.stream(parts, i + 1, parts.length).collect(Collectors.joining("."));
                 // if we have not yet found a configurer for the new target
                 if (configurer == null) {
                     configurer = PropertyConfigurerHelper.resolvePropertyConfigurer(camelContext, newTarget);
