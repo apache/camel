@@ -191,7 +191,7 @@ public abstract class VerbDefinition extends OptionalIdentifiedDefinition<VerbDe
     }
 
     public String getPath() {
-        return path;
+        return path != null ? path : uri;
     }
 
     /**
