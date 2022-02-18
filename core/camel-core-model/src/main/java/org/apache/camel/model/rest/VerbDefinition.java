@@ -51,9 +51,6 @@ public abstract class VerbDefinition extends OptionalIdentifiedDefinition<VerbDe
     private List<SecurityDefinition> security = new ArrayList<>();
 
     @XmlAttribute
-    @Deprecated
-    private String uri;
-    @XmlAttribute
     private String path;
     @XmlAttribute
     private String consumes;
@@ -177,21 +174,8 @@ public abstract class VerbDefinition extends OptionalIdentifiedDefinition<VerbDe
         this.security = security;
     }
 
-    @Deprecated
-    public String getUri() {
-        return path;
-    }
-
-    /**
-     * Deprecated use path instead.
-     */
-    @Deprecated
-    public void setUri(String uri) {
-        this.path = uri;
-    }
-
     public String getPath() {
-        return path != null ? path : uri;
+        return path;
     }
 
     /**

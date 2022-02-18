@@ -12,7 +12,6 @@
     "output": false
   },
   "properties": {
-    "uri": { "kind": "attribute", "displayName": "Uri", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": true, "autowired": false, "secret": false, "description": "Deprecated use path instead." },
     "path": { "kind": "attribute", "displayName": "Path", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The path mapping URIs of this REST operation such as \/{id}." },
     "consumes": { "kind": "attribute", "displayName": "Consumes", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "To define the content type what the REST service consumes (accept as input), such as application\/xml or application\/json. This option will override what may be configured on a parent level" },
     "produces": { "kind": "attribute", "displayName": "Produces", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "To define the content type what the REST service produces (uses for output), such as application\/xml or application\/json This option will override what may be configured on a parent level" },

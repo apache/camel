@@ -6519,9 +6519,6 @@
           },
           "type" : {
             "type" : "string"
-          },
-          "uri" : {
-            "type" : "string"
           }
         }
       },
@@ -6601,9 +6598,6 @@
             "$ref" : "#/items/definitions/org.apache.camel.model.ToDynamicDefinition"
           },
           "type" : {
-            "type" : "string"
-          },
-          "uri" : {
             "type" : "string"
           }
         }
@@ -6685,9 +6679,6 @@
           },
           "type" : {
             "type" : "string"
-          },
-          "uri" : {
-            "type" : "string"
           }
         }
       },
@@ -6767,9 +6758,6 @@
             "$ref" : "#/items/definitions/org.apache.camel.model.ToDynamicDefinition"
           },
           "type" : {
-            "type" : "string"
-          },
-          "uri" : {
             "type" : "string"
           }
         }
@@ -6851,9 +6839,6 @@
           },
           "type" : {
             "type" : "string"
-          },
-          "uri" : {
-            "type" : "string"
           }
         }
       },
@@ -6933,9 +6918,6 @@
             "$ref" : "#/items/definitions/org.apache.camel.model.ToDynamicDefinition"
           },
           "type" : {
-            "type" : "string"
-          },
-          "uri" : {
             "type" : "string"
           }
         }

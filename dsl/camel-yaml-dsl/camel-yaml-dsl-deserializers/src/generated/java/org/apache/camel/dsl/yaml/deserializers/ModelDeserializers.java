@@ -3998,8 +3998,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition"),
                     @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition"),
                     @YamlProperty(name = "to-d", type = "object:org.apache.camel.model.ToDynamicDefinition"),
-                    @YamlProperty(name = "type", type = "string"),
-                    @YamlProperty(name = "uri", type = "string", deprecated = true)
+                    @YamlProperty(name = "type", type = "string")
             }
     )
     public static class DeleteDefinitionDeserializer extends YamlDeserializerBase<DeleteDefinition> {
@@ -4109,11 +4108,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "type": {
                     String val = asText(node);
                     target.setType(val);
-                    break;
-                }
-                case "uri": {
-                    String val = asText(node);
-                    target.setUri(val);
                     break;
                 }
                 case "id": {
@@ -5375,8 +5369,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition"),
                     @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition"),
                     @YamlProperty(name = "to-d", type = "object:org.apache.camel.model.ToDynamicDefinition"),
-                    @YamlProperty(name = "type", type = "string"),
-                    @YamlProperty(name = "uri", type = "string", deprecated = true)
+                    @YamlProperty(name = "type", type = "string")
             }
     )
     public static class GetDefinitionDeserializer extends YamlDeserializerBase<GetDefinition> {
@@ -5486,11 +5479,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "type": {
                     String val = asText(node);
                     target.setType(val);
-                    break;
-                }
-                case "uri": {
-                    String val = asText(node);
-                    target.setUri(val);
                     break;
                 }
                 case "id": {
@@ -5818,8 +5806,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition"),
                     @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition"),
                     @YamlProperty(name = "to-d", type = "object:org.apache.camel.model.ToDynamicDefinition"),
-                    @YamlProperty(name = "type", type = "string"),
-                    @YamlProperty(name = "uri", type = "string", deprecated = true)
+                    @YamlProperty(name = "type", type = "string")
             }
     )
     public static class HeadDefinitionDeserializer extends YamlDeserializerBase<HeadDefinition> {
@@ -5929,11 +5916,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "type": {
                     String val = asText(node);
                     target.setType(val);
-                    break;
-                }
-                case "uri": {
-                    String val = asText(node);
-                    target.setUri(val);
                     break;
                 }
                 case "id": {
@@ -9602,8 +9584,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition"),
                     @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition"),
                     @YamlProperty(name = "to-d", type = "object:org.apache.camel.model.ToDynamicDefinition"),
-                    @YamlProperty(name = "type", type = "string"),
-                    @YamlProperty(name = "uri", type = "string", deprecated = true)
+                    @YamlProperty(name = "type", type = "string")
             }
     )
     public static class PatchDefinitionDeserializer extends YamlDeserializerBase<PatchDefinition> {
@@ -9713,11 +9694,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "type": {
                     String val = asText(node);
                     target.setType(val);
-                    break;
-                }
-                case "uri": {
-                    String val = asText(node);
-                    target.setUri(val);
                     break;
                 }
                 case "id": {
@@ -9985,8 +9961,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition"),
                     @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition"),
                     @YamlProperty(name = "to-d", type = "object:org.apache.camel.model.ToDynamicDefinition"),
-                    @YamlProperty(name = "type", type = "string"),
-                    @YamlProperty(name = "uri", type = "string", deprecated = true)
+                    @YamlProperty(name = "type", type = "string")
             }
     )
     public static class PostDefinitionDeserializer extends YamlDeserializerBase<PostDefinition> {
@@ -10096,11 +10071,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "type": {
                     String val = asText(node);
                     target.setType(val);
-                    break;
-                }
-                case "uri": {
-                    String val = asText(node);
-                    target.setUri(val);
                     break;
                 }
                 case "id": {
@@ -10494,8 +10464,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition"),
                     @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition"),
                     @YamlProperty(name = "to-d", type = "object:org.apache.camel.model.ToDynamicDefinition"),
-                    @YamlProperty(name = "type", type = "string"),
-                    @YamlProperty(name = "uri", type = "string", deprecated = true)
+                    @YamlProperty(name = "type", type = "string")
             }
     )
     public static class PutDefinitionDeserializer extends YamlDeserializerBase<PutDefinition> {
@@ -10605,11 +10574,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "type": {
                     String val = asText(node);
                     target.setType(val);
-                    break;
-                }
-                case "uri": {
-                    String val = asText(node);
-                    target.setUri(val);
                     break;
                 }
                 case "id": {
