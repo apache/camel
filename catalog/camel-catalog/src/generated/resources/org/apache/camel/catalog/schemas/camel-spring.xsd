@@ -13850,13 +13850,6 @@ configuration, so these custom functions can be used in xquery expressions.
             <xs:element ref="tns:route"/>
           </xs:choice>
         </xs:sequence>
-        <xs:attribute name="uri" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Deprecated: Deprecated use path instead.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
         <xs:attribute name="path" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
