@@ -61,6 +61,9 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
     public static final DotName CLASS_CLASS
             = DotName.createSimple("java.lang.Class");
 
+    public static final DotName DEPRECATED_ANNOTATION_CLASS
+            = DotName.createSimple("java.lang.Deprecated");
+
     public static final DotName XML_ROOT_ELEMENT_ANNOTATION_CLASS
             = DotName.createSimple("javax.xml.bind.annotation.XmlRootElement");
     public static final DotName XML_TYPE_CLASS
@@ -261,25 +264,28 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
     }
 
     protected static AnnotationSpec yamlProperty(String name, String type) {
-        return yamlProperty(name, type, false);
+        return yamlProperty(name, type, false, false);
     }
 
-    protected static AnnotationSpec yamlProperty(String name, String type, boolean required) {
+    protected static AnnotationSpec yamlProperty(String name, String type, boolean required, boolean deprecated) {
         AnnotationSpec.Builder builder = AnnotationSpec.builder(CN_YAML_PROPERTY);
         builder.addMember("name", "$S", name);
         builder.addMember("type", "$S", type);
         if (required) {
             builder.addMember("required", "$L", required);
         }
+        if (deprecated) {
+            builder.addMember("deprecated", "$L", deprecated);
+        }
 
         return builder.build();
     }
 
     protected static AnnotationSpec yamlPropertyWithFormat(String name, String type, String format) {
-        return yamlPropertyWithFormat(name, type, format, false);
+        return yamlPropertyWithFormat(name, type, format, false, false);
     }
 
-    protected static AnnotationSpec yamlPropertyWithFormat(String name, String type, String format, boolean required) {
+    protected static AnnotationSpec yamlPropertyWithFormat(String name, String type, String format, boolean required, boolean deprecated) {
         AnnotationSpec.Builder builder = AnnotationSpec.builder(CN_YAML_PROPERTY);
         builder.addMember("name", "$S", name);
         builder.addMember("type", "$S", type);
@@ -287,6 +293,9 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
 
         if (required) {
             builder.addMember("required", "$L", required);
+        }
+        if (deprecated) {
+            builder.addMember("deprecated", "$L", deprecated);
         }
 
         return builder.build();
@@ -303,7 +312,7 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
     }
 
     protected static AnnotationSpec yamlPropertyWithSubtype(String name, String type, String subType, boolean required) {
-        return yamlProperty(name, type + ":" + subType, required);
+        return yamlProperty(name, type + ":" + subType, required, false);
     }
 
     // **************************
@@ -593,6 +602,10 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
                 annotationValue(fi, XML_ATTRIBUTE_ANNOTATION_CLASS, "required")
                         .map(AnnotationValue::asBoolean))
                                 .orElse(false);
+    }
+
+    protected boolean isDeprecated(FieldInfo fi) {
+        return fi.hasAnnotation(DEPRECATED_ANNOTATION_CLASS);
     }
 
     protected boolean extendsType(Type type, DotName superType) {

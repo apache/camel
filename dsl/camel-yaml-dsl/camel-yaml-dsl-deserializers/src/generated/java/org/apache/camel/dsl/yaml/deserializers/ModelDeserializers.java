@@ -909,7 +909,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             nodes = "bean",
             properties = {
                     @YamlProperty(name = "bean-type", type = "string"),
-                    @YamlProperty(name = "cache", type = "boolean"),
+                    @YamlProperty(name = "cache", type = "boolean", deprecated = true),
                     @YamlProperty(name = "description", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
@@ -3999,7 +3999,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition"),
                     @YamlProperty(name = "to-d", type = "object:org.apache.camel.model.ToDynamicDefinition"),
                     @YamlProperty(name = "type", type = "string"),
-                    @YamlProperty(name = "uri", type = "string")
+                    @YamlProperty(name = "uri", type = "string", deprecated = true)
             }
     )
     public static class DeleteDefinitionDeserializer extends YamlDeserializerBase<DeleteDefinition> {
@@ -5376,7 +5376,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition"),
                     @YamlProperty(name = "to-d", type = "object:org.apache.camel.model.ToDynamicDefinition"),
                     @YamlProperty(name = "type", type = "string"),
-                    @YamlProperty(name = "uri", type = "string")
+                    @YamlProperty(name = "uri", type = "string", deprecated = true)
             }
     )
     public static class GetDefinitionDeserializer extends YamlDeserializerBase<GetDefinition> {
@@ -5819,7 +5819,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition"),
                     @YamlProperty(name = "to-d", type = "object:org.apache.camel.model.ToDynamicDefinition"),
                     @YamlProperty(name = "type", type = "string"),
-                    @YamlProperty(name = "uri", type = "string")
+                    @YamlProperty(name = "uri", type = "string", deprecated = true)
             }
     )
     public static class HeadDefinitionDeserializer extends YamlDeserializerBase<HeadDefinition> {
@@ -8604,7 +8604,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "parallel-processing", type = "boolean"),
                     @YamlProperty(name = "share-unit-of-work", type = "boolean"),
                     @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition"),
-                    @YamlProperty(name = "stop-on-aggregate-exception", type = "boolean"),
+                    @YamlProperty(name = "stop-on-aggregate-exception", type = "boolean", deprecated = true),
                     @YamlProperty(name = "stop-on-exception", type = "boolean"),
                     @YamlProperty(name = "strategy-method-allow-null", type = "boolean"),
                     @YamlProperty(name = "strategy-method-name", type = "string"),
@@ -9603,7 +9603,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition"),
                     @YamlProperty(name = "to-d", type = "object:org.apache.camel.model.ToDynamicDefinition"),
                     @YamlProperty(name = "type", type = "string"),
-                    @YamlProperty(name = "uri", type = "string")
+                    @YamlProperty(name = "uri", type = "string", deprecated = true)
             }
     )
     public static class PatchDefinitionDeserializer extends YamlDeserializerBase<PatchDefinition> {
@@ -9986,7 +9986,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition"),
                     @YamlProperty(name = "to-d", type = "object:org.apache.camel.model.ToDynamicDefinition"),
                     @YamlProperty(name = "type", type = "string"),
-                    @YamlProperty(name = "uri", type = "string")
+                    @YamlProperty(name = "uri", type = "string", deprecated = true)
             }
     )
     public static class PostDefinitionDeserializer extends YamlDeserializerBase<PostDefinition> {
@@ -10495,7 +10495,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition"),
                     @YamlProperty(name = "to-d", type = "object:org.apache.camel.model.ToDynamicDefinition"),
                     @YamlProperty(name = "type", type = "string"),
-                    @YamlProperty(name = "uri", type = "string")
+                    @YamlProperty(name = "uri", type = "string", deprecated = true)
             }
     )
     public static class PutDefinitionDeserializer extends YamlDeserializerBase<PutDefinition> {
@@ -10688,7 +10688,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "parallel-aggregate", type = "boolean"),
                     @YamlProperty(name = "parallel-processing", type = "boolean"),
                     @YamlProperty(name = "share-unit-of-work", type = "boolean"),
-                    @YamlProperty(name = "stop-on-aggregate-exception", type = "boolean"),
+                    @YamlProperty(name = "stop-on-aggregate-exception", type = "boolean", deprecated = true),
                     @YamlProperty(name = "stop-on-exception", type = "boolean"),
                     @YamlProperty(name = "strategy-method-allow-null", type = "boolean"),
                     @YamlProperty(name = "strategy-method-name", type = "string"),
@@ -11623,8 +11623,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             },
             properties = {
                     @YamlProperty(name = "api-component", type = "string"),
-                    @YamlProperty(name = "api-context-id-pattern", type = "string"),
-                    @YamlProperty(name = "api-context-listing", type = "boolean"),
+                    @YamlProperty(name = "api-context-id-pattern", type = "string", deprecated = true),
+                    @YamlProperty(name = "api-context-listing", type = "boolean", deprecated = true),
                     @YamlProperty(name = "api-context-path", type = "string"),
                     @YamlProperty(name = "api-context-route-id", type = "string"),
                     @YamlProperty(name = "api-host", type = "string"),
@@ -13552,7 +13552,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "message-frequency", type = "number"),
                     @YamlProperty(name = "sample-period", type = "string"),
-                    @YamlProperty(name = "units", type = "string")
+                    @YamlProperty(name = "units", type = "string", deprecated = true)
             }
     )
     public static class SamplingDefinitionDeserializer extends YamlDeserializerBase<SamplingDefinition> {
@@ -14938,7 +14938,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "parallel-processing", type = "boolean"),
                     @YamlProperty(name = "share-unit-of-work", type = "boolean"),
                     @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition"),
-                    @YamlProperty(name = "stop-on-aggregate-exception", type = "boolean"),
+                    @YamlProperty(name = "stop-on-aggregate-exception", type = "boolean", deprecated = true),
                     @YamlProperty(name = "stop-on-exception", type = "boolean"),
                     @YamlProperty(name = "strategy-method-allow-null", type = "boolean"),
                     @YamlProperty(name = "strategy-method-name", type = "string"),

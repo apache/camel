@@ -952,7 +952,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                     cb.addStatement("break");
 
                     annotations.add(
-                        yamlPropertyWithFormat(fieldName, "string", "binary", isRequired(field))
+                        yamlPropertyWithFormat(fieldName, "string", "binary", isRequired(field), isDeprecated(field))
                     );
                     break;
                 case "Z":
@@ -960,28 +960,28 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                     cb.addStatement("boolean val = asBoolean(node)");
                     cb.addStatement("target.set$L(val)", StringHelper.capitalize(field.name()));
                     cb.addStatement("break");
-                    annotations.add(yamlProperty(fieldName, "boolean", isRequired(field)));
+                    annotations.add(yamlProperty(fieldName, "boolean", isRequired(field), isDeprecated(field)));
                     break;
                 case "I":
                 case "int":
                     cb.addStatement("int val = asInt(node)");
                     cb.addStatement("target.set$L(val)", StringHelper.capitalize(field.name()));
                     cb.addStatement("break");
-                    annotations.add(yamlProperty(fieldName, "number", isRequired(field)));
+                    annotations.add(yamlProperty(fieldName, "number", isRequired(field), isDeprecated(field)));
                     break;
                 case "J":
                 case "long":
                     cb.addStatement("long val = asLong(node)");
                     cb.addStatement("target.set$L(val)", StringHelper.capitalize(field.name()));
                     cb.addStatement("break");
-                    annotations.add(yamlProperty(fieldName, "number", isRequired(field)));
+                    annotations.add(yamlProperty(fieldName, "number", isRequired(field), isDeprecated(field)));
                     break;
                 case "D":
                 case "double":
                     cb.addStatement("double val = asDouble(node)");
                     cb.addStatement("target.set$L(val)", StringHelper.capitalize(field.name()));
                     cb.addStatement("break");
-                    annotations.add(yamlProperty(fieldName, "number", isRequired(field)));
+                    annotations.add(yamlProperty(fieldName, "number", isRequired(field), isDeprecated(field)));
                     break;
                 case "java.lang.String":
                     cb.addStatement("String val = asText(node)");
@@ -994,17 +994,17 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
 
                     switch (javaType) {
                         case "java.lang.Boolean":
-                            annotations.add(yamlProperty(fieldName, "boolean", isRequired(field)));
+                            annotations.add(yamlProperty(fieldName, "boolean", isRequired(field), isDeprecated(field)));
                             break;
                         case "java.lang.Integer":
                         case "java.lang.Short":
                         case "java.lang.Long":
                         case "java.lang.Float":
                         case "java.lang.Double":
-                            annotations.add(yamlProperty(fieldName, "number", isRequired(field)));
+                            annotations.add(yamlProperty(fieldName, "number", isRequired(field), isDeprecated(field)));
                             break;
                         default:
-                            annotations.add(yamlProperty(fieldName, "string", isRequired(field)));
+                            annotations.add(yamlProperty(fieldName, "string", isRequired(field), isDeprecated(field)));
                     }
 
                     break;
@@ -1012,7 +1012,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                     cb.addStatement("java.lang.Class<?> val = asClass(node)");
                     cb.addStatement("target.set$L(val)", StringHelper.capitalize(field.name()));
                     cb.addStatement("break");
-                    annotations.add(yamlProperty(fieldName, "string", isRequired(field)));
+                    annotations.add(yamlProperty(fieldName, "string", isRequired(field), isDeprecated(field)));
                     break;
                 case "[Ljava.lang.Class;":
                     cb.addStatement("java.lang.Class<?>[] val = asClassArray(node)");
@@ -1027,13 +1027,13 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                     cb.addStatement("String val = asText(node)");
                     cb.addStatement("target.set$L($L.valueOf(val))", StringHelper.capitalize(field.name()), field.type().name().toString());
                     cb.addStatement("break");
-                    annotations.add(yamlProperty(fieldName, "number", isRequired(field)));
+                    annotations.add(yamlProperty(fieldName, "number", isRequired(field), isDeprecated(field)));
                     break;
                 case "java.lang.Boolean":
                     cb.addStatement("String val = asText(node)");
                     cb.addStatement("target.set$L($L.valueOf(val))", StringHelper.capitalize(field.name()), field.type().name().toString());
                     cb.addStatement("break");
-                    annotations.add(yamlProperty(fieldName, "boolean", isRequired(field)));
+                    annotations.add(yamlProperty(fieldName, "boolean", isRequired(field), isDeprecated(field)));
                     break;
                 default:
                     if (field.type().kind() == Type.Kind.CLASS) {

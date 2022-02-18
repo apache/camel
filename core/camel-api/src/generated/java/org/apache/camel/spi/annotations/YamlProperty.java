@@ -32,6 +32,8 @@ public @interface YamlProperty {
 
     String description() default "";
 
+    boolean deprecated() default false;
+
     boolean required() default false;
 
     String[] values() default {};
