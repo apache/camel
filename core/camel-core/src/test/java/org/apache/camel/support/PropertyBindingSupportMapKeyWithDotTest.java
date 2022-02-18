@@ -36,6 +36,8 @@ public class PropertyBindingSupportMapKeyWithDotTest extends ContextTestSupport 
         prop.put("id", "123");
         prop.put("database.name", "MySQL");
         prop.put("database.timezone", "CET");
+        prop.put("database.client.id", "123");
+        prop.put("database.client.type", "Basic");
 
         Map<String, String> map = new HashMap<>();
         PropertyBindingSupport.build().bind(context, map, prop);
@@ -43,6 +45,49 @@ public class PropertyBindingSupportMapKeyWithDotTest extends ContextTestSupport 
         assertEquals("123", map.get("id"));
         assertEquals("MySQL", map.get("database.name"));
         assertEquals("CET", map.get("database.timezone"));
+        assertEquals("123", map.get("database.client.id"));
+        assertEquals("Basic", map.get("database.client.type"));
+    }
+
+    @Test
+    public void testPropertiesConfigMap() throws Exception {
+        Map<String, Object> prop = new LinkedHashMap<>();
+        prop.put("id", "123");
+        prop.put("config.database.name", "MySQL");
+        prop.put("config.database.timezone", "CET");
+        prop.put("config.database.client.id", "123");
+        prop.put("config.database.client.type", "Basic");
+
+        Foo foo = new Foo();
+        PropertyBindingSupport.build().bind(context, foo, prop);
+
+        assertEquals("123", foo.getId());
+        assertEquals("MySQL", foo.getConfig().get("database.name"));
+        assertEquals("CET", foo.getConfig().get("database.timezone"));
+        assertEquals("123", foo.getConfig().get("database.client.id"));
+        assertEquals("Basic", foo.getConfig().get("database.client.type"));
+    }
+
+    public static class Foo {
+
+        private String id;
+        private Map<String, String> config;
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public Map<String, String> getConfig() {
+            return config;
+        }
+
+        public void setConfig(Map<String, String> config) {
+            this.config = config;
+        }
     }
 
 }
