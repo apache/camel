@@ -131,8 +131,8 @@ public class RouteIdFactory implements NodeIdFactory {
             routeId.append(verb.asVerb());
             appendWithSeparator(routeId, prepareUri(restDefinition.getPath()));
 
-            if (verb.getUri() != null && verb.getUri().length() > 0) {
-                appendWithSeparator(routeId, prepareUri(verb.getUri()));
+            if (verb.getPath() != null && verb.getPath().length() > 0) {
+                appendWithSeparator(routeId, prepareUri(verb.getPath()));
             }
 
             verb.setUsedForGeneratingNodeId(true);

@@ -51,7 +51,10 @@ public abstract class VerbDefinition extends OptionalIdentifiedDefinition<VerbDe
     private List<SecurityDefinition> security = new ArrayList<>();
 
     @XmlAttribute
+    @Deprecated
     private String uri;
+    @XmlAttribute
+    private String path;
     @XmlAttribute
     private String consumes;
     @XmlAttribute
@@ -174,15 +177,28 @@ public abstract class VerbDefinition extends OptionalIdentifiedDefinition<VerbDe
         this.security = security;
     }
 
+    @Deprecated
     public String getUri() {
-        return uri;
+        return path;
     }
 
     /**
-     * Uri template of this REST service such as /{id}.
+     * Deprecated use path instead.
      */
+    @Deprecated
     public void setUri(String uri) {
-        this.uri = uri;
+        this.path = uri;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    /**
+     * The path mapping URIs of this REST operation such as /{id}.
+     */
+    public void setPath(String path) {
+        this.path = path;
     }
 
     public String getConsumes() {

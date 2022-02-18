@@ -34,7 +34,7 @@ public class XmlRestParseToDTest extends XmlTestSupport {
 
         assertEquals(1, rest.getVerbs().size());
         GetDefinition get = (GetDefinition) rest.getVerbs().get(0);
-        assertEquals("/view/{id}", get.getUri());
+        assertEquals("/view/{id}", get.getPath());
         assertEquals("bean:getUser?id=${header.id}", get.getToD().getUri());
     }
 

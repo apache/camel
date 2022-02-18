@@ -691,7 +691,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         }
         getVerbs().add(answer);
         answer.setRest(this);
-        answer.setUri(uri);
+        answer.setPath(uri);
         return this;
     }
 
@@ -721,8 +721,8 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         Set<String> paths = new HashSet<>();
         for (VerbDefinition verb : verbs) {
             String path = verb.asVerb();
-            if (verb.getUri() != null) {
-                path += ":" + verb.getUri();
+            if (verb.getPath() != null) {
+                path += ":" + verb.getPath();
             }
             if (!paths.add(path)) {
                 throw new IllegalArgumentException("Duplicate verb detected in rest-dsl: " + path);
@@ -922,14 +922,14 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
 
             String path = getPath();
             String s1 = FileUtil.stripTrailingSeparator(path);
-            String s2 = FileUtil.stripLeadingSeparator(verb.getUri());
+            String s2 = FileUtil.stripLeadingSeparator(verb.getPath());
             String allPath;
             if (s1 != null && s2 != null) {
                 allPath = s1 + "/" + s2;
             } else if (path != null) {
                 allPath = path;
             } else {
-                allPath = verb.getUri();
+                allPath = verb.getPath();
             }
 
             // each {} is a parameter (url templating)
@@ -1047,12 +1047,12 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     }
 
     private String buildUri(VerbDefinition verb) {
-        if (path != null && verb.getUri() != null) {
-            return path + ":" + verb.getUri();
+        if (path != null && verb.getPath() != null) {
+            return path + ":" + verb.getPath();
         } else if (path != null) {
             return path;
-        } else if (verb.getUri() != null) {
-            return verb.getUri();
+        } else if (verb.getPath() != null) {
+            return verb.getPath();
         } else {
             return "";
         }
