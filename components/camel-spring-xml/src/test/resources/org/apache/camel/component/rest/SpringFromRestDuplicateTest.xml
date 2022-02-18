@@ -30,7 +30,7 @@
   <camelContext xmlns="http://camel.apache.org/schema/spring">
 
     <rest path="/users">
-      <get uri="{id}">
+      <get path="{id}">
         <to uri="log:foo"/>
       </get>
       <post>
@@ -39,7 +39,7 @@
       <get>
         <to uri="log:foo"/>
       </get>
-      <get uri="{id}">
+      <get path="{id}">
         <to uri="log:foo"/>
       </get>
     </rest>

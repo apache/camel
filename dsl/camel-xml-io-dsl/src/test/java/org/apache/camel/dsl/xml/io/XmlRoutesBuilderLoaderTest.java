@@ -52,7 +52,7 @@ public class XmlRoutesBuilderLoaderTest {
         String content = ""
                          + "<rests xmlns=\"http://camel.apache.org/schema/spring\">"
                          + "  <rest id=\"bar\" path=\"/say/hello\">"
-                         + "    <get uri=\"/bar\">"
+                         + "    <get path=\"/bar\">"
                          + "      <to uri=\"mock:bar\"/>"
                          + "    </get>"
                          + "  </rest>"

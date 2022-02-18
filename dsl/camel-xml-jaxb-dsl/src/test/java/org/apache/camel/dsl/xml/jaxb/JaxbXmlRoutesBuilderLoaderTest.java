@@ -59,7 +59,7 @@ public class JaxbXmlRoutesBuilderLoaderTest {
     private final String restsContent = ""
                                         + "<rests " + NAMESPACE_ATTRIBUTE + ">"
                                         + "  <rest id=\"bar\" path=\"/say/hello\">"
-                                        + "    <get uri=\"/bar\">"
+                                        + "    <get path=\"/bar\">"
                                         + "      <to uri=\"mock:bar\"/>"
                                         + "    </get>"
                                         + "  </rest>"

@@ -84,7 +84,7 @@ class KotlinRoutesBuilderLoaderTest {
             assertThat(this?.verbs).hasSize(1)
 
             with(this?.verbs?.get(0) as GetDefinition) {
-                assertThat(uri).isEqualTo("/get")
+                assertThat(path).isEqualTo("/get")
                 assertThat(consumes).isEqualTo("application/json")
                 assertThat(produces).isEqualTo("application/json")
                 assertThat(to).hasFieldOrPropertyWithValue("endpointUri", "direct:get")
@@ -95,7 +95,7 @@ class KotlinRoutesBuilderLoaderTest {
             assertThat(this?.verbs).hasSize(1)
 
             with(this?.verbs?.get(0) as PostDefinition) {
-                assertThat(uri).isNull()
+                assertThat(path).isNull()
                 assertThat(consumes).isEqualTo("application/json")
                 assertThat(produces).isEqualTo("application/json")
                 assertThat(to).hasFieldOrPropertyWithValue("endpointUri", "direct:post")

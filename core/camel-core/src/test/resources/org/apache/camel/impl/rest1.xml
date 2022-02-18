@@ -18,7 +18,7 @@
 
 -->
 <rest id="foo" path="/say/hello" xmlns="http://camel.apache.org/schema/spring">
-    <get uri="/bar">
+    <get path="/bar">
       <to uri="mock:bar"/>
     </get>
 </rest>

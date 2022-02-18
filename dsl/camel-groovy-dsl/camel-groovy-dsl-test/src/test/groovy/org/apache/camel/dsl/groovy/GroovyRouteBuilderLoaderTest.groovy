@@ -85,7 +85,7 @@ class GroovyRouteBuilderLoaderTest extends Specification {
                 verbs.size() == 1
 
                 with(verbs.first(), GetDefinition) {
-                    uri == '/get'
+                    path == '/get'
                     consumes == 'application/json'
                     produces == 'application/json'
 
@@ -99,7 +99,7 @@ class GroovyRouteBuilderLoaderTest extends Specification {
                 verbs.size() == 1
 
                 with(verbs.first(), PostDefinition) {
-                    uri == null
+                    path == null
                     consumes == 'application/json'
                     produces == 'application/json'
 

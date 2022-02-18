@@ -55,7 +55,7 @@ public class RestDefinitionEmitterTest {
 
         final VerbDefinition definition = verbs.get(0);
         assertThat(definition.asVerb()).isEqualTo("put");
-        assertThat(definition.getUri()).isEqualTo("/pet");
+        assertThat(definition.getPath()).isEqualTo("/pet");
         assertThat(definition.getConsumes()).isEqualTo("application/json,application/xml");
         assertThat(definition.getProduces()).isEqualTo("application/xml,application/json");
 

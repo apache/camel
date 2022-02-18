@@ -503,7 +503,7 @@ public class RestOpenApiReader {
             // the method must be in lower case
             String method = verb.asVerb().toLowerCase(Locale.US);
             // operation path is a key
-            String opPath = OpenApiHelper.buildUrl(basePath, getValue(camelContext, verb.getUri()));
+            String opPath = OpenApiHelper.buildUrl(basePath, getValue(camelContext, verb.getPath()));
 
             if (openApi.paths == null) {
                 openApi.paths = openApi.createPaths();
@@ -1498,14 +1498,14 @@ public class RestOpenApiReader {
         @Override
         public int compare(VerbDefinition a, VerbDefinition b) {
             String u1 = "";
-            if (a.getUri() != null) {
+            if (a.getPath() != null) {
                 // replace { with _ which comes before a when soring by char
-                u1 = getValue(camelContext, a.getUri()).replace("{", "_");
+                u1 = getValue(camelContext, a.getPath()).replace("{", "_");
             }
             String u2 = "";
-            if (b.getUri() != null) {
+            if (b.getPath() != null) {
                 // replace { with _ which comes before a when soring by char
-                u2 = getValue(camelContext, b.getUri()).replace("{", "_");
+                u2 = getValue(camelContext, b.getPath()).replace("{", "_");
             }
 
             int num = u1.compareTo(u2);

@@ -119,7 +119,7 @@ public class ComplexTypesTest extends CamelTestSupport {
 
         List<RestDefinition> rests = context.getRestDefinitions().stream()
                 // So we get the security schema and the route schema
-                .filter(def -> def.getVerbs().isEmpty() || def.getVerbs().get(0).getUri().equals(uri))
+                .filter(def -> def.getVerbs().isEmpty() || def.getVerbs().get(0).getPath().equals(uri))
                 .collect(Collectors.toList());
 
         RestOpenApiReader reader = new RestOpenApiReader();

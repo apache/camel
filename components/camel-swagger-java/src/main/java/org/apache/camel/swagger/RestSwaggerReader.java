@@ -241,7 +241,7 @@ public class RestSwaggerReader {
             // the method must be in lower case
             String method = verb.asVerb().toLowerCase(Locale.US);
             // operation path is a key
-            String opPath = SwaggerHelper.buildUrl(basePath, verb.getUri());
+            String opPath = SwaggerHelper.buildUrl(basePath, verb.getPath());
 
             Operation op = new Operation();
             if (org.apache.camel.util.ObjectHelper.isNotEmpty(pathAsTag)) {
@@ -785,14 +785,14 @@ public class RestSwaggerReader {
         public int compare(VerbDefinition a, VerbDefinition b) {
 
             String u1 = "";
-            if (a.getUri() != null) {
+            if (a.getPath() != null) {
                 // replace { with _ which comes before a when soring by char
-                u1 = a.getUri().replace("{", "_");
+                u1 = a.getPath().replace("{", "_");
             }
             String u2 = "";
-            if (b.getUri() != null) {
+            if (b.getPath() != null) {
                 // replace { with _ which comes before a when soring by char
-                u2 = b.getUri().replace("{", "_");
+                u2 = b.getPath().replace("{", "_");
             }
 
             int num = u1.compareTo(u2);
