@@ -2840,9 +2840,6 @@ public class ModelParser extends BaseParser {
             return true;
         };
     }
-    protected VerbDefinition doParseVerbDefinition() throws IOException, XmlPullParserException {
-        return doParse(new VerbDefinition(), verbDefinitionAttributeHandler(), verbDefinitionElementHandler(), noValueHandler());
-    }
     protected RestOperationParamDefinition doParseRestOperationParamDefinition() throws IOException, XmlPullParserException {
         return doParse(new RestOperationParamDefinition(), (def, key, val) -> {
             switch (key) {
