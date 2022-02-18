@@ -55,7 +55,7 @@ public class MarshalMapCVE202026217Test extends CamelTestSupport {
         Exception exception = assertThrows(CamelExecutionException.class,
                 () -> template.sendBodyAndProperty("direct:in", body, Exchange.CHARSET_NAME, "ISO-8859-1"));
 
-        Assertions.assertInstanceOf(ForbiddenClassException.class, exception.getCause());
+        Assertions.assertTrue(exception.getCause() instanceof ForbiddenClassException);
     }
 
     @Override
