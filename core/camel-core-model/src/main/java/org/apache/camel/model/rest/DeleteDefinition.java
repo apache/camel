@@ -30,4 +30,8 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DeleteDefinition extends VerbDefinition {
 
+    @Override
+    public String asVerb() {
+        return "delete";
+    }
 }

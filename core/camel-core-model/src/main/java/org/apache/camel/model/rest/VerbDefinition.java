@@ -460,25 +460,7 @@ public abstract class VerbDefinition extends OptionalIdentifiedDefinition<VerbDe
         return rest.verb(verb, uri);
     }
 
-    public String asVerb() {
-        // we do not want the jaxb model to repeat itself, by outputting <get
-        // method="get">
-        // so we infer the verb from the instance type
-        if (this instanceof GetDefinition) {
-            return "get";
-        } else if (this instanceof PostDefinition) {
-            return "post";
-        } else if (this instanceof PutDefinition) {
-            return "put";
-        } else if (this instanceof PatchDefinition) {
-            return "patch";
-        } else if (this instanceof DeleteDefinition) {
-            return "delete";
-        } else if (this instanceof HeadDefinition) {
-            return "head";
-        }
-        throw new IllegalArgumentException("Verb not supported");
-    }
+    public abstract String asVerb();
 
     public Boolean getUsedForGeneratingNodeId() {
         return usedForGeneratingNodeId;

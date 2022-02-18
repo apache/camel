@@ -30,4 +30,8 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GetDefinition extends VerbDefinition {
 
+    @Override
+    public String asVerb() {
+        return "get";
+    }
 }
