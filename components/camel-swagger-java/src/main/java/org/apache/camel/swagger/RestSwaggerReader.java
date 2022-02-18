@@ -291,8 +291,8 @@ public class RestSwaggerReader {
                 op.summary(verb.getDescriptionText());
             }
 
-            if (Boolean.TRUE.equals(verb.getDeprecated())) {
-                op.deprecated(true);
+            if ("true".equals(verb.getDeprecated())) {
+                op.deprecated(Boolean.TRUE);
             }
 
             // security

@@ -567,8 +567,8 @@ public class RestOpenApiReader {
             op.summary = getValue(camelContext, verb.getDescriptionText());
         }
 
-        if (Boolean.TRUE.equals(verb.getDeprecated())) {
-            op.deprecated = verb.getDeprecated();
+        if ("true".equals(verb.getDeprecated())) {
+            op.deprecated = Boolean.TRUE;
         }
 
         // security
@@ -798,8 +798,8 @@ public class RestOpenApiReader {
             op.consumes.addAll(Arrays.asList(parts));
         }
 
-        if (Boolean.TRUE.equals(verb.getDeprecated())) {
-            op.deprecated = verb.getDeprecated();
+        if ("true".equals(verb.getDeprecated())) {
+            op.deprecated = Boolean.TRUE;
         }
 
         if (produces != null) {
