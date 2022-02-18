@@ -558,6 +558,38 @@ public interface StreamEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to append a new line character at end of output.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param appendNewLine the value to set
+         * @return the dsl builder
+         */
+        default StreamEndpointProducerBuilder appendNewLine(
+                boolean appendNewLine) {
+            doSetProperty("appendNewLine", appendNewLine);
+            return this;
+        }
+        /**
+         * Whether to append a new line character at end of output.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param appendNewLine the value to set
+         * @return the dsl builder
+         */
+        default StreamEndpointProducerBuilder appendNewLine(String appendNewLine) {
+            doSetProperty("appendNewLine", appendNewLine);
+            return this;
+        }
+        /**
          * Number of messages to process before closing stream on Producer side.
          * Never close stream by default (only when Producer is stopped). If
          * more messages are sent, the stream is reopened for another
