@@ -41,7 +41,7 @@ import org.apache.camel.spi.Metadata;
  */
 @Metadata(label = "rest")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition> implements Block, OutputNode {
+public abstract class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition> implements Block, OutputNode {
 
     @XmlElementRef
     private List<RestOperationParamDefinition> params = new ArrayList<>();

@@ -150,13 +150,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- xmlunit, assertj and woostox are used for a few tests -->
-        <dependency>
-            <groupId>org.xmlunit</groupId>
-            <artifactId>xmlunit-core</artifactId>
-            <version>${xmlunit-version}</version>
-            <scope>test</scope>
-        </dependency>
+        <!-- assertj and woostox are used for a few tests -->
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>

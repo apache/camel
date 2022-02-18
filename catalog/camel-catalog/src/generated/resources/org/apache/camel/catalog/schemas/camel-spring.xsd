@@ -13837,7 +13837,7 @@ configuration, so these custom functions can be used in xquery expressions.
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:complexType name="verbDefinition">
+  <xs:complexType abstract="true" name="verbDefinition">
     <xs:complexContent>
       <xs:extension base="tns:optionalIdentifiedDefinition">
         <xs:sequence>
