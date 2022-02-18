@@ -33,6 +33,9 @@ public final class RuntimeUtil {
         level = level.toLowerCase();
 
         switch (level) {
+            case "off":
+                Configurator.setRootLevel(Level.OFF);
+                break;
             case "trace":
                 Configurator.setRootLevel(Level.TRACE);
                 break;

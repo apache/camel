@@ -52,16 +52,19 @@ class Run implements Callable<Integer> {
     @Parameters(description = "The Camel file(s) to run", arity = "1")
     private String[] files;
 
-    @Option(names = { "--dep", "--dependency" }, description = "Additional dependencies to add to the classpath", arity = "0")
-    private String[] dependencies;
-
     //CHECKSTYLE:OFF
     @Option(names = {"-h", "--help"}, usageHelp = true, description = "Display the help and sub-commands")
     private boolean helpRequested;
     //CHECKSTYLE:ON
 
+    @Option(names = { "--dep", "--dependency" }, description = "Additional dependencies to add to the classpath", arity = "0")
+    private String[] dependencies;
+
     @Option(names = { "--name" }, defaultValue = "CamelJBang", description = "The name of the Camel application")
     private String name;
+
+    @Option(names = { "--logging" }, description = "Can be used to turn of logging")
+    private boolean logging = true;
 
     @Option(names = { "--logging-level" }, defaultValue = "info", description = "Logging level")
     private String loggingLevel;
@@ -133,9 +136,13 @@ class Run implements Callable<Integer> {
         File[] lockFiles = currentDir.listFiles(f -> f.getName().endsWith(".camel.lock"));
 
         for (File lockFile : lockFiles) {
-            System.out.println("Removing file " + lockFile);
+            if (logging) {
+                System.out.println("Removing file " + lockFile);
+            }
             if (!lockFile.delete()) {
-                System.err.println("Failed to remove lock file " + lockFile);
+                if (logging) {
+                    System.err.println("Failed to remove lock file " + lockFile);
+                }
             }
         }
 
@@ -144,7 +151,11 @@ class Run implements Callable<Integer> {
 
     private int run() throws Exception {
         // configure logging first
-        RuntimeUtil.configureLog(loggingLevel);
+        if (logging) {
+            RuntimeUtil.configureLog(loggingLevel);
+        } else {
+            RuntimeUtil.configureLog("off");
+        }
 
         KameletMain main;
 
@@ -328,8 +339,10 @@ class Run implements Callable<Integer> {
     public File createLockFile() throws IOException {
         File lockFile = File.createTempFile(".run", ".camel.lock", new File("."));
 
-        System.out.printf("A new lock file was created, delete the file to stop running:%n%s%n",
-                lockFile.getAbsolutePath());
+        if (logging) {
+            System.out.printf("A new lock file was created, delete the file to stop running:%n%s%n",
+                    lockFile.getAbsolutePath());
+        }
         lockFile.deleteOnExit();
 
         return lockFile;
