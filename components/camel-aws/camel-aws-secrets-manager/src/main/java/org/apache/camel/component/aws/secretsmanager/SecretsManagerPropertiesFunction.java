@@ -49,6 +49,16 @@ import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueRespon
  * <li><tt>CAMEL_VAULT_AWS_REGION</tt></li>
  * </ul>
  * <p/>
+ *
+ * Otherwise it is possible to specify the credentials as properties:
+ *
+ * <ul>
+ * <li><tt>camel.vault.aws.accessKey</tt></li>
+ * <li><tt>camel.vault.aws.secretKey</tt></li>
+ * <li><tt>camel.vault.aws.region</tt></li>
+ * </ul>
+ * <p/>
+ *
  * This implementation is to return the secret value associated with a key. The properties related to this kind of
  * Properties Function are all prefixed with <tt>aws:</tt>. For example asking for <tt>aws:token</tt>, will return the
  * secret value associated the secret named token on AWS Secrets Manager
