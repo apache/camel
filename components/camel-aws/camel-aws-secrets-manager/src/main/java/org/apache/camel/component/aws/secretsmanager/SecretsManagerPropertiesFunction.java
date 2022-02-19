@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws.secretsmanager;
 
 import java.util.Base64;
+import java.util.Optional;
 import java.util.Properties;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -74,9 +75,18 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
         String region = System.getenv(CAMEL_AWS_VAULT_REGION_ENV);
         if (ObjectHelper.isEmpty(accessKey) && ObjectHelper.isEmpty(secretKey) && ObjectHelper.isEmpty(region)) {
             PropertiesComponent pc = getCamelContext().getPropertiesComponent();
-            accessKey = String.valueOf(pc.resolveProperty(CAMEL_AWS_VAULT_ACCESS_KEY_PROP));
-            secretKey = String.valueOf(pc.resolveProperty(CAMEL_AWS_VAULT_SECRET_KEY_PROP));
-            region = String.valueOf(pc.resolveProperty(CAMEL_AWS_VAULT_REGION_PROP));
+            Optional<String> tmpAccessKey = pc.resolveProperty(CAMEL_AWS_VAULT_ACCESS_KEY_PROP);
+            if (tmpAccessKey.isPresent()) {
+                accessKey = tmpAccessKey.get();
+            }
+            Optional<String> tmpSecretKey = pc.resolveProperty(CAMEL_AWS_VAULT_SECRET_KEY_PROP);
+            if (tmpSecretKey.isPresent()) {
+                secretKey = tmpSecretKey.get();
+            }
+            Optional<String> tmpRegion = pc.resolveProperty(CAMEL_AWS_VAULT_REGION_PROP);
+            if (tmpRegion.isPresent()) {
+                region = tmpRegion.get();
+            }
         }
         SecretsManagerClientBuilder clientBuilder = SecretsManagerClient.builder();
         AwsBasicCredentials cred = AwsBasicCredentials.create(accessKey, secretKey);
