@@ -14,51 +14,53 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spi;
+package org.apache.camel.vault;
+
+import org.apache.camel.spi.Metadata;
 
 /**
- * Configuration for access to Vaults.
+ * Configuration for access to AWS Secret.
  */
-public class VaultConfiguration {
+public class AwsVaultConfiguration extends VaultConfiguration {
 
     @Metadata(secret = true)
-    private String awsAccessKey;
+    private String accessKey;
     @Metadata(secret = true)
-    private String awsSecretKey;
+    private String secretKey;
     @Metadata
-    private String awsRegion;
+    private String region;
 
-    public String getAwsAccessKey() {
-        return awsAccessKey;
+    public String getAccessKey() {
+        return accessKey;
     }
 
     /**
      * The AWS access key
      */
-    public void setAwsAccessKey(String awsAccessKey) {
-        this.awsAccessKey = awsAccessKey;
+    public void setAccessKey(String accessKey) {
+        this.accessKey = accessKey;
     }
 
-    public String getAwsSecretKey() {
-        return awsSecretKey;
+    public String getSecretKey() {
+        return secretKey;
     }
 
     /**
      * The AWS secret key
      */
-    public void setAwsSecretKey(String awsSecretKey) {
-        this.awsSecretKey = awsSecretKey;
+    public void setSecretKey(String secretKey) {
+        this.secretKey = secretKey;
     }
 
-    public String getAwsRegion() {
-        return awsRegion;
+    public String getRegion() {
+        return region;
     }
 
     /**
      * The AWS region
      */
-    public void setAwsRegion(String awsRegion) {
-        this.awsRegion = awsRegion;
+    public void setRegion(String region) {
+        this.region = region;
     }
 
 }

@@ -149,10 +149,10 @@ import org.apache.camel.spi.UriFactoryResolver;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.spi.Validator;
 import org.apache.camel.spi.ValidatorRegistry;
-import org.apache.camel.spi.VaultConfiguration;
 import org.apache.camel.spi.XMLRoutesDefinitionLoader;
 import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.support.jsse.SSLContextParameters;
+import org.apache.camel.vault.VaultConfiguration;
 
 @Experimental
 public class LightweightCamelContext implements ExtendedCamelContext, CatalogCamelContext, ModelCamelContext {
